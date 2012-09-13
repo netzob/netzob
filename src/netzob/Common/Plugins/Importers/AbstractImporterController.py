@@ -30,17 +30,22 @@
 #+---------------------------------------------------------------------------+
 import logging
 import uuid
+import time
 from gettext import gettext as _
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from gi.repository import Gtk, Pango
+from gi.repository import Gtk, Pango, GObject
+
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Plugins.AbstractPluginController import AbstractPluginController
+from netzob.Common.Threads.Job import Job
+from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask
+from netzob.UI.Import.Controllers.ConfirmImportMessagesController import ConfirmImportMessagesController
 
 
 class AbstractImporterController(AbstractPluginController):
@@ -117,16 +122,47 @@ class AbstractImporterController(AbstractPluginController):
         self.updateCounters()
 
     def importButton_clicked_cb(self, widget):
+        """Callback executed when the user request to
+        import the selected messages"""
         selectedMessages = self.selectedMessages
         selectedCount = len(selectedMessages)
         if selectedCount != 0:
             currentProjectName = self.getCurrentProject().getName()
-            self.doImportMessages(selectedMessages)
-            self.view.dialog.destroy()
-            # Execute the finish (CB) method if one is defined
-            if self.plugin.finish is not None:
-                self.plugin.finish()
+
+            # Threaded import process
+            Job(self.startImportMessages(selectedMessages))
+
+    def startImportMessages(self, selectedMessages):
+        """Method considered as the main Job to execute to import
+        selected messages"""
+
+        if self.model is not None:
+            self.model.status_cb = self.updateImportProgessBar
+            self.model.end_cb = self.requestConfirmation
+
+        (yield ThreadedTask(self.doImportMessages, selectedMessages))
+
+        self.view.dialog.destroy()
+        # Execute the finish (CB) method if one is defined
+        if self.plugin.finish is not None:
+            self.plugin.finish()
+
+    def updateImportProgessBar(self, percent, message):
+        """Update the progress bar given the provided informations"""
+        if percent is not None:
+            valTotalPercent = float(percent) / float(100)
+            time.sleep(0.01)
+            GObject.idle_add(self.view.importProgressBar.set_fraction, valTotalPercent)
+
+        if message is None:
+            GObject.idle_add(self.view.importProgressBar.set_text, "")
+        else:
+            GObject.idle_add(self.view.importProgressBar.set_text, message)
 
     def updateCounters(self):
         displayedPackets = self.view.listListStore.iter_n_children(None)
         self.view.updateCounters(displayedPackets, self.selectedPacketCount)
+
+    def requestConfirmation(self, workspace, project, type, messages):
+        confirmController = ConfirmImportMessagesController(workspace, project, type, messages)
+        GObject.idle_add(confirmController.run)

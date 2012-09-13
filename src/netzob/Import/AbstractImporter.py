@@ -53,9 +53,17 @@ class AbstractImporter(object):
         self.type = type
         self.messages = []
         self.netzob = netzob
+        self.status_cb = None
+        self.end_cb = None
 
     def saveMessagesInCurrentProject(self, messageIDList):
+        """Retrieve messages from the provided list of IDs
+        and add them to the current project"""
         addMessages = []
+        # Compute the step
+        step = float(100.0 / float(len(messageIDList)))
+        status = 0.0
+        old_status = 0.0
         for messageID in messageIDList:
             message = self.getMessageByID(str(messageID))
             if message is not None:
@@ -63,19 +71,30 @@ class AbstractImporter(object):
             else:
                 errorMessage = _("Message ID: {0} not found in importer message list").format(messageID)
                 raise NetzobImportException("PCAP", errorMessage, ERROR)
+            status += step
+
+            if self.status_cb is not None:
+                self.status_cb(status, None)
+                old_status = status
+
         self.saveMessagesInProject(self.netzob.getCurrentWorkspace(), self.netzob.getCurrentProject(), addMessages)
 
     def saveMessagesInProject(self, workspace, project, messages):
         """Add a selection of messages to an existing project
            it also saves them in the workspace"""
-        confirmController = ConfirmImportMessagesController(workspace, project, self.type, messages)
-        confirmController.run()
+
+        if self.end_cb is not None:
+            self.end_cb(workspace, project, self.type, messages)
+        else:
+            confirmController = ConfirmImportMessagesController(workspace, project, self.type, messages)
+            confirmController.run()
 
     def getMessageByID(self, strID):
         selectedMessage = None
         for message in self.messages:
             if str(message.getID()) == strID:
                 selectedMessage = message
+                break
 
         return selectedMessage
 

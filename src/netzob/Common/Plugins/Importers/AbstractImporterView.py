@@ -55,7 +55,7 @@ class AbstractImporterView(AbstractPluginView):
         self._getObjects(self._builder, ["dialog", "openFileEntry",
                                          "listTreeView", "detailTextView", "cancelButton", "warnAlign",
                                          "warnLabel", "displayCountLabel", "selectCountLabel", "importButton",
-                                         "globalBox"])
+                                         "globalBox", "importProgressBar"])
         # Change packet details textview font
         monoFontDesc = Pango.FontDescription("monospace")
         self.detailTextView.modify_font(monoFontDesc)
