@@ -64,8 +64,7 @@ class PeachExporterPlugin(ExporterPlugin):
                 @param netzob: the main netzob project.
         """
         ExporterPlugin.__init__(self, netzob)
-        self.controller = PeachExportController(netzob)
-        self.entryPoints = [ExportMenuExtension(netzob, self.controller, "peachExporter", "Peach pit file")]
+        self.entryPoints = [ExportMenuExtension(netzob, self.actionCallback, "peachExporter", "Peach pit file")]
 
     def getName(self):
         """getName:
@@ -115,3 +114,13 @@ class PeachExporterPlugin(ExporterPlugin):
                 @param val:
         """
         self.val = val
+
+    def actionCallback(self):
+        """setVal:
+                Callback when plugin is launched.
+
+                @type val:
+                @param val:
+        """
+        controller = PeachExportController(self.netzob)
+        controller.run()

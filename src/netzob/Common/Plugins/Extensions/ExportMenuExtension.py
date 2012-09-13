@@ -102,4 +102,4 @@ class ExportMenuExtension(GlobalMenuExtension):
         """executeAction:
                 Start the controller. Called when the menu entry is selected.
         """
-        self.controller.run()
+        self.controller()

@@ -116,11 +116,12 @@ class PeachExportController(AbstractExporterController):
                 @type treeview: gtk.TreeView
                 @param treeview: the symbol tree view.
         """
-        (model, iter) = treeview.get_selection().get_selected()
-        if(iter):
-            if(model.iter_is_valid(iter)):
-                symbolID = model.get_value(iter, 0)
-                self.showXMLDefinition(symbolID)
+        if treeview.get_selection() is not None:
+            (model, iter) = treeview.get_selection().get_selected()
+            if(iter):
+                if(model.iter_is_valid(iter)):
+                    symbolID = model.get_value(iter, 0)
+                    self.showXMLDefinition(symbolID)
 
     def changeFuzzingBase(self, combo):
         """changeFuzzingBase:
@@ -183,6 +184,7 @@ class PeachExportController(AbstractExporterController):
         if self.selectedSymbolID != "-2":
             chooser = Gtk.FileChooserDialog(title=_("Export as Peach Fuzzer (XML)"), action=Gtk.FileChooserAction.SAVE, buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
             res = chooser.run()
+            fileName = ""
             if res == Gtk.ResponseType.OK:
                 fileName = chooser.get_filename()
             chooser.destroy()

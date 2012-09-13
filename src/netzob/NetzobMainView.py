@@ -230,7 +230,7 @@ class NetzobMainView(object):
         exportersMenu.append(exporterEntry)
 
         for pluginExtension in pluginsExtensions:
-            pluginEntry = Gtk.CheckMenuItem(pluginExtension.menuText)
+            pluginEntry = Gtk.MenuItem(pluginExtension.menuText)
             pluginEntry.connect("activate", pluginExtension.executeAction)
             exportersMenu.append(pluginEntry)
         exportersMenu.show_all()
