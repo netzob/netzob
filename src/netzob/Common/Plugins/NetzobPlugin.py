@@ -152,8 +152,6 @@ class NetzobPlugin(object):
                             pluginExtensionClass.__class__.__name__))
                         if issubclass(pluginExtensionClass.__class__, extensionClass):
                             pluginExtensions.append(pluginExtensionClass)
-                        else:
-                            logging.debug("oups not {0}".format(pluginExtensionClass))
             except Exception, e:
                 logging.debug("Error while loading an extension : {0}".format(e))
 

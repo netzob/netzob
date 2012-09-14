@@ -28,64 +28,50 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging
-import errno
-import time
-import uuid
-import os
-from lxml.etree import ElementTree
-from lxml import etree
-from gettext import gettext as _
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-import impacket.ImpactDecoder as Decoders
-import impacket.ImpactPacket as Packets
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common import Project
-from netzob.Common.Workspace import Workspace
-from netzob.Common.Models.Factories.AbstractMessageFactory import AbstractMessageFactory
-from netzob.Common.NetzobException import NetzobImportException
-from netzob.Import.AbstractImporter import AbstractImporter
-from netzob.UI.ModelReturnCodes import ERROR, WARNING, SUCCEDED
+from netzob.Common.Plugins.Extensions.GlobalMenuExtension import GlobalMenuExtension
 
 
-class XMLImporter(AbstractImporter):
-    """Model of XML importer plugin"""
+class CapturerMenuExtension(GlobalMenuExtension):
 
-    def __init__(self, netzob):
-        super(XMLImporter, self).__init__("XML IMPORT", netzob)
-        self.log = logging.getLogger('netzob.Import.XMLImport.py')
-        self.filesToBeImported = []
+    def __init__(self, netzob, controller, actionName, menuText, menuStock=None,
+                 menuAccel=None, menuTooltip=None):
+        super(GlobalMenuExtension, self).__init__()
+        self.netzob = netzob
+        self.actionName = actionName
+        self.menuText = menuText
+        self.menuStock = menuStock
+        self.menuAccel = menuAccel
+        self.menuTooltip = menuTooltip
+        self.controller = controller
 
-    def setSourceFiles(self, filePathList):
-        self.filesToBeImported = filePathList
+    def getUIDefinition(self):
+        uiDefinition = """
+        <ui>
+        <menubar name='MenuBar'>
+            <menu action='Project'>
+                <menu action='CaptureMessages'>
+                    <menuitem action='{0}' />
+                </menu>
+            </menu>
+        </menubar>
+        </ui>
+        """.format(self.actionName)
+        return uiDefinition
 
-    def readMessages(self):
-        self.messages = []
-        for filePath in self.filesToBeImported:
-            self._readMessagesFromFile(filePath)
+    def getActions(self):
+        actions = [
+            (self.actionName, self.menuStock,
+                self.menuText, self.menuAccel, self.menuTooltip,
+                self.executeAction)]
+        return actions
 
-    def _readMessagesFromFile(self, filePath):
-        from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
-        xmlSchemaPath = os.path.join(ResourcesConfiguration.getStaticResources(), "xsds/0.1/common.xsd")
-        # If we find a version which validates the XML, we parse with the associated function
-        if not Workspace.isSchemaValidateXML(xmlSchemaPath, filePath):
-            logging.error("The specified XML file {0} is not valid "
-                          "according to the XSD ({1}).".format(filePath, xmlSchemaPath))
-        else:
-            logging.debug("XML file valid according to the XSD schema")
-
-            # Parse the XML Document as 0.1 version
-            tree = ElementTree()
-            tree.parse(filePath)
-            xmlFile = tree.getroot()
-
-            for xmlMessage in xmlFile.findall("{" + Project.COMMON_NAMESPACE + "}message"):
-                message = AbstractMessageFactory.loadFromXML(xmlMessage, Project.COMMON_NAMESPACE, "0.1")
-                logging.debug("XML String data: " + message.getStringData())
-                self.messages.append(message)
+    def executeAction(self, widget, data=None):
+        self.controller()

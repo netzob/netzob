@@ -89,7 +89,8 @@ class NetzobMainView(object):
         self.registerPerspective(self.TRAFFIC_SIMULATOR_VIEW,
                                  _("Simulator"),
                                  SimulatorController)
-        self.switchPerspective(self.VOCABULARY_INFERENCE_VIEW)
+        # Useless
+#        self.switchPerspective(self.VOCABULARY_INFERENCE_VIEW)
         self.perspectiveComboBox.set_active(0)
 
     def loadBaseMenuBarAndToolbar(self):

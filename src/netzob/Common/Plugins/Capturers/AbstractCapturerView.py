@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from netzob.Common.Plugins.Extensions.GlobalMenuExtension import GlobalMenuExtension
 
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
@@ -29,49 +28,31 @@ from netzob.Common.Plugins.Extensions.GlobalMenuExtension import GlobalMenuExten
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
+import os
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
+from gi.repository import Gtk, Pango
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.Common.Plugins.AbstractPluginView import AbstractPluginView
 
 
-class ImportMenuExtension(GlobalMenuExtension):
+class AbstractCapturerView(AbstractPluginView):
+    GLADE_FILENAME = "AbstractCapturerView.glade"
 
-    def __init__(self, netzob, controller, actionName, menuText, menuStock=None,
-                 menuAccel=None, menuTooltip=None):
-        super(GlobalMenuExtension, self).__init__()
-        self.netzob = netzob
-        self.actionName = actionName
-        self.menuText = menuText
-        self.menuStock = menuStock
-        self.menuAccel = menuAccel
-        self.menuTooltip = menuTooltip
-        self.controller = controller
+    def __init__(self, plugin, controller):
+        super(AbstractCapturerView, self).__init__(plugin, controller)
 
-    def getUIDefinition(self):
-        uiDefinition = """
-        <ui>
-        <menubar name='MenuBar'>
-            <menu action='Project'>
-                <menu action='ImportTraces'>
-                    <menuitem action='{0}' />
-                </menu>
-            </menu>
-        </menubar>
-        </ui>
-        """.format(self.actionName)
-        return uiDefinition
+    def run(self):
+        self.dialog.show_all()
+        self.hideWarning()
 
-    def getActions(self):
-        actions = [
-            (self.actionName, self.menuStock,
-                self.menuText, self.menuAccel, self.menuTooltip,
-                self.executeAction)]
-        return actions
+    def showWarning(self, text):
+        pass
 
-    def executeAction(self, widget, data=None):
-        self.controller.run()
+    def hideWarning(self):
+        pass

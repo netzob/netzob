@@ -38,13 +38,13 @@ import logging
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk
 import gi
-from netzob.UI.Vocabulary.Controllers.EnvironmentDependenciesSearcherController import EnvironmentDependenciesSearcherController
 gi.require_version('Gtk', '3.0')
 
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.UI.Vocabulary.Controllers.EnvironmentDependenciesSearcherController import EnvironmentDependenciesSearcherController
 from netzob.UI.Vocabulary.Views.VocabularyView import VocabularyView
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.Common.Symbol import Symbol
@@ -64,7 +64,7 @@ from netzob.UI.Vocabulary.Controllers.RelationsController import RelationsContro
 from netzob.UI.Vocabulary.Controllers.Menus.ContextualMenuOnSymbolController import ContextualMenuOnSymbolController
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.UI.Vocabulary.Controllers.VariableController import VariableTreeController
-from netzob.Common.Plugins.Extensions.ImportMenuExtension import ImportMenuExtension
+from netzob.Common.Plugins.Extensions.CapturerMenuExtension import CapturerMenuExtension
 
 
 #+----------------------------------------------
@@ -102,7 +102,7 @@ class VocabularyController(object):
     def updateListOfCapturerPlugins(self):
         """Fetch the list of available capturer plugins, and provide
         them to its associated view"""
-        pluginExtensions = NetzobPlugin.getLoadedPluginsExtension(ImportMenuExtension)
+        pluginExtensions = NetzobPlugin.getLoadedPluginsExtension(CapturerMenuExtension)
         self.view.updateListCapturerPlugins(pluginExtensions)
 
     ## Symbol List toolbar callbacks

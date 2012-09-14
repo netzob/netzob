@@ -110,8 +110,8 @@
     </child>
     <child>
       <object class="GtkAction" id="captureMessages">
-        <property name="label" translatable="yes">Capture messages from...</property>
-        <property name="tooltip" translatable="yes">Capture messages from...</property>
+        <property name="label" translatable="yes">Capture messages...</property>
+        <property name="tooltip" translatable="yes">Capture messages...</property>
         <property name="hide_if_empty">False</property>
       </object>
     </child>
