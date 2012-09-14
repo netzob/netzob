@@ -93,6 +93,7 @@ class NetzobMainController(object):
         self.log.info(_("Starting netzob UI"))
         self.view = None    # small hack since the attribute need to exists when the main glade is loaded
         self.view = NetzobMainView(self)
+        self.view.registerPerspectives()
 
         # Load all available plugins
         NetzobPlugin.loadPlugins(self)

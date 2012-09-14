@@ -147,6 +147,20 @@ class VocabularyView(object):
     def getMenuToolbarUIDefinition(self):
         return self._uiDefinition
 
+    def updateListCapturerPlugins(self, pluginsExtensions):
+        """Update the menu"""
+        pluginMenu = self.netzob.view.uiManager.get_widget("/mainMenuBar/fileMenu/fileMenuAdditions/captureMessages").get_submenu()
+
+        # Update the list of exporters
+        for i in pluginMenu.get_children():
+            pluginMenu.remove(i)
+
+        for pluginExtension in pluginsExtensions:
+            pluginEntry = Gtk.MenuItem(pluginExtension.menuText)
+            pluginEntry.connect("activate", pluginExtension.executeAction)
+            pluginMenu.append(pluginEntry)
+        pluginMenu.show_all()
+
     def drag_data_received_event(self, widget, drag_context, x, y, data, info, time):
         """Callback executed when the user drops
         some data in the treeview of symbols."""
