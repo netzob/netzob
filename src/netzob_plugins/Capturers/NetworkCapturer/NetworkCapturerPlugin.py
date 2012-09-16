@@ -43,6 +43,7 @@ import random
 from netzob.Common.Plugins.CapturerPlugin import CapturerPlugin
 from netzob.Common.Plugins.Extensions.CapturerMenuExtension import CapturerMenuExtension
 from netzob_plugins.Capturers.NetworkCapturer.NetworkCapturerController import NetworkCapturerController
+from netzob.UI.NetzobWidgets import NetzobErrorMessage
 
 
 class NetworkCapturerPlugin(CapturerPlugin):
@@ -63,6 +64,7 @@ class NetworkCapturerPlugin(CapturerPlugin):
                 @param netzob: the main netzob project.
         """
         super(NetworkCapturerPlugin, self).__init__(netzob)
+        self.netzob = netzob
         self.entryPoints = [CapturerMenuExtension(netzob, self.actionCallback, "Capture network trafic", "Capture network trafic")]
 
     def getName(self):
@@ -114,12 +116,16 @@ class NetworkCapturerPlugin(CapturerPlugin):
         """
         self.val = val
 
-    def actionCallback(self):
+    def actionCallback(self, vocabularyView):
         """setVal:
                 Callback when plugin is launched.
 
                 @type val:
                 @param val:
         """
-        controller = NetworkCapturerController(self.netzob)
+        if self.netzob.getCurrentProject() is None:
+            NetzobErrorMessage(_("No project selected."))            
+            return
+        self.finish = vocabularyView.updateSymbolList
+        controller = NetworkCapturerController(self.netzob, self)
         controller.run()

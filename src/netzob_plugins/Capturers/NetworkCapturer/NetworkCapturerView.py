@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 AMOSSYS                                                |
+#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -31,6 +31,7 @@
 from gettext import gettext as _
 import logging
 import pcapy
+import os
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -49,127 +50,87 @@ class NetworkCapturerView(AbstractCapturerView):
             GUI for viewing network capturer.
     """
 
-    def __init__(self):
+    GLADE_FILENAME = "NetworkCapturerConfigurationWidget.glade"
+
+    def __init__(self, plugin, controller):
         """Constructor of NetworkCapturerView:
         """
-        self.buildPanel()
+        super(NetworkCapturerView, self).__init__(plugin, controller)
 
-        self.dialog = Gtk.Dialog(title=_("Network capturer"), flags=0, buttons=None)
-        self.dialog.vbox.pack_start(self.panel, True, True, 0)
-        self.dialog.set_size_request(600, 400)
+        # Import and add configuration widget
+        self.builderConfWidget = Gtk.Builder()
+        curDir = os.path.dirname(__file__)
+        gladePath = os.path.join(self.getPlugin().getPluginStaticResourcesPath(), "ui", NetworkCapturerView.GLADE_FILENAME)
 
-    def buildPanel(self):
-        """buildPanel:
-                Build and display the main panel.
-        """
-        # Network Capturing Panel
-        self.panel = Gtk.Table(rows=7, columns=4, homogeneous=False)
-        self.panel.show()
+        self.builderConfWidget.add_from_file(gladePath)
+        self._getObjects(self.builderConfWidget, ["NetworkConfigurationBox", "deviceCombo",
+                                                  "filterEntry", "layerRadioButton2", "layerRadioButton3",
+                                                  "layerRadioButton4", "countEntry", "timeEntry"])
+        self.layerRadioButton4.set_active(True)
+        self.builderConfWidget.connect_signals(self.controller)
+        self.setDialogTitle(_("Capture network messages"))
+        self.setConfigurationWidget(self.NetworkConfigurationBox)
+        self._textCell = Gtk.CellRendererText()
+        self.makeL4ImportTreeView()
 
-        # Network devices
-        label = Gtk.Label(label=_("Network devices"))
-        label.show()
-        self.listNetworkDevice = Gtk.ComboBoxText.new_with_entry()
-        self.listNetworkDevice.show()
-        self.listNetworkDevice.set_size_request(300, -1)
-        self.listNetworkDevice.set_model(Gtk.ListStore(str))
-        self.listNetworkDevice.get_model().clear()
+    def addTreeViewTextColumn(self, text, modelColumn):
+        column = Gtk.TreeViewColumn(text)
+        column.pack_start(self._textCell, True)
+        column.add_attribute(self._textCell, "text", modelColumn)
+        column.set_sort_column_id(modelColumn)
+        self.listTreeView.append_column(column)
 
-        # list of interfaces
-        try:
-            interfaces = pcapy.findalldevs()
-        except:
-            logging.warn(_("You don't have enough permissions to open any network interface on this system."))
-            interfaces = []
+    def addTreeViewSelectedToggleColumn(self):
+        toggleCellRenderer = Gtk.CellRendererToggle()
+        toggleCellRenderer.set_activatable(True)
+        toggleCellRenderer.connect("toggled", self.controller.selectMessage)
+        # Selected column
+        column = Gtk.TreeViewColumn()
+        column.pack_start(toggleCellRenderer, True)
+        column.add_attribute(toggleCellRenderer, "active", 1)
+        self.listTreeView.append_column(column)
 
-        for interface in interfaces:
-            self.listNetworkDevice.append_text(str(interface))
+    def removeAllTreeViewColumns(self):
+        columnList = self.listTreeView.get_columns()
+        for column in columnList:
+            self.listTreeView.remove_column(column)
 
-        self.panel.attach(label, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.panel.attach(self.listNetworkDevice, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+    def makeL2ImportTreeView(self):
+        self.removeAllTreeViewColumns()
+        # Liststore to displayer layer 2 packets
+        # ID, Selected, Source Address, Destination Address, Payload
+        self.listListStore = Gtk.ListStore(
+            str, 'gboolean', str, str, str)
+        self.listTreeView.set_model(self.listListStore)
+        self.addTreeViewSelectedToggleColumn()
+        self.addTreeViewTextColumn("Source Address", 2)
+        self.addTreeViewTextColumn("Destination Address", 3)
+        self.addTreeViewTextColumn("Payload", 4)
 
-        # BPF filter
-        label = Gtk.Label(label=_("BPF filter"))
-        label.show()
-        self.entry_filter = Gtk.Entry()
-        self.entry_filter.set_width_chars(50)
-        self.entry_filter.show()
-        self.entry_filter.set_text("tcp port 80")
-        self.panel.attach(label, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.panel.attach(self.entry_filter, 1, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+    def makeL3ImportTreeView(self):
+        self.removeAllTreeViewColumns()
+        # Liststore to display layer 3 packets
+        # ID, Selected, Source IP, Destination IP, Payload
+        self.listListStore = Gtk.ListStore(
+            str, 'gboolean', str, str, str)
+        self.listTreeView.set_model(self.listListStore)
+        self.addTreeViewSelectedToggleColumn()
+        self.addTreeViewTextColumn("Source IP", 2)
+        self.addTreeViewTextColumn("Destination IP", 3)
+        self.addTreeViewTextColumn("Payload", 4)
 
-        # Count capturing limit
-        label = Gtk.Label(label=_("Count limit"))
-        label.show()
-        self.entry_count = Gtk.Entry()
-        self.entry_count.show()
-        self.entry_count.set_text("10")
-        self.panel.attach(label, 0, 1, 2, 3, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-        self.panel.attach(self.entry_count, 1, 2, 2, 3, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-
-        # Time capturing limit
-        label = Gtk.Label(label=_("Timeout"))
-        label.show()
-        self.entry_time = Gtk.Entry()
-        self.entry_time.show()
-        self.entry_time.set_text("10")
-        self.panel.attach(label, 0, 1, 3, 4, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-        self.panel.attach(self.entry_time, 1, 2, 3, 4, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-
-        # Sniff launching button
-        self.butLaunchSniff = Gtk.Button(label=_("Sniff traffic"))
-        self.butLaunchSniff.show()
-        self.panel.attach(self.butLaunchSniff, 1, 2, 5, 6, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-
-        # Packet list
-        scroll = Gtk.ScrolledWindow()
-        self.treestore = Gtk.TreeStore(int, str, str, str, int, int, int)  # pktID, proto (udp/tcp), IP.src, IP.dst, sport, dport, timestamp
-        self.treeview = Gtk.TreeView(self.treestore)
-        self.treeview.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
-        self.selection = self.treeview.get_selection()
-        cell = Gtk.CellRendererText()
-        # Col proto
-        column = Gtk.TreeViewColumn(_("Proto"))
-        column.pack_start(cell, True)
-        column.add_attribute(cell, "text", 1)
-        self.treeview.append_column(column)
-        # Col IP.src
-        column = Gtk.TreeViewColumn(_("IP source"))
-        column.pack_start(cell, True)
-        column.add_attribute(cell, "text", 2)
-        self.treeview.append_column(column)
-        # Col IP.dst
-        column = Gtk.TreeViewColumn(_("IP dest"))
-        column.pack_start(cell, True)
-        column.add_attribute(cell, "text", 3)
-        self.treeview.append_column(column)
-        # Col {TCP,UDP}.sport
-        column = Gtk.TreeViewColumn(_("sport"))
-        column.pack_start(cell, True)
-        column.add_attribute(cell, "text", 4)
-        self.treeview.append_column(column)
-        # Col {TCP,UDP}.dport
-        column = Gtk.TreeViewColumn(_("dport"))
-        column.pack_start(cell, True)
-        column.add_attribute(cell, "text", 5)
-        self.treeview.append_column(column)
-        self.treeview.show()
-        scroll.add(self.treeview)
-        scroll.show()
-        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        self.panel.attach(scroll, 0, 2, 4, 5, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
-        # Button select packets for further analysis
-        self.butSaveSelectedPackets = Gtk.Button(label=_("Save selected packets"))
-        self.butSaveSelectedPackets.show()
-        self.panel.attach(self.butSaveSelectedPackets, 1, 2, 6, 7, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-
-        # Packet detail
-        scroll = Gtk.ScrolledWindow()
-        self.textview = Gtk.TextView()
-        self.textview.show()
-        self.textview.get_buffer().create_tag("normalTag", family="Courier")
-        self.textview.set_size_request(300, -1)
-        scroll.add(self.textview)
-        scroll.show()
-        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        self.panel.attach(scroll, 2, 4, 0, 7, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
+    def makeL4ImportTreeView(self):
+        self.removeAllTreeViewColumns()
+        # Liststore to display layer 4 packets
+        # ID, Selected, Source IP, Destination IP, Protocol,
+        # Source Port, Destination Port, Payload
+        self.listListStore = Gtk.ListStore(
+            str, 'gboolean', str, str, str, str, str, str)
+        self.listTreeView.set_model(self.listListStore)
+        self.addTreeViewSelectedToggleColumn()
+        self.addTreeViewTextColumn("Source IP", 2)
+        self.addTreeViewTextColumn("Destination IP", 3)
+        self.addTreeViewTextColumn("Protocol", 4)
+        self.addTreeViewTextColumn("Source Port", 5)
+        self.addTreeViewTextColumn("Destination Port", 6)
+        self.addTreeViewTextColumn("Payload", 7)
