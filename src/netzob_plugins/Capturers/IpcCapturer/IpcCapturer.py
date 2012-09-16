@@ -77,8 +77,10 @@ class IpcCapturer(AbstractCapturer):
                 Return the process list
         """
         processList = []
+        uidUser = self.getUidOfCurrentUser()
         for pid in readProcesses():
-            processList.append(str(pid) + "\t" + str(readProcessCmdline(pid)[0]))
+            if (uidUser == "0") or (uidUser == self.getUidOfProcess(pid)):
+                processList.append(str(pid) + "\t" + str(readProcessCmdline(pid)[0]))
         return processList
 
     #+----------------------------------------------
@@ -101,6 +103,18 @@ class IpcCapturer(AbstractCapturer):
         fds = self.retrieveFDs(self.filter1.get_active(), self.filter2.get_active(), self.filter3.get_active())
         for fd in fds:
             self.fdTreeview.get_model().append(None, fd)
+
+    def getUidOfProcess(self, pid):
+        cmd = "ps -p " + str(pid) + " -o uid= |tr -d \" \""
+        uid = os.popen(cmd).read().strip()
+        return uid
+
+    def getUidOfCurrentUser(self):
+        cmd = "id"
+        idResult = os.popen(cmd).read()
+        m = re.search("uid=(\d+)\(.*", idResult)
+        uid = m.group(1)
+        return uid
 
     #+----------------------------------------------
     #| Retrieve the filtered FD

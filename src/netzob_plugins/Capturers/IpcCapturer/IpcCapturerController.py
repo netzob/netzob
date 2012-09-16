@@ -80,6 +80,7 @@ class IpcCapturerController(AbstractCapturerController):
         """updateFlowList_cb:
                 Called when user wants to update the flow list
         """
+        self.view.fdStore.clear()
         processSelected = self.view.processCombo.get_active_text()
         self.model.pid = int(processSelected.split()[0])
         filter_fs = self.view.fsFilterButton.get_active()
