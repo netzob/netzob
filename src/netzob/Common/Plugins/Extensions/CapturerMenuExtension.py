@@ -73,5 +73,5 @@ class CapturerMenuExtension(GlobalMenuExtension):
                 self.executeAction)]
         return actions
 
-    def executeAction(self, widget, data=None):
-        self.controller()
+    def executeAction(self, widget, vocabularyView, data=None):
+        self.controller(vocabularyView)

@@ -157,7 +157,7 @@ class VocabularyView(object):
 
         for pluginExtension in pluginsExtensions:
             pluginEntry = Gtk.MenuItem(pluginExtension.menuText)
-            pluginEntry.connect("activate", pluginExtension.executeAction)
+            pluginEntry.connect("activate", pluginExtension.executeAction, self)
             pluginMenu.append(pluginEntry)
         pluginMenu.show_all()
 

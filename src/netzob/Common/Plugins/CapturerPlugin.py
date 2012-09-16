@@ -50,3 +50,5 @@ class CapturerPlugin(NetzobPlugin):
 
     def __init__(self, netzob):
         NetzobPlugin.__init__(self, netzob)
+        self.finish = None
+

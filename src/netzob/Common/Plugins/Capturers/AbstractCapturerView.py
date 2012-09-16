@@ -42,17 +42,59 @@ from netzob.Common.Plugins.AbstractPluginView import AbstractPluginView
 
 
 class AbstractCapturerView(AbstractPluginView):
-    GLADE_FILENAME = "AbstractCapturerView.glade"
+    GLADE_FILENAME = "abstractCapturerView.glade"
 
     def __init__(self, plugin, controller):
         super(AbstractCapturerView, self).__init__(plugin, controller)
+        self._builder = Gtk.Builder()
+        gladeFilePath = os.path.join(
+            self.getPlugin().getNetzobStaticResourcesPath(),
+            "ui", "capturer", AbstractCapturerView.GLADE_FILENAME)
+
+        self._builder.add_from_file(gladeFilePath)
+        self._getObjects(self._builder, ["dialog", "openFileEntry",
+                                         "listTreeView", "detailTextView", "cancelButton", "warnAlign",
+                                         "warnLabel", "displayCountLabel", "selectCountLabel", "importButton",
+                                         "globalBox", "importProgressBar"])
+        # Change packet details textview font
+        monoFontDesc = Pango.FontDescription("monospace")
+        self.detailTextView.modify_font(monoFontDesc)
+        self._builder.connect_signals(self.getController())
+        self.cancelButton.connect_object("clicked", Gtk.Widget.destroy,
+                                         self.dialog)
+
+    def setConfigurationWidget(self, widget):
+        self.globalBox.pack_start(widget, False, False, 0)
+        self.globalBox.reorder_child(widget, 1)
+        widget.show()
+
+    def setDialogTitle(self, title):
+        self.dialog.set_title(title)
+
+    def _getObjects(self, builder, objectsList):
+        for object in objectsList:
+            setattr(self, object, builder.get_object(object))
 
     def run(self):
         self.dialog.show_all()
         self.hideWarning()
 
     def showWarning(self, text):
-        pass
+        self.warnLabel.set_text(text)
+        self.warnAlign.show_all()
 
     def hideWarning(self):
-        pass
+        self.warnAlign.hide()
+
+    def clearPacketView(self):
+        self.listListStore.clear()
+        self.detailTextView.get_buffer().set_text("")
+
+    def updateCounters(self, displayedPackets, selectedPackets):
+        if selectedPackets == 0:
+            self.importButton.set_sensitive(False)
+        else:
+            self.importButton.set_sensitive(True)
+
+        self.displayCountLabel.set_text(str(displayedPackets))
+        self.selectCountLabel.set_text(str(selectedPackets))
