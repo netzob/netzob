@@ -75,7 +75,7 @@ class NetzobMainController(object):
         # Initialize everything
         self._loadBugReporter(opts)
         self.currentWorkspace = self._loadWorkspace(opts)
-        self._initLogging()
+        self._initLogging(opts)
         self._initResourcesAndLocales()
 
         # Loading the last project
@@ -164,9 +164,9 @@ class NetzobMainController(object):
             logging.exception("setlocale failed, resetting to C")
             locale.setlocale(locale.LC_ALL, "C")
 
-    def _initLogging(self):
+    def _initLogging(self, opts):
         # Create the logging infrastructure
-        LoggingConfiguration().initializeLogging(self.currentWorkspace)
+        LoggingConfiguration().initializeLogging(self.currentWorkspace, opts)
         self.log = logging.getLogger(__name__)
 
     def run(self):
