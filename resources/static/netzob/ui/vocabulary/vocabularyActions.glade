@@ -161,5 +161,13 @@
         <signal name="toggled" handler="searchText_toggled_cb" swapped="no"/>
       </object>
     </child>
+    <child>
+      <object class="GtkToggleAction" id="filterMessages">
+        <property name="label" translatable="yes">Filter messages</property>
+        <property name="tooltip" translatable="yes">Filter messages in all messages of current symbol</property>
+        <property name="stock_id">gtk-find</property>
+        <signal name="toggled" handler="filterMessages_toggled_cb" swapped="no"/>
+      </object>
+    </child>
   </object>
 </interface>

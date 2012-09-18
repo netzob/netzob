@@ -51,6 +51,7 @@ from collections import OrderedDict
 #+---------------------------------------------------------------------------+
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.UI.Vocabulary.Controllers.ResearchController import ResearchController
+from netzob.UI.Vocabulary.Controllers.FilterMessagesController import FilterMessagesController
 
 
 class VocabularyView(object):
@@ -112,6 +113,11 @@ class VocabularyView(object):
         self.messageTableBoxAndResearchBox.pack_end(self.researchController._view.researchBar, False, False, 0)
         self.researchController._view.research_format.set_active(4)
         self.researchController.hide()
+
+        # add the filterBar
+        self.filterMessagesController = FilterMessagesController(self.controller)
+        self.messageTableBoxAndResearchBox.pack_end(self.filterMessagesController._view.filterBar, False, False, 0)
+        self.filterMessagesController.hide()
 
     def _loadActionGroupUIDefinition(self):
         """Loads the action group and the UI definition of menu items

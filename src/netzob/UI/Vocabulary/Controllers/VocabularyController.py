@@ -513,12 +513,27 @@ class VocabularyController(object):
         """Callback executed when the user clicks
         on the research toggle button"""
         if self.getCurrentProject() is None:
-            NetzobErrorMessage(_("No project selected."))
+            if action.get_active() == True:
+                NetzobErrorMessage(_("No project selected."))
+            action.set_active(False)
             return
         if action.get_active():
             self._view.researchController.show()
         else:
             self._view.researchController.hide()
+
+    def filterMessages_toggled_cb(self, action):
+        """Callback executed when the user clicks
+        on the filter messages toggle button"""
+        if self.getCurrentProject() is None:
+            if action.get_active() == True:
+                NetzobErrorMessage(_("No project selected."))
+            action.set_active(False)
+            return
+        if action.get_active():
+            self._view.filterMessagesController.show()
+        else:
+            self._view.filterMessagesController.hide()
 
     def environmentDep_activate_cb(self, action):
         """Callback executed when the user requests

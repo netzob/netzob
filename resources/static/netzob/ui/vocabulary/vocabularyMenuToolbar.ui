@@ -24,6 +24,7 @@
       <menu action="searchMenu">
         <menuitem action="searchText" />
         <menuitem action="environmentDep" />
+        <menuitem action="filterMessages" />
         <menuitem action="messagesDistribution" />
         <menuitem action="variableTable" />
         <menuitem action="relationsViewer" />
