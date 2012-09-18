@@ -56,7 +56,7 @@ from netzob.UI.Vocabulary.Views.VariableView import VariableTreeView, \
     VariableCreationView, VariableMovingView
 
 
-class VariableTreeController:
+class VariableTreeController(object):
     """VariableTreeController:
             Controls a variable's tree view display
     """
@@ -259,7 +259,8 @@ class VariableTreeController:
         else:
             logging.info(_("A variable already exists."))
 
-class VariableCreationController:
+
+class VariableCreationController(object):
     """VariableCreationController:
             Manage a view that allows the user to modify/create a variable by specifying each of its field.
     """
@@ -737,7 +738,7 @@ class VariableCreationController:
         VariableIDTreeController(self)
 
 
-class VariableMovingController:
+class VariableMovingController(object):
     """VariableMovingController:
             Manage a view that allows the user to move a variable to a specified position.
     """
@@ -795,7 +796,7 @@ class VariableMovingController:
         self.view.getWidg("dialog").destroy()
 
 
-class VariableIDTreeController:
+class VariableIDTreeController(object):
     """VariableIDTreeController:
             Controls a variable's ID tree view display.
             This treeview displays every variable of the vocabulary and is useful for selecting one of them.

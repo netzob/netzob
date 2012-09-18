@@ -46,7 +46,7 @@ from netzob.Fuzzing.File import File
 #| UIfuzzing:
 #|     GUI for fuzzing applications
 #+----------------------------------------------
-class UIfuzzing:
+class UIfuzzing(object):
     def new(self):
         pass
 

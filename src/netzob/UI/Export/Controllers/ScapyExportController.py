@@ -45,7 +45,7 @@ from netzob.Export.ScapyExport import ScapyExport
 #| ScapyExport:
 #|     GUI for exporting results as scapy dissector
 #+----------------------------------------------
-class ScapyExportController:
+class ScapyExportController(object):
 
     #+----------------------------------------------
     #| Called when user select a new trace

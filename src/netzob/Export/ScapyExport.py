@@ -36,7 +36,7 @@ import logging
 #| ScapyExport:
 #|     Class for building a scapy dissector
 #+----------------------------------------------
-class ScapyExport:
+class ScapyExport(object):
 
     #+----------------------------------------------
     #| Constructor:

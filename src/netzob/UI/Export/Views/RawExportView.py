@@ -38,7 +38,7 @@ gi.require_version('Gtk', '3.0')
 #| RawExportView:
 #|     GUI for exporting results in raw mode
 #+----------------------------------------------
-class RawExportView:
+class RawExportView(object):
 
     #+----------------------------------------------
     #| Constructor:

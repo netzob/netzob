@@ -49,7 +49,7 @@ from netzob.Fuzzing.TreeViews.TreeTypeStructureGenerator import TreeTypeStructur
 #| Network:
 #|     This class offers the capability to fuzz network flows in live
 #+---------------------------------------------------------------------------+
-class Network:
+class Network(object):
     def new(self):
         pass
 

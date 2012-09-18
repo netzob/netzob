@@ -56,7 +56,7 @@ from netzob.Import.GOTPoisoning.GOTPoisoner import GOTPoisoner
 #| Api:
 #|     GUI for capturing messages from api hooking
 #+---------------------------------------------------------------------------+
-class ApiImport:
+class ApiImport(object):
 
     def new(self):
         pass

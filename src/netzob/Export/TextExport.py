@@ -36,7 +36,7 @@ import logging
 #| TextExport:
 #|     GUI for exporting results in raw mode
 #+----------------------------------------------
-class TextExport:
+class TextExport(object):
 
     #+----------------------------------------------
     #| Constructor:

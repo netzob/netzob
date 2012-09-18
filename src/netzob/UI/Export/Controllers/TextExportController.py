@@ -45,7 +45,7 @@ from netzob.Export.TextExport import TextExport
 #| TextExport:
 #|     GUI for exporting results in text mode
 #+----------------------------------------------
-class TextExportController:
+class TextExportController(object):
 
     #+----------------------------------------------
     #| Called when user select a new trace

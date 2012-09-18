@@ -38,7 +38,7 @@ gi.require_version('Gtk', '3.0')
 #| ScapyExportView:
 #|     GUI for exporting results as scapy dissector
 #+----------------------------------------------
-class ScapyExportView:
+class ScapyExportView(object):
 
     #+----------------------------------------------
     #| Constructor:

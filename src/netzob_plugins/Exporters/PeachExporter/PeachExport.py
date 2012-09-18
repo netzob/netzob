@@ -40,7 +40,7 @@ from bitarray import bitarray
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
 
 
-class PeachExport:
+class PeachExport(object):
     """PeachExport:
             Utility for exporting netzob information into Peach pit file.
             Simplify the construction of a fuzzer with Peach.

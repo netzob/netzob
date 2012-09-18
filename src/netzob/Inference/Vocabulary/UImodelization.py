@@ -84,7 +84,7 @@ gi.require_version('Gtk', '3.0')
 #| UImodelization:
 #|     GUI for vocabulary inference
 #+----------------------------------------------
-class UImodelization:
+class UImodelization(object):
 
     #+----------------------------------------------
     #| Called when user select a new trace
@@ -1865,10 +1865,10 @@ class UImodelization:
 #===============================================================================
 #        dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK, None)
 #        dialog.set_markup(_("Definition of the new variable"))
-# 
+#
 #        # Create the ID of the new variable
 #        variableID = uuid.uuid4()
-# 
+#
 #        mainTable = Gtk.Table(rows=3, columns=2, homogeneous=False)
 #        # id of the variable
 #        variableIDLabel = NetzobLabel(_("ID :"))
@@ -1876,44 +1876,44 @@ class UImodelization:
 #        variableIDValueLabel.set_sensitive(False)
 #        mainTable.attach(variableIDLabel, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 #        mainTable.attach(variableIDValueLabel, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
-# 
+#
 #        # name of the variable
 #        variableNameLabel = NetzobLabel(_("Name : "))
 #        variableNameEntry = Gtk.Entry()
 #        variableNameEntry.show()
 #        mainTable.attach(variableNameLabel, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 #        mainTable.attach(variableNameEntry, 1, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
-# 
+#
 #        # Include current binary values
 #        variableWithCurrentBinariesLabel = NetzobLabel(_("Add current binaries : "))
-# 
+#
 #        variableWithCurrentBinariesButton = Gtk.CheckButton(_("Disjunctive inclusion"))
 #        variableWithCurrentBinariesButton.set_active(False)
 #        variableWithCurrentBinariesButton.show()
-# 
+#
 #        mainTable.attach(variableWithCurrentBinariesLabel, 0, 1, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 #        mainTable.attach(variableWithCurrentBinariesButton, 1, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
-# 
+#
 #        dialog.vbox.pack_end(mainTable, True, True, 0)
 #        dialog.show_all()
 #        result = dialog.run()
-# 
+#
 #        if result != Gtk.ResponseType.OK:
 #            dialog.destroy()
 #            return
-# 
+#
 #        # We retrieve the value of the variable
 #        varName = variableNameEntry.get_text()
-# 
+#
 #        # Disjonctive inclusion ?
 #        disjunctive = variableWithCurrentBinariesButton.get_active()
-# 
+#
 #        if disjunctive:
 #            # Create a default value
 #            defaultValue = field.getDefaultVariable(symbol)
 #        else:
 #            defaultValue = None
-# 
+#
 #        # We close the current dialog
 #        dialog.destroy()
 #===============================================================================

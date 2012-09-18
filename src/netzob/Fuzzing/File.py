@@ -45,7 +45,7 @@ from netzob.Fuzzing.TreeViews.TreeTypeStructureGenerator import TreeTypeStructur
 #| FileImport:
 #|     GUI for capturing messages
 #+----------------------------------------------
-class File:
+class File(object):
 
     def new(self):
         pass

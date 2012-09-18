@@ -49,7 +49,7 @@ import logging
 #+----------------------------------------------
 #| EnvironmentDependenciesSearcherController.py:
 #+----------------------------------------------
-class EnvironmentDependenciesSearcherController:
+class EnvironmentDependenciesSearcherController(object):
 
     def __init__(self, vocabularyController, symbols):
         # create logger with the given configuration

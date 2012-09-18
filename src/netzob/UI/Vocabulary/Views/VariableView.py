@@ -43,7 +43,7 @@ from gi.repository import Gtk
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
-class AbstractView:
+class AbstractView(object):
     """AbstractView:
             An abstract class mothering all views for the variable management.
     """

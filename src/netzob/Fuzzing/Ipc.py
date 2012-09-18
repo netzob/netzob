@@ -45,7 +45,7 @@ from netzob.Fuzzing.TreeViews.TreeTypeStructureGenerator import TreeTypeStructur
 #| Ipc:
 #|     ensures the capture of informations through IPC proxing
 #+----------------------------------------------
-class Ipc:
+class Ipc(object):
 
     #+----------------------------------------------
     #| Called when user select a new trace

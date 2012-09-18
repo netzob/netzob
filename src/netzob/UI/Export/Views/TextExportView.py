@@ -38,7 +38,7 @@ gi.require_version('Gtk', '3.0')
 #| TextExportView:
 #|     GUI for exporting results in text mode
 #+----------------------------------------------
-class TextExportView:
+class TextExportView(object):
 
     #+----------------------------------------------
     #| Constructor:

@@ -45,7 +45,7 @@ from netzob.UI.Simulator.Controllers.CreateNetworkActorController import CreateN
 #+---------------------------------------------------------------------------+
 #| SimulatorController:
 #+---------------------------------------------------------------------------+
-class SimulatorController:
+class SimulatorController(object):
 
     def __init__(self, netzob):
         self.netzob = netzob

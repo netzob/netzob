@@ -46,7 +46,7 @@ from netzob.Common.Filters.VisualizationFilter import VisualizationFilter
 #| FilterApplicationTable:
 #|     Definition of a filter application table
 #+---------------------------------------------------------------------------+
-class FilterApplicationTable:
+class FilterApplicationTable(object):
 
     def __init__(self, splittedData):
         self.splittedData = splittedData

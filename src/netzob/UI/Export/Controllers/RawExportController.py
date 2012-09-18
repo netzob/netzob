@@ -45,7 +45,7 @@ from netzob.Export.RawExport import RawExport
 #| RawExportController:
 #|     GUI for exporting results in raw mode
 #+----------------------------------------------
-class RawExportController:
+class RawExportController(object):
 
     #+----------------------------------------------
     #| Called when user select a new trace

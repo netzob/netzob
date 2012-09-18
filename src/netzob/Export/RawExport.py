@@ -36,7 +36,7 @@ import logging
 #| RawExport:
 #|     For exporting results in raw mode
 #+----------------------------------------------
-class RawExport:
+class RawExport(object):
 
     #+----------------------------------------------
     #| Constructor:

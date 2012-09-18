@@ -42,7 +42,7 @@ import logging
 #+---------------------------------------------------------------------------+
 
 
-class AbstractVariable:
+class AbstractVariable(object):
     """AbstractVariable:
             An abstract variable defined in a dictionary.
     """

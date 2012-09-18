@@ -52,7 +52,7 @@ from netzob.Inference.Vocabulary.SizeFieldIdentifier import SizeFieldIdentifier
 #+----------------------------------------------
 #| FindSizeFieldsController:
 #+----------------------------------------------
-class FindSizeFieldsController:
+class FindSizeFieldsController(object):
 
     #+----------------------------------------------
     #| Constructor:

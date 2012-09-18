@@ -33,7 +33,7 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.C_Extensions.WrapperMessage import WrapperMessage
 
 
-class WrapperArgsFactory:
+class WrapperArgsFactory(object):
     """Factory dedicated to the manipulation of arguments passed to C wrapper"""
 
     def __init__(self, function):

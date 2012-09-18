@@ -50,7 +50,7 @@ from netzob.UI.Grammar.Controllers.CreateCloseChannelTransitionController import
 #| GrammarInferenceController:
 #|    Graphical display of the inferring process of a grammar
 #+---------------------------------------------------------------------------+
-class GrammarController:
+class GrammarController(object):
 
     def __init__(self, netzob):
         self.netzob = netzob

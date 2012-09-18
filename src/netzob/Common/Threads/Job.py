@@ -32,7 +32,7 @@ from gettext import gettext as _
 import functools
 
 
-class Job:
+class Job(object):
     """Wrap a co-routines that yields asynchronous tasks (see Task class)."""
     def __init__(self, generator):
         self.generator = generator

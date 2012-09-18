@@ -41,7 +41,7 @@ from gettext import gettext as _
 #| AboutDialog:
 #|     Shows the about dialog of Netzob
 #+----------------------------------------------
-class AboutDialog:
+class AboutDialog(object):
     """Static class which includes the method
     to display the about dialog of Netzob."""
 
