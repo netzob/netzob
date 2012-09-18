@@ -28,64 +28,73 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging
-import errno
-import time
-import uuid
 import os
-from lxml.etree import ElementTree
-from lxml import etree
-from gettext import gettext as _
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-import impacket.ImpactDecoder as Decoders
-import impacket.ImpactPacket as Packets
+from gi.repository import Gtk, Pango
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common import Project
-from netzob.Common.Workspace import Workspace
-from netzob.Common.Models.Factories.AbstractMessageFactory import AbstractMessageFactory
-from netzob.Common.NetzobException import NetzobImportException
-from netzob.Import.AbstractImporter import AbstractImporter
-from netzob.UI.ModelReturnCodes import ERROR, WARNING, SUCCEDED
+from netzob.Common.Plugins.AbstractPluginView import AbstractPluginView
 
 
-class XMLImporter(AbstractImporter):
-    """Model of XML importer plugin"""
+class AbstractCapturerView(AbstractPluginView):
+    GLADE_FILENAME = "abstractCapturerView.glade"
 
-    def __init__(self, netzob):
-        super(XMLImporter, self).__init__("XML IMPORT", netzob)
-        self.log = logging.getLogger('netzob.Import.XMLImport.py')
-        self.filesToBeImported = []
+    def __init__(self, plugin, controller):
+        super(AbstractCapturerView, self).__init__(plugin, controller)
+        self._builder = Gtk.Builder()
+        gladeFilePath = os.path.join(
+            self.getPlugin().getNetzobStaticResourcesPath(),
+            "ui", "capturer", AbstractCapturerView.GLADE_FILENAME)
 
-    def setSourceFiles(self, filePathList):
-        self.filesToBeImported = filePathList
+        self._builder.add_from_file(gladeFilePath)
+        self._getObjects(self._builder, ["dialog", "openFileEntry",
+                                         "listTreeView", "detailTextView", "cancelButton", "warnAlign",
+                                         "warnLabel", "displayCountLabel", "selectCountLabel", "importButton",
+                                         "globalBox", "importProgressBar"])
+        # Change packet details textview font
+        monoFontDesc = Pango.FontDescription("monospace")
+        self.detailTextView.modify_font(monoFontDesc)
+        self._builder.connect_signals(self.getController())
+        self.cancelButton.connect_object("clicked", Gtk.Widget.destroy,
+                                         self.dialog)
 
-    def readMessages(self):
-        self.messages = []
-        for filePath in self.filesToBeImported:
-            self._readMessagesFromFile(filePath)
+    def setConfigurationWidget(self, widget):
+        self.globalBox.pack_start(widget, False, False, 0)
+        self.globalBox.reorder_child(widget, 1)
+        widget.show()
 
-    def _readMessagesFromFile(self, filePath):
-        from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
-        xmlSchemaPath = os.path.join(ResourcesConfiguration.getStaticResources(), "xsds/0.1/common.xsd")
-        # If we find a version which validates the XML, we parse with the associated function
-        if not Workspace.isSchemaValidateXML(xmlSchemaPath, filePath):
-            logging.error("The specified XML file {0} is not valid "
-                          "according to the XSD ({1}).".format(filePath, xmlSchemaPath))
+    def setDialogTitle(self, title):
+        self.dialog.set_title(title)
+
+    def _getObjects(self, builder, objectsList):
+        for object in objectsList:
+            setattr(self, object, builder.get_object(object))
+
+    def run(self):
+        self.dialog.show_all()
+        self.hideWarning()
+
+    def showWarning(self, text):
+        self.warnLabel.set_text(text)
+        self.warnAlign.show_all()
+
+    def hideWarning(self):
+        self.warnAlign.hide()
+
+    def clearPacketView(self):
+        self.listListStore.clear()
+        self.detailTextView.get_buffer().set_text("")
+
+    def updateCounters(self, displayedPackets, selectedPackets):
+        if selectedPackets == 0:
+            self.importButton.set_sensitive(False)
         else:
-            logging.debug("XML file valid according to the XSD schema")
+            self.importButton.set_sensitive(True)
 
-            # Parse the XML Document as 0.1 version
-            tree = ElementTree()
-            tree.parse(filePath)
-            xmlFile = tree.getroot()
-
-            for xmlMessage in xmlFile.findall("{" + Project.COMMON_NAMESPACE + "}message"):
-                message = AbstractMessageFactory.loadFromXML(xmlMessage, Project.COMMON_NAMESPACE, "0.1")
-                logging.debug("XML String data: " + message.getStringData())
-                self.messages.append(message)
+        self.displayCountLabel.set_text(str(displayedPackets))
+        self.selectCountLabel.set_text(str(selectedPackets))

@@ -51,7 +51,7 @@ class LoggingConfiguration(object):
     #+----------------------------------------------
     #| initializeLogging:
     #+----------------------------------------------
-    def initializeLogging(workspace):
+    def initializeLogging(workspace, opts):
         # First we extract the normal logging config file
         loggingFilePath = os.path.join(workspace.getPath(), workspace.getPathOfLogging())
         if (loggingFilePath != "" and os.path.isfile(loggingFilePath)):
@@ -66,3 +66,8 @@ class LoggingConfiguration(object):
             f = logging.Formatter("[%(threadName)s]%(asctime)s - %(module)s - %(levelname)s - %(message)s")
             h.setFormatter(f)
             logger.addHandler(h)
+
+        # Override default configuration with command line option
+        if opts.debugLevel in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
+            logger = logging.getLogger()
+            logger.setLevel(opts.debugLevel)

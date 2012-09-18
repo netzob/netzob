@@ -253,6 +253,8 @@ setup(
             ospyImporter = netzob_plugins.Importers.OSpyImporter.OSpyImporterPlugin:OSpyImporterPlugin
             xmlImporter = netzob_plugins.Importers.XMLImporter.XMLImporterPlugin:XMLImporterPlugin
             peachExporter = netzob_plugins.Exporters.PeachExporter.PeachExporterPlugin:PeachExporterPlugin
+            networkCapturer = netzob_plugins.Capturers.NetworkCapturer.NetworkCapturerPlugin:NetworkCapturerPlugin
+            ipcCapturer = netzob_plugins.Capturers.IpcCapturer.IpcCapturerPlugin:IpcCapturerPlugin
 
          [babel.extractors]
             glade = resources.sdist.babel_extract:extract_glade

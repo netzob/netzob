@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from netzob.Common.Plugins.Extensions.GlobalMenuExtension import GlobalMenuExtension
 
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
@@ -29,49 +28,27 @@ from netzob.Common.Plugins.Extensions.GlobalMenuExtension import GlobalMenuExten
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
+import logging
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 
+
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 
 
-class ImportMenuExtension(GlobalMenuExtension):
+#+---------------------------------------------------------------------------+
+#| CapturerPlugin:
+#|     Abstract class for all the capturer plugins
+#+---------------------------------------------------------------------------+
+class CapturerPlugin(NetzobPlugin):
 
-    def __init__(self, netzob, controller, actionName, menuText, menuStock=None,
-                 menuAccel=None, menuTooltip=None):
-        super(GlobalMenuExtension, self).__init__()
-        self.netzob = netzob
-        self.actionName = actionName
-        self.menuText = menuText
-        self.menuStock = menuStock
-        self.menuAccel = menuAccel
-        self.menuTooltip = menuTooltip
-        self.controller = controller
+    def __init__(self, netzob):
+        NetzobPlugin.__init__(self, netzob)
+        self.finish = None
 
-    def getUIDefinition(self):
-        uiDefinition = """
-        <ui>
-        <menubar name='MenuBar'>
-            <menu action='Project'>
-                <menu action='ImportTraces'>
-                    <menuitem action='{0}' />
-                </menu>
-            </menu>
-        </menubar>
-        </ui>
-        """.format(self.actionName)
-        return uiDefinition
-
-    def getActions(self):
-        actions = [
-            (self.actionName, self.menuStock,
-                self.menuText, self.menuAccel, self.menuTooltip,
-                self.executeAction)]
-        return actions
-
-    def executeAction(self, widget, data=None):
-        self.controller.run()

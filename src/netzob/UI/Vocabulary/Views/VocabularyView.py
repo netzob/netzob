@@ -51,6 +51,7 @@ from collections import OrderedDict
 #+---------------------------------------------------------------------------+
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.UI.Vocabulary.Controllers.ResearchController import ResearchController
+from netzob.UI.Vocabulary.Controllers.FilterMessagesController import FilterMessagesController
 
 
 class VocabularyView(object):
@@ -113,6 +114,11 @@ class VocabularyView(object):
         self.researchController._view.research_format.set_active(4)
         self.researchController.hide()
 
+        # add the filterBar
+        self.filterMessagesController = FilterMessagesController(self.controller)
+        self.messageTableBoxAndResearchBox.pack_end(self.filterMessagesController._view.filterBar, False, False, 0)
+        self.filterMessagesController.hide()
+
     def _loadActionGroupUIDefinition(self):
         """Loads the action group and the UI definition of menu items
         . This method should only be called in the constructor"""
@@ -146,6 +152,20 @@ class VocabularyView(object):
     # Return toolbar and menu
     def getMenuToolbarUIDefinition(self):
         return self._uiDefinition
+
+    def updateListCapturerPlugins(self, pluginsExtensions):
+        """Update the menu"""
+        pluginMenu = self.netzob.view.uiManager.get_widget("/mainMenuBar/fileMenu/fileMenuAdditions/captureMessages").get_submenu()
+
+        # Update the list of exporters
+        for i in pluginMenu.get_children():
+            pluginMenu.remove(i)
+
+        for pluginExtension in pluginsExtensions:
+            pluginEntry = Gtk.MenuItem(pluginExtension.menuText)
+            pluginEntry.connect("activate", pluginExtension.executeAction, self)
+            pluginMenu.append(pluginEntry)
+        pluginMenu.show_all()
 
     def drag_data_received_event(self, widget, drag_context, x, y, data, info, time):
         """Callback executed when the user drops

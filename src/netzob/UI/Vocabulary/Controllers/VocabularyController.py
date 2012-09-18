@@ -38,13 +38,13 @@ import logging
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk
 import gi
-from netzob.UI.Vocabulary.Controllers.EnvironmentDependenciesSearcherController import EnvironmentDependenciesSearcherController
 gi.require_version('Gtk', '3.0')
 
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.UI.Vocabulary.Controllers.EnvironmentDependenciesSearcherController import EnvironmentDependenciesSearcherController
 from netzob.UI.Vocabulary.Views.VocabularyView import VocabularyView
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.Common.Symbol import Symbol
@@ -64,6 +64,7 @@ from netzob.UI.Vocabulary.Controllers.RelationsController import RelationsContro
 from netzob.UI.Vocabulary.Controllers.Menus.ContextualMenuOnSymbolController import ContextualMenuOnSymbolController
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.UI.Vocabulary.Controllers.VariableController import VariableTreeController
+from netzob.Common.Plugins.Extensions.CapturerMenuExtension import CapturerMenuExtension
 
 
 #+----------------------------------------------
@@ -88,6 +89,8 @@ class VocabularyController(object):
 
     def activate(self):
         """Activate the perspective"""
+        # Refresh list of available exporter plugins
+        self.updateListOfCapturerPlugins()
         pass
 
     def restart(self):
@@ -95,6 +98,12 @@ class VocabularyController(object):
         logging.debug("Restarting the vocabulary view")
         self.view.removeAllMessageTables()
         self.view.updateLeftPanel()
+
+    def updateListOfCapturerPlugins(self):
+        """Fetch the list of available capturer plugins, and provide
+        them to its associated view"""
+        pluginExtensions = NetzobPlugin.getLoadedPluginsExtension(CapturerMenuExtension)
+        self.view.updateListCapturerPlugins(pluginExtensions)
 
     ## Symbol List toolbar callbacks
     def selectAllSymbolsButton_clicked_cb(self, toolButton):
@@ -504,12 +513,27 @@ class VocabularyController(object):
         """Callback executed when the user clicks
         on the research toggle button"""
         if self.getCurrentProject() is None:
-            NetzobErrorMessage(_("No project selected."))
+            if action.get_active() == True:
+                NetzobErrorMessage(_("No project selected."))
+            action.set_active(False)
             return
         if action.get_active():
             self._view.researchController.show()
         else:
             self._view.researchController.hide()
+
+    def filterMessages_toggled_cb(self, action):
+        """Callback executed when the user clicks
+        on the filter messages toggle button"""
+        if self.getCurrentProject() is None:
+            if action.get_active() == True:
+                NetzobErrorMessage(_("No project selected."))
+            action.set_active(False)
+            return
+        if action.get_active():
+            self._view.filterMessagesController.show()
+        else:
+            self._view.filterMessagesController.hide()
 
     def environmentDep_activate_cb(self, action):
         """Callback executed when the user requests
@@ -601,23 +625,6 @@ class VocabularyController(object):
     def importMessagesFromFile_activate_cb(self, action):
         """Execute all the plugins associated with
         file import."""
-        if self.getCurrentProject() is None:
-            NetzobErrorMessage(_("No project selected."))
-            return
-
-        chooser = ImportFileChooserDialog(NetzobPlugin.getLoadedPlugins(FileImporterPlugin))
-        res = chooser.run()
-        plugin = None
-        if res == chooser.RESPONSE_OK:
-            (filePathList, plugin) = chooser.getFilenameListAndPlugin()
-        chooser.destroy()
-        if plugin is not None:
-            plugin.setFinish_cb(self.view.updateSymbolList)
-            plugin.importFile(filePathList)
-
-    def captureMessages_activate_cb(self, action):
-        """Execute all the plugins associated with
-        capture function."""
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return

@@ -60,6 +60,7 @@ class CommandLine(object):
         self.parser.add_option("-w", "--workspace",
                                dest="workspace", help="Path to the workspace")
         self.parser.add_option("-b", "--bug-reporter", action="store_true", dest="bugReport", help="Activate the bug reporter")
+        self.parser.add_option("-d", "--debugLevel", dest="debugLevel", help="Activate debug information ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL')")
 
         # register the group of options for plugins
         groupPlugins = optparse.OptionGroup(self.parser, "Manage Netzob's plugins")

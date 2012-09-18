@@ -71,7 +71,6 @@ class NetzobMainView(object):
         self.currentPerspectiveActionGroup = None
         self.currentPerspectivePanel = None
         self.loadBaseMenuBarAndToolbar()
-        self._registerPerspectives()
 
     def _getObjects(self, builder, objectsList):
         for object in objectsList:
@@ -80,7 +79,7 @@ class NetzobMainView(object):
     def run(self):
         self.mainWindow.show()
 
-    def _registerPerspectives(self):
+    def registerPerspectives(self):
         self.registerPerspective(self.VOCABULARY_INFERENCE_VIEW,
                                  _("Vocabulary Inference"),
                                  VocabularyController)
@@ -90,7 +89,8 @@ class NetzobMainView(object):
         self.registerPerspective(self.TRAFFIC_SIMULATOR_VIEW,
                                  _("Simulator"),
                                  SimulatorController)
-        self.switchPerspective(self.VOCABULARY_INFERENCE_VIEW)
+        # Useless
+#        self.switchPerspective(self.VOCABULARY_INFERENCE_VIEW)
         self.perspectiveComboBox.set_active(0)
 
     def loadBaseMenuBarAndToolbar(self):
@@ -162,8 +162,6 @@ class NetzobMainView(object):
         self.resetMainWindow()
         self.log.debug("Setting perspective ID {0}".format(newPerspectiveCode))
         perspective = self.perspectiveDict[newPerspectiveCode][1]
-        # Activate it
-        perspective.activate()
         # Switch central panel
         self.currentPerspectivePanel = perspective.view.getPanel()
         self.setCentralPanel(self.currentPerspectivePanel)
@@ -173,6 +171,8 @@ class NetzobMainView(object):
         # Merge UI definition into UI Manager
         self.currentPerspectiveMergeID = self.uiManager.add_ui_from_string(
             perspective.view.getMenuToolbarUIDefinition())
+        # Activate it
+        perspective.activate()
 
     def currentProjectHasChanged(self):
         """Update the view when the current project has changed"""

@@ -110,12 +110,9 @@
     </child>
     <child>
       <object class="GtkAction" id="captureMessages">
-        <property name="label" translatable="yes">Capture messages</property>
-        <property name="short_label" translatable="yes">Capture</property>
-        <property name="tooltip" translatable="yes">Capture messages</property>
-        <property name="stock_id">netzob-capture-messages</property>
-        <property name="is_important">True</property>
-        <signal name="activate" handler="captureMessages_activate_cb" swapped="no"/>
+        <property name="label" translatable="yes">Capture messages...</property>
+        <property name="tooltip" translatable="yes">Capture messages...</property>
+        <property name="hide_if_empty">False</property>
       </object>
     </child>
     <child>
@@ -162,6 +159,14 @@
         <property name="tooltip" translatable="yes">Search a string in all messages of current symbol</property>
         <property name="stock_id">gtk-find</property>
         <signal name="toggled" handler="searchText_toggled_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkToggleAction" id="filterMessages">
+        <property name="label" translatable="yes">Filter messages</property>
+        <property name="tooltip" translatable="yes">Filter messages in all messages of current symbol</property>
+        <property name="stock_id">gtk-find</property>
+        <signal name="toggled" handler="filterMessages_toggled_cb" swapped="no"/>
       </object>
     </child>
   </object>

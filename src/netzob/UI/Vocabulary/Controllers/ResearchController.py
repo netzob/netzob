@@ -342,6 +342,8 @@ class ResearchController(object):
         self.idResult = 0
         self.decolorizeAllResult()
         self.vocabularyController.view.updateSelectedMessageTable()
+        checkMenuItem = self.vocabularyController.netzob.view.uiManager.get_widget("/mainMenuBar/mainMenuBarAdditions/searchMenu/searchText")
+        checkMenuItem.set_active(False)
         self.hide()
 
     def research_preferences_clicked_cb(self, widget):

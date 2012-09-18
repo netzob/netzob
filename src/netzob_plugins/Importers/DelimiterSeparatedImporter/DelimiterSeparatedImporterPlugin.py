@@ -38,7 +38,6 @@ from gettext import gettext as _
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
-from netzob.Common.Plugins.Extensions.ImportMenuExtension import ImportMenuExtension
 from netzob_plugins.Importers.DelimiterSeparatedImporter.DelimiterSeparatedImporterController import DelimiterSeparatedImporterController
 
 

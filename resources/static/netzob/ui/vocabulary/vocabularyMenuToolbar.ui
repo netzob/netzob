@@ -3,7 +3,7 @@
     <menu action="fileMenu">
       <placeholder name="fileMenuAdditions">
         <menuitem action="importMessagesFromFile" />
-        <menuitem action="captureMessages" />
+        <menu action="captureMessages" />
       </placeholder>
     </menu>
     <placeholder name="mainMenuBarAdditions">
@@ -24,6 +24,7 @@
       <menu action="searchMenu">
         <menuitem action="searchText" />
         <menuitem action="environmentDep" />
+        <menuitem action="filterMessages" />
         <menuitem action="messagesDistribution" />
         <menuitem action="variableTable" />
         <menuitem action="relationsViewer" />

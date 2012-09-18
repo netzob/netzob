@@ -29,11 +29,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-from gi.repository import Gtk
-from gi.repository import GObject
 import re
-import gi
-gi.require_version('Gtk', '3.0')
 import logging
 import threading
 import os
@@ -46,23 +42,14 @@ import subprocess
 #+----------------------------------------------
 from netzob.Common.Models.IPCMessage import IPCMessage
 from netzob.Common.Models.Factories.IPCMessageFactory import IPCMessageFactory
-from netzob.Import.AbstractImporter import AbstractImporter
+from netzob.Common.Plugins.Capturers.AbstractCapturer import AbstractCapturer
 
 
 #+----------------------------------------------
-#| IPpc:
-#|     ensures the capture of informations through IPC proxing
+#| IpcCapturer:
+#|     Ensures the capture of information through IPC proxing
 #+----------------------------------------------
-class IpcImport(AbstractImporter):
-
-    def new(self):
-        pass
-
-    def update(self):
-        pass
-
-    def clear(self):
-        pass
+class IpcCapturer(AbstractCapturer):
 
     def kill(self):
         if self.stracePid is not None and self.stracePid.poll() is not None:
@@ -73,23 +60,11 @@ class IpcImport(AbstractImporter):
     #+----------------------------------------------
     #| Constructor:
     #+----------------------------------------------
-    def __init__(self, zob):
-        AbstractImporter.__init__(self, "IPC IMPORT", zob.getCurrentWorkspace(),
-                                  zob.getCurrentProject())
-        self.zob = zob
-
-        # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Capturing.ipc.py')
+    def __init__(self, netzob):
+        super(IpcCapturer, self).__init__("IPC CAPTURER", netzob)
+        self.netzob = netzob
 
         self.packets = []
-        self.init()
-
-        self.dialog = Gtk.Dialog(title=_("Capture IPC flow"), flags=0, buttons=None)
-        self.dialog.show()
-        self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
-        self.dialog.set_size_request(900, 700)
-
-    def init(self):
         self.pid = None
         self.stracePid = None
         self.aSniffThread = None
@@ -97,159 +72,16 @@ class IpcImport(AbstractImporter):
         self.selected_fds = set()
         self.sniffOption = None
 
-        # Network Capturing Panel
-        self.panel = Gtk.Table(rows=6, columns=4, homogeneous=False)
-        self.panel.show()
-
-        # Processfilter
-        but = Gtk.Button(_("Update processes list"))
-        but.show()
-        but.connect("clicked", self.updateProcessList_cb)
-        self.processStore = Gtk.ComboBoxText.new_with_entry()
-        self.processStore.show()
-        self.processStore.set_size_request(300, -1)
-        self.processStore.set_model(Gtk.ListStore(str))
-        self.panel.attach(but, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.panel.attach(self.processStore, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
-
-        # FD filter
-        hbox = Gtk.HBox(False, spacing=10)
-        hbox.show()
-        self.filter1 = Gtk.CheckButton(_("File system"))
-        self.filter2 = Gtk.CheckButton(_("Network"))
-        self.filter3 = Gtk.CheckButton(_("Interprocess"))
-        self.filter1.set_active(True)
-        self.filter2.set_active(True)
-        self.filter3.set_active(True)
-        self.filter1.set_sensitive(False)
-        self.filter2.set_sensitive(False)
-        self.filter3.set_sensitive(False)
-        self.filter1.show()
-        self.filter2.show()
-        self.filter3.show()
-        hbox.pack_start(self.filter1, False, False, 0)
-        hbox.pack_start(self.filter2, False, False, 0)
-        hbox.pack_start(self.filter3, False, False, 0)
-        self.butUpdateFlows = Gtk.Button(_("Update flows"))
-        self.butUpdateFlows.show()
-        self.butUpdateFlows.set_sensitive(False)
-        self.butUpdateFlows.connect("clicked", self.processSelected_cb)
-        hbox.pack_start(self.butUpdateFlows, False, False, 0)
-        self.panel.attach(hbox, 0, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.handlerID = self.processStore.connect("changed", self.processSelected_cb)
-        self.updateProcessList_cb(None)
-
-        # File descriptor list
-        scroll = Gtk.ScrolledWindow()
-        self.fdTreeview = Gtk.TreeView(Gtk.TreeStore(str, str, str))  # file descriptor, type, name
-        self.fdTreeview.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
-        cell = Gtk.CellRendererText()
-        # Col file descriptor
-        column = Gtk.TreeViewColumn(_("FD"))
-        column.pack_start(cell, True)
-        column.add_attribute(cell, "text", 0)
-        self.fdTreeview.append_column(column)
-        # Col type
-        column = Gtk.TreeViewColumn(_("Type"))
-        column.pack_start(cell, True)
-        column.add_attribute(cell, "text", 1)
-        self.fdTreeview.append_column(column)
-        # Col name
-        column = Gtk.TreeViewColumn(_("Name"))
-        column.pack_start(cell, True)
-        column.add_attribute(cell, "text", 2)
-        self.fdTreeview.append_column(column)
-        self.fdTreeview.show()
-        scroll.add(self.fdTreeview)
-        scroll.show()
-        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        self.panel.attach(scroll, 0, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
-
-        # Sniff launching button : all sniff
-        self.butSniffAll = Gtk.Button(label=_("Sniff on every flows"))
-        self.butSniffAll.show()
-        self.butSniffAll.set_sensitive(False)
-        self.panel.attach(self.butSniffAll, 0, 1, 5, 6, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.butSniffAll.connect("clicked", self.startSniff_cb, "all")
-
-        # Sniff launching button : FS sniff
-        self.butSniffFS = Gtk.Button(label=_("Sniff on FS flows"))
-        self.butSniffFS.show()
-        self.butSniffFS.set_sensitive(False)
-        self.panel.attach(self.butSniffFS, 0, 1, 6, 7, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.butSniffFS.connect("clicked", self.startSniff_cb, "fs")
-
-        # Sniff launching button : network sniff
-        self.butSniffNetwork = Gtk.Button(label=_("Sniff on network flows"))
-        self.butSniffNetwork.show()
-        self.butSniffNetwork.set_sensitive(False)
-        self.panel.attach(self.butSniffNetwork, 0, 1, 7, 8, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.butSniffNetwork.connect("clicked", self.startSniff_cb, "network")
-
-        # Sniff launching button ; interprocess sniff
-        self.butSniffIPC = Gtk.Button(label=_("Sniff on IPC flows"))
-        self.butSniffIPC.show()
-        self.butSniffIPC.set_sensitive(False)
-        self.panel.attach(self.butSniffIPC, 0, 1, 8, 9, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.butSniffIPC.connect("clicked", self.startSniff_cb, "ipc")
-
-        # Sniff launching button ; filtered sniff
-        self.butSniffFiltered = Gtk.Button(label=_("Sniff on selected flows"))
-        self.butSniffFiltered.show()
-        self.butSniffFiltered.set_sensitive(False)
-        self.panel.attach(self.butSniffFiltered, 0, 1, 9, 10, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-        self.butSniffFiltered.connect("clicked", self.startSniff_cb, "filtered")
-
-        # Sniff stopping button
-        self.butStop = Gtk.Button(label=_("Stop sniffing"))
-        self.butStop.show()
-        self.butStop.set_sensitive(False)
-        self.butStop.connect("clicked", self.stopSniff_cb)
-        self.panel.attach(self.butStop, 1, 2, 7, 8, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-        fdSelection = self.fdTreeview.get_selection()
-        fdSelection.connect("changed", self.fdSelected_cb)
-        # Packet list
-        scroll = Gtk.ScrolledWindow()
-        self.pktTreestore = Gtk.TreeStore(int, int, str, str, int)  # pktID, fd, direction (read/write), data, timestamp
-        treeview = Gtk.TreeView(self.pktTreestore)
-        treeview.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
-        cell = Gtk.CellRendererText()
-        # Col fd
-        column = Gtk.TreeViewColumn(_("FD"))
-        column.pack_start(cell, True)
-        column.add_attribute(cell, "text", 1)
-        treeview.append_column(column)
-        # Col direction
-        column = Gtk.TreeViewColumn(_("Direction"))
-        column.pack_start(cell, True)
-        column.add_attribute(cell, "text", 2)
-        treeview.append_column(column)
-        # Col Data
-        column = Gtk.TreeViewColumn(_("Data"))
-        column.pack_start(cell, True)
-        column.add_attribute(cell, "text", 3)
-        treeview.append_column(column)
-        treeview.show()
-        scroll.add(treeview)
-        scroll.show()
-        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        self.panel.attach(scroll, 2, 4, 0, 5, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
-
-        # Button save selected packets
-        but = Gtk.Button(label=_("Save selected packets"))
-        but.show()
-        but.connect("clicked", self.save_packets, treeview)
-        self.panel.attach(but, 2, 4, 5, 6, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-
-    #+----------------------------------------------
-    #| Called when user wants to update the process list
-    #+----------------------------------------------
-    def updateProcessList_cb(self, button):
-        self.processStore.handler_block(self.handlerID)
-        self.processStore.get_model().clear()
+    def getProcessList(self):
+        """getProcessList:
+                Return the process list
+        """
+        processList = []
+        uidUser = self.getUidOfCurrentUser()
         for pid in readProcesses():
-            self.processStore.append_text(str(pid) + "\t" + readProcessCmdline(pid)[0])
-        self.processStore.handler_unblock(self.handlerID)
+            if (uidUser == "0") or (uidUser == self.getUidOfProcess(pid)):
+                processList.append(str(pid) + "\t" + str(readProcessCmdline(pid)[0]))
+        return processList
 
     #+----------------------------------------------
     #| Called when user select a process
@@ -271,6 +103,18 @@ class IpcImport(AbstractImporter):
         fds = self.retrieveFDs(self.filter1.get_active(), self.filter2.get_active(), self.filter3.get_active())
         for fd in fds:
             self.fdTreeview.get_model().append(None, fd)
+
+    def getUidOfProcess(self, pid):
+        cmd = "ps -p " + str(pid) + " -o uid= |tr -d \" \""
+        uid = os.popen(cmd).read().strip()
+        return uid
+
+    def getUidOfCurrentUser(self):
+        cmd = "id"
+        idResult = os.popen(cmd).read()
+        m = re.search("uid=(\d+)\(.*", idResult)
+        uid = m.group(1)
+        return uid
 
     #+----------------------------------------------
     #| Retrieve the filtered FD
@@ -446,6 +290,3 @@ class IpcImport(AbstractImporter):
             return "fs"
         else:
             return "ipc"
-
-    def getPanel(self):
-        return self.panel

@@ -39,7 +39,6 @@ import fnmatch
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
-from netzob.Common.Plugins.Extensions.ImportMenuExtension import ImportMenuExtension
 from netzob_plugins.Importers.OSpyImporter.OSpyImporterController import OSpyImporterController
 
 
