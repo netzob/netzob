@@ -143,6 +143,9 @@ def checkFile(file):
     if file.endswith("__init__.py"):
         return results
 
+    if file.endswith(".pyc"):
+        return results
+
     # Verify no '<<<' and or conflicts info are commited
     results['Conflicts'] = searchForPattern(file, '<<<<<<', 'hints of untreated conflicts')  # Thisisnotaconflict
 
@@ -161,7 +164,6 @@ def checkFile(file):
         results['PEP8'] = checkPEP8(file)
 
     return results
-
 
 def verifyResults(results):
     result = 0
@@ -182,15 +184,16 @@ def verifyResults(results):
                 print "[I]\t no error found."
     return result
 
+def analyze(providedFiles):
 
-def analyze(filesToAnalyze):
-
-    if filesToAnalyze is None:
+    if providedFiles is None:
         # Retrieve all the files to analyze
         print "[I] Retrieve all the files to analyze from the staged area."
         files = getFiles()
     else:
         print "[I] Retrieve all the file to analyze from the command line arguments."
+        filesToAnalyze = getFilesFromListOfPath(providedFiles)
+
         files = []
         for fileToAnalyze in filesToAnalyze:
             if os.path.isfile(fileToAnalyze):
@@ -201,7 +204,7 @@ def analyze(filesToAnalyze):
                 except:
                     print "[E] File %s exists but is not readable." % fileToAnalyze
 
-    print "[I] %d files will be analyzed." % (len(files))
+#    print "[I] %d files will be analyzed." % (len(files))
     globalResults = dict()
     for file in files:
         globalResults[file] = checkFile(file)
@@ -214,6 +217,19 @@ def analyze(filesToAnalyze):
         print "[E] Errors founds, commit not allowed."
     sys.exit(result)
 
+def getFilesFromListOfPath(paths):
+    result = []
+    for p in paths:
+        if os.path.isfile(p):
+            result.append(p)
+        elif os.path.isdir(p):
+            subfiles = os.listdir(p)
+            toAnalyze = []
+            for s in subfiles:
+                toAnalyze.append(os.path.join(p, s))
+            subfilesResult = getFilesFromListOfPath(toAnalyze)
+            result.extend(subfilesResult)
+    return result
 
 if __name__ == '__main__':
 
