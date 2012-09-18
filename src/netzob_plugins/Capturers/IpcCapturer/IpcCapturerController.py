@@ -90,58 +90,40 @@ class IpcCapturerController(AbstractCapturerController):
             self.view.fdStore.append(fd)
 
     def doReadMessages(self):
-        # Sanity checks
-        device = self.view.deviceCombo.get_active_text()
-        if device is None:
-            NetzobErrorMessage(_("Incorrect device"))
-            return
-        count = self.view.countEntry.get_text()
-        try:
-            count = int(count)
-        except ValueError:
-            NetzobErrorMessage(_("Incorrect count"))
-            return
-        if count < 1:
-            NetzobErrorMessage(_("Incorrect count"))
-        time = self.view.timeEntry.get_text()
-        try:
-            time = int(time)
-        except ValueError:
-            NetzobErrorMessage(_("Incorrect time"))
-            return
-        if time < 1:
-            NetzobErrorMessage(_("Incorrect time"))
-
         # Launch packets capturing
         try:
-            self.model.setBPFFilter(self.view.filterEntry.get_text().strip())
-            self.model.readMessages(self.callback_readMessage, device, count, time)
+            self.model.startSniff(self.callback_readMessage)
         except NetzobImportException, importEx:
             if importEx.statusCode == WARNING:
                 self.view.showWarning(importEx.message)
             else:
                 NetzobErrorMessage(importEx.message)
 
+    def stopSniffing_cb(self, widget):
+        self.model.stopSniff()
+
     def callback_readMessage(self, message):
-        # Display all read messages
-        if self.importLayer == 2:
-            self.view.listListStore.append([str(message.getID()), False,
-                                            str(message.getL2SourceAddress()),
-                                            str(message.getL2DestinationAddress()),
-                                            message.getStringData()])
-        elif self.importLayer == 3:
-            self.view.listListStore.append([str(message.getID()), False,
-                                            str(message.getL3SourceAddress()),
-                                            str(message.getL3DestinationAddress()),
-                                            message.getStringData()])
-        else:
-            self.view.listListStore.append([str(message.getID()), False,
-                                            str(message.getL3SourceAddress()), str(message.getL3DestinationAddress()),
-                                            str(message.getL4Protocol()), str(message.getL4SourcePort()), str(message.getL4DestinationPort()),
-                                            message.getStringData()])
+        self.view.listListStore.append([str(message.getID()),
+                                        False,
+                                        str(message.getKey()),
+                                        str(message.getCategory()),
+                                        str(message.getDirection()),
+                                        str(message.getStringData())])
 
     def doGetMessageDetails(self, messageID):
         return self.model.getMessageDetails(messageID)
 
     def doImportMessages(self, selectedPackets):
         self.model.saveMessagesInCurrentProject(selectedPackets)
+
+    def sniffOptionRadioButton_toggled_cb(self, widget):
+        if self.view.fsFlowsCheck.get_active():
+            self.model.sniffOption = "fs"
+        elif self.view.networkFlowsCheck.get_active():
+            self.model.sniffOption = "network"
+        elif self.view.ipcFlowsCheck.get_active():
+            self.model.sniffOption = "ipc"
+        elif self.view.selectecFlowsCheck.get_active():
+            self.model.sniffOption = "selected"
+        else:
+            self.model.sniffOption = "all"

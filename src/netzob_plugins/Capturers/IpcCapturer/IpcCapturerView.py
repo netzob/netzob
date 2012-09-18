@@ -80,7 +80,7 @@ class IpcCapturerView(AbstractCapturerView):
             column.set_sort_column_id(modelColumn)
             self.listTreeView.append_column(column)
 
-        self.listListStore = Gtk.ListStore('gboolean', str, str)
+        self.listListStore = Gtk.ListStore(str, 'gboolean', str, str, str, str)
         self.listTreeView.set_model(self.listListStore)
         toggleCellRenderer = Gtk.CellRendererToggle()
         toggleCellRenderer.set_activatable(True)
@@ -88,8 +88,10 @@ class IpcCapturerView(AbstractCapturerView):
         # Selected column
         column = Gtk.TreeViewColumn()
         column.pack_start(toggleCellRenderer, True)
-        column.add_attribute(toggleCellRenderer, "active", 0)
+        column.add_attribute(toggleCellRenderer, "active", 1)
         self.listTreeView.append_column(column)
         cell = Gtk.CellRendererText()
-        add_text_column("ID", 1)
-        add_text_column("Contents", 2)
+        add_text_column("FD", 2)
+        add_text_column("Type", 3)
+        add_text_column("Direction", 4)
+        add_text_column("Data", 5)

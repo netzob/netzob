@@ -36,6 +36,8 @@ import os
 import time
 from ptrace.linux_proc import readProcesses, readProcessCmdline
 import subprocess
+from gi.repository import GObject
+import uuid
 
 #+----------------------------------------------
 #| Local Imports
@@ -43,6 +45,8 @@ import subprocess
 from netzob.Common.Models.IPCMessage import IPCMessage
 from netzob.Common.Models.Factories.IPCMessageFactory import IPCMessageFactory
 from netzob.Common.Plugins.Capturers.AbstractCapturer import AbstractCapturer
+from netzob.Common.EnvironmentalDependencies import EnvironmentalDependencies
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 #+----------------------------------------------
@@ -63,14 +67,19 @@ class IpcCapturer(AbstractCapturer):
     def __init__(self, netzob):
         super(IpcCapturer, self).__init__("IPC CAPTURER", netzob)
         self.netzob = netzob
-
-        self.packets = []
         self.pid = None
+        self.sniffOption = None
         self.stracePid = None
         self.aSniffThread = None
         self.doSniff = False
+        self._payloadDict = {}
+        self.envDeps = EnvironmentalDependencies()
+
         self.selected_fds = set()
-        self.sniffOption = None
+
+    @property
+    def payloadDict(self):
+        return self._payloadDict.copy()
 
     def getProcessList(self):
         """getProcessList:
@@ -82,27 +91,6 @@ class IpcCapturer(AbstractCapturer):
             if (uidUser == "0") or (uidUser == self.getUidOfProcess(pid)):
                 processList.append(str(pid) + "\t" + str(readProcessCmdline(pid)[0]))
         return processList
-
-    #+----------------------------------------------
-    #| Called when user select a process
-    #+----------------------------------------------
-    def processSelected_cb(self, widget):
-        self.butSniffAll.set_sensitive(True)
-        self.butSniffNetwork.set_sensitive(True)
-        self.butSniffFS.set_sensitive(True)
-        self.butSniffIPC.set_sensitive(True)
-        self.filter1.set_sensitive(True)
-        self.filter2.set_sensitive(True)
-        self.filter3.set_sensitive(True)
-        self.butUpdateFlows.set_sensitive(True)
-
-        self.fdTreeview.get_model().clear()
-        processSelected = self.processStore.get_active_text()
-        self.pid = int(processSelected.split()[0])
-        name = processSelected.split()[1]
-        fds = self.retrieveFDs(self.filter1.get_active(), self.filter2.get_active(), self.filter3.get_active())
-        for fd in fds:
-            self.fdTreeview.get_model().append(None, fd)
 
     def getUidOfProcess(self, pid):
         cmd = "ps -p " + str(pid) + " -o uid= |tr -d \" \""
@@ -143,64 +131,14 @@ class IpcCapturer(AbstractCapturer):
         return fdescrs
 
     #+----------------------------------------------
-    #| Called when user select a fd
-    #+----------------------------------------------
-    def fdSelected_cb(self, selection):
-        self.butSniffFiltered.set_sensitive(True)
-
-    #+----------------------------------------------
-    #| Called when user select a list of packet
-    #+----------------------------------------------
-    def save_packets(self, button, treeview):
-
-        currentProject = self.zob.getCurrentProject()
-        selection = treeview.get_selection()
-        messages = []
-
-        (model, paths) = selection.get_selected_rows()
-        for path in paths:
-            iter = model.get_iter(path)
-            if(model.iter_is_valid(iter)):
-                packetID = model.get_value(iter, 0)
-                msg_fd = model.get_value(iter, 1)
-                msg_direction = model.get_value(iter, 2)
-                msg_timestamp = str(model.get_value(iter, 4))
-                msg_rawPayload = self.packets[packetID]
-                if msg_rawPayload == "":
-                    continue
-
-                #Compute the messages
-                message = IPCMessage(msg_fd, msg_timestamp, msg_rawPayload.replace("\\x", ""), "none", msg_fd, msg_direction)
-                messages.append(message)
-
-        # We ask the confirmation
-        md = Gtk.MessageDialog(None,
-                               Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION,
-                               Gtk.ButtonsType.OK_CANCEL, (_("Are you sure to import the %s selected packets in project %s?") % (str(len(messages)), currentProject.getName())))
-#        md.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
-        resp = md.run()
-        md.destroy()
-
-        if resp == Gtk.ResponseType.OK:
-            self.saveMessagesInProject(self.zob.getCurrentWorkspace(), currentProject, messages, False)
-        self.dialog.destroy()
-
-        # We update the gui
-        self.zob.update()
-
-    #+----------------------------------------------
     #| Called when launching sniffing process
     #+----------------------------------------------
-    def startSniff_cb(self, button, sniffOption):
-        self.sniffOption = sniffOption
+    def startSniff(self, callback_readMessage):
+        self.callback_readMessage = callback_readMessage
         self.selected_fds.clear()
         self.doSniff = True
-        self.butStop.set_sensitive(True)
-        self.butSniffAll.set_sensitive(False)
-        self.butSniffNetwork.set_sensitive(False)
-        self.butSniffFS.set_sensitive(False)
-        self.butSniffIPC.set_sensitive(False)
-        self.butSniffFiltered.set_sensitive(False)
+        self.envDeps.captureEnvData()  # Retrieve the environmental data (os specific, system specific, etc.)
+        self.messages = []
 
         if self.sniffOption == "filtered":
             (model, paths) = self.fdTreeview.get_selection().get_selected_rows()
@@ -210,21 +148,14 @@ class IpcCapturer(AbstractCapturer):
                     # Extract the fd number
                     self.selected_fds.add(int(re.match("(\d+)", model.get_value(iter, 0)).group(1)))
         self.packets = []
-        self.pktTreestore.clear()
         self.aSniffThread = threading.Thread(None, self.sniffThread, None, (), {})
         self.aSniffThread.start()
 
     #+----------------------------------------------
     #| Called when stopping sniffing process
     #+----------------------------------------------
-    def stopSniff_cb(self, button):
+    def stopSniff(self):
         self.doSniff = False
-        self.butStop.set_sensitive(False)
-        self.butSniffAll.set_sensitive(True)
-        self.butSniffNetwork.set_sensitive(True)
-        self.butSniffFS.set_sensitive(True)
-        self.butSniffIPC.set_sensitive(True)
-        self.butSniffFiltered.set_sensitive(True)
 
         if self.stracePid is not None:
             self.stracePid.kill()
@@ -237,7 +168,7 @@ class IpcCapturer(AbstractCapturer):
     #| Thread for sniffing a process
     #+----------------------------------------------
     def sniffThread(self):
-        self.log.info(_("Launching sniff process"))
+        logging.info(_("Launching sniff process"))
         self.stracePid = subprocess.Popen(["/usr/bin/strace", "-xx", "-s", "65536", "-e", "read,write", "-p", str(self.pid)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         GObject.io_add_watch(self.stracePid.stderr, GObject.IO_IN | GObject.IO_HUP, self.handle_new_pkt)
 
@@ -254,6 +185,7 @@ class IpcCapturer(AbstractCapturer):
         direction = data[m.start(1): m.end(1)]
         fd = int(data[m.start(2): m.end(2)])
         pkt = data[m.start(3): m.end(3)]
+        pkt = pkt.replace("\\x", "")
         returnCode = int(data[m.start(4): m.end(4)])
 
         # Apply filter
@@ -270,13 +202,16 @@ class IpcCapturer(AbstractCapturer):
             if not fd in self.selected_fds:
                 return self.doSniff
 
-        # Add packet
         if returnCode > 256:
             tmp_pkt = pkt[:255] + "..."
         else:
             tmp_pkt = pkt
-        self.pktTreestore.append(None, [len(self.packets), fd, direction, tmp_pkt.replace("\\x", ""), int(time.time())])
-        self.packets.append(pkt)
+        mUuid = uuid.uuid4()
+        mTimestamp = int(time.time())
+        message = IPCMessage(mUuid, mTimestamp, tmp_pkt, self.getTypeFromFD(int(fd)), fd, direction)
+        self._payloadDict[mUuid] = pkt
+        self.messages.append(message)
+        self.callback_readMessage(message)
         return self.doSniff
 
     #+----------------------------------------------
@@ -290,3 +225,12 @@ class IpcCapturer(AbstractCapturer):
             return "fs"
         else:
             return "ipc"
+
+    def getMessageDetails(self, messageID):
+        if not messageID in self._payloadDict:
+            errorMessage = _("Message ID: {0} not found in importer " +
+                             "message list").format(messageID)
+            logging.error(errorMessage)
+            raise NetzobImportException("IPC", errorMessage, ERROR)
+        payload = self._payloadDict[messageID]
+        return TypeConvertor.hexdump(TypeConvertor.netzobRawToPythonRaw(payload))
