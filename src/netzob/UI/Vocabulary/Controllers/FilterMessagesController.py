@@ -93,7 +93,7 @@ class FilterMessagesController(object):
             if messageData.find(toSearch) == -1:
                 i = messagesStore.get_iter_first()
                 while True:
-                    if i==None:
+                    if i == None:
                         break
                     s = messagesStore.get_value(i, 0)
                     if s == message.getID():
