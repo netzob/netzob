@@ -41,6 +41,7 @@ from resources.sdist.manpage_command import manpage_command
 from resources.sdist.pybuild_command import pybuild_command
 from resources.sdist.test_command import test_command
 
+
 def opj(*args):
     path = os.path.join(*args)
     return os.path.normpath(path)
@@ -137,15 +138,11 @@ moduleLibRegex = Extension('_libRegex',
 #+----------------------------------------------------------------------------
 dependencies = [
     'babel',
-    'numpy',
-    'python-ptrace',
-    'matplotlib',
-    'pcapy',
     'bitarray',
     'lxml',
 ]
 extra_dependencies = {
-        'docs': ['Sphinx>=1.1.3']
+    'docs': ['Sphinx>=1.1.3']
 }
 #+----------------------------------------------------------------------------
 #| Extensions in the build operations (create manpage, i18n, ...)
@@ -172,6 +169,7 @@ try:
     build.sub_commands.append(('compile_catalog', None))
 except ImportError:
     print "Info: Babel support unavailable, translations not available"
+
 
 #+---------------------------------------------------------------------------------------------
 #| Build a mapping of merge path and local files to put in data_files argument of setup() call
@@ -200,30 +198,15 @@ def find_data_files(dstdir, srcdir, *wildcards, **kw):
                     [os.path.basename(f) for f in glob(opj(srcdir, '*'))])
     return file_list
 
-root_data_files = find_data_files(opj("share", "netzob"),
-                                     netzobStaticResourcesPath,
-                                     'logo.png', recursive=False)
-app_data_files = find_data_files(opj("share", "applications"),
-                                     netzobStaticResourcesPath,
-                                     'netzob.desktop', recursive=False)
-icons_data_files = find_data_files(opj("share", "netzob", "icons"),
-                                     opj(netzobStaticResourcesPath, "icons"),
-                                     '*.png')
-default_data_files = find_data_files(opj("share", "netzob", "defaults"),
-                                     opj(netzobStaticResourcesPath, "defaults"),
-                                     '*.default', recursive=False)
-xsds_data_files = find_data_files(opj("share", "netzob", "xsds"),
-                                     opj(netzobStaticResourcesPath, "xsds"),
-                                     '*.xsd')
-locale_data_files = find_data_files(opj("share", "locale"),
-                                     opj(netzobStaticResourcesPath, "locales"),
-                                     '*.mo')
-ui_data_files = find_data_files(opj("share", "netzob", "ui"),
-                                     opj(netzobStaticResourcesPath, "ui"),
-                                     '*.glade', '*.ui')
-data_files = root_data_files + app_data_files + icons_data_files + \
-             default_data_files + xsds_data_files + locale_data_files + \
-             ui_data_files
+root_data_files = find_data_files(opj("share", "netzob"), netzobStaticResourcesPath, 'logo.png', recursive=False)
+app_data_files = find_data_files(opj("share", "applications"), netzobStaticResourcesPath, 'netzob.desktop', recursive=False)
+icons_data_files = find_data_files(opj("share", "netzob", "icons"), opj(netzobStaticResourcesPath, "icons"), '*.png')
+default_data_files = find_data_files(opj("share", "netzob", "defaults"), opj(netzobStaticResourcesPath, "defaults"), '*.default', recursive=False)
+xsds_data_files = find_data_files(opj("share", "netzob", "xsds"), opj(netzobStaticResourcesPath, "xsds"), '*.xsd')
+locale_data_files = find_data_files(opj("share", "locale"), opj(netzobStaticResourcesPath, "locales"), '*.mo')
+ui_data_files = find_data_files(opj("share", "netzob", "ui"), opj(netzobStaticResourcesPath, "ui"), '*.glade', '*.ui')
+
+data_files = root_data_files + app_data_files + icons_data_files + default_data_files + xsds_data_files + locale_data_files + ui_data_files
 
 
 #+----------------------------------------------------------------------------

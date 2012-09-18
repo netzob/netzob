@@ -29,12 +29,20 @@ file, process and kernel data acquisition).
 Netzob currently supports Linux x86 and x64 platforms. A Windows
 version is expected soon.
 
+[ Install Netzob Core]
+
+The following requirements cannot be installed through easy_install process:
+* python
+* python-dev
+* libxml2-dev
+* libxslt-dev
+
+On a debian-like OS, you can get those package with the following aptitude command:
+$ aptitude install libxml2-dev libxslt-dev
+
 Dependencies:
 
 * python
-* python-ptrace
-* python-matplotlib
-* python-pcapy
 * python-bitarray
 * python-lxml
 * python-dev
@@ -58,7 +66,7 @@ Linux-specific dependencies:
 
 Or, on Debian-like operating systems:
 
-$ sudo apt-get install python python-ptrace python-matplotlib strace lsof \
+$ sudo apt-get install python python-ptrace strace lsof \
   python-pcapy python-bitarray python-dev python-lxml libjs-sphinxdoc     \
   python-sphinx python-setuptools graphviz python-babel gir1.2-gtk-3.0 \
   gir1.2-glib-2.0 python-gobject python-gi
@@ -66,6 +74,13 @@ $ sudo apt-get install python python-ptrace python-matplotlib strace lsof \
 And then, 
 
 $ python setup.py build
+
+[ Install Official Plugins]
+
+Dependencies :
+* libpcap-dev
+* python-ptrace
+* python-pcapy
 
 
 [******************************************************************************]
