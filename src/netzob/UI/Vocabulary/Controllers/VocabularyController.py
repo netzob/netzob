@@ -534,7 +534,7 @@ class VocabularyController(object):
         if symbols == []:
             NetzobErrorMessage(_("No symbol(s) selected."))
             return
-        distribution = MessagesDistributionController(self._view.getCheckedSymbolList())
+        distribution = MessagesDistributionController(self, self._view.getCheckedSymbolList())
         distribution.run()
 
     def relationsViewer_activate_cb(self, action):
