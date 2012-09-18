@@ -73,6 +73,16 @@ def checkPEP8(file):
         localResult.append(line)
     return localResult
 
+def checkClassDeclation(file):
+    localResult = []
+    with open(file, 'rb') as f:
+        lineNumber = 0
+        for line in f:
+            m = re.search('class\s+[^\(]*:', line)
+            if m:
+                localResult.append("Old class definition found on {0}".format(m.group()))
+    return localResult
+
 
 def searchForPattern(file, pattern, errorName):
     localResult = []
@@ -162,6 +172,7 @@ def checkFile(file):
     # Check against PEP8 rules for python files
     if os.path.splitext(file)[-1] == ".py":
         results['PEP8'] = checkPEP8(file)
+        results['Old Class'] = checkClassDeclation(file)
 
     return results
 
