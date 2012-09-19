@@ -112,6 +112,23 @@
           </packing>
         </child>
         <child>
+          <object class="GtkRadioButton" id="layerRadioButton1">
+            <property name="label" translatable="yes">Raw</property>
+            <property name="use_action_appearance">False</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="use_action_appearance">False</property>
+            <property name="xalign">0</property>
+            <property name="draw_indicator">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkRadioButton" id="layerRadioButton2">
             <property name="label" translatable="yes">Layer 2 (Ethernet/Linux SLL)</property>
             <property name="use_action_appearance">False</property>
@@ -121,12 +138,13 @@
             <property name="use_action_appearance">False</property>
             <property name="xalign">0</property>
             <property name="draw_indicator">True</property>
+            <property name="group">layerRadioButton1</property>
             <signal name="toggled" handler="layerRadioButton_toggled_cb" swapped="no"/>
           </object>
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>
-            <property name="position">1</property>
+            <property name="position">2</property>
           </packing>
         </child>
         <child>
@@ -145,7 +163,7 @@
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>
-            <property name="position">2</property>
+            <property name="position">3</property>
           </packing>
         </child>
         <child>
@@ -157,14 +175,14 @@
             <property name="receives_default">False</property>
             <property name="use_action_appearance">False</property>
             <property name="xalign">0</property>
-            <property name="active">True</property>
             <property name="draw_indicator">True</property>
             <property name="group">layerRadioButton3</property>
+            <signal name="toggled" handler="layerRadioButton_toggled_cb" swapped="no"/>
           </object>
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>
-            <property name="position">3</property>
+            <property name="position">4</property>
           </packing>
         </child>
       </object>

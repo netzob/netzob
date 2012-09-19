@@ -64,8 +64,8 @@ class NetworkCapturerView(AbstractCapturerView):
 
         self.builderConfWidget.add_from_file(gladePath)
         self._getObjects(self.builderConfWidget, ["NetworkConfigurationBox", "deviceCombo",
-                                                  "filterEntry", "layerRadioButton2", "layerRadioButton3",
-                                                  "layerRadioButton4", "countEntry", "timeEntry"])
+                                                  "filterEntry", "layerRadioButton1", "layerRadioButton2",
+                                                  "layerRadioButton3", "layerRadioButton4", "countEntry", "timeEntry"])
         self.layerRadioButton4.set_active(True)
         self.builderConfWidget.connect_signals(self.controller)
         self.setDialogTitle(_("Capture network messages"))
@@ -94,6 +94,16 @@ class NetworkCapturerView(AbstractCapturerView):
         columnList = self.listTreeView.get_columns()
         for column in columnList:
             self.listTreeView.remove_column(column)
+
+    def makeL1ImportTreeView(self):
+        self.removeAllTreeViewColumns()
+        # Liststore to displayer layer 2 packets
+        # ID, Selected, Payload
+        self.listListStore = Gtk.ListStore(
+            str, 'gboolean', str)
+        self.listTreeView.set_model(self.listListStore)
+        self.addTreeViewSelectedToggleColumn()
+        self.addTreeViewTextColumn("Payload", 2)
 
     def makeL2ImportTreeView(self):
         self.removeAllTreeViewColumns()
