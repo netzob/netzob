@@ -79,7 +79,11 @@ class PCAPImporterController(AbstractFileImporterController):
                 NetzobErrorMessage(importEx.message)
 
         # Display all read messages
-        if self.importLayer == 2:
+        if self.importLayer == 1:
+            for message in self.model.messages:
+                self.view.listListStore.append([str(message.getID()), False,
+                                                message.getStringData()])
+        elif self.importLayer == 2:
             for message in self.model.messages:
                 self.view.listListStore.append([str(message.getID()), False,
                                                 str(message.getL2SourceAddress()),
@@ -108,7 +112,10 @@ class PCAPImporterController(AbstractFileImporterController):
         self.view.filterEntry.clear()
 
     def layerRadioButton_toggled_cb(self, widget):
-        if self.view.layerRadioButton2.get_active():
+        if self.view.layerRadioButton1.get_active():
+            self.importLayer = 1
+            self.view.makeL1ImportTreeView()
+        elif self.view.layerRadioButton2.get_active():
             self.importLayer = 2
             self.view.makeL2ImportTreeView()
         elif self.view.layerRadioButton3.get_active():

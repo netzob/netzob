@@ -47,6 +47,7 @@ import impacket.ImpactPacket as Packets
 from netzob.Common.NetzobException import NetzobImportException
 from netzob.Import.AbstractImporter import AbstractImporter
 from netzob.UI.ModelReturnCodes import ERROR, WARNING, SUCCEDED
+from netzob.Common.Models.RawMessage import RawMessage
 from netzob.Common.Models.L2NetworkMessage import L2NetworkMessage
 from netzob.Common.Models.L3NetworkMessage import L3NetworkMessage
 from netzob.Common.Models.L4NetworkMessage import L4NetworkMessage
@@ -98,7 +99,7 @@ class PCAPImporter(AbstractImporter):
         self.bpfFilter = bpfFilter
 
     def setImportLayer(self, importLayer):
-        if not importLayer in [2, 3, 4]:
+        if not importLayer in [1, 2, 3, 4]:
             raise
         self.importLayer = importLayer
 
@@ -135,7 +136,14 @@ class PCAPImporter(AbstractImporter):
         """Decode a packet"""
         mUuid = uuid.uuid4()
         mTimestamp = int(time.time())
-        if self.importLayer == 2:
+        if self.importLayer == 1:
+            self.messages.append(
+                RawMessage(
+                    mUuid,
+                    mTimestamp,
+                    payload.encode("hex")))
+            self._payloadDict[mUuid] = payload
+        elif self.importLayer == 2:
             (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = \
                 self.decodeLayer2(header, payload)
             self.messages.append(

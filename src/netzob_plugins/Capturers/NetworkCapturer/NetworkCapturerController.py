@@ -81,7 +81,10 @@ class NetworkCapturerController(AbstractCapturerController):
         self.view.filterEntry.set_text("")
 
     def layerRadioButton_toggled_cb(self, widget):
-        if self.view.layerRadioButton2.get_active():
+        if self.view.layerRadioButton1.get_active():
+            self.importLayer = 1
+            self.view.makeL1ImportTreeView()
+        elif self.view.layerRadioButton2.get_active():
             self.importLayer = 2
             self.view.makeL2ImportTreeView()
         elif self.view.layerRadioButton3.get_active():
@@ -126,7 +129,10 @@ class NetworkCapturerController(AbstractCapturerController):
 
     def callback_readMessage(self, message):
         # Display all read messages
-        if self.importLayer == 2:
+        if self.importLayer == 1:
+            self.view.listListStore.append([str(message.getID()), False,
+                                            message.getStringData()])
+        elif self.importLayer == 2:
             self.view.listListStore.append([str(message.getID()), False,
                                             str(message.getL2SourceAddress()),
                                             str(message.getL2DestinationAddress()),

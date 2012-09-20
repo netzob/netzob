@@ -48,6 +48,7 @@ from netzob.Common.EnvironmentalDependencies import EnvironmentalDependencies
 from netzob.Common.Plugins.Capturers.AbstractCapturer import AbstractCapturer
 from netzob.Common.NetzobException import NetzobImportException
 from netzob.UI.ModelReturnCodes import ERROR, WARNING, SUCCEDED
+from netzob.Common.Models.RawMessage import RawMessage
 from netzob.Common.Models.L2NetworkMessage import L2NetworkMessage
 from netzob.Common.Models.L3NetworkMessage import L3NetworkMessage
 from netzob.Common.Models.L4NetworkMessage import L4NetworkMessage
@@ -55,7 +56,7 @@ from netzob.Common.Models.L4NetworkMessage import L4NetworkMessage
 
 #+---------------------------------------------------------------------------+
 #| NetworkCapturer:
-#|     
+#|
 #+---------------------------------------------------------------------------+
 class NetworkCapturer(AbstractCapturer):
     """NetworkCapturer: This class offers the capability to capture
@@ -83,7 +84,7 @@ class NetworkCapturer(AbstractCapturer):
         self.bpfFilter = bpfFilter
 
     def setImportLayer(self, importLayer):
-        if not importLayer in [2, 3, 4]:
+        if not importLayer in [1, 2, 3, 4]:
             raise
         self.importLayer = importLayer
 
@@ -131,7 +132,13 @@ class NetworkCapturer(AbstractCapturer):
         mUuid = uuid.uuid4()
         mTimestamp = int(time.time())
         message = None
-        if self.importLayer == 2:
+        if self.importLayer == 1:
+            message = RawMessage(
+                mUuid,
+                mTimestamp,
+                payload.encode("hex"))
+            self._payloadDict[mUuid] = payload
+        elif self.importLayer == 2:
             (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = \
                 self.decodeLayer2(header, payload)
             message = L2NetworkMessage(
@@ -221,8 +228,6 @@ class NetworkCapturer(AbstractCapturer):
                             "currently supported, packet ethernet " +
                             "type = {0})").format(etherType)
             logging.warn(warnMessage)
-            raise NetzobImportException("PCAP", warnMessage, WARNING,
-                                        self.INVALID_LAYER3)
 
     def decodeLayer4(self, ipProtocolNum, l3Payload):
             if ipProtocolNum == Packets.UDP.protocol:
@@ -247,8 +252,6 @@ class NetworkCapturer(AbstractCapturer):
                                 "are currently supported, packet IP protocol " +
                                 "number = {0})").format(ipProtocolNum)
                 logging.warn(warnMessage)
-                raise NetzobImportException("PCAP", warnMessage, WARNING,
-                                            self.INVALID_LAYER4)
 
     def getMessageDetails(self, messageID):
         if not messageID in self._payloadDict:
