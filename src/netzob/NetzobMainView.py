@@ -202,12 +202,15 @@ class NetzobMainView(object):
         currentProject = self.controller.getCurrentProject()
         if currentProject is not None:
             currentProjectName = currentProject.getName()
-
+            currentProjectPath = currentProject.getPath()
         for (projectName, projectPath) in listOfProjectsNameAndPath:
             projectLoaded = False
             # Set toggled the current project
             if currentProjectName is not None:
-                projectLoaded = (currentProjectName == projectName)
+                if (currentProjectName == projectName and currentProjectPath == projectPath):
+                    projectLoaded = True
+                else:
+                    projectLoaded = False
 
             projectEntry = Gtk.CheckMenuItem(projectName)
             projectEntry.set_active(projectLoaded)
