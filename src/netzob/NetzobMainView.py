@@ -115,6 +115,9 @@ class NetzobMainView(object):
         self.setMenuBar(self.uiManager.get_widget("/mainMenuBar"))
         self.setToolbar(mainToolbar)
 
+        # Add accel group to window
+        self.mainWindow.add_accel_group(self.uiManager.get_accel_group())
+
     def resetMainWindow(self):
         self.log.debug("Resetting main window to its original state.")
         # Reset menu and toolbar
