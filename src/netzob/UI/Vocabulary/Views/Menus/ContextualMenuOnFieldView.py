@@ -94,6 +94,12 @@ class ContextualMenuOnFieldView(object):
         item.connect("activate", self.controller.displayDomainOfDefinition_cb)
         self.menu.append(item)
 
+        # Add entry to export fields
+        item = Gtk.MenuItem(_("Extract fields to a new symbol"))
+        item.show()
+        item.connect("activate", self.controller.exportSelectedFields_cb)
+        self.menu.append(item)
+
         # Add entry to delete the current message
         item = Gtk.MenuItem(_("Delete message"))
         item.show()

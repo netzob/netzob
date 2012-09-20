@@ -31,6 +31,7 @@
 from gettext import gettext as _
 import logging
 import time
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -46,9 +47,12 @@ from gi.repository import Pango
 #+---------------------------------------------------------------------------+
 from netzob.UI.Vocabulary.Views.Menus.ContextualMenuOnFieldView import ContextualMenuOnFieldView
 from netzob.UI.NetzobWidgets import NetzobLabel
+from netzob.Common.Symbol import Symbol
 from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Models.RawMessage import RawMessage
 from netzob.UI.Vocabulary.Controllers.PopupEditFieldController import PopupEditFieldController
 from netzob.UI.Vocabulary.Controllers.VariableController import VariableTreeController
+from netzob.UI.Import.Controllers.ConfirmImportMessagesController import ConfirmImportMessagesController
 
 
 class ContextualMenuOnFieldController(object):
@@ -188,3 +192,36 @@ class ContextualMenuOnFieldController(object):
         to delete the current message"""
         self.symbol.removeMessage(self.message)
         self.vocabularyController._view.updateMessageTableDisplayingSymbols([self.symbol])
+
+    def exportSelectedFields_cb(self, event):
+        # If fields header are selected, we get it
+        fields = self.vocabularyController.view.selectedMessageTable.treeViewHeaderGroup.getSelectedFields()
+        if fields is None or len(fields) == 0:
+            # Either, we only consider the current field
+            fields = [self.field]
+        # We retrieve the first and last fields selected
+        firstField = fields[0]
+        lastField = fields[0]
+        for field in fields:
+            if field.getIndex() < firstField.getIndex():
+                firstField = field
+            if field.getIndex() > lastField.getIndex():
+                lastField = field
+        # We initialize the correct number of new messages
+        newMessages = []
+        for message in self.symbol.getMessages():
+            mUuid = uuid.uuid4()
+            newMessages.append(RawMessage(mUuid, message.getTimestamp(), ""))
+        # We concatenate between the first and last fields        
+        for index in range(firstField.getIndex(), lastField.getIndex() + 1):
+            cells = self.symbol.getCellsByField(self.symbol.getFieldByIndex(index))
+            for i in range(len(cells)):
+                newMessages[i].setData(str(newMessages[i].getStringData()) + str(cells[i]))
+        # We create a new symbol and register it
+        currentWorkspace = self.vocabularyController.getCurrentWorkspace()
+        currentProject = self.vocabularyController.netzob.getCurrentProject()
+        confirmController = ConfirmImportMessagesController(currentWorkspace, currentProject, "RAW", newMessages)
+        confirmController.run()
+        # Update UI
+        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.view.updateLeftPanel()
