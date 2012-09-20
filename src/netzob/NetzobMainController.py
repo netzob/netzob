@@ -177,6 +177,17 @@ class NetzobMainController(object):
     def close(self):
         """The method which closes the current project
         and the workspace before stopping the GTK"""
+        result = self.closeCurrentProject()
+        if result == True:
+            # Save the workspace
+            self.getCurrentWorkspace().saveConfigFile()
+
+            # Close the controller
+            Gtk.main_quit()
+
+    def closeCurrentProject(self):
+        """Close and offers to save the pending
+        modifications in the current project."""
         currentProject = self.getCurrentProject()
 
         # Close the current project
@@ -186,16 +197,13 @@ class NetzobMainController(object):
             if resp == Gtk.ResponseType.YES:
                 logging.debug("Saving the current project")
                 self.getCurrentProject().saveConfigFile(self.getCurrentWorkspace())
+                return True
 
             elif resp == Gtk.ResponseType.CANCEL:
                 logging.debug("Abort quitting")
-                return True
-
-        # Save the workspace
-        self.getCurrentWorkspace().saveConfigFile()
-
-        # Close the controller
-        Gtk.main_quit()
+                return False
+        self.currentProjet = None
+        return True
 
     def getCurrentProject(self):
         return self.currentProject
@@ -573,16 +581,17 @@ class NetzobMainController(object):
     def switchProject(self, projectPath):
         """Change the current project with the project
         declared in file projectPath. If the loading is successful
-        the view is updated
+        the view is updated.
+        If a current project is already loaded, it offers to save pending modifications
+        before changing.
         @param projectPath: the path to the project to load
         @type projectPath: str
         """
         if projectPath is not None:
             logging.debug("Switch to the project declared in {0}".format(projectPath))
-
             newProject = Project.loadProject(self.currentWorkspace, projectPath)
-            if newProject is not None:
+            if newProject is not None and self.closeCurrentProject():
                 self.currentProject = newProject
                 self.view.currentProjectHasChanged()
             else:
-                logging.warning("Impossible to load the requested project.")
+                self.view.currentProjectHasChanged()
