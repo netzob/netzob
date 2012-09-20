@@ -18,6 +18,7 @@
     </menu>
     <placeholder name="mainMenuBarAdditions" />
     <menu action="helpMenu">
+      <menuitem action="availablePlugins" />
       <menuitem action="aboutNetzob" />
     </menu>
   </menubar>

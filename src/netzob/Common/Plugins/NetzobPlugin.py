@@ -87,6 +87,12 @@ class NetzobPlugin(object):
     def getAuthor(self):
         return self.__plugin_author__
 
+    def getCopyright(self):
+        return self.__plugin_copyright__
+
+    def getLicense(self):
+        return self.__plugin_license__
+
     @abstractmethod
     def getEntryPoints(self):
         raise NotImplementedError("The plugin class doesn't implement method 'getEntryPoints'")

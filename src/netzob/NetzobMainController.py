@@ -61,6 +61,7 @@ from netzob.UI.Common.Controllers.BugReporterController import BugReporterContro
 from netzob.UI.NetzobWidgets import NetzobErrorMessage
 from netzob.UI.WorkspaceSelector import WorkspaceSelector
 from netzob.Common.Plugins.Extensions.ExportMenuExtension import ExportMenuExtension
+from netzob.UI.Common.Controllers.AvailablePluginsController import AvailablePluginsController
 
 
 class NetzobMainController(object):
@@ -555,6 +556,11 @@ class NetzobMainController(object):
         when the user click on the associate
         menu entry."""
         AboutDialog.display(self.view.mainWindow)
+
+    def availablePlugins_activate_cb(self, action):
+        """Displays the list of available plugins"""
+        controller = AvailablePluginsController(self)
+        controller.run()
 
     def switchProject_cb(self, widget, projectPath):
         """Callback for the GTK view in order to
