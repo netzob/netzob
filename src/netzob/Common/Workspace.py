@@ -239,10 +239,9 @@ class Workspace(object):
         xmlPrototypes.text = str(self.getPathOfPrototypes())
 
         xmlWorkspaceProjects = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}projects")
-        logging.debug("Projects included in workspace.xml :")
-        for project in self.getProjects():
+        for projectPath in self.getProjectsPath():
             xmlProject = etree.SubElement(xmlWorkspaceProjects, "{" + WORKSPACE_NAMESPACE + "}project")
-            xmlProject.set("path", project.getPath())
+            xmlProject.set("path", projectPath)
 
         xmlWorkspaceImported = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}traces")
         for importedTrace in self.getImportedTraces():
