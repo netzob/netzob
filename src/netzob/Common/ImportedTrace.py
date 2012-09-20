@@ -73,7 +73,12 @@ class ImportedTrace(object):
         # Creation of the XML File (in buffer)
         # Compress it using gzip and save the .gz
         tracesFile = os.path.join(pathOfTraces, str(self.getID()) + ".gz")
-        logging.info("Save the trace " + str(self.getID()) + " in " + tracesFile)
+        if not os.path.isfile(tracesFile):
+            logging.debug("Save the trace " + str(self.getID()) + " in " + tracesFile)
+            # Compress and write the file
+            gzipFile = gzip.open(tracesFile, 'wb')
+            gzipFile.write(contentOfFile)
+            gzipFile.close()
 
         # Register the namespace (2 way depending on the version)
         try:
@@ -95,16 +100,6 @@ class ImportedTrace(object):
 
         tree = ElementTree(root)
         contentOfFile = str(etree.tostring(tree.getroot()))
-
-        # if outputfile already exists we delete it
-        if os.path.isfile(tracesFile):
-            logging.debug("The compressed version (" + tracesFile + ") of the file already exists, we replace it with the new one")
-            os.remove(tracesFile)
-
-        # Compress and write the file
-        gzipFile = gzip.open(tracesFile, 'wb')
-        gzipFile.write(contentOfFile)
-        gzipFile.close()
 
     def addSession(self, session):
         self.sessions.append(session)
