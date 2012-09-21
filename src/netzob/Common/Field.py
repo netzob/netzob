@@ -99,6 +99,7 @@ class Field(object):
         self.mathematicFilters = []
 
         self.variable = None
+        self.defaultVariable = None
 
     def getEncodedVersionOfTheRegex(self):
         """getEncodedVersionOfTheRegex:
@@ -152,20 +153,33 @@ class Field(object):
             variable = DataVariable(uuid.uuid4(), self.getName(), False, False, BinaryType(True, len(value), len(value)), value.to01())  # A static field is neither mutable nor random.
             return variable
         else:
-            # The default variable is an alternative of all the possibilities (in binary type)
-            cells = symbol.getUniqValuesByField(self)
-            tmpDomain = set()
-            for cell in cells:
-                tmpDomain.add(TypeConvertor.netzobRawToBitArray(cell))
-            domain = sorted(tmpDomain)
+            if self.defaultVariable is None:
+                self.defaultVariable = self.generateDefaultVariable(symbol)
+            return self.defaultVariable
 
-            variable = AggregateVariable(uuid.uuid4(), "Aggregate", False, False, None)
-            alternateVar = AlternateVariable(uuid.uuid4(), "Alternate", False, False, None)
-            for d in domain:
-                child = DataVariable(uuid.uuid4(), "defaultVariable", False, False, BinaryType(True, len(d), len(d)), d.to01())
-                alternateVar.addChild(child)
-            variable.addChild(alternateVar)
-            return variable
+    def generateDefaultVariable(self, symbol):
+        """generateDefaultVariable:
+                generates the default variable and returns it
+
+                @type symbol: netzob.Common.Symbol
+                @param symbol: the parent symbol.
+                @rtype: netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable.AggregateVariable
+                @return: the generated variable
+        """
+        # The default variable is an alternative of all the possibilities (in binary type)
+        cells = symbol.getUniqValuesByField(self)
+        tmpDomain = set()
+        for cell in cells:
+            tmpDomain.add(TypeConvertor.netzobRawToBitArray(cell))
+        domain = sorted(tmpDomain)
+
+        variable = AggregateVariable(uuid.uuid4(), "Aggregate", False, False, None)
+        alternateVar = AlternateVariable(uuid.uuid4(), "Alternate", False, False, None)
+        for d in domain:
+            child = DataVariable(uuid.uuid4(), "defaultVariable", False, False, BinaryType(True, len(d), len(d)), d.to01())
+            alternateVar.addChild(child)
+        variable.addChild(alternateVar)
+        return variable
 
     def getVisualizationFilters(self):
         """getVisualizationFilters:
