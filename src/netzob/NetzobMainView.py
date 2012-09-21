@@ -231,10 +231,17 @@ class NetzobMainView(object):
         for i in exportersMenu.get_children():
             exportersMenu.remove(i)
 
+        # Add XML export
         exporterEntry = Gtk.MenuItem(_("XML"))
-        exporterEntry.connect("activate", self.controller.exportProject_activate_cb)
+        exporterEntry.connect("activate", self.controller.xmlExportProject_activate_cb)
         exportersMenu.append(exporterEntry)
 
+        # Add human readable export
+        exporterEntry = Gtk.MenuItem(_("Human readable"))
+        exporterEntry.connect("activate", self.controller.rawExportProject_activate_cb)
+        exportersMenu.append(exporterEntry)
+
+        # Add plugin specific exports
         for pluginExtension in pluginsExtensions:
             pluginEntry = Gtk.MenuItem(pluginExtension.menuText)
             pluginEntry.connect("activate", pluginExtension.executeAction)
