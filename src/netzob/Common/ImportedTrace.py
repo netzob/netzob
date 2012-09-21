@@ -70,16 +70,6 @@ class ImportedTrace(object):
         xmlTrace.set("name", str(self.getName()))
         xmlTrace.set("id", str(self.getID()))
 
-        # Creation of the XML File (in buffer)
-        # Compress it using gzip and save the .gz
-        tracesFile = os.path.join(pathOfTraces, str(self.getID()) + ".gz")
-        if not os.path.isfile(tracesFile):
-            logging.debug("Save the trace " + str(self.getID()) + " in " + tracesFile)
-            # Compress and write the file
-            gzipFile = gzip.open(tracesFile, 'wb')
-            gzipFile.write(contentOfFile)
-            gzipFile.close()
-
         # Register the namespace (2 way depending on the version)
         try:
             etree.register_namespace('netzob-common', namespace_common)
@@ -100,6 +90,16 @@ class ImportedTrace(object):
 
         tree = ElementTree(root)
         contentOfFile = str(etree.tostring(tree.getroot()))
+
+        # Creation of the XML File (in buffer)
+        # Compress it using gzip and save the .gz
+        tracesFile = os.path.join(pathOfTraces, str(self.getID()) + ".gz")
+        if not os.path.isfile(tracesFile):
+            logging.debug("Save the trace " + str(self.getID()) + " in " + tracesFile)
+            # Compress and write the file
+            gzipFile = gzip.open(tracesFile, 'wb')
+            gzipFile.write(contentOfFile)
+            gzipFile.close()
 
     def addSession(self, session):
         self.sessions.append(session)
