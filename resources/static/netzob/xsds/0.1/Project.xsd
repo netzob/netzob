@@ -250,6 +250,8 @@
 			<element name="messages-ref" type="netzob-common:Messages-ref"
 				minOccurs="0">
 			</element>
+			<element name="layers" type="netzob-project:Layers"
+				maxOccurs="1" minOccurs="0"></element>
 			<element name="fields" type="netzob-project:Fields"
 				maxOccurs="1" minOccurs="0"></element>
 		</sequence>
@@ -271,6 +273,59 @@
 		<attribute name="score" type="float"></attribute>
 		<attribute name="alignmentType" type="string"></attribute>
 		<attribute name="rawDelimiter" type="string"></attribute>
+	</complexType>
+
+	<complexType name="Layers">
+		<sequence>
+			<element name="layer" type="netzob-project:Layer" maxOccurs="unbounded"
+				minOccurs="0"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="Layer">
+		<sequence>
+			<element name="format" type="string" maxOccurs="1" minOccurs="0"></element>
+			<element name="unitsize" type="string" maxOccurs="1"
+				minOccurs="0"></element>
+			<element name="sign" type="string" maxOccurs="1" minOccurs="0"></element>
+			<element name="endianess" type="string" maxOccurs="1"
+				minOccurs="0"></element>
+			<element name="description" type="string" minOccurs="0"></element>
+			<element name="color" maxOccurs="1" minOccurs="0">
+				<simpleType>
+					<restriction base="string">
+						<minLength value="1"></minLength>
+					</restriction>
+				</simpleType>
+			</element>
+			<element name="bgcolor" maxOccurs="1" minOccurs="0">
+				<simpleType>
+					<restriction base="string">
+						<minLength value="1"></minLength>
+					</restriction>
+				</simpleType>
+			</element>
+			<element name="fields-ref" type="netzob-project:Fields-ref"
+				minOccurs="0">
+			</element>
+		</sequence>
+		<attribute name="name" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+
+	<complexType name="Fields-ref">
+		<choice minOccurs="0" maxOccurs="unbounded">
+			<element name="field-ref" type="netzob-project:Field-ref"></element>
+		</choice>
+	</complexType>
+
+	<complexType name="Field-ref">
+		<attribute name="id" type="string"></attribute>
 	</complexType>
 
 	<complexType name="Fields">

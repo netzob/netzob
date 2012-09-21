@@ -65,6 +65,7 @@ from netzob.Common.Property import Property
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Type.TypeIdentifier import TypeIdentifier
 from netzob.Common.Type.UnitSize import UnitSize
+from netzob.Common.Layer import Layer
 
 
 #+---------------------------------------------------------------------------+
@@ -94,6 +95,7 @@ class Symbol(AbstractSymbol):
         self.alignment = ""
         self.score = 0.0
         self.messages = []
+        self.layers = []
         self.fields = []
         self.alignmentType = "regex"
         self.rawDelimiter = ""
@@ -119,6 +121,8 @@ class Symbol(AbstractSymbol):
         field = Field.createDefaultField(self)  # Only one default field by symbol.
         field.setFormat(aFormat)
         self.addField(field)
+        layer = Layer("default")
+        self.addLayer(layer)
 
     def addVisualizationFilter(self, filter):
         self.visualizationFilters.append(filter)
@@ -977,11 +981,11 @@ class Symbol(AbstractSymbol):
 
         return result
 
-    #+----------------------------------------------
-    #| removeMessage : remove any ref to the given
-    #| message and recompute regex and score
-    #+----------------------------------------------
+    ### Messages ###
     def removeMessage(self, message):
+        """removeMessage: remove any ref to the given message and
+        recompute regex and score.
+        """
         if message in self.messages:
             self.messages.remove(message)
         else:
@@ -1009,6 +1013,25 @@ class Symbol(AbstractSymbol):
 #            for field in self.fields:
 #                field.variable = field.getDefaultVariable(self)
 
+    ### Layers ###
+    def removeLayer(self, layer):
+        """removeLayer: remove a specific layer.
+        """
+        if layer in self.layers:
+            self.layers.remove(layer)
+        else:
+            self.log.error("Cannot remove layer {0} from symbol {1}, since it doesn't exist.".format(layer.getName(), self.getName()))
+
+    def addLayers(self, layers):
+        """addMessages: add the provided layers in the symbol.
+        """
+        for layer in layers:
+            self.addLayer(layer)
+
+    def addLayer(self, layer):
+        self.layers.append(layer)
+
+    ### Fields ###
     def addField(self, field, index=None):
         if index is None:
             self.fields.append(field)
@@ -1060,6 +1083,10 @@ class Symbol(AbstractSymbol):
         for message in self.messages:
             xmlMessage = etree.SubElement(xmlMessages, "{" + namespace_common + "}message-ref")
             xmlMessage.set("id", str(message.getID()))
+        # Save the layers
+        xmlLayers = etree.SubElement(xmlSymbol, "{" + namespace_project + "}layers")
+        for layer in self.getLayers():
+            layer.save(xmlLayers, namespace_project)
         # Save the fields
         xmlFields = etree.SubElement(xmlSymbol, "{" + namespace_project + "}fields")
         for field in self.getFields():
@@ -1258,6 +1285,7 @@ class Symbol(AbstractSymbol):
         properties.append(prop)
 
         properties.append(Property('messages', Format.DECIMAL, len(self.getMessages())))
+        properties.append(Property('layers', Format.DECIMAL, len(self.getLayers())))
         properties.append(Property('fields', Format.DECIMAL, len(self.getFields())))
         minMsgSize = None
         maxMsgSize = 0
@@ -1313,6 +1341,9 @@ class Symbol(AbstractSymbol):
             else:
                 self.removeMessage(message)
         return result
+
+    def getLayers(self):
+        return self.layers
 
     def getScore(self):
         return self.score
@@ -1377,6 +1408,9 @@ class Symbol(AbstractSymbol):
 
     def setMessages(self, mess):
         self.messages = mess
+
+    def setLayers(self, layers):
+        self.layers = layers
 
     def setAlignmentType(self, aType):
         self.alignmentType = aType
@@ -1498,5 +1532,14 @@ class Symbol(AbstractSymbol):
                     field = Field.loadFromXML(xmlField, namespace_project, version, symbol)
                     if field != None:
                         symbol.addField(field)
+
+            # we parse the layers
+            if xmlRoot.find("{" + namespace_project + "}layers") is not None:
+                xmlLayers = xmlRoot.find("{" + namespace_project + "}layers")
+                for xmlLayer in xmlLayers.findall("{" + namespace_project + "}layer"):
+                    layer = Layer.loadFromXML(xmlLayer, namespace_project, version, symbol)
+                    if layer != None:
+                        symbol.addLayer(layer)
+
             return symbol
         return None
