@@ -259,6 +259,13 @@ class AbstractionLayer():
     def getGeneratedOutputSymbols(self):
         return self.outputSymbols
 
+    def getProperties(self):
+        """Compute and return the list of properties of the abstraction layer"""
+        properties = []
+        properties.extend(self.getCommunicationChannel().getProperties())
+
+        return properties
+
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+

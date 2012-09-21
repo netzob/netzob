@@ -71,7 +71,8 @@ class SimulatorView(object):
                                         "infoCurrentActorLabel",
                                         "statusCurrentActorLabel",
                                         "currentActorIOChannelListStore",
-                                        "currentActorMemoryListStore"
+                                        "currentActorMemoryListStore",
+                                        "currentActorPropertiesListStore"
                                         ])
         self._loadActionGroupUIDefinition()
         self.builder.connect_signals(self.controller)
@@ -194,6 +195,15 @@ class SimulatorView(object):
 
             self.statusCurrentActorLabel.set_label(actorStatus)
             self.statusCurrentActorLabel.show()
+
+            self.displayPropertiesOfActor(currentActor)
+
+    def displayPropertiesOfActor(self, actor):
+        """Display the properties of the actor"""
+        self.currentActorPropertiesListStore.clear()
+
+        for property in actor.getProperties():
+            self.currentActorPropertiesListStore.append([str(property.getName()), str(property.getCurrentValue())])
 
     def updateGrammarOfCurrentActor(self):
         currentActor = self.controller.getCurrentActor()

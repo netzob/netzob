@@ -35,6 +35,8 @@ from netzob.Common.MMSTD.Dictionary.DataTypes.WordType import WordType
 from netzob.Common.MMSTD.Dictionary.DataTypes.IPv4WordType import IPv4WordType
 from netzob.Common.MMSTD.Dictionary.DataTypes.IntegerType import IntegerType
 from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Property import Property
+from netzob.Common.Type.Format import Format
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -166,6 +168,15 @@ class AbstractChannel():
 
     def getOriginalTargetPort(self):
         return self.originalTargetPort
+
+    def getProperties(self):
+        properties = []
+        properties.append(Property("Protocol", Format.STRING, self.originalProtocol))
+        properties.append(Property("Bind IP", Format.STRING, self.originalBindIp))
+        properties.append(Property("Bind Port", Format.DECIMAL, self.originalBindPort))
+        properties.append(Property("Target IP", Format.STRING, self.originalTargetIp))
+        properties.append(Property("Target Port", Format.DECIMAL, self.originalTargetPort))
+        return properties
 
     #+-----------------------------------------------------------------------+
     #| Load

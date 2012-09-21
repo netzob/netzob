@@ -148,7 +148,5 @@ class SimulatorController(object):
         model, iter = selection.get_selected()
         if iter is not None:
             actorID = model[iter][2]
-            print actorID
             self.currentActor = self.getCurrentProject().getSimulator().getActorByID(actorID)
-
         self._view.updateCurrentActor()

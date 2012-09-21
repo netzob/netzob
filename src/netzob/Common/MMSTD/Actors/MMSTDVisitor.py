@@ -34,6 +34,9 @@ import threading
 from lxml.etree import ElementTree
 from lxml import etree
 from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
+from netzob.Common.Property import Property
+from netzob.Common.Type.TypeIdentifier import TypeIdentifier
+from netzob.Common.Type.Format import Format
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -113,6 +116,20 @@ class MMSTDVisitor(threading.Thread):
 
     def getAbstractionLayer(self):
         return self.abstractionLayer
+
+    def getProperties(self):
+        """Compute and return the list of properties of the actor"""
+        properties = []
+        properties.append(Property("ID", Format.STRING, self.getID()))
+        properties.append(Property("Name", Format.STRING, self.getName()))
+        initiator = "No"
+        if self.isInitiator():
+            initiator = "Yes"
+        properties.append(Property("Initiator", Format.STRING, initiator))
+
+        properties.extend(self.getAbstractionLayer().getProperties())
+
+        return properties
 
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
