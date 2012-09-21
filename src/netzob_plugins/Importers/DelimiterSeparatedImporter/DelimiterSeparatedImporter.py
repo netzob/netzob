@@ -50,6 +50,10 @@ from netzob.Import.AbstractImporter import AbstractImporter
 class DelimiterSeparatedImporter(AbstractImporter):
     """Model of file importer plugin"""
 
+    SEPARATOR_STRATEGY_DELETE = _("Delete Separator")
+    SEPARATOR_STRATEGY_KEEP_START = _("Keep Starting Separator")
+    SEPARATOR_STRATEGY_KEEP_END = _("Keep Ending Separator")
+
     def __init__(self, netzob):
         super(DelimiterSeparatedImporter, self).__init__("FILE IMPORT", netzob)
         self.log = logging.getLogger('netzob.Import.FileImporter.py')
@@ -58,6 +62,7 @@ class DelimiterSeparatedImporter(AbstractImporter):
         self.envDeps = EnvironmentalDependencies()
         self.importedFiles = []
         self.messageSeparator = ""
+        self.messageSeparatorStrategy = None
 
     def setSourceFiles(self, filePathList):
         self.importedFiles = []
@@ -78,8 +83,9 @@ class DelimiterSeparatedImporter(AbstractImporter):
                                   modificationDate, owner, size, 0)
             self.importedFiles.append(message)
 
-    def setSeparator(self, separator):
+    def setSeparator(self, separator, strategy):
         self.messageSeparator = separator
+        self.messageSeparatorStrategy = strategy
 
     def readMessages(self):
         # Iterate over all imported files and split them
@@ -89,8 +95,31 @@ class DelimiterSeparatedImporter(AbstractImporter):
             lineNumber = 0
             if len(self.messageSeparator) > 0:
                 splittedStrHexData = fileMessage.getData().split(self.messageSeparator)
+                if self.messageSeparatorStrategy != DelimiterSeparatedImporter.SEPARATOR_STRATEGY_DELETE:
+                    i_s = 0
+                    l_s = len(splittedStrHexData)
+                    for s in splittedStrHexData:
+                        if self.messageSeparatorStrategy == DelimiterSeparatedImporter.SEPARATOR_STRATEGY_KEEP_END:
+                            if fileMessage.getData().endswith(self.messageSeparator):
+                                limit = l_s
+                            else:
+                                limit = l_s - 1
+                            if i_s < limit:
+                                splittedStrHexData[i_s] = s + self.messageSeparator
+
+                        if self.messageSeparatorStrategy == DelimiterSeparatedImporter.SEPARATOR_STRATEGY_KEEP_START:
+                            if fileMessage.getData().startswith(self.messageSeparator):
+                                limit = 0
+                            else:
+                                limit = 1
+                            if i_s >= limit:
+                                splittedStrHexData[i_s] = self.messageSeparator + s
+
+                        i_s += 1
+
             else:
                 splittedStrHexData = [fileMessage.getData()]
+            i_s = 0
             for s in splittedStrHexData:
                 if len(s) > 0:
                     message = FileMessage(uuid.uuid4(), 0,
@@ -98,6 +127,7 @@ class DelimiterSeparatedImporter(AbstractImporter):
                                           fileMessage.getModificationDate(), fileMessage.getOwner(),
                                           fileMessage.getSize(), lineNumber)
                     self.messages.append(message)
+                i_s += 1
 
     def _getNetzobRawContentOfFile(self, filename):
         with open(filename, "rb") as file:

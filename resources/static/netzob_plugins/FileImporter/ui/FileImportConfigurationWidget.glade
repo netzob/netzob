@@ -1,32 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
-|          01001110 01100101 01110100 01111010 01101111 01100010            |
-|                                                                           |
-|               Netzob : Inferring communication protocols                  |
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
-| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
-| This program is free software: you can redistribute it and/or modify      |
-| it under the terms of the GNU General Public License as published by      |
-| the Free Software Foundation, either version 3 of the License, or         |
-| (at your option) any later version.                                       |
-|                                                                           |
-| This program is distributed in the hope that it will be useful,           |
-| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
-| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
-| GNU General Public License for more details.                              |
-|                                                                           |
-| You should have received a copy of the GNU General Public License         |
-| along with this program. If not, see <http://www.gnu.org/licenses/>.      |
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
-| @url      : http://www.netzob.org                                         |
-| @contact  : contact@netzob.org                                            |
-| @sponsors : Amossys, http://www.amossys.fr                                |
-|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
--->
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
+  <object class="GtkListStore" id="keepSeparatorListStore">
+    <columns>
+      <!-- column-name choice -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkBox" id="fileConfigurationBox">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -56,6 +36,24 @@
       </packing>
     </child>
     <child>
+      <object class="GtkComboBox" id="keepSeparatorComboBox">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="model">keepSeparatorListStore</property>
+        <child>
+          <object class="GtkCellRendererText" id="cellrenderertext1"/>
+          <attributes>
+            <attribute name="text">0</attribute>
+          </attributes>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">2</property>
+      </packing>
+    </child>
+    <child>
       <object class="GtkButton" id="applySeparatorButton">
         <property name="label">gtk-apply</property>
         <property name="use_action_appearance">False</property>
@@ -69,7 +67,7 @@
       <packing>
         <property name="expand">False</property>
         <property name="fill">True</property>
-        <property name="position">2</property>
+        <property name="position">3</property>
       </packing>
     </child>
     <child>
@@ -86,7 +84,7 @@
       <packing>
         <property name="expand">False</property>
         <property name="fill">True</property>
-        <property name="position">3</property>
+        <property name="position">4</property>
       </packing>
     </child>
   </object>

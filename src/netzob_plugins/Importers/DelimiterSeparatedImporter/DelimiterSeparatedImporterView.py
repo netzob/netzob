@@ -36,6 +36,7 @@ from gettext import gettext as _
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk
 import gi
+from netzob_plugins.Importers.DelimiterSeparatedImporter.DelimiterSeparatedImporter import DelimiterSeparatedImporter
 gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
@@ -57,8 +58,7 @@ class DelimiterSeparatedImporterView(AbstractFileImporterView):
         self.builderConfWidget = Gtk.Builder()
         curDir = os.path.dirname(__file__)
         self.builderConfWidget.add_from_file(os.path.join(self.getPlugin().getPluginStaticResourcesPath(), "ui", DelimiterSeparatedImporterView.GLADE_FILENAME))
-        self._getObjects(self.builderConfWidget, ["fileConfigurationBox",
-                                                  "separatorEntry"])
+        self._getObjects(self.builderConfWidget, ["fileConfigurationBox", "separatorEntry", "keepSeparatorComboBox", "keepSeparatorListStore", ""])
         self.builderConfWidget.connect_signals(self.controller)
         self.setDialogTitle(_("Import messages from raw file"))
         self.setImportConfigurationWidget(self.fileConfigurationBox)
@@ -70,6 +70,12 @@ class DelimiterSeparatedImporterView(AbstractFileImporterView):
             column.add_attribute(cell, "text", modelColumn)
             column.set_sort_column_id(modelColumn)
             self.listTreeView.append_column(column)
+
+        # Configure the list of "strategy" with separators
+        self.keepSeparatorListStore.append([DelimiterSeparatedImporter.SEPARATOR_STRATEGY_DELETE])
+        self.keepSeparatorListStore.append([DelimiterSeparatedImporter.SEPARATOR_STRATEGY_KEEP_START])
+        self.keepSeparatorListStore.append([DelimiterSeparatedImporter.SEPARATOR_STRATEGY_KEEP_END])
+        self.keepSeparatorComboBox.set_active(0)
 
         self.listListStore = Gtk.ListStore('gboolean', str, str)
         self.listTreeView.set_model(self.listListStore)

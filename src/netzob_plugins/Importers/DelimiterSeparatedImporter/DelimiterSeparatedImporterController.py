@@ -63,7 +63,12 @@ class DelimiterSeparatedImporterController(AbstractFileImporterController):
         self.model.setSourceFiles(filePathList)
 
     def doReadMessages(self):
-        self.model.setSeparator(self.view.separatorEntry.get_text().strip())
+        selectedEntry = self.view.keepSeparatorComboBox.get_active()
+        separatorStrategy = None
+        if selectedEntry is not None:
+            separatorStrategy = self.view.keepSeparatorListStore[selectedEntry][0]
+
+        self.model.setSeparator(self.view.separatorEntry.get_text().strip(), separatorStrategy)
         self.model.readMessages()
         for message in self.model.messages:
             self.view.listListStore.append([False, str(message.getID()), message.getStringData()])
