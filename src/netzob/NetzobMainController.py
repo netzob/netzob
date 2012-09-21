@@ -62,6 +62,7 @@ from netzob.UI.NetzobWidgets import NetzobErrorMessage
 from netzob.UI.WorkspaceSelector import WorkspaceSelector
 from netzob.Common.Plugins.Extensions.ExportMenuExtension import ExportMenuExtension
 from netzob.UI.Common.Controllers.AvailablePluginsController import AvailablePluginsController
+from netzob.UI.Export.Controllers.RawExportController import RawExportController
 
 
 class NetzobMainController(object):
@@ -400,10 +401,13 @@ class NetzobMainController(object):
         else:
             applyButton.set_sensitive(False)
 
-    def exportProject_activate_cb(self, action):
+    def xmlExportProject_activate_cb(self, action):
         """Display the dialog in order
         to export the current project when the user request it
         through the menu."""
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
         logging.debug("Export project")
         finish = False
         errorMessage = None
@@ -473,6 +477,16 @@ class NetzobMainController(object):
         if (result == 1):
             #cancel
             dialog.destroy()
+
+    def rawExportProject_activate_cb(self, action):
+        """Display the dialog in order
+        to export the symbols when the user request it
+        through the menu."""
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
+        logging.debug("Export raw symbols")
+        controller = RawExportController(self)
 
     def fileSetFileChooser_switchWorkspace_cb(self, widget, applyButton):
         """Callback executed when the user

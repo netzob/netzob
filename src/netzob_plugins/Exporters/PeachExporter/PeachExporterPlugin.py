@@ -43,6 +43,7 @@ import random
 from netzob.Common.Plugins.ExporterPlugin import ExporterPlugin
 from netzob.Common.Plugins.Extensions.ExportMenuExtension import ExportMenuExtension
 from netzob_plugins.Exporters.PeachExporter.PeachExportController import PeachExportController
+from netzob.UI.NetzobWidgets import NetzobErrorMessage
 
 
 class PeachExporterPlugin(ExporterPlugin):
@@ -122,5 +123,8 @@ class PeachExporterPlugin(ExporterPlugin):
                 @type val:
                 @param val:
         """
+        if self.netzob.getCurrentProject() is None:
+            NetzobErrorMessage(_("No project selected."))
+            return
         controller = PeachExportController(self.netzob)
         controller.run()
