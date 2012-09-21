@@ -309,6 +309,13 @@
 				minOccurs="0">
 			</element>
 		</sequence>
+		<attribute name="id" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
 		<attribute name="name" use="required">
 			<simpleType>
 				<restriction base="string">
@@ -325,7 +332,7 @@
 	</complexType>
 
 	<complexType name="Field-ref">
-		<attribute name="id" type="string"></attribute>
+		<attribute name="index" type="int"></attribute>
 	</complexType>
 
 	<complexType name="Fields">

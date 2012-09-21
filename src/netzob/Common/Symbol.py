@@ -41,6 +41,7 @@ from operator import attrgetter
 import logging
 import re
 import struct
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -87,9 +88,9 @@ class Symbol(AbstractSymbol):
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
-    def __init__(self, id, name, project, pattern=[], minEqu=0):
+    def __init__(self, ID, name, project, pattern=[], minEqu=0):
         AbstractSymbol.__init__(self, "Symbol")
-        self.id = id
+        self.id = ID
         self.name = name
         self.project = project
         self.alignment = ""
@@ -116,12 +117,17 @@ class Symbol(AbstractSymbol):
         self.reinitFields()
 
     def reinitFields(self):
+        # Fields
         self.fields = []
         aFormat = self.project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
         field = Field.createDefaultField(self)  # Only one default field by symbol.
         field.setFormat(aFormat)
         self.addField(field)
-        layer = Layer("default")
+        # Layers
+        self.layers = []
+        lUuid = uuid.uuid4()
+        layer = Layer(lUuid, "default")
+        layer.addField(field)
         self.addLayer(layer)
 
     def addVisualizationFilter(self, filter):
@@ -361,11 +367,17 @@ class Symbol(AbstractSymbol):
                 # TODO: handle complex regex
                 continue
 
-    #+----------------------------------------------
-    #| getMessageByID:
-    #|  Return the message which ID is provided
-    #+----------------------------------------------
+    def getLayerByID(self, layerID):
+        """getLayerByID: Return the message which ID is provided.
+        """
+        for layer in self.layers:
+            if str(layer.getID()) == str(layerID):
+                return layer
+        return None
+
     def getMessageByID(self, messageID):
+        """getMessageByID: Return the message which ID is provided.
+        """
         for message in self.messages:
             if str(message.getID()) == str(messageID):
                 return message
@@ -1042,6 +1054,10 @@ class Symbol(AbstractSymbol):
         field.setIndex(realIndex)
         return realIndex
 
+    def cleanLayers(self):
+        while len(self.layers) != 0:
+            self.layers.pop()
+
     def cleanFields(self):
         while len(self.fields) != 0:
             self.fields.pop()
@@ -1493,6 +1509,7 @@ class Symbol(AbstractSymbol):
 
             symbol = Symbol(idSymbol, nameSymbol, project)
             symbol.cleanFields()
+            symbol.cleanLayers()
             symbol.setAlignment(alignmentSymbol)
             symbol.setScore(scoreSymbol)
             symbol.setAlignmentType(alignmentType)

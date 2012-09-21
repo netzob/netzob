@@ -268,7 +268,7 @@ class VocabularyView(object):
         message table"""
         logging.debug("Update the displayed symbol in selected table message")
 
-        # Open a message table is None is available
+        # Open a message table if none is available
         if len(self.messageTableList) == 0:
             self.addMessageTable()
 
@@ -299,10 +299,15 @@ class VocabularyView(object):
         self.symbolListTreeViewSelection.handler_block_by_func(self.controller.symbolListTreeViewSelection_changed_cb)
         self.symbolListStore.clear()
         for sym in symbolList:
-            self.addRowSymbolList(checkedMessagesIDList, sym.getName(),
-                                  len(sym.getMessages()),
-                                  len(sym.getFields()),
-                                  str(sym.getID()))
+            pIter = self.addRowSymbolList(checkedMessagesIDList, sym.getName(),
+                                          len(sym.getMessages()),
+                                          len(sym.getFields()),
+                                          str(sym.getID()))
+            for layer in sym.getLayers():
+                self.addLayerRowSymbolList(pIter, checkedMessagesIDList, layer.getName(),
+                                           len(sym.getMessages()),
+                                           len(layer.getFields()),
+                                           str(layer.getID()))
         self.setSelectedSymbolFromSelectedMessageTable()
         self.symbolListTreeViewSelection.handler_unblock_by_func(self.controller.symbolListTreeViewSelection_changed_cb)
 
@@ -325,12 +330,34 @@ class VocabularyView(object):
         @param field: number of field in the symbol
         @type  image: string
         @param image: image of the lock button (freeze partitioning)"""
-        i = self.symbolListStore.append()
+        i = self.symbolListStore.append(None)
         self.symbolListStore.set(i, self.SYMBOLLISTSTORE_SELECTED_COLUMN, (symID in checkedMessagesIDList))
         self.symbolListStore.set(i, self.SYMBOLLISTSTORE_NAME_COLUMN, name)
         self.symbolListStore.set(i, self.SYMBOLLISTSTORE_MESSAGE_COLUMN, message)
         self.symbolListStore.set(i, self.SYMBOLLISTSTORE_FIELD_COLUMN, field)
         self.symbolListStore.set(i, self.SYMBOLLISTSTORE_ID_COLUMN, symID)
+        return i
+
+    def addLayerRowSymbolList(self, parentIter, checkedMessagesIDList, name, message, field, layerID):
+        """Adds a layer row in the symbol list of left panel
+        @type  parentIter: string
+        @param parentIter: parent iter
+        @type  selection: boolean
+        @param selection: if selected symbol
+        @type  name: string
+        @param name: name of the symbol
+        @type  message: string
+        @param message: number of message in the symbol
+        @type  field: string
+        @param field: number of field in the symbol
+        @type  image: string
+        @param image: image of the lock button (freeze partitioning)"""
+        i = self.symbolListStore.append(parentIter)
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_SELECTED_COLUMN, (layerID in checkedMessagesIDList))
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_NAME_COLUMN, name)
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_MESSAGE_COLUMN, message)
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_FIELD_COLUMN, field)
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_ID_COLUMN, layerID)
 
     def updateSymbolListToolbar(self):
         """Enables or disable buttons of the symbol list toolbar"""

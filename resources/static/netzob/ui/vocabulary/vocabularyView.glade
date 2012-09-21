@@ -33,7 +33,7 @@
       <column type="GtkListStore"/>
     </columns>
   </object>
-  <object class="GtkListStore" id="symbolListStore">
+  <object class="GtkTreeStore" id="symbolListStore">
     <columns>
       <!-- column-name selected -->
       <column type="gboolean"/>

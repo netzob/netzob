@@ -288,12 +288,19 @@ class VocabularyController(object):
         currentVocabulary = self.netzob.getCurrentProject().getVocabulary()
         if iter is not None:
             logging.debug("Iter is not none")
-            symID = model[iter][self.view.SYMBOLLISTSTORE_ID_COLUMN]
-            symbol = currentVocabulary.getSymbolByID(symID)
-
-            self.executeMoveTargetOperation(symbol)
-
-            self.view.setDisplayedSymbolInSelectedMessageTable(symbol)
+            # We first check if the user selected a symbol
+            ID = model[iter][self.view.SYMBOLLISTSTORE_ID_COLUMN]
+            symbol = currentVocabulary.getSymbolByID(ID)
+            if symbol is None:
+                # Else we check if the user selected a layer
+                it_parent = model.iter_parent(iter)
+                symID = model[it_parent][self.view.SYMBOLLISTSTORE_ID_COLUMN]
+                symbol = currentVocabulary.getSymbolByID(symID)
+                layer = symbol.getLayerByID(ID)
+                self.view.setDisplayedSymbolInSelectedMessageTable(layer)
+            else:
+                self.executeMoveTargetOperation(symbol)
+                self.view.setDisplayedSymbolInSelectedMessageTable(symbol)
             self._view.updateSymbolProperties()
 
     def symbolListTreeView_button_press_event_cb(self, treeview, eventButton):
