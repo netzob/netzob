@@ -106,6 +106,11 @@ class ForcePartitioningController(object):
         #close dialog box
         self._view.forceDialog.destroy()
 
+        # Update the message table view
+        self.vocabularyController._view.updateMessageTableDisplayingSymbols(self.symbols)
+        # Update the symbol properties view
+        self.vocabularyController._view.updateLeftPanel()
+
     def forcePartitioning(self, encodedDelimiter, format):
         """Smooth the provided symbols"""
         step = float(100) / float(len(self.symbols))
