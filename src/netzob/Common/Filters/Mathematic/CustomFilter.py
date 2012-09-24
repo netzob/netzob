@@ -54,9 +54,10 @@ class CustomFilter(MathematicFilter):
 
     TYPE = "CustomFilter"
 
-    def __init__(self, name, sourceCode):
+    def __init__(self, name, sourceCode, sourceCodeReverse):
         MathematicFilter.__init__(self, CustomFilter.TYPE, name)
         self.sourceCode = sourceCode + '\n'
+        self.sourceCodeReverse = sourceCodeReverse + '\n'
 
     def apply(self, message):
         output = "00"
@@ -77,18 +78,30 @@ class CustomFilter(MathematicFilter):
                 # Fetch the new value of message
                 output = interpreter.locals['message']
             except Exception, e:
-                logging.warning("Error while appying filter on a message : " + str(e))
-
+                logging.warning("Error while applying filter on a message : " + str(e))
         return output
 
-    def compileSourceCode(self):
-        errorMessage = None
+    def reverse(self, message):
+        output = "00"
+        compiledCode = None
+        toCompile = self.sourceCodeReverse
         try:
-            compiledCode = code.compile_command(self.sourceCode, "string", "exec")
+            compiledCode = code.compile_command(toCompile, "string", "exec")
         except SyntaxError:
             errorMessage = traceback.format_exc().rstrip()
 
-        return errorMessage
+        if compiledCode is not None:
+            try:
+                # Initialize locals with the message
+                locals = {'message': message}
+                interpreter = InteractiveInterpreter(locals)
+                # Run the compiled code
+                interpreter.runcode(compiledCode)
+                # Fetch the new value of message
+                output = interpreter.locals['message']
+            except Exception, e:
+                logging.warning("Error while appying filter on a message : " + str(e))
+        return output
 
     def save(self, root, namespace_common):
         xmlFilter = etree.SubElement(root, "{" + namespace_common + "}filter")
@@ -97,6 +110,8 @@ class CustomFilter(MathematicFilter):
         xmlFilter.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:CustomFilter")
         xmlSourceCode = etree.SubElement(xmlFilter, "{" + namespace_common + "}source-code")
         xmlSourceCode.text = self.getSourceCode()
+        xmlSourceCodeReverse = etree.SubElement(xmlFilter, "{" + namespace_common + "}source-code_reverse")
+        xmlSourceCodeReverse.text = self.getSourceCodeReverse()
 
     @staticmethod
     def loadFromXML(rootElement, namespace, version):
@@ -109,9 +124,33 @@ class CustomFilter(MathematicFilter):
 
         nameFilter = rootElement.get("name")
         sourceCode = rootElement.find("{" + namespace + "}source-code").text
-
-        filter = CustomFilter(nameFilter, sourceCode)
+        if rootElement.find("{" + namespace + "}source-code_reverse") is not None:
+            sourceCodeReverse = rootElement.find("{" + namespace + "}source-code_reverse").text
+        else:
+            sourceCodeReverse = sourceCode
+        filter = CustomFilter(nameFilter, sourceCode, sourceCodeReverse)
         return filter
 
+    def compileSourceCode(self):
+        errorMessage = None
+        try:
+            compiledCode = code.compile_command(self.sourceCode, "string", "exec")
+        except SyntaxError:
+            errorMessage = traceback.format_exc().rstrip()
+
+        return errorMessage
+
+    def compileReverseSourceCode(self):
+        errorMessage = None
+        try:
+            compiledCode = code.compile_command(self.sourceCodeReverse, "string", "exec")
+        except SyntaxError:
+            errorMessage = traceback.format_exc().rstrip()
+
+        return errorMessage
+
     def getSourceCode(self):
+        return self.sourceCode
+
+    def getSourceCodeReverse(self):
         return self.sourceCode

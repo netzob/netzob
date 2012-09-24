@@ -55,6 +55,7 @@ class CustomMathFilterController(object):
         self._view = CustomMathFilterView(self)
         self.symbol = symbol
         self.sourceCode = ""
+        self.reverseSourceCode = ""
         self.filterName = ""
         self.filter = None
 
@@ -64,6 +65,7 @@ class CustomMathFilterController(object):
 
     def run(self):
         self.initSourceCode()
+        self.initReverseSourceCode()
         self.updateMessages()
         self._view.run()
 
@@ -85,24 +87,53 @@ class CustomMathFilterController(object):
     def testYourFilterButton_clicked_cb(self, widget):
         self.dataUpdated()
 
+    def sourceCodeIsTheSameForReverseCheckButton_toggled_cb(self, widget):
+        if self._view.sourceCodeIsTheSameForReverseCheckButton.get_active():
+            self._view.filterReverseTextView.set_editable(False)
+        else:
+            self._view.filterReverseTextView.set_editable(True)
+
     def initSourceCode(self):
         initialSource = """# Type below the Python source code of your filter.
 # The source code must edit the content of a 'message' variable. This variable
 # contains an hexastring value (eg. '0b1c3489') you can 'filter'.
 # An example of a source code would be :
 #
+# ! This source code is for abstracting messages (decrypt, decompress received messages...)
+#
+# An example of a source code would be :
+#
 # message = '00'+message+'00'
 """
         self._view.filterTextView.get_buffer().set_text(initialSource)
 
+    def initReverseSourceCode(self):
+        initialSource = """# Type below the Python source code of your filter.
+# The source code must edit the content of a 'message' variable. This variable
+# contains an hexastring value (eg. '0b1c3489') you can 'filter'.
+#
+# ! This source code is for specifying messages (encrypt, compress sent messages...)
+#
+# An example of a source code would be :
+#
+# message = '00'+message+'00'
+"""
+        self._view.filterReverseTextView.get_buffer().set_text(initialSource)
+
     def dataUpdated(self):
         # retrieve the source code
         self.sourceCode = self._view.filterTextView.get_buffer().get_text(self._view.filterTextView.get_buffer().get_start_iter(), self._view.filterTextView.get_buffer().get_end_iter(), True)
+
+        if self._view.sourceCodeIsTheSameForReverseCheckButton.get_active():
+            self.reverseSourceCode = self.sourceCode
+        else:
+            self.reverseSourceCode = self._view.filterReverseTextView.get_buffer().get_text(self._view.filterReverseTextView.get_buffer().get_start_iter(), self._view.filterReverseTextView.get_buffer().get_end_iter(), True)
+
         # retrieve the name of the filter
         self.filterName = self._view.nameOfFilterEntry.get_text()
 
-        if self.filterName is not None and len(self.filterName) > 0 and self.sourceCode is not None and len(self.sourceCode) > 0:
-            self.filter = CustomFilter(self.filterName, self.sourceCode)
+        if self.filterName is not None and len(self.filterName) > 0 and self.sourceCode is not None and len(self.sourceCode) > 0 and self.reverseSourceCode is not None and len(self.reverseSourceCode) > 0:
+            self.filter = CustomFilter(self.filterName, self.sourceCode, self.reverseSourceCode)
             errorMessage = self.filter.compileSourceCode()
 
             if errorMessage is None:
@@ -122,6 +153,24 @@ class CustomMathFilterController(object):
                 self._view.scrolledwindow3.show_all()
                 self._view.labelMessage.set_label("{0}".format(errorMessage))
                 self._view.labelMessage.show()
+
+            errorMessage = self.filter.compileReverseSourceCode()
+
+            if errorMessage is None:
+                self._view.applyButton.set_sensitive(True)
+                self._view.imageValid.show()
+                self._view.imageError.hide()
+                self._view.scrolledwindow3.show_all()
+            else:
+                self.filter = None
+                self._view.applyButton.set_sensitive(False)
+                self.updateMessages()
+                self._view.imageValid.hide()
+                self._view.imageError.show()
+                self._view.scrolledwindow3.show_all()
+                self._view.labelMessage.set_label("Error with the reverse source code {0}".format(errorMessage))
+                self._view.labelMessage.show()
+
         else:
             self._view.applyButton.set_sensitive(False)
             self._view.imageValid.hide()

@@ -50,10 +50,25 @@ class Base64Filter(MathematicFilter):
         MathematicFilter.__init__(self, Base64Filter.TYPE, name)
 
     def apply(self, message):
+        """apply:
+        Decode in B64 the provided message"""
         result = message
         try:
             rawContent = TypeConvertor.netzobRawToPythonRaw(message)
             b64Content = base64.b64decode(rawContent)
+            result = TypeConvertor.pythonRawToNetzobRaw(b64Content)
+        except TypeError as error:
+            logging.warning("Impossible to compute the base64 value of message (error={0})".format(str(error)))
+            result = ""
+        return result
+
+    def reverse(self, message):
+        """reverse:
+        Encode in B64 the provided message"""
+        result = message
+        try:
+            rawContent = TypeConvertor.netzobRawToPythonRaw(message)
+            b64Content = base64.b64encode(rawContent)
             result = TypeConvertor.pythonRawToNetzobRaw(b64Content)
         except TypeError as error:
             logging.warning("Impossible to compute the base64 value of message (error={0})".format(str(error)))

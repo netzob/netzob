@@ -100,6 +100,7 @@
 			<extension base="netzob-ws:MathematicsFilter">
 				<sequence>
 					<element name="source-code" type="string"></element>
+					<element name="source-code_reverse" type="string" minOccurs="0" maxOccurs="1"></element>
 				</sequence>
 			</extension>
 		</complexContent>

@@ -54,7 +54,7 @@ class CustomMathFilterView(object):
                                                 "customMathFilterDialog.glade"))
         self._getObjects(self.builder, ["customMathFilterDialog",
                                         "imageError", "imageValid", "cancelButton",
-                                        "applyButton", "nameOfFilterEntry", "labelMessage",
+                                        "applyButton", "nameOfFilterEntry", "labelMessage", "filterReverseTextView", "sourceCodeIsTheSameForReverseCheckButton",
                                         "filterTextView", "messagesListStore", "scrolledwindow3"])
         self.controller = controller
         self.builder.connect_signals(self.controller)
