@@ -305,12 +305,10 @@ void getHighestEquivalentGroup2(t_equivalentGroup * result,
 			//printf("matrix %d,%d = %f\n", i, p, scoreMatrix[i][p]);
 			//}
 		}
-		if (callbackStatus(0,
-				(double) 100.0 * (i * nbMessage + nbMessage - 1)
-						/ ((nbMessage - 1) * (nbMessage + 1)),
-				"Building Status: %lf",
-				(float) 100.0 * (i * nbMessage + nbMessage - 1)
-						/ ((nbMessage - 1) * (nbMessage + 1))) == -1) {
+
+		double val = (double) 100.0 * (i * nbMessage + nbMessage - 1) / ((nbMessage - 1) * (nbMessage + 1));
+
+		if (callbackStatus(0,val,"Building Status (%.2lf %%)",(float) val) == -1) {
 			printf("Error, error while executing C callback.\n");
 		}
 	}
