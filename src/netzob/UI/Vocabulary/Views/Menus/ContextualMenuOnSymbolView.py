@@ -86,13 +86,11 @@ class ContextualMenuOnSymbolView(object):
         currentWorkspace = self.controller.vocabularyController.getCurrentWorkspace()
         mathematicFilters = currentWorkspace.getMathematicFilters()
 
-        messages = self.controller.symbol.getMessages()
         # Fetch all the filters attach to messages of current symbol
         filtersInMessages = []
-        for message in messages:
-            for filter in message.getMathematicFilters():
-                if not filter in filtersInMessages:
-                    filtersInMessages.append(filter)
+        for filter in self.controller.symbol.getMathematicFilters():
+            if not filter in filtersInMessages:
+                filtersInMessages.append(filter)
 
         for mathFilter in mathematicFilters:
             toggled = False

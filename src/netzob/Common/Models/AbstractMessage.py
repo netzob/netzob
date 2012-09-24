@@ -203,8 +203,21 @@ class AbstractMessage(object):
 
     def getMathematicFilters(self):
         """Return the activated mathematic filters
-        on message scope"""
-        return self.mathematicFilters
+        on message scope.
+        The list of uniq filters is the result of the merge between
+        the filters of the symbol and of the message.
+        """
+        filters = []
+        filters.extend(self.mathematicFilters)
+        for filter in self.symbol.getMathematicFilters():
+            found = False
+            for f in filters:
+                if f.getName() == filter.getName():
+                    found = True
+                    break
+            if not found:
+                filters.append(filter)
+        return filters
 
     def addMathematicFilter(self, filter):
         """Add a math filter for the message"""
@@ -284,16 +297,11 @@ class AbstractMessage(object):
         splittedData = self.getSplittedData()
 
         if len(splittedData) != len(self.symbol.getFields()):
-
-            print "Nb of expected fields : {0}".format(self.symbol.getFields())
-            print "fields : {0}".format(splittedData)
-
             logging.error("Inconsistency problem between number of fields and the regex application")
             return []
 
         # Add Mathematics filters
         i = 0
-
         for field in self.symbol.getFields():
             filters = field.getMathematicFilters()
 
