@@ -924,6 +924,17 @@ class Symbol(AbstractSymbol):
         """
         self.getRoot().write(writingToken)
         result = writingToken.getValue()
+
+        if len(self.getMathematicFilters()) > 0:
+            result = TypeConvertor.bin2hexstring(result)
+
+        # Before returning the value we apply available custom math filter (reverse method)
+        for filter in self.getMathematicFilters():
+            self.log.debug("Executing reverse method of filter {0} on {1}".format(filter.getName(), result))
+            result = filter.reverse(result)
+
+        result = TypeConvertor.hexstring2bin(result)
+
         return result
 
     def getRoot(self):

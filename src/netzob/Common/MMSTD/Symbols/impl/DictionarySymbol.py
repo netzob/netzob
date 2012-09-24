@@ -68,6 +68,7 @@ class DictionarySymbol(AbstractSymbol):
         """
         self.entry.write(writingToken)
         result = writingToken.getValue()
+
         return result
 
     #+-----------------------------------------------------------------------+
