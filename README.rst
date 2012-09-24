@@ -144,8 +144,7 @@ You're interested in joining, please contact-us !
 Authors, Contributors and Sponsors
 ==================================
 
-See ``Authors.rst`` file in the top distribution directory for the
-updated list of Netzob's friends.
+.. include:: Authors.txt
 
 License
 =======
