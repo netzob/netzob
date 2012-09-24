@@ -144,7 +144,7 @@ You're interested in joining, please contact-us !
 Authors, Contributors and Sponsors
 ==================================
 
-.. include:: Authors.txt
+.. include:: AUTHORS.txt
 
 License
 =======
