@@ -2,7 +2,7 @@ NEWS
 ====
 
 v0.3.3 -- 2012-06-06
-^^^^^^^^^^^^^^^^^^^^
+--------------------
 
 :Version name: FlyingRazorback
 
@@ -28,7 +28,7 @@ v0.3.3 -- 2012-06-06
     * Importer for XML formated traces
 
 v0.3.2 -- 2012-02-23
-^^^^^^^^^^^^^^^^^^^^
+--------------------
 
 * Upgrade Vocabulary Inference
     * Add Octal visualization
@@ -55,12 +55,12 @@ v0.3.2 -- 2012-02-23
     * Apply pep8 quality repository on source code
     	
 v0.3.1 -- 2012-01-12
-^^^^^^^^^^^^^^^^^^^^
+--------------------
 
 * Small fixes
 
 v0.3 -- 2012-01-12
-^^^^^^^^^^^^^^^^^^
+------------------
 
 * Upgraded GUI and user experience
     * Add a menu
@@ -94,13 +94,13 @@ v0.3 -- 2012-01-12
     * Dedicated website (http://www.netzob.org)
 
 v0.2 -- 2011-09-01
-^^^^^^^^^^^^^^^^^^
+------------------
 
 * Add import modules : IPC, PCAP and Live network flows
 * Add export module : raw XML format
 * Improvement of Needleman and Wunsh performance with OpenMP
 
 v0.1 -- 2011-08-16
-^^^^^^^^^^^^^^^^^^
+------------------
 
 * Initial release
