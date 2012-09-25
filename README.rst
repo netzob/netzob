@@ -39,7 +39,7 @@ More Information
 :Website: `http://www.netzob.org <http://www.netzob.org>`_
 :Email: `contact@netzob.org <contact@netzob.org>`_
 :Mailing list: Two lists are available, use the `SYMPA web interface <https://lists.netzob.org/wws>`_ to register.
-:IRC: You can hang-out with us on Freenode's IRC channel `#netzob <irc://irc.freenode.net/netzob>`_
+:IRC: You can hang-out with us on Freenode's IRC channel #netzob @ freenode.org.
 :Wiki: Discuss strategy on `Netzob's wiki <https://dev.netzob.org/projects/netzob/wiki>`_
 :Twitter: Follow Netzob's official accounts (@Netzob)
 
