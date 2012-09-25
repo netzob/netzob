@@ -38,7 +38,7 @@ More Information
 
 :Website: `http://www.netzob.org <http://www.netzob.org>`_
 :Email: `contact@netzob.org <contact@netzob.org>`_
-:Mailing list: Two lists are available, use the `SYMPA web interface <https://lists.netzob.org/wws>`_ to register on them.
+:Mailing list: Two lists are available, use the `SYMPA web interface <https://lists.netzob.org/wws>`_ to register.
 :IRC: You can hang-out with us on Freenode's IRC channel `#netzob <irc://irc.freenode.net/netzob>`_
 :Wiki: Discuss strategy on `Netzob's wiki <https://dev.netzob.org/projects/netzob/wiki>`_
 :Twitter: Follow Netzob's official accounts (@Netzob)
@@ -84,7 +84,7 @@ following bunch of prerequisites before initiating Netzob's install process.
 We also highly recommend to install the following additional dependencies:
 
 * python-babel (for the translations)
-* python-sphinx (for the documentation
+* python-sphinx (for the documentation)
 
 Once the required dependencies are installed, you can test (developer mode) Netzob::
 
@@ -102,7 +102,7 @@ Once installed, running Netzob is as simple as executing the provided script::
 
   $ ./netzob
 
-This script is in Python's path if you've installed Netzob otherwise
+This script is in Python's path if you've installed Netzob, otherwise
 (in developer mode), its located in the top distribution directory.
 
 Documentation
