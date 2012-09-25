@@ -1,6 +1,6 @@
 include AUTHORS.txt
 include COPYING.txt
-include NEWS.txt
+include NEWS.rst
 include PKG-INFO.txt
 include README.rst
 exclude doc/netzob.1
