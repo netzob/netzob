@@ -288,7 +288,7 @@ class TreeViewHeaderWidget(Gtk.VBox):
         self.focused = True
         self.collapsed = False
         self.setSortIndicator(self.SORT_NONE)
-        self.selected = False
+        self.setSelected(False)
 
     def __setupUI(self):
         """Setup GTK widgets"""
