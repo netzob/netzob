@@ -188,7 +188,14 @@ class NetzobMainView(object):
         self.controller.updateListOfAvailableProjects()
 
     def currentWorkspaceHasChanged(self):
-        """Update the view when the current workspace has changed"""
+        """currentWorkspaceHasChanged:
+        Execute the operations which must be done when
+        the current workspace has changed :
+        - Update the view,
+        - Save the new workspace."""
+        if self.controller.getCurrentWorkspace() is not None:
+            ResourcesConfiguration.generateUserFile(self.controller.getCurrentWorkspace().getPath(), ResourcesConfiguration.extractAPIKeyDefinitionFromLocalFile())
+
         self.currentProjectHasChanged()
         self.updateSwitchProjectMenu(self.controller.getCurrentWorkspace().getNameOfProjects())
 
