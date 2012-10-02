@@ -158,14 +158,14 @@ class MMSTD(Automata):
         states = self.getStates()
         for state in states:
             if state.isActive():
-                dotCode = dotCode + "\"" + state.getName() + "\" [style=filled, fillcolor = red];\n"
+                dotCode = dotCode + "\"" + state.getName() + "\" [style=filled, fillcolor = red, URL = \"" + state.getID() + "\"];\n"
             else:
-                dotCode = dotCode + "\"" + state.getName() + "\" [style=filled, fillcolor = white];\n"
+                dotCode = dotCode + "\"" + state.getName() + "\" [style=filled, fillcolor = white, URL = \"" + state.getID() + "\"];\n"
 
         for inputState in states:
             for transition in inputState.getTransitions():
                 outputState = transition.getOutputState()
-                dotCode = dotCode + "\"" + inputState.getName() + "\" -> \"" + outputState.getName() + "\" [fontsize=5, label=\"" + transition.getDescription() + "\"]\n"
+                dotCode = dotCode + "\"" + inputState.getName() + "\" -> \"" + outputState.getName() + "\" [fontsize=5, label=\"" + transition.getDescription() + "\", URL = \"" + transition.getID() + "\"]\n"
 
         dotCode = dotCode + "}"
         return dotCode

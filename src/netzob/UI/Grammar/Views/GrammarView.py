@@ -41,6 +41,7 @@ from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.Simulator.XDotWidget import XDotWidget
 from netzob.Common.MMSTD.States.impl.NormalState import NormalState
 from netzob.Common.MMSTD.MMSTD import MMSTD
+from netzob.UI.Grammar.Views.GrammarXDotWidget import GrammarXDotWidget
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
@@ -63,7 +64,7 @@ class GrammarView(object):
         self._loadActionGroupUIDefinition()
         self.builder.connect_signals(self.controller)
 
-        self.xdotWidget = XDotWidget()
+        self.xdotWidget = GrammarXDotWidget()
         self.xdotWidget.show_all()
         self.paned1.add(self.xdotWidget)
 

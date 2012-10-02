@@ -385,7 +385,6 @@ class Node(Element):
     def get_url(self, x, y):
         if self.url is None:
             return None
-        #print (x, y), (self.x1, self.y1), "-", (self.x2, self.y2)
         if self.is_inside(x, y):
             return Url(self, self.url)
         return None
@@ -1408,7 +1407,7 @@ class DotWidget(Gtk.DrawingArea):
     """PyGTK widget that draws dot graphs."""
 
     __gsignals__ = {
-        'clicked': (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_STRING, Gdk.Event))
+        'clicked': (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_STRING, GObject.TYPE_PYOBJECT))
     }
 
     filter = 'dot'
@@ -1429,6 +1428,7 @@ class DotWidget(Gtk.DrawingArea):
         self.add_events(Gdk.EventMask.SCROLL_MASK)
         self.connect("scroll-event", self.on_area_scroll_event)
         self.connect("size-allocate", self.on_area_size_allocate)
+
 
         self.connect('key-press-event', self.on_key_press_event)
 
@@ -1487,7 +1487,6 @@ class DotWidget(Gtk.DrawingArea):
             return True
 
     def set_xdotcode(self, xdotcode):
-        # print xdotcode
         parser = XDotParser(xdotcode)
         self.graph = parser.parse()
         self.zoom_image(self.zoom_ratio, center=True)
@@ -1679,7 +1678,12 @@ class DotWidget(Gtk.DrawingArea):
                     self.animate_to(jump.x, jump.y)
 
             return True
-        if event.button == 1 or event.button == 2:
+        if event.button == 3 and self.is_click(event):
+            x, y = int(event.x), int(event.y)
+            url = self.get_url(x, y)
+            if url is not None:
+                self.emit('clicked', unicode(url.url), event)
+
             return True
         return False
 
