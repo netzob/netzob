@@ -25,61 +25,60 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 #| Standard library imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 from gettext import gettext as _
+import logging
+import time
+import uuid
+
+#+---------------------------------------------------------------------------+
+#| Related third party imports
+#+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk, GObject
 import gi
-from netzob.UI.Grammar.Controllers.Menus.ContextualMenuOnStateController import ContextualMenuOnStateController
+from netzob.UI.Grammar.Views.Menus.ContextualMenuOnStateView import ContextualMenuOnStateView
 gi.require_version('Gtk', '3.0')
+from gi.repository import GObject
+from gi.repository import Pango
 
-#+----------------------------------------------
-#| Related third party imports
-#+----------------------------------------------
-from netzob.Simulator.XDotWidget import XDotWidget
-
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 #| Local application imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 
 
-#+----------------------------------------------
-#| Configuration of the logger
-#+----------------------------------------------
+class ContextualMenuOnStateController(object):
+    """Contextual menu on state"""
 
-
-#+----------------------------------------------
-#| XDotWidget:
-#|    Integrates an XDot graph in a PyGtk window
-#+----------------------------------------------
-class GrammarXDotWidget(XDotWidget):
-
-    def __init__(self, grammarController):
-        XDotWidget.__init__(self)
+    def __init__(self, grammarController, state):
         self.grammarController = grammarController
-        self.connect('clicked', self.on_click_action)
+        self.state = state
+        self._view = ContextualMenuOnStateView(self)
+        self.log = logging.getLogger(__name__)
 
-    def on_click_action(self, object, url, event):
-        if event.button == 3:
+    @property
+    def view(self):
+        return self._view
 
-            state = self.getStateWithID(url)
-            if state is not None:
-                controller = ContextualMenuOnStateController(self.grammarController, state)
-                controller.run(event)
+    def run(self, event):
+        self._view.run(event)
 
-    def getStateWithID(self, id):
-        currentProject = self.grammarController.getCurrentProject()
-        if currentProject is None:
-            return
+    def getState(self):
+        return self.state
 
-        automata = currentProject.getGrammar().getAutomata()
-        for state in automata.getStates():
-            print id
-            if str(state.getID()) == str(id):
-                return state
-        return None
+    def editState_cb(self, widget):
+        """callback executed when the user wants to edit a state"""
+        print "edit state"
 
-    def drawAutomata(self, automata):
-        self.set_dotcode(automata.getDotCode())
-        self.zoom_to_fit()
+    def deleteState_cb(self, widget):
+        """callback executed when the user wants to delete a state"""
+        print "delete state"
+
+    def editTransition_cb(self, widget, transition):
+        """callback executed when the user wants to edit a transition"""
+        print "edit transiton"
+
+    def deleteTransition_cb(self, widget, transition):
+        """callback executed when the user wants to delete a transition"""
+        print "delete transiton"

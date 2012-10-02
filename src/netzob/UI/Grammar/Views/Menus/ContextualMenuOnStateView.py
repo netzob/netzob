@@ -25,61 +25,66 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 #| Standard library imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 from gettext import gettext as _
-from gi.repository import Gtk, Gdk, GObject
-import gi
-from netzob.UI.Grammar.Controllers.Menus.ContextualMenuOnStateController import ContextualMenuOnStateController
-gi.require_version('Gtk', '3.0')
+import os
 
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 #| Related third party imports
-#+----------------------------------------------
-from netzob.Simulator.XDotWidget import XDotWidget
+#+---------------------------------------------------------------------------+
+from gi.repository import Gtk, Gdk
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject
 
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 #| Local application imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 
 
-#+----------------------------------------------
-#| Configuration of the logger
-#+----------------------------------------------
+class ContextualMenuOnStateView(object):
 
+    def __init__(self, controller):
+        self.controller = controller
 
-#+----------------------------------------------
-#| XDotWidget:
-#|    Integrates an XDot graph in a PyGtk window
-#+----------------------------------------------
-class GrammarXDotWidget(XDotWidget):
+    def run(self, event):
+        self.menu = Gtk.Menu()
 
-    def __init__(self, grammarController):
-        XDotWidget.__init__(self)
-        self.grammarController = grammarController
-        self.connect('clicked', self.on_click_action)
+        # Add entry to edit state
+        item = Gtk.MenuItem(_("Edit State"))
+        item.show()
+        item.connect("activate", self.controller.editState_cb)
+        self.menu.append(item)
 
-    def on_click_action(self, object, url, event):
-        if event.button == 3:
+        # Transitions
+        for transition in self.controller.getState().getTransitions():
+            subMenu = self.build_submenu_for_transition(transition)
+            item = Gtk.MenuItem(_("Transition {0}".format(transition.getName())))
+            item.set_submenu(subMenu)
+            item.show()
+            self.menu.append(item)
 
-            state = self.getStateWithID(url)
-            if state is not None:
-                controller = ContextualMenuOnStateController(self.grammarController, state)
-                controller.run(event)
+        # Add entry to delete state
+        item = Gtk.MenuItem(_("Delete State"))
+        item.show()
+        item.connect("activate", self.controller.deleteState_cb)
+        self.menu.append(item)
 
-    def getStateWithID(self, id):
-        currentProject = self.grammarController.getCurrentProject()
-        if currentProject is None:
-            return
+        self.menu.popup(None, None, None, None, event.button, event.time)
 
-        automata = currentProject.getGrammar().getAutomata()
-        for state in automata.getStates():
-            print id
-            if str(state.getID()) == str(id):
-                return state
-        return None
+    def build_submenu_for_transition(self, transition):
+        menu = Gtk.Menu()
 
-    def drawAutomata(self, automata):
-        self.set_dotcode(automata.getDotCode())
-        self.zoom_to_fit()
+        item = Gtk.MenuItem(_("Edit"))
+        item.show()
+        item.connect("activate", self.controller.editTransition_cb, transition)
+        menu.append(item)
+
+        item = Gtk.MenuItem(_("Delete"))
+        item.show()
+        item.connect("activate", self.controller.deleteTransition_cb, transition)
+        menu.append(item)
+
+        return menu

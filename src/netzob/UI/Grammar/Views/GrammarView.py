@@ -64,7 +64,7 @@ class GrammarView(object):
         self._loadActionGroupUIDefinition()
         self.builder.connect_signals(self.controller)
 
-        self.xdotWidget = GrammarXDotWidget()
+        self.xdotWidget = GrammarXDotWidget(self.controller)
         self.xdotWidget.show_all()
         self.paned1.add(self.xdotWidget)
 
