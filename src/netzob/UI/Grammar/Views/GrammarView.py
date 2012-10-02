@@ -113,6 +113,8 @@ class GrammarView(object):
             return
 
         grammar = self.controller.getCurrentProject().getGrammar()
+        grammar.update(self.controller.getCurrentProject().getVocabulary())
+
         if grammar is not None:
             automata = grammar.getAutomata()
             if automata is not None:

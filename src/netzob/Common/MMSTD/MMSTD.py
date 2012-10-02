@@ -29,9 +29,18 @@
 #| Standard library imports
 #+----------------------------------------------
 from gettext import gettext as _
-import logging
-from lxml.etree import ElementTree
 from lxml import etree
+from lxml.etree import ElementTree
+from netzob.Common.Automata import Automata
+from netzob.Common.MMSTD.Actors.SimpleCommunicationChannel import \
+    SimpleCommunicationLayer
+from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
+from netzob.Common.MMSTD.Dictionary.Memory import Memory
+from netzob.Common.MMSTD.States.AbstractState import AbstractState
+from netzob.Common.MMSTD.Transitions.AbstractTransition import \
+    AbstractTransition
+import logging
+from netzob.Common.MMSTD.Transitions.impl.SemiStochasticTransition import SemiStochasticTransition
 
 #+----------------------------------------------
 #| Related third party imports
@@ -40,12 +49,6 @@ from lxml import etree
 #+----------------------------------------------
 #| Local application imports
 #+----------------------------------------------
-from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
-from netzob.Common.MMSTD.Actors.SimpleCommunicationChannel import SimpleCommunicationLayer
-from netzob.Common.MMSTD.Dictionary.Memory import Memory
-from netzob.Common.MMSTD.States.AbstractState import AbstractState
-from netzob.Common.MMSTD.Transitions.AbstractTransition import AbstractTransition
-from netzob.Common.Automata import Automata
 
 
 #+----------------------------------------------
@@ -200,6 +203,32 @@ class MMSTD(Automata):
             else:
                 self.log.error("state = NONE !!")
         return states
+
+    def update(self, vocabulary):
+        """update the definition of the automata
+        and searched for deprecated symbols"""
+        deprecatedTransitions = []
+        for transition in self.transitions:
+            if transition.getType() == SemiStochasticTransition.TYPE:
+                symbols = []
+                symbols.append(transition.getInputSymbol())
+                for (s, p, ti) in transition.getOutputSymbols():
+                    symbols.append(s)
+
+                error = False
+                for symbol in symbols:
+                    found = False
+                    for s in vocabulary.getSymbols():
+                        if str(s.getID()) == str(symbol.getID()):
+                            found = True
+                            break
+                    if not found:
+                        error = True
+                        break
+                if error:
+                    deprecatedTransitions.append(transition)
+        for transiton in deprecatedTransitions:
+            self.removeTransition(transition)
 
     #+---------------------------------------------------------------------------+
     #| Save & Load
