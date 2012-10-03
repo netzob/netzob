@@ -208,6 +208,9 @@ ui_data_files = find_data_files(opj("share", "netzob", "ui"), opj(netzobStaticRe
 
 data_files = root_data_files + app_data_files + icons_data_files + default_data_files + xsds_data_files + locale_data_files + ui_data_files
 
+# Extract the long description from README.rst and NEWS.rst files
+README = open('README.rst', 'rt').read()
+NEWS = open('NEWS.rst', 'rt').read()
 
 #+----------------------------------------------------------------------------
 #| Definition of Netzob for setup
@@ -244,7 +247,7 @@ setup(
         "Topic :: Security",
         "Topic :: System :: Networking",
     ],
-    long_description=release.long_description,
+    long_description=README + '\n' + NEWS,
     cmdclass=CMD_CLASS,
     entry_points="""
         [netzob.plugins]

@@ -25,52 +25,58 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
+#+----------------------------------------------
 #| Standard library imports
-#+---------------------------------------------------------------------------+
-import logging
-import base64
+#+----------------------------------------------
+from gettext import gettext as _
+from gi.repository import Gtk, Gdk, GObject
+import gi
+from netzob.UI.Grammar.Controllers.Menus.ContextualMenuOnStateController import ContextualMenuOnStateController
+gi.require_version('Gtk', '3.0')
 
-#+---------------------------------------------------------------------------+
+#+----------------------------------------------
+#| Related third party imports
+#+----------------------------------------------
+from netzob.Simulator.XDotWidget import XDotWidget
+
+#+----------------------------------------------
 #| Local application imports
-#+---------------------------------------------------------------------------+
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Filters.MathematicFilter import MathematicFilter
+#+----------------------------------------------
 
 
-#+---------------------------------------------------------------------------+
-#| Base64Filter:
-#|     Definition of a base64 transformation filter
-#+---------------------------------------------------------------------------+
-class Base64Filter(MathematicFilter):
+#+----------------------------------------------
+#| Configuration of the logger
+#+----------------------------------------------
 
-    TYPE = "FormatFilter"
 
-    def __init__(self, name):
-        MathematicFilter.__init__(self, Base64Filter.TYPE, name)
+#+----------------------------------------------
+#| XDotWidget:
+#|    Integrates an XDot graph in a PyGtk window
+#+----------------------------------------------
+class GrammarXDotWidget(XDotWidget):
 
-    def apply(self, message):
-        """apply:
-        Decode in B64 the provided message"""
-        result = message
-        try:
-            rawContent = TypeConvertor.netzobRawToPythonRaw(message)
-            b64Content = base64.b64decode(rawContent)
-            result = TypeConvertor.pythonRawToNetzobRaw(b64Content)
-        except TypeError as error:
-            logging.warning("Impossible to compute the base64 value of message (error={0})".format(str(error)))
-            result = ""
-        return result
+    def __init__(self, grammarController):
+        XDotWidget.__init__(self)
+        self.grammarController = grammarController
+        self.connect('clicked', self.on_click_action)
 
-    def reverse(self, message):
-        """reverse:
-        Encode in B64 the provided message"""
-        result = message
-        try:
-            rawContent = TypeConvertor.netzobRawToPythonRaw(message)
-            b64Content = base64.b64encode(rawContent)
-            result = TypeConvertor.pythonRawToNetzobRaw(b64Content)
-        except TypeError as error:
-            logging.warning("Impossible to compute the base64 value of message (error={0})".format(str(error)))
-            result = ""
-        return result
+    def on_click_action(self, object, url, event):
+        if event.button == 3:
+            state = self.getStateWithID(url)
+            if state is not None:
+                controller = ContextualMenuOnStateController(self.grammarController, state)
+                controller.run(event)
+
+    def getStateWithID(self, id):
+        currentProject = self.grammarController.getCurrentProject()
+        if currentProject is None:
+            return
+        automata = currentProject.getGrammar().getAutomata()
+        for state in automata.getStates():
+            if str(state.getID()) == str(id):
+                return state
+        return None
+
+    def drawAutomata(self, automata):
+        self.set_dotcode(automata.getDotCode())
+        self.zoom_to_fit()

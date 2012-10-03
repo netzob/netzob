@@ -182,7 +182,7 @@ class AbstractionLayer():
         # First we specialize the symbol in a message
         binMessage = self.specialize(symbol)
         strMessage = TypeConvertor.bin2strhex(binMessage)
-        self.log.info("- str = '" + strMessage + "'")
+        self.log.info("Write str message = '" + strMessage + "'")
 
         # now we send it
         now = datetime.datetime.now()

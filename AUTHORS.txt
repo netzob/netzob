@@ -15,3 +15,9 @@ Contributors
   * Fabien André (developer)
   * Quentin Heyler (developer)
   * Benjamin Dufour (developer)
+
+Sponsors
+--------
+
+  * AMOSSYS: http://www.amossys.fr
+  * Supélec: http://www.rennes.supelec.fr/ren/rd/cidre/

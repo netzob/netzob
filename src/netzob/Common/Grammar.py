@@ -61,6 +61,12 @@ class Grammar(object):
         else:
             logging.debug("Can't add the provided sequence, since its already registered")
 
+    def update(self, vocabulary):
+        """update:
+        verifies the grammar and its automata is still valid
+        and that none of its symbols has been deprecated"""
+        self.automata.update(vocabulary)
+
     #+-----------------------------------------------------------------------+
     #| Save & Load
     #+-----------------------------------------------------------------------+

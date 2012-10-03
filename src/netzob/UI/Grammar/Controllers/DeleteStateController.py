@@ -28,49 +28,54 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
+from gettext import gettext as _
 import logging
-import base64
+import time
+import uuid
+
+#+---------------------------------------------------------------------------+
+#| Related third party imports
+#+---------------------------------------------------------------------------+
+from gi.repository import Gtk, Gdk
+import gi
+from netzob.UI.Grammar.Views.DeleteStateView import DeleteStateView
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Filters.MathematicFilter import MathematicFilter
 
 
-#+---------------------------------------------------------------------------+
-#| Base64Filter:
-#|     Definition of a base64 transformation filter
-#+---------------------------------------------------------------------------+
-class Base64Filter(MathematicFilter):
+class DeleteStateController(object):
+    """Manages the deletetion of a state"""
 
-    TYPE = "FormatFilter"
+    def __init__(self, grammarController, state):
+        self.grammarController = grammarController
+        self.state = state
+        self._view = DeleteStateView(self, self.state)
+        self.log = logging.getLogger(__name__)
 
-    def __init__(self, name):
-        MathematicFilter.__init__(self, Base64Filter.TYPE, name)
+    @property
+    def view(self):
+        return self._view
 
-    def apply(self, message):
-        """apply:
-        Decode in B64 the provided message"""
-        result = message
-        try:
-            rawContent = TypeConvertor.netzobRawToPythonRaw(message)
-            b64Content = base64.b64decode(rawContent)
-            result = TypeConvertor.pythonRawToNetzobRaw(b64Content)
-        except TypeError as error:
-            logging.warning("Impossible to compute the base64 value of message (error={0})".format(str(error)))
-            result = ""
-        return result
+    def deleteStateButton_clicked_cb(self, widget):
+        currentProject = self.grammarController.getCurrentProject()
+        if currentProject is None or self.state is None:
+            return
+        grammar = currentProject.getGrammar()
+        automata = grammar.getAutomata()
+        if automata is None:
+            return
 
-    def reverse(self, message):
-        """reverse:
-        Encode in B64 the provided message"""
-        result = message
-        try:
-            rawContent = TypeConvertor.netzobRawToPythonRaw(message)
-            b64Content = base64.b64encode(rawContent)
-            result = TypeConvertor.pythonRawToNetzobRaw(b64Content)
-        except TypeError as error:
-            logging.warning("Impossible to compute the base64 value of message (error={0})".format(str(error)))
-            result = ""
-        return result
+        automata.removeState(self.state)
+        self._view.destroy()
+
+        self.grammarController.restart()
+
+    def cancelButton_clicked_cb(self, widget):
+        self._view.destroy()
+
+    def run(self):
+        self._view.run()

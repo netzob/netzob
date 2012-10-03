@@ -59,8 +59,23 @@ class MathematicFilter(RenderingFilter):
     #|     MUST BE IMPLEMENTED IN SUB CLASSES
     #+-----------------------------------------------------------------------+
     def apply(self, message):
-        self.log.error("The filter class (" + self.getType() + ") doesn't define 'isValid' !")
-        raise NotImplementedError("The filter class (" + self.getType() + ") doesn't define 'isValid' !")
+        """apply:
+        Apply the filter on the provided message"""
+
+        self.log.error("The filter class (" + self.getType() + ") doesn't define 'apply' !")
+        raise NotImplementedError("The filter class (" + self.getType() + ") doesn't define 'apply' !")
+
+    #+-----------------------------------------------------------------------+
+    #| reverse
+    #|     Abstract method to reverse the filter on a provided message (
+    #|     MUST BE IMPLEMENTED IN SUB CLASSES
+    #+-----------------------------------------------------------------------+
+    def reverse(self, message):
+        """reverse:
+        Apply the reverse filter on the provided message"""
+
+        self.log.error("The filter class (" + self.getType() + ") doesn't define 'reverse' !")
+        raise NotImplementedError("The filter class (" + self.getType() + ") doesn't define 'reverse' !")
 
     def save(self, root, namespace_common):
         """Save under the provided XML root the current maths filter"""

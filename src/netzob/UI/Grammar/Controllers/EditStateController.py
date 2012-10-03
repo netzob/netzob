@@ -29,42 +29,89 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import os
+import logging
+import time
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk
 import gi
+from netzob.Common.MMSTD.States.impl.NormalState import NormalState
+from netzob.Common.MMSTD.MMSTD import MMSTD
+from netzob.UI.Grammar.Views.EditStateView import EditStateView
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
-class CustomMathFilterView(object):
+class EditStateController(object):
+    """Manages the edition of a state"""
 
-    def __init__(self, controller):
-        self.builder = Gtk.Builder()
-        self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
-                                                "ui", "vocabulary",
-                                                "customMathFilterDialog.glade"))
-        self._getObjects(self.builder, ["customMathFilterDialog",
-                                        "imageError", "imageValid", "cancelButton",
-                                        "applyButton", "nameOfFilterEntry", "labelMessage", "filterReverseTextView", "sourceCodeIsTheSameForReverseCheckButton",
-                                        "filterTextView", "messagesListStore", "scrolledwindow3"])
-        self.controller = controller
-        self.builder.connect_signals(self.controller)
+    def __init__(self, grammarController, state):
+        self.grammarController = grammarController
+        self.state = state
+        self._view = EditStateView(self, self.state)
+        self.log = logging.getLogger(__name__)
 
-    def _getObjects(self, builder, objectsList):
-        for obj in objectsList:
-            setattr(self, obj, builder.get_object(obj))
+    @property
+    def view(self):
+        return self._view
+
+    def displayErrorMessage(self, errorMessage):
+        if errorMessage is None:
+            self._view.errorImage.hide()
+            self._view.errorLabel.set_label("")
+            self._view.errorLabel.hide()
+        else:
+            self._view.errorLabel.set_label(errorMessage)
+            self._view.errorLabel.show()
+            self._view.errorImage.show()
+
+    def cancelButton_clicked_cb(self, event):
+        """Callback executed when the user clicks on the cancel button"""
+        self._view.destroy()
+
+    def createButton_clicked_cb(self, event):
+        currentProject = self.grammarController.getCurrentProject()
+
+        """callback executed when the user clicks on the create button"""
+        initialState = self._view.initialStateCheckButton.get_active()
+        stateName = self._view.nameEntry.get_text()
+
+        automata = currentProject.getGrammar().getAutomata()
+
+        errorMessage = None
+        # verify initialState is valid
+        if not initialState and automata.getInitialState() == self.state:
+            errorMessage = _("You cannot deactivate an initial state.")
+            self.displayErrorMessage(errorMessage)
+            return
+
+        # verify the name of the state is unique
+        found = False
+        if automata is not None:
+            for state in automata.getStates():
+                if state.getName() == stateName and state != self.state:
+                    found = True
+                    break
+
+        if found:
+            errorMessage = _("A state already has this name, please specify another one")
+            self.displayErrorMessage(errorMessage)
+            return
+
+        self.state.setName(stateName)
+
+        if initialState:
+            automata.setInitialState(self.state)
+
+        self._view.destroy()
+        self.grammarController.restart()
 
     def run(self):
-        self.customMathFilterDialog.run()
-
-    def destroy(self):
-        self.customMathFilterDialog.destroy()
+        self._view.run()

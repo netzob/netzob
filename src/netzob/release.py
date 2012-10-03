@@ -103,26 +103,14 @@ translator_credits = """Français : Olivier Tétard <olivier.tetard@amossys.fr>"
 #+---------------------------------------------------------------------------+
 #| Keywords to describe the application
 #+---------------------------------------------------------------------------+
-keywords = ["Protocol", "Inference", "Networking", "Reverse Engineering", "Security"]
+keywords = ["Protocol", "Inference", "Networking", "Reverse Engineering", "Fuzzing", "Security"]
 
 #+---------------------------------------------------------------------------+
 #| Long description
+#| <!> Do not use it anymore
 #+---------------------------------------------------------------------------+
-long_description = """
-Inferring communication protocols
-
-=================================
-
-
-Netzob simplifies the work for security auditors by providing a complete framework
-for the reverse engineering of communication protocols.
-
-
-It handles different types of protocols : text protocols (like HTTP and IRC), fixed fields protocols (like IP and TCP)
-and variable fields protocols (like ASN.1 based formats).
-Netzob is therefore suitable for reversing network protocols, structured files and system and process
-flows (IPC and communication with drivers). Netzob is provided with modules dedicated to capture data in
-multiple contexts (network, file, process and kernel data acquisition)."""
+"""@deprecated: the official long description is now the full README.rst file"""
+long_description = ""
 
 #+---------------------------------------------------------------------------+
 #| License used to publish the tool

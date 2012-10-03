@@ -82,6 +82,8 @@ class IpcCapturerController(AbstractCapturerController):
         """
         self.view.fdStore.clear()
         processSelected = self.view.processCombo.get_active_text()
+        if processSelected is None or processSelected == "":
+            return
         self.model.pid = int(processSelected.split()[0])
         filter_fs = self.view.fsFilterButton.get_active()
         filter_net = self.view.networkFilterButton.get_active()

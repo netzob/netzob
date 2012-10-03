@@ -62,3 +62,17 @@ class GZipFilter(MathematicFilter):
             logging.info("Impossible to apply GZip filter on provided message (error= {0})".format(str(e)))
             result = ""
         return result
+
+    def reverse(self, message):
+        result = message
+        rawData = TypeConvertor.netzobRawToPythonRaw(message)
+        compressedstream = StringIO.StringIO()
+        try:
+            gzipper = gzip.GzipFile(fileobj=compressedstream, mode='w')
+            gzipper.write(rawData)
+            gzipper.close()
+            result = TypeConvertor.pythonRawToNetzobRaw(compressedstream.getvalue())
+        except Exception as e:
+            logging.info("Impossible to apply GZip filter on provided message (error= {0})".format(str(e)))
+            result = ""
+        return result

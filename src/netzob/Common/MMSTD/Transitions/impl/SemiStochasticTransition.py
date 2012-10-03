@@ -212,8 +212,7 @@ class SemiStochasticTransition(AbstractTransition):
         desc = []
         for outSymbolDesc in self.getOutputSymbols():
             desc.append("(" + str(outSymbolDesc[0].getName()) + ", " + str(outSymbolDesc[1]) + "%, " + str(outSymbolDesc[2]) + "ms)")
-
-        return "(" + str(inputSymbolName) + ";{" + ",".join(desc) + "})"
+        return self.getName() + " (" + str(inputSymbolName) + ";{" + ",".join(desc) + "})"
 
     def save(self, root, namespace):
         xmlTransition = etree.SubElement(root, "{" + namespace + "}transition")

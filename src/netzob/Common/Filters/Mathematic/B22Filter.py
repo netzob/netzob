@@ -50,12 +50,27 @@ class BZ2Filter(MathematicFilter):
         MathematicFilter.__init__(self, BZ2Filter.TYPE, name)
 
     def apply(self, message):
+        """apply:
+        This decompress the provided message in bz2"""
         result = message
         rawData = TypeConvertor.netzobRawToPythonRaw(message)
         try:
             rawResult = bz2.decompress(rawData)
             result = TypeConvertor.pythonRawToNetzobRaw(rawResult)
         except Exception as e:
-            logging.info("Impossible to apply BZ2 filter on provided message (error= {0})".format(str(e)))
+            logging.info("Impossible to apply BZ2 filter (decompress) on provided message (error= {0})".format(str(e)))
+            result = ""
+        return result
+
+    def reverse(self, message):
+        """reverse:
+        This compress the provided message in bz2 format"""
+        result = message
+        rawData = TypeConvertor.netzobRawToPythonRaw(message)
+        try:
+            rawResult = bz2.compress(rawData)
+            result = TypeConvertor.pythonRawToNetzobRaw(rawResult)
+        except Exception as e:
+            logging.info("Impossible to reverse BZ2 filter (compress) on provided message (error= {0})".format(str(e)))
             result = ""
         return result

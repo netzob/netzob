@@ -114,6 +114,10 @@ class MessageTableView(object):
                 column_header.set_focus_on_click(False)
         return messageTableTreeView
 
+    def refreshProperties(self):
+        """refresh the properties like background color"""
+        self.messageTableTreeView.queue_draw()
+
     def __makeTreeViewColumn(self, startOfColumns, i):
         i = i - 1
         markupCellRenderer = Gtk.CellRendererText()
@@ -292,7 +296,7 @@ class TreeViewHeaderWidget(Gtk.VBox):
         self.focused = True
         self.collapsed = False
         self.setSortIndicator(self.SORT_NONE)
-        self.selected = False
+        self.setSelected(False)
 
     def __setupUI(self):
         """Setup GTK widgets"""
@@ -429,10 +433,23 @@ class TreeViewHeaderWidget(Gtk.VBox):
         """Selects or unselects the column"""
         self.selected = selected
         if selected:
+            # change background of column
+            if self.treeViewColumn is not None and self.treeViewColumn.get_cells() is not None and len(self.treeViewColumn.get_cells()) > 0:
+                cellRenderer = self.treeViewColumn.get_cells()[0]
+                cellRenderer.set_property("background", "grey")
+                self.messageTableView.refreshProperties()
+
             boldFont = Pango.FontDescription()
             boldFont.set_weight(Pango.Weight.BOLD)
             self.titleLabel.modify_font(boldFont)
+
         else:
+            # change background of column
+            if self.treeViewColumn is not None and self.treeViewColumn.get_cells() is not None and len(self.treeViewColumn.get_cells()) > 0:
+                cellRenderer = self.treeViewColumn.get_cells()[0]
+                cellRenderer.set_property("background", "white")
+                self.messageTableView.refreshProperties()
+
             normalFont = Pango.FontDescription()
             normalFont.set_weight(Pango.Weight.NORMAL)
             self.titleLabel.modify_font(normalFont)

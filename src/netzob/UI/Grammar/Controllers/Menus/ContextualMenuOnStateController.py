@@ -28,49 +28,61 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
+from gettext import gettext as _
 import logging
-import base64
+import time
+import uuid
+
+#+---------------------------------------------------------------------------+
+#| Related third party imports
+#+---------------------------------------------------------------------------+
+from gi.repository import Gtk, Gdk, GObject
+import gi
+from netzob.UI.Grammar.Views.Menus.ContextualMenuOnStateView import ContextualMenuOnStateView
+from netzob.UI.Grammar.Controllers.DeleteStateController import DeleteStateController
+from netzob.UI.Grammar.Controllers.EditStateController import EditStateController
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject
+from gi.repository import Pango
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Filters.MathematicFilter import MathematicFilter
 
 
-#+---------------------------------------------------------------------------+
-#| Base64Filter:
-#|     Definition of a base64 transformation filter
-#+---------------------------------------------------------------------------+
-class Base64Filter(MathematicFilter):
+class ContextualMenuOnStateController(object):
+    """Contextual menu on state"""
 
-    TYPE = "FormatFilter"
+    def __init__(self, grammarController, state):
+        self.grammarController = grammarController
+        self.state = state
+        self._view = ContextualMenuOnStateView(self)
+        self.log = logging.getLogger(__name__)
 
-    def __init__(self, name):
-        MathematicFilter.__init__(self, Base64Filter.TYPE, name)
+    @property
+    def view(self):
+        return self._view
 
-    def apply(self, message):
-        """apply:
-        Decode in B64 the provided message"""
-        result = message
-        try:
-            rawContent = TypeConvertor.netzobRawToPythonRaw(message)
-            b64Content = base64.b64decode(rawContent)
-            result = TypeConvertor.pythonRawToNetzobRaw(b64Content)
-        except TypeError as error:
-            logging.warning("Impossible to compute the base64 value of message (error={0})".format(str(error)))
-            result = ""
-        return result
+    def run(self, event):
+        self._view.run(event)
 
-    def reverse(self, message):
-        """reverse:
-        Encode in B64 the provided message"""
-        result = message
-        try:
-            rawContent = TypeConvertor.netzobRawToPythonRaw(message)
-            b64Content = base64.b64encode(rawContent)
-            result = TypeConvertor.pythonRawToNetzobRaw(b64Content)
-        except TypeError as error:
-            logging.warning("Impossible to compute the base64 value of message (error={0})".format(str(error)))
-            result = ""
-        return result
+    def getState(self):
+        return self.state
+
+    def editState_cb(self, widget):
+        """callback executed when the user wants to edit a state"""
+        controller = EditStateController(self.grammarController, self.state)
+        controller.run()
+
+    def deleteState_cb(self, widget):
+        """callback executed when the user wants to delete a state"""
+        controller = DeleteStateController(self.grammarController, self.state)
+        controller.run()
+
+    def editTransition_cb(self, widget, transition):
+        """callback executed when the user wants to edit a transition"""
+        print "edit transition"
+
+    def deleteTransition_cb(self, widget, transition):
+        """callback executed when the user wants to delete a transition"""
+        print "delete transition"

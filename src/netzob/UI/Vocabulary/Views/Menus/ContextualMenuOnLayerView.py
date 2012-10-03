@@ -101,10 +101,9 @@ class ContextualMenuOnLayerView(object):
         messages = self.controller.layer.getMessages()
         # Fetch all the filters attach to messages of current layer (either symbol of fieldLayer)
         filtersInMessages = []
-        for message in messages:
-            for filter in message.getMathematicFilters():
-                if not filter in filtersInMessages:
-                    filtersInMessages.append(filter)
+        for filter in self.controller.symbol.getMathematicFilters():
+            if not filter in filtersInMessages:
+                filtersInMessages.append(filter)
 
         for mathFilter in mathematicFilters:
             toggled = False

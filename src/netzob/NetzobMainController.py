@@ -498,7 +498,9 @@ class NetzobMainController(object):
             applyButton.set_sensitive(False)
 
     def switchWorkspace_activate_cb(self, action):
-
+        """switchWorkspace_activate_cb:
+        Callback executed when the user requests to switch to another
+        workspace"""
         finish = False
         errorMessage = None
         while not finish:

@@ -28,49 +28,63 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging
-import base64
+from gettext import gettext as _
+import os
+
+#+---------------------------------------------------------------------------+
+#| Related third party imports
+#+---------------------------------------------------------------------------+
+from gi.repository import Gtk, Gdk
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Filters.MathematicFilter import MathematicFilter
 
 
-#+---------------------------------------------------------------------------+
-#| Base64Filter:
-#|     Definition of a base64 transformation filter
-#+---------------------------------------------------------------------------+
-class Base64Filter(MathematicFilter):
+class ContextualMenuOnStateView(object):
 
-    TYPE = "FormatFilter"
+    def __init__(self, controller):
+        self.controller = controller
 
-    def __init__(self, name):
-        MathematicFilter.__init__(self, Base64Filter.TYPE, name)
+    def run(self, event):
+        self.menu = Gtk.Menu()
 
-    def apply(self, message):
-        """apply:
-        Decode in B64 the provided message"""
-        result = message
-        try:
-            rawContent = TypeConvertor.netzobRawToPythonRaw(message)
-            b64Content = base64.b64decode(rawContent)
-            result = TypeConvertor.pythonRawToNetzobRaw(b64Content)
-        except TypeError as error:
-            logging.warning("Impossible to compute the base64 value of message (error={0})".format(str(error)))
-            result = ""
-        return result
+        # Add entry to edit state
+        item = Gtk.MenuItem(_("Edit State"))
+        item.show()
+        item.connect("activate", self.controller.editState_cb)
+        self.menu.append(item)
 
-    def reverse(self, message):
-        """reverse:
-        Encode in B64 the provided message"""
-        result = message
-        try:
-            rawContent = TypeConvertor.netzobRawToPythonRaw(message)
-            b64Content = base64.b64encode(rawContent)
-            result = TypeConvertor.pythonRawToNetzobRaw(b64Content)
-        except TypeError as error:
-            logging.warning("Impossible to compute the base64 value of message (error={0})".format(str(error)))
-            result = ""
-        return result
+        # Transitions
+        for transition in self.controller.getState().getTransitions():
+            subMenu = self.build_submenu_for_transition(transition)
+            item = Gtk.MenuItem(_("Transition {0}".format(transition.getName())))
+            item.set_submenu(subMenu)
+            item.show()
+            self.menu.append(item)
+
+        # Add entry to delete state
+        item = Gtk.MenuItem(_("Delete State"))
+        item.show()
+        item.connect("activate", self.controller.deleteState_cb)
+        self.menu.append(item)
+
+        self.menu.popup(None, None, None, None, event.button, event.time)
+
+    def build_submenu_for_transition(self, transition):
+        menu = Gtk.Menu()
+
+        item = Gtk.MenuItem(_("Edit"))
+        item.show()
+        item.connect("activate", self.controller.editTransition_cb, transition)
+        menu.append(item)
+
+        item = Gtk.MenuItem(_("Delete"))
+        item.show()
+        item.connect("activate", self.controller.deleteTransition_cb, transition)
+        menu.append(item)
+
+        return menu

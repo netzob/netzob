@@ -237,6 +237,17 @@ class Symbol(AbstractSymbol):
         """
         self.getRoot().write(writingToken)
         result = writingToken.getValue()
+
+        if len(self.getMathematicFilters()) > 0:
+            result = TypeConvertor.bin2hexstring(result)
+
+        # Before returning the value we apply available custom math filter (reverse method)
+        for filter in self.getMathematicFilters():
+            self.log.debug("Executing reverse method of filter {0} on {1}".format(filter.getName(), result))
+            result = filter.reverse(result)
+
+        result = TypeConvertor.hexstring2bin(result)
+
         return result
 
     def getRoot(self):
@@ -249,6 +260,24 @@ class Symbol(AbstractSymbol):
                 variable = field.getVariable()
             rootSymbol.addChild(variable)
         return rootSymbol
+
+    def getMathematicFilters(self):
+        """Return the activated mathematic filters
+        on message scope.
+        The list of uniq filters is the result of the merge between
+        the filters of the symbol and of the message.
+        """
+        return self.mathematicFilters
+
+    def addMathematicFilter(self, filter):
+        """Add a math filter for the message"""
+        self.mathematicFilters.append(filter)
+
+    def removeMathematicFilter(self, filter):
+        """Remove the provided filter from current symbol"""
+        if filter in self.mathematicFilters:
+            print "remobving"
+            self.mathematicFilters.remove(filter)
 
     def getProperties(self):
         properties = []

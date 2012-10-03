@@ -28,49 +28,61 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging
-import base64
+from gettext import gettext as _
+import os
+
+#+---------------------------------------------------------------------------+
+#| Related third party imports
+#+---------------------------------------------------------------------------+
+from gi.repository import Gtk, Gdk
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Filters.MathematicFilter import MathematicFilter
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
-#+---------------------------------------------------------------------------+
-#| Base64Filter:
-#|     Definition of a base64 transformation filter
-#+---------------------------------------------------------------------------+
-class Base64Filter(MathematicFilter):
+class EditStateView(object):
 
-    TYPE = "FormatFilter"
+    def __init__(self, controller, state):
+        '''
+        Constructor
+        '''
+        self.builder = Gtk.Builder()
+        self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
+                                                "ui", "grammar",
+                                                "createStateDialog.glade"))
+        self._getObjects(self.builder, ["createStateDialog",
+                                        "createButton", "cancelButton",
+                                        "idEntry", "nameEntry", "initialStateCheckButton",
+                                        "errorImage", "errorLabel", "titleLabel"])
+        self.controller = controller
+        self.builder.connect_signals(self.controller)
 
-    def __init__(self, name):
-        MathematicFilter.__init__(self, Base64Filter.TYPE, name)
+        self.titleLabel.set_label(_("Edit the state"))
 
-    def apply(self, message):
-        """apply:
-        Decode in B64 the provided message"""
-        result = message
-        try:
-            rawContent = TypeConvertor.netzobRawToPythonRaw(message)
-            b64Content = base64.b64decode(rawContent)
-            result = TypeConvertor.pythonRawToNetzobRaw(b64Content)
-        except TypeError as error:
-            logging.warning("Impossible to compute the base64 value of message (error={0})".format(str(error)))
-            result = ""
-        return result
+        isInitialState = False
+        automata = controller.grammarController.getCurrentProject().getGrammar().getAutomata()
+        initialState = automata.getInitialState()
 
-    def reverse(self, message):
-        """reverse:
-        Encode in B64 the provided message"""
-        result = message
-        try:
-            rawContent = TypeConvertor.netzobRawToPythonRaw(message)
-            b64Content = base64.b64encode(rawContent)
-            result = TypeConvertor.pythonRawToNetzobRaw(b64Content)
-        except TypeError as error:
-            logging.warning("Impossible to compute the base64 value of message (error={0})".format(str(error)))
-            result = ""
-        return result
+        if str(initialState.getID()) == str(state.getID()):
+            isInitialState = True
+
+        self.idEntry.set_text(str(state.getID()))
+        self.idEntry.set_sensitive(False)
+
+        self.nameEntry.set_text(state.getName())
+        self.initialStateCheckButton.set_active(isInitialState)
+
+    def _getObjects(self, builder, objectsList):
+        for obj in objectsList:
+            setattr(self, obj, builder.get_object(obj))
+
+    def run(self):
+        self.createStateDialog.run()
+
+    def destroy(self):
+        self.createStateDialog.destroy()
