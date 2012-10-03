@@ -146,7 +146,7 @@ class AbstractMessage(object):
         filters = []
 
         # First we add all the encoding filters attached to the symbol
-        filters.extend(self.symbol.getEncodingFilters())
+        filters.extend(self.symbol.getField().getEncodingFilters())
 
         # We add the locally defined encoding filters
         filters.extend(self.encodingFilters)
@@ -209,7 +209,7 @@ class AbstractMessage(object):
         """
         filters = []
         filters.extend(self.mathematicFilters)
-        for filter in self.symbol.getMathematicFilters():
+        for filter in self.symbol.getField().getMathematicFilters():
             found = False
             for f in filters:
                 if f.getName() == filter.getName():
