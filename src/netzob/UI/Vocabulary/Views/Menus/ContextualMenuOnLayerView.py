@@ -50,7 +50,7 @@ from netzob.Common.Type.Endianess import Endianess
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
-class ContextualMenuOnSymbolView(object):
+class ContextualMenuOnLayerView(object):
 
     def __init__(self, controller):
         self.controller = controller
@@ -59,9 +59,15 @@ class ContextualMenuOnSymbolView(object):
         # Build the contextual menu for messages
         self.menu = Gtk.Menu()
 
+        # Add entry to edit layer
+        item = Gtk.MenuItem(_("Edit layer"))
+        item.show()
+        item.connect("activate", self.controller.renameLayer_cb)
+        self.menu.append(item)
+
         # Add sub-entries to change the type of a specific column
         subMenu = self.build_encoding_submenu()
-        item = Gtk.MenuItem(_("Symbol visualization"))
+        item = Gtk.MenuItem(_("Visualization"))
         item.set_submenu(subMenu)
         item.show()
         self.menu.append(item)
@@ -74,20 +80,26 @@ class ContextualMenuOnSymbolView(object):
         item.show()
         self.menu.append(item)
 
+        # Add entry to delete layer
+        item = Gtk.MenuItem(_("Delete layer"))
+        item.show()
+        item.connect("activate", self.controller.deleteLayer_cb)
+        self.menu.append(item)
+
         self.menu.popup(None, None, None, None, event.button, event.time)
 
     def build_math_filters_submenu(self):
         """Create a GTK submenu which contains
         entries to edit the mathematical filters
-        of selected symbol"""
+        of selected layer"""
         menu = Gtk.Menu()
 
         # Retrieve the list of available mathematical filters
         currentWorkspace = self.controller.vocabularyController.getCurrentWorkspace()
         mathematicFilters = currentWorkspace.getMathematicFilters()
 
-        messages = self.controller.symbol.getMessages()
-        # Fetch all the filters attach to messages of current symbol
+        messages = self.controller.layer.getMessages()
+        # Fetch all the filters attach to messages of current layer (either symbol of fieldLayer)
         filtersInMessages = []
         for message in messages:
             for filter in message.getMathematicFilters():
@@ -117,12 +129,12 @@ class ContextualMenuOnSymbolView(object):
 
     #+----------------------------------------------
     #| build_encoding_submenu:
-    #|   Build a submenu for symbol data visualization.
+    #|   Build a submenu for visualization.
     #+----------------------------------------------
     def build_encoding_submenu(self):
         """Create a GTK menu which contains
         entries to edit the visualizations formats of
-        selected symbol"""
+        selected layer"""
         menu = Gtk.Menu()
 
         # Format submenu

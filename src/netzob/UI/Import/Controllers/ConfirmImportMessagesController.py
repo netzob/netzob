@@ -51,6 +51,7 @@ from netzob.Common.Threads.Job import Job
 from netzob.Common.Session import Session
 from netzob.Common.ImportedTrace import ImportedTrace
 from netzob.Common.Symbol import Symbol
+from netzob.Common.Field import Field
 
 
 class ConfirmImportMessagesController(object):
@@ -131,7 +132,8 @@ class ConfirmImportMessagesController(object):
         # We register the symbol in the vocabulary of the project
         self.currentProject.getVocabulary().addSymbol(symbol)
         # We create a default field for the symbol
-        symbol.reinitFields()
+        field = Field.createDefaultField(symbol)
+        symbol.getField().addField(field)
 
         # Add the environmental dependencies to the project
 #        if fetchEnv:

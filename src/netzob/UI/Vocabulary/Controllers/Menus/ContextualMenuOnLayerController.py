@@ -31,13 +31,13 @@
 from gettext import gettext as _
 import logging
 import time
+import os
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk, GObject
 import gi
-from netzob.UI.Common.Controllers.CustomMathFilterController import CustomMathFilterController
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 from gi.repository import Pango
@@ -45,19 +45,21 @@ from gi.repository import Pango
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.UI.Vocabulary.Views.Menus.ContextualMenuOnSymbolView import ContextualMenuOnSymbolView
+from netzob.UI.Common.Controllers.CustomMathFilterController import CustomMathFilterController
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+from netzob.UI.Vocabulary.Views.Menus.ContextualMenuOnLayerView import ContextualMenuOnLayerView
 from netzob.UI.NetzobWidgets import NetzobLabel
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.UI.Vocabulary.Controllers.PopupEditFieldController import PopupEditFieldController
 
 
-class ContextualMenuOnSymbolController(object):
-    """Contextual menu on symbol (visualization, etc.)"""
+class ContextualMenuOnLayerController(object):
+    """Contextual menu on layer (visualization, etc.)"""
 
-    def __init__(self, vocabularyController, symbol):
+    def __init__(self, vocabularyController, layer):
         self.vocabularyController = vocabularyController
-        self.symbol = symbol
-        self._view = ContextualMenuOnSymbolView(self)
+        self.layer = layer
+        self._view = ContextualMenuOnLayerView(self)
         self.log = logging.getLogger(__name__)
 
     @property
@@ -73,7 +75,7 @@ class ContextualMenuOnSymbolController(object):
     #|   by doing a right click on it.
     #+----------------------------------------------
     def changeFormat_cb(self, event, aFormat):
-        self.symbol.setFormat(aFormat)
+        self.layer.setFormat(aFormat)
         self.vocabularyController.view.updateSelectedMessageTable()
 
     #+----------------------------------------------
@@ -82,7 +84,7 @@ class ContextualMenuOnSymbolController(object):
     #|   by doing a right click on it.
     #+----------------------------------------------
     def changeUnitSize_cb(self, event, unitSize):
-        self.symbol.setUnitSize(unitSize)
+        self.layer.setUnitSize(unitSize)
         self.vocabularyController.view.updateSelectedMessageTable()
 
     #+----------------------------------------------
@@ -91,7 +93,7 @@ class ContextualMenuOnSymbolController(object):
     #|   by doing a right click on it.
     #+----------------------------------------------
     def changeSign_cb(self, event, sign):
-        self.symbol.setSign(sign)
+        self.layer.setSign(sign)
         self.vocabularyController.view.updateSelectedMessageTable()
 
     #+----------------------------------------------
@@ -100,13 +102,13 @@ class ContextualMenuOnSymbolController(object):
     #|   by doing a right click on it.
     #+----------------------------------------------
     def changeEndianess_cb(self, event, endianess):
-        self.symbol.setEndianess(endianess)
+        self.layer.setEndianess(endianess)
         self.vocabularyController.view.updateSelectedMessageTable()
 
     def applyMathematicFilter_cb(self, event, mathFilter):
         """Add the selected mathematics filter"""
 
-        messages = self.symbol.getMessages()
+        messages = self.layer.getMessages()
         for message in messages:
             found = False
             for appliedFilter in message.getMathematicFilters():
@@ -118,11 +120,82 @@ class ContextualMenuOnSymbolController(object):
             else:
                 message.addMathematicFilter(mathFilter)
 
-        self.symbol.resetPartitioning(self.vocabularyController.getCurrentProject())
+        self.layer.resetPartitioning(self.vocabularyController.getCurrentProject())
         self.vocabularyController.view.updateSelectedMessageTable()
 
     def createCustomFilter_cb(self, event):
         """Callback executed when the user
         clicks on menu entry to create a custom filter"""
-        customFilterController = CustomMathFilterController(self.vocabularyController, self.symbol)
+        customFilterController = CustomMathFilterController(self.vocabularyController, self.layer)
         customFilterController.run()
+
+    def renameLayer_cb(self, widget):
+        builder2 = Gtk.Builder()
+        builder2.add_from_file(os.path.join(
+            ResourcesConfiguration.getStaticResources(),
+            "ui",
+            "dialogbox.glade"))
+        dialog = builder2.get_object("renamelayer")
+        dialog.set_title("Rename the layer " + self.layer.getName())
+
+        #button apply
+        applybutton = builder2.get_object("button10")
+        applybutton.set_sensitive(False)
+        dialog.add_action_widget(applybutton, 0)
+        #button cancel
+        cancelbutton = builder2.get_object("button2")
+        dialog.add_action_widget(cancelbutton, 1)
+        #disable apply button if no text
+        entry = builder2.get_object("entry3")
+        entry.connect("changed", self.entry_disableButtonIfEmpty_cb, applybutton)
+        #run the dialog window and wait for the result
+        result = dialog.run()
+
+        if (result == 0):
+            #apply
+            newLayerName = entry.get_text()
+            self.log.debug(_("Renamed layer {0} to {1}").format(self.layer.getName(), newLayerName))
+            currentProject = self.vocabularyController.netzob.getCurrentProject()
+            currentProject.getVocabulary().getFieldByID(self.layer.getID()).setName(newLayerName)
+            self.vocabularyController.view.updateLeftPanel()
+            self.vocabularyController.view.updateSelectedMessageTable()
+            dialog.destroy()
+        if (result == 1):
+            #cancel
+            dialog.destroy()
+
+    def entry_disableButtonIfEmpty_cb(self, widget, button):
+        if(len(widget.get_text()) > 0):
+            button.set_sensitive(True)
+        else:
+            button.set_sensitive(False)
+
+    def deleteLayer_cb(self, widget):
+        # Verify if selected layer is the top layer (i.e. the symbol)
+        if self.layer == self.layer.getSymbol().getField():
+            # If so, delete the symbol and its messages
+            currentProject = self.vocabularyController.netzob.getCurrentProject()
+            currentVocabulary = currentProject.getVocabulary()
+            for mess in self.layer.getSymbol().getMessages():
+                currentVocabulary.removeMessage(mess)
+            currentVocabulary.removeSymbol(self.layer.getSymbol())
+            self.vocabularyController.view.emptyMessageTableDisplayingSymbols([self.layer.getSymbol()])
+            self.vocabularyController.view.updateLeftPanel()
+            self.vocabularyController.view.updateSelectedMessageTable()
+            return
+        # Concatenate all children of the current layer
+        childrenFields = []
+        for child in self.layer.getExtendedFields():
+            childrenFields.append(child)
+
+        # Insert all the child at the place of the current layer
+        parentField = self.layer.getParentField()
+        indexInParentLayer = parentField.getLocalFields().index(self.layer)
+        parentField.getLocalFields().remove(self.layer)
+        index = indexInParentLayer
+        for child in childrenFields:
+            parentField.getLocalFields().insert(index, child)
+            index += 1
+
+        self.vocabularyController.view.updateLeftPanel()
+        self.vocabularyController.view.updateSelectedMessageTable()

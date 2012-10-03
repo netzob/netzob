@@ -124,6 +124,13 @@ class Vocabulary(object):
                 return symbol
         return None
 
+    def getFieldByID(self, fieldID):
+        for symbol in self.symbols:
+            for field in symbol.getAllFields():
+                if str(field.getID()) == str(fieldID):
+                    return field
+        return None
+
     def getSession(self, sessionID):
         for session in self.sessions:
             if session.getID() == sessionID:

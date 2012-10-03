@@ -109,9 +109,9 @@ class SimplePartitioningController(object):
         self._view.simpleDialog.destroy()
 
         # Update the message table view
-        self.vocabularyController._view.updateMessageTableDisplayingSymbols(self.symbols)
+        self.vocabularyController.view.updateSelectedMessageTable()
         # Update the symbol properties view
-        self.vocabularyController._view.updateLeftPanel()
+        self.vocabularyController.view.updateLeftPanel()
 
     def simplePartitioning(self, unitSize):
         """Simple partitioning the provided symbols"""
@@ -120,7 +120,7 @@ class SimplePartitioningController(object):
             GObject.idle_add(self._view.simple_progressbar.set_text, _("Simple partitioning symbol {0}".format(symbol.getName())))
             if self.isFlagStopRaised():
                 return
-            symbol.simplePartitioning(unitSize, self.updateProgessBar, self.isFlagStopRaised)
+            symbol.getField().simplePartitioning(unitSize, self.updateProgessBar, self.isFlagStopRaised)
             self.id_current_symbol += 1
 
     def updateProgessBar(self, percent, message):

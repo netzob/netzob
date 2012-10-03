@@ -56,10 +56,11 @@ from netzob.UI.Vocabulary.Controllers.FilterMessagesController import FilterMess
 
 class VocabularyView(object):
     SYMBOLLISTSTORE_SELECTED_COLUMN = 0
-    SYMBOLLISTSTORE_NAME_COLUMN = 1
-    SYMBOLLISTSTORE_MESSAGE_COLUMN = 2
-    SYMBOLLISTSTORE_FIELD_COLUMN = 3
-    SYMBOLLISTSTORE_ID_COLUMN = 4
+    SYMBOLLISTSTORE_TOPLEVEL_COLUMN = 1
+    SYMBOLLISTSTORE_NAME_COLUMN = 2
+    SYMBOLLISTSTORE_MESSAGE_COLUMN = 3
+    SYMBOLLISTSTORE_FIELD_COLUMN = 4
+    SYMBOLLISTSTORE_ID_COLUMN = 5
 
     PROJECTPROPERTIESLISTSTORE_NAME_COLUMN = 0
     PROJECTPROPERTIESLISTSTORE_VALUE_COLUMN = 1
@@ -88,7 +89,7 @@ class VocabularyView(object):
             "ui", "vocabulary",
             "vocabularyView.glade"))
         self._getObjects(self.builder, ["vocabularyPanel", "symbolListStore",
-                                        "renameSymbolButton", "concatSymbolButton", "deleteSymbolButton", "newMessageList",
+                                        "concatSymbolButton", "deleteSymbolButton", "newMessageList",
                                         "projectTreeview", "symbolTreeview", "messageTreeview", "fieldTreeview",
                                         "projectPropertiesListstore", "symbolPropertiesListstore", "messagePropertiesListstore",
                                         "messageTableBox", "symbolListTreeView",
@@ -238,9 +239,9 @@ class VocabularyView(object):
 
     def emptyMessageTableDisplayingSymbols(self, symbolList):
         toBeRemovedTables = [mTable for mTable in self.messageTableList
-                             if mTable.getDisplayedSymbol() in symbolList]
+                             if mTable.getDisplayedField() in symbolList]
         for mTable in toBeRemovedTables:
-            mTable.setDisplayedSymbol(None)
+            mTable.setDisplayedField(None)
 
     def updateSelectedMessageTable(self):
         if self.selectedMessageTable is not None:
@@ -248,7 +249,7 @@ class VocabularyView(object):
 
     def updateMessageTableDisplayingSymbols(self, symbolList):
         toBeUpdatedTables = [mTable for mTable in self.messageTableList
-                             if mTable.getDisplayedSymbol() in symbolList]
+                             if mTable.getDisplayedField() in symbolList]
         for mTable in toBeUpdatedTables:
             mTable.update()
 
@@ -263,7 +264,7 @@ class VocabularyView(object):
         # Update current selected message table and
         self.selectedMessageTable = selectedMessageTable
 
-    def setDisplayedSymbolInSelectedMessageTable(self, symbol):
+    def setDisplayedFieldInSelectedMessageTable(self, symbol):
         """Show the definition of provided symbol on the selected
         message table"""
         logging.debug("Update the displayed symbol in selected table message")
@@ -272,24 +273,24 @@ class VocabularyView(object):
         if len(self.messageTableList) == 0:
             self.addMessageTable()
 
-        # if a message table is selected we update its symbol (if required)
-        if self.selectedMessageTable is not None and symbol != self.selectedMessageTable.displayedSymbol:
-            self.selectedMessageTable.setDisplayedSymbol(symbol)
+        # if a message table is selected we update its symbol
+        self.selectedMessageTable.setDisplayedField(symbol)
 
-    def getDisplayedSymbolInSelectedMessageTable(self):
+    def getDisplayedFieldInSelectedMessageTable(self):
         if self.selectedMessageTable is None:
             return None
         else:
-            return self.selectedMessageTable.displayedSymbol
+            return self.selectedMessageTable.displayedField
 
     ## Symbol List
     def updateSymbolList(self):
         """Updates the symbol list of the left panel, preserving the current
         selection"""
         # Retrieve symbols of the current project vocabulary (if one selected)
-        symbolList = []
+        layerList = []
         if self.getCurrentProject() is not None and self.getCurrentProject().getVocabulary() is not None:
-            symbolList.extend(self.getCurrentProject().getVocabulary().getSymbols())
+            for symbol in self.getCurrentProject().getVocabulary().getSymbols():
+                layerList.append(symbol.getField())
 
         checkedMessagesIDList = []
         for row in self.symbolListStore:
@@ -298,16 +299,13 @@ class VocabularyView(object):
         # Block selection changed handler
         self.symbolListTreeViewSelection.handler_block_by_func(self.controller.symbolListTreeViewSelection_changed_cb)
         self.symbolListStore.clear()
-        for sym in symbolList:
-            pIter = self.addRowSymbolList(checkedMessagesIDList, sym.getName(),
-                                          len(sym.getMessages()),
-                                          len(sym.getFields()),
-                                          str(sym.getID()))
-            for layer in sym.getLayers():
-                self.addLayerRowSymbolList(pIter, checkedMessagesIDList, layer.getName(),
-                                           len(sym.getMessages()),
-                                           len(layer.getFields()),
-                                           str(layer.getID()))
+        for layer in layerList:
+            pIter = self.addRowSymbolList(checkedMessagesIDList, layer.getName(),
+                                          len(layer.getMessages()),
+                                          len(layer.getExtendedFields()),
+                                          str(layer.getID()))
+            for fieldLayer in layer.getFieldLayers():
+                self.addLayerRowSymbolList(pIter, checkedMessagesIDList, layer, fieldLayer)
         self.setSelectedSymbolFromSelectedMessageTable()
         self.symbolListTreeViewSelection.handler_unblock_by_func(self.controller.symbolListTreeViewSelection_changed_cb)
 
@@ -315,7 +313,7 @@ class VocabularyView(object):
         if self.selectedMessageTable is None:
             self.setSelectedSymbol(None)
         else:
-            messageTableSymbol = self.selectedMessageTable.displayedSymbol
+            messageTableSymbol = self.selectedMessageTable.displayedField
             self.setSelectedSymbol(messageTableSymbol)
 
     def addRowSymbolList(self, checkedMessagesIDList, name, message, field, symID):
@@ -332,37 +330,36 @@ class VocabularyView(object):
         @param image: image of the lock button (freeze partitioning)"""
         i = self.symbolListStore.append(None)
         self.symbolListStore.set(i, self.SYMBOLLISTSTORE_SELECTED_COLUMN, (symID in checkedMessagesIDList))
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_TOPLEVEL_COLUMN, True)
         self.symbolListStore.set(i, self.SYMBOLLISTSTORE_NAME_COLUMN, name)
         self.symbolListStore.set(i, self.SYMBOLLISTSTORE_MESSAGE_COLUMN, message)
         self.symbolListStore.set(i, self.SYMBOLLISTSTORE_FIELD_COLUMN, field)
         self.symbolListStore.set(i, self.SYMBOLLISTSTORE_ID_COLUMN, symID)
         return i
 
-    def addLayerRowSymbolList(self, parentIter, checkedMessagesIDList, name, message, field, layerID):
+    def addLayerRowSymbolList(self, parentIter, checkedMessagesIDList, symbol, fieldLayer):
         """Adds a layer row in the symbol list of left panel
         @type  parentIter: string
         @param parentIter: parent iter
         @type  selection: boolean
         @param selection: if selected symbol
-        @type  name: string
-        @param name: name of the symbol
-        @type  message: string
-        @param message: number of message in the symbol
-        @type  field: string
-        @param field: number of field in the symbol
-        @type  image: string
-        @param image: image of the lock button (freeze partitioning)"""
+        @type  name: fieldLayer
+        @param name: the targeted fieldLayer
+        """
         i = self.symbolListStore.append(parentIter)
-        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_SELECTED_COLUMN, (layerID in checkedMessagesIDList))
-        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_NAME_COLUMN, name)
-        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_MESSAGE_COLUMN, message)
-        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_FIELD_COLUMN, field)
-        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_ID_COLUMN, layerID)
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_SELECTED_COLUMN, (str(fieldLayer.getID()) in checkedMessagesIDList))
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_TOPLEVEL_COLUMN, False)
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_NAME_COLUMN, fieldLayer.getName())
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_MESSAGE_COLUMN, len(symbol.getMessages()))
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_FIELD_COLUMN, len(fieldLayer.getExtendedFields()))
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_ID_COLUMN, str(fieldLayer.getID()))
+        # Add inner layers
+        for innerFieldLayer in fieldLayer.getFieldLayers():
+            self.addLayerRowSymbolList(i, checkedMessagesIDList, symbol, innerFieldLayer)
 
     def updateSymbolListToolbar(self):
         """Enables or disable buttons of the symbol list toolbar"""
         selectedSymbolsCount = self.countSelectedSymbols()
-        self.renameSymbolButton.set_sensitive((selectedSymbolsCount == 1))
         self.concatSymbolButton.set_sensitive((selectedSymbolsCount >= 2))
         self.deleteSymbolButton.set_sensitive((selectedSymbolsCount >= 1))
 
@@ -373,6 +370,18 @@ class VocabularyView(object):
                 count += 1
         return count
 
+    def getCheckedLayerList(self):
+        if self.getCurrentProject() is None:
+            return []
+        currentVocabulary = self.getCurrentProject().getVocabulary()
+        selectedLayerList = []
+        for row in self.symbolListStore:
+            if row[self.SYMBOLLISTSTORE_SELECTED_COLUMN]:
+                layer_id = row[self.SYMBOLLISTSTORE_ID_COLUMN]
+                layer = currentVocabulary.getFieldByID(layer_id)
+                selectedLayerList.append(layer)
+        return selectedLayerList
+
     def getCheckedSymbolList(self):
         if self.getCurrentProject() is None:
             return []
@@ -380,9 +389,10 @@ class VocabularyView(object):
         selectedSymbolList = []
         for row in self.symbolListStore:
             if row[self.SYMBOLLISTSTORE_SELECTED_COLUMN]:
-                symID = row[self.SYMBOLLISTSTORE_ID_COLUMN]
-                sym = currentVocabulary.getSymbolByID(symID)
-                selectedSymbolList.append(sym)
+                layer_id = row[self.SYMBOLLISTSTORE_ID_COLUMN]
+                layer = currentVocabulary.getFieldByID(layer_id)
+                if not layer.getSymbol() in selectedSymbolList:
+                    selectedSymbolList.append(layer.getSymbol())
         return selectedSymbolList
 
     def setSelectedSymbol(self, symbol):
@@ -447,7 +457,7 @@ class VocabularyView(object):
         """Create the list of properties associated
         with the current displayed symbol"""
         properties = []
-        symbol = self.getDisplayedSymbolInSelectedMessageTable()
+        symbol = self.getDisplayedFieldInSelectedMessageTable()
         if symbol is not None:
             properties = symbol.getProperties()
         return properties
@@ -473,7 +483,7 @@ class VocabularyView(object):
         self.updateSymbolVariableDefinition()
 
     def updateSymbolVariableDefinition(self):
-        currentSymbol = self.getDisplayedSymbolInSelectedMessageTable()
+        currentSymbol = self.getDisplayedFieldInSelectedMessageTable()
         if currentSymbol is not None:
             variableDisplayerController = VariableDisplayerController(self, currentSymbol, True)
             variableDisplayerController.run(self.messagesDistributionSymbolViewport)
@@ -509,7 +519,7 @@ class VocabularyView(object):
     def getCurrentProject(self):
         return self.controller.netzob.getCurrentProject()
 
-    def getDisplayedSymbol(self):
+    def getDisplayedField(self):
         if self.selectedMessageTable is None:
             return None
-        return self.selectedMessageTable.getDisplayedSymbol()
+        return self.selectedMessageTable.getDisplayedField()

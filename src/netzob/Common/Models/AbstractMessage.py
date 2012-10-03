@@ -274,7 +274,7 @@ class AbstractMessage(object):
     #|  and return a table
     #+----------------------------------------------
     def applyAlignment(self, styled=False, encoded=False):
-        if self.getSymbol().getAlignmentType() == "regex":
+        if self.getSymbol().getField().getAlignmentType() == "regex":
             return self.getFields(styled, encoded)
         else:
             return self.applyDelimiter(styled, encoded)
@@ -283,9 +283,9 @@ class AbstractMessage(object):
         # Retrieve the data in columns
         splittedData = self.getSplittedData()
 
-        if len(splittedData) != len(self.symbol.getFields()):
+        if len(splittedData) != len(self.symbol.getExtendedFields()):
 
-            print "Nb of expected fields : {0}".format(self.symbol.getFields())
+            print "Nb of expected fields : {0}".format(self.symbol.getExtendedFields())
             print "fields : {0}".format(splittedData)
 
             logging.error("Inconsistency problem between number of fields and the regex application")
@@ -294,7 +294,7 @@ class AbstractMessage(object):
         # Add Mathematics filters
         i = 0
 
-        for field in self.symbol.getFields():
+        for field in self.symbol.getExtendedFields():
             filters = field.getMathematicFilters()
 
             for filter in filters:
@@ -309,8 +309,8 @@ class AbstractMessage(object):
 
         if encoding is True or visualization is True:
             i_data = 0
-            for i_field in range(0, len(self.symbol.getFields())):
-                field = self.symbol.getFields()[i_field]
+            for i_field in range(0, len(self.symbol.getExtendedFields())):
+                field = self.symbol.getExtendedFields()[i_field]
                 dataField = splittedData[i_field]
 
                 # Add encoding filters
@@ -342,7 +342,7 @@ class AbstractMessage(object):
 
         dynamicDatas = None
         # First we compute the global regex
-        for field in self.symbol.getFields():
+        for field in self.symbol.getExtendedFields():
             if field.isStatic():
                 # C Version :
                 #regex.append("(" + field.getRegex() + ")")
@@ -367,7 +367,7 @@ class AbstractMessage(object):
 
         result = []
         iCol = 1
-        for field in self.symbol.getFields():
+        for field in self.symbol.getExtendedFields():
             if field.isStatic():
                 result.append(field.getRegex())
             else:
@@ -398,10 +398,10 @@ class AbstractMessage(object):
     #|  and return a table
     #+----------------------------------------------
     def applyDelimiter(self, styled=False, encoded=False):
-        delimiter = self.getSymbol().getRawDelimiter()
+        delimiter = self.getSymbol().getField().getRawDelimiter()
         res = []
         iField = -1
-        for field in self.symbol.getFields():
+        for field in self.symbol.getExtendedFields():
             if field.getName() == "__sep__":
                 tmp = delimiter
             else:

@@ -165,7 +165,7 @@ class RelationsController(object):
             y_symbol = i * symbol_vertical_size - symbol_vertical_size / 2
             current_x = max_symbol_name_width + 30
             fieldsPositions = dict()
-            for field in symbol.getFields():
+            for field in symbol.getExtendedFields():
                 cc.rectangle(current_x, y_symbol - 10, 30, 20)
                 fieldsPositions[field] = [current_x, y_symbol - 10, current_x + 30, y_symbol + 10]
                 cc.set_source_rgb(1, 0.86, 0.45)
@@ -178,7 +178,7 @@ class RelationsController(object):
     def drawFieldsRelations(self):
         symbols = self.vocabularyController.getCurrentProject().getVocabulary().getSymbols()
         for symbol in symbols:
-            for field in symbol.getFields():
+            for field in symbol.getExtendedFields():
                 self.drawFieldRelations(symbol, field)
 
     def drawFieldRelations(self, symbol, field):

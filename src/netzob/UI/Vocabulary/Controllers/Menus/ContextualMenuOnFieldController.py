@@ -48,20 +48,22 @@ from gi.repository import Pango
 from netzob.UI.Vocabulary.Views.Menus.ContextualMenuOnFieldView import ContextualMenuOnFieldView
 from netzob.UI.NetzobWidgets import NetzobLabel
 from netzob.Common.Symbol import Symbol
+from netzob.Common.Field import Field
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Models.RawMessage import RawMessage
 from netzob.UI.Vocabulary.Controllers.PopupEditFieldController import PopupEditFieldController
 from netzob.UI.Vocabulary.Controllers.VariableController import VariableTreeController
 from netzob.UI.Import.Controllers.ConfirmImportMessagesController import ConfirmImportMessagesController
+from netzob.UI.NetzobWidgets import NetzobErrorMessage
 
 
 class ContextualMenuOnFieldController(object):
     """Contextual menu on field (copy to clipboard, message
     visualization, etc.)"""
 
-    def __init__(self, vocabularyController, symbol, message, field):
+    def __init__(self, vocabularyController, layer, message, field):
         self.vocabularyController = vocabularyController
-        self.symbol = symbol
+        self.layer = layer
         self.message = message
         self.field = field
         self._view = ContextualMenuOnFieldView(self)
@@ -73,6 +75,9 @@ class ContextualMenuOnFieldController(object):
 
     def run(self, event):
         self._view.run(event)
+
+    def getSymbol(self):
+        return self.field.getSymbol()
 
     #+----------------------------------------------
     #| rightClickToCopyToClipboard:
@@ -131,7 +136,7 @@ class ContextualMenuOnFieldController(object):
     #|   Retrieve the domain of definition of the selected column
     #+----------------------------------------------
     def displayDomainOfDefinition_cb(self, event):
-        cells = self.symbol.getUniqValuesByField(self.field)
+        cells = self.field.getUniqValuesByField()
         tmpDomain = set()
         for cell in cells:
             tmpDomain.add(TypeConvertor.encodeNetzobRawToGivenType(cell, self.field.getFormat()))
@@ -180,18 +185,75 @@ class ContextualMenuOnFieldController(object):
             self.field.addMathematicFilter(filter)
         self.vocabularyController.view.updateSelectedMessageTable()
 
+    def displayPopupToCreateLayer_cb(self, event):
+        # If fields header are selected, we get it
+        selectedFields = self.vocabularyController.view.selectedMessageTable.treeViewHeaderGroup.getSelectedFields()
+        if selectedFields is None or len(selectedFields) == 0:
+            # Either, we only consider the current field
+            selectedFields = [self.field]
+        # We retrieve the first and last fields selected
+        firstField = selectedFields[0]
+        lastField = selectedFields[0]
+        for field in selectedFields:
+            if field.getIndex() < firstField.getIndex():
+                firstField = field
+            if field.getIndex() > lastField.getIndex():
+                lastField = field
+        # Update selected fields to the entire range
+        selectedFields = []
+        for field in self.getSymbol().getExtendedFields():
+            if field.getIndex() >= firstField.getIndex() and field.getIndex() <= lastField.getIndex():
+                selectedFields.append(field)
+        # Verify that selected field range does not overlap existing layers (i.e. if the selected fields have the same parent)
+        parent = selectedFields[0].getParentField()
+        for selectedField in selectedFields:
+            if parent != selectedField.getParentField():
+                NetzobErrorMessage(_("Selected field range overlaps existing layer."))
+                return
+        # Retrieve layer's name
+        dialog = Gtk.Dialog(title=_("Layer creation"), flags=0, buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OK, Gtk.ResponseType.OK))
+        dialog.set_size_request(200, 50)
+        label = Gtk.Label("Name:")
+        entry = Gtk.Entry()
+        dialog.vbox.pack_start(label, True, True, 0)
+        dialog.vbox.pack_start(entry, True, True, 0)
+        dialog.show_all()
+        result = dialog.run()
+        if (result == Gtk.ResponseType.OK):
+            name = entry.get_text()
+            dialog.destroy()
+            if name == "":
+                return
+        else:
+            dialog.destroy()
+            return
+        # Create a new layer
+        fieldLayer = Field(str(name), "", self.getSymbol())
+        index_newField = 999999
+        parentField = None
+        for selectedField in selectedFields:
+            parentField = selectedField.getParentField()
+            if parentField.getLocalFields().index(selectedField) < index_newField:
+                index_newField = parentField.getLocalFields().index(selectedField)  # Retrieve the lowest index of the new fields
+            fieldLayer.addField(selectedField)
+            parentField.getLocalFields().remove(selectedField)
+        parentField.getLocalFields().insert(index_newField, fieldLayer)
+#        self.getSymbol().getField().addField(fieldLayer, index_newField)
+        self.vocabularyController.view.updateLeftPanel()
+
     def displayPopupToEditField_cb(self, event):
         popup = PopupEditFieldController(self.vocabularyController, self.field)
         popup.run()
 
     def displayPopupToEditVariable_cb(self, event):
-        creationPanel = VariableTreeController(self.vocabularyController.netzob, self.symbol, self.field)
+        creationPanel = VariableTreeController(self.vocabularyController.netzob, self.getSymbol(), self.field)
 
     def deleteMessage_cb(self, event):
         """Callback executed when the user requests
         to delete the current message"""
-        self.symbol.removeMessage(self.message)
-        self.vocabularyController._view.updateMessageTableDisplayingSymbols([self.symbol])
+        self.getSymbol().removeMessage(self.message)
+        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.view.updateLeftPanel()
 
     def exportSelectedFields_cb(self, event):
         # If fields header are selected, we get it
@@ -209,12 +271,12 @@ class ContextualMenuOnFieldController(object):
                 lastField = field
         # We initialize the correct number of new messages
         newMessages = []
-        for message in self.symbol.getMessages():
+        for message in self.getSymbol().getMessages():
             mUuid = uuid.uuid4()
             newMessages.append(RawMessage(mUuid, message.getTimestamp(), ""))
         # We concatenate between the first and last fields        
         for index in range(firstField.getIndex(), lastField.getIndex() + 1):
-            cells = self.symbol.getCellsByField(self.symbol.getFieldByIndex(index))
+            cells = self.getSymbol().getField().getCellsByField(self.getSymbol().getFieldByIndex(index))
             for i in range(len(cells)):
                 newMessages[i].setData(str(newMessages[i].getStringData()) + str(cells[i]))
         # We create a new symbol and register it

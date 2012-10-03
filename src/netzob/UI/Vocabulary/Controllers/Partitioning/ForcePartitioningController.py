@@ -106,6 +106,11 @@ class ForcePartitioningController(object):
         #close dialog box
         self._view.forceDialog.destroy()
 
+        # Update the message table view
+        self.vocabularyController.view.updateSelectedMessageTable()
+        # Update the symbol properties view
+        self.vocabularyController.view.updateLeftPanel()
+
     def forcePartitioning(self, encodedDelimiter, format):
         """Smooth the provided symbols"""
         step = float(100) / float(len(self.symbols))
@@ -114,7 +119,7 @@ class ForcePartitioningController(object):
             GObject.idle_add(self._view.force_progressbar.set_text, _("Force partitioning symbol {0}".format(symbol.getName())))
             if self.flagStop:
                 return
-            symbol.forcePartitioning(format, encodedDelimiter)
+            symbol.getField().forcePartitioning(format, encodedDelimiter)
             total = total + step
             rtotal = float(total) / float(100)
             time.sleep(0.01)

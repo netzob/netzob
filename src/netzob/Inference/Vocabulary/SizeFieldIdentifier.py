@@ -51,7 +51,7 @@ class SizeFieldIdentifier(object):
 
     def estimateDurationOfSearch(self, symbols):
         duration = 0
-        # len(symbol.getFields())
+        # len(symbol.getExtendedFields())
 
         return duration
 
@@ -74,7 +74,7 @@ class SizeFieldIdentifier(object):
 
     def getPotentialSizeFields(self, symbol):
         sizeFields = []
-        for field in symbol.getFields():
+        for field in symbol.getExtendedFields():
             if not field.isStatic():  # Means the element is static, so we assume it's not a good candidate
                 sizeFields.append(field)
 
@@ -82,7 +82,7 @@ class SizeFieldIdentifier(object):
         sizeCellsByField = {}
         for sizeField in sizeFields:
             sizeCellsByField[sizeField] = []
-            cells = symbol.getCellsByField(sizeField)
+            cells = symbol.getField().getCellsByField(sizeField)
             for cell in cells:
                 sizeCellsByField[sizeField].append(self.getEncodedSizes(cell))
         return sizeCellsByField
@@ -124,7 +124,7 @@ class SizeFieldIdentifier(object):
         # Fill the aggregate of messages from fieldStart to fieldStop
         for iField in range(start, stop):
             # Retrieve current cells
-            cells = symbol.getCellsByField(symbol.getFieldByIndex(iField))
+            cells = symbol.getField().getCellsByField(symbol.getFieldByIndex(iField))
             for l in range(len(cells)):
                 aggregateCellsData[l] += cells[l]
         return aggregateCellsData
@@ -135,7 +135,7 @@ class SizeFieldIdentifier(object):
         j = 0
 
         # We cover each field and aggregate them for a potential payload
-        while j < len(symbol.getFields()):
+        while j < len(symbol.getExtendedFields()):
 
             # Initialize the aggregate of messages from fieldJ to fieldK
             aggregateCellsData = []
@@ -144,10 +144,10 @@ class SizeFieldIdentifier(object):
 
             # Fill the aggregate of messages and try to compare its length with the current expected length
             k = j
-            while k < len(symbol.getFields()):
+            while k < len(symbol.getExtendedFields()):
                     if k != j:
                         for l in range(len(sizeCells)):
-                            aggregateCellsData[l] += symbol.getCellsByField(symbol.getFieldByIndex(k))[l]
+                            aggregateCellsData[l] += symbol.getField().getCellsByField(symbol.getFieldByIndex(k))[l]
 
                     # We try to aggregate the successive right sub-parts of j if it's a static column
                     if symbol.getFieldByIndex(j).isStatic():
@@ -163,7 +163,7 @@ class SizeFieldIdentifier(object):
                                 if symbol.getFieldByIndex(j).isStatic():
                                     targetData = symbol.getFieldByIndex(j).getRegex()[lenJ - m:] + aggregateCellsData[nbMsg]
                                 else:
-                                    targetData = symbol.getCellsByField(symbol.getFieldByIndex(j))[nbMsg] + aggregateCellsData[nbMsg]
+                                    targetData = symbol.getField().getCellsByField(symbol.getFieldByIndex(j))[nbMsg] + aggregateCellsData[nbMsg]
 
                                     for (encodedSizeLE, encodedSizeBE) in dictEncodedSizes:
                                         if (expectedSizeLE != len(targetData) / 2) and (expectedSizeBE != len(targetData) / 2):
@@ -177,7 +177,7 @@ class SizeFieldIdentifier(object):
 
     def searchInSymbol(self, symbol):
         # First we verify there are at least 2 fields :)
-        if len(symbol.getFields()) <= 1:
+        if len(symbol.getExtendedFields()) <= 1:
             return
 
         # We retrieve the potential size fields
@@ -185,9 +185,9 @@ class SizeFieldIdentifier(object):
 
         # We loop over each aggregate of fieldStart to fieldEnd to search for associated size
         start = 0
-        while start < len(symbol.getFields()) - 1:
+        while start < len(symbol.getExtendedFields()) - 1:
 
-            for end in range(start + 1, len(symbol.getFields()) + 1):
+            for end in range(start + 1, len(symbol.getExtendedFields()) + 1):
                 # We retrieve the potential payloads
                 payloads = self.getPotentialPayloads(symbol, start, end)
 

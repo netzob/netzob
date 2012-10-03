@@ -61,7 +61,7 @@ from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
 from netzob.UI.NetzobWidgets import NetzobQuestionMessage, NetzobErrorMessage, NetzobInfoMessage
 from netzob.UI.Vocabulary.Controllers.RelationsController import RelationsController
-from netzob.UI.Vocabulary.Controllers.Menus.ContextualMenuOnSymbolController import ContextualMenuOnSymbolController
+from netzob.UI.Vocabulary.Controllers.Menus.ContextualMenuOnLayerController import ContextualMenuOnLayerController
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.UI.Vocabulary.Controllers.VariableController import VariableTreeController
 from netzob.Common.Plugins.Extensions.CapturerMenuExtension import CapturerMenuExtension
@@ -194,46 +194,6 @@ class VocabularyController(object):
         #refresh view
         self.view.updateLeftPanel()
 
-    #possible que si on selectionne un unique symbol
-    def renameSymbolButton_clicked_cb(self, widget):
-        if self.getCurrentProject() is None:
-            NetzobErrorMessage(_("No project selected."))
-            return
-        symbol = self.view.getCheckedSymbolList()[0]
-        builder2 = Gtk.Builder()
-        builder2.add_from_file(os.path.join(
-            ResourcesConfiguration.getStaticResources(),
-            "ui",
-            "dialogbox.glade"))
-        dialog = builder2.get_object("renamesymbol")
-        dialog.set_title("Rename the symbol " + symbol.getName())
-
-        #button apply
-        applybutton = builder2.get_object("button10")
-        applybutton.set_sensitive(False)
-        dialog.add_action_widget(applybutton, 0)
-        #button cancel
-        cancelbutton = builder2.get_object("button2")
-        dialog.add_action_widget(cancelbutton, 1)
-        #disable apply button if no text
-        entry = builder2.get_object("entry3")
-        entry.connect("changed", self.entry_disableButtonIfEmpty_cb, applybutton)
-        #run the dialog window and wait for the result
-        result = dialog.run()
-
-        if (result == 0):
-            #apply
-            newSymbolName = entry.get_text()
-            self.log.debug(_("Renamed symbol {0} to {1}").format(symbol.getName(), newSymbolName))
-            currentProject = self.netzob.getCurrentProject()
-            currentProject.getVocabulary().getSymbolByID(symbol.getID()).setName(newSymbolName)
-            self.view.updateLeftPanel()
-            self.view.updateMessageTableDisplayingSymbols([symbol])
-            dialog.destroy()
-        if (result == 1):
-            #cancel
-            dialog.destroy()
-
     def deleteSymbolButton_clicked_cb(self, toolButton):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
@@ -248,6 +208,7 @@ class VocabularyController(object):
             self.view.emptyMessageTableDisplayingSymbols([sym])
         # Update view
         self.view.updateLeftPanel()
+        self.view.updateSelectedMessageTable()
 
     def newMessageTableButton_clicked_cb(self, toolButton):
         if self.getCurrentProject() is None:
@@ -290,17 +251,9 @@ class VocabularyController(object):
             logging.debug("Iter is not none")
             # We first check if the user selected a symbol
             ID = model[iter][self.view.SYMBOLLISTSTORE_ID_COLUMN]
-            symbol = currentVocabulary.getSymbolByID(ID)
-            if symbol is None:
-                # Else we check if the user selected a layer
-                it_parent = model.iter_parent(iter)
-                symID = model[it_parent][self.view.SYMBOLLISTSTORE_ID_COLUMN]
-                symbol = currentVocabulary.getSymbolByID(symID)
-                layer = symbol.getLayerByID(ID)
-                self.view.setDisplayedSymbolInSelectedMessageTable(layer)
-            else:
-                self.executeMoveTargetOperation(symbol)
-                self.view.setDisplayedSymbolInSelectedMessageTable(symbol)
+            field = currentVocabulary.getFieldByID(ID)
+            self.executeMoveTargetOperation(field.getSymbol())
+            self.view.setDisplayedFieldInSelectedMessageTable(field)
             self._view.updateSymbolProperties()
 
     def symbolListTreeView_button_press_event_cb(self, treeview, eventButton):
@@ -314,15 +267,15 @@ class VocabularyController(object):
                 # No symbol selected
                 return
 
-            # Retrieve the selected symbol
-            symbol_id = treeview.get_model()[path][VocabularyView.SYMBOLLISTSTORE_ID_COLUMN]
-            if symbol_id is not None:
-                symbol = self.getCurrentProject().getVocabulary().getSymbolByID(symbol_id)
+            # Retrieve the selected layerField
+            layer_id = treeview.get_model()[path][VocabularyView.SYMBOLLISTSTORE_ID_COLUMN]
+            if layer_id is not None:
+                layer = self.getCurrentProject().getVocabulary().getFieldByID(layer_id)
             else:
                 return
 
             # Popup a contextual menu
-            menuController = ContextualMenuOnSymbolController(self, symbol)
+            menuController = ContextualMenuOnLayerController(self, layer)
             menuController.run(eventButton)
 
 ################ TO BE FIXED
@@ -390,11 +343,11 @@ class VocabularyController(object):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        symbols = self.view.getCheckedSymbolList()
-        if symbols == []:
-            NetzobErrorMessage(_("No symbol(s) selected."))
+        fields = self.view.getCheckedSymbolList()
+        if fields == []:
+            NetzobErrorMessage(_("No field(s) selected."))
             return
-        reset_controller = ResetPartitioningController(self, symbols)
+        reset_controller = ResetPartitioningController(self, fields)
         reset_controller.run()
 
     def concatField_activate_cb(self, action):
@@ -402,7 +355,7 @@ class VocabularyController(object):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        symbol = self.view.getDisplayedSymbol()
+        symbol = self.view.getDisplayedField()
         if symbol is None:
             NetzobErrorMessage(_("No selected symbol."))
             return
@@ -428,7 +381,7 @@ class VocabularyController(object):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        symbol = self.view.getDisplayedSymbol()
+        symbol = self.view.getDisplayedField()
         if symbol is None:
             NetzobErrorMessage(_("No selected symbol."))
             return
@@ -446,7 +399,7 @@ class VocabularyController(object):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        symbol = self.view.getDisplayedSymbol()
+        symbol = self.view.getDisplayedField()
         if symbol is None:
             NetzobErrorMessage(_("No selected symbol."))
             return
@@ -510,7 +463,7 @@ class VocabularyController(object):
             return
         for message in selectedMessages:
             # Remove message from model
-#            self.netzob.getCurrentProject().getVocabulary().removeMessage(message)
+            self.netzob.getCurrentProject().getVocabulary().removeMessage(message)
             message.getSymbol().removeMessage(message)
         # Update view
         self.view.updateSelectedMessageTable()

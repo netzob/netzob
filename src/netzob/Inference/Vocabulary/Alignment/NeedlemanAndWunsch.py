@@ -100,18 +100,18 @@ class NeedlemanAndWunsch(object):
         messages = symbol.getMessages()
         if messages is None or len(messages) == 0:
             logging.debug("The symbol '" + symbol.getName() + "' is empty. No alignment needed")
-            symbol.cleanFields()
+            symbol.getField().cleanFields()
 
             if self.isFinish():
                 return
 
             field = Field.createDefaultField(symbol)
-            symbol.addField(field)
+            symbol.getField().addField(field)
 
             # Use the default protocol type for representation
             field.setFormat(defaultFormat)
         else:
-            symbol.cleanFields()
+            symbol.getField().cleanFields()
 
             if self.isFinish():
                 return
@@ -122,7 +122,7 @@ class NeedlemanAndWunsch(object):
             if self.isFinish():
                 return
 
-            symbol.setAlignment(alignment)
+            symbol.getField().setAlignment(alignment)
             logging.debug("Alignment : {0}".format(alignment))
 
             # We update the regex based on the results
@@ -133,10 +133,10 @@ class NeedlemanAndWunsch(object):
 
             except NetzobException, e:
                 logging.warn("Partitionnement error: {0}".format(e))
-                symbol.cleanFields()
+                symbol.getField().cleanFields()
 
                 field = Field.createDefaultField(symbol)
-                symbol.addField(field)
+                symbol.getField().addField(field)
 
                 # Use the default protocol type for representation
                 field.setFormat(defaultFormat)
@@ -278,37 +278,37 @@ class NeedlemanAndWunsch(object):
             regex.append("(.{," + str(nbTiret) + "})")
 
         iField = 0
-        symbol.cleanFields()
+        symbol.getField().cleanFields()
         logging.debug("REGEX " + str(regex))
         for regexElt in regex:
             if self.isFinish():
                 return
-            field = Field("Field " + str(iField), iField, regexElt)
-            symbol.addField(field)
+            field = Field("Field " + str(iField), regexElt, symbol)
+            symbol.getField().addField(field)
 
             # Use the default protocol type for representation
             field.setFormat(defaultFormat)
             iField = iField + 1
-        if len(symbol.getFields()) >= 100:
-            raise NetzobException("This Python version only supports 100 named groups in regex (found {0})".format(len(symbol.getFields())))
+        if len(symbol.getExtendedFields()) >= 100:
+            raise NetzobException("This Python version only supports 100 named groups in regex (found {0})".format(len(symbol.getExtendedFields())))
         # We look for useless fields
         doLoop = True
         # We loop until we don't pop any field
         while doLoop is True:
             doLoop = False
-            for field in symbol.getFields():
+            for field in symbol.getExtendedFields():
 
                 if self.isFinish():
                     return
 
                 # We try to see if this field produces only empty values when applied on messages
                 if not field.isStatic():
-                    cells = symbol.getCellsByField(field)
+                    cells = symbol.getField().getCellsByField(field)
                     cells = "".join(cells)
                     if cells == "":
-                        symbol.getFields().pop(field.getIndex())  # We remove this useless field
+                        symbol.getExtendedFields().pop(field.getIndex())  # We remove this useless field
                         # Adapt index of the following fields
-                        for fieldNext in symbol.getFields():
+                        for fieldNext in symbol.getExtendedFields():
                             if fieldNext.getIndex() > field.getIndex():
                                 fieldNext.setIndex(fieldNext.getIndex() - 1)
                         # Concatenate the surrounding fields (because they should be static fields)

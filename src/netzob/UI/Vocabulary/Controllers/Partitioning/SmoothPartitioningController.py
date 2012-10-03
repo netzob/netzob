@@ -101,6 +101,11 @@ class SmoothPartitioningController(object):
         # Close dialog box
         self._view.smoothDialog.destroy()
 
+        # Update the message table view
+        self.vocabularyController.view.updateSelectedMessageTable()
+        # Update the symbol properties view
+        self.vocabularyController.view.updateLeftPanel()
+
     def smooth(self):
         """Smooth the provided symbols"""
         step = float(100) / float(len(self.symbols))
@@ -109,7 +114,7 @@ class SmoothPartitioningController(object):
             GObject.idle_add(self._view.smooth_progressbar.set_text, _("Smooth symbol {0}".format(symbol.getName())))
             if self.flagStop:
                 return
-            symbol.slickRegex(self.vocabularyController.getCurrentProject())
+            symbol.getField().slickRegex(self.vocabularyController.getCurrentProject())
             total = total + step
             rtotal = float(total) / float(100)
             time.sleep(0.01)

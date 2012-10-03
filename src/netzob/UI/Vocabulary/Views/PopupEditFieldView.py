@@ -56,7 +56,7 @@ class PopupEditFieldView(object):
             ResourcesConfiguration.getStaticResources(),
             "ui", "vocabulary",
             "editFieldDialog.glade"))
-        self._getObjects(self.builder, ["dialog", "fieldName", "description", "regex", "encapsulationLevel"])
+        self._getObjects(self.builder, ["dialog", "fieldName", "description", "regex"])
         self.controller = controller
         self.builder.connect_signals(self.controller)
 

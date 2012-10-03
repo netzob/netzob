@@ -85,7 +85,6 @@ class ResetPartitioningController(object):
     def startReset(self):
         """Start the reset operation by creating
         a dedicated thread
-        @var symbols: the list of symbols that should be reseted
         """
         if len(self.symbols) > 0:
             self.log.debug("Start to reset the selected symbols")
@@ -94,13 +93,18 @@ class ResetPartitioningController(object):
             except TaskError, e:
                 self.log.error(_("Error while proceeding to the reseting of symbols: {0}").format(str(e)))
         else:
-            self.log.debug("No symbol selected")
+            self.log.debug("No field selected")
 
         # Update button
         self._view.reset_stop.set_sensitive(True)
 
         # Close dialog box
         self._view.resetDialog.destroy()
+
+        # Update the message table view
+        self.vocabularyController.view.updateSelectedMessageTable()
+        # Update the symbol properties view
+        self.vocabularyController.view.updateLeftPanel()
 
     def reset(self):
         """Reset the provided symbols"""
@@ -110,7 +114,7 @@ class ResetPartitioningController(object):
             GObject.idle_add(self._view.reset_progressbar.set_text, _("Reset symbol {0}".format(symbol.getName())))
             if self.flagStop:
                 return
-            symbol.resetPartitioning(self.vocabularyController.getCurrentProject())
+            symbol.getField().resetPartitioning(self.vocabularyController.getCurrentProject())
             total = total + step
             rtotal = float(total) / float(100)
             time.sleep(0.01)
