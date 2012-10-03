@@ -25,58 +25,52 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 #| Standard library imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 from gettext import gettext as _
-from gi.repository import Gtk, Gdk, GObject
-import gi
-from netzob.UI.Grammar.Controllers.Menus.ContextualMenuOnStateController import ContextualMenuOnStateController
-gi.require_version('Gtk', '3.0')
+import os
 
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 #| Related third party imports
-#+----------------------------------------------
-from netzob.Simulator.XDotWidget import XDotWidget
+#+---------------------------------------------------------------------------+
+from gi.repository import Gtk, Gdk
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject
 
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 #| Local application imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
-#+----------------------------------------------
-#| Configuration of the logger
-#+----------------------------------------------
+class DeleteStateView(object):
 
+    def __init__(self, controller, state):
+        '''
+        Constructor
+        '''
+        self.builder = Gtk.Builder()
+        self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
+                                                "ui", "grammar",
+                                                "DeleteStateDialog.glade"))
+        self._getObjects(self.builder, ["deleteStateDialog",
+                                        "IDEntry", "nameEntry",
+                                        "typeEntry"])
+        self.controller = controller
+        self.builder.connect_signals(self.controller)
 
-#+----------------------------------------------
-#| XDotWidget:
-#|    Integrates an XDot graph in a PyGtk window
-#+----------------------------------------------
-class GrammarXDotWidget(XDotWidget):
+        self.IDEntry.set_text(str(state.getID()))
+        self.nameEntry.set_text(state.getName())
+        self.typeEntry.set_text(str(state.getType()))
 
-    def __init__(self, grammarController):
-        XDotWidget.__init__(self)
-        self.grammarController = grammarController
-        self.connect('clicked', self.on_click_action)
+    def _getObjects(self, builder, objectsList):
+        for obj in objectsList:
+            setattr(self, obj, builder.get_object(obj))
 
-    def on_click_action(self, object, url, event):
-        if event.button == 3:
-            state = self.getStateWithID(url)
-            if state is not None:
-                controller = ContextualMenuOnStateController(self.grammarController, state)
-                controller.run(event)
+    def run(self):
+        self.deleteStateDialog.run()
 
-    def getStateWithID(self, id):
-        currentProject = self.grammarController.getCurrentProject()
-        if currentProject is None:
-            return
-        automata = currentProject.getGrammar().getAutomata()
-        for state in automata.getStates():
-            if str(state.getID()) == str(id):
-                return state
-        return None
-
-    def drawAutomata(self, automata):
-        self.set_dotcode(automata.getDotCode())
-        self.zoom_to_fit()
+    def destroy(self):
+        self.deleteStateDialog.destroy()
