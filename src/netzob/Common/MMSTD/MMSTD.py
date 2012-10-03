@@ -158,9 +158,16 @@ class MMSTD(Automata):
         states = self.getStates()
         for state in states:
             if state.isActive():
-                dotCode = dotCode + "\"" + state.getName() + "\" [style=filled, fillcolor = red, URL = \"" + state.getID() + "\"];\n"
+                color = "red"
             else:
-                dotCode = dotCode + "\"" + state.getName() + "\" [style=filled, fillcolor = white, URL = \"" + state.getID() + "\"];\n"
+                color = "white"
+
+            if state == self.initialState:
+                shape = "doublecircle"
+            else:
+                shape = "ellipse"
+
+            dotCode = dotCode + "\"" + state.getName() + "\" [shape=" + shape + " style=filled, fillcolor = " + color + ", URL = \"" + state.getID() + "\"];\n"
 
         for inputState in states:
             for transition in inputState.getTransitions():
