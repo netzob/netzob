@@ -36,54 +36,47 @@ import uuid
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from gi.repository import Gtk, Gdk, GObject
+from gi.repository import Gtk, Gdk
 import gi
-from netzob.UI.Grammar.Views.Menus.ContextualMenuOnStateView import ContextualMenuOnStateView
-from netzob.UI.Grammar.Controllers.DeleteStateController import DeleteStateController
-from netzob.UI.Grammar.Controllers.EditStateController import EditStateController
+from netzob.UI.Grammar.Views.DeleteStateView import DeleteStateView
+from netzob.UI.Grammar.Views.DeleteTransitionView import DeleteTransitionView
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
-from gi.repository import Pango
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 
 
-class ContextualMenuOnStateController(object):
-    """Contextual menu on state"""
+class DeleteTransitionController(object):
+    """Manages the deletetion of a state"""
 
-    def __init__(self, grammarController, state):
+    def __init__(self, grammarController, transition):
         self.grammarController = grammarController
-        self.state = state
-        self._view = ContextualMenuOnStateView(self)
+        self.transition = transition
+        self._view = DeleteTransitionView(self, self.transition)
         self.log = logging.getLogger(__name__)
 
     @property
     def view(self):
         return self._view
 
-    def run(self, event):
-        self._view.run(event)
+    def deleteTransitionButton_clicked_cb(self, widget):
+        currentProject = self.grammarController.getCurrentProject()
+        if currentProject is None or self.state is None:
+            return
+        grammar = currentProject.getGrammar()
+        automata = grammar.getAutomata()
+        if automata is None:
+            return
 
-    def getState(self):
-        return self.state
+        automata.removeTransition(self.transition)
+        self._view.destroy()
 
-    def editState_cb(self, widget):
-        """callback executed when the user wants to edit a state"""
-        controller = EditStateController(self.grammarController, self.state)
-        controller.run()
+        self.grammarController.restart()
 
-    def deleteState_cb(self, widget):
-        """callback executed when the user wants to delete a state"""
-        controller = DeleteStateController(self.grammarController, self.state)
-        controller.run()
+    def cancelButton_clicked_cb(self, widget):
+        self._view.destroy()
 
-    def editTransition_cb(self, widget, transition):
-        """callback executed when the user wants to edit a transition"""
-        print "edit transition"
-
-    def deleteTransition_cb(self, widget, transition):
-        """callback executed when the user wants to delete a transition"""
-        controller = DeleteTransitionController(self.grammarController, self.transition)
-        controller.run()
+    def run(self):
+        self._view.run()
