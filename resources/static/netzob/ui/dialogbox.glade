@@ -219,7 +219,7 @@ Thank you for your help.</property>
                     <property name="can_focus">True</property>
                     <property name="hexpand">True</property>
                     <property name="editable">False</property>
-                    <property name="invisible_char">â—</property>
+                    <property name="invisible_char">â</property>
                     <property name="invisible_char_set">True</property>
                   </object>
                   <packing>
@@ -264,7 +264,7 @@ Thank you for your help.</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="hexpand">True</property>
-                        <property name="invisible_char">â—</property>
+                        <property name="invisible_char">â</property>
                         <property name="invisible_char_set">True</property>
                         <signal name="changed" handler="bugReporter_entry_changed_cb" swapped="no"/>
                       </object>
@@ -602,7 +602,7 @@ is not valid !</property>
               <object class="GtkEntry" id="entry1">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="invisible_char">â—</property>
+                <property name="invisible_char">â</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -768,7 +768,7 @@ is not valid !</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="hexpand">True</property>
-                <property name="invisible_char">â—</property>
+                <property name="invisible_char">â</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -1038,7 +1038,7 @@ is not valid !</property>
               <object class="GtkEntry" id="entry4">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="invisible_char">â—</property>
+                <property name="invisible_char">â</property>
                 <property name="invisible_char_set">True</property>
               </object>
               <packing>
@@ -1061,10 +1061,10 @@ is not valid !</property>
       <action-widget response="0">newProjectApplyButton</action-widget>
     </action-widgets>
   </object>
-  <object class="GtkDialog" id="renamesymbol">
+  <object class="GtkDialog" id="renamelayer">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">Rename the symbol X</property>
+    <property name="title" translatable="yes">Rename the layer X</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox8">
@@ -1137,7 +1137,7 @@ is not valid !</property>
               <object class="GtkEntry" id="entry3">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="invisible_char">â—</property>
+                <property name="invisible_char">â</property>
                 <property name="invisible_char_set">True</property>
               </object>
               <packing>
@@ -1301,4 +1301,3 @@ is not valid !</property>
     </action-widgets>
   </object>
 </interface>
-

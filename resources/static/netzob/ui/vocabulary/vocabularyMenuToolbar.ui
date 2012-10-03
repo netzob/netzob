@@ -35,13 +35,6 @@
   <toolbar name="mainToolbar">
     <placeholder name="mainToolbarAdditions">
       <toolitem action="importMessagesFromFile" />
-      <toolitem action="captureMessages" />
-      <separator />
-      <toolitem action="sequenceAlignment" />
-      <toolitem action="partitioningForce" />
-      <toolitem action="partitioningSimple" />
-      <toolitem action="partitioningSmooth" />
-      <toolitem action="partitioningReset" />
       <separator />
       <toolitem action="concatField" />
       <toolitem action="split" />
@@ -51,9 +44,7 @@
       <separator />
       <toolitem action="searchText" />
       <toolitem action="environmentDep" />
-      <toolitem action="messagesDistribution" />
       <toolitem action="variableTable" />
-      <toolitem action="fieldLimits" />
     </placeholder>
   </toolbar>
 </ui>
