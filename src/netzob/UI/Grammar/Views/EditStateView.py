@@ -29,60 +29,60 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import logging
-import time
-import uuid
+import os
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from gi.repository import Gtk, Gdk, GObject
+from gi.repository import Gtk, Gdk
 import gi
-from netzob.UI.Grammar.Views.Menus.ContextualMenuOnStateView import ContextualMenuOnStateView
-from netzob.UI.Grammar.Controllers.DeleteStateController import DeleteStateController
-from netzob.UI.Grammar.Controllers.EditStateController import EditStateController
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
-from gi.repository import Pango
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
-class ContextualMenuOnStateController(object):
-    """Contextual menu on state"""
+class EditStateView(object):
 
-    def __init__(self, grammarController, state):
-        self.grammarController = grammarController
-        self.state = state
-        self._view = ContextualMenuOnStateView(self)
-        self.log = logging.getLogger(__name__)
+    def __init__(self, controller, state):
+        '''
+        Constructor
+        '''
+        self.builder = Gtk.Builder()
+        self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
+                                                "ui", "grammar",
+                                                "createStateDialog.glade"))
+        self._getObjects(self.builder, ["createStateDialog",
+                                        "createButton", "cancelButton",
+                                        "idEntry", "nameEntry", "initialStateCheckButton",
+                                        "errorImage", "errorLabel", "titleLabel"])
+        self.controller = controller
+        self.builder.connect_signals(self.controller)
 
-    @property
-    def view(self):
-        return self._view
+        self.titleLabel.set_label(_("Edit the state"))
 
-    def run(self, event):
-        self._view.run(event)
+        isInitialState = False
+        automata = controller.grammarController.getCurrentProject().getGrammar().getAutomata()
+        initialState = automata.getInitialState()
 
-    def getState(self):
-        return self.state
+        if str(initialState.getID()) == str(state.getID()):
+            isInitialState = True
 
-    def editState_cb(self, widget):
-        """callback executed when the user wants to edit a state"""
-        controller = EditStateController(self.grammarController, self.state)
-        controller.run()
+        self.idEntry.set_text(str(state.getID()))
+        self.idEntry.set_sensitive(False)
 
-    def deleteState_cb(self, widget):
-        """callback executed when the user wants to delete a state"""
-        controller = DeleteStateController(self.grammarController, self.state)
-        controller.run()
+        self.nameEntry.set_text(state.getName())
+        self.initialStateCheckButton.set_active(isInitialState)
 
-    def editTransition_cb(self, widget, transition):
-        """callback executed when the user wants to edit a transition"""
-        print "edit transition"
+    def _getObjects(self, builder, objectsList):
+        for obj in objectsList:
+            setattr(self, obj, builder.get_object(obj))
 
-    def deleteTransition_cb(self, widget, transition):
-        """callback executed when the user wants to delete a transition"""
-        print "delete transition"
+    def run(self):
+        self.createStateDialog.run()
+
+    def destroy(self):
+        self.createStateDialog.destroy()

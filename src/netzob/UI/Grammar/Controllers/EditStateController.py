@@ -36,53 +36,82 @@ import uuid
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from gi.repository import Gtk, Gdk, GObject
+from gi.repository import Gtk, Gdk
 import gi
-from netzob.UI.Grammar.Views.Menus.ContextualMenuOnStateView import ContextualMenuOnStateView
-from netzob.UI.Grammar.Controllers.DeleteStateController import DeleteStateController
-from netzob.UI.Grammar.Controllers.EditStateController import EditStateController
+from netzob.Common.MMSTD.States.impl.NormalState import NormalState
+from netzob.Common.MMSTD.MMSTD import MMSTD
+from netzob.UI.Grammar.Views.EditStateView import EditStateView
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
-from gi.repository import Pango
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 
 
-class ContextualMenuOnStateController(object):
-    """Contextual menu on state"""
+class EditStateController(object):
+    """Manages the edition of a state"""
 
     def __init__(self, grammarController, state):
         self.grammarController = grammarController
         self.state = state
-        self._view = ContextualMenuOnStateView(self)
+        self._view = EditStateView(self, self.state)
         self.log = logging.getLogger(__name__)
 
     @property
     def view(self):
         return self._view
 
-    def run(self, event):
-        self._view.run(event)
+    def displayErrorMessage(self, errorMessage):
+        if errorMessage is None:
+            self._view.errorImage.hide()
+            self._view.errorLabel.set_label("")
+            self._view.errorLabel.hide()
+        else:
+            self._view.errorLabel.set_label(errorMessage)
+            self._view.errorLabel.show()
+            self._view.errorImage.show()
 
-    def getState(self):
-        return self.state
+    def cancelButton_clicked_cb(self, event):
+        """Callback executed when the user clicks on the cancel button"""
+        self._view.destroy()
 
-    def editState_cb(self, widget):
-        """callback executed when the user wants to edit a state"""
-        controller = EditStateController(self.grammarController, self.state)
-        controller.run()
+    def createButton_clicked_cb(self, event):
+        currentProject = self.grammarController.getCurrentProject()
 
-    def deleteState_cb(self, widget):
-        """callback executed when the user wants to delete a state"""
-        controller = DeleteStateController(self.grammarController, self.state)
-        controller.run()
+        """callback executed when the user clicks on the create button"""
+        initialState = self._view.initialStateCheckButton.get_active()
+        stateName = self._view.nameEntry.get_text()
 
-    def editTransition_cb(self, widget, transition):
-        """callback executed when the user wants to edit a transition"""
-        print "edit transition"
+        automata = currentProject.getGrammar().getAutomata()
 
-    def deleteTransition_cb(self, widget, transition):
-        """callback executed when the user wants to delete a transition"""
-        print "delete transition"
+        errorMessage = None
+        # verify initialState is valid
+        if not initialState and automata.getInitialState() == self.state:
+            errorMessage = _("You cannot deactivate an initial state.")
+            self.displayErrorMessage(errorMessage)
+            return
+
+        # verify the name of the state is unique
+        found = False
+        if automata is not None:
+            for state in automata.getStates():
+                if state.getName() == stateName and state != self.state:
+                    found = True
+                    break
+
+        if found:
+            errorMessage = _("A state already has this name, please specify another one")
+            self.displayErrorMessage(errorMessage)
+            return
+
+        self.state.setName(stateName)
+
+        if initialState:
+            automata.setInitialState(self.state)
+
+        self._view.destroy()
+        self.grammarController.restart()
+
+    def run(self):
+        self._view.run()
