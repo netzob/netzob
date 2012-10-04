@@ -101,6 +101,8 @@ class ResetPartitioningController(object):
 
         # Close dialog box
         self._view.resetDialog.destroy()
+        # refresh the vocabulary view
+        self.vocabularyController.restart()
 
     def reset(self):
         """Reset the provided symbols"""
