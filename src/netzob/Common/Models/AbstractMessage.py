@@ -209,14 +209,16 @@ class AbstractMessage(object):
         """
         filters = []
         filters.extend(self.mathematicFilters)
-        for filter in self.symbol.getMathematicFilters():
-            found = False
-            for f in filters:
-                if f.getName() == filter.getName():
-                    found = True
-                    break
-            if not found:
-                filters.append(filter)
+
+        if self.symbol is not None:
+            for filter in self.symbol.getMathematicFilters():
+                found = False
+                for f in filters:
+                    if f.getName() == filter.getName():
+                        found = True
+                        break
+                if not found:
+                    filters.append(filter)
         return filters
 
     def addMathematicFilter(self, filter):
