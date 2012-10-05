@@ -379,7 +379,10 @@ class AbstractMessage(object):
         iCol = 1
         for field in self.symbol.getFields():
             if field.isStatic():
-                result.append(field.getRegex())
+                value = field.getRegex()
+                if value.endswith("?"):
+                    value = value[1:len(value) - 2]
+                result.append(value)
             else:
                 start = dynamicDatas.start(iCol)
                 end = dynamicDatas.end(iCol)

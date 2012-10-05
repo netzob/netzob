@@ -214,8 +214,8 @@ class Symbol(AbstractSymbol):
         logging.debug("Size of the longest message : {0}".format(maxLen))
 
         # Try to see if the column is static or variable
-        resultString = ""
-        resultMask = ""
+        resultString = []
+        resultMask = []
 
         # Stop and clean if requested
         if idStop_cb is not None:
@@ -225,6 +225,7 @@ class Symbol(AbstractSymbol):
 
         step = float(100) / float(maxLen)
         totalPercent = 0
+
         # Loop until maxLen
         for it in range(maxLen):
             ref = ""
@@ -236,24 +237,32 @@ class Symbol(AbstractSymbol):
                     self.cleanFields()
                     return
 
+            oneMessageIsTooShort = False
             # Loop through each cells of the column
             for message in self.getMessages():
-                try:
+                dataMessage = message.getStringData()
+                if it < len(dataMessage):
                     tmp = message.getStringData()[it]
                     if ref == "":
                         ref = tmp
-                    if ref != tmp:
+                    elif ref != tmp:
                         isDifferent = True
                         break
-                except IndexError:
-                    isDifferent = True
+                else:
+                    # message is too short
+                    oneMessageIsTooShort = True
+
+            if oneMessageIsTooShort:
+                prefix = '+'
+            else:
+                prefix = ''
 
             if isDifferent:
-                resultString += "-"
-                resultMask += "1"
+                resultString.append("-")
+                resultMask.append(prefix + "1")
             else:
-                resultString += ref
-                resultMask += "0"
+                resultString.append(ref)
+                resultMask.append(prefix + "0")
 
             totalPercent += step
             if it % 20 == 0 and status_cb is not None:
@@ -263,10 +272,9 @@ class Symbol(AbstractSymbol):
         if unitSize != UnitSize.NONE:
             unitSize = UnitSize.getSizeInBits(unitSize)
             nbLetters = unitSize / 4
-            tmpResultString = ""
-            tmpResultMask = ""
+            tmpResultString = []
+            tmpResultMask = []
             for i in range(0, len(resultString), nbLetters):
-
                 # Stop and clean if requested
                 if idStop_cb is not None:
                     if idStop_cb():
@@ -274,14 +282,14 @@ class Symbol(AbstractSymbol):
                         return
 
                 tmpText = resultString[i:i + nbLetters]
-                if tmpText.count("-") >= 1:
+                tmpMask = resultMask[i:i + nbLetters]
+                if "-" in tmpText:
                     for j in range(len(tmpText)):
-                        tmpResultString += "-"
-                        tmpResultMask += "1"
+                        tmpResultString.append("-")
+                        tmpResultMask.append("1")
                 else:
-                    tmpResultString += tmpText
-                    for j in range(len(tmpText)):
-                        tmpResultMask += "0"
+                    tmpResultString.extend(tmpText)
+                    tmpResultMask.extend(tmpMask)
             resultString = tmpResultString
             resultMask = tmpResultMask
 
@@ -294,50 +302,72 @@ class Symbol(AbstractSymbol):
             isLastDyn = False
 
         nbElements = 1
-        iField = -1
+        iField = 0
+        typeOfLastElement = None  # None undef, 1 : dynamic, 0:static, 0+:static optional
+        fields = []
+        currentField = Field("tmp", iField, "")
         for it in range(1, len(resultMask)):
-            if resultMask[it] == "1":  # The current column is dynamic
-                if isLastDyn:
-                    nbElements += 1
+            nbElements += 1
+
+            # Manage dynamic field
+            if resultMask[it] == "1":
+                if typeOfLastElement is None or typeOfLastElement == resultMask[it]:
+                    typeOfLastElement = resultMask[it]
+                    if currentField is None:
+                        currentField = Field("tmp", iField, "(.{,1})")
+                        nbElements = 1
+                    else:
+                        currentField.setRegex("(.{," + str(nbElements) + "})")
                 else:
-                    # We change the field
+                    typeOfLastElement = resultMask[it]
+                    fields.append(currentField)
                     iField += 1
-                    field = Field(_("Name"), iField, currentStaticField)
-                    field.setColor("black")
-                    self.addField(field)
-                    # We start a new field
-                    currentStaticField = ""
+                    currentField = Field("tmp", iField, "(.{,1})")
                     nbElements = 1
-                isLastDyn = True
-            else:  # The current column is static
-                if isLastDyn:  # We change the field
-                    iField += 1
-                    field = Field(_("Name"), iField, "(.{," + str(nbElements) + "})")
-                    field.setColor("blue")
-                    self.addField(field)
-                    # We start a new field
-                    currentStaticField = resultString[it]
-                    nbElements = 1
+
+            elif resultMask[it] == "0":
+                # In a static field
+                if typeOfLastElement is None or typeOfLastElement == resultMask[it]:
+                    typeOfLastElement = resultMask[it]
+                    if currentField is None:
+                        currentField = Field("tmp", iField, resultString[it])
+                        nbElements = 1
+                    else:
+                        currentField.setRegex(currentField.getRegex() + resultString[it])
+
                 else:
-                    currentStaticField += resultString[it]
-                    nbElements += 1
-                isLastDyn = False
+                    typeOfLastElement = resultMask[it]
+                    fields.append(currentField)
+                    currentField = Field("tmp", iField, resultString[it])
+                    iField += 1
+
+            elif resultMask[it] == "+0":
+                # In a static optional field
+                if typeOfLastElement is None or typeOfLastElement == resultMask[it]:
+                    typeOfLastElement = resultMask[it]
+
+                    if currentField is None:
+                        currentField = Field("tmp", iField, "(" + resultString[it] + ")?")
+                        nbElements = 1
+                    else:
+                        currentField.setRegex("(" + currentField.getRegex()[1:len(currentField.getRegex()) - 2] + resultString[it] + ")?")
+
+                else:
+                    typeOfLastElement = resultMask[it]
+                    fields.append(currentField)
+                    currentField = Field("tmp", iField, "(" + resultString[it] + ")?")
+                    iField += 1
+        if currentField is not None:
+            fields.append(currentField)
+
+        for field in fields:
+            self.addField(field)
 
         # Stop and clean if requested
         if idStop_cb is not None:
             if idStop_cb():
                 self.cleanFields()
                 return
-
-        # We add the last field
-        iField += 1
-        if resultMask[-1] == "1":  # If the last column is dynamic
-            field = Field(_("Name"), iField, "(.{," + str(nbElements) + "})")
-            field.setColor("blue")
-        else:
-            field = Field(_("Name"), iField, currentStaticField)
-            field.setColor("black")
-        self.addField(field)
 
     #+----------------------------------------------
     #| computeFieldsLimits:
