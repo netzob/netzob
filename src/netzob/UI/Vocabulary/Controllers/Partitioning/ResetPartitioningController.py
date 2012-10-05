@@ -100,6 +100,8 @@ class ResetPartitioningController(object):
 
         # Close dialog box
         self._view.resetDialog.destroy()
+        # refresh the vocabulary view
+        self.vocabularyController.restart()
 
         # Update the message table view
         self.vocabularyController.view.updateSelectedMessageTable()

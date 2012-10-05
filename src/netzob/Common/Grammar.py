@@ -65,7 +65,8 @@ class Grammar(object):
         """update:
         verifies the grammar and its automata is still valid
         and that none of its symbols has been deprecated"""
-        self.automata.update(vocabulary)
+        if self.automata is not None:
+            self.automata.update(vocabulary)
 
     #+-----------------------------------------------------------------------+
     #| Save & Load
