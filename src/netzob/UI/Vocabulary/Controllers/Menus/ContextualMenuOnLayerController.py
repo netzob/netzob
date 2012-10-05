@@ -51,6 +51,11 @@ from netzob.UI.Vocabulary.Views.Menus.ContextualMenuOnLayerView import Contextua
 from netzob.UI.NetzobWidgets import NetzobLabel
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.UI.Vocabulary.Controllers.PopupEditFieldController import PopupEditFieldController
+from netzob.UI.Vocabulary.Controllers.Partitioning.SequenceAlignmentController import SequenceAlignmentController
+from netzob.UI.Vocabulary.Controllers.Partitioning.ForcePartitioningController import ForcePartitioningController
+from netzob.UI.Vocabulary.Controllers.Partitioning.SimplePartitioningController import SimplePartitioningController
+from netzob.UI.Vocabulary.Controllers.Partitioning.SmoothPartitioningController import SmoothPartitioningController
+from netzob.UI.Vocabulary.Controllers.Partitioning.ResetPartitioningController import ResetPartitioningController
 
 
 class ContextualMenuOnLayerController(object):
@@ -199,3 +204,23 @@ class ContextualMenuOnLayerController(object):
 
         self.vocabularyController.view.updateLeftPanel()
         self.vocabularyController.view.updateSelectedMessageTable()
+
+    def sequenceAlignment_cb(self, action):
+        sequence_controller = SequenceAlignmentController( self.vocabularyController, [self.layer])
+        sequence_controller.run()
+
+    def forcePartitionment_cb(self, action):
+        force_controller = ForcePartitioningController(self.vocabularyController, [self.layer])
+        force_controller.run()
+
+    def simplePartitionment_cb(self, action):
+        simple_controller = SimplePartitioningController(self.vocabularyController, [self.layer])
+        simple_controller.run()
+
+    def smoothPartitionment_cb(self, action):
+        smooth_controller = SmoothPartitioningController(self.vocabularyController, [self.layer])
+        smooth_controller.run()
+
+    def resetPartitionment_cb(self, action):
+        reset_controller = ResetPartitioningController(self.vocabularyController, [self.layer])
+        reset_controller.run()

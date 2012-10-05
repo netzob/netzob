@@ -54,12 +54,12 @@ class SimplePartitioningController(object):
     classdocs
     '''
 
-    def __init__(self, vocabularyController, symbols=[]):
+    def __init__(self, vocabularyController, fields=[]):
         self.vocabularyController = vocabularyController
         self._view = SimplePartitioningView(self)
         self.log = logging.getLogger(__name__)
         self.flagStop = False
-        self.symbols = symbols
+        self.fields = fields
 
     @property
     def view(self):
@@ -93,14 +93,14 @@ class SimplePartitioningController(object):
         Job(self.startSimplePartitioning(formatBits))
 
     def startSimplePartitioning(self, unitSize):
-        if len(self.symbols) > 0:
-            self.log.debug("Start to simple partitioning the selected symbols")
+        if len(self.fields) > 0:
+            self.log.debug("Start to simple partitioning the selected fields")
             try:
                 (yield ThreadedTask(self.simplePartitioning, unitSize))
             except TaskError, e:
-                self.log.error(_("Error while proceeding to the simple partitioning of symbols: {0}").format(str(e)))
+                self.log.error(_("Error while proceeding to the simple partitioning of fields: {0}").format(str(e)))
         else:
-            self.log.debug("No symbol selected")
+            self.log.debug("No field selected")
 
         # Update button
         self._view.simple_stop.set_sensitive(False)
@@ -110,24 +110,24 @@ class SimplePartitioningController(object):
 
         # Update the message table view
         self.vocabularyController.view.updateSelectedMessageTable()
-        # Update the symbol properties view
+        # Update the field properties view
         self.vocabularyController.view.updateLeftPanel()
 
     def simplePartitioning(self, unitSize):
-        """Simple partitioning the provided symbols"""
-        self.id_current_symbol = 0
-        for symbol in self.symbols:
-            GObject.idle_add(self._view.simple_progressbar.set_text, _("Simple partitioning symbol {0}".format(symbol.getName())))
+        """Simple partitioning the provided fields"""
+        self.id_current_field = 0
+        for field in self.fields:
+            GObject.idle_add(self._view.simple_progressbar.set_text, _("Simple partitioning field {0}".format(field.getName())))
             if self.isFlagStopRaised():
                 return
-            symbol.getField().simplePartitioning(unitSize, self.updateProgessBar, self.isFlagStopRaised)
-            self.id_current_symbol += 1
+            field.simplePartitioning(unitSize, self.updateProgessBar, self.isFlagStopRaised)
+            self.id_current_field += 1
 
     def updateProgessBar(self, percent, message):
         """Update the progress bar given the provided informations"""
-        nbStage = len(self.symbols)
+        nbStage = len(self.fields)
         if percent is not None:
-            totalPercent = (100 / nbStage) * self.id_current_symbol + percent / nbStage
+            totalPercent = (100 / nbStage) * self.id_current_field + percent / nbStage
             valTotalPercent = float(totalPercent) / float(100)
             time.sleep(0.01)
             GObject.idle_add(self._view.simple_progressbar.set_fraction, valTotalPercent)

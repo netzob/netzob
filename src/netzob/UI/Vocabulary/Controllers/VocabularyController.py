@@ -308,33 +308,33 @@ class VocabularyController(object):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        symbols = self.view.getCheckedSymbolList()
-        if symbols == []:
+        layers = self.view.getCheckedLayerList()
+        if layers == []:
             NetzobErrorMessage(_("No symbol(s) selected."))
             return
-        force_controller = ForcePartitioningController(self, symbols)
+        force_controller = ForcePartitioningController(self, layers)
         force_controller.run()
 
     def partitioningSimple_activate_cb(self, action):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        symbols = self.view.getCheckedSymbolList()
-        if symbols == []:
+        layers = self.view.getCheckedLayerList()
+        if layers == []:
             NetzobErrorMessage(_("No symbol(s) selected."))
             return
-        simple_controller = SimplePartitioningController(self, symbols)
+        simple_controller = SimplePartitioningController(self, layers)
         simple_controller.run()
 
     def partitioningSmooth_activate_cb(self, action):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        symbols = self.view.getCheckedSymbolList()
-        if symbols == []:
+        layers = self.view.getCheckedLayerList()
+        if layers == []:
             NetzobErrorMessage(_("No symbol(s) selected."))
             return
-        smooth_controller = SmoothPartitioningController(self, symbols)
+        smooth_controller = SmoothPartitioningController(self, layers)
         smooth_controller.run()
 
     def partitioningReset_activate_cb(self, action):
@@ -343,11 +343,11 @@ class VocabularyController(object):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        fields = self.view.getCheckedSymbolList()
-        if fields == []:
-            NetzobErrorMessage(_("No field(s) selected."))
+        layers = self.view.getCheckedLayerList()
+        if layers == []:
+            NetzobErrorMessage(_("No symbol(s) selected."))
             return
-        reset_controller = ResetPartitioningController(self, fields)
+        reset_controller = ResetPartitioningController(self, layers)
         reset_controller.run()
 
     def concatField_activate_cb(self, action):

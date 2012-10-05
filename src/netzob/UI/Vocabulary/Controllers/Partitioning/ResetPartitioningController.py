@@ -49,14 +49,14 @@ from netzob.UI.Vocabulary.Views.Partitioning.ResetPartitioningView import ResetP
 
 
 class ResetPartitioningController(object):
-    """Reset the partitions on selected symbols"""
+    """Reset the partitions on selected fields"""
 
-    def __init__(self, vocabularyController, symbols=[]):
+    def __init__(self, vocabularyController, fields=[]):
         self.vocabularyController = vocabularyController
         self._view = ResetPartitioningView(self)
         self.log = logging.getLogger(__name__)
         self.flagStop = False
-        self.symbols = symbols
+        self.fields = fields
 
     @property
     def view(self):
@@ -86,12 +86,12 @@ class ResetPartitioningController(object):
         """Start the reset operation by creating
         a dedicated thread
         """
-        if len(self.symbols) > 0:
-            self.log.debug("Start to reset the selected symbols")
+        if len(self.fields) > 0:
+            self.log.debug("Start to reset the selected fields")
             try:
                 (yield ThreadedTask(self.reset))
             except TaskError, e:
-                self.log.error(_("Error while proceeding to the reseting of symbols: {0}").format(str(e)))
+                self.log.error(_("Error while proceeding to the reseting of fields: {0}").format(str(e)))
         else:
             self.log.debug("No field selected")
 
@@ -107,14 +107,14 @@ class ResetPartitioningController(object):
         self.vocabularyController.view.updateLeftPanel()
 
     def reset(self):
-        """Reset the provided symbols"""
-        step = float(100) / float(len(self.symbols))
+        """Reset the provided fields"""
+        step = float(100) / float(len(self.fields))
         total = float(0)
-        for symbol in self.symbols:
-            GObject.idle_add(self._view.reset_progressbar.set_text, _("Reset symbol {0}".format(symbol.getName())))
+        for field in self.fields:
+            GObject.idle_add(self._view.reset_progressbar.set_text, _("Reset field {0}".format(field.getName())))
             if self.flagStop:
                 return
-            symbol.getField().resetPartitioning(self.vocabularyController.getCurrentProject())
+            field.resetPartitioning(self.vocabularyController.getCurrentProject())
             total = total + step
             rtotal = float(total) / float(100)
             time.sleep(0.01)

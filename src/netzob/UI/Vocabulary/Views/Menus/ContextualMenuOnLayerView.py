@@ -65,6 +65,13 @@ class ContextualMenuOnLayerView(object):
         item.connect("activate", self.controller.renameLayer_cb)
         self.menu.append(item)
 
+        # Add sub-entries for partitioning
+        subMenu = self.build_partitioning_submenu()
+        item = Gtk.MenuItem(_("Partitioning"))
+        item.set_submenu(subMenu)
+        item.show()
+        self.menu.append(item)
+
         # Add sub-entries to change the type of a specific column
         subMenu = self.build_encoding_submenu()
         item = Gtk.MenuItem(_("Visualization"))
@@ -126,10 +133,6 @@ class ContextualMenuOnLayerView(object):
         menu.show_all()
         return menu
 
-    #+----------------------------------------------
-    #| build_encoding_submenu:
-    #|   Build a submenu for visualization.
-    #+----------------------------------------------
     def build_encoding_submenu(self):
         """Create a GTK menu which contains
         entries to edit the visualizations formats of
@@ -187,4 +190,41 @@ class ContextualMenuOnLayerView(object):
         item.set_submenu(subMenu)
         item.show()
         menu.append(item)
+        return menu
+
+    def build_partitioning_submenu(self):
+        """Create a GTK menu which contains
+        entries for partitioning fields"""
+        menu = Gtk.Menu()
+
+        # Sequence alignment
+        item = Gtk.MenuItem(_("Sequence alignment"))
+        item.connect("activate", self.controller.sequenceAlignment_cb)
+        item.show()
+        menu.append(item)
+
+        # Force partitionment
+        item = Gtk.MenuItem(_("Force partitionment"))
+        item.connect("activate", self.controller.forcePartitionment_cb)
+        item.show()
+        menu.append(item)
+
+        # Simple partitionment
+        item = Gtk.MenuItem(_("Simple partitionment"))
+        item.connect("activate", self.controller.simplePartitionment_cb)
+        item.show()
+        menu.append(item)
+
+        # Smooth partitionment
+        item = Gtk.MenuItem(_("Smooth partitionment"))
+        item.connect("activate", self.controller.smoothPartitionment_cb)
+        item.show()
+        menu.append(item)
+
+        # Reset partitionment
+        item = Gtk.MenuItem(_("Reset partitionment"))
+        item.connect("activate", self.controller.resetPartitionment_cb)
+        item.show()
+        menu.append(item)
+
         return menu
