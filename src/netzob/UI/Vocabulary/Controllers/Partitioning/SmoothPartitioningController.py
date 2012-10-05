@@ -101,6 +101,11 @@ class SmoothPartitioningController(object):
         # Close dialog box
         self._view.smoothDialog.destroy()
 
+        # Update the message table view
+        self.vocabularyController._view.updateMessageTableDisplayingSymbols(self.symbols)
+        # Update the symbol properties view
+        self.vocabularyController._view.updateLeftPanel()
+
     def smooth(self):
         """Smooth the provided symbols"""
         step = float(100) / float(len(self.symbols))
