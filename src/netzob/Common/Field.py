@@ -764,7 +764,11 @@ class Field(object):
                 @return: the generated variable
         """
         if self.isStatic():
-            value = TypeConvertor.netzobRawToBitArray(self.getRegex())
+            value = self.getRegex()
+            if value.endswith("?"):
+                value = value[1:len(value) - 2]
+
+            value = TypeConvertor.netzobRawToBitArray(value)
             variable = DataVariable(uuid.uuid4(), self.getName(), False, False, BinaryType(True, len(value), len(value)), value.to01())  # A static field is neither mutable nor random.
             return variable
         else:
