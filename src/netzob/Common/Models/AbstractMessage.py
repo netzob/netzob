@@ -209,6 +209,8 @@ class AbstractMessage(object):
         """
         filters = []
         filters.extend(self.mathematicFilters)
+        if self.symbol is None:
+            return filters
         for filter in self.symbol.getField().getMathematicFilters():
             found = False
             for f in filters:
@@ -287,12 +289,6 @@ class AbstractMessage(object):
     #|  and return a table
     #+----------------------------------------------
     def applyAlignment(self, styled=False, encoded=False):
-        if self.getSymbol().getField().getAlignmentType() == "regex":
-            return self.getFields(styled, encoded)
-        else:
-            return self.applyDelimiter(styled, encoded)
-
-    def getFields(self, visualization=False, encoding=False):
         # Retrieve the data in columns
         splittedData = self.getSplittedData()
 
@@ -319,18 +315,18 @@ class AbstractMessage(object):
         # Create the locationTable
         filterTable = FilterApplicationTable(splittedData)
 
-        if encoding is True or visualization is True:
+        if encoded is True or styled is True:
             i_data = 0
             for i_field in range(0, len(self.symbol.getExtendedFields())):
                 field = self.symbol.getExtendedFields()[i_field]
                 dataField = splittedData[i_field]
 
                 # Add encoding filters
-                if encoding is True:
+                if encoded is True:
                     for filter in field.getEncodingFilters():
                         filterTable.applyFilter(filter, i_data, i_data + len(dataField))
                 # Add visualization filters
-                if visualization is True:
+                if styled is True:
                     # Add visualization filters obtained from fields
                     for filter in field.getVisualizationFilters():
                         if len(dataField) > 0:
@@ -338,7 +334,7 @@ class AbstractMessage(object):
                 i_data = i_data + len(dataField)
 
             # Add visualization filters of our current message
-            if visualization is True:
+            if styled is True:
                 for (filter, start, end) in self.getVisualizationFilters():
                     filterTable.applyFilter(filter, start, end)
 
@@ -363,6 +359,7 @@ class AbstractMessage(object):
                 regex.append(field.getRegex())
 
         # Now we apply the regex over the message
+        print regex
         try:
             compiledRegex = re.compile("".join(regex))
             data = self.getReducedStringData()
@@ -378,15 +375,11 @@ class AbstractMessage(object):
             raise NetzobException("The regex of the group doesn't match one of its message")
 
         result = []
-        iCol = 1
-        for field in self.symbol.getExtendedFields():
-            if field.isStatic():
-                result.append(field.getRegex())
-            else:
-                start = dynamicDatas.start(iCol)
-                end = dynamicDatas.end(iCol)
-                result.append(data[start:end])
-                iCol += 1
+        for i in range(len(self.symbol.getExtendedFields())):
+            print dynamicDatas.group(i)
+            start = dynamicDatas.start(i)
+            end = dynamicDatas.end(i)
+            result.append(data[start:end])
         return result
 
 # C VERSION (should work)#
@@ -404,53 +397,6 @@ class AbstractMessage(object):
 #            raise NetzobException("The regex of the group doesn't match one of its message")
 
         return aligned
-
-    #+----------------------------------------------
-    #| applyDelimiter: apply the current delimiter on the message
-    #|  and return a table
-    #+----------------------------------------------
-    def applyDelimiter(self, styled=False, encoded=False):
-        delimiter = self.getSymbol().getField().getRawDelimiter()
-        res = []
-        iField = -1
-        for field in self.symbol.getExtendedFields():
-            if field.getName() == "__sep__":
-                tmp = delimiter
-            else:
-                iField += 1
-                try:
-                    tmp = self.getStringData().split(delimiter)[iField]
-                except IndexError:
-                    tmp = ""
-
-            if field.getColor() == "" or field.getColor() is None:
-                color = 'blue'
-            else:
-                color = field.getColor()
-
-            # Define the background color
-            if field.getBackgroundColor() is not None:
-                backgroundColor = 'background="' + field.getBackgroundColor() + '"'
-            else:
-                backgroundColor = ""
-
-            if styled:
-                if encoded:
-                    from gi.repository import GLib  # TODO: to fix
-                    import gi
-                    gi.require_version('Gtk', '3.0')
-                    res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + GLib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(tmp, field)) + '</span>')
-                else:
-                    res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + tmp + '</span>')
-            else:
-                if encoded:
-                    from gi.repository import GLib  # TODO: to fix
-                    import gi
-                    gi.require_version('Gtk', '3.0')
-                    res.append(GLib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(tmp, field)))
-                else:
-                    res.append(tmp)
-        return res
 
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

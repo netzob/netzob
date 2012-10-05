@@ -125,7 +125,7 @@ class ContextualMenuOnLayerController(object):
             else:
                 message.addMathematicFilter(mathFilter)
 
-        self.layer.resetPartitioning(self.vocabularyController.getCurrentProject())
+        self.layer.resetPartitioning()
         self.vocabularyController.view.updateSelectedMessageTable()
 
     def createCustomFilter_cb(self, event):
@@ -185,23 +185,8 @@ class ContextualMenuOnLayerController(object):
                 currentVocabulary.removeMessage(mess)
             currentVocabulary.removeSymbol(self.layer.getSymbol())
             self.vocabularyController.view.emptyMessageTableDisplayingSymbols([self.layer.getSymbol()])
-            self.vocabularyController.view.updateLeftPanel()
-            self.vocabularyController.view.updateSelectedMessageTable()
-            return
-        # Concatenate all children of the current layer
-        childrenFields = []
-        for child in self.layer.getExtendedFields():
-            childrenFields.append(child)
-
-        # Insert all the child at the place of the current layer
-        parentField = self.layer.getParentField()
-        indexInParentLayer = parentField.getLocalFields().index(self.layer)
-        parentField.getLocalFields().remove(self.layer)
-        index = indexInParentLayer
-        for child in childrenFields:
-            parentField.getLocalFields().insert(index, child)
-            index += 1
-
+        else:
+            self.layer.flattenLocalFields()
         self.vocabularyController.view.updateLeftPanel()
         self.vocabularyController.view.updateSelectedMessageTable()
 

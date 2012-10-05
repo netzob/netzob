@@ -69,16 +69,18 @@ class ForcePartitioningController(object):
         self._view.forceDialog.destroy()
 
     def force_execute_clicked_cb(self, widget):
-        self.flagStop = False
+        #extract choose value
+        delimiter = self._view.force_entry.get_text()
+        if delimiter is None or delimiter == "":
+            return
         #update widget
+        self.flagStop = False
         self._view.force_stop.set_sensitive(True)
         self._view.force_cancel.set_sensitive(False)
         self._view.force_execute.set_sensitive(False)
         self._view.force_entry.set_sensitive(False)
         self._view.force_radiobutton_hexa.set_sensitive(False)
         self._view.force_radiobutton_string.set_sensitive(False)
-        #extract choose value
-        delimiter = self._view.force_entry.get_text()
         if self._view.force_radiobutton_hexa.get_active():
             delimiterType = Format.HEX
         else:
