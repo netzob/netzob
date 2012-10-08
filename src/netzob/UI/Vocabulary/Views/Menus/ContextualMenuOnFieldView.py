@@ -123,6 +123,9 @@ class ContextualMenuOnFieldView(object):
 
         field = self.controller.field
 
+        # Retrieve all the values in the current field
+        cells = self.controller.symbol.getUniqValuesByField(field)
+
         # Retrieve the selected message and field content
         if self.controller.message is not None:
             # Retrieve content of the field
@@ -131,7 +134,7 @@ class ContextualMenuOnFieldView(object):
             field_content = None
 
         # Format submenu
-        possible_choices = Format.getSupportedFormats()
+        possible_choices = Format.getPossibleFormats(cells)
         subMenu = Gtk.Menu()
         for value in possible_choices:
             label = value

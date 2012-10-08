@@ -54,6 +54,15 @@ class Format():
     IP = "ip"
 
     @staticmethod
+    def getPossibleFormats(values):
+        """getPossibleFormats:
+        Given the provided values, it computes the possible formats
+        the values can be.
+        returns a list of format"""
+
+        return Format.getSupportedFormats()
+
+    @staticmethod
     #+---------------------------------------------------------------------------+
     #| getSupportedFormats:
     #|     Returns an array composed of the names of primary supported formats
