@@ -79,7 +79,7 @@ class SplitFieldController(object):
         self.view.buffer.get_buffer().create_tag("greenTag", weight=Pango.Weight.BOLD, foreground="#006400", family="Courier")
 
         # Find the size of the longest message
-        cells = self.symbol.getField().getCellsByField(self.field)
+        cells = self.field.getCells()
         for m in cells:
             if len(m) > self.split_max_len:
                 self.split_max_len = len(m)
@@ -113,7 +113,7 @@ class SplitFieldController(object):
     def adjustSplit_clicked(self, direction):
         if self.split_max_len <= 1:
             return
-        messages = self.symbol.getField().getCellsByField(self.field)
+        messages = self.field.getCells()
 
         # Bounds checking
         if self.split_align == "left":
@@ -157,7 +157,7 @@ class SplitFieldController(object):
         else:
             self.split_align = "left"
 
-        messages = self.symbol.getField().getCellsByField(self.field)
+        messages = self.field.getCells()
 
         # Adapt alignment
         self.view.buffer.get_buffer().set_text("")

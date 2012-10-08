@@ -228,7 +228,10 @@ class ContextualMenuOnFieldController(object):
             dialog.destroy()
             return
         # Create a new layer
-        fieldLayer = Field(str(name), "", self.getSymbol())
+        regex = ""
+        for selectedField in selectedFields:
+            regex += selectedField.getRegex().replace("(", "").replace(")", "")
+        fieldLayer = Field(str(name), "(" + regex + ")", self.getSymbol())
         index_newField = 999999
         parentField = None
         for selectedField in selectedFields:

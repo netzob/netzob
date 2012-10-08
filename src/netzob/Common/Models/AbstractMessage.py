@@ -209,6 +209,8 @@ class AbstractMessage(object):
         """
         filters = []
         filters.extend(self.mathematicFilters)
+        if self.symbol is None:
+            return filters
         for filter in self.symbol.getField().getMathematicFilters():
             found = False
             for f in filters:
@@ -287,26 +289,68 @@ class AbstractMessage(object):
     #|  and return a table
     #+----------------------------------------------
     def applyAlignment(self, styled=False, encoded=False):
-        if self.getSymbol().getField().getAlignmentType() == "regex":
-            return self.getFields(styled, encoded)
-        else:
-            return self.applyDelimiter(styled, encoded)
+        fields = [self.symbol.getField()]
+        dataToSplit = self.getReducedStringData()
+        splittedData = self.applyAlignmentByFields(fields, dataToSplit)
 
-    def getFields(self, visualization=False, encoding=False):
+        # Create the locationTable
+        filterTable = FilterApplicationTable(splittedData)
+
+        if encoded is True or styled is True:
+            i_data = 0
+            for i_field in range(0, len(self.symbol.getExtendedFields())):
+                field = self.symbol.getExtendedFields()[i_field]
+                dataField = splittedData[i_field]
+
+                # Add encoding filters
+                if encoded is True:
+                    for filter in field.getEncodingFilters():
+                        filterTable.applyFilter(filter, i_data, i_data + len(dataField))
+                # Add visualization filters
+                if styled is True:
+                    # Add visualization filters obtained from fields
+                    for filter in field.getVisualizationFilters():
+                        if len(dataField) > 0:
+                            filterTable.applyFilter(filter, i_data, i_data + len(dataField))
+                i_data = i_data + len(dataField)
+
+            # Add visualization filters of our current message
+            if styled is True:
+                for (filter, start, end) in self.getVisualizationFilters():
+                    filterTable.applyFilter(filter, start, end)
+
+        return filterTable.getResult()
+
+    def applyAlignmentByFields(self, fields, dataToSplit):
+        print dataToSplit
+        resSplittedData = []
         # Retrieve the data in columns
-        splittedData = self.getSplittedData()
+        splittedData = self.getSplittedData(fields, dataToSplit)
+        print splittedData
 
-        if len(splittedData) != len(self.symbol.getExtendedFields()):
-
-            print "Nb of expected fields : {0}".format(self.symbol.getExtendedFields())
-            print "fields : {0}".format(splittedData)
-
+        if len(splittedData) != len(fields):
+            logging.error("Nb of expected fields : {0}".format(self.symbol.getExtendedFields()))
+            logging.error("fields : {0}".format(splittedData))
             logging.error("Inconsistency problem between number of fields and the regex application")
             return []
 
+        # Apply mathematical filters on each field
+        filteredData = self.getFilteredData(fields, splittedData)
+
+        # Recursive alignment on each fieldLayer
+        i = 0
+        for field in fields:
+            if field.isLayer():
+                resSplittedData.extend(self.applyAlignmentByFields(field.getLocalFields(), filteredData[i]))
+            else:
+                resSplittedData.append(filteredData[i])
+            i += 1
+        return resSplittedData
+
+    def getFilteredData(self, fields, splittedData):
         # Add Mathematics filters
         i = 0
-        for field in self.symbol.getExtendedFields():
+        for field in fields:
             filters = field.getMathematicFilters()
 
             for filter in filters:
@@ -315,58 +359,31 @@ class AbstractMessage(object):
                 except:
                     self.log.warning("Impossible to apply filter {0} on data {1}.".format(filter.getName(), splittedData[i]))
             i = i + 1
-
-        # Create the locationTable
-        filterTable = FilterApplicationTable(splittedData)
-
-        if encoding is True or visualization is True:
-            i_data = 0
-            for i_field in range(0, len(self.symbol.getExtendedFields())):
-                field = self.symbol.getExtendedFields()[i_field]
-                dataField = splittedData[i_field]
-
-                # Add encoding filters
-                if encoding is True:
-                    for filter in field.getEncodingFilters():
-                        filterTable.applyFilter(filter, i_data, i_data + len(dataField))
-                # Add visualization filters
-                if visualization is True:
-                    # Add visualization filters obtained from fields
-                    for filter in field.getVisualizationFilters():
-                        if len(dataField) > 0:
-                            filterTable.applyFilter(filter, i_data, i_data + len(dataField))
-                i_data = i_data + len(dataField)
-
-            # Add visualization filters of our current message
-            if visualization is True:
-                for (filter, start, end) in self.getVisualizationFilters():
-                    filterTable.applyFilter(filter, start, end)
-
-        return filterTable.getResult()
+        return splittedData
 
     #+-----------------------------------------------------------------------+
     #| getSplittedData
     #|     Split the message using its symbol's regex and return an array of it
     #+-----------------------------------------------------------------------+
-    def getSplittedData(self):
+    def getSplittedData(self, fields, dataToSplit):
+        if len(fields) == 1:
+            return [dataToSplit]
+
         regex = []
         aligned = None
 
         dynamicDatas = None
         # First we compute the global regex
-        for field in self.symbol.getExtendedFields():
-            if field.isStatic():
-                # C Version :
-                #regex.append("(" + field.getRegex() + ")")
-                regex.append(field.getRegex())
-            else:
-                regex.append(field.getRegex())
+        for field in fields:
+            # C Version :
+            #regex.append("(" + field.getRegex() + ")")
+            regex.append(field.getRegex())
 
         # Now we apply the regex over the message
         try:
             compiledRegex = re.compile("".join(regex))
-            data = self.getReducedStringData()
-            dynamicDatas = compiledRegex.match(data)
+            print "".join(regex)
+            dynamicDatas = compiledRegex.match(dataToSplit)
 
         except AssertionError:
             raise NetzobException("This Python version only supports 100 named groups in regex")
@@ -374,22 +391,14 @@ class AbstractMessage(object):
         if dynamicDatas is None:
             self.log.warning("The regex of the group doesn't match one of its message")
             self.log.warning("Regex: " + "".join(regex))
-            self.log.warning("Message: " + data[:255] + "...")
+            self.log.warning("Message: " + dataToSplit[:255] + "...")
             raise NetzobException("The regex of the group doesn't match one of its message")
 
         result = []
-        iCol = 1
-        for field in self.symbol.getExtendedFields():
-            if field.isStatic():
-                value = field.getRegex()
-                if value.endswith("?"):
-                    value = value[1:len(value) - 2]
-                result.append(value)
-            else:
-                start = dynamicDatas.start(iCol)
-                end = dynamicDatas.end(iCol)
-                result.append(data[start:end])
-                iCol += 1
+        for i in range(1, len(fields) + 1):
+            start = dynamicDatas.start(i)
+            end = dynamicDatas.end(i)
+            result.append(dataToSplit[start:end])
         return result
 
 # C VERSION (should work)#
@@ -407,53 +416,6 @@ class AbstractMessage(object):
 #            raise NetzobException("The regex of the group doesn't match one of its message")
 
         return aligned
-
-    #+----------------------------------------------
-    #| applyDelimiter: apply the current delimiter on the message
-    #|  and return a table
-    #+----------------------------------------------
-    def applyDelimiter(self, styled=False, encoded=False):
-        delimiter = self.getSymbol().getField().getRawDelimiter()
-        res = []
-        iField = -1
-        for field in self.symbol.getExtendedFields():
-            if field.getName() == "__sep__":
-                tmp = delimiter
-            else:
-                iField += 1
-                try:
-                    tmp = self.getStringData().split(delimiter)[iField]
-                except IndexError:
-                    tmp = ""
-
-            if field.getColor() == "" or field.getColor() is None:
-                color = 'blue'
-            else:
-                color = field.getColor()
-
-            # Define the background color
-            if field.getBackgroundColor() is not None:
-                backgroundColor = 'background="' + field.getBackgroundColor() + '"'
-            else:
-                backgroundColor = ""
-
-            if styled:
-                if encoded:
-                    from gi.repository import GLib  # TODO: to fix
-                    import gi
-                    gi.require_version('Gtk', '3.0')
-                    res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + GLib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(tmp, field)) + '</span>')
-                else:
-                    res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + tmp + '</span>')
-            else:
-                if encoded:
-                    from gi.repository import GLib  # TODO: to fix
-                    import gi
-                    gi.require_version('Gtk', '3.0')
-                    res.append(GLib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(tmp, field)))
-                else:
-                    res.append(tmp)
-        return res
 
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

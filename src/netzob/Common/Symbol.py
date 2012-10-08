@@ -276,7 +276,6 @@ class Symbol(AbstractSymbol):
     def removeMathematicFilter(self, filter):
         """Remove the provided filter from current symbol"""
         if filter in self.mathematicFilters:
-            print "remobving"
             self.mathematicFilters.remove(filter)
 
     def getProperties(self):

@@ -283,18 +283,19 @@ class Field(object):
     #|  Specify a delimiter for partitioning
     #+----------------------------------------------
     def forcePartitioning(self, aFormat, rawDelimiter):
+        self.resetPartitioning()
         self.alignmentType = "delimiter"
-        self.rawDelimiter = rawDelimiter
-        self.cleanFields()
+        self.setRawDelimiter(rawDelimiter)
 
         minNbSplit = 999999
         maxNbSplit = -1
-        for message in self.getMessages():
-            tmpStr = message.getStringData().split(rawDelimiter)
+        for cell in self.getCells():
+            tmpStr = cell.split(rawDelimiter)
             minNbSplit = min(minNbSplit,
                              len(tmpStr))
             maxNbSplit = max(maxNbSplit,
                              len(tmpStr))
+        self.removeLocalFields()
         if minNbSplit <= 1:  # If the delimiter does not create splitted fields
             field = Field(_("Name"), "(.{,})", self.getSymbol())
             field.setFormat(aFormat)
@@ -306,12 +307,14 @@ class Field(object):
         iField = -1
         for i in range(maxNbSplit):
             iField += 1
-            field = Field(_("Name"), "(.{,})", self.getSymbol())
+            field = Field(_("Name"), "(.{,}?)", self.getSymbol())
+            print field.getRegex()
             field.setFormat(aFormat)
             field.setColor("blue")
             self.addField(field)
             iField += 1
-            field = Field("__sep__", self.getRawDelimiter(), self.getSymbol())
+            field = Field("__sep__", "(" + self.getRawDelimiter() + ")?", self.getSymbol())
+            print field.getRegex()
             field.setFormat(aFormat)
             field.setColor("black")
             self.addField(field)
@@ -326,11 +329,11 @@ class Field(object):
         self.alignmentType = "regex"
         self.rawDelimiter = ""
         # Restore fields to the default situation
-        self.cleanFields()
+        self.resetPartitioning()
         # Retrieve the biggest message
         maxLen = 0
-        for message in self.getMessages():
-            curLen = len(message.getStringData())
+        for cell in self.getCells():
+            curLen = len(cell)
             if curLen > maxLen:
                 maxLen = curLen
         logging.debug("Size of the longest message : {0}".format(maxLen))
@@ -342,7 +345,7 @@ class Field(object):
         # Stop and clean if requested
         if idStop_cb is not None:
             if idStop_cb():
-                self.cleanFields()
+                self.removeLocalFields()
                 return
 
         step = float(100) / float(maxLen)
@@ -355,13 +358,13 @@ class Field(object):
             # Stop and clean if requested
             if it % 10 == 0 and idStop_cb is not None:
                 if idStop_cb():
-                    self.cleanFields()
+                    self.removeLocalFields()
                     return
 
             # Loop through each cells of the column
-            for message in self.getMessages():
+            for cell in self.getCells():
                 try:
-                    tmp = message.getStringData()[it]
+                    tmp = cell[it]
                     if ref == "":
                         ref = tmp
                     if ref != tmp:
@@ -392,7 +395,7 @@ class Field(object):
                 # Stop and clean if requested
                 if idStop_cb is not None:
                     if idStop_cb():
-                        self.cleanFields()
+                        self.removeLocalFields()
                         return
 
                 tmpText = resultString[i:i + nbLetters]
@@ -408,6 +411,7 @@ class Field(object):
             resultMask = tmpResultMask
 
         ## Build of the fields
+        self.removeLocalFields()
         currentStaticField = ""
         if resultMask[0] == "1":  # The first column is dynamic
             isLastDyn = True
@@ -424,7 +428,7 @@ class Field(object):
                 else:
                     # We change the field
                     iField += 1
-                    field = Field(_("Name"), currentStaticField, self.getSymbol())
+                    field = Field(_("Name"), "(" + currentStaticField + ")", self.getSymbol())
                     field.setColor("black")
                     self.addField(field)
                     # We start a new field
@@ -448,7 +452,7 @@ class Field(object):
         # Stop and clean if requested
         if idStop_cb is not None:
             if idStop_cb():
-                self.cleanFields()
+                self.removeLocalFields()
                 return
 
         # We add the last field
@@ -534,17 +538,12 @@ class Field(object):
     #| resetPartitioning:
     #|   Reset the current partitioning
     #+----------------------------------------------
-    def resetPartitioning(self, project):
-        aFormat = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
-
+    def resetPartitioning(self):
         # Reset values
         self.alignmentType = "regex"
         self.rawDelimiter = ""
-        self.cleanFields()
-
-        # Create a single field
-        self.fields = []
-        field = Field.createDefaultField(self.getSymbol())
+        self.removeLocalFields()
+        field = self.createDefaultField(self.getSymbol())
         self.addField(field)
 
     #+----------------------------------------------
@@ -557,7 +556,7 @@ class Field(object):
             if field.isStatic():
                 continue
             elif field.isRegexOnlyDynamic():
-                cells = self.getCellsByField(field)
+                cells = field.getCells()
                 if len(cells) != len(self.getMessages()):
                     # There exists empty cells
                     continue
@@ -654,7 +653,7 @@ class Field(object):
             return False
 
         # Find the static/dynamic cols
-        cells = self.getCellsByField(field)
+        cells = field.getCells()
         ref1 = cells[0][:split_position]
         ref2 = cells[0][split_position:]
         isStatic1 = True
@@ -764,11 +763,7 @@ class Field(object):
                 @return: the generated variable
         """
         if self.isStatic():
-            value = self.getRegex()
-            if value.endswith("?"):
-                value = value[1:len(value) - 2]
-
-            value = TypeConvertor.netzobRawToBitArray(value)
+            value = TypeConvertor.netzobRawToBitArray(self.getRegexData())
             variable = DataVariable(uuid.uuid4(), self.getName(), False, False, BinaryType(True, len(value), len(value)), value.to01())  # A static field is neither mutable nor random.
             return variable
         else:
@@ -827,9 +822,29 @@ class Field(object):
         realIndex = self.fields.index(field)
         return realIndex
 
-    def cleanFields(self):
+    def removeLocalFields(self):
         while len(self.fields) != 0:
             self.fields.pop()
+
+    def flattenLocalFields(self):
+        """flattenLocalFields: merge the local fields of the current
+        layer at the layer level.
+        """
+        if not self.isLayer():
+            return
+        # Concatenate all children of the current layer
+        childrenFields = []
+        for child in self.getExtendedFields():
+            childrenFields.append(child)
+
+        # Insert all the child at the place of the current field
+        parentField = self.getParentField()
+        indexInParentLayer = parentField.getLocalFields().index(self)
+        parentField.getLocalFields().remove(self)
+        index = indexInParentLayer
+        for child in childrenFields:
+            parentField.getLocalFields().insert(index, child)
+            index += 1
 
     def popField(self, index=None):
         if index is None:
@@ -869,35 +884,43 @@ class Field(object):
                     return res
         return None
 
-    def getCellsByField(self, field):
-        """getCellsByField:
+    def getCells(self):
+        """getCells:
         Return all the messages parts which are in
         the specified field
         """
         # First we verify the field exists in the symbol
-        if not field in self.fields:
+        if not self in self.getSymbol().getAllFields():
             logging.warn(_("The computing field is not part of the current symbol"))
             return []
 
-        res = []
-        for message in self.getMessages():
-            messageTable = message.applyAlignment()
-            messageElt = messageTable[field.getIndex()]
-            res.append(messageElt)
-#            if len(messageElt) > 0:
-#                res.append(messageElt)
-#            else:
-#                res.append(None)
-        return res
+        # Retrieve all sub-cells
+        if self.isLayer():
+            res = []
+            for subField in self.getExtendedFields():
+                res.append(subField.getCells())
+            # Concatenate sub-cells
+            finalRes = []
+            for i in range(len(self.getMessages())):
+                finalRes.append("")
+            for i in range(len(res)):
+                for j in range(len(res[i])):
+                    finalRes[j] += res[i][j]
+            return finalRes
+        else:  # A leaf field
+            res = []
+            for message in self.getMessages():
+                messageTable = message.applyAlignment()
+                messageElt = messageTable[self.getIndex()]
+                res.append(messageElt)
+            return res
 
     def getUniqValuesByField(self):
         # First we verify the field exists in the symbol
         res = []
-        for message in self.getMessages():
-            messageTable = message.applyAlignment()
-            messageElt = messageTable[self.getIndex()]
-            if len(messageElt) > 0 and not messageElt in res:
-                res.append(messageElt)
+        for cell in self.getCells():
+            if len(cell) > 0 and not cell in res:
+                res.append(cell)
         return res
 
     ## Messages
@@ -1022,6 +1045,12 @@ class Field(object):
     def getRegex(self):
         return self.regex
 
+    def getRegexData(self):
+        if self.isStatic():
+            return self.regex.replace("(", "").replace(")", "").replace("?", "")
+        else:
+            return ""
+
     def getDescription(self):
         return self.description
 
@@ -1073,11 +1102,11 @@ class Field(object):
 
     def getExtendedFields(self):
         result = []
-        for field in self.getLocalFields():
-            if field.isLayer():
+        if self.isLayer():
+            for field in self.getLocalFields():
                 result.extend(field.getExtendedFields())
-            else:
-                result.append(field)
+        else:
+            result.append(self)
         return result
 
     def getFieldLayers(self):
@@ -1122,22 +1151,22 @@ class Field(object):
 
     def setFormat(self, aFormat):
         self.format = aFormat
-        for field in self.getExtendedFields():
+        for field in self.getLocalFields():
             field.setFormat(aFormat)
 
     def setUnitSize(self, unitSize):
         self.unitSize = unitSize
-        for field in self.getExtendedFields():
+        for field in self.getLocalFields():
             field.setUnitSize(unitSize)
 
     def setSign(self, sign):
         self.sign = sign
-        for field in self.getExtendedFields():
+        for field in self.getLocalFields():
             field.setSign(sign)
 
     def setEndianess(self, endianess):
         self.endianess = endianess
-        for field in self.getExtendedFields():
+        for field in self.getLocalFields():
             field.setEndianess(endianess)
 
     def setVariable(self, variable):

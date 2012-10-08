@@ -132,7 +132,7 @@ class ContextualMenuOnFieldView(object):
         # Retrieve the selected message and field content
         if self.controller.message is not None:
             # Retrieve content of the field
-            field_content = self.controller.message.getFields(False)[self.controller.field.getIndex()]
+            field_content = self.controller.message.applyAlignment()[self.controller.field.getIndex()]
         else:
             field_content = None
 

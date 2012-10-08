@@ -100,13 +100,10 @@ class ResetPartitioningController(object):
 
         # Close dialog box
         self._view.resetDialog.destroy()
-        # refresh the vocabulary view
-        self.vocabularyController.restart()
 
-        # Update the message table view
-        self.vocabularyController.view.updateSelectedMessageTable()
-        # Update the symbol properties view
+        # Update the UI
         self.vocabularyController.view.updateLeftPanel()
+        self.vocabularyController.view.updateSelectedMessageTable()
 
     def reset(self):
         """Reset the provided fields"""
@@ -116,7 +113,7 @@ class ResetPartitioningController(object):
             GObject.idle_add(self._view.reset_progressbar.set_text, _("Reset field {0}".format(field.getName())))
             if self.flagStop:
                 return
-            field.resetPartitioning(self.vocabularyController.getCurrentProject())
+            field.resetPartitioning()
             total = total + step
             rtotal = float(total) / float(100)
             time.sleep(0.01)

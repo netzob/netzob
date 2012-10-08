@@ -100,7 +100,7 @@ class NeedlemanAndWunsch(object):
         messages = symbol.getMessages()
         if messages is None or len(messages) == 0:
             logging.debug("The symbol '" + symbol.getName() + "' is empty. No alignment needed")
-            symbol.getField().cleanFields()
+            symbol.getField().removeLocalFields()
 
             if self.isFinish():
                 return
@@ -111,7 +111,7 @@ class NeedlemanAndWunsch(object):
             # Use the default protocol type for representation
             field.setFormat(defaultFormat)
         else:
-            symbol.getField().cleanFields()
+            symbol.getField().removeLocalFields()
 
             if self.isFinish():
                 return
@@ -133,7 +133,7 @@ class NeedlemanAndWunsch(object):
 
             except NetzobException, e:
                 logging.warn("Partitionnement error: {0}".format(e))
-                symbol.getField().cleanFields()
+                symbol.getField().removeLocalFields()
 
                 field = Field.createDefaultField(symbol)
                 symbol.getField().addField(field)
@@ -278,7 +278,7 @@ class NeedlemanAndWunsch(object):
             regex.append("(.{," + str(nbTiret) + "})")
 
         iField = 0
-        symbol.getField().cleanFields()
+        symbol.getField().removeLocalFields()
         logging.debug("REGEX " + str(regex))
         for regexElt in regex:
             if self.isFinish():
@@ -303,7 +303,7 @@ class NeedlemanAndWunsch(object):
 
                 # We try to see if this field produces only empty values when applied on messages
                 if not field.isStatic():
-                    cells = symbol.getField().getCellsByField(field)
+                    cells = field.getCells()
                     cells = "".join(cells)
                     if cells == "":
                         symbol.getExtendedFields().pop(field.getIndex())  # We remove this useless field

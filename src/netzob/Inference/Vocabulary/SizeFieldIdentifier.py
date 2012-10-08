@@ -82,7 +82,7 @@ class SizeFieldIdentifier(object):
         sizeCellsByField = {}
         for sizeField in sizeFields:
             sizeCellsByField[sizeField] = []
-            cells = symbol.getField().getCellsByField(sizeField)
+            cells = sizeField.getCells()
             for cell in cells:
                 sizeCellsByField[sizeField].append(self.getEncodedSizes(cell))
         return sizeCellsByField
@@ -124,7 +124,7 @@ class SizeFieldIdentifier(object):
         # Fill the aggregate of messages from fieldStart to fieldStop
         for iField in range(start, stop):
             # Retrieve current cells
-            cells = symbol.getField().getCellsByField(symbol.getFieldByIndex(iField))
+            cells = symbol.getFieldByIndex(iField).getCells()
             for l in range(len(cells)):
                 aggregateCellsData[l] += cells[l]
         return aggregateCellsData
