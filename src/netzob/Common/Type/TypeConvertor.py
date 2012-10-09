@@ -452,6 +452,28 @@ class TypeConvertor():
 
     @staticmethod
     #+----------------------------------------------
+    #| serializeValues :
+    #|     create a serialization view of the values
+    #| @returns (serialized, format)
+    #+----------------------------------------------
+    def serializeValues(values, unitSize):
+        serialMessages = ""
+        format = ""
+        for value in values:
+            if unitSize == 8:
+                data = value
+            elif unitSize == 4:
+                data = "".join(["0" + i for i in value])
+            else:
+                logging.warn("Serializing at " + str(unitSize) + " unit size not yet implemented")
+                return
+
+            format += str(len(data) / 2) + "M"
+            serialMessages += TypeConvertor.netzobRawToPythonRaw(data)
+        return (serialMessages, format)
+
+    @staticmethod
+    #+----------------------------------------------
     #| serializeSymbol :
     #|     create a serialization view of a symbol
     #| @returns (serialized, format)

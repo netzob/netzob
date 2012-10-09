@@ -297,11 +297,11 @@ class VocabularyController(object):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        symbols = self.view.getCheckedSymbolList()
-        if symbols == []:
-            NetzobErrorMessage(_("No symbol(s) selected."))
+        layers = self.view.getCheckedLayerList()
+        if layers == []:
+            NetzobErrorMessage(_("No layer(s) selected."))
             return
-        sequence_controller = SequenceAlignmentController(self, symbols)
+        sequence_controller = SequenceAlignmentController(self, layers)
         sequence_controller.run()
 
     def partitioningForce_activate_cb(self, action):

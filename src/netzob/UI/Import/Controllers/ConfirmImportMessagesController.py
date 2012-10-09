@@ -51,7 +51,6 @@ from netzob.Common.Threads.Job import Job
 from netzob.Common.Session import Session
 from netzob.Common.ImportedTrace import ImportedTrace
 from netzob.Common.Symbol import Symbol
-from netzob.Common.Field import Field
 
 
 class ConfirmImportMessagesController(object):

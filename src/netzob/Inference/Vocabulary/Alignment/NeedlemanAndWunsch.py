@@ -59,16 +59,23 @@ import _libInterface
 #+---------------------------------------------------------------------------+
 class NeedlemanAndWunsch(object):
 
-    def __init__(self, unitSize, cb_status=None):
+    def __init__(self, unitSize, project, cb_status=None):
         self.cb_status = cb_status
+        self.project = project
         self.unitSize = unitSize
-        self.result = []
         self.scores = {}
         self.absoluteStage = None
         self.statusRatio = None
         self.statusRatioOffset = None
         self.flagStop = False
         self.clusteringSolution = None
+
+        # Then we retrieve all the parameters of the CLUSTERING / ALIGNMENT
+        self.defaultFormat = self.project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
+        self.nbIteration = self.project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_NB_ITERATION)
+        self.minEquivalence = self.project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD)
+        self.doInternalSlick = self.project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
+        self.doOrphanReduction = self.project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
 
     #+-----------------------------------------------------------------------+
     #| cb_executionStatus
@@ -92,67 +99,52 @@ class NeedlemanAndWunsch(object):
             self.cb_status(stage, totalPercent, currentMessage)
 
     #+-----------------------------------------------------------------------+
-    #| alignSymbol
-    #|     Default alignment of messages declared in a Symbol
+    #| alignField
+    #|     Default alignment of messages declared in a Symbol/Field
     #| @param the symbol
     #+-----------------------------------------------------------------------+
-    def alignSymbol(self, symbol, doInternalSlick, defaultFormat):
-        messages = symbol.getMessages()
+    def alignField(self, field):
+        messages = field.getMessages()
+        field.resetPartitioning()
+        field.removeLocalFields()
         if messages is None or len(messages) == 0:
-            logging.debug("The symbol '" + symbol.getName() + "' is empty. No alignment needed")
-            symbol.getField().removeLocalFields()
-
-            if self.isFinish():
-                return
-
-            field = Field.createDefaultField(symbol)
-            symbol.getField().addField(field)
-
-            # Use the default protocol type for representation
-            field.setFormat(defaultFormat)
+            logging.debug("The field '" + field.getName() + "' is empty. No alignment needed")
+            field.setRegex("(.{,})")
         else:
-            symbol.getField().removeLocalFields()
-
             if self.isFinish():
                 return
 
             # We execute the alignment
-            (alignment, score) = self.align(doInternalSlick, messages)
+            (alignment, score) = self.alignData(field.getCells())
 
             if self.isFinish():
                 return
 
-            symbol.getField().setAlignment(alignment)
+            field.setAlignment(alignment)
             logging.debug("Alignment : {0}".format(alignment))
 
             # We update the regex based on the results
             try:
                 if self.isFinish():
                     return
-                self.buildRegexFromAlignment(symbol, alignment, defaultFormat)
+                self.buildRegexFromAlignment(field, alignment)
 
             except NetzobException, e:
                 logging.warn("Partitionnement error: {0}".format(e))
-                symbol.getField().removeLocalFields()
-
-                field = Field.createDefaultField(symbol)
-                symbol.getField().addField(field)
-
-                # Use the default protocol type for representation
-                field.setFormat(defaultFormat)
+                field.resetPartitioning()
 
     #+-----------------------------------------------------------------------+
-    #| align
+    #| alignData
     #|     Default alignment of messages
     #| @param messages a list of AbstractMessages
     #| @returns (alignment, score)
     #+-----------------------------------------------------------------------+
-    def align(self, doInternalSlick, messages):
+    def alignData(self, data):
         # First we serialize the two messages
-        (serialMessages, format) = TypeConvertor.serializeMessages(messages, self.unitSize)
+        (serialValues, format) = TypeConvertor.serializeValues(data, self.unitSize)
 
         debug = False
-        (score1, score2, score3, regex, mask) = _libNeedleman.alignMessages(doInternalSlick, len(messages), format, serialMessages, self.cb_executionStatus, debug)
+        (score1, score2, score3, regex, mask) = _libNeedleman.alignMessages(self.doInternalSlick, len(data), format, serialValues, self.cb_executionStatus, debug)
         scores = (score1, score2, score3)
 
         if self.isFinish():
@@ -161,55 +153,6 @@ class NeedlemanAndWunsch(object):
         alignment = self.deserializeAlignment(regex, mask)
         alignment = self.smoothAlignment(alignment)
         return (alignment, scores)
-
-    #+-----------------------------------------------------------------------+
-    #| alignTwoMessages
-    #|     Default alignment of two messages
-    #| @param message1 the first message to align
-    #| @param message2 the second message to align
-    #| @returns (alignment, score)
-    #+-----------------------------------------------------------------------+
-    def alignTwoMessages(self, doInternalSlick, message1, message2):
-        # First we serialize the two messages
-        (serialMessages, format) = TypeConvertor.serializeMessages([message1, message2], self.unitSize)
-
-        debug = False
-        (score1, score2, score3, regex, mask) = _libNeedleman.alignTwoMessages(doInternalSlick, format, serialMessages, debug)
-        scores = (score1, score2, score3)
-        alignment = self.deserializeAlignment(regex, mask)
-
-        return (scores, alignment)
-
-    #+-----------------------------------------------------------------------+
-    #| deserializeMessages
-    #|     Useless (functionally) function created for testing purposes
-    #| @param messages a list of AbstractMessages
-    #| @returns number Of Deserialized Messages
-    #+-----------------------------------------------------------------------+
-    def deserializeMessages(self, messages):
-        # First we serialize the messages
-        (serialMessages, format) = TypeConvertor.serializeMessages(messages, self.unitSize)
-
-        debug = False
-        return _libInterface.deserializeMessages(len(messages), format, serialMessages, debug)
-
-    #+-----------------------------------------------------------------------+
-    #| smoothAlignment:
-    #|     Try to smooth the given alignment
-    #| @param alignment The sequence alignment result
-    #| @returns The smoothed alignment
-    #+-----------------------------------------------------------------------+
-    def smoothAlignment(self, alignment):
-        result = ""
-        nbLetters = self.unitSize / 4
-        for i in range(0, len(alignment), nbLetters):
-            tmpText = alignment[i:i + nbLetters]
-            if tmpText.count("-") >= 1:
-                for j in range(len(tmpText)):
-                    result += "-"
-            else:
-                result += tmpText
-        return result
 
     #+-----------------------------------------------------------------------+
     #| deserializeAlignment
@@ -241,13 +184,30 @@ class NeedlemanAndWunsch(object):
         return align
 
     #+-----------------------------------------------------------------------+
+    #| smoothAlignment:
+    #|     Try to smooth the given alignment
+    #| @param alignment The sequence alignment result
+    #| @returns The smoothed alignment
+    #+-----------------------------------------------------------------------+
+    def smoothAlignment(self, alignment):
+        result = ""
+        nbLetters = self.unitSize / 4
+        for i in range(0, len(alignment), nbLetters):
+            tmpText = alignment[i:i + nbLetters]
+            if tmpText.count("-") >= 1:
+                for j in range(len(tmpText)):
+                    result += "-"
+            else:
+                result += tmpText
+        return result
+
+    #+-----------------------------------------------------------------------+
     #| buildRegexFromAlignment
     #|     Transform the alignment in a regular expression
-    #| @param symbol the associated symbol
+    #| @param field the associated field
     #| @param align the given alignment
-    #| @param defaultFormat the visualization format
     #+-----------------------------------------------------------------------+
-    def buildRegexFromAlignment(self, symbol, align, defaultFormat):
+    def buildRegexFromAlignment(self, field, align):
         # Build regex from alignment
         i = 0
         start = 0
@@ -266,7 +226,7 @@ class NeedlemanAndWunsch(object):
                 if (found is True):
                     found = False
                     nbTiret = i - start
-                    regex.append("(.{," + str(nbTiret) + "})")
+                    regex.append(".{," + str(nbTiret) + "}")
                     regex.append(align[i])
                 else:
                     if len(regex) == 0:
@@ -275,106 +235,75 @@ class NeedlemanAndWunsch(object):
                         regex[-1] += align[i]
         if (found is True):
             nbTiret = i - start + 1
-            regex.append("(.{," + str(nbTiret) + "})")
+            regex.append(".{," + str(nbTiret) + "}")
 
         iField = 0
-        symbol.getField().removeLocalFields()
         logging.debug("REGEX " + str(regex))
         for regexElt in regex:
             if self.isFinish():
                 return
-            field = Field("Field " + str(iField), regexElt, symbol)
-            symbol.getField().addField(field)
+            innerField = Field("Field " + str(iField), "(" + regexElt + ")", field.getSymbol())
+            field.addField(innerField)
 
             # Use the default protocol type for representation
-            field.setFormat(defaultFormat)
+            field.setFormat(self.defaultFormat)
             iField = iField + 1
-        if len(symbol.getExtendedFields()) >= 100:
-            raise NetzobException("This Python version only supports 100 named groups in regex (found {0})".format(len(symbol.getExtendedFields())))
+        if len(field.getSymbol().getExtendedFields()) >= 100:
+            raise NetzobException("This Python version only supports 100 named groups in regex (found {0})".format(len(field.getSymbol().getExtendedFields())))
+        """
         # We look for useless fields
         doLoop = True
         # We loop until we don't pop any field
         while doLoop is True:
             doLoop = False
-            for field in symbol.getExtendedFields():
+            for innerField in field.getExtendedFields():
 
                 if self.isFinish():
                     return
 
                 # We try to see if this field produces only empty values when applied on messages
-                if not field.isStatic():
-                    cells = field.getCells()
+                if not innerField.isStatic():
+                    cells = innerField.getCells()
                     cells = "".join(cells)
                     if cells == "":
-                        symbol.getExtendedFields().pop(field.getIndex())  # We remove this useless field
-                        # Adapt index of the following fields
-                        for fieldNext in symbol.getExtendedFields():
-                            if fieldNext.getIndex() > field.getIndex():
-                                fieldNext.setIndex(fieldNext.getIndex() - 1)
-                        # Concatenate the surrounding fields (because they should be static fields)
-                        if symbol.concatFields(field.getIndex() - 1, field.getIndex()) == 1:
+                        # Concatenate the current useless inner field with the next field
+                        if innerField.concatWithNextField() == 1:
                             doLoop = True
                             break
+        """
 
     #+----------------------------------------------
-    #| alignWithNeedlemanWunsh:
+    #| alignFields:
     #|  Align each messages of each symbol with the
     #|  Needleman Wunsh algorithm
     #+----------------------------------------------
-    def alignSymbols(self, symbols, project):
+    def alignFields(self, fields):
+        # If we selected only one symbol
+        if len(fields) == 1:
+            self.alignField(fields[0])
+            return
+
+        # Else we merge the checked symbols to apply UPGMA
+        logging.warn("UPGMA not yet supported")
         from netzob.Inference.Vocabulary.Alignment.UPGMA import UPGMA
-        self.result = []
-        preResults = []
-
-        # First we add in results, the symbols which wont be aligned
-        for symbol in project.getVocabulary().getSymbols():
-            found = False
-            for s in symbols:
-                if str(symbol.getID()) == str(s.getID()):
-                    found = True
-            if not found:
-                logging.debug("Symbol " + str(symbol.getName()) + "[" + str(symbol.getID()) + "]] wont be aligned")
-                preResults.append(symbol)
-
-        # Then we retrieve all the parameters of the CLUSTERING / ALIGNMENT
-        defaultFormat = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
-        nbIteration = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_NB_ITERATION)
-        minEquivalence = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD)
-        doInternalSlick = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
-        doOrphanReduction = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
-
-        # We try to cluster each symbol
-        listEqu = []  # list of thresholds recorded
-        emptySymbols = []  # list of all empty symbols
-
-        symbolsToCluster = []
-        for s in symbols:
-            if len(s.getMessages()) == 0:
-                emptySymbols.append(s)
-            else:
-                symbolsToCluster.append(s)
+        return
 
         if self.isFinish():
             return
 
-        self.clusteringSolution = UPGMA(project, symbolsToCluster, True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_executionStatus)
+        self.clusteringSolution = UPGMA(self.project, fields, self.unitSize, self.cb_executionStatus)
         t1 = time.time()
-        self.result = self.clusteringSolution.executeClustering()
+        self.clusteringSolution.executeClustering()
 
         if self.isFinish():
             return
 
         # We optionally handle orphans
-        if doOrphanReduction:
-            self.result = self.clusteringSolution.executeOrphanReduction()
+        if self.doOrphanReduction:
+            self.clusteringSolution.executeOrphanReduction()
         t2 = time.time()
 
-        self.result.extend(preResults)
-        self.result.extend(emptySymbols)  # Add the empty symbols (To discuss: can we delete them before?)
         logging.info("Time of clustering : " + str(t2 - t1))
-
-    def getLastResult(self):
-        return self.result
 
     def isFinish(self):
         return self.flagStop
@@ -384,3 +313,32 @@ class NeedlemanAndWunsch(object):
         if self.clusteringSolution is not None:
             logging.debug("Close the clustering solution")
             self.clusteringSolution.stop()
+
+    #+-----------------------------------------------------------------------+
+    #| alignTwoMessages
+    #|     Default alignment of two messages
+    #| @param message1 the first message to align
+    #| @param message2 the second message to align
+    #| @returns (alignment, score)
+    #+-----------------------------------------------------------------------+
+    def alignTwoMessages(self, message1, message2):
+        # First we serialize the two messages
+        (serialMessages, format) = TypeConvertor.serializeMessages([message1, message2], self.unitSize)
+
+        debug = False
+        (score1, score2, score3, regex, mask) = _libNeedleman.alignTwoMessages(self.doInternalSlick, format, serialMessages, debug)
+        scores = (score1, score2, score3)
+        alignment = self.deserializeAlignment(regex, mask)
+        return (scores, alignment)
+
+    #+-----------------------------------------------------------------------+
+    #| deserializeMessages
+    #|     Useless (functionally) function created for testing purposes
+    #| @param messages a list of AbstractMessages
+    #| @returns number Of Deserialized Messages
+    #+-----------------------------------------------------------------------+
+    def deserializeMessages(self, messages):
+        # First we serialize the messages
+        (serialMessages, format) = TypeConvertor.serializeMessages(messages, self.unitSize)
+        debug = False
+        return _libInterface.deserializeMessages(len(messages), format, serialMessages, debug)

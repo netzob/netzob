@@ -574,71 +574,28 @@ class Field(object):
                 continue
 
     #+----------------------------------------------
-    #| concatFields:
-    #|  Concatenate fields from index startField to endField
+    #| concatWithNextField:
+    #|  Concatenate the current field with the next one at the same level
     #+----------------------------------------------
-    def concatFields(self, startField, endField):
-        for i_concatleft in range(endField - startField):
-            if not self.concatCloseFields(startField):
-                break
-            else:
-                for i_concatleft in range(startField - endField):
-                    if not self.concatCloseFields(endField):
-                        break
+    def concatWithNextField(self):
+        # Retrieve the 2 fields to concatenate
+        parentField = self.getParentField()
+        localFields = parentField.getLocalFields()
+        indexField1 = localFields.index(self)
+        indexField2 = indexField1 + 1
+        field1 = self
+        try:
+            field2 = localFields[indexField2]
+        except IndexError:
+            return -1
 
-    #+----------------------------------------------
-    #| concatCloseFields:
-    #|  Concatenate two fields starting from index iField
-    #+----------------------------------------------
-    def concatCloseFields(self, iField):
-        field1 = None
-        field2 = None
-        if iField == len(self.fields) - 1:
-            return 0
+        # Remove children of each fields
+        field1.removeLocalFields()
+        field2.removeLocalFields()
 
-        for field in self.fields:
-            if field.getIndex() == iField:
-                field1 = field
-            elif field.getIndex() == iField + 1:
-                field2 = field
-
-        if field1 is None or field2 is None:
-            return 0
-
-        # Build the merged regex
-        newRegex = ""
-        if field1.getRegex() == "":
-            newRegex = field2.getRegex()
-        if field2.getRegex() == "":
-            newRegex = field1.getRegex()
-
-        if field1.getRegex()[0] == "(" and field2.getRegex()[0] != "(":  # Dyn + Static fields
-            newRegex = field1.getRegex()[:-1] + field2.getRegex() + ")"
-
-        if field1.getRegex()[0] != "(" and field2.getRegex()[0] == "(":  # Static + Dyn fields
-            newRegex = "(" + field1.getRegex() + field2.getRegex()[1:]
-
-        if field1.getRegex()[0] == "(" and field2.getRegex()[0] == "(":  # Dyn + Dyn fields
-            newRegex = field1.getRegex()[:-1] + field2.getRegex()[1:]
-
-        if field1.getRegex()[0] != "(" and field2.getRegex()[0] != "(":  # Static + Static fields (should not happen...)
-            newRegex = field1.getRegex() + field2.getRegex()
-
-        # Default representation is BINARY
-        new_name = field1.getName() + "+" + field2.getName()
-        # Creation of the new Field
-        newField = Field(new_name, newRegex, self.getSymbol())
-
-        self.fields.remove(field1)
-        self.fields.remove(field2)
-
-        # Update the index of the fields placed after it
-        for field in self.fields:
-            if field.getIndex() > newField.getIndex():
-                field.setIndex(field.getIndex() - 1)
-        self.fields.append(newField)
-        # sort fields by their index
-        self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
+        # Concatenate fields
+        field1.setRegex("(" + field1.getRegex()[1:-1] + field1.getRegex()[1:-1] + ")")
+        localFields.remove(field2)
         return 1
 
     #+----------------------------------------------
