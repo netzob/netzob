@@ -320,8 +320,6 @@ class Field(object):
     #+----------------------------------------------
     def simplePartitioning(self, unitSize, status_cb=None, idStop_cb=None):
         logging.debug("Compute the simple partitioning on current symbol")
-        self.alignmentType = "regex"
-        self.rawDelimiter = ""
         # Restore fields to the default situation
         self.resetPartitioning()
         # Retrieve the biggest message
