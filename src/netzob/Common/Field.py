@@ -242,7 +242,7 @@ class Field(object):
                 @rtype: boolean
                 @return: True if the regex is static.
         """
-        if self.regex.find("{") == -1 or self.getName() == "__sep__":
+        if (self.regex.find("{") == -1 and self.regex.find("*") == -1) or self.getName() == "__sep__":
             return True
         else:
             return False
@@ -307,14 +307,12 @@ class Field(object):
         iField = -1
         for i in range(maxNbSplit):
             iField += 1
-            field = Field(_("Name"), "(.{,}?)", self.getSymbol())
-            print field.getRegex()
+            field = Field(_("Name"), "((?:(?!" + self.getRawDelimiter() + ").)*)", self.getSymbol())
             field.setFormat(aFormat)
             field.setColor("blue")
             self.addField(field)
             iField += 1
             field = Field("__sep__", "(" + self.getRawDelimiter() + ")?", self.getSymbol())
-            print field.getRegex()
             field.setFormat(aFormat)
             field.setColor("black")
             self.addField(field)

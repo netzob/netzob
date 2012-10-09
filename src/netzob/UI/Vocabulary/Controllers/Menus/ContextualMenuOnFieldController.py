@@ -230,7 +230,7 @@ class ContextualMenuOnFieldController(object):
         # Create a new layer
         regex = ""
         for selectedField in selectedFields:
-            regex += selectedField.getRegex().replace("(", "").replace(")", "")
+            regex += "(?:" + selectedField.getRegex()[1:]
         fieldLayer = Field(str(name), "(" + regex + ")", self.getSymbol())
         index_newField = 999999
         parentField = None
@@ -277,7 +277,7 @@ class ContextualMenuOnFieldController(object):
         for message in self.getSymbol().getMessages():
             mUuid = uuid.uuid4()
             newMessages.append(RawMessage(mUuid, message.getTimestamp(), ""))
-        # We concatenate between the first and last fields        
+        # We concatenate between the first and last fields
         for index in range(firstField.getIndex(), lastField.getIndex() + 1):
             cells = self.getSymbol().getField().getCellsByField(self.getSymbol().getFieldByIndex(index))
             for i in range(len(cells)):

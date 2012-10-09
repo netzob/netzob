@@ -322,11 +322,9 @@ class AbstractMessage(object):
         return filterTable.getResult()
 
     def applyAlignmentByFields(self, fields, dataToSplit):
-        print dataToSplit
         resSplittedData = []
         # Retrieve the data in columns
         splittedData = self.getSplittedData(fields, dataToSplit)
-        print splittedData
 
         if len(splittedData) != len(fields):
             logging.error("Nb of expected fields : {0}".format(self.symbol.getExtendedFields()))
@@ -382,7 +380,6 @@ class AbstractMessage(object):
         # Now we apply the regex over the message
         try:
             compiledRegex = re.compile("".join(regex))
-            print "".join(regex)
             dynamicDatas = compiledRegex.match(dataToSplit)
 
         except AssertionError:
