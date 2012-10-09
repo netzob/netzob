@@ -113,20 +113,17 @@ class ContextualMenuOnLayerController(object):
     def applyMathematicFilter_cb(self, event, mathFilter):
         """Add the selected mathematics filter"""
 
-        messages = self.layer.getMessages()
-        for message in messages:
-            found = False
-            for appliedFilter in message.getMathematicFilters():
-                if appliedFilter.getName() == mathFilter.getName():
-                    found = True
-                    break
-            if found:
-                message.removeMathematicFilter(appliedFilter)
-            else:
-                message.addMathematicFilter(mathFilter)
-
-        self.layer.resetPartitioning()
-        self.vocabularyController.view.updateSelectedMessageTable()
+        found = False
+        for appliedFilter in self.layer.getMathematicFilters():
+            if appliedFilter.getName() == mathFilter.getName():
+                found = True
+                break
+        if found:
+            self.layer.removeMathematicFilter(appliedFilter)
+        else:
+            self.layer.addMathematicFilter(mathFilter)
+            self.layer.resetPartitioning()
+            self.vocabularyController.view.updateSelectedMessageTable()
 
     def createCustomFilter_cb(self, event):
         """Callback executed when the user

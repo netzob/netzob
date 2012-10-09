@@ -68,9 +68,6 @@ class AbstractMessage(object):
         self.session = None
         self.rightReductionFactor = 0
         self.leftReductionFactor = 0
-        self.visualizationFilters = []
-        self.encodingFilters = []
-        self.mathematicFilters = []
         self.extraProperties = []
 
         self.pattern = []
@@ -103,56 +100,6 @@ class AbstractMessage(object):
     def addExtraProperty(self, property):
         self.extraProperties.append(property)
 
-    #+-----------------------------------------------------------------------+
-    #| addVisualizationFilter
-    #|     Add a visualization filter
-    #+-----------------------------------------------------------------------+
-    def addVisualizationFilter(self, filter, start, end):
-        self.visualizationFilters.append((filter, start, end))
-
-    #+-----------------------------------------------------------------------+
-    #| removeVisualizationFilter
-    #|     Remove a visualization filter
-    #+-----------------------------------------------------------------------+
-    def removeVisualizationFilter(self, filter):
-        savedFilters = []
-        for (f, start, end) in self.visualizationFilters:
-            if filter.getID() != f.getID():
-                savedFilters.append((f, start, end))
-        self.visualizationFilters = []
-        for a in savedFilters:
-            self.visualizationFilters.append(a)
-
-    #+-----------------------------------------------------------------------+
-    #| addEncodingFilter
-    #|     Add an encoding filter
-    #+-----------------------------------------------------------------------+
-    def addEncodingFilter(self, filter):
-        self.encodingFilters.append(filter)
-
-    #+-----------------------------------------------------------------------+
-    #| removeEncodingFilter
-    #|     Remove an encoding filter
-    #+-----------------------------------------------------------------------+
-    def removeEncodingFilter(self, filter):
-        if filter in self.encodingFilters:
-            self.encodingFilters.remove(filter)
-
-    #+-----------------------------------------------------------------------+
-    #| getEncodingFilters
-    #|     Computes the encoding filters associated with current message
-    #+-----------------------------------------------------------------------+
-    def getEncodingFilters(self):
-        filters = []
-
-        # First we add all the encoding filters attached to the symbol
-        filters.extend(self.symbol.getField().getEncodingFilters())
-
-        # We add the locally defined encoding filters
-        filters.extend(self.encodingFilters)
-
-        return filters
-
     #+----------------------------------------------
     #|`getStringData : compute a string representation
     #| of the data
@@ -160,7 +107,7 @@ class AbstractMessage(object):
     #+----------------------------------------------
     def getStringData(self):
         message = str(self.data)
-        for filter in self.getMathematicFilters():
+        for filter in self.getSymbol().getField().getMathematicFilters():  # Retrieve filters of the top fieldLayer
             try:
                 message = filter.apply(message)
             except:
@@ -200,35 +147,6 @@ class AbstractMessage(object):
                 end = end + 1
 
         return "".join(self.getStringData()[start:end])
-
-    def getMathematicFilters(self):
-        """Return the activated mathematic filters
-        on message scope.
-        The list of uniq filters is the result of the merge between
-        the filters of the symbol and of the message.
-        """
-        filters = []
-        filters.extend(self.mathematicFilters)
-        if self.symbol is None:
-            return filters
-        for filter in self.symbol.getField().getMathematicFilters():
-            found = False
-            for f in filters:
-                if f.getName() == filter.getName():
-                    found = True
-                    break
-            if not found:
-                filters.append(filter)
-        return filters
-
-    def addMathematicFilter(self, filter):
-        """Add a math filter for the message"""
-        self.mathematicFilters.append(filter)
-
-    def removeMathematicFilter(self, filter):
-        """Remove the provided filter from current symbol"""
-        if filter in self.mathematicFilters:
-            self.mathematicFilters.remove(filter)
 
     #+----------------------------------------------
     #| compilePattern:
@@ -313,11 +231,6 @@ class AbstractMessage(object):
                         if len(dataField) > 0:
                             filterTable.applyFilter(filter, i_data, i_data + len(dataField))
                 i_data = i_data + len(dataField)
-
-            # Add visualization filters of our current message
-            if styled is True:
-                for (filter, start, end) in self.getVisualizationFilters():
-                    filterTable.applyFilter(filter, start, end)
 
         return filterTable.getResult()
 
@@ -441,9 +354,6 @@ class AbstractMessage(object):
 
     def getTimestamp(self):
         return self.timestamp
-
-    def getVisualizationFilters(self):
-        return self.visualizationFilters
 
     def getPattern(self):
         return self.pattern
