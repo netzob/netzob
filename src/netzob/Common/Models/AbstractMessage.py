@@ -107,6 +107,8 @@ class AbstractMessage(object):
     #+----------------------------------------------
     def getStringData(self):
         message = str(self.data)
+        if self.getSymbol() is None:
+            return message
         for filter in self.getSymbol().getField().getMathematicFilters():  # Retrieve filters of the top fieldLayer
             try:
                 message = filter.apply(message)

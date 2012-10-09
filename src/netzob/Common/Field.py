@@ -92,9 +92,7 @@ class Field(object):
         # Partitionment
         self.score = 0.0
         self.alignment = ""
-        self.alignmentType = "regex"
         self.regex = regex
-        self.rawDelimiter = ""
 
         # Filters
         self.encodingFilters = []
@@ -284,8 +282,6 @@ class Field(object):
     #+----------------------------------------------
     def forcePartitioning(self, aFormat, rawDelimiter):
         self.resetPartitioning()
-        self.alignmentType = "delimiter"
-        self.setRawDelimiter(rawDelimiter)
 
         minNbSplit = 999999
         maxNbSplit = -1
@@ -307,12 +303,12 @@ class Field(object):
         iField = -1
         for i in range(maxNbSplit):
             iField += 1
-            field = Field(_("Name"), "((?:(?!" + self.getRawDelimiter() + ").)*)", self.getSymbol())
+            field = Field(_("Name"), "((?:(?!" + rawDelimiter + ").)*)", self.getSymbol())
             field.setFormat(aFormat)
             field.setColor("blue")
             self.addField(field)
             iField += 1
-            field = Field("__sep__", "(" + self.getRawDelimiter() + ")?", self.getSymbol())
+            field = Field("__sep__", "(" + rawDelimiter + ")?", self.getSymbol())
             field.setFormat(aFormat)
             field.setColor("black")
             self.addField(field)
@@ -407,7 +403,7 @@ class Field(object):
                         tmpResultMask += "0"
             resultString = tmpResultString
             resultMask = tmpResultMask
-
+ 
         ## Build of the fields
         self.removeLocalFields()
         currentStaticField = ""
@@ -469,10 +465,6 @@ class Field(object):
     #|  sequences that are between big dynamic sequences
     #+----------------------------------------------
     def slickRegex(self, project):
-        if self.getAlignmentType() == "delimiter":
-            logging.warn("SlickRegex(): only applicable to a symbol with dynamic alignment")
-            return
-
         # Use the default protocol type for representation
         aFormat = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
 
@@ -538,8 +530,6 @@ class Field(object):
     #+----------------------------------------------
     def resetPartitioning(self):
         # Reset values
-        self.alignmentType = "regex"
-        self.rawDelimiter = ""
         self.removeLocalFields()
         field = self.createDefaultField(self.getSymbol())
         self.addField(field)
@@ -947,8 +937,6 @@ class Field(object):
         xmlField.set("name", str(self.getName()))
         xmlField.set("alignment", str(self.getAlignment()))
         xmlField.set("score", str(self.getScore()))
-        xmlField.set("alignmentType", str(self.getAlignmentType()))
-        xmlField.set("rawDelimiter", str(self.getRawDelimiter()))
 
         if self.getRegex() is not None:
             xmlFieldRegex = etree.SubElement(xmlField, "{" + namespace + "}regex")
@@ -1028,12 +1016,6 @@ class Field(object):
     def getAlignment(self):
         return self.alignment.strip()
 
-    def getAlignmentType(self):
-        return self.alignmentType
-
-    def getRawDelimiter(self):
-        return self.rawDelimiter
-
     def getFormat(self):
         return self.format
 
@@ -1097,12 +1079,6 @@ class Field(object):
 
     def setScore(self, score):
         self.score = score
-
-    def setAlignmentType(self, aType):
-        self.alignmentType = aType
-
-    def setRawDelimiter(self, rawDelimiter):
-        self.rawDelimiter = rawDelimiter
 
     def setFormat(self, aFormat):
         self.format = aFormat
@@ -1170,15 +1146,11 @@ class Field(object):
                 field_regex = ""
             alignmentSymbol = xmlRoot.get("alignment", None)
             scoreSymbol = float(xmlRoot.get("score", "0"))
-            alignmentType = xmlRoot.get("alignmentType")
-            rawDelimiter = xmlRoot.get("rawDelimiter")
 
             field = Field(field_name, field_regex, symbol)
             field.setID(field_id)
             field.setAlignment(alignmentSymbol)
             field.setScore(scoreSymbol)
-            field.setAlignmentType(alignmentType)
-            field.setRawDelimiter(rawDelimiter)
 
             if xmlRoot.find("{" + namespace + "}format") is not None:
                 field_format = xmlRoot.find("{" + namespace + "}format").text
