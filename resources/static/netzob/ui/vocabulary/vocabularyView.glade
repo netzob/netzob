@@ -115,6 +115,7 @@
                     <property name="headers_clickable">False</property>
                     <property name="search_column">0</property>
                     <property name="enable_grid_lines">both</property>
+                    <property name="enable_tree_lines">True</property>
                     <child internal-child="selection">
                       <object class="GtkTreeSelection" id="symbolListTreeViewSelection">
                         <signal name="changed" handler="symbolListTreeViewSelection_changed_cb" swapped="no"/>
