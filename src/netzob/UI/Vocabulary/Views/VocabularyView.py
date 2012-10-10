@@ -173,14 +173,18 @@ class VocabularyView(object):
         some data in the treeview of symbols."""
         receivedData = data.get_text()
 
+        if widget is None:
+            logging.debug("No widget selected, cannot move the message")
+            return
+
         # retrieve the drop row
         path, position = widget.get_dest_row_at_pos(x, y)
         targetSymbol = None
         if path is not None:
-            symbolID = widget.get_model()[path][VocabularyView.SYMBOLLISTSTORE_ID_COLUMN]
-            if symbolID is not None:
-                targetSymbol = self.controller.getCurrentProject().getVocabulary().getSymbolByID(symbolID)
-
+            layerID = widget.get_model()[path][VocabularyView.SYMBOLLISTSTORE_ID_COLUMN]
+            if layerID is not None:
+                targetField = self.controller.getCurrentProject().getVocabulary().getFieldByID(layerID)
+                targetSymbol = targetField.getSymbol()
         if targetSymbol is None:
             return
 
@@ -190,7 +194,7 @@ class VocabularyView(object):
                     message = self.controller.getCurrentProject().getVocabulary().getMessageByID(msgID)
                     # verify if the target symbol's regex is valid according to the message
                     if message is not None:
-                        if targetSymbol.isRegexValidForMessage(message):
+                        if targetSymbol.getField().isRegexValidForMessage(message):
                             self.controller.moveMessage(message, targetSymbol)
                         else:
                             self.drag_receivedMessages(targetSymbol, message)
