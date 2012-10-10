@@ -82,6 +82,12 @@ class ContextualMenuOnFieldView(object):
         item.show()
         self.menu.append(item)
 
+        # Add entry to create layer
+        item = Gtk.MenuItem(_("Create layer"))
+        item.show()
+        item.connect("activate", self.controller.displayPopupToCreateLayer_cb)
+        self.menu.append(item)
+
         # Add entry to edit variable
         item = Gtk.MenuItem(_("Edit variable"))
         item.show()
@@ -129,7 +135,7 @@ class ContextualMenuOnFieldView(object):
         # Retrieve the selected message and field content
         if self.controller.message is not None:
             # Retrieve content of the field
-            field_content = self.controller.message.getFields(False)[self.controller.field.getIndex()]
+            field_content = self.controller.message.applyAlignment()[self.controller.field.getIndex()]
         else:
             field_content = None
 

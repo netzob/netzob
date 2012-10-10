@@ -67,7 +67,7 @@ class VariableDisplayerView(object):
             return
         # We retrieve all the fields and there associated variables
         fields = dict()
-        for field in self.controller.symbol.getFields():
+        for field in self.controller.symbol.getExtendedFields():
             var = field.getVariable()
             if var is None:
                 var = field.getDefaultVariable(self.controller.symbol)

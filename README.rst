@@ -76,8 +76,6 @@ following bunch of prerequisites before initiating Netzob's install process.
 
 * python
 * python-dev
-* python-lxml
-* python-bitarray
 * libxml2-dev
 * libxslt-dev
 * python-setuptools

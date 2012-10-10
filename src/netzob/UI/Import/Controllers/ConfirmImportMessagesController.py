@@ -130,8 +130,6 @@ class ConfirmImportMessagesController(object):
             symbol.addMessage(message)
         # We register the symbol in the vocabulary of the project
         self.currentProject.getVocabulary().addSymbol(symbol)
-        # We create a default field for the symbol
-        symbol.reinitFields()
 
         # Add the environmental dependencies to the project
 #        if fetchEnv:

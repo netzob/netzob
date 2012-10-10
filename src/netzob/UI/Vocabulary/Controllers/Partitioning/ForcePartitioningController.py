@@ -52,14 +52,14 @@ from netzob.UI.Vocabulary.Views.Partitioning.ForcePartitioningView import ForceP
 
 class ForcePartitioningController(object):
     """Manages the execution of the force partitioning on
-    the selected symbols"""
+    the selected fields"""
 
-    def __init__(self, vocabularyController, symbols=[]):
+    def __init__(self, vocabularyController, fields=[]):
         self.vocabularyController = vocabularyController
         self._view = ForcePartitioningView(self)
         self.log = logging.getLogger(__name__)
         self.flagStop = False
-        self.symbols = symbols
+        self.fields = fields
 
     @property
     def view(self):
@@ -69,16 +69,18 @@ class ForcePartitioningController(object):
         self._view.forceDialog.destroy()
 
     def force_execute_clicked_cb(self, widget):
-        self.flagStop = False
+        #extract choose value
+        delimiter = self._view.force_entry.get_text()
+        if delimiter is None or delimiter == "":
+            return
         #update widget
+        self.flagStop = False
         self._view.force_stop.set_sensitive(True)
         self._view.force_cancel.set_sensitive(False)
         self._view.force_execute.set_sensitive(False)
         self._view.force_entry.set_sensitive(False)
         self._view.force_radiobutton_hexa.set_sensitive(False)
         self._view.force_radiobutton_string.set_sensitive(False)
-        #extract choose value
-        delimiter = self._view.force_entry.get_text()
         if self._view.force_radiobutton_hexa.get_active():
             delimiterType = Format.HEX
         else:
@@ -91,14 +93,14 @@ class ForcePartitioningController(object):
         Job(self.startForcePartitioning(encodedDelimiter, delimiterType))
 
     def startForcePartitioning(self, delimiter, format):
-        if len(self.symbols) > 0:
-            self.log.debug("Start to force partitioning the selected symbols")
+        if len(self.fields) > 0:
+            self.log.debug("Start to force partitioning the selected fields")
             try:
                 (yield ThreadedTask(self.forcePartitioning, delimiter, format))
             except TaskError, e:
-                self.log.error(_("Error while proceeding to the force partitioning of symbols: {0}").format(str(e)))
+                self.log.error(_("Error while proceeding to the force partitioning of fields: {0}").format(str(e)))
         else:
-            self.log.debug("No symbol selected")
+            self.log.debug("No field selected")
 
         #update button
         self._view.force_stop.set_sensitive(True)
@@ -107,19 +109,19 @@ class ForcePartitioningController(object):
         self._view.forceDialog.destroy()
 
         # Update the message table view
-        self.vocabularyController._view.updateMessageTableDisplayingSymbols(self.symbols)
+        self.vocabularyController.view.updateSelectedMessageTable()
         # Update the symbol properties view
-        self.vocabularyController._view.updateLeftPanel()
+        self.vocabularyController.view.updateLeftPanel()
 
     def forcePartitioning(self, encodedDelimiter, format):
-        """Smooth the provided symbols"""
-        step = float(100) / float(len(self.symbols))
+        """Smooth the provided fields"""
+        step = float(100) / float(len(self.fields))
         total = float(0)
-        for symbol in self.symbols:
-            GObject.idle_add(self._view.force_progressbar.set_text, _("Force partitioning symbol {0}".format(symbol.getName())))
+        for field in self.fields:
+            GObject.idle_add(self._view.force_progressbar.set_text, _("Force partitioning field {0}".format(field.getName())))
             if self.flagStop:
                 return
-            symbol.forcePartitioning(format, encodedDelimiter)
+            field.forcePartitioning(format, encodedDelimiter)
             total = total + step
             rtotal = float(total) / float(100)
             time.sleep(0.01)

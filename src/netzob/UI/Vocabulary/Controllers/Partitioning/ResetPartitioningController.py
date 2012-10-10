@@ -49,14 +49,14 @@ from netzob.UI.Vocabulary.Views.Partitioning.ResetPartitioningView import ResetP
 
 
 class ResetPartitioningController(object):
-    """Reset the partitions on selected symbols"""
+    """Reset the partitions on selected fields"""
 
-    def __init__(self, vocabularyController, symbols=[]):
+    def __init__(self, vocabularyController, fields=[]):
         self.vocabularyController = vocabularyController
         self._view = ResetPartitioningView(self)
         self.log = logging.getLogger(__name__)
         self.flagStop = False
-        self.symbols = symbols
+        self.fields = fields
 
     @property
     def view(self):
@@ -85,34 +85,35 @@ class ResetPartitioningController(object):
     def startReset(self):
         """Start the reset operation by creating
         a dedicated thread
-        @var symbols: the list of symbols that should be reseted
         """
-        if len(self.symbols) > 0:
-            self.log.debug("Start to reset the selected symbols")
+        if len(self.fields) > 0:
+            self.log.debug("Start to reset the selected fields")
             try:
                 (yield ThreadedTask(self.reset))
             except TaskError, e:
-                self.log.error(_("Error while proceeding to the reseting of symbols: {0}").format(str(e)))
+                self.log.error(_("Error while proceeding to the reseting of fields: {0}").format(str(e)))
         else:
-            self.log.debug("No symbol selected")
+            self.log.debug("No field selected")
 
         # Update button
         self._view.reset_stop.set_sensitive(True)
 
         # Close dialog box
         self._view.resetDialog.destroy()
-        # refresh the vocabulary view
-        self.vocabularyController.restart()
+
+        # Update the UI
+        self.vocabularyController.view.updateLeftPanel()
+        self.vocabularyController.view.updateSelectedMessageTable()
 
     def reset(self):
-        """Reset the provided symbols"""
-        step = float(100) / float(len(self.symbols))
+        """Reset the provided fields"""
+        step = float(100) / float(len(self.fields))
         total = float(0)
-        for symbol in self.symbols:
-            GObject.idle_add(self._view.reset_progressbar.set_text, _("Reset symbol {0}".format(symbol.getName())))
+        for field in self.fields:
+            GObject.idle_add(self._view.reset_progressbar.set_text, _("Reset field {0}".format(field.getName())))
             if self.flagStop:
                 return
-            symbol.resetPartitioning(self.vocabularyController.getCurrentProject())
+            field.resetPartitioning()
             total = total + step
             rtotal = float(total) / float(100)
             time.sleep(0.01)

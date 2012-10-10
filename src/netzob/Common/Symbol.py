@@ -46,9 +46,6 @@ import uuid
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-#import pyasn1.codec.der.decoder
-#from pyasn1.error import PyAsn1Error
-#from pyasn1.error import SubstrateUnderrunError
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
@@ -58,15 +55,8 @@ from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import \
     AggregateVariable
 from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
 from netzob.Common.NetzobException import NetzobException
-from netzob.Common.ProjectConfiguration import ProjectConfiguration
-from netzob.Common.Type.Endianess import Endianess
-from netzob.Common.Type.Format import Format
-from netzob.Common.Type.Sign import Sign
 from netzob.Common.Property import Property
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Type.TypeIdentifier import TypeIdentifier
-from netzob.Common.Type.UnitSize import UnitSize
-from netzob.Common.Layer import Layer
+from netzob.Common.Type.Format import Format
 
 
 #+---------------------------------------------------------------------------+
@@ -88,567 +78,16 @@ class Symbol(AbstractSymbol):
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
-    def __init__(self, ID, name, project, pattern=[], minEqu=0):
+    def __init__(self, ID, name, project):
         AbstractSymbol.__init__(self, "Symbol")
         self.id = ID
-        self.name = name
         self.project = project
-        self.alignment = ""
-        self.score = 0.0
         self.messages = []
-        self.layers = []
-        self.fields = []
-        self.alignmentType = "regex"
-        self.rawDelimiter = ""
+        self.field = Field.createDefaultField(self)
+        self.field.setName(name)
         self.project = project
-        self.encodingFilters = []
-        self.visualizationFilters = []
-        self.mathematicFilters = []
-        self.pattern = pattern
-        self.minEqu = minEqu
-
-        # Interpretation attributes
-        self.format = Format.HEX
-        self.unitSize = UnitSize.NONE
-        self.sign = Sign.UNSIGNED
-        self.endianess = Endianess.BIG
-
-        self.default = True
-        # Clean the symbol
-        self.reinitFields()
-
-    def reinitFields(self):
-        # Fields
-        self.fields = []
-        aFormat = self.project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
-        field = Field.createDefaultField(self)  # Only one default field by symbol.
-        field.setFormat(aFormat)
-        self.addField(field)
-        # Layers
-        self.layers = []
-        lUuid = uuid.uuid4()
-        layer = Layer(lUuid, "default")
-        layer.addField(field)
-        self.addLayer(layer)
-
-    def addVisualizationFilter(self, filter):
-        self.visualizationFilters.append(filter)
-
-    def cleanVisualizationFilters(self):
-        self.visualizationFilters = []
-
-    def getVisualizationFilters(self):
-        return self.visualizationFilters
-
-    def removeVisualizationFilter(self, filter):
-        self.visualizationFilters.remove(filter)
-
-    def addEncodingFilter(self, filter):
-        self.encodingFilters.append(filter)
-
-    def removeEncodingFilter(self, filter):
-        if filter in self.encodingFilters:
-            self.encodingFilters.remove(filter)
-
-    def getEncodingFilters(self):
-        filters = []
-        for field in self.getFields():
-            filters.extend(field.getEncodingFilters())
-        filters.extend(self.encodingFilters)
-
-    #+----------------------------------------------
-    #| forcePartitioning:
-    #|  Specify a delimiter for partitioning
-    #+----------------------------------------------
-    def forcePartitioning(self, aFormat, rawDelimiter):
-        self.alignmentType = "delimiter"
-        self.rawDelimiter = rawDelimiter
-        self.cleanFields()
-
-        minNbSplit = 999999
-        maxNbSplit = -1
-        for message in self.getMessages():
-            tmpStr = message.getStringData().split(rawDelimiter)
-            minNbSplit = min(minNbSplit,
-                             len(tmpStr))
-            maxNbSplit = max(maxNbSplit,
-                             len(tmpStr))
-        if minNbSplit <= 1:  # If the delimiter does not create splitted fields
-            field = Field(_("Name"), 0, "(.{,})")
-            field.setFormat(aFormat)
-            field.setColor("blue")
-            self.addField(field)
-            return
-
-        # Else, we add (maxNbSplit + maxNbSplit - 1) fields
-        iField = -1
-        for i in range(maxNbSplit):
-            iField += 1
-            field = Field(_("Name"), iField, "(.{,})")
-            field.setFormat(aFormat)
-            field.setColor("blue")
-            self.addField(field)
-            iField += 1
-            field = Field("__sep__", iField, self.getRawDelimiter())
-            field.setFormat(aFormat)
-            field.setColor("black")
-            self.addField(field)
-        self.popField()
-
-    #+----------------------------------------------
-    #| simplePartitioning:
-    #|  Do message partitioning according to column variation
-    #+----------------------------------------------
-    def simplePartitioning(self, unitSize, status_cb=None, idStop_cb=None):
-        logging.debug("Compute the simple partitioning on current symbol")
-        self.alignmentType = "regex"
-        self.rawDelimiter = ""
-        # Restore fields to the default situation
-        self.cleanFields()
-        # Retrieve the biggest message
-        maxLen = 0
-        for message in self.getMessages():
-            curLen = len(message.getStringData())
-            if curLen > maxLen:
-                maxLen = curLen
-        logging.debug("Size of the longest message : {0}".format(maxLen))
-
-        # Try to see if the column is static or variable
-        resultString = []
-        resultMask = []
-
-        # Stop and clean if requested
-        if idStop_cb is not None:
-            if idStop_cb():
-                self.cleanFields()
-                return
-
-        step = float(100) / float(maxLen)
-        totalPercent = 0
-
-        # Loop until maxLen
-        for it in range(maxLen):
-            ref = ""
-            isDifferent = False
-
-            # Stop and clean if requested
-            if it % 10 == 0 and idStop_cb is not None:
-                if idStop_cb():
-                    self.cleanFields()
-                    return
-
-            oneMessageIsTooShort = False
-            # Loop through each cells of the column
-            for message in self.getMessages():
-                dataMessage = message.getStringData()
-                if it < len(dataMessage):
-                    tmp = message.getStringData()[it]
-                    if ref == "":
-                        ref = tmp
-                    elif ref != tmp:
-                        isDifferent = True
-                        break
-                else:
-                    # message is too short
-                    oneMessageIsTooShort = True
-
-            if oneMessageIsTooShort:
-                prefix = '+'
-            else:
-                prefix = ''
-
-            if isDifferent:
-                resultString.append("-")
-                resultMask.append(prefix + "1")
-            else:
-                resultString.append(ref)
-                resultMask.append(prefix + "0")
-
-            totalPercent += step
-            if it % 20 == 0 and status_cb is not None:
-                status_cb(totalPercent, None)
-
-        # Apply unitSize
-        if unitSize != UnitSize.NONE:
-            unitSize = UnitSize.getSizeInBits(unitSize)
-            nbLetters = unitSize / 4
-            tmpResultString = []
-            tmpResultMask = []
-            for i in range(0, len(resultString), nbLetters):
-                # Stop and clean if requested
-                if idStop_cb is not None:
-                    if idStop_cb():
-                        self.cleanFields()
-                        return
-
-                tmpText = resultString[i:i + nbLetters]
-                tmpMask = resultMask[i:i + nbLetters]
-                if "-" in tmpText:
-                    for j in range(len(tmpText)):
-                        tmpResultString.append("-")
-                        tmpResultMask.append("1")
-                else:
-                    tmpResultString.extend(tmpText)
-                    tmpResultMask.extend(tmpMask)
-            resultString = tmpResultString
-            resultMask = tmpResultMask
-
-        ## Build of the fields
-        currentStaticField = ""
-        if resultMask[0] == "1":  # The first column is dynamic
-            isLastDyn = True
-        else:
-            currentStaticField += resultString[0]
-            isLastDyn = False
-
-        nbElements = 1
-        iField = 0
-        typeOfLastElement = None  # None undef, 1 : dynamic, 0:static, 0+:static optional
-        fields = []
-        currentField = Field("tmp", iField, "")
-        for it in range(1, len(resultMask)):
-            nbElements += 1
-
-            # Manage dynamic field
-            if resultMask[it] == "1":
-                if typeOfLastElement is None or typeOfLastElement == resultMask[it]:
-                    typeOfLastElement = resultMask[it]
-                    if currentField is None:
-                        currentField = Field("tmp", iField, "(.{,1})")
-                        nbElements = 1
-                    else:
-                        currentField.setRegex("(.{," + str(nbElements) + "})")
-                else:
-                    typeOfLastElement = resultMask[it]
-                    fields.append(currentField)
-                    iField += 1
-                    currentField = Field("tmp", iField, "(.{,1})")
-                    nbElements = 1
-
-            elif resultMask[it] == "0":
-                # In a static field
-                if typeOfLastElement is None or typeOfLastElement == resultMask[it]:
-                    typeOfLastElement = resultMask[it]
-                    if currentField is None:
-                        currentField = Field("tmp", iField, resultString[it])
-                        nbElements = 1
-                    else:
-                        currentField.setRegex(currentField.getRegex() + resultString[it])
-
-                else:
-                    typeOfLastElement = resultMask[it]
-                    fields.append(currentField)
-                    currentField = Field("tmp", iField, resultString[it])
-                    iField += 1
-
-            elif resultMask[it] == "+0":
-                # In a static optional field
-                if typeOfLastElement is None or typeOfLastElement == resultMask[it]:
-                    typeOfLastElement = resultMask[it]
-
-                    if currentField is None:
-                        currentField = Field("tmp", iField, "(" + resultString[it] + ")?")
-                        nbElements = 1
-                    else:
-                        currentField.setRegex("(" + currentField.getRegex()[1:len(currentField.getRegex()) - 2] + resultString[it] + ")?")
-
-                else:
-                    typeOfLastElement = resultMask[it]
-                    fields.append(currentField)
-                    currentField = Field("tmp", iField, "(" + resultString[it] + ")?")
-                    iField += 1
-        if currentField is not None:
-            fields.append(currentField)
-
-        for field in fields:
-            self.addField(field)
-
-        # Stop and clean if requested
-        if idStop_cb is not None:
-            if idStop_cb():
-                self.cleanFields()
-                return
-
-    #+----------------------------------------------
-    #| computeFieldsLimits:
-    #|
-    #+----------------------------------------------
-    def computeFieldsLimits(self):
-        for field in self.getFields():
-            tmpRegex = field.getRegex()
-            if field.isStatic():
-                continue
-            elif field.isRegexOnlyDynamic():
-                cells = self.getCellsByField(field)
-                if len(cells) != len(self.getMessages()):
-                    # There exists empty cells
-                    continue
-                min = 999999
-                max = 0
-                for cell in cells:
-                    if len(cell) > max:
-                        max = len(cell)
-                    if len(cell) < min:
-                        min = len(cell)
-                if min == max:
-                    field.setRegex("(.{" + str(min) + "})")
-                else:
-                    field.setRegex("(.{" + str(min) + "," + str(max) + "})")
-            else:
-                # TODO: handle complex regex
-                continue
-
-    def getLayerByID(self, layerID):
-        """getLayerByID: Return the message which ID is provided.
-        """
-        for layer in self.layers:
-            if str(layer.getID()) == str(layerID):
-                return layer
-        return None
-
-    def getMessageByID(self, messageID):
-        """getMessageByID: Return the message which ID is provided.
-        """
-        for message in self.messages:
-            if str(message.getID()) == str(messageID):
-                return message
-
-        return None
-
-    #+----------------------------------------------
-    #| getFieldByIndex:
-    #|  Return the field with specified index
-    #+----------------------------------------------
-    def getFieldByIndex(self, index):
-        field = None
-        try:
-            field = self.fields[index]
-        finally:
-            return field
-
-    #+----------------------------------------------
-    #| getCellsByField:
-    #|  Return all the messages parts which are in
-    #|  the specified field
-    #+----------------------------------------------
-    def getCellsByField(self, field):
-        # First we verify the field exists in the symbol
-        if not field in self.fields:
-            logging.warn(_("The computing field is not part of the current symbol"))
-            return []
-
-        res = []
-        for message in self.getMessages():
-            messageTable = message.applyAlignment()
-            messageElt = messageTable[field.getIndex()]
-            res.append(messageElt)
-#            if len(messageElt) > 0:
-#                res.append(messageElt)
-#            else:
-#                res.append(None)
-        return res
-
-    #+----------------------------------------------
-    #| getUniqValuesByField:
-    #|  Return all the uniq cells of a field
-    #+----------------------------------------------
-    def getUniqValuesByField(self, field):
-        # First we verify the field exists in the symbol
-        if not field in self.fields:
-            logging.warn("The computing field is not part of the current symbol")
-            return []
-
-        res = []
-        for message in self.getMessages():
-            messageTable = message.applyAlignment()
-            messageElt = messageTable[field.getIndex()]
-            if len(messageElt) > 0 and not messageElt in res:
-                res.append(messageElt)
-        return res
-
-    #+----------------------------------------------
-    #| concatFields:
-    #|  Concatenate fields from index startField to endField
-    #+----------------------------------------------
-    def concatFields(self, startField, endField):
-        for i_concatleft in range(endField - startField):
-            if not self.concatCloseFields(startField):
-                break
-            else:
-                for i_concatleft in range(startField - endField):
-                    if not self.concatCloseFields(endField):
-                        break
-
-    #+----------------------------------------------
-    #| concatCloseFields:
-    #|  Concatenate two fields starting from index iField
-    #+----------------------------------------------
-    def concatCloseFields(self, iField):
-        field1 = None
-        field2 = None
-        if iField == len(self.fields) - 1:
-            return 0
-
-        for field in self.fields:
-            if field.getIndex() == iField:
-                field1 = field
-            elif field.getIndex() == iField + 1:
-                field2 = field
-
-        if field1 is None or field2 is None:
-            return 0
-
-        # Build the merged regex
-        newRegex = ""
-        if field1.getRegex() == "":
-            newRegex = field2.getRegex()
-        if field2.getRegex() == "":
-            newRegex = field1.getRegex()
-
-        if field1.getRegex()[0] == "(" and field2.getRegex()[0] != "(":  # Dyn + Static fields
-            newRegex = field1.getRegex()[:-1] + field2.getRegex() + ")"
-
-        if field1.getRegex()[0] != "(" and field2.getRegex()[0] == "(":  # Static + Dyn fields
-            newRegex = "(" + field1.getRegex() + field2.getRegex()[1:]
-
-        if field1.getRegex()[0] == "(" and field2.getRegex()[0] == "(":  # Dyn + Dyn fields
-            newRegex = field1.getRegex()[:-1] + field2.getRegex()[1:]
-
-        if field1.getRegex()[0] != "(" and field2.getRegex()[0] != "(":  # Static + Static fields (should not happen...)
-            newRegex = field1.getRegex() + field2.getRegex()
-
-        # Default representation is BINARY
-        new_name = field1.getName() + "+" + field2.getName()
-        # Creation of the new Field
-        newField = Field(new_name, field1.getIndex(), newRegex)
-
-        self.fields.remove(field1)
-        self.fields.remove(field2)
-
-        # Update the index of the fields placed after it
-        for field in self.fields:
-            if field.getIndex() > newField.getIndex():
-                field.setIndex(field.getIndex() - 1)
-        self.fields.append(newField)
-        # sort fields by their index
-        self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
-        return 1
-
-    #+----------------------------------------------
-    #| splitField:
-    #|  Split a field in two fields
-    #|  return False if the split does not occure, else True
-    #+----------------------------------------------
-    def splitField(self, field, split_position, split_align):
-        if split_position == 0:
-            return False
-
-        # Find the static/dynamic cols
-        cells = self.getCellsByField(field)
-        ref1 = cells[0][:split_position]
-        ref2 = cells[0][split_position:]
-        isStatic1 = True
-        isStatic2 = True
-        lenDyn1 = len(cells[0][:split_position])
-        lenDyn2 = len(cells[0][split_position:])
-        for m in cells[1:]:
-            if m[:split_position] != ref1:
-                isStatic1 = False
-                if len(m[:split_position]) > lenDyn1:
-                    lenDyn1 = len(m[:split_position])
-            if m[split_position:] != ref2:
-                isStatic2 = False
-                if len(m[split_position:]) > lenDyn2:
-                    lenDyn2 = len(m[split_position:])
-
-        # Build the new sub-regex
-        if isStatic1:
-            regex1 = ref1
-        else:
-            if split_align == "left":
-                # The size is fixed
-                regex1 = "(.{" + str(lenDyn1) + "})"
-            else:
-                regex1 = "(.{," + str(lenDyn1) + "})"
-        if isStatic2:
-            regex2 = ref2
-        else:
-            if split_align == "right":
-                # The size is fixed
-                regex2 = "(.{" + str(lenDyn2) + "})"
-            else:
-                regex2 = "(.{," + str(lenDyn2) + "})"
-
-        if regex1 == "":
-            return False
-        if regex2 == "":
-            return False
-
-        new_format = field.getFormat()
-        new_encapsulationLevel = field.getEncapsulationLevel()
-
-        # We Build the two new fields
-        field1 = Field(field.getName() + "-1", field.getIndex(), regex1)
-        field1.setEncapsulationLevel(new_encapsulationLevel)
-        field1.setFormat(new_format)
-        field1.setColor(field.getColor())
-        if field.getDescription() is not None and len(field.getDescription()) > 0:
-            field1.setDescription(field.getDescription() + "-1")
-        field2 = Field(field.getName() + "-2", field.getIndex() + 1, regex2)
-
-        field2.setEncapsulationLevel(new_encapsulationLevel)
-        field2.setFormat(new_format)
-        field2.setColor(field.getColor())
-        if field.getDescription() is not None and len(field.getDescription()) > 0:
-            field2.setDescription(field.getDescription() + "-2")
-
-        # Remove the truncated one
-        self.fields.remove(field)
-
-        # Modify index to adapt
-        for field in self.getFields():
-            if field.getIndex() > field1.getIndex():
-                field.setIndex(field.getIndex() + 1)
-
-        self.fields.append(field1)
-        self.fields.append(field2)
-        # sort fields by their index
-        self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
-        return True
-
-    #+-----------------------------------------------------------------------+
-    #| getPossibleTypesForAField:
-    #|     Retrieve all the possible types for a field
-    #+-----------------------------------------------------------------------+
-    def getPossibleTypesForAField(self, field):
-        # first we verify the field exists in the symbol
-        if not field in self.fields:
-            logging.warn("The computing field is not part of the current symbol")
-            return []
-
-        # Retrieve all the part of the messages which are in the given field
-        cells = self.getUniqValuesByField(field)
-        typeIdentifier = TypeIdentifier()
-        return typeIdentifier.getTypes(cells)
-
-    #+-----------------------------------------------------------------------+
-    #| getStyledPossibleTypesForAField:
-    #|     Retrieve all the possibles types for a field and we colorize
-    #|     the selected one we an HTML RED SPAN
-    #+-----------------------------------------------------------------------+
-    def getStyledPossibleTypesForAField(self, field):
-        tmpTypes = self.getPossibleTypesForAField(field)
-        for i in range(len(tmpTypes)):
-            if tmpTypes[i] == field.getFormat():
-                tmpTypes[i] = "<span foreground=\"red\">" + field.getFormat() + "</span>"
-        return ", ".join(tmpTypes)
-
-    #+----------------------------------------------
-    #| applyDataType_cb:
-    #|  Called when user wants to apply a data type to a field
-    #+----------------------------------------------
-    def applyDataType_cb(self, button, iField, dataType):
-        self.getFieldByIndex(iField).setDescription(dataType)
+        self.pattern = None
+        self.minEqu = 0
 
     #+----------------------------------------------
     #| getVariables:
@@ -656,7 +95,7 @@ class Symbol(AbstractSymbol):
     #+----------------------------------------------
     def getVariables(self):
         result = []
-        for field in self.getFields():
+        for field in self.getExtendedFields():
             if field.getVariable() is not None:
                 # We add all variable that has the root variable of field as ancestor.
                 result.extend(field.getVariable().getProgeny())
@@ -667,6 +106,14 @@ class Symbol(AbstractSymbol):
         return result
 
     ### Messages ###
+    def getMessageByID(self, messageID):
+        """getMessageByID: Return the message which ID is provided.
+        """
+        for message in self.messages:
+            if str(message.getID()) == str(messageID):
+                return message
+        return None
+
     def removeMessage(self, message):
         """removeMessage: remove any ref to the given message and
         recompute regex and score.
@@ -675,11 +122,6 @@ class Symbol(AbstractSymbol):
             self.messages.remove(message)
         else:
             self.log.error("Cannot remove message {0} from symbol {1}, since it doesn't exist.".format(message.getID(), self.getName()))
-        # We reinit the fields' variables.
-        # Note(fgy): this could overwrite user variable
-#        if self.default:
-#            for field in self.fields:
-#                field.variable = field.getDefaultVariable(self)
 
     def addMessages(self, messages):
         """Add the provided messages in the symbol"""
@@ -692,94 +134,19 @@ class Symbol(AbstractSymbol):
                 return
         message.setSymbol(self)
         self.messages.append(message)
-        # We reinit the fields' variables.
-        # Note(fgy): this could overwrite user variable
-#        if self.default:
-#            for field in self.fields:
-#                field.variable = field.getDefaultVariable(self)
-
-    ### Layers ###
-    def removeLayer(self, layer):
-        """removeLayer: remove a specific layer.
-        """
-        if layer in self.layers:
-            self.layers.remove(layer)
-        else:
-            self.log.error("Cannot remove layer {0} from symbol {1}, since it doesn't exist.".format(layer.getName(), self.getName()))
-
-    def addLayers(self, layers):
-        """addMessages: add the provided layers in the symbol.
-        """
-        for layer in layers:
-            self.addLayer(layer)
-
-    def addLayer(self, layer):
-        self.layers.append(layer)
-
-    ### Fields ###
-    def addField(self, field, index=None):
-        if index is None:
-            self.fields.append(field)
-        else:
-            self.fields.insert(index, field)
-
-        realIndex = self.fields.index(field)
-        field.setIndex(realIndex)
-        return realIndex
-
-    def cleanLayers(self):
-        while len(self.layers) != 0:
-            self.layers.pop()
-
-    def cleanFields(self):
-        while len(self.fields) != 0:
-            self.fields.pop()
-
-    def popField(self, index=None):
-        if index is None:
-            self.fields.pop()
-        else:
-            self.fields.pop(index)
 
     def save(self, root, namespace_project, namespace_common):
         xmlSymbol = etree.SubElement(root, "{" + namespace_project + "}symbol")
-        xmlSymbol.set("alignment", str(self.getAlignment()))
         xmlSymbol.set("id", str(self.getID()))
-        xmlSymbol.set("name", str(self.getName()))
-        xmlSymbol.set("score", str(self.getScore()))
-        xmlSymbol.set("alignmentType", str(self.getAlignmentType()))
-        xmlSymbol.set("rawDelimiter", str(self.getRawDelimiter()))
-
-        # Interpretation attributes
-        if self.getFormat() is not None:
-            xmlSymbolFormat = etree.SubElement(xmlSymbol, "{" + namespace_project + "}format")
-            xmlSymbolFormat.text = str(self.getFormat())
-
-        if self.getUnitSize() is not None:
-            xmlSymbolUnitSize = etree.SubElement(xmlSymbol, "{" + namespace_project + "}unitsize")
-            xmlSymbolUnitSize.text = str(self.getUnitSize())
-
-        if self.getSign() is not None:
-            xmlSymbolSign = etree.SubElement(xmlSymbol, "{" + namespace_project + "}sign")
-            xmlSymbolSign.text = str(self.getSign())
-
-        if self.getEndianess() is not None:
-            xmlSymbolEndianess = etree.SubElement(xmlSymbol, "{" + namespace_project + "}endianess")
-            xmlSymbolEndianess.text = str(self.getEndianess())
 
         # Save the message references
         xmlMessages = etree.SubElement(xmlSymbol, "{" + namespace_project + "}messages-ref")
         for message in self.messages:
             xmlMessage = etree.SubElement(xmlMessages, "{" + namespace_common + "}message-ref")
             xmlMessage.set("id", str(message.getID()))
-        # Save the layers
-        xmlLayers = etree.SubElement(xmlSymbol, "{" + namespace_project + "}layers")
-        for layer in self.getLayers():
-            layer.save(xmlLayers, namespace_project)
-        # Save the fields
-        xmlFields = etree.SubElement(xmlSymbol, "{" + namespace_project + "}fields")
-        for field in self.getFields():
-            field.save(xmlFields, namespace_project)
+        # Save the field
+        if self.getField() is not None:
+            self.getField().save(xmlSymbol, namespace_project)
 
     #+----------------------------------------------
     #| getXMLDefinition:
@@ -809,7 +176,7 @@ class Symbol(AbstractSymbol):
     #+----------------------------------------------
     def getTextDefinition(self):
         result = ""
-        for field in self.getFields():
+        for field in self.getExtendedFields():
             # We exclude separator fields
             if self.getAlignmentType() == "delimiter":
                 if field.isStatic():
@@ -845,7 +212,7 @@ class Symbol(AbstractSymbol):
         s += "    name = \"" + self.getName() + "\"\n"
         s += "    fields_desc = [\n"
 
-        for field in self.getFields():
+        for field in self.getExtendedFields():
             if self.field.isStatic():
                 s += "                    StrFixedLenField(\"" + field.getName() + "\", " + field.getEncodedVersionOfTheRegex() + ")\n"
             else:  # Variable field of fixed size
@@ -859,90 +226,6 @@ class Symbol(AbstractSymbol):
         # bind_layers(TCP, HTTP, dport=80)
         return s
 
-    #+----------------------------------------------
-    #| slickRegex:
-    #|  try to make smooth the regex, by deleting tiny static
-    #|  sequences that are between big dynamic sequences
-    #+----------------------------------------------
-    def slickRegex(self, project):
-        if self.getAlignmentType() == "delimiter":
-            logging.warn("SlickRegex(): only applicable to a symbol with dynamic alignment")
-            return
-
-        # Use the default protocol type for representation
-        aFormat = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
-
-        res = False
-        i = 1
-        nbFields = len(self.getFields())
-        while i < nbFields - 1:
-            aField = self.getFieldByIndex(i)
-            if aField.isStatic():
-                if len(aField.getRegex()) <= 2:  # Means a potential negligeable element that can be merged with its neighbours
-                    precField = self.getFieldByIndex(i - 1)
-                    if precField.isRegexOnlyDynamic():
-                        nextField = self.getFieldByIndex(i + 1)
-                        if nextField.isRegexOnlyDynamic():
-                            res = True
-                            minSize = len(aField.getRegex())
-                            maxSize = len(aField.getRegex())
-
-                            # Build the new field
-                            regex = re.compile(".*{(\d*),(\d*)}.*")
-
-                            # Get the minSize/maxSize of precField
-                            m = regex.match(precField.getRegex())
-                            if m.group(1) != "":
-                                minSize += int(m.group(1))
-                            if m.group(2) != "":
-                                maxSize += int(m.group(2))
-
-                            # Get the minSize/maxSize of nextField
-                            m = regex.match(nextField.getRegex())
-                            if m.group(1) != "":
-                                minSize += int(m.group(1))
-                            if m.group(2) != "":
-                                maxSize += int(m.group(2))
-
-                            minSize = str(minSize)
-                            maxSize = str(maxSize)
-
-                            aField.setIndex(precField.getIndex())
-                            aField.setRegex("(.{" + minSize + "," + maxSize + "})")
-                            aField.setFormat(aFormat)
-
-                            # Delete the old ones
-                            self.fields.remove(nextField)
-                            self.fields.remove(precField)
-
-                            # Update the index of the fields placed after the new one
-                            for field in self.fields:
-                                if field.getIndex() > aField.getIndex():
-                                    field.setIndex(field.getIndex() - 2)
-                            # Sort fields by their index
-                            self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
-                            break  # Just do it one time to avoid conflicts in self.fields structure
-            i += 1
-
-        if res:
-            self.slickRegex(project)  # Try to loop until no more merges are done
-            logging.debug("The regex has been slicked")
-
-    #+----------------------------------------------
-    #| resetPartitioning:
-    #|   Reset the current partitioning
-    #+----------------------------------------------
-    def resetPartitioning(self, project):
-        aFormat = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
-
-        # Reset values
-        self.alignmentType = "regex"
-        self.rawDelimiter = ""
-        self.cleanFields()
-
-        # Create a single field
-        field = self.reinitFields()
-
     def write(self, writingToken):
         """write:
                 Grants a writing access to the symbol and its variables. Retrieve and return the value issued from this access.
@@ -955,10 +238,8 @@ class Symbol(AbstractSymbol):
         self.getRoot().write(writingToken)
         result = writingToken.getValue()
 
-        if len(self.getMathematicFilters()) > 0:
-            result = TypeConvertor.bin2hexstring(result)
-
         # Before returning the value we apply available custom math filter (reverse method)
+        print "TODO: this has been done at the Field level"
         for filter in self.getMathematicFilters():
             self.log.debug("Executing reverse method of filter {0} on {1}".format(filter.getName(), result))
             result = filter.reverse(result)
@@ -970,31 +251,13 @@ class Symbol(AbstractSymbol):
     def getRoot(self):
         # We create an aggregate of all the fields
         rootSymbol = AggregateVariable(self.getID(), self.getName(), False, False, None)
-        for field in self.getFields():
+        for field in self.getExtendedFields():
             if field.getVariable() is None:
                 variable = field.getDefaultVariable(self)
             else:
                 variable = field.getVariable()
             rootSymbol.addChild(variable)
         return rootSymbol
-
-    def getMathematicFilters(self):
-        """Return the activated mathematic filters
-        on message scope.
-        The list of uniq filters is the result of the merge between
-        the filters of the symbol and of the message.
-        """
-        return self.mathematicFilters
-
-    def addMathematicFilter(self, filter):
-        """Add a math filter for the message"""
-        self.mathematicFilters.append(filter)
-
-    def removeMathematicFilter(self, filter):
-        """Remove the provided filter from current symbol"""
-        if filter in self.mathematicFilters:
-            print "remobving"
-            self.mathematicFilters.remove(filter)
 
     def getProperties(self):
         properties = []
@@ -1003,8 +266,7 @@ class Symbol(AbstractSymbol):
         properties.append(prop)
 
         properties.append(Property('messages', Format.DECIMAL, len(self.getMessages())))
-        properties.append(Property('layers', Format.DECIMAL, len(self.getLayers())))
-        properties.append(Property('fields', Format.DECIMAL, len(self.getFields())))
+        properties.append(Property('fields', Format.DECIMAL, len(self.getExtendedFields())))
         minMsgSize = None
         maxMsgSize = 0
         avgMsgSize = 0
@@ -1021,25 +283,6 @@ class Symbol(AbstractSymbol):
         properties.append(Property('min msg size (bytes)', Format.DECIMAL, minMsgSize))
         properties.append(Property('max msg size (bytes)', Format.DECIMAL, maxMsgSize))
 
-        prop = Property("format", Format.STRING, self.format)
-        prop.setIsEditable(True)
-        prop.setPossibleValues(Format.getSupportedFormats())
-        properties.append(prop)
-
-        prop = Property("unitSize", Format.STRING, self.unitSize)
-        prop.setIsEditable(True)
-        prop.setPossibleValues([UnitSize.NONE, UnitSize.BITS4, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64])
-        properties.append(prop)
-
-        prop = Property("sign", Format.STRING, self.sign)
-        prop.setIsEditable(True)
-        prop.setPossibleValues([Sign.SIGNED, Sign.UNSIGNED])
-        properties.append(prop)
-
-        prop = Property("endianess", Format.STRING, self.endianess)
-        prop.setIsEditable(True)
-        prop.setPossibleValues([Endianess.BIG, Endianess.LITTLE])
-        properties.append(prop)
         return properties
 
 #+---------------------------------------------------------------------------+
@@ -1060,30 +303,8 @@ class Symbol(AbstractSymbol):
                 self.removeMessage(message)
         return result
 
-    def getLayers(self):
-        return self.layers
-
-    def getScore(self):
-        return self.score
-
-    def getName(self):
-        return self.name
-
-    def getFields(self):
-        self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
-        return self.fields
-
-    def getAlignment(self):
-        return self.alignment.strip()
-
-    def getAlignmentType(self):
-        return self.alignmentType
-
-    def getRawDelimiter(self):
-        return self.rawDelimiter
-
-    def getProject(self):
-        return self.project
+    def getMinEqu(self):
+        return self.minEqu
 
     def getPattern(self):
         return self.pattern
@@ -1091,92 +312,47 @@ class Symbol(AbstractSymbol):
     def getPatternString(self):
         return str(self.pattern[0]) + ";" + str([str(i) for i in self.pattern[1]])
 
-    def getMinEqu(self):
-        return self.minEqu
+    def getField(self):
+        return self.field
 
-    def getFormat(self):
-        return self.format
+    def getAllFields(self):
+        """getAllFields: return all the fields (both layers and
+        leafs) starting from the current object
+        """
+        res = []
+        res.append(self.getField())
+        res.extend(self.getField().getAllFields())
+        return res
 
-    def getUnitSize(self):
-        return self.unitSize
+    def getExtendedFields(self):
+        return self.getField().getExtendedFields()
 
-    def getSign(self):
-        return self.sign
+    def getFieldByIndex(self, i):
+        return self.getField().getFieldByIndex(i)
 
-    def getEndianess(self):
-        return self.endianess
+    def getName(self):
+        return self.getField().getName()
 
-    def isDefault(self):
-        return self.default
+    def getProject(self):
+        return self.project
 
 #+---------------------------------------------------------------------------+
 #| Setters                                                                   |
 #+---------------------------------------------------------------------------+
-    def setFields(self, fields):
-        self.fields = fields
-
-    def setAlignment(self, alignment):
-        self.alignment = alignment
-
-    def setScore(self, score):
-        self.score = score
+    def setField(self, field):
+        self.field = field
 
     def setName(self, name):
-        self.name = name
+        self.getField().setName(name)
 
     def setMessages(self, mess):
         self.messages = mess
 
-    def setLayers(self, layers):
-        self.layers = layers
+    def setMinEqu(self, minEqu):
+        self.minEqu = minEqu
 
-    def setAlignmentType(self, aType):
-        self.alignmentType = aType
-
-    def setRawDelimiter(self, rawDelimiter):
-        self.rawDelimiter = rawDelimiter
-
-    def setFormat(self, aFormat):
-        self.format = aFormat
-        for field in self.getFields():
-            field.setFormat(aFormat)
-
-    def setUnitSize(self, unitSize):
-        self.unitSize = unitSize
-        for field in self.getFields():
-            field.setUnitSize(unitSize)
-
-    def setSign(self, sign):
-        self.sign = sign
-        for field in self.getFields():
-            field.setSign(sign)
-
-    def setEndianess(self, endianess):
-        self.endianess = endianess
-        for field in self.getFields():
-            field.setEndianess(endianess)
-
-    def isRegexValidForMessage(self, message):
-        """Offers to verify if the provided message
-        can be splitted in fields following their definition
-        in the current symbol"""
-        regex = []
-        for field in self.getFields():
-            regex.append(field.getRegex())
-        # Now we apply the regex over the message
-        try:
-            compiledRegex = re.compile("".join(regex))
-            data = message.getReducedStringData()
-            dynamicDatas = compiledRegex.match(data)
-        except AssertionError:
-            return False
-
-        if dynamicDatas is None:
-            return False
-        return True
-
-    def setDefault(self, default):
-        self.default = default
+    def setPattern(self, pattern):
+        self.pattern = pattern
 
     def __str__(self):
         return str(self.getName())
@@ -1202,37 +378,8 @@ class Symbol(AbstractSymbol):
     @staticmethod
     def loadSymbol(xmlRoot, namespace_project, namespace_common, version, project, poolOfMessages):
         if version == "0.1":
-            nameSymbol = xmlRoot.get("name")
             idSymbol = xmlRoot.get("id")
-            alignmentSymbol = xmlRoot.get("alignment", None)
-            scoreSymbol = float(xmlRoot.get("score", "0"))
-            alignmentType = xmlRoot.get("alignmentType")
-            rawDelimiter = xmlRoot.get("rawDelimiter")
-
-            symbol = Symbol(idSymbol, nameSymbol, project)
-            symbol.cleanFields()
-            symbol.cleanLayers()
-            symbol.setAlignment(alignmentSymbol)
-            symbol.setScore(scoreSymbol)
-            symbol.setAlignmentType(alignmentType)
-            symbol.setRawDelimiter(rawDelimiter)
-
-            # Interpretation attributes
-            if xmlRoot.find("{" + namespace_project + "}format") is not None:
-                symbol_format = xmlRoot.find("{" + namespace_project + "}format").text
-                symbol.setFormat(symbol_format)
-
-            if xmlRoot.find("{" + namespace_project + "}unitsize") is not None:
-                symbol_unitsize = xmlRoot.find("{" + namespace_project + "}unitsize").text
-                symbol.setUnitSize(symbol_unitsize)
-
-            if xmlRoot.find("{" + namespace_project + "}sign") is not None:
-                symbol_sign = xmlRoot.find("{" + namespace_project + "}sign").text
-                symbol.setSign(symbol_sign)
-
-            if xmlRoot.find("{" + namespace_project + "}endianess") is not None:
-                symbol_endianess = xmlRoot.find("{" + namespace_project + "}endianess").text
-                symbol.setEndianess(symbol_endianess)
+            symbol = Symbol(idSymbol, "", project)
 
             # we parse the messages
             if xmlRoot.find("{" + namespace_project + "}messages-ref") is not None:
@@ -1245,20 +392,11 @@ class Symbol(AbstractSymbol):
                         symbol.addMessage(message)
 
             # we parse the fields
-            if xmlRoot.find("{" + namespace_project + "}fields") is not None:
-                xmlFields = xmlRoot.find("{" + namespace_project + "}fields")
-                for xmlField in xmlFields.findall("{" + namespace_project + "}field"):
-                    field = Field.loadFromXML(xmlField, namespace_project, version, symbol)
-                    if field != None:
-                        symbol.addField(field)
-
-            # we parse the layers
-            if xmlRoot.find("{" + namespace_project + "}layers") is not None:
-                xmlLayers = xmlRoot.find("{" + namespace_project + "}layers")
-                for xmlLayer in xmlLayers.findall("{" + namespace_project + "}layer"):
-                    layer = Layer.loadFromXML(xmlLayer, namespace_project, version, symbol)
-                    if layer != None:
-                        symbol.addLayer(layer)
+            if xmlRoot.find("{" + namespace_project + "}field") is not None:
+                xmlField = xmlRoot.find("{" + namespace_project + "}field")
+                field = Field.loadFromXML(xmlField, namespace_project, version, symbol)
+                if field != None:
+                    symbol.setField(field)
 
             return symbol
         return None

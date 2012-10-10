@@ -49,14 +49,14 @@ from netzob.UI.Vocabulary.Views.Partitioning.SmoothPartitioningView import Smoot
 
 
 class SmoothPartitioningController(object):
-    """Executes the smooth operation on selected symbols"""
+    """Executes the smooth operation on selected fields"""
 
-    def __init__(self, vocabularyController, symbols=[]):
+    def __init__(self, vocabularyController, fields=[]):
         self.vocabularyController = vocabularyController
         self._view = SmoothPartitioningView(self)
         self.log = logging.getLogger(__name__)
         self.flagStop = False
-        self.symbols = symbols
+        self.fields = fields
 
     @property
     def view(self):
@@ -85,16 +85,16 @@ class SmoothPartitioningController(object):
     def startSmooth(self):
         """Start the smooth operation by creating
         a dedicated thread
-        @var symbols: the list of symbols that should be smoothed
+        @var fields: the list of fields that should be smoothed
         """
-        if len(self.symbols) > 0:
-            self.log.debug("Start to smooth the selected symbols")
+        if len(self.fields) > 0:
+            self.log.debug("Start to smooth the selected fields")
             try:
                 (yield ThreadedTask(self.smooth))
             except TaskError, e:
-                self.log.error(_("Error while proceeding to the smoothing of symbols: {0}").format(str(e)))
+                self.log.error(_("Error while proceeding to the smoothing of fields: {0}").format(str(e)))
         else:
-            self.log.debug("No symbol selected")
+            self.log.debug("No field selected")
 
         # Update button
         self._view.smooth_stop.set_sensitive(True)
@@ -102,19 +102,19 @@ class SmoothPartitioningController(object):
         self._view.smoothDialog.destroy()
 
         # Update the message table view
-        self.vocabularyController._view.updateMessageTableDisplayingSymbols(self.symbols)
-        # Update the symbol properties view
-        self.vocabularyController._view.updateLeftPanel()
+        self.vocabularyController.view.updateSelectedMessageTable()
+        # Update the field properties view
+        self.vocabularyController.view.updateLeftPanel()
 
     def smooth(self):
-        """Smooth the provided symbols"""
-        step = float(100) / float(len(self.symbols))
+        """Smooth the provided fields"""
+        step = float(100) / float(len(self.fields))
         total = float(0)
-        for symbol in self.symbols:
-            GObject.idle_add(self._view.smooth_progressbar.set_text, _("Smooth symbol {0}".format(symbol.getName())))
+        for field in self.fields:
+            GObject.idle_add(self._view.smooth_progressbar.set_text, _("Smooth field {0}".format(field.getName())))
             if self.flagStop:
                 return
-            symbol.slickRegex(self.vocabularyController.getCurrentProject())
+            field.slickRegex(self.vocabularyController.getCurrentProject())
             total = total + step
             rtotal = float(total) / float(100)
             time.sleep(0.01)

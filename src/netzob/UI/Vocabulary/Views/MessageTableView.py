@@ -58,10 +58,10 @@ class MessageTableView(object):
             "ui", "vocabulary",
             "messageTable.glade"))
         self._getObjects(self.builder, ["messageTableBox",
-                                        "symbolNameLabel",
+                                        "fieldNameLabel",
                                         "messageTableScrolledWindow"])
         self.builder.connect_signals(self.controller)
-        self.displayedSymbol = None
+        self.displayedField = None
         # Make an empty treeview
         self.messageTableTreeView = self.__makeMessageTreeView()
         self.messageTableScrolledWindow.add(self.messageTableTreeView)
@@ -88,12 +88,14 @@ class MessageTableView(object):
         messageTableTreeView.drag_source_add_text_targets()
 
         # Create columns
-        if self.displayedSymbol is None:
+        if self.displayedField is None or len(self.displayedField.getExtendedFields()) < 1:
             return messageTableTreeView
-        numOfColumns = 1 + min(self.MAX_DISPLAYED_FIELDS, len(self.displayedSymbol.getFields()))
+        startOfColumns = 1 + self.displayedField.getExtendedFields()[0].getIndex()
+        numOfColumns = startOfColumns + min(self.MAX_DISPLAYED_FIELDS, len(self.displayedField.getExtendedFields()))
+
         self.treeViewHeaderGroup.clear()
-        for colIdx in range(1, numOfColumns):
-            (tvc, head) = self.__makeTreeViewColumn(colIdx)
+        for colIdx in range(startOfColumns, numOfColumns):
+            (tvc, head) = self.__makeTreeViewColumn(startOfColumns, colIdx)
             #tvc.set_clickable(True)
             messageTableTreeView.append_column(tvc)
             but = tvc.get_button()
@@ -116,40 +118,40 @@ class MessageTableView(object):
         """refresh the properties like background color"""
         self.messageTableTreeView.queue_draw()
 
-    def __makeTreeViewColumn(self, i):
+    def __makeTreeViewColumn(self, startOfColumns, i):
         i = i - 1
         markupCellRenderer = Gtk.CellRendererText()
         treeViewColumn = Gtk.TreeViewColumn()
-        field = self.displayedSymbol.getFieldByIndex(i)
+        field = self.displayedField.getFieldByIndex(i)
         headerWidget = TreeViewHeaderWidget(field,
                                             treeViewColumn,
                                             self)
         treeViewColumn.set_widget(headerWidget)
         treeViewColumn.set_resizable(True)
         treeViewColumn.pack_start(markupCellRenderer, True)
-        treeViewColumn.add_attribute(markupCellRenderer, "markup", i + 1)
+        treeViewColumn.add_attribute(markupCellRenderer, "markup", i + 2 - startOfColumns)
         markupCellRenderer.set_property("font", "monospace")
         return (treeViewColumn, headerWidget)
 
-    def setDisplayedSymbol(self, symbol):
-        """Memorizes symbol as the displayed symbol in this message table
-        and updates itself to display this symbol."""
-        self.displayedSymbol = symbol
+    def setDisplayedField(self, field):
+        """Memorizes field as the displayed field in this message table
+        and updates itself to display this field."""
+        self.displayedField = field
         self.update()
 
-    def getDisplayedSymbol(self):
-        """Returns the currently displayed symbol in this message table"""
-        return self.displayedSymbol
+    def getDisplayedField(self):
+        """Returns the currently displayed field in this message table"""
+        return self.displayedField
 
     def updateMessageTableTreeView(self):
         """Performs a full update on the treeview displaying messages.
         You should call this method only if you need a full update
-        of the (ie if the fields of the symbols)"""
+        of the table"""
         logging.debug("Start to update the message table")
         ## Remove former TreeView if necessary
         if self.messageTableTreeView is not None:
             self.messageTableScrolledWindow.remove(self.messageTableTreeView)
-        if self.displayedSymbol is None:
+        if self.displayedField is None:
             return
         ## Create a new treeview
         self.messageTableTreeView = self.__makeMessageTreeView()
@@ -168,10 +170,12 @@ class MessageTableView(object):
         splitMessagesMatrix = []
         # Split every message
         logging.debug("Start to compute the alignments of messages")
-        for message in self.displayedSymbol.getMessages():
+        for message in self.displayedField.getMessages():
             try:
                 splitMessage = [str(message.getID())]
-                splitMessage.extend(message.applyAlignment(styled=True, encoded=True))
+                tmpSplitMessage = message.applyAlignment(styled=True, encoded=True)
+                tmpSplitMessage = tmpSplitMessage[self.displayedField.getExtendedFields()[0].getIndex():self.displayedField.getExtendedFields()[-1].getIndex() + 1]
+                splitMessage.extend(tmpSplitMessage)
             except NetzobException:
                 logging.warn("Impossible to display one of messages since it cannot be cut according to the computed regex.")
                 logging.warn("Message : " + str(message.getStringData()))
@@ -180,7 +184,7 @@ class MessageTableView(object):
         logging.debug("Alignent computed")
         # Setup listStore
         numOfColumns = min(self.MAX_DISPLAYED_FIELDS,
-                           len(self.displayedSymbol.getFields()))
+                           len(self.displayedField.getExtendedFields()))
         # the list store must include the ID and a column for every field
         listStoreTypes = [str] * (numOfColumns + 1)
         self.messageTableListStore = Gtk.ListStore(*listStoreTypes)
@@ -203,27 +207,27 @@ class MessageTableView(object):
         self.messageTableListStore.set_sort_column_id(sortIndex, sortTypeMap[sortType])
         self.treeViewHeaderGroup.setAllColumnsSortIndicator(sortIndex, sortType)
 
-    def updateSymbolNameLabel(self):
-        """Udpates the label displaying the symbol name."""
-        if self.displayedSymbol is None:
-            symbolName = "Empty Message Table"
+    def updateFieldNameLabel(self):
+        """Udpates the label displaying the field name."""
+        if self.displayedField is None:
+            fieldName = "Empty Message Table"
         else:
-            symbolName = self.displayedSymbol.getName()
-        self.symbolNameLabel.set_text(symbolName)
+            fieldName = self.displayedField.getName()
+        self.fieldNameLabel.set_text(fieldName)
 
     def setSelected(self, selected):
         """Selects or unselects the message table."""
         if selected:
             boldFont = Pango.FontDescription()
             boldFont.set_weight(Pango.Weight.BOLD)
-            self.symbolNameLabel.modify_font(boldFont)
+            self.fieldNameLabel.modify_font(boldFont)
         else:
             selection = self.messageTableTreeView.get_selection()
             if selection is not None:
                 selection.unselect_all()
             normalFont = Pango.FontDescription()
             normalFont.set_weight(Pango.Weight.NORMAL)
-            self.symbolNameLabel.modify_font(normalFont)
+            self.fieldNameLabel.modify_font(normalFont)
 
     def __drag_data_get_event(self, widget, drag_context, data, info, time):
         """Callback executed when the user request this treeview as the the
@@ -236,7 +240,7 @@ class MessageTableView(object):
                     data.set_text("m:{0}".format(msgID), -1)
 
     def update(self):
-        self.updateSymbolNameLabel()
+        self.updateFieldNameLabel()
         self.updateMessageTableTreeView()
 
     def getPanel(self):

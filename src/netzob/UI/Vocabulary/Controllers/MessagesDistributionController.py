@@ -87,8 +87,8 @@ class MessagesDistributionController(object):
 
             current_i = 0
             fieldAxis = []
-            for field in symbol.getFields():
-                cellsField = symbol.getUniqValuesByField(field)
+            for field in symbol.getExtendedFields():
+                cellsField = field.getUniqValuesByField()
 
                 maxField = 0
                 for cell in cellsField:
@@ -99,9 +99,9 @@ class MessagesDistributionController(object):
                 fieldAxis.append(current_i)
             self.axisByFieldBySymbol[symbol.getID()] = fieldAxis
 
-            for field in symbol.getFields():
+            for field in symbol.getExtendedFields():
                 maxCell = -1
-                for cell in symbol.getUniqValuesByField(field):
+                for cell in field.getUniqValuesByField():
                     for j in range(len(cell) / 2):
                         if (i + j) > maxX:
                             maxX = (i + j)

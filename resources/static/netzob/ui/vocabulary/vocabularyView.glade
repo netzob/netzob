@@ -37,6 +37,8 @@
     <columns>
       <!-- column-name selected -->
       <column type="gboolean"/>
+      <!-- column-name toplevel -->
+      <column type="gboolean"/>
       <!-- column-name name -->
       <column type="gchararray"/>
       <!-- column-name numOfMessages -->
@@ -113,6 +115,7 @@
                     <property name="headers_clickable">False</property>
                     <property name="search_column">0</property>
                     <property name="enable_grid_lines">both</property>
+                    <property name="enable_tree_lines">True</property>
                     <child internal-child="selection">
                       <object class="GtkTreeSelection" id="symbolListTreeViewSelection">
                         <signal name="changed" handler="symbolListTreeViewSelection_changed_cb" swapped="no"/>
@@ -128,6 +131,7 @@
                             <signal name="toggled" handler="toggleCellRenderer_toggled_cb" swapped="no"/>
                           </object>
                           <attributes>
+                            <attribute name="activatable">1</attribute>
                             <attribute name="active">0</attribute>
                           </attributes>
                         </child>
@@ -139,7 +143,7 @@
                         <child>
                           <object class="GtkCellRendererText" id="cellrenderertext1"/>
                           <attributes>
-                            <attribute name="text">1</attribute>
+                            <attribute name="text">2</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -150,7 +154,7 @@
                         <child>
                           <object class="GtkCellRendererText" id="cellrenderertext2"/>
                           <attributes>
-                            <attribute name="text">2</attribute>
+                            <attribute name="text">3</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -161,7 +165,7 @@
                         <child>
                           <object class="GtkCellRendererText" id="cellrenderertext5"/>
                           <attributes>
-                            <attribute name="text">3</attribute>
+                            <attribute name="text">4</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -269,25 +273,6 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToolButton" id="renameSymbolButton">
-                    <property name="use_action_appearance">False</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="has_tooltip">True</property>
-                    <property name="tooltip_markup" translatable="yes">Rename one symbol</property>
-                    <property name="tooltip_text" translatable="yes">Rename one symbol</property>
-                    <property name="use_action_appearance">False</property>
-                    <property name="label" translatable="yes">Rename</property>
-                    <property name="use_underline">True</property>
-                    <property name="stock_id">netzob-rename</property>
-                    <signal name="clicked" handler="renameSymbolButton_clicked_cb" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkToolButton" id="deleteSymbolButton">
                     <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
@@ -323,12 +308,171 @@
                     <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip_markup" translatable="yes">New empty view for message of symbol</property>
                     <property name="tooltip_text" translatable="yes">New empty view for message of symbol</property>
                     <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">New MessageList</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">netzob-new-window</property>
                     <signal name="clicked" handler="newMessageTableButton_clicked_cb" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolbar" id="symbolListToolbar2">
+                <property name="width_request">270</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkToolButton" id="sequenceAlignment">
+                    <property name="use_action_appearance">False</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip_markup" translatable="yes">Sequence alignment on selected symbol</property>
+                    <property name="tooltip_text" translatable="yes">Sequence alignment on selected symbol</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="label" translatable="yes">Sequence alignment</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">netzob-partitioning-sequence</property>
+                    <signal name="clicked" handler="sequenceAlignment_activate_cb" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="partitioningForce">
+                    <property name="use_action_appearance">False</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip_markup" translatable="yes">Force Partitioning on selected symbol</property>
+                    <property name="tooltip_text" translatable="yes">Force Partitioning on selected symbol</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="label" translatable="yes">Force Partitioning</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">netzob-partitioning-force</property>
+                    <signal name="clicked" handler="partitioningForce_activate_cb" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="partitioningSimple">
+                    <property name="use_action_appearance">False</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip_markup" translatable="yes">Simple Partitioning on selected symbol</property>
+                    <property name="tooltip_text" translatable="yes">Simple Partitioning on selected symbol</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="label" translatable="yes">Simple Partitioning</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">netzob-partitioning-simple</property>
+                    <signal name="clicked" handler="partitioningSimple_activate_cb" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="partitioningSmooth">
+                    <property name="use_action_appearance">False</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip_markup" translatable="yes">Smooth Partitioning on selected symbol</property>
+                    <property name="tooltip_text" translatable="yes">Smooth Partitioning on selected symbol</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="label" translatable="yes">Smooth Partitioning</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">netzob-partitioning-smooth</property>
+                    <signal name="clicked" handler="partitioningSmooth_activate_cb" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="partitioningReset">
+                    <property name="use_action_appearance">False</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip_markup" translatable="yes">Reset Partitioning on selected symbol</property>
+                    <property name="tooltip_text" translatable="yes">Reset Partitioning on selected symbol</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="label" translatable="yes">Reset Partitioning</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">netzob-partitioning-reset</property>
+                    <signal name="clicked" handler="partitioningReset_activate_cb" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparatorToolItem" id="separatorXXX">
+                    <property name="use_action_appearance">False</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="use_action_appearance">False</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="messagesDistribution">
+                    <property name="use_action_appearance">False</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip_markup" translatable="yes">Display messages distributions for selected symbol(s)</property>
+                    <property name="tooltip_text" translatable="yes">Display messages distributions for selected symbol(s)</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="label" translatable="yes">Messages Distribution…</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">netzob-messages-distribution</property>
+                    <signal name="clicked" handler="messagesDistribution_activate_cb" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="fieldLimits">
+                    <property name="use_action_appearance">False</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip_markup" translatable="yes">Display min and max size of selected symbol</property>
+                    <property name="tooltip_text" translatable="yes">Display min and max size of selected symbol</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="label" translatable="yes">Field Limits</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">netzob-field-limit</property>
+                    <signal name="clicked" handler="fieldLimits_activate_cb" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -351,7 +495,7 @@
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="padding">1</property>
-                <property name="position">4</property>
+                <property name="position">5</property>
               </packing>
             </child>
           </object>

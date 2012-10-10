@@ -79,11 +79,6 @@ class PopupEditFieldController(object):
             self.view.description.set_text("")
         # Regex
         self.view.regex.set_text(self.field.getRegex())
-        # Encapsulation level
-        for i in range(10):
-            self.view.encapsulationLevel.append_text(str(i))
-            if i == self.field.getEncapsulationLevel():
-                self.view.encapsulationLevel.set_active(i)
 
     def cancel_clicked_cb(self, widget):
         self.view.dialog.destroy()
@@ -102,14 +97,6 @@ class PopupEditFieldController(object):
         if (len(text) > 0):
             self.field.setRegex(text)
         self.vocabularyController.view.updateSelectedMessageTable()
-        # Update field encapsulation level
-        try:
-            encapLevel = int(self.view.encapsulationLevel.get_active())
-        except TypeError:
-            pass
-        else:
-            if encapLevel >= 0:
-                self.field.setEncapsulationLevel(encapLevel)
         # UI update
         self.view.dialog.destroy()
         self.vocabularyController.view.updateSelectedMessageTable()

@@ -158,7 +158,7 @@ class PeachExport(object):
                 @param dataModelid: a number that identifies the data model.
         """
         xmlDataModel = etree.SubElement(xmlFather, "DataModel", name=("dataModel{0}").format(str(dataModelid)))
-        for field in symbol.getFields():
+        for field in symbol.getExtendedFields():
             xmlField = None
 
             #-----------------------------------#

@@ -58,32 +58,32 @@ class UPGMA(object):
     When processing, the matrix of scores is computed by the C extensions (L{_libScoreComputation} and L{_libInterface})
     and used to regroup messages and symbols into equivalent cluster."""
 
-    def __init__(self, project, symbols, explodeSymbols, nbIteration, minEquivalence, doInternalSlick, defaultFormat, unitSize, cb_status=None, scores={}):
+    def __init__(self, project, symbols, unitSize, cb_status=None, scores={}):
         self.project = project
-        self.nbIteration = nbIteration
-        self.minEquivalence = minEquivalence
-        self.doInternalSlick = doInternalSlick
-        self.cb_status = cb_status
-        self.defaultFormat = defaultFormat
         self.unitSize = unitSize
-        self.log = logging.getLogger('netzob.Inference.Vocabulary.UPGMA.py')
+        self.cb_status = cb_status
         self.scores = scores
+
+        # Then we retrieve all the parameters of the CLUSTERING / ALIGNMENT
+        self.defaultFormat = self.project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
+        self.nbIteration = self.project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_NB_ITERATION)
+        self.minEquivalence = self.project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD)
+        self.doInternalSlick = self.project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
+
+        self.log = logging.getLogger('netzob.Inference.Vocabulary.UPGMA.py')
         self.path = []
         self.flagStop = False
         self.currentAlignment = None
-        if explodeSymbols is False:
-            self.symbols = symbols
-        else:
-            # Create a symbol for each message
-            self.symbols = []
-            i_symbol = 1
-            for symbol in symbols:
-                for m in symbol.getMessages():
-                    tmpSymbol = Symbol(str(uuid.uuid4()), "Symbol " + str(i_symbol), project)
-                    tmpSymbol.addMessage(m)
-                    self.symbols.append(tmpSymbol)
-                    i_symbol += 1
 
+        # Create a symbol for each message
+        self.symbols = []
+        i_symbol = 1
+        for symbol in symbols:
+            for m in symbol.getMessages():
+                tmpSymbol = Symbol(str(uuid.uuid4()), "Symbol " + str(i_symbol), project)
+                tmpSymbol.addMessage(m)
+                self.symbols.append(tmpSymbol)
+                i_symbol += 1
         self.log.debug("A number of {0} already aligned symbols will be clustered.".format(str(len(symbols))))
 
     def cb_executionStatus(self, stage, donePercent, currentMessage):
@@ -123,7 +123,7 @@ class UPGMA(object):
             if self.isFinish():
                 return None
 
-            self.currentAlignment.alignSymbol(symbol, self.doInternalSlick, self.defaultFormat)
+            self.currentAlignment.alignField(symbol, self.doInternalSlick)
             self.currentAlignment.statusRatioOffset = self.currentAlignment.statusRatioOffset + 1
 
         return self.symbols
@@ -245,7 +245,8 @@ class UPGMA(object):
         messages.extend(symbol1.getMessages())
         messages.extend(symbol2.getMessages())
 
-        newSymbol = Symbol(str(uuid.uuid4()), symbol1.getName(), self.project, minEqu=self.minEquivalence)
+        newSymbol = Symbol(str(uuid.uuid4()), symbol1.getName(), self.project)
+        newSymbol.setMinEqu(self.minEquivalence)
         for message in messages:
             newSymbol.addMessage(message)
 
@@ -315,7 +316,7 @@ class UPGMA(object):
         alignment = NeedlemanAndWunsch(self.unitSize, self.cb_status)
         # Compute the regex/alignment of each symbol
         for symbol in self.symbols:
-            alignment.alignSymbol(symbol, self.doInternalSlick, self.defaultFormat)
+            alignment.alignField(symbol, self.doInternalSlick)
         return self.symbols
 
     def deserializeGroups(self, symbols):

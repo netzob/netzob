@@ -381,7 +381,7 @@ class Project(object):
         properties.append(Property('messages', Format.DECIMAL, len(self.getVocabulary().getMessages())))
         fields = 0
         for sym in self.getVocabulary().getSymbols():
-            fields = fields + len(sym.getFields())
+            fields = fields + len(sym.getField().getExtendedFields())
         properties.append(Property('fields', Format.DECIMAL, fields))
 
         prop = Property(configuration.VOCABULARY_GLOBAL_FORMAT, Format.STRING, configuration.getVocabularyInferenceParameter(configuration.VOCABULARY_GLOBAL_FORMAT))

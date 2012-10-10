@@ -95,33 +95,33 @@ class MessageTableController(object):
                 return
 
             # Retrieve the selected message
-            symbol = self._view.getDisplayedSymbol()
-            if symbol is None:
-                logging.warn("No symbol is selected, please choose one.")
+            layer = self._view.getDisplayedField()
+            if layer is None:
+                logging.warn("No layer is selected, please choose one.")
                 return
 
             message_id = None
             aIter = treeview.get_model().get_iter(path)
             if aIter and treeview.get_model().iter_is_valid(aIter):
                 message_id = treeview.get_model().get_value(aIter, 0)
-                message = symbol.getMessageByID(message_id)
+                message = layer.getMessageByID(message_id)
             else:
                 logging.warn(_("Impossible to retrieve the clicked message !"))
                 return
 
             # Retrieve the selected field number
-            iField = 0
+            iField = self.view.displayedField.getExtendedFields()[0].getIndex()  # Starting displayed field
             for col in treeview.get_columns():
                 if col == treeviewColumn:
                     break
                 iField += 1
-            field = symbol.getFieldByIndex(iField)
+            field = layer.getFieldByIndex(iField)
             if field is None:
                 logging.warn(_("Impossible to retrieve the clicked field !"))
                 return
 
             # Popup a contextual menu
-            menuController = ContextualMenuOnFieldController(self.vocabularyPerspective.controller, symbol, message, field)
+            menuController = ContextualMenuOnFieldController(self.vocabularyPerspective.controller, layer, message, field)
             menuController.run(eventButton)
 
     def messageTableTreeView_enter_notify_event_cb(self, treeView, data=None):

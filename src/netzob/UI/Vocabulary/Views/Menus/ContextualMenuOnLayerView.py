@@ -50,7 +50,7 @@ from netzob.Common.Type.Endianess import Endianess
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
-class ContextualMenuOnSymbolView(object):
+class ContextualMenuOnLayerView(object):
 
     def __init__(self, controller):
         self.controller = controller
@@ -59,9 +59,22 @@ class ContextualMenuOnSymbolView(object):
         # Build the contextual menu for messages
         self.menu = Gtk.Menu()
 
+        # Add entry to edit layer
+        item = Gtk.MenuItem(_("Edit layer"))
+        item.show()
+        item.connect("activate", self.controller.renameLayer_cb)
+        self.menu.append(item)
+
+        # Add sub-entries for partitioning
+        subMenu = self.build_partitioning_submenu()
+        item = Gtk.MenuItem(_("Partitioning"))
+        item.set_submenu(subMenu)
+        item.show()
+        self.menu.append(item)
+
         # Add sub-entries to change the type of a specific column
         subMenu = self.build_encoding_submenu()
-        item = Gtk.MenuItem(_("Symbol visualization"))
+        item = Gtk.MenuItem(_("Visualization"))
         item.set_submenu(subMenu)
         item.show()
         self.menu.append(item)
@@ -74,21 +87,28 @@ class ContextualMenuOnSymbolView(object):
         item.show()
         self.menu.append(item)
 
+        # Add entry to delete layer
+        item = Gtk.MenuItem(_("Delete layer"))
+        item.show()
+        item.connect("activate", self.controller.deleteLayer_cb)
+        self.menu.append(item)
+
         self.menu.popup(None, None, None, None, event.button, event.time)
 
     def build_math_filters_submenu(self):
         """Create a GTK submenu which contains
         entries to edit the mathematical filters
-        of selected symbol"""
+        of selected layer"""
         menu = Gtk.Menu()
 
         # Retrieve the list of available mathematical filters
         currentWorkspace = self.controller.vocabularyController.getCurrentWorkspace()
         mathematicFilters = currentWorkspace.getMathematicFilters()
 
-        # Fetch all the filters attach to messages of current symbol
+        messages = self.controller.layer.getMessages()
+        # Fetch all the filters attach to messages of current layer (either symbol of fieldLayer)
         filtersInMessages = []
-        for filter in self.controller.symbol.getMathematicFilters():
+        for filter in self.controller.layer.getSymbol().getField().getMathematicFilters():
             if not filter in filtersInMessages:
                 filtersInMessages.append(filter)
 
@@ -113,14 +133,10 @@ class ContextualMenuOnSymbolView(object):
         menu.show_all()
         return menu
 
-    #+----------------------------------------------
-    #| build_encoding_submenu:
-    #|   Build a submenu for symbol data visualization.
-    #+----------------------------------------------
     def build_encoding_submenu(self):
         """Create a GTK menu which contains
         entries to edit the visualizations formats of
-        selected symbol"""
+        selected layer"""
         menu = Gtk.Menu()
 
         # Format submenu
@@ -174,4 +190,41 @@ class ContextualMenuOnSymbolView(object):
         item.set_submenu(subMenu)
         item.show()
         menu.append(item)
+        return menu
+
+    def build_partitioning_submenu(self):
+        """Create a GTK menu which contains
+        entries for partitioning fields"""
+        menu = Gtk.Menu()
+
+        # Sequence alignment
+        item = Gtk.MenuItem(_("Sequence alignment"))
+        item.connect("activate", self.controller.sequenceAlignment_cb)
+        item.show()
+        menu.append(item)
+
+        # Force partitionment
+        item = Gtk.MenuItem(_("Force partitionment"))
+        item.connect("activate", self.controller.forcePartitionment_cb)
+        item.show()
+        menu.append(item)
+
+        # Simple partitionment
+        item = Gtk.MenuItem(_("Simple partitionment"))
+        item.connect("activate", self.controller.simplePartitionment_cb)
+        item.show()
+        menu.append(item)
+
+        # Smooth partitionment
+        item = Gtk.MenuItem(_("Smooth partitionment"))
+        item.connect("activate", self.controller.smoothPartitionment_cb)
+        item.show()
+        menu.append(item)
+
+        # Reset partitionment
+        item = Gtk.MenuItem(_("Reset partitionment"))
+        item.connect("activate", self.controller.resetPartitionment_cb)
+        item.show()
+        menu.append(item)
+
         return menu
