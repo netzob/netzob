@@ -107,14 +107,6 @@ class AbstractMessage(object):
     #+----------------------------------------------
     def getStringData(self):
         message = str(self.data)
-        if self.getSymbol() is None:
-            return message
-        for filter in self.getSymbol().getField().getMathematicFilters():  # Retrieve filters of the top fieldLayer
-            try:
-                message = filter.apply(message)
-            except:
-                message = "Error, invalid filter"
-
         return message
 
     def getReducedSize(self):
@@ -264,8 +256,8 @@ class AbstractMessage(object):
         # Add Mathematics filters
         i = 0
         for field in fields:
-            filters = field.getMathematicFilters()
 
+            filters = field.getMathematicFilters()
             for filter in filters:
                 try:
                     splittedData[i] = filter.apply(splittedData[i])
@@ -312,22 +304,6 @@ class AbstractMessage(object):
             end = dynamicDatas.end(i)
             result.append(dataToSplit[start:end])
         return result
-
-# C VERSION (should work)#
-#        # Execute in C the regex application
-#        try:
-#            result = _libRegex.match("".join(regex), self.getReducedStringData(), 0)
-#            aligned = result.split("\x01")
-#        except:
-#            pass
-#
-#        if aligned is None:
-#            self.log.warning("The regex of the group doesn't match one of its message")
-#            self.log.warning("Regex: " + "".join(regex))
-#            self.log.warning("Message: " + self.getReducedStringData() + "...")
-#            raise NetzobException("The regex of the group doesn't match one of its message")
-
-        return aligned
 
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

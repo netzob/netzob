@@ -122,8 +122,9 @@ class ContextualMenuOnLayerController(object):
             self.layer.removeMathematicFilter(appliedFilter)
         else:
             self.layer.addMathematicFilter(mathFilter)
-            self.layer.resetPartitioning()
-            self.vocabularyController.view.updateSelectedMessageTable()
+
+        self.layer.resetPartitioning()
+        self.vocabularyController.view.updateSelectedMessageTable()
 
     def createCustomFilter_cb(self, event):
         """Callback executed when the user
@@ -188,7 +189,7 @@ class ContextualMenuOnLayerController(object):
         self.vocabularyController.view.updateSelectedMessageTable()
 
     def sequenceAlignment_cb(self, action):
-        sequence_controller = SequenceAlignmentController( self.vocabularyController, [self.layer])
+        sequence_controller = SequenceAlignmentController(self.vocabularyController, [self.layer])
         sequence_controller.run()
 
     def forcePartitionment_cb(self, action):
