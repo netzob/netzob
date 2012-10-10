@@ -435,13 +435,14 @@ class VocabularyController(object):
             # drop selected messages
             for message in self.selectedMessagesToMove:
                 if message is not None:
-                    if targetSymbol.isRegexValidForMessage(message):
+                    if targetSymbol.getField().isRegexValidForMessage(message):
                         self.moveMessage(message, targetSymbol)
                     else:
                         moveMessageController = MoveMessageController(self, self.selectedMessagesToMove, targetSymbol)
                         moveMessageController.run()
-
             self.removePendingMessagesToMove()
+            self.view.updateSelectedMessageTable()
+            self.view.updateLeftPanel()
 
     def removePendingMessagesToMove(self):
         """Clean the pending messages the user wanted to move (using the button)."""
