@@ -301,7 +301,7 @@ class VocabularyController(object):
         if layers == []:
             NetzobErrorMessage(_("No layer(s) selected."))
             return
-        sequence_controller = SequenceAlignmentController(self, layers)
+        sequence_controller = SequenceAlignmentController(self, layers, doUpgma=True)
         sequence_controller.run()
 
     def partitioningForce_activate_cb(self, action):

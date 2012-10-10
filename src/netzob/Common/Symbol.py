@@ -87,7 +87,6 @@ class Symbol(AbstractSymbol):
         self.field.setName(name)
         self.project = project
         self.pattern = None
-        self.minEqu = 0
 
     #+----------------------------------------------
     #| getVariables:

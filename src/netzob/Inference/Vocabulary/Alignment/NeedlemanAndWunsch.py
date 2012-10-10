@@ -37,12 +37,14 @@
 import logging
 import time
 from gettext import gettext as _
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Field import Field
+from netzob.Common.Symbol import Symbol
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.NetzobException import NetzobException
 
@@ -59,7 +61,7 @@ import _libInterface
 #+---------------------------------------------------------------------------+
 class NeedlemanAndWunsch(object):
 
-    def __init__(self, unitSize, project, cb_status=None):
+    def __init__(self, unitSize, project, doUpgma, cb_status=None):
         self.cb_status = cb_status
         self.project = project
         self.unitSize = unitSize
@@ -69,6 +71,8 @@ class NeedlemanAndWunsch(object):
         self.statusRatioOffset = None
         self.flagStop = False
         self.clusteringSolution = None
+        self.doUpgma = doUpgma
+        self.newSymbols = []
 
         # Then we retrieve all the parameters of the CLUSTERING / ALIGNMENT
         self.defaultFormat = self.project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
@@ -278,31 +282,52 @@ class NeedlemanAndWunsch(object):
     #|  Needleman Wunsh algorithm
     #+----------------------------------------------
     def alignFields(self, fields):
-        # If we selected only one symbol
-        if len(fields) == 1:
-            self.alignField(fields[0])
+        # If we apply basic alignment per field
+        if self.doUpgma is False:
+            for field in fields:
+                self.alignField(field)
             return
 
-        # Else we merge the checked symbols to apply UPGMA
-        logging.warn("UPGMA not yet supported")
+        # Else we apply UPGMA
         from netzob.Inference.Vocabulary.Alignment.UPGMA import UPGMA
-        return
+        self.newSymbols = []
+        preResults = []
 
-        if self.isFinish():
-            return
+        # First we add in results, the symbols which wont be aligned
+        for symbol in self.project.getVocabulary().getSymbols():
+            found = False
+            for field in fields:
+                if str(symbol.getID()) == str(field.getSymbol().getID()):
+                    found = True
+            if not found:
+                logging.debug("Symbol " + str(symbol.getName()) + "[" + str(symbol.getID()) + "]] wont be aligned")
+                preResults.append(symbol)
 
-        self.clusteringSolution = UPGMA(self.project, fields, self.unitSize, self.cb_executionStatus)
+        # Create a symbol for each message
+        tmpSymbols = []
+        i_field = 1
+        for field in fields:
+            for m in field.getMessages():
+                tmpSymbol = Symbol(str(uuid.uuid4()), "Symbol-" + str(i_field), self.project)
+                tmpField = Field("Field-" + str(i_field), "(.{,})", tmpSymbol)
+                tmpSymbol.addMessage(m)
+                tmpSymbol.setField(tmpField)
+                tmpSymbols.append(tmpSymbol)
+                i_field += 1
+
+        self.clusteringSolution = UPGMA(self.project, tmpSymbols, self.unitSize, self.cb_executionStatus)
         t1 = time.time()
-        self.clusteringSolution.executeClustering()
+        self.newSymbols = self.clusteringSolution.executeClustering()
 
         if self.isFinish():
             return
 
         # We optionally handle orphans
         if self.doOrphanReduction:
-            self.clusteringSolution.executeOrphanReduction()
+            self.newSymbols = self.clusteringSolution.executeOrphanReduction()
         t2 = time.time()
 
+        self.newSymbols.extend(preResults)
         logging.info("Time of clustering : " + str(t2 - t1))
 
     def isFinish(self):
@@ -313,6 +338,9 @@ class NeedlemanAndWunsch(object):
         if self.clusteringSolution is not None:
             logging.debug("Close the clustering solution")
             self.clusteringSolution.stop()
+
+    def getNewSymbols(self):
+        return self.newSymbols
 
     #+-----------------------------------------------------------------------+
     #| alignTwoMessages

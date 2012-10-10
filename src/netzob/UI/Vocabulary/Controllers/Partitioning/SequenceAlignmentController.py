@@ -52,12 +52,17 @@ from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAn
 class SequenceAlignmentController(object):
     '''Controls the execution of the alignment process'''
 
-    def __init__(self, vocabularyController, fields=[]):
+    def __init__(self, vocabularyController, fields=[], doUpgma=False):
         self.vocabularyController = vocabularyController
         self._view = SequenceAlignmentView(self)
         self.log = logging.getLogger(__name__)
         self.alignmentSolution = None
         self.fields = fields
+        self.doUpgma = doUpgma
+
+        if doUpgma is False:
+            self.view.similarity_box.hide()
+            self.view.orphanButton.hide()
 
     @property
     def view(self):
@@ -94,7 +99,7 @@ class SequenceAlignmentController(object):
         self.vocabularyController.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK, smooth)
 
         # Configure Needleman and Wunsch
-        self.alignmentSolution = NeedlemanAndWunsch(unitSize, self.vocabularyController.getCurrentProject(), self.percentOfAlignmentProgessBar)
+        self.alignmentSolution = NeedlemanAndWunsch(unitSize, self.vocabularyController.getCurrentProject(), self.doUpgma, self.percentOfAlignmentProgessBar)
 
         # Define the alignment JOB
         self._view.sequence_stop.set_sensitive(True)
@@ -110,14 +115,26 @@ class SequenceAlignmentController(object):
         except TaskError, e:
             self.log.error(_("Error while proceeding to the alignment: {0}").format(str(e)))
 
-        # Clean the interface
-        self._view.resetProgressBars()
-        # Close dialog box
-        self._view.sequenceDialog.destroy()
-        # Update the message table view
-        self.vocabularyController.view.updateSelectedMessageTable()
-        # Update the field properties view
-        self.vocabularyController.view.updateLeftPanel()
+        if self.doUpgma is True:
+            # We have new symbols
+            newSymbols = self.alignmentSolution.getNewSymbols()
+            if newSymbols is not None and len(newSymbols) > 0:
+                self.vocabularyController.getCurrentProject().getVocabulary().setSymbols(newSymbols)
+                # Clean the interface
+                self._view.resetProgressBars()
+                # Close dialog box
+                self._view.sequenceDialog.destroy()
+                self.vocabularyController.restart()
+                return
+        else:
+            # Clean the interface
+            self._view.resetProgressBars()
+            # Close dialog box
+            self._view.sequenceDialog.destroy()
+            # Update the message table view
+            self.vocabularyController.view.updateSelectedMessageTable()
+            # Update the field properties view
+            self.vocabularyController.view.updateLeftPanel()
 
     def percentOfAlignmentProgessBar(self, stage, percent, message):
         # select the good progress bar in function of the stage

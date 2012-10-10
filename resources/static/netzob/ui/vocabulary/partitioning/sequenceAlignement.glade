@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
+  <object class="GtkAdjustment" id="sequence_adjustment">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkDialog" id="sequenceDialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Sequence alignment</property>
+    <property name="default_width">400</property>
+    <property name="default_height">250</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox22">
@@ -12,7 +19,7 @@
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child>
-          <object class="GtkBox" id="box9">
+          <object class="GtkBox" id="similarity_box">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="spacing">5</property>
@@ -399,10 +406,5 @@
       <action-widget response="0">sequence_stop</action-widget>
       <action-widget response="0">sequence_execute</action-widget>
     </action-widgets>
-  </object>
-  <object class="GtkAdjustment" id="sequence_adjustment">
-    <property name="upper">100</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
   </object>
 </interface>

@@ -56,7 +56,7 @@ class SequenceAlignmentView(object):
             ResourcesConfiguration.getStaticResources(),
             "ui", "vocabulary", "partitioning",
             "sequenceAlignement.glade"))
-        self._getObjects(self.builder, ["sequenceDialog",
+        self._getObjects(self.builder, ["sequenceDialog", "similarity_box",
                                         "sequence_execute", "sequence_cancel", "sequence_stop",
                                         "sequence_adjustment", "sequence_scale", "sequence_spinbutton",
                                         "radiobutton4bit", "radiobutton8bit",

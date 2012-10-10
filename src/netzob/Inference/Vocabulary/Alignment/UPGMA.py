@@ -40,6 +40,7 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.C_Extensions.WrapperArgsFactory import WrapperArgsFactory
 from netzob.Common.Symbol import Symbol
 from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
+from netzob.Common.ProjectConfiguration import ProjectConfiguration
 
 #+---------------------------------------------------------------------------+
 #| C Imports
@@ -113,7 +114,7 @@ class UPGMA(object):
         if self.isFinish():
             return None
 
-        self.currentAlignment = NeedlemanAndWunsch(self.unitSize, self.cb_status)
+        self.currentAlignment = NeedlemanAndWunsch(self.unitSize, self.project, False, self.cb_status)
         self.currentAlignment.absoluteStage = 2
         self.currentAlignment.statusRatio = len(self.symbols)
         self.currentAlignment.statusRatioOffset = 0
@@ -123,7 +124,7 @@ class UPGMA(object):
             if self.isFinish():
                 return None
 
-            self.currentAlignment.alignField(symbol, self.doInternalSlick)
+            self.currentAlignment.alignField(symbol.getField())
             self.currentAlignment.statusRatioOffset = self.currentAlignment.statusRatioOffset + 1
 
         return self.symbols
@@ -313,10 +314,10 @@ class UPGMA(object):
             self.symbols = tmp_symbols
 
         self.cb_executionStatus(3, 50.0, "Executing last alignment...")
-        alignment = NeedlemanAndWunsch(self.unitSize, self.cb_status)
+        alignment = NeedlemanAndWunsch(self.unitSize, self.project, False, self.cb_status)
         # Compute the regex/alignment of each symbol
         for symbol in self.symbols:
-            alignment.alignField(symbol, self.doInternalSlick)
+            alignment.alignField(symbol.getField())
         return self.symbols
 
     def deserializeGroups(self, symbols):
