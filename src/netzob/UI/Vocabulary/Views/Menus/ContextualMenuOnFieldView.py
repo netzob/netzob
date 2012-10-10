@@ -130,7 +130,7 @@ class ContextualMenuOnFieldView(object):
         field = self.controller.field
 
         # Retrieve all the values in the current field
-        cells = self.controller.symbol.getUniqValuesByField(field)
+        cells = field.getUniqValuesByField()
 
         # Retrieve the selected message and field content
         if self.controller.message is not None:
