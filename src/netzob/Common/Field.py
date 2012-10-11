@@ -231,7 +231,7 @@ class Field(object):
         elif self.regex.find("{") != -1:  # This is a real regex
             return self.regex
         else:  # This is a simple value
-            return TypeConvertor.encodeNetzobRawToGivenType(self.regex, self.format)
+            return TypeConvertor.encodeNetzobRawToGivenType(self.getRegexData(), self.format)
 
     def isStatic(self):
         """isStatic:
