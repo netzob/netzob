@@ -53,7 +53,7 @@ class AvailablePluginsView(object):
         self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
                                                 "ui",
                                                 "availablePluginsDialog.glade"))
-        self._getObjects(self.builder, ["window", "pluginsListStore"])
+        self._getObjects(self.builder, ["availablePluginsDialog", "pluginsListStore"])
         self.controller = controller
         self.builder.connect_signals(self.controller)
 
@@ -73,7 +73,7 @@ class AvailablePluginsView(object):
             setattr(self, obj, builder.get_object(obj))
 
     def run(self):
-        self.window.show_all()
+        self.availablePluginsDialog.show_all()
 
     def destroy(self):
-        self.window.destroy()
+        self.availablePluginsDialog.destroy()
