@@ -60,3 +60,6 @@ class AvailablePluginsController(object):
 
     def run(self):
         self._view.run()
+
+    def closeButton_clicked_cb(self, widget):
+        self._view.destroy()
