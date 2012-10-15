@@ -108,8 +108,8 @@ class NetzobMainController(object):
         self.updateListOfAvailableProjects()
 
     def _loadBugReporter(self, opts):
-        """Activate the bug reporter if the command line
-        options requests it"""
+        """Activate the bug reporter if the command line options
+        requests it"""
         if opts.bugReport:
             logging.debug("Activate the bug reporter")
 
@@ -187,8 +187,8 @@ class NetzobMainController(object):
             Gtk.main_quit()
 
     def closeCurrentProject(self):
-        """Close and offers to save the pending
-        modifications in the current project."""
+        """Close and offers to save the pending modifications in the
+        current project."""
         currentProject = self.getCurrentProject()
 
         # Close the current project
@@ -213,8 +213,8 @@ class NetzobMainController(object):
         return self.currentWorkspace
 
     def updateListOfAvailableProjects(self):
-        """Fetch the list of available projects in the
-        current workspace, and provide them to its associated view"""
+        """Fetch the list of available projects in the current
+        workspace, and provide them to its associated view"""
         listOfProjectsNameAndPath = self.currentWorkspace.getNameOfProjects()
         self.view.updateSwitchProjectMenu(listOfProjectsNameAndPath)
 
@@ -244,9 +244,8 @@ class NetzobMainController(object):
             button.set_sensitive(False)
 
     def newProject_activate_cb(self, action):
-        """Display the dialog in order
-        to create a new project when the user request it
-        through the menu."""
+        """Display the dialog in order to create a new project when
+        the user request it through the menu."""
         finish = False
         errorMessage = None
         while not finish:
@@ -306,9 +305,8 @@ class NetzobMainController(object):
         self.getCurrentProject().saveConfigFile(self.getCurrentWorkspace())
 
     def fileSetFileChooser_importProject_cb(self, widget, applyButton):
-        """Callback executed when the user
-        selects a file in the file chooser of
-        the import project dialog box"""
+        """Callback executed when the user selects a file in the file
+        chooser of the import project dialog box"""
         selectedFile = widget.get_filename()
         if selectedFile is not None:
             applyButton.set_sensitive(True)
@@ -316,9 +314,8 @@ class NetzobMainController(object):
             applyButton.set_sensitive(False)
 
     def importProject_activate_cb(self, action):
-        """Display the dialog in order
-        to import a project when the user request it
-        through the menu."""
+        """Display the dialog in order to import a project when the
+        user request it through the menu."""
         logging.debug("Import project")
         finish = False
         errorMessage = None
@@ -479,9 +476,8 @@ class NetzobMainController(object):
             dialog.destroy()
 
     def rawExportProject_activate_cb(self, action):
-        """Display the dialog in order
-        to export the symbols when the user request it
-        through the menu."""
+        """Display the dialog in order to export the symbols when the
+        user request it through the menu."""
         if self.getCurrentProject() == None:
             NetzobErrorMessage(_("No project selected."))
             return
@@ -571,8 +567,7 @@ class NetzobMainController(object):
             dialog.destroy()
 
     def quit_activate_cb(self, action):
-        """Callback executed when the user
-        request to close Netzob"""
+        """Callback executed when the user request to close Netzob"""
         self.close()
 
     def aboutNetzob_activate_cb(self, action):
@@ -587,19 +582,22 @@ class NetzobMainController(object):
         controller.run()
 
     def switchProject_cb(self, widget, projectPath):
-        """Callback for the GTK view in order to
-        switch to another project.
+        """Callback for the GTK view in order to switch to another
+        project.
+
         @param projectPath: the path to the project to load
         @type projectPath: str
         """
         self.switchProject(projectPath)
 
     def switchProject(self, projectPath):
-        """Change the current project with the project
-        declared in file projectPath. If the loading is successful
-        the view is updated.
-        If a current project is already loaded, it offers to save pending modifications
-        before changing.
+        """Change the current project with the project declared in
+        file projectPath. If the loading is successful the view is
+        updated.
+
+        If a current project is already loaded, it offers to save
+        pending modifications before changing.
+
         @param projectPath: the path to the project to load
         @type projectPath: str
         """
