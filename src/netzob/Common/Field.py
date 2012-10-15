@@ -36,17 +36,6 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 from lxml import etree
-import logging
-import re
-import uuid
-
-#+---------------------------------------------------------------------------+
-#| Related third party imports                                               |
-#+---------------------------------------------------------------------------+
-
-#+---------------------------------------------------------------------------+
-#| Local application imports                                                 |
-#+---------------------------------------------------------------------------+
 from netzob.Common.Filters.Encoding.FormatFilter import FormatFilter
 from netzob.Common.Filters.Visualization.BackgroundColorFilter import \
     BackgroundColorFilter
@@ -59,13 +48,24 @@ from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import \
 from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import \
     AlternateVariable
 from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
+from netzob.Common.ProjectConfiguration import ProjectConfiguration
+from netzob.Common.Property import Property
 from netzob.Common.Type.Endianess import Endianess
 from netzob.Common.Type.Format import Format
 from netzob.Common.Type.Sign import Sign
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Type.UnitSize import UnitSize
-from netzob.Common.Property import Property
-from netzob.Common.ProjectConfiguration import ProjectConfiguration
+import logging
+import re
+import uuid
+
+#+---------------------------------------------------------------------------+
+#| Related third party imports                                               |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
+#| Local application imports                                                 |
+#+---------------------------------------------------------------------------+
 
 
 class Field(object):
@@ -401,7 +401,7 @@ class Field(object):
                         tmpResultMask += "0"
             resultString = tmpResultString
             resultMask = tmpResultMask
- 
+
         ## Build of the fields
         self.removeLocalFields()
         currentStaticField = ""
@@ -453,7 +453,7 @@ class Field(object):
             field = Field(_("Name"), "(.{," + str(nbElements) + "})", self.getSymbol())
             field.setColor("blue")
         else:
-            field = Field(_("Name"), currentStaticField, self.getSymbol())
+            field = Field(_("Name"), "(" + currentStaticField + ")", self.getSymbol())
             field.setColor("black")
         self.addField(field)
 
