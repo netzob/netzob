@@ -359,20 +359,23 @@ class VocabularyController(object):
         if symbol is None:
             NetzobErrorMessage(_("No selected symbol."))
             return
-        fields = self.view.selectedMessageTable.treeViewHeaderGroup.getSelectedFields()
-        if fields is None or len(fields) < 2:
+        selectedFields = self.view.selectedMessageTable.treeViewHeaderGroup.getSelectedFields()
+        if selectedFields is None or len(selectedFields) < 2:
             NetzobErrorMessage(_("You need to select at least two fields."))
             return
         # We retrieve the first and last fields selected
-        firstField = fields[0]
-        lastField = fields[0]
-        for field in fields:
-            if field.getIndex() < firstField.getIndex():
-                firstField = field
-            if field.getIndex() > lastField.getIndex():
-                lastField = field
-        # We concatenate between the first and last fields
-        symbol.concatFields(firstField.getIndex(), lastField.getIndex())
+        firstField = selectedFields[0]
+        lastField = selectedFields[0]
+
+        for selectedField in selectedFields:
+            if selectedField.getIndex() < firstField.getIndex():
+                firstField = selectedField
+            if selectedField.getIndex() > lastField.getIndex():
+                lastField = selectedField
+
+        # We concat all the fields in the first one
+        firstField.concatFields(lastField)
+
         self.view.updateSelectedMessageTable()
         self.view.updateLeftPanel()
 

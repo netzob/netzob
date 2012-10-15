@@ -561,6 +561,49 @@ class Field(object):
                 # TODO: handle complex regex
                 continue
 
+    def concatFields(self, lastField):
+        """concatFields: concat all the next fields in the current one
+        until the last field."""
+        logging.warn("Concat field from {0}({1}) to {2}({3})".format(self.getName(), self.getID(), lastField.getName(), lastField.getID()))
+
+        # If no last field is provided we stop here
+        if lastField == None:
+            return
+
+        # Retrieve all the fields at the same level
+        parentField = self.getParentField()
+        localFields = parentField.getLocalFields()
+
+        if lastField not in localFields:
+            logging.warn("Impossible to merge with field {0} since its not of the same layer.".format(lastField.getName()))
+            return
+
+        lastMerge = False
+        while not lastMerge:
+            # retrieve next field
+            nextField = self.getNextFieldInCurrentLayer()
+
+            if nextField is None:
+                return
+
+            if nextField.getID() == lastField.getID():
+                lastMerge = True
+
+            self.concatWithNextField()
+
+    def getNextFieldInCurrentLayer(self):
+        """getNextFieldInCurrentLayer:
+            Computes the next field from the same layer.
+            Returns None if it doesn't exist"""
+        parentField = self.getParentField()
+        localFields = parentField.getLocalFields()
+        indexField1 = localFields.index(self)
+        indexField2 = indexField1 + 1
+        try:
+            return localFields[indexField2]
+        except IndexError:
+            return None
+
     #+----------------------------------------------
     #| concatWithNextField:
     #|  Concatenate the current field with the next one at the same level
