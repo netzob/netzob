@@ -113,8 +113,8 @@ def NetzobProgressBar(text=None):
 #+---------------------------------------------------------------------------+
 #| NetzobErrorMessage:
 #+---------------------------------------------------------------------------+
-def NetzobErrorMessage(text):
-    md = Gtk.MessageDialog(None,
+def NetzobErrorMessage(text, parent=None):
+    md = Gtk.MessageDialog(parent,
                            Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
                            Gtk.MessageType.ERROR,
                            Gtk.ButtonsType.CLOSE,
