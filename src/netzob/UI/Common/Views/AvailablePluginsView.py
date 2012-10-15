@@ -48,7 +48,7 @@ from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 
 class AvailablePluginsView(object):
 
-    def __init__(self, controller):
+    def __init__(self, controller, parent=None):
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
                                                 "ui",
@@ -65,6 +65,8 @@ class AvailablePluginsView(object):
             self.pluginsListStore.set(i, 0, str(plugin.getName()))
             self.pluginsListStore.set(i, 1, str(plugin.getVersion()))
             self.pluginsListStore.set(i, 2, str(plugin.getDescription()))
+
+        self.availablePluginsDialog.set_transient_for(parent)
 
     def _getObjects(self, builder, objectsList):
         for obj in objectsList:
