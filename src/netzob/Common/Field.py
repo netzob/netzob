@@ -123,8 +123,8 @@ class Field(object):
     def cleanVisualizationFilters(self):
         self.visualizationFilters = []
 
-    def getVisualizationFilters(self):
-        return self.visualizationFilters
+#    def getVisualizationFilters(self):
+#        return self.visualizationFilters
 
     def removeVisualizationFilter(self, filter):
         self.visualizationFilters.remove(filter)
@@ -136,11 +136,11 @@ class Field(object):
         if filter in self.encodingFilters:
             self.encodingFilters.remove(filter)
 
-    def getEncodingFilters(self):
-        filters = []
-        for field in self.getExtendedFields():
-            filters.extend(field.getEncodingFilters())
-        filters.extend(self.encodingFilters)
+#    def getEncodingFilters(self):
+#        filters = []
+#        for field in self.getExtendedFields():
+#            filters.extend(field.getEncodingFilters())
+#        filters.extend(self.encodingFilters)
 
     def getVisualizationFilters(self):
         """getVisualizationFilters:
@@ -331,8 +331,8 @@ class Field(object):
         logging.debug("Size of the longest message : {0}".format(maxLen))
 
         # Try to see if the column is static or variable
-        resultString = ""
-        resultMask = ""
+        resultString = []
+        resultMask = []
 
         # Stop and clean if requested
         if idStop_cb is not None:
@@ -353,24 +353,30 @@ class Field(object):
                     self.removeLocalFields()
                     return
 
+            oneCellIsTooShort = False
             # Loop through each cells of the column
             for cell in self.getCells():
-                try:
+                if it < len(cell):
                     tmp = cell[it]
                     if ref == "":
                         ref = tmp
                     if ref != tmp:
                         isDifferent = True
                         break
-                except IndexError:
-                    isDifferent = True
+                else:
+                    oneCellIsTooShort = True
+
+            if oneCellIsTooShort:
+                prefix = '+'
+            else:
+                prefix = ''
 
             if isDifferent:
-                resultString += "-"
-                resultMask += "1"
+                resultString.append("-")
+                resultMask.append(prefix + "1")
             else:
-                resultString += ref
-                resultMask += "0"
+                resultString.append(ref)
+                resultMask.append(prefix + "0")
 
             totalPercent += step
             if it % 20 == 0 and status_cb is not None:
@@ -380,10 +386,9 @@ class Field(object):
         if unitSize != UnitSize.NONE:
             unitSize = UnitSize.getSizeInBits(unitSize)
             nbLetters = unitSize / 4
-            tmpResultString = ""
-            tmpResultMask = ""
+            tmpResultString = []
+            tmpResultMask = []
             for i in range(0, len(resultString), nbLetters):
-
                 # Stop and clean if requested
                 if idStop_cb is not None:
                     if idStop_cb():
@@ -391,14 +396,14 @@ class Field(object):
                         return
 
                 tmpText = resultString[i:i + nbLetters]
-                if tmpText.count("-") >= 1:
+                tmpMask = resultMask[i:i + nbLetters]
+                if "-" in tmpText:
                     for j in range(len(tmpText)):
-                        tmpResultString += "-"
-                        tmpResultMask += "1"
+                        tmpResultString.append("-")
+                        tmpResultMask.append("1")
                 else:
-                    tmpResultString += tmpText
-                    for j in range(len(tmpText)):
-                        tmpResultMask += "0"
+                    tmpResultString.extend(tmpText)
+                    tmpResultMask.extend(tmpMask)
             resultString = tmpResultString
             resultMask = tmpResultMask
 
@@ -412,50 +417,69 @@ class Field(object):
             isLastDyn = False
 
         nbElements = 1
-        iField = -1
+        iField = 0
+        typeOfLastElement = None  # None undef, 1 : dynamic, 0:static, 0+:static optional
+        fields = []
+        currentField = Field("tmp", "", self.getSymbol())
         for it in range(1, len(resultMask)):
+            nbElements += 1
+
             if resultMask[it] == "1":  # The current column is dynamic
-                if isLastDyn:
-                    nbElements += 1
+                if typeOfLastElement is None or typeOfLastElement == resultMask[it]:
+                    typeOfLastElement = resultMask[it]
+                    if currentField is None:
+                        currentField = Field("tmp", "(.{,1})", self.getSymbol())
+                        nbElements = 1
+                    else:
+                        currentField.setRegex("(.{," + str(nbElements) + "})")
                 else:
-                    # We change the field
+                    typeOfLastElement = resultMask[it]
+                    fields.append(currentField)
                     iField += 1
-                    field = Field(_("Name"), "(" + currentStaticField + ")", self.getSymbol())
-                    field.setColor("black")
-                    self.addField(field)
-                    # We start a new field
-                    currentStaticField = ""
+                    currentField = Field("tmp", "(.{,1})", self.getSymbol())
                     nbElements = 1
-                isLastDyn = True
-            else:  # The current column is static
-                if isLastDyn:  # We change the field
-                    iField += 1
-                    field = Field(_("Name"), "(.{," + str(nbElements) + "})", self.getSymbol())
-                    field.setColor("blue")
-                    self.addField(field)
-                    # We start a new field
-                    currentStaticField = resultString[it]
-                    nbElements = 1
+            elif resultMask[it] == "0":
+                # In a static field
+                if typeOfLastElement is None or typeOfLastElement == resultMask[it]:
+                    typeOfLastElement = resultMask[it]
+                    if currentField is None:
+                        currentField = Field("tmp", resultString[it], self.getSymbol())
+                        nbElements = 1
+                    else:
+                        currentField.setRegex(currentField.getRegex() + resultString[it])
                 else:
-                    currentStaticField += resultString[it]
-                    nbElements += 1
-                isLastDyn = False
+                    typeOfLastElement = resultMask[it]
+                    fields.append(currentField)
+                    currentField = Field("tmp", resultString[it], self.getSymbol())
+                    iField += 1
+
+            elif resultMask[it] == "+0":
+                # In a static optional field
+                if typeOfLastElement is None or typeOfLastElement == resultMask[it]:
+                    typeOfLastElement = resultMask[it]
+
+                    if currentField is None:
+                        currentField = Field("tmp", "(" + resultString[it] + ")?", self.getSymbol())
+                        nbElements = 1
+                    else:
+                        currentField.setRegex("(" + currentField.getRegex()[1:len(currentField.getRegex()) - 2] + resultString[it] + ")?")
+
+                else:
+                    typeOfLastElement = resultMask[it]
+                    fields.append(currentField)
+                    currentField = Field("tmp", "(" + resultString[it] + ")?", self.getSymbol())
+                    iField += 1
+        if currentField is not None:
+            fields.append(currentField)
+
+        for field in fields:
+            self.addField(field)
 
         # Stop and clean if requested
         if idStop_cb is not None:
             if idStop_cb():
                 self.removeLocalFields()
                 return
-
-        # We add the last field
-        iField += 1
-        if resultMask[-1] == "1":  # If the last column is dynamic
-            field = Field(_("Name"), "(.{," + str(nbElements) + "})", self.getSymbol())
-            field.setColor("blue")
-        else:
-            field = Field(_("Name"), "(" + currentStaticField + ")", self.getSymbol())
-            field.setColor("black")
-        self.addField(field)
 
     #+----------------------------------------------
     #| slickRegex:
@@ -469,6 +493,7 @@ class Field(object):
         res = False
         i = 1
         nbFields = len(self.getExtendedFields())
+
         while i < nbFields - 1:
             aField = self.getFieldByIndex(i)
             if aField.isStatic():
@@ -625,7 +650,7 @@ class Field(object):
         field2.removeLocalFields()
 
         # Concatenate fields
-        field1.setRegex("(" + field1.getRegex()[1:-1] + field1.getRegex()[1:-1] + ")")
+        field1.setRegex("(" + field1.getRegex()[1:-1] + field2.getRegex()[1:-1] + ")")
         localFields.remove(field2)
         return 1
 
@@ -749,7 +774,13 @@ class Field(object):
                 @return: the generated variable
         """
         if self.isStatic():
-            value = TypeConvertor.netzobRawToBitArray(self.getRegexData())
+            value = self.getRegex()
+            if value.endswith("?"):
+                value = value[1:len(value) - 2]
+            else:
+                value = value[1:len(value) - 1]
+
+            value = TypeConvertor.netzobRawToBitArray(value)
             variable = DataVariable(uuid.uuid4(), self.getName(), False, False, BinaryType(True, len(value), len(value)), value.to01())  # A static field is neither mutable nor random.
             return variable
         else:
