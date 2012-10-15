@@ -246,23 +246,29 @@ class NetzobMainController(object):
     def newProject_activate_cb(self, action):
         """Display the dialog in order to create a new project when
         the user request it through the menu."""
+
         finish = False
         errorMessage = None
+
         while not finish:
-            #open dialogbox
+            # open Dialogbox
             builder2 = Gtk.Builder()
             builder2.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(), "ui", "dialogbox.glade"))
             dialog = builder2.get_object("newProject")
-            #button apply
+
+            # Apply button
             applybutton = builder2.get_object("newProjectApplyButton")
             applybutton.set_sensitive(False)
             dialog.add_action_widget(applybutton, 0)
-            #button cancel
-            cancelbutton = builder2.get_object("newProjectCancelButton")
-            dialog.add_action_widget(cancelbutton, 1)
-            #disable apply button if no text
+
+            # Disable 'apply' button if there is no text
             entry = builder2.get_object("entry4")
             entry.connect("changed", self.entry_disableButtonIfEmpty_cb, applybutton)
+
+            # Cancel button
+            cancelbutton = builder2.get_object("newProjectCancelButton")
+            dialog.add_action_widget(cancelbutton, 1)
+
             if errorMessage is not None:
                 # Display a warning message on the dialog box
                 warnLabel = builder2.get_object("NewProjectWarnLabel")
@@ -270,12 +276,13 @@ class NetzobMainController(object):
                 warnBox = builder2.get_object("newProjectWarnBox")
                 warnBox.show_all()
 
-            #run the dialog window and wait for the result
+            # Run the dialog window and wait for the result
             result = dialog.run()
+
             if result == 0:
                 newProjectName = entry.get_text()
                 dialog.destroy()
-                self.log.debug("Verify the uniqueness of project name : {0}".format(newProjectName))
+                self.log.debug("Verify the uniqueness of project name: {0}".format(newProjectName))
                 found = False
                 for (projectName, projectPath) in self.currentWorkspace.getNameOfProjects():
                     if projectName == newProjectName:
@@ -293,9 +300,6 @@ class NetzobMainController(object):
             else:
                 dialog.destroy()
                 finish = True
-        if (result == 1):
-            #cancel
-            dialog.destroy()
 
     def saveProject_activate_cb(self, action):
         """Save the current project"""
