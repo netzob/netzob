@@ -255,6 +255,7 @@ class NetzobMainController(object):
             builder2 = Gtk.Builder()
             builder2.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(), "ui", "dialogbox.glade"))
             dialog = builder2.get_object("newProject")
+            dialog.set_transient_for(self.view.mainWindow)
 
             # Apply button
             applybutton = builder2.get_object("newProjectApplyButton")
@@ -304,7 +305,7 @@ class NetzobMainController(object):
     def saveProject_activate_cb(self, action):
         """Save the current project"""
         if self.getCurrentProject() == None:
-            NetzobErrorMessage(_("No project selected."))
+            NetzobErrorMessage(_("No project selected."), self.view.mainWindow)
             return
         self.getCurrentProject().saveConfigFile(self.getCurrentWorkspace())
 
@@ -407,7 +408,7 @@ class NetzobMainController(object):
         to export the current project when the user request it
         through the menu."""
         if self.getCurrentProject() == None:
-            NetzobErrorMessage(_("No project selected."))
+            NetzobErrorMessage(_("No project selected."), self.view.mainWindow)
             return
         logging.debug("Export project")
         finish = False
@@ -483,7 +484,7 @@ class NetzobMainController(object):
         """Display the dialog in order to export the symbols when the
         user request it through the menu."""
         if self.getCurrentProject() == None:
-            NetzobErrorMessage(_("No project selected."))
+            NetzobErrorMessage(_("No project selected."), self.view.mainWindow)
             return
         logging.debug("Export raw symbols")
         controller = RawExportController(self)
