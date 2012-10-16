@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -25,33 +26,27 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-[build_manpage]
-output=doc/netzob.1
-parser=netzob.Common.CommandLine:CommandLine
+#+----------------------------------------------------------------------------
+#| Global Imports
+#+----------------------------------------------------------------------------
+from setuptools import setup
 
-[compile_catalog]
-domain = netzob
-directory = resources/static/netzob/locales
+dependencies = [
 
-[extract_messages]
-msgid_bugs_address = i18n@netzob.org
-output_file = resources/static/netzob/locales/netzob.pot
+]
 
-[init_catalog]
-input_file = resources/static/netzob/locales/netzob.pot
-output_dir = resources/static/netzob/locales
-domain = netzob
-
-[update_catalog]
-input_file = resources/static/netzob/locales/netzob.pot
-output_dir = resources/static/netzob/locales
-domain = netzob
-
-[test]
-reportfile=unittests_results.xml
-
-#[plugins]
-#plugins = Netzob-PcapImporter:src/netzob_plugins/Importers/PCAPImporter/setup.py
-#          Netzob-DelimiterSeparatedImporter:src/netzob_plugins/Importers/DelimiterSeparatedImporter/setup.py
-#          Netzob-OSpyImporter:src/netzob_plugins/Importers/OSpyImporter/setup.py
-#          Netzob-XMLImporter:src/netzob_plugins/Importers/XMLImporter/setup.py
+#+----------------------------------------------------------------------------
+#| Definition of Netzob for setup
+#+----------------------------------------------------------------------------
+setup(
+    name="Netzob-DelimiterSeparatedImporter",
+    version="1.0.0",
+    author="Georges Bossert, Frédéric Guihéry",
+    author_email="contact@netzob.org",
+    packages=['DelimiterSeparatedImporter'],
+    install_requires=dependencies,
+    entry_points="""
+    [netzob.plugins]
+    DelimiterSeparatedImporter=DelimiterSeparatedImporter.DelimiterSeparatedImporterPlugin:DelimiterSeparatedImporterPlugin
+    """
+)

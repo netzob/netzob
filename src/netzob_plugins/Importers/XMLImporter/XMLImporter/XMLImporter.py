@@ -28,8 +28,12 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
+import logging
+import os
+from lxml.etree import ElementTree
+from lxml import etree
 from gettext import gettext as _
-import fnmatch
+
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
@@ -37,37 +41,44 @@ import fnmatch
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
-from netzob_plugins.Importers.PCAPImporter.PCAPImporterController import PCAPImporterController
+from netzob.Common import Project
+from netzob.Common.Workspace import Workspace
+from netzob.Common.Models.Factories.AbstractMessageFactory import AbstractMessageFactory
+from netzob.Import.AbstractImporter import AbstractImporter
 
 
-class PCAPImporterPlugin(FileImporterPlugin):
-    """PCAPImporter : Provide the possibility to import messages
-       from PCAP network capture files"""
-
-    __plugin_name__ = "PCAPImporter"
-    __plugin_version__ = "1.0"
-    __plugin_description__ = _("Provide the possibility to import messages from PCAP network capture files")
-    __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>"
-    __plugin_copyright__ = "Georges Bossert and Frédéric Guihéry"
-    __plugin_license__ = "GPLv3+"
-
-    FILE_TYPE_DESCRIPTION = "PCAP File"
+class XMLImporter(AbstractImporter):
+    """Model of XML importer plugin"""
 
     def __init__(self, netzob):
-        super(PCAPImporterPlugin, self).__init__(netzob)
-        self.entryPoints = []
+        super(XMLImporter, self).__init__("XML IMPORT", netzob)
+        self.log = logging.getLogger('netzob.Import.XMLImport.py')
+        self.filesToBeImported = []
 
-    def getEntryPoints(self):
-        return self.entryPoints
+    def setSourceFiles(self, filePathList):
+        self.filesToBeImported = filePathList
 
-    def canHandleFile(self, filePath):
-        return fnmatch.fnmatch(filePath, "*.pcap")
+    def readMessages(self):
+        self.messages = []
+        for filePath in self.filesToBeImported:
+            self._readMessagesFromFile(filePath)
 
-    def getFileTypeDescription(self):
-        return self.FILE_TYPE_DESCRIPTION
+    def _readMessagesFromFile(self, filePath):
+        from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+        xmlSchemaPath = os.path.join(ResourcesConfiguration.getStaticResources(), "xsds/0.1/common.xsd")
+        # If we find a version which validates the XML, we parse with the associated function
+        if not Workspace.isSchemaValidateXML(xmlSchemaPath, filePath):
+            logging.error("The specified XML file {0} is not valid "
+                          "according to the XSD ({1}).".format(filePath, xmlSchemaPath))
+        else:
+            logging.debug("XML file valid according to the XSD schema")
 
-    def importFile(self, filePathList):
-        self.controller = PCAPImporterController(self.getNetzob(), self)
-        self.controller.setSourceFiles(filePathList)
-        self.controller.run()
+            # Parse the XML Document as 0.1 version
+            tree = ElementTree()
+            tree.parse(filePath)
+            xmlFile = tree.getroot()
+
+            for xmlMessage in xmlFile.findall("{" + Project.COMMON_NAMESPACE + "}message"):
+                message = AbstractMessageFactory.loadFromXML(xmlMessage, Project.COMMON_NAMESPACE, "0.1")
+                logging.debug("XML String data: " + message.getStringData())
+                self.messages.append(message)

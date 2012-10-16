@@ -28,7 +28,8 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-
+from gettext import gettext as _
+import fnmatch
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
@@ -36,35 +37,37 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Plugins.Importers.AbstractFileImporterController import AbstractFileImporterController
-from netzob_plugins.Importers.OSpyImporter.OSpyImporter import OSpyImporter
-from netzob_plugins.Importers.OSpyImporter.OSpyImporterView import OSpyImporterView
+from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
+from PCAPImporterController import PCAPImporterController
 
 
-class OSpyImporterController(AbstractFileImporterController):
-    COLUMN_ID = 1
-    COLUMN_SELECTED = 0
+class PCAPImporterPlugin(FileImporterPlugin):
+    """PCAPImporter : Provide the possibility to import messages
+       from PCAP network capture files"""
 
-    def __init__(self, netzob, plugin):
-        super(OSpyImporterController, self).__init__(netzob, plugin)
-        self.model = OSpyImporter(netzob)
-        self.view = OSpyImporterView(plugin, self)
+    __plugin_name__ = "PCAPImporter"
+    __plugin_version__ = "1.0"
+    __plugin_description__ = _("Provide the possibility to import messages from PCAP network capture files")
+    __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>"
+    __plugin_copyright__ = "Georges Bossert and Frédéric Guihéry"
+    __plugin_license__ = "GPLv3+"
 
-    def run(self):
-        self.view.run()
+    FILE_TYPE_DESCRIPTION = "PCAP File"
 
-    def doSetSourceFiles(self, filePathList):
-        self.model.setSourceFiles(filePathList)
+    def __init__(self, netzob):
+        super(PCAPImporterPlugin, self).__init__(netzob)
+        self.entryPoints = []
 
-    def doReadMessages(self):
-        self.model.readMessages()
-        for message in self.model.messages:
-            self.view.listListStore.append([False, str(message.getID()), str(message.getL3SourceAddress()), str(message.getL3DestinationAddress()), str(message.getL4Protocol()), str(message.getL4SourcePort()), str(message.getL4DestinationPort()), message.getStringData()])
+    def getEntryPoints(self):
+        return self.entryPoints
 
-    def doGetMessageDetails(self, messageID):
-        message = self.model.getMessageByID(str(messageID))
-        return TypeConvertor.hexdump(TypeConvertor.netzobRawToPythonRaw(message.getData()))
+    def canHandleFile(self, filePath):
+        return fnmatch.fnmatch(filePath, "*.pcap")
 
-    def doImportMessages(self, selectedMessages):
-        self.model.saveMessagesInCurrentProject(selectedMessages)
+    def getFileTypeDescription(self):
+        return self.FILE_TYPE_DESCRIPTION
+
+    def importFile(self, filePathList):
+        self.controller = PCAPImporterController(self.getNetzob(), self)
+        self.controller.setSourceFiles(filePathList)
+        self.controller.run()

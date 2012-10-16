@@ -298,11 +298,23 @@ class AbstractMessage(object):
             self.log.warning("Message: " + dataToSplit[:255] + "...")
             raise NetzobException("The regex of the group doesn't match one of its message")
 
+        print dataToSplit
+        print "".join(regex)
+
         result = []
-        for i in range(1, len(fields) + 1):
-            start = dynamicDatas.start(i)
-            end = dynamicDatas.end(i)
+        iCol = 1
+
+        for field in fields:
+            try:
+                start = dynamicDatas.start(iCol)
+                end = dynamicDatas.end(iCol)
+            except:
+                if iCol == len(fields):
+                    print "HUM"
+            print "Field : {0} : {1}".format(iCol, dataToSplit[start:end])
             result.append(dataToSplit[start:end])
+
+            iCol += 1
         return result
 
     #+-----------------------------------------------------------------------+

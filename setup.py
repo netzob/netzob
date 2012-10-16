@@ -34,6 +34,7 @@ import os
 import uuid
 from fnmatch import fnmatch
 from glob import glob
+import subprocess
 sys.path.insert(0, 'src/')
 from setuptools import setup, Extension, find_packages
 from netzob import release
@@ -133,17 +134,22 @@ moduleLibRegex = Extension('_libRegex',
                            define_macros=macros,
                            include_dirs=includes)
 
+
 #+----------------------------------------------------------------------------
 #| Definition of the dependencies
 #+----------------------------------------------------------------------------
 dependencies = [
     'babel',
     'bitarray',
-    'lxml',
+    'lxml'
 ]
+
 extra_dependencies = {
     'docs': ['Sphinx>=1.1.3']
 }
+
+dependency_links = []
+
 #+----------------------------------------------------------------------------
 #| Extensions in the build operations (create manpage, i18n, ...)
 #+----------------------------------------------------------------------------
@@ -218,12 +224,13 @@ NEWS = open('NEWS.rst', 'rt').read()
 setup(
     name=release.name,
     packages=find_packages(where='src'),
-    package_dir={"netzob": "src" + os.sep + "netzob", "netzob_plugins": "src" + os.sep + "netzob_plugins"},
+    package_dir={"netzob": "src" + os.sep + "netzob"},
     ext_modules=[moduleLibNeedleman, moduleLibScoreComputation, moduleLibInterface, moduleLibRegex],
     data_files=data_files,
     scripts=["netzob"],
     install_requires=dependencies,
     extras_require=extra_dependencies,
+    dependency_links=dependency_links,
     version=release.version,
     license=release.licenseName,
     description=release.description,
@@ -249,19 +256,9 @@ setup(
     ],
     long_description=README + '\n' + NEWS,
     cmdclass=CMD_CLASS,
-    entry_points="""
-        [netzob.plugins]
-            delemiterSeparatedImporter = netzob_plugins.Importers.DelimiterSeparatedImporter.DelimiterSeparatedImporterPlugin:DelimiterSeparatedImporterPlugin
-            pcapImporter = netzob_plugins.Importers.PCAPImporter.PCAPImporterPlugin:PCAPImporterPlugin
-            ospyImporter = netzob_plugins.Importers.OSpyImporter.OSpyImporterPlugin:OSpyImporterPlugin
-            xmlImporter = netzob_plugins.Importers.XMLImporter.XMLImporterPlugin:XMLImporterPlugin
-            peachExporter = netzob_plugins.Exporters.PeachExporter.PeachExporterPlugin:PeachExporterPlugin
-            networkCapturer = netzob_plugins.Capturers.NetworkCapturer.NetworkCapturerPlugin:NetworkCapturerPlugin
-            ipcCapturer = netzob_plugins.Capturers.IpcCapturer.IpcCapturerPlugin:IpcCapturerPlugin
-
-         [babel.extractors]
-            glade = resources.sdist.babel_extract:extract_glade
-        """,
+    entry_points="""[babel.extractors]
+        glade = resources.sdist.babel_extract:extract_glade
+    """,
     # Files that should be scanned by Babel (if available)
     message_extractors={
         'src': [

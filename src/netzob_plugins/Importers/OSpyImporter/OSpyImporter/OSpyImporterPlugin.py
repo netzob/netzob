@@ -28,57 +28,47 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
+from gettext import gettext as _
+import fnmatch
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from gi.repository import Gtk
-import gi
-gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Plugins.Importers.AbstractFileImporterController import AbstractFileImporterController
-from netzob_plugins.Importers.DelimiterSeparatedImporter.DelimiterSeparatedImporter import DelimiterSeparatedImporter
-from netzob_plugins.Importers.DelimiterSeparatedImporter.DelimiterSeparatedImporterView import DelimiterSeparatedImporterView
+from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
+from OSpyImporterController import OSpyImporterController
 
 
-class DelimiterSeparatedImporterController(AbstractFileImporterController):
-    """Controller of file importer plugin"""
+class OSpyImporterPlugin(FileImporterPlugin):
+    """OSpyImporter : Provides the possibility to import messages
+       from OSpy project file."""
 
-    COLUMN_ID = 1
-    COLUMN_SELECTED = 0
+    __plugin_name__ = "OSpyImporter"
+    __plugin_version__ = "1.0"
+    __plugin_description__ = _("Provides the possibility to import messages from OSpy project file.")
+    __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>"
+    __plugin_copyright__ = "Georges Bossert and Frédéric Guihéry"
+    __plugin_license__ = "GPLv3+"
 
-    def __init__(self, netzob, plugin):
-        super(DelimiterSeparatedImporterController, self).__init__(netzob, plugin)
-        self.model = DelimiterSeparatedImporter(self.netzob)
-        self.view = DelimiterSeparatedImporterView(plugin, self)
+    FILE_TYPE_DESCRIPTION = "oSpy File"
 
-    def run(self):
-        self.view.run()
+    def __init__(self, netzob):
+        super(OSpyImporterPlugin, self).__init__(netzob)
+        self.entryPoints = []
 
-    def doSetSourceFiles(self, filePathList):
-        self.model.setSourceFiles(filePathList)
+    def getEntryPoints(self):
+        return self.entryPoints
 
-    def doReadMessages(self):
-        selectedEntry = self.view.keepSeparatorComboBox.get_active()
-        separatorStrategy = None
-        if selectedEntry is not None:
-            separatorStrategy = self.view.keepSeparatorListStore[selectedEntry][0]
+    def canHandleFile(self, filePath):
+        return fnmatch.fnmatch(filePath, "*.osd")
 
-        self.model.setSeparator(self.view.separatorEntry.get_text().strip(), separatorStrategy)
-        self.model.readMessages()
-        for message in self.model.messages:
-            self.view.listListStore.append([False, str(message.getID()), message.getStringData()])
+    def getFileTypeDescription(self):
+        return self.FILE_TYPE_DESCRIPTION
 
-    def doGetMessageDetails(self, messageID):
-        message = self.model.getMessageByID(str(messageID))
-        return TypeConvertor.hexdump(TypeConvertor.netzobRawToPythonRaw(message.getData()))
-
-    def doImportMessages(self, selectedMessages):
-        self.model.saveMessagesInCurrentProject(selectedMessages)
-
-    def clearSeparatorButton_clicked_cb(self, widget):
-        self.view.separatorEntry.set_text("")
+    def importFile(self, filePathList):
+        self.controller = OSpyImporterController(self.getNetzob(), self)
+        self.controller.setSourceFiles(filePathList)
+        self.controller.run()

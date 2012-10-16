@@ -36,7 +36,7 @@ from gettext import gettext as _
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk
 import gi
-from netzob_plugins.Importers.DelimiterSeparatedImporter.DelimiterSeparatedImporter import DelimiterSeparatedImporter
+from DelimiterSeparatedImporter import DelimiterSeparatedImporter
 gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+

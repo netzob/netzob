@@ -28,7 +28,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -37,38 +36,41 @@ from gettext import gettext as _
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
-from netzob_plugins.Importers.DelimiterSeparatedImporter.DelimiterSeparatedImporterController import DelimiterSeparatedImporterController
+from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Plugins.Importers.AbstractFileImporterController import AbstractFileImporterController
+from XMLImporter import XMLImporter
+from XMLImporterView import XMLImporterView
 
 
-class DelimiterSeparatedImporterPlugin(FileImporterPlugin):
-    """FileImporter : Provide the possibility to import messages
-       from any binary or ascii file."""
+class XMLImporterController(AbstractFileImporterController):
 
-    __plugin_name__ = "FileImporter"
-    __plugin_version__ = "1.0"
-    __plugin_description__ = _("Provide the possibility to import messages from any binary or ascii file.")
-    __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>"
-    __plugin_copyright__ = "Georges Bossert and Frédéric Guihéry"
-    __plugin_license__ = "GPLv3+"
+    COLUMN_ID = 1
+    COLUMN_SELECTED = 0
 
-    PLUGIN_PRIORITY = 0
-    FILE_TYPE_DESCRIPTION = "Delimiter Separated File"
+    def __init__(self, netzob, plugin):
+        super(XMLImporterController, self).__init__(netzob, plugin)
+        self.model = XMLImporter(netzob)
+        self.view = XMLImporterView(plugin, self)
 
-    def __init__(self, netzob):
-        super(DelimiterSeparatedImporterPlugin, self).__init__(netzob)
-        self.entryPoints = []
+    def run(self):
+        self.view.run()
 
-    def getEntryPoints(self):
-        return self.entryPoints
+    def doSetSourceFiles(self, filePathList):
+        self.model.setSourceFiles(filePathList)
 
-    def canHandleFile(self, filePath):
-        return True
+    def doReadMessages(self):
+        self.model.readMessages()
+        for message in self.model.messages:
+            self.view.listListStore.append([False, str(message.getID()), str(message.getType()), message.getStringData()])
 
-    def getFileTypeDescription(self):
-        return self.FILE_TYPE_DESCRIPTION
+    def doGetMessageDetails(self, messageID):
+        message = self.model.getMessageByID(str(messageID))
+        properties = [(name, value) for (name, _, value) in message.getProperties()
+                      if name != 'Data']
+        messageDetails = "\n".join(["{0} : {1}".format(*prop)
+                                    for prop in properties])
+        messageDetails += "\n\n" + TypeConvertor.hexdump(TypeConvertor.netzobRawToPythonRaw(message.getStringData()))
+        return messageDetails
 
-    def importFile(self, filePathList):
-        self.controller = DelimiterSeparatedImporterController(self.getNetzob(), self)
-        self.controller.setSourceFiles(filePathList)
-        self.controller.run()
+    def doImportMessages(self, selectedMessages):
+        self.model.saveMessagesInCurrentProject(selectedMessages)
