@@ -62,8 +62,6 @@ class WorkspaceSelector(object):
         pos = textBuffer.get_end_iter()
         textBuffer.insert_with_tags(pos,
                                     _("Choose a workspace folder to use."))
-        #textBuffer.insert_with_tags(pos,
-        #        "Choose a workspace folder to use for this session.")
 
         # Input Box
         inputBox = Gtk.HBox(spacing=10)
@@ -78,12 +76,6 @@ class WorkspaceSelector(object):
         inputBox.pack_start(workButton, False, True, 0)
         inputBox.set_border_width(10)
 
-        # Default checkbox
-        #self.defaultCheck = Gtk.CheckButton(
-        #        "Use this as default and do not ask again")
-        #self.defaultCheck.set_active(True)
-        #self.defaultCheck.set_border_width(10)
-
         # Buttons
         okButton = Gtk.Button(stock=Gtk.STOCK_OK)
         okButton.connect("clicked", self.destroy)
@@ -97,7 +89,6 @@ class WorkspaceSelector(object):
         self.dialog.vbox.pack_start(instrTextView, False, True, 0)
         self.dialog.vbox.pack_start(inputBox, False, True, 0)
         self.dialog.vbox.pack_start(Gtk.Alignment.new(0, 1, 0, 0), True, True, 0)
-        #self.dialog.vbox.pack_start(self.defaultCheck, False, True, 0)
         self.dialog.show_all()
 
         self._selectedWorkspace = None
@@ -108,10 +99,6 @@ class WorkspaceSelector(object):
     @property
     def selectedWorkspace(self):
         return self._selectedWorkspace
-
-    #@property
-    #def makeDefault(self):
-    #    return self.defaultCheck.get_active()
 
     def openBrowseDialog(self, widget, data=None):
         chooser = Gtk.FileChooserDialog(title=_("Select the workspace"),
