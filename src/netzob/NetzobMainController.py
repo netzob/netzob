@@ -323,18 +323,14 @@ class NetzobMainController(object):
         errorMessage = None
 
         while not finish:
-            #open dialogbox
+            # Open Dialogbox
             builder2 = Gtk.Builder()
             builder2.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(), "ui", "dialogbox.glade"))
             dialog = builder2.get_object("importProject")
-            #button apply
+            dialog.set_transient_for(self.view.mainWindow)
+
+            # Disable the apply button if no file is provided
             applybutton = builder2.get_object("importProjectApplyButton")
-            applybutton.set_sensitive(False)
-            dialog.add_action_widget(applybutton, 0)
-            #button cancel
-            cancelbutton = builder2.get_object("importProjectCancelButton")
-            dialog.add_action_widget(cancelbutton, 1)
-            #disable apply button if no file is provided
             fileChooserButton = builder2.get_object("importProjectFileChooserButton")
             fileChooserButton.connect("file-set", self.fileSetFileChooser_importProject_cb, applybutton)
 
@@ -345,8 +341,9 @@ class NetzobMainController(object):
                 warnBox = builder2.get_object("importProjectWarnBox")
                 warnBox.show_all()
 
-            #run the dialog window and wait for the result
+            # Run the dialog window and wait for the result
             result = dialog.run()
+
             if result == 0:
                 selectedFile = fileChooserButton.get_filename()
                 dialog.destroy()
@@ -360,14 +357,15 @@ class NetzobMainController(object):
                     else:
                         # Generate the Unique ID of the imported project
                         idProject = str(uuid.uuid4())
+
                         # First we verify and create if necessary the directory of the project
                         projectPath = "projects/" + idProject + "/"
                         destPath = os.path.join(os.path.join(self.getCurrentWorkspace().getPath(), projectPath))
                         if not os.path.exists(destPath):
                             logging.info("Creation of the directory " + destPath)
                             os.mkdir(destPath)
-                        # Retrieving and storing of the config file
                         try:
+                            # Retrieving and storing of the config file
                             destFile = os.path.join(destPath, Project.CONFIGURATION_FILENAME)
                             shutil.copy(selectedFile, destFile)
 
