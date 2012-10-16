@@ -41,13 +41,14 @@ dependencies = [
 #| Definition of Netzob for setup
 #+----------------------------------------------------------------------------
 setup(
-    name="netzob-PcapImporter",
+    name="Netzob-PcapImporter",
+    version="1.0.0",
     author="Georges Bossert, Frédéric Guihéry",
     author_email="contact@netzob.org",
-    package_dir={"PCAPImporter": "src"},
+    packages=['PCAPImporter'],
     install_requires=dependencies,
     entry_points="""
     [netzob.plugins]
-    PCAPImporter=PCAPImporterPlugin:PCAPImporterPlugin
+    PCAPImporter=PCAPImporter.PCAPImporterPlugin:PCAPImporterPlugin
     """
 )

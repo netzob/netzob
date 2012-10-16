@@ -28,6 +28,8 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
+from gettext import gettext as _
+import fnmatch
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -36,41 +38,37 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Plugins.Importers.AbstractFileImporterController import AbstractFileImporterController
-from netzob_plugins.Importers.XMLImporter.XMLImporter import XMLImporter
-from netzob_plugins.Importers.XMLImporter.XMLImporterView import XMLImporterView
+from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
+from XMLImporterController import XMLImporterController
 
 
-class XMLImporterController(AbstractFileImporterController):
+class XMLImporterPlugin(FileImporterPlugin):
+    """XMLImporter : Provide the possibility to import messages
+       from netzob XML message files"""
 
-    COLUMN_ID = 1
-    COLUMN_SELECTED = 0
+    __plugin_name__ = "XMLImporter"
+    __plugin_version__ = "1.0"
+    __plugin_description__ = _("Provide the possibility to import messages from netzob XML message files")
+    __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>"
+    __plugin_copyright__ = "Georges Bossert and Frédéric Guihéry"
+    __plugin_license__ = "GPLv3+"
 
-    def __init__(self, netzob, plugin):
-        super(XMLImporterController, self).__init__(netzob, plugin)
-        self.model = XMLImporter(netzob)
-        self.view = XMLImporterView(plugin, self)
+    FILE_TYPE_DESCRIPTION = "Netzob XML Traces"
 
-    def run(self):
-        self.view.run()
+    def __init__(self, netzob):
+        super(XMLImporterPlugin, self).__init__(netzob)
+        self.entryPoints = []
 
-    def doSetSourceFiles(self, filePathList):
-        self.model.setSourceFiles(filePathList)
+    def getEntryPoints(self):
+        return self.entryPoints
 
-    def doReadMessages(self):
-        self.model.readMessages()
-        for message in self.model.messages:
-            self.view.listListStore.append([False, str(message.getID()), str(message.getType()), message.getStringData()])
+    def canHandleFile(self, filePath):
+        return fnmatch.fnmatch(filePath, "*.xml")
 
-    def doGetMessageDetails(self, messageID):
-        message = self.model.getMessageByID(str(messageID))
-        properties = [(name, value) for (name, _, value) in message.getProperties()
-                      if name != 'Data']
-        messageDetails = "\n".join(["{0} : {1}".format(*prop)
-                                    for prop in properties])
-        messageDetails += "\n\n" + TypeConvertor.hexdump(TypeConvertor.netzobRawToPythonRaw(message.getStringData()))
-        return messageDetails
+    def getFileTypeDescription(self):
+        return self.FILE_TYPE_DESCRIPTION
 
-    def doImportMessages(self, selectedMessages):
-        self.model.saveMessagesInCurrentProject(selectedMessages)
+    def importFile(self, filePathList):
+        self.controller = XMLImporterController(self.getNetzob(), self)
+        self.controller.setSourceFiles(filePathList)
+        self.controller.run()

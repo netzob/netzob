@@ -39,13 +39,14 @@ dependencies = [
 #| Definition of Netzob for setup
 #+----------------------------------------------------------------------------
 setup(
-    name="netzob-DelimiterSeparatedImporter",
+    name="Netzob-DelimiterSeparatedImporter",
+    version="1.0.0",
     author="Georges Bossert, Frédéric Guihéry",
     author_email="contact@netzob.org",
-    package_dir={"DelimiterSeparatedImporter": "src"},
+    packages=['DelimiterSeparatedImporter'],
     install_requires=dependencies,
     entry_points="""
     [netzob.plugins]
-    DelimiterSeparatedImporter=DelimiterSeparatedImporterPlugin:DelimiterSeparatedImporterPlugin
+    DelimiterSeparatedImporter=DelimiterSeparatedImporter.DelimiterSeparatedImporterPlugin:DelimiterSeparatedImporterPlugin
     """
 )

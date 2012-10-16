@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -25,50 +26,26 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Standard library imports
-#+---------------------------------------------------------------------------+
-from gettext import gettext as _
-import fnmatch
+#+----------------------------------------------------------------------------
+#| Global Imports
+#+----------------------------------------------------------------------------
+from setuptools import setup
 
-#+---------------------------------------------------------------------------+
-#| Related third party imports
-#+---------------------------------------------------------------------------+
+dependencies = [
+]
 
-#+---------------------------------------------------------------------------+
-#| Local application imports
-#+---------------------------------------------------------------------------+
-from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
-from netzob_plugins.Importers.XMLImporter.XMLImporterController import XMLImporterController
-
-
-class XMLImporterPlugin(FileImporterPlugin):
-    """XMLImporter : Provide the possibility to import messages
-       from netzob XML message files"""
-
-    __plugin_name__ = "XMLImporter"
-    __plugin_version__ = "1.0"
-    __plugin_description__ = _("Provide the possibility to import messages from netzob XML message files")
-    __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>"
-    __plugin_copyright__ = "Georges Bossert and Frédéric Guihéry"
-    __plugin_license__ = "GPLv3+"
-
-    FILE_TYPE_DESCRIPTION = "Netzob XML Traces"
-
-    def __init__(self, netzob):
-        super(XMLImporterPlugin, self).__init__(netzob)
-        self.entryPoints = []
-
-    def getEntryPoints(self):
-        return self.entryPoints
-
-    def canHandleFile(self, filePath):
-        return fnmatch.fnmatch(filePath, "*.xml")
-
-    def getFileTypeDescription(self):
-        return self.FILE_TYPE_DESCRIPTION
-
-    def importFile(self, filePathList):
-        self.controller = XMLImporterController(self.getNetzob(), self)
-        self.controller.setSourceFiles(filePathList)
-        self.controller.run()
+#+----------------------------------------------------------------------------
+#| Definition of Netzob for setup
+#+----------------------------------------------------------------------------
+setup(
+    name="Netzob-XMLImporter",
+    version="1.0.0",
+    author="Georges Bossert, Frédéric Guihéry",
+    author_email="contact@netzob.org",
+    packages=['XMLImporter'],
+    install_requires=dependencies,
+    entry_points="""
+    [netzob.plugins]
+    XMLImporter=XMLImporter.XMLImporterPlugin:XMLImporterPlugin
+    """
+)

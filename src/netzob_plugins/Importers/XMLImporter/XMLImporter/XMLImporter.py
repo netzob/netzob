@@ -28,6 +28,11 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
+import logging
+import os
+from lxml.etree import ElementTree
+from lxml import etree
+from gettext import gettext as _
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -36,35 +41,44 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Plugins.Importers.AbstractFileImporterController import AbstractFileImporterController
-from netzob_plugins.Importers.OSpyImporter.OSpyImporter import OSpyImporter
-from netzob_plugins.Importers.OSpyImporter.OSpyImporterView import OSpyImporterView
+from netzob.Common import Project
+from netzob.Common.Workspace import Workspace
+from netzob.Common.Models.Factories.AbstractMessageFactory import AbstractMessageFactory
+from netzob.Import.AbstractImporter import AbstractImporter
 
 
-class OSpyImporterController(AbstractFileImporterController):
-    COLUMN_ID = 1
-    COLUMN_SELECTED = 0
+class XMLImporter(AbstractImporter):
+    """Model of XML importer plugin"""
 
-    def __init__(self, netzob, plugin):
-        super(OSpyImporterController, self).__init__(netzob, plugin)
-        self.model = OSpyImporter(netzob)
-        self.view = OSpyImporterView(plugin, self)
+    def __init__(self, netzob):
+        super(XMLImporter, self).__init__("XML IMPORT", netzob)
+        self.log = logging.getLogger('netzob.Import.XMLImport.py')
+        self.filesToBeImported = []
 
-    def run(self):
-        self.view.run()
+    def setSourceFiles(self, filePathList):
+        self.filesToBeImported = filePathList
 
-    def doSetSourceFiles(self, filePathList):
-        self.model.setSourceFiles(filePathList)
+    def readMessages(self):
+        self.messages = []
+        for filePath in self.filesToBeImported:
+            self._readMessagesFromFile(filePath)
 
-    def doReadMessages(self):
-        self.model.readMessages()
-        for message in self.model.messages:
-            self.view.listListStore.append([False, str(message.getID()), str(message.getL3SourceAddress()), str(message.getL3DestinationAddress()), str(message.getL4Protocol()), str(message.getL4SourcePort()), str(message.getL4DestinationPort()), message.getStringData()])
+    def _readMessagesFromFile(self, filePath):
+        from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+        xmlSchemaPath = os.path.join(ResourcesConfiguration.getStaticResources(), "xsds/0.1/common.xsd")
+        # If we find a version which validates the XML, we parse with the associated function
+        if not Workspace.isSchemaValidateXML(xmlSchemaPath, filePath):
+            logging.error("The specified XML file {0} is not valid "
+                          "according to the XSD ({1}).".format(filePath, xmlSchemaPath))
+        else:
+            logging.debug("XML file valid according to the XSD schema")
 
-    def doGetMessageDetails(self, messageID):
-        message = self.model.getMessageByID(str(messageID))
-        return TypeConvertor.hexdump(TypeConvertor.netzobRawToPythonRaw(message.getData()))
+            # Parse the XML Document as 0.1 version
+            tree = ElementTree()
+            tree.parse(filePath)
+            xmlFile = tree.getroot()
 
-    def doImportMessages(self, selectedMessages):
-        self.model.saveMessagesInCurrentProject(selectedMessages)
+            for xmlMessage in xmlFile.findall("{" + Project.COMMON_NAMESPACE + "}message"):
+                message = AbstractMessageFactory.loadFromXML(xmlMessage, Project.COMMON_NAMESPACE, "0.1")
+                logging.debug("XML String data: " + message.getStringData())
+                self.messages.append(message)
