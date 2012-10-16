@@ -37,8 +37,8 @@ from gi.repository import Gtk
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob_plugins.Importers.PCAPImporter.PCAPImporter import PCAPImporter
-from netzob_plugins.Importers.PCAPImporter.PCAPImporterView import PCAPImporterView
+from PCAPImporter import PCAPImporter
+from PCAPImporterView import PCAPImporterView
 from netzob.Common.NetzobException import NetzobImportException
 from netzob.Common.Plugins.Importers.AbstractFileImporterController import AbstractFileImporterController
 from netzob.UI.NetzobWidgets import NetzobErrorMessage

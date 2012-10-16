@@ -38,7 +38,7 @@ import fnmatch
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
-from netzob_plugins.Importers.PCAPImporter.PCAPImporterController import PCAPImporterController
+from PCAPImporterController import PCAPImporterController
 
 
 class PCAPImporterPlugin(FileImporterPlugin):
