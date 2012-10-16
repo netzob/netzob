@@ -48,12 +48,12 @@ from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 
 class AvailablePluginsView(object):
 
-    def __init__(self, controller):
+    def __init__(self, controller, parent=None):
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
                                                 "ui",
                                                 "availablePluginsDialog.glade"))
-        self._getObjects(self.builder, ["window", "pluginsListStore"])
+        self._getObjects(self.builder, ["availablePluginsDialog", "pluginsListStore"])
         self.controller = controller
         self.builder.connect_signals(self.controller)
 
@@ -66,12 +66,14 @@ class AvailablePluginsView(object):
             self.pluginsListStore.set(i, 1, str(plugin.getVersion()))
             self.pluginsListStore.set(i, 2, str(plugin.getDescription()))
 
+        self.availablePluginsDialog.set_transient_for(parent)
+
     def _getObjects(self, builder, objectsList):
         for obj in objectsList:
             setattr(self, obj, builder.get_object(obj))
 
     def run(self):
-        self.window.show_all()
+        self.availablePluginsDialog.show_all()
 
     def destroy(self):
-        self.window.destroy()
+        self.availablePluginsDialog.destroy()

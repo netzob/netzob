@@ -52,7 +52,7 @@ class AvailablePluginsController(object):
     def __init__(self, mainController):
         self.mainController = mainController
         self.log = logging.getLogger(__name__)
-        self._view = AvailablePluginsView(self)
+        self._view = AvailablePluginsView(self, mainController.view.mainWindow)
 
     @property
     def view(self):
@@ -60,3 +60,6 @@ class AvailablePluginsController(object):
 
     def run(self):
         self._view.run()
+
+    def closeButton_clicked_cb(self, widget):
+        self._view.destroy()

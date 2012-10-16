@@ -138,24 +138,17 @@ class ContextualMenuOnLayerController(object):
             ResourcesConfiguration.getStaticResources(),
             "ui",
             "dialogbox.glade"))
-        dialog = builder2.get_object("renamelayer")
-        dialog.set_title("Rename the layer " + self.layer.getName())
 
-        #button apply
+        dialog = builder2.get_object("renamelayer")
+        dialog.set_title(_("Rename the layer {0}").format(self.layer.getName()))
+
         applybutton = builder2.get_object("button10")
-        applybutton.set_sensitive(False)
-        dialog.add_action_widget(applybutton, 0)
-        #button cancel
-        cancelbutton = builder2.get_object("button2")
-        dialog.add_action_widget(cancelbutton, 1)
-        #disable apply button if no text
         entry = builder2.get_object("entry3")
         entry.connect("changed", self.entry_disableButtonIfEmpty_cb, applybutton)
-        #run the dialog window and wait for the result
+
         result = dialog.run()
 
         if (result == 0):
-            #apply
             newLayerName = entry.get_text()
             self.log.debug(_("Renamed layer {0} to {1}").format(self.layer.getName(), newLayerName))
             currentProject = self.vocabularyController.netzob.getCurrentProject()
@@ -163,9 +156,8 @@ class ContextualMenuOnLayerController(object):
             self.vocabularyController.view.updateLeftPanel()
             self.vocabularyController.view.updateSelectedMessageTable()
             dialog.destroy()
-        if (result == 1):
-            #cancel
-            dialog.destroy()
+
+        dialog.destroy()
 
     def entry_disableButtonIfEmpty_cb(self, widget, button):
         if(len(widget.get_text()) > 0):

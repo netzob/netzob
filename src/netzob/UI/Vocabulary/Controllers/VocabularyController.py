@@ -130,27 +130,20 @@ class VocabularyController(object):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
+
         builder2 = Gtk.Builder()
-        builder2.add_from_file(os.path.join(
-            ResourcesConfiguration.getStaticResources(),
-            "ui",
-            "dialogbox.glade"))
+        builder2.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(), "ui", "dialogbox.glade"))
         dialog = builder2.get_object("createsymbol")
-        #button apply
+        dialog.set_transient_for(self.netzob.view.mainWindow)
+
+        # Disable apply button if no text
         applybutton = builder2.get_object("button1")
-        applybutton.set_sensitive(False)
-        dialog.add_action_widget(applybutton, 0)
-        #button cancel
-        cancelbutton = builder2.get_object("button435")
-        dialog.add_action_widget(cancelbutton, 1)
-        #disable apply button if no text
         entry = builder2.get_object("entry1")
         entry.connect("changed", self.entry_disableButtonIfEmpty_cb, applybutton)
-        #run the dialog window and wait for the result
+
         result = dialog.run()
 
         if (result == 0):
-            #apply
             newSymbolName = entry.get_text()
             newSymbolId = str(uuid.uuid4())
             self.log.debug("A new symbol will be created with the given name : {0}".format(newSymbolName))
@@ -160,7 +153,6 @@ class VocabularyController(object):
             self.view.updateLeftPanel()
             dialog.destroy()
         if (result == 1):
-            #cancel
             dialog.destroy()
 
     def entry_disableButtonIfEmpty_cb(self, widget, button):
@@ -541,32 +533,31 @@ class VocabularyController(object):
             ResourcesConfiguration.getStaticResources(),
             "ui", "vocabulary",
             "variableTable.glade"))
-        dialog = builder2.get_object("variableDialog")
 
-        #button apply
-        okbutton = builder2.get_object("variable_ok")
-        dialog.add_action_widget(okbutton, 0)
-        #add variable in treeview
+        dialog = builder2.get_object("variableDialog")
         variable_liststore = builder2.get_object("variableListstore")
+
+        # FIXME!
+        # Missing code here!
+
         # ++CODE HERE++
         # ADD DATA NEEDED ON THE LISTSTORE FOR EVERY VARIABLE CREATE BY USER
         # EXEMPLE TO ADD ONE LINE WITH VALUE : [variable1, symbolToto, re{g0.6]ex, ipv4, initialValue : 192.168.0.6 ]
         # EXEMPLE CODE :
-        """i = variable_liststore.append()
-        variable_liststore.set(i, 0, "variable1")
-        variable_liststore.set(i, 1, "symbolToto")
-        variable_liststore.set(i, 2, "re{g0.6]ex")
-        variable_liststore.set(i, 3, "ipv4")
-        variable_liststore.set(i, 4, "initial value : 192.168.0.6")
-        i = variable_liststore.append()
-        variable_liststore.set(i, 0, "variable2")
-        variable_liststore.set(i, 1, "symbolToto")
-        variable_liststore.set(i, 2, "re{g1006.8]ex")
-        variable_liststore.set(i, 3, "binary")
-        variable_liststore.set(i, 4, "initial value : 0110, min bits : 2, max bits : 8")"""
-        ##
+        # """i = variable_liststore.append()
+        # variable_liststore.set(i, 0, "variable1")
+        # variable_liststore.set(i, 1, "symbolToto")
+        # variable_liststore.set(i, 2, "re{g0.6]ex")
+        # variable_liststore.set(i, 3, "ipv4")
+        # variable_liststore.set(i, 4, "initial value : 192.168.0.6")
+        # i = variable_liststore.append()
+        # variable_liststore.set(i, 0, "variable2")
+        # variable_liststore.set(i, 1, "symbolToto")
+        # variable_liststore.set(i, 2, "re{g1006.8]ex")
+        # variable_liststore.set(i, 3, "binary")
+        # variable_liststore.set(i, 4, "initial value : 0110, min bits : 2, max bits : 8")"""
+        # ##
 
-        #run the dialog window and wait for the result
         result = dialog.run()
 
         if (result == 0):

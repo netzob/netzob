@@ -108,8 +108,9 @@ class NetzobMainController(object):
         self.updateListOfAvailableProjects()
 
     def _loadBugReporter(self, opts):
-        """Activate the bug reporter if the command line
-        options requests it"""
+        """Activate the bug reporter if the command line options
+        requests it"""
+
         if opts.bugReport:
             logging.debug("Activate the bug reporter")
 
@@ -176,8 +177,9 @@ class NetzobMainController(object):
         Gtk.main()
 
     def close(self):
-        """The method which closes the current project
-        and the workspace before stopping the GTK"""
+        """The method which closes the current project and the
+        workspace before stopping the GTK"""
+
         result = self.closeCurrentProject()
         if result == True:
             # Save the workspace
@@ -187,8 +189,9 @@ class NetzobMainController(object):
             Gtk.main_quit()
 
     def closeCurrentProject(self):
-        """Close and offers to save the pending
-        modifications in the current project."""
+        """Close and offers to save the pending modifications in the
+        current project."""
+
         currentProject = self.getCurrentProject()
 
         # Close the current project
@@ -213,8 +216,8 @@ class NetzobMainController(object):
         return self.currentWorkspace
 
     def updateListOfAvailableProjects(self):
-        """Fetch the list of available projects in the
-        current workspace, and provide them to its associated view"""
+        """Fetch the list of available projects in the current
+        workspace, and provide them to its associated view"""
         listOfProjectsNameAndPath = self.currentWorkspace.getNameOfProjects()
         self.view.updateSwitchProjectMenu(listOfProjectsNameAndPath)
 
@@ -244,26 +247,23 @@ class NetzobMainController(object):
             button.set_sensitive(False)
 
     def newProject_activate_cb(self, action):
-        """Display the dialog in order
-        to create a new project when the user request it
-        through the menu."""
+        """Display the dialog in order to create a new project when
+        the user request it through the menu."""
+
         finish = False
         errorMessage = None
+
         while not finish:
-            #open dialogbox
+            # open Dialogbox
             builder2 = Gtk.Builder()
             builder2.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(), "ui", "dialogbox.glade"))
             dialog = builder2.get_object("newProject")
-            #button apply
+            dialog.set_transient_for(self.view.mainWindow)
+
             applybutton = builder2.get_object("newProjectApplyButton")
-            applybutton.set_sensitive(False)
-            dialog.add_action_widget(applybutton, 0)
-            #button cancel
-            cancelbutton = builder2.get_object("newProjectCancelButton")
-            dialog.add_action_widget(cancelbutton, 1)
-            #disable apply button if no text
             entry = builder2.get_object("entry4")
             entry.connect("changed", self.entry_disableButtonIfEmpty_cb, applybutton)
+
             if errorMessage is not None:
                 # Display a warning message on the dialog box
                 warnLabel = builder2.get_object("NewProjectWarnLabel")
@@ -271,12 +271,13 @@ class NetzobMainController(object):
                 warnBox = builder2.get_object("newProjectWarnBox")
                 warnBox.show_all()
 
-            #run the dialog window and wait for the result
+            # Run the dialog window and wait for the result
             result = dialog.run()
+
             if result == 0:
                 newProjectName = entry.get_text()
                 dialog.destroy()
-                self.log.debug("Verify the uniqueness of project name : {0}".format(newProjectName))
+                self.log.debug("Verify the uniqueness of project name: {0}".format(newProjectName))
                 found = False
                 for (projectName, projectPath) in self.currentWorkspace.getNameOfProjects():
                     if projectName == newProjectName:
@@ -294,21 +295,19 @@ class NetzobMainController(object):
             else:
                 dialog.destroy()
                 finish = True
-        if (result == 1):
-            #cancel
-            dialog.destroy()
 
     def saveProject_activate_cb(self, action):
         """Save the current project"""
+
         if self.getCurrentProject() == None:
-            NetzobErrorMessage(_("No project selected."))
+            NetzobErrorMessage(_("No project selected."), self.view.mainWindow)
             return
         self.getCurrentProject().saveConfigFile(self.getCurrentWorkspace())
 
     def fileSetFileChooser_importProject_cb(self, widget, applyButton):
-        """Callback executed when the user
-        selects a file in the file chooser of
-        the import project dialog box"""
+        """Callback executed when the user selects a file in the file
+        chooser of the import project dialog box"""
+
         selectedFile = widget.get_filename()
         if selectedFile is not None:
             applyButton.set_sensitive(True)
@@ -316,27 +315,25 @@ class NetzobMainController(object):
             applyButton.set_sensitive(False)
 
     def importProject_activate_cb(self, action):
-        """Display the dialog in order
-        to import a project when the user request it
-        through the menu."""
+        """Display the dialog in order to import a project when the
+        user request it through the menu."""
+
         logging.debug("Import project")
         finish = False
         errorMessage = None
+
         while not finish:
-            #open dialogbox
+            # Open Dialogbox
             builder2 = Gtk.Builder()
             builder2.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(), "ui", "dialogbox.glade"))
             dialog = builder2.get_object("importProject")
-            #button apply
+            dialog.set_transient_for(self.view.mainWindow)
+
+            # Disable the apply button if no file is provided
             applybutton = builder2.get_object("importProjectApplyButton")
-            applybutton.set_sensitive(False)
-            dialog.add_action_widget(applybutton, 0)
-            #button cancel
-            cancelbutton = builder2.get_object("importProjectCancelButton")
-            dialog.add_action_widget(cancelbutton, 1)
-            #disable apply button if no file is provided
             fileChooserButton = builder2.get_object("importProjectFileChooserButton")
             fileChooserButton.connect("file-set", self.fileSetFileChooser_importProject_cb, applybutton)
+
             if errorMessage is not None:
                 # Display a warning message on the dialog box
                 warnLabel = builder2.get_object("importProjectWarnLabel")
@@ -344,8 +341,9 @@ class NetzobMainController(object):
                 warnBox = builder2.get_object("importProjectWarnBox")
                 warnBox.show_all()
 
-            #run the dialog window and wait for the result
+            # Run the dialog window and wait for the result
             result = dialog.run()
+
             if result == 0:
                 selectedFile = fileChooserButton.get_filename()
                 dialog.destroy()
@@ -359,14 +357,15 @@ class NetzobMainController(object):
                     else:
                         # Generate the Unique ID of the imported project
                         idProject = str(uuid.uuid4())
+
                         # First we verify and create if necessary the directory of the project
                         projectPath = "projects/" + idProject + "/"
                         destPath = os.path.join(os.path.join(self.getCurrentWorkspace().getPath(), projectPath))
                         if not os.path.exists(destPath):
                             logging.info("Creation of the directory " + destPath)
                             os.mkdir(destPath)
-                        # Retrieving and storing of the config file
                         try:
+                            # Retrieving and storing of the config file
                             destFile = os.path.join(destPath, Project.CONFIGURATION_FILENAME)
                             shutil.copy(selectedFile, destFile)
 
@@ -382,33 +381,33 @@ class NetzobMainController(object):
                             errorMessage = None
                         except IOError, e:
                             errorMessage = _("An error occurred while copying the file")
-                            logging.warn("Error when importing project: " + str(e))
+                            logging.warn("Error when importing project: {0}".format(e))
             else:
                 dialog.destroy()
                 finish = True
-        if (result == 1):
-            #cancel
-            dialog.destroy()
 
     def fileSetFileChooserOrFilenamEntry_exportProject_cb(self, widget, fileChooser, fileEntry, applyButton):
-        """Callback executed when the user
-        selects a file in the file chooser of
-        the export project dialog box"""
+        """Callback executed when the user selects a file in the file
+        chooser of the export project dialog box"""
+
         currentFolder = fileChooser.get_current_folder()
         currentFile = fileEntry.get_text()
+
         if currentFolder is not None and len(currentFolder) > 0 and currentFile is not None and len(currentFile) > 0:
             applyButton.set_sensitive(True)
         else:
             applyButton.set_sensitive(False)
 
     def xmlExportProject_activate_cb(self, action):
-        """Display the dialog in order
-        to export the current project when the user request it
-        through the menu."""
+        """Display the dialog in order to export the current project
+        when the user request it through the menu."""
+
         if self.getCurrentProject() == None:
-            NetzobErrorMessage(_("No project selected."))
+            NetzobErrorMessage(_("No project selected."), self.view.mainWindow)
             return
+
         logging.debug("Export project")
+
         finish = False
         errorMessage = None
         while not finish:
@@ -416,18 +415,13 @@ class NetzobMainController(object):
             builder2 = Gtk.Builder()
             builder2.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(), "ui", "dialogbox.glade"))
             dialog = builder2.get_object("exportProject")
-            #button apply
-            applybutton = builder2.get_object("exportProjectApplyButton")
-            applybutton.set_sensitive(False)
-            dialog.add_action_widget(applybutton, 0)
-            #button cancel
-            cancelbutton = builder2.get_object("exportProjectCancelButton")
-            dialog.add_action_widget(cancelbutton, 1)
-            #disable apply button if no directory and filename is provided
-            fileChooserButton = builder2.get_object("exportProjectFileChooserButton")
-            filenameEntry = builder2.get_object("exportProjectFilenameEntry")
+            dialog.set_transient_for(self.view.mainWindow)
 
-            # set the default filename based on current project
+            applybutton = builder2.get_object("exportProjectApplyButton")
+            filenameEntry = builder2.get_object("exportProjectFilenameEntry")
+            fileChooserButton = builder2.get_object("exportProjectFileChooserButton")
+
+            # Set the default filename based on current project
             if self.getCurrentProject() is not None:
                 filenameEntry.set_text("{0}.xml".format(self.getCurrentProject().getName()))
             else:
@@ -445,8 +439,9 @@ class NetzobMainController(object):
                 warnLabel.set_text(errorMessage)
                 warnBox = builder2.get_object("exportProjectWarnBox")
                 warnBox.show_all()
-            #run the dialog window and wait for the result
+
             result = dialog.run()
+
             if result == 0:
                 selectedFolder = fileChooserButton.get_current_folder()
                 filename = filenameEntry.get_text()
@@ -470,27 +465,25 @@ class NetzobMainController(object):
                             errorMessage = None
                         except IOError, e:
                             errorMessage = _("An error occurred while exporting the project.")
-                            logging.warn("Error when importing project: " + str(e))
+                            logging.warn("Error when importing project: {0}".format(e))
             else:
                 dialog.destroy()
                 finish = True
-        if (result == 1):
-            #cancel
-            dialog.destroy()
 
     def rawExportProject_activate_cb(self, action):
-        """Display the dialog in order
-        to export the symbols when the user request it
-        through the menu."""
+        """Display the dialog in order to export the symbols when the
+        user request it through the menu."""
+
         if self.getCurrentProject() == None:
-            NetzobErrorMessage(_("No project selected."))
+            NetzobErrorMessage(_("No project selected."), self.view.mainWindow)
             return
         logging.debug("Export raw symbols")
         controller = RawExportController(self)
 
     def fileSetFileChooser_switchWorkspace_cb(self, widget, applyButton):
-        """Callback executed when the user
-        selects a directory in the file chooser"""
+        """Callback executed when the user selects a directory in the
+        file chooser"""
+
         currentFolder = widget.get_current_folder()
         if currentFolder is not None and len(currentFolder) > 0:
             applyButton.set_sensitive(True)
@@ -498,9 +491,9 @@ class NetzobMainController(object):
             applyButton.set_sensitive(False)
 
     def switchWorkspace_activate_cb(self, action):
-        """switchWorkspace_activate_cb:
-        Callback executed when the user requests to switch to another
-        workspace"""
+        """Callback executed when the user requests to switch to
+        another workspace"""
+
         finish = False
         errorMessage = None
         while not finish:
@@ -510,18 +503,13 @@ class NetzobMainController(object):
                 ResourcesConfiguration.getStaticResources(),
                 "ui",
                 "dialogbox.glade"))
+
             dialog = builder2.get_object("switchWorkspace")
-            #button apply
+
             applybutton = builder2.get_object("switchWorkspaceApplyButton")
-            dialog.add_action_widget(applybutton, 0)
-            #button cancel
-            cancelbutton = builder2.get_object("switchWorkspaceCancelButton")
-            dialog.add_action_widget(cancelbutton, 1)
-
-            #disable apply button if no directory is provided
             fileChooserButton = builder2.get_object("switchWorkspaceFileChooserButton")
-
             fileChooserButton.connect("current-folder-changed", self.fileSetFileChooser_switchWorkspace_cb, applybutton)
+
             if errorMessage is not None:
                 # Display a warning message on the dialog box
                 warnLabel = builder2.get_object("switchWorkspaceWarnLabel")
@@ -529,7 +517,6 @@ class NetzobMainController(object):
                 warnBox = builder2.get_object("switchWorkspaceWarnBox")
                 warnBox.show_all()
 
-            #run the dialog window and wait for the result
             result = dialog.run()
 
             if result == 0:
@@ -571,38 +558,44 @@ class NetzobMainController(object):
             dialog.destroy()
 
     def quit_activate_cb(self, action):
-        """Callback executed when the user
-        request to close Netzob"""
+        """Callback executed when the user request to close Netzob"""
+
         self.close()
 
     def aboutNetzob_activate_cb(self, action):
-        """Displays the about dialog
-        when the user click on the associate
-        menu entry."""
+        """Displays the about dialog when the user click on the
+        associate menu entry."""
+
         AboutDialog.display(self.view.mainWindow)
 
     def availablePlugins_activate_cb(self, action):
         """Displays the list of available plugins"""
+
         controller = AvailablePluginsController(self)
         controller.run()
 
     def switchProject_cb(self, widget, projectPath):
-        """Callback for the GTK view in order to
-        switch to another project.
+        """Callback for the GTK view in order to switch to another
+        project.
+
         @param projectPath: the path to the project to load
         @type projectPath: str
         """
+
         self.switchProject(projectPath)
 
     def switchProject(self, projectPath):
-        """Change the current project with the project
-        declared in file projectPath. If the loading is successful
-        the view is updated.
-        If a current project is already loaded, it offers to save pending modifications
-        before changing.
+        """Change the current project with the project declared in
+        file projectPath. If the loading is successful the view is
+        updated.
+
+        If a current project is already loaded, it offers to save
+        pending modifications before changing.
+
         @param projectPath: the path to the project to load
         @type projectPath: str
         """
+
         if projectPath is not None:
             logging.debug("Switch to the project declared in {0}".format(projectPath))
             newProject = Project.loadProject(self.currentWorkspace, projectPath)
