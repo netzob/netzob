@@ -685,7 +685,7 @@ is not valid !</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
+                <property name="receives_default">False</property>
                 <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
@@ -700,7 +700,10 @@ is not valid !</property>
                 <property name="label">gtk-apply</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
+                <property name="can_default">True</property>
+                <property name="has_default">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
@@ -773,6 +776,7 @@ is not valid !</property>
                 <property name="can_focus">True</property>
                 <property name="hexpand">True</property>
                 <property name="invisible_char">â</property>
+                <property name="activates_default">True</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -791,7 +795,7 @@ is not valid !</property>
       </object>
     </child>
     <action-widgets>
-      <action-widget response="0">exportProjectCancelButton</action-widget>
+      <action-widget response="1">exportProjectCancelButton</action-widget>
       <action-widget response="0">exportProjectApplyButton</action-widget>
     </action-widgets>
   </object>
@@ -1107,6 +1111,7 @@ is not valid !</property>
                 <property name="label">gtk-apply</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="has_default">True</property>
@@ -1170,7 +1175,7 @@ is not valid !</property>
       </object>
     </child>
     <action-widgets>
-      <action-widget response="0">button2</action-widget>
+      <action-widget response="1">button2</action-widget>
       <action-widget response="0">button10</action-widget>
     </action-widgets>
   </object>
@@ -1252,6 +1257,8 @@ is not valid !</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="can_default">True</property>
+                <property name="has_default">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
@@ -1310,7 +1317,7 @@ is not valid !</property>
       </object>
     </child>
     <action-widgets>
-      <action-widget response="0">switchWorkspaceCancelButton</action-widget>
+      <action-widget response="1">switchWorkspaceCancelButton</action-widget>
       <action-widget response="0">switchWorkspaceApplyButton</action-widget>
     </action-widgets>
   </object>

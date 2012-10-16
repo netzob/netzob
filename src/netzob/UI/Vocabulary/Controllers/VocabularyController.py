@@ -530,32 +530,31 @@ class VocabularyController(object):
             ResourcesConfiguration.getStaticResources(),
             "ui", "vocabulary",
             "variableTable.glade"))
-        dialog = builder2.get_object("variableDialog")
 
-        #button apply
-        okbutton = builder2.get_object("variable_ok")
-        dialog.add_action_widget(okbutton, 0)
-        #add variable in treeview
+        dialog = builder2.get_object("variableDialog")
         variable_liststore = builder2.get_object("variableListstore")
+
+        # FIXME!
+        # Missing code here!
+
         # ++CODE HERE++
         # ADD DATA NEEDED ON THE LISTSTORE FOR EVERY VARIABLE CREATE BY USER
         # EXEMPLE TO ADD ONE LINE WITH VALUE : [variable1, symbolToto, re{g0.6]ex, ipv4, initialValue : 192.168.0.6 ]
         # EXEMPLE CODE :
-        """i = variable_liststore.append()
-        variable_liststore.set(i, 0, "variable1")
-        variable_liststore.set(i, 1, "symbolToto")
-        variable_liststore.set(i, 2, "re{g0.6]ex")
-        variable_liststore.set(i, 3, "ipv4")
-        variable_liststore.set(i, 4, "initial value : 192.168.0.6")
-        i = variable_liststore.append()
-        variable_liststore.set(i, 0, "variable2")
-        variable_liststore.set(i, 1, "symbolToto")
-        variable_liststore.set(i, 2, "re{g1006.8]ex")
-        variable_liststore.set(i, 3, "binary")
-        variable_liststore.set(i, 4, "initial value : 0110, min bits : 2, max bits : 8")"""
-        ##
+        # """i = variable_liststore.append()
+        # variable_liststore.set(i, 0, "variable1")
+        # variable_liststore.set(i, 1, "symbolToto")
+        # variable_liststore.set(i, 2, "re{g0.6]ex")
+        # variable_liststore.set(i, 3, "ipv4")
+        # variable_liststore.set(i, 4, "initial value : 192.168.0.6")
+        # i = variable_liststore.append()
+        # variable_liststore.set(i, 0, "variable2")
+        # variable_liststore.set(i, 1, "symbolToto")
+        # variable_liststore.set(i, 2, "re{g1006.8]ex")
+        # variable_liststore.set(i, 3, "binary")
+        # variable_liststore.set(i, 4, "initial value : 0110, min bits : 2, max bits : 8")"""
+        # ##
 
-        #run the dialog window and wait for the result
         result = dialog.run()
 
         if (result == 0):

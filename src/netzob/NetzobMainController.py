@@ -392,6 +392,7 @@ class NetzobMainController(object):
 
         currentFolder = fileChooser.get_current_folder()
         currentFile = fileEntry.get_text()
+
         if currentFolder is not None and len(currentFolder) > 0 and currentFile is not None and len(currentFile) > 0:
             applyButton.set_sensitive(True)
         else:
@@ -414,18 +415,13 @@ class NetzobMainController(object):
             builder2 = Gtk.Builder()
             builder2.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(), "ui", "dialogbox.glade"))
             dialog = builder2.get_object("exportProject")
-            #button apply
-            applybutton = builder2.get_object("exportProjectApplyButton")
-            applybutton.set_sensitive(False)
-            dialog.add_action_widget(applybutton, 0)
-            #button cancel
-            cancelbutton = builder2.get_object("exportProjectCancelButton")
-            dialog.add_action_widget(cancelbutton, 1)
-            #disable apply button if no directory and filename is provided
-            fileChooserButton = builder2.get_object("exportProjectFileChooserButton")
-            filenameEntry = builder2.get_object("exportProjectFilenameEntry")
+            dialog.set_transient_for(self.view.mainWindow)
 
-            # set the default filename based on current project
+            applybutton = builder2.get_object("exportProjectApplyButton")
+            filenameEntry = builder2.get_object("exportProjectFilenameEntry")
+            fileChooserButton = builder2.get_object("exportProjectFileChooserButton")
+
+            # Set the default filename based on current project
             if self.getCurrentProject() is not None:
                 filenameEntry.set_text("{0}.xml".format(self.getCurrentProject().getName()))
             else:
@@ -443,8 +439,9 @@ class NetzobMainController(object):
                 warnLabel.set_text(errorMessage)
                 warnBox = builder2.get_object("exportProjectWarnBox")
                 warnBox.show_all()
-            #run the dialog window and wait for the result
+
             result = dialog.run()
+
             if result == 0:
                 selectedFolder = fileChooserButton.get_current_folder()
                 filename = filenameEntry.get_text()
@@ -468,13 +465,10 @@ class NetzobMainController(object):
                             errorMessage = None
                         except IOError, e:
                             errorMessage = _("An error occurred while exporting the project.")
-                            logging.warn("Error when importing project: " + str(e))
+                            logging.warn("Error when importing project: {0}".format(e))
             else:
                 dialog.destroy()
                 finish = True
-        if (result == 1):
-            #cancel
-            dialog.destroy()
 
     def rawExportProject_activate_cb(self, action):
         """Display the dialog in order to export the symbols when the
@@ -509,18 +503,13 @@ class NetzobMainController(object):
                 ResourcesConfiguration.getStaticResources(),
                 "ui",
                 "dialogbox.glade"))
+
             dialog = builder2.get_object("switchWorkspace")
-            #button apply
+
             applybutton = builder2.get_object("switchWorkspaceApplyButton")
-            dialog.add_action_widget(applybutton, 0)
-            #button cancel
-            cancelbutton = builder2.get_object("switchWorkspaceCancelButton")
-            dialog.add_action_widget(cancelbutton, 1)
-
-            #disable apply button if no directory is provided
             fileChooserButton = builder2.get_object("switchWorkspaceFileChooserButton")
-
             fileChooserButton.connect("current-folder-changed", self.fileSetFileChooser_switchWorkspace_cb, applybutton)
+
             if errorMessage is not None:
                 # Display a warning message on the dialog box
                 warnLabel = builder2.get_object("switchWorkspaceWarnLabel")
@@ -528,7 +517,6 @@ class NetzobMainController(object):
                 warnBox = builder2.get_object("switchWorkspaceWarnBox")
                 warnBox.show_all()
 
-            #run the dialog window and wait for the result
             result = dialog.run()
 
             if result == 0:
@@ -582,6 +570,7 @@ class NetzobMainController(object):
 
     def availablePlugins_activate_cb(self, action):
         """Displays the list of available plugins"""
+
         controller = AvailablePluginsController(self)
         controller.run()
 
@@ -606,6 +595,7 @@ class NetzobMainController(object):
         @param projectPath: the path to the project to load
         @type projectPath: str
         """
+
         if projectPath is not None:
             logging.debug("Switch to the project declared in {0}".format(projectPath))
             newProject = Project.loadProject(self.currentWorkspace, projectPath)
