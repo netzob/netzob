@@ -110,6 +110,7 @@ class NetzobMainController(object):
     def _loadBugReporter(self, opts):
         """Activate the bug reporter if the command line options
         requests it"""
+
         if opts.bugReport:
             logging.debug("Activate the bug reporter")
 
@@ -176,8 +177,9 @@ class NetzobMainController(object):
         Gtk.main()
 
     def close(self):
-        """The method which closes the current project
-        and the workspace before stopping the GTK"""
+        """The method which closes the current project and the
+        workspace before stopping the GTK"""
+
         result = self.closeCurrentProject()
         if result == True:
             # Save the workspace
@@ -189,6 +191,7 @@ class NetzobMainController(object):
     def closeCurrentProject(self):
         """Close and offers to save the pending modifications in the
         current project."""
+
         currentProject = self.getCurrentProject()
 
         # Close the current project
@@ -295,6 +298,7 @@ class NetzobMainController(object):
 
     def saveProject_activate_cb(self, action):
         """Save the current project"""
+
         if self.getCurrentProject() == None:
             NetzobErrorMessage(_("No project selected."), self.view.mainWindow)
             return
@@ -303,6 +307,7 @@ class NetzobMainController(object):
     def fileSetFileChooser_importProject_cb(self, widget, applyButton):
         """Callback executed when the user selects a file in the file
         chooser of the import project dialog box"""
+
         selectedFile = widget.get_filename()
         if selectedFile is not None:
             applyButton.set_sensitive(True)
@@ -312,9 +317,11 @@ class NetzobMainController(object):
     def importProject_activate_cb(self, action):
         """Display the dialog in order to import a project when the
         user request it through the menu."""
+
         logging.debug("Import project")
         finish = False
         errorMessage = None
+
         while not finish:
             #open dialogbox
             builder2 = Gtk.Builder()
@@ -330,6 +337,7 @@ class NetzobMainController(object):
             #disable apply button if no file is provided
             fileChooserButton = builder2.get_object("importProjectFileChooserButton")
             fileChooserButton.connect("file-set", self.fileSetFileChooser_importProject_cb, applybutton)
+
             if errorMessage is not None:
                 # Display a warning message on the dialog box
                 warnLabel = builder2.get_object("importProjectWarnLabel")
@@ -375,18 +383,15 @@ class NetzobMainController(object):
                             errorMessage = None
                         except IOError, e:
                             errorMessage = _("An error occurred while copying the file")
-                            logging.warn("Error when importing project: " + str(e))
+                            logging.warn("Error when importing project: {0}".format(e))
             else:
                 dialog.destroy()
                 finish = True
-        if (result == 1):
-            #cancel
-            dialog.destroy()
 
     def fileSetFileChooserOrFilenamEntry_exportProject_cb(self, widget, fileChooser, fileEntry, applyButton):
-        """Callback executed when the user
-        selects a file in the file chooser of
-        the export project dialog box"""
+        """Callback executed when the user selects a file in the file
+        chooser of the export project dialog box"""
+
         currentFolder = fileChooser.get_current_folder()
         currentFile = fileEntry.get_text()
         if currentFolder is not None and len(currentFolder) > 0 and currentFile is not None and len(currentFile) > 0:
@@ -395,13 +400,15 @@ class NetzobMainController(object):
             applyButton.set_sensitive(False)
 
     def xmlExportProject_activate_cb(self, action):
-        """Display the dialog in order
-        to export the current project when the user request it
-        through the menu."""
+        """Display the dialog in order to export the current project
+        when the user request it through the menu."""
+
         if self.getCurrentProject() == None:
             NetzobErrorMessage(_("No project selected."), self.view.mainWindow)
             return
+
         logging.debug("Export project")
+
         finish = False
         errorMessage = None
         while not finish:
@@ -474,6 +481,7 @@ class NetzobMainController(object):
     def rawExportProject_activate_cb(self, action):
         """Display the dialog in order to export the symbols when the
         user request it through the menu."""
+
         if self.getCurrentProject() == None:
             NetzobErrorMessage(_("No project selected."), self.view.mainWindow)
             return
@@ -481,8 +489,9 @@ class NetzobMainController(object):
         controller = RawExportController(self)
 
     def fileSetFileChooser_switchWorkspace_cb(self, widget, applyButton):
-        """Callback executed when the user
-        selects a directory in the file chooser"""
+        """Callback executed when the user selects a directory in the
+        file chooser"""
+
         currentFolder = widget.get_current_folder()
         if currentFolder is not None and len(currentFolder) > 0:
             applyButton.set_sensitive(True)
@@ -490,9 +499,9 @@ class NetzobMainController(object):
             applyButton.set_sensitive(False)
 
     def switchWorkspace_activate_cb(self, action):
-        """switchWorkspace_activate_cb:
-        Callback executed when the user requests to switch to another
-        workspace"""
+        """Callback executed when the user requests to switch to
+        another workspace"""
+
         finish = False
         errorMessage = None
         while not finish:
@@ -564,12 +573,13 @@ class NetzobMainController(object):
 
     def quit_activate_cb(self, action):
         """Callback executed when the user request to close Netzob"""
+
         self.close()
 
     def aboutNetzob_activate_cb(self, action):
-        """Displays the about dialog
-        when the user click on the associate
-        menu entry."""
+        """Displays the about dialog when the user click on the
+        associate menu entry."""
+
         AboutDialog.display(self.view.mainWindow)
 
     def availablePlugins_activate_cb(self, action):
@@ -584,6 +594,7 @@ class NetzobMainController(object):
         @param projectPath: the path to the project to load
         @type projectPath: str
         """
+
         self.switchProject(projectPath)
 
     def switchProject(self, projectPath):
