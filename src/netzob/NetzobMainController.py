@@ -257,18 +257,9 @@ class NetzobMainController(object):
             dialog = builder2.get_object("newProject")
             dialog.set_transient_for(self.view.mainWindow)
 
-            # Apply button
             applybutton = builder2.get_object("newProjectApplyButton")
-            applybutton.set_sensitive(False)
-            dialog.add_action_widget(applybutton, 0)
-
-            # Disable 'apply' button if there is no text
             entry = builder2.get_object("entry4")
             entry.connect("changed", self.entry_disableButtonIfEmpty_cb, applybutton)
-
-            # Cancel button
-            cancelbutton = builder2.get_object("newProjectCancelButton")
-            dialog.add_action_widget(cancelbutton, 1)
 
             if errorMessage is not None:
                 # Display a warning message on the dialog box
