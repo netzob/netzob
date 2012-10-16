@@ -31,9 +31,7 @@
 #+----------------------------------------------------------------------------
 from setuptools import setup
 
-dependencies = [
-
-]
+dependencies = ['python-dateutil']
 
 #+----------------------------------------------------------------------------
 #| Definition of Netzob for setup
