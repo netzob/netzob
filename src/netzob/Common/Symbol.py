@@ -57,6 +57,7 @@ from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
 from netzob.Common.NetzobException import NetzobException
 from netzob.Common.Property import Property
 from netzob.Common.Type.Format import Format
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 #+---------------------------------------------------------------------------+
@@ -238,14 +239,14 @@ class Symbol(AbstractSymbol):
         """
         self.getRoot().write(writingToken)
         result = writingToken.getValue()
-
-        # Before returning the value we apply available custom math filter (reverse method)
-        print "TODO: this has been done at the Field level"
-        for filter in self.getMathematicFilters():
-            self.log.debug("Executing reverse method of filter {0} on {1}".format(filter.getName(), result))
-            result = filter.reverse(result)
-
-        result = TypeConvertor.hexstring2bin(result)
+#
+#        # Before returning the value we apply available custom math filter (reverse method)
+#        print "TODO: this has been done at the Field level"
+#        for filter in self.getMathematicFilters():
+#            self.log.debug("Executing reverse method of filter {0} on {1}".format(filter.getName(), result))
+#            result = filter.reverse(result)
+        print result
+#        result = TypeConvertor.hexstring2bin(result)
 
         return result
 
