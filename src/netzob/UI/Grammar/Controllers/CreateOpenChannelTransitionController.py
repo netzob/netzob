@@ -143,6 +143,7 @@ class CreateOpenChannelTransitionController(object):
             return
         if endState is None:
             errorMesssage = _("An error occurred and prevented to retrieve the provided end state.")
+            self.displayErrorMessage(errorMessage)
             return
 
         # Verify no other open channel transition is registered on the start state

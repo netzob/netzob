@@ -131,6 +131,7 @@ class CreateSemiStochasticTransitionController(object):
             return
         if endState is None:
             errorMesssage = _("An error occurred and prevented to retrieve the provided end state.")
+            self.displayErrorMessage(errorMessage)
             return
 
         # Input Symbol
