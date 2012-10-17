@@ -75,11 +75,13 @@ COMMON_NAMESPACE = "http://www.netzob.org/common"
 #+---------------------------------------------------------------------------+
 class Symbol(AbstractSymbol):
 
+    TYPE = "Symbol"
+
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
     def __init__(self, ID, name, project):
-        AbstractSymbol.__init__(self, "Symbol")
+        AbstractSymbol.__init__(self, Symbol.TYPE)
         self.id = ID
         self.project = project
         self.messages = []
