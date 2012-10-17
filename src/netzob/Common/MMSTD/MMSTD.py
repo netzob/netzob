@@ -41,6 +41,7 @@ from netzob.Common.MMSTD.Transitions.AbstractTransition import \
     AbstractTransition
 import logging
 from netzob.Common.MMSTD.Transitions.impl.SemiStochasticTransition import SemiStochasticTransition
+from netzob.Common.Symbol import Symbol
 
 #+----------------------------------------------
 #| Related third party imports
@@ -120,7 +121,9 @@ class MMSTD(Automata):
     def removeTransition(self, transition):
         if transition in self.transitions:
             for state in self.states:
+                self.log.debug("Unregister transition {0} from state {1}".format(transition.getName(), state.getName()))
                 state.unregisterTransition(transition)
+            self.log.debug("Remove transition {0} from the MMSTD".format(transition.getName()))
             self.transitions.remove(transition)
 
     def addTransition(self, transition):
@@ -176,6 +179,7 @@ class MMSTD(Automata):
                 dotCode.append('"{0}" -> "{1}" [fontsize=5, label="{2}", URL="{3}"];'.format(inputState.getName(), outputState.getName(), transition.getDescription(), transition.getID()))
 
         dotCode.append("}")
+
         return '\n'.join(dotCode)
 
     #+---------------------------------------------------------------------------+
@@ -216,12 +220,14 @@ class MMSTD(Automata):
         """update the definition of the automata
         and searched for deprecated symbols"""
         deprecatedTransitions = []
+
         for transition in self.transitions:
             if transition.getType() == SemiStochasticTransition.TYPE:
                 symbols = []
                 symbols.append(transition.getInputSymbol())
                 for (s, p, ti) in transition.getOutputSymbols():
-                    symbols.append(s)
+                    if s.getType() == Symbol.TYPE:
+                        symbols.append(s)
 
                 error = False
                 for symbol in symbols:
@@ -231,6 +237,7 @@ class MMSTD(Automata):
                             found = True
                             break
                     if not found:
+                        self.log.warning("Symbol {0} has not been found in vocabulary".format(symbol.getName()))
                         error = True
                         break
                 if error:
