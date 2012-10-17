@@ -153,7 +153,8 @@ class MMSTD(Automata):
     #| @return a string containing the dot code of the automata
     #+---------------------------------------------------------------------------+
     def getDotCode(self):
-        dotCode = "digraph G {\n"
+        dotCode = []
+        dotCode.append("digraph G {")
         # first we include all the states declared in the automata
         states = self.getStates()
         for state in states:
@@ -167,15 +168,15 @@ class MMSTD(Automata):
             else:
                 shape = "ellipse"
 
-            dotCode = dotCode + "\"" + state.getName() + "\" [shape=" + shape + " style=filled, fillcolor = " + color + ", URL = \"" + state.getID() + "\"];\n"
+            dotCode.append('"{0}" [shape={1}, style=filled, fillcolor={2}, URL="{3}"];'.format(state.getName(), shape, color, state.getID()))
 
         for inputState in states:
             for transition in inputState.getTransitions():
                 outputState = transition.getOutputState()
-                dotCode = dotCode + "\"" + inputState.getName() + "\" -> \"" + outputState.getName() + "\" [fontsize=5, label=\"" + transition.getDescription() + "\", URL = \"" + transition.getID() + "\"]\n"
+                dotCode.append('"{0}" -> "{1}" [fontsize=5, label="{2}", URL="{3}"];'.format(inputState.getName(), outputState.getName(), transition.getDescription(), transition.getID()))
 
-        dotCode = dotCode + "}"
-        return dotCode
+        dotCode.append("}")
+        return '\n'.join(dotCode)
 
     #+---------------------------------------------------------------------------+
     #| getAllStates:
