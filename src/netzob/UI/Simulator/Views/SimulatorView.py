@@ -261,19 +261,14 @@ class SimulatorView(object):
         currentActor = self.controller.getCurrentActor()
         if currentActor is not None:
             if currentActor.isActive():
-                imageStatus = Gtk.STOCK_YES
                 actorStatus = "active"
                 self.stopCurrentActorButton.set_sensitive(True)
                 self.startCurrentActorButton.set_sensitive(False)
 
             else:
-                imageStatus = Gtk.STOCK_YES
                 actorStatus = "inactive"
                 self.stopCurrentActorButton.set_sensitive(False)
                 self.startCurrentActorButton.set_sensitive(True)
-
-            self.statusCurrentActorImage = Gtk.Image(stock=imageStatus)
-            self.statusCurrentActorImage.show()
 
             self.statusCurrentActorLabel.set_label(actorStatus)
             self.statusCurrentActorLabel.show()
