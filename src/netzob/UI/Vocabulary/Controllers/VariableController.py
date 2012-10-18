@@ -74,8 +74,8 @@ class VariableTreeController(object):
         self.field = field
 
         self.view = VariableTreeView(self)
-        if self.field.getVariable() is not None:
-            self.registerContent(self.field.getVariable())
+#        if self.field.getVariable() is not None:
+        self.registerContent(self.field.getVariable())
         self.initCallbacks()
 
     def initCallbacks(self):
@@ -208,12 +208,13 @@ class VariableTreeController(object):
             variable.getFathers()[0].removeChildByID(variable)
 
             # Remove its entry.
-            entry = self.dictEntry[variable.getID()]
+            entry = self.dictEntry[str(variable.getID())]
             self.treestore.remove(entry)
 
             # Remove the variable and its entry from dictionaries.
-            self.dictEntry.pop(variable.getID())
-            self.dictVariable.pop(variable.getID())
+            self.dictEntry.pop(str(variable.getID()))
+            self.dictVariable.pop(str(variable.getID()))
+
         else:
             logging.info(_("The user didn't confirm the deletion of the variable {0}").format(variable.getName()))
 

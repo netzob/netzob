@@ -1104,7 +1104,10 @@ class Field(object):
         return self.mathematicFilters
 
     def getVariable(self):
-        return self.variable
+        if self.variable is None:
+            return self.generateDefaultVariable(self.symbol)
+        else:
+            return self.variable
 
     def getLocalFields(self):
         return self.fields
