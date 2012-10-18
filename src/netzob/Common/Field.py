@@ -58,6 +58,7 @@ from netzob.Common.Type.UnitSize import UnitSize
 import logging
 import re
 import uuid
+from netzob.Common.Type.TypeIdentifier import TypeIdentifier
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -154,9 +155,9 @@ class Field(object):
         # dynamic fields are in Blue
         if not self.isStatic():
             filters.append(TextColorFilter("Dynamic Field", "blue"))
-            # fields with no variable define are in yellow
-            if self.variable is None:
-                filters.append(BackgroundColorFilter("Default variable", "yellow"))
+#            # fields with no variable define are in yellow
+#            if self.variable is None:
+#                filters.append(BackgroundColorFilter("Default variable", "yellow"))
 
         return filters
 
@@ -683,7 +684,7 @@ class Field(object):
 
         # Build the new sub-regex
         if isStatic1:
-            regex1 = ref1
+            regex1 = "(" + ref1 + ")"
         else:
             if split_align == "left":
                 # The size is fixed
@@ -691,7 +692,7 @@ class Field(object):
             else:
                 regex1 = "(.{," + str(lenDyn1) + "})"
         if isStatic2:
-            regex2 = ref2
+            regex2 = "(" + ref2 + ")"
         else:
             if split_align == "right":
                 # The size is fixed
@@ -705,35 +706,60 @@ class Field(object):
             return False
 
         new_format = field.getFormat()
-        new_encapsulationLevel = field.getEncapsulationLevel()
+        indexOldField = field.getIndex()
+        parentField = field.getParentField()
 
-        # We Build the two new fields
+        # Create two new fields
         field1 = Field(field.getName() + "-1", regex1, self.getSymbol())
-        field1.setEncapsulationLevel(new_encapsulationLevel)
         field1.setFormat(new_format)
-        field1.setColor(field.getColor())
-        if field.getDescription() is not None and len(field.getDescription()) > 0:
-            field1.setDescription(field.getDescription() + "-1")
+
         field2 = Field(field.getName() + "-2", regex2, self.getSymbol())
-
-        field2.setEncapsulationLevel(new_encapsulationLevel)
         field2.setFormat(new_format)
-        field2.setColor(field.getColor())
-        if field.getDescription() is not None and len(field.getDescription()) > 0:
-            field2.setDescription(field.getDescription() + "-2")
 
-        # Remove the truncated one
+        # insert the two new fields
+        parentField.addField(field2, indexOldField)
+        parentField.addField(field1, indexOldField)
+
+#        # remove old field
         self.fields.remove(field)
+#
+#
+##
+##        print field.getIndex()
+##
+##
+##
+###        new_encapsulationLevel = field.getEncapsulationLevel()
+##
+##        # We Build the two new fields
+##        field1 = Field(field.getName() + "-1", regex1, self.getSymbol())
+###        field1.setEncapsulationLevel(new_encapsulationLevel)
+##        field1.setFormat(new_format)
+##        field1.setColor(field.getColor())
+##        if field.getDescription() is not None and len(field.getDescription()) > 0:
+##            field1.setDescription(field.getDescription() + "-1")
+##        field2 = Field(field.getName() + "-2", regex2, self.getSymbol())
+##
+###        field2.setEncapsulationLevel(new_encapsulationLevel)
+##        field2.setFormat(new_format)
+##        field2.setColor(field.getColor())
+##        if field.getDescription() is not None and len(field.getDescription()) > 0:
+##            field2.setDescription(field.getDescription() + "-2")
+##
 
-        # Modify index to adapt
-        for field in self.getExtendedFields():
-            if field.getIndex() > field1.getIndex():
-                field.setIndex(field.getIndex() + 1)
-
-        self.fields.append(field1)
-        self.fields.append(field2)
-        # sort fields by their index
-        self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
+#
+#        # Modify index to adapt
+#        for field in self.getExtendedFields():
+#            if field.getIndex() > field1.getIndex():
+#                field.setIndex(field.getIndex() + 1)
+#
+#        # Remove the truncated one
+#        self.fields.remove(field)
+#
+#        self.fields.append(field1)
+#        self.fields.append(field2)
+#        # sort fields by their index
+#        self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
         return True
 
     #+-----------------------------------------------------------------------+
