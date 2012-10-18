@@ -205,8 +205,8 @@ class VariableTreeController(object):
         md.destroy()
         if result == Gtk.ResponseType.YES:
             # Remove the variable from the global tree.
-            variable.getFathers()[0].removeChildByID(variable)
-
+            father = variable.getFathers()[0]
+            father.removeChildByID(variable)
             # Remove its entry.
             entry = self.dictEntry[str(variable.getID())]
             self.treestore.remove(entry)

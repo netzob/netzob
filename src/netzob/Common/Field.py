@@ -1105,9 +1105,8 @@ class Field(object):
 
     def getVariable(self):
         if self.variable is None:
-            return self.generateDefaultVariable(self.symbol)
-        else:
-            return self.variable
+            self.variable = self.generateDefaultVariable(self.symbol)
+        return self.variable
 
     def getLocalFields(self):
         return self.fields
