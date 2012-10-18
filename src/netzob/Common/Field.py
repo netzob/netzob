@@ -831,7 +831,7 @@ class Field(object):
         domain = sorted(tmpDomain)
 
         variable = AggregateVariable(uuid.uuid4(), "Aggregate", False, False, None)
-        alternateVar = AlternateVariable(uuid.uuid4(), "Alternate", False, False, None)
+        alternateVar = AlternateVariable(uuid.uuid4(), "Alternate", True, False, None)
         for d in domain:
             child = DataVariable(uuid.uuid4(), "defaultVariable", False, False, BinaryType(True, len(d), len(d)), d.to01())
             alternateVar.addChild(child)

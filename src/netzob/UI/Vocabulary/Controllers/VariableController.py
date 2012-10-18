@@ -254,11 +254,11 @@ class VariableTreeController(object):
                 Create a default variable, which is an alternate of
                 all the possible values of the field.
         """
-        if self.field.getVariable() is None:
-            self.field.variable = self.field.getDefaultVariable(self.symbol)
-            self.registerContent(self.field.getVariable())
-        else:
-            logging.info(_("A variable already exists."))
+#        if self.field.getVariable() is None:
+        self.field.variable = self.field.getDefaultVariable(self.symbol)
+        self.registerContent(self.field.getVariable())
+#        else:
+#            logging.info(_("A variable already exists."))
 
 
 class VariableCreationController(object):
@@ -674,9 +674,6 @@ class VariableCreationController(object):
             variable = ComputedRelationVariable(anid, name, mutable, learnable, vtype, pointedID, self.treeController.symbol)
 
         if variable is not None:
-            # We notify the symbol that is no more composed of default variable.
-            self.treeController.symbol.setDefault(False)
-
             # This part is for saving and transfering children when transforming a node variable into an other kind of node variable.
             if self.editOverCreate:
                 # We transform a node variable into a node variable.
