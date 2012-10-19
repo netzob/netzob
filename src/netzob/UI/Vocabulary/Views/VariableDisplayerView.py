@@ -42,6 +42,8 @@ from netzob.Simulator.XDotWidget import XDotWidget
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
 from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
+from netzob.Common.MMSTD.Dictionary.RelationTypes.SizeRelationType import SizeRelationType
+from netzob.Common.MMSTD.Dictionary.Variables.ComputedRelationVariable import ComputedRelationVariable
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
@@ -110,6 +112,8 @@ class VariableDisplayerView(object):
             dotCode.extend(self.addAlternateVariable(variable))
         elif variable.getVariableType() == DataVariable.TYPE:
             dotCode.extend(self.addDataVariable(variable))
+        elif variable.getVariableType() == ComputedRelationVariable.TYPE:
+            dotCode.extend(self.addComputedReleationVariable(variable))
         else:
             print variable
         return dotCode
@@ -139,4 +143,21 @@ class VariableDisplayerView(object):
         label = "Data{0}:{1}".format(self.idBin, var.getName())
         self.idBin += 1
         dotCode.append("\"{0}\" [style=filled, fillcolor = green, label=\"{1}\"];".format(var.getID(), label))
+        return dotCode
+
+    def addComputedReleationVariable(self, var):
+        dotCode = []
+
+        relationType = var.getRelationType()
+        pointedID = var.getPointedID()
+        if relationType.getType() == SizeRelationType.TYPE:
+            labelRelation = "Size"
+        else:
+            labelRelation = "Unknown"
+
+        label = "ComputedRelation{0}:{1}".format(self.idBin, var.getName())
+        self.idBin += 1
+        dotCode.append("\"{0}\" [style=filled, fillcolor = green, label=\"{1}\"];".format(var.getID(), label))
+
+        dotCode.append('{0} -> {1} [label="{2}";];').format(var.getID(), pointedID)
         return dotCode
