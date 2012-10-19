@@ -157,7 +157,7 @@ class VariableDisplayerView(object):
 
         label = "ComputedRelation{0}:{1}".format(self.idBin, var.getName())
         self.idBin += 1
-        dotCode.append("\"{0}\" [style=filled, fillcolor = green, label=\"{1}\"];".format(var.getID(), label))
+        dotCode.append("\"{0}\" [style=filled, fillcolor = grey, label=\"{1}\"];".format(var.getID(), label))
 
-        dotCode.append('{0} -> {1} [label="{2}";];').format(var.getID(), pointedID)
+        dotCode.append('"{0}" -> "{1}" [label = " {2}"];'.format(var.getID(), pointedID, labelRelation))
         return dotCode
