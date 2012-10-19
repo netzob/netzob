@@ -224,7 +224,7 @@ NEWS = open('NEWS.rst', 'rt').read()
 setup(
     name=release.name,
     packages=find_packages(where='src'),
-    package_dir={"netzob": "src" + os.sep + "netzob"},
+    package_dir={"netzob": "src" + os.sep + "netzob", "netzob_plugins": "src" + os.sep + "netzob_plugins"},
     ext_modules=[moduleLibNeedleman, moduleLibScoreComputation, moduleLibInterface, moduleLibRegex],
     data_files=data_files,
     scripts=["netzob"],
