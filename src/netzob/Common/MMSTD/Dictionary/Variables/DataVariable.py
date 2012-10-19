@@ -307,7 +307,7 @@ class DataVariable(AbstractLeafVariable):
         """
         self.log.debug(_("- [ {0}: writeValue.").format(self.toString()))
         value = self.getValue(writingToken)
-        writingToken.appendValue(value)
+        writingToken.write(self, value)
         self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), writingToken.toString()))
 
 #+---------------------------------------------------------------------------+
