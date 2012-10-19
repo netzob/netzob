@@ -45,8 +45,8 @@ from netzob.Common.ProjectConfiguration import ProjectConfiguration
 #+---------------------------------------------------------------------------+
 #| C Imports
 #+---------------------------------------------------------------------------+
-import _libScoreComputation
-import _libInterface
+from netzob import _libScoreComputation
+from netzob import _libInterface
 
 
 #+---------------------------------------------------------------------------+

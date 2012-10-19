@@ -48,10 +48,10 @@ if os.name == 'nt':
 
 try:
     # Verify that required C extensions are available
-    import _libNeedleman
-    import _libScoreComputation
-    import _libInterface
-    import _libRegex
+    from netzob import _libNeedleman
+    from netzob import _libScoreComputation
+    from netzob import _libInterface
+    from netzob import _libRegex
 except:
     # Else, assume the path is gotten from the 'python setup.py build' command
     arch = os.uname()[-1]

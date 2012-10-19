@@ -86,7 +86,7 @@ toolsPath = opj(libPath, "tools")
 macros = [('BID', '"{0}"'.format(uuid.uuid4()))]
 
 # Module Needleman
-moduleLibNeedleman = Extension('_libNeedleman',
+moduleLibNeedleman = Extension('netzob._libNeedleman',
                                # extra_compile_args=["-fopenmp"],
                                # extra_link_args=["-fopenmp"],
                                sources=[opj(interfacePath, "Interface.c"),
@@ -102,7 +102,7 @@ moduleLibNeedleman = Extension('_libNeedleman',
                                include_dirs=includes)
 
 # Module ScoreComputation
-moduleLibScoreComputation = Extension('_libScoreComputation',
+moduleLibScoreComputation = Extension('netzob._libScoreComputation',
                                       # extra_compile_args=["-fopenmp"],
                                       # extra_link_args=["-fopenmp"],
                                       sources=[opj(needlemanPath, "scoreComputation.c"),
@@ -118,7 +118,7 @@ moduleLibScoreComputation = Extension('_libScoreComputation',
                                       include_dirs=includes)
 
 # Module Interface
-moduleLibInterface = Extension('_libInterface',
+moduleLibInterface = Extension('netzob._libInterface',
                                sources=[opj(interfacePath, "Interface.c"),
                                         opj(pyInterfacePath, "libInterface.c"),
                                         opj(toolsPath, "getBID.c")],
@@ -126,7 +126,7 @@ moduleLibInterface = Extension('_libInterface',
                                include_dirs=includes)
 
 # Module Regex
-moduleLibRegex = Extension('_libRegex',
+moduleLibRegex = Extension('netzob._libRegex',
                            sources=[opj(regexPath, "regex.c"),
                                     opj(pyRegexPath, "libRegex.c"),
                                     opj(regexPath, "manipulate.c"),

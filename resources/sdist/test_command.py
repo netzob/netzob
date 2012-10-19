@@ -58,7 +58,7 @@ class test_command(Command):
 
         try:
             # Verify that libNeedleman is in the path
-            import _libNeedleman
+            from netzob import _libNeedleman
         except:
             # Else, assume the path is gotten from the 'python setup.py build' command
             arch = os.uname()[-1]

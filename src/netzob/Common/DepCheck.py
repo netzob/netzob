@@ -55,7 +55,7 @@ class DepCheck(object):
     def checkCExtensions():
         # Verify we can load the lib Needleman
         try:
-            import _libNeedleman
+            from netzob import _libNeedleman
         except ImportError:
             logging.error(_("Impossible to import the libNeedleman"))
             return False
@@ -77,7 +77,7 @@ class DepCheck(object):
 
         # Verify we can load the lib ScoreComputation
         try:
-            import _libScoreComputation
+            from netzob import _libScoreComputation
         except ImportError:
             logging.error(_("Impossible to import the libScoreComputation"))
             return False
@@ -99,7 +99,7 @@ class DepCheck(object):
 
         # Verify we can load the lib Interface
         try:
-            import _libInterface
+            from netzob import _libInterface
         except ImportError:
             logging.error(_("Impossible to import the libInterface"))
             return False
@@ -121,7 +121,7 @@ class DepCheck(object):
 
         # Verify we can load the lib Regex
         try:
-            import _libRegex
+            from netzob import _libRegex
         except ImportError:
             logging.error(_("Impossible to import the libRegex"))
             return False

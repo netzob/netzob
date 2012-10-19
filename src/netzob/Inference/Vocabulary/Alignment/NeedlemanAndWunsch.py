@@ -51,8 +51,8 @@ from netzob.Common.NetzobException import NetzobException
 #+---------------------------------------------------------------------------+
 #| C Imports
 #+---------------------------------------------------------------------------+
-import _libNeedleman
-import _libInterface
+from netzob import _libNeedleman
+from netzob import _libInterface
 
 
 #+---------------------------------------------------------------------------+
