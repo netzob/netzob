@@ -71,16 +71,30 @@ class VariableWritingToken(AbstractVariableProcessingToken):
         """updateValue:
                 Re-make the value of the token by concatenating each segment of the chopped value.
         """
-        self.setValue = bitarray()
+        self.value = bitarray()
+        self.index = 0
         for linkedValue in self.getLinkedValue():
             self.appendValue(linkedValue[1])
+
+    def setValueForVariable(self, variable, value):
+        """setValueForVariable:
+                Edit the previously inserted value for specified variable and replace it
+                with the provided value
+        """
+        for linkedValue in self.getLinkedValue():
+            if linkedValue[0] == variable.getID():
+                linkedValue[1] = value
+                break
+
+        # refresh the computed value
+        self.updateValue()
 
     def write(self, variable, value):
         """write:
                 A variable writes a value in the token.
         """
         self.appendLinkedValue([variable.getID(), value])
-        self.appendValue(value)
+        self.updateValue()
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |

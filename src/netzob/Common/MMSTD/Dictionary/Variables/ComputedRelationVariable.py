@@ -364,10 +364,13 @@ class ComputedRelationVariable(AbstractVariable):
         self.log.debug(_("[ {0} (relation): notifiedWrite access:").format(AbstractVariable.toString(self)))
 
         if self.isDefined(writingToken):
-            for linkedValue in writingToken.getLinkedValue():
-                if linkedValue[0] == self.getID():
-                    linkedValue[1] = self.currentValue
-            writingToken.updateValue()
+
+            # Compute the value
+            self.retrieveValue(writingToken)
+
+            # replace the new value in the writing token
+            writingToken.setValueForVariable(self, self.currentValue)
+
         else:
             self.log.debug(_("Write abort: the variable is neither defined, nor random."))
             writingToken.setOk(False)
