@@ -51,11 +51,10 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 class SplitFieldController(object):
     """Split a field in two fields"""
 
-    def __init__(self, vocabularyController, symbol, field):
+    def __init__(self, vocabularyController, field):
         self.vocabularyController = vocabularyController
         self._view = SplitFieldView(self)
         self.log = logging.getLogger(__name__)
-        self.symbol = symbol
         self.field = field
 
     @property
@@ -91,6 +90,8 @@ class SplitFieldController(object):
     def cancel_clicked_cb(self, widget):
         self.view.splitFieldDialog.destroy()
 
+        self.vocabularyController.view().updateSymbolList()
+
     def doSplit_clicked_cb(self, widget):
         if self.split_max_len <= 1:
             self.view.splitFieldDialog.destroy()
@@ -100,7 +101,7 @@ class SplitFieldController(object):
             split_index = -self.split_position
         else:
             split_index = self.split_position
-        self.symbol.splitField(self.field, split_index, self.split_align)
+        self.field.splitField(split_index, self.split_align)
         self.view.splitFieldDialog.destroy()
         self.vocabularyController.view.updateSelectedMessageTable()
 

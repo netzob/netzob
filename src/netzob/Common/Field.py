@@ -37,8 +37,7 @@
 from gettext import gettext as _
 from lxml import etree
 from netzob.Common.Filters.Encoding.FormatFilter import FormatFilter
-from netzob.Common.Filters.Visualization.BackgroundColorFilter import \
-    BackgroundColorFilter
+
 from netzob.Common.Filters.Visualization.TextColorFilter import TextColorFilter
 from netzob.Common.MMSTD.Dictionary.DataTypes.BinaryType import BinaryType
 from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
@@ -660,12 +659,12 @@ class Field(object):
     #|  Split a field in two fields
     #|  return False if the split does not occure, else True
     #+----------------------------------------------
-    def splitField(self, field, split_position, split_align):
+    def splitField(self, split_position, split_align):
         if split_position == 0:
             return False
 
         # Find the static/dynamic cols
-        cells = field.getCells()
+        cells = self.getCells()
         ref1 = cells[0][:split_position]
         ref2 = cells[0][split_position:]
         isStatic1 = True
@@ -705,61 +704,26 @@ class Field(object):
         if regex2 == "":
             return False
 
-        new_format = field.getFormat()
-        indexOldField = field.getIndex()
-        parentField = field.getParentField()
+        new_format = self.getFormat()
+        indexOldField = self.getIndex()
+        parentField = self.getParentField()
 
         # Create two new fields
-        field1 = Field(field.getName() + "-1", regex1, self.getSymbol())
+        field1 = Field(self.getName() + "-1", regex1, self.getSymbol())
         field1.setFormat(new_format)
 
-        field2 = Field(field.getName() + "-2", regex2, self.getSymbol())
+        field2 = Field(self.getName() + "-2", regex2, self.getSymbol())
         field2.setFormat(new_format)
 
-        # insert the two new fields
-        parentField.addField(field2, indexOldField)
-        parentField.addField(field1, indexOldField)
+        if parentField is None:
+            parentField = Field("Root", self.getRegex(), self.getSymbol())
+            parentField.addField(self, 0)
+            self.getSymbol().setField(parentField)
 
-#        # remove old field
-        self.fields.remove(field)
-#
-#
-##
-##        print field.getIndex()
-##
-##
-##
-###        new_encapsulationLevel = field.getEncapsulationLevel()
-##
-##        # We Build the two new fields
-##        field1 = Field(field.getName() + "-1", regex1, self.getSymbol())
-###        field1.setEncapsulationLevel(new_encapsulationLevel)
-##        field1.setFormat(new_format)
-##        field1.setColor(field.getColor())
-##        if field.getDescription() is not None and len(field.getDescription()) > 0:
-##            field1.setDescription(field.getDescription() + "-1")
-##        field2 = Field(field.getName() + "-2", regex2, self.getSymbol())
-##
-###        field2.setEncapsulationLevel(new_encapsulationLevel)
-##        field2.setFormat(new_format)
-##        field2.setColor(field.getColor())
-##        if field.getDescription() is not None and len(field.getDescription()) > 0:
-##            field2.setDescription(field.getDescription() + "-2")
-##
+        index2 = parentField.addField(field2, indexOldField)
+        parentField.addField(field1, index2)
+        parentField.removeLocalField(self)
 
-#
-#        # Modify index to adapt
-#        for field in self.getExtendedFields():
-#            if field.getIndex() > field1.getIndex():
-#                field.setIndex(field.getIndex() + 1)
-#
-#        # Remove the truncated one
-#        self.fields.remove(field)
-#
-#        self.fields.append(field1)
-#        self.fields.append(field2)
-#        # sort fields by their index
-#        self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
         return True
 
     #+-----------------------------------------------------------------------+
@@ -860,6 +824,8 @@ class Field(object):
         if index is None:
             self.fields.append(field)
         else:
+            print "add field in ; "
+            print self.fields
             self.fields.insert(index, field)
 
         realIndex = self.fields.index(field)
@@ -894,6 +860,14 @@ class Field(object):
             self.fields.pop()
         else:
             self.fields.pop(index)
+
+    def removeLocalField(self, field):
+        """removeLocalField:
+        Remove from the current field's children, the provided field"""
+        if field in self.fields:
+            self.fields.remove(field)
+        else:
+            self.log.warning("Cannot remove field {0} from the children of field {1}.".format(field.getName(), self.getName()))
 
     def isLayer(self):
         if len(self.getLocalFields()) > 0:  # Means inner fields exist

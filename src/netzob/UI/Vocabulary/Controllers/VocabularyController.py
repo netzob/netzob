@@ -376,15 +376,15 @@ class VocabularyController(object):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        symbol = self.view.getDisplayedField()
-        if symbol is None:
-            NetzobErrorMessage(_("No selected symbol."))
-            return
+#        displayedField = self.view.getDisplayedField()
+#        if displayedField is None:
+#            NetzobErrorMessage(_("No selected symbol."))
+#            return
         fields = self.view.selectedMessageTable.treeViewHeaderGroup.getSelectedFields()
         # Split field
         if fields != None and len(fields) > 0:
             field = fields[-1]  # We take the last selected field
-            controller = SplitFieldController(self, symbol, field)
+            controller = SplitFieldController(self, field)
             controller.run()
         else:
             NetzobErrorMessage(_("No selected field."))
