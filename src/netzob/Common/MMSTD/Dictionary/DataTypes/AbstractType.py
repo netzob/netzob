@@ -108,9 +108,11 @@ class AbstractType():
         """
         if self.sized:
             size = random.randint(self.minChars, self.maxChars)
+            self.log.debug("Generate Fixed Sized value (generated size = {0})".format(size))
             return self.generateFixedSizeValue(generationStrategies, size)
         else:
             size = random.randint(0, AbstractType.MAX_CHARS)
+            self.log.debug("Generate unsized value (generated size = {0})".format(size))
             value = self.generateFixedSizeValue(generationStrategies, size)
             value += self.delimiter  # The delimiter is a part of the final value.
             return value
