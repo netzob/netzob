@@ -317,6 +317,17 @@ class Symbol(AbstractSymbol):
     def getField(self):
         return self.field
 
+    def getFieldByID(self, idField):
+        """getFieldByID:
+        Retrieves all the fields and searches for
+        a field which ID is provided.
+        Returns None, if cannot be found"""
+        fields = self.getAllFields()
+        for field in fields:
+            if str(field.getID()) == str(idField):
+                return field
+        return None
+
     def getAllFields(self):
         """getAllFields: return all the fields (both layers and
         leafs) starting from the current object
