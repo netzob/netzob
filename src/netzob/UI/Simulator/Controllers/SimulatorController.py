@@ -129,7 +129,7 @@ class SimulatorController(object):
         self.currentActor = self.currentActor.clone()
 
         if self.currentActor is not None and not self.currentActor.isActive():
-            self.currentActor.setStatusModification_cb(self._view.updateStatusOfCurrentActor)
+#            self.currentActor.setStatusModification_cb(self._view.updateStatusOfCurrentActor)
             self.currentActor.getAbstractionLayer().setInputSymbolReception_cb(self._view.registerInputSymbolOfCurrentActor)
             self.currentActor.getAbstractionLayer().setOutputSymbolSending_cb(self._view.registerOutputSymbolOfCurrentActor)
             self.currentActor.getAbstractionLayer().getMemory().setMemoryAccess_cb(self._view.registerMemoryAccess)
