@@ -73,6 +73,8 @@ from netzob.Common.Plugins.Extensions.CapturerMenuExtension import CapturerMenuE
 #+----------------------------------------------
 class VocabularyController(object):
 
+    PERSPECTIVE_ID = "vocabulary-inference-view"
+
     def __init__(self, netzob):
         self.netzob = netzob
         self._view = VocabularyView(self)

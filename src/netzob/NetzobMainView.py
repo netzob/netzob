@@ -53,7 +53,6 @@ from netzob.UI.Simulator.Controllers.SimulatorController import SimulatorControl
 class NetzobMainView(object):
     """Netzob main window view"""
 
-    VOCABULARY_INFERENCE_VIEW = "vocabulary-inference-view"
     GRAMMAR_INFERENCE_VIEW = "grammar-inference-view"
     TRAFFIC_SIMULATOR_VIEW = "traffic-simulator-view"
 
@@ -80,7 +79,7 @@ class NetzobMainView(object):
         self.mainWindow.show()
 
     def registerPerspectives(self):
-        self.registerPerspective(self.VOCABULARY_INFERENCE_VIEW,
+        self.registerPerspective(VocabularyController.PERSPECTIVE_ID,
                                  _("Vocabulary Inference"),
                                  VocabularyController)
         self.registerPerspective(self.GRAMMAR_INFERENCE_VIEW,
@@ -135,6 +134,11 @@ class NetzobMainView(object):
     def registerPerspective(self, perspectiveCode, perspectiveDescription, perspectiveControllerClass):
         self.perspectiveDict[perspectiveCode] = (perspectiveDescription, perspectiveControllerClass(self.controller))
         self.perspectiveListStore.append([perspectiveCode, perspectiveDescription])
+
+    def getRegisteredPerspectives(self):
+        """registeredPerspectives:
+                Returns a dictionary which contains the list of registered perspectives"""
+        return self.perspectiveDict
 
     def setPrimaryToolbarStyle(self, toolbar):
         """Make toolbar a GTK primary toolbar. In most GTK themes,
