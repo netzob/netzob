@@ -168,9 +168,12 @@ class MessageTableView(object):
         in the treeview to be refreshed and the fields of the symbol have not
         changed. (ie the columns of the treeview won't be updated)"""
         splitMessagesMatrix = []
+
+        messages = self.displayedField.getMessages()
+
         # Split every message
-        logging.debug("Start to compute the alignments of messages")
-        for message in self.displayedField.getMessages():
+        logging.debug("Align {0} messages with regex {1}".format(len(messages), self.displayedField.getRegex()))
+        for message in messages:
             try:
                 splitMessage = [str(message.getID())]
                 tmpSplitMessage = message.applyAlignment(styled=True, encoded=True)
