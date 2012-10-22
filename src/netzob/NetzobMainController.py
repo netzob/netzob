@@ -234,7 +234,8 @@ class NetzobMainController(object):
         if not perspectiveCode in persCodes:
             self.log.warning("The requested perspective ({0}) canot be found.".format(perspectiveCode))
             return None
-        return self.view.getRegisteredPerspectives()[perspectiveCode]
+        (perspectiveDescription, instance) = self.view.getRegisteredPerspectives()[perspectiveCode]
+        return instance
 
     def perspectiveComboBox_changed_cb(self, comboBox):
         iter = comboBox.get_active_iter()
