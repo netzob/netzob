@@ -212,7 +212,7 @@ class ResearchController(object):
             searchTasks = None
             self.log.error("Cannot search for data if provided with type {0}".format(format))
 
-        if searchTasks is not None:
+        if searchTasks is not None and len(searchTasks) > 0:
             self.executedSearchTasks = searcher.search(searchTasks)
             self.idResult = -1
             self.nbResult = 0
