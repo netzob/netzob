@@ -30,6 +30,7 @@
 #+---------------------------------------------------------------------------+
 import logging
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+from netzob.UI.Vocabulary.Controllers.VocabularyController import VocabularyController
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -57,6 +58,11 @@ class AbstractPluginController(object):
         @return: the current project L{netzob.Common.Project:Project}
         """
         return self.netzob.getCurrentProject()
+
+    def getVocabularyController(self):
+        """getVocabularyController:
+                Returns the controller associated with the vocabulary"""
+        return self.netzob.getPerspectiveController(VocabularyController.PERSPECTIVE_ID)
 
     def getPlugin(self):
         return self.plugin

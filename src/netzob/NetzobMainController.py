@@ -227,6 +227,15 @@ class NetzobMainController(object):
         pluginExtensions = NetzobPlugin.getLoadedPluginsExtension(ExportMenuExtension)
         self.view.updateListExporterPlugins(pluginExtensions)
 
+    def getPerspectiveController(self, perspectiveCode):
+        """Fetch the requested perspective (given its code).
+        Returns None if it cannot be found"""
+        persCodes = self.view.getRegisteredPerspectives().keys()
+        if not perspectiveCode in persCodes:
+            self.log.warning("The requested perspective ({0}) canot be found.".format(perspectiveCode))
+            return None
+        return self.view.getRegisteredPerspectives()[perspectiveCode]
+
     def perspectiveComboBox_changed_cb(self, comboBox):
         iter = comboBox.get_active_iter()
         if iter is not None and self.view is not None:
