@@ -69,6 +69,7 @@ class AbstractMessage(object):
         self.rightReductionFactor = 0
         self.leftReductionFactor = 0
         self.extraProperties = []
+        self.visualizationFilters = []
 
         self.pattern = []
         if not pattern:
@@ -219,12 +220,16 @@ class AbstractMessage(object):
                     for filter in field.getEncodingFilters():
                         filterTable.applyFilter(filter, i_data, i_data + len(dataField))
                 # Add visualization filters
-                if styled is True:
+                if styled is True and len(dataField) > 0:
                     # Add visualization filters obtained from fields
                     for filter in field.getVisualizationFilters():
-                        if len(dataField) > 0:
-                            filterTable.applyFilter(filter, i_data, i_data + len(dataField))
+                        filterTable.applyFilter(filter, i_data, i_data + len(dataField))
+
                 i_data = i_data + len(dataField)
+
+            if styled is True:
+                for (filter, start, end) in self.getVisualizationFilters():
+                    filterTable.applyFilter(filter, start, end)
 
         return filterTable.getResult()
 
@@ -367,3 +372,25 @@ class AbstractMessage(object):
     def setLeftReductionFactor(self, factor):
         self.leftReductionFactor = factor
         self.rightReductionFactor = 0
+
+    def getVisualizationFilters(self):
+        """getVisualizationFilters:
+                Returns a list which contains all the visualization filters
+                attach to the current message"""
+        return self.visualizationFilters
+
+    def addVisualizationFilter(self, filter, start, end):
+        """addVisualizationFilter:
+                Register a new visu filter"""
+        self.visualizationFilters.append((filter, start, end))
+
+    def removeVisualizationFilter(self, filter):
+        """removeVisualizationFilter:
+                Remove the provided filter."""
+        savedFilters = []
+        for (f, start, end) in self.visualizationFilters:
+            if filter.getID() != f.getID():
+                savedFilters.append((f, start, end))
+        self.visualizationFilters = []
+        for a in savedFilters:
+            self.visualizationFilters.append(a)

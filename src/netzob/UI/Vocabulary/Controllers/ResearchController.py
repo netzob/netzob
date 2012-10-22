@@ -265,10 +265,12 @@ class ResearchController(object):
 
         # fetch the current result
         currentResult = self.getCurrentResult()
+        self.decolorizeAllResult()
+
+        if currentResult is None:
+            return
 
         self._view.currentSelectedResultLabel.set_label(_("{0}/{1} : {2}".format(self.idResult + 1, self.nbResult, currentResult.getVariationDescription())))
-
-        self.decolorizeAllResult()
 
         # add a dedicated filter for the result
         self.colorizeResult(currentResult)
@@ -282,7 +284,9 @@ class ResearchController(object):
         vocabulary = self.vocabularyController.getCurrentProject().getVocabulary()
         for symbol in vocabulary.getSymbols():
             filterToRemoveFromSymbol = []
-            for filter in symbol.getVisualizationFilters():
+            field = symbol.getField()
+
+            for filter in field.getVisualizationFilters():
                 if filter.getName() == "Search":
                     filterToRemoveFromSymbol.append(filter)
 
@@ -309,7 +313,7 @@ class ResearchController(object):
     def showResult(self, result):
         """Show the result pointed message"""
         currentMessage = result.getMessage()
-        self.vocabularyController.view.setDisplayedSymbolInSelectedMessageTable(currentMessage.getSymbol())
+        self.vocabularyController.view.setDisplayedFieldInSelectedMessageTable(currentMessage.getSymbol().getField())
         self.vocabularyController.view.updateSelectedMessageTable()
 
     def updateNextAndPreviousButtons(self):

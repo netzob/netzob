@@ -184,6 +184,22 @@ class Searcher(object):
         val = "%s%s%s%s" % (c2, d2, a2, b2)
         tasks.extend(self.getSearchedDataForString(val))
 
+        #in hexadecimal
+        ah = hex(int(a))[2:]
+        ah = ((2 - len(ah)) * '0') + ah
+
+        bh = hex(int(b))[2:]
+        bh = ((2 - len(bh)) * '0') + bh
+
+        ch = hex(int(c))[2:]
+        ch = ((2 - len(ch)) * '0') + ch
+
+        dh = hex(int(d))[2:]
+        dh = ((2 - len(dh)) * '0') + dh
+
+        val = "{0}{1}{2}{3}".format(ah, bh, ch, dh)
+        tasks.extend(self.getSearchedDataForHexadecimal(val))
+
         return tasks
 
     #+----------------------------------------------
@@ -252,7 +268,7 @@ class Searcher(object):
 
     def naturalSearch(self, data, message):
         results = []
-
+        self.log.debug("Natural search of {0} in {1}".format(data, message.getStringData()))
         # Search naturally all the possible places of data in message
         indice = 0
         while indice + len(data) <= len(message.getStringData()):
