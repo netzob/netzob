@@ -124,7 +124,7 @@ class IpcCapturerPlugin(CapturerPlugin):
                 @param val:
         """
         if self.netzob.getCurrentProject() is None:
-            NetzobErrorMessage(_("No project selected."))            
+            NetzobErrorMessage(_("No project selected."))
             return
         self.finish = vocabularyView.updateSymbolList
         controller = IpcCapturerController(self.netzob, self)
