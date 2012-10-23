@@ -42,30 +42,30 @@ import random
 #+---------------------------------------------------------------------------+
 from netzob.Common.Plugins.CapturerPlugin import CapturerPlugin
 from netzob.Common.Plugins.Extensions.CapturerMenuExtension import CapturerMenuExtension
-from netzob_plugins.Capturers.IpcCapturer.IpcCapturerController import IpcCapturerController
+from netzob_plugins.Capturers.NetworkCapturer.NetworkCapturer.NetworkCapturerController import NetworkCapturerController
 from netzob.UI.NetzobWidgets import NetzobErrorMessage
 
 
-class IpcCapturerPlugin(CapturerPlugin):
-    """IpcCapturerPlugin:
-            Plugin that captures IPC trafic.
+class NetworkCapturerPlugin(CapturerPlugin):
+    """NetworkCapturerPlugin:
+            Plugin that captures network trafic.
     """
-    __plugin_name__ = "IpcCapturer"
+    __plugin_name__ = "NetworkCapturer"
     __plugin_version__ = "1.0"
-    __plugin_description__ = _("Provide the possibility to capture IPC trafic.")
-    __plugin_author__ = "Frédéric Guihéry <frederic.guihery@amossys.fr>"
+    __plugin_description__ = _("Provide the possibility to capture network trafic.")
+    __plugin_author__ = "Frédéric Guihéry <frederic.guihery@amossys.fr>, Georges Bossert <georges.bossert@supelec.fr>"
     __plugin_copyright__ = "Georges Bossert and Frédéric Guihéry"
     __plugin_license__ = "GPLv3+"
 
     def __init__(self, netzob):
-        """Constructor of IpcCapturerPlugin:
+        """Constructor of NetworkCapturerPlugin:
 
                 @type netzob: netzob.NetzobGUI.NetzobGUI
                 @param netzob: the main netzob project.
         """
-        super(IpcCapturerPlugin, self).__init__(netzob)
+        super(NetworkCapturerPlugin, self).__init__(netzob)
         self.netzob = netzob
-        self.entryPoints = [CapturerMenuExtension(netzob, self.actionCallback, "Capture IPC trafic", "Capture IPC trafic")]
+        self.entryPoints = [CapturerMenuExtension(netzob, self.actionCallback, "Capture network trafic", "Capture network trafic")]
 
     def getName(self):
         """getName:
@@ -102,7 +102,7 @@ class IpcCapturerPlugin(CapturerPlugin):
     def getEntryPoints(self):
         """getEntryPoints:
 
-                @rtype: netzob_plugins.Capturers.IpcCapturer.EntryPoints.GlobalMenuEntryPoint.GlobalMenuEntryPoint
+                @rtype: netzob_plugins.Capturers.NetworkCapturer.EntryPoints.GlobalMenuEntryPoint.GlobalMenuEntryPoint
                 @return: the plugin entry point, so it can be linked to the netzob project.
         """
         return self.entryPoints
@@ -127,5 +127,5 @@ class IpcCapturerPlugin(CapturerPlugin):
             NetzobErrorMessage(_("No project selected."))            
             return
         self.finish = vocabularyView.updateSymbolList
-        controller = IpcCapturerController(self.netzob, self)
+        controller = NetworkCapturerController(self.netzob, self)
         controller.run()

@@ -42,8 +42,8 @@ import time
 #+---------------------------------------------------------------------------+
 from netzob.UI.NetzobWidgets import NetzobInfoMessage, NetzobErrorMessage
 from netzob.Common.Plugins.Capturers.AbstractCapturerController import AbstractCapturerController
-from netzob_plugins.Capturers.NetworkCapturer.NetworkCapturerView import NetworkCapturerView
-from netzob_plugins.Capturers.NetworkCapturer.NetworkCapturer import NetworkCapturer
+from netzob_plugins.Capturers.NetworkCapturer.NetworkCapturer.NetworkCapturerView import NetworkCapturerView
+from netzob_plugins.Capturers.NetworkCapturer.NetworkCapturer.NetworkCapturer import NetworkCapturer
 from netzob.Common.Models.L4NetworkMessage import L4NetworkMessage
 from netzob.Common.NetzobException import NetzobImportException
 

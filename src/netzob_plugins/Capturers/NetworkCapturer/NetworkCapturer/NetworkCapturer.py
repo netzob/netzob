@@ -94,7 +94,7 @@ class NetworkCapturer(AbstractCapturer):
         try:
             interfaces = pcapy.findalldevs()
         except:
-            logging.warn(_("You don't have enough permissions to open any network interface on this system."))
+            logging.warn(_("You don't have enough permissions to open any network interface on this system. Please look at the README.rst file for more information."))
         return interfaces
 
     def readMessages(self, callback_readMessage, device, count, time):
@@ -152,8 +152,11 @@ class NetworkCapturer(AbstractCapturer):
         elif self.importLayer == 3:
             (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = \
                 self.decodeLayer2(header, payload)
-            (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum) = \
-                self.decodeLayer3(etherType, l2Payload)
+            try:
+                (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum) = \
+                    self.decodeLayer3(etherType, l2Payload)
+            except TypeError:
+                return
             message = L3NetworkMessage(
                 mUuid,
                 mTimestamp,
@@ -168,10 +171,13 @@ class NetworkCapturer(AbstractCapturer):
         else:
             (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = \
                 self.decodeLayer2(header, payload)
-            (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum) = \
-                self.decodeLayer3(etherType, l2Payload)
-            (l4Proto, l4SrcPort, l4DstPort, l4Payload) = \
-                self.decodeLayer4(ipProtocolNum, l3Payload)
+            try:
+                (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum) = \
+                    self.decodeLayer3(etherType, l2Payload)
+                (l4Proto, l4SrcPort, l4DstPort, l4Payload) = \
+                    self.decodeLayer4(ipProtocolNum, l3Payload)
+            except TypeError:
+                return
             if l4Payload.encode("hex") == "":
                 return
             message = L4NetworkMessage(
