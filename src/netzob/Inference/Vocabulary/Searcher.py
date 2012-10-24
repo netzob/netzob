@@ -91,10 +91,10 @@ class Searcher(object):
     #|   Generates data which can represent the specified Hexa
     #| @param value the value to search for
     #+----------------------------------------------
-    def getSearchedDataForHexadecimal(self, value):
+    def getSearchedDataForHexadecimal(self, value, extraInfo=None):
         # Creation of a SearchTask
         task = SearchTask(value, value, Format.HEX)
-        task.registerVariation(value, "Hexadecimal representation of '{0}'".format(value))
+        task.registerVariation(value, "Hex repr of '{0}'({1}))".format(value, extraInfo))
 #        task.registerVariation(value[::-1], "Inverted representation of '{0}'".format(value[::-1]))
         return [task]
 
@@ -198,7 +198,7 @@ class Searcher(object):
         dh = ((2 - len(dh)) * '0') + dh
 
         val = "{0}{1}{2}{3}".format(ah, bh, ch, dh)
-        tasks.extend(self.getSearchedDataForHexadecimal(val))
+        tasks.extend(self.getSearchedDataForHexadecimal(val, value))
 
         return tasks
 
