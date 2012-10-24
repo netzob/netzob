@@ -70,6 +70,7 @@ class AbstractMessage(object):
         self.leftReductionFactor = 0
         self.extraProperties = []
         self.visualizationFilters = []
+        self.mathematicFilters = []
 
         self.pattern = []
         if not pattern:
@@ -108,6 +109,11 @@ class AbstractMessage(object):
     #+----------------------------------------------
     def getStringData(self):
         message = str(self.data)
+
+        # Filter with math filters
+        for filter in self.getMathematicFilters():
+            message = filter.apply(message)
+
         return message
 
     def getReducedSize(self):
@@ -394,3 +400,30 @@ class AbstractMessage(object):
         self.visualizationFilters = []
         for a in savedFilters:
             self.visualizationFilters.append(a)
+
+    def removeMathematicFilter(self, filter):
+        """removeMathematicFilter:
+                Remove a precised mathematic filter.
+
+                @type filter: netzob.Common.Filters
+                @param filter: the filter that is removed.
+        """
+        fToRemove = None
+        for mFilter in self.mathematicFilters:
+            if mFilter.getName() == filter.getName():
+                fToRemove = mFilter
+                break
+        if fToRemove is not None:
+            self.mathematicFilters.remove(fToRemove)
+
+    def addMathematicFilter(self, filter):
+        """addMathematicFilter:
+                Add a precised mathematic filter.
+
+                @type filter: netzob.Common.Filters
+                @param filter: the filter that is added.
+        """
+        self.mathematicFilters.append(filter)
+
+    def getMathematicFilters(self):
+        return self.mathematicFilters
