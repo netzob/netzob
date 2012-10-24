@@ -111,8 +111,10 @@ class EnvironmentDependenciesSearcherController(object):
         self.searchTasks = []
         for prop in envDeps:
             if prop.getFormat() == Format.STRING:
-                self.searchTasks.extend(searcher.getSearchedDataForString(str(prop.getCurrentValue())))
+                self.log.debug("Search for String {0}...".format(prop.getCurrentValue()))
+#                self.searchTasks.extend(searcher.getSearchedDataForString(str(prop.getCurrentValue())))
             elif prop.getFormat() == Format.IP:
+                self.log.debug("Search for IP {0}...".format(prop.getCurrentValue()))
                 self.searchTasks.extend(searcher.getSearchedDataForIP(prop.getCurrentValue()))
             else:
                 self.log.warn("A property with format {0} cannot be searched.".format(prop.getFormat()))
