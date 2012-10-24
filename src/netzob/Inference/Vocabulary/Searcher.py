@@ -271,13 +271,13 @@ class Searcher(object):
         self.log.debug("Natural search of {0} in {1}".format(data, message.getStringData()))
         # Search naturally all the possible places of data in message
         indice = 0
-        while indice + len(data) <= len(message.getStringData()):
-            if message.getStringData()[indice:len(data) + indice] == data:
-                # We have a match
-                searchResult = SearchResult(message, "Natural search")
-                searchResult.addSegment(indice, len(data))
-                results.append(searchResult)
-            indice = indice + 1
+        messageData = message.getStringData()
+        indice = messageData.find(data, 0)
+        while indice >= 0:
+            searchResult = SearchResult(message, "Natural search")
+            searchResult.addSegment(indice, len(data))
+            results.append(searchResult)
+            indice = messageData.find(data, indice + 1)
 
         return results
 
