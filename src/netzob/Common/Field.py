@@ -824,8 +824,6 @@ class Field(object):
         if index is None:
             self.fields.append(field)
         else:
-            print "add field in ; "
-            print self.fields
             self.fields.insert(index, field)
 
         realIndex = self.fields.index(field)
