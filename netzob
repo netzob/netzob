@@ -37,37 +37,13 @@ import optparse
 from gi.repository import GObject
 
 #+---------------------------------------------------------------------------+
-#| Prepare, load and import the required modules
+#| Local imports
 #+---------------------------------------------------------------------------+
 sys.path.insert(0, 'src/')
-
-# Insert in the path the directory where _libNeedleman.pyd is
-# TODO here !
-if os.name == 'nt':
-    sys.path.insert(0, 'lib/libNeedleman/')
-
-try:
-    # Verify that required C extensions are available
-    from netzob import _libNeedleman
-    from netzob import _libScoreComputation
-    from netzob import _libInterface
-    from netzob import _libRegex
-except:
-    # Else, assume the path is gotten from the 'python setup.py build' command
-    arch = os.uname()[-1]
-    python_version = sys.version[:3]
-    build_lib_path = "build/lib.linux-" + arch + "-" + python_version
-    sys.path.append(build_lib_path)
-
-from netzob.Common.DepCheck import DepCheck
 from netzob.Common.CommandLine import CommandLine
 
-if __name__ == "__main__":
 
-    # Starting the dependency checker
-    if not DepCheck.checkRequiredDependency():
-        logging.fatal("Some required dependency are not available and prevent netzob from starting.")
-        sys.exit()
+if __name__ == "__main__":
 
     # Parsing Command Line arguments
     commandLineParser = CommandLine()
@@ -75,9 +51,33 @@ if __name__ == "__main__":
     # compute the requested execution following the provided arguments
     commandLineParser.parse()
 
-    GObject.threads_init()  # for handling concurrent GUI access from threads
+    # Starting the dependency checker
+    from netzob.Common.DepCheck import DepCheck
+    if not DepCheck.checkRequiredDependency():
+        logging.fatal("Some required dependency are not available and prevent netzob from starting.")
+        sys.exit()
+
+    # Insert in the path the directory where _libNeedleman.pyd is
+    # TODO here !
+    if os.name == 'nt':
+        sys.path.insert(0, 'lib/libNeedleman/')
+
+    try:
+        # Verify that required C extensions are available
+        from netzob import _libNeedleman
+        from netzob import _libScoreComputation
+        from netzob import _libInterface
+        from netzob import _libRegex
+    except:
+        # Else, assume the path is gotten from the 'python setup.py build' command
+        arch = os.uname()[-1]
+        python_version = sys.version[:3]
+        build_lib_path = "build/lib.linux-" + arch + "-" + python_version
+        sys.path.append(build_lib_path)
+
 
     if commandLineParser.isStartGUIRequested():
+        GObject.threads_init()  # for handling concurrent GUI access from threads
         from netzob.NetzobMainController import NetzobMainController
         netzobController = NetzobMainController()
         netzobController.run()
