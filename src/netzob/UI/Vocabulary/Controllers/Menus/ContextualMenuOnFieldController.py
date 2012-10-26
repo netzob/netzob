@@ -277,9 +277,9 @@ class ContextualMenuOnFieldController(object):
         for message in self.getSymbol().getMessages():
             mUuid = uuid.uuid4()
             newMessages.append(RawMessage(mUuid, message.getTimestamp(), ""))
-        # We concatenate between the first and last fields
+        # We concatenate between the first and last cells
         for index in range(firstField.getIndex(), lastField.getIndex() + 1):
-            cells = self.getSymbol().getField().getCellsByField(self.getSymbol().getFieldByIndex(index))
+            cells = self.getSymbol().getFieldByIndex(index).getCells()
             for i in range(len(cells)):
                 newMessages[i].setData(str(newMessages[i].getStringData()) + str(cells[i]))
         # We create a new symbol and register it
