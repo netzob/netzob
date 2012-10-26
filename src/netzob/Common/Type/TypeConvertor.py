@@ -152,11 +152,6 @@ class TypeConvertor():
             return raw
 
     @staticmethod
-    def encodeNetzobRawToGivenField(raw, field):
-        res = TypeConvertor.applyFieldEncoding(raw, field)
-        return res
-
-    @staticmethod
     def string2hex(msg):
         return [hex(ord(x)) for x in msg]
 
@@ -254,11 +249,14 @@ class TypeConvertor():
 
         if len(raw) % 2 == 0:  # Even length
             for i in range(0, len(raw), 2):
-                res = res + oct(int(raw[i: i + 2], 16))
+                tmp = oct(int(raw[i: i + 2], 16))
+                res = res + tmp[1:]  # Do not consider the first 0 character
         else:  # Odd length
             for i in range(0, len(raw) - 1, 2):
-                res = res + oct(int(raw[i: i + 2], 16))
-            res = res + oct(int(raw[-1], 16))
+                tmp = oct(int(raw[i: i + 2], 16))
+                res = res + tmp[1:]
+            tmp = oct(int(raw[-1], 16))
+            res = res + tmp[1:]
         return res
 
     @staticmethod
@@ -595,89 +593,6 @@ class TypeConvertor():
             i = i + 16
 
         return res.getvalue()
-
-    @staticmethod
-    #+----------------------------------------------
-    #| Transform each chunk according to the endianess
-    #+----------------------------------------------
-    def applyFieldEncoding(raw, field):
-        unitSize = field.getUnitSize()
-        endianess = field.getEndianess()
-        sign = field.getSign()
-        aFormat = field.getFormat()
-
-        # Handle unitSize
-        # TODO: support 4BITS
-        if unitSize == UnitSize.NONE:
-            tmp = TypeConvertor.encodeNetzobRawToGivenType(raw, aFormat)
-            return tmp
-        elif unitSize == UnitSize.BIT:
-            size = 1
-            return TypeConvertor.encodeNetzobRawToGivenType(raw, aFormat)
-        elif unitSize == UnitSize.BITS8:
-            size = 8
-        elif unitSize == UnitSize.BITS16:
-            size = 16
-        elif unitSize == UnitSize.BITS32:
-            size = 32
-        elif unitSize == UnitSize.BITS64:
-            size = 64
-        else:  # Render with no splitting
-            tmp = TypeConvertor.encodeNetzobRawToGivenType(raw, aFormat)
-            return tmp
-
-        # Handle endianess
-        if endianess == Endianess.BIG:
-            transform = ">"
-        else:
-            transform = "<"
-
-        res = ""
-        for i in range(0, len(raw), size / 4):
-            tmp = raw[i:i + (size / 4)]
-            initTmp = tmp
-
-            if len(tmp) == 2:  # In half-bytes
-                sizeStr = "B"
-            elif len(tmp) == 4:
-                sizeStr = "H"
-            elif len(tmp) == 8:
-                sizeStr = "I"
-            elif len(tmp) == 16:
-                sizeStr = "Q"
-            else:
-                sizeStr = "Q"
-                if endianess == Endianess.BIG:
-                    tmp = (16 - len(tmp)) * "0" + tmp  # Put padding on the left
-                else:
-                    tmp = tmp + (16 - len(tmp)) * "0"  # Put padding on the right
-
-            tmp = TypeConvertor.netzobRawToPythonRaw(tmp)
-
-            # Handle sign
-            if sign == Sign.SIGNED:
-                sizeStr = sizeStr.lower()
-
-            (tmp,) = struct.unpack(transform + sizeStr, tmp)
-
-            # Handle format
-            if aFormat == Format.BINARY:
-                tmp = TypeConvertor.netzobRawToBinary(initTmp)
-            elif aFormat == Format.OCTAL:
-                tmp = "%o" % tmp
-            elif aFormat == Format.DECIMAL:
-                tmp = "%d" % tmp
-            elif aFormat == Format.HEX:
-                fmt = "%" + str(size / 4) + "x"
-                tmp = fmt % tmp
-            elif aFormat == Format.STRING:
-                tmp = TypeConvertor.netzobRawToString(initTmp)
-            elif aFormat == Format.FLOAT:
-                tmp = "%f" % tmp
-
-            res += str(tmp)
-
-        return res  # s[:-1]  # We delete the last space character
 
 #+---------------------------------------------------------------------------+
 #| Convertors by Benjamin                                                    |

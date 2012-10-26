@@ -84,15 +84,15 @@ class FormatFilter(EncodingFilter):
         # we apply endianess on it
         # we consider the normal mode is big-endian
         for i in range(0, len(splittedData)):
-            netzobRaw = splittedData[i]
+            origNetzobRaw = splittedData[i]
 
             # SPECIAL CASE : ASCII we do not compute endianess neither signed/unsigned
             if not self.formatType == Format.STRING and UnitSize.getSizeInBits(self.unitsize) >= 8 and not self.formatType == Format.BINARY:
-                tmpVal = UnitSize.getSizeInBits(self.unitsize) / 4 - len(netzobRaw)
+                tmpVal = UnitSize.getSizeInBits(self.unitsize) / 4 - len(origNetzobRaw)
                 if self.endianness == Endianess.BIG:
-                    netzobRaw = (tmpVal * "0") + netzobRaw
+                    netzobRaw = (tmpVal * "0") + origNetzobRaw
                 else:
-                    netzobRaw = netzobRaw + (tmpVal * "0")
+                    netzobRaw = origNetzobRaw + (tmpVal * "0")
 
                 # Convert in Python raw
                 pythonraw = TypeConvertor.netzobRawToPythonRaw(netzobRaw)
@@ -112,22 +112,22 @@ class FormatFilter(EncodingFilter):
                 (unpackRaw,) = struct.unpack(transformer, pythonraw)
 
                 localResult = ""
+                fmt = "%" + str(UnitSize.getMaxDigitForTypeAndUnitSize(self.formatType, self.unitsize))
                 if self.formatType == Format.OCTAL:
-                    localResult = "%o" % unpackRaw
+                    localResult = (fmt + "o") % unpackRaw
                 elif self.formatType == Format.DECIMAL:
-                    localResult = "%d" % unpackRaw
+                    localResult = (fmt + "d") % unpackRaw
                 elif self.formatType == Format.HEX:
-                    fmt = "%" + str(UnitSize.getSizeInBits(self.unitsize) / 4) + "x"
-                    localResult = fmt % unpackRaw
+                    localResult = (fmt + "s") % origNetzobRaw
                 encodedSplittedData.append(localResult)
             elif self.formatType == Format.STRING:
-                encodedSplittedData.append(TypeConvertor.netzobRawToString(netzobRaw))
+                encodedSplittedData.append(TypeConvertor.netzobRawToString(origNetzobRaw))
             elif self.formatType == Format.BINARY:
-                encodedSplittedData.append(TypeConvertor.netzobRawToBinary(netzobRaw))
+                encodedSplittedData.append(TypeConvertor.netzobRawToBinary(origNetzobRaw))
             elif self.formatType == Format.IPv4:
-                encodedSplittedData.append(TypeConvertor.netzobRawToIPv4(netzobRaw))
+                encodedSplittedData.append(TypeConvertor.netzobRawToIPv4(origNetzobRaw))
             elif UnitSize.getSizeInBits(self.unitsize) < UnitSize.getSizeInBits(UnitSize.BITS8):
-                encodedSplittedData.append(TypeConvertor.encodeNetzobRawToGivenType(netzobRaw, self.formatType))
+                encodedSplittedData.append(TypeConvertor.encodeNetzobRawToGivenType(origNetzobRaw, self.formatType))
 
         # Before sending back (;D) we join everything
         return " ".join(encodedSplittedData)
