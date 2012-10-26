@@ -143,7 +143,14 @@ class ContextualMenuOnLayerView(object):
         possible_choices = Format.getSupportedFormats()
         subMenu = Gtk.Menu()
         for value in possible_choices:
-            item = Gtk.MenuItem(value)
+            # Compute if its activated
+            toggled = False
+            if self.controller.layer.getFormat() == value:
+                toggled = True
+
+            # Create the check item
+            item = Gtk.CheckMenuItem(value)
+            item.set_active(toggled)
             item.show()
             item.connect("activate", self.controller.changeFormat_cb, value)
             subMenu.append(item)
@@ -156,7 +163,13 @@ class ContextualMenuOnLayerView(object):
         possible_choices = [UnitSize.NONE, UnitSize.BIT, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64]
         subMenu = Gtk.Menu()
         for value in possible_choices:
-            item = Gtk.MenuItem(value)
+            # Compute if its activated
+            toggled = False
+            if self.controller.layer.getUnitSize() == value:
+                toggled = True
+
+            item = Gtk.CheckMenuItem(value)
+            item.set_active(toggled)
             item.show()
             item.connect("activate", self.controller.changeUnitSize_cb, value)
             subMenu.append(item)
@@ -169,7 +182,13 @@ class ContextualMenuOnLayerView(object):
         possible_choices = [Sign.SIGNED, Sign.UNSIGNED]
         subMenu = Gtk.Menu()
         for value in possible_choices:
-            item = Gtk.MenuItem(value)
+            # Compute if its activated
+            toggled = False
+            if self.controller.layer.getSign() == value:
+                toggled = True
+
+            item = Gtk.CheckMenuItem(value)
+            item.set_active(toggled)
             item.show()
             item.connect("activate", self.controller.changeSign_cb, value)
             subMenu.append(item)
@@ -182,7 +201,13 @@ class ContextualMenuOnLayerView(object):
         possible_choices = [Endianess.BIG, Endianess.LITTLE]
         subMenu = Gtk.Menu()
         for value in possible_choices:
-            item = Gtk.MenuItem(value)
+            # Compute if its activated
+            toggled = False
+            if self.controller.layer.getEndianess() == value:
+                toggled = True
+
+            item = Gtk.CheckMenuItem(value)
+            item.set_active(toggled)
             item.show()
             item.connect("activate", self.controller.changeEndianess_cb, value)
             subMenu.append(item)
