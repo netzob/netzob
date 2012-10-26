@@ -187,6 +187,9 @@ class NetzobMainController(object):
 
             # Close the controller
             Gtk.main_quit()
+            return False  # We inform Gtk that we want to emit destroy signal
+        else:
+            return True  # We inform Gtk that we don't want to emit destroy signal
 
     def closeCurrentProject(self):
         """Close and offers to save the pending modifications in the
