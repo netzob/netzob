@@ -209,25 +209,6 @@
                     <property name="homogeneous">True</property>
                   </packing>
                 </child>
-                <child>
-                  <object class="GtkToolButton" id="fieldLimits">
-                    <property name="use_action_appearance">False</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="has_tooltip">True</property>
-                    <property name="tooltip_markup" translatable="yes">Display min and max size of selected symbol</property>
-                    <property name="tooltip_text" translatable="yes">Display min and max size of selected symbol</property>
-                    <property name="use_action_appearance">False</property>
-                    <property name="label" translatable="yes">Field Limits</property>
-                    <property name="use_underline">True</property>
-                    <property name="stock_id">netzob-field-limit</property>
-                    <signal name="clicked" handler="fieldLimits_activate_cb" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
