@@ -91,11 +91,11 @@ class Searcher(object):
     #|   Generates data which can represent the specified Hexa
     #| @param value the value to search for
     #+----------------------------------------------
-    def getSearchedDataForHexadecimal(self, value):
+    def getSearchedDataForHexadecimal(self, value, extraInfo=None):
         # Creation of a SearchTask
         task = SearchTask(value, value, Format.HEX)
-        task.registerVariation(value, "Hexadecimal representation of '{0}'".format(value))
-        task.registerVariation(value[::-1], "Inverted representation of '{0}'".format(value[::-1]))
+        task.registerVariation(value, "Hex repr of '{0}'({1}))".format(value, extraInfo))
+#        task.registerVariation(value[::-1], "Inverted representation of '{0}'".format(value[::-1]))
         return [task]
 
     #+----------------------------------------------
@@ -151,38 +151,38 @@ class Searcher(object):
         if d2 < 10:
             d2 = "0" + d2
 
-        # in String :
-        # - 192.168.0.10
-        val = "%s.%s.%s.%s" % (a, b, c, d)
-        tasks.extend(self.getSearchedDataForString(val))
-
-        # - 192.168.000.010
-        val = "%s.%s.%s.%s" % (a2, b2, c2, d2)
-        tasks.extend(self.getSearchedDataForString(val))
-
-        # - 192168000010
-        val = "%s%s%s%s" % (a2, b2, c2, d2)
-        tasks.extend(self.getSearchedDataForString(val))
-
-        # - 10.0.168.192
-        val = "%s.%s.%s.%s" % (d, c, b, a)
-        tasks.extend(self.getSearchedDataForString(val))
-
-        # - 000.010.192.168
-        val = "%s.%s.%s.%s" % (d2, c2, b2, a2)
-        tasks.extend(self.getSearchedDataForString(val))
-
-        # - 0.10.192.168
-        val = "%s.%s.%s.%s" % (c, d, a, b)
-        tasks.extend(self.getSearchedDataForString(val))
-
-        # - 000.010.192.168
-        val = "%s.%s.%s.%s" % (c2, d2, a2, b2)
-        tasks.extend(self.getSearchedDataForString(val))
-
-        # - 000010192168
-        val = "%s%s%s%s" % (c2, d2, a2, b2)
-        tasks.extend(self.getSearchedDataForString(val))
+#        # in String :
+#        # - 192.168.0.10
+#        val = "%s.%s.%s.%s" % (a, b, c, d)
+#        tasks.extend(self.getSearchedDataForString(val))
+#
+#        # - 192.168.000.010
+#        val = "%s.%s.%s.%s" % (a2, b2, c2, d2)
+#        tasks.extend(self.getSearchedDataForString(val))
+#
+#        # - 192168000010
+#        val = "%s%s%s%s" % (a2, b2, c2, d2)
+#        tasks.extend(self.getSearchedDataForString(val))
+#
+#        # - 10.0.168.192
+#        val = "%s.%s.%s.%s" % (d, c, b, a)
+#        tasks.extend(self.getSearchedDataForString(val))
+#
+#        # - 000.010.192.168
+#        val = "%s.%s.%s.%s" % (d2, c2, b2, a2)
+#        tasks.extend(self.getSearchedDataForString(val))
+#
+#        # - 0.10.192.168
+#        val = "%s.%s.%s.%s" % (c, d, a, b)
+#        tasks.extend(self.getSearchedDataForString(val))
+#
+#        # - 000.010.192.168
+#        val = "%s.%s.%s.%s" % (c2, d2, a2, b2)
+#        tasks.extend(self.getSearchedDataForString(val))
+#
+#        # - 000010192168
+#        val = "%s%s%s%s" % (c2, d2, a2, b2)
+#        tasks.extend(self.getSearchedDataForString(val))
 
         #in hexadecimal
         ah = hex(int(a))[2:]
@@ -198,7 +198,7 @@ class Searcher(object):
         dh = ((2 - len(dh)) * '0') + dh
 
         val = "{0}{1}{2}{3}".format(ah, bh, ch, dh)
-        tasks.extend(self.getSearchedDataForHexadecimal(val))
+        tasks.extend(self.getSearchedDataForHexadecimal(val, value))
 
         return tasks
 
@@ -261,9 +261,9 @@ class Searcher(object):
     def extendedSearch(self, data, message):
         results = []
         results.extend(self.naturalSearch(data, message))
-        results.extend(self.inversedSearch(data, message))
-        results.extend(self.semiInvertedOnNaturalSearch(data, message))
-        results.extend(self.semiInvertedOnInvertedSearch(data, message))
+#        results.extend(self.inversedSearch(data, message))
+#        results.extend(self.semiInvertedOnNaturalSearch(data, message))
+#        results.extend(self.semiInvertedOnInvertedSearch(data, message))
         return results
 
     def naturalSearch(self, data, message):
@@ -271,13 +271,13 @@ class Searcher(object):
         self.log.debug("Natural search of {0} in {1}".format(data, message.getStringData()))
         # Search naturally all the possible places of data in message
         indice = 0
-        while indice + len(data) <= len(message.getStringData()):
-            if message.getStringData()[indice:len(data) + indice] == data:
-                # We have a match
-                searchResult = SearchResult(message, "Natural search")
-                searchResult.addSegment(indice, len(data))
-                results.append(searchResult)
-            indice = indice + 1
+        messageData = message.getStringData()
+        indice = messageData.find(data, 0)
+        while indice >= 0:
+            searchResult = SearchResult(message, "Natural search")
+            searchResult.addSegment(indice, len(data))
+            results.append(searchResult)
+            indice = messageData.find(data, indice + 1)
 
         return results
 

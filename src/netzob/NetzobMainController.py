@@ -49,6 +49,7 @@ gi.require_version('Gtk', '3.0')
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.DepCheck import DepCheck
+from netzob.Common.SignalsManager import SignalsManager
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.Common.Workspace import Workspace
 from netzob.Common.CommandLine import CommandLine
@@ -79,6 +80,9 @@ class NetzobMainController(object):
         self.currentWorkspace = self._loadWorkspace(opts)
         self._initLogging(opts)
         self._initResourcesAndLocales()
+
+        # Intialize signals manager
+        self.signalsManager = SignalsManager()
 
         # Loading the last project
         self.currentProject = self.currentWorkspace.getLastProject()
@@ -209,6 +213,10 @@ class NetzobMainController(object):
             elif resp == Gtk.ResponseType.CANCEL:
                 logging.debug("Abort quitting")
                 return False
+
+        # Emit a signal for toolbar upgrade
+        self.getSignalsManager().emitSignal(SignalsManager.SIG_PROJECT_CLOSE)
+
         self.currentProjet = None
         return True
 
@@ -614,6 +622,12 @@ class NetzobMainController(object):
             newProject = Project.loadProject(self.currentWorkspace, projectPath)
             if newProject is not None and self.closeCurrentProject():
                 self.currentProject = newProject
+                # Emit a signal for toolbar upgrade
+                self.getSignalsManager().emitSignal(SignalsManager.SIG_PROJECT_OPEN)
                 self.view.currentProjectHasChanged()
             else:
                 self.view.currentProjectHasChanged()
+
+    def getSignalsManager(self):
+        """returns the signals manager"""
+        return self.signalsManager

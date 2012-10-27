@@ -16,6 +16,7 @@
         <property name="label" translatable="yes">Save Project</property>
         <property name="tooltip" translatable="yes">Save current project</property>
         <property name="stock_id">gtk-save</property>
+        <property name="sensitive">False</property>
         <signal name="activate" handler="saveProject_activate_cb" swapped="no"/>
       </object>
       <accelerator key="s" modifiers="GDK_CONTROL_MASK"/>
@@ -32,6 +33,7 @@
         <property name="label" translatable="yes">Export Project…</property>
         <property name="tooltip" translatable="yes">Save current project</property>
         <property name="hide_if_empty">False</property>
+        <property name="sensitive">False</property>
       </object>
     </child>
     <child>

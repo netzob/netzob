@@ -45,6 +45,7 @@ from gi.repository import GObject
 #+---------------------------------------------------------------------------+
 from netzob.UI.NetzobWidgets import addNetzobIconsToDefaultFactory
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+from netzob.Common.SignalsManager import SignalsManager
 from netzob.UI.Vocabulary.Controllers.VocabularyController import VocabularyController
 from netzob.UI.Grammar.Controllers.GrammarController import GrammarController
 from netzob.UI.Simulator.Controllers.SimulatorController import SimulatorController
@@ -70,6 +71,27 @@ class NetzobMainView(object):
         self.currentPerspectiveActionGroup = None
         self.currentPerspectivePanel = None
         self.loadBaseMenuBarAndToolbar()
+        self.registerSignalListeners()
+
+    def registerSignalListeners(self):
+        # Register signal processing on toolbar elements
+        signalManager = self.controller.getSignalsManager()
+        if signalManager is None:
+            self.log.warning("No signal manager has been found.")
+            return
+
+        signalManager.attach(self.projectStatusHasChanged_cb, [SignalsManager.SIG_PROJECT_OPEN, SignalsManager.SIG_PROJECT_CLOSE])
+
+    def projectStatusHasChanged_cb(self, signal):
+        """projectStatusHasChanged_cb:
+        Callback executed when a signal is emitted."""
+
+        if signal == SignalsManager.SIG_PROJECT_OPEN:
+            self.mainActionGroup.get_action('saveProject').set_sensitive(True)
+            self.mainActionGroup.get_action('exportProject').set_sensitive(True)
+        elif signal == SignalsManager.SIG_PROJECT_CLOSE:
+            self.mainActionGroup.get_action('saveProject').set_sensitive(False)
+            self.mainActionGroup.get_action('exportProject').set_sensitive(False)
 
     def _getObjects(self, builder, objectsList):
         for object in objectsList:

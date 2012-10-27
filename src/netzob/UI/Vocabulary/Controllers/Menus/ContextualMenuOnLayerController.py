@@ -113,15 +113,41 @@ class ContextualMenuOnLayerController(object):
     def applyMathematicFilter_cb(self, event, mathFilter):
         """Add the selected mathematics filter"""
 
-        found = False
-        for appliedFilter in self.layer.getMathematicFilters():
-            if appliedFilter.getName() == mathFilter.getName():
-                found = True
+        # Computes if the current included messages are already filtered
+        allFiltered = True
+
+        for message in self.layer.getMessages():
+            found = False
+            for filter in message.getMathematicFilters():
+                if filter.getName() == mathFilter.getName():
+                    found = True
+            if not found:
+                allFiltered = False
                 break
-        if found:
-            self.layer.removeMathematicFilter(appliedFilter)
+
+        if not allFiltered:
+            #Activate filter
+            for message in self.layer.getMessages():
+                found = False
+                for filter in message.getMathematicFilters():
+                    if filter.getName() == mathFilter.getName():
+                        found = True
+                if not found:
+                    message.addMathematicFilter(mathFilter)
         else:
-            self.layer.addMathematicFilter(mathFilter)
+            # Deactivate filter
+            for message in self.layer.getMessages():
+                message.removeMathematicFilter(mathFilter)
+
+#        found = False
+#        for appliedFilter in self.layer.getMathematicFilters():
+#            if appliedFilter.getName() == mathFilter.getName():
+#                found = True
+#                break
+#        if found:
+#            self.layer.removeMathematicFilter(appliedFilter)
+#        else:
+#            self.layer.addMathematicFilter(mathFilter)
 
         self.layer.resetPartitioning()
         self.vocabularyController.view.updateSelectedMessageTable()

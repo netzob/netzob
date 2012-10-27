@@ -153,6 +153,7 @@ class CustomMathFilterController(object):
                 self._view.scrolledwindow3.show_all()
                 self._view.labelMessage.set_label("{0}".format(errorMessage))
                 self._view.labelMessage.show()
+                return
 
             errorMessage = self.filter.compileReverseSourceCode()
 
