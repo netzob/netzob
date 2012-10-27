@@ -34,6 +34,7 @@
         <property name="label" translatable="yes">Concatenate Fields</property>
         <property name="tooltip" translatable="yes">Concatenate selected fields</property>
         <property name="stock_id">netzob-concat-field</property>
+        <property name="sensitive">False</property>
         <signal name="activate" handler="concatField_activate_cb" swapped="no"/>
       </object>
     </child>
@@ -42,6 +43,7 @@
         <property name="label" translatable="yes">Split Field</property>
         <property name="tooltip" translatable="yes">Split selected field</property>
         <property name="stock_id">netzob-edit-cut-left</property>
+        <property name="sensitive">False</property>
         <signal name="activate" handler="split_activate_cb" swapped="no"/>
       </object>
     </child>
@@ -50,7 +52,6 @@
         <property name="label" translatable="yes">Edit Variable…</property>
         <property name="tooltip" translatable="yes">Edit the variable for selected field</property>
         <property name="stock_id">netzob-create-variable</property>
-        <property name="sensitive">False</property>
         <signal name="activate" handler="editVariable_activate_cb" swapped="no"/>
       </object>
     </child>

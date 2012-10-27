@@ -137,6 +137,23 @@ class VocabularyView(object):
 
         signalManager.attach(self.projectStatusHasChanged_cb, [SignalsManager.SIG_PROJECT_OPEN, SignalsManager.SIG_PROJECT_CLOSE])
         signalManager.attach(self.symbolSelectionHasChanged_cb, [SignalsManager.SIG_SYMBOLS_NO_SELECTION, SignalsManager.SIG_SYMBOLS_SINGLE_SELECTION, SignalsManager.SIG_SYMBOLS_MULTIPLE_SELECTION])
+        signalManager.attach(self.fieldSelectionHasChanged_cb, [SignalsManager.SIG_FIELDS_NO_SELECTION, SignalsManager.SIG_FIELDS_SINGLE_SELECTION, SignalsManager.SIG_FIELDS_MULTIPLE_SELECTION])
+
+    def fieldSelectionHasChanged_cb(self, signal):
+        """fieldSelectionHasChanhed_cb:
+            Callback executed when none, or or multiple fields are selected."""
+        if signal == SignalsManager.SIG_FIELDS_NO_SELECTION:
+            self._actionGroup.get_action('concatField').set_sensitive(False)
+            self._actionGroup.get_action('split').set_sensitive(False)
+            self._actionGroup.get_action('editVariable').set_sensitive(False)
+        elif signal == SignalsManager.SIG_FIELDS_SINGLE_SELECTION:
+            self._actionGroup.get_action('concatField').set_sensitive(False)
+            self._actionGroup.get_action('split').set_sensitive(True)
+            self._actionGroup.get_action('editVariable').set_sensitive(True)
+        elif signal == SignalsManager.SIG_FIELDS_MULTIPLE_SELECTION:
+            self._actionGroup.get_action('concatField').set_sensitive(True)
+            self._actionGroup.get_action('split').set_sensitive(False)
+            self._actionGroup.get_action('editVariable').set_sensitive(False)
 
     def symbolSelectionHasChanged_cb(self, signal):
         """symbolSelectionHasChanged_cb:
