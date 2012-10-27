@@ -66,7 +66,10 @@ class FormatFilter(EncodingFilter):
         if self.unitsize != UnitSize.NONE:
             # First we apply the unit size
             # Default modulo = 2 => 8BITS
-            modulo = UnitSize.getSizeInBits(self.unitsize) / 4
+            if self.unitsize == UnitSize.BIT:
+                modulo = 1
+            else:
+                modulo = UnitSize.getSizeInBits(self.unitsize) / 4
 
             splittedData = []
             tmpResult = ""

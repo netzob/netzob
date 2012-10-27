@@ -160,7 +160,7 @@ class ContextualMenuOnLayerView(object):
         menu.append(item)
 
         # Unitsize submenu
-        possible_choices = [UnitSize.NONE, UnitSize.BIT, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64]
+        possible_choices = [UnitSize.NONE, UnitSize.BITS4, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64]
         subMenu = Gtk.Menu()
         for value in possible_choices:
             # Compute if its activated
