@@ -42,7 +42,7 @@ import random
 #+---------------------------------------------------------------------------+
 from netzob.Common.Plugins.CapturerPlugin import CapturerPlugin
 from netzob.Common.Plugins.Extensions.CapturerMenuExtension import CapturerMenuExtension
-from netzob_plugins.Capturers.NetworkCapturer.NetworkCapturerController import NetworkCapturerController
+from netzob_plugins.Capturers.NetworkCapturer.NetworkCapturer.NetworkCapturerController import NetworkCapturerController
 from netzob.UI.NetzobWidgets import NetzobErrorMessage
 
 
@@ -124,7 +124,7 @@ class NetworkCapturerPlugin(CapturerPlugin):
                 @param val:
         """
         if self.netzob.getCurrentProject() is None:
-            NetzobErrorMessage(_("No project selected."))            
+            NetzobErrorMessage(_("No project selected."))
             return
         self.finish = vocabularyView.updateSymbolList
         controller = NetworkCapturerController(self.netzob, self)

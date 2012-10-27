@@ -105,6 +105,18 @@ Once installed, running Netzob is as simple as executing the provided script::
 This script is in Python's path if you've installed Netzob, otherwise
 (in developer mode), its located in the top distribution directory.
 
+
+Miscellaneous
+-------------
+
+Configuration requirements for Network and PCAP input::
+
+  $ sudo setcap cap_net_raw=ep /usr/bin/python2.XX
+
+Configuration requirements for IPC input on Ubuntu::
+
+  $ sudo bash -c "echo 0 > /proc/sys/kernel/yama/ptrace_scope"
+
 Documentation
 =============
 

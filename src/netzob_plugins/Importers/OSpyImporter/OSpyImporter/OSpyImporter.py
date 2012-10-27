@@ -75,7 +75,7 @@ class OSpyImporter(AbstractImporter):
         functionList = []
         for xmlMessage in xmlRoot.findall("Messages"):
             message = self._parseMessage(xmlMessage)
-            if message is not None and (message.getL4Protocol() == "EncryptMessage" or message.getL4Protocol() == "DecryptMessage"):
+            if message is not None:  # and (message.getL4Protocol() == "EncryptMessage" or message.getL4Protocol() == "DecryptMessage"):
                 messageList.append(message)
                 if not message.getL4Protocol() in functionList:
                     functionList.append(message.getL4Protocol())
