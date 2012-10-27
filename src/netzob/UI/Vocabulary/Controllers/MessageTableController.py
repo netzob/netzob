@@ -74,9 +74,6 @@ class MessageTableController(object):
                         logging.warn("Impossible to retrieve the requested message ({0})".format(msgID))
                     else:
                         self.selectedMessages.append(message)
-            self.vocabularyPerspective.updateMessageProperties()
-            return
-        self.selectedMessages = []
         self.vocabularyPerspective.updateMessageProperties()
 
     def messageListBox_button_press_event_cb(self, box, eventButton):
