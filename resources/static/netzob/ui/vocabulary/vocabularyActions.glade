@@ -60,6 +60,7 @@
         <property name="label" translatable="yes">Move to another symbol</property>
         <property name="tooltip" translatable="yes">Move selected messages to another symbol</property>
         <property name="stock_id">netzob-move-to-symbol</property>
+        <property name="sensitive">False</property>
         <signal name="activate" handler="moveMessagesToOtherSymbol_activate_cb" swapped="no"/>
       </object>
     </child>
@@ -68,6 +69,7 @@
         <property name="label" translatable="yes">Delete</property>
         <property name="tooltip" translatable="yes">Delete selected message(s)</property>
         <property name="stock_id">gtk-delete</property>
+        <property name="sensitive">False</property>
         <signal name="activate" handler="deleteMessages_activate_cb" swapped="no"/>
       </object>
     </child>
@@ -180,6 +182,7 @@
         <property name="label" translatable="yes">Filter messages</property>
         <property name="tooltip" translatable="yes">Filter messages in all messages of current symbol</property>
         <property name="stock_id">gtk-find</property>
+        <property name="sensitive">False</property>
         <signal name="toggled" handler="filterMessages_toggled_cb" swapped="no"/>
       </object>
     </child>

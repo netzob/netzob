@@ -54,6 +54,10 @@ class SignalsManager(object):
     SIG_FIELDS_SINGLE_SELECTION = "field.single_selection"
     SIG_FIELDS_MULTIPLE_SELECTION = "field.multiple_selection"
 
+    SIG_MESSAGES_NO_SELECTION = "messages.no_selection"
+    SIG_MESSAGES_SINGLE_SELECTION = "messages.single_selection"
+    SIG_MESSAGES_MULTIPLE_SELECTION = "messages.multiple_selection"
+
     def __init__(self):
         self.log = logging.getLogger(__name__)
         self.log.debug("Initialize signals manager")

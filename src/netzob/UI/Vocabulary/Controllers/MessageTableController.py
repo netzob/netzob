@@ -36,6 +36,7 @@ import logging
 #+---------------------------------------------------------------------------+
 from netzob.UI.Vocabulary.Views.MessageTableView import MessageTableView
 from netzob.UI.Vocabulary.Controllers.Menus.ContextualMenuOnFieldController import ContextualMenuOnFieldController
+from netzob.Common.SignalsManager import SignalsManager
 
 
 class MessageTableController(object):
@@ -75,6 +76,15 @@ class MessageTableController(object):
                     else:
                         self.selectedMessages.append(message)
         self.vocabularyPerspective.updateMessageProperties()
+
+        # Send signals to update toolbar
+        nbSelectedMessage = len(self.selectedMessages)
+        if nbSelectedMessage == 0:
+            self.getSignalsManager().emitSignal(SignalsManager.SIG_MESSAGES_NO_SELECTION)
+        elif nbSelectedMessage == 1:
+            self.getSignalsManager().emitSignal(SignalsManager.SIG_MESSAGES_SINGLE_SELECTION)
+        elif nbSelectedMessage > 1:
+            self.getSignalsManager().emitSignal(SignalsManager.SIG_MESSAGES_MULTIPLE_SELECTION)
 
     def messageListBox_button_press_event_cb(self, box, eventButton):
         self.vocabularyPerspective.setSelectedMessageTable(self.view)
