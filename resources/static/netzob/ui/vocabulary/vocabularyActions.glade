@@ -130,11 +130,13 @@
     <child>
       <object class="GtkAction" id="automaticToolMenu">
         <property name="label" translatable="yes">Automatic Tool</property>
+        <property name="sensitive">False</property>
       </object>
     </child>
     <child>
       <object class="GtkAction" id="manualToolMenu">
         <property name="label" translatable="yes">Manual Tool</property>
+        <property name="sensitive">False</property>
       </object>
     </child>
     <child>

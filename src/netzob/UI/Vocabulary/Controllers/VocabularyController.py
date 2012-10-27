@@ -213,7 +213,6 @@ class VocabularyController(object):
     def toggleCellRenderer_toggled_cb(self, widget, buttonid):
         # Update this flag so the line won't be selected.
         self.symbol_list_set_selection = False
-
         model = self.view.symbolListStore
         model[buttonid][0] = not model[buttonid][0]
         self.view.updateSymbolListToolbar()
