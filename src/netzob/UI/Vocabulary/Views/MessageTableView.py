@@ -36,6 +36,7 @@ import logging
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk, GLib, Pango
 import gi
+from netzob.Common.SignalsManager import SignalsManager
 gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
@@ -456,6 +457,16 @@ class TreeViewHeaderWidget(Gtk.VBox):
             normalFont = Pango.FontDescription()
             normalFont.set_weight(Pango.Weight.NORMAL)
             self.titleLabel.modify_font(normalFont)
+
+        # Emit Signals to update toolbar status
+        nbSelectedFields = len(self.messageTableView.treeViewHeaderGroup.getSelectedFields())
+        signalsManager = self.messageTableView.controller.getSignalsManager()
+        if nbSelectedFields == 0:
+            signalsManager.emitSignal(SignalsManager.SIG_FIELDS_NO_SELECTION)
+        elif nbSelectedFields == 1:
+            signalsManager.emitSignal(SignalsManager.SIG_FIELDS_SINGLE_SELECTION)
+        elif nbSelectedFields > 1:
+            signalsManager.emitSignal(SignalsManager.SIG_FIELDS_MULTIPLE_SELECTION)
 
     ## Callbacks
 

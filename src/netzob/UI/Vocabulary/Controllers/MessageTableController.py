@@ -49,6 +49,9 @@ class MessageTableController(object):
     def view(self):
         return self._view
 
+    def getSignalsManager(self):
+        return self.vocabularyPerspective.netzob.getSignalsManager()
+
     def getSelectedMessages(self):
         return self.selectedMessages
 
