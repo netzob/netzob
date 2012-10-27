@@ -38,6 +38,7 @@ import logging
 from gi.repository import Gtk, Gdk
 import gi
 from netzob.UI.Vocabulary.Controllers.MessageTableController import MessageTableController
+from netzob.Common.SignalsManager import SignalsManager
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.UI.Vocabulary.Controllers.MessagesDistributionController import MessagesDistributionController
 from netzob.UI.Common.Controllers.MoveMessageController import MoveMessageController
@@ -90,6 +91,12 @@ class VocabularyView(object):
             "vocabularyView.glade"))
         self._getObjects(self.builder, ["vocabularyPanel", "symbolListStore",
                                         "concatSymbolButton", "deleteSymbolButton", "newMessageList",
+                                        "sequenceAlignmentButton",
+                                        "partitioningForceButton",
+                                        "partitioningSimpleButton",
+                                        "partitioningSmoothButton",
+                                        "partitioningResetButton",
+                                        "messagesDistributionButton",
                                         "projectTreeview", "symbolTreeview", "messageTreeview", "fieldTreeview",
                                         "projectPropertiesListstore", "symbolPropertiesListstore", "messagePropertiesListstore",
                                         "messageTableBox", "symbolListTreeView",
@@ -119,6 +126,58 @@ class VocabularyView(object):
         self.filterMessagesController = FilterMessagesController(self.controller)
         self.messageTableBoxAndResearchBox.pack_end(self.filterMessagesController._view.filterBar, False, False, 0)
         self.filterMessagesController.hide()
+        self.registerSignalListeners()
+
+    def registerSignalListeners(self):
+        # Register signal processing on toolbar elements
+        signalManager = self.netzob.getSignalsManager()
+        if signalManager is None:
+            self.log.warning("No signal manager has been found.")
+            return
+
+        signalManager.attach(self.projectStatusHasChanged_cb, [SignalsManager.SIG_PROJECT_OPEN, SignalsManager.SIG_PROJECT_CLOSE])
+        signalManager.attach(self.symbolSelectionHasChanged_cb, [SignalsManager.SIG_SYMBOLS_NO_SELECTION, SignalsManager.SIG_SYMBOLS_SINGLE_SELECTION, SignalsManager.SIG_SYMBOLS_MULTIPLE_SELECTION])
+
+    def symbolSelectionHasChanged_cb(self, signal):
+        """symbolSelectionHasChanged_cb:
+        callback executed when none, one or multiple symbols are selected."""
+        if signal == SignalsManager.SIG_SYMBOLS_NO_SELECTION:
+            self._actionGroup.get_action('partitioningSimple').set_sensitive(False)
+            self._actionGroup.get_action('partitioningSmooth').set_sensitive(False)
+            self._actionGroup.get_action('partitioningReset').set_sensitive(False)
+            self._actionGroup.get_action('editVariable').set_sensitive(False)
+            self._actionGroup.get_action('environmentDep').set_sensitive(False)
+            self._actionGroup.get_action('messagesDistribution').set_sensitive(False)
+            self._actionGroup.get_action('partitioningForce').set_sensitive(False)
+            self._actionGroup.get_action('sequenceAlignment').set_sensitive(False)
+        elif signal == SignalsManager.SIG_SYMBOLS_SINGLE_SELECTION or SignalsManager.SIG_SYMBOLS_MULTIPLE_SELECTION:
+            self._actionGroup.get_action('partitioningSimple').set_sensitive(True)
+            self._actionGroup.get_action('partitioningSmooth').set_sensitive(True)
+            self._actionGroup.get_action('partitioningReset').set_sensitive(True)
+            self._actionGroup.get_action('environmentDep').set_sensitive(True)
+            self._actionGroup.get_action('messagesDistribution').set_sensitive(True)
+            self._actionGroup.get_action('partitioningForce').set_sensitive(True)
+            self._actionGroup.get_action('sequenceAlignment').set_sensitive(True)
+            if signal == SignalsManager.SIG_SYMBOLS_SINGLE_SELECTION:
+                self._actionGroup.get_action('editVariable').set_sensitive(False)
+
+    def projectStatusHasChanged_cb(self, signal):
+        """projectStatusHasChanged_cb:
+        Callback executed when a signal is emitted."""
+
+        if signal == SignalsManager.SIG_PROJECT_OPEN:
+            self._actionGroup.get_action('importMessagesFromFile').set_sensitive(True)
+            self._actionGroup.get_action('captureMessages').set_sensitive(True)
+            self._actionGroup.get_action('relationsViewer').set_sensitive(True)
+            self._actionGroup.get_action('searchMenu').set_sensitive(True)
+            self._actionGroup.get_action('searchText').set_sensitive(True)
+            self._actionGroup.get_action('variableTable').set_sensitive(True)
+        elif signal == SignalsManager.SIG_PROJECT_CLOSE:
+            self._actionGroup.get_action('importMessagesFromFile').set_sensitive(False)
+            self._actionGroup.get_action('captureMessages').set_sensitive(False)
+            self._actionGroup.get_action('searchMenu').set_sensitive(False)
+            self._actionGroup.get_action('searchText').set_sensitive(False)
+            self._actionGroup.get_action('variableTable').set_sensitive(False)
 
     def _loadActionGroupUIDefinition(self):
         """Loads the action group and the UI definition of menu items
@@ -137,6 +196,25 @@ class VocabularyView(object):
             "vocabularyMenuToolbar.ui")
         with open(uiDefinitionFilePath, "r") as uiDefinitionFile:
             self._uiDefinition = uiDefinitionFile.read()
+
+        # Attach actions from the vocabularyActionGroup to the small panel on top of symbols
+        sequenceAlignmentAction = self._actionGroup.get_action('sequenceAlignment')
+        self.sequenceAlignmentButton.set_related_action(sequenceAlignmentAction)
+
+        partitioningForceAction = self._actionGroup.get_action('partitioningForce')
+        self.partitioningForceButton.set_related_action(partitioningForceAction)
+
+        partitioningSimpleAction = self._actionGroup.get_action('partitioningSimple')
+        self.partitioningSimpleButton.set_related_action(partitioningSimpleAction)
+
+        partitioningSmoothAction = self._actionGroup.get_action('partitioningSmooth')
+        self.partitioningSmoothButton.set_related_action(partitioningSmoothAction)
+
+        partitioningResetAction = self._actionGroup.get_action('partitioningReset')
+        self.partitioningResetButton.set_related_action(partitioningResetAction)
+
+        messagesDistributionAction = self._actionGroup.get_action('messagesDistribution')
+        self.messagesDistributionButton.set_related_action(messagesDistributionAction)
 
     def _getObjects(self, builder, objectsList):
         for object in objectsList:
@@ -366,6 +444,14 @@ class VocabularyView(object):
         selectedSymbolsCount = self.countSelectedSymbols()
         self.concatSymbolButton.set_sensitive((selectedSymbolsCount >= 2))
         self.deleteSymbolButton.set_sensitive((selectedSymbolsCount >= 1))
+
+        # We emit signals depending of the number of selected symbols
+        if selectedSymbolsCount == 0:
+            self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SYMBOLS_NO_SELECTION)
+        elif selectedSymbolsCount == 1:
+            self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SYMBOLS_SINGLE_SELECTION)
+        else:
+            self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SYMBOLS_MULTIPLE_SELECTION)
 
     def countSelectedSymbols(self):
         count = 0
