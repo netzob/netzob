@@ -1,6 +1,31 @@
 NEWS
 ====
 
+v0.4 -- 2012-11-15
+--------------------
+
+:Version name: SwimmingRhino
+
+* User interface
+    * New user-friendly graphical interface
+    * Port Netzob to GTK+3
+    * Allow specification of logging level in the UI
+* New plugin architecture
+* Internationalization of Netzob
+* Vocabulary inference
+    * Support of layers
+    * Support customized mathematical filters
+    * Provide the edition of a variable
+    * Support IPv4, MAC and random binary variables
+    * Support filters for displayed messages
+    * Allow export of a selection of fields as a new symbol
+* Import
+    * Importer for OSpy projects
+    * Allow user to specify the import layer (2,3 or 4) while importing network messages
+    * Allow to keep delimiter while file importing. Indicate the position of the delimiter
+* Automatic Bug Reporter
+
+
 v0.3.3 -- 2012-06-06
 --------------------
 
