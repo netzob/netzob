@@ -1245,7 +1245,7 @@ class Field(object):
                 @return: the built field.
         """
         if version == "0.1":
-            field_id = xmlRoot.get("id")
+            field_id = uuid.UUID(xmlRoot.get("id"))
             field_name = xmlRoot.get("name")
             field_regex = ""
             if xmlRoot.find("{" + namespace + "}regex") is not None:

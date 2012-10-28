@@ -110,7 +110,7 @@ class Sequence(object):
     @staticmethod
     def loadFromXML(xmlRoot, vocabulary, namespace, version):
         if version == "0.1":
-            sequence_ID = xmlRoot.get("id")
+            sequence_ID = uuid.UUID(xmlRoot.get("id"))
             sequence_name = xmlRoot.get("name")
             sequence_description = xmlRoot.get("description")
 

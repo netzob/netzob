@@ -71,7 +71,7 @@ def loadProject_0_1(projectFile):
     etree.register_namespace('netzob', PROJECT_NAMESPACE)
     etree.register_namespace('netzob-common', COMMON_NAMESPACE)
 
-    projectID = xmlProject.get('id')
+    projectID = uuid.UUID(xmlProject.get('id'))
     projectName = xmlProject.get('name', 'none')
     projectCreationDate = TypeConvertor.xsdDatetime2PythonDatetime(xmlProject.get('creation_date'))
     projectPath = xmlProject.get('path')

@@ -32,6 +32,7 @@ from gettext import gettext as _
 import logging
 from lxml.etree import ElementTree
 from lxml import etree
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -96,7 +97,7 @@ class Session(object):
     @staticmethod
     def loadFromXML(xmlRoot, namespace_main, namespace_common, version, poolOfMessages):
         if version == "0.1":
-            id = xmlRoot.get("id")
+            id = uuid.UUID(xmlRoot.get("id"))
             name = xmlRoot.get("name")
             description = xmlRoot.get("description")
 

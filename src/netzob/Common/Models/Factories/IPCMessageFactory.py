@@ -29,7 +29,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -107,7 +107,7 @@ class IPCMessageFactory(object):
         msg_data = bytearray(rootElement.find("{" + namespace + "}data").text)
 
         # Retrieve the id
-        msg_id = rootElement.get("id")
+        msg_id = uuid.UUID(rootElement.get("id"))
 
         # Retrieve the timestamp
         msg_timestamp = int(rootElement.get("timestamp"))

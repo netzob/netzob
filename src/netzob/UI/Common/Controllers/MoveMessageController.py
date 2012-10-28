@@ -85,7 +85,7 @@ class MoveMessageController(object):
         to the defined other which's regex is reseted"""
         self.vocabularyController.moveMessage(message, self.targetSymbol)
 
-        self.targetSymbol.resetPartitioning()
+        self.targetSymbol.getField().resetPartitioning()
         self._view.destroy()
 
     def recomputeRegexAndMove(self, message):
@@ -94,7 +94,7 @@ class MoveMessageController(object):
         self.vocabularyController.moveMessage(message, self.targetSymbol)
 
         self._view.destroy()
-        sequence_controller = SequenceAlignmentController(self.vocabularyController, [self.targetSymbol])
+        sequence_controller = SequenceAlignmentController(self.vocabularyController, [self.targetSymbol.getField()])
         sequence_controller.run()
 
     def moveInTrash(self, message):

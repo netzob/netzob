@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -133,7 +133,7 @@ class IRPDeviceIoControlMessageFactory(object):
         msg_data = bytearray(rootElement.find("{" + namespace + "}data").text)
 
         # Retrieve the id
-        msg_id = rootElement.get("id")
+        msg_id = uuid.UUID(rootElement.get("id"))
 
         # Retrieve the timestamp
         msg_timestamp = int(rootElement.get("timestamp"))

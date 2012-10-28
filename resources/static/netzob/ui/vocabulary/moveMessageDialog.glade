@@ -123,7 +123,7 @@ Below is the available solution you have to resolve this issue.</property>
                 <property name="layout_style">start</property>
                 <child>
                   <object class="GtkRadioButton" id="moveMessageMoveAndForgetRadioButton">
-                    <property name="label" translatable="yes">Move selected message and forget target symbol.</property>
+                    <property name="label" translatable="yes">Move selected message and forget target message format.</property>
                     <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
@@ -168,6 +168,7 @@ Below is the available solution you have to resolve this issue.</property>
                     <property name="xalign">0</property>
                     <property name="draw_indicator">True</property>
                     <property name="group">moveMessageMoveAndForgetRadioButton</property>
+		    <property name="visible">False</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>

@@ -391,7 +391,7 @@ class Symbol(AbstractSymbol):
     @staticmethod
     def loadSymbol(xmlRoot, namespace_project, namespace_common, version, project, poolOfMessages):
         if version == "0.1":
-            idSymbol = xmlRoot.get("id")
+            idSymbol = uuid.UUID(xmlRoot.get("id"))
             symbol = Symbol(idSymbol, "", project)
 
             # we parse the messages
