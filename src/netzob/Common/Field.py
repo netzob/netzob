@@ -235,12 +235,12 @@ class Field(object):
 
     def isStatic(self):
         """isStatic:
-                Tells if a regex is static (does not contain a '{n,p}').
+                Tells if a regex is static (is of the form '(data)').
 
                 @rtype: boolean
                 @return: True if the regex is static.
         """
-        if (self.regex.find("{") == -1 and self.regex.find("*") == -1) or self.getName() == "__sep__":
+        if (re.match("\(\d*\)", self.regex) is not None) and self.getName() != "__sep__":
             return True
         else:
             return False
@@ -487,24 +487,32 @@ class Field(object):
     #|  sequences that are between big dynamic sequences
     #+----------------------------------------------
     def slickRegex(self, project):
-        # Use the default protocol type for representation
-        aFormat = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
+        # Verify that targeted fields are in the same layer
+        extendedFields = self.getExtendedFields()
+        parent = extendedFields[0].getParentField()
+        for field in extendedFields[1:]:
+            if field.getParentField() != parent:
+                logging.warn(_("Can't smooth regex from fields that are part of different layers."))
+                return
 
-        res = False
-        i = 1
-        nbFields = len(self.getExtendedFields())
-
+        # Main smooth routine
+        mergeDone = False
+        i = extendedFields[0].getIndex()  # Retrieve the index of the first field to consider
+        i = i + 1  # We start at the second field
+        nbFields = len(extendedFields)
         while i < nbFields - 1:
             aField = self.getFieldByIndex(i)
+            if aField is None:
+                return
             if aField.isStatic():
-                if len(aField.getRegex()) <= 2:  # Means a potential negligeable element that can be merged with its neighbours
+                if len(aField.getRegexData()) <= 2:  # Means a potential negligeable element that can be merged with its neighbours
                     precField = self.getFieldByIndex(i - 1)
                     if precField.isRegexOnlyDynamic():
                         nextField = self.getFieldByIndex(i + 1)
                         if nextField.isRegexOnlyDynamic():
-                            res = True
-                            minSize = len(aField.getRegex())
-                            maxSize = len(aField.getRegex())
+                            mergeDone = True
+                            minSize = len(aField.getRegexData())
+                            maxSize = len(aField.getRegexData())
 
                             # Build the new field
                             regex = re.compile(".*{(\d*),(\d*)}.*")
@@ -526,24 +534,17 @@ class Field(object):
                             minSize = str(minSize)
                             maxSize = str(maxSize)
 
-                            aField.setIndex(precField.getIndex())
+                            # Update current field regex
                             aField.setRegex("(.{" + minSize + "," + maxSize + "})")
-                            aField.setFormat(aFormat)
 
-                            # Delete the old ones
-                            self.fields.remove(nextField)
-                            self.fields.remove(precField)
-
-                            # Update the index of the fields placed after the new one
-                            for field in self.fields:
-                                if field.getIndex() > aField.getIndex():
-                                    field.setIndex(field.getIndex() - 2)
-                            # Sort fields by their index
-                            self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
-                            break  # Just do it one time to avoid conflicts in self.fields structure
+                            # Delete the now usless precedent and next fields
+                            parent = nextField.getParentField()
+                            parent.removeLocalField(nextField)
+                            parent = precField.getParentField()
+                            parent.removeLocalField(precField)
             i += 1
 
-        if res:
+        if mergeDone:
             self.slickRegex(project)  # Try to loop until no more merges are done
             logging.debug("The regex has been slicked")
 
