@@ -133,6 +133,7 @@
             <property name="use_action_appearance">False</property>
             <property name="image">research_preferences_image</property>
             <property name="relief">none</property>
+            <property name="visible">False</property>
             <signal name="clicked" handler="research_preferences_clicked_cb" swapped="no"/>
           </object>
           <packing>
