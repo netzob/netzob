@@ -587,21 +587,24 @@ class Field(object):
                 continue
 
     def concatFields(self, lastField):
-        """concatFields: concat all the next fields in the current one
-        until the last field."""
-        logging.warn("Concat field from {0}({1}) to {2}({3})".format(self.getName(), self.getID(), lastField.getName(), lastField.getID()))
+        """concatFields: concat all the next fields with the current one
+        until the lastField is reached.
+        @return: a tupple that indicates if the function has correctly been processed, and if not, the error message."""
+        logging.debug("Concat field from {0} to {1}".format(self.getName(), lastField.getName()))
 
         # If no last field is provided we stop here
         if lastField == None:
-            return
+            msg = "Last field is not provided."
+            return (False, msg)
 
         # Retrieve all the fields at the same level
         parentField = self.getParentField()
         localFields = parentField.getLocalFields()
 
         if lastField not in localFields:
-            logging.warn("Impossible to merge with field {0} since its not of the same layer.".format(lastField.getName()))
-            return
+            msg = "Impossible to merge with field {0} since it's not part of the same layer.".format(lastField.getName())
+            logging.warn(msg)
+            return (False, msg)
 
         lastMerge = False
         while not lastMerge:
@@ -609,12 +612,13 @@ class Field(object):
             nextField = self.getNextFieldInCurrentLayer()
 
             if nextField is None:
-                return
+                return (True, "")
 
             if nextField.getID() == lastField.getID():
                 lastMerge = True
 
             self.concatWithNextField()
+        return (True, "")
 
     def getNextFieldInCurrentLayer(self):
         """getNextFieldInCurrentLayer:

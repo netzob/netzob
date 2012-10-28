@@ -367,10 +367,12 @@ class VocabularyController(object):
                 lastField = selectedField
 
         # We concat all the fields in the first one
-        firstField.concatFields(lastField)
-
-        self.view.updateSelectedMessageTable()
-        self.view.updateLeftPanel()
+        (errorCode, errorMsg) = firstField.concatFields(lastField)
+        if errorCode is False:
+            NetzobErrorMessage(errorMsg)
+        else:
+            self.view.updateSelectedMessageTable()
+            self.view.updateLeftPanel()
 
     def split_activate_cb(self, action):
         # Sanity check
