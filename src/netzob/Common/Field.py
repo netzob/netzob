@@ -36,8 +36,19 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 from lxml import etree
-from netzob.Common.Filters.Encoding.FormatFilter import FormatFilter
+import logging
+import re
+import uuid
 
+#+---------------------------------------------------------------------------+
+#| Related third party imports                                               |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
+#| Local application imports                                                 |
+#+---------------------------------------------------------------------------+
+from netzob.Common.Filters.Encoding.FormatFilter import FormatFilter
+from netzob.Common.Type.TypeIdentifier import TypeIdentifier
 from netzob.Common.Filters.Visualization.TextColorFilter import TextColorFilter
 from netzob.Common.MMSTD.Dictionary.DataTypes.BinaryType import BinaryType
 from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
@@ -54,18 +65,6 @@ from netzob.Common.Type.Format import Format
 from netzob.Common.Type.Sign import Sign
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Type.UnitSize import UnitSize
-import logging
-import re
-import uuid
-from netzob.Common.Type.TypeIdentifier import TypeIdentifier
-
-#+---------------------------------------------------------------------------+
-#| Related third party imports                                               |
-#+---------------------------------------------------------------------------+
-
-#+---------------------------------------------------------------------------+
-#| Local application imports                                                 |
-#+---------------------------------------------------------------------------+
 
 
 class Field(object):
@@ -276,6 +275,18 @@ class Field(object):
             return False
         return True
 
+    def fixRegex(self):
+        """fixRegex: for regex that only renders fixed-size cells,
+        directly fix the regex."""
+        if not self.isRegexOnlyDynamic():
+            return
+        cells = self.getCells()
+        refSize = len(cells[0])
+        for cell in cells[1:]:
+            if len(cell) != refSize:
+                return
+        self.setRegex("(.{" + str(refSize) + "})")
+
     #+----------------------------------------------
     #| forcePartitioning:
     #|  Specify a delimiter for partitioning
@@ -313,6 +324,10 @@ class Field(object):
             field.setColor("black")
             self.addField(field)
         self.popField()
+
+        # Last loop to detect fixed-sized dynamic fields
+        for innerField in self.getLocalFields():
+            innerField.fixRegex()
 
     #+----------------------------------------------
     #| simplePartitioning:
@@ -486,6 +501,10 @@ class Field(object):
                 field.setRegex(field.getRegex() + ")")
             # Add field to local fields of the current object
             self.addField(field)
+
+        # Last loop to detect fixed-sized dynamic fields
+        for innerField in self.getLocalFields():
+            innerField.fixRegex()
 
         # Stop and clean if requested
         if idStop_cb is not None:

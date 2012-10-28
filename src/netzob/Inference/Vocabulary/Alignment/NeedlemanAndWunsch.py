@@ -137,6 +137,10 @@ class NeedlemanAndWunsch(object):
                 logging.warn("Partitionnement error: {0}".format(e))
                 field.resetPartitioning()
 
+            # Last loop to detect fixed-sized dynamic fields
+            for innerField in field.getLocalFields():
+                innerField.fixRegex()
+
     #+-----------------------------------------------------------------------+
     #| alignData
     #|     Default alignment of messages
