@@ -245,7 +245,7 @@
                             <signal name="toggled" handler="toggleCellRenderer_toggled_cb" swapped="no"/>
                           </object>
                           <attributes>
-                            <attribute name="activatable">1</attribute>
+                            <attribute name="visible">1</attribute>
                             <attribute name="active">0</attribute>
                           </attributes>
                         </child>
