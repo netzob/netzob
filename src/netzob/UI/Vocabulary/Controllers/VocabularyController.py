@@ -579,12 +579,14 @@ class VocabularyController(object):
             NetzobErrorMessage(_("No project selected."))
             return
 
-        if self.view.getSelectedSymbol() is None:
-            NetzobErrorMessage(_("No symbol selected."))
+        layers = self.view.getCheckedLayerList()
+        if layers == []:
+            NetzobErrorMessage(_("No symbol(s) selected."))
             return
 
-        self.view.getSelectedSymbol().computeFieldsLimits()
-        self.view.updateSelectedMessageTable()
+        for layer in layers:
+            layer.computeFieldsLimits()
+            self.view.updateSelectedMessageTable()
         NetzobInfoMessage(_("Fields limits computed."))
 
     def importMessagesFromFile_activate_cb(self, action):
