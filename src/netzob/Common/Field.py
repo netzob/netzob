@@ -751,16 +751,15 @@ class Field(object):
         field2 = Field(self.getName() + "-2", regex2, self.getSymbol())
         field2.setFormat(new_format)
 
-        if parentField is None:
-            parentField = Field("Root", self.getRegex(), self.getSymbol())
-            parentField.addField(self, 0)
-            self.getSymbol().setField(parentField)
-
-        index2 = parentField.addField(field2, indexOldField)
-        parentField.addField(field1, index2)
-        parentField.removeLocalField(self)
-
-        return True
+        if parentField is None:  # Parent is Symbol
+            self.addField(field1)
+            self.addField(field2)
+            return True
+        else:
+            index2 = parentField.addField(field2, indexOldField)
+            parentField.addField(field1, index2)
+            parentField.removeLocalField(self)
+            return True
 
     #+-----------------------------------------------------------------------+
     #| getPossibleTypesForAField:
