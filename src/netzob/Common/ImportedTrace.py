@@ -35,6 +35,7 @@ import os.path
 from lxml.etree import ElementTree
 from lxml import etree
 from StringIO import StringIO
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
