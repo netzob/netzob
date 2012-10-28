@@ -73,6 +73,7 @@ class SimplePartitioningController(object):
         # update widget
         self._view.simple_cancel.set_sensitive(False)
         self._view.simple_execute.set_sensitive(False)
+        self._view.radiobutton4bits.set_sensitive(False)
         self._view.radiobutton8bits.set_sensitive(False)
         self._view.radiobutton16bits.set_sensitive(False)
         self._view.radiobutton32bits.set_sensitive(False)
@@ -82,7 +83,9 @@ class SimplePartitioningController(object):
 
         #extract chosen value
         formatBits = UnitSize.BITS8
-        if self._view.radiobutton16bits.get_active():
+        if self._view.radiobutton4bits.get_active():
+            formatBits = UnitSize.BITS4
+        elif self._view.radiobutton16bits.get_active():
             formatBits = UnitSize.BITS16
         elif self._view.radiobutton32bits.get_active():
             formatBits = UnitSize.BITS32
@@ -148,6 +151,7 @@ class SimplePartitioningController(object):
         # update widget
         self._view.simple_execute.set_sensitive(True)
         self._view.simple_cancel.set_sensitive(True)
+        self._view.radiobutton4bits.set_sensitive(True)
         self._view.radiobutton8bits.set_sensitive(True)
         self._view.radiobutton16bits.set_sensitive(True)
         self._view.radiobutton32bits.set_sensitive(True)

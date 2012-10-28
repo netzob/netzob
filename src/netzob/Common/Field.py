@@ -226,12 +226,12 @@ class Field(object):
                 @rtype: string
                 @return: the encoded version or the regex itself if it did not manage to encode.
         """
-        if self.regex == "" or self.regex is None or self.regex == "None":  # TODO: be careful with the fact that XML files may store None as a string...
+        if self.regex == "" or self.regex is None:
             return ""
-        elif self.regex.find("{") != -1:  # This is a real regex
+        elif self.isStatic():
+            return self.getRegex().replace(self.getRegexData(), TypeConvertor.encodeNetzobRawToGivenType(self.getRegexData(), self.format))
+        else:  # Dynamic or complex regex
             return self.regex
-        else:  # This is a simple value
-            return TypeConvertor.encodeNetzobRawToGivenType(self.getRegexData(), self.format)
 
     def isStatic(self):
         """isStatic:
@@ -240,7 +240,7 @@ class Field(object):
                 @rtype: boolean
                 @return: True if the regex is static.
         """
-        if (re.match("\(\d*\)", self.regex) is not None) and self.getName() != "__sep__":
+        if (re.match("\([0-9a-f]*\)\??", self.regex) is not None) and self.getName() != "__sep__":
             return True
         else:
             return False
@@ -324,7 +324,8 @@ class Field(object):
         self.resetPartitioning()
         # Retrieve the biggest message
         maxLen = 0
-        for cell in self.getCells():
+        cells = self.getCells()
+        for cell in cells:
             curLen = len(cell)
             if curLen > maxLen:
                 maxLen = curLen
@@ -342,10 +343,24 @@ class Field(object):
 
         step = float(100) / float(maxLen)
         totalPercent = 0
-        # Loop until maxLen
+        # Loop until maxLen to build a mask such as:
+        #        'totoploptoto'
+        #        'tototatatotototo'
+        #        'totoabcdtotototo'
+        #  ref = 'toto----totototo'
+        # mask = '............????'
+        # Where '-' means a different character
+        #   and '.' means a mandatory character
+        #   and '?' means an optional similar character
+        SIMILAR = "0"
+        DIFFERENT = "1"
+        SIMILAR_OPTIONAL = "2"
+        DIFFERENT_OPTIONAL = "3"
+
         for it in range(maxLen):
             ref = ""
             isDifferent = False
+            oneCellIsTooShort = False
 
             # Stop and clean if requested
             if it % 10 == 0 and idStop_cb is not None:
@@ -353,9 +368,8 @@ class Field(object):
                     self.removeLocalFields()
                     return
 
-            oneCellIsTooShort = False
             # Loop through each cells of the column
-            for cell in self.getCells():
+            for cell in cells:
                 if it < len(cell):
                     tmp = cell[it]
                     if ref == "":
@@ -366,17 +380,18 @@ class Field(object):
                 else:
                     oneCellIsTooShort = True
 
-            if oneCellIsTooShort:
-                prefix = '+'
-            else:
-                prefix = ''
-
             if isDifferent:
                 resultString.append("-")
-                resultMask.append(prefix + "1")
+                if oneCellIsTooShort:
+                    resultMask.append(DIFFERENT_OPTIONAL)
+                else:
+                    resultMask.append(DIFFERENT)
             else:
                 resultString.append(ref)
-                resultMask.append(prefix + "0")
+                if oneCellIsTooShort:
+                    resultMask.append(SIMILAR_OPTIONAL)
+                else:
+                    resultMask.append(SIMILAR)
 
             totalPercent += step
             if it % 20 == 0 and status_cb is not None:
@@ -400,7 +415,7 @@ class Field(object):
                 if "-" in tmpText:
                     for j in range(len(tmpText)):
                         tmpResultString.append("-")
-                        tmpResultMask.append("1")
+                        tmpResultMask.append(DIFFERENT)
                 else:
                     tmpResultString.extend(tmpText)
                     tmpResultMask.extend(tmpMask)
@@ -409,51 +424,43 @@ class Field(object):
 
         ## Build of the fields
         self.removeLocalFields()
-        currentStaticField = ""
-        if resultMask[0] == "1":  # The first column is dynamic
-            isLastDyn = True
-        else:
-            currentStaticField += resultString[0]
-            isLastDyn = False
-
-        nbElements = 1
+        nbElements = 0
         iField = 0
-        typeOfLastElement = None  # None undef, 1 : dynamic, 0:static, 0+:static optional
+        typeOfLastElement = None
         fields = []
         currentField = Field("tmp", "", self.getSymbol())
-        for it in range(1, len(resultMask)):
+        for it in range(0, len(resultMask)):
             nbElements += 1
 
-            if resultMask[it] == "1":  # The current column is dynamic
-                if typeOfLastElement is None or typeOfLastElement == resultMask[it]:
-                    typeOfLastElement = resultMask[it]
+            if resultMask[it] == DIFFERENT:  # The current column is dynamic
+                if typeOfLastElement is None or typeOfLastElement == DIFFERENT:
+                    typeOfLastElement = DIFFERENT
                     if currentField is None:
                         currentField = Field("tmp", "(.{,1})", self.getSymbol())
                         nbElements = 1
                     else:
                         currentField.setRegex("(.{," + str(nbElements) + "})")
-                else:
-                    typeOfLastElement = resultMask[it]
+                else:  # Last element was SIMILAR, wo we've reached a field boundary
+                    typeOfLastElement = DIFFERENT
                     fields.append(currentField)
                     iField += 1
                     currentField = Field("tmp", "(.{,1})", self.getSymbol())
                     nbElements = 1
-            elif resultMask[it] == "0":
+            elif resultMask[it] == SIMILAR:
                 # In a static field
-                if typeOfLastElement is None or typeOfLastElement == resultMask[it]:
-                    typeOfLastElement = resultMask[it]
+                if typeOfLastElement is None or typeOfLastElement == SIMILAR:
+                    typeOfLastElement = SIMILAR
                     if currentField is None:
                         currentField = Field("tmp", resultString[it], self.getSymbol())
-                        nbElements = 1
                     else:
                         currentField.setRegex(currentField.getRegex() + resultString[it])
-                else:
-                    typeOfLastElement = resultMask[it]
+                else:  # Last element was DIFFERENT, wo we've reached a field boundary
+                    typeOfLastElement = SIMILAR
                     fields.append(currentField)
                     currentField = Field("tmp", resultString[it], self.getSymbol())
                     iField += 1
 
-            elif resultMask[it] == "+0":
+            elif resultMask[it] == SIMILAR_OPTIONAL:
                 # In a static optional field
                 if typeOfLastElement is None or typeOfLastElement == resultMask[it]:
                     typeOfLastElement = resultMask[it]
@@ -463,7 +470,6 @@ class Field(object):
                         nbElements = 1
                     else:
                         currentField.setRegex("(" + currentField.getRegex()[1:len(currentField.getRegex()) - 2] + resultString[it] + ")?")
-
                 else:
                     typeOfLastElement = resultMask[it]
                     fields.append(currentField)
@@ -473,6 +479,12 @@ class Field(object):
             fields.append(currentField)
 
         for field in fields:
+            # Add parentheses where needed
+            if field.getRegex()[0] != "(":
+                field.setRegex("(" + field.getRegex())
+            if field.getRegex()[-1] != ")" and field.getRegex()[-1] != "?":
+                field.setRegex(field.getRegex() + ")")
+            # Add field to local fields of the current object
             self.addField(field)
 
         # Stop and clean if requested

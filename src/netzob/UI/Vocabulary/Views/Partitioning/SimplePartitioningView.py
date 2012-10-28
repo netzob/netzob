@@ -57,6 +57,7 @@ class SimplePartitioningView(object):
                                                 "simplePartitioning.glade"))
         self._getObjects(self.builder, ["simpleDialog",
                                         "simple_execute", "simple_stop", "simple_cancel",
+                                        "radiobutton4bits",
                                         "radiobutton8bits", "radiobutton16bits",
                                         "radiobutton32bits", "radiobutton64bits",
                                         "simple_progressbar"])

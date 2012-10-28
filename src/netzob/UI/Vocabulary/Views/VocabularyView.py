@@ -201,7 +201,6 @@ class VocabularyView(object):
         if signal == SignalsManager.SIG_SYMBOLS_NO_SELECTION or signal == SignalsManager.SIG_SYMBOLS_MULTIPLE_SELECTION:
             self._actionGroup.get_action('filterMessages').set_sensitive(False)
         elif signal == SignalsManager.SIG_SYMBOLS_SINGLE_SELECTION:
-            print signal
             self._actionGroup.get_action('filterMessages').set_sensitive(True)
 
     def projectStatusHasChanged_cb(self, signal):
