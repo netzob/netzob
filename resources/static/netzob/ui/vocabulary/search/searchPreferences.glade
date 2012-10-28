@@ -40,7 +40,6 @@
                 <property name="xalign">0</property>
                 <property name="active">True</property>
                 <property name="draw_indicator">True</property>
-                <property name="group">research_displaySymbol</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -222,7 +221,6 @@
                 <property name="xalign">0</property>
                 <property name="active">True</property>
                 <property name="draw_indicator">True</property>
-                <property name="group">research_inverted_no</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -261,7 +259,6 @@
                 <property name="xalign">0</property>
                 <property name="active">True</property>
                 <property name="draw_indicator">True</property>
-                <property name="group">research_underline_no</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -301,7 +298,6 @@
                 <property name="xalign">0</property>
                 <property name="active">True</property>
                 <property name="draw_indicator">True</property>
-                <property name="group">research_matchCase_no</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -361,7 +357,6 @@
                 <property name="xalign">0</property>
                 <property name="active">True</property>
                 <property name="draw_indicator">True</property>
-                <property name="group">research_regex_no</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
