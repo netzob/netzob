@@ -46,6 +46,10 @@ class SignalsManager(object):
     SIG_PROJECT_OPEN = "project.open"
     SIG_PROJECT_CLOSE = "project.close"
 
+    SIG_SYMBOLS_NONE_CHECKED = "symbols.none_checked"
+    SIG_SYMBOLS_SINGLE_CHECKED = "symbols.single_checked"
+    SIG_SYMBOLS_MULTIPLE_CHECKED = "symbols.multiple_checked"
+
     SIG_SYMBOLS_NO_SELECTION = "symbols.no_selection"
     SIG_SYMBOLS_SINGLE_SELECTION = "symbols.single_selection"
     SIG_SYMBOLS_MULTIPLE_SELECTION = "symbols.multiple_selection"

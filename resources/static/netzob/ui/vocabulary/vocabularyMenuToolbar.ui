@@ -44,6 +44,7 @@
       <separator />
       <toolitem action="searchText" />
       <toolitem action="environmentDep" />
+      <toolitem action="filterMessages" />
       <toolitem action="variableTable" />
     </placeholder>
   </toolbar>

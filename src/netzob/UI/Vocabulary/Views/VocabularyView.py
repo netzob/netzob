@@ -37,12 +37,6 @@ import logging
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk
 import gi
-from netzob.UI.Vocabulary.Controllers.MessageTableController import MessageTableController
-from netzob.Common.SignalsManager import SignalsManager
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.UI.Vocabulary.Controllers.MessagesDistributionController import MessagesDistributionController
-from netzob.UI.Common.Controllers.MoveMessageController import MoveMessageController
-from netzob.UI.Vocabulary.Controllers.VariableDisplayerController import VariableDisplayerController
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 from collections import OrderedDict
@@ -53,6 +47,12 @@ from collections import OrderedDict
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.UI.Vocabulary.Controllers.ResearchController import ResearchController
 from netzob.UI.Vocabulary.Controllers.FilterMessagesController import FilterMessagesController
+from netzob.UI.Vocabulary.Controllers.MessageTableController import MessageTableController
+from netzob.Common.SignalsManager import SignalsManager
+from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.UI.Vocabulary.Controllers.MessagesDistributionController import MessagesDistributionController
+from netzob.UI.Common.Controllers.MoveMessageController import MoveMessageController
+from netzob.UI.Vocabulary.Controllers.VariableDisplayerController import VariableDisplayerController
 
 
 class VocabularyView(object):
@@ -136,6 +136,7 @@ class VocabularyView(object):
             return
 
         signalManager.attach(self.projectStatusHasChanged_cb, [SignalsManager.SIG_PROJECT_OPEN, SignalsManager.SIG_PROJECT_CLOSE])
+        signalManager.attach(self.symbolCheckedHasChanged_cb, [SignalsManager.SIG_SYMBOLS_NONE_CHECKED, SignalsManager.SIG_SYMBOLS_SINGLE_CHECKED, SignalsManager.SIG_SYMBOLS_MULTIPLE_CHECKED])
         signalManager.attach(self.symbolSelectionHasChanged_cb, [SignalsManager.SIG_SYMBOLS_NO_SELECTION, SignalsManager.SIG_SYMBOLS_SINGLE_SELECTION, SignalsManager.SIG_SYMBOLS_MULTIPLE_SELECTION])
         signalManager.attach(self.fieldSelectionHasChanged_cb, [SignalsManager.SIG_FIELDS_NO_SELECTION, SignalsManager.SIG_FIELDS_SINGLE_SELECTION, SignalsManager.SIG_FIELDS_MULTIPLE_SELECTION])
         signalManager.attach(self.messageSelectionHasChanged_cb, [SignalsManager.SIG_MESSAGES_NO_SELECTION, SignalsManager.SIG_MESSAGES_SINGLE_SELECTION, SignalsManager.SIG_MESSAGES_MULTIPLE_SELECTION])
@@ -171,10 +172,10 @@ class VocabularyView(object):
             self._actionGroup.get_action('split').set_sensitive(False)
             self._actionGroup.get_action('editVariable').set_sensitive(False)
 
-    def symbolSelectionHasChanged_cb(self, signal):
-        """symbolSelectionHasChanged_cb:
-        callback executed when none, one or multiple symbols are selected."""
-        if signal == SignalsManager.SIG_SYMBOLS_NO_SELECTION:
+    def symbolCheckedHasChanged_cb(self, signal):
+        """symbolCheckedHasChanged_cb:
+        callback executed when none, one or multiple symbols are checked."""
+        if signal == SignalsManager.SIG_SYMBOLS_NONE_CHECKED:
             self._actionGroup.get_action('partitioningSimple').set_sensitive(False)
             self._actionGroup.get_action('partitioningSmooth').set_sensitive(False)
             self._actionGroup.get_action('partitioningReset').set_sensitive(False)
@@ -183,7 +184,7 @@ class VocabularyView(object):
             self._actionGroup.get_action('messagesDistribution').set_sensitive(False)
             self._actionGroup.get_action('partitioningForce').set_sensitive(False)
             self._actionGroup.get_action('sequenceAlignment').set_sensitive(False)
-        elif signal == SignalsManager.SIG_SYMBOLS_SINGLE_SELECTION or SignalsManager.SIG_SYMBOLS_MULTIPLE_SELECTION:
+        elif signal == SignalsManager.SIG_SYMBOLS_SINGLE_CHECKED or signal == SignalsManager.SIG_SYMBOLS_MULTIPLE_CHECKED:
             self._actionGroup.get_action('partitioningSimple').set_sensitive(True)
             self._actionGroup.get_action('partitioningSmooth').set_sensitive(True)
             self._actionGroup.get_action('partitioningReset').set_sensitive(True)
@@ -191,8 +192,17 @@ class VocabularyView(object):
             self._actionGroup.get_action('messagesDistribution').set_sensitive(True)
             self._actionGroup.get_action('partitioningForce').set_sensitive(True)
             self._actionGroup.get_action('sequenceAlignment').set_sensitive(True)
-            if signal == SignalsManager.SIG_SYMBOLS_SINGLE_SELECTION:
+            if signal == SignalsManager.SIG_SYMBOLS_SINGLE_CHECKED:
                 self._actionGroup.get_action('editVariable').set_sensitive(False)
+
+    def symbolSelectionHasChanged_cb(self, signal):
+        """symbolSelectionHasChanged_cb:
+        callback executed when none, one or multiple symbols are selected."""
+        if signal == SignalsManager.SIG_SYMBOLS_NO_SELECTION or signal == SignalsManager.SIG_SYMBOLS_MULTIPLE_SELECTION:
+            self._actionGroup.get_action('filterMessages').set_sensitive(False)
+        elif signal == SignalsManager.SIG_SYMBOLS_SINGLE_SELECTION:
+            print signal
+            self._actionGroup.get_action('filterMessages').set_sensitive(True)
 
     def projectStatusHasChanged_cb(self, signal):
         """projectStatusHasChanged_cb:
@@ -485,11 +495,11 @@ class VocabularyView(object):
 
         # We emit signals depending of the number of selected symbols
         if selectedSymbolsCount == 0:
-            self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SYMBOLS_NO_SELECTION)
+            self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SYMBOLS_NONE_CHECKED)
         elif selectedSymbolsCount == 1:
-            self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SYMBOLS_SINGLE_SELECTION)
+            self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SYMBOLS_SINGLE_CHECKED)
         else:
-            self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SYMBOLS_MULTIPLE_SELECTION)
+            self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SYMBOLS_MULTIPLE_CHECKED)
 
     def countSelectedSymbols(self):
         count = 0
