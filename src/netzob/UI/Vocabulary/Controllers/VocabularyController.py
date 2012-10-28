@@ -65,6 +65,7 @@ from netzob.UI.Vocabulary.Controllers.Menus.ContextualMenuOnLayerController impo
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.UI.Vocabulary.Controllers.VariableController import VariableTreeController
 from netzob.Common.Plugins.Extensions.CapturerMenuExtension import CapturerMenuExtension
+from netzob.Common.SignalsManager import SignalsManager
 
 
 #+----------------------------------------------
@@ -100,6 +101,9 @@ class VocabularyController(object):
         logging.debug("Restarting the vocabulary view")
         self.view.removeAllMessageTables()
         self.view.updateLeftPanel()
+
+    def getSignalsManager(self):
+        return self.netzob.getSignalsManager()
 
     def updateListOfCapturerPlugins(self):
         """Fetch the list of available capturer plugins, and provide
@@ -248,6 +252,9 @@ class VocabularyController(object):
             self.executeMoveTargetOperation(field.getSymbol())
             self.view.setDisplayedFieldInSelectedMessageTable(field)
             self._view.updateSymbolProperties()
+            self.getSignalsManager().emitSignal(SignalsManager.SIG_SYMBOLS_SINGLE_SELECTION)
+        else:
+            self.getSignalsManager().emitSignal(SignalsManager.SIG_SYMBOLS_NO_SELECTION)
 
     def symbolListTreeView_button_press_event_cb(self, treeview, eventButton):
         # Popup a contextual menu if right click
