@@ -180,6 +180,7 @@ def addNetzobIconsToDefaultFactory():
     addIconToFactory("netzob-move-to-symbol", "move-to-symbol.png")
     addIconToFactory("netzob-search-environment-dep", "search-environment-dep.png")
     addIconToFactory("netzob-messages-distribution", "messages-distribution.png")
+    addIconToFactory("netzob-filter-messages", "filter-messages.png")
     addIconToFactory("netzob-variable-table", "variable-table.png")
     addIconToFactory("netzob-field-limit", "field-limit.png")
     addIconToFactory("netzob-select-all", "select-all.png")
