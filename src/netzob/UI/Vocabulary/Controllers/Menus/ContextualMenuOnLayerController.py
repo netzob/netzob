@@ -61,10 +61,13 @@ from netzob.UI.Vocabulary.Controllers.Partitioning.ResetPartitioningController i
 class ContextualMenuOnLayerController(object):
     """Contextual menu on layer (visualization, etc.)"""
 
-    def __init__(self, vocabularyController, layer):
+    def __init__(self, vocabularyController, layers):
         self.vocabularyController = vocabularyController
-        self.layer = layer
-        self._view = ContextualMenuOnLayerView(self)
+        self.layers = layers
+        multipleLayers = False
+        if len(layers) > 1:
+            multipleLayers = True
+        self._view = ContextualMenuOnLayerView(self, multipleLayers)
         self.log = logging.getLogger(__name__)
 
     @property
@@ -80,7 +83,8 @@ class ContextualMenuOnLayerController(object):
     #|   by doing a right click on it.
     #+----------------------------------------------
     def changeFormat_cb(self, event, aFormat):
-        self.layer.setFormat(aFormat)
+        for layer in self.layers:
+            layer.setFormat(aFormat)
         self.vocabularyController.view.updateSelectedMessageTable()
 
     #+----------------------------------------------
@@ -89,7 +93,8 @@ class ContextualMenuOnLayerController(object):
     #|   by doing a right click on it.
     #+----------------------------------------------
     def changeUnitSize_cb(self, event, unitSize):
-        self.layer.setUnitSize(unitSize)
+        for layer in self.layers:
+            layer.setUnitSize(unitSize)
         self.vocabularyController.view.updateSelectedMessageTable()
 
     #+----------------------------------------------
@@ -98,7 +103,8 @@ class ContextualMenuOnLayerController(object):
     #|   by doing a right click on it.
     #+----------------------------------------------
     def changeSign_cb(self, event, sign):
-        self.layer.setSign(sign)
+        for layer in self.layers:
+            layer.setSign(sign)
         self.vocabularyController.view.updateSelectedMessageTable()
 
     #+----------------------------------------------
@@ -107,7 +113,8 @@ class ContextualMenuOnLayerController(object):
     #|   by doing a right click on it.
     #+----------------------------------------------
     def changeEndianess_cb(self, event, endianess):
-        self.layer.setEndianess(endianess)
+        for layer in self.layers:
+            layer.setEndianess(endianess)
         self.vocabularyController.view.updateSelectedMessageTable()
 
     def applyMathematicFilter_cb(self, event, mathFilter):
@@ -116,7 +123,7 @@ class ContextualMenuOnLayerController(object):
         # Computes if the current included messages are already filtered
         allFiltered = True
 
-        for message in self.layer.getMessages():
+        for message in self.layers[0].getMessages():
             found = False
             for filter in message.getMathematicFilters():
                 if filter.getName() == mathFilter.getName():
@@ -127,7 +134,7 @@ class ContextualMenuOnLayerController(object):
 
         if not allFiltered:
             #Activate filter
-            for message in self.layer.getMessages():
+            for message in self.layers[0].getMessages():
                 found = False
                 for filter in message.getMathematicFilters():
                     if filter.getName() == mathFilter.getName():
@@ -136,26 +143,26 @@ class ContextualMenuOnLayerController(object):
                     message.addMathematicFilter(mathFilter)
         else:
             # Deactivate filter
-            for message in self.layer.getMessages():
+            for message in self.layers[0].getMessages():
                 message.removeMathematicFilter(mathFilter)
 
 #        found = False
-#        for appliedFilter in self.layer.getMathematicFilters():
+#        for appliedFilter in self.layers[0].getMathematicFilters():
 #            if appliedFilter.getName() == mathFilter.getName():
 #                found = True
 #                break
 #        if found:
-#            self.layer.removeMathematicFilter(appliedFilter)
+#            self.layers[0].removeMathematicFilter(appliedFilter)
 #        else:
-#            self.layer.addMathematicFilter(mathFilter)
+#            self.layers[0].addMathematicFilter(mathFilter)
 
-        self.layer.resetPartitioning()
+        self.layers[0].resetPartitioning()
         self.vocabularyController.view.updateSelectedMessageTable()
 
     def createCustomFilter_cb(self, event):
         """Callback executed when the user
         clicks on menu entry to create a custom filter"""
-        customFilterController = CustomMathFilterController(self.vocabularyController, self.layer)
+        customFilterController = CustomMathFilterController(self.vocabularyController, self.layers[0])
         customFilterController.run()
 
     def renameLayer_cb(self, widget):
@@ -166,7 +173,7 @@ class ContextualMenuOnLayerController(object):
             "dialogbox.glade"))
 
         dialog = builder2.get_object("renamelayer")
-        dialog.set_title(_("Rename the layer {0}").format(self.layer.getName()))
+        dialog.set_title(_("Rename the layer {0}").format(self.layers[0].getName()))
 
         applybutton = builder2.get_object("button10")
         entry = builder2.get_object("entry3")
@@ -176,9 +183,9 @@ class ContextualMenuOnLayerController(object):
 
         if (result == 0):
             newLayerName = entry.get_text()
-            self.log.debug(_("Renamed layer {0} to {1}").format(self.layer.getName(), newLayerName))
+            self.log.debug(_("Renamed layer {0} to {1}").format(self.layers[0].getName(), newLayerName))
             currentProject = self.vocabularyController.netzob.getCurrentProject()
-            currentProject.getVocabulary().getFieldByID(self.layer.getID()).setName(newLayerName)
+            currentProject.getVocabulary().getFieldByID(self.layers[0].getID()).setName(newLayerName)
             self.vocabularyController.view.updateLeftPanel()
             self.vocabularyController.view.updateSelectedMessageTable()
             dialog.destroy()
@@ -192,36 +199,37 @@ class ContextualMenuOnLayerController(object):
             button.set_sensitive(False)
 
     def deleteLayer_cb(self, widget):
-        # Verify if selected layer is the top layer (i.e. the symbol)
-        if self.layer == self.layer.getSymbol().getField():
-            # If so, delete the symbol and its messages
-            currentProject = self.vocabularyController.netzob.getCurrentProject()
-            currentVocabulary = currentProject.getVocabulary()
-            for mess in self.layer.getSymbol().getMessages():
-                currentVocabulary.removeMessage(mess)
-            currentVocabulary.removeSymbol(self.layer.getSymbol())
-            self.vocabularyController.view.emptyMessageTableDisplayingSymbols([self.layer.getSymbol()])
-        else:
-            self.layer.flattenLocalFields()
+        for layer in self.layers:
+            # Verify if selected layer is the top layer (i.e. the symbol)
+            if layer == layer.getSymbol().getField():
+                # If so, delete the symbol and its messages
+                currentProject = self.vocabularyController.netzob.getCurrentProject()
+                currentVocabulary = currentProject.getVocabulary()
+                for mess in layer.getSymbol().getMessages():
+                    currentVocabulary.removeMessage(mess)
+                currentVocabulary.removeSymbol(layer.getSymbol())
+                self.vocabularyController.view.emptyMessageTableDisplayingSymbols([layer.getSymbol()])
+            else:
+                layer.flattenLocalFields()
         self.vocabularyController.view.updateLeftPanel()
         self.vocabularyController.view.updateSelectedMessageTable()
 
     def sequenceAlignment_cb(self, action):
-        sequence_controller = SequenceAlignmentController(self.vocabularyController, [self.layer])
+        sequence_controller = SequenceAlignmentController(self.vocabularyController, [self.layers[0]])
         sequence_controller.run()
 
     def forcePartitionment_cb(self, action):
-        force_controller = ForcePartitioningController(self.vocabularyController, [self.layer])
+        force_controller = ForcePartitioningController(self.vocabularyController, [self.layers[0]])
         force_controller.run()
 
     def simplePartitionment_cb(self, action):
-        simple_controller = SimplePartitioningController(self.vocabularyController, [self.layer])
+        simple_controller = SimplePartitioningController(self.vocabularyController, [self.layers[0]])
         simple_controller.run()
 
     def smoothPartitionment_cb(self, action):
-        smooth_controller = SmoothPartitioningController(self.vocabularyController, [self.layer])
+        smooth_controller = SmoothPartitioningController(self.vocabularyController, [self.layers[0]])
         smooth_controller.run()
 
     def resetPartitionment_cb(self, action):
-        reset_controller = ResetPartitioningController(self.vocabularyController, [self.layer])
+        reset_controller = ResetPartitioningController(self.vocabularyController, [self.layers[0]])
         reset_controller.run()

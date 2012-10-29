@@ -52,25 +52,28 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 class ContextualMenuOnLayerView(object):
 
-    def __init__(self, controller):
+    def __init__(self, controller, multipleLayers=False):
         self.controller = controller
+        self.multipleLayers = multipleLayers
 
     def run(self, event):
         # Build the contextual menu for messages
         self.menu = Gtk.Menu()
 
         # Add entry to edit layer
-        item = Gtk.MenuItem(_("Edit layer"))
-        item.show()
-        item.connect("activate", self.controller.renameLayer_cb)
-        self.menu.append(item)
+        if self.multipleLayers is False:
+            item = Gtk.MenuItem(_("Edit layer"))
+            item.show()
+            item.connect("activate", self.controller.renameLayer_cb)
+            self.menu.append(item)
 
         # Add sub-entries for partitioning
-        subMenu = self.build_partitioning_submenu()
-        item = Gtk.MenuItem(_("Partitioning"))
-        item.set_submenu(subMenu)
-        item.show()
-        self.menu.append(item)
+        if self.multipleLayers is False:
+            subMenu = self.build_partitioning_submenu()
+            item = Gtk.MenuItem(_("Partitioning"))
+            item.set_submenu(subMenu)
+            item.show()
+            self.menu.append(item)
 
         # Add sub-entries to change the type of a specific column
         subMenu = self.build_encoding_submenu()
@@ -81,11 +84,12 @@ class ContextualMenuOnLayerView(object):
 
         # Add sub-entries to manage mathematical filter
         # Add sub-entries to add mathematic filters on a  specific column
-        subMenuMathematicFilters = self.build_math_filters_submenu()
-        item = Gtk.MenuItem(_("Mathematics filters"))
-        item.set_submenu(subMenuMathematicFilters)
-        item.show()
-        self.menu.append(item)
+        if self.multipleLayers is False:
+            subMenuMathematicFilters = self.build_math_filters_submenu()
+            item = Gtk.MenuItem(_("Mathematics filters"))
+            item.set_submenu(subMenuMathematicFilters)
+            item.show()
+            self.menu.append(item)
 
         # Add entry to delete layer
         item = Gtk.MenuItem(_("Delete layer"))
@@ -105,10 +109,10 @@ class ContextualMenuOnLayerView(object):
         currentWorkspace = self.controller.vocabularyController.getCurrentWorkspace()
         mathematicFilters = currentWorkspace.getMathematicFilters()
 
-        messages = self.controller.layer.getMessages()
+        messages = self.controller.layers[0].getMessages()
         # Fetch all the filters attach to messages of current layer (either symbol of fieldLayer)
         filtersInMessages = []
-        for filter in self.controller.layer.getSymbol().getField().getMathematicFilters():
+        for filter in self.controller.layers[0].getSymbol().getField().getMathematicFilters():
             if not filter in filtersInMessages:
                 filtersInMessages.append(filter)
 
@@ -145,8 +149,9 @@ class ContextualMenuOnLayerView(object):
         for value in possible_choices:
             # Compute if its activated
             toggled = False
-            if self.controller.layer.getFormat() == value:
-                toggled = True
+            if self.multipleLayers is False:
+                if self.controller.layers[0].getFormat() == value:
+                    toggled = True
 
             # Create the check item
             item = Gtk.CheckMenuItem(value)
@@ -165,8 +170,9 @@ class ContextualMenuOnLayerView(object):
         for value in possible_choices:
             # Compute if its activated
             toggled = False
-            if self.controller.layer.getUnitSize() == value:
-                toggled = True
+            if self.multipleLayers is False:
+                if self.controller.layers[0].getUnitSize() == value:
+                    toggled = True
 
             item = Gtk.CheckMenuItem(value)
             item.set_active(toggled)
@@ -184,8 +190,9 @@ class ContextualMenuOnLayerView(object):
         for value in possible_choices:
             # Compute if its activated
             toggled = False
-            if self.controller.layer.getSign() == value:
-                toggled = True
+            if self.multipleLayers is False:
+                if self.controller.layers[0].getSign() == value:
+                    toggled = True
 
             item = Gtk.CheckMenuItem(value)
             item.set_active(toggled)
@@ -203,8 +210,9 @@ class ContextualMenuOnLayerView(object):
         for value in possible_choices:
             # Compute if its activated
             toggled = False
-            if self.controller.layer.getEndianess() == value:
-                toggled = True
+            if self.multipleLayers is False:
+                if self.controller.layers[0].getEndianess() == value:
+                    toggled = True
 
             item = Gtk.CheckMenuItem(value)
             item.set_active(toggled)

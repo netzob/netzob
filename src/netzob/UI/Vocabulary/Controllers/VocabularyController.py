@@ -242,12 +242,15 @@ class VocabularyController(object):
         """Callback executed when the user
         clicks on a symbol in the list"""
         logging.debug("The current symbol has changed")
-        model, iter = selection.get_selected()
+        if 1 != selection.count_selected_rows():
+            return
+        (model, paths) = selection.get_selected_rows()
+        aIter = model.get_iter(paths[0])  # We work on only one symbol/layer
         currentVocabulary = self.netzob.getCurrentProject().getVocabulary()
-        if iter is not None:
+        if aIter is not None:
             logging.debug("Iter is not none")
             # We first check if the user selected a symbol
-            ID = model[iter][self.view.SYMBOLLISTSTORE_ID_COLUMN]
+            ID = model[aIter][self.view.SYMBOLLISTSTORE_ID_COLUMN]
             field = currentVocabulary.getFieldByID(ID)
             self.executeMoveTargetOperation(field.getSymbol())
             self.view.setDisplayedFieldInSelectedMessageTable(field)
@@ -259,24 +262,22 @@ class VocabularyController(object):
     def symbolListTreeView_button_press_event_cb(self, treeview, eventButton):
         # Popup a contextual menu if right click
         if eventButton.type == Gdk.EventType.BUTTON_PRESS and eventButton.button == 3:
-            x = int(eventButton.x)
-            y = int(eventButton.y)
-            try:
-                (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
-            except:
-                # No symbol selected
-                return
+            (model, paths) = treeview.get_selection().get_selected_rows()
 
-            # Retrieve the selected layerField
-            layer_id = treeview.get_model()[path][VocabularyView.SYMBOLLISTSTORE_ID_COLUMN]
-            if layer_id is not None:
-                layer = self.getCurrentProject().getVocabulary().getFieldByID(layer_id)
-            else:
-                return
+            layers = []
+            for path in paths:
+                # Retrieve the selected layerFields
+                layer_id = model[path][VocabularyView.SYMBOLLISTSTORE_ID_COLUMN]
+                if layer_id is not None:
+                    layer = self.getCurrentProject().getVocabulary().getFieldByID(layer_id)
+                    layers.append(layer)
+                else:
+                    return
 
             # Popup a contextual menu
-            menuController = ContextualMenuOnLayerController(self, layer)
+            menuController = ContextualMenuOnLayerController(self, layers)
             menuController.run(eventButton)
+            return True  # To discard remaining signals (such as 'changed_cb')
 
 ################ TO BE FIXED
     def button_newview_cb(self, widget):

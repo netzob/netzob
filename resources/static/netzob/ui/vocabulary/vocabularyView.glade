@@ -109,11 +109,13 @@
                 <property name="can_focus">False</property>
                 <child>
                   <object class="GtkToolButton" id="sequenceAlignmentButton">
+                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
                     <property name="tooltip_markup" translatable="yes">Sequence alignment on selected symbol</property>
                     <property name="tooltip_text" translatable="yes">Sequence alignment on selected symbol</property>
+                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Sequence alignment</property>
                     <property name="use_underline">True</property>
                   </object>
@@ -124,11 +126,13 @@
                 </child>
                 <child>
                   <object class="GtkToolButton" id="partitioningForceButton">
+                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
                     <property name="tooltip_markup" translatable="yes">Force Partitioning on selected symbol</property>
                     <property name="tooltip_text" translatable="yes">Force Partitioning on selected symbol</property>
+                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Force Partitioning</property>
                     <property name="use_underline">True</property>
                   </object>
@@ -139,11 +143,13 @@
                 </child>
                 <child>
                   <object class="GtkToolButton" id="partitioningSimpleButton">
+                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
                     <property name="tooltip_markup" translatable="yes">Simple Partitioning on selected symbol</property>
                     <property name="tooltip_text" translatable="yes">Simple Partitioning on selected symbol</property>
+                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Simple Partitioning</property>
                     <property name="use_underline">True</property>
                   </object>
@@ -154,11 +160,13 @@
                 </child>
                 <child>
                   <object class="GtkToolButton" id="partitioningSmoothButton">
+                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
                     <property name="tooltip_markup" translatable="yes">Smooth Partitioning on selected symbol</property>
                     <property name="tooltip_text" translatable="yes">Smooth Partitioning on selected symbol</property>
+                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Smooth Partitioning</property>
                     <property name="use_underline">True</property>
                   </object>
@@ -169,11 +177,13 @@
                 </child>
                 <child>
                   <object class="GtkToolButton" id="partitioningResetButton">
+                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
                     <property name="tooltip_markup" translatable="yes">Reset Partitioning on selected symbol</property>
                     <property name="tooltip_text" translatable="yes">Reset Partitioning on selected symbol</property>
+                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Reset Partitioning</property>
                     <property name="use_underline">True</property>
                   </object>
@@ -196,11 +206,13 @@
                 </child>
                 <child>
                   <object class="GtkToolButton" id="messagesDistributionButton">
+                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
                     <property name="tooltip_markup" translatable="yes">Display messages distributions for selected symbol(s)</property>
                     <property name="tooltip_text" translatable="yes">Display messages distributions for selected symbol(s)</property>
+                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Messages Distribution…</property>
                     <property name="use_underline">True</property>
                   </object>
@@ -232,6 +244,7 @@
                     <property name="enable_tree_lines">True</property>
                     <child internal-child="selection">
                       <object class="GtkTreeSelection" id="symbolListTreeViewSelection">
+                        <property name="mode">multiple</property>
                         <signal name="changed" handler="symbolListTreeViewSelection_changed_cb" swapped="no"/>
                       </object>
                     </child>
