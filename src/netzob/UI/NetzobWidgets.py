@@ -174,7 +174,7 @@ def addNetzobIconsToDefaultFactory():
     addIconToFactory("netzob-partitioning-freeze", "partitioning-freeze.png")
     addIconToFactory("netzob-concat-field", "concat-field.png")
     addIconToFactory("netzob-concat-symbol", "concat-symbol.png")
-    addIconToFactory("netzob-edit-cut-left", "edit-cut-left.png")
+    addIconToFactory("netzob-edit-cut-left", "split-field.png")
     addIconToFactory("netzob-edit-cut-right", "edit-cut-right.png")
     addIconToFactory("netzob-create-variable", "create-variable.png")
     addIconToFactory("netzob-move-to-symbol", "move-to-symbol.png")
