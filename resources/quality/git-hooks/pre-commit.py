@@ -67,11 +67,19 @@ def getFiles():
 
 def checkPEP8(file):
     localResult = []
-    p = subprocess.Popen(['pep8', '--repeat', '--ignore=E501,E711,E712', file], stdout=subprocess.PIPE)
-    out, err = p.communicate()
-    for line in out.splitlines():
-        localResult.append(line)
-    return localResult
+    try:
+        p = subprocess.Popen(['pep8', '--repeat', '--ignore=E501,E711,E712', file], stdout=subprocess.PIPE)
+        out, err = p.communicate()
+        for line in out.splitlines():
+            localResult.append(line)
+        return localResult
+    except Exception,e:
+        if str(e).find("[Errno 2] No such file or directory") != -1 :
+            print "[E] PEP8 is not installed."
+        else:
+            print "[E] PEP8 does not work, it is probably not installed.\nThe error is : {0}".format(str(e))
+        sys.exit(1)
+        
 
 def checkClassDeclation(file):
     localResult = []
