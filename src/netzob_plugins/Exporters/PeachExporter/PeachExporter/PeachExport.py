@@ -333,24 +333,26 @@ class PeachExport(object):
                 @return: the list, representing aggregations, of lists, representing alternations, of couple (type of a leaf variable, value (in bitarray) of leaf variable).
         """
         logging.debug(_("<[ variable  : {0}.").format(str(variable.getName())))
-        variableType = variable.getTypeVariable()
+        variableType = variable.getVariableType()
         typedValueLists = []  # List of list of couple type-value.
-        if variableType == "Aggregate":
+        if variableType == "Aggregate Variable":
             for child in variable.getChildren():
                 # We concatenate the double lists at the lower level (inner list).
                 logging.debug(_("fatherValueLists : {0}.").format(str(typedValueLists)))
                 typedValueLists = self.concatVariableValues(typedValueLists, self.getRecVariableTypedValueLists(child))
 
-        elif variableType == "Alternate":
+        elif variableType == "Alternate Variable":
             for child in variable.getChildren():
                 # We simply concatenate the two double lists as simple list.
                 for value in self.getRecVariableTypedValueLists(child):
                     typedValueLists.append(value)
-        elif variableType == "ReferencedVariable":
-            # We retrieve the typedValueLists of the pointed variable. Referenced variable are variable pointing to another variable.
-            vocabulary = self.netzob.getCurrentProject().getVocabulary()
-            pointedVariable = variable.getPointedVariable(vocabulary)
-            typedValueLists = self.getRecVariableTypedValueLists(pointedVariable)
+
+# TODO: Integrate Pointing Variable & Repeat Variable.
+#        elif variableType == "ReferencedVariable":
+#            # We retrieve the typedValueLists of the pointed variable. Referenced variable are variable pointing to another variable.
+#            vocabulary = self.netzob.getCurrentProject().getVocabulary()
+#            pointedVariable = variable.getPointedVariable(vocabulary)
+#            typedValueLists = self.getRecVariableTypedValueLists(pointedVariable)
         else:
             # We add the variable type and its binary value as a singleton list in the higher list.
             vocabulary = self.netzob.getCurrentProject().getVocabulary()
@@ -445,6 +447,7 @@ class PeachExport(object):
                 @type xmlFather: lxml.etree.element
                 @param xmlFather: the xml tree father of the current element.
         """
+        # TODO: Make a complete state model.
         xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="SimpleStateModel", initialState="state0")
         # There is always at least one state, the first state which is naturally called state0 and is the initial state.
 
