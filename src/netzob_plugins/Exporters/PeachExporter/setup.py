@@ -47,6 +47,6 @@ setup(
     install_requires=dependencies,
     entry_points="""
     [netzob.plugins]
-    PeachExporter=PeachExporter.PeachExporterPlugin:PeachExporterPlugin
+    PeachExporter = PeachExporter.PeachExporterPlugin:PeachExporterPlugin
     """
 )
