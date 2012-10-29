@@ -583,7 +583,8 @@ class VocabularyView(object):
             line = self.projectPropertiesListstore.append()
             self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_NAME_COLUMN, prop.getName())
             self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_VALUE_COLUMN, str(prop.getCurrentValue()))
-            self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_EDITABLE_COLUMN, prop.isEditable)
+            #self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_EDITABLE_COLUMN, prop.isEditable)
+            self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_EDITABLE_COLUMN, False)
             if prop.getPossibleValues() != []:
                 liststore_possibleValues = Gtk.ListStore(str)
                 for val in prop.getPossibleValues():
