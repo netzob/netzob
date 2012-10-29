@@ -29,9 +29,6 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import logging
-import uuid
-import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
