@@ -241,9 +241,9 @@ class VocabularyController(object):
     def symbolListTreeViewSelection_changed_cb(self, selection):
         """Callback executed when the user
         clicks on a symbol in the list"""
-        logging.debug("The current symbol has changed")
         if 1 != selection.count_selected_rows():
             return
+        logging.debug("The current symbol has changed")
         (model, paths) = selection.get_selected_rows()
         aIter = model.get_iter(paths[0])  # We work on only one symbol/layer
         currentVocabulary = self.netzob.getCurrentProject().getVocabulary()

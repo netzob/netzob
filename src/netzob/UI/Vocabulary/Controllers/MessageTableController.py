@@ -59,7 +59,6 @@ class MessageTableController(object):
     def messageTableTreeView_changed_event_cb(self, selection):
         """Callback executed when the user
         clicks on a message in the MessageTable"""
-
         if self.vocabularyPerspective.controller.selectedMessagesToMove is not None:
             self.vocabularyPerspective.controller.removePendingMessagesToMove()
 
@@ -93,8 +92,8 @@ class MessageTableController(object):
         self.vocabularyPerspective.removeMessageTable(self.view)
 
     def messageTableTreeView_button_press_event_cb(self, treeview, eventButton):
-        self.vocabularyPerspective.setSelectedMessageTable(self.view)
         # Popup a contextual menu if right click
+        self.vocabularyPerspective.setSelectedMessageTable(self.view)
         if eventButton.type == Gdk.EventType.BUTTON_PRESS and eventButton.button == 3:
             x = int(eventButton.x)
             y = int(eventButton.y)
@@ -133,6 +132,7 @@ class MessageTableController(object):
             # Popup a contextual menu
             menuController = ContextualMenuOnFieldController(self.vocabularyPerspective.controller, layer, message, field)
             menuController.run(eventButton)
+            return True  # Needed to block remainin signals (especially the 'changed_cb' signal)
 
     def messageTableTreeView_enter_notify_event_cb(self, treeView, data=None):
         self.view.treeViewHeaderGroup.setAllColumnsFocus(True)
