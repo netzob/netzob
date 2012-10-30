@@ -230,6 +230,8 @@ class MessageTableView(object):
 #            selection = self.messageTableTreeView.get_selection()
 #            if selection is not None:
 #                selection.unselect_all()
+            for header in self.treeViewHeaderGroup.getSelectedHeaders():
+                header.setSelected(False)
             normalFont = Pango.FontDescription()
             normalFont.set_weight(Pango.Weight.NORMAL)
             self.fieldNameLabel.modify_font(normalFont)
@@ -495,6 +497,7 @@ class TreeViewHeaderWidget(Gtk.VBox):
         self.setCollapsed(not self.collapsed)
 
     def titleEventBox_button_press_event_cb(self, *args):
+        self.messageTableView.controller.vocabularyPerspective.setSelectedMessageTable(self.messageTableView)
         self.setSelected(not self.selected)
 
 
