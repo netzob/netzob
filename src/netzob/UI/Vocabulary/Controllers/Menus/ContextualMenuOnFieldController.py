@@ -61,10 +61,10 @@ class ContextualMenuOnFieldController(object):
     """Contextual menu on field (copy to clipboard, message
     visualization, etc.)"""
 
-    def __init__(self, vocabularyController, layer, message, field):
+    def __init__(self, vocabularyController, layer, messages, field):
         self.vocabularyController = vocabularyController
         self.layer = layer
-        self.message = message
+        self.messages = messages
         self.field = field
         self._view = ContextualMenuOnFieldView(self)
         self.log = logging.getLogger(__name__)
@@ -85,14 +85,20 @@ class ContextualMenuOnFieldController(object):
     #+----------------------------------------------
     def copyToClipboard_cb(self, event, aligned, encoded, fieldLevel):
         if aligned is False:  # Copy the entire raw message
-            text = self.message.getStringData()
+            text = ""
+            for message in self.messages:
+                text += message.getStringData() + "\n"
             self.vocabularyController.netzob.clipboard.set_text(text, -1)
         elif fieldLevel is False:  # Copy the entire aligned message
-            text = self.message.applyAlignment(styled=False, encoded=encoded)
-            text = str(text)
+            text = ""
+            for message in self.messages:
+                tmp = message.applyAlignment(styled=False, encoded=encoded)
+                text += str(tmp) + "\n"
             self.vocabularyController.netzob.clipboard.set_text(text, -1)
         else:  # Just copy the selected field
-            text = self.message.applyAlignment(styled=False, encoded=encoded)[self.field.getIndex()]
+            text = ""
+            for message in self.messages:
+                text += str(message.applyAlignment(styled=False, encoded=encoded)[self.field.getIndex()]) + "\n"
             self.vocabularyController.netzob.clipboard.set_text(text, -1)
 
     #+----------------------------------------------
@@ -254,7 +260,8 @@ class ContextualMenuOnFieldController(object):
     def deleteMessage_cb(self, event):
         """Callback executed when the user requests
         to delete the current message"""
-        self.getSymbol().removeMessage(self.message)
+        for message in self.messages:
+            self.getSymbol().removeMessage(message)
         self.vocabularyController.view.updateSelectedMessageTable()
         self.vocabularyController.view.updateLeftPanel()
 

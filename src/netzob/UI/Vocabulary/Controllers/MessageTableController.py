@@ -103,20 +103,21 @@ class MessageTableController(object):
                 # No message selected
                 return
 
-            # Retrieve the selected message
+            # Retrieve the selected messages
+            messages = []
             layer = self._view.getDisplayedField()
             if layer is None:
-                logging.warn("No layer is selected, please choose one.")
+                logging.warn("No layer selected, please choose one.")
                 return
 
-            message_id = None
-            aIter = treeview.get_model().get_iter(path)
-            if aIter and treeview.get_model().iter_is_valid(aIter):
-                message_id = treeview.get_model().get_value(aIter, 0)
-                message = layer.getMessageByID(message_id)
-            else:
-                logging.warn(_("Impossible to retrieve the clicked message !"))
-                return
+            (model, paths) = treeview.get_selection().get_selected_rows()
+            for path in paths:
+                message_id = model[path][0]
+                if message_id is not None:
+                    message = layer.getMessageByID(message_id)
+                    messages.append(message)
+                else:
+                    return
 
             # Retrieve the selected field number
             iField = self.view.displayedField.getExtendedFields()[0].getIndex()  # Starting displayed field
@@ -130,7 +131,7 @@ class MessageTableController(object):
                 return
 
             # Popup a contextual menu
-            menuController = ContextualMenuOnFieldController(self.vocabularyPerspective.controller, layer, message, field)
+            menuController = ContextualMenuOnFieldController(self.vocabularyPerspective.controller, layer, messages, field)
             menuController.run(eventButton)
             return True  # Needed to block remainin signals (especially the 'changed_cb' signal)
 
