@@ -96,7 +96,7 @@ class FilterMessagesController(object):
                     if i == None:
                         break
                     s = messagesStore.get_value(i, 0)
-                    if s == message.getID():
+                    if str(s) == str(message.getID()):
                         messagesToRemove.append(i)
                         break
                     i = messagesStore.iter_next(i)
