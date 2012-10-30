@@ -303,7 +303,7 @@ class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
                 time.sleep(0.1)
                 finish = not self.subVisitor.isAlive()
             except:
-                self.log.warn("The socket is not anymore opened !")
+                self.log.warn("The socket is not opened anymore!")
                 finish = True
 
         self.subVisitor.join(None)
@@ -320,8 +320,8 @@ class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
 #+---------------------------------------------------------------------------+
 class NetworkServer(AbstractChannel):
 
-    def __init__(self, id, memory, bind_ip, bind_port, target_ip, target_port):
-        AbstractActor.__init__(self, id, True, False, memory, bind_ip, bind_port, target_ip, target_port)
+    def __init__(self, id, memory, protocol, bind_ip, bind_port, target_ip, target_port):
+        AbstractChannel.__init__(self, id, True, False, memory, protocol, bind_ip, bind_port, target_ip, target_port)
         # create logger with the given configuration
         self.log = logging.getLogger(__name__)
 
@@ -400,7 +400,7 @@ class NetworkServer(AbstractChannel):
         self.log.debug("Stopping the thread of the network server")
 
         self.close()
-        AbstractActor.stop(self)
+        #AbstractActor.stop(self)
 
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
