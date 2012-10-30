@@ -4,7 +4,7 @@ NEWS
 v0.4 -- 2012-11-15
 --------------------
 
-:Version name: SwimmingRhino
+:Version name: JumpingRhino
 
 * User interface
     * New user-friendly graphical interface
