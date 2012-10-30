@@ -123,7 +123,7 @@ class PCAPImporter(AbstractImporter):
         self.log.info(_("Starting import from {0} (linktype:{0})").format(filePath, str(packetReader.datalink())))
         self.datalink = packetReader.datalink()
 
-        if self.datalink != pcapy.DLT_EN10MB and self.datalink != pcapy.DLT_LINUX_SLL:
+        if self.importLayer > 1 and self.datalink != pcapy.DLT_EN10MB and self.datalink != pcapy.DLT_LINUX_SLL:
             errorMessage = _("This pcap cannot be imported since the "
                              + "layer 2 is not supported ({0})").format(str(self.datalink))
             self.log.warn(errorMessage)
