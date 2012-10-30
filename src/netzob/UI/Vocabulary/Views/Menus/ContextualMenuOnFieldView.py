@@ -276,7 +276,7 @@ class ContextualMenuOnFieldView(object):
 
             transformationFunctionItem = Gtk.CheckMenuItem(transformationFunction.getName())
             transformationFunctionItem.set_active(toggled)
-            transformationFunctionItem.connect("activate", self.controller.applyT_cb, transformationFunction)
+            transformationFunctionItem.connect("activate", self.controller.applyTransformationFunction_cb, transformationFunction)
             transformationFunctionItem.show()
             menu.append(transformationFunctionItem)
         return menu
