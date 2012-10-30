@@ -389,9 +389,9 @@ class VocabularyView(object):
         if self.selectedMessageTable is not None:
             self.selectedMessageTable.setSelected(False)
 
-        selectedMessageTable.setSelected(True)
         # Update current selected message table and
         self.selectedMessageTable = selectedMessageTable
+        self.selectedMessageTable.setSelected(True)
 
     def setDisplayedFieldInSelectedMessageTable(self, symbol):
         """Show the definition of provided symbol on the selected
