@@ -34,14 +34,14 @@ from git import *
 ignore_files = [
     "__init__.py",
     "src/netzob/ExternalLibs/xdot.py",
-    ".*\.txt",
-    ".*\.png", ".*\.ico"
+    ".*\.txt", ".*\.rst",
+    ".*\.png", ".*\.ico",
     ".*\.xsd", ".*\.xml",
     "resources/*",
     ".*\.pyc",
     "MANIFEST\.in",
     ".*\.po", ".*\.pot",
-    "doc/netzob\.1"
+    "doc/netzob\.1",
     "\.git/*",
 ]
 
