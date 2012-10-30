@@ -44,10 +44,10 @@ import shutil
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.XSDResolver import XSDResolver
 from netzob.Common.ImportedTrace import ImportedTrace
-from netzob.Common.Filters.Mathematic.Base64Filter import Base64Filter
-from netzob.Common.Filters.Mathematic.GZipFilter import GZipFilter
-from netzob.Common.Filters.Mathematic.B22Filter import BZ2Filter
-from netzob.Common.Filters.RenderingFilter import RenderingFilter
+from netzob.Common.Functions.Transformation.Base64Function import Base64Function
+from netzob.Common.Functions.Transformation.GZipFunction import GZipFunction
+from netzob.Common.Functions.Transformation.BZ2Function import BZ2Function
+from netzob.Common.Functions.RenderingFunction import RenderingFunction
 
 WORKSPACE_NAMESPACE = "http://www.netzob.org/workspace"
 COMMON_NAMESPACE = "http://www.netzob.org/common"
@@ -100,12 +100,12 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
             if project_path == lastProject and lastProject is not None:
                 workspace.referenceLastProject(lastProject)
 
-    # Reference the filters
-    if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}filters") is not None:
-        for xmlFilter in xmlWorkspace.findall("{" + WORKSPACE_NAMESPACE + "}filters/{" + WORKSPACE_NAMESPACE + "}filter"):
-            filter = RenderingFilter.loadFromXML(xmlFilter, WORKSPACE_NAMESPACE, "0.1")
-            if filter is not None:
-                workspace.addCustomMathFilter(filter)
+    # Reference the functions
+    if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}functions") is not None:
+        for xmlFunction in xmlWorkspace.findall("{" + WORKSPACE_NAMESPACE + "}functions/{" + WORKSPACE_NAMESPACE + "}function"):
+            function = RenderingFunction.loadFromXML(xmlFunction, WORKSPACE_NAMESPACE, "0.1")
+            if function is not None:
+                workspace.addCustomTransformationFunction(function)
 
     return workspace
 
@@ -137,7 +137,7 @@ class Workspace(object):
         self.pathOfPrototypes = pathOfPrototypes
         self.lastProjectPath = lastProjectPath
         self.importedTraces = importedTraces
-        self.customMathFilters = []
+        self.customTransformationFunctions = []
 
     def getNameOfProjects(self):
         nameOfProjects = []
@@ -179,27 +179,27 @@ class Workspace(object):
         self.importedTraces.remove(importedTrace)
 #        self.saveConfigFile()
 
-    def getMathematicFilters(self):
+    def getTransformationFunctions(self):
         """Computes and returns the list of available
-        filters"""
-        filters = []
-        filters.append(Base64Filter(_("Base64 Filter")))
-        filters.append(GZipFilter(_("GZip Filter")))
-        filters.append(BZ2Filter(_("BZ2 Filter")))
-        filters.extend(self.customMathFilters)
-        return filters
+        functions"""
+        functions = []
+        functions.append(Base64Function(_("Base64 Function")))
+        functions.append(GZipFunction(_("GZip Function")))
+        functions.append(BZ2Function(_("BZ2 Function")))
+        functions.extend(self.customTransformationFunctions)
+        return functions
 
-    def getCustomFilters(self):
-        return self.customMathFilters
+    def getCustomFunctions(self):
+        return self.customTransformationFunctions
 
-    def addCustomMathFilter(self, filter):
+    def addCustomTransformationFunction(self, function):
         found = False
-        for f in self.customMathFilters:
-            if f.getName() == filter.getName():
+        for f in self.customTransformationFunctions:
+            if f.getName() == function.getName():
                 found = True
                 break
         if not found:
-            self.customMathFilters.append(filter)
+            self.customTransformationFunctions.append(function)
 
     #+-----------------------------------------------------------------------+
     #| referenceProject:
@@ -247,9 +247,9 @@ class Workspace(object):
         for importedTrace in self.getImportedTraces():
             importedTrace.save(xmlWorkspaceImported, WORKSPACE_NAMESPACE, COMMON_NAMESPACE, os.path.join(self.path, self.getPathOfTraces()))
 
-        xmlWorkspaceFilters = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}filters")
-        for filter in self.getCustomFilters():
-            filter.save(xmlWorkspaceFilters, WORKSPACE_NAMESPACE)
+        xmlWorkspaceFunctions = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}functions")
+        for function in self.getCustomFunctions():
+            function.save(xmlWorkspaceFunctions, WORKSPACE_NAMESPACE)
 
         tree = ElementTree(root)
         tree.write(workspaceFile)

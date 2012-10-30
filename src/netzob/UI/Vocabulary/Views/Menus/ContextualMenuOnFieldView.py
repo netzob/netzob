@@ -29,7 +29,6 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import os
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -42,15 +41,11 @@ from gi.repository import GObject
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.Common.Type.Format import Format
 from netzob.Common.Type.UnitSize import UnitSize
 from netzob.Common.Type.Sign import Sign
 from netzob.Common.Type.Endianess import Endianess
 from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Filters.Mathematic.Base64Filter import Base64Filter
-from netzob.Common.Filters.Mathematic.GZipFilter import GZipFilter
-from netzob.Common.Filters.Mathematic.B22Filter import BZ2Filter
 
 
 class ContextualMenuOnFieldView(object):
@@ -75,10 +70,10 @@ class ContextualMenuOnFieldView(object):
         item.show()
         self.menu.append(item)
 
-        # Add sub-entries to add mathematic filters on a  specific column
-        subMenuMathematicFilters = self.build_mathematicFilter_submenu()
-        item = Gtk.MenuItem(_("Configure mathematic filters"))
-        item.set_submenu(subMenuMathematicFilters)
+        # Add sub-entries to add transformation function on a  specific column
+        subMenuTransformationFunctions = self.build_transformationFunction_submenu()
+        item = Gtk.MenuItem(_("Configure Transformation Functions"))
+        item.set_submenu(subMenuTransformationFunctions)
         item.show()
         self.menu.append(item)
 
@@ -262,26 +257,26 @@ class ContextualMenuOnFieldView(object):
         return copyMenu
 
     #+----------------------------------------------
-    #| build_mathematicFilter_submenu:
-    #|   Build a submenu for field/symbol mathematic filters
+    #| build_transformationFunction_submenu:
+    #|   Build a submenu for field/symbol transformation function
     #+----------------------------------------------
-    def build_mathematicFilter_submenu(self):
+    def build_transformationFunction_submenu(self):
         menu = Gtk.Menu()
 
-        # Retrieve the list of available mathematical filters
+        # Retrieve the list of available transformation function
         currentWorkspace = self.controller.vocabularyController.getCurrentWorkspace()
-        mathematicFilters = currentWorkspace.getMathematicFilters()
+        transformationFunctions = currentWorkspace.getTransformationFunctions()
 
-        for mathFilter in mathematicFilters:
+        for transformationFunction in transformationFunctions:
             toggled = False
-            for f in self.controller.field.getMathematicFilters():
-                if f.getName() == mathFilter.getName():
+            for f in self.controller.field.getTransformationFunctions():
+                if f.getName() == transformationFunction.getName():
                     toggled = True
                     break
 
-            mathFilterItem = Gtk.CheckMenuItem(mathFilter.getName())
-            mathFilterItem.set_active(toggled)
-            mathFilterItem.connect("activate", self.controller.applyMathematicalFilter_cb, mathFilter)
-            mathFilterItem.show()
-            menu.append(mathFilterItem)
+            transformationFunctionItem = Gtk.CheckMenuItem(transformationFunction.getName())
+            transformationFunctionItem.set_active(toggled)
+            transformationFunctionItem.connect("activate", self.controller.applyT_cb, transformationFunction)
+            transformationFunctionItem.show()
+            menu.append(transformationFunctionItem)
         return menu

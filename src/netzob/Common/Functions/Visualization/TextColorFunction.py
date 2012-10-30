@@ -29,56 +29,29 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-import uuid
-from netzob.Common.Filters.RenderingFilter import RenderingFilter
-#+---------------------------------------------------------------------------+
-#| Local imports
-#+---------------------------------------------------------------------------+
-
+from netzob.Common.Functions.VisualizationFunction import VisualizationFunction
+from netzob.Common.Type.Format import Format
 
 #+---------------------------------------------------------------------------+
-#| EncodingFilter :
-#|     Class definition of a filter for encoding purposes (format, unit, ...)
+#| Related third party imports
 #+---------------------------------------------------------------------------+
-class EncodingFilter(RenderingFilter):
 
-    TYPE = "EncodingFilter"
+#+---------------------------------------------------------------------------+
+#| Local application imports
+#+---------------------------------------------------------------------------+
 
-    #+-----------------------------------------------------------------------+
-    #| Constructor
-    #+-----------------------------------------------------------------------+
-    def __init__(self, type, name):
-        RenderingFilter.__init__(self, EncodingFilter.TYPE)
-        self.type = type
-        self.name = name
 
-    #+-----------------------------------------------------------------------+
-    #| apply
-    #|     Abstract method to apply the filter on a provided message
-    #|     MUST BE IMPLEMENTED IN SUB CLASSES
-    #+-----------------------------------------------------------------------+
-    def apply(self, message):
-        self.log.error("The filter class (" + self.getType() + ") doesn't define 'isValid' !")
-        raise NotImplementedError("The filter class (" + self.getType() + ") doesn't define 'isValid' !")
+#+---------------------------------------------------------------------------+
+#| TextColorFunction:
+#|     Definition of a visualization function wich colorize a text
+#+---------------------------------------------------------------------------+
+class TextColorFunction(VisualizationFunction):
 
-    #+-----------------------------------------------------------------------+
-    #| getConversionAddressingTable
-    #|     Retrieve a table which describes the conversion addressing
-    #+-----------------------------------------------------------------------+
-    def getConversionAddressingTable(self, message):
-        return None
+    TYPE = "TextColorFunction"
 
-    #+-----------------------------------------------------------------------+
-    #| Getter & Setters
-    #+-----------------------------------------------------------------------+
-    def getType(self):
-        return self.type
+    def __init__(self, name, color):
+        VisualizationFunction.__init__(self, TextColorFunction.TYPE, name)
+        self.color = color
 
-    def getName(self):
-        return self.name
-
-    def setType(self, type):
-        self.type = type
-
-    def setName(self, name):
-        self.name = name
+    def getTags(self):
+        return ('<span foreground="' + self.color + '">', '</span>')

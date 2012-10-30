@@ -31,7 +31,7 @@
 import logging
 import struct
 from netzob.Common.Type.Format import Format
-from netzob.Common.Filters.EncodingFilter import EncodingFilter
+from netzob.Common.Functions.EncodingFunction import EncodingFunction
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Type.UnitSize import UnitSize
 from netzob.Common.Type.Endianess import Endianess
@@ -47,15 +47,15 @@ from netzob.Common.Type.Sign import Sign
 
 
 #+---------------------------------------------------------------------------+
-#| FormatFilter:
-#|     Definition of an encoding filter which apply a format on a message
+#| FormatFunction:
+#|     Definition of an encoding function which apply a format on a message
 #+---------------------------------------------------------------------------+
-class FormatFilter(EncodingFilter):
+class FormatFunction(EncodingFunction):
 
-    TYPE = "FormatFilter"
+    TYPE = "FormatFunction"
 
     def __init__(self, name, formatType, unitSize, endianness, sign):
-        EncodingFilter.__init__(self, FormatFilter.TYPE, name)
+        EncodingFunction.__init__(self, FormatFunction.TYPE, name)
         self.formatType = formatType
         self.unitsize = unitSize
         self.endianness = endianness

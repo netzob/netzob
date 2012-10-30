@@ -42,7 +42,7 @@ from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.Type.UnitSize import UnitSize
 from netzob.Common.Type.Format import Format
 from netzob.Common.Token import Token
-from netzob.Common.Filters.FilterApplicationTable import FilterApplicationTable
+from netzob.Common.Functions.FunctionApplicationTable import FunctionApplicationTable
 
 #from netzob import _libRegex
 
@@ -69,8 +69,8 @@ class AbstractMessage(object):
         self.rightReductionFactor = 0
         self.leftReductionFactor = 0
         self.extraProperties = []
-        self.visualizationFilters = []
-        self.mathematicFilters = []
+        self.visualizationFunctions = []
+        self.transformationFunctions = []
 
         self.pattern = []
         if not pattern:
@@ -110,9 +110,9 @@ class AbstractMessage(object):
     def getStringData(self):
         message = str(self.data)
 
-        # Filter with math filters
-        for filter in self.getMathematicFilters():
-            message = filter.apply(message)
+        # Function with math functions
+        for function in self.getTransformationFunctions():
+            message = function.apply(message)
 
         return message
 
@@ -213,7 +213,7 @@ class AbstractMessage(object):
         splittedData = self.applyAlignmentByFields(fields, dataToSplit)
 
         # Create the locationTable
-        filterTable = FilterApplicationTable(splittedData)
+        functionTable = FunctionApplicationTable(splittedData)
 
         if encoded is True or styled is True:
             i_data = 0
@@ -221,23 +221,23 @@ class AbstractMessage(object):
                 field = self.symbol.getExtendedFields()[i_field]
                 dataField = splittedData[i_field]
 
-                # Add encoding filters
+                # Add encoding functions
                 if encoded is True:
-                    for filter in field.getEncodingFilters():
-                        filterTable.applyFilter(filter, i_data, i_data + len(dataField))
-                # Add visualization filters
+                    for function in field.getEncodingFunctions():
+                        functionTable.applyFunction(function, i_data, i_data + len(dataField))
+                # Add visualization functions
                 if styled is True and len(dataField) > 0:
-                    # Add visualization filters obtained from fields
-                    for filter in field.getVisualizationFilters():
-                        filterTable.applyFilter(filter, i_data, i_data + len(dataField))
+                    # Add visualization functions obtained from fields
+                    for function in field.getVisualizationFunctions():
+                        functionTable.applyFunction(function, i_data, i_data + len(dataField))
 
                 i_data = i_data + len(dataField)
 
             if styled is True:
-                for (filter, start, end) in self.getVisualizationFilters():
-                    filterTable.applyFilter(filter, start, end)
+                for (function, start, end) in self.getVisualizationFunctions():
+                    functionTable.applyFunction(function, start, end)
 
-        return filterTable.getResult()
+        return functionTable.getResult()
 
     def applyAlignmentByFields(self, fields, dataToSplit):
         resSplittedData = []
@@ -250,30 +250,30 @@ class AbstractMessage(object):
             logging.error("Inconsistency problem between number of fields and the regex application")
             return []
 
-        # Apply mathematical filters on each field
-        filteredData = self.getFilteredData(fields, splittedData)
+        # Apply transformation functions on each field
+        transformedData = self.getTransformedData(fields, splittedData)
 
         # Recursive alignment on each fieldLayer
         i = 0
         for field in fields:
             if field.isLayer():
-                resSplittedData.extend(self.applyAlignmentByFields(field.getLocalFields(), filteredData[i]))
+                resSplittedData.extend(self.applyAlignmentByFields(field.getLocalFields(), transformedData[i]))
             else:
-                resSplittedData.append(filteredData[i])
+                resSplittedData.append(transformedData[i])
             i += 1
         return resSplittedData
 
-    def getFilteredData(self, fields, splittedData):
-        # Add Mathematics filters
+    def getTransformedData(self, fields, splittedData):
+        # Add transformation functions
         i = 0
         for field in fields:
 
-            filters = field.getMathematicFilters()
-            for filter in filters:
+            functions = field.getTransformationFunctions()
+            for function in functions:
                 try:
-                    splittedData[i] = filter.apply(splittedData[i])
+                    splittedData[i] = function.apply(splittedData[i])
                 except:
-                    self.log.warning("Impossible to apply filter {0} on data {1}.".format(filter.getName(), splittedData[i]))
+                    self.log.warning("Impossible to apply function {0} on data {1}.".format(function.getName(), splittedData[i]))
             i = i + 1
         return splittedData
 
@@ -379,51 +379,51 @@ class AbstractMessage(object):
         self.leftReductionFactor = factor
         self.rightReductionFactor = 0
 
-    def getVisualizationFilters(self):
-        """getVisualizationFilters:
-                Returns a list which contains all the visualization filters
+    def getVisualizationFunctions(self):
+        """getVisualizationFunctions:
+                Returns a list which contains all the visualization functions
                 attach to the current message"""
-        return self.visualizationFilters
+        return self.visualizationFunctions
 
-    def addVisualizationFilter(self, filter, start, end):
-        """addVisualizationFilter:
-                Register a new visu filter"""
-        self.visualizationFilters.append((filter, start, end))
+    def addVisualizationFunction(self, function, start, end):
+        """addVisualizationFunction:
+                Register a new visu function"""
+        self.visualizationFunctions.append((function, start, end))
 
-    def removeVisualizationFilter(self, filter):
-        """removeVisualizationFilter:
-                Remove the provided filter."""
-        savedFilters = []
-        for (f, start, end) in self.visualizationFilters:
-            if filter.getID() != f.getID():
-                savedFilters.append((f, start, end))
-        self.visualizationFilters = []
-        for a in savedFilters:
-            self.visualizationFilters.append(a)
+    def removeVisualizationFunction(self, function):
+        """removeVisualizationFunction:
+                Remove the provided function."""
+        savedFunctions = []
+        for (f, start, end) in self.visualizationFunctions:
+            if function.getID() != f.getID():
+                savedFunctions.append((f, start, end))
+        self.visualizationFunctions = []
+        for a in savedFunctions:
+            self.visualizationFunctions.append(a)
 
-    def removeMathematicFilter(self, filter):
-        """removeMathematicFilter:
-                Remove a precised mathematic filter.
+    def removeTransformationFunction(self, function):
+        """removeTransformationFunction:
+                Remove a precised transformation function.
 
-                @type filter: netzob.Common.Filters
-                @param filter: the filter that is removed.
+                @type function: netzob.Common.Functions
+                @param function: the function that is removed.
         """
         fToRemove = None
-        for mFilter in self.mathematicFilters:
-            if mFilter.getName() == filter.getName():
-                fToRemove = mFilter
+        for mFunction in self.transformationFunctions:
+            if mFunction.getName() == function.getName():
+                fToRemove = mFunction
                 break
         if fToRemove is not None:
-            self.mathematicFilters.remove(fToRemove)
+            self.transformationFunctions.remove(fToRemove)
 
-    def addMathematicFilter(self, filter):
-        """addMathematicFilter:
-                Add a precised mathematic filter.
+    def addTransformationFunction(self, function):
+        """addTransformationFunction:
+                Add a precised transformation function.
 
-                @type filter: netzob.Common.Filters
-                @param filter: the filter that is added.
+                @type function: netzob.Common.Functions
+                @param function: the function that is added.
         """
-        self.mathematicFilters.append(filter)
+        self.transformationFunctions.append(function)
 
-    def getMathematicFilters(self):
-        return self.mathematicFilters
+    def getTransformationFunctions(self):
+        return self.transformationFunctions

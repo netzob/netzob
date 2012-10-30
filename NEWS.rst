@@ -14,7 +14,7 @@ v0.4 -- 2012-11-15
 * Internationalization of Netzob
 * Vocabulary inference
     * Support of layers
-    * Support customized mathematical filters
+    * Support customized transformation functions
     * Provide the edition of a variable
     * Support IPv4, MAC and random binary variables
     * Support filters for displayed messages

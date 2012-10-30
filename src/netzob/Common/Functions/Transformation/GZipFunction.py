@@ -29,48 +29,50 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-import base64
+import gzip
+import StringIO
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Filters.MathematicFilter import MathematicFilter
+from netzob.Common.Functions.TransformationFunction import TransformationFunction
 
 
 #+---------------------------------------------------------------------------+
-#| Base64Filter:
-#|     Definition of a base64 transformation filter
+#| GZipFunction:
+#|     Definition of a GZIP transformation function
 #+---------------------------------------------------------------------------+
-class Base64Filter(MathematicFilter):
+class GZipFunction(TransformationFunction):
 
-    TYPE = "FormatFilter"
+    TYPE = "GZipFunction"
 
     def __init__(self, name):
-        MathematicFilter.__init__(self, Base64Filter.TYPE, name)
+        TransformationFunction.__init__(self, GZipFunction.TYPE, name)
 
     def apply(self, message):
-        """apply:
-        Decode in B64 the provided message"""
         result = message
+        rawData = TypeConvertor.netzobRawToPythonRaw(message)
+        compressedstream = StringIO.StringIO(rawData)
         try:
-            rawContent = TypeConvertor.netzobRawToPythonRaw(message)
-            b64Content = base64.b64decode(rawContent)
-            result = TypeConvertor.pythonRawToNetzobRaw(b64Content)
-        except TypeError as error:
-            logging.warning("Impossible to compute the base64 value of message (error={0})".format(str(error)))
+            gzipper = gzip.GzipFile(fileobj=compressedstream)
+            data = gzipper.read()
+            result = TypeConvertor.pythonRawToNetzobRaw(data)
+        except Exception as e:
+            logging.info("Impossible to apply GZip function on provided message (error= {0})".format(str(e)))
             result = ""
         return result
 
     def reverse(self, message):
-        """reverse:
-        Encode in B64 the provided message"""
         result = message
+        rawData = TypeConvertor.netzobRawToPythonRaw(message)
+        compressedstream = StringIO.StringIO()
         try:
-            rawContent = TypeConvertor.netzobRawToPythonRaw(message)
-            b64Content = base64.b64encode(rawContent)
-            result = TypeConvertor.pythonRawToNetzobRaw(b64Content)
-        except TypeError as error:
-            logging.warning("Impossible to compute the base64 value of message (error={0})".format(str(error)))
+            gzipper = gzip.GzipFile(fileobj=compressedstream, mode='w')
+            gzipper.write(rawData)
+            gzipper.close()
+            result = TypeConvertor.pythonRawToNetzobRaw(compressedstream.getvalue())
+        except Exception as e:
+            logging.info("Impossible to apply GZip function on provided message (error= {0})".format(str(e)))
             result = ""
         return result

@@ -43,7 +43,7 @@ from netzob.Common.Threads.Tasks.ThreadedTask import TaskError, ThreadedTask
 from netzob.Inference.Vocabulary.SearchTask import SearchTask
 from netzob.Common.Type.Format import Format
 from netzob.Inference.Vocabulary.Searcher import Searcher
-from netzob.Common.Filters.Visualization.TextColorFilter import TextColorFilter
+from netzob.Common.Functions.Visualization.TextColorFunction import TextColorFunction
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
@@ -260,7 +260,7 @@ class ResearchController(object):
 
     def showCurrentResult(self):
         """Show the current result (open the symbol) and
-        highlight with a "Search Filter" the segments"""
+        highlight with a "Search Function" the segments"""
         self.updateNextAndPreviousButtons()
 
         # fetch the current result
@@ -272,43 +272,43 @@ class ResearchController(object):
 
         self._view.currentSelectedResultLabel.set_label(_("{0}/{1} : {2}".format(self.idResult + 1, self.nbResult, currentResult.getVariationDescription())))
 
-        # add a dedicated filter for the result
+        # add a dedicated function for the result
         self.colorizeResult(currentResult)
 
         # the result message should become the displayed one
         self.showResult(currentResult)
 
     def decolorizeAllResult(self):
-        """Search for all the "Search Filters" on any symbol
+        """Search for all the "Search Functions" on any symbol
         and remove them"""
         vocabulary = self.vocabularyController.getCurrentProject().getVocabulary()
         for symbol in vocabulary.getSymbols():
-            filterToRemoveFromSymbol = []
+            functionToRemoveFromSymbol = []
             field = symbol.getField()
 
-            for filter in field.getVisualizationFilters():
-                if filter.getName() == "Search":
-                    filterToRemoveFromSymbol.append(filter)
+            for function in field.getVisualizationFunctions():
+                if function.getName() == "Search":
+                    functionToRemoveFromSymbol.append(function)
 
-            for filter in filterToRemoveFromSymbol:
-                symbol.removeVisualizationFilter(filter)
+            for function in functionToRemoveFromSymbol:
+                symbol.removeVisualizationFunction(function)
 
-            filterToRemoveFromMessage = []
+            functionToRemoveFromMessage = []
             for message in symbol.getMessages():
-                for (filter, start, end) in message.getVisualizationFilters():
-                    if filter.getName() == "Search":
-                        filterToRemoveFromMessage.append(filter)
+                for (function, start, end) in message.getVisualizationFunctions():
+                    if function.getName() == "Search":
+                        functionToRemoveFromMessage.append(function)
 
-                for f in filterToRemoveFromMessage:
-                    message.removeVisualizationFilter(f)
+                for f in functionToRemoveFromMessage:
+                    message.removeVisualizationFunction(f)
 
     def colorizeResult(self, result):
-        """Colorize by adding a filter on the segment
+        """Colorize by adding a function on the segment
         pointed by the results"""
         for (start, length) in result.getSegments():
-            filter = TextColorFilter("Search", "green")
+            function = TextColorFunction("Search", "green")
             message = result.getMessage()
-            message.addVisualizationFilter(filter, start, start + length)
+            message.addVisualizationFunction(function, start, start + length)
 
     def showResult(self, result):
         """Show the result pointed message"""

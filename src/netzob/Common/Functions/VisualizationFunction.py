@@ -28,43 +28,50 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
-import os
+import logging
 
 #+---------------------------------------------------------------------------+
-#| Related third party imports
+#| Local imports
 #+---------------------------------------------------------------------------+
-from gi.repository import Gtk, Gdk
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import GObject
+from netzob.Common.Functions.RenderingFunction import RenderingFunction
+
 
 #+---------------------------------------------------------------------------+
-#| Local application imports
+#| VisualizationFunction:
+#|     Class definition of a function for visualization purposes (color, bold, ...)
 #+---------------------------------------------------------------------------+
-from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+class VisualizationFunction(RenderingFunction):
 
+    TYPE = "VisualizationFunction"
 
-class CustomMathFilterView(object):
+    #+-----------------------------------------------------------------------+
+    #| Constructor
+    #+-----------------------------------------------------------------------+
+    def __init__(self, type, name):
+        RenderingFunction.__init__(self, VisualizationFunction.TYPE)
+        self.type = type
+        self.name = name
 
-    def __init__(self, controller):
-        self.builder = Gtk.Builder()
-        self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
-                                                "ui", "vocabulary",
-                                                "customMathFilterDialog.glade"))
-        self._getObjects(self.builder, ["customMathFilterDialog",
-                                        "imageError", "imageValid", "cancelButton",
-                                        "applyButton", "nameOfFilterEntry", "labelMessage", "filterReverseTextView", "sourceCodeIsTheSameForReverseCheckButton",
-                                        "filterTextView", "messagesListStore", "scrolledwindow3"])
-        self.controller = controller
-        self.builder.connect_signals(self.controller)
+    #+-----------------------------------------------------------------------+
+    #| getTags
+    #|     Abstract method to return the tags created by the function (start,end) tags
+    #|     MUST BE IMPLEMENTED IN SUB CLASSES
+    #+-----------------------------------------------------------------------+
+    def getTags(self):
+        self.log.error("The function class (" + self.getType() + ") doesn't define 'getTags' !")
+        raise NotImplementedError("The function class (" + self.getType() + ") doesn't define 'getTags' !")
 
-    def _getObjects(self, builder, objectsList):
-        for obj in objectsList:
-            setattr(self, obj, builder.get_object(obj))
+    #+-----------------------------------------------------------------------+
+    #| Getter & Setters
+    #+-----------------------------------------------------------------------+
+    def getType(self):
+        return self.type
 
-    def run(self):
-        self.customMathFilterDialog.run()
+    def getName(self):
+        return self.name
 
-    def destroy(self):
-        self.customMathFilterDialog.destroy()
+    def setType(self, type):
+        self.type = type
+
+    def setName(self, name):
+        self.name = name

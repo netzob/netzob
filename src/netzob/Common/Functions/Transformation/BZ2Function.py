@@ -29,49 +29,48 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
+import bz2
 
 #+---------------------------------------------------------------------------+
-#| Local imports
+#| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Filters.RenderingFilter import RenderingFilter
+from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Functions.TransformationFunction import TransformationFunction
 
 
 #+---------------------------------------------------------------------------+
-#| VisualizationFilter:
-#|     Class definition of a filter for visualization purposes (color, bold, ...)
+#| BZ2Function:
+#|     Definition of a BZ2 transformation function
 #+---------------------------------------------------------------------------+
-class VisualizationFilter(RenderingFilter):
+class BZ2Function(TransformationFunction):
 
-    TYPE = "VisualizationFilter"
+    TYPE = "BZ2Function"
 
-    #+-----------------------------------------------------------------------+
-    #| Constructor
-    #+-----------------------------------------------------------------------+
-    def __init__(self, type, name):
-        RenderingFilter.__init__(self, VisualizationFilter.TYPE)
-        self.type = type
-        self.name = name
+    def __init__(self, name):
+        TransformationFunction.__init__(self, BZ2Function.TYPE, name)
 
-    #+-----------------------------------------------------------------------+
-    #| getTags
-    #|     Abstract method to return the tags created by the filter (start,end) tags
-    #|     MUST BE IMPLEMENTED IN SUB CLASSES
-    #+-----------------------------------------------------------------------+
-    def getTags(self):
-        self.log.error("The filter class (" + self.getType() + ") doesn't define 'getTags' !")
-        raise NotImplementedError("The filter class (" + self.getType() + ") doesn't define 'getTags' !")
+    def apply(self, message):
+        """apply:
+        This decompress the provided message in bz2"""
+        result = message
+        rawData = TypeConvertor.netzobRawToPythonRaw(message)
+        try:
+            rawResult = bz2.decompress(rawData)
+            result = TypeConvertor.pythonRawToNetzobRaw(rawResult)
+        except Exception as e:
+            logging.info("Impossible to apply BZ2 function (decompress) on provided message (error= {0})".format(str(e)))
+            result = ""
+        return result
 
-    #+-----------------------------------------------------------------------+
-    #| Getter & Setters
-    #+-----------------------------------------------------------------------+
-    def getType(self):
-        return self.type
-
-    def getName(self):
-        return self.name
-
-    def setType(self, type):
-        self.type = type
-
-    def setName(self, name):
-        self.name = name
+    def reverse(self, message):
+        """reverse:
+        This compress the provided message in bz2 format"""
+        result = message
+        rawData = TypeConvertor.netzobRawToPythonRaw(message)
+        try:
+            rawResult = bz2.compress(rawData)
+            result = TypeConvertor.pythonRawToNetzobRaw(rawResult)
+        except Exception as e:
+            logging.info("Impossible to reverse BZ2 function (compress) on provided message (error= {0})".format(str(e)))
+            result = ""
+        return result

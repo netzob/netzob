@@ -29,28 +29,56 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-from netzob.Common.Filters.VisualizationFilter import VisualizationFilter
-
+import uuid
+from netzob.Common.Functions.RenderingFunction import RenderingFunction
 #+---------------------------------------------------------------------------+
-#| Related third party imports
-#+---------------------------------------------------------------------------+
-
-#+---------------------------------------------------------------------------+
-#| Local application imports
+#| Local imports
 #+---------------------------------------------------------------------------+
 
 
 #+---------------------------------------------------------------------------+
-#| BackgroundColorFilter:
-#|     Definition of a visualization filter wich colorize the background
+#| EncodingFunction :
+#|     Class definition of a function for encoding purposes (format, unit, ...)
 #+---------------------------------------------------------------------------+
-class BackgroundColorFilter(VisualizationFilter):
+class EncodingFunction(RenderingFunction):
 
-    TYPE = "BackgroundColorFilter"
+    TYPE = "EncodingFunction"
 
-    def __init__(self, name, color):
-        VisualizationFilter.__init__(self, BackgroundColorFilter.TYPE, name)
-        self.color = color
+    #+-----------------------------------------------------------------------+
+    #| Constructor
+    #+-----------------------------------------------------------------------+
+    def __init__(self, type, name):
+        RenderingFunction.__init__(self, EncodingFunction.TYPE)
+        self.type = type
+        self.name = name
 
-    def getTags(self):
-        return ('<span background="' + self.color + '">', '</span>')
+    #+-----------------------------------------------------------------------+
+    #| apply
+    #|     Abstract method to apply the function on a provided message
+    #|     MUST BE IMPLEMENTED IN SUB CLASSES
+    #+-----------------------------------------------------------------------+
+    def apply(self, message):
+        self.log.error("The function class (" + self.getType() + ") doesn't define 'isValid' !")
+        raise NotImplementedError("The function class (" + self.getType() + ") doesn't define 'isValid' !")
+
+    #+-----------------------------------------------------------------------+
+    #| getConversionAddressingTable
+    #|     Retrieve a table which describes the conversion addressing
+    #+-----------------------------------------------------------------------+
+    def getConversionAddressingTable(self, message):
+        return None
+
+    #+-----------------------------------------------------------------------+
+    #| Getter & Setters
+    #+-----------------------------------------------------------------------+
+    def getType(self):
+        return self.type
+
+    def getName(self):
+        return self.name
+
+    def setType(self, type):
+        self.type = type
+
+    def setName(self, name):
+        self.name = name

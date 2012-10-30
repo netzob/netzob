@@ -36,28 +36,27 @@ import logging
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk
 import gi
-from netzob.UI.Common.Views.CustomMathFilterView import CustomMathFilterView
-from netzob.Common.Filters.Mathematic.CustomFilter import CustomFilter
+from netzob.UI.Common.Views.CustomTransformationFunctionView import CustomTransformationFunctionView
+from netzob.Common.Functions.Transformation.CustomFunction import CustomFunction
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
-from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-class CustomMathFilterController(object):
-    """Manage the creation of a custom math filter"""
+class CustomTransformationFunctionController(object):
+    """Manage the creation of a custom transformation function"""
 
     def __init__(self, vocabularyController, symbol):
         self.vocabularyController = vocabularyController
         self.log = logging.getLogger(__name__)
-        self._view = CustomMathFilterView(self)
+        self._view = CustomTransformationFunctionView(self)
         self.symbol = symbol
         self.sourceCode = ""
         self.reverseSourceCode = ""
-        self.filterName = ""
-        self.filter = None
+        self.functionName = ""
+        self.function = None
 
     @property
     def view(self):
@@ -72,31 +71,31 @@ class CustomMathFilterController(object):
     def cancelButton_clicked_cb(self, widget):
         """Callback executed when the user clicks
         on the cancel button"""
-        self._view.customMathFilterDialog.destroy()
+        self._view.customTransformationFunctionDialog.destroy()
 
     def applyButton_clicked_cb(self, widget):
         """Callback executed when the user clicks
         on the apply button."""
-        self._view.customMathFilterDialog.destroy()
+        self._view.customTransformationFunctionDialog.destroy()
 
-        if self.filter is not None:
-            # Create the filter add it to the workspace set of available filters
+        if self.function is not None:
+            # Create the function add it to the workspace set of available functions
             workspace = self.vocabularyController.getCurrentWorkspace()
-            workspace.addCustomMathFilter(self.filter)
+            workspace.addCustomTransformationFunction(self.function)
 
-    def testYourFilterButton_clicked_cb(self, widget):
+    def testYourFunctionButton_clicked_cb(self, widget):
         self.dataUpdated()
 
     def sourceCodeIsTheSameForReverseCheckButton_toggled_cb(self, widget):
         if self._view.sourceCodeIsTheSameForReverseCheckButton.get_active():
-            self._view.filterReverseTextView.set_editable(False)
+            self._view.functionReverseTextView.set_editable(False)
         else:
-            self._view.filterReverseTextView.set_editable(True)
+            self._view.functionReverseTextView.set_editable(True)
 
     def initSourceCode(self):
-        initialSource = """# Type below the Python source code of your filter.
+        initialSource = """# Type below the Python source code of your function.
 # The source code must edit the content of a 'message' variable. This variable
-# contains an hexastring value (eg. '0b1c3489') you can 'filter'.
+# contains an hexastring value (eg. '0b1c3489') you can 'function'.
 # An example of a source code would be :
 #
 # ! This source code is for abstracting messages (decrypt, decompress received messages...)
@@ -105,12 +104,12 @@ class CustomMathFilterController(object):
 #
 # message = '00'+message+'00'
 """
-        self._view.filterTextView.get_buffer().set_text(initialSource)
+        self._view.functionTextView.get_buffer().set_text(initialSource)
 
     def initReverseSourceCode(self):
-        initialSource = """# Type below the Python source code of your filter.
+        initialSource = """# Type below the Python source code of your function.
 # The source code must edit the content of a 'message' variable. This variable
-# contains an hexastring value (eg. '0b1c3489') you can 'filter'.
+# contains an hexastring value (eg. '0b1c3489') you can 'function'.
 #
 # ! This source code is for specifying messages (encrypt, compress sent messages...)
 #
@@ -118,23 +117,23 @@ class CustomMathFilterController(object):
 #
 # message = '00'+message+'00'
 """
-        self._view.filterReverseTextView.get_buffer().set_text(initialSource)
+        self._view.functionReverseTextView.get_buffer().set_text(initialSource)
 
     def dataUpdated(self):
         # retrieve the source code
-        self.sourceCode = self._view.filterTextView.get_buffer().get_text(self._view.filterTextView.get_buffer().get_start_iter(), self._view.filterTextView.get_buffer().get_end_iter(), True)
+        self.sourceCode = self._view.functionTextView.get_buffer().get_text(self._view.functionTextView.get_buffer().get_start_iter(), self._view.functionTextView.get_buffer().get_end_iter(), True)
 
         if self._view.sourceCodeIsTheSameForReverseCheckButton.get_active():
             self.reverseSourceCode = self.sourceCode
         else:
-            self.reverseSourceCode = self._view.filterReverseTextView.get_buffer().get_text(self._view.filterReverseTextView.get_buffer().get_start_iter(), self._view.filterReverseTextView.get_buffer().get_end_iter(), True)
+            self.reverseSourceCode = self._view.functionReverseTextView.get_buffer().get_text(self._view.functionReverseTextView.get_buffer().get_start_iter(), self._view.functionReverseTextView.get_buffer().get_end_iter(), True)
 
-        # retrieve the name of the filter
-        self.filterName = self._view.nameOfFilterEntry.get_text()
+        # retrieve the name of the function
+        self.functionName = self._view.nameOfFunctionEntry.get_text()
 
-        if self.filterName is not None and len(self.filterName) > 0 and self.sourceCode is not None and len(self.sourceCode) > 0 and self.reverseSourceCode is not None and len(self.reverseSourceCode) > 0:
-            self.filter = CustomFilter(self.filterName, self.sourceCode, self.reverseSourceCode)
-            errorMessage = self.filter.compileSourceCode()
+        if self.functionName is not None and len(self.functionName) > 0 and self.sourceCode is not None and len(self.sourceCode) > 0 and self.reverseSourceCode is not None and len(self.reverseSourceCode) > 0:
+            self.function = CustomFunction(self.functionName, self.sourceCode, self.reverseSourceCode)
+            errorMessage = self.function.compileSourceCode()
 
             if errorMessage is None:
                 self._view.applyButton.set_sensitive(True)
@@ -142,10 +141,10 @@ class CustomMathFilterController(object):
                 self._view.imageValid.show()
                 self._view.imageError.hide()
                 self._view.scrolledwindow3.show_all()
-                self._view.labelMessage.set_label(_("Verify below the filtered messages"))
+                self._view.labelMessage.set_label(_("Verify below the transformed messages"))
                 self._view.labelMessage.show()
             else:
-                self.filter = None
+                self.function = None
                 self._view.applyButton.set_sensitive(False)
                 self.updateMessages()
                 self._view.imageValid.hide()
@@ -155,7 +154,7 @@ class CustomMathFilterController(object):
                 self._view.labelMessage.show()
                 return
 
-            errorMessage = self.filter.compileReverseSourceCode()
+            errorMessage = self.function.compileReverseSourceCode()
 
             if errorMessage is None:
                 self._view.applyButton.set_sensitive(True)
@@ -163,7 +162,7 @@ class CustomMathFilterController(object):
                 self._view.imageError.hide()
                 self._view.scrolledwindow3.show_all()
             else:
-                self.filter = None
+                self.function = None
                 self._view.applyButton.set_sensitive(False)
                 self.updateMessages()
                 self._view.imageValid.hide()
@@ -177,7 +176,7 @@ class CustomMathFilterController(object):
             self._view.imageValid.hide()
             self._view.imageError.show()
             self._view.scrolledwindow3.show_all()
-            self._view.labelMessage.set_label(_("Specify the name and the source code of your Filter"))
+            self._view.labelMessage.set_label(_("Specify the name and the source code of your Function"))
             self._view.labelMessage.show()
 
     def updateMessages(self):
@@ -185,13 +184,13 @@ class CustomMathFilterController(object):
 
         for message in self.symbol.getMessages():
             original = message.getStringData()
-            if self.filter is not None:
-                filtered = self.filter.apply(original)
+            if self.function is not None:
+                functioned = self.function.apply(original)
             else:
-                filtered = ""
-            self.addMessage(original, filtered)
+                functioned = ""
+            self.addMessage(original, functioned)
 
-    def addMessage(self, original, filtered):
+    def addMessage(self, original, functioned):
         i = self._view.messagesListStore.append()
         self._view.messagesListStore.set(i, 0, original)
-        self._view.messagesListStore.set(i, 1, filtered)
+        self._view.messagesListStore.set(i, 1, functioned)

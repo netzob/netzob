@@ -29,62 +29,28 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-import uuid
-#+---------------------------------------------------------------------------+
-#| Local imports
-#+---------------------------------------------------------------------------+
-
+from netzob.Common.Functions.VisualizationFunction import VisualizationFunction
 
 #+---------------------------------------------------------------------------+
-#| RenderingFilter :
-#|     Class definition of any filter used for rendering
+#| Related third party imports
 #+---------------------------------------------------------------------------+
-class RenderingFilter(object):
 
-    #+-----------------------------------------------------------------------+
-    #| Constructor
-    #+-----------------------------------------------------------------------+
-    def __init__(self, superType):
-        self.id = uuid.uuid4()
-        self.superType = superType
-        self.priority = 1
+#+---------------------------------------------------------------------------+
+#| Local application imports
+#+---------------------------------------------------------------------------+
 
-    #+-----------------------------------------------------------------------+
-    #| Getter & Setters
-    #+-----------------------------------------------------------------------+
-    def getID(self):
-        return self.id
 
-    def getSuperType(self):
-        return self.superType
+#+---------------------------------------------------------------------------+
+#| BackgroundColorFunction:
+#|     Definition of a visualization function wich colorize the background
+#+---------------------------------------------------------------------------+
+class BackgroundColorFunction(VisualizationFunction):
 
-    def getPriority(self):
-        return self.priority
+    TYPE = "BackgroundColorFunction"
 
-    def setPriority(self, priority):
-        self.priority = priority
+    def __init__(self, name, color):
+        VisualizationFunction.__init__(self, BackgroundColorFunction.TYPE, name)
+        self.color = color
 
-    @staticmethod
-    def save(filter, root, namespace_workspace):
-        print "oups"
-
-    @staticmethod
-    def loadFromXML(rootElement, namespace, version):
-        """loadFromXML:
-           Function which parses an XML and extract from it
-           the definition of a rendering filter
-           @param rootElement: XML root of the filter
-           @return an instance of a filter
-           @throw NameError if XML invalid"""
-
-        # Computes which type is it
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "abstract":
-            raise NameError("The parsed xml doesn't represent a valid type of filter.")
-
-        filterType = rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract")
-        from netzob.Common.Filters.Mathematic.CustomFilter import CustomFilter
-
-        if filterType == "netzob:" + CustomFilter.TYPE:
-            return CustomFilter.loadFromXML(rootElement, namespace, version)
-        else:
-            raise NameError("The parsed xml doesn't represent a know type of filter.")
+    def getTags(self):
+        return ('<span background="' + self.color + '">', '</span>')

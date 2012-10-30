@@ -178,17 +178,17 @@ class ContextualMenuOnFieldController(object):
         dialog.vbox.pack_start(scroll, True, True, 0)
         dialog.show()
 
-    def applyMathematicalFilter_cb(self, object, filter):
-        appliedFilters = self.field.getMathematicFilters()
+    def applyTransformationFunction_cb(self, object, function):
+        appliedFunctions = self.field.getTransformationFunctions()
         found = False
-        for appliedFilter in appliedFilters:
-            if appliedFilter.getName() == filter.getName():
+        for appliedFunction in appliedFunctions:
+            if appliedFunction.getName() == function.getName():
                 found = True
         if found:
-            #deactivate the selected filter
-            self.field.removeMathematicFilter(filter)
+            #deactivate the selected function
+            self.field.removeTransformationFunction(function)
         else:
-            self.field.addMathematicFilter(filter)
+            self.field.addTransformationFunction(function)
         self.vocabularyController.view.updateSelectedMessageTable()
 
     def displayPopupToCreateLayer_cb(self, event):

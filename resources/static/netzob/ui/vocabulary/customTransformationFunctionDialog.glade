@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
-  <object class="GtkDialog" id="customMathFilterDialog">
+  <object class="GtkDialog" id="customTransformationFunctionDialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">Create a Mathematical Filter</property>
+    <property name="title" translatable="yes">Create a Custom Transformation Function</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox1">
@@ -153,7 +153,7 @@
                   <object class="GtkLabel" id="label1">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Custom Mathematical Filter</property>
+                    <property name="label" translatable="yes">Custom Transformation Function</property>
                     <attributes>
                       <attribute name="font-desc" value="Sans 14"/>
                     </attributes>
@@ -180,7 +180,7 @@
                   <object class="GtkLabel" id="label2">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Name of the filter</property>
+                    <property name="label" translatable="yes">Name of the function</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -189,7 +189,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="nameOfFilterEntry">
+                  <object class="GtkEntry" id="nameOfFunctionEntry">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="invisible_char">●</property>
@@ -228,7 +228,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
-                              <object class="GtkTextView" id="filterTextView">
+                              <object class="GtkTextView" id="functionTextView">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                               </object>
@@ -254,7 +254,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
-                              <object class="GtkTextView" id="filterReverseTextView">
+                              <object class="GtkTextView" id="functionReverseTextView">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                               </object>
@@ -305,15 +305,15 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkButton" id="testYourFilterButton">
-                    <property name="label" translatable="yes">Test your filter</property>
+                  <object class="GtkButton" id="testYourFunctionButton">
+                    <property name="label" translatable="yes">Test your function</property>
                     <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="halign">end</property>
                     <property name="use_action_appearance">False</property>
-                    <signal name="clicked" handler="testYourFilterButton_clicked_cb" swapped="no"/>
+                    <signal name="clicked" handler="testYourFunctionButton_clicked_cb" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">True</property>

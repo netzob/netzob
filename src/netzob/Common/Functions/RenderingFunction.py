@@ -29,29 +29,62 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-from netzob.Common.Filters.VisualizationFilter import VisualizationFilter
-from netzob.Common.Type.Format import Format
-
+import uuid
 #+---------------------------------------------------------------------------+
-#| Related third party imports
-#+---------------------------------------------------------------------------+
-
-#+---------------------------------------------------------------------------+
-#| Local application imports
+#| Local imports
 #+---------------------------------------------------------------------------+
 
 
 #+---------------------------------------------------------------------------+
-#| TextColorFilter:
-#|     Definition of a visualization filter wich colorize a text
+#| RenderingFunction :
+#|     Class definition of any function used for rendering
 #+---------------------------------------------------------------------------+
-class TextColorFilter(VisualizationFilter):
+class RenderingFunction(object):
 
-    TYPE = "TextColorFilter"
+    #+-----------------------------------------------------------------------+
+    #| Constructor
+    #+-----------------------------------------------------------------------+
+    def __init__(self, superType):
+        self.id = uuid.uuid4()
+        self.superType = superType
+        self.priority = 1
 
-    def __init__(self, name, color):
-        VisualizationFilter.__init__(self, TextColorFilter.TYPE, name)
-        self.color = color
+    #+-----------------------------------------------------------------------+
+    #| Getter & Setters
+    #+-----------------------------------------------------------------------+
+    def getID(self):
+        return self.id
 
-    def getTags(self):
-        return ('<span foreground="' + self.color + '">', '</span>')
+    def getSuperType(self):
+        return self.superType
+
+    def getPriority(self):
+        return self.priority
+
+    def setPriority(self, priority):
+        self.priority = priority
+
+    @staticmethod
+    def save(function, root, namespace_workspace):
+        print "oups"
+
+    @staticmethod
+    def loadFromXML(rootElement, namespace, version):
+        """loadFromXML:
+           Function which parses an XML and extract from it
+           the definition of a rendering function
+           @param rootElement: XML root of the function
+           @return an instance of a function
+           @throw NameError if XML invalid"""
+
+        # Computes which type is it
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "abstract":
+            raise NameError("The parsed xml doesn't represent a valid type of function.")
+
+        functionType = rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract")
+        from netzob.Common.Functions.Transformation.CustomFunction import CustomFunction
+
+        if functionType == "netzob:" + CustomFunction.TYPE:
+            return CustomFunction.loadFromXML(rootElement, namespace, version)
+        else:
+            raise NameError("The parsed xml doesn't represent a know type of function.")

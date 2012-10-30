@@ -30,8 +30,8 @@
 #+---------------------------------------------------------------------------+
 import logging
 from netzob.Common.Type.Format import Format
-from netzob.Common.Filters.EncodingFilter import EncodingFilter
-from netzob.Common.Filters.VisualizationFilter import VisualizationFilter
+from netzob.Common.Functions.EncodingFunction import EncodingFunction
+from netzob.Common.Functions.VisualizationFunction import VisualizationFunction
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -43,69 +43,69 @@ from netzob.Common.Filters.VisualizationFilter import VisualizationFilter
 
 
 #+---------------------------------------------------------------------------+
-#| FilterApplicationTable:
-#|     Definition of a filter application table
+#| FunctionApplicationTable:
+#|     Definition of a function application table
 #+---------------------------------------------------------------------------+
-class FilterApplicationTable(object):
+class FunctionApplicationTable(object):
 
     def __init__(self, splittedData):
         self.splittedData = splittedData
-        self.appliedFilters = []  # [(i_col, i_local_start, i_local_end, i_start, i_end, originalData, newData, filter), ...]
+        self.appliedFunctions = []  # [(i_col, i_local_start, i_local_end, i_start, i_end, originalData, newData, function), ...]
         # We create a conversion addressing table
-        # {(i_data => i_data_filtered), ...}
+        # {(i_data => i_data_functioned), ...}
         self.conversionAddressingTable = self.getInitialConversionAddressingTable()
         self.tags = []
 
-    def applyFilter(self, filter, i_start, i_end):
+    def applyFunction(self, function, i_start, i_end):
         for (i_col, i_local_start, i_local_end, i_start, i_end, data) in self.getSegments(i_start, i_end):
-            self.appliedFilters.append((i_col, i_local_start, i_local_end, i_start, i_end, data, filter))
+            self.appliedFunctions.append((i_col, i_local_start, i_local_end, i_start, i_end, data, function))
 
     def getResult(self):
         result = []
         styledResult = []
         encodedResult = []
 
-        # First we apply encoding filters
-        # then we apply visualization filters
-        encodingFilters = []
-        visualizationFilters = []
+        # First we apply encoding functions
+        # then we apply visualization functions
+        encodingFunctions = []
+        visualizationFunctions = []
 
-        # We split applied filters between encoding and visualization ones
-        for appliedFilter in self.appliedFilters:
-            (i_col, i_local_start, i_end_local, i_start, i_end, data, filter) = appliedFilter
-            if filter.getSuperType() == EncodingFilter.TYPE:
-                encodingFilters.append(appliedFilter)
-            elif filter.getSuperType() == VisualizationFilter.TYPE:
-                visualizationFilters.append(appliedFilter)
+        # We split applied functions between encoding and visualization ones
+        for appliedFunction in self.appliedFunctions:
+            (i_col, i_local_start, i_end_local, i_start, i_end, data, function) = appliedFunction
+            if function.getSuperType() == EncodingFunction.TYPE:
+                encodingFunctions.append(appliedFunction)
+            elif function.getSuperType() == VisualizationFunction.TYPE:
+                visualizationFunctions.append(appliedFunction)
             else:
-                logging.warn("Unknown filter found in the list of applied filters.")
+                logging.warn("Unknown function found in the list of applied functions.")
 
-        # We apply encoding filters per column
+        # We apply encoding functions per column
         for col in range(0, len(self.splittedData)):
             newData = self.splittedData[col]
-            # Search for filters which applies on current column
-            toApplyFilter = []
-            for (i_col, i_local_start, i_local_end, i_start, i_end, data, filter) in encodingFilters:
+            # Search for functions which applies on current column
+            toApplyFunction = []
+            for (i_col, i_local_start, i_local_end, i_start, i_end, data, function) in encodingFunctions:
                 if i_col == col:
-                    toApplyFilter.append((i_col, i_local_start, i_local_end, i_start, i_end, data, filter))
+                    toApplyFunction.append((i_col, i_local_start, i_local_end, i_start, i_end, data, function))
 
-            # Apply filters
-            for (i_col, i_local_start, i_local_end, i_start, i_end, data, filter) in toApplyFilter:
-                #logging.debug("Apply filter {0} on {1}".format(filter.getName(), self.splittedData[col][i_local_start:i_local_end]))
+            # Apply functions
+            for (i_col, i_local_start, i_local_end, i_start, i_end, data, function) in toApplyFunction:
+                #logging.debug("Apply function {0} on {1}".format(function.getName(), self.splittedData[col][i_local_start:i_local_end]))
                 #logging.debug("Conversion table (before):")
                 #logging.debug(self.conversionAddressingTable)
 
-                tmpData = filter.apply(self.splittedData[col][i_local_start:i_local_end])
+                tmpData = function.apply(self.splittedData[col][i_local_start:i_local_end])
                 newData = newData[0:i_local_start] + tmpData + newData[i_local_end:]
 
                 # update in the conversion addressing table
-                filterConversionAddressingTable = filter.getConversionAddressingTable(self.splittedData[col][i_local_start:i_local_end])
-                if filterConversionAddressingTable is None:
-                     #logging.debug("Automatic deduction of the filter conversion addressing table")
+                functionConversionAddressingTable = function.getConversionAddressingTable(self.splittedData[col][i_local_start:i_local_end])
+                if functionConversionAddressingTable is None:
+                     #logging.debug("Automatic deduction of the function conversion addressing table")
                     self.updateConversionAddressingTable(i_start, i_end, i_start, i_start + len(tmpData))
                 else:
-                    #logging.debug("Apply the filter conversion addressing table")
-                    self.updateConversionAddressingTableWithTable(filterConversionAddressingTable)
+                    #logging.debug("Apply the function conversion addressing table")
+                    self.updateConversionAddressingTableWithTable(functionConversionAddressingTable)
 
                 #logging.debug("Conversion table (after):")
                 #logging.debug(self.conversionAddressingTable)
@@ -116,24 +116,24 @@ class FilterApplicationTable(object):
 
         i_global = 0
 
-        # We apply visualization filters per column
+        # We apply visualization functions per column
         for col in range(0, len(self.splittedData)):
             encodedCol = encodedResult[col]
 
             if len(encodedCol) > 0:
-                toApplyFilter = []
-                # Retrieve all the visualization filters we should apply on current column
-                for (i_col, i_local_start, i_local_end, i_start, i_end, data, filter) in visualizationFilters:
+                toApplyFunction = []
+                # Retrieve all the visualization functions we should apply on current column
+                for (i_col, i_local_start, i_local_end, i_start, i_end, data, function) in visualizationFunctions:
                     if i_col == col:
-                        toApplyFilter.append((i_col, i_local_start, i_local_end, i_start, i_end, data, filter))
+                        toApplyFunction.append((i_col, i_local_start, i_local_end, i_start, i_end, data, function))
 
-                # Prepare filters for current column
-                for (i_col, i_local_start, i_local_end, i_start, i_end, data, filter) in toApplyFilter:
-                    (openTag, endTag) = filter.getTags()
+                # Prepare functions for current column
+                for (i_col, i_local_start, i_local_end, i_start, i_end, data, function) in toApplyFunction:
+                    (openTag, endTag) = function.getTags()
                     if openTag is not None:
-                        self.registerTag(i_col, filter.getID(), i_local_start, openTag)
+                        self.registerTag(i_col, function.getID(), i_local_start, openTag)
                     if endTag is not None:
-                        self.registerTag(i_col, filter.getID(), i_local_end, endTag)
+                        self.registerTag(i_col, function.getID(), i_local_end, endTag)
 
                 i_letter = 0
                 # Retrieve the new content of current column (with opening and ending tags)

@@ -34,53 +34,53 @@ import uuid
 #+---------------------------------------------------------------------------+
 #| Local imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Filters.RenderingFilter import RenderingFilter
+from netzob.Common.Functions.RenderingFunction import RenderingFunction
 
 
 #+---------------------------------------------------------------------------+
-#| MathematicFilter :
-#|     Class definition of a filter for mathematic purposes (b64, rot13, ...)
+#| TransformationFunction :
+#|     Class definition of a function for transformation purposes (b64, rot13, ...)
 #+---------------------------------------------------------------------------+
-class MathematicFilter(RenderingFilter):
+class TransformationFunction(RenderingFunction):
 
-    TYPE = "MathematicFilter"
+    TYPE = "TransformationFunction"
 
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
     def __init__(self, type, name):
-        RenderingFilter.__init__(self, MathematicFilter.TYPE)
+        RenderingFunction.__init__(self, TransformationFunction.TYPE)
         self.type = type
         self.name = name
 
     #+-----------------------------------------------------------------------+
     #| apply
-    #|     Abstract method to apply the filter on a provided message
+    #|     Abstract method to apply the function on a provided message
     #|     MUST BE IMPLEMENTED IN SUB CLASSES
     #+-----------------------------------------------------------------------+
     def apply(self, message):
         """apply:
-        Apply the filter on the provided message"""
+        Apply the function on the provided message"""
 
-        self.log.error("The filter class (" + self.getType() + ") doesn't define 'apply' !")
-        raise NotImplementedError("The filter class (" + self.getType() + ") doesn't define 'apply' !")
+        self.log.error("The function class (" + self.getType() + ") doesn't define 'apply' !")
+        raise NotImplementedError("The function class (" + self.getType() + ") doesn't define 'apply' !")
 
     #+-----------------------------------------------------------------------+
     #| reverse
-    #|     Abstract method to reverse the filter on a provided message (
+    #|     Abstract method to reverse the function on a provided message (
     #|     MUST BE IMPLEMENTED IN SUB CLASSES
     #+-----------------------------------------------------------------------+
     def reverse(self, message):
         """reverse:
-        Apply the reverse filter on the provided message"""
+        Apply the reverse function on the provided message"""
 
-        self.log.error("The filter class (" + self.getType() + ") doesn't define 'reverse' !")
-        raise NotImplementedError("The filter class (" + self.getType() + ") doesn't define 'reverse' !")
+        self.log.error("The function class (" + self.getType() + ") doesn't define 'reverse' !")
+        raise NotImplementedError("The function class (" + self.getType() + ") doesn't define 'reverse' !")
 
     def save(self, root, namespace_common):
-        """Save under the provided XML root the current maths filter"""
-        self.log.error("The filter class ({0}) doesn't define the 'save' method !".format(self.getType()))
-        raise NotImplemented("The filter class ({0}) doesn't define the 'save' method !".format(self.getType()))
+        """Save under the provided XML root the current transformation function"""
+        self.log.error("The function class ({0}) doesn't define the 'save' method !".format(self.getType()))
+        raise NotImplemented("The function class ({0}) doesn't define the 'save' method !".format(self.getType()))
 
     #+-----------------------------------------------------------------------+
     #| getConversionAddressingTable

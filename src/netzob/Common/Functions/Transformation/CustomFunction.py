@@ -41,21 +41,21 @@ from lxml import etree
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Filters.MathematicFilter import MathematicFilter
+from netzob.Common.Functions.TransformationFunction import TransformationFunction
 from code import InteractiveInterpreter
 
 
 #+---------------------------------------------------------------------------+
-#| CustomFilter:
-#|     Definition of a Custom filter (provided by user)
+#| CustomFunction:
+#|     Definition of a Custom function (provided by user)
 #+---------------------------------------------------------------------------+
-class CustomFilter(MathematicFilter):
-    """Definition of a Custom filter (provided by user)"""
+class CustomFunction(TransformationFunction):
+    """Definition of a Custom function (provided by user)"""
 
-    TYPE = "CustomFilter"
+    TYPE = "CustomFunction"
 
     def __init__(self, name, sourceCode, sourceCodeReverse):
-        MathematicFilter.__init__(self, CustomFilter.TYPE, name)
+        TransformationFunction.__init__(self, CustomFunction.TYPE, name)
         self.sourceCode = sourceCode + '\n'
         self.sourceCodeReverse = sourceCodeReverse + '\n'
 
@@ -78,7 +78,7 @@ class CustomFilter(MathematicFilter):
                 # Fetch the new value of message
                 output = interpreter.locals['message']
             except Exception, e:
-                logging.warning("Error while applying filter on a message : " + str(e))
+                logging.warning("Error while applying function on a message : " + str(e))
         return output
 
     def reverse(self, message):
@@ -100,36 +100,36 @@ class CustomFilter(MathematicFilter):
                 # Fetch the new value of message
                 output = interpreter.locals['message']
             except Exception, e:
-                logging.warning("Error while appying filter on a message : " + str(e))
+                logging.warning("Error while appying function on a message : " + str(e))
         return output
 
     def save(self, root, namespace_common):
-        xmlFilter = etree.SubElement(root, "{" + namespace_common + "}filter")
-        xmlFilter.set("type", self.getType())
-        xmlFilter.set("name", self.getName())
-        xmlFilter.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:CustomFilter")
-        xmlSourceCode = etree.SubElement(xmlFilter, "{" + namespace_common + "}source-code")
+        xmlFunction = etree.SubElement(root, "{" + namespace_common + "}function")
+        xmlFunction.set("type", self.getType())
+        xmlFunction.set("name", self.getName())
+        xmlFunction.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:CustomFunction")
+        xmlSourceCode = etree.SubElement(xmlFunction, "{" + namespace_common + "}source-code")
         xmlSourceCode.text = self.getSourceCode()
-        xmlSourceCodeReverse = etree.SubElement(xmlFilter, "{" + namespace_common + "}source-code_reverse")
+        xmlSourceCodeReverse = etree.SubElement(xmlFunction, "{" + namespace_common + "}source-code_reverse")
         xmlSourceCodeReverse.text = self.getSourceCodeReverse()
 
     @staticmethod
     def loadFromXML(rootElement, namespace, version):
         """loadFromXML:
            Function which parses an XML and extract from it
-           the definition of a rendering filter
-           @param rootElement: XML root of the filter
-           @return an instance of a filter
+           the definition of a rendering function
+           @param rootElement: XML root of the function
+           @return an instance of a function
            @throw NameError if XML invalid"""
 
-        nameFilter = rootElement.get("name")
+        nameFunction = rootElement.get("name")
         sourceCode = rootElement.find("{" + namespace + "}source-code").text
         if rootElement.find("{" + namespace + "}source-code_reverse") is not None:
             sourceCodeReverse = rootElement.find("{" + namespace + "}source-code_reverse").text
         else:
             sourceCodeReverse = sourceCode
-        filter = CustomFilter(nameFilter, sourceCode, sourceCodeReverse)
-        return filter
+        function = CustomFunction(nameFunction, sourceCode, sourceCodeReverse)
+        return function
 
     def compileSourceCode(self):
         errorMessage = None

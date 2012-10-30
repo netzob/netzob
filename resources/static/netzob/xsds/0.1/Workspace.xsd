@@ -17,7 +17,7 @@
     		<element name="traces" type="netzob-ws:Traces"
     			minOccurs="0">
     		</element>
-    		<element name="filters" type="netzob-ws:Filters" minOccurs="0" maxOccurs="1"></element>
+    		<element name="functions" type="netzob-ws:Functions" minOccurs="0" maxOccurs="1"></element>
     	</sequence>
     	<attribute name="creation_date" type="dateTime"
     		use="required">
@@ -76,28 +76,28 @@
     	</sequence>
     </complexType>
 
-	<complexType name="Filters">
+	<complexType name="Functions">
 		<sequence>
-			<element name="filter" type="netzob-ws:Filter" maxOccurs="unbounded" minOccurs="0"></element>
+			<element name="function" type="netzob-ws:Function" maxOccurs="unbounded" minOccurs="0"></element>
 		</sequence>
 	</complexType>
 
-	<complexType name="Filter">
+	<complexType name="Function">
 		<attribute name="type" type="string"></attribute>
 		<attribute name="name" type="string"></attribute>
 	</complexType>
 
-	<complexType name="MathematicsFilter">
+	<complexType name="TransformationFunction">
 		<complexContent>
-			<extension base="netzob-ws:Filter">
+			<extension base="netzob-ws:Function">
 				
 			</extension>
 		</complexContent>
 	</complexType>
 	
-	<complexType name="CustomFilter">
+	<complexType name="CustomFunction">
 		<complexContent>
-			<extension base="netzob-ws:MathematicsFilter">
+			<extension base="netzob-ws:TransformationFunction">
 				<sequence>
 					<element name="source-code" type="string"></element>
 					<element name="source-code_reverse" type="string" minOccurs="0" maxOccurs="1"></element>

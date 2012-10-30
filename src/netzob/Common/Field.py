@@ -47,9 +47,9 @@ import uuid
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Filters.Encoding.FormatFilter import FormatFilter
+from netzob.Common.Functions.Encoding.FormatFunction import FormatFunction
 from netzob.Common.Type.TypeIdentifier import TypeIdentifier
-from netzob.Common.Filters.Visualization.TextColorFilter import TextColorFilter
+from netzob.Common.Functions.Visualization.TextColorFunction import TextColorFunction
 from netzob.Common.MMSTD.Dictionary.DataTypes.BinaryType import BinaryType
 from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
     AbstractVariable
@@ -93,10 +93,10 @@ class Field(object):
         self.alignment = ""
         self.regex = regex
 
-        # Filters
-        self.encodingFilters = []
-        self.visualizationFilters = []
-        self.mathematicFilters = []
+        # Functions
+        self.encodingFunctions = []
+        self.visualizationFunctions = []
+        self.transformationFunctions = []
 
         # Interpretation attributes
         self.format = self.symbol.project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
@@ -115,102 +115,102 @@ class Field(object):
     def __repr__(self):
         return str(self.getName())
 
-    ## Filters
-    def addVisualizationFilter(self, filter):
-        self.visualizationFilters.append(filter)
+    ## Functions
+    def addVisualizationFunction(self, function):
+        self.visualizationFunctions.append(function)
 
-    def cleanVisualizationFilters(self):
-        self.visualizationFilters = []
+    def cleanVisualizationFunctions(self):
+        self.visualizationFunctions = []
 
-#    def getVisualizationFilters(self):
-#        return self.visualizationFilters
+#    def getVisualizationFunctions(self):
+#        return self.visualizationFunctions
 
-    def removeVisualizationFilter(self, filter):
-        self.visualizationFilters.remove(filter)
+    def removeVisualizationFunction(self, function):
+        self.visualizationFunctions.remove(function)
 
-    def addEncodingFilter(self, filter):
-        self.encodingFilters.append(filter)
+    def addEncodingFunction(self, function):
+        self.encodingFunctions.append(function)
 
-    def removeEncodingFilter(self, filter):
-        if filter in self.encodingFilters:
-            self.encodingFilters.remove(filter)
+    def removeEncodingFunction(self, function):
+        if function in self.encodingFunctions:
+            self.encodingFunctions.remove(function)
 
-#    def getEncodingFilters(self):
-#        filters = []
+#    def getEncodingFunctions(self):
+#        functions = []
 #        for field in self.getExtendedFields():
-#            filters.extend(field.getEncodingFilters())
-#        filters.extend(self.encodingFilters)
+#            functions.extend(field.getEncodingFunctions())
+#        functions.extend(self.encodingFunctions)
 
-    def getVisualizationFilters(self):
-        """getVisualizationFilters:
-                Get the visualization filters applied on this field.
+    def getVisualizationFunctions(self):
+        """getVisualizationFunctions:
+                Get the visualization functions applied on this field.
 
-                @rtype: netzob.Common.Filters List
-                @return: a list of all needed filters.
+                @rtype: netzob.Common.Functions List
+                @return: a list of all needed functions.
         """
-        filters = []
+        functions = []
 
         # dynamic fields are in Blue
         if not self.isStatic():
-            filters.append(TextColorFilter("Dynamic Field", "blue"))
+            functions.append(TextColorFunction("Dynamic Field", "blue"))
 #            # fields with no variable define are in yellow
 #            if self.variable is None:
-#                filters.append(BackgroundColorFilter("Default variable", "yellow"))
+#                functions.append(BackgroundColorFunction("Default variable", "yellow"))
 
-        return filters
+        return functions
 
-    def getEncodingFilters(self):
-        """getEncodingFilters:
-                Calls computeFormatEncodingFilter.
+    def getEncodingFunctions(self):
+        """getEncodingFunctions:
+                Calls computeFormatEncodingFunction.
         """
-        filters = []
-        # Following filters must be considered :
-        filters.append(self.computeFormatEncodingFilter())
-        return filters
+        functions = []
+        # Following functions must be considered :
+        functions.append(self.computeFormatEncodingFunction())
+        return functions
 
-    def removeMathematicFilter(self, filter):
-        """removeMathematicFilter:
-                Remove a precised mathematic filter.
+    def removeTransformationFunction(self, function):
+        """removeTransformationFunction:
+                Remove a precised function.
 
-                @type filter: netzob.Common.Filters
-                @param filter: the filter that is removed.
+                @type function: netzob.Common.Functions
+                @param function: the function that is removed.
         """
         fToRemove = None
-        for mFilter in self.mathematicFilters:
-            if mFilter.getName() == filter.getName():
-                fToRemove = mFilter
+        for mFunction in self.transformationFunctions:
+            if mFunction.getName() == function.getName():
+                fToRemove = mFunction
                 break
         if fToRemove is not None:
-            self.mathematicFilters.remove(fToRemove)
+            self.transformationFunctions.remove(fToRemove)
 
-    def addMathematicFilter(self, filter):
-        """addMathematicFilter:
-                Add a precised mathematic filter.
+    def addTransformationFunction(self, function):
+        """addTransformationFunction:
+                Add a precised function.
 
-                @type filter: netzob.Common.Filters
-                @param filter: the filter that is added.
+                @type function: netzob.Common.Functions
+                @param function: the function that is added.
         """
-        self.mathematicFilters.append(filter)
+        self.transformationFunctions.append(function)
 
-    def computeFormatEncodingFilter(self):
-        """computeFormatEncodingFilter:
-                Get the format filter applied on this field. It tells how the data are displayed.
+    def computeFormatEncodingFunction(self):
+        """computeFormatEncodingFunction:
+                Get the format function applied on this field. It tells how the data are displayed.
 
-                @rtype: netzob.Common.Filters.FormatFilter
-                @return: the computed format filter.
+                @rtype: netzob.Common.Functions.FormatFunction
+                @return: the computed format function.
         """
-        return FormatFilter("Field Format Encoding", self.format, self.unitSize, self.endianess, self.sign)
+        return FormatFunction("Field Format Encoding", self.format, self.unitSize, self.endianess, self.sign)
 
-    def computeSignEncodingFilter(self):
-        """computeSignEncodingFilter:
+    def computeSignEncodingFunction(self):
+        """computeSignEncodingFunction:
                 Does nothing.
 
                 @return: None
         """
         return None
 
-    def computeEndianessEncodingFilter(self):
-        """computeEndianessEncodingFilter:
+    def computeEndianessEncodingFunction(self):
+        """computeEndianessEncodingFunction:
                 Does nothing.
 
                 @return: None
@@ -1162,8 +1162,8 @@ class Field(object):
     def getEndianess(self):
         return self.endianess
 
-    def getMathematicFilters(self):
-        return self.mathematicFilters
+    def getTransformationFunctions(self):
+        return self.transformationFunctions
 
     def getVariable(self):
         if self.variable is None:

@@ -82,12 +82,12 @@ class ContextualMenuOnLayerView(object):
         item.show()
         self.menu.append(item)
 
-        # Add sub-entries to manage mathematical filter
-        # Add sub-entries to add mathematic filters on a  specific column
+        # Add sub-entries to manage transformation functions
+        # Add sub-entries to add transformation functions on a  specific column
         if self.multipleLayers is False:
-            subMenuMathematicFilters = self.build_math_filters_submenu()
-            item = Gtk.MenuItem(_("Mathematics filters"))
-            item.set_submenu(subMenuMathematicFilters)
+            subMenuTransformationFunctions = self.build_transformation_functions_submenu()
+            item = Gtk.MenuItem(_("Transformation Functions"))
+            item.set_submenu(subMenuTransformationFunctions)
             item.show()
             self.menu.append(item)
 
@@ -99,40 +99,40 @@ class ContextualMenuOnLayerView(object):
 
         self.menu.popup(None, None, None, None, event.button, event.time)
 
-    def build_math_filters_submenu(self):
+    def build_transformation_functions_submenu(self):
         """Create a GTK submenu which contains
-        entries to edit the mathematical filters
+        entries to edit the transformation functions
         of selected layer"""
         menu = Gtk.Menu()
 
-        # Retrieve the list of available mathematical filters
+        # Retrieve the list of available transformation functions
         currentWorkspace = self.controller.vocabularyController.getCurrentWorkspace()
-        mathematicFilters = currentWorkspace.getMathematicFilters()
+        transformationFunctions = currentWorkspace.getTransformationFunctions()
 
         messages = self.controller.layers[0].getMessages()
-        # Fetch all the filters attach to messages of current layer (either symbol of fieldLayer)
-        filtersInMessages = []
-        for filter in self.controller.layers[0].getSymbol().getField().getMathematicFilters():
-            if not filter in filtersInMessages:
-                filtersInMessages.append(filter)
+        # Fetch all the functions attach to messages of current layer (either symbol of fieldLayer)
+        functionsInMessages = []
+        for function in self.controller.layers[0].getSymbol().getField().getTransformationFunctions():
+            if not function in functionsInMessages:
+                functionsInMessages.append(function)
 
-        for mathFilter in mathematicFilters:
+        for transformationFunction in transformationFunctions:
             toggled = False
-            for f in filtersInMessages:
-                if f.getName() == mathFilter.getName():
+            for f in functionsInMessages:
+                if f.getName() == transformationFunction.getName():
                     toggled = True
                     break
 
-            mathFilterItem = Gtk.CheckMenuItem(mathFilter.getName())
-            mathFilterItem.set_active(toggled)
-            mathFilterItem.connect("activate", self.controller.applyMathematicFilter_cb, mathFilter)
-            mathFilterItem.show()
-            menu.append(mathFilterItem)
+            transformationFunctionItem = Gtk.CheckMenuItem(transformationFunction.getName())
+            transformationFunctionItem.set_active(toggled)
+            transformationFunctionItem.connect("activate", self.controller.applyTransformationFunction_cb, transformationFunction)
+            transformationFunctionItem.show()
+            menu.append(transformationFunctionItem)
 
-        customFilter = Gtk.MenuItem(_("Create your Filter"))
-        customFilter.connect("activate", self.controller.createCustomFilter_cb)
-        customFilter.show()
-        menu.append(customFilter)
+        customFunction = Gtk.MenuItem(_("Create your Function"))
+        customFunction.connect("activate", self.controller.createCustomFunction_cb)
+        customFunction.show()
+        menu.append(customFunction)
 
         menu.show_all()
         return menu

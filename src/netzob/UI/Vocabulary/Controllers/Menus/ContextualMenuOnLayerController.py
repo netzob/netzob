@@ -45,7 +45,7 @@ from gi.repository import Pango
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.UI.Common.Controllers.CustomMathFilterController import CustomMathFilterController
+from netzob.UI.Common.Controllers.CustomTransformationFunctionController import CustomTransformationFunctionController
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.UI.Vocabulary.Views.Menus.ContextualMenuOnLayerView import ContextualMenuOnLayerView
 from netzob.UI.NetzobWidgets import NetzobLabel
@@ -117,53 +117,43 @@ class ContextualMenuOnLayerController(object):
             layer.setEndianess(endianess)
         self.vocabularyController.view.updateSelectedMessageTable()
 
-    def applyMathematicFilter_cb(self, event, mathFilter):
-        """Add the selected mathematics filter"""
+    def applyTransformationFunction_cb(self, event, transformationFunction):
+        """Add the selected transformation function"""
 
-        # Computes if the current included messages are already filtered
-        allFiltered = True
+        # Computes if the current included messages are already functioned
+        allTransformed = True
 
         for message in self.layers[0].getMessages():
             found = False
-            for filter in message.getMathematicFilters():
-                if filter.getName() == mathFilter.getName():
+            for function in message.getTransformationFunctions():
+                if function.getName() == transformationFunction.getName():
                     found = True
             if not found:
-                allFiltered = False
+                allTransformed = False
                 break
 
-        if not allFiltered:
-            #Activate filter
+        if not allTransformed:
+            #Activate function
             for message in self.layers[0].getMessages():
                 found = False
-                for filter in message.getMathematicFilters():
-                    if filter.getName() == mathFilter.getName():
+                for function in message.getTransformationFunctions():
+                    if function.getName() == transformationFunction.getName():
                         found = True
                 if not found:
-                    message.addMathematicFilter(mathFilter)
+                    message.addTransformationFunction(transformationFunction)
         else:
-            # Deactivate filter
+            # Deactivate function
             for message in self.layers[0].getMessages():
-                message.removeMathematicFilter(mathFilter)
-
-#        found = False
-#        for appliedFilter in self.layers[0].getMathematicFilters():
-#            if appliedFilter.getName() == mathFilter.getName():
-#                found = True
-#                break
-#        if found:
-#            self.layers[0].removeMathematicFilter(appliedFilter)
-#        else:
-#            self.layers[0].addMathematicFilter(mathFilter)
+                message.removeTransformationFunction(transformationFunction)
 
         self.layers[0].resetPartitioning()
         self.vocabularyController.view.updateSelectedMessageTable()
 
-    def createCustomFilter_cb(self, event):
+    def createCustomFunction_cb(self, event):
         """Callback executed when the user
-        clicks on menu entry to create a custom filter"""
-        customFilterController = CustomMathFilterController(self.vocabularyController, self.layers[0])
-        customFilterController.run()
+        clicks on menu entry to create a custom function"""
+        customFunctionController = CustomTransformationFunctionController(self.vocabularyController, self.layers[0])
+        customFunctionController.run()
 
     def renameLayer_cb(self, widget):
         builder2 = Gtk.Builder()

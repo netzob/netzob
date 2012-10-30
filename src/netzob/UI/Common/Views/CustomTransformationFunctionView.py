@@ -28,49 +28,43 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging
-import bz2
+from gettext import gettext as _
+import os
+
+#+---------------------------------------------------------------------------+
+#| Related third party imports
+#+---------------------------------------------------------------------------+
+from gi.repository import Gtk, Gdk
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Filters.MathematicFilter import MathematicFilter
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
-#+---------------------------------------------------------------------------+
-#| BZ2Filter:
-#|     Definition of a BZ2 transformation filter
-#+---------------------------------------------------------------------------+
-class BZ2Filter(MathematicFilter):
+class CustomTransformationFunctionView(object):
 
-    TYPE = "BZ2Filter"
+    def __init__(self, controller):
+        self.builder = Gtk.Builder()
+        self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
+                                                "ui", "vocabulary",
+                                                "customTransformationFunctionDialog.glade"))
+        self._getObjects(self.builder, ["customTransformationFunctionDialog",
+                                        "imageError", "imageValid", "cancelButton",
+                                        "applyButton", "nameOfFunctionEntry", "labelMessage", "functionReverseTextView", "sourceCodeIsTheSameForReverseCheckButton",
+                                        "functionTextView", "messagesListStore", "scrolledwindow3"])
+        self.controller = controller
+        self.builder.connect_signals(self.controller)
 
-    def __init__(self, name):
-        MathematicFilter.__init__(self, BZ2Filter.TYPE, name)
+    def _getObjects(self, builder, objectsList):
+        for obj in objectsList:
+            setattr(self, obj, builder.get_object(obj))
 
-    def apply(self, message):
-        """apply:
-        This decompress the provided message in bz2"""
-        result = message
-        rawData = TypeConvertor.netzobRawToPythonRaw(message)
-        try:
-            rawResult = bz2.decompress(rawData)
-            result = TypeConvertor.pythonRawToNetzobRaw(rawResult)
-        except Exception as e:
-            logging.info("Impossible to apply BZ2 filter (decompress) on provided message (error= {0})".format(str(e)))
-            result = ""
-        return result
+    def run(self):
+        self.customTransformationFunctionDialog.run()
 
-    def reverse(self, message):
-        """reverse:
-        This compress the provided message in bz2 format"""
-        result = message
-        rawData = TypeConvertor.netzobRawToPythonRaw(message)
-        try:
-            rawResult = bz2.compress(rawData)
-            result = TypeConvertor.pythonRawToNetzobRaw(rawResult)
-        except Exception as e:
-            logging.info("Impossible to reverse BZ2 filter (compress) on provided message (error= {0})".format(str(e)))
-            result = ""
-        return result
+    def destroy(self):
+        self.customTransformationFunctionDialog.destroy()
