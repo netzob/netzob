@@ -256,6 +256,18 @@ class Field(object):
         else:
             return False
 
+    def isRegexOptional(self):
+        """isRegexOptional:
+                Tells if a regex is optional (i.e. has a '?' at the end).
+
+                @rtype: boolean
+                @return: True if the regex is optional.
+        """
+        if self.getRegex()[-1] == '?':
+            return True
+        else:
+            return False
+
     def isRegexValidForMessage(self, message):
         """Offers to verify if the provided message
         can be splitted in fields following their definition
@@ -686,7 +698,24 @@ class Field(object):
         field2.removeLocalFields()
 
         # Concatenate fields
-        field1.setRegex("(" + field1.getRegex()[1:-1] + field2.getRegex()[1:-1] + ")")
+        regex = ""
+        optional = False
+        if field1.isRegexOptional():
+            regex += field1.getRegex()[1:-2]
+            optional = True
+        else:
+            regex += field1.getRegex()[1:-1]
+
+        if field2.isRegexOptional():
+            regex += field2.getRegex()[1:-2]
+            optional = True
+        else:
+            regex += field2.getRegex()[1:-1]
+
+        if optional:
+            field1.setRegex("(" + regex + ")?")
+        else:
+            field1.setRegex("(" + regex + ")")
         localFields.remove(field2)
         return 1
 
