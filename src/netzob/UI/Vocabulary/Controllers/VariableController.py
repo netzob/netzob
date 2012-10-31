@@ -792,7 +792,7 @@ class VariableMovingController(object):
         self.treeController.treestore.move_before(entry, self.treeController.dictEntry[self.variable.getFathers()[0].getChildren()[position].getID()])
 
         # Move the variable.
-        self.variable.getFathers[0]().moveChild(self.variable, position)
+        self.variable.getFathers()[0].moveChild(self.variable, position)
 
         self.view.getWidg("dialog").destroy()
 
