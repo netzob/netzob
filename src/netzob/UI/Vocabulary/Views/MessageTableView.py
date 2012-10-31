@@ -227,9 +227,9 @@ class MessageTableView(object):
             self.fieldNameLabel.modify_font(boldFont)
         else:
             # TODO: The following lines have the bad side effect of unselecting the lines of each messageTable...
-#            selection = self.messageTableTreeView.get_selection()
-#            if selection is not None:
-#                selection.unselect_all()
+            selection = self.messageTableTreeView.get_selection()
+            if selection is not None:
+                selection.unselect_all()
             for header in self.treeViewHeaderGroup.getSelectedHeaders():
                 header.setSelected(False)
             normalFont = Pango.FontDescription()

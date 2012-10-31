@@ -385,6 +385,9 @@ class VocabularyView(object):
     def setSelectedMessageTable(self, selectedMessageTable):
         """Set provided message table as selected"""
 
+        if selectedMessageTable == self.selectedMessageTable:
+            return
+
         # Update appearance of old and new selected message table
         if self.selectedMessageTable is not None:
             self.selectedMessageTable.setSelected(False)
