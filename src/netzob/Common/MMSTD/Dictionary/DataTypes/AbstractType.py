@@ -67,11 +67,11 @@ class AbstractType():
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Types.AbstractType.py')
         self.sized = sized
         self.setNumberBitsAndNumberChars(minChars, maxChars)
+        self.delimiter = None
         try:
             # We assume that delimiters are written by the user as hex string.
             self.delimiter = TypeConvertor.hexstring2bin(delimiter)
         except:
-            self.delimiter
             self.log.error(_("The delimiter {0} is not a valid hexadecimal string.").format(str(delimiter)))
 
     def toString(self):
