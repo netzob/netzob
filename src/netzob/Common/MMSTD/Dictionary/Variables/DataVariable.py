@@ -28,6 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+from bitarray import bitarray
 from gettext import gettext as _
 from lxml import etree
 import logging
@@ -306,7 +307,8 @@ class DataVariable(AbstractLeafVariable):
                 Write this value in the writingToken.
         """
         self.log.debug(_("- [ {0}: writeValue.").format(self.toString()))
-        value = self.getValue(writingToken)
+        value = bitarray()
+        value.extend(self.getValue(writingToken))
         if not self.type.isSized():
             # Do not forget to write the delimiter if the variable has one
             value.extend(self.getType().getDelimiter())
