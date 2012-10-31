@@ -102,8 +102,8 @@ class AbstractNodeVariable(AbstractVariable):
             for son in self.children:
                 if son.getID() == child.getID():
                     # We edit the element.
+                    self.insertChild(self.indexOfChild(son), child)
                     self.removeChild(son)
-                    self.addChild(child)
                     break
 
     def shuffleChildren(self):
