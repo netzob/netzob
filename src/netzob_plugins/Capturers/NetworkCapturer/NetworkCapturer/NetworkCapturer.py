@@ -133,6 +133,8 @@ class NetworkCapturer(AbstractCapturer):
         mTimestamp = int(time.time())
         message = None
         if self.importLayer == 1:
+            if len(payload) == 0:
+                return
             message = RawMessage(
                 mUuid,
                 mTimestamp,
@@ -141,6 +143,8 @@ class NetworkCapturer(AbstractCapturer):
         elif self.importLayer == 2:
             (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = \
                 self.decodeLayer2(header, payload)
+            if len(l2Payload) == 0:
+                return
             message = L2NetworkMessage(
                 mUuid,
                 mTimestamp,
@@ -156,6 +160,8 @@ class NetworkCapturer(AbstractCapturer):
                 (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum) = \
                     self.decodeLayer3(etherType, l2Payload)
             except TypeError:
+                return
+            if len(l3Payload) == 0:
                 return
             message = L3NetworkMessage(
                 mUuid,
@@ -179,6 +185,8 @@ class NetworkCapturer(AbstractCapturer):
             except TypeError:
                 return
             if l4Payload.encode("hex") == "":
+                return
+            if len(l4Payload) == 0:
                 return
             message = L4NetworkMessage(
                 mUuid,

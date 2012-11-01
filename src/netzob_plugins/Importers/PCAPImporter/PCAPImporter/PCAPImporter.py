@@ -137,6 +137,8 @@ class PCAPImporter(AbstractImporter):
         mUuid = uuid.uuid4()
         mTimestamp = int(time.time())
         if self.importLayer == 1:
+            if len(payload) == 0:
+                return
             self.messages.append(
                 RawMessage(
                     mUuid,
@@ -146,6 +148,8 @@ class PCAPImporter(AbstractImporter):
         elif self.importLayer == 2:
             (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = \
                 self.decodeLayer2(header, payload)
+            if len(l2Payload) == 0:
+                return
             self.messages.append(
                 L2NetworkMessage(
                     mUuid,
@@ -160,6 +164,8 @@ class PCAPImporter(AbstractImporter):
                 self.decodeLayer2(header, payload)
             (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum) = \
                 self.decodeLayer3(etherType, l2Payload)
+            if len(l3Payload) == 0:
+                return
             self.messages.append(
                 L3NetworkMessage(
                     mUuid,
@@ -179,6 +185,8 @@ class PCAPImporter(AbstractImporter):
                 self.decodeLayer3(etherType, l2Payload)
             (l4Proto, l4SrcPort, l4DstPort, l4Payload) = \
                 self.decodeLayer4(ipProtocolNum, l3Payload)
+            if len(l4Payload) == 0:
+                return
             self.messages.append(
                 L4NetworkMessage(
                     mUuid,
