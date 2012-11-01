@@ -46,6 +46,7 @@ from gi.repository import Pango
 #+---------------------------------------------------------------------------+
 from netzob.UI.Vocabulary.Views.SplitFieldView import SplitFieldView
 from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.UI.NetzobWidgets import NetzobErrorMessage
 
 
 class SplitFieldController(object):
@@ -62,7 +63,8 @@ class SplitFieldController(object):
         return self._view
 
     def run(self):
-        self.initBuffer()
+        if self.initBuffer() == False:
+            return
         self._view.run()
 
     #+----------------------------------------------
@@ -71,17 +73,25 @@ class SplitFieldController(object):
     #+----------------------------------------------
     def initBuffer(self):
         self.split_position = 1
+        self.split_min_len = 999999
         self.split_max_len = 0
         self.split_align = "left"
 
-        self.view.buffer.get_buffer().create_tag("redTag", weight=Pango.Weight.BOLD, foreground="red", family="Courier")
-        self.view.buffer.get_buffer().create_tag("greenTag", weight=Pango.Weight.BOLD, foreground="#006400", family="Courier")
-
-        # Find the size of the longest message
+        # Find the size of the shortest/longest message
         cells = self.field.getCells()
         for m in cells:
             if len(m) > self.split_max_len:
                 self.split_max_len = len(m)
+            if len(m) < self.split_min_len:
+                self.split_min_len = len(m)
+
+        if self.split_min_len == 0:
+            self.view.splitFieldDialog.destroy()
+            NetzobErrorMessage(_("Can't split field with empty cell(s)."))
+            return False
+
+        self.view.buffer.get_buffer().create_tag("redTag", weight=Pango.Weight.BOLD, foreground="red", family="Courier")
+        self.view.buffer.get_buffer().create_tag("greenTag", weight=Pango.Weight.BOLD, foreground="#006400", family="Courier")
 
         for m in cells:
             self.view.buffer.get_buffer().insert_with_tags_by_name(self.view.buffer.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[:self.split_position], self.field.getFormat()) + "  ", "redTag")
@@ -89,8 +99,7 @@ class SplitFieldController(object):
 
     def cancel_clicked_cb(self, widget):
         self.view.splitFieldDialog.destroy()
-
-        self.vocabularyController.view().updateSymbolList()
+        self.vocabularyController.view.updateSymbolList()
 
     def doSplit_clicked_cb(self, widget):
         if self.split_max_len <= 1:
@@ -124,13 +133,17 @@ class SplitFieldController(object):
                     self.split_position = 1
             else:
                 self.split_position += 1
-                if self.split_position > self.split_max_len - 1:
-                    self.split_position = self.split_max_len - 1
+                if self.split_position > self.split_min_len - 1:
+                    self.split_position = self.split_min_len - 1
+                    if self.split_position == 0:
+                        self.split_position = 1
         else:
             if direction == "left":
                 self.split_position += 1
-                if self.split_position > self.split_max_len - 1:
-                    self.split_position = self.split_max_len - 1
+                if self.split_position > self.split_min_len - 1:
+                    self.split_position = self.split_min_len - 1
+                    if self.split_position == 0:
+                        self.split_position = 1
             else:
                 self.split_position -= 1
                 if self.split_position < 1:
