@@ -34,7 +34,7 @@ from gi.repository import Pango
 import gi
 from gi.repository import GObject
 from netzob.UI.Vocabulary.Views.EnvironmentDependenciesSearcherView import EnvironmentDependenciesSearcherView
-from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask
+from netzob.Common.Threads.Tasks.ThreadedTask import TaskError, ThreadedTask
 from netzob.Inference.Vocabulary.Searcher import Searcher
 from netzob.Common.Threads.Job import Job
 from netzob.Common.Type.Format import Format

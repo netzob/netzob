@@ -212,7 +212,10 @@ class Searcher(object):
         symbols = self.project.getVocabulary().getSymbols()
 
         # compute the step for status notification
-        step = 100.0 / (len(symbols) * len(tasks))
+        try:
+            step = 100.0 / (len(symbols) * len(tasks))
+        except ZeroDivisionError:
+            step = 100
         status = 0.0
 
         for task in tasks:
