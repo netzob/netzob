@@ -160,6 +160,10 @@ class ResearchController(object):
         text = widget.get_text()
         tformat = self._view.research_format.get_active_text()
 
+        if text == "":
+            self.decolorizeAllResult()
+            return
+
         # Stop current search process (and wit for it stops)
         self.stopSearch()
         while self.searchRunning:
