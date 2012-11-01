@@ -20,6 +20,7 @@
         <menuitem action="editVariable" />
         <menuitem action="moveMessagesToOtherSymbol" />
         <menuitem action="deleteMessages" />
+        <menuitem action="fieldLimits" />
       </menu>
       <menu action="searchMenu">
         <menuitem action="searchText" />
@@ -28,7 +29,6 @@
         <menuitem action="messagesDistribution" />
         <menuitem action="variableTable" />
         <menuitem action="relationsViewer" />
-        <menuitem action="fieldLimits" />
       </menu>
     </placeholder>
   </menubar>

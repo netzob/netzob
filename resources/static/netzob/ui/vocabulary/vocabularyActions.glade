@@ -66,7 +66,7 @@
     </child>
     <child>
       <object class="GtkAction" id="deleteMessages">
-        <property name="label" translatable="yes">Delete</property>
+        <property name="label" translatable="yes">Delete message(s)</property>
         <property name="tooltip" translatable="yes">Delete selected message(s)</property>
         <property name="stock_id">gtk-delete</property>
         <property name="sensitive">False</property>
@@ -103,8 +103,8 @@
     </child>
     <child>
       <object class="GtkAction" id="fieldLimits">
-        <property name="label" translatable="yes">Field Limits</property>
-        <property name="tooltip" translatable="yes">Display min and max size of selected symbol</property>
+        <property name="label" translatable="yes">Compute field limits</property>
+        <property name="tooltip" translatable="yes">Compute min and max size of selected symbol(s)</property>
         <property name="stock_id">netzob-field-limit</property>
         <signal name="activate" handler="fieldLimits_activate_cb" swapped="no"/>
       </object>
