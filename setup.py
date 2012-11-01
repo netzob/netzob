@@ -269,3 +269,27 @@ setup(
         ]
     },
 )
+
+if len(sys.argv) > 1:
+    command = sys.argv[1]
+else:
+    command = None
+if command in ["build", "develop"]:
+    root_dir = os.getcwd()
+    main_plugin_dir = root_dir + os.sep + "src" + os.sep + "netzob_plugins" + os.sep
+    plugin_categories = ["Capturers", "Importers", "Exporters"]
+    for plugin_category in plugin_categories:
+        plugin_dir = main_plugin_dir + plugin_category + os.sep
+        plugin_list = os.listdir(plugin_dir)
+        for plugin_name in plugin_list:
+            if plugin_name != "__init__.py" and plugin_name != "__init__.pyc":
+                plugin_fullpath = plugin_dir + plugin_name
+                print ""
+                print "------------------------------"
+                print "Handling plugin: " + plugin_name
+                print "Plugin path: " + plugin_fullpath
+                os.chdir(plugin_fullpath)
+                cmd = "python setup.py " + " ".join(sys.argv[1:])
+                print "Using following command: " + cmd
+                os.system(cmd)
+
