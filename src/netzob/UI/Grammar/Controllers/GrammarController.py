@@ -30,6 +30,7 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
+from netzob.Inference.Grammar.AutomaticGrammarInferenceView import AutomaticGrammarInferenceView
 from netzob.UI.Grammar.Views.GrammarView import GrammarView
 from netzob.UI.Grammar.Controllers.CreateStateController import CreateStateController
 from netzob.UI.Grammar.Controllers.CreateSemiStochasticTransitionController import CreateSemiStochasticTransitionController
@@ -79,9 +80,13 @@ class GrammarController(object):
         return self.netzob.getCurrentWorkspace()
 
     def activeGrammarInferring_activate_cb(self, event):
+        print "PAN"
         if self.getCurrentProject() is None:
             logging.info("No project loaded.")
             return
+
+        agi = AutomaticGrammarInferenceView(self.getCurrentProject())
+        agi.display()
 
     def passiveGrammarInferring_activate_cb(self, event):
         if self.getCurrentProject() is None:

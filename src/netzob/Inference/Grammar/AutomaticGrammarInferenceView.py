@@ -33,21 +33,22 @@ import logging
 from gi.repository import Gtk
 import gi
 from gi.repository import GObject
-
 gi.require_version('Gtk', '3.0')
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
 from netzob.Inference.Grammar.GrammarInferer import GrammarInferer
 from netzob.Inference.Grammar.EquivalenceOracles.WMethodNetworkEquivalenceOracle import WMethodNetworkEquivalenceOracle
-from netzob.Common.MMSTD.Actors.Network.NetworkClient import NetworkClient
+from netzob.Common.MMSTD.Actors.NetworkChannels.NetworkClient import NetworkClient
 from netzob.Simulator.XDotWidget import XDotWidget
 from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask
 from netzob.Common.Threads.Job import Job
-from netzob.Common.MMSTD.Actors.Network.NetworkServer import NetworkServer
+from netzob.Common.MMSTD.Actors.NetworkChannels.NetworkServer import NetworkServer
 from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
 from netzob.Common.MMSTD.Symbols.impl.UnknownSymbol import UnknownSymbol
+from netzob.Common.MMSTD.Dictionary.Memory import Memory
 
 
 #+----------------------------------------------
@@ -274,18 +275,20 @@ class AutomaticGrammarInferenceView(object):
 
         inputDictionary = []
         for symbol in self.project.getVocabulary().getSymbols():
-            if symbol.getName() == "LOGIN" or symbol.getName() == "EXECUTE" or symbol.getName() == "LOGOUT" or symbol.getName() == "DOWNLOAD":
-                inputDictionary.append(symbol)
+#            if symbol.getName() == "LOGIN" or symbol.getName() == "EXECUTE" or symbol.getName() == "LOGOUT" or symbol.getName() == "DOWNLOAD":
+            inputDictionary.append(symbol)
         inputDictionary.append(UnknownSymbol())
         # Close the current dialog
         self.dialog.destroy()
 
+        anID = uuid.uuid4()
+        memory = Memory()
         if actorType == "CLIENT":
             # Lets create a simple network oracle
-            oracleCommunicationChannel = NetworkServer(actorIP, actorNetworkProtocol, ourPort, targetPort)
+            oracleCommunicationChannel = NetworkServer(anID, memory, actorNetworkProtocol, "127.0.0.1", ourPort, actorIP, targetPort)
         else:
             # Lets create a simple network oracle
-            oracleCommunicationChannel = NetworkClient(actorIP, actorNetworkProtocol, targetPort, ourPort)
+            oracleCommunicationChannel = NetworkClient(anID, memory, actorNetworkProtocol, "127.0.0.1", ourPort, actorIP, targetPort)
 
         # Lets create an equivalence oracle
         equivalenceOracle = WMethodNetworkEquivalenceOracle(oracleCommunicationChannel, maxNumberOfState, scriptFilename)
