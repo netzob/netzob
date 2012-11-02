@@ -274,7 +274,7 @@ if len(sys.argv) > 1:
     command = sys.argv[1]
 else:
     command = None
-if command in ["build", "develop"]:
+if command in ["build", "develop", "install"]:
     root_dir = os.getcwd()
     main_plugin_dir = root_dir + os.sep + "src" + os.sep + "netzob_plugins" + os.sep
     plugin_categories = ["Capturers", "Importers", "Exporters"]
