@@ -22,3 +22,4 @@ src/netzob_plugins/Importers/DelimiterSeparatedImporter/build/
 src/netzob_plugins/Importers/OSpyImporter/build/
 src/netzob_plugins/Importers/PCAPImporter/build/
 src/netzob_plugins/Importers/XMLImporter/build/
+src/netzob_plugins/Exporters/PeachExporter/build/
