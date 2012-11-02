@@ -186,6 +186,7 @@
         <property name="label" translatable="yes">Filter displayed messages</property>
         <property name="tooltip" translatable="yes">Filter displayed messages in all messages of current symbol</property>
         <property name="stock_id">netzob-filter-messages</property>
+        <property name="is_important">True</property>
         <property name="sensitive">False</property>
         <signal name="toggled" handler="filterMessages_toggled_cb" swapped="no"/>
       </object>
