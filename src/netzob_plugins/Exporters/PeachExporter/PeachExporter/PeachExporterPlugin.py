@@ -42,7 +42,7 @@ import random
 #+---------------------------------------------------------------------------+
 from netzob.Common.Plugins.ExporterPlugin import ExporterPlugin
 from netzob.Common.Plugins.Extensions.ExportMenuExtension import ExportMenuExtension
-from netzob_plugins.Exporters.PeachExporter.PeachExportController import PeachExportController
+from netzob_plugins.Exporters.PeachExporter.PeachExporter.PeachExportController import PeachExportController
 from netzob.UI.NetzobWidgets import NetzobErrorMessage
 
 

@@ -42,8 +42,8 @@ from gi.repository import Gtk
 #+---------------------------------------------------------------------------+
 from netzob.UI.NetzobWidgets import NetzobInfoMessage, NetzobErrorMessage
 from netzob.Common.Plugins.Exporters.AbstractExporterController import AbstractExporterController
-from netzob_plugins.Exporters.PeachExporter.PeachExportView import PeachExportView
-from netzob_plugins.Exporters.PeachExporter.PeachExport import PeachExport
+from netzob_plugins.Exporters.PeachExporter.PeachExporter.PeachExportView import PeachExportView
+from netzob_plugins.Exporters.PeachExporter.PeachExporter.PeachExport import PeachExport
 
 
 class PeachExportController(AbstractExporterController):
