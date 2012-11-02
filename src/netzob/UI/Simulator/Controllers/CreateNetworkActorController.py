@@ -62,7 +62,7 @@ class CreateNetworkActorController(object):
 
     def __init__(self, simulatorController):
         self.simulatorController = simulatorController
-        self.idActor = uuid.uuid4()
+        self.idActor = str(uuid.uuid4())
         self._view = CreateNetworkView(self, self.idActor)
         self.log = logging.getLogger(__name__)
 
@@ -161,7 +161,7 @@ class CreateNetworkActorController(object):
             targetPort = None
 
         communicationChannel = None
-        idChannel = uuid.uuid4()
+        idChannel = str(uuid.uuid4())
 
         # Initialize a memory with communication channels variables
         memory = Memory()

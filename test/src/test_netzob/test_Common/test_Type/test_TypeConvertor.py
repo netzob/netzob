@@ -61,7 +61,7 @@ class test_TypeConvertor(NetzobTestCase):
                 # Generate the content of two messages
                 data = TypeConvertor.stringToNetzobRaw(self.generateRandomString(5, 100))
                 # Create the messages
-                message = RawMessage(uuid.uuid4(), str(time.time()), data)
+                message = RawMessage(str(uuid.uuid4()), str(time.time()), data)
                 messages.append(message)
             
             # start the serialization process
@@ -82,7 +82,7 @@ class test_TypeConvertor(NetzobTestCase):
         currentProject = workspace.getProjects()[0]
         nb_test = 100
         for i_test in range(0, nb_test) :                   
-            symbol = Symbol(uuid.uuid4(), "TestSymbol", currentProject)
+            symbol = Symbol(str(uuid.uuid4()), "TestSymbol", currentProject)
             nb_messages = random.randint(5, 50)
             size_messages = []
             for i_message in range(0, nb_messages) :
@@ -91,7 +91,7 @@ class test_TypeConvertor(NetzobTestCase):
                 size_messages.append(str(len(size)))
                 data = TypeConvertor.stringToNetzobRaw(size)
                 # Create the message
-                message = RawMessage(uuid.uuid4(), str(time.time()), data)
+                message = RawMessage(str(uuid.uuid4()), str(time.time()), data)
                 # Register the message
                 symbol.addMessage(message)
             

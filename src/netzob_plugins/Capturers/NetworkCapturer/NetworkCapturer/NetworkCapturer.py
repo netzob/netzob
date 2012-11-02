@@ -129,7 +129,7 @@ class NetworkCapturer(AbstractCapturer):
 
     def _packetHandler(self, header, payload):
         """Decode a packet"""
-        mUuid = uuid.uuid4()
+        mUuid = str(uuid.uuid4())
         mTimestamp = int(time.time())
         message = None
         if self.importLayer == 1:

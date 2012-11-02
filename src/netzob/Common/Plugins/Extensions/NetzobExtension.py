@@ -48,4 +48,4 @@ class NetzobExtension(object):
 
     def __init__(self):
         # Generate a unique ID
-        self.id = uuid.uuid4()
+        self.id = str(uuid.uuid4())

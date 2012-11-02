@@ -124,9 +124,9 @@ class OpenChannelTransition(AbstractTransition):
 
                 self.log.debug("The openChannelTransition finishes (the generated instance has been closed)!")
                 # We create a Close Channel Transition to close the server
-                inputState = NormalState(uuid.uuid4(), "Input State of the close server transition")
-                outputState = NormalState(uuid.uuid4(), "Output State of the close server transition")
-                closeChannelTransition = CloseChannelTransition(uuid.uuid4(), "Close Server transition", inputState, outputState, 300)
+                inputState = NormalState(str(uuid.uuid4()), "Input State of the close server transition")
+                outputState = NormalState(str(uuid.uuid4()), "Output State of the close server transition")
+                closeChannelTransition = CloseChannelTransition(str(uuid.uuid4()), "Close Server transition", inputState, outputState, 300)
                 inputState.registerTransition(closeChannelTransition)
                 return inputState
         else:

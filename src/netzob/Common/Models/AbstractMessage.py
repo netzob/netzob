@@ -57,7 +57,7 @@ class AbstractMessage(object):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.Models.AbstractMessage.py')
         if id is None:
-            self.id = uuid.uuid4()
+            self.id = str(uuid.uuid4())
         else:
             self.id = id
 

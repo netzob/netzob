@@ -82,7 +82,7 @@ class OSpyImporter(AbstractImporter):
         return messageList
 
     def _parseMessage(self, rootElement):
-        mUuid = uuid.uuid4()
+        mUuid = str(uuid.uuid4())
         mTimestamp = None
         mData = None
         localAddress = None

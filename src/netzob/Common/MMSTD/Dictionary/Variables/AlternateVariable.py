@@ -121,7 +121,7 @@ class AlternateVariable(AbstractNodeVariable):
 
         # We create a fake father for this alternate.
         if self.getFathers()[0].getType() == AggregateVariable.TYPE:
-            fakeFather = AggregateVariable(uuid.uuid4(), "Fake father", False, False)
+            fakeFather = AggregateVariable(str(uuid.uuid4()), "Fake father", False, False)
             # We add this element and its right brother as child of the fake father in order to pursue the read access from where we are.
             fakeFather.addChild(self)
             for rightBrother in self.getFathers()[0].getChildren()[selfPosition:]:
@@ -131,7 +131,7 @@ class AlternateVariable(AbstractNodeVariable):
             # Some iterations of this treatment could have be made before. The fake father should not make more iterations than it remains for the real father.
             minIterations = max(0, minIterations - self.getFathers()[0].getCurrentIteration())
             maxIterations = max(0, maxIterations - self.getFathers()[0].getCurrentIteration())
-            fakeFather = RepeatVariable(uuid.uuid4(), "Fake father", False, False, self, minIterations, maxIterations)
+            fakeFather = RepeatVariable(str(uuid.uuid4()), "Fake father", False, False, self, minIterations, maxIterations)
         else:
             self.log.error(_("The father is neither an aggregate nor a repeat variable."))
 
@@ -140,7 +140,7 @@ class AlternateVariable(AbstractNodeVariable):
         for index in len(valueToBeRead):
             # We search if, by shifting the position of actual variable, we could read the given value.
             tmpValue = valueToBeRead[:index]
-            tmpChild = DataVariable(uuid.uuid4(), "Learned Inserted Variable", True, True, BinaryType(True, len(tmpValue), len(tmpValue)), tmpValue.to01())
+            tmpChild = DataVariable(str(uuid.uuid4()), "Learned Inserted Variable", True, True, BinaryType(True, len(tmpValue), len(tmpValue)), tmpValue.to01())
             # We add the new variable at the end, in order to minimize its impact.
             self.add(tmpChild)
 

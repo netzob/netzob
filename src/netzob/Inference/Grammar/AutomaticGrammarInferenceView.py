@@ -281,7 +281,7 @@ class AutomaticGrammarInferenceView(object):
         # Close the current dialog
         self.dialog.destroy()
 
-        anID = uuid.uuid4()
+        anID = str(uuid.uuid4())
         memory = Memory()
         if actorType == "CLIENT":
             # Lets create a simple network oracle

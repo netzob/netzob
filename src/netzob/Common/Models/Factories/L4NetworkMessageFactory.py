@@ -93,7 +93,7 @@ class L4NetworkMessageFactory(object):
         # Parse the data field and transform it into a byte array
         msg_data = bytearray(rootElement.find("{" + namespace + "}data").text)
         # Retrieve the id
-        msg_id = uuid.UUID(rootElement.get("id"))
+        msg_id = str(rootElement.get("id"))
         # Retrieve the timestamp
         msg_timestamp = int(rootElement.get("timestamp"))
         # Retrieve layer 2 properties

@@ -76,7 +76,7 @@ class test_NeedlemanInC(unittest.TestCase):
             nbMessage = random.randint(2, 500)
             for iMessage in range(0, nbMessage) :
                 data = TypeConvertor.stringToNetzobRaw(self.generateRandomString(5, 500))
-                message = RawMessage(uuid.uuid4(), str(time.time()), data)
+                message = RawMessage(str(uuid.uuid4()), str(time.time()), data)
                 messages.append(message)
             
             nbDeserializedTest = alignmentSolution.deserializeMessages(messages)
@@ -92,7 +92,7 @@ class test_NeedlemanInC(unittest.TestCase):
             nbMessage = random.randint(2, 50)
             for iMessage in range(0, nbMessage) :
                 data = TypeConvertor.stringToNetzobRaw("bonjour" + self.generateRandomString(5, 30) + ", tout va bien ?")
-                message = RawMessage(uuid.uuid4(), str(time.time()), data)
+                message = RawMessage(str(uuid.uuid4()), str(time.time()), data)
                 messages.append(message)
             
             (alignment, scores) = alignmentSolution.align(False, messages)
@@ -114,8 +114,8 @@ class test_NeedlemanInC(unittest.TestCase):
             data1 = TypeConvertor.stringToNetzobRaw(common_pattern)
             data2 = TypeConvertor.stringToNetzobRaw(common_pattern)
             # Create the messages
-            message1 = RawMessage(uuid.uuid4(), str(time.time()), data1)
-            message2 = RawMessage(uuid.uuid4(), str(time.time()), data2)
+            message1 = RawMessage(str(uuid.uuid4()), str(time.time()), data1)
+            message2 = RawMessage(str(uuid.uuid4()), str(time.time()), data2)
             
             (scores, alignment) = alignmentSolution.alignTwoMessages(False, message1, message2)
             (score1, score2, score3) = scores
@@ -139,8 +139,8 @@ class test_NeedlemanInC(unittest.TestCase):
             data1 = TypeConvertor.stringToNetzobRaw(common_pattern_before + "hercule" + common_pattern_after)
             data2 = TypeConvertor.stringToNetzobRaw(common_pattern_before + "thomas" + common_pattern_after)
             # Create the messages
-            message1 = RawMessage(uuid.uuid4(), str(time.time()), data1)
-            message2 = RawMessage(uuid.uuid4(), str(time.time()), data2)
+            message1 = RawMessage(str(uuid.uuid4()), str(time.time()), data1)
+            message2 = RawMessage(str(uuid.uuid4()), str(time.time()), data2)
             
             (scores, alignment) = alignmentSolution.alignTwoMessages(False, message1, message2)
             (score1, score2, score3) = scores

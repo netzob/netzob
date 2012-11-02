@@ -175,7 +175,7 @@ class VocabularyController(object):
         symbols = self.view.getCheckedSymbolList()
 
         # Create a new symbol
-        newSymbol = Symbol(uuid.uuid4(), "Merged", self.getCurrentProject())
+        newSymbol = Symbol(str(uuid.uuid4()), "Merged", self.getCurrentProject())
 
         # fetch all their messages
         for sym in symbols:

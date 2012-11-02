@@ -282,7 +282,7 @@ class ContextualMenuOnFieldController(object):
         # We initialize the correct number of new messages
         newMessages = []
         for message in self.getSymbol().getMessages():
-            mUuid = uuid.uuid4()
+            mUuid = str(uuid.uuid4())
             newMessages.append(RawMessage(mUuid, message.getTimestamp(), ""))
         # We concatenate between the first and last cells
         for index in range(firstField.getIndex(), lastField.getIndex() + 1):

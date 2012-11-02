@@ -124,7 +124,7 @@ class OSpy(AbstractThirdPartyImporter):
 #            <PeerPort>443</PeerPort>
 #            <Data>SFRUUC8xLjEgMjAwIE9LDQpEYXRlOiBUdWUsIDIyIE1heSAyMDEyIDA2OjU4OjExIEdNVA0KU2VydmVyOiBBcGFjaGUNCkNvbnRlbnQtRW5jb2Rpbmc6IGd6aXANClZhcnk6IEFjY2VwdC1FbmNvZGluZw0KQ29udGVudC1MZW5ndGg6IDUwDQpLZWVwLUFsaXZlOiB0aW1lb3V0PTE1LCBtYXg9OTkxDQpDb25uZWN0aW9uOiBLZWVwLUFsaXZlDQpDb250ZW50LVR5cGU6IHRleHQvaHRtbA0KDQofiwgAAAAAAAADqlYqLkksSVWyMtBRSixLzMxJTMoB8gxrAQAAAP//AwAQWBTTGQAAAA==</Data>
 #          </Messages>
-        id = uuid.uuid4()
+        id = str(uuid.uuid4())
 
         msg_timestamp = None
         msg_data = None

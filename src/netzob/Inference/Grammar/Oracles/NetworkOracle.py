@@ -73,7 +73,7 @@ class NetworkOracle(threading.Thread):
         abstractionLayer = AbstractionLayer(self.communicationChannel, self.mmstd.getVocabulary(), memory)
 
         # And we create an MMSTD visitor for this
-        anID = uuid.uuid4()
+        anID = str(uuid.uuid4())
         self.oracle = MMSTDVisitor(anID, "MMSTD-NetworkOracle", self.mmstd, self.isMaster, abstractionLayer)
         self.oracle.start()
 

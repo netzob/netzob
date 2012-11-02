@@ -75,10 +75,10 @@ class test_Needleman(NetzobTestCase):
             data1 = TypeConvertor.stringToNetzobRaw(self.generateRandomString(5, 100) + common_pattern + self.generateRandomString(5, 100))
             data2 = TypeConvertor.stringToNetzobRaw(self.generateRandomString(5, 100) + common_pattern + self.generateRandomString(5, 100))
             # Create the messages
-            message1 = RawMessage(uuid.uuid4(), str(time.time()), data1)
-            message2 = RawMessage(uuid.uuid4(), str(time.time()), data2)
+            message1 = RawMessage(str(uuid.uuid4()), str(time.time()), data1)
+            message2 = RawMessage(str(uuid.uuid4()), str(time.time()), data2)
             # Create the symbol
-            symbol = Symbol(uuid.uuid4(), "test_randomAlignments#" + str(i_test), currentProject)
+            symbol = Symbol(str(uuid.uuid4()), "test_randomAlignments#" + str(i_test), currentProject)
             symbol.addMessage(message1)
             symbol.addMessage(message2)
             
@@ -119,10 +119,10 @@ class test_Needleman(NetzobTestCase):
             data1 = TypeConvertor.stringToNetzobRaw(common_pattern + self.generateRandomString(5, 100))
             data2 = TypeConvertor.stringToNetzobRaw(common_pattern + self.generateRandomString(5, 100))
             # Create the messages
-            message1 = RawMessage(uuid.uuid4(), str(time.time()), data1)
-            message2 = RawMessage(uuid.uuid4(), str(time.time()), data2)
+            message1 = RawMessage(str(uuid.uuid4()), str(time.time()), data1)
+            message2 = RawMessage(str(uuid.uuid4()), str(time.time()), data2)
             # Create the symbol
-            symbol = Symbol(uuid.uuid4(), "test_randomAlignments#" + str(i_test), currentProject)
+            symbol = Symbol(str(uuid.uuid4()), "test_randomAlignments#" + str(i_test), currentProject)
             symbol.addMessage(message1)
             symbol.addMessage(message2)
             
@@ -166,10 +166,10 @@ class test_Needleman(NetzobTestCase):
             data1 = TypeConvertor.stringToNetzobRaw(self.generateRandomString(5, 100) + common_pattern)
             data2 = TypeConvertor.stringToNetzobRaw(self.generateRandomString(5, 100) + common_pattern)
             # Create the messages
-            message1 = RawMessage(uuid.uuid4(), str(time.time()), data1)
-            message2 = RawMessage(uuid.uuid4(), str(time.time()), data2)
+            message1 = RawMessage(str(uuid.uuid4()), str(time.time()), data1)
+            message2 = RawMessage(str(uuid.uuid4()), str(time.time()), data2)
             # Create the symbol
-            symbol = Symbol(uuid.uuid4(), "test_randomAlignments#" + str(i_test), currentProject)
+            symbol = Symbol(str(uuid.uuid4()), "test_randomAlignments#" + str(i_test), currentProject)
             symbol.addMessage(message1)
             symbol.addMessage(message2)
             

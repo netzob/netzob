@@ -83,7 +83,7 @@ pyRegexPath = opj(regexPath, "Py_lib")
 toolsPath = opj(libPath, "tools")
 
 # Generate the random binary identifier BID
-macros = [('BID', '"{0}"'.format(uuid.uuid4()))]
+macros = [('BID', '"{0}"'.format(str(uuid.uuid4())))]
 
 # Module Needleman
 moduleLibNeedleman = Extension('netzob._libNeedleman',

@@ -148,13 +148,13 @@ class SearchView(object):
         for task in searchTasks:
             for result in task.getResults():
                 for (start, end) in result.getSegments():
-                    function = TextColorFunction(uuid.uuid4(), "Search", start, start + end + 1, "#DD0000")
+                    function = TextColorFunction(str(uuid.uuid4()), "Search", start, start + end + 1, "#DD0000")
                     message = result.getMessage()
                     message.addVisualizationFunction(function)
                     # colorize the associated symbol
                     symbol = self.project.getVocabulary().getSymbolWhichContainsMessage(message)
                     if not symbol in colorizedSymbols:
-                        symbol.addVisualizationFunction(TextColorFunction(uuid.uuid4(), "Search", None, None, "#DD0000"))
+                        symbol.addVisualizationFunction(TextColorFunction(str(uuid.uuid4()), "Search", None, None, "#DD0000"))
                         colorizedSymbols.append(symbol)
 #                    message.highlightSegment(start, end)
         # We update the different views

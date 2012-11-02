@@ -331,7 +331,7 @@ class ThirdPartyImport(AbstractImporter):
                 continue
 
             # Create a message
-            message = FileMessage(uuid.uuid4(), 0, content, fileName, creationDate, modificationDate, owner, size, 0)
+            message = FileMessage(str(uuid.uuid4()), 0, content, fileName, creationDate, modificationDate, owner, size, 0)
             self.messages.append(message)
             self.lineView.get_model().append(None, [message.getID(), content])
             fileNumber += 1
@@ -365,7 +365,7 @@ class ThirdPartyImport(AbstractImporter):
                 splittedStrHexData = [message.getData()]
             for s in splittedStrHexData:
                 if len(s) > 0:
-                    message = FileMessage(uuid.uuid4(), 0, s, message.getFilename(), message.getCreationDate(), message.getModificationDate(), message.getOwner(), message.getSize(), lineNumber)
+                    message = FileMessage(str(uuid.uuid4()), 0, s, message.getFilename(), message.getCreationDate(), message.getModificationDate(), message.getOwner(), message.getSize(), lineNumber)
                     new_messages.append(message)
                     lineNumber += 1
 

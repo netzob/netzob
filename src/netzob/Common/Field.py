@@ -82,7 +82,7 @@ class Field(object):
                 @type symbol: string
                 @param symbol: the parent symbol
         """
-        self.id = uuid.uuid4()
+        self.id = str(uuid.uuid4())
         self.name = name
         self.symbol = symbol
         self.description = ""
@@ -835,7 +835,7 @@ class Field(object):
                 value = value[1:len(value) - 1]
 
             value = TypeConvertor.netzobRawToBitArray(value)
-            variable = DataVariable(uuid.uuid4(), self.getName(), False, False, BinaryType(True, len(value), len(value)), value.to01())  # A static field is neither mutable nor random.
+            variable = DataVariable(str(uuid.uuid4()), self.getName(), False, False, BinaryType(True, len(value), len(value)), value.to01())  # A static field is neither mutable nor random.
             return variable
         else:
             if self.defaultVariable is None:
@@ -858,10 +858,10 @@ class Field(object):
             tmpDomain.add(TypeConvertor.netzobRawToBitArray(cell))
         domain = sorted(tmpDomain)
 
-        variable = AggregateVariable(uuid.uuid4(), "Aggregate", False, False, None)
-        alternateVar = AlternateVariable(uuid.uuid4(), "Alternate", True, False, None)
+        variable = AggregateVariable(str(uuid.uuid4()), "Aggregate", False, False, None)
+        alternateVar = AlternateVariable(str(uuid.uuid4()), "Alternate", True, False, None)
         for d in domain:
-            child = DataVariable(uuid.uuid4(), "defaultVariable", False, False, BinaryType(True, len(d), len(d)), d.to01())
+            child = DataVariable(str(uuid.uuid4()), "defaultVariable", False, False, BinaryType(True, len(d), len(d)), d.to01())
             alternateVar.addChild(child)
         variable.addChild(alternateVar)
         return variable
@@ -1273,7 +1273,7 @@ class Field(object):
                 @return: the built field.
         """
         if version == "0.1":
-            field_id = uuid.UUID(xmlRoot.get("id"))
+            field_id = str(xmlRoot.get("id"))
             field_name = xmlRoot.get("name")
             field_regex = ""
             if xmlRoot.find("{" + namespace + "}regex") is not None:

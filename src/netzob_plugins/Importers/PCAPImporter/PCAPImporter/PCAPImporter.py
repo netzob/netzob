@@ -134,7 +134,7 @@ class PCAPImporter(AbstractImporter):
 
     def _packetHandler(self, header, payload):
         """Decode a packet"""
-        mUuid = uuid.uuid4()
+        mUuid = str(uuid.uuid4())
         mTimestamp = int(time.time())
         if self.importLayer == 1:
             if len(payload) == 0:

@@ -54,7 +54,7 @@ class CreateOpenChannelTransitionController(object):
 
     def __init__(self, grammarController):
         self.grammarController = grammarController
-        self.idTransition = uuid.uuid4()
+        self.idTransition = str(uuid.uuid4())
         self._view = CreateOpenChannelTransitionView(self, self.idTransition)
         self.log = logging.getLogger(__name__)
 

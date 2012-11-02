@@ -78,7 +78,7 @@ class DelimiterSeparatedImporter(AbstractImporter):
             if not len(content) > 0:
                 continue
             # Create a message
-            message = FileMessage(uuid.uuid4(), 0,
+            message = FileMessage(str(uuid.uuid4()), 0,
                                   content, filePath, creationDate,
                                   modificationDate, owner, size, 0)
             self.importedFiles.append(message)
@@ -122,7 +122,7 @@ class DelimiterSeparatedImporter(AbstractImporter):
             i_s = 0
             for s in splittedStrHexData:
                 if len(s) > 0:
-                    message = FileMessage(uuid.uuid4(), 0,
+                    message = FileMessage(str(uuid.uuid4()), 0,
                                           s, fileMessage.getFilename(), fileMessage.getCreationDate(),
                                           fileMessage.getModificationDate(), fileMessage.getOwner(),
                                           fileMessage.getSize(), lineNumber)

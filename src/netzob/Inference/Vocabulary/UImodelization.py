@@ -1867,7 +1867,7 @@ class UImodelization(object):
 #        dialog.set_markup(_("Definition of the new variable"))
 #
 #        # Create the ID of the new variable
-#        variableID = uuid.uuid4()
+#        variableID = str(uuid.uuid4())
 #
 #        mainTable = Gtk.Table(rows=3, columns=2, homogeneous=False)
 #        # id of the variable

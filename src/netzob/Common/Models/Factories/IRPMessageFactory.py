@@ -129,7 +129,7 @@ class IRPMessageFactory(object):
         msg_data = bytearray(rootElement.find("{" + namespace + "}data").text)
 
         # Retrieve the id
-        msg_id = uuid.UUID(rootElement.get("id"))
+        msg_id = str(rootElement.get("id"))
 
         # Retrieve the timestamp
         msg_timestamp = int(rootElement.get("timestamp"))

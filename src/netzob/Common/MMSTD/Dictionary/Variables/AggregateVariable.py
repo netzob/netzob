@@ -201,13 +201,13 @@ class AggregateVariable(AbstractNodeVariable):
         savedIndex = readingToken.getIndex()
 
         childPosition = self.indexOfChild(child)
-        repeatVariable = RepeatVariable(uuid.uuid4(), "Learned Option Variable", False, True, self, 0, 1)
+        repeatVariable = RepeatVariable(str(uuid.uuid4()), "Learned Option Variable", False, True, self, 0, 1)
         # We will insert the new child under a 0-1 repeat variable to potentially not take care of it, just before the position of the problematic child.
         self.insertChild(childPosition, repeatVariable)
         valueToBeRead = readingToken.getValue()[readingToken.getIndex():]
         for index in len(valueToBeRead):
             tmpValue = valueToBeRead[:index]
-            tmpChild = DataVariable(uuid.uuid4(), "Learned Inserted Variable", True, True, BinaryType(True, len(tmpValue), len(tmpValue)), tmpValue.to01())
+            tmpChild = DataVariable(str(uuid.uuid4()), "Learned Inserted Variable", True, True, BinaryType(True, len(tmpValue), len(tmpValue)), tmpValue.to01())
             repeatVariable.add(tmpChild)
 
             # We read this new variable in a learning context.

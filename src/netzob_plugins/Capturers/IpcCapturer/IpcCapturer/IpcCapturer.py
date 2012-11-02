@@ -208,7 +208,7 @@ class IpcCapturer(AbstractCapturer):
             tmp_pkt = pkt
         if len(tmp_pkt) == 0:
             return
-        mUuid = uuid.uuid4()
+        mUuid = str(uuid.uuid4())
         mTimestamp = int(time.time())
         message = IPCMessage(mUuid, mTimestamp, tmp_pkt, self.getTypeFromFD(int(fd)), fd, direction)
         self._payloadDict[mUuid] = pkt

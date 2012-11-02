@@ -45,7 +45,7 @@ class RenderingFunction(object):
     #| Constructor
     #+-----------------------------------------------------------------------+
     def __init__(self, superType):
-        self.id = uuid.uuid4()
+        self.id = str(uuid.uuid4())
         self.superType = superType
         self.priority = 1
 
