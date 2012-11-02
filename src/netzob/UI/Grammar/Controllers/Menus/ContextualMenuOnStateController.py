@@ -40,6 +40,7 @@ from gi.repository import Gtk, Gdk, GObject
 import gi
 from netzob.UI.Grammar.Views.Menus.ContextualMenuOnStateView import ContextualMenuOnStateView
 from netzob.UI.Grammar.Controllers.DeleteStateController import DeleteStateController
+from netzob.UI.Grammar.Controllers.DeleteTransitionController import DeleteTransitionController
 from netzob.UI.Grammar.Controllers.EditStateController import EditStateController
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
@@ -79,11 +80,11 @@ class ContextualMenuOnStateController(object):
         controller = DeleteStateController(self.grammarController, self.state)
         controller.run()
 
-    def editTransition_cb(self, widget, transition):
+    def editTransition_cb(self, widget, event, transition):
         """callback executed when the user wants to edit a transition"""
         print "edit transition"
 
-    def deleteTransition_cb(self, widget, transition):
+    def deleteTransition_cb(self, widget, event, transition):
         """callback executed when the user wants to delete a transition"""
-        controller = DeleteTransitionController(self.grammarController, self.transition)
+        controller = DeleteTransitionController(self.grammarController, transition)
         controller.run()
