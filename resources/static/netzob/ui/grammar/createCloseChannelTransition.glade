@@ -115,7 +115,7 @@
                   <object class="GtkLabel" id="label1">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Describe the Close Channel to create</property>
+                    <property name="label" translatable="yes">Describe the Close Channel</property>
                     <attributes>
                       <attribute name="font-desc" value="Sans Bold 14"/>
                     </attributes>

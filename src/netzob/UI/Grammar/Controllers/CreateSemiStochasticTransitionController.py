@@ -54,11 +54,65 @@ from netzob.UI.Grammar.Views.CreateSemiStochasticTransitionView import CreateSem
 class CreateSemiStochasticTransitionController(object):
     """Manages the creation of a new SemiStochasticTransition"""
 
-    def __init__(self, grammarController):
+    def __init__(self, grammarController, currentTransition):
         self.grammarController = grammarController
-        self.idTransition = str(uuid.uuid4())
+        self.currentTransition = currentTransition
+        if self.currentTransition is None:
+            self.idTransition = str(uuid.uuid4())
+        else:
+            self.idTransition = self.currentTransition.getID()
         self._view = CreateSemiStochasticTransitionView(self, self.idTransition)
         self.log = logging.getLogger(__name__)
+
+        if self.currentTransition is not None:
+            self.view.idSemiStochasticTransitionEntry.set_text(self.idTransition)
+            self.view.nameSemiStochasticTransitionEntry.set_text(self.currentTransition.getName())
+
+            # Retrieves the list of states and of input symbols
+            states = []
+            inputSymbols = [EmptySymbol(), UnknownSymbol()]
+            currentProject = self.grammarController.getCurrentProject()
+            if currentProject is not None:
+                automata = currentProject.getGrammar().getAutomata()
+                if automata is not None:
+                    states.extend(automata.getStates())
+                vocabulary = currentProject.getVocabulary()
+                if vocabulary is not None:
+                    inputSymbols.extend(vocabulary.getSymbols())
+
+            # Set the start state
+            i = 0
+            for state in states:
+                if str(state.getID()) == self.currentTransition.getInputState().getID():
+                    self.view.startStateSemiStochasticTransitionComboBox.set_active(i)
+                    break
+                i += 1
+
+            # Set the end state
+            i = 0
+            for state in states:
+                if str(state.getID()) == self.currentTransition.getOutputState().getID():
+                    self.view.endStateSemiStochasticTransitionComboBox.set_active(i)
+                    break
+                i += 1
+
+            # Set the input symbol
+            i = 0
+            for symbol in inputSymbols:
+                if str(symbol.getID()) == self.currentTransition.getInputSymbol().getID():
+                    self.view.inputSymbolSemiStochasticTransitionComboBox.set_active(i)
+                    break
+                i += 1
+
+            # Set the output symbols
+            outputSymbols = self.currentTransition.getOutputSymbols()
+            for outputSymbolTupple in outputSymbols:
+                (outputSymbol, probabilityOutput, timeOutput) = outputSymbolTupple
+                i = self.view.outputSymbolsListStore.append()
+                self.view.outputSymbolsListStore.set(i, 0, str(outputSymbol.getID()))
+                self.view.outputSymbolsListStore.set(i, 1, outputSymbol.getName())
+                self.view.outputSymbolsListStore.set(i, 2, probabilityOutput)
+                self.view.outputSymbolsListStore.set(i, 3, timeOutput)
 
     @property
     def view(self):
@@ -83,10 +137,15 @@ class CreateSemiStochasticTransitionController(object):
         the creation of the transition"""
         currentProject = self.grammarController.getCurrentProject()
 
+        # Remove old transition
+        if currentProject is not None:
+            automata = currentProject.getGrammar().getAutomata()
+            if self.currentTransition is not None:
+                automata.removeTransition(self.currentTransition)
+
         # Retrieve the states and symbols of the current project
         states = []
         symbols = [EmptySymbol(), UnknownSymbol()]
-        currentProject = self.grammarController.getCurrentProject()
         if currentProject is not None:
             automata = currentProject.getGrammar().getAutomata()
             if automata is not None:

@@ -80,7 +80,6 @@ class GrammarController(object):
         return self.netzob.getCurrentWorkspace()
 
     def activeGrammarInferring_activate_cb(self, event):
-        print "PAN"
         if self.getCurrentProject() is None:
             logging.info("No project loaded.")
             return
@@ -108,7 +107,7 @@ class GrammarController(object):
             logging.info("No project loaded.")
             return
 
-        createTransitionController = CreateSemiStochasticTransitionController(self)
+        createTransitionController = CreateSemiStochasticTransitionController(self, None)
         createTransitionController.run()
 
     def createOpenChannelTransition_activate_cb(self, event):
@@ -116,7 +115,7 @@ class GrammarController(object):
             logging.info("No project loaded.")
             return
 
-        createTransitionController = CreateOpenChannelTransitionController(self)
+        createTransitionController = CreateOpenChannelTransitionController(self, None)
         createTransitionController.run()
 
     def createCloseChannelTransition_activate_cb(self, event):
@@ -124,5 +123,5 @@ class GrammarController(object):
             logging.info("No project loaded.")
             return
 
-        createTransitionController = CreateCloseChannelTransitionController(self)
+        createTransitionController = CreateCloseChannelTransitionController(self, None)
         createTransitionController.run()

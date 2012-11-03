@@ -52,11 +52,45 @@ from gi.repository import GObject
 class CreateOpenChannelTransitionController(object):
     """Manages the creation of an open channel transition"""
 
-    def __init__(self, grammarController):
+    def __init__(self, grammarController, currentTransition):
         self.grammarController = grammarController
-        self.idTransition = str(uuid.uuid4())
+        self.currentTransition = currentTransition
+        if self.currentTransition is None:
+            self.idTransition = str(uuid.uuid4())
+        else:
+            self.idTransition = self.currentTransition.getID()
         self._view = CreateOpenChannelTransitionView(self, self.idTransition)
         self.log = logging.getLogger(__name__)
+
+        if self.currentTransition is not None:
+            self.view.idEntry.set_text(self.idTransition)
+            self.view.nameEntry.set_text(self.currentTransition.getName())
+            self.view.timeEntry.set_text(str(self.currentTransition.getConnectionTime()))
+            self.view.maxNumberOfAttemptEntry.set_text(str(self.currentTransition.getMaxNumberOfAttempt()))
+
+            # Retrieves the list of states
+            states = []
+            currentProject = self.grammarController.getCurrentProject()
+            if currentProject is not None:
+                automata = currentProject.getGrammar().getAutomata()
+                if automata is not None:
+                    states.extend(automata.getStates())
+
+            # Set the start state
+            i = 0
+            for state in states:
+                if str(state.getID()) == self.currentTransition.getInputState().getID():
+                    self.view.startStateComboBox.set_active(i)
+                    break
+                i += 1
+
+            # Set the end state
+            i = 0
+            for state in states:
+                if str(state.getID()) == self.currentTransition.getOutputState().getID():
+                    self.view.endStateComboBox.set_active(i)
+                    break
+                i += 1
 
     @property
     def view(self):
@@ -78,6 +112,13 @@ class CreateOpenChannelTransitionController(object):
 
     def createButton_clicked_cb(self, event):
         """callback executed when the user clicks on the create button"""
+
+        # Remove old transition
+        currentProject = self.grammarController.getCurrentProject()
+        if currentProject is not None:
+            automata = currentProject.getGrammar().getAutomata()
+            if self.currentTransition is not None:
+                automata.removeTransition(self.currentTransition)
 
         # Transition's name
         transitionName = self._view.nameEntry.get_text()
@@ -120,7 +161,6 @@ class CreateOpenChannelTransitionController(object):
             self.displayErrorMessage(errorMessage)
             return
 
-        currentProject = self.grammarController.getCurrentProject()
         automata = currentProject.getGrammar().getAutomata()
         states = []
         if automata is not None:
