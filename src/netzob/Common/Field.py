@@ -791,30 +791,25 @@ class Field(object):
             return True
 
     #+-----------------------------------------------------------------------+
-    #| getPossibleTypesForAField:
-    #|     Retrieve all the possible types for a field
+    #| getPossibleTypes:
+    #|     Retrieve all the possible types for the current field
     #+-----------------------------------------------------------------------+
-    def getPossibleTypesForAField(self, field):
-        # first we verify the field exists in the symbol
-        if not field in self.fields:
-            logging.warn("The computing field is not part of the current symbol")
-            return []
-
+    def getPossibleTypes(self):
         # Retrieve all the part of the messages which are in the given field
         cells = self.getUniqValuesByField()
         typeIdentifier = TypeIdentifier()
-        return typeIdentifier.getTypes(cells)
+        return typeIdentifier.getTypes("".join(cells))
 
     #+-----------------------------------------------------------------------+
-    #| getStyledPossibleTypesForAField:
+    #| getStyledPossibleTypes:
     #|     Retrieve all the possibles types for a field and we colorize
     #|     the selected one we an HTML RED SPAN
     #+-----------------------------------------------------------------------+
-    def getStyledPossibleTypesForAField(self, field):
-        tmpTypes = self.getPossibleTypesForAField(field)
+    def getStyledPossibleTypes(self):
+        tmpTypes = self.getPossibleTypes()
         for i in range(len(tmpTypes)):
-            if tmpTypes[i] == field.getFormat():
-                tmpTypes[i] = "<span foreground=\"red\">" + field.getFormat() + "</span>"
+            if tmpTypes[i] == self.getFormat():
+                tmpTypes[i] = "<span foreground=\"red\">" + self.getFormat() + "</span>"
         return ", ".join(tmpTypes)
 
     ## Variable

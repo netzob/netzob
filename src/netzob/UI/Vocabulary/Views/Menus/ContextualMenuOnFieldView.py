@@ -90,7 +90,7 @@ class ContextualMenuOnFieldView(object):
         self.menu.append(item)
 
         # Add entry to retrieve the field domain of definition
-        item = Gtk.MenuItem(_("Field's domain of definition"))
+        item = Gtk.MenuItem(_("Field analysis"))
         item.show()
         item.connect("activate", self.controller.displayDomainOfDefinition_cb)
         self.menu.append(item)

@@ -49,9 +49,9 @@ from netzob.UI.Vocabulary.Views.Menus.ContextualMenuOnFieldView import Contextua
 from netzob.UI.NetzobWidgets import NetzobLabel
 from netzob.Common.Symbol import Symbol
 from netzob.Common.Field import Field
-from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Models.RawMessage import RawMessage
 from netzob.UI.Vocabulary.Controllers.PopupEditFieldController import PopupEditFieldController
+from netzob.UI.Vocabulary.Controllers.FieldAnalysisController import FieldAnalysisController
 from netzob.UI.Vocabulary.Controllers.VariableController import VariableTreeController
 from netzob.UI.Import.Controllers.ConfirmImportMessagesController import ConfirmImportMessagesController
 from netzob.UI.NetzobWidgets import NetzobErrorMessage
@@ -142,41 +142,8 @@ class ContextualMenuOnFieldController(object):
     #|   Retrieve the domain of definition of the selected column
     #+----------------------------------------------
     def displayDomainOfDefinition_cb(self, event):
-        cells = self.field.getUniqValuesByField()
-        tmpDomain = set()
-        for cell in cells:
-            tmpDomain.add(TypeConvertor.encodeNetzobRawToGivenType(cell, self.field.getFormat()))
-        domain = sorted(tmpDomain)
-
-        dialog = Gtk.Dialog(title=_("Domain of definition for the column ") + self.field.getName(), flags=0, buttons=None)
-
-        # Text view containing domain of definition
-        ## ListStore format:
-        # str: symbol.id
-        treeview = Gtk.TreeView(Gtk.ListStore(str))
-        treeview.show()
-
-        cell = Gtk.CellRendererText()
-        cell.set_sensitive(True)
-        cell.set_property('editable', True)
-
-        column = Gtk.TreeViewColumn(_("Column ") + str(self.field.getIndex()))
-        column.pack_start(cell, True)
-        column.add_attribute(cell, "text", 0)
-
-        treeview.append_column(column)
-
-        for elt in domain:
-            treeview.get_model().append([elt])
-
-        scroll = Gtk.ScrolledWindow()
-        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        scroll.show()
-        scroll.add(treeview)
-
-        dialog.set_size_request(500, 300)
-        dialog.vbox.pack_start(scroll, True, True, 0)
-        dialog.show()
+        controller = FieldAnalysisController(self.vocabularyController, self.field)
+        controller.run()
 
     def applyTransformationFunction_cb(self, object, function):
         appliedFunctions = self.field.getTransformationFunctions()
