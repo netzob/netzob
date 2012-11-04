@@ -30,13 +30,11 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 from gi.repository import GObject, Gtk, Gdk
-from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 import gi
 import logging
 import os
 import uuid
 import datetime
-from netzob.Simulator.XDotWidget import XDotWidget
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
@@ -45,6 +43,8 @@ gi.require_version('Gtk', '3.0')
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+from netzob.Simulator.XDotWidget import XDotWidget
 
 
 class SimulatorView(object):
@@ -63,6 +63,7 @@ class SimulatorView(object):
                                         "stopActorButton",
                                         "startActorButton",
                                         "actorsListStore",
+                                        "listOfActorsTreeView",
                                         "grammarCurrentActorViewport",
                                         "statusCurrentActorImage",
                                         "nameCurrentActorLabel",
@@ -122,6 +123,7 @@ class SimulatorView(object):
     def restart(self):
         """restart the view"""
         self.refreshListOfActors()
+        self.deleteActorButton.set_sensitive(False)
 
     def refreshListOfActors(self):
         """Clear the list of available actors and update it
