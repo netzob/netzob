@@ -598,13 +598,16 @@ class TypeConvertor():
 #| Convertors by Benjamin                                                    |
 #+---------------------------------------------------------------------------+
     @staticmethod
-    def stringB2bin(stri):
-        if stri is not None:
-            bina = bitarray()
-            bina.fromstring(stri)
+    def stringB2bin(stri, theEndian='big'):
+        if stri is None:
+            return None
+        elif stri == "":
+            bina = bitarray(endian=theEndian)
             return bina
         else:
-            return None
+            bina = bitarray(endian=theEndian)
+            bina.fromstring(stri)
+            return bina
 
     @staticmethod
     def binB2string(bina):
