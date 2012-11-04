@@ -597,7 +597,12 @@ class VocabularyController(object):
             NetzobErrorMessage(_("No project selected."))
             return
 
-        chooser = ImportFileChooserDialog(NetzobPlugin.getLoadedPlugins(FileImporterPlugin))
+        importerPlugins =  NetzobPlugin.getLoadedPlugins(FileImporterPlugin)
+        if len(importerPlugins) < 1:
+            NetzobErrorMessage(_("No importer plugin available."))
+            return
+
+        chooser = ImportFileChooserDialog(importerPlugins)
         res = chooser.run()
         plugin = None
         if res == chooser.RESPONSE_OK:
