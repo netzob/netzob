@@ -254,7 +254,6 @@ class CreateSemiStochasticTransitionController(object):
 
         # attach the transition to the grammar
         self.grammarController.getCurrentProject().getGrammar().getAutomata().addTransition(transition)
-
         self._view.destroy()
         self.grammarController.restart()
 

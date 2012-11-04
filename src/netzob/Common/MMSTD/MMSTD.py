@@ -31,17 +31,7 @@
 from gettext import gettext as _
 from lxml import etree
 from lxml.etree import ElementTree
-from netzob.Common.Automata import Automata
-from netzob.Common.MMSTD.Actors.SimpleCommunicationChannel import \
-    SimpleCommunicationLayer
-from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
-from netzob.Common.MMSTD.Dictionary.Memory import Memory
-from netzob.Common.MMSTD.States.AbstractState import AbstractState
-from netzob.Common.MMSTD.Transitions.AbstractTransition import \
-    AbstractTransition
 import logging
-from netzob.Common.MMSTD.Transitions.impl.SemiStochasticTransition import SemiStochasticTransition
-from netzob.Common.Symbol import Symbol
 
 #+----------------------------------------------
 #| Related third party imports
@@ -50,6 +40,18 @@ from netzob.Common.Symbol import Symbol
 #+----------------------------------------------
 #| Local application imports
 #+----------------------------------------------
+from netzob.Common.Automata import Automata
+from netzob.Common.MMSTD.Actors.SimpleCommunicationChannel import \
+    SimpleCommunicationLayer
+from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
+from netzob.Common.MMSTD.Dictionary.Memory import Memory
+from netzob.Common.MMSTD.States.AbstractState import AbstractState
+from netzob.Common.MMSTD.Transitions.AbstractTransition import \
+    AbstractTransition
+from netzob.Common.MMSTD.Transitions.impl.SemiStochasticTransition import SemiStochasticTransition
+from netzob.Common.Symbol import Symbol
+from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
+from netzob.Common.MMSTD.Symbols.impl.UnknownSymbol import UnknownSymbol
 
 
 #+----------------------------------------------
@@ -232,7 +234,9 @@ class MMSTD(Automata):
                 error = False
                 for symbol in symbols:
                     found = False
-                    for s in vocabulary.getSymbols():
+                    vocaSymbols = [EmptySymbol(), UnknownSymbol()]
+                    vocaSymbols.extend(vocabulary.getSymbols())
+                    for s in vocaSymbols:
                         if str(s.getID()) == str(symbol.getID()):
                             found = True
                             break
