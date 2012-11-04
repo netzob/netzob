@@ -42,7 +42,7 @@ import random
 #+---------------------------------------------------------------------------+
 from netzob.Common.Plugins.CapturerPlugin import CapturerPlugin
 from netzob.Common.Plugins.Extensions.CapturerMenuExtension import CapturerMenuExtension
-from netzob_plugins.Capturers.IpcCapturer.IpcCapturer.IpcCapturerController import IpcCapturerController
+from IpcCapturerController import IpcCapturerController
 from netzob.UI.NetzobWidgets import NetzobErrorMessage
 
 

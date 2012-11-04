@@ -42,8 +42,8 @@ import time
 #+---------------------------------------------------------------------------+
 from netzob.UI.NetzobWidgets import NetzobInfoMessage, NetzobErrorMessage
 from netzob.Common.Plugins.Capturers.AbstractCapturerController import AbstractCapturerController
-from netzob_plugins.Capturers.IpcCapturer.IpcCapturer.IpcCapturerView import IpcCapturerView
-from netzob_plugins.Capturers.IpcCapturer.IpcCapturer.IpcCapturer import IpcCapturer
+from IpcCapturerView import IpcCapturerView
+from IpcCapturer import IpcCapturer
 from netzob.Common.Models.IPCMessage import IPCMessage
 from netzob.Common.NetzobException import NetzobImportException
 
