@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-05 00:54+0100\n"
-"PO-Revision-Date: 2012-11-05 11:56+0200\n"
-"Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
+"PO-Revision-Date: 2012-11-05 15:22+0200\n"
+"Last-Translator: Frédéric Guihéry <sygus@cat-lan.com>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
 "Language: fr\n"
@@ -283,9 +283,8 @@ msgid "{0}, bits: ({1}, {2}), chars: ({3}, {4})"
 msgstr ""
 
 #: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:81
-#, fuzzy
 msgid "{0}, delimiter: {1}"
-msgstr "Délimiteur :"
+msgstr "{0}, délimiteur : {1}"
 
 #: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:140
 #: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:148
@@ -484,9 +483,8 @@ msgid "[ {0}: children's memorized value are restored."
 msgstr ""
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractNodeVariable.py:143
-#, fuzzy
 msgid "Variable {0}: ]"
-msgstr "Variable :"
+msgstr "Variable {0}:]"
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractVariable.py:79
 msgid "Variable {0} ({3}) (mutable: {1}, learnable: {2})"
@@ -569,9 +567,8 @@ msgid "- [ {0}: learn."
 msgstr ""
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:287
-#, fuzzy
 msgid "[Aggregate] {0} ({1})"
-msgstr "Créer un état {0} ({1})"
+msgstr "[Agrégat] {0} ({1})"
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:306
 #: src/netzob/Common/MMSTD/Dictionary/Variables/RepeatVariable.py:227
@@ -601,9 +598,8 @@ msgstr ""
 #: src/netzob/Common/MMSTD/Dictionary/Variables/RepeatVariable.py:292
 #: src/netzob/Common/MMSTD/Dictionary/Variables/_ComputedRelationVariable.py:115
 #: src/netzob/Common/MMSTD/Dictionary/Variables/_DirectRelationVariable.py:97
-#, fuzzy
 msgid "Variable {0}. ]"
-msgstr "Variable"
+msgstr "Variable {0}.]"
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:380
 msgid "[ AggregateVariable: loadFromXML:"
@@ -630,9 +626,8 @@ msgid "[ {0} (Alternate): writeChildren:"
 msgstr ""
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/AlternateVariable.py:223
-#, fuzzy
 msgid "[Alternate] {0} ({1})"
-msgstr "Créer un état {0} ({1})"
+msgstr "[Alternat] {0} ({1})"
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/AlternateVariable.py:240
 msgid "[ {0} (Alternate): read access:"
@@ -738,9 +733,8 @@ msgstr ""
 #: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:205
 #: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:219
 #: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:224
-#, fuzzy
 msgid "[{0}]"
-msgstr "DLL [{0}]"
+msgstr "[{0}]"
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:238
 #: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:336
@@ -830,9 +824,8 @@ msgid "- {0}: value is memorized."
 msgstr ""
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:263
-#, fuzzy
 msgid "Learning done."
-msgstr "Gel terminé."
+msgstr "Apprentissage terminé."
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:265
 msgid "Learning abort because the previous format comparison failed."
@@ -1175,7 +1168,7 @@ msgstr ""
 
 #: src/netzob/Import/ApiImport.py:381
 msgid "Stoping the capture..."
-msgstr "Arrêter la capture"
+msgstr "Arrêter la capture..."
 
 #: src/netzob/Import/ApiImport.py:389
 msgid "Reading finish, we close the FIFO."
@@ -1186,9 +1179,8 @@ msgid "Import data from third parties"
 msgstr ""
 
 #: src/netzob/Import/ThirdPartyImport.py:115
-#, fuzzy
 msgid "Select data source"
-msgstr "Sélectionner l'espace de travail"
+msgstr "Sélectionner la source de donnée"
 
 #: src/netzob/Import/ThirdPartyImport.py:133
 msgid "Select a third party"
@@ -1199,9 +1191,8 @@ msgid "Load"
 msgstr ""
 
 #: src/netzob/Import/ThirdPartyImport.py:174 src/netzob/Import/XMLImport.py:129
-#, fuzzy
 msgid "Message ID"
-msgstr "Message"
+msgstr "ID de message"
 
 #: src/netzob/Import/ThirdPartyImport.py:186 src/netzob/Import/XMLImport.py:149
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:115
@@ -1233,9 +1224,8 @@ msgid "Select one or multiple file"
 msgstr ""
 
 #: src/netzob/Import/XMLImport.py:109
-#, fuzzy
 msgid "Select file(s)"
-msgstr "Exporter les champs sélectionnés"
+msgstr "Sélectionner les fichier(s)"
 
 #: src/netzob/Import/XMLImport.py:133
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:198
@@ -1250,14 +1240,13 @@ msgid "Type"
 msgstr "Type"
 
 #: src/netzob/Import/XMLImport.py:137
-#, fuzzy
 msgid "Content"
-msgstr "Contenu de l'aide"
+msgstr "Contenu"
 
 #: src/netzob/Import/XMLImport.py:191
-#, fuzzy
 msgid "Are you sure to import the {0} computed messages in project {1}?"
-msgstr "Êtes-vous sur d'importer les %s paquets sélectionnés dans le projet %s ?"
+msgstr ""
+"Êtes-vous sur d'importer les {0} paquets sélectionnés dans le projet {1} ?"
 
 #: src/netzob/Import/XMLImport.py:254
 msgid "The specified XML file {0} is not valid according to the XSD ({1})."
@@ -1502,32 +1491,28 @@ msgid "Word"
 msgstr "Mot"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:177
-#, fuzzy
 msgid "Decimal Word"
-msgstr "Hexadécimal"
+msgstr "Mot hexadécimal"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:183
 msgid "IPv4 Word"
 msgstr ""
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:189
-#, fuzzy
 msgid "MAC Word"
-msgstr "Hexadécimal"
+msgstr "MAC hexadécimal"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:195
-#, fuzzy
 msgid "Hexadecimal Word"
-msgstr "Hexadécimal"
+msgstr "Mot hexadécimal"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:201
 msgid "Binary"
 msgstr "Binaire"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:207
-#, fuzzy
 msgid "Integer"
-msgstr "Filtre"
+msgstr "Entier"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:213
 #: src/netzob/Inference/Vocabulary/_VariableView.py:522
@@ -1543,9 +1528,8 @@ msgid "Referenced Variable"
 msgstr "Variable référencée"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:231
-#, fuzzy
 msgid "Repeat Variable"
-msgstr "Créer une variable"
+msgstr "Variable de répétition"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:236
 #: src/netzob/UI/Vocabulary/Controllers/VariableController.py:166
@@ -1565,7 +1549,7 @@ msgstr ""
 #: src/netzob/Inference/Vocabulary/_VariableView.py:665
 #: src/netzob/Inference/Vocabulary/_VariableView.py:773
 msgid "Parent ID:"
-msgstr "Identifiant du parent :"
+msgstr "ID du parent :"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:263
 #: src/netzob/Inference/Vocabulary/_VariableView.py:348
@@ -1603,14 +1587,12 @@ msgid "Definition of the Hexadecimal Variable"
 msgstr "Définition de la variable héxadécimale"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:370
-#, fuzzy
 msgid "Minimum number of hex (0xf=1):"
-msgstr "Nombre minimum de bits : "
+msgstr "Nombre minimum de caractères héxa (0xf=1) :"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:378
-#, fuzzy
 msgid "Maximum number of hex:"
-msgstr "Nombre maximum d'états :"
+msgstr "Nombre maximum de caractères héxa :"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:416
 msgid "Definition of the Alternative"
@@ -1640,9 +1622,8 @@ msgid "Value:"
 msgstr "Valeur :"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:599
-#, fuzzy
 msgid "Definition of the Decimal WORD"
-msgstr "Définition de la variable héxadécimale"
+msgstr "Définition du mot héxadécimal"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:657
 msgid "Definition of the IPv4 Variable"
@@ -1762,9 +1743,8 @@ msgstr "Sélectionner un symbole pour voir sa définition XML"
 #: src/netzob/UI/Export/Controllers/RawExportController.py:100
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:175
 #: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExportController.py:175
-#, fuzzy
 msgid "No XML definition found"
-msgstr "Domaine de définition pour la colonne"
+msgstr "Aucune définition XML trouvée"
 
 #: src/netzob/UI/Export/Controllers/ScapyExportController.py:93
 #: src/netzob/UI/Export/Controllers/TextExportController.py:92
@@ -1776,9 +1756,8 @@ msgid "No scapy definition found"
 msgstr ""
 
 #: src/netzob/UI/Export/Controllers/TextExportController.py:99
-#, fuzzy
 msgid "No text definition found"
-msgstr "Domaine de définition pour la colonne"
+msgstr "Aucune définition trouvée"
 
 #: src/netzob/UI/Export/Views/RawExportView.py:50
 msgid "Export project as raw XML"
@@ -1791,9 +1770,8 @@ msgstr "Exporter le projet au format texte"
 
 #: src/netzob/UI/Grammar/Controllers/CreateCloseChannelTransitionController.py:125
 #: src/netzob/UI/Grammar/Controllers/CreateOpenChannelTransitionController.py:126
-#, fuzzy
 msgid "Give a name to the transition"
-msgstr "Définition de la nouvelle transition"
+msgstr "Donnez un nom à la nouvelle transition"
 
 #: src/netzob/UI/Grammar/Controllers/CreateCloseChannelTransitionController.py:136
 #: src/netzob/UI/Grammar/Controllers/CreateOpenChannelTransitionController.py:137
@@ -1803,16 +1781,14 @@ msgstr ""
 #: src/netzob/UI/Grammar/Controllers/CreateCloseChannelTransitionController.py:144
 #: src/netzob/UI/Grammar/Controllers/CreateOpenChannelTransitionController.py:156
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:168
-#, fuzzy
 msgid "Select a start state."
-msgstr "État de démarrage"
+msgstr "Sélectionnez un état initial."
 
 #: src/netzob/UI/Grammar/Controllers/CreateCloseChannelTransitionController.py:148
 #: src/netzob/UI/Grammar/Controllers/CreateOpenChannelTransitionController.py:160
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:172
-#, fuzzy
 msgid "Select an end state"
-msgstr "Créer un état"
+msgstr "Sélectionnez un état final"
 
 #: src/netzob/UI/Grammar/Controllers/CreateCloseChannelTransitionController.py:170
 #: src/netzob/UI/Grammar/Controllers/CreateOpenChannelTransitionController.py:181
@@ -1839,14 +1815,12 @@ msgid "Provided start state already has an open channel transition."
 msgstr ""
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:160
-#, fuzzy
 msgid "Give a name to the transition."
-msgstr "Définition de la nouvelle transition"
+msgstr "Donnez un nom à la nouvelle transition."
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:199
-#, fuzzy
 msgid "Select an input Symbol."
-msgstr "Aucun symbole sélectionné"
+msgstr "Sélectionnez un symbole d'entrée."
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:210
 msgid "An error occurred and prevented to retrieve the provided input symbol"
@@ -1917,24 +1891,20 @@ msgid "You cannot deactivate an initial state."
 msgstr ""
 
 #: src/netzob/UI/Grammar/Views/EditStateView.py:65
-#, fuzzy
 msgid "Edit the state"
-msgstr "Créer un état"
+msgstr "Editer l'état"
 
 #: src/netzob/UI/Grammar/Views/Menus/ContextualMenuOnStateView.py:56
-#, fuzzy
 msgid "Edit State"
-msgstr "État terminal"
+msgstr "Edtiter l'état"
 
 #: src/netzob/UI/Grammar/Views/Menus/ContextualMenuOnStateView.py:64
-#, fuzzy
 msgid "Transition {0}"
-msgstr "ID de la transition"
+msgstr "Transition {0}"
 
 #: src/netzob/UI/Grammar/Views/Menus/ContextualMenuOnStateView.py:70
-#, fuzzy
 msgid "Delete State"
-msgstr "Créer un état"
+msgstr "Supprimez un état"
 
 #: src/netzob/UI/Grammar/Views/Menus/ContextualMenuOnStateView.py:80
 msgid "Edit"
@@ -1950,9 +1920,8 @@ msgid "Specify the name of new symbol"
 msgstr ""
 
 #: src/netzob/UI/Import/Controllers/ConfirmImportMessagesController.py:99
-#, fuzzy
 msgid "The provided symbol name already exists."
-msgstr "Ce nom de projet existe déjà"
+msgstr "Ce nom de symbole existe déjà."
 
 #: src/netzob/UI/Import/Controllers/ConfirmImportMessagesController.py:171
 #: src/netzob/UI/Import/Controllers/ConfirmImportMessagesController.py:221
@@ -2004,9 +1973,8 @@ msgid "A network server requires a bind port."
 msgstr ""
 
 #: src/netzob/UI/Simulator/Controllers/SimulatorController.py:108
-#, fuzzy
 msgid "Click yes to confirm the deletion of the selected actor"
-msgstr "Cliquez sur oui pour valider la suppression du message sélectionné"
+msgstr "Cliquez sur oui pour valider la suppression de l'acteur sélectionné"
 
 #: src/netzob/UI/Vocabulary/Controllers/EnvironmentDependenciesSearcherController.py:87
 msgid ""
@@ -2079,9 +2047,8 @@ msgid "Can't split field with empty cell(s)."
 msgstr ""
 
 #: src/netzob/UI/Vocabulary/Controllers/VariableController.py:164
-#, fuzzy
 msgid "Edit the sub-element"
-msgstr "Ajouter un sous-élément"
+msgstr "Éditer le sous-élément"
 
 #: src/netzob/UI/Vocabulary/Controllers/VariableController.py:172
 msgid "Edit this element"
@@ -2104,23 +2071,20 @@ msgid "The user didn't confirm the deletion of the variable {0}"
 msgstr "L'utilisateur n'a pas confirmé la suppression de la variable {0}"
 
 #: src/netzob/UI/Vocabulary/Controllers/VariableController.py:228
-#, fuzzy
 msgid "Click yes to confirm the edition of the variable {0}"
-msgstr "Cliquez sur oui pour confirmer la suppression de la variable {0}"
+msgstr "Cliquez sur oui pour confirmer l'édition de la variable {0}"
 
 #: src/netzob/UI/Vocabulary/Controllers/VariableController.py:252
-#, fuzzy
 msgid "The user didn't confirm the edition of the variable {0}"
-msgstr "L'utilisateur n'a pas confirmé la suppression de la variable {0}"
+msgstr "L'utilisateur n'a pas confirmé l'édition de la variable {0}"
 
 #: src/netzob/UI/Vocabulary/Controllers/VariableController.py:892
 msgid "Select this element"
 msgstr ""
 
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:303
-#, fuzzy
 msgid "No layer(s) selected."
-msgstr "Aucun symbole sélectionné"
+msgstr "Aucune couche sélectionnée."
 
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:314
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:325
@@ -2129,15 +2093,13 @@ msgstr "Aucun symbole sélectionné"
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:514
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:526
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:585
-#, fuzzy
 msgid "No symbol(s) selected."
-msgstr "Aucun symbole sélectionné"
+msgstr "Aucun symbole sélectionné."
 
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:361
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:410
-#, fuzzy
 msgid "No selected symbol."
-msgstr "Aucun symbole sélectionné"
+msgstr "Aucun symbole sélectionné."
 
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:365
 msgid "You need to select at least two fields."
@@ -2145,9 +2107,8 @@ msgstr ""
 
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:401
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:414
-#, fuzzy
 msgid "No selected field."
-msgstr "Exporter les champs sélectionnés"
+msgstr "Aucun champs sélectionné."
 
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:430
 #, fuzzy
