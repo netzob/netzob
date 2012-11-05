@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-06-13 16:32+0200\n"
-"PO-Revision-Date: 2012-11-05 11:56+0200\n"
-"Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
+"PO-Revision-Date: 2012-11-05 15:09+0200\n"
+"Last-Translator: Frédéric Guihéry <sygus@cat-lan.com>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/master/fr/>\n"
 "Language: fr\n"
@@ -573,7 +573,7 @@ msgstr ""
 
 #: src/netzob/Import/ApiImport.py:382
 msgid "Stoping the capture..."
-msgstr "Arrêter la capture"
+msgstr "Arrêter la capture..."
 
 #: src/netzob/Import/ApiImport.py:390
 msgid "Reading finish, we close the FIFO."
@@ -1815,9 +1815,8 @@ msgid "Word"
 msgstr "Mot"
 
 #: src/netzob/Inference/Vocabulary/VariableView.py:171
-#, fuzzy
 msgid "Decimal Word"
-msgstr "Hexadécimal"
+msgstr "Mot hexadécimal"
 
 #: src/netzob/Inference/Vocabulary/VariableView.py:177
 msgid "IPv4"
@@ -1861,7 +1860,7 @@ msgstr ""
 #: src/netzob/Inference/Vocabulary/VariableView.py:640
 #: src/netzob/Inference/Vocabulary/VariableView.py:748
 msgid "Parent ID:"
-msgstr "Identifiant du parent :"
+msgstr "ID du parent :"
 
 #: src/netzob/Inference/Vocabulary/VariableView.py:248
 #: src/netzob/Inference/Vocabulary/VariableView.py:333
@@ -1888,14 +1887,12 @@ msgid "Definition of the Hexadecimal Variable"
 msgstr "Définition de la variable héxadécimale"
 
 #: src/netzob/Inference/Vocabulary/VariableView.py:346
-#, fuzzy
 msgid "Minimum number of hex (0xf=1):"
-msgstr "Nombre minimum de bits : "
+msgstr "Nombre minimum de caractères héxa (0xf=1) :"
 
 #: src/netzob/Inference/Vocabulary/VariableView.py:354
-#, fuzzy
 msgid "Maximum number of hex:"
-msgstr "Nombre maximum d'états :"
+msgstr "Nombre maximum de caractères héxa :"
 
 #: src/netzob/Inference/Vocabulary/VariableView.py:392
 msgid "Definition of the Alternative"
@@ -1919,9 +1916,8 @@ msgid "Value:"
 msgstr "Valeur :"
 
 #: src/netzob/Inference/Vocabulary/VariableView.py:575
-#, fuzzy
 msgid "Definition of the Decimal WORD"
-msgstr "Définition de la variable héxadécimale"
+msgstr "Définition du mot héxadécimal"
 
 #: src/netzob/Inference/Vocabulary/VariableView.py:632
 msgid "Definition of the IPv4 Variable"
