@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-05 00:54+0100\n"
-"PO-Revision-Date: 2012-11-05 01:06+0200\n"
-"Last-Translator: Frédéric Guihéry <sygus@cat-lan.com>\n"
+"PO-Revision-Date: 2012-11-05 09:30+0200\n"
+"Last-Translator: Alexandre PIGNÉ <alex@freesenses.net>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/netzob/fr/>\n"
 "Language: fr\n"
@@ -85,12 +85,12 @@ msgstr "Copie de {0}"
 
 #: src/netzob/NetzobMainController.py:404
 msgid "An error occurred while copying the file"
-msgstr ""
+msgstr "Une erreur est survenue durant la copie du fichier"
 
 #: src/netzob/NetzobMainController.py:449
 #: src/netzob/NetzobMainController.py:477
 msgid "Please open a project before exporting it."
-msgstr ""
+msgstr "Veuillez ouvrir un projet avant de l'exporter."
 
 #: src/netzob/NetzobMainController.py:472
 #: src/netzob/NetzobMainController.py:548
@@ -100,19 +100,19 @@ msgstr "Aucun projet sélectionné"
 
 #: src/netzob/NetzobMainController.py:474
 msgid "No filename provided"
-msgstr ""
+msgstr "Aucun nom de fichier fourni"
 
 #: src/netzob/NetzobMainController.py:488
 msgid "An error occurred while exporting the project."
-msgstr ""
+msgstr "Une erreur est survenue durant l'export du projet."
 
 #: src/netzob/NetzobMainController.py:562
 msgid "An error occurred while loading workspace."
-msgstr ""
+msgstr "Une erreur est survenue pendant le chargement de l'espace de travail."
 
 #: src/netzob/NetzobMainController.py:572
 msgid "An error occurred while creating workspace."
-msgstr ""
+msgstr "Une erreur est survenue durant la création de l'espace de travail."
 
 #: src/netzob/NetzobMainView.py:105
 #, fuzzy
@@ -140,10 +140,13 @@ msgstr ""
 #: src/netzob/NetzobMainView.py:290
 msgid "Save the changes to the project \"{0}\" before closing?"
 msgstr ""
+"Voulez-vous sauvegarder les modifications du projet \"{0}\" avant la fermeture "
+"?"
 
 #: src/netzob/NetzobMainView.py:298
 msgid "If you don't save, changes will be permanently lost."
 msgstr ""
+"Vos modifications seront définitivement perdues si vous ne sauvegardez pas."
 
 #: src/netzob/NetzobMainView.py:300
 msgid "Close _Without Saving"
