@@ -824,12 +824,11 @@
 	<complexType name="ClientNetworkChannel">
 		<complexContent>
 			<extension base="netzob-project:NetworkChannel">
-				
 			</extension>
 		</complexContent>
 	</complexType>
 
-	<complexType name="ServerNetworkActor">
+	<complexType name="ServerNetworkChannel">
 		<complexContent>
 			<extension base="netzob-project:NetworkChannel">
 			</extension>
