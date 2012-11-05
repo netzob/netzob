@@ -362,7 +362,9 @@
 
 	<complexType name="States">
 		<sequence>
-			<element name="state" type="netzob-project:State" maxOccurs="unbounded"></element>
+			<element name="state" type="netzob-project:State"
+				 minOccurs="0" maxOccurs="unbounded">
+			</element>
 		</sequence>
 	</complexType>
 
