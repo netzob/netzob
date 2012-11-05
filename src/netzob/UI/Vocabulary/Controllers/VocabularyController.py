@@ -260,6 +260,8 @@ class VocabularyController(object):
             self.getSignalsManager().emitSignal(SignalsManager.SIG_SYMBOLS_NO_SELECTION)
 
     def symbolListTreeView_button_press_event_cb(self, treeview, eventButton):
+        if 1 > treeview.get_selection().count_selected_rows():
+            return
         # Popup a contextual menu if right click
         if eventButton.type == Gdk.EventType.BUTTON_PRESS and eventButton.button == 3:
             (model, paths) = treeview.get_selection().get_selected_rows()
