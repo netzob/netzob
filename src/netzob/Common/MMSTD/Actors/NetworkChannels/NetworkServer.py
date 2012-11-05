@@ -441,11 +441,11 @@ class NetworkServer(AbstractChannel):
         else:
             xmlTargetIp.text = ""
 
-        xmlTragetPort = etree.SubElement(xmlActor, "{" + namespace + "}target_port")
+        xmlTargetPort = etree.SubElement(xmlActor, "{" + namespace + "}target_port")
         if self.getOriginalTargetPort() is not None:
-            xmlTargetIp.text = str(self.getOriginalTargetPort())
+            xmlTargetPort.text = str(self.getOriginalTargetPort())
         else:
-            xmlTargetIp.text = ""
+            xmlTargetPort.text = ""
 
     @staticmethod
     def loadFromXML(rootElement, namespace, version, memory):

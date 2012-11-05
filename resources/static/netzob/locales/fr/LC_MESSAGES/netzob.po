@@ -27,7 +27,7 @@ msgstr "Démarrage de l'interface graphique de Netzob"
 
 #: src/netzob/NetzobMainController.py:308
 msgid "A project with the same name already exists ({0}, {1}), please change it."
-msgstr ""
+msgstr "Un projet avec le même nom existe déjà ({0}, {1}), veuillez le changer."
 
 #: src/netzob/NetzobMainController.py:309
 msgid "A project with this name exists"
@@ -35,7 +35,7 @@ msgstr "Un projet avec ce nom existe déjà"
 
 #: src/netzob/NetzobMainController.py:311
 msgid "Create new project {0}"
-msgstr "Créer le nouveau projet {0}"
+msgstr "Créer un nouveau projet {0}"
 
 #: src/netzob/NetzobMainController.py:324
 #: src/netzob/NetzobMainController.py:427
@@ -77,7 +77,7 @@ msgstr "Aucun fichier sélectionné"
 
 #: src/netzob/NetzobMainController.py:377
 msgid "The file doesn't define a valid project."
-msgstr ""
+msgstr "Le fichier ne contient pas de projet valide."
 
 #: src/netzob/NetzobMainController.py:395
 msgid "Copy of {0}"
@@ -85,12 +85,12 @@ msgstr "Copie de {0}"
 
 #: src/netzob/NetzobMainController.py:404
 msgid "An error occurred while copying the file"
-msgstr ""
+msgstr "Une erreur est survenue durant la copie du fichier"
 
 #: src/netzob/NetzobMainController.py:449
 #: src/netzob/NetzobMainController.py:477
 msgid "Please open a project before exporting it."
-msgstr ""
+msgstr "Veuillez ouvrir un projet avant de l'exporter."
 
 #: src/netzob/NetzobMainController.py:472
 #: src/netzob/NetzobMainController.py:548
@@ -99,19 +99,19 @@ msgstr "Aucun répertoire sélectionné"
 
 #: src/netzob/NetzobMainController.py:474
 msgid "No filename provided"
-msgstr ""
+msgstr "Aucun nom de fichier fourni"
 
 #: src/netzob/NetzobMainController.py:488
 msgid "An error occurred while exporting the project."
-msgstr ""
+msgstr "Une erreur est survenue durant l'export du projet."
 
 #: src/netzob/NetzobMainController.py:562
 msgid "An error occurred while loading workspace."
-msgstr ""
+msgstr "Une erreur est survenue pendant le chargement de l'espace de travail."
 
 #: src/netzob/NetzobMainController.py:572
 msgid "An error occurred while creating workspace."
-msgstr ""
+msgstr "Une erreur est survenue durant la création de l'espace de travail."
 
 #: src/netzob/NetzobMainView.py:105
 msgid "Vocabulary Inference"
@@ -137,10 +137,13 @@ msgstr "Lisible"
 #: src/netzob/NetzobMainView.py:290
 msgid "Save the changes to the project \"{0}\" before closing?"
 msgstr ""
+"Voulez-vous sauvegarder les modifications du projet \"{0}\" avant la fermeture "
+"?"
 
 #: src/netzob/NetzobMainView.py:298
 msgid "If you don't save, changes will be permanently lost."
 msgstr ""
+"Vos modifications seront définitivement perdues si vous ne sauvegardez pas."
 
 #: src/netzob/NetzobMainView.py:300
 msgid "Close _Without Saving"
