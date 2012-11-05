@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-05 00:54+0100\n"
-"PO-Revision-Date: 2012-11-05 15:22+0200\n"
-"Last-Translator: Frédéric Guihéry <sygus@cat-lan.com>\n"
+"PO-Revision-Date: 2012-11-05 21:30+0200\n"
+"Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
 "Language: fr\n"
@@ -2124,9 +2124,8 @@ msgid "No selected message(s)."
 msgstr "Supprimer le message"
 
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:467
-#, fuzzy
 msgid "Click yes to confirm the deletion of the selected message(s)"
-msgstr "Cliquez sur oui pour valider la suppression du message sélectionné"
+msgstr "Cliquez sur oui pour confirmer la suppression du message sélectionné"
 
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:591
 msgid "Fields limits computed."
@@ -2145,28 +2144,24 @@ msgid "Layer creation"
 msgstr ""
 
 #: src/netzob/UI/Vocabulary/Controllers/Menus/ContextualMenuOnLayerController.py:166
-#, fuzzy
 msgid "Rename the layer {0}"
-msgstr "Démarrer l'acteur {0}"
+msgstr "Renommer la couche {0}"
 
 #: src/netzob/UI/Vocabulary/Controllers/Menus/ContextualMenuOnLayerController.py:176
-#, fuzzy
 msgid "Renamed layer {0} to {1}"
-msgstr "Créer un état {0} ({1})"
+msgstr "Couche renommée de {0} à ({1})"
 
 #: src/netzob/UI/Vocabulary/Controllers/Partitioning/ForcePartitioningController.py:101
 msgid "Error while proceeding to the force partitioning of fields: {0}"
 msgstr ""
 
 #: src/netzob/UI/Vocabulary/Controllers/Partitioning/ForcePartitioningController.py:121
-#, fuzzy
 msgid "Force partitioning field {0}"
-msgstr "Forcer le partitionnement"
+msgstr "Partitionnement forcé du champ {0}"
 
 #: src/netzob/UI/Vocabulary/Controllers/Partitioning/ForcePartitioningController.py:129
-#, fuzzy
 msgid "Force partitioning finished !"
-msgstr "Forcer le partitionnement"
+msgstr "Partitionnement forcé terminé !"
 
 #: src/netzob/UI/Vocabulary/Controllers/Partitioning/ResetPartitioningController.py:94
 msgid "Error while proceeding to the reseting of fields: {0}"
