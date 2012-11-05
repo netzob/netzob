@@ -43,6 +43,9 @@ from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
 #+---------------------------------------------------------------------------+
 class DictionarySymbol(AbstractSymbol):
 
+    # Name of the "type" of the symbol
+    TYPE = "DictionarySymbol"
+
     def __init__(self, dictionaryEntry):
         AbstractSymbol.__init__(self, "DictionarySymbol")
         # create logger with the given configuration

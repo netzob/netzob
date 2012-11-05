@@ -181,6 +181,8 @@ class AbstractionLayer():
         self.log.info("Sending symbol '" + str(symbol) + "' over the communication channel")
         # First we specialize the symbol in a message
         binMessage = self.specialize(symbol)
+        if type(binMessage) == tuple:  # Means EmptySymbol or UnknownSymbol
+            (binMessage, dummy) = binMessage
         strMessage = TypeConvertor.bin2strhex(binMessage)
         self.log.info("Write str message = '" + strMessage + "'")
 

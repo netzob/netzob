@@ -231,6 +231,8 @@ class AutomaticGrammarInferenceView(object):
 
         # Create a str view of the Result Query
         strResultQuery = ""
+        if not type(resultQuery) == list:
+            return
         for symbol in resultQuery:
             strSymbol = ""
             if symbol.getType() == "DictionarySymbol":
