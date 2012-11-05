@@ -9,33 +9,33 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-05 00:54+0100\n"
-"PO-Revision-Date: 2012-06-13 16:34+0200\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: French\n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"PO-Revision-Date: 2012-11-05 01:06+0200\n"
+"Last-Translator: Frédéric Guihéry <sygus@cat-lan.com>\n"
+"Language-Team: French "
+"<http://qa.netzob.org/weblate/projects/netzob/netzob/fr/>\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Weblate 1.3\n"
 "Generated-By: Babel 0.9.6\n"
 
 #: src/netzob/NetzobMainController.py:99
-#, fuzzy
 msgid "Starting netzob UI"
 msgstr "Démarrage de Netzob"
 
 #: src/netzob/NetzobMainController.py:308
 msgid "A project with the same name already exists ({0}, {1}), please change it."
-msgstr ""
+msgstr "Un projet avec le même nom existe déjà ({0}, {1}), veuillez le changer."
 
 #: src/netzob/NetzobMainController.py:309
-#, fuzzy
 msgid "A project with this name exists"
 msgstr "Ce nom de projet existe déjà"
 
 #: src/netzob/NetzobMainController.py:311
-#, fuzzy
 msgid "Create new project {0}"
-msgstr "Créer un nouveau projet"
+msgstr "Créer un nouveau projet {0}"
 
 #: src/netzob/NetzobMainController.py:324
 #: src/netzob/NetzobMainController.py:427
@@ -72,13 +72,12 @@ msgid "No project selected."
 msgstr "Aucun projet sélectionné"
 
 #: src/netzob/NetzobMainController.py:373
-#, fuzzy
 msgid "No file selected"
-msgstr "Aucun symbole sélectionné"
+msgstr "Aucun fichier sélectionné"
 
 #: src/netzob/NetzobMainController.py:377
 msgid "The file doesn't define a valid project."
-msgstr ""
+msgstr "Le fichier ne contient pas de projet valide."
 
 #: src/netzob/NetzobMainController.py:395
 msgid "Copy of {0}"
@@ -4389,4 +4388,3 @@ msgstr "Délimiteur :"
 
 #~ msgid "Find ASN.1 fields"
 #~ msgstr "Trouver les champs ASN.1"
-
