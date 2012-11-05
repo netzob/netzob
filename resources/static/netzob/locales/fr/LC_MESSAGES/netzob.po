@@ -9,33 +9,33 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-05 00:54+0100\n"
-"PO-Revision-Date: 2012-06-13 16:34+0200\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: French\n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"PO-Revision-Date: 2012-11-05 11:56+0200\n"
+"Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
+"Language-Team: French "
+"<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Weblate 1.3-dev\n"
 "Generated-By: Babel 0.9.6\n"
 
 #: src/netzob/NetzobMainController.py:99
-#, fuzzy
 msgid "Starting netzob UI"
-msgstr "Démarrage de Netzob"
+msgstr "Démarrage de l'interface graphique de Netzob"
 
 #: src/netzob/NetzobMainController.py:308
 msgid "A project with the same name already exists ({0}, {1}), please change it."
 msgstr ""
 
 #: src/netzob/NetzobMainController.py:309
-#, fuzzy
 msgid "A project with this name exists"
-msgstr "Ce nom de projet existe déjà"
+msgstr "Un projet avec ce nom existe déjà"
 
 #: src/netzob/NetzobMainController.py:311
-#, fuzzy
 msgid "Create new project {0}"
-msgstr "Créer un nouveau projet"
+msgstr "Créer le nouveau projet {0}"
 
 #: src/netzob/NetzobMainController.py:324
 #: src/netzob/NetzobMainController.py:427
@@ -69,12 +69,11 @@ msgstr "Créer un nouveau projet"
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExporterPlugin.py:127
 #: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExporterPlugin.py:127
 msgid "No project selected."
-msgstr "Aucun projet sélectionné"
+msgstr "Aucun projet sélectionné."
 
 #: src/netzob/NetzobMainController.py:373
-#, fuzzy
 msgid "No file selected"
-msgstr "Aucun symbole sélectionné"
+msgstr "Aucun fichier sélectionné"
 
 #: src/netzob/NetzobMainController.py:377
 msgid "The file doesn't define a valid project."
@@ -95,9 +94,8 @@ msgstr ""
 
 #: src/netzob/NetzobMainController.py:472
 #: src/netzob/NetzobMainController.py:548
-#, fuzzy
 msgid "No directory selected"
-msgstr "Aucun projet sélectionné"
+msgstr "Aucun répertoire sélectionné"
 
 #: src/netzob/NetzobMainController.py:474
 msgid "No filename provided"
@@ -116,13 +114,11 @@ msgid "An error occurred while creating workspace."
 msgstr ""
 
 #: src/netzob/NetzobMainView.py:105
-#, fuzzy
 msgid "Vocabulary Inference"
 msgstr "Inférence de vocabulaire"
 
 #: src/netzob/NetzobMainView.py:108
 #: resources/static/netzob/ui/grammar/grammarActions.glade:43
-#, fuzzy
 msgid "Grammar Inference"
 msgstr "Inférence de grammaire"
 
@@ -136,7 +132,7 @@ msgstr "XML"
 
 #: src/netzob/NetzobMainView.py:273
 msgid "Human readable"
-msgstr ""
+msgstr "Lisible"
 
 #: src/netzob/NetzobMainView.py:290
 msgid "Save the changes to the project \"{0}\" before closing?"
@@ -212,7 +208,7 @@ msgstr "Netzob"
 
 #: src/netzob/Common/SplashScreen.py:78
 msgid "Current workspace : "
-msgstr "Espace de travail courant"
+msgstr "Espace de travail courant : "
 
 #: src/netzob/Common/SplashScreen.py:80
 msgid "Current workspace : NO WORKSPACE COMPUTED !"
@@ -227,19 +223,16 @@ msgid "Tried to compare a Symbol with {0}"
 msgstr ""
 
 #: src/netzob/Common/Workspace.py:186
-#, fuzzy
 msgid "Base64 Function"
-msgstr "Fonction"
+msgstr "Fonction Base64"
 
 #: src/netzob/Common/Workspace.py:187
-#, fuzzy
 msgid "GZip Function"
-msgstr "Fonction"
+msgstr "Fonction GZip"
 
 #: src/netzob/Common/Workspace.py:188
-#, fuzzy
 msgid "BZ2 Function"
-msgstr "Fonction"
+msgstr "Fonction BZ2"
 
 #: src/netzob/Common/Workspace.py:301
 msgid "The workspace's path ({0}) is incorrect."
@@ -1010,11 +1003,11 @@ msgstr "IP destination"
 
 #: src/netzob/Fuzzing/Network.py:164
 msgid "sport"
-msgstr "sport"
+msgstr "Port source"
 
 #: src/netzob/Fuzzing/Network.py:169
 msgid "dport"
-msgstr "dport"
+msgstr "Port destination"
 
 #: src/netzob/Fuzzing/Network.py:261
 msgid "Launching fuzzing process with : filter=\"{0}\""
@@ -1070,7 +1063,7 @@ msgstr ""
 
 #: src/netzob/Import/ApiImport.py:87
 msgid "Unable to find a repository file for API injector."
-msgstr "Impossible de trouver un dépôt de fichier pour l'injecteur d'API"
+msgstr "Impossible de trouver un dépôt de fichier pour l'injecteur d'API."
 
 #: src/netzob/Import/ApiImport.py:100
 msgid "Update processes list"
@@ -1701,7 +1694,7 @@ msgstr ""
 
 #: src/netzob/UI/WorkspaceSelector.py:69
 msgid "Workspace: "
-msgstr "Espace de travail :"
+msgstr "Espace de travail : "
 
 #: src/netzob/UI/WorkspaceSelector.py:75
 msgid "Browse..."
@@ -4389,4 +4382,3 @@ msgstr "Délimiteur :"
 
 #~ msgid "Find ASN.1 fields"
 #~ msgstr "Trouver les champs ASN.1"
-
