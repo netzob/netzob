@@ -209,7 +209,7 @@ class ThirdPartyImport(AbstractImporter):
                 selectedMessage = message
 
         if selectedMessage is None:
-            self.log.warn(_("Impossible to retrieve the message the user clicked on. Hum ?"))
+            self.log.warn("Impossible to retrieve the message the user clicked on. Hum ?")
             return
 
         self.displayMessage(selectedMessage)
@@ -232,9 +232,9 @@ class ThirdPartyImport(AbstractImporter):
         parsedMessages = self.loadMessagesFromPlugin(self.thirdPartyStore.get_active_text(), filesToBeImported)
 
         if parsedMessages is None:
-            logging.warning(_("Impossible to find a plugin to import data from."))
+            logging.warning("Impossible to find a plugin to import data from.")
         else:
-            logging.debug(_("A number of {0} messages were extracted.").format(len(parsedMessages)))
+            logging.debug("A number of {0} messages were extracted.".format(len(parsedMessages)))
             for message in parsedMessages:
                 self.messages.append(message)
                 self.lineView.get_model().append(None, [message.getID(), message.getData()])

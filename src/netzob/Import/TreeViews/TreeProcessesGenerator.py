@@ -100,7 +100,7 @@ class TreeProcessesGenerator():
     #|         Update the treestore in normal mode
     #+----------------------------------------------
     def default(self):
-        self.log.debug(_("Updating the treestore of the processes in default mode"))
+        self.log.debug("Updating the treestore of the processes in default mode")
         self.treestore.clear()
 
         self.updateProcessesList()
@@ -109,7 +109,7 @@ class TreeProcessesGenerator():
             iter = self.treestore.append(None, [process.getName(), process.getPid(), '#000000', '#FFFFFF'])
 
     def updateProcessesList(self):
-        self.log.debug(_("Updating the list of executing processes."))
+        self.log.debug("Updating the list of executing processes.")
         self.processes = ExecutionContext.getCurrentProcesses()
 
     #+----------------------------------------------

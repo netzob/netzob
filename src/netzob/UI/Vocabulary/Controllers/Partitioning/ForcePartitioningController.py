@@ -98,7 +98,7 @@ class ForcePartitioningController(object):
             try:
                 (yield ThreadedTask(self.forcePartitioning, delimiter, format))
             except TaskError, e:
-                self.log.error(_("Error while proceeding to the force partitioning of fields: {0}").format(str(e)))
+                self.log.error("Error while proceeding to the force partitioning of fields: {0}".format(str(e)))
         else:
             self.log.debug("No field selected")
 

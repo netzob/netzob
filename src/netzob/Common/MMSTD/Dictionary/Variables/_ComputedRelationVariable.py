@@ -85,15 +85,15 @@ class ComputedRelationVariable(AbstractRelationVariable):
         """trivialCompareFormat:
                 We call the compare format function.
         """
-        self.log.debug(_("- [ {0}: trivialCompareFormat.").format(self.toString()))
+        self.log.debug("- [ {0}: trivialCompareFormat.".format(self.toString()))
         self.compareFormat(readingToken)
-        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ] -".format(self.getName(), readingToken.toString()))
 
     def toXML(self, root, namespace):
         """toXML:
             Create the xml tree associated to this variable.
         """
-        self.log.debug(_("[ {0}: toXML:").format(self.toString()))
+        self.log.debug("[ {0}: toXML:".format(self.toString()))
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         xmlVariable.set("id", str(self.getID()))
         xmlVariable.set("name", str(self.getName()))
@@ -112,7 +112,7 @@ class ComputedRelationVariable(AbstractRelationVariable):
         # Definition of the referenced variable ID.
         xmlRefID = etree.SubElement(xmlVariable, "{" + namespace + "}ref")
         xmlRefID.text = str(self.pointedID)
-        self.log.debug(_("Variable {0}. ]").format(self.getName()))
+        self.log.debug("Variable {0}. ]".format(self.getName()))
 
         # minChars
         xmlMinChars = etree.SubElement(xmlVariable, "{" + namespace + "}minChars")
@@ -133,9 +133,9 @@ class ComputedRelationVariable(AbstractRelationVariable):
         """compareFormat:
                 Similar to the pointedVariable's own compareFormat function.
         """
-        self.log.debug(_("- [ {0}: compareFormat.").format(self.toString()))
+        self.log.debug("- [ {0}: compareFormat.".format(self.toString()))
         self.getDataType().compareFormat(readingToken)
-        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ] -".format(self.getName(), readingToken.toString()))
 
     def lightRead(self, readingToken):
         """lightRead:
@@ -147,14 +147,14 @@ class ComputedRelationVariable(AbstractRelationVariable):
         """generate:
                 A new current value is generated according to the variable type and the given generation strategy.
         """
-        self.log.debug(_("- {0}: generate.").format(self.toString()))
+        self.log.debug("- {0}: generate.".format(self.toString()))
         self.setCurrentValue(self.relationType.getAssociatedDataType().generateValue(writingToken.getGenerationStrategy(), self.minChars, self.maxChars))
 
     def computeValue(self, value):
         """computeValue:
                 Compute the value of the relation variable from the given value..
         """
-        self.log.debug(_("- {0}: computeValue.").format(self.toString()))
+        self.log.debug("- {0}: computeValue.".format(self.toString()))
         return self.relationType.computeValue(value)
 
 #+---------------------------------------------------------------------------+
@@ -186,7 +186,7 @@ class ComputedRelationVariable(AbstractRelationVariable):
         """loadFromXML:
                 Loads a ComputedRelationVariable from an XML definition.
         """
-        logging.debug(_("[ ComputedRelationVariable: loadFromXML:"))
+        logging.debug("[ ComputedRelationVariable: loadFromXML:")
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
@@ -229,14 +229,14 @@ class ComputedRelationVariable(AbstractRelationVariable):
                 if _type is None:
                     return None
             else:
-                logging.error(_("No type specified for this variable in the xml file."))
+                logging.error("No type specified for this variable in the xml file.")
                 return None
 
             # ref
             xmlRefID = xmlRoot.find("{" + namespace + "}ref").text
 
             result = ComputedRelationVariable(xmlID, xmlName, xmlMutable, xmlLearnable, _type, xmlRefID, symbol)
-            logging.debug(_("ComputedRelationVariable: loadFromXML successes: {0} ]").format(result.toString()))
+            logging.debug("ComputedRelationVariable: loadFromXML successes: {0} ]".format(result.toString()))
             return result
-        logging.debug(_("ComputedRelationVariable: loadFromXML fails"))
+        logging.debug("ComputedRelationVariable: loadFromXML fails")
         return None

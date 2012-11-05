@@ -91,7 +91,7 @@ class ResetPartitioningController(object):
             try:
                 (yield ThreadedTask(self.reset))
             except TaskError, e:
-                self.log.error(_("Error while proceeding to the reseting of fields: {0}").format(str(e)))
+                self.log.error("Error while proceeding to the reseting of fields: {0}".format(str(e)))
         else:
             self.log.debug("No field selected")
 

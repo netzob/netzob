@@ -182,16 +182,16 @@ class Vocabulary(object):
         return variables
 
     def getVariableByID(self, idVar):
-        # logging.debug(_("[ Searching Variable: {0}").format(idVar))
+        # logging.debug("[ Searching Variable: {0}".format(idVar))
         for symbol in self.symbols:
-            # logging.debug(_("[ Symbol {0}").format(symbol.getName()))
+            # logging.debug("[ Symbol {0}".format(symbol.getName()))
             for variable in symbol.getVariables():
-                    # logging.debug(_("- Variable: {0}").format(str(variable.getID())))
+                    # logging.debug("- Variable: {0}".format(str(variable.getID())))
                     if variable.getID() == idVar:
-                        # logging.debug(_("Found!"))
+                        # logging.debug("Found!")
                         return variable
-            # logging.debug(_("Symbol {0} ]").format(symbol.getName()))
-        # logging.debug(_("Not found!"))
+            # logging.debug("Symbol {0} ]".format(symbol.getName()))
+        # logging.debug("Not found!")
         return None
 
     def estimateNeedlemanWunschNumberOfExecutionStep(self, project):

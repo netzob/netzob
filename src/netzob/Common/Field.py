@@ -535,7 +535,7 @@ class Field(object):
         parent = extendedFields[0].getParentField()
         for field in extendedFields[1:]:
             if field.getParentField() != parent:
-                logging.warn(_("Can't smooth regex from fields that are part of different layers."))
+                logging.warn("Can't smooth regex from fields that are part of different layers.")
                 return
 
         # Main smooth routine
@@ -965,7 +965,7 @@ class Field(object):
         """
         # First we verify the field exists in the symbol
         if not self in self.getSymbol().getAllFields():
-            logging.warn(_("The computing field is not part of the current symbol"))
+            logging.warn("The computing field is not part of the current symbol")
             return []
 
         # Retrieve all sub-cells

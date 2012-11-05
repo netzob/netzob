@@ -72,7 +72,7 @@ class AbstractNodeVariable(AbstractVariable):
                 @param position: the position where the child is being moved.
         """
         if position < 0 or position > len(self.children):
-            self.log.info(_("Wrong position given, nothing is done: the position {0} is without the boundaries [0, {1}]").format(str(position), str(len(self.children))))
+            self.log.info("Wrong position given, nothing is done: the position {0} is without the boundaries [0, {1}]".format(str(position), str(len(self.children))))
         else:
             self.removeChild(child)
             self.insertChild(position, child)
@@ -110,7 +110,7 @@ class AbstractNodeVariable(AbstractVariable):
         """shuffleChildren:
                 Randomly sort children of the variable.
         """
-        self.log.debug(_("-  {0}: shuffleChildren.").format(self.toString()))
+        self.log.debug("-  {0}: shuffleChildren.".format(self.toString()))
         if self.getChildren() is not None:
             random.shuffle(self.getChildren())
 
@@ -137,22 +137,22 @@ class AbstractNodeVariable(AbstractVariable):
         """restore:
                 Restore all children on the memory cache.
         """
-        self.log.debug(_("[ {0}: children's memorized value are restored.").format(self.toString()))
+        self.log.debug("[ {0}: children's memorized value are restored.".format(self.toString()))
         for child in self.children:
             child.restore(processingToken)
-        self.log.debug(_("Variable {0}: ]").format(self.getName()))
+        self.log.debug("Variable {0}: ]".format(self.getName()))
 
     def getDictOfValues(self, processingToken):
         """getDictOfValues
                 We concatenate every dictOfValues of each child.
         """
         dictOfValues = dict()
-        # self.log.debug(_("[ Dict of values:"))
+        # self.log.debug("[ Dict of values:")
         for child in self.children:
             dictOfValue = child.getDictOfValues(processingToken)
             for key, val in dictOfValue.iteritems():
                 dictOfValues[key] = val
-        # self.log.debug(_(" Dict of values: {0} ]").format(str(dictOfValues)))
+        # self.log.debug(" Dict of values: {0} ]".format(str(dictOfValues)))
         return dictOfValues
 
     def getProgeny(self):

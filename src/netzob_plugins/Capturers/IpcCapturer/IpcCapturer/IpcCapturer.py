@@ -168,7 +168,7 @@ class IpcCapturer(AbstractCapturer):
     #| Thread for sniffing a process
     #+----------------------------------------------
     def sniffThread(self):
-        logging.info(_("Launching sniff process"))
+        logging.info("Launching sniff process")
         self.stracePid = subprocess.Popen(["/usr/bin/strace", "-xx", "-s", "65536", "-e", "read,write", "-p", str(self.pid)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         GObject.io_add_watch(self.stracePid.stderr, GObject.IO_IN | GObject.IO_HUP, self.handle_new_pkt)
 

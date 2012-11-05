@@ -164,7 +164,7 @@ class AbstractLeafVariable(AbstractVariable):
         """read:
                 The leaf element tries to compare/learn the read value.
         """
-        self.log.debug(_("[ {0} (leaf): read access:").format(AbstractVariable.toString(self)))
+        self.log.debug("[ {0} (leaf): read access:".format(AbstractVariable.toString(self)))
         if self.isMutable():
             if self.isLearnable():
                 if self.isDefined(readingToken):
@@ -208,20 +208,20 @@ class AbstractLeafVariable(AbstractVariable):
 
                 else:
                     # not mutable, not learnable and not defined.
-                    self.log.debug(_("Read abort: the variable is neither defined, nor mutable."))
+                    self.log.debug("Read abort: the variable is neither defined, nor mutable.")
                     readingToken.setOk(False)
 
         # Variable notification
         if readingToken.isOk():
             self.notifyBoundedVariables("read", readingToken, self.getValue(readingToken))
 
-        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ]".format(self.getName(), readingToken.toString()))
 
     def write(self, writingToken):
         """write:
                 The leaf element returns its value or a generated one.
         """
-        self.log.debug(_("[ {0} (leaf): write access:").format(AbstractVariable.toString(self)))
+        self.log.debug("[ {0} (leaf): write access:".format(AbstractVariable.toString(self)))
         if self.isMutable():
             if self.isLearnable():
                 if self.isDefined(writingToken):
@@ -264,11 +264,11 @@ class AbstractLeafVariable(AbstractVariable):
 
                 else:
                     # not mutable, not learnable and not defined.
-                    self.log.debug(_("Write abort: the variable is neither defined, nor mutable."))
+                    self.log.debug("Write abort: the variable is neither defined, nor mutable.")
                     writingToken.setOk(False)
 
         # Variable notification
         if writingToken.isOk():
             self.notifyBoundedVariables("write", writingToken)
 
-        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ]".format(self.getName(), writingToken.toString()))

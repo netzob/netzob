@@ -81,16 +81,16 @@ class ComputedRelationVariable(AbstractVariable):
         found = False
         for element in treeElements:
             if not found and element.getID() == self.pointedID:
-                self.log.debug(_("We found the pointed value."))
+                self.log.debug("We found the pointed value.")
                 found = True
             if element.getID() == self.getID():
                 if found:
-                    self.log.debug(_("The pointing value is after the pointed value in the same tree."))
+                    self.log.debug("The pointing value is after the pointed value in the same tree.")
                     return True
                 else:
-                    self.log.debug(_("The pointing value is before the pointed value or in a different tree."))
+                    self.log.debug("The pointing value is before the pointed value or in a different tree.")
                     return False
-        self.log.debug(_("Default case."))
+        self.log.debug("Default case.")
         return True
 
     def retrieveValue(self, processingToken):
@@ -100,7 +100,7 @@ class ComputedRelationVariable(AbstractVariable):
                 @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
                 @param processingToken: a token which contains all critical information on this access.
         """
-        self.log.debug(_("- {0}: retrieveValue.").format(self.toString()))
+        self.log.debug("- {0}: retrieveValue.".format(self.toString()))
         if self.getPointedVariable() is None:
             self.log.debug("No pointed variable.")
             self.currentValue = None
@@ -121,30 +121,30 @@ class ComputedRelationVariable(AbstractVariable):
                 @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
                 @param readingToken: a token which contains all critical information on this access.
         """
-        self.log.debug(_("- [ {0}: compare.").format(self.toString()))
+        self.log.debug("- [ {0}: compare.".format(self.toString()))
         localValue = self.currentValue
         tmp = readingToken.getValue()[readingToken.getIndex():]
         if len(tmp) >= len(localValue):
             if tmp[:len(localValue)] == localValue:
-                self.log.debug(_("Comparison successful."))
+                self.log.debug("Comparison successful.")
                 readingToken.read(self, len(localValue))
                 readingToken.setOk(True)
             else:
                 readingToken.setOk(False)
-                self.log.debug(_("Comparison failed: wrong value."))
+                self.log.debug("Comparison failed: wrong value.")
         else:
             readingToken.setOk(False)
-            self.log.debug(_("Comparison failed: wrong size."))
+            self.log.debug("Comparison failed: wrong size.")
 
-        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ] -".format(self.getName(), readingToken.toString()))
 
     def compareFormat(self, readingToken):
         """compareFormat:
                 Similar to the pointedVariable's own compareFormat function.
         """
-        self.log.debug(_("- [ {0}: compareFormat.").format(self.toString()))
+        self.log.debug("- [ {0}: compareFormat.".format(self.toString()))
         self.getDataType().compareFormat(readingToken)
-        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ] -".format(self.getName(), readingToken.toString()))
 
     def bindValue(self, processingToken):
         """bindValue:
@@ -162,14 +162,14 @@ class ComputedRelationVariable(AbstractVariable):
         """generate:
                 A new current value is generated according to the variable type and the given generation strategy.
         """
-        self.log.debug(_("- {0}: generate.").format(self.toString()))
+        self.log.debug("- {0}: generate.".format(self.toString()))
         self.setCurrentValue(self.relationType.getAssociatedDataType().generateValue(writingToken.getGenerationStrategy(), self.minChars, self.maxChars))
 
     def computeValue(self, value):
         """computeValue:
                 Compute the value of the relation variable from the given value..
         """
-        self.log.debug(_("- {0}: computeValue.").format(self.toString()))
+        self.log.debug("- {0}: computeValue.".format(self.toString()))
         return self.relationType.computeValue(value)
 
     def writeValue(self, writingToken):
@@ -177,9 +177,9 @@ class ComputedRelationVariable(AbstractVariable):
                 Write the variable value if it has one, else it returns the memorized value.
                 Write this value in the writingToken.
         """
-        self.log.debug(_("- [ {0}: writeValue.").format(self.toString()))
+        self.log.debug("- [ {0}: writeValue.".format(self.toString()))
         writingToken.write(self, self.currentValue)
-        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), writingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ] -".format(self.getName(), writingToken.toString()))
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
@@ -235,7 +235,7 @@ class ComputedRelationVariable(AbstractVariable):
         """read:
                 The relation variable tries to compare/learn the read value.
         """
-        self.log.debug(_("[ {0} (relation): read access:").format(AbstractVariable.toString(self)))
+        self.log.debug("[ {0} (relation): read access:".format(AbstractVariable.toString(self)))
         self.directPointer = self.findDirectPointer()
 
         if self.isDefined(readingToken):
@@ -250,20 +250,20 @@ class ComputedRelationVariable(AbstractVariable):
                 self.bindValue(readingToken)
 
         else:
-            self.log.debug(_("Read abort: the variable is not defined."))
+            self.log.debug("Read abort: the variable is not defined.")
             readingToken.setOk(False)
 
         # Variable notification
         if readingToken.isOk():
             self.notifyBoundedVariables("read", readingToken, self.currentValue)
 
-        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ]".format(self.getName(), readingToken.toString()))
 
     def write(self, writingToken):
         """write:
                 The relation variable returns a computed or a generated value.
         """
-        self.log.debug(_("[ {0} (relation): write access:").format(AbstractVariable.toString(self)))
+        self.log.debug("[ {0} (relation): write access:".format(AbstractVariable.toString(self)))
         self.directPointer = self.findDirectPointer()
 
         if self.isDefined(writingToken):
@@ -276,20 +276,20 @@ class ComputedRelationVariable(AbstractVariable):
                 self.retrieveValue(writingToken)
             self.writeValue(writingToken)
         else:
-            self.log.debug(_("Write abort: the variable is not defined."))
+            self.log.debug("Write abort: the variable is not defined.")
             writingToken.setOk(False)
 
         # Variable notification
         if writingToken.isOk():
             self.notifyBoundedVariables("write", writingToken)
 
-        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ]".format(self.getName(), writingToken.toString()))
 
     def toXML(self, root, namespace):
         """toXML:
             Create the xml tree associated to this variable.
         """
-        self.log.debug(_("[ {0}: toXML:").format(self.toString()))
+        self.log.debug("[ {0}: toXML:".format(self.toString()))
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         xmlVariable.set("id", str(self.getID()))
         xmlVariable.set("name", str(self.getName()))
@@ -308,7 +308,7 @@ class ComputedRelationVariable(AbstractVariable):
         # Definition of the referenced variable ID.
         xmlRefID = etree.SubElement(xmlVariable, "{" + namespace + "}ref")
         xmlRefID.text = str(self.pointedID)
-        self.log.debug(_("Variable {0}. ]").format(self.getName()))
+        self.log.debug("Variable {0}. ]".format(self.getName()))
 
         # minChars
         xmlMinChars = etree.SubElement(xmlVariable, "{" + namespace + "}minChars")
@@ -333,7 +333,7 @@ class ComputedRelationVariable(AbstractVariable):
                 @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
                 @param readingToken: a token which contains all critical information on this access.
         """
-        self.log.debug(_("[ {0} (relation): read access:").format(AbstractVariable.toString(self)))
+        self.log.debug("[ {0} (relation): read access:".format(AbstractVariable.toString(self)))
 
         if self.isDefined(readingToken):
             for linkedValue in readingToken.getLinkedValue():
@@ -344,14 +344,14 @@ class ComputedRelationVariable(AbstractVariable):
                         break
 
         else:
-            self.log.debug(_("Read abort: the variable is neither defined, nor mutable."))
+            self.log.debug("Read abort: the variable is neither defined, nor mutable.")
             readingToken.setOk(False)
 
         # Variable notification
         if readingToken.isOk():
             self.notifyBoundedVariables("read", readingToken, pointedValue)
 
-        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ]".format(self.getName(), readingToken.toString()))
 
     def notifiedWrite(self, writingToken):
         """notify:
@@ -361,7 +361,7 @@ class ComputedRelationVariable(AbstractVariable):
                 @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
                 @param writingToken: a token which contains all critical information on this access.
         """
-        self.log.debug(_("[ {0} (relation): notifiedWrite access:").format(AbstractVariable.toString(self)))
+        self.log.debug("[ {0} (relation): notifiedWrite access:".format(AbstractVariable.toString(self)))
 
         if self.isDefined(writingToken):
 
@@ -372,14 +372,14 @@ class ComputedRelationVariable(AbstractVariable):
             writingToken.setValueForVariable(self, self.currentValue)
 
         else:
-            self.log.debug(_("Write abort: the variable is neither defined, nor random."))
+            self.log.debug("Write abort: the variable is neither defined, nor random.")
             writingToken.setOk(False)
 
         # Variable notification
         if writingToken.isOk():
             self.notifyBoundedVariables("write", writingToken)
 
-        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ]".format(self.getName(), writingToken.toString()))
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
@@ -418,7 +418,7 @@ class ComputedRelationVariable(AbstractVariable):
         """loadFromXML:
                 Loads a ComputedRelationVariable from an XML definition.
         """
-        logging.debug(_("[ ComputedRelationVariable: loadFromXML:"))
+        logging.debug("[ ComputedRelationVariable: loadFromXML:")
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
@@ -461,14 +461,14 @@ class ComputedRelationVariable(AbstractVariable):
                 if _type is None:
                     return None
             else:
-                logging.error(_("No type specified for this variable in the xml file."))
+                logging.error("No type specified for this variable in the xml file.")
                 return None
 
             # ref
             xmlRefID = xmlRoot.find("{" + namespace + "}ref").text
 
             result = ComputedRelationVariable(xmlID, xmlName, xmlMutable, xmlLearnable, _type, xmlRefID, symbol)
-            logging.debug(_("ComputedRelationVariable: loadFromXML successes: {0} ]").format(result.toString()))
+            logging.debug("ComputedRelationVariable: loadFromXML successes: {0} ]".format(result.toString()))
             return result
-        logging.debug(_("ComputedRelationVariable: loadFromXML fails"))
+        logging.debug("ComputedRelationVariable: loadFromXML fails")
         return None

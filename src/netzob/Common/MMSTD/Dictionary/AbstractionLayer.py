@@ -206,18 +206,18 @@ class AbstractionLayer():
         self.log.debug("We abstract the received message : " + TypeConvertor.bin2strhex(message))
         # we search in the vocabulary an entry which match the message
         for symbol in self.vocabulary.getSymbols():
-            self.log.debug(_("Try to abstract message through : {0}.").format(symbol.getName()))
+            self.log.debug("Try to abstract message through : {0}.".format(symbol.getName()))
             readingToken = VariableReadingToken(False, self.vocabulary, self.memory, TypeConvertor.strBitarray2Bitarray(message), 0)
             symbol.getRoot().read(readingToken)
 
-            logging.debug(_("ReadingToken: isOk: {0}, index: {1}, len(value): {2}").format(str(readingToken.isOk()), str(readingToken.getIndex()), str(len(readingToken.getValue()))))
+            logging.debug("ReadingToken: isOk: {0}, index: {1}, len(value): {2}".format(str(readingToken.isOk()), str(readingToken.getIndex()), str(len(readingToken.getValue()))))
             # The message matches if the read is ok and the whole entry was read.
             if readingToken.isOk() and readingToken.getIndex() == len(readingToken.getValue()):
-                self.log.debug(_("The message matches symbol {0}.").format(symbol.getName()))
+                self.log.debug("The message matches symbol {0}.".format(symbol.getName()))
                 # It matches so we learn from it if it's possible
                 return symbol
             else:
-                self.log.debug(_("The message doesn't match symbol {0}.").format(symbol.getName()))
+                self.log.debug("The message doesn't match symbol {0}.".format(symbol.getName()))
             # This is now managed in the variables modules.
             #===================================================================
             #    self.memory.createMemory()

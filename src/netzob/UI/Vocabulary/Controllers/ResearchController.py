@@ -102,7 +102,7 @@ class ResearchController(object):
         try:
             (yield ThreadedTask(self.arbitrarySearch, searchTasks))
         except TaskError, e:
-            self.log.error(_("Error while proceeding to the arbitrary search process: {0}").format(str(e)))
+            self.log.error("Error while proceeding to the arbitrary search process: {0}".format(str(e)))
 
         if self.executedSearchTasks is not None and len(self.executedSearchTasks) > 0:
             self.idResult += 1
@@ -182,7 +182,7 @@ class ResearchController(object):
         try:
             (yield ThreadedTask(self.search, text, format))
         except TaskError, e:
-            self.log.error(_("Error while proceeding to the search process: {0}").format(str(e)))
+            self.log.error("Error while proceeding to the search process: {0}".format(str(e)))
 
         if self.executedSearchTasks is not None and len(self.executedSearchTasks) > 0:
             self.idResult += 1

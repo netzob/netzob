@@ -215,7 +215,7 @@ class AutomaticGrammarInferenceView(object):
 
     def callback_submitedQuery(self, query, resultQuery):
         if query is None:
-            self.log.debug(_("Impossible to show a Null query"))
+            self.log.debug("Impossible to show a Null query")
             return
 
         # Create a str view of the Query
@@ -251,7 +251,7 @@ class AutomaticGrammarInferenceView(object):
 
     def stopInference(self, button):
         self.finish = True
-        self.log.info(_("Stop the inferer"))
+        self.log.info("Stop the inferer")
         self.inferer.stop()
 
     def startInferer(self):
@@ -261,7 +261,7 @@ class AutomaticGrammarInferenceView(object):
 
     def saveGrammar(self, button):
         if self.computedAutomaton is not None:
-            self.log.debug(_("Saving the computed automata as the grammar of current project"))
+            self.log.debug("Saving the computed automata as the grammar of current project")
             self.project.getGrammar().setAutomata(self.computedAutomaton)
             self.dialog.destroy()
 

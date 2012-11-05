@@ -96,7 +96,7 @@ class NetzobMainController(object):
             sys.exit()
 
         # Initialize main view
-        self.log.info(_("Starting netzob UI"))
+        self.log.info("Starting netzob UI")
         self.view = None    # small hack since the attribute need to exists when the main glade is loaded
         self.view = NetzobMainView(self)
 
@@ -305,10 +305,10 @@ class NetzobMainController(object):
                         found = True
                         break
                 if found:
-                    self.log.info(_("A project with the same name already exists ({0}, {1}), please change it.".format(projectName, projectPath)))
+                    self.log.info("A project with the same name already exists ({0}, {1}), please change it.".format(projectName, projectPath))
                     errorMessage = _("A project with this name exists")
                 else:
-                    self.log.debug(_("Create new project {0}").format(newProjectName))
+                    self.log.debug("Create new project {0}".format(newProjectName))
                     newProject = Project.createProject(self.getCurrentWorkspace(), newProjectName)
                     self.switchProject(newProject.getPath())
                     finish = True

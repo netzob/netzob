@@ -173,7 +173,7 @@ class ContextualMenuOnLayerController(object):
 
         if (result == 0):
             newLayerName = entry.get_text()
-            self.log.debug(_("Renamed layer {0} to {1}").format(self.layers[0].getName(), newLayerName))
+            self.log.debug("Renamed layer {0} to {1}".format(self.layers[0].getName(), newLayerName))
             currentProject = self.vocabularyController.netzob.getCurrentProject()
             currentProject.getVocabulary().getFieldByID(self.layers[0].getID()).setName(newLayerName)
             self.vocabularyController.view.updateLeftPanel()
