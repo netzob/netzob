@@ -83,16 +83,16 @@ class LearningAlgorithm(object):
         # Verify the request is not in the cache
         cachedValue = self.cache.getCachedResult(query)
         if cachedValue is not None:
-            self.log.info("The MQ is cached, result obtained : " + str(query) + " = " + str(cachedValue) + ".")
+            self.log.info("The MQ is cached, result obtained: {0} = {1}.".format(str(query), str(cachedValue)))
             return cachedValue[len(cachedValue) - 1]
 
         # TODO : must be UPGRADED
         # WARNING
         if self.resetScript != "":
-            self.log.info("Reseting the oracle by executing script : " + self.resetScript)
+            self.log.info("Reseting the oracle by executing script: {0}".format(self.resetScript))
             os.system("sh " + self.resetScript)
 
-        self.log.info("Submit the following query : " + str(query))
+        self.log.info("Submit the following query: {0}".format(str(query)))
 
         isMaster = not self.communicationChannel.isServer()
 
@@ -101,8 +101,7 @@ class LearningAlgorithm(object):
 
         self.cb_hypotheticalAutomaton(mmstd)
         time.sleep(10)
-        self.log.info("The current experimentation has generated the following MMSTD :")
-        self.log.debug(mmstd.getDotCode())
+        self.log.info("The current experimentation has generated the following MMSTD: {0}".format(self.log.debug(mmstd.getDotCode())))
 
         # create an oracle for this MMSTD
         oracle = NetworkOracle(self.communicationChannel, isMaster)
@@ -131,23 +130,19 @@ class LearningAlgorithm(object):
             tmpResultQuery = oracle.getGeneratedInputSymbols()
 
         self.log.info("---------------------------------------------")
-        self.log.info("RESUMONS UN PETIT PEU TOUT CA :")
+        self.log.info("RESUMONS UN PETIT PEU TOUT CA:")
         self.log.info("---------------------------------------------")
-        self.log.info("SUBMITED : ")
-        self.log.info(str(query))
+        self.log.info("SUBMITED: {0}".format(str(query)))
         self.log.info("---------------------------------------------")
-        self.log.info("RESULT :")
+        self.log.info("RESULT:")
         self.log.info("---------------------------------------------")
-        self.log.info("+ getResults :")
-        self.log.info(str(resultQuery))
+        self.log.info("+ getResults: {0}".format(str(resultQuery)))
         self.log.info("---------------------------------------------")
-        self.log.info("+ getGeneratedInputSymbols :")
-        self.log.info(str(oracle.getGeneratedInputSymbols()))
+        self.log.info("+ getGeneratedInputSymbols: {0}".format(str(oracle.getGeneratedInputSymbols())))
         self.log.info("---------------------------------------------")
-        self.log.info("+ getGeneratedOutputSymbols :")
-        self.log.info(str(oracle.getGeneratedOutputSymbols()))
+        self.log.info("+ getGeneratedOutputSymbols: {0}".format(str(oracle.getGeneratedOutputSymbols())))
         self.log.info("---------------------------------------------")
-        self.log.info("The following query has been computed : " + str(resultQuery))
+        self.log.info("The following query has been computed: {0}".format(str(resultQuery)))
 
         # Register this query and the associated response
         self.submitedQueries.append([query, resultQuery])

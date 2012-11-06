@@ -115,7 +115,7 @@ class AutomaticGrammarAbstractionView(object):
         # retrieve the automata
         automata = self.project.getGrammar().getAutomata()
 
-        self.log.debug("automata : %s" % automata.getDotCode())
+        self.log.debug("automata: %s" % automata.getDotCode())
 
         if automata is None:
             self.log.warn("Cannot apply a session on the current automata because it doesn't exist")
@@ -138,7 +138,7 @@ class AutomaticGrammarAbstractionView(object):
 
         isInput = True
         for message in session.getMessages():
-            self.log.debug("Inject message : %s" % (message.getData()))
+            self.log.debug("Inject message: %s" % (message.getData()))
             # we abstract the message
             symbol = abstractionLayer.abstract(TypeConvertor.netzobRawToBitArray(str(message.getData())))
             if isInput:

@@ -274,7 +274,7 @@ class ResearchController(object):
         if currentResult is None:
             return
 
-        self._view.currentSelectedResultLabel.set_label(_("{0}/{1} : {2}".format(self.idResult + 1, self.nbResult, currentResult.getVariationDescription())))
+        self._view.currentSelectedResultLabel.set_label(_("{0}/{1}: {2}".format(self.idResult + 1, self.nbResult, currentResult.getVariationDescription())))
 
         # add a dedicated function for the result
         self.colorizeResult(currentResult)

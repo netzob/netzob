@@ -128,13 +128,13 @@ class SearchView(object):
             self.log.warn("No data to search after were computed.")
             return
 
-        self.log.debug("The following data will be searched for :")
+        self.log.debug("The following data will be searched for:")
         for data in searchedData:
             self.log.info(" - " + str(data))
 
         # Then we search them in the list of messages included in the vocabulary
         searchTasks = searcher.search(searchedData)
-        self.log.info("A number of " + str(len(searchTasks)) + " results found !")
+        self.log.info("A number of {0} results found!".format(str(len(searchTasks))))
 
         # Colorize the segments
         self.colorizeResults(searchTasks)

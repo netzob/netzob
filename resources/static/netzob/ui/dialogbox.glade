@@ -903,7 +903,7 @@ is not valid !</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="xpad">2</property>
-                <property name="label" translatable="yes"> Project to import :</property>
+                <property name="label" translatable="yes">Project to import:</property>
               </object>
               <packing>
                 <property name="expand">False</property>

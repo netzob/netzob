@@ -356,7 +356,7 @@ class Field(object):
             curLen = len(cell)
             if curLen > maxLen:
                 maxLen = curLen
-        logging.debug("Size of the longest message : {0}".format(maxLen))
+        logging.debug("Size of the longest message: {0}".format(maxLen))
 
         # Try to see if the column is static or variable
         resultString = []

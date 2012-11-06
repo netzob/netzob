@@ -172,7 +172,7 @@ class XMLImport(AbstractImporter):
                 selectedMessage = message
 
         if selectedMessage is None:
-            self.log.warn("Impossible to retrieve the message the user clicked on. Hum ?")
+            self.log.warn("Impossible to retrieve the message the user clicked on. Hum?")
             return
 
         self.displayMessage(selectedMessage)

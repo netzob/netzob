@@ -258,7 +258,7 @@ class Network(object):
     #| Thread for fuzzing
     #+----------------------------------------------
     def fuzzThread(self, button, aFilter):
-        self.log.info("Launching fuzzing process with : filter=\"{0}\"".format(aFilter.get_text()))
+        self.log.info("Launching fuzzing process with: filter=\"{0}\"".format(aFilter.get_text()))
 
         ## Set Netfilter NFQUEUE
 #        os.popen("sudo iptables -I OUTPUT -p tcp --dport 80  -j NFQUEUE 2>&1 > /dev/null")

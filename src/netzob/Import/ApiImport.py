@@ -239,7 +239,7 @@ class ApiImport(object):
                 self.dllTreeview.get_model().append(None, [lib.getName(), lib.getVersion(), lib.getPath()])
 
         else:
-            self.log.error("A selected process cannot be found !")
+            self.log.error("A selected process cannot be found!")
 
     #+----------------------------------------------
     #| Called when user select a a DLL
@@ -260,7 +260,7 @@ class ApiImport(object):
             found = True
 
         if found is False:
-            self.log.error("The selected process cannot be find !")
+            self.log.error("The selected process cannot be find!")
             return
 
         self.dllStore.get_model().clear()
@@ -344,7 +344,7 @@ class ApiImport(object):
         while (receivedMessage != "STOP\n"):
             self.pktTreestore.append(None, [len(self.packets), "NONE", "NC", receivedMessage, int(time.time())])
             receivedMessage = self.readline(self.fifo)
-            self.log.info("FIFO : " + receivedMessage)
+            self.log.info("FIFO: " + receivedMessage)
 
     def createFifo(self):
         self.log.info("Creating the FIFO file: {0}".format(self.fifoFile))
@@ -355,7 +355,7 @@ class ApiImport(object):
             self.log.error("Failed to create FIFO: %s" % e)
             return False
         else:
-            self.log.info("The fifo has been created...")
+            self.log.info("The fifo has been created.")
             return True
 
     def readline(self, f):
@@ -368,7 +368,7 @@ class ApiImport(object):
     def sniffThread(self):
         # Create the receptor (FIFO creation)
         if not self.createFifo():
-            self.log.error("Cannot execute GOT Poisoning since FIFO file was not created !")
+            self.log.error("Cannot execute GOT Poisoning since FIFO file was not created!")
             return
 
         # Read from the fifo

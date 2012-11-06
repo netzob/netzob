@@ -478,7 +478,7 @@ class NetzobMainController(object):
                     else:
                         try:
                             outputFilename = os.path.join(selectedFolder, filename)
-                            logging.debug("Output filename : {0}".format(outputFilename))
+                            logging.debug("Output filename: {0}".format(outputFilename))
                             xmlDefinitionOfProject = self.getCurrentProject().generateXMLConfigFile()
                             tree = ElementTree(xmlDefinitionOfProject)
                             tree.write(outputFilename)
@@ -560,7 +560,7 @@ class NetzobMainController(object):
                                 self.view.currentWorkspaceHasChanged()
                             except Exception, e:
                                 errorMessage = _("An error occurred while loading workspace.")
-                                logging.warn("Error while loading workspace declared in folder {0} : {1}".format(selectedFolder, e))
+                                logging.warn("Error while loading workspace declared in folder {0}: {1}".format(selectedFolder, e))
                     else:
                         # create a new workspace
                         try:
@@ -570,7 +570,7 @@ class NetzobMainController(object):
                             self.view.currentWorkspaceHasChanged()
                         except Exception, e:
                                 errorMessage = _("An error occurred while creating workspace.")
-                                logging.warn("Error while creating workspace declared in folder {0} : {1}".format(selectedFolder, e))
+                                logging.warn("Error while creating workspace declared in folder {0}: {1}".format(selectedFolder, e))
             else:
                 dialog.destroy()
                 finish = True
