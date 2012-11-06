@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-06 17:53+0100\n"
+"POT-Creation-Date: 2012-11-06 18:01+0100\n"
 "PO-Revision-Date: 2012-11-06 14:32+0200\n"
 "Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
@@ -239,42 +239,6 @@ msgstr ""
 msgid "WritingToken: isOk: {0}, value: {1}"
 msgstr ""
 
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractLeafVariable.py:68
-msgid "The current variable does not implement 'forget'."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractLeafVariable.py:78
-msgid "The current variable does not implement 'recall'."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractLeafVariable.py:88
-msgid "The current variable does not implement 'memorize'."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractLeafVariable.py:98
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:179
-msgid "The current variable does not implement 'compareFormat'."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractLeafVariable.py:108
-msgid "The current variable does not implement 'learn'."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractLeafVariable.py:118
-msgid "The current variable does not implement 'compare'."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractLeafVariable.py:128
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractLeafVariable.py:138
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:199
-msgid "The current variable does not implement 'generate'."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractLeafVariable.py:148
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractLeafVariable.py:158
-msgid "The current variable does not implement 'writeValue'."
-msgstr ""
-
 #: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractNodeVariable.py:126
 #: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractNodeVariable.py:134
 msgid "[ {0}, children:\n"
@@ -282,26 +246,6 @@ msgstr ""
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractVariable.py:79
 msgid "Variable {0} ({3}) (mutable: {1}, learnable: {2})"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractVariable.py:155
-msgid "The current variable does not implement 'isDefined'."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractVariable.py:167
-msgid "The current variable does not implement 'toXML'."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractVariable.py:177
-msgid "The current variable does not implement 'restore'."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractVariable.py:202
-msgid "The current variable does not implement 'read'."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractVariable.py:212
-msgid "The current variable does not implement 'write'."
 msgstr ""
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:287
@@ -341,14 +285,6 @@ msgstr ""
 msgid ""
 "[{0}, child:\n"
 " - {1}]"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:189
-msgid "The current variable does not implement 'lightRead'."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:211
-msgid "The current variable does not implement 'computeValue'."
 msgstr ""
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/_DirectRelationVariable.py:73
@@ -2814,4 +2750,49 @@ msgstr ""
 #, fuzzy
 msgid "Time limit:"
 msgstr "Délimiteur :"
+
+#~ msgid "The current variable does not implement 'forget'."
+#~ msgstr ""
+
+#~ msgid "The current variable does not implement 'recall'."
+#~ msgstr ""
+
+#~ msgid "The current variable does not implement 'memorize'."
+#~ msgstr ""
+
+#~ msgid "The current variable does not implement 'compareFormat'."
+#~ msgstr ""
+
+#~ msgid "The current variable does not implement 'learn'."
+#~ msgstr ""
+
+#~ msgid "The current variable does not implement 'compare'."
+#~ msgstr ""
+
+#~ msgid "The current variable does not implement 'generate'."
+#~ msgstr ""
+
+#~ msgid "The current variable does not implement 'writeValue'."
+#~ msgstr ""
+
+#~ msgid "The current variable does not implement 'isDefined'."
+#~ msgstr ""
+
+#~ msgid "The current variable does not implement 'toXML'."
+#~ msgstr ""
+
+#~ msgid "The current variable does not implement 'restore'."
+#~ msgstr ""
+
+#~ msgid "The current variable does not implement 'read'."
+#~ msgstr ""
+
+#~ msgid "The current variable does not implement 'write'."
+#~ msgstr ""
+
+#~ msgid "The current variable does not implement 'lightRead'."
+#~ msgstr ""
+
+#~ msgid "The current variable does not implement 'computeValue'."
+#~ msgstr ""
 
