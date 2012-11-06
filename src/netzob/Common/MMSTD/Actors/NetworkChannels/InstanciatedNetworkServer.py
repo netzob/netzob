@@ -52,13 +52,20 @@ from netzob.Common.MMSTD.Actors.AbstractChannel import AbstractChannel
 #+---------------------------------------------------------------------------+
 class InstanciatedNetworkServer(AbstractChannel):
 
-    def __init__(self, socket):
-        AbstractActor.__init__(self, True, True)
+    def __init__(self, protocol, request, udp_client_address=None):
+#        AbstractChannel.__init__(self, True, True)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.InstanciatedNetworkServer.py')
-        self.socket = socket
         self.inputMessages = []
         self.outputMessages = []
+        self.protocol = protocol
+        if self.protocol == "UDP":
+            dataReceived = request[0].strip()
+            self.socket = request[1]
+            self.udp_client_address = udp_client_address
+        else:  # TCP
+            self.socket = request
+
 #
 #    def createNewServer(self):
 #        host = "localhost"
@@ -106,7 +113,7 @@ class InstanciatedNetworkServer(AbstractChannel):
 
         if (len(chars) == 0):
             return result
-        result.fromstring(chars)
+        result = TypeConvertor.stringB2bin(chars)
 
         self.log.debug("Received : {0}".format(TypeConvertor.bin2strhex(result)))
         return result
@@ -116,7 +123,10 @@ class InstanciatedNetworkServer(AbstractChannel):
         self.outputMessages.append(message)
         # This work only for values between 0x00 and 0x7f
         # self.socket.send(message.tostring())
-        self.socket.send(message.tobytes())
+        if self.protocol == "UDP":
+            self.socket.sendto(TypeConvertor.binB2string(message), self.udp_client_address)
+        else:  # TCP
+            self.socket.send(TypeConvertor.binB2string(message))
 
         self.log.debug("Write down !")
 
