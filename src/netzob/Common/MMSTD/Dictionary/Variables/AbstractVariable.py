@@ -152,7 +152,7 @@ class AbstractVariable(object):
                 @rtype: boolean
                 @return: True if the variable is defined.
         """
-        raise NotImplementedError(_("The current variable does not implement 'isDefined'."))
+        raise NotImplementedError("The current variable does not implement 'isDefined'.")
 
     @abstractmethod
     def toXML(self, root, namespace):
@@ -164,7 +164,7 @@ class AbstractVariable(object):
             @type namespace: string
             @param namespace: a namespace used as a precision in the variable tree.
         """
-        raise NotImplementedError(_("The current variable does not implement 'toXML'."))
+        raise NotImplementedError("The current variable does not implement 'toXML'.")
 
     @abstractmethod
     def restore(self, processingToken):
@@ -174,7 +174,7 @@ class AbstractVariable(object):
                 @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
                 @param processingToken: a token which contains all critical information on this access.
         """
-        raise NotImplementedError(_("The current variable does not implement 'restore'."))
+        raise NotImplementedError("The current variable does not implement 'restore'.")
 
     @abstractmethod
     def getDictOfValues(self, processingToken):
@@ -199,7 +199,7 @@ class AbstractVariable(object):
                 @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
                 @param readingToken: a token which contains all critical information on this reading access.
         """
-        raise NotImplementedError(_("The current variable does not implement 'read'."))
+        raise NotImplementedError("The current variable does not implement 'read'.")
 
     @abstractmethod
     def write(self, writingToken):
@@ -209,7 +209,7 @@ class AbstractVariable(object):
                 @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
                 @param writingToken: a token which contains all critical information on this writing access.
         """
-        raise NotImplementedError(_("The current variable does not implement 'write'."))
+        raise NotImplementedError("The current variable does not implement 'write'.")
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |

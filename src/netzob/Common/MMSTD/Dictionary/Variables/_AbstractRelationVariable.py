@@ -176,7 +176,7 @@ class AbstractRelationVariable(AbstractVariable):
                 @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
                 @param readingToken: a token which contains all critical information on this access.
         """
-        raise NotImplementedError(_("The current variable does not implement 'compareFormat'."))
+        raise NotImplementedError("The current variable does not implement 'compareFormat'.")
 
     @abstractmethod
     def lightRead(self, readingToken):
@@ -186,7 +186,7 @@ class AbstractRelationVariable(AbstractVariable):
                 @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
                 @param readingToken: a token which contains all critical information on this access.
         """
-        raise NotImplementedError(_("The current variable does not implement 'lightRead'."))
+        raise NotImplementedError("The current variable does not implement 'lightRead'.")
 
     @abstractmethod
     def generate(self, writingToken):
@@ -196,7 +196,7 @@ class AbstractRelationVariable(AbstractVariable):
                 @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
                 @param writingToken: a token which contains all critical information on this access.
         """
-        raise NotImplementedError(_("The current variable does not implement 'generate'."))
+        raise NotImplementedError("The current variable does not implement 'generate'.")
 
     @abstractmethod
     def computeValue(self, value):
@@ -208,7 +208,7 @@ class AbstractRelationVariable(AbstractVariable):
                 @rtype: bitarray
                 @return: the computed value.
         """
-        raise NotImplementedError(_("The current variable does not implement 'computeValue'."))
+        raise NotImplementedError("The current variable does not implement 'computeValue'.")
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
