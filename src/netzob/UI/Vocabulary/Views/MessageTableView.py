@@ -182,7 +182,7 @@ class MessageTableView(object):
                 splitMessage.extend(tmpSplitMessage)
             except NetzobException:
                 logging.warn("Impossible to display one of messages since it cannot be cut according to the computed regex.")
-                logging.warn("Message : " + str(message.getStringData()))
+                logging.warn("Message: {0}".format(str(message.getStringData())))
                 continue  # We don't display the message in error
             splitMessagesMatrix.append(splitMessage)
         logging.debug("Alignent computed")
@@ -520,6 +520,7 @@ class TreeViewHeaderWidget(Gtk.VBox):
             signalsManager.emitSignal(SignalsManager.SIG_FIELDS_SINGLE_SELECTION)
         elif nbSelectedFields > 1:
             signalsManager.emitSignal(SignalsManager.SIG_FIELDS_MULTIPLE_SELECTION)
+
 
 class TreeViewHeaderWidgetGroup(object):
 

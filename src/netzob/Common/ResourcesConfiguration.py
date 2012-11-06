@@ -70,7 +70,7 @@ class ResourcesConfiguration(object):
 
         staticPath = ResourcesConfiguration.verifyStaticResources()
         if staticPath is None:
-            logging.fatal(_("The static resources were not found !"))
+            logging.fatal("The static resources were not found !")
             return False
         return True
 

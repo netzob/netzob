@@ -94,7 +94,7 @@ class TreeTypeStructureGenerator():
     #|         Update the treestore in error mode
     #+----------------------------------------------
     def error(self):
-        self.log.warning(_("The treeview for the messages is in error mode"))
+        self.log.warning("The treeview for the messages is in error mode")
         pass
 
     #+----------------------------------------------

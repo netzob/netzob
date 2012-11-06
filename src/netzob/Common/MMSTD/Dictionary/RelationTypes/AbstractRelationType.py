@@ -128,5 +128,5 @@ class AbstractRelationType():
         if typeString == SizeRelationType.TYPE:
             _type = SizeRelationType(sized, minChars, maxChars, delimiter)
         else:
-            logging.error(_("Wrong type specified for this variable."))
+            logging.error("Wrong type specified for this variable.")
         return _type

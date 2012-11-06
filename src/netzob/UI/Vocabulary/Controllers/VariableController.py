@@ -151,7 +151,7 @@ class VariableTreeController(object):
             return
 
         if variable is None:
-            logging.debug(_("Impossible to find the selected variable."))
+            logging.debug("Impossible to find the selected variable.")
             return
 
         # We display the menu for the insertion of sub-elements if its an Aggregate or an Alternative
@@ -216,7 +216,7 @@ class VariableTreeController(object):
             self.dictVariable.pop(str(variable.getID()))
 
         else:
-            logging.info(_("The user didn't confirm the deletion of the variable {0}").format(variable.getName()))
+            logging.info("The user didn't confirm the deletion of the variable {0}".format(variable.getName()))
 
     def editVariable(self, variable):
         """editVariable:
@@ -249,7 +249,7 @@ class VariableTreeController(object):
                 self.treestore.set_value(entry, 1, variable.toString())
                 #self.registerVariable(self.dictEntry[father.getID()], variable)
         else:
-            logging.info(_("The user didn't confirm the edition of the variable {0}").format(variable.getName()))
+            logging.info("The user didn't confirm the edition of the variable {0}".format(variable.getName()))
 
     def createDefaultVariable_cb(self, event):
         """createDefaultVariable_cb:
@@ -260,7 +260,7 @@ class VariableTreeController(object):
         self.field.variable = self.field.getDefaultVariable(self.symbol)
         self.registerContent(self.field.getVariable())
 #        else:
-#            logging.info(_("A variable already exists."))
+#            logging.info("A variable already exists.")
 
 
 class VariableCreationController(object):
@@ -882,7 +882,7 @@ class VariableIDTreeController(object):
             return
 
         if variable is None:
-            logging.debug(_("Impossible to find the selected variable."))
+            logging.debug("Impossible to find the selected variable.")
             return
 
         # We display the menu for the insertion of sub-elements if its an Aggregate or an Alternative

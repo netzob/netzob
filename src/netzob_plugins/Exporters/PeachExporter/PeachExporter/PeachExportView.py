@@ -120,7 +120,7 @@ class PeachExportView(AbstractExporterView):
         self.optionsTable = Gtk.Table(rows=1, columns=4, homogeneous=False)
         self.optionsTable.show()
 
-        label = NetzobLabel(_("Fuzzing based on : "))
+        label = NetzobLabel(_("Fuzzing based on: "))
         self.comboFuzzingBase = NetzobComboBoxEntry()
         self.comboFuzzingBase.append_text("Variable")
         self.comboFuzzingBase.append_text("Regex")

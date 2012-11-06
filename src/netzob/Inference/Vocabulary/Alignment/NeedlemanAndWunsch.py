@@ -125,7 +125,7 @@ class NeedlemanAndWunsch(object):
                 return
 
             field.setAlignment(alignment)
-            logging.debug("Alignment : {0}".format(alignment))
+            logging.debug("Alignment: {0}".format(alignment))
 
             # We update the regex based on the results
             try:
@@ -304,7 +304,7 @@ class NeedlemanAndWunsch(object):
                 if str(symbol.getID()) == str(field.getSymbol().getID()):
                     found = True
             if not found:
-                logging.debug("Symbol " + str(symbol.getName()) + "[" + str(symbol.getID()) + "]] wont be aligned")
+                logging.debug("Symbol {0} [{1}] wont be aligned".format(str(symbol.getName()), str(symbol.getID())))
                 preResults.append(symbol)
 
         # Create a symbol for each message
@@ -332,7 +332,7 @@ class NeedlemanAndWunsch(object):
         t2 = time.time()
 
         self.newSymbols.extend(preResults)
-        logging.info("Time of clustering : " + str(t2 - t1))
+        logging.info("Time of clustering: {1}".format(str(t2 - t1)))
 
     def isFinish(self):
         return self.flagStop

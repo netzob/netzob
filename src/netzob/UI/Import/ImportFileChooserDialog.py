@@ -61,7 +61,7 @@ class ImportFileChooserDialog(object):
         self.builder.connect_signals(self)
         self._getObjects(["importFileChooserDialog", "importTypeComboBox"])
         self.log = logging.getLogger(__name__)
-        self.log.debug("Create import FileChooserDialog with plugins : "
+        self.log.debug("Create import FileChooserDialog with plugins: "
                        + ", ".join([plugin.getFileTypeDescription()
                                     for plugin in self.pluginDict.itervalues()]))
         importTypeAlign = self.builder.get_object("importTypeAlign")
@@ -116,7 +116,7 @@ class ImportFileChooserDialog(object):
         # as default
         if selectionIndex != -1:
             self.importTypeComboBox.set_active(selectionIndex)
-            self.log.debug("Default selection : {0}".format(selectionIndex))
+            self.log.debug("Default selection: {0}".format(selectionIndex))
         else:
             self.importTypeUserChoice = None
             self.importTypeComboBox.set_active(0)

@@ -149,7 +149,7 @@ class Ipc(object):
             self.menu.popup(None, None, None, None, event.button, event.time)
 
     def fuzz_field_cb(self, widget, field):
-        self.log.debug(_("Fuzz field: {0}").format(str(field)))
+        self.log.debug("Fuzz field: {0}".format(str(field)))
 
     #+----------------------------------------------
     #| GETTERS

@@ -194,7 +194,7 @@ class BugReporterController(object):
             resp, content = h.request(api_url, 'GET')
             return resp['status'] == '200'
         except Exception, e:
-            self.log.error("Error while verifying the server is up : {0}".format(e))
+            self.log.error("Error while verifying the server is up: {0}".format(e))
         return False
 
     def isAPIKeyValid(self):
@@ -238,7 +238,7 @@ class BugReporterController(object):
         except SSLHandshakeError, e:
             self.log.error("The SSL certificate of the remote server is not valid. ({0})".format(e))
         except Exception, e:
-            self.log.error("An error occurred while verifying the SSL connection with the remote server : {0}".format(e))
+            self.log.error("An error occurred while verifying the SSL connection with the remote server: {0}".format(e))
         return False
 
     def getReportContent(self):

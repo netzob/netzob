@@ -60,7 +60,7 @@ class SizeFieldIdentifier(object):
             pass
         else:
             pass
-        logging.debug("message : {0}".format(message))
+        logging.debug("message: {0}".format(message))
 
     def search(self, symbols, results):
         self.results = results

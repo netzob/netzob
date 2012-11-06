@@ -98,7 +98,7 @@ class ForcePartitioningController(object):
             try:
                 (yield ThreadedTask(self.forcePartitioning, delimiter, format))
             except TaskError, e:
-                self.log.error(_("Error while proceeding to the force partitioning of fields: {0}").format(str(e)))
+                self.log.error("Error while proceeding to the force partitioning of fields: {0}".format(str(e)))
         else:
             self.log.debug("No field selected")
 
@@ -126,7 +126,7 @@ class ForcePartitioningController(object):
             rtotal = float(total) / float(100)
             time.sleep(0.01)
             GObject.idle_add(self._view.force_progressbar.set_fraction, rtotal)
-        GObject.idle_add(self._view.force_progressbar.set_text, _("Force partitioning finished !"))
+        GObject.idle_add(self._view.force_progressbar.set_text, _("Force partitioning finished!"))
 
     def force_stop_clicked_cb(self, widget):
         # update button

@@ -63,7 +63,7 @@ class RelationsController(object):
 
     def show(self):
         if self.vocabularyController.getCurrentProject() is None:
-            logging.info(_("Open a project before..."))
+            logging.info("Open a project before...")
             return
         self._view.relationsDialog.show()
 

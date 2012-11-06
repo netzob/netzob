@@ -86,15 +86,15 @@ class DataCarver(object):
                     strData = TypeConvertor.netzobRawToString(message.getReducedStringData())
                     for match in regex.finditer(strData):
                         if match is None:
-                            taskResult = SearchResult(message, "Data Carving : {0}".format(carver))
+                            taskResult = SearchResult(message, "Data Carving: {0}".format(carver))
                             taskResult.addSegment(0, len(message.getReducedStringData()))
                             taskResults.append(taskResult)
                         else:
-                            taskResult = SearchResult(message, "Data Carving : {0}".format(carver))
+                            taskResult = SearchResult(message, "Data Carving: {0}".format(carver))
                             taskResult.addSegment(match.start(0) * 2, match.end(0) * 2)
                             taskResults.append(taskResult)
                 if len(taskResults) > 0:
-                    currentTask.registerResults(taskResults, "Data Carving : {0}".format(carver))
+                    currentTask.registerResults(taskResults, "Data Carving: {0}".format(carver))
                     tasks.append(currentTask)
             results.append(tasks)
 

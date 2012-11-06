@@ -204,15 +204,15 @@ class Angluin(LearningAlgorithm):
         for wordSA in self.SA:
             rowSA = self.getRowOfObservationTable(wordSA)
             found = False
-            self.log.info("isclosed ? : We verify with SA member : " + str(rowSA))
+            self.log.info("isClosed()? We verify with SA member: {0}".format(str(rowSA)))
             for wordS in self.S:
                 rowS = self.getRowOfObservationTable(wordS)
                 if self.rowsEquals(rowS, rowSA):
-                    self.log.debug("     is closed: YES (" + str(rowS) + " is equal !")
+                    self.log.debug("     isClosed(): YES ({0}) is equal!".format(str(rowS)))
                     found = True
 
             if not found:
-                self.log.info("The low-row associated with " + str(wordSA) + " was not found in S")
+                self.log.info("The low-row associated with {0} was not found in S".format(str(wordSA)))
                 return False
 
         return True
@@ -250,7 +250,7 @@ class Angluin(LearningAlgorithm):
                 if word != word2 and self.rowsEquals(row, row2):
                     equalsRows.append((word, word2))
 
-        self.log.info("isConsistent ? Equals Rows in S are from words : ")
+        self.log.info("isConsistent ? Equals Rows in S are from words: ")
         for (w1, w2) in equalsRows:
             self.log.info("w1=" + str(w1) + ";w2=" + str(w2))
 
@@ -280,7 +280,7 @@ class Angluin(LearningAlgorithm):
                 if word != word2 and self.rowsEquals(row, row2):
                     equalsRows.append((word, word2))
 
-        self.log.info("Equals Rows in S are from words : ")
+        self.log.info("Equals Rows in S are from words: ")
         for (w1, w2) in equalsRows:
             self.log.info("w1=" + str(w1) + ";w2=" + str(w2))
 
@@ -368,10 +368,10 @@ class Angluin(LearningAlgorithm):
         # Create the states of the automata
         uniqueRowsInS = self.getUniqueRowsInS()
         for (w, r) in uniqueRowsInS:
-            self.log.info("The row with word " + str(w) + " is unique !")
+            self.log.info("The row with word {0} is unique !".format(str(w)))
             # We create a State for each unique row
             nameState = self.appendValuesInRow(r)
-            self.log.info("Create state : " + nameState)
+            self.log.info("Create state: {0}".format(nameState))
             currentState = NormalState(idState, nameState)
             states.append(currentState)
             wordAndStates.append((w, currentState))
@@ -385,7 +385,7 @@ class Angluin(LearningAlgorithm):
         self.log.debug("Create the transition of the automata")
         # Create the transitions of the automata
         for (word, state) in wordAndStates:
-            self.log.debug("Working on state : " + str(state.getName()))
+            self.log.debug("Working on state: {0}".format(str(state.getName())))
 
             for symbol in self.initialD:
                 # retrieve the value:
@@ -407,7 +407,7 @@ class Angluin(LearningAlgorithm):
 
                         # search for the state having this name:
                         outputState = None
-                        self.log.info("Search for the output state : " + outputStateName)
+                        self.log.info("Search for the output state: {0}".format(outputStateName))
                         for (w2, s2) in wordAndStates:
                             if s2.getName() == outputStateName:
                                 outputState = s2
@@ -419,8 +419,8 @@ class Angluin(LearningAlgorithm):
                             inputSymbol = symbol.getSymbolsWhichAreNotEmpty()[0]
 
                             self.log.info("We create a transition from " + str(state.getName()) + "=>" + str(outputState.getName()))
-                            self.log.info(" input : " + str(inputSymbol))
-                            self.log.info(" output : " + str(value))
+                            self.log.info(" input: {0}".format(str(inputSymbol)))
+                            self.log.info(" output: {0}".format(str(value)))
 
                             transition = SemiStochasticTransition(idTransition, "Transition " + str(idTransition), state, outputState, inputSymbol)
                             transition.addOutputSymbol(value, 100, 1000)

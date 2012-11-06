@@ -20,7 +20,7 @@
               <object class="GtkLabel" id="label13">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Delimiter :</property>
+                <property name="label" translatable="yes">Delimiter:</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -58,7 +58,7 @@
               <object class="GtkLabel" id="label14">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Format of delimiter :</property>
+                <property name="label" translatable="yes">Delimiter format:</property>
               </object>
               <packing>
                 <property name="expand">False</property>

@@ -120,7 +120,7 @@ class VariableView(object):
         self.registerVariable(None, self.rootVariable, "Root")
 
     def registerVariable(self, rootEntry, variable, name):
-        self.log.debug(_("Register: {0}").format(str(name)))
+        self.log.debug("Register: {0}".format(str(name)))
         self.datas[str(variable.getID())] = variable
         newEntry = self.treestore.append(rootEntry, [str(variable.getID()), name])
         if variable.getType() == AggregateVariable.TYPE or variable.getType() == AlternateVariable.TYPE:
@@ -159,7 +159,7 @@ class VariableView(object):
                             rootVariable = self.datas[varid]
 
         if rootVariable is None:
-            self.log.debug(_("Impossible to find the selected variable."))
+            self.log.debug("Impossible to find the selected variable.")
             return
 
         # We display the menu for the insertion of sub-elements if its an Aggregate or an Alternative

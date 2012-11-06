@@ -56,7 +56,7 @@ class RawExport(object):
                 resSymbol = symbol
                 break
         if resSymbol is None:
-            self.log.warning(_("Impossible to retrieve the symbol having the id {0}").format(str(symbolID)))
+            self.log.warning("Impossible to retrieve the symbol having the id {0}".format(str(symbolID)))
             return None
         else:
             return resSymbol.getXMLDefinition()
