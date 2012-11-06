@@ -9,14 +9,16 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-06 14:36+0100\n"
-"PO-Revision-Date: 2012-11-06 14:32+0200\n"
+"PO-Revision-Date: 2012-11-06 15:08+0200\n"
 "Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Weblate 1.3-dev\n"
 "Generated-By: Babel 0.9.6\n"
 
 #: src/netzob/NetzobMainController.py:309
@@ -2197,9 +2199,8 @@ msgid "Test your function"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/customTransformationFunctionDialog.glade:354
-#, fuzzy
 msgid "Original"
-msgstr "Valeur initiale : "
+msgstr "Original"
 
 #: resources/static/netzob/ui/vocabulary/customTransformationFunctionDialog.glade:366
 msgid "Filtered"
@@ -2214,12 +2215,10 @@ msgid "Field name"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/editFieldDialog.glade:48
-#, fuzzy
 msgid "Regex (be careful!)"
 msgstr "Expression rationnelle (faire attention !)"
 
 #: resources/static/netzob/ui/vocabulary/environmentDependenciesSearcherView.glade:17
-#, fuzzy
 msgid "Search For Environmental Dependencies"
 msgstr "Rechercher les dépendances d'environnement"
 
@@ -2252,7 +2251,6 @@ msgid "Type guessing"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/fieldAnalysis.glade:139
-#, fuzzy
 msgid "column"
 msgstr "Colonne"
 
@@ -2266,9 +2264,8 @@ msgid "Distribution of bytes values"
 msgstr "Description de la variable"
 
 #: resources/static/netzob/ui/vocabulary/messageTable.glade:31
-#, fuzzy
 msgid "Empty Message Table"
-msgstr "Supprimer le message"
+msgstr "Table de messages vide"
 
 #: resources/static/netzob/ui/vocabulary/messageTable.glade:48
 #: resources/static/netzob/ui/vocabulary/messageTable.glade:49
@@ -2298,29 +2295,25 @@ msgid "Move selected message and re-compute the regex"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/moveMessageDialog.glade:162
-#, fuzzy
 msgid "Move selected message in trash"
-msgstr "Sauvegarder les paquets sélectionnés"
+msgstr "Déplacer les messages sélectionnés vers la corbeille"
 
 #: resources/static/netzob/ui/vocabulary/relationsView.glade:53
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:145
-#, fuzzy
 msgid "Relations"
-msgstr "Direction"
+msgstr "Relations"
 
 #: resources/static/netzob/ui/vocabulary/splitFieldDialog.glade:12
 msgid "Split field"
-msgstr "Séparer le champ"
+msgstr "Fractionner le champ"
 
 #: resources/static/netzob/ui/vocabulary/splitFieldDialog.glade:45
-#, fuzzy
 msgid "Change alignment"
-msgstr "Alignement de séquence"
+msgstr "Changer l'alignement"
 
 #: resources/static/netzob/ui/vocabulary/variableTable.glade:21
-#, fuzzy
 msgid "Variables table"
-msgstr "Variable"
+msgstr "Table des variables"
 
 #: resources/static/netzob/ui/vocabulary/variableTable.glade:96
 msgid "Regex"
@@ -2354,65 +2347,54 @@ msgid "Reset Partitioning"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:26
-#, fuzzy
 msgid "Reset partitioning of selected symbol"
-msgstr "Annuler le partitionnement"
+msgstr "Annuler le partitionnement du symbole sélectionné"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:34
-#, fuzzy
 msgid "Concatenate Fields"
 msgstr "Concaténer les champs"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:35
-#, fuzzy
 msgid "Concatenate selected fields"
-msgstr "Concaténer les champs"
+msgstr "Concaténer les champs sélectionnés"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:43
-#, fuzzy
 msgid "Split Field"
-msgstr "Séparer le champ"
+msgstr "Fractionner le champ"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:44
-#, fuzzy
 msgid "Split selected field"
-msgstr "Exporter les champs sélectionnés"
+msgstr "Fractionner les champs sélectionnés"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:53
 msgid "Edit the variable for selected field"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:60
-#, fuzzy
 msgid "Move To Another Symbol"
-msgstr "Supprimer le symbole"
+msgstr "Déplacer vers un autre symbole"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:61
 msgid "Move selected messages to another symbol"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:69
-#, fuzzy
 msgid "Delete Message(s)"
-msgstr "Supprimer le message"
+msgstr "Supprimer les messages"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:70
-#, fuzzy
 msgid "Delete selected message(s)"
-msgstr "Supprimer le message"
+msgstr "Supprimer les messages sélectionnés"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:78
-#, fuzzy
 msgid "Environmental Dependencies"
 msgstr "Dépendances d'environnement"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:79
-#, fuzzy
 msgid "Search for environmental dependencies for all messages"
-msgstr "Dépendances d'environnement"
+msgstr "Chercher les dépendances d'environnement pour tous les messages"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:87
-#, fuzzy
 msgid "Messages Distribution"
 msgstr "Distribution des messages"
 
@@ -2423,14 +2405,12 @@ msgid "Display messages distributions for selected symbol(s)"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:96
-#, fuzzy
 msgid "Variable Table"
-msgstr "Variable"
+msgstr "Table des variables"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:97
-#, fuzzy
 msgid "Display variable table"
-msgstr "Éditer la variable"
+msgstr "Afficher la table des variables"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:106
 msgid "Compute Field Limits"
@@ -2441,24 +2421,20 @@ msgid "Compute min and max size of selected symbol(s)"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:114
-#, fuzzy
 msgid "Import Messages From File"
-msgstr "Importer depuis un fichier"
+msgstr "Importer des messages depuis un fichier"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:116
-#, fuzzy
 msgid "Import messages from file"
-msgstr "Importer depuis un fichier"
+msgstr "Importer des messages depuis un fichier"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:125
-#, fuzzy
 msgid "Capture Messages"
-msgstr "Supprimer le message"
+msgstr "Capturer des messages"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:126
-#, fuzzy
 msgid "Capture messages"
-msgstr "Supprimer le message"
+msgstr "Capturer des messages"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:133
 msgid "Automatic Tool"
@@ -2488,9 +2464,8 @@ msgid "Use sequence alignment on selected symbol"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:177
-#, fuzzy
 msgid "Search text"
-msgstr "Résultats de la recherche"
+msgstr "Chercher un texte"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:178
 msgid "Search a string in all messages of the current symbol"
@@ -2506,15 +2481,13 @@ msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:115
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:116
-#, fuzzy
 msgid "Sequence alignment on selected symbol"
-msgstr "Alignement de séquence"
+msgstr "Alignement de séquence sur le symbole sélectionné"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:130
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:131
-#, fuzzy
 msgid "Force Partitioning on selected symbol"
-msgstr "Aucun symbole sélectionné"
+msgstr "Partitionnement forcé sur le symbole sélectionné"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:132
 msgid "Force Partitioning"
@@ -2522,24 +2495,20 @@ msgstr "Forcer le partitionnement"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:145
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:146
-#, fuzzy
 msgid "Simple Partitioning on selected symbol"
-msgstr "Partitionnement simple"
+msgstr "Partitionnement simple sur le symbole sélectionné"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:160
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:161
-#, fuzzy
 msgid "Smooth Partitioning on selected symbol"
-msgstr "Aucun symbole sélectionné"
+msgstr "Partitionnement lissé sur le symbole sélectionné"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:175
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:176
-#, fuzzy
 msgid "Reset Partitioning on selected symbol"
-msgstr "Annuler le partitionnement"
+msgstr "Annuler le partitionnement sur le symbole sélectionné"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:202
-#, fuzzy
 msgid "Messages Distribution…"
 msgstr "Distribution des messages"
 
@@ -2550,16 +2519,14 @@ msgstr "Champ"
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:305
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:306
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:307
-#, fuzzy
 msgid "Select all symbols"
-msgstr "Aucun symbole sélectionné"
+msgstr "Sélectionner tous les symboles"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:322
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:323
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:324
-#, fuzzy
 msgid "Unselect all symbols"
-msgstr "Aucun symbole sélectionné"
+msgstr "Désélectionner tous les symboles"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:349
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:350
@@ -2572,20 +2539,17 @@ msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:366
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:367
-#, fuzzy
 msgid "Concatenate selected symbols"
-msgstr "Aucun symbole sélectionné"
+msgstr "Concaténer les symboles sélectionnés"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:368
-#, fuzzy
 msgid "Concatenate"
-msgstr "Concaténer les champs"
+msgstr "Concaténer"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:383
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:384
-#, fuzzy
 msgid "Delete selected symbol(s)"
-msgstr "Aucun symbole sélectionné"
+msgstr "Supprimer les symboles sélectionnés"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:410
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:411
@@ -2606,14 +2570,12 @@ msgid "Project"
 msgstr "Projet"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/forcePartitioning.glade:23
-#, fuzzy
 msgid "Delimiter:"
-msgstr "Délimiteur :"
+msgstr "Délimiteur : "
 
 #: resources/static/netzob/ui/vocabulary/partitioning/forcePartitioning.glade:61
-#, fuzzy
 msgid "Delimiter format:"
-msgstr "Délimiteur :"
+msgstr "Format du délimiteur : "
 
 #: resources/static/netzob/ui/vocabulary/partitioning/forcePartitioning.glade:71
 msgid "Hexadecimal"
@@ -2632,9 +2594,8 @@ msgid "Similarity percent:"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:87
-#, fuzzy
 msgid "Unit size:"
-msgstr "Taille de l'unité"
+msgstr "Taille de l'unité : "
 
 #: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:97
 msgid " 4 bits"
@@ -2646,9 +2607,8 @@ msgid "8 bits"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:147
-#, fuzzy
 msgid "Option:"
-msgstr "Options"
+msgstr "Option : "
 
 #: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:157
 msgid "Orphan reduction"
@@ -2699,9 +2659,8 @@ msgid "Smooth partitioning"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/search/searchBar.glade:35
-#, fuzzy
 msgid "Search:"
-msgstr "Rechercher"
+msgstr "Chercher : "
 
 #: resources/static/netzob/ui/vocabulary/search/searchBar.glade:59
 msgid "Find previous"
@@ -2712,14 +2671,12 @@ msgid "Find next"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/search/searchBar.glade:97
-#, fuzzy
 msgid "|  Format:"
-msgstr "Format :"
+msgstr "| Format : "
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:7
-#, fuzzy
 msgid "Search properties"
-msgstr "Propriétés du message"
+msgstr "Propriétés de la recherche"
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:24
 #, fuzzy
@@ -2772,29 +2729,24 @@ msgid "no"
 msgstr ""
 
 #: resources/static/netzob_plugins/FileImporter/ui/FileImportConfigurationWidget.glade:17
-#, fuzzy
 msgid "Separator:"
-msgstr "Opération :"
+msgstr "Séparateur : "
 
 #: resources/static/netzob_plugins/IpcCapturer/ui/IpcCapturerConfigurationWidget.glade:25
-#, fuzzy
 msgid "Update process list"
 msgstr "Mettre à jour la liste des processus"
 
 #: resources/static/netzob_plugins/IpcCapturer/ui/IpcCapturerConfigurationWidget.glade:43
-#, fuzzy
 msgid "Process:"
-msgstr "Processus"
+msgstr "Processus : "
 
 #: resources/static/netzob_plugins/IpcCapturer/ui/IpcCapturerConfigurationWidget.glade:80
-#, fuzzy
 msgid "Filter flows:"
-msgstr "Mettre à jour les flux"
+msgstr "Filtrer les flux : "
 
 #: resources/static/netzob_plugins/IpcCapturer/ui/IpcCapturerConfigurationWidget.glade:90
-#, fuzzy
 msgid "File system (FS)"
-msgstr "Système de fichiers"
+msgstr "Système de fichiers (FS)"
 
 #: resources/static/netzob_plugins/IpcCapturer/ui/IpcCapturerConfigurationWidget.glade:107
 msgid "Network"
@@ -2805,7 +2757,6 @@ msgid "IPC"
 msgstr ""
 
 #: resources/static/netzob_plugins/IpcCapturer/ui/IpcCapturerConfigurationWidget.glade:141
-#, fuzzy
 msgid "Update flow list"
 msgstr "Mettre à jour les flux"
 
@@ -2814,29 +2765,24 @@ msgid "FD"
 msgstr ""
 
 #: resources/static/netzob_plugins/IpcCapturer/ui/IpcCapturerConfigurationWidget.glade:226
-#, fuzzy
 msgid "All flows"
-msgstr "Mettre à jour les flux"
+msgstr "Tous les flux"
 
 #: resources/static/netzob_plugins/IpcCapturer/ui/IpcCapturerConfigurationWidget.glade:244
-#, fuzzy
 msgid "FS flows"
-msgstr "Mettre à jour les flux"
+msgstr "Flux de type FS"
 
 #: resources/static/netzob_plugins/IpcCapturer/ui/IpcCapturerConfigurationWidget.glade:263
-#, fuzzy
 msgid "Network flows"
-msgstr "Écouter sur les flux réseau"
+msgstr "Flux réseau"
 
 #: resources/static/netzob_plugins/IpcCapturer/ui/IpcCapturerConfigurationWidget.glade:282
-#, fuzzy
 msgid "IPC flows"
-msgstr "Mettre à jour les flux"
+msgstr "Flux de type IPC"
 
 #: resources/static/netzob_plugins/IpcCapturer/ui/IpcCapturerConfigurationWidget.glade:301
-#, fuzzy
 msgid "Selected flows"
-msgstr "Écouter sur les flux sélectionnés"
+msgstr "Flux sélectionnés"
 
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:16
 msgid "Device:"
@@ -2844,15 +2790,13 @@ msgstr ""
 
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:52
 #: resources/static/netzob_plugins/PCAPImporter/ui/PCAPImportConfigurationWidget.glade:16
-#, fuzzy
 msgid "BPF Filter:"
-msgstr "Filtre BPF"
+msgstr "Filtre BPF : "
 
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:106
 #: resources/static/netzob_plugins/PCAPImporter/ui/PCAPImportConfigurationWidget.glade:70
-#, fuzzy
 msgid "Import layer:"
-msgstr "Couche réseau :"
+msgstr "Importer la couche : "
 
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:116
 #: resources/static/netzob_plugins/PCAPImporter/ui/PCAPImportConfigurationWidget.glade:80
@@ -2917,4 +2861,3 @@ msgstr "Délimiteur :"
 
 #~ msgid "Search or Environmental Dependencies"
 #~ msgstr "Chercher les dépendances environnementales"
-
