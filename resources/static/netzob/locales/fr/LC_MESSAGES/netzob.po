@@ -9,14 +9,16 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-06 12:07+0100\n"
-"PO-Revision-Date: 2012-11-05 22:06+0200\n"
+"PO-Revision-Date: 2012-11-06 12:52+0200\n"
 "Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Weblate 1.3-dev\n"
 "Generated-By: Babel 0.9.6\n"
 
 #: src/netzob/NetzobMainController.py:309
@@ -166,9 +168,8 @@ msgid "Netzob"
 msgstr "Netzob"
 
 #: src/netzob/Common/SplashScreen.py:78
-#, fuzzy
 msgid "Current workspace: {0}"
-msgstr "Espace de travail courant : "
+msgstr "Espace de travail courant : {0}"
 
 #: src/netzob/Common/SplashScreen.py:80
 msgid "Current workspace: NO WORKSPACE COMPUTED!"
@@ -1271,14 +1272,12 @@ msgid "No selected field."
 msgstr "Aucun champs sélectionné."
 
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:432
-#, fuzzy
 msgid "Not selected message(s)."
-msgstr "Supprimer le message"
+msgstr "Aucun message sélectionné."
 
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:467
-#, fuzzy
 msgid "No selected message(s)."
-msgstr "Supprimer le message"
+msgstr "Aucun message sélectionné."
 
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:469
 msgid "Click yes to confirm the deletion of the selected message(s)"
@@ -1309,42 +1308,34 @@ msgid "Force partitioning field {0}"
 msgstr "Partitionnement forcé du champ {0}"
 
 #: src/netzob/UI/Vocabulary/Controllers/Partitioning/ForcePartitioningController.py:129
-#, fuzzy
 msgid "Force partitioning finished!"
 msgstr "Partitionnement forcé terminé !"
 
 #: src/netzob/UI/Vocabulary/Controllers/Partitioning/ResetPartitioningController.py:113
-#, fuzzy
 msgid "Reset field {0}"
-msgstr "Fuzzer le champ : {0}"
+msgstr "Réinitialiser le champ {0}"
 
 #: src/netzob/UI/Vocabulary/Controllers/Partitioning/ResetPartitioningController.py:121
-#, fuzzy
 msgid "Reset finished!"
-msgstr "Fuzzer le champ : {0}"
+msgstr "Réinitialisation terminé !"
 
 #: src/netzob/UI/Vocabulary/Controllers/Partitioning/SimplePartitioningController.py:123
-#, fuzzy
 msgid "Simple partitioning field {0}"
-msgstr "Partitionnement simple"
+msgstr "Partitionnement simple du champ {0}"
 
 #: src/netzob/UI/Vocabulary/Controllers/Partitioning/SmoothPartitioningController.py:114
-#, fuzzy
 msgid "Smooth field {0}"
-msgstr "Fuzzer le champ : {0}"
+msgstr "Lisser le champ {0}"
 
 #: src/netzob/UI/Vocabulary/Controllers/Partitioning/SmoothPartitioningController.py:122
-#, fuzzy
 msgid "Smooth finished!"
-msgstr "Fuzzer le champ : {0}"
+msgstr "Lissage terminé !"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:61
-#, fuzzy
 msgid "Edit Field"
 msgstr "Éditer le champ"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:68
-#, fuzzy
 msgid "Field Visualization"
 msgstr "Visualisation du champ"
 
@@ -1353,13 +1344,11 @@ msgid "Configure Transformation Functions"
 msgstr ""
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:81
-#, fuzzy
 msgid "Create Layer"
 msgstr "Créer une couche"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:87
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:52
-#, fuzzy
 msgid "Edit Variable"
 msgstr "Éditer la variable"
 
@@ -1368,17 +1357,14 @@ msgid "Field Analysis"
 msgstr ""
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:99
-#, fuzzy
 msgid "Extract Fields To A New Symbol"
-msgstr "Créer un nouveau symbole"
+msgstr "Extraire les champs dans un nouveau symbole"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:105
-#, fuzzy
 msgid "Delete Message"
 msgstr "Supprimer le message"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:112
-#, fuzzy
 msgid "Copy To Clipboard"
 msgstr "Copier dans le presse papier"
 
@@ -1404,39 +1390,32 @@ msgid "Endianess"
 msgstr "Boutisme"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:237
-#, fuzzy
 msgid "Raw Message"
 msgstr "Message brut"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:241
-#, fuzzy
 msgid "Aligned Raw Message"
 msgstr "Message brut aligné"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:245
-#, fuzzy
 msgid "Aligned Formatted Message"
 msgstr "Message brut aligné"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:249
-#, fuzzy
 msgid "Raw Field"
 msgstr "Champ brut"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:253
-#, fuzzy
 msgid "Formatted Field"
 msgstr "Champ formaté"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:65
-#, fuzzy
 msgid "Edit Layer"
 msgstr "Éditer la couche"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:73
-#, fuzzy
 msgid "Partitioning"
-msgstr "Annuler le partitionnement"
+msgstr "Partitionner"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:80
 msgid "Visualization"
@@ -1447,12 +1426,10 @@ msgid "Transformation Functions"
 msgstr ""
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:95
-#, fuzzy
 msgid "Delete Layer"
 msgstr "Supprimer la couche"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:132
-#, fuzzy
 msgid "Create Your Function"
 msgstr "Créer une nouvelle fonction"
 
@@ -1461,22 +1438,18 @@ msgid "Sequence Alignment"
 msgstr "Alignement de séquences"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:240
-#, fuzzy
 msgid "Force Partitionment"
 msgstr "Partitionnement forcé"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:246
-#, fuzzy
 msgid "Simple Partitionment"
 msgstr "Partitionnement simple"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:252
-#, fuzzy
 msgid "Smooth Partitionment"
-msgstr "Annuler le partitionnement"
+msgstr "Partitionnement lissé"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:258
-#, fuzzy
 msgid "Reset Partitionment"
 msgstr "Annuler le partitionnement"
 
@@ -1526,9 +1499,8 @@ msgid "Provide the possibility to capture network trafic."
 msgstr ""
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerView.py:71
-#, fuzzy
 msgid "Capture network messages"
-msgstr "Capturer le trafic réseau"
+msgstr "Capturer les messages réseau"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:76
 msgid "Entire project"
@@ -1746,7 +1718,6 @@ msgid "New Project"
 msgstr "Nouveau projet"
 
 #: resources/static/netzob/ui/mainActions.glade:8
-#, fuzzy
 msgid "Create a new project"
 msgstr "Créer un nouveau projet"
 
@@ -1755,17 +1726,14 @@ msgid "Save Project"
 msgstr "Enregistrer le projet"
 
 #: resources/static/netzob/ui/mainActions.glade:17
-#, fuzzy
 msgid "Save the current project"
 msgstr "Enregistrer le projet courant"
 
 #: resources/static/netzob/ui/mainActions.glade:26
-#, fuzzy
 msgid "Import Project"
 msgstr "Importer un projet"
 
 #: resources/static/netzob/ui/mainActions.glade:33
-#, fuzzy
 msgid "Export Project"
 msgstr "Exporter le projet"
 
@@ -1774,7 +1742,6 @@ msgid "Save current project"
 msgstr "Enregistrer le projet courant"
 
 #: resources/static/netzob/ui/mainActions.glade:41
-#, fuzzy
 msgid "Switch Workspace"
 msgstr "Changer d'espace de travail"
 
@@ -1803,7 +1770,6 @@ msgid "Help"
 msgstr "Aide"
 
 #: resources/static/netzob/ui/mainActions.glade:79
-#, fuzzy
 msgid "Open Project From Workspace"
 msgstr "Ouvrir un projet de l'espace de travail"
 
@@ -1816,9 +1782,8 @@ msgid "Netzob - inference communication protocol"
 msgstr "Netzob - Inférence de protocole de communication"
 
 #: resources/static/netzob/ui/mainWindow.glade:39
-#, fuzzy
 msgid "Switch perspective"
-msgstr "Changer de projet"
+msgstr "Changer de vue"
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:65
 msgid "Mutable"
@@ -1830,9 +1795,8 @@ msgid "Learnable"
 msgstr "Variable"
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:139
-#, fuzzy
 msgid "Variable Type"
-msgstr "Variable"
+msgstr "Type de la variable"
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:228
 msgid "Pointed ID"
@@ -1855,9 +1819,8 @@ msgid "has a size"
 msgstr ""
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:383
-#, fuzzy
 msgid "Delimiter (hex)"
-msgstr "Délimiteur :"
+msgstr "Délimiteur (hex)"
 
 #: resources/static/netzob/ui/Variables/VariableMovingView.glade:53
 msgid "Choose the future position of this variable among this node."
@@ -1874,15 +1837,13 @@ msgstr "Créer une variable"
 
 #: resources/static/netzob/ui/capturer/abstractCapturerView.glade:9
 #: resources/static/netzob/ui/import/abstractImporterView.glade:9
-#, fuzzy
 msgid "Import file"
-msgstr "Importer depuis un fichier"
+msgstr "Import de fichier"
 
 #: resources/static/netzob/ui/capturer/abstractCapturerView.glade:52
 #: resources/static/netzob/ui/import/abstractImporterView.glade:52
-#, fuzzy
 msgid "Import messages"
-msgstr "Afficher les messages"
+msgstr "Importer les messages"
 
 #: resources/static/netzob/ui/capturer/abstractCapturerView.glade:175
 #: resources/static/netzob/ui/import/abstractImporterView.glade:175
@@ -1896,14 +1857,12 @@ msgstr ""
 
 #: resources/static/netzob/ui/capturer/abstractCapturerView.glade:207
 #: resources/static/netzob/ui/import/abstractImporterView.glade:207
-#, fuzzy
 msgid "Invert selection"
-msgstr "personnaliser la sélection"
+msgstr "Inverser la sélection"
 
 #: resources/static/netzob/ui/capturer/abstractCapturerView.glade:276
-#, fuzzy
 msgid "Displayed Packets:"
-msgstr "Afficher les propriétés"
+msgstr "Paquets affichés : "
 
 #: resources/static/netzob/ui/capturer/abstractCapturerView.glade:293
 #: resources/static/netzob/ui/capturer/abstractCapturerView.glade:324
@@ -1913,21 +1872,18 @@ msgid "0"
 msgstr ""
 
 #: resources/static/netzob/ui/capturer/abstractCapturerView.glade:307
-#, fuzzy
 msgid "Selected Packets:"
-msgstr "Sauvegarder les paquets sélectionnés"
+msgstr "Paquets sélectionnés : "
 
 #: resources/static/netzob/ui/capturer/confirmImportMessagesDialog.glade:117
 #: resources/static/netzob/ui/import/confirmImportMessagesDialog.glade:117
-#, fuzzy
 msgid "Import messages in project"
-msgstr "Importer un projet"
+msgstr "Import de messages dans le projet"
 
 #: resources/static/netzob/ui/capturer/confirmImportMessagesDialog.glade:157
 #: resources/static/netzob/ui/import/confirmImportMessagesDialog.glade:157
-#, fuzzy
 msgid "Name of created symbol"
-msgstr "Aucun symbole sélectionné"
+msgstr "Nom du symbole crée"
 
 #: resources/static/netzob/ui/capturer/confirmImportMessagesDialog.glade:168
 #: resources/static/netzob/ui/import/confirmImportMessagesDialog.glade:168
@@ -1936,17 +1892,15 @@ msgstr ""
 
 #: resources/static/netzob/ui/capturer/confirmImportMessagesDialog.glade:187
 #: resources/static/netzob/ui/import/confirmImportMessagesDialog.glade:187
-#, fuzzy
 msgid "Keep properties of duplicated messages"
-msgstr "Propriétés du message"
+msgstr "Conserver les propriétés des messages dupliqués"
 
 #: resources/static/netzob/ui/grammar/DeleteStateDialog.glade:7
 #: resources/static/netzob/ui/grammar/DeleteStateDialog.glade:86
 #: resources/static/netzob/ui/grammar/DeleteTransitionDialog.glade:7
 #: resources/static/netzob/ui/grammar/deleteTransitionDialog.glade:85
-#, fuzzy
 msgid "Confirm the deletion of state"
-msgstr "L'utilisateur n'a pas confirmé la suppresion de l'état {0}"
+msgstr "Confirmer la suppression d'un état"
 
 #: resources/static/netzob/ui/grammar/DeleteStateDialog.glade:126
 #: resources/static/netzob/ui/grammar/DeleteTransitionDialog.glade:126
@@ -1960,9 +1914,8 @@ msgid "ID"
 msgstr "ID"
 
 #: resources/static/netzob/ui/grammar/DeleteTransitionDialog.glade:86
-#, fuzzy
 msgid "Confirm the deletion of the transition"
-msgstr "L'utilisateur n'a pas confirmé la suppression de la transition {0}"
+msgstr "Confirmer la suppression de la transition"
 
 #: resources/static/netzob/ui/grammar/createCloseChannelTransition.glade:35
 #: resources/static/netzob/ui/grammar/createOpenChannelTransition.glade:35
@@ -1998,61 +1951,50 @@ msgid "Time before opening (ms)"
 msgstr ""
 
 #: resources/static/netzob/ui/grammar/createOpenChannelTransition.glade:289
-#, fuzzy
 msgid "Max Number of Attempt"
-msgstr "Nombre maximum d'états :"
+msgstr "Nombre maximum de tentatives"
 
 #: resources/static/netzob/ui/grammar/createSemiStochasticTransitionDialogs.glade:7
-#, fuzzy
 msgid "Create a SemiStochastic Transition"
-msgstr "Créer une transition"
+msgstr "Créer une transition semi-stochastique"
 
 #: resources/static/netzob/ui/grammar/createSemiStochasticTransitionDialogs.glade:119
-#, fuzzy
 msgid "Describe the transition"
-msgstr "Créer une transition"
+msgstr "Description de la transition"
 
 #: resources/static/netzob/ui/grammar/createSemiStochasticTransitionDialogs.glade:174
 #: resources/static/netzob/ui/grammar/deleteTransitionDialog.glade:210
-#, fuzzy
 msgid "Start State"
 msgstr "État de démarrage"
 
 #: resources/static/netzob/ui/grammar/createSemiStochasticTransitionDialogs.glade:188
 #: resources/static/netzob/ui/grammar/deleteTransitionDialog.glade:223
-#, fuzzy
 msgid "End State"
-msgstr "État terminal"
+msgstr "État final"
 
 #: resources/static/netzob/ui/grammar/createSemiStochasticTransitionDialogs.glade:216
-#, fuzzy
 msgid "Input Symbol"
-msgstr "Éditer le symbole"
+msgstr "Symbole d'entrée"
 
 #: resources/static/netzob/ui/grammar/createSemiStochasticTransitionDialogs.glade:372
-#, fuzzy
 msgid "Output Symbol"
-msgstr "Éditer le symbole"
+msgstr "Symbole de sortie"
 
 #: resources/static/netzob/ui/grammar/createSemiStochasticTransitionDialogs.glade:386
-#, fuzzy
 msgid "Probability (%)"
-msgstr "Probabilité ([0;100]) : "
+msgstr "Probabilité (%)"
 
 #: resources/static/netzob/ui/grammar/createSemiStochasticTransitionDialogs.glade:400
-#, fuzzy
 msgid "Time (ms)"
-msgstr "Durée de la connexion (ms) : "
+msgstr "Durée (ms)"
 
 #: resources/static/netzob/ui/grammar/createSemiStochasticTransitionDialogs.glade:468
-#, fuzzy
 msgid "Remove Output Symbol"
-msgstr "Supprimer le symbole"
+msgstr "Supprimer le symbole de sortie"
 
 #: resources/static/netzob/ui/grammar/createSemiStochasticTransitionDialogs.glade:486
-#, fuzzy
 msgid "Add Output Symbol"
-msgstr "Éditer le symbole"
+msgstr "Ajouter un symbole de sortie"
 
 #: resources/static/netzob/ui/grammar/createSemiStochasticTransitionDialogs.glade:529
 #: resources/static/netzob/ui/simulator/simulatorView.glade:637
@@ -2062,51 +2004,44 @@ msgid "Symbol"
 msgstr "Symbole"
 
 #: resources/static/netzob/ui/grammar/createSemiStochasticTransitionDialogs.glade:540
-#, fuzzy
 msgid "Probability"
-msgstr "Probabilité ([0;100]) : "
+msgstr "Probabilité"
 
 #: resources/static/netzob/ui/grammar/createSemiStochasticTransitionDialogs.glade:551
 #: resources/static/netzob/ui/simulator/simulatorView.glade:626
 #: resources/static/netzob/ui/simulator/simulatorView.glade:748
-#, fuzzy
 msgid "Time"
-msgstr "Temps :"
+msgstr "Durée"
 
 #: resources/static/netzob/ui/grammar/createStateDialog.glade:118
 msgid "Describe the State to Create"
 msgstr ""
 
 #: resources/static/netzob/ui/grammar/createStateDialog.glade:185
-#, fuzzy
 msgid "Initial State"
 msgstr "État de démarrage"
 
 #: resources/static/netzob/ui/grammar/deleteTransitionDialog.glade:7
-#, fuzzy
 msgid "Confirm the deletion of transition"
-msgstr "L'utilisateur n'a pas confirmé la suppression de la transition {0}"
+msgstr "Confirmer la suppression de la transition"
 
 #: resources/static/netzob/ui/grammar/grammarActions.glade:7
-#, fuzzy
 msgid "Active Grammar Inferring"
-msgstr "Inférence de grammaire"
+msgstr "Inférence active de grammaire"
 
 #: resources/static/netzob/ui/grammar/grammarActions.glade:8
 msgid "Infer the grammar"
 msgstr ""
 
 #: resources/static/netzob/ui/grammar/grammarActions.glade:16
-#, fuzzy
 msgid "Passive Grammar Inferring"
-msgstr "Inférence de grammaire"
+msgstr "Inférence passive de grammaire"
 
 #: resources/static/netzob/ui/grammar/grammarActions.glade:17
 msgid "Infer the grammar based on provided examples"
 msgstr ""
 
 #: resources/static/netzob/ui/grammar/grammarActions.glade:25
-#, fuzzy
 msgid "Create State"
 msgstr "Créer un état"
 
@@ -2115,14 +2050,12 @@ msgid "Create a state in the current grammar"
 msgstr ""
 
 #: resources/static/netzob/ui/grammar/grammarActions.glade:34
-#, fuzzy
 msgid "Create Semi-Stochastic Transiton"
-msgstr "Créer une transition"
+msgstr "Créer une transition semi-stochastique"
 
 #: resources/static/netzob/ui/grammar/grammarActions.glade:35
-#, fuzzy
 msgid "Create a semi stochastic transition"
-msgstr "Créer une transition"
+msgstr "Créer une transition semi-stochastique"
 
 #: resources/static/netzob/ui/grammar/grammarActions.glade:48
 msgid "Grammar Edition"
@@ -2149,41 +2082,34 @@ msgid "Create a Close Channel Transition"
 msgstr "Créer une transition"
 
 #: resources/static/netzob/ui/import/abstractImporterView.glade:116
-#, fuzzy
 msgid "Warning message"
 msgstr "Message d'avertissement"
 
 #: resources/static/netzob/ui/import/abstractImporterView.glade:276
-#, fuzzy
 msgid "Displayed packets:"
-msgstr "Afficher les propriétés"
+msgstr "Paquets affichés : "
 
 #: resources/static/netzob/ui/import/abstractImporterView.glade:307
-#, fuzzy
 msgid "Selected packets:"
-msgstr "Sauvegarder les paquets sélectionnés"
+msgstr "Paquets sélectionnés : "
 
 #: resources/static/netzob/ui/import/fileListSourceWidget.glade:25
-#, fuzzy
 msgid "Selected files:"
-msgstr "Exporter les champs sélectionnés"
+msgstr "Fichiers sélectionnés : "
 
 #: resources/static/netzob/ui/import/importFileChooserDialog.glade:74
-#, fuzzy
 msgid "Import as:"
-msgstr "Exporter comme"
+msgstr "Importer comme : "
 
 #: resources/static/netzob/ui/simulator/createNetworkActor.glade:7
 #: resources/static/netzob/ui/simulator/simulatorActions.glade:7
 #: resources/static/netzob/ui/simulator/simulatorActions.glade:8
-#, fuzzy
 msgid "Create Network Actor"
-msgstr "Capturer le trafic réseau"
+msgstr "Créer un acteur réseau"
 
 #: resources/static/netzob/ui/simulator/createNetworkActor.glade:119
-#, fuzzy
 msgid "Create a Network Actor"
-msgstr "Créer une nouvelle trace"
+msgstr "Créer un acteur réseau"
 
 #: resources/static/netzob/ui/simulator/createNetworkActor.glade:142
 msgid "General Informations"
@@ -2194,9 +2120,8 @@ msgid "Initiator"
 msgstr ""
 
 #: resources/static/netzob/ui/simulator/createNetworkActor.glade:260
-#, fuzzy
 msgid "Network Conf"
-msgstr "Réseau"
+msgstr "Configuration réseau"
 
 #: resources/static/netzob/ui/simulator/createNetworkActor.glade:332
 msgid "Predefined Values"
@@ -2227,16 +2152,14 @@ msgid "TARGET_PORT"
 msgstr "Port cible :"
 
 #: resources/static/netzob/ui/simulator/simulatorActions.glade:9
-#, fuzzy
 msgid "Create a network actor"
-msgstr "Créer une nouvelle trace"
+msgstr "Créer un acteur réseau"
 
 #: resources/static/netzob/ui/simulator/simulatorActions.glade:17
 #: resources/static/netzob/ui/simulator/simulatorActions.glade:18
 #: resources/static/netzob/ui/simulator/simulatorView.glade:84
-#, fuzzy
 msgid "Actors"
-msgstr "Ajouter un acteur"
+msgstr "Acteurs"
 
 #: resources/static/netzob/ui/simulator/simulatorView.glade:144
 msgid "Status"
@@ -2264,7 +2187,6 @@ msgid "Status :"
 msgstr ""
 
 #: resources/static/netzob/ui/simulator/simulatorView.glade:648
-#, fuzzy
 msgid "Mesage"
 msgstr "Message"
 
@@ -2307,9 +2229,8 @@ msgid "Original"
 msgstr "Valeur initiale : "
 
 #: resources/static/netzob/ui/vocabulary/customTransformationFunctionDialog.glade:366
-#, fuzzy
 msgid "Filtered"
-msgstr "Filtre"
+msgstr "Filtré"
 
 #: resources/static/netzob/ui/vocabulary/editFieldDialog.glade:7
 msgid "Edit field"
@@ -2320,19 +2241,16 @@ msgid "Field name"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/editFieldDialog.glade:48
-#, fuzzy
 msgid "Regex (be careful !)"
-msgstr "Expression rationnelle (faire attention !) :"
+msgstr "Expression rationnelle (faire attention !)"
 
 #: resources/static/netzob/ui/vocabulary/environmentDependenciesSearcherView.glade:17
-#, fuzzy
 msgid "Search or Environmental Dependencies"
-msgstr "Dépendances d'environnement"
+msgstr "Chercher les dépendances environnementales"
 
 #: resources/static/netzob/ui/vocabulary/environmentDependenciesSearcherView.glade:96
-#, fuzzy
 msgid "Search for Environmental Dependencies"
-msgstr "Dépendances d'environnement"
+msgstr "Rechercher les dépendances d'environnement"
 
 #: resources/static/netzob/ui/vocabulary/environmentDependenciesSearcherView.glade:124
 msgid "The following Environmental Dependencies will be searched"
@@ -2347,9 +2265,8 @@ msgid "Field name:"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/fieldAnalysis.glade:52
-#, fuzzy
 msgid "Domain of definition"
-msgstr "Domaine de définiton du champ"
+msgstr "Domaine de définition"
 
 #: resources/static/netzob/ui/vocabulary/fieldAnalysis.glade:90
 msgid "Domain"
@@ -2365,9 +2282,8 @@ msgid "column"
 msgstr "Colonne"
 
 #: resources/static/netzob/ui/vocabulary/filterMessagesBar.glade:30
-#, fuzzy
 msgid "Filter:"
-msgstr "Filtre"
+msgstr "Filtre : "
 
 #: resources/static/netzob/ui/vocabulary/messageDistributionDialog.glade:7
 #, fuzzy
@@ -2606,9 +2522,8 @@ msgid "Search a string in all messages of the current symbol"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:186
-#, fuzzy
 msgid "Filter Displayed Messages"
-msgstr "Afficher les messages"
+msgstr "Filtrer les messages affichés"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:187
 msgid "Filter displayed messages in all messages of current symbol"
@@ -3739,4 +3654,3 @@ msgstr "Délimiteur :"
 
 #~ msgid "Use regex expression :"
 #~ msgstr ""
-
