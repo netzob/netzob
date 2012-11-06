@@ -92,7 +92,7 @@ class SmoothPartitioningController(object):
             try:
                 (yield ThreadedTask(self.smooth))
             except TaskError, e:
-                self.log.error(_("Error while proceeding to the smoothing of fields: {0}").format(str(e)))
+                self.log.error("Error while proceeding to the smoothing of fields: {0}".format(str(e)))
         else:
             self.log.debug("No field selected")
 
@@ -119,7 +119,7 @@ class SmoothPartitioningController(object):
             rtotal = float(total) / float(100)
             time.sleep(0.01)
             GObject.idle_add(self._view.smooth_progressbar.set_fraction, rtotal)
-        GObject.idle_add(self._view.smooth_progressbar.set_text, _("Smooth finished !"))
+        GObject.idle_add(self._view.smooth_progressbar.set_text, _("Smooth finished!"))
 
     def smooth_stop_clicked_cb(self, widget):
         """Callback executed when the

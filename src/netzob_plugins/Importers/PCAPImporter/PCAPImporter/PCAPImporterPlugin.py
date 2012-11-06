@@ -42,7 +42,7 @@ from PCAPImporterController import PCAPImporterController
 
 
 class PCAPImporterPlugin(FileImporterPlugin):
-    """PCAPImporter : Provide the possibility to import messages
+    """PCAPImporter: Provide the possibility to import messages
        from PCAP network capture files"""
 
     __plugin_name__ = "PCAPImporter"

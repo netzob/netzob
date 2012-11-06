@@ -120,7 +120,7 @@ class FindSizeFieldsController(object):
         try:
             (yield ThreadedTask(sizeFieldIdentifier.search, symbols, results))
         except TaskError, e:
-            self.log.error(_("Error while proceeding to the size field identification: {0}").format(str(e)))
+            self.log.error("Error while proceeding to the size field identification: {0}".format(str(e)))
 
         sizeFields = sizeFieldIdentifier.getResults()
         logging.debug(sizeFields)

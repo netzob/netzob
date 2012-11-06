@@ -43,8 +43,8 @@ from XMLImporterController import XMLImporterController
 
 
 class XMLImporterPlugin(FileImporterPlugin):
-    """XMLImporter : Provide the possibility to import messages
-       from netzob XML message files"""
+    """XMLImporter: Provide the possibility to import messages from
+       netzob XML message files"""
 
     __plugin_name__ = "XMLImporter"
     __plugin_version__ = "1.0"

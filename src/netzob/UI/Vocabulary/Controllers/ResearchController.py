@@ -102,7 +102,7 @@ class ResearchController(object):
         try:
             (yield ThreadedTask(self.arbitrarySearch, searchTasks))
         except TaskError, e:
-            self.log.error(_("Error while proceeding to the arbitrary search process: {0}").format(str(e)))
+            self.log.error("Error while proceeding to the arbitrary search process: {0}".format(str(e)))
 
         if self.executedSearchTasks is not None and len(self.executedSearchTasks) > 0:
             self.idResult += 1
@@ -182,7 +182,7 @@ class ResearchController(object):
         try:
             (yield ThreadedTask(self.search, text, format))
         except TaskError, e:
-            self.log.error(_("Error while proceeding to the search process: {0}").format(str(e)))
+            self.log.error("Error while proceeding to the search process: {0}".format(str(e)))
 
         if self.executedSearchTasks is not None and len(self.executedSearchTasks) > 0:
             self.idResult += 1
@@ -274,7 +274,7 @@ class ResearchController(object):
         if currentResult is None:
             return
 
-        self._view.currentSelectedResultLabel.set_label(_("{0}/{1} : {2}".format(self.idResult + 1, self.nbResult, currentResult.getVariationDescription())))
+        self._view.currentSelectedResultLabel.set_label(_("{0}/{1}: {2}".format(self.idResult + 1, self.nbResult, currentResult.getVariationDescription())))
 
         # add a dedicated function for the result
         self.colorizeResult(currentResult)
@@ -283,8 +283,8 @@ class ResearchController(object):
         self.showResult(currentResult)
 
     def decolorizeAllResult(self):
-        """Search for all the "Search Functions" on any symbol
-        and remove them"""
+        """Search for all the "Search Functions" on any symbol and
+        remove them"""
         vocabulary = self.vocabularyController.getCurrentProject().getVocabulary()
         for symbol in vocabulary.getSymbols():
             functionToRemoveFromSymbol = []

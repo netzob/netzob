@@ -172,7 +172,7 @@ class XMLImport(AbstractImporter):
                 selectedMessage = message
 
         if selectedMessage is None:
-            self.log.warn(_("Impossible to retrieve the message the user clicked on. Hum ?"))
+            self.log.warn("Impossible to retrieve the message the user clicked on. Hum?")
             return
 
         self.displayMessage(selectedMessage)
@@ -251,9 +251,9 @@ class XMLImport(AbstractImporter):
             xmlSchemaPath = os.path.join(ResourcesConfiguration.getStaticResources(), "xsds/0.1/common.xsd")
             # If we find a version which validates the XML, we parse with the associated function
             if not Workspace.isSchemaValidateXML(xmlSchemaPath, file):
-                logging.error(_("The specified XML file {0} is not valid according to the XSD ({1}).").format(str(file), str(xmlSchemaPath)))
+                logging.error("The specified XML file {0} is not valid according to the XSD ({1}).".format(str(file), str(xmlSchemaPath)))
             else:
-                logging.debug(_("XML file valid according to the XSD schema"))
+                logging.debug("XML file valid according to the XSD schema")
 
                 # Parse the XML Document as 0.1 version
                 tree = ElementTree()
@@ -262,7 +262,7 @@ class XMLImport(AbstractImporter):
 
                 for xmlMessage in xmlFile.findall("{" + Project.COMMON_NAMESPACE + "}message"):
                     message = AbstractMessageFactory.loadFromXML(xmlMessage, Project.COMMON_NAMESPACE, "0.1")
-                    logging.debug(_("XML String data: {0}").format(message.getStringData()))
+                    logging.debug("XML String data: {0}".format(message.getStringData()))
                     self.messages.append(message)
                     self.lineView.get_model().append(None, [str(message.getID()), message.getType(), message.getStringData()])
 

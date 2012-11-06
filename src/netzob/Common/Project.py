@@ -260,11 +260,11 @@ class Project(object):
             return None
         # is the projectFile is a file
         if not os.path.isfile(projectFile):
-            logging.warn("The specified project's configuration file (" + str(projectFile) + ") is not valid : its not a file.")
+            logging.warn("The specified project's configuration file ({0} is not valid: its not a file.".format(str(projectFile)))
             return None
         # is it readable
         if not os.access(projectFile, os.R_OK):
-            logging.warn("The specified project's configuration file (" + str(projectFile) + ") is not readable.")
+            logging.warn("The specified project's configuration file ({0}) is not readable.".format(str(projectFile)))
             return None
 
         # We validate the file given the schemas
@@ -284,7 +284,7 @@ class Project(object):
                 if projectName is not None and projectName != 'none':
                     return projectName
             else:
-                logging.warn("The project declared in file (" + projectFile + ") is not valid")
+                logging.warn("The project declared in file ({0}) is not valid".format(projectFile))
         return None
 
     @staticmethod
@@ -294,7 +294,7 @@ class Project(object):
             return None
         # is the projectFile is a file
         if not os.path.isfile(projectFile):
-            logging.warn("The specified project's configuration file (" + str(projectFile) + ") is not valid : its not a file.")
+            logging.warn("The specified project's configuration file (" + str(projectFile) + ") is not valid: its not a file.")
             return None
         # is it readable
         if not os.access(projectFile, os.R_OK):
@@ -324,11 +324,11 @@ class Project(object):
     def isSchemaValidateXML(schemaFile, xmlFile):
         # is the schema is a file
         if not os.path.isfile(schemaFile):
-            logging.warn("The specified schema file (" + str(schemaFile) + ") is not valid : its not a file.")
+            logging.warn("The specified schema file ({0}) is not valid: its not a file.".format(str(schemaFile)))
             return False
         # is it readable
         if not os.access(schemaFile, os.R_OK):
-            logging.warn("The specified schema file (" + str(schemaFile) + ") is not readable.")
+            logging.warn("The specified schema file ({0}) is not readable.".format(str(schemaFile)))
             return False
 
         schemaF = open(schemaFile, "r")

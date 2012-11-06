@@ -4,7 +4,7 @@
   <object class="GtkDialog" id="preferencesResearchDialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">Research properties</property>
+    <property name="title" translatable="yes">Search properties</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox7">
@@ -159,7 +159,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="margin_right">5</property>
-                <property name="label" translatable="yes">Use inverted research :</property>
+                <property name="label" translatable="yes">Use inverted search:</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -173,7 +173,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="margin_right">5</property>
-                <property name="label" translatable="yes">Underline all object found :</property>
+                <property name="label" translatable="yes">Underline found objects:</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -187,7 +187,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="margin_right">5</property>
-                <property name="label" translatable="yes">Match case :</property>
+                <property name="label" translatable="yes">Match case:</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -201,7 +201,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="margin_right">5</property>
-                <property name="label" translatable="yes">Use regex expression :</property>
+                <property name="label" translatable="yes">Use regular expression:</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>

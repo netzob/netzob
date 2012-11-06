@@ -229,7 +229,7 @@ class Network(object):
             self.menu.popup(None, None, None, None, event.button, event.time)
 
     def fuzz_field_cb(self, widget, field):
-        self.log.debug(_("Fuzz field: {0}".format(str(field))))
+        self.log.debug("Fuzz field: {0}".format(str(field)))
 
     #+----------------------------------------------
     #| Called when user select a packet for details
@@ -258,7 +258,7 @@ class Network(object):
     #| Thread for fuzzing
     #+----------------------------------------------
     def fuzzThread(self, button, aFilter):
-        self.log.info(_("Launching fuzzing process with : filter=\"{0}\"").format(aFilter.get_text()))
+        self.log.info("Launching fuzzing process with: filter=\"{0}\"".format(aFilter.get_text()))
 
         ## Set Netfilter NFQUEUE
 #        os.popen("sudo iptables -I OUTPUT -p tcp --dport 80  -j NFQUEUE 2>&1 > /dev/null")

@@ -8,34 +8,20 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-05 00:54+0100\n"
+"POT-Creation-Date: 2012-11-06 12:07+0100\n"
 "PO-Revision-Date: 2012-11-05 22:06+0200\n"
 "Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
-"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Weblate 1.3-dev\n"
 "Generated-By: Babel 0.9.6\n"
-
-#: src/netzob/NetzobMainController.py:99
-msgid "Starting netzob UI"
-msgstr "Démarrage de l'interface graphique de Netzob"
-
-#: src/netzob/NetzobMainController.py:308
-msgid "A project with the same name already exists ({0}, {1}), please change it."
-msgstr "Un projet avec le même nom existe déjà ({0}, {1}), veuillez le changer."
 
 #: src/netzob/NetzobMainController.py:309
 msgid "A project with this name exists"
 msgstr "Un projet avec ce nom existe déjà"
-
-#: src/netzob/NetzobMainController.py:311
-msgid "Create new project {0}"
-msgstr "Création du nouveau projet {0}"
 
 #: src/netzob/NetzobMainController.py:324
 #: src/netzob/NetzobMainController.py:427
@@ -44,30 +30,27 @@ msgstr "Création du nouveau projet {0}"
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:172
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:197
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:213
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:299
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:310
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:321
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:332
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:345
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:357
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:388
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:406
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:426
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:461
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:484
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:497
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:510
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:522
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:533
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:540
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:580
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:597
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:301
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:312
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:323
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:334
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:347
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:359
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:390
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:408
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:428
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:463
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:486
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:499
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:512
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:524
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:535
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:542
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:582
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:599
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturerPlugin.py:127
-#: src/netzob_plugins/Capturers/IpcCapturer/build/lib.linux-i686-2.7/IpcCapturer/IpcCapturerPlugin.py:127
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerPlugin.py:127
-#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-i686-2.7/NetworkCapturer/NetworkCapturerPlugin.py:127
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExporterPlugin.py:127
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExporterPlugin.py:127
 msgid "No project selected."
 msgstr "Aucun projet sélectionné."
 
@@ -137,32 +120,17 @@ msgstr "Lisible"
 #: src/netzob/NetzobMainView.py:290
 msgid "Save the changes to the project \"{0}\" before closing?"
 msgstr ""
-"Voulez-vous sauvegarder les modifications du projet \"{0}\" avant la fermeture "
-"?"
+"Voulez-vous sauvegarder les modifications du projet \"{0}\" avant la "
+"fermeture ?"
 
 #: src/netzob/NetzobMainView.py:298
 msgid "If you don't save, changes will be permanently lost."
 msgstr ""
-"Vos modifications seront définitivement perdues si vous ne sauvegardez pas."
+"Vos modifications seront définitivement perdues si vous ne sauvegardez "
+"pas."
 
 #: src/netzob/NetzobMainView.py:300
 msgid "Close _Without Saving"
-msgstr ""
-
-#: src/netzob/Common/DepCheck.py:60
-msgid "Impossible to import the libNeedleman"
-msgstr ""
-
-#: src/netzob/Common/DepCheck.py:82
-msgid "Impossible to import the libScoreComputation"
-msgstr ""
-
-#: src/netzob/Common/DepCheck.py:104
-msgid "Impossible to import the libInterface"
-msgstr ""
-
-#: src/netzob/Common/DepCheck.py:126
-msgid "Impossible to import the libRegex"
 msgstr ""
 
 #: src/netzob/Common/Field.py:319 src/netzob/Common/Field.py:329
@@ -189,18 +157,6 @@ msgstr ""
 msgid "Name"
 msgstr "Nom"
 
-#: src/netzob/Common/Field.py:538
-msgid "Can't smooth regex from fields that are part of different layers."
-msgstr ""
-
-#: src/netzob/Common/Field.py:968
-msgid "The computing field is not part of the current symbol"
-msgstr ""
-
-#: src/netzob/Common/ResourcesConfiguration.py:73
-msgid "The static resources were not found !"
-msgstr "Les ressources statiques n'ont pas été trouvées !"
-
 #: src/netzob/Common/ResourcesConfiguration.py:110
 msgid "New Workspace"
 msgstr "Nouvel espace de travail"
@@ -210,19 +166,12 @@ msgid "Netzob"
 msgstr "Netzob"
 
 #: src/netzob/Common/SplashScreen.py:78
-msgid "Current workspace : "
+#, fuzzy
+msgid "Current workspace: {0}"
 msgstr "Espace de travail courant : "
 
 #: src/netzob/Common/SplashScreen.py:80
-msgid "Current workspace : NO WORKSPACE COMPUTED !"
-msgstr "Espace de travail courrant : AUCUN ESPACE DE TRAVAIL GÉNÉRÉ !"
-
-#: src/netzob/Common/Symbol.py:105
-msgid "Field {0} has no variable, considering default one."
-msgstr ""
-
-#: src/netzob/Common/Symbol.py:377 src/netzob/Common/TrashSymbol.py:296
-msgid "Tried to compare a Symbol with {0}"
+msgid "Current workspace: NO WORKSPACE COMPUTED!"
 msgstr ""
 
 #: src/netzob/Common/Workspace.py:186
@@ -249,8 +198,8 @@ msgstr ""
 
 #: src/netzob/Common/Workspace.py:309
 msgid ""
-"The specified workspace's configuration file ({0}) is not valid : its not"
-" a file."
+"The specified workspace's configuration file ({0}) is not valid: its not "
+"a file."
 msgstr ""
 
 #: src/netzob/Common/Workspace.py:312
@@ -261,26 +210,6 @@ msgstr ""
 msgid "The specified workspace is not valid according the XSD definitions."
 msgstr ""
 
-#: src/netzob/Common/MMSTD/Dictionary/AbstractionLayer.py:207
-msgid "Try to abstract message through : {0}."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/AbstractionLayer.py:211
-msgid "ReadingToken: isOk: {0}, index: {1}, len(value): {2}"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/AbstractionLayer.py:214
-msgid "The message matches symbol {0}."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/AbstractionLayer.py:218
-msgid "The message doesn't match symbol {0}."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:75
-msgid "The delimiter {0} is not a valid hexadecimal string."
-msgstr ""
-
 #: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:79
 msgid "{0}, bits: ({1}, {2}), chars: ({3}, {4})"
 msgstr ""
@@ -288,25 +217,6 @@ msgstr ""
 #: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:81
 msgid "{0}, delimiter: {1}"
 msgstr "{0}, délimiteur : {1}"
-
-#: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:140
-#: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:148
-#: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:165
-msgid "Format comparison successful."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:143
-#: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:151
-msgid "Format comparison failed: wrong format."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:154
-msgid "Format comparison failed: wrong size."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:169
-msgid "Format comparison failed: no delimiter found."
-msgstr ""
 
 #: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:192
 msgid "The current type does not implement 'mutateValue'."
@@ -345,21 +255,6 @@ msgstr ""
 msgid "The current type does not implement 'suitsBinary'."
 msgstr ""
 
-#: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:318
-msgid "Type {0} : minChars undefined or < 0. MinBits value is fixed to 0."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:325
-msgid ""
-"Type {0} : maxChars undefined or < minChars. MaxBits value is fixed to "
-"minBits."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:357
-#: src/netzob/Common/MMSTD/Dictionary/RelationTypes/AbstractRelationType.py:131
-msgid "Wrong type specified for this variable."
-msgstr ""
-
 #: src/netzob/Common/MMSTD/Dictionary/RelationTypes/AbstractRelationType.py:64
 msgid "{0}, associatedDataType: {1}"
 msgstr ""
@@ -375,10 +270,6 @@ msgstr ""
 #: src/netzob/Common/MMSTD/Dictionary/Values/AbstractValue.py:58
 msgid "Import from File"
 msgstr "Importer depuis un fichier"
-
-#: src/netzob/Common/MMSTD/Dictionary/VariableProcessingToken/AbstractVariableProcessingToken.py:97
-msgid "The token's ok flag is set to {0}."
-msgstr ""
 
 #: src/netzob/Common/MMSTD/Dictionary/VariableProcessingToken/VariableReadingToken.py:63
 msgid "ReadingToken: isOk: {0}, value left: {1}"
@@ -424,70 +315,10 @@ msgstr ""
 msgid "The current variable does not implement 'writeValue'."
 msgstr ""
 
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractLeafVariable.py:167
-msgid "[ {0} (leaf): read access:"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractLeafVariable.py:211
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:347
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:278
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:346
-msgid "Read abort: the variable is neither defined, nor mutable."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractLeafVariable.py:218
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractLeafVariable.py:274
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:325
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:352
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AlternateVariable.py:104
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AlternateVariable.py:207
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AlternateVariable.py:260
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AlternateVariable.py:287
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:260
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:286
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:354
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:382
-#: src/netzob/Common/MMSTD/Dictionary/Variables/RepeatVariable.py:140
-#: src/netzob/Common/MMSTD/Dictionary/Variables/RepeatVariable.py:181
-#: src/netzob/Common/MMSTD/Dictionary/Variables/RepeatVariable.py:240
-#: src/netzob/Common/MMSTD/Dictionary/Variables/RepeatVariable.py:267
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:285
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:325
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:353
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:381
-msgid "Variable {0}: {1}. ]"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractLeafVariable.py:224
-msgid "[ {0} (leaf): write access:"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractLeafVariable.py:267
-msgid "Write abort: the variable is neither defined, nor mutable."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractNodeVariable.py:75
-msgid ""
-"Wrong position given, nothing is done: the position {0} is without the "
-"boundaries [0, {1}]"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractNodeVariable.py:113
-msgid "-  {0}: shuffleChildren."
-msgstr ""
-
 #: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractNodeVariable.py:126
 #: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractNodeVariable.py:134
 msgid "[ {0}, children:\n"
 msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractNodeVariable.py:140
-msgid "[ {0}: children's memorized value are restored."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractNodeVariable.py:143
-msgid "Variable {0}: ]"
-msgstr "Variable {0}:]"
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractVariable.py:79
 msgid "Variable {0} ({3}) (mutable: {1}, learnable: {2})"
@@ -513,219 +344,13 @@ msgstr ""
 msgid "The current variable does not implement 'write'."
 msgstr ""
 
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractVariable.py:284
-msgid "[ AbstractVariable: loadFromXML:"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractVariable.py:316
-msgid ""
-"xmlRoot.get(...) returns {0} which does not correspond to a true variable"
-" class."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractVariable.py:317
-msgid "AbstractVariable: loadFromXML ]"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractVariable.py:319
-msgid "Version != 0.1"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:76
-msgid "- [ {0}: sortChildrenToRead."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:140
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:187
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:231
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:271
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AlternateVariable.py:172
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:139
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:147
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:182
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:230
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:267
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:288
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:316
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:103
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:157
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:166
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:399
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:417
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_ComputedRelationVariable.py:90
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_ComputedRelationVariable.py:138
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_DirectRelationVariable.py:108
-msgid "Variable {0}: {1}. ] -"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:150
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:241
-msgid "- [ {0}: readChildren."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:200
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AlternateVariable.py:115
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:235
-msgid "- [ {0}: learn."
-msgstr ""
-
 #: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:287
 msgid "[Aggregate] {0} ({1})"
 msgstr "[Agrégat] {0} ({1})"
 
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:306
-#: src/netzob/Common/MMSTD/Dictionary/Variables/RepeatVariable.py:227
-msgid "[ {0} (Aggregate): read access:"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:318
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:345
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AlternateVariable.py:253
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AlternateVariable.py:280
-#: src/netzob/Common/MMSTD/Dictionary/Variables/RepeatVariable.py:233
-#: src/netzob/Common/MMSTD/Dictionary/Variables/RepeatVariable.py:260
-msgid "Write abort: the variable has no child."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:332
-#: src/netzob/Common/MMSTD/Dictionary/Variables/RepeatVariable.py:247
-msgid "[ {0} (Aggregate): write access:"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:359
-msgid "[ {0} (Aggregate): toXML:"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:370
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:311
-#: src/netzob/Common/MMSTD/Dictionary/Variables/RepeatVariable.py:292
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_ComputedRelationVariable.py:115
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_DirectRelationVariable.py:97
-msgid "Variable {0}. ]"
-msgstr "Variable {0}.]"
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:380
-msgid "[ AggregateVariable: loadFromXML:"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:391
-msgid "AggregateVariable: loadFromXML successes: {0} ]"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:393
-msgid "AggregateVariable: loadFromXML fails"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AlternateVariable.py:75
-msgid "[ {0} (Alternate): readChildren:"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AlternateVariable.py:136
-msgid "The father is neither an aggregate nor a repeat variable."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AlternateVariable.py:180
-msgid "[ {0} (Alternate): writeChildren:"
-msgstr ""
-
 #: src/netzob/Common/MMSTD/Dictionary/Variables/AlternateVariable.py:223
 msgid "[Alternate] {0} ({1})"
 msgstr "[Alternat] {0} ({1})"
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AlternateVariable.py:240
-msgid "[ {0} (Alternate): read access:"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AlternateVariable.py:267
-msgid "[ {0} (Alternate): write access:"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AlternateVariable.py:313
-msgid "[ AlternateVariable: loadFromXML:"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AlternateVariable.py:325
-msgid "AlternateVariable: loadFromXML successes: {0} ]"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AlternateVariable.py:327
-msgid "AlternateVariable: loadFromXML fails"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:84
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:79
-msgid "We found the pointed value."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:88
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:83
-msgid "The pointing value is after the pointed value in the same tree."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:91
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:86
-msgid "The pointing value is before the pointed value or in a different tree."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:93
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:88
-msgid "Default case."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:103
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:124
-msgid "- {0}: retrieveValue."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:124
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:273
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:142
-msgid "- [ {0}: compare."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:129
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:279
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:147
-msgid "Comparison successful."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:134
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:284
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:152
-msgid "Comparison failed: wrong value."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:137
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:287
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:155
-msgid "Comparison failed: wrong size."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:145
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:226
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_ComputedRelationVariable.py:136
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_DirectRelationVariable.py:106
-msgid "- [ {0}: compareFormat."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:165
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:301
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_ComputedRelationVariable.py:150
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_DirectRelationVariable.py:124
-msgid "- {0}: generate."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:172
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_ComputedRelationVariable.py:157
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_DirectRelationVariable.py:135
-msgid "- {0}: computeValue."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:180
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:309
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:164
-msgid "- [ {0}: writeValue."
-msgstr ""
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:195
 #: src/netzob/Common/MMSTD/Dictionary/Variables/_ComputedRelationVariable.py:82
@@ -739,148 +364,12 @@ msgstr ""
 msgid "[{0}]"
 msgstr "[{0}]"
 
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:238
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:336
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:257
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:338
-msgid "[ {0} (relation): read access:"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:253
-msgid "Read abort: the variable is not defined."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:266
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:291
-msgid "[ {0} (relation): write access:"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:279
-msgid "Write abort: the variable is not defined."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:292
-#: src/netzob/Common/MMSTD/Dictionary/Variables/RepeatVariable.py:274
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_ComputedRelationVariable.py:96
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_DirectRelationVariable.py:86
-msgid "[ {0}: toXML:"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:364
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:363
-msgid "[ {0} (relation): notifiedWrite access:"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:375
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:318
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:374
-msgid "Write abort: the variable is neither defined, nor random."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:421
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_ComputedRelationVariable.py:189
-msgid "[ ComputedRelationVariable: loadFromXML:"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:464
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:416
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_ComputedRelationVariable.py:232
-msgid "No type specified for this variable in the xml file."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:471
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_ComputedRelationVariable.py:239
-msgid "ComputedRelationVariable: loadFromXML successes: {0} ]"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:473
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_ComputedRelationVariable.py:241
-msgid "ComputedRelationVariable: loadFromXML fails"
-msgstr ""
-
 #: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:86
 msgid "[Data] {0}, type: {1}, original value: {2}"
 msgstr ""
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:129
 msgid "{0}, value: {1}"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:155
-msgid "- {0}: memorized value is restored."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:162
-msgid "- {0}: toXML:"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:204
-msgid "- {0}: value is forgotten."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:212
-msgid "- {0}: value is recalled."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:219
-msgid "- {0}: value is memorized."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:263
-msgid "Learning done."
-msgstr "Apprentissage terminé."
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:265
-msgid "Learning abort because the previous format comparison failed."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:294
-msgid "- {0}: mutate."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:335
-msgid "Variable {0} (Data): type undefined."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:346
-msgid "Variable {0} (Data): The given original value has an inappropriate size."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:352
-msgid "Variable {0} (Data): The given original value is None."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:366
-msgid "[ DataVariable: loadFromXML:"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:420
-msgid "DataVariable: loadFromXML successes: {0} ]"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:422
-msgid "DataVariable: loadFromXML fails"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/RepeatVariable.py:77
-msgid ""
-"Variable {0} (Repeat): Construction of RepeatVariable: minIterations "
-"undefined or < 0. minIterations value is fixed to 0."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/RepeatVariable.py:82
-msgid ""
-"Variable {0} (Repeat): Construction of RepeatVariable: maxIterations "
-"undefined or < minIterations. maxIterations value is fixed to "
-"minIterations."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/RepeatVariable.py:90
-msgid "[ {0}: read access:"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/RepeatVariable.py:146
-msgid "[ {0}: write access:"
 msgstr ""
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/RepeatVariable.py:205
@@ -894,22 +383,6 @@ msgid ""
 " - {1}]"
 msgstr ""
 
-#: src/netzob/Common/MMSTD/Dictionary/Variables/RepeatVariable.py:319
-msgid "[ RepeatVariable: loadFromXML:"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/RepeatVariable.py:344
-msgid "RepeatVariable: loadFromXML successes: {0} ]"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/RepeatVariable.py:346
-msgid "RepeatVariable: loadFromXML fails"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:98
-msgid "- [ {0}: randomizePointedVariable."
-msgstr ""
-
 #: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:189
 msgid "The current variable does not implement 'lightRead'."
 msgstr ""
@@ -918,64 +391,22 @@ msgstr ""
 msgid "The current variable does not implement 'computeValue'."
 msgstr ""
 
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:392
-msgid "- [ {0}: notifiedWriteValue."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:408
-msgid "- [ {0}: notifiedCompare."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_ComputedRelationVariable.py:88
-msgid "- [ {0}: trivialCompareFormat."
-msgstr ""
-
 #: src/netzob/Common/MMSTD/Dictionary/Variables/_DirectRelationVariable.py:73
 msgid "[Direct Relation] {0}, pointed ID: {1}"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_DirectRelationVariable.py:146
-msgid "[ DirectRelationVariable: loadFromXML:"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_DirectRelationVariable.py:155
-msgid "DirectRelationVariable: loadFromXML successes: {0} ]"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_DirectRelationVariable.py:157
-msgid "DirectRelationVariable: loadFromXML fails"
 msgstr ""
 
 #: src/netzob/Common/Plugins/Capturers/AbstractCapturer.py:72
 #: src/netzob/Import/AbstractImporter.py:72
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturer.py:233
-#: src/netzob_plugins/Capturers/IpcCapturer/build/lib.linux-i686-2.7/IpcCapturer/IpcCapturer.py:233
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturer.py:272
-#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-i686-2.7/NetworkCapturer/NetworkCapturer.py:272
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:274
-#: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-i686-2.7/PCAPImporter/PCAPImporter.py:274
 msgid "Message ID: {0} not found in importer message list"
-msgstr ""
-
-#: src/netzob/Export/RawExport.py:59 src/netzob/Export/ScapyExport.py:59
-#: src/netzob/Export/TextExport.py:59
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:91
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExport.py:91
-msgid "Impossible to retrieve the symbol having the id {0}"
 msgstr ""
 
 #: src/netzob/Fuzzing/File.py:142 src/netzob/Fuzzing/Ipc.py:145
 #: src/netzob/Fuzzing/Network.py:225
 msgid "Fuzz field"
 msgstr "Fuzzer les champs"
-
-#: src/netzob/Fuzzing/File.py:149
-msgid "Fuzz field : {0}"
-msgstr "Fuzzer le champ : {0}"
-
-#: src/netzob/Fuzzing/Ipc.py:152 src/netzob/Fuzzing/Network.py:232
-msgid "Fuzz field: {0}"
-msgstr "Fuzzer le champ : {0}"
 
 #: src/netzob/Fuzzing/Network.py:125
 msgid "Filter"
@@ -1005,10 +436,6 @@ msgstr "Port source"
 msgid "dport"
 msgstr "Port destination"
 
-#: src/netzob/Fuzzing/Network.py:261
-msgid "Launching fuzzing process with : filter=\"{0}\""
-msgstr "Lancement du processus de fuzzing avec : filter=\"{0}\""
-
 #: src/netzob/Fuzzing/UIfuzzing.py:93
 msgid "Network fuzzing"
 msgstr "Fuzzing réseau"
@@ -1029,10 +456,6 @@ msgstr "Fuzzing de fichier"
 msgid "Symbols"
 msgstr "Symboles"
 
-#: src/netzob/Fuzzing/TreeViews/TreeSymbolGenerator.py:99
-msgid "Updating the treestore of the symbol in default mode"
-msgstr ""
-
 #: src/netzob/Fuzzing/TreeViews/TreeTypeStructureGenerator.py:70
 msgid "iCol"
 msgstr ""
@@ -1052,14 +475,6 @@ msgstr "Valeur"
 #: resources/static/netzob/ui/vocabulary/editFieldDialog.glade:35
 msgid "Description"
 msgstr "Description"
-
-#: src/netzob/Fuzzing/TreeViews/TreeTypeStructureGenerator.py:97
-msgid "The treeview for the messages is in error mode"
-msgstr ""
-
-#: src/netzob/Import/ApiImport.py:87
-msgid "Unable to find a repository file for API injector."
-msgstr "Impossible de trouver un dépôt de fichier pour l'injecteur d'API."
 
 #: src/netzob/Import/ApiImport.py:100
 msgid "Update processes list"
@@ -1104,79 +519,6 @@ msgstr "Paramètre"
 msgid "Data"
 msgstr "Données"
 
-#: src/netzob/Import/ApiImport.py:242
-msgid "A selected process cannot be found !"
-msgstr ""
-
-#: src/netzob/Import/ApiImport.py:263
-msgid "The selected process cannot be find !"
-msgstr ""
-
-#: src/netzob/Import/ApiImport.py:280 src/netzob/Import/ApiImport.py:304
-msgid "You have to select a process if you want to capture it"
-msgstr "Vous devez sélectionner un processus si vous voulez le capturer"
-
-#: src/netzob/Import/ApiImport.py:283 src/netzob/Import/ApiImport.py:307
-msgid "You have to select a DLL if you want to capture it"
-msgstr "Vous devez sélectionner une DLL si vous voulez la capturer"
-
-#: src/netzob/Import/ApiImport.py:295
-msgid "Impossible to retrieve the selected function"
-msgstr ""
-
-#: src/netzob/Import/ApiImport.py:297
-msgid "Selected function done!"
-msgstr ""
-
-#: src/netzob/Import/ApiImport.py:310
-msgid "You have to select a function if you want to capture it"
-msgstr ""
-
-#: src/netzob/Import/ApiImport.py:315
-msgid "Temporary folder: {0}"
-msgstr "Répertoire temporaire : {0}"
-
-#: src/netzob/Import/ApiImport.py:336
-msgid "Starting the capture of [{0}]"
-msgstr ""
-
-#: src/netzob/Import/ApiImport.py:337
-msgid "DLL [{0}]"
-msgstr "DLL [{0}]"
-
-#: src/netzob/Import/ApiImport.py:338
-msgid "Function [{0}]"
-msgstr "Fonction [{0}]"
-
-#: src/netzob/Import/ApiImport.py:343
-msgid "FIFO: {0}"
-msgstr ""
-
-#: src/netzob/Import/ApiImport.py:350
-msgid "Creating the FIFO file: {0}"
-msgstr ""
-
-#: src/netzob/Import/ApiImport.py:355
-#, python-format
-msgid "Failed to create FIFO: %s"
-msgstr ""
-
-#: src/netzob/Import/ApiImport.py:358
-msgid "The fifo has been created..."
-msgstr ""
-
-#: src/netzob/Import/ApiImport.py:371
-msgid "Cannot execute GOT Poisoning since FIFO file was not created !"
-msgstr ""
-
-#: src/netzob/Import/ApiImport.py:381
-msgid "Stoping the capture..."
-msgstr "Arrêter la capture..."
-
-#: src/netzob/Import/ApiImport.py:389
-msgid "Reading finish, we close the FIFO."
-msgstr ""
-
 #: src/netzob/Import/ThirdPartyImport.py:97
 msgid "Import data from third parties"
 msgstr ""
@@ -1202,20 +544,8 @@ msgstr "ID de message"
 msgid "Import"
 msgstr "Importer"
 
-#: src/netzob/Import/ThirdPartyImport.py:212 src/netzob/Import/XMLImport.py:175
-msgid "Impossible to retrieve the message the user clicked on. Hum ?"
-msgstr ""
-
 #: src/netzob/Import/ThirdPartyImport.py:229
 msgid "Cannot load file {0}, its not a file."
-msgstr ""
-
-#: src/netzob/Import/ThirdPartyImport.py:235
-msgid "Impossible to find a plugin to import data from."
-msgstr ""
-
-#: src/netzob/Import/ThirdPartyImport.py:237
-msgid "A number of {0} messages were extracted."
 msgstr ""
 
 #: src/netzob/Import/ThirdPartyImport.py:270 src/netzob/Import/XMLImport.py:199
@@ -1248,103 +578,19 @@ msgstr "Contenu"
 
 #: src/netzob/Import/XMLImport.py:191
 msgid "Are you sure to import the {0} computed messages in project {1}?"
-msgstr ""
-"Êtes-vous sur d'importer les {0} paquets sélectionnés dans le projet {1} ?"
-
-#: src/netzob/Import/XMLImport.py:254
-msgid "The specified XML file {0} is not valid according to the XSD ({1})."
-msgstr ""
-
-#: src/netzob/Import/XMLImport.py:256
-msgid "XML file valid according to the XSD schema"
-msgstr ""
-
-#: src/netzob/Import/XMLImport.py:265
-msgid "XML String data: {0}"
-msgstr ""
+msgstr "Êtes-vous sur d'importer les {0} paquets sélectionnés dans le projet {1} ?"
 
 #: src/netzob/Import/TreeViews/TreeProcessesGenerator.py:79
 msgid "Processes"
 msgstr "Processus"
-
-#: src/netzob/Import/TreeViews/TreeProcessesGenerator.py:103
-msgid "Updating the treestore of the processes in default mode"
-msgstr ""
-
-#: src/netzob/Import/TreeViews/TreeProcessesGenerator.py:112
-msgid "Updating the list of executing processes."
-msgstr ""
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarAbstractionView.py:64
 msgid "Automatic abstraction of the current grammar"
 msgstr ""
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarAbstractionView.py:68
-#: src/netzob/Inference/Grammar/AutomaticGrammarAbstractionView.py:76
 msgid "Start the abstraction"
 msgstr "Créer une abstraction"
-
-#: src/netzob/Inference/Grammar/AutomaticGrammarAbstractionView.py:80
-#, python-format
-msgid "A number of %d sessions will be injected in the grammar"
-msgstr ""
-
-#: src/netzob/Inference/Grammar/AutomaticGrammarAbstractionView.py:83
-msgid "Search for a difference with a new session"
-msgstr ""
-
-#: src/netzob/Inference/Grammar/AutomaticGrammarAbstractionView.py:89
-#, python-format
-msgid "A difference has been found, symbol %s must be added to transition %s"
-msgstr ""
-
-#: src/netzob/Inference/Grammar/AutomaticGrammarAbstractionView.py:94
-msgid "The current session does not introduce other differences"
-msgstr ""
-
-#: src/netzob/Inference/Grammar/AutomaticGrammarAbstractionView.py:95
-msgid "All the sessions have been applied on current automata"
-msgstr ""
-
-#: src/netzob/Inference/Grammar/AutomaticGrammarAbstractionView.py:98
-#, python-format
-msgid "Adding symbol %s as an output transition %s."
-msgstr ""
-
-#: src/netzob/Inference/Grammar/AutomaticGrammarAbstractionView.py:118
-#, python-format
-msgid "automata : %s"
-msgstr "automate : %s"
-
-#: src/netzob/Inference/Grammar/AutomaticGrammarAbstractionView.py:121
-msgid "Cannot apply a session on the current automata because it doesn't exist"
-msgstr ""
-
-#: src/netzob/Inference/Grammar/AutomaticGrammarAbstractionView.py:141
-#, python-format
-msgid "Inject message : %s"
-msgstr "Injecter le message : %s"
-
-#: src/netzob/Inference/Grammar/AutomaticGrammarAbstractionView.py:154
-#, python-format
-msgid "Input symbol %s doesn't match any existing transition in current state %s"
-msgstr ""
-
-#: src/netzob/Inference/Grammar/AutomaticGrammarAbstractionView.py:155
-msgid "We forget this message."
-msgstr ""
-
-#: src/netzob/Inference/Grammar/AutomaticGrammarAbstractionView.py:157
-#, python-format
-msgid "Input symbol %s matchs the transition %s from state %s"
-msgstr ""
-
-#: src/netzob/Inference/Grammar/AutomaticGrammarAbstractionView.py:171
-#, python-format
-msgid ""
-"A difference has been found, symbol %s is not an output symbol of "
-"transition %s"
-msgstr ""
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:73
 msgid "Configuration of the automatic inference"
@@ -1419,48 +665,10 @@ msgstr "Stop"
 msgid "Save as Grammar"
 msgstr "Sauvegarder la grammaire"
 
-#: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:218
-msgid "Impossible to show a Null query"
-msgstr "Impossible d'afficher une requête nulle"
-
-#: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:252
-msgid "Stop the inferer"
-msgstr ""
-
-#: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:262
-msgid "Saving the computed automata as the grammar of current project"
-msgstr ""
-
 #: src/netzob/Inference/Vocabulary/SearchView.py:84
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:162
 msgid "Search"
 msgstr "Rechercher"
-
-#: src/netzob/Inference/Vocabulary/SearchView.py:97
-msgid ""
-"Do not start the searching process since no pattern was provided by the "
-"user"
-msgstr ""
-
-#: src/netzob/Inference/Vocabulary/SearchView.py:102
-msgid "Do not start the searching process since no type was provided by the user"
-msgstr ""
-
-#: src/netzob/Inference/Vocabulary/SearchView.py:105
-msgid "User searches for {0} of type {1}"
-msgstr ""
-
-#: src/netzob/Inference/Vocabulary/SearchView.py:129
-msgid "No data to search after were computed."
-msgstr ""
-
-#: src/netzob/Inference/Vocabulary/SearchView.py:132
-msgid "The following data will be searched for:"
-msgstr ""
-
-#: src/netzob/Inference/Vocabulary/SearchView.py:138
-msgid "A number of {0} results found!"
-msgstr ""
 
 #: src/netzob/Inference/Vocabulary/SearchView.py:168
 msgid "Search results"
@@ -1478,16 +686,6 @@ msgstr "Description de la variable"
 #: src/netzob/Inference/Vocabulary/_VariableView.py:113
 msgid "Create"
 msgstr "Créer"
-
-#: src/netzob/Inference/Vocabulary/_VariableView.py:123
-msgid "Register: {0}"
-msgstr ""
-
-#: src/netzob/Inference/Vocabulary/_VariableView.py:162
-#: src/netzob/UI/Vocabulary/Controllers/VariableController.py:154
-#: src/netzob/UI/Vocabulary/Controllers/VariableController.py:885
-msgid "Impossible to find the selected variable."
-msgstr ""
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:171
 msgid "Word"
@@ -1645,6 +843,7 @@ msgid "Representation"
 msgstr "Représentation"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:717
+#: resources/static/netzob/ui/vocabulary/partitioning/simplePartitioning.glade:24
 msgid "Format:"
 msgstr "Format :"
 
@@ -1733,19 +932,12 @@ msgstr ""
 msgid "Specify the name and the source code of your Function"
 msgstr ""
 
-#: src/netzob/UI/Export/Controllers/RawExportController.py:92
-#: src/netzob/UI/Export/Controllers/ScapyExportController.py:92
-#: src/netzob/UI/Export/Controllers/TextExportController.py:91
-msgid "No selected symbol"
-msgstr "Aucun symbole sélectionné"
-
 #: src/netzob/UI/Export/Controllers/RawExportController.py:93
 msgid "Select a symbol to see its XML definition"
 msgstr "Sélectionner un symbole pour voir sa définition XML"
 
 #: src/netzob/UI/Export/Controllers/RawExportController.py:100
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:175
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExportController.py:175
 msgid "No XML definition found"
 msgstr "Aucune définition XML trouvée"
 
@@ -1979,12 +1171,6 @@ msgstr ""
 msgid "Click yes to confirm the deletion of the selected actor"
 msgstr "Cliquez sur oui pour valider la suppression de l'acteur sélectionné"
 
-#: src/netzob/UI/Vocabulary/Controllers/EnvironmentDependenciesSearcherController.py:87
-msgid ""
-"Error while proceeding to the environmental search dependencies on "
-"symbols: {0}"
-msgstr ""
-
 #: src/netzob/UI/Vocabulary/Controllers/FindSizeFieldsController.py:83
 msgid "Size Fields Identifications"
 msgstr ""
@@ -1997,29 +1183,12 @@ msgstr ""
 msgid "Start"
 msgstr "Démarrer"
 
-#: src/netzob/UI/Vocabulary/Controllers/FindSizeFieldsController.py:123
-msgid "Error while proceeding to the size field identification: {0}"
-msgstr ""
-
 #: src/netzob/UI/Vocabulary/Controllers/FindSizeFieldsController.py:235
 msgid "size field"
 msgstr "taille du champ"
 
 #: src/netzob/UI/Vocabulary/Controllers/FindSizeFieldsController.py:236
 msgid "start of payload"
-msgstr ""
-
-#: src/netzob/UI/Vocabulary/Controllers/MessageTableController.py:130
-msgid "Impossible to retrieve the clicked field !"
-msgstr ""
-
-#: src/netzob/UI/Vocabulary/Controllers/MessagesDistributionController.py:130
-#: src/netzob/UI/Vocabulary/Controllers/RelationsController.py:66
-msgid "Open a project before..."
-msgstr ""
-
-#: src/netzob/UI/Vocabulary/Controllers/ResearchController.py:105
-msgid "Error while proceeding to the arbitrary search process: {0}"
 msgstr ""
 
 #: src/netzob/UI/Vocabulary/Controllers/ResearchController.py:132
@@ -2037,12 +1206,8 @@ msgstr ""
 msgid "{0} occurrence found."
 msgstr ""
 
-#: src/netzob/UI/Vocabulary/Controllers/ResearchController.py:185
-msgid "Error while proceeding to the search process: {0}"
-msgstr ""
-
 #: src/netzob/UI/Vocabulary/Controllers/ResearchController.py:277
-msgid "{0}/{1} : {2}"
+msgid "{0}/{1}: {2}"
 msgstr ""
 
 #: src/netzob/UI/Vocabulary/Controllers/SplitFieldController.py:90
@@ -2069,69 +1234,61 @@ msgstr ""
 msgid "Click yes to confirm the removal of the variable {0}"
 msgstr "Cliquez sur oui pour confirmer la suppression de la variable {0}"
 
-#: src/netzob/UI/Vocabulary/Controllers/VariableController.py:219
-msgid "The user didn't confirm the deletion of the variable {0}"
-msgstr "L'utilisateur n'a pas confirmé la suppression de la variable {0}"
-
 #: src/netzob/UI/Vocabulary/Controllers/VariableController.py:228
 msgid "Click yes to confirm the edition of the variable {0}"
 msgstr "Cliquez sur oui pour confirmer l'édition de la variable {0}"
-
-#: src/netzob/UI/Vocabulary/Controllers/VariableController.py:252
-msgid "The user didn't confirm the edition of the variable {0}"
-msgstr "L'utilisateur n'a pas confirmé l'édition de la variable {0}"
 
 #: src/netzob/UI/Vocabulary/Controllers/VariableController.py:892
 msgid "Select this element"
 msgstr ""
 
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:303
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:305
 msgid "No layer(s) selected."
 msgstr "Aucune couche sélectionnée."
 
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:314
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:325
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:336
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:349
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:514
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:526
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:585
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:316
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:327
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:338
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:351
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:516
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:528
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:587
 msgid "No symbol(s) selected."
 msgstr "Aucun symbole sélectionné."
 
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:361
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:410
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:363
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:412
 msgid "No selected symbol."
 msgstr "Aucun symbole sélectionné."
 
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:365
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:367
 msgid "You need to select at least two fields."
 msgstr ""
 
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:401
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:414
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:403
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:416
 msgid "No selected field."
 msgstr "Aucun champs sélectionné."
 
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:430
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:432
 #, fuzzy
 msgid "Not selected message(s)."
 msgstr "Supprimer le message"
 
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:465
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:467
 #, fuzzy
 msgid "No selected message(s)."
 msgstr "Supprimer le message"
 
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:467
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:469
 msgid "Click yes to confirm the deletion of the selected message(s)"
 msgstr "Cliquez sur oui pour confirmer la suppression du message sélectionné"
 
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:591
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:593
 msgid "Fields limits computed."
 msgstr ""
 
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:602
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:604
 msgid "No importer plugin available."
 msgstr ""
 
@@ -2147,25 +1304,14 @@ msgstr ""
 msgid "Rename the layer {0}"
 msgstr "Renommer la couche {0}"
 
-#: src/netzob/UI/Vocabulary/Controllers/Menus/ContextualMenuOnLayerController.py:176
-msgid "Renamed layer {0} to {1}"
-msgstr "Couche renommée de {0} à ({1})"
-
-#: src/netzob/UI/Vocabulary/Controllers/Partitioning/ForcePartitioningController.py:101
-msgid "Error while proceeding to the force partitioning of fields: {0}"
-msgstr ""
-
 #: src/netzob/UI/Vocabulary/Controllers/Partitioning/ForcePartitioningController.py:121
 msgid "Force partitioning field {0}"
 msgstr "Partitionnement forcé du champ {0}"
 
 #: src/netzob/UI/Vocabulary/Controllers/Partitioning/ForcePartitioningController.py:129
-msgid "Force partitioning finished !"
+#, fuzzy
+msgid "Force partitioning finished!"
 msgstr "Partitionnement forcé terminé !"
-
-#: src/netzob/UI/Vocabulary/Controllers/Partitioning/ResetPartitioningController.py:94
-msgid "Error while proceeding to the reseting of fields: {0}"
-msgstr ""
 
 #: src/netzob/UI/Vocabulary/Controllers/Partitioning/ResetPartitioningController.py:113
 #, fuzzy
@@ -2173,25 +1319,14 @@ msgid "Reset field {0}"
 msgstr "Fuzzer le champ : {0}"
 
 #: src/netzob/UI/Vocabulary/Controllers/Partitioning/ResetPartitioningController.py:121
-msgid "Reset finished !"
-msgstr ""
-
-#: src/netzob/UI/Vocabulary/Controllers/Partitioning/SequenceAlignmentController.py:116
-msgid "Error while proceeding to the alignment: {0}"
-msgstr ""
-
-#: src/netzob/UI/Vocabulary/Controllers/Partitioning/SimplePartitioningController.py:104
-msgid "Error while proceeding to the simple partitioning of fields: {0}"
-msgstr ""
+#, fuzzy
+msgid "Reset finished!"
+msgstr "Fuzzer le champ : {0}"
 
 #: src/netzob/UI/Vocabulary/Controllers/Partitioning/SimplePartitioningController.py:123
 #, fuzzy
 msgid "Simple partitioning field {0}"
 msgstr "Partitionnement simple"
-
-#: src/netzob/UI/Vocabulary/Controllers/Partitioning/SmoothPartitioningController.py:95
-msgid "Error while proceeding to the smoothing of fields: {0}"
-msgstr ""
 
 #: src/netzob/UI/Vocabulary/Controllers/Partitioning/SmoothPartitioningController.py:114
 #, fuzzy
@@ -2199,16 +1334,18 @@ msgid "Smooth field {0}"
 msgstr "Fuzzer le champ : {0}"
 
 #: src/netzob/UI/Vocabulary/Controllers/Partitioning/SmoothPartitioningController.py:122
-msgid "Smooth finished !"
-msgstr ""
+#, fuzzy
+msgid "Smooth finished!"
+msgstr "Fuzzer le champ : {0}"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:61
-#: resources/static/netzob/ui/vocabulary/editFieldDialog.glade:7
-msgid "Edit field"
+#, fuzzy
+msgid "Edit Field"
 msgstr "Éditer le champ"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:68
-msgid "Field visualization"
+#, fuzzy
+msgid "Field Visualization"
 msgstr "Visualisation du champ"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:75
@@ -2216,28 +1353,33 @@ msgid "Configure Transformation Functions"
 msgstr ""
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:81
-msgid "Create layer"
+#, fuzzy
+msgid "Create Layer"
 msgstr "Créer une couche"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:87
-msgid "Edit variable"
+#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:52
+#, fuzzy
+msgid "Edit Variable"
 msgstr "Éditer la variable"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:93
-#: resources/static/netzob/ui/vocabulary/fieldAnalysis.glade:24
-msgid "Field analysis"
+msgid "Field Analysis"
 msgstr ""
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:99
-msgid "Extract fields to a new symbol"
-msgstr ""
+#, fuzzy
+msgid "Extract Fields To A New Symbol"
+msgstr "Créer un nouveau symbole"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:105
-msgid "Delete message"
+#, fuzzy
+msgid "Delete Message"
 msgstr "Supprimer le message"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:112
-msgid "Copy to clipboard"
+#, fuzzy
+msgid "Copy To Clipboard"
 msgstr "Copier dans le presse papier"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:163
@@ -2262,27 +1404,33 @@ msgid "Endianess"
 msgstr "Boutisme"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:237
-msgid "Raw message"
+#, fuzzy
+msgid "Raw Message"
 msgstr "Message brut"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:241
-msgid "Aligned raw message"
+#, fuzzy
+msgid "Aligned Raw Message"
 msgstr "Message brut aligné"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:245
-msgid "Aligned formatted message"
-msgstr ""
+#, fuzzy
+msgid "Aligned Formatted Message"
+msgstr "Message brut aligné"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:249
-msgid "Raw field"
+#, fuzzy
+msgid "Raw Field"
 msgstr "Champ brut"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:253
-msgid "Formatted field"
+#, fuzzy
+msgid "Formatted Field"
 msgstr "Champ formaté"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:65
-msgid "Edit layer"
+#, fuzzy
+msgid "Edit Layer"
 msgstr "Éditer la couche"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:73
@@ -2299,91 +1447,60 @@ msgid "Transformation Functions"
 msgstr ""
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:95
-msgid "Delete layer"
+#, fuzzy
+msgid "Delete Layer"
 msgstr "Supprimer la couche"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:132
-msgid "Create your Function"
+#, fuzzy
+msgid "Create Your Function"
 msgstr "Créer une nouvelle fonction"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:234
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:117
-#: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:12
-msgid "Sequence alignment"
-msgstr "Alignement de séquence"
+msgid "Sequence Alignment"
+msgstr "Alignement de séquences"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:240
-msgid "Force partitionment"
+#, fuzzy
+msgid "Force Partitionment"
 msgstr "Partitionnement forcé"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:246
 #, fuzzy
-msgid "Simple partitionment"
+msgid "Simple Partitionment"
 msgstr "Partitionnement simple"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:252
-msgid "Smooth partitionment"
+#, fuzzy
+msgid "Smooth Partitionment"
 msgstr "Annuler le partitionnement"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:258
-msgid "Reset partitionment"
+#, fuzzy
+msgid "Reset Partitionment"
 msgstr "Annuler le partitionnement"
 
-#: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturer.py:171
-#: src/netzob_plugins/Capturers/IpcCapturer/build/lib.linux-i686-2.7/IpcCapturer/IpcCapturer.py:171
-msgid "Launching sniff process"
-msgstr "Lancement du processus d'écoute"
-
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturerPlugin.py:55
-#: src/netzob_plugins/Capturers/IpcCapturer/build/lib.linux-i686-2.7/IpcCapturer/IpcCapturerPlugin.py:55
 msgid "Provide the possibility to capture IPC trafic."
 msgstr ""
 
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturerView.py:71
-#: src/netzob_plugins/Capturers/IpcCapturer/build/lib.linux-i686-2.7/IpcCapturer/IpcCapturerView.py:71
 msgid "Capture IPC messages"
 msgstr "Capturer les messages IPC"
 
-#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturer.py:97
-#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-i686-2.7/NetworkCapturer/NetworkCapturer.py:97
-msgid ""
-"You don't have enough permissions to open any network interface on this "
-"system. Please look at the README.rst file for more information."
-msgstr ""
-"Vous n'avez pas les permissions suffisantes pour ouvrir une interface réseau "
-"sur ce système. Veuillez consulter le fichier README.rst pour plus "
-"d'informations."
-
-#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturer.py:112
-#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-i686-2.7/NetworkCapturer/NetworkCapturer.py:112
-msgid ""
-"Launching sniff process on dev {0} with : count={1}, timeout={2}, "
-"filter=\"{3}\""
-msgstr ""
-
-#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturer.py:117
-#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-i686-2.7/NetworkCapturer/NetworkCapturer.py:117
-msgid "The provided filter is not valid (it should respects the BPF format"
-msgstr ""
-
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturer.py:122
-#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-i686-2.7/NetworkCapturer/NetworkCapturer.py:122
 msgid "This device cannot be sniffed since the layer 2 is not supported ({0})"
 msgstr ""
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturer.py:240
-#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-i686-2.7/NetworkCapturer/NetworkCapturer.py:240
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:238
-#: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-i686-2.7/PCAPImporter/PCAPImporter.py:238
 msgid ""
 "Cannot import one of the provided packets since its layer 3 is "
 "unsupported (Only IP is currently supported, packet ethernet type = {0})"
 msgstr ""
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturer.py:264
-#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-i686-2.7/NetworkCapturer/NetworkCapturer.py:264
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:264
-#: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-i686-2.7/PCAPImporter/PCAPImporter.py:264
 msgid ""
 "Cannot import one of the provided packets since its layer 4 is "
 "unsupported (Only UDP and TCP are currently supported, packet IP protocol"
@@ -2391,127 +1508,41 @@ msgid ""
 msgstr ""
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:101
-#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-i686-2.7/NetworkCapturer/NetworkCapturerController.py:101
 msgid "Incorrect device"
 msgstr ""
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:107
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:110
-#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-i686-2.7/NetworkCapturer/NetworkCapturerController.py:107
-#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-i686-2.7/NetworkCapturer/NetworkCapturerController.py:110
 msgid "Incorrect count"
 msgstr ""
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:115
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:118
-#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-i686-2.7/NetworkCapturer/NetworkCapturerController.py:115
-#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-i686-2.7/NetworkCapturer/NetworkCapturerController.py:118
 msgid "Incorrect time"
 msgstr ""
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerPlugin.py:55
-#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-i686-2.7/NetworkCapturer/NetworkCapturerPlugin.py:55
 msgid "Provide the possibility to capture network trafic."
 msgstr ""
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerView.py:71
-#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-i686-2.7/NetworkCapturer/NetworkCapturerView.py:71
 #, fuzzy
 msgid "Capture network messages"
 msgstr "Capturer le trafic réseau"
 
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:70
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExport.py:70
-msgid "Targeted symbolID: {0}"
-msgstr ""
-
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:168
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExport.py:168
-msgid "The fuzzing is based on variables."
-msgstr ""
-
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:175
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExport.py:175
-msgid "The field {0} has the value {1}."
-msgstr ""
-
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:182
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExport.py:182
-msgid "Sublength : {0}."
-msgstr ""
-
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:218
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExport.py:218
-msgid "The fuzzing is based on regexes."
-msgstr ""
-
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:239
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExport.py:239
-msgid "The field {0} has the splitted Regex = {1}"
-msgstr ""
-
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:267
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExport.py:267
-msgid "The field {0} has a static subfield of value {1}."
-msgstr ""
-
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:273
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExport.py:273
-msgid "The field {0} is empty."
-msgstr ""
-
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:335
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExport.py:335
-msgid "<[ variable  : {0}."
-msgstr ""
-
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:341
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExport.py:341
-msgid "fatherValueLists : {0}."
-msgstr ""
-
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:363
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExport.py:363
-msgid "typedValueLists  : {0}."
-msgstr ""
-
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:364
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExport.py:364
-msgid "variable  : {0}. ]>"
-msgstr ""
-
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:386
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExport.py:386
-msgid "concatVariableValues : midvl before : {0}."
-msgstr ""
-
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:388
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExport.py:388
-msgid "concatVariableValues : midvl after : {0}."
-msgstr ""
-
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:432
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExport.py:432
-msgid "Format of the field {0} is {1}."
-msgstr ""
-
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:76
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExportController.py:76
 msgid "Entire project"
 msgstr "Projet complet"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:185
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExportController.py:185
 msgid "Export as Peach Fuzzer (XML)"
 msgstr ""
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:197
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExportController.py:197
 msgid "Are you sure to override the file '{0}'?"
 msgstr "Êtes-vous sur de remplacer le fichire '{0}' ?"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:215
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExportController.py:215
 msgid ""
 "The project has been correctly exported as a Peach Fuzzer to '{0}'.\n"
 "Do not forget to copy in the targeted directory our Peach plugin "
@@ -2519,106 +1550,82 @@ msgid ""
 msgstr ""
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:217
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExportController.py:217
 msgid ""
 "The following error occurred while exporting the project as a Peach "
 "Fuzzer to '{0}': {1}"
 msgstr ""
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportView.py:55
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExportView.py:55
 msgid "Export project as Peach pit XML"
 msgstr "Exporter le projet au format XML Peach pit"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportView.py:123
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExportView.py:123
-msgid "Fuzzing based on : "
+msgid "Fuzzing based on: "
 msgstr ""
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExporterPlugin.py:56
-#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-i686-2.7/PeachExporter/PeachExporterPlugin.py:56
 msgid "Provide the possibility to export netzob symbols to Peach pit files."
 msgstr ""
 
 #: src/netzob_plugins/Importers/DelimiterSeparatedImporter/DelimiterSeparatedImporter/DelimiterSeparatedImporter.py:53
-#: src/netzob_plugins/Importers/DelimiterSeparatedImporter/build/lib.linux-i686-2.7/DelimiterSeparatedImporter/DelimiterSeparatedImporter.py:53
 msgid "Delete Separator"
 msgstr "Supprimer le séparateur"
 
 #: src/netzob_plugins/Importers/DelimiterSeparatedImporter/DelimiterSeparatedImporter/DelimiterSeparatedImporter.py:54
-#: src/netzob_plugins/Importers/DelimiterSeparatedImporter/build/lib.linux-i686-2.7/DelimiterSeparatedImporter/DelimiterSeparatedImporter.py:54
 msgid "Keep Starting Separator"
 msgstr ""
 
 #: src/netzob_plugins/Importers/DelimiterSeparatedImporter/DelimiterSeparatedImporter/DelimiterSeparatedImporter.py:55
-#: src/netzob_plugins/Importers/DelimiterSeparatedImporter/build/lib.linux-i686-2.7/DelimiterSeparatedImporter/DelimiterSeparatedImporter.py:55
 msgid "Keep Ending Separator"
 msgstr ""
 
 #: src/netzob_plugins/Importers/DelimiterSeparatedImporter/DelimiterSeparatedImporter/DelimiterSeparatedImporterPlugin.py:50
-#: src/netzob_plugins/Importers/DelimiterSeparatedImporter/build/lib.linux-i686-2.7/DelimiterSeparatedImporter/DelimiterSeparatedImporterPlugin.py:50
 msgid "Provide the possibility to import messages from any binary or ascii file."
 msgstr ""
 
 #: src/netzob_plugins/Importers/DelimiterSeparatedImporter/DelimiterSeparatedImporter/DelimiterSeparatedImporterView.py:63
-#: src/netzob_plugins/Importers/DelimiterSeparatedImporter/build/lib.linux-i686-2.7/DelimiterSeparatedImporter/DelimiterSeparatedImporterView.py:63
 msgid "Import messages from raw file"
 msgstr "Importer des messages depuis un fichier brut"
 
 #: src/netzob_plugins/Importers/OSpyImporter/OSpyImporter/OSpyImporterPlugin.py:51
-#: src/netzob_plugins/Importers/OSpyImporter/build/lib.linux-i686-2.7/OSpyImporter/OSpyImporterPlugin.py:51
 msgid "Provides the possibility to import messages from OSpy project file."
 msgstr ""
 
 #: src/netzob_plugins/Importers/OSpyImporter/OSpyImporter/OSpyImporterView.py:62
-#: src/netzob_plugins/Importers/OSpyImporter/build/lib.linux-i686-2.7/OSpyImporter/OSpyImporterView.py:62
 msgid "Import messages from oSpy file"
 msgstr "Importer des messages depuis un fichier oSpy"
 
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:84
-#: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-i686-2.7/PCAPImporter/PCAPImporter.py:84
 msgid "Error while trying to open the file {0}."
 msgstr ""
 
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:87
-#: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-i686-2.7/PCAPImporter/PCAPImporter.py:87
 msgid ""
 "Error while trying to open the file {0}, more permissions are required "
 "for reading it."
 msgstr ""
 
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:118
-#: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-i686-2.7/PCAPImporter/PCAPImporter.py:118
 msgid "The provided filter is not valid (it should follow the BPF format)"
 msgstr ""
 
-#: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:123
-#: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-i686-2.7/PCAPImporter/PCAPImporter.py:123
-msgid "Starting import from {0} (linktype:{0})"
-msgstr ""
-
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:127
-#: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-i686-2.7/PCAPImporter/PCAPImporter.py:127
 msgid "This pcap cannot be imported since the layer 2 is not supported ({0})"
 msgstr ""
 
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporterPlugin.py:50
-#: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-i686-2.7/PCAPImporter/PCAPImporterPlugin.py:50
 msgid "Provide the possibility to import messages from PCAP network capture files"
 msgstr ""
 
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporterView.py:64
-#: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-i686-2.7/PCAPImporter/PCAPImporterView.py:64
 msgid "Import messages from PCAP file"
 msgstr "Importer des messages depuis un fichier PCAP"
 
 #: src/netzob_plugins/Importers/XMLImporter/XMLImporter/XMLImporterPlugin.py:51
-#: src/netzob_plugins/Importers/XMLImporter/build/lib.linux-i686-2.7/XMLImporter/XMLImporterPlugin.py:51
 msgid "Provide the possibility to import messages from netzob XML message files"
 msgstr ""
 
 #: src/netzob_plugins/Importers/XMLImporter/XMLImporter/XMLImporterView.py:59
-#: src/netzob_plugins/Importers/XMLImporter/build/lib.linux-i686-2.7/XMLImporter/XMLImporterView.py:59
 msgid "Import messages from XML file"
 msgstr "Importer des messages depuis un fichier XML"
 
@@ -2633,7 +1640,6 @@ msgstr ""
 #: resources/static/netzob/ui/dialogbox.glade:975
 #: resources/static/netzob/ui/dialogbox.glade:1223
 #: resources/static/netzob/ui/capturer/abstractCapturerView.glade:116
-#: resources/static/netzob/ui/import/abstractImporterView.glade:116
 msgid "Warning Message"
 msgstr "Message d'avertissement"
 
@@ -2689,8 +1695,8 @@ msgstr "Créer un nouveau symbole"
 
 #: resources/static/netzob/ui/dialogbox.glade:596
 #: resources/static/netzob/ui/dialogbox.glade:1146
-msgid "Name of the symbol :"
-msgstr "Nom du symbole : "
+msgid "Symbol's name:"
+msgstr ""
 
 #: resources/static/netzob/ui/dialogbox.glade:634
 msgid "Export project"
@@ -2712,7 +1718,7 @@ msgid "Import a project"
 msgstr "Importer un projet"
 
 #: resources/static/netzob/ui/dialogbox.glade:906
-msgid " Project to import :"
+msgid "Project to import:"
 msgstr ""
 
 #: resources/static/netzob/ui/dialogbox.glade:943
@@ -2720,8 +1726,8 @@ msgid "New project"
 msgstr "Nouveau projet"
 
 #: resources/static/netzob/ui/dialogbox.glade:1043
-msgid "Name of the project :"
-msgstr "Nom du nouveau projet : "
+msgid "Project's name:"
+msgstr ""
 
 #: resources/static/netzob/ui/dialogbox.glade:1082
 msgid "Rename the layer X"
@@ -2740,7 +1746,8 @@ msgid "New Project"
 msgstr "Nouveau projet"
 
 #: resources/static/netzob/ui/mainActions.glade:8
-msgid "Create new project"
+#, fuzzy
+msgid "Create a new project"
 msgstr "Créer un nouveau projet"
 
 #: resources/static/netzob/ui/mainActions.glade:16
@@ -2748,24 +1755,31 @@ msgid "Save Project"
 msgstr "Enregistrer le projet"
 
 #: resources/static/netzob/ui/mainActions.glade:17
+#, fuzzy
+msgid "Save the current project"
+msgstr "Enregistrer le projet courant"
+
+#: resources/static/netzob/ui/mainActions.glade:26
+#, fuzzy
+msgid "Import Project"
+msgstr "Importer un projet"
+
+#: resources/static/netzob/ui/mainActions.glade:33
+#, fuzzy
+msgid "Export Project"
+msgstr "Exporter le projet"
+
 #: resources/static/netzob/ui/mainActions.glade:34
 msgid "Save current project"
 msgstr "Enregistrer le projet courant"
 
-#: resources/static/netzob/ui/mainActions.glade:26
-msgid "Import Project…"
-msgstr "Importer un projet"
-
-#: resources/static/netzob/ui/mainActions.glade:33
-msgid "Export Project…"
-msgstr "Exporter le projet"
-
 #: resources/static/netzob/ui/mainActions.glade:41
-msgid "Switch Workspace…"
+#, fuzzy
+msgid "Switch Workspace"
 msgstr "Changer d'espace de travail"
 
 #: resources/static/netzob/ui/mainActions.glade:42
-msgid "Select a new working directory"
+msgid "Choose a new working directory"
 msgstr ""
 
 #: resources/static/netzob/ui/mainActions.glade:49
@@ -2789,7 +1803,8 @@ msgid "Help"
 msgstr "Aide"
 
 #: resources/static/netzob/ui/mainActions.glade:79
-msgid "Open project from workspace"
+#, fuzzy
+msgid "Open Project From Workspace"
 msgstr "Ouvrir un projet de l'espace de travail"
 
 #: resources/static/netzob/ui/mainActions.glade:80
@@ -2886,7 +1901,6 @@ msgid "Invert selection"
 msgstr "personnaliser la sélection"
 
 #: resources/static/netzob/ui/capturer/abstractCapturerView.glade:276
-#: resources/static/netzob/ui/import/abstractImporterView.glade:276
 #, fuzzy
 msgid "Displayed Packets:"
 msgstr "Afficher les propriétés"
@@ -2899,7 +1913,6 @@ msgid "0"
 msgstr ""
 
 #: resources/static/netzob/ui/capturer/abstractCapturerView.glade:307
-#: resources/static/netzob/ui/import/abstractImporterView.glade:307
 #, fuzzy
 msgid "Selected Packets:"
 msgstr "Sauvegarder les paquets sélectionnés"
@@ -3135,9 +2148,24 @@ msgstr "Créer une transition"
 msgid "Create a Close Channel Transition"
 msgstr "Créer une transition"
 
+#: resources/static/netzob/ui/import/abstractImporterView.glade:116
+#, fuzzy
+msgid "Warning message"
+msgstr "Message d'avertissement"
+
+#: resources/static/netzob/ui/import/abstractImporterView.glade:276
+#, fuzzy
+msgid "Displayed packets:"
+msgstr "Afficher les propriétés"
+
+#: resources/static/netzob/ui/import/abstractImporterView.glade:307
+#, fuzzy
+msgid "Selected packets:"
+msgstr "Sauvegarder les paquets sélectionnés"
+
 #: resources/static/netzob/ui/import/fileListSourceWidget.glade:25
 #, fuzzy
-msgid "Selected files :"
+msgid "Selected files:"
 msgstr "Exporter les champs sélectionnés"
 
 #: resources/static/netzob/ui/import/importFileChooserDialog.glade:74
@@ -3283,6 +2311,10 @@ msgstr "Valeur initiale : "
 msgid "Filtered"
 msgstr "Filtre"
 
+#: resources/static/netzob/ui/vocabulary/editFieldDialog.glade:7
+msgid "Edit field"
+msgstr "Éditer le champ"
+
 #: resources/static/netzob/ui/vocabulary/editFieldDialog.glade:22
 msgid "Field name"
 msgstr ""
@@ -3304,6 +2336,10 @@ msgstr "Dépendances d'environnement"
 
 #: resources/static/netzob/ui/vocabulary/environmentDependenciesSearcherView.glade:124
 msgid "The following Environmental Dependencies will be searched"
+msgstr ""
+
+#: resources/static/netzob/ui/vocabulary/fieldAnalysis.glade:24
+msgid "Field analysis"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/fieldAnalysis.glade:39
@@ -3392,7 +2428,7 @@ msgstr "Alignement de séquence"
 
 #: resources/static/netzob/ui/vocabulary/variableTable.glade:21
 #, fuzzy
-msgid "Variable table"
+msgid "Variables table"
 msgstr "Variable"
 
 #: resources/static/netzob/ui/vocabulary/variableTable.glade:96
@@ -3451,18 +2487,13 @@ msgstr "Séparer le champ"
 msgid "Split selected field"
 msgstr "Exporter les champs sélectionnés"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:52
-#, fuzzy
-msgid "Edit Variable…"
-msgstr "Éditer la variable"
-
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:53
 msgid "Edit the variable for selected field"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:60
 #, fuzzy
-msgid "Move to another symbol"
+msgid "Move To Another Symbol"
 msgstr "Supprimer le symbole"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:61
@@ -3471,7 +2502,7 @@ msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:69
 #, fuzzy
-msgid "Delete message(s)"
+msgid "Delete Message(s)"
 msgstr "Supprimer le message"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:70
@@ -3481,18 +2512,17 @@ msgstr "Supprimer le message"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:78
 #, fuzzy
-msgid "Environment Dependencies"
+msgid "Environmental Dependencies"
 msgstr "Dépendances d'environnement"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:79
 #, fuzzy
-msgid "Search environment dependencies for all message"
+msgid "Search for environmental dependencies for all messages"
 msgstr "Dépendances d'environnement"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:87
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:202
 #, fuzzy
-msgid "Messages Distribution…"
+msgid "Messages Distribution"
 msgstr "Distribution des messages"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:88
@@ -3503,7 +2533,7 @@ msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:96
 #, fuzzy
-msgid "Variable Table…"
+msgid "Variable Table"
 msgstr "Variable"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:97
@@ -3512,7 +2542,7 @@ msgid "Display variable table"
 msgstr "Éditer la variable"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:106
-msgid "Compute field limits"
+msgid "Compute Field Limits"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:107
@@ -3520,15 +2550,23 @@ msgid "Compute min and max size of selected symbol(s)"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:114
+#, fuzzy
+msgid "Import Messages From File"
+msgstr "Importer depuis un fichier"
+
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:116
 #, fuzzy
 msgid "Import messages from file"
 msgstr "Importer depuis un fichier"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:125
+#, fuzzy
+msgid "Capture Messages"
+msgstr "Supprimer le message"
+
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:126
 #, fuzzy
-msgid "Capture messages..."
+msgid "Capture messages"
 msgstr "Supprimer le message"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:133
@@ -3540,8 +2578,8 @@ msgid "Manual Tool"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:153
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:132
-msgid "Force Partitioning"
+#: resources/static/netzob/ui/vocabulary/partitioning/forcePartitioning.glade:7
+msgid "Force partitioning"
 msgstr "Forcer le partitionnement"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:154
@@ -3549,8 +2587,10 @@ msgid "Use force partitioning on selected symbol"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:168
-msgid "Sequence Alignment"
-msgstr "Alignement de séquences"
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:117
+#: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:12
+msgid "Sequence alignment"
+msgstr "Alignement de séquence"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:169
 msgid "Use sequence alignment on selected symbol"
@@ -3558,16 +2598,16 @@ msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:177
 #, fuzzy
-msgid "Search Text"
+msgid "Search text"
 msgstr "Résultats de la recherche"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:178
-msgid "Search a string in all messages of current symbol"
+msgid "Search a string in all messages of the current symbol"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:186
 #, fuzzy
-msgid "Filter displayed messages"
+msgid "Filter Displayed Messages"
 msgstr "Afficher les messages"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:187
@@ -3585,6 +2625,10 @@ msgstr "Alignement de séquence"
 #, fuzzy
 msgid "Force Partitioning on selected symbol"
 msgstr "Aucun symbole sélectionné"
+
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:132
+msgid "Force Partitioning"
+msgstr "Forcer le partitionnement"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:145
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:146
@@ -3604,6 +2648,11 @@ msgstr "Aucun symbole sélectionné"
 msgid "Reset Partitioning on selected symbol"
 msgstr "Annuler le partitionnement"
 
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:202
+#, fuzzy
+msgid "Messages Distribution…"
+msgstr "Distribution des messages"
+
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:266
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:676
 msgid "Message"
@@ -3617,14 +2666,14 @@ msgstr "Champ"
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:306
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:307
 #, fuzzy
-msgid "Select all symbol"
+msgid "Select all symbols"
 msgstr "Aucun symbole sélectionné"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:322
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:323
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:324
 #, fuzzy
-msgid "Deselect all symbol"
+msgid "Unselect all symbols"
 msgstr "Aucun symbole sélectionné"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:349
@@ -3639,7 +2688,7 @@ msgstr ""
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:366
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:367
 #, fuzzy
-msgid "Concatenate selected symbol(s)"
+msgid "Concatenate selected symbols"
 msgstr "Aucun symbole sélectionné"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:368
@@ -3671,25 +2720,22 @@ msgstr "Propriétés"
 msgid "Project"
 msgstr "Projet"
 
-#: resources/static/netzob/ui/vocabulary/partitioning/forcePartitioning.glade:7
-msgid "Force partitioning"
-msgstr "Forcer le partitionnement"
-
 #: resources/static/netzob/ui/vocabulary/partitioning/forcePartitioning.glade:23
 #, fuzzy
-msgid "Delimiter :"
+msgid "Delimiter:"
 msgstr "Délimiteur :"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/forcePartitioning.glade:61
-msgid "Format of delimiter :"
-msgstr ""
+#, fuzzy
+msgid "Delimiter format:"
+msgstr "Délimiteur :"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/forcePartitioning.glade:71
 msgid "Hexadecimal"
 msgstr "Hexadécimal"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/forcePartitioning.glade:89
-msgid "String"
+msgid "Stri"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/partitioning/resetPartitioning.glade:7
@@ -3697,12 +2743,12 @@ msgid "Reset partitioning"
 msgstr "Annuler le partitionnement"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:30
-msgid "Similarity percent :"
+msgid "Similarity percent:"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:87
 #, fuzzy
-msgid "Unit size :"
+msgid "Unit size:"
 msgstr "Taille de l'unité"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:97
@@ -3716,7 +2762,7 @@ msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:147
 #, fuzzy
-msgid "Option :"
+msgid "Option:"
 msgstr "Options"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:157
@@ -3747,11 +2793,6 @@ msgstr ""
 msgid "Simple partitioning"
 msgstr "Partitionnement simple"
 
-#: resources/static/netzob/ui/vocabulary/partitioning/simplePartitioning.glade:24
-#, fuzzy
-msgid "Format :"
-msgstr "Format :"
-
 #: resources/static/netzob/ui/vocabulary/partitioning/simplePartitioning.glade:34
 msgid "4 bits"
 msgstr ""
@@ -3774,7 +2815,7 @@ msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/search/searchBar.glade:35
 #, fuzzy
-msgid "Research :"
+msgid "Search:"
 msgstr "Rechercher"
 
 #: resources/static/netzob/ui/vocabulary/search/searchBar.glade:59
@@ -3787,12 +2828,12 @@ msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/search/searchBar.glade:97
 #, fuzzy
-msgid "|  Format :"
+msgid "|  Format:"
 msgstr "Format :"
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:7
 #, fuzzy
-msgid "Research properties"
+msgid "Search properties"
 msgstr "Propriétés du message"
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:24
@@ -3816,19 +2857,19 @@ msgid "all symbol"
 msgstr "Éditer le symbole"
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:162
-msgid "Use inverted research :"
+msgid "Use inverted search:"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:176
-msgid "Underline all object found :"
+msgid "Underline found objects:"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:190
-msgid "Match case :"
+msgid "Match case:"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:204
-msgid "Use regex expression :"
+msgid "Use regular expression:"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:215
@@ -3962,346 +3003,740 @@ msgstr ""
 msgid "Time limit:"
 msgstr "Délimiteur :"
 
-#~ msgid "1 - Message format inference"
+#~ msgid "Starting netzob UI"
+#~ msgstr "Démarrage de l'interface graphique de Netzob"
+
+#~ msgid ""
+#~ "A project with the same name "
+#~ "already exists ({0}, {1}), please change"
+#~ " it."
+#~ msgstr "Un projet avec le même nom existe déjà ({0}, {1}), veuillez le changer."
+
+#~ msgid "Create new project {0}"
+#~ msgstr "Création du nouveau projet {0}"
+
+#~ msgid "Impossible to import the libNeedleman"
 #~ msgstr ""
 
-#~ msgid "Automatically discover the best alignment of messages"
-#~ msgstr "Découvrir automatiquement le meilleur alignement des messages"
-
-#~ msgid "Set a delimiter to force partitioning"
+#~ msgid "Impossible to import the libScoreComputation"
 #~ msgstr ""
 
-#~ msgid "In order to show the simple differences between messages"
+#~ msgid "Impossible to import the libInterface"
 #~ msgstr ""
 
-#~ msgid "Merge small static fields with its neighbours"
+#~ msgid "Impossible to import the libRegex"
 #~ msgstr ""
 
-#~ msgid "Reset the current partitioning"
-#~ msgstr "Réinitialiser le partitionnement courant"
+#~ msgid "Can't smooth regex from fields that are part of different layers."
+#~ msgstr ""
 
-#~ msgid "2 - Field type inference"
-#~ msgstr "2 - Inférence de type de champ"
+#~ msgid "The computing field is not part of the current symbol"
+#~ msgstr ""
 
-#~ msgid "Freeze partitioning"
+#~ msgid "The static resources were not found !"
+#~ msgstr "Les ressources statiques n'ont pas été trouvées !"
+
+#~ msgid "Current workspace : NO WORKSPACE COMPUTED !"
+#~ msgstr "Espace de travail courrant : AUCUN ESPACE DE TRAVAIL GÉNÉRÉ !"
+
+#~ msgid "Field {0} has no variable, considering default one."
+#~ msgstr ""
+
+#~ msgid "Tried to compare a Symbol with {0}"
 #~ msgstr ""
 
 #~ msgid ""
-#~ "Automatically find and freeze the "
-#~ "boundaries (min/max of cell's size) for"
-#~ " each fields"
+#~ "The specified workspace's configuration file"
+#~ " ({0}) is not valid : its not"
+#~ " a file."
 #~ msgstr ""
 
-#~ msgid "Messages distribution"
-#~ msgstr "Distribution des messages"
-
-#~ msgid "Open a graph with messages distribution, separated by fields"
+#~ msgid "Try to abstract message through : {0}."
 #~ msgstr ""
 
-#~ msgid "Data carving"
+#~ msgid "ReadingToken: isOk: {0}, index: {1}, len(value): {2}"
 #~ msgstr ""
 
-#~ msgid "Automatically look for known patterns of data (URL, IP, email, etc.)"
+#~ msgid "The message matches symbol {0}."
 #~ msgstr ""
 
-#~ msgid "3 - Dependencies inference"
-#~ msgstr "3 - Inférence des dépendances"
-
-#~ msgid "Find size fields"
-#~ msgstr "Identifier la taille des champs"
-
-#~ msgid "Automatically find potential size fields and associated payloads"
-#~ msgstr ""
-#~ "Trouver automatiquement la taille potentielle des champs et les\n"
-#~ "payloads associées"
-
-#~ msgid "Environment dependencies"
-#~ msgstr "Dépendances d'environnement"
-
-#~ msgid ""
-#~ "Automatically look for environmental "
-#~ "dependencies (retrieved during capture) in "
-#~ "messages"
+#~ msgid "The message doesn't match symbol {0}."
 #~ msgstr ""
 
-#~ msgid "4 - Visualization"
-#~ msgstr "4 - Visualisation"
-
-#~ msgid "Format : "
-#~ msgstr "Format :"
-
-#~ msgid "Unit size : "
-#~ msgstr "Taille de l'unité"
-
-#~ msgid "Sign : "
-#~ msgstr "Signe :"
-
-#~ msgid "Endianess : "
-#~ msgstr "Boutisme :"
-
-#~ msgid "5 - Search data"
-#~ msgstr "5 - Rechercher des données"
-
-#~ msgid "A search function available in different encoding format"
+#~ msgid "The delimiter {0} is not a valid hexadecimal string."
 #~ msgstr ""
 
-#~ msgid "Similarity threshold:"
+#~ msgid "Format comparison successful."
 #~ msgstr ""
 
-#~ msgid "Unit size (in bits):"
-#~ msgstr "Taille de l'unité (en bits)"
-
-#~ msgid "Smooth alignment"
+#~ msgid "Format comparison failed: wrong format."
 #~ msgstr ""
 
-#~ msgid "Delimiter: "
-#~ msgstr "Délimiteur :"
-
-#~ msgid "Format type: "
-#~ msgstr "Type de format :"
-
-#~ msgid "Minimum unit size: "
+#~ msgid "Format comparison failed: wrong size."
 #~ msgstr ""
 
-#~ msgid "The current project doesn't have any referenced vocabulary."
-#~ msgstr "Le projet courant ne dispose pas de vocabulaire référencé"
-
-#~ msgid "User requested a contextual menu (treeview messages)"
+#~ msgid "Format comparison failed: no delimiter found."
 #~ msgstr ""
 
-#~ msgid "Move to..."
-#~ msgstr ""
-
-#~ msgid "with precedent field"
-#~ msgstr "avec le champs précédent"
-
-#~ msgid "with all precedent field"
-#~ msgstr "avec tous les champs précédents"
-
-#~ msgid "with next field"
-#~ msgstr "avec le champ suivant"
-
-#~ msgid "with all next fields"
-#~ msgstr "avec tous les champs suivants"
-
-#~ msgid "personalize selection"
-#~ msgstr "personnaliser la sélection"
-
-#~ msgid "Concatenate field"
-#~ msgstr "Concaténer les champs"
-
-#~ msgid "Field's domain of definition"
-#~ msgstr "Domaine de définiton du champ"
-
-#~ msgid "Create a variable"
-#~ msgstr "Créer une variable"
-
-#~ msgid "Remove variable"
-#~ msgstr "Supprimer la variable"
-
-#~ msgid "Configure variation of field"
-#~ msgstr "Confiuger la variation du champ"
-
-#~ msgid "Aligned message"
-#~ msgstr "Message aligné"
-
-#~ msgid "Message properties"
-#~ msgstr "Propriétés du message"
-
-#~ msgid "Modify field attributes"
-#~ msgstr "Modifier les attributs du champ"
-
-#~ msgid "Name : "
-#~ msgstr "Nom : "
-
-#~ msgid "Description : "
-#~ msgstr "Description : "
-
-#~ msgid "Regex (be careful !) : "
-#~ msgstr "Expression rationnelle (faire attention !) :"
-
-#~ msgid "Encapsulation level : "
-#~ msgstr ""
-
-#~ msgid "User requested a contextual menu (on treeview typeStructure)"
-#~ msgstr ""
-
-#~ msgid "Impossible to retrieve the clicked field!"
-#~ msgstr ""
-
-#~ msgid "with all next field"
-#~ msgstr "avec tous les champs suivants"
-
-#~ msgid "Export selected fields"
-#~ msgstr "Exporter les champs sélectionnés"
-
-#~ msgid "Save selected data"
-#~ msgstr "Sauvegarder les données sélectionnés"
-
-#~ msgid "Add to an existing trace"
-#~ msgstr "Ajouter à une trace existante"
-
-#~ msgid "Save"
-#~ msgstr "Sauvegarder"
-
-#~ msgid "Create a new trace"
-#~ msgstr "Créer une nouvelle trace"
-
-#~ msgid "Not yet implemented"
-#~ msgstr ""
-
-#~ msgid "Domain of definition for the column "
-#~ msgstr "Domaine de définition pour la colonne"
-
-#~ msgid "Column "
-#~ msgstr "Colonne "
-
-#~ msgid "The user wants to copy the following message to the clipboard: {0}"
-#~ msgstr ""
-
-#~ msgid "Impossible to retrieve the message based on its ID [{0}]"
-#~ msgstr ""
-
-#~ msgid "The user wants to see the properties of message {0}"
-#~ msgstr ""
-
-#~ msgid "Properties of message "
-#~ msgstr "Propriétés du message"
-
-#~ msgid "Click yes to confirm the deletion of the selected messages"
-#~ msgstr "Cliquez sur oui pour valider la suppression du message sélectionné"
-
-#~ msgid "The user wants to delete the message {0}"
-#~ msgstr ""
-
-#~ msgid "Impossible to retrieve the message to remove based on its ID [{0}]"
-#~ msgstr ""
-
-#~ msgid "Concatenation of Fields"
-#~ msgstr "Concaténation de champs"
-
-#~ msgid "Fields from:"
-#~ msgstr ""
-
-#~ msgid "to:"
-#~ msgstr ""
-
-#~ msgid "Concatenate fields"
-#~ msgstr "Concaténer les champs"
-
-#~ msgid "Concatenate from {0} to the column {1}"
-#~ msgstr ""
-
-#~ msgid "Error: {0} > Last field index"
-#~ msgstr ""
-
-#~ msgid "Error: You must put integers in forms"
-#~ msgstr ""
-
-#~ msgid "Concatenate the column {0} with the {1} column"
-#~ msgstr ""
-
-#~ msgid "Can't concatenate the first column with its left column"
-#~ msgstr ""
-
-#~ msgid "Can't concatenate the last column with its right column"
-#~ msgstr ""
-
-#~ msgid "Split column "
-#~ msgstr "Séparer la colonne "
-
-#~ msgid "Align to right"
-#~ msgstr ""
-
-#~ msgid "Split column"
-#~ msgstr "Séparer la colonne"
-
-#~ msgid "Content of the column to split"
-#~ msgstr "Contenu de la colonne à séparer"
-
-#~ msgid "Opening the dialog for the creation of a variable"
-#~ msgstr ""
-
-#~ msgid "Align to left"
-#~ msgstr ""
-
-#~ msgid "Edit symbol"
-#~ msgstr "Éditer le symbole"
-
-#~ msgid "Align the symbol"
-#~ msgstr "Aligner le symbole"
-
-#~ msgid "Remove symbol"
-#~ msgstr "Supprimer le symbole"
-
-#~ msgid "Create a symbol"
-#~ msgstr "Créer un symbole"
-
-#~ msgid "Searching"
-#~ msgstr "Recherche"
-
-#~ msgid "<b>Please enter the name of the symbol :</b>"
-#~ msgstr "<b>Merci d'entrer le nom du symbole :</b>"
-
-#~ msgid "<b>Please enter symbol's name</b> :"
-#~ msgstr "<b>Merci d'entrer le nom du symbole</b> :"
-
-#~ msgid "Name :"
-#~ msgstr "Nom :"
-
-#~ msgid "a new symbol will be created with the given name : {0}"
-#~ msgstr ""
-
-#~ msgid "Can remove the symbol {0} since it's an empty one."
-#~ msgstr ""
-
-#~ msgid "Click yes to confirm the removal of the symbol {0}"
-#~ msgstr "Cliquez sur oui pour confirmer la suppression du symbole {0}"
-
-#~ msgid "The user didn't confirm the deletion of the symbol {0}"
-#~ msgstr "L'utilisateur n'a pas confirmé la suppression du symbole {0}"
-
-#~ msgid "Impossible to retrieve the message to move based on its ID [{0}]"
-#~ msgstr ""
-
-#~ msgid "The message having the ID [{0}] has been found !"
+#~ msgid "Type {0} : minChars undefined or < 0. MinBits value is fixed to 0."
 #~ msgstr ""
 
 #~ msgid ""
-#~ "Impossible to retrieve the symbol in "
-#~ "which the selected message must be "
-#~ "moved out."
+#~ "Type {0} : maxChars undefined or <"
+#~ " minChars. MaxBits value is fixed to"
+#~ " minBits."
 #~ msgstr ""
 
-#~ msgid "The new symbol of the message is {0}"
+#~ msgid "Wrong type specified for this variable."
 #~ msgstr ""
 
-#~ msgid "Move messages from {0} to {1} : {2}"
+#~ msgid "The token's ok flag is set to {0}."
 #~ msgstr ""
 
-#~ msgid "Status = {0}: {1}"
+#~ msgid "[ {0} (leaf): read access:"
 #~ msgstr ""
 
-#~ msgid "No symbol selected."
+#~ msgid "Read abort: the variable is neither defined, nor mutable."
+#~ msgstr ""
+
+#~ msgid "Variable {0}: {1}. ]"
+#~ msgstr ""
+
+#~ msgid "[ {0} (leaf): write access:"
+#~ msgstr ""
+
+#~ msgid "Write abort: the variable is neither defined, nor mutable."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Wrong position given, nothing is done:"
+#~ " the position {0} is without the "
+#~ "boundaries [0, {1}]"
+#~ msgstr ""
+
+#~ msgid "-  {0}: shuffleChildren."
+#~ msgstr ""
+
+#~ msgid "[ {0}: children's memorized value are restored."
+#~ msgstr ""
+
+#~ msgid "Variable {0}: ]"
+#~ msgstr "Variable {0}:]"
+
+#~ msgid "[ AbstractVariable: loadFromXML:"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "xmlRoot.get(...) returns {0} which does "
+#~ "not correspond to a true variable "
+#~ "class."
+#~ msgstr ""
+
+#~ msgid "AbstractVariable: loadFromXML ]"
+#~ msgstr ""
+
+#~ msgid "Version != 0.1"
+#~ msgstr ""
+
+#~ msgid "- [ {0}: sortChildrenToRead."
+#~ msgstr ""
+
+#~ msgid "Variable {0}: {1}. ] -"
+#~ msgstr ""
+
+#~ msgid "- [ {0}: readChildren."
+#~ msgstr ""
+
+#~ msgid "- [ {0}: learn."
+#~ msgstr ""
+
+#~ msgid "[ {0} (Aggregate): read access:"
+#~ msgstr ""
+
+#~ msgid "Write abort: the variable has no child."
+#~ msgstr ""
+
+#~ msgid "[ {0} (Aggregate): write access:"
+#~ msgstr ""
+
+#~ msgid "[ {0} (Aggregate): toXML:"
+#~ msgstr ""
+
+#~ msgid "Variable {0}. ]"
+#~ msgstr "Variable {0}.]"
+
+#~ msgid "[ AggregateVariable: loadFromXML:"
+#~ msgstr ""
+
+#~ msgid "AggregateVariable: loadFromXML successes: {0} ]"
+#~ msgstr ""
+
+#~ msgid "AggregateVariable: loadFromXML fails"
+#~ msgstr ""
+
+#~ msgid "[ {0} (Alternate): readChildren:"
+#~ msgstr ""
+
+#~ msgid "The father is neither an aggregate nor a repeat variable."
+#~ msgstr ""
+
+#~ msgid "[ {0} (Alternate): writeChildren:"
+#~ msgstr ""
+
+#~ msgid "[ {0} (Alternate): read access:"
+#~ msgstr ""
+
+#~ msgid "[ {0} (Alternate): write access:"
+#~ msgstr ""
+
+#~ msgid "[ AlternateVariable: loadFromXML:"
+#~ msgstr ""
+
+#~ msgid "AlternateVariable: loadFromXML successes: {0} ]"
+#~ msgstr ""
+
+#~ msgid "AlternateVariable: loadFromXML fails"
+#~ msgstr ""
+
+#~ msgid "We found the pointed value."
+#~ msgstr ""
+
+#~ msgid "The pointing value is after the pointed value in the same tree."
+#~ msgstr ""
+
+#~ msgid "The pointing value is before the pointed value or in a different tree."
+#~ msgstr ""
+
+#~ msgid "Default case."
+#~ msgstr ""
+
+#~ msgid "- {0}: retrieveValue."
+#~ msgstr ""
+
+#~ msgid "- [ {0}: compare."
+#~ msgstr ""
+
+#~ msgid "Comparison successful."
+#~ msgstr ""
+
+#~ msgid "Comparison failed: wrong value."
+#~ msgstr ""
+
+#~ msgid "Comparison failed: wrong size."
+#~ msgstr ""
+
+#~ msgid "- [ {0}: compareFormat."
+#~ msgstr ""
+
+#~ msgid "- {0}: generate."
+#~ msgstr ""
+
+#~ msgid "- {0}: computeValue."
+#~ msgstr ""
+
+#~ msgid "- [ {0}: writeValue."
+#~ msgstr ""
+
+#~ msgid "[ {0} (relation): read access:"
+#~ msgstr ""
+
+#~ msgid "Read abort: the variable is not defined."
+#~ msgstr ""
+
+#~ msgid "[ {0} (relation): write access:"
+#~ msgstr ""
+
+#~ msgid "Write abort: the variable is not defined."
+#~ msgstr ""
+
+#~ msgid "[ {0}: toXML:"
+#~ msgstr ""
+
+#~ msgid "[ {0} (relation): notifiedWrite access:"
+#~ msgstr ""
+
+#~ msgid "Write abort: the variable is neither defined, nor random."
+#~ msgstr ""
+
+#~ msgid "[ ComputedRelationVariable: loadFromXML:"
+#~ msgstr ""
+
+#~ msgid "No type specified for this variable in the xml file."
+#~ msgstr ""
+
+#~ msgid "ComputedRelationVariable: loadFromXML successes: {0} ]"
+#~ msgstr ""
+
+#~ msgid "ComputedRelationVariable: loadFromXML fails"
+#~ msgstr ""
+
+#~ msgid "- {0}: memorized value is restored."
+#~ msgstr ""
+
+#~ msgid "- {0}: toXML:"
+#~ msgstr ""
+
+#~ msgid "- {0}: value is forgotten."
+#~ msgstr ""
+
+#~ msgid "- {0}: value is recalled."
+#~ msgstr ""
+
+#~ msgid "- {0}: value is memorized."
+#~ msgstr ""
+
+#~ msgid "Learning done."
+#~ msgstr "Apprentissage terminé."
+
+#~ msgid "Learning abort because the previous format comparison failed."
+#~ msgstr ""
+
+#~ msgid "- {0}: mutate."
+#~ msgstr ""
+
+#~ msgid "Variable {0} (Data): type undefined."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Variable {0} (Data): The given original"
+#~ " value has an inappropriate size."
+#~ msgstr ""
+
+#~ msgid "Variable {0} (Data): The given original value is None."
+#~ msgstr ""
+
+#~ msgid "[ DataVariable: loadFromXML:"
+#~ msgstr ""
+
+#~ msgid "DataVariable: loadFromXML successes: {0} ]"
+#~ msgstr ""
+
+#~ msgid "DataVariable: loadFromXML fails"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Variable {0} (Repeat): Construction of "
+#~ "RepeatVariable: minIterations undefined or <"
+#~ " 0. minIterations value is fixed to"
+#~ " 0."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Variable {0} (Repeat): Construction of "
+#~ "RepeatVariable: maxIterations undefined or <"
+#~ " minIterations. maxIterations value is "
+#~ "fixed to minIterations."
+#~ msgstr ""
+
+#~ msgid "[ {0}: read access:"
+#~ msgstr ""
+
+#~ msgid "[ {0}: write access:"
+#~ msgstr ""
+
+#~ msgid "[ RepeatVariable: loadFromXML:"
+#~ msgstr ""
+
+#~ msgid "RepeatVariable: loadFromXML successes: {0} ]"
+#~ msgstr ""
+
+#~ msgid "RepeatVariable: loadFromXML fails"
+#~ msgstr ""
+
+#~ msgid "- [ {0}: randomizePointedVariable."
+#~ msgstr ""
+
+#~ msgid "- [ {0}: notifiedWriteValue."
+#~ msgstr ""
+
+#~ msgid "- [ {0}: notifiedCompare."
+#~ msgstr ""
+
+#~ msgid "- [ {0}: trivialCompareFormat."
+#~ msgstr ""
+
+#~ msgid "[ DirectRelationVariable: loadFromXML:"
+#~ msgstr ""
+
+#~ msgid "DirectRelationVariable: loadFromXML successes: {0} ]"
+#~ msgstr ""
+
+#~ msgid "DirectRelationVariable: loadFromXML fails"
+#~ msgstr ""
+
+#~ msgid "Impossible to retrieve the symbol having the id {0}"
+#~ msgstr ""
+
+#~ msgid "Fuzz field : {0}"
+#~ msgstr "Fuzzer le champ : {0}"
+
+#~ msgid "Fuzz field: {0}"
+#~ msgstr "Fuzzer le champ : {0}"
+
+#~ msgid "Launching fuzzing process with : filter=\"{0}\""
+#~ msgstr "Lancement du processus de fuzzing avec : filter=\"{0}\""
+
+#~ msgid "Updating the treestore of the symbol in default mode"
+#~ msgstr ""
+
+#~ msgid "The treeview for the messages is in error mode"
+#~ msgstr ""
+
+#~ msgid "Unable to find a repository file for API injector."
+#~ msgstr "Impossible de trouver un dépôt de fichier pour l'injecteur d'API."
+
+#~ msgid "A selected process cannot be found !"
+#~ msgstr ""
+
+#~ msgid "The selected process cannot be find !"
+#~ msgstr ""
+
+#~ msgid "You have to select a process if you want to capture it"
+#~ msgstr "Vous devez sélectionner un processus si vous voulez le capturer"
+
+#~ msgid "You have to select a DLL if you want to capture it"
+#~ msgstr "Vous devez sélectionner une DLL si vous voulez la capturer"
+
+#~ msgid "Impossible to retrieve the selected function"
+#~ msgstr ""
+
+#~ msgid "Selected function done!"
+#~ msgstr ""
+
+#~ msgid "You have to select a function if you want to capture it"
+#~ msgstr ""
+
+#~ msgid "Temporary folder: {0}"
+#~ msgstr "Répertoire temporaire : {0}"
+
+#~ msgid "Starting the capture of [{0}]"
+#~ msgstr ""
+
+#~ msgid "DLL [{0}]"
+#~ msgstr "DLL [{0}]"
+
+#~ msgid "Function [{0}]"
+#~ msgstr "Fonction [{0}]"
+
+#~ msgid "FIFO: {0}"
+#~ msgstr ""
+
+#~ msgid "Creating the FIFO file: {0}"
+#~ msgstr ""
+
+#~ msgid "Failed to create FIFO: %s"
+#~ msgstr ""
+
+#~ msgid "The fifo has been created..."
+#~ msgstr ""
+
+#~ msgid "Cannot execute GOT Poisoning since FIFO file was not created !"
+#~ msgstr ""
+
+#~ msgid "Stoping the capture..."
+#~ msgstr "Arrêter la capture..."
+
+#~ msgid "Reading finish, we close the FIFO."
+#~ msgstr ""
+
+#~ msgid "Impossible to retrieve the message the user clicked on. Hum ?"
+#~ msgstr ""
+
+#~ msgid "Impossible to find a plugin to import data from."
+#~ msgstr ""
+
+#~ msgid "A number of {0} messages were extracted."
+#~ msgstr ""
+
+#~ msgid "The specified XML file {0} is not valid according to the XSD ({1})."
+#~ msgstr ""
+
+#~ msgid "XML file valid according to the XSD schema"
+#~ msgstr ""
+
+#~ msgid "XML String data: {0}"
+#~ msgstr ""
+
+#~ msgid "Updating the treestore of the processes in default mode"
+#~ msgstr ""
+
+#~ msgid "Updating the list of executing processes."
+#~ msgstr ""
+
+#~ msgid "A number of %d sessions will be injected in the grammar"
+#~ msgstr ""
+
+#~ msgid "Search for a difference with a new session"
+#~ msgstr ""
+
+#~ msgid "A difference has been found, symbol %s must be added to transition %s"
+#~ msgstr ""
+
+#~ msgid "The current session does not introduce other differences"
+#~ msgstr ""
+
+#~ msgid "All the sessions have been applied on current automata"
+#~ msgstr ""
+
+#~ msgid "Adding symbol %s as an output transition %s."
+#~ msgstr ""
+
+#~ msgid "automata : %s"
+#~ msgstr "automate : %s"
+
+#~ msgid "Cannot apply a session on the current automata because it doesn't exist"
+#~ msgstr ""
+
+#~ msgid "Inject message : %s"
+#~ msgstr "Injecter le message : %s"
+
+#~ msgid ""
+#~ "Input symbol %s doesn't match any "
+#~ "existing transition in current state %s"
+#~ msgstr ""
+
+#~ msgid "We forget this message."
+#~ msgstr ""
+
+#~ msgid "Input symbol %s matchs the transition %s from state %s"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "A difference has been found, symbol "
+#~ "%s is not an output symbol of "
+#~ "transition %s"
+#~ msgstr ""
+
+#~ msgid "Impossible to show a Null query"
+#~ msgstr "Impossible d'afficher une requête nulle"
+
+#~ msgid "Stop the inferer"
+#~ msgstr ""
+
+#~ msgid "Saving the computed automata as the grammar of current project"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Do not start the searching process "
+#~ "since no pattern was provided by "
+#~ "the user"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Do not start the searching process "
+#~ "since no type was provided by the"
+#~ " user"
+#~ msgstr ""
+
+#~ msgid "User searches for {0} of type {1}"
+#~ msgstr ""
+
+#~ msgid "No data to search after were computed."
+#~ msgstr ""
+
+#~ msgid "The following data will be searched for:"
+#~ msgstr ""
+
+#~ msgid "A number of {0} results found!"
+#~ msgstr ""
+
+#~ msgid "Register: {0}"
+#~ msgstr ""
+
+#~ msgid "Impossible to find the selected variable."
+#~ msgstr ""
+
+#~ msgid "No selected symbol"
 #~ msgstr "Aucun symbole sélectionné"
 
-#~ msgid "Freezing done."
-#~ msgstr "Gel terminé."
-
-#~ msgid "Execute Data Carving on symbol ${0}"
+#~ msgid ""
+#~ "Error while proceeding to the "
+#~ "environmental search dependencies on symbols:"
+#~ " {0}"
 #~ msgstr ""
 
-#~ msgid "Do not start the searching process since no pattern has been provided"
+#~ msgid "Error while proceeding to the size field identification: {0}"
 #~ msgstr ""
 
-#~ msgid "Do not start the searching process since no type has been provided"
+#~ msgid "Impossible to retrieve the clicked field !"
 #~ msgstr ""
 
-#~ msgid "User searches for {0} of type {1} in symbol {2}"
+#~ msgid "Open a project before..."
 #~ msgstr ""
 
-#~ msgid "No ASN.1 field found."
-#~ msgstr "Aucun champ ASN.1 trouvé"
+#~ msgid "Error while proceeding to the arbitrary search process: {0}"
+#~ msgstr ""
 
-#~ msgid "Find ASN.1 fields"
-#~ msgstr "Trouver les champs ASN.1"
+#~ msgid "Error while proceeding to the search process: {0}"
+#~ msgstr ""
+
+#~ msgid "{0}/{1} : {2}"
+#~ msgstr ""
+
+#~ msgid "The user didn't confirm the deletion of the variable {0}"
+#~ msgstr "L'utilisateur n'a pas confirmé la suppression de la variable {0}"
+
+#~ msgid "The user didn't confirm the edition of the variable {0}"
+#~ msgstr "L'utilisateur n'a pas confirmé l'édition de la variable {0}"
+
+#~ msgid "Renamed layer {0} to {1}"
+#~ msgstr "Couche renommée de {0} à ({1})"
+
+#~ msgid "Error while proceeding to the force partitioning of fields: {0}"
+#~ msgstr ""
+
+#~ msgid "Error while proceeding to the reseting of fields: {0}"
+#~ msgstr ""
+
+#~ msgid "Reset finished !"
+#~ msgstr ""
+
+#~ msgid "Error while proceeding to the alignment: {0}"
+#~ msgstr ""
+
+#~ msgid "Error while proceeding to the simple partitioning of fields: {0}"
+#~ msgstr ""
+
+#~ msgid "Error while proceeding to the smoothing of fields: {0}"
+#~ msgstr ""
+
+#~ msgid "Smooth finished !"
+#~ msgstr ""
+
+#~ msgid "Extract fields to a new symbol"
+#~ msgstr ""
+
+#~ msgid "Aligned formatted message"
+#~ msgstr ""
+
+#~ msgid "Launching sniff process"
+#~ msgstr "Lancement du processus d'écoute"
+
+#~ msgid ""
+#~ "You don't have enough permissions to "
+#~ "open any network interface on this "
+#~ "system. Please look at the README.rst"
+#~ " file for more information."
+#~ msgstr ""
+#~ "Vous n'avez pas les permissions "
+#~ "suffisantes pour ouvrir une interface "
+#~ "réseau sur ce système. Veuillez "
+#~ "consulter le fichier README.rst pour "
+#~ "plus d'informations."
+
+#~ msgid ""
+#~ "Launching sniff process on dev {0} "
+#~ "with : count={1}, timeout={2}, filter=\"{3}\""
+#~ msgstr ""
+
+#~ msgid "The provided filter is not valid (it should respects the BPF format"
+#~ msgstr ""
+
+#~ msgid "Targeted symbolID: {0}"
+#~ msgstr ""
+
+#~ msgid "The fuzzing is based on variables."
+#~ msgstr ""
+
+#~ msgid "The field {0} has the value {1}."
+#~ msgstr ""
+
+#~ msgid "Sublength : {0}."
+#~ msgstr ""
+
+#~ msgid "The fuzzing is based on regexes."
+#~ msgstr ""
+
+#~ msgid "The field {0} has the splitted Regex = {1}"
+#~ msgstr ""
+
+#~ msgid "The field {0} has a static subfield of value {1}."
+#~ msgstr ""
+
+#~ msgid "The field {0} is empty."
+#~ msgstr ""
+
+#~ msgid "<[ variable  : {0}."
+#~ msgstr ""
+
+#~ msgid "fatherValueLists : {0}."
+#~ msgstr ""
+
+#~ msgid "typedValueLists  : {0}."
+#~ msgstr ""
+
+#~ msgid "variable  : {0}. ]>"
+#~ msgstr ""
+
+#~ msgid "concatVariableValues : midvl before : {0}."
+#~ msgstr ""
+
+#~ msgid "concatVariableValues : midvl after : {0}."
+#~ msgstr ""
+
+#~ msgid "Format of the field {0} is {1}."
+#~ msgstr ""
+
+#~ msgid "Fuzzing based on : "
+#~ msgstr ""
+
+#~ msgid "Starting import from {0} (linktype:{0})"
+#~ msgstr ""
+
+#~ msgid "Name of the symbol :"
+#~ msgstr "Nom du symbole : "
+
+#~ msgid " Project to import :"
+#~ msgstr ""
+
+#~ msgid "Name of the project :"
+#~ msgstr "Nom du nouveau projet : "
+
+#~ msgid "Import Project…"
+#~ msgstr "Importer un projet"
+
+#~ msgid "Export Project…"
+#~ msgstr "Exporter le projet"
+
+#~ msgid "Select a new working directory"
+#~ msgstr ""
+
+#~ msgid "Edit Variable…"
+#~ msgstr "Éditer la variable"
+
+#~ msgid "Variable Table…"
+#~ msgstr "Variable"
+
+#~ msgid "Compute field limits"
+#~ msgstr ""
+
+#~ msgid "Search a string in all messages of current symbol"
+#~ msgstr ""
+
+#~ msgid "Select all symbol"
+#~ msgstr "Aucun symbole sélectionné"
+
+#~ msgid "Format of delimiter :"
+#~ msgstr ""
+
+#~ msgid "String"
+#~ msgstr ""
+
+#~ msgid "Similarity percent :"
+#~ msgstr ""
+
+#~ msgid "Format :"
+#~ msgstr "Format :"
+
+#~ msgid "Use inverted research :"
+#~ msgstr ""
+
+#~ msgid "Underline all object found :"
+#~ msgstr ""
+
+#~ msgid "Match case :"
+#~ msgstr ""
+
+#~ msgid "Use regex expression :"
+#~ msgstr ""
+
