@@ -159,7 +159,7 @@ Below is the available solution you have to resolve this issue.</property>
                 </child>
                 <child>
                   <object class="GtkRadioButton" id="moveMessageMoveInTrashRadioButton">
-                    <property name="label" translatable="yes">Move selected message in trash</property>
+                    <property name="label" translatable="yes">Move selected message to trash</property>
                     <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
