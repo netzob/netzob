@@ -283,8 +283,8 @@ class ResearchController(object):
         self.showResult(currentResult)
 
     def decolorizeAllResult(self):
-        """Search for all the "Search Functions" on any symbol
-        and remove them"""
+        """Search for all the "Search Functions" on any symbol and
+        remove them"""
         vocabulary = self.vocabularyController.getCurrentProject().getVocabulary()
         for symbol in vocabulary.getSymbols():
             functionToRemoveFromSymbol = []

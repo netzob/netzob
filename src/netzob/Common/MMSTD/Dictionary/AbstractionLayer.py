@@ -262,7 +262,8 @@ class AbstractionLayer():
         return self.outputSymbols
 
     def getProperties(self):
-        """Compute and return the list of properties of the abstraction layer"""
+        """Compute and return the list of properties of the
+        abstraction layer"""
         properties = []
         properties.extend(self.getCommunicationChannel().getProperties())
 
