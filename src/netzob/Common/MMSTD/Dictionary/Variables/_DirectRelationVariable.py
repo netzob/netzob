@@ -70,7 +70,7 @@ class DirectRelationVariable(AbstractRelationVariable):
     def toString(self):
         """toString:
         """
-        return _("[Direct Relation] {0}, pointed ID: {1}").format(AbstractVariable.toString(self), str(self.getPointedID()))
+        return "[Direct Relation] {0}, pointed ID: {1}".format(AbstractVariable.toString(self), str(self.getPointedID()))
 
     def trivialCompareFormat(self, readingToken):
         """trivialCompareFormat:
