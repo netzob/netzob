@@ -202,17 +202,17 @@ class RepeatVariable(AbstractNodeVariable):
     def toString(self):
         """toString:
         """
-        return _("[Repeat] {0}, iterations: ({1}, {2})").format(AbstractVariable.toString(self), str(self.minIterations), str(self.maxIterations))
+        return "[Repeat] {0}, iterations: ({1}, {2})".format(AbstractVariable.toString(self), str(self.minIterations), str(self.maxIterations))
 
     def getDescription(self, processingToken):
         """getDescription:
         """
-        return _("[{0}, child:\n - {1}]").format(self.toString(), self.getChild().getDescription(processingToken))
+        return "[{0}, child:\n - {1}]".format(self.toString(), self.getChild().getDescription(processingToken))
 
     def getUncontextualizedDescription(self):
         """getUncontextualizedDescription:
         """
-        return _("[{0}, child:\n - {1}]").format(self.toString(), self.getChild().getUncontextualizedDescription())
+        return "[{0}, child:\n - {1}]".format(self.toString(), self.getChild().getUncontextualizedDescription())
 
     def isDefined(self, processingToken):
         """isDefined:

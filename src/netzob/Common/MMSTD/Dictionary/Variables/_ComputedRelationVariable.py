@@ -79,7 +79,7 @@ class ComputedRelationVariable(AbstractRelationVariable):
     def toString(self):
         """toString:
         """
-        return _("[Computed Relation] {0}, pointed ID: {1}, type: {2}.").format(AbstractVariable.toString(self), str(self.getPointedID()), self.relationType.toString())
+        return "[Computed Relation] {0}, pointed ID: {1}, type: {2}.".format(AbstractVariable.toString(self), str(self.getPointedID()), self.relationType.toString())
 
     def trivialCompareFormat(self, readingToken):
         """trivialCompareFormat:

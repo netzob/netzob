@@ -261,16 +261,12 @@ class NetworkCapturer(AbstractCapturer):
                 l4Payload = layer4.get_data_as_string()
                 return (l4Proto, l4SrcPort, l4DstPort, l4Payload)
             else:
-                warnMessage = _("Cannot import one of the provided packets since " +
-                                "its layer 4 is unsupported (Only UDP and TCP " +
-                                "are currently supported, packet IP protocol " +
-                                "number = {0})").format(ipProtocolNum)
+                warnMessage = "Cannot import one of the provided packets since its layer 4 is unsupported (Only UDP and TCP are currently supported, packet IP protocol number = {0})".format(ipProtocolNum)
                 logging.warn(warnMessage)
 
     def getMessageDetails(self, messageID):
         if not messageID in self._payloadDict:
-            errorMessage = _("Message ID: {0} not found in importer " +
-                             "message list").format(messageID)
+            errorMessage = "Message ID: {0} not found in importer message list".format(messageID)
             logging.error(errorMessage)
             raise NetzobImportException("PCAP", errorMessage, ERROR)
         decoder = Decoders.EthDecoder()

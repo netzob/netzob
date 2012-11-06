@@ -83,7 +83,7 @@ class DataVariable(AbstractLeafVariable):
         else:
             readableValue = self.bin2str(self.originalValue)
 
-        return _("[Data] {0}, type: {1}, original value: {2}").format(AbstractVariable.toString(self), self.type.toString(), readableValue)
+        return "[Data] {0}, type: {1}, original value: {2}".format(AbstractVariable.toString(self), self.type.toString(), readableValue)
 
     def getValue(self, processingToken):
         """getValue:
@@ -126,7 +126,7 @@ class DataVariable(AbstractLeafVariable):
         else:
             readableValue = str(self.bin2str(self.getValue(writingToken)))
 
-        return _("{0}, value: {1}").format(self.toString(), readableValue)
+        return "{0}, value: {1}".format(self.toString(), readableValue)
 
     def getUncontextualizedDescription(self):
         """getUncontextualizedDescription:

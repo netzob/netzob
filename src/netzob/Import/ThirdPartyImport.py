@@ -225,8 +225,7 @@ class ThirdPartyImport(AbstractImporter):
             if filename is not None and filename != "" and os.path.isfile(filename):
                 filesToBeImported.append(filename)
             else:
-                logging.warning(
-                    _("Cannot load file {0}, its not a file.").format(filename))
+                logging.warning("Cannot load file {0}, its not a file.".format(filename))
 
         # Start to load
         parsedMessages = self.loadMessagesFromPlugin(self.thirdPartyStore.get_active_text(), filesToBeImported)

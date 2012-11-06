@@ -114,7 +114,7 @@ class BugReporterController(object):
 
         self._view.bugReporterSaveButton.set_sensitive(False)
         self._view.bugReporterCancelButton.set_sensitive(True)
-        self._view.bugReporterCancelButton.set_label(_("Fermer"))
+        self._view.bugReporterCancelButton.set_label(_("Close"))
 
         # Compute the content of the report
         reportContent = self.getReportContent()

@@ -61,7 +61,7 @@ class AbstractRelationType():
         self.associatedDataType = self.makeAssociatedDataType(sized, nbChars, nbChars, delimiter)
 
     def toString(self):
-        return (_("{0}, associatedDataType: {1}").format(self.getType(), self.associatedDataType.toString()))
+        return "{0}, associatedDataType: {1}".format(self.getType(), self.associatedDataType.toString())
 
 #+---------------------------------------------------------------------------+
 #| Abstract methods                                                          |

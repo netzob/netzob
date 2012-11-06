@@ -123,7 +123,7 @@ class AbstractNodeVariable(AbstractVariable):
         values = []
         for child in self.children:
             values.append(child.getDescription(processingToken))
-        return _("[ {0}, children:\n").format(self.toString()) + "\n".join(values) + " ]"
+        return "[ {0}, children:\n".format(self.toString()) + "\n".join(values) + " ]"
 
     def getUncontextualizedDescription(self):
         """getUncontextualizedDescription:
@@ -131,7 +131,7 @@ class AbstractNodeVariable(AbstractVariable):
         values = []
         for child in self.children:
             values.append(child.getUncontextualizedDescription())
-        return _("[ {0}, children:\n").format(self.toString()) + "\n".join(values) + " ]"
+        return "[ {0}, children:\n".format(self.toString()) + "\n".join(values) + " ]"
 
     def restore(self, processingToken):
         """restore:

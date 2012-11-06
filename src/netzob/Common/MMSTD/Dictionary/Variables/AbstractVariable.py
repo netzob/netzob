@@ -76,7 +76,7 @@ class AbstractVariable(object):
         """toString:
                 For debugging purpose.
         """
-        return _("Variable {0} ({3}) (mutable: {1}, learnable: {2})").format(self.name, str(self.mutable), str(self.learnable), self.id)
+        return "Variable {0} ({3}) (mutable: {1}, learnable: {2})".format(self.name, str(self.mutable), str(self.learnable), self.id)
 
     def getProgeny(self):
         """getProgeny:

@@ -219,7 +219,7 @@ class CreateSemiStochasticTransitionController(object):
                     found = True
                     break
         if found:
-            errorMessage = _("The specifed start state already has a transition with the same input symbol.")
+            errorMessage = _("The specified start state already has a transition with the same input symbol.")
             self.displayErrorMessage(errorMessage)
             return
 

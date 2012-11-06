@@ -76,9 +76,9 @@ class AbstractType():
 
     def toString(self):
         if self.sized:
-            return (_("{0}, bits: ({1}, {2}), chars: ({3}, {4})").format(self.getType(), str(self.minBits), str(self.maxBits), str(self.minChars), str(self.maxChars)))
+            return ("{0}, bits: ({1}, {2}), chars: ({3}, {4})".format(self.getType(), str(self.minBits), str(self.maxBits), str(self.minChars), str(self.maxChars)))
         else:
-            return (_("{0}, delimiter: {1}").format(self.getType(), self.bin2str(self.delimiter)))
+            return ("{0}, delimiter: {1}").format(self.getType(), self.bin2str(self.delimiter))
 
     def endsHere(self, bina):
         """endsHere:
