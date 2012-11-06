@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-06-13 16:32+0200\n"
-"PO-Revision-Date: 2012-11-05 15:09+0200\n"
-"Last-Translator: Frédéric Guihéry <sygus@cat-lan.com>\n"
+"PO-Revision-Date: 2012-11-06 14:49+0200\n"
+"Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/master/fr/>\n"
 "Language: fr\n"
@@ -1354,12 +1354,11 @@ msgstr "Concaténer les champs"
 #: src/netzob/Inference/Vocabulary/UImodelization.py:928
 #: src/netzob/Inference/Vocabulary/UImodelization.py:1339
 msgid "Split field"
-msgstr "Séparer le champ"
+msgstr "Fractionner le champ"
 
 #: src/netzob/Inference/Vocabulary/UImodelization.py:935
-#, fuzzy
 msgid "Partitioning"
-msgstr "Annuler le partitionnement"
+msgstr "Partitionner"
 
 #: src/netzob/Inference/Vocabulary/UImodelization.py:941
 #: src/netzob/Inference/Vocabulary/UImodelization.py:1345
