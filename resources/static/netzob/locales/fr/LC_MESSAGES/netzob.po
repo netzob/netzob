@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-06 14:36+0100\n"
+"POT-Creation-Date: 2012-11-06 17:27+0100\n"
 "PO-Revision-Date: 2012-11-06 14:32+0200\n"
 "Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
@@ -225,18 +225,6 @@ msgstr "{0}, délimiteur : {1}"
 
 #: src/netzob/Common/MMSTD/Dictionary/RelationTypes/AbstractRelationType.py:64
 msgid "{0}, associatedDataType: {1}"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/RelationTypes/AbstractRelationType.py:77
-msgid "The current type does not implement 'getType'."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/RelationTypes/AbstractRelationType.py:92
-msgid "The current type does not implement 'makeAssociatedDataType'."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/RelationTypes/AbstractRelationType.py:104
-msgid "The current type does not implement 'computeValue'."
 msgstr ""
 
 #: src/netzob/Common/MMSTD/Dictionary/Values/AbstractValue.py:58
@@ -2299,7 +2287,7 @@ msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/moveMessageDialog.glade:162
 #, fuzzy
-msgid "Move selected message in trash"
+msgid "Move selected message to trash"
 msgstr "Sauvegarder les paquets sélectionnés"
 
 #: resources/static/netzob/ui/vocabulary/relationsView.glade:53
@@ -2412,6 +2400,7 @@ msgid "Search for environmental dependencies for all messages"
 msgstr "Dépendances d'environnement"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:87
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:202
 #, fuzzy
 msgid "Messages Distribution"
 msgstr "Distribution des messages"
@@ -2537,11 +2526,6 @@ msgstr "Aucun symbole sélectionné"
 #, fuzzy
 msgid "Reset Partitioning on selected symbol"
 msgstr "Annuler le partitionnement"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:202
-#, fuzzy
-msgid "Messages Distribution…"
-msgstr "Distribution des messages"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:277
 msgid "Field"
@@ -2728,17 +2712,17 @@ msgstr "Rechercher"
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:34
 #, fuzzy
-msgid "focus symbol"
+msgid "Focused symbol"
 msgstr "Supprimer le symbole"
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:52
 #, fuzzy
-msgid "display symbol"
+msgid "Displayed symbols"
 msgstr "Éditer le symbole"
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:70
 #, fuzzy
-msgid "all symbol"
+msgid "All symbols"
 msgstr "Éditer le symbole"
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:162
@@ -2888,33 +2872,15 @@ msgstr ""
 msgid "Time limit:"
 msgstr "Délimiteur :"
 
-#~ msgid "The current type does not implement 'mutateValue'."
+#~ msgid "The current type does not implement 'getType'."
 #~ msgstr ""
 
-#~ msgid "The current type does not implement 'generateFixedSizeValue'."
+#~ msgid "The current type does not implement 'makeAssociatedDataType'."
 #~ msgstr ""
 
-#~ msgid "The current type does not implement 'str2bin'."
+#~ msgid "The current type does not implement 'computeValue'."
 #~ msgstr ""
 
-#~ msgid "The current type does not implement 'bin2str'."
-#~ msgstr ""
-
-#~ msgid "The current type does not implement 'getBitSize'."
-#~ msgstr ""
-
-#~ msgid "The current type does not implement 'getMaxBitSize'."
-#~ msgstr ""
-
-#~ msgid "The current type does not implement 'getMinBitSize'."
-#~ msgstr ""
-
-#~ msgid "The current type does not implement 'suitsBinary'."
-#~ msgstr ""
-
-#~ msgid "Mesage"
-#~ msgstr "Message"
-
-#~ msgid "Search or Environmental Dependencies"
-#~ msgstr "Chercher les dépendances environnementales"
+#~ msgid "Messages Distribution…"
+#~ msgstr "Distribution des messages"
 
