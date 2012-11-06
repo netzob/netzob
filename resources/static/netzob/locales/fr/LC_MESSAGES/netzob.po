@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-06 18:44+0100\n"
-"PO-Revision-Date: 2012-11-06 18:50+0200\n"
-"Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
+"PO-Revision-Date: 2012-11-06 21:59+0200\n"
+"Last-Translator: Frédéric Guihéry <sygus@cat-lan.com>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
 "Language: fr\n"
@@ -223,7 +223,7 @@ msgstr "Importer depuis un fichier"
 
 #: src/netzob/Common/MMSTD/Dictionary/VariableProcessingToken/VariableWritingToken.py:68
 msgid "WritingToken: isOk: {0}, value: {1}"
-msgstr ""
+msgstr "WritingToken: isOk: {0}, value: {1}"
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:287
 msgid "[Aggregate] {0} ({1})"
@@ -242,14 +242,14 @@ msgstr "[{0}]"
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/_DirectRelationVariable.py:73
 msgid "[Direct Relation] {0}, pointed ID: {1}"
-msgstr ""
+msgstr "[Direct Relation] {0}, pointed ID: {1}"
 
 #: src/netzob/Common/Plugins/Capturers/AbstractCapturer.py:72
 #: src/netzob/Import/AbstractImporter.py:72
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturer.py:233
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:274
 msgid "Message ID: {0} not found in importer message list"
-msgstr ""
+msgstr "ID de message ({0}) non trouvé dans la liste d'import des messages"
 
 #: src/netzob/Fuzzing/File.py:142 src/netzob/Fuzzing/Ipc.py:145
 #: src/netzob/Fuzzing/Network.py:225
@@ -306,7 +306,7 @@ msgstr "Symboles"
 
 #: src/netzob/Fuzzing/TreeViews/TreeTypeStructureGenerator.py:70
 msgid "iCol"
-msgstr ""
+msgstr "iCol"
 
 #: src/netzob/Fuzzing/TreeViews/TreeTypeStructureGenerator.py:70
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:173
@@ -541,7 +541,7 @@ msgstr "Mot hexadécimal"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:183
 msgid "IPv4 Word"
-msgstr ""
+msgstr "Mot IPv4"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:189
 msgid "MAC Word"
@@ -659,7 +659,7 @@ msgstr "Définition de l'agrégat"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:530
 msgid "Definition of the WORD"
-msgstr ""
+msgstr "Définition du mot"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:563
 #: src/netzob/Inference/Vocabulary/_VariableView.py:624
@@ -693,7 +693,7 @@ msgstr "Format :"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:766
 msgid "Definition of the ReferencedVariable"
-msgstr ""
+msgstr "Définition de la variable référencée"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:791
 msgid "Referenced Variable:"
@@ -726,7 +726,7 @@ msgstr "Espace de travail : "
 #: src/netzob/UI/WorkspaceSelector.py:75
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:257
 msgid "Browse"
-msgstr ""
+msgstr "Parcourir"
 
 #: src/netzob/UI/WorkspaceSelector.py:110
 msgid "Select the workspace"
@@ -752,7 +752,7 @@ msgstr "Merci de vérifier votre clé d'API."
 
 #: src/netzob/UI/Common/Controllers/BugReporterController.py:117
 msgid "Close"
-msgstr ""
+msgstr "Fermer"
 
 #: src/netzob/UI/Common/Controllers/BugReporterController.py:131
 msgid "You've been associated to the bug report {0}/issues/{1}."
@@ -847,7 +847,7 @@ msgstr "Une erreur s'est produite et a empêché de récupérer l'état final pr
 
 #: src/netzob/UI/Grammar/Controllers/CreateCloseChannelTransitionController.py:185
 msgid "Provided start state already has a close channel transition."
-msgstr ""
+msgstr "L'état de départ fourni a déjà une transition de fermeture de canal."
 
 #: src/netzob/UI/Grammar/Controllers/CreateOpenChannelTransitionController.py:148
 msgid "Give a valid maximum number of attempt (> 1)"
@@ -855,7 +855,7 @@ msgstr "Donnez un nombre maximal de tentatives valide (> 1)"
 
 #: src/netzob/UI/Grammar/Controllers/CreateOpenChannelTransitionController.py:197
 msgid "Provided start state already has an open channel transition."
-msgstr ""
+msgstr "L'état de départ fourni a déjà une transition d'ouverture de canal."
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:160
 msgid "Give a name to the transition."
@@ -876,6 +876,7 @@ msgid ""
 "The specified start state already has a transition with the same input "
 "symbol."
 msgstr ""
+"L'état de départ fourni a déjà une transition avec le même symbole d'entrée."
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:227
 msgid "Provide at least 1 output symbol (even an EmptySymbol)."
@@ -895,7 +896,7 @@ msgstr "Une erreur est survenue et a empêché de récupérer le symbole de sort
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:292
 msgid "Specify a valid probability defined over 100 (float)"
-msgstr ""
+msgstr "Spécifiez une probabilité valide définie sur 100 (flottant)"
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:297
 msgid "Specify a valid probability (0.0<=probability<=100.0)"
@@ -916,24 +917,26 @@ msgstr "Vous ne pouvez pas ajouter de durée multiples au même symbole de sorti
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:330
 msgid "The sum of probabilities is above 100, please adapt the provided value."
 msgstr ""
+"Spécifiez des probabilités dont la somme est valide (0,0 <= probabilité <= "
+"100,0)."
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:349
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:355
 msgid "Select an output Symbol before removing it."
-msgstr ""
+msgstr "Sélectionnez un symbole de sortie avant de le supprimer."
 
 #: src/netzob/UI/Grammar/Controllers/CreateStateController.py:91
 msgid "The first created state must be an initial state"
-msgstr ""
+msgstr "Le premier état créé doit être un état initial"
 
 #: src/netzob/UI/Grammar/Controllers/CreateStateController.py:104
 #: src/netzob/UI/Grammar/Controllers/EditStateController.py:104
 msgid "A state already has this name, please specify another one"
-msgstr ""
+msgstr "Ce nom d'état existe déjà. Choisissez un autre nom."
 
 #: src/netzob/UI/Grammar/Controllers/EditStateController.py:91
 msgid "You cannot deactivate an initial state."
-msgstr ""
+msgstr "Vous ne pouvez pas désactiver un état initial."
 
 #: src/netzob/UI/Grammar/Views/EditStateView.py:65
 msgid "Edit the state"
@@ -953,16 +956,16 @@ msgstr "Supprimez un état"
 
 #: src/netzob/UI/Grammar/Views/Menus/ContextualMenuOnStateView.py:80
 msgid "Edit"
-msgstr ""
+msgstr "Éditer"
 
 #: src/netzob/UI/Grammar/Views/Menus/ContextualMenuOnStateView.py:86
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:385
 msgid "Delete"
-msgstr ""
+msgstr "Effacer"
 
 #: src/netzob/UI/Import/Controllers/ConfirmImportMessagesController.py:89
 msgid "Specify the name of new symbol"
-msgstr ""
+msgstr "Choisissez un nom pour le nouveau symbole"
 
 #: src/netzob/UI/Import/Controllers/ConfirmImportMessagesController.py:99
 msgid "The provided symbol name already exists."
@@ -971,51 +974,51 @@ msgstr "Ce nom de symbole existe déjà."
 #: src/netzob/UI/Import/Controllers/ConfirmImportMessagesController.py:171
 #: src/netzob/UI/Import/Controllers/ConfirmImportMessagesController.py:221
 msgid "{0} messages will be imported"
-msgstr ""
+msgstr "{0} messages vont être importés"
 
 #: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:92
 msgid "Give a name to the actor"
-msgstr ""
+msgstr "Choisissez un nom pour le nouvel acteur"
 
 #: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:104
 msgid "An actor already has this name."
-msgstr ""
+msgstr "Un acteur à déjà ce nom."
 
 #: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:116
 msgid "Specify the type of the actor."
-msgstr ""
+msgstr "Spécifiez un type d'acteur."
 
 #: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:121
 msgid "Choose between a CLIENT or a SERVER type."
-msgstr ""
+msgstr "Choisissez entre un type CLIENT ou SERVER."
 
 #: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:128
 msgid "Only UDP and TCP layer 4 protocols are supported."
-msgstr ""
+msgstr "Seuls les protocoles de niveau 4 UDP et TCP sont supportés."
 
 #: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:142
 msgid "Specify a valid bind port (int>0)"
-msgstr ""
+msgstr "Spécifiez un port valide (int>0)"
 
 #: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:157
 msgid "Specify a valid target port (int>0)"
-msgstr ""
+msgstr "Spécifier un port destination valide (int>0)"
 
 #: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:173
 msgid "A network client requires a target IP."
-msgstr ""
+msgstr "Un client réseau nécessite une adresse IP."
 
 #: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:178
 msgid "A network client requires a target port."
-msgstr ""
+msgstr "Un client réseau nécessite un port destination."
 
 #: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:188
 msgid "A network server requires a bind IP."
-msgstr ""
+msgstr "Un serveur réseau nécessite une adresse IP."
 
 #: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:193
 msgid "A network server requires a bind port."
-msgstr ""
+msgstr "Un serveur réseau nécessite un port réseau."
 
 #: src/netzob/UI/Simulator/Controllers/SimulatorController.py:108
 msgid "Click yes to confirm the deletion of the selected actor"
@@ -1023,11 +1026,11 @@ msgstr "Cliquez sur oui pour valider la suppression de l'acteur sélectionné"
 
 #: src/netzob/UI/Vocabulary/Controllers/FindSizeFieldsController.py:83
 msgid "Size Fields Identifications"
-msgstr ""
+msgstr "Identification des champs taille"
 
 #: src/netzob/UI/Vocabulary/Controllers/FindSizeFieldsController.py:92
 msgid "Cancel"
-msgstr ""
+msgstr "Annuler"
 
 #: src/netzob/UI/Vocabulary/Controllers/FindSizeFieldsController.py:93
 msgid "Start"
@@ -1039,30 +1042,30 @@ msgstr "taille du champ"
 
 #: src/netzob/UI/Vocabulary/Controllers/FindSizeFieldsController.py:236
 msgid "start of payload"
-msgstr ""
+msgstr "Début de la charge utile"
 
 #: src/netzob/UI/Vocabulary/Controllers/ResearchController.py:132
 #: src/netzob/UI/Vocabulary/Controllers/ResearchController.py:229
 msgid "No occurrence found."
-msgstr ""
+msgstr "Aucune occurrence trouvée."
 
 #: src/netzob/UI/Vocabulary/Controllers/ResearchController.py:137
 #: src/netzob/UI/Vocabulary/Controllers/ResearchController.py:234
 msgid "{0} occurrences found."
-msgstr ""
+msgstr "{0} occurrence(s) trouvée(s)."
 
 #: src/netzob/UI/Vocabulary/Controllers/ResearchController.py:139
 #: src/netzob/UI/Vocabulary/Controllers/ResearchController.py:236
 msgid "{0} occurrence found."
-msgstr ""
+msgstr "{0} occurrence(s) trouvée(s)."
 
 #: src/netzob/UI/Vocabulary/Controllers/ResearchController.py:277
 msgid "{0}/{1}: {2}"
-msgstr ""
+msgstr "{0}/{1}: {2}"
 
 #: src/netzob/UI/Vocabulary/Controllers/SplitFieldController.py:90
 msgid "Can't split field with empty cell(s)."
-msgstr ""
+msgstr "Ne peux pas découper un champs sans cellule."
 
 #: src/netzob/UI/Vocabulary/Controllers/VariableController.py:164
 msgid "Edit the sub-element"
@@ -1070,15 +1073,15 @@ msgstr "Éditer le sous-élément"
 
 #: src/netzob/UI/Vocabulary/Controllers/VariableController.py:172
 msgid "Edit this element"
-msgstr ""
+msgstr "Éditer cet élément"
 
 #: src/netzob/UI/Vocabulary/Controllers/VariableController.py:179
 msgid "Move this element"
-msgstr ""
+msgstr "Déplacer cet élément"
 
 #: src/netzob/UI/Vocabulary/Controllers/VariableController.py:185
 msgid "Remove this element"
-msgstr ""
+msgstr "Supprimer cet élément"
 
 #: src/netzob/UI/Vocabulary/Controllers/VariableController.py:202
 msgid "Click yes to confirm the removal of the variable {0}"
@@ -1090,7 +1093,7 @@ msgstr "Cliquez sur oui pour confirmer l'édition de la variable {0}"
 
 #: src/netzob/UI/Vocabulary/Controllers/VariableController.py:892
 msgid "Select this element"
-msgstr ""
+msgstr "Sélectionner cet élément"
 
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:305
 msgid "No layer(s) selected."
@@ -1113,7 +1116,7 @@ msgstr "Aucun symbole sélectionné."
 
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:367
 msgid "You need to select at least two fields."
-msgstr ""
+msgstr "Vous devez sélectionner au moins deux champs."
 
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:403
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:416
@@ -1134,19 +1137,19 @@ msgstr "Cliquez sur oui pour confirmer la suppression du message sélectionné"
 
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:593
 msgid "Fields limits computed."
-msgstr ""
+msgstr "Limites des champs calculées."
 
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:604
 msgid "No importer plugin available."
-msgstr ""
+msgstr "Aucun plugin d'import disponible."
 
 #: src/netzob/UI/Vocabulary/Controllers/Menus/ContextualMenuOnFieldController.py:184
 msgid "Selected field range overlaps existing layer."
-msgstr ""
+msgstr "La plage de champs sélectionnée chevauche une couche protocolaire."
 
 #: src/netzob/UI/Vocabulary/Controllers/Menus/ContextualMenuOnFieldController.py:187
 msgid "Layer creation"
-msgstr ""
+msgstr "Création d'une couche protocolaire"
 
 #: src/netzob/UI/Vocabulary/Controllers/Menus/ContextualMenuOnLayerController.py:166
 msgid "Rename the layer {0}"
@@ -1190,7 +1193,7 @@ msgstr "Visualisation du champ"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:75
 msgid "Configure Transformation Functions"
-msgstr ""
+msgstr "Configurer les fonctions de transformation"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:81
 msgid "Create Layer"
@@ -1203,7 +1206,7 @@ msgstr "Éditer la variable"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:93
 msgid "Field Analysis"
-msgstr ""
+msgstr "Analyse du champs"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:99
 msgid "Extract Fields To A New Symbol"
@@ -1226,7 +1229,7 @@ msgstr "Format"
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:184
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:182
 msgid "UnitSize"
-msgstr ""
+msgstr "Taille unitaire"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:205
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:202
@@ -1272,7 +1275,7 @@ msgstr "Visualisation"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:89
 msgid "Transformation Functions"
-msgstr ""
+msgstr "Fonctions de transformation"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:95
 msgid "Delete Layer"
@@ -1304,7 +1307,7 @@ msgstr "Annuler le partitionnement"
 
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturerPlugin.py:55
 msgid "Provide the possibility to capture IPC trafic."
-msgstr ""
+msgstr "Permet la capture de flux IPC."
 
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturerView.py:71
 msgid "Capture IPC messages"
@@ -1313,6 +1316,8 @@ msgstr "Capturer les messages IPC"
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturer.py:122
 msgid "This device cannot be sniffed since the layer 2 is not supported ({0})"
 msgstr ""
+"Cette interface ne peut être utilisée car la couche 2 n'est pas supportée "
+"({0})"
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturer.py:240
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:238
@@ -1320,24 +1325,26 @@ msgid ""
 "Cannot import one of the provided packets since its layer 3 is "
 "unsupported (Only IP is currently supported, packet ethernet type = {0})"
 msgstr ""
+"Ne peut importer ce paquet réseau car la couche 3 ({0}) n'est pas supportée "
+"(seul le protocole IP est pour l'instant supporté)"
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:101
 msgid "Incorrect device"
-msgstr ""
+msgstr "Interface incorrecte"
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:107
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:110
 msgid "Incorrect count"
-msgstr ""
+msgstr "Valeur du compteur incorrecte"
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:115
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:118
 msgid "Incorrect time"
-msgstr ""
+msgstr "Valeur du temporisateur incorrecte"
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerPlugin.py:55
 msgid "Provide the possibility to capture network trafic."
-msgstr ""
+msgstr "Permet la capture de flux réseau."
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerView.py:71
 msgid "Capture network messages"
@@ -1349,7 +1356,7 @@ msgstr "Projet complet"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:185
 msgid "Export as Peach Fuzzer (XML)"
-msgstr ""
+msgstr "Exporter en tant que Fuzzer Peach (XML)"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:197
 msgid "Are you sure to override the file '{0}'?"
@@ -1638,9 +1645,8 @@ msgid "Mutable"
 msgstr ""
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:79
-#, fuzzy
 msgid "Learnable"
-msgstr "Variable"
+msgstr "Mémorisable"
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:139
 msgid "Variable Type"
@@ -1675,9 +1681,8 @@ msgid "Variable position"
 msgstr ""
 
 #: resources/static/netzob/ui/Variables/VariableTreeView.glade:19
-#, fuzzy
 msgid "Create default variable"
-msgstr "Créer une variable"
+msgstr "Créer une variable par défaut"
 
 #: resources/static/netzob/ui/capturer/abstractCapturerView.glade:9
 #: resources/static/netzob/ui/import/abstractImporterView.glade:9
@@ -1906,24 +1911,20 @@ msgid "Grammar Edition"
 msgstr ""
 
 #: resources/static/netzob/ui/grammar/grammarActions.glade:53
-#, fuzzy
 msgid "Create OpenChannel Transition"
-msgstr "Créer une transition"
+msgstr "Créer une transition d'ouverture de canal"
 
 #: resources/static/netzob/ui/grammar/grammarActions.glade:54
-#, fuzzy
 msgid "Create Open Channel Transition"
-msgstr "Créer une transition"
+msgstr "Créer une transition d'ouverture de canal"
 
 #: resources/static/netzob/ui/grammar/grammarActions.glade:62
-#, fuzzy
 msgid "Create CloseChannel Transition"
-msgstr "Créer une transition"
+msgstr "Créer une transition de fermeture de canal"
 
 #: resources/static/netzob/ui/grammar/grammarActions.glade:63
-#, fuzzy
 msgid "Create a Close Channel Transition"
-msgstr "Créer une transition"
+msgstr "Créer une transition de fermeture de canal"
 
 #: resources/static/netzob/ui/import/abstractImporterView.glade:116
 msgid "Warning message"
@@ -1972,28 +1973,24 @@ msgid "Predefined Values"
 msgstr ""
 
 #: resources/static/netzob/ui/simulator/createNetworkActor.glade:352
-#, fuzzy
 msgid "L4_PROTOCOL"
-msgstr "Protocole :"
+msgstr "L4_PROTOCOL"
 
 #: resources/static/netzob/ui/simulator/createNetworkActor.glade:366
 msgid "BIND_IP"
 msgstr ""
 
 #: resources/static/netzob/ui/simulator/createNetworkActor.glade:380
-#, fuzzy
 msgid "BIND_PORT"
-msgstr "dport"
+msgstr "BIND_PORT"
 
 #: resources/static/netzob/ui/simulator/createNetworkActor.glade:394
-#, fuzzy
 msgid "TARGET_IP"
-msgstr "Cible :"
+msgstr "TARGET_IP"
 
 #: resources/static/netzob/ui/simulator/createNetworkActor.glade:408
-#, fuzzy
 msgid "TARGET_PORT"
-msgstr "Port cible :"
+msgstr "TARGET_PORT"
 
 #: resources/static/netzob/ui/simulator/simulatorActions.glade:9
 msgid "Create a network actor"
@@ -2022,9 +2019,8 @@ msgid "Communication Channel"
 msgstr ""
 
 #: resources/static/netzob/ui/simulator/simulatorView.glade:533
-#, fuzzy
 msgid "Info :"
-msgstr "Signe :"
+msgstr "Information :"
 
 #: resources/static/netzob/ui/simulator/simulatorView.glade:547
 msgid "Status :"
@@ -2041,9 +2037,8 @@ msgid "Memory Accesses"
 msgstr ""
 
 #: resources/static/netzob/ui/simulator/simulatorView.glade:737
-#, fuzzy
 msgid "OP"
-msgstr "Stop"
+msgstr "OP"
 
 #: resources/static/netzob/ui/simulator/simulatorView.glade:759
 msgid "Variable"
@@ -2130,9 +2125,8 @@ msgid "Filter:"
 msgstr "Filtre : "
 
 #: resources/static/netzob/ui/vocabulary/messageDistributionDialog.glade:7
-#, fuzzy
 msgid "Distribution of bytes values"
-msgstr "Description de la variable"
+msgstr "Distribution des valeurs d'octets"
 
 #: resources/static/netzob/ui/vocabulary/messageTable.glade:31
 msgid "Empty Message Table"
@@ -2425,9 +2419,8 @@ msgid "New empty view for message of symbol"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:412
-#, fuzzy
 msgid "New MessageList"
-msgstr "Message brut"
+msgstr "Nouvelle liste de messages"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:457
 msgid "Properties"
@@ -2547,24 +2540,20 @@ msgid "Search properties"
 msgstr "Propriétés de la recherche"
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:24
-#, fuzzy
 msgid "Search in"
 msgstr "Rechercher"
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:34
-#, fuzzy
 msgid "Focused symbol"
-msgstr "Supprimer le symbole"
+msgstr "Symbole ayant le focus"
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:52
-#, fuzzy
 msgid "Displayed symbols"
-msgstr "Éditer le symbole"
+msgstr "Symboles affichés"
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:70
-#, fuzzy
 msgid "All symbols"
-msgstr "Éditer le symbole"
+msgstr "Tous les symboles"
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:162
 msgid "Use inverted search:"
