@@ -8,17 +8,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-06 12:07+0100\n"
+"POT-Creation-Date: 2012-11-06 14:36+0100\n"
 "PO-Revision-Date: 2012-11-06 14:32+0200\n"
 "Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
-"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Weblate 1.3-dev\n"
 "Generated-By: Babel 0.9.6\n"
 
 #: src/netzob/NetzobMainController.py:309
@@ -196,22 +194,22 @@ msgid ""
 "The workspace's configuration file can't be find (No workspace path "
 "given)."
 msgstr ""
-"La configuration de l'espace de travail n'a pas été trouvée (l'emplacement "
-"de l'espace de travail n'a pas été fourni)."
+"La configuration de l'espace de travail n'a pas été trouvée "
+"(l'emplacement de l'espace de travail n'a pas été fourni)."
 
 #: src/netzob/Common/Workspace.py:309
 msgid ""
 "The specified workspace's configuration file ({0}) is not valid: its not "
 "a file."
 msgstr ""
-"L'espace de travail spécifié dans le fichier de configuration ({0}) n'est "
-"pas valide : il ne s'agit pas d'un fichier."
+"L'espace de travail spécifié dans le fichier de configuration ({0}) n'est"
+" pas valide : il ne s'agit pas d'un fichier."
 
 #: src/netzob/Common/Workspace.py:312
 msgid "The specified workspace's configuration file ({0}) is not readable."
 msgstr ""
-"Le fichier de configuration de l'espace de travail indiqué ({0}) n'est pas "
-"lisible."
+"Le fichier de configuration de l'espace de travail indiqué ({0}) n'est "
+"pas lisible."
 
 #: src/netzob/Common/Workspace.py:320
 msgid "The specified workspace is not valid according the XSD definitions."
@@ -225,45 +223,12 @@ msgstr ""
 msgid "{0}, delimiter: {1}"
 msgstr "{0}, délimiteur : {1}"
 
-#: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:192
-msgid "The current type does not implement 'mutateValue'."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:206
-msgid "The current type does not implement 'generateFixedSizeValue'."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:219
-msgid "The current type does not implement 'str2bin'."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:232
-msgid "The current type does not implement 'bin2str'."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:244
-msgid "The current type does not implement 'getBitSize'."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:256
-msgid "The current type does not implement 'getMaxBitSize'."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:268
-msgid "The current type does not implement 'getMinBitSize'."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:278
-#: src/netzob/Common/MMSTD/Dictionary/RelationTypes/AbstractRelationType.py:77
-msgid "The current type does not implement 'getType'."
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:290
-msgid "The current type does not implement 'suitsBinary'."
-msgstr ""
-
 #: src/netzob/Common/MMSTD/Dictionary/RelationTypes/AbstractRelationType.py:64
 msgid "{0}, associatedDataType: {1}"
+msgstr ""
+
+#: src/netzob/Common/MMSTD/Dictionary/RelationTypes/AbstractRelationType.py:77
+msgid "The current type does not implement 'getType'."
 msgstr ""
 
 #: src/netzob/Common/MMSTD/Dictionary/RelationTypes/AbstractRelationType.py:92
@@ -2193,7 +2158,9 @@ msgid "Status :"
 msgstr ""
 
 #: resources/static/netzob/ui/simulator/simulatorView.glade:648
-msgid "Mesage"
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:266
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:676
+msgid "Message"
 msgstr "Message"
 
 #: resources/static/netzob/ui/simulator/simulatorView.glade:694
@@ -2247,12 +2214,14 @@ msgid "Field name"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/editFieldDialog.glade:48
-msgid "Regex (be careful !)"
+#, fuzzy
+msgid "Regex (be careful!)"
 msgstr "Expression rationnelle (faire attention !)"
 
 #: resources/static/netzob/ui/vocabulary/environmentDependenciesSearcherView.glade:17
-msgid "Search or Environmental Dependencies"
-msgstr "Chercher les dépendances environnementales"
+#, fuzzy
+msgid "Search For Environmental Dependencies"
+msgstr "Rechercher les dépendances d'environnement"
 
 #: resources/static/netzob/ui/vocabulary/environmentDependenciesSearcherView.glade:96
 msgid "Search for Environmental Dependencies"
@@ -2573,11 +2542,6 @@ msgstr "Annuler le partitionnement"
 #, fuzzy
 msgid "Messages Distribution…"
 msgstr "Distribution des messages"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:266
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:676
-msgid "Message"
-msgstr "Message"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:277
 msgid "Field"
@@ -2924,739 +2888,33 @@ msgstr ""
 msgid "Time limit:"
 msgstr "Délimiteur :"
 
-#~ msgid "Starting netzob UI"
-#~ msgstr "Démarrage de l'interface graphique de Netzob"
-
-#~ msgid ""
-#~ "A project with the same name "
-#~ "already exists ({0}, {1}), please change"
-#~ " it."
-#~ msgstr "Un projet avec le même nom existe déjà ({0}, {1}), veuillez le changer."
-
-#~ msgid "Create new project {0}"
-#~ msgstr "Création du nouveau projet {0}"
-
-#~ msgid "Impossible to import the libNeedleman"
-#~ msgstr ""
-
-#~ msgid "Impossible to import the libScoreComputation"
-#~ msgstr ""
-
-#~ msgid "Impossible to import the libInterface"
-#~ msgstr ""
-
-#~ msgid "Impossible to import the libRegex"
-#~ msgstr ""
-
-#~ msgid "Can't smooth regex from fields that are part of different layers."
-#~ msgstr ""
-
-#~ msgid "The computing field is not part of the current symbol"
-#~ msgstr ""
-
-#~ msgid "The static resources were not found !"
-#~ msgstr "Les ressources statiques n'ont pas été trouvées !"
-
-#~ msgid "Current workspace : NO WORKSPACE COMPUTED !"
-#~ msgstr "Espace de travail courrant : AUCUN ESPACE DE TRAVAIL GÉNÉRÉ !"
-
-#~ msgid "Field {0} has no variable, considering default one."
-#~ msgstr ""
-
-#~ msgid "Tried to compare a Symbol with {0}"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "The specified workspace's configuration file"
-#~ " ({0}) is not valid : its not"
-#~ " a file."
-#~ msgstr ""
-
-#~ msgid "Try to abstract message through : {0}."
-#~ msgstr ""
-
-#~ msgid "ReadingToken: isOk: {0}, index: {1}, len(value): {2}"
-#~ msgstr ""
-
-#~ msgid "The message matches symbol {0}."
-#~ msgstr ""
-
-#~ msgid "The message doesn't match symbol {0}."
-#~ msgstr ""
-
-#~ msgid "The delimiter {0} is not a valid hexadecimal string."
-#~ msgstr ""
-
-#~ msgid "Format comparison successful."
-#~ msgstr ""
-
-#~ msgid "Format comparison failed: wrong format."
-#~ msgstr ""
-
-#~ msgid "Format comparison failed: wrong size."
-#~ msgstr ""
-
-#~ msgid "Format comparison failed: no delimiter found."
-#~ msgstr ""
-
-#~ msgid "Type {0} : minChars undefined or < 0. MinBits value is fixed to 0."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Type {0} : maxChars undefined or <"
-#~ " minChars. MaxBits value is fixed to"
-#~ " minBits."
-#~ msgstr ""
-
-#~ msgid "Wrong type specified for this variable."
-#~ msgstr ""
-
-#~ msgid "The token's ok flag is set to {0}."
-#~ msgstr ""
-
-#~ msgid "[ {0} (leaf): read access:"
-#~ msgstr ""
-
-#~ msgid "Read abort: the variable is neither defined, nor mutable."
-#~ msgstr ""
-
-#~ msgid "Variable {0}: {1}. ]"
-#~ msgstr ""
-
-#~ msgid "[ {0} (leaf): write access:"
-#~ msgstr ""
-
-#~ msgid "Write abort: the variable is neither defined, nor mutable."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Wrong position given, nothing is done:"
-#~ " the position {0} is without the "
-#~ "boundaries [0, {1}]"
-#~ msgstr ""
-
-#~ msgid "-  {0}: shuffleChildren."
-#~ msgstr ""
-
-#~ msgid "[ {0}: children's memorized value are restored."
-#~ msgstr ""
-
-#~ msgid "Variable {0}: ]"
-#~ msgstr "Variable {0}:]"
-
-#~ msgid "[ AbstractVariable: loadFromXML:"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "xmlRoot.get(...) returns {0} which does "
-#~ "not correspond to a true variable "
-#~ "class."
-#~ msgstr ""
-
-#~ msgid "AbstractVariable: loadFromXML ]"
-#~ msgstr ""
-
-#~ msgid "Version != 0.1"
-#~ msgstr ""
-
-#~ msgid "- [ {0}: sortChildrenToRead."
-#~ msgstr ""
-
-#~ msgid "Variable {0}: {1}. ] -"
-#~ msgstr ""
-
-#~ msgid "- [ {0}: readChildren."
-#~ msgstr ""
-
-#~ msgid "- [ {0}: learn."
-#~ msgstr ""
-
-#~ msgid "[ {0} (Aggregate): read access:"
-#~ msgstr ""
-
-#~ msgid "Write abort: the variable has no child."
-#~ msgstr ""
-
-#~ msgid "[ {0} (Aggregate): write access:"
-#~ msgstr ""
-
-#~ msgid "[ {0} (Aggregate): toXML:"
-#~ msgstr ""
-
-#~ msgid "Variable {0}. ]"
-#~ msgstr "Variable {0}.]"
-
-#~ msgid "[ AggregateVariable: loadFromXML:"
-#~ msgstr ""
-
-#~ msgid "AggregateVariable: loadFromXML successes: {0} ]"
-#~ msgstr ""
-
-#~ msgid "AggregateVariable: loadFromXML fails"
-#~ msgstr ""
-
-#~ msgid "[ {0} (Alternate): readChildren:"
-#~ msgstr ""
-
-#~ msgid "The father is neither an aggregate nor a repeat variable."
-#~ msgstr ""
-
-#~ msgid "[ {0} (Alternate): writeChildren:"
-#~ msgstr ""
-
-#~ msgid "[ {0} (Alternate): read access:"
-#~ msgstr ""
-
-#~ msgid "[ {0} (Alternate): write access:"
-#~ msgstr ""
-
-#~ msgid "[ AlternateVariable: loadFromXML:"
-#~ msgstr ""
-
-#~ msgid "AlternateVariable: loadFromXML successes: {0} ]"
-#~ msgstr ""
-
-#~ msgid "AlternateVariable: loadFromXML fails"
-#~ msgstr ""
-
-#~ msgid "We found the pointed value."
-#~ msgstr ""
-
-#~ msgid "The pointing value is after the pointed value in the same tree."
-#~ msgstr ""
-
-#~ msgid "The pointing value is before the pointed value or in a different tree."
-#~ msgstr ""
-
-#~ msgid "Default case."
-#~ msgstr ""
-
-#~ msgid "- {0}: retrieveValue."
-#~ msgstr ""
-
-#~ msgid "- [ {0}: compare."
-#~ msgstr ""
-
-#~ msgid "Comparison successful."
-#~ msgstr ""
-
-#~ msgid "Comparison failed: wrong value."
-#~ msgstr ""
-
-#~ msgid "Comparison failed: wrong size."
-#~ msgstr ""
-
-#~ msgid "- [ {0}: compareFormat."
-#~ msgstr ""
-
-#~ msgid "- {0}: generate."
-#~ msgstr ""
-
-#~ msgid "- {0}: computeValue."
-#~ msgstr ""
-
-#~ msgid "- [ {0}: writeValue."
-#~ msgstr ""
-
-#~ msgid "[ {0} (relation): read access:"
-#~ msgstr ""
-
-#~ msgid "Read abort: the variable is not defined."
-#~ msgstr ""
-
-#~ msgid "[ {0} (relation): write access:"
-#~ msgstr ""
-
-#~ msgid "Write abort: the variable is not defined."
-#~ msgstr ""
-
-#~ msgid "[ {0}: toXML:"
-#~ msgstr ""
-
-#~ msgid "[ {0} (relation): notifiedWrite access:"
-#~ msgstr ""
-
-#~ msgid "Write abort: the variable is neither defined, nor random."
-#~ msgstr ""
-
-#~ msgid "[ ComputedRelationVariable: loadFromXML:"
-#~ msgstr ""
-
-#~ msgid "No type specified for this variable in the xml file."
-#~ msgstr ""
-
-#~ msgid "ComputedRelationVariable: loadFromXML successes: {0} ]"
-#~ msgstr ""
-
-#~ msgid "ComputedRelationVariable: loadFromXML fails"
-#~ msgstr ""
-
-#~ msgid "- {0}: memorized value is restored."
-#~ msgstr ""
-
-#~ msgid "- {0}: toXML:"
-#~ msgstr ""
-
-#~ msgid "- {0}: value is forgotten."
-#~ msgstr ""
-
-#~ msgid "- {0}: value is recalled."
-#~ msgstr ""
-
-#~ msgid "- {0}: value is memorized."
-#~ msgstr ""
-
-#~ msgid "Learning done."
-#~ msgstr "Apprentissage terminé."
-
-#~ msgid "Learning abort because the previous format comparison failed."
-#~ msgstr ""
-
-#~ msgid "- {0}: mutate."
-#~ msgstr ""
-
-#~ msgid "Variable {0} (Data): type undefined."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Variable {0} (Data): The given original"
-#~ " value has an inappropriate size."
-#~ msgstr ""
-
-#~ msgid "Variable {0} (Data): The given original value is None."
-#~ msgstr ""
-
-#~ msgid "[ DataVariable: loadFromXML:"
-#~ msgstr ""
-
-#~ msgid "DataVariable: loadFromXML successes: {0} ]"
-#~ msgstr ""
-
-#~ msgid "DataVariable: loadFromXML fails"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Variable {0} (Repeat): Construction of "
-#~ "RepeatVariable: minIterations undefined or <"
-#~ " 0. minIterations value is fixed to"
-#~ " 0."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Variable {0} (Repeat): Construction of "
-#~ "RepeatVariable: maxIterations undefined or <"
-#~ " minIterations. maxIterations value is "
-#~ "fixed to minIterations."
-#~ msgstr ""
-
-#~ msgid "[ {0}: read access:"
-#~ msgstr ""
-
-#~ msgid "[ {0}: write access:"
-#~ msgstr ""
-
-#~ msgid "[ RepeatVariable: loadFromXML:"
-#~ msgstr ""
-
-#~ msgid "RepeatVariable: loadFromXML successes: {0} ]"
-#~ msgstr ""
-
-#~ msgid "RepeatVariable: loadFromXML fails"
-#~ msgstr ""
-
-#~ msgid "- [ {0}: randomizePointedVariable."
+#~ msgid "The current type does not implement 'mutateValue'."
 #~ msgstr ""
 
-#~ msgid "- [ {0}: notifiedWriteValue."
+#~ msgid "The current type does not implement 'generateFixedSizeValue'."
 #~ msgstr ""
 
-#~ msgid "- [ {0}: notifiedCompare."
+#~ msgid "The current type does not implement 'str2bin'."
 #~ msgstr ""
 
-#~ msgid "- [ {0}: trivialCompareFormat."
+#~ msgid "The current type does not implement 'bin2str'."
 #~ msgstr ""
 
-#~ msgid "[ DirectRelationVariable: loadFromXML:"
+#~ msgid "The current type does not implement 'getBitSize'."
 #~ msgstr ""
 
-#~ msgid "DirectRelationVariable: loadFromXML successes: {0} ]"
+#~ msgid "The current type does not implement 'getMaxBitSize'."
 #~ msgstr ""
 
-#~ msgid "DirectRelationVariable: loadFromXML fails"
+#~ msgid "The current type does not implement 'getMinBitSize'."
 #~ msgstr ""
 
-#~ msgid "Impossible to retrieve the symbol having the id {0}"
+#~ msgid "The current type does not implement 'suitsBinary'."
 #~ msgstr ""
 
-#~ msgid "Fuzz field : {0}"
-#~ msgstr "Fuzzer le champ : {0}"
+#~ msgid "Mesage"
+#~ msgstr "Message"
 
-#~ msgid "Fuzz field: {0}"
-#~ msgstr "Fuzzer le champ : {0}"
+#~ msgid "Search or Environmental Dependencies"
+#~ msgstr "Chercher les dépendances environnementales"
 
-#~ msgid "Launching fuzzing process with : filter=\"{0}\""
-#~ msgstr "Lancement du processus de fuzzing avec : filter=\"{0}\""
-
-#~ msgid "Updating the treestore of the symbol in default mode"
-#~ msgstr ""
-
-#~ msgid "The treeview for the messages is in error mode"
-#~ msgstr ""
-
-#~ msgid "Unable to find a repository file for API injector."
-#~ msgstr "Impossible de trouver un dépôt de fichier pour l'injecteur d'API."
-
-#~ msgid "A selected process cannot be found !"
-#~ msgstr ""
-
-#~ msgid "The selected process cannot be find !"
-#~ msgstr ""
-
-#~ msgid "You have to select a process if you want to capture it"
-#~ msgstr "Vous devez sélectionner un processus si vous voulez le capturer"
-
-#~ msgid "You have to select a DLL if you want to capture it"
-#~ msgstr "Vous devez sélectionner une DLL si vous voulez la capturer"
-
-#~ msgid "Impossible to retrieve the selected function"
-#~ msgstr ""
-
-#~ msgid "Selected function done!"
-#~ msgstr ""
-
-#~ msgid "You have to select a function if you want to capture it"
-#~ msgstr ""
-
-#~ msgid "Temporary folder: {0}"
-#~ msgstr "Répertoire temporaire : {0}"
-
-#~ msgid "Starting the capture of [{0}]"
-#~ msgstr ""
-
-#~ msgid "DLL [{0}]"
-#~ msgstr "DLL [{0}]"
-
-#~ msgid "Function [{0}]"
-#~ msgstr "Fonction [{0}]"
-
-#~ msgid "FIFO: {0}"
-#~ msgstr ""
-
-#~ msgid "Creating the FIFO file: {0}"
-#~ msgstr ""
-
-#~ msgid "Failed to create FIFO: %s"
-#~ msgstr ""
-
-#~ msgid "The fifo has been created..."
-#~ msgstr ""
-
-#~ msgid "Cannot execute GOT Poisoning since FIFO file was not created !"
-#~ msgstr ""
-
-#~ msgid "Stoping the capture..."
-#~ msgstr "Arrêter la capture..."
-
-#~ msgid "Reading finish, we close the FIFO."
-#~ msgstr ""
-
-#~ msgid "Impossible to retrieve the message the user clicked on. Hum ?"
-#~ msgstr ""
-
-#~ msgid "Impossible to find a plugin to import data from."
-#~ msgstr ""
-
-#~ msgid "A number of {0} messages were extracted."
-#~ msgstr ""
-
-#~ msgid "The specified XML file {0} is not valid according to the XSD ({1})."
-#~ msgstr ""
-
-#~ msgid "XML file valid according to the XSD schema"
-#~ msgstr ""
-
-#~ msgid "XML String data: {0}"
-#~ msgstr ""
-
-#~ msgid "Updating the treestore of the processes in default mode"
-#~ msgstr ""
-
-#~ msgid "Updating the list of executing processes."
-#~ msgstr ""
-
-#~ msgid "A number of %d sessions will be injected in the grammar"
-#~ msgstr ""
-
-#~ msgid "Search for a difference with a new session"
-#~ msgstr ""
-
-#~ msgid "A difference has been found, symbol %s must be added to transition %s"
-#~ msgstr ""
-
-#~ msgid "The current session does not introduce other differences"
-#~ msgstr ""
-
-#~ msgid "All the sessions have been applied on current automata"
-#~ msgstr ""
-
-#~ msgid "Adding symbol %s as an output transition %s."
-#~ msgstr ""
-
-#~ msgid "automata : %s"
-#~ msgstr "automate : %s"
-
-#~ msgid "Cannot apply a session on the current automata because it doesn't exist"
-#~ msgstr ""
-
-#~ msgid "Inject message : %s"
-#~ msgstr "Injecter le message : %s"
-
-#~ msgid ""
-#~ "Input symbol %s doesn't match any "
-#~ "existing transition in current state %s"
-#~ msgstr ""
-
-#~ msgid "We forget this message."
-#~ msgstr ""
-
-#~ msgid "Input symbol %s matchs the transition %s from state %s"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "A difference has been found, symbol "
-#~ "%s is not an output symbol of "
-#~ "transition %s"
-#~ msgstr ""
-
-#~ msgid "Impossible to show a Null query"
-#~ msgstr "Impossible d'afficher une requête nulle"
-
-#~ msgid "Stop the inferer"
-#~ msgstr ""
-
-#~ msgid "Saving the computed automata as the grammar of current project"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Do not start the searching process "
-#~ "since no pattern was provided by "
-#~ "the user"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Do not start the searching process "
-#~ "since no type was provided by the"
-#~ " user"
-#~ msgstr ""
-
-#~ msgid "User searches for {0} of type {1}"
-#~ msgstr ""
-
-#~ msgid "No data to search after were computed."
-#~ msgstr ""
-
-#~ msgid "The following data will be searched for:"
-#~ msgstr ""
-
-#~ msgid "A number of {0} results found!"
-#~ msgstr ""
-
-#~ msgid "Register: {0}"
-#~ msgstr ""
-
-#~ msgid "Impossible to find the selected variable."
-#~ msgstr ""
-
-#~ msgid "No selected symbol"
-#~ msgstr "Aucun symbole sélectionné"
-
-#~ msgid ""
-#~ "Error while proceeding to the "
-#~ "environmental search dependencies on symbols:"
-#~ " {0}"
-#~ msgstr ""
-
-#~ msgid "Error while proceeding to the size field identification: {0}"
-#~ msgstr ""
-
-#~ msgid "Impossible to retrieve the clicked field !"
-#~ msgstr ""
-
-#~ msgid "Open a project before..."
-#~ msgstr ""
-
-#~ msgid "Error while proceeding to the arbitrary search process: {0}"
-#~ msgstr ""
-
-#~ msgid "Error while proceeding to the search process: {0}"
-#~ msgstr ""
-
-#~ msgid "{0}/{1} : {2}"
-#~ msgstr ""
-
-#~ msgid "The user didn't confirm the deletion of the variable {0}"
-#~ msgstr "L'utilisateur n'a pas confirmé la suppression de la variable {0}"
-
-#~ msgid "The user didn't confirm the edition of the variable {0}"
-#~ msgstr "L'utilisateur n'a pas confirmé l'édition de la variable {0}"
-
-#~ msgid "Renamed layer {0} to {1}"
-#~ msgstr "Couche renommée de {0} à ({1})"
-
-#~ msgid "Error while proceeding to the force partitioning of fields: {0}"
-#~ msgstr ""
-
-#~ msgid "Error while proceeding to the reseting of fields: {0}"
-#~ msgstr ""
-
-#~ msgid "Reset finished !"
-#~ msgstr ""
-
-#~ msgid "Error while proceeding to the alignment: {0}"
-#~ msgstr ""
-
-#~ msgid "Error while proceeding to the simple partitioning of fields: {0}"
-#~ msgstr ""
-
-#~ msgid "Error while proceeding to the smoothing of fields: {0}"
-#~ msgstr ""
-
-#~ msgid "Smooth finished !"
-#~ msgstr ""
-
-#~ msgid "Extract fields to a new symbol"
-#~ msgstr ""
-
-#~ msgid "Aligned formatted message"
-#~ msgstr ""
-
-#~ msgid "Launching sniff process"
-#~ msgstr "Lancement du processus d'écoute"
-
-#~ msgid ""
-#~ "You don't have enough permissions to "
-#~ "open any network interface on this "
-#~ "system. Please look at the README.rst"
-#~ " file for more information."
-#~ msgstr ""
-#~ "Vous n'avez pas les permissions "
-#~ "suffisantes pour ouvrir une interface "
-#~ "réseau sur ce système. Veuillez "
-#~ "consulter le fichier README.rst pour "
-#~ "plus d'informations."
-
-#~ msgid ""
-#~ "Launching sniff process on dev {0} "
-#~ "with : count={1}, timeout={2}, filter=\"{3}\""
-#~ msgstr ""
-
-#~ msgid "The provided filter is not valid (it should respects the BPF format"
-#~ msgstr ""
-
-#~ msgid "Targeted symbolID: {0}"
-#~ msgstr ""
-
-#~ msgid "The fuzzing is based on variables."
-#~ msgstr ""
-
-#~ msgid "The field {0} has the value {1}."
-#~ msgstr ""
-
-#~ msgid "Sublength : {0}."
-#~ msgstr ""
-
-#~ msgid "The fuzzing is based on regexes."
-#~ msgstr ""
-
-#~ msgid "The field {0} has the splitted Regex = {1}"
-#~ msgstr ""
-
-#~ msgid "The field {0} has a static subfield of value {1}."
-#~ msgstr ""
-
-#~ msgid "The field {0} is empty."
-#~ msgstr ""
-
-#~ msgid "<[ variable  : {0}."
-#~ msgstr ""
-
-#~ msgid "fatherValueLists : {0}."
-#~ msgstr ""
-
-#~ msgid "typedValueLists  : {0}."
-#~ msgstr ""
-
-#~ msgid "variable  : {0}. ]>"
-#~ msgstr ""
-
-#~ msgid "concatVariableValues : midvl before : {0}."
-#~ msgstr ""
-
-#~ msgid "concatVariableValues : midvl after : {0}."
-#~ msgstr ""
-
-#~ msgid "Format of the field {0} is {1}."
-#~ msgstr ""
-
-#~ msgid "Fuzzing based on : "
-#~ msgstr ""
-
-#~ msgid "Starting import from {0} (linktype:{0})"
-#~ msgstr ""
-
-#~ msgid "Name of the symbol :"
-#~ msgstr "Nom du symbole : "
-
-#~ msgid " Project to import :"
-#~ msgstr ""
-
-#~ msgid "Name of the project :"
-#~ msgstr "Nom du nouveau projet : "
-
-#~ msgid "Import Project…"
-#~ msgstr "Importer un projet"
-
-#~ msgid "Export Project…"
-#~ msgstr "Exporter le projet"
-
-#~ msgid "Select a new working directory"
-#~ msgstr ""
-
-#~ msgid "Edit Variable…"
-#~ msgstr "Éditer la variable"
-
-#~ msgid "Variable Table…"
-#~ msgstr "Variable"
-
-#~ msgid "Compute field limits"
-#~ msgstr ""
-
-#~ msgid "Search a string in all messages of current symbol"
-#~ msgstr ""
-
-#~ msgid "Select all symbol"
-#~ msgstr "Aucun symbole sélectionné"
-
-#~ msgid "Format of delimiter :"
-#~ msgstr ""
-
-#~ msgid "String"
-#~ msgstr ""
-
-#~ msgid "Similarity percent :"
-#~ msgstr ""
-
-#~ msgid "Format :"
-#~ msgstr "Format :"
-
-#~ msgid "Use inverted research :"
-#~ msgstr ""
-
-#~ msgid "Underline all object found :"
-#~ msgstr ""
-
-#~ msgid "Match case :"
-#~ msgstr ""
-
-#~ msgid "Use regex expression :"
-#~ msgstr ""
