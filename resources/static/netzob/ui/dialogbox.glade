@@ -593,7 +593,7 @@ is not valid !</property>
               <object class="GtkLabel" id="label1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Name of the symbol :</property>
+                <property name="label" translatable="yes">Symbol's name:</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -903,7 +903,7 @@ is not valid !</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="xpad">2</property>
-                <property name="label" translatable="yes"> Project to import :</property>
+                <property name="label" translatable="yes">Project to import:</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1040,7 +1040,7 @@ is not valid !</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="xpad">2</property>
-                <property name="label" translatable="yes">Name of the project :</property>
+                <property name="label" translatable="yes">Project's name:</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1143,7 +1143,7 @@ is not valid !</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="xpad">2</property>
-                <property name="label" translatable="yes">Name of the symbol :</property>
+                <property name="label" translatable="yes">Symbol's name:</property>
               </object>
               <packing>
                 <property name="expand">False</property>

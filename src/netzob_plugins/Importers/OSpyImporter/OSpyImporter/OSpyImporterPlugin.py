@@ -43,8 +43,8 @@ from OSpyImporterController import OSpyImporterController
 
 
 class OSpyImporterPlugin(FileImporterPlugin):
-    """OSpyImporter : Provides the possibility to import messages
-       from OSpy project file."""
+    """OSpyImporter: Provides the possibility to import messages from
+       OSpy project file."""
 
     __plugin_name__ = "OSpyImporter"
     __plugin_version__ = "1.0"

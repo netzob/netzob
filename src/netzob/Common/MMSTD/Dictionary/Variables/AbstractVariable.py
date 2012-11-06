@@ -281,7 +281,7 @@ class AbstractVariable(object):
                 @return: a variable constructed from this XML definition.
         """
         if version == "0.1":
-            logging.debug(_("[ AbstractVariable: loadFromXML:"))
+            logging.debug("[ AbstractVariable: loadFromXML:")
             # Data Variable
             if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:DataVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
@@ -313,7 +313,7 @@ class AbstractVariable(object):
                 return ComputedRelationVariable.loadFromXML(xmlRoot, namespace, version, symbol)
 
             else:
-                logging.debug(_("xmlRoot.get(...) returns {0} which does not correspond to a true variable class.").format(xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract")))
-            logging.debug(_("AbstractVariable: loadFromXML ]"))
+                logging.debug("xmlRoot.get(...) returns {0} which does not correspond to a true variable class.").format(xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract"))
+            logging.debug("AbstractVariable: loadFromXML ]")
         else:
-            logging.debug(_("Version != 0.1"))
+            logging.debug("Version != 0.1")

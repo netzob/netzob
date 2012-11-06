@@ -72,7 +72,7 @@ class AbstractType():
             # We assume that delimiters are written by the user as hex string.
             self.delimiter = TypeConvertor.hexstring2bin(delimiter)
         except:
-            self.log.error(_("The delimiter {0} is not a valid hexadecimal string.").format(str(delimiter)))
+            self.log.error("The delimiter {0} is not a valid hexadecimal string.".format(str(delimiter)))
 
     def toString(self):
         if self.sized:
@@ -137,21 +137,21 @@ class AbstractType():
                     # Format comparison.
                     if self.suitsBinary(tmp):
                         readingToken.setOk(True)
-                        self.log.info(_("Format comparison successful."))
+                        self.log.info("Format comparison successful.")
                     else:
                         readingToken.setOk(False)
-                        self.log.info(_("Format comparison failed: wrong format."))
+                        self.log.info("Format comparison failed: wrong format.")
                 else:  # len(tmp) > self.maxBits
                     # Format comparison.
                     if self.suitsBinary(tmp[:maxBits]):
                         readingToken.setOk(True)
-                        self.log.info(_("Format comparison successful."))
+                        self.log.info("Format comparison successful.")
                     else:
                         readingToken.setOk(False)
-                        self.log.info(_("Format comparison failed: wrong format."))
+                        self.log.info("Format comparison failed: wrong format.")
             else:
                 readingToken.setOk(False)
-                self.log.info(_("Format comparison failed: wrong size."))
+                self.log.info("Format comparison failed: wrong size.")
 
         # If the type is delimited from 0 to a delimiter.
         else:
@@ -162,11 +162,11 @@ class AbstractType():
                     break
             if endi != -1:
                 # We learn from the beginning to the delimiter.
-                self.log.info(_("Format comparison successful."))
+                self.log.info("Format comparison successful.")
                 readingToken.setOk(True)
             else:
                 readingToken.setOk(False)
-                self.log.info(_("Format comparison failed: no delimiter found."))
+                self.log.info("Format comparison failed: no delimiter found.")
 
 #+---------------------------------------------------------------------------+
 #| Abstract methods                                                          |
@@ -315,14 +315,14 @@ class AbstractType():
             self.minBits = self.getMinBitSize(minChars)
             self.minChars = minChars
         else:
-            self.log.info(_("Type {0} : minChars undefined or < 0. MinBits value is fixed to 0.").format(self.getType()))
+            self.log.info("Type {0} : minChars undefined or < 0. MinBits value is fixed to 0.".format(self.getType()))
             self.minBits = 0
             self.minChars = 0
         if maxChars is not None and maxChars >= minChars:
             self.maxBits = self.getMaxBitSize(maxChars)
             self.maxChars = maxChars
         else:
-            self.log.info(_("Type {0} : maxChars undefined or < minChars. MaxBits value is fixed to minBits.").format(self.getType()))
+            self.log.info("Type {0} : maxChars undefined or < minChars. MaxBits value is fixed to minBits.".format(self.getType()))
             self.maxBits = self.minBits
             self.maxChars = self.minChars
 
@@ -354,5 +354,5 @@ class AbstractType():
         elif typeString == WordType.TYPE:
             _type = WordType(sized, minSize, maxSize, delimiter)
         else:
-            logging.error(_("Wrong type specified for this variable."))
+            logging.error("Wrong type specified for this variable.")
         return _type

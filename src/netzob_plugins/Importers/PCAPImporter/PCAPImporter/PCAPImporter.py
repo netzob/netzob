@@ -120,7 +120,7 @@ class PCAPImporter(AbstractImporter):
             raise NetzobImportException("PCAP", errorMessage, ERROR,
                                         self.INVALID_BPF_FILTER)
 
-        self.log.info(_("Starting import from {0} (linktype:{0})").format(filePath, str(packetReader.datalink())))
+        self.log.info("Starting import from {0} (linktype:{0})".format(filePath, str(packetReader.datalink())))
         self.datalink = packetReader.datalink()
 
         if self.importLayer > 1 and self.datalink != pcapy.DLT_EN10MB and self.datalink != pcapy.DLT_LINUX_SLL:

@@ -127,7 +127,7 @@ class MessageTableController(object):
                 iField += 1
             field = layer.getFieldByIndex(iField)
             if field is None:
-                logging.warn(_("Impossible to retrieve the clicked field !"))
+                logging.warn("Impossible to retrieve the clicked field!")
                 return
 
             # Popup a contextual menu

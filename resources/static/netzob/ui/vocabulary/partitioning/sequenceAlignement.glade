@@ -27,7 +27,7 @@
               <object class="GtkLabel" id="label4">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Similarity percent :</property>
+                <property name="label" translatable="yes">Similarity percent:</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -84,7 +84,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="margin_right">5</property>
-                <property name="label" translatable="yes">Unit size :</property>
+                <property name="label" translatable="yes">Unit size:</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -144,7 +144,7 @@
               <object class="GtkLabel" id="label5">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Option :</property>
+                <property name="label" translatable="yes">Option:</property>
               </object>
               <packing>
                 <property name="expand">False</property>

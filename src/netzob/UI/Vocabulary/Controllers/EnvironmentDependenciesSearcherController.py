@@ -84,7 +84,7 @@ class EnvironmentDependenciesSearcherController(object):
             try:
                 (yield ThreadedTask(self.envDepsSearch))
             except TaskError, e:
-                self.log.error(_("Error while proceeding to the environmental search dependencies on symbols: {0}").format(str(e)))
+                self.log.error("Error while proceeding to the environmental search dependencies on symbols: {0}".format(str(e)))
         else:
             self.log.debug("No symbol selected")
 

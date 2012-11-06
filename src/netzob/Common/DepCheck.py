@@ -57,7 +57,7 @@ class DepCheck(object):
         try:
             from netzob import _libNeedleman
         except ImportError:
-            logging.error(_("Impossible to import the libNeedleman"))
+            logging.error("Impossible to import the libNeedleman")
             return False
 
         pathToImportedLib = "Unknown path"
@@ -79,7 +79,7 @@ class DepCheck(object):
         try:
             from netzob import _libScoreComputation
         except ImportError:
-            logging.error(_("Impossible to import the libScoreComputation"))
+            logging.error("Impossible to import the libScoreComputation")
             return False
 
         pathToImportedLib = "Unknown path"
@@ -101,7 +101,7 @@ class DepCheck(object):
         try:
             from netzob import _libInterface
         except ImportError:
-            logging.error(_("Impossible to import the libInterface"))
+            logging.error("Impossible to import the libInterface")
             return False
 
         pathToImportedLib = "Unknown path"
@@ -123,7 +123,7 @@ class DepCheck(object):
         try:
             from netzob import _libRegex
         except ImportError:
-            logging.error(_("Impossible to import the libRegex"))
+            logging.error("Impossible to import the libRegex")
             return False
 
         pathToImportedLib = "Unknown path"

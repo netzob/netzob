@@ -306,7 +306,7 @@ class Workspace(object):
             return _("The workspace's configuration file can't be find (No workspace path given).")
         # is the workspaceFile is a file
         if not os.path.isfile(workspaceFile):
-            return _("The specified workspace's configuration file ({0}) is not valid : its not a file.".format(workspaceFile))
+            return _("The specified workspace's configuration file ({0}) is not valid: its not a file.".format(workspaceFile))
         # is it readable
         if not os.access(workspaceFile, os.R_OK):
             return _("The specified workspace's configuration file ({0}) is not readable.".format(workspaceFile))

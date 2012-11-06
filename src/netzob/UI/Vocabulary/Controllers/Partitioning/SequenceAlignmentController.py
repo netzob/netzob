@@ -113,7 +113,7 @@ class SequenceAlignmentController(object):
         try:
             (yield ThreadedTask(self.alignmentSolution.alignFields, self.fields))
         except TaskError, e:
-            self.log.error(_("Error while proceeding to the alignment: {0}").format(str(e)))
+            self.log.error("Error while proceeding to the alignment: {0}".format(str(e)))
 
         if self.doUpgma is True:
             # We have new symbols

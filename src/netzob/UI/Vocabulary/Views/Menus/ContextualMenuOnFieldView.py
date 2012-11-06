@@ -58,14 +58,14 @@ class ContextualMenuOnFieldView(object):
         self.menu = Gtk.Menu()
 
         # Add entry to edit field
-        item = Gtk.MenuItem(_("Edit field"))
+        item = Gtk.MenuItem(_("Edit Field"))
         item.show()
         item.connect("activate", self.controller.displayPopupToEditField_cb)
         self.menu.append(item)
 
         # Add sub-entries to change the type of a specific column
         subMenu = self.build_encoding_submenu()
-        item = Gtk.MenuItem(_("Field visualization"))
+        item = Gtk.MenuItem(_("Field Visualization"))
         item.set_submenu(subMenu)
         item.show()
         self.menu.append(item)
@@ -78,38 +78,38 @@ class ContextualMenuOnFieldView(object):
         self.menu.append(item)
 
         # Add entry to create layer
-        item = Gtk.MenuItem(_("Create layer"))
+        item = Gtk.MenuItem(_("Create Layer"))
         item.show()
         item.connect("activate", self.controller.displayPopupToCreateLayer_cb)
         self.menu.append(item)
 
         # Add entry to edit variable
-        item = Gtk.MenuItem(_("Edit variable"))
+        item = Gtk.MenuItem(_("Edit Variable"))
         item.show()
         item.connect("activate", self.controller.displayPopupToEditVariable_cb)
         self.menu.append(item)
 
         # Add entry to retrieve the field domain of definition
-        item = Gtk.MenuItem(_("Field analysis"))
+        item = Gtk.MenuItem(_("Field Analysis"))
         item.show()
         item.connect("activate", self.controller.displayDomainOfDefinition_cb)
         self.menu.append(item)
 
         # Add entry to export fields
-        item = Gtk.MenuItem(_("Extract fields to a new symbol"))
+        item = Gtk.MenuItem(_("Extract Fields To A New Symbol"))
         item.show()
         item.connect("activate", self.controller.exportSelectedFields_cb)
         self.menu.append(item)
 
         # Add entry to delete the current message
-        item = Gtk.MenuItem(_("Delete message"))
+        item = Gtk.MenuItem(_("Delete Message"))
         item.show()
         item.connect("activate", self.controller.deleteMessage_cb)
         self.menu.append(item)
 
         # Add entries for copy functions
         subMenu = self.build_copy_submenu()
-        item = Gtk.MenuItem(_("Copy to clipboard"))
+        item = Gtk.MenuItem(_("Copy To Clipboard"))
         item.set_submenu(subMenu)
         item.show()
         self.menu.append(item)
@@ -234,23 +234,23 @@ class ContextualMenuOnFieldView(object):
     def build_copy_submenu(self):
         # Add entries for copy functions
         copyMenu = Gtk.Menu()
-        item = Gtk.MenuItem(_("Raw message"))
+        item = Gtk.MenuItem(_("Raw Message"))
         item.show()
         item.connect("activate", self.controller.copyToClipboard_cb, False, False, False)
         copyMenu.append(item)
-        item = Gtk.MenuItem(_("Aligned raw message"))
+        item = Gtk.MenuItem(_("Aligned Raw Message"))
         item.show()
         item.connect("activate", self.controller.copyToClipboard_cb, True, False, False)
         copyMenu.append(item)
-        item = Gtk.MenuItem(_("Aligned formatted message"))
+        item = Gtk.MenuItem(_("Aligned Formatted Message"))
         item.show()
         item.connect("activate", self.controller.copyToClipboard_cb, True, True, False)
         copyMenu.append(item)
-        item = Gtk.MenuItem(_("Raw field"))
+        item = Gtk.MenuItem(_("Raw Field"))
         item.show()
         item.connect("activate", self.controller.copyToClipboard_cb, True, False, True)
         copyMenu.append(item)
-        item = Gtk.MenuItem(_("Formatted field"))
+        item = Gtk.MenuItem(_("Formatted Field"))
         item.show()
         item.connect("activate", self.controller.copyToClipboard_cb, True, True, True)
         copyMenu.append(item)

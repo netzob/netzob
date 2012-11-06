@@ -102,7 +102,7 @@ class Symbol(AbstractSymbol):
                 # We add all variable that has the root variable of field as ancestor.
                 result.extend(field.getVariable().getProgeny())
             else:
-                self.log.debug(_("Field {0} has no variable, considering default one.").format(str(field.getName())))
+                self.log.debug("Field {0} has no variable, considering default one.".format(str(field.getName())))
                 result.extend(field.getDefaultVariable(self).getProgeny())
 
         return result
@@ -374,7 +374,7 @@ class Symbol(AbstractSymbol):
             else:
                 return 1
         except:
-            self.log.warn(_("Tried to compare a Symbol with {0}").format(str(other)))
+            self.log.warn("Tried to compare a Symbol with {0}".format(str(other)))
             return 1
 
 #+---------------------------------------------------------------------------+

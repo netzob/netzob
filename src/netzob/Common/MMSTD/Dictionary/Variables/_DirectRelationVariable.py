@@ -83,7 +83,7 @@ class DirectRelationVariable(AbstractRelationVariable):
         """toXML:
                 Create the xml tree associated to this variable.
         """
-        self.log.debug(_("[ {0}: toXML:").format(self.toString()))
+        self.log.debug("[ {0}: toXML:".format(self.toString()))
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         xmlVariable.set("id", str(self.getID()))
         xmlVariable.set("name", str(self.getName()))
@@ -94,7 +94,7 @@ class DirectRelationVariable(AbstractRelationVariable):
         # Definition of the referenced variable ID.
         xmlRefID = etree.SubElement(xmlVariable, "{" + namespace + "}ref")
         xmlRefID.text = str(self.pointedID)
-        self.log.debug(_("Variable {0}. ]").format(self.getName()))
+        self.log.debug("Variable {0}. ]".format(self.getName()))
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractRelationVariable                         |
@@ -103,9 +103,9 @@ class DirectRelationVariable(AbstractRelationVariable):
         """compareFormat:
                 The variable checks if its format complies with the read value's format.
         """
-        self.log.debug(_("- [ {0}: compareFormat.").format(self.toString()))
+        self.log.debug("- [ {0}: compareFormat.".format(self.toString()))
         self.getPointedVariable().getType().trivialCompareFormat(readingToken)
-        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ] -".format(self.getName(), readingToken.toString()))
 
     def lightRead(self, readingToken):
         """lightRead:
@@ -121,7 +121,7 @@ class DirectRelationVariable(AbstractRelationVariable):
         """generate:
                 A new current value is generated according to the pointed variable type and the given generation strategy.
         """
-        self.log.debug(_("- {0}: generate.").format(self.toString()))
+        self.log.debug("- {0}: generate.".format(self.toString()))
         if self.getPointedVariable() is None:
             writingToken.setOk(False)
             self.log.debug("No pointed variable.")
@@ -132,7 +132,7 @@ class DirectRelationVariable(AbstractRelationVariable):
         """computeValue:
                 Just affect the value to the current variable.
         """
-        self.log.debug(_("- {0}: computeValue.").format(self.toString()))
+        self.log.debug("- {0}: computeValue.".format(self.toString()))
         return value
 
 #+---------------------------------------------------------------------------+
@@ -143,7 +143,7 @@ class DirectRelationVariable(AbstractRelationVariable):
         """loadFromXML:
                 Loads a DirectRelationVariable variable from an XML definition.
         """
-        logging.debug(_("[ DirectRelationVariable: loadFromXML:"))
+        logging.debug("[ DirectRelationVariable: loadFromXML:")
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
@@ -152,7 +152,7 @@ class DirectRelationVariable(AbstractRelationVariable):
 
             xmlRefID = xmlRoot.find("{" + namespace + "}ref").text
             result = DirectRelationVariable(xmlID, xmlName, xmlMutable, xmlLearnable, xmlRefID, symbol)
-            logging.debug(_("DirectRelationVariable: loadFromXML successes: {0} ]").format(result.toString()))
+            logging.debug("DirectRelationVariable: loadFromXML successes: {0} ]".format(result.toString()))
             return result
-        logging.debug(_("DirectRelationVariable: loadFromXML fails"))
+        logging.debug("DirectRelationVariable: loadFromXML fails")
         return None

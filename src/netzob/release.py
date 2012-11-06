@@ -98,7 +98,7 @@ download_url = "http://www.netzob.org/download"
 #+---------------------------------------------------------------------------+
 #| Translators
 #+---------------------------------------------------------------------------+
-translator_credits = """Français : Olivier Tétard <olivier.tetard@amossys.fr>"""
+translator_credits = """Français: Olivier Tétard <olivier.tetard@amossys.fr>"""
 
 #+---------------------------------------------------------------------------+
 #| Keywords to describe the application

@@ -293,7 +293,7 @@ class TrashSymbol(AbstractSymbol):
             else:
                 return 1
         except:
-            self.log.warn(_("Tried to compare a Symbol with {0}").format(str(other)))
+            self.log.warn("Tried to compare a Symbol with {0}".format(str(other)))
             return 1
 
     #+----------------------------------------------

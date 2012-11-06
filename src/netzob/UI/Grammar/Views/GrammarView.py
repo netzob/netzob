@@ -119,7 +119,7 @@ class GrammarView(object):
         if grammar is not None:
             automata = grammar.getAutomata()
             if automata is not None:
-                logging.debug("automata dot code : {0}".format(automata.getDotCode()))
+                logging.debug("automata dot code: {0}".format(automata.getDotCode()))
 
                 self.xdotWidget.drawAutomata(automata)
             else:

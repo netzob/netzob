@@ -280,7 +280,7 @@ class UPGMA(object):
                     tmp_symbols.append(symbol)
 
             if len(orphans) <= 1:
-                self.log.info("Number of orphan symbols : {0}. The orphan merging op. is finished !".format(len(orphans)))
+                self.log.info("Number of orphan symbols: {0}. The orphan merging op. is finished!".format(len(orphans)))
                 break
 
             self.symbols = orphans
