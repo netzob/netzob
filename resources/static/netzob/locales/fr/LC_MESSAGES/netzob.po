@@ -8,17 +8,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-06 18:01+0100\n"
+"POT-Creation-Date: 2012-11-06 18:44+0100\n"
 "PO-Revision-Date: 2012-11-06 18:43+0200\n"
 "Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
-"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Weblate 1.3-dev\n"
 "Generated-By: Babel 0.9.6\n"
 
 #: src/netzob/NetzobMainController.py:309
@@ -217,37 +215,12 @@ msgstr ""
 msgid "The specified workspace is not valid according the XSD definitions."
 msgstr "L'espace de travail indiqué n'est pas conforme aux définitions XSD."
 
-#: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:79
-msgid "{0}, bits: ({1}, {2}), chars: ({3}, {4})"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:81
-msgid "{0}, delimiter: {1}"
-msgstr "{0}, délimiteur : {1}"
-
-#: src/netzob/Common/MMSTD/Dictionary/RelationTypes/AbstractRelationType.py:64
-msgid "{0}, associatedDataType: {1}"
-msgstr ""
-
 #: src/netzob/Common/MMSTD/Dictionary/Values/AbstractValue.py:58
 msgid "Import from File"
 msgstr "Importer depuis un fichier"
 
-#: src/netzob/Common/MMSTD/Dictionary/VariableProcessingToken/VariableReadingToken.py:63
-msgid "ReadingToken: isOk: {0}, value left: {1}"
-msgstr ""
-
 #: src/netzob/Common/MMSTD/Dictionary/VariableProcessingToken/VariableWritingToken.py:68
 msgid "WritingToken: isOk: {0}, value: {1}"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractNodeVariable.py:126
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractNodeVariable.py:134
-msgid "[ {0}, children:\n"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AbstractVariable.py:79
-msgid "Variable {0} ({3}) (mutable: {1}, learnable: {2})"
 msgstr ""
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:287
@@ -258,36 +231,12 @@ msgstr "[Agrégat] {0} ({1})"
 msgid "[Alternate] {0} ({1})"
 msgstr "[Alternat] {0} ({1})"
 
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:195
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_ComputedRelationVariable.py:82
-msgid "[Computed Relation] {0}, pointed ID: {1}, type: {2}."
-msgstr ""
-
 #: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:200
 #: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:205
 #: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:219
 #: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:224
 msgid "[{0}]"
 msgstr "[{0}]"
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:86
-msgid "[Data] {0}, type: {1}, original value: {2}"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/DataVariable.py:129
-msgid "{0}, value: {1}"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/RepeatVariable.py:205
-msgid "[Repeat] {0}, iterations: ({1}, {2})"
-msgstr ""
-
-#: src/netzob/Common/MMSTD/Dictionary/Variables/RepeatVariable.py:210
-#: src/netzob/Common/MMSTD/Dictionary/Variables/RepeatVariable.py:215
-msgid ""
-"[{0}, child:\n"
-" - {1}]"
-msgstr ""
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/_DirectRelationVariable.py:73
 msgid "[Direct Relation] {0}, pointed ID: {1}"
@@ -296,7 +245,6 @@ msgstr ""
 #: src/netzob/Common/Plugins/Capturers/AbstractCapturer.py:72
 #: src/netzob/Import/AbstractImporter.py:72
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturer.py:233
-#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturer.py:272
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:274
 msgid "Message ID: {0} not found in importer message list"
 msgstr ""
@@ -442,15 +390,11 @@ msgstr "ID de message"
 msgid "Import"
 msgstr "Importer"
 
-#: src/netzob/Import/ThirdPartyImport.py:229
-msgid "Cannot load file {0}, its not a file."
-msgstr ""
-
-#: src/netzob/Import/ThirdPartyImport.py:270 src/netzob/Import/XMLImport.py:199
+#: src/netzob/Import/ThirdPartyImport.py:269 src/netzob/Import/XMLImport.py:199
 msgid "Check if this trace is a session"
 msgstr "Vérifier si cette trace est une session"
 
-#: src/netzob/Import/ThirdPartyImport.py:290 src/netzob/Import/XMLImport.py:219
+#: src/netzob/Import/ThirdPartyImport.py:289 src/netzob/Import/XMLImport.py:219
 msgid "Select one or multiple file"
 msgstr "Sélectionnez un ou plusieurs fichiers"
 
@@ -778,8 +722,9 @@ msgid "Workspace: "
 msgstr "Espace de travail : "
 
 #: src/netzob/UI/WorkspaceSelector.py:75
-msgid "Browse..."
-msgstr "Parcourir"
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:257
+msgid "Browse"
+msgstr ""
 
 #: src/netzob/UI/WorkspaceSelector.py:110
 msgid "Select the workspace"
@@ -804,8 +749,8 @@ msgid "Please verify your API key."
 msgstr "Merci de vérifier votre clé d'API."
 
 #: src/netzob/UI/Common/Controllers/BugReporterController.py:117
-msgid "Fermer"
-msgstr "Fermer"
+msgid "Close"
+msgstr ""
 
 #: src/netzob/UI/Common/Controllers/BugReporterController.py:131
 msgid "You've been associated to the bug report {0}/issues/{1}."
@@ -815,8 +760,7 @@ msgstr "Vous avez été associé au rapport {0}/issues/{1}."
 msgid ""
 "An error occurred while you were associated with the bug report "
 "{0}/issues/{1}."
-msgstr ""
-"Une erreur s'est produite lors de l'association au rapport {0}/issues/{1}."
+msgstr "Une erreur s'est produite lors de l'association au rapport {0}/issues/{1}."
 
 #: src/netzob/UI/Common/Controllers/BugReporterController.py:142
 msgid "The bug report has successfully been published on {0}/issues/{1}"
@@ -891,8 +835,7 @@ msgstr "Sélectionnez un état final"
 #: src/netzob/UI/Grammar/Controllers/CreateOpenChannelTransitionController.py:181
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:188
 msgid "An error occurred and prevented to retrieve the provided start state."
-msgstr ""
-"Une erreur s'est produite et a empêché de retrouver l'état initial fourni."
+msgstr "Une erreur s'est produite et a empêché de retrouver l'état initial fourni."
 
 #: src/netzob/UI/Grammar/Controllers/CreateCloseChannelTransitionController.py:174
 #: src/netzob/UI/Grammar/Controllers/CreateOpenChannelTransitionController.py:185
@@ -928,7 +871,7 @@ msgstr ""
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:222
 msgid ""
-"The specifed start state already has a transition with the same input "
+"The specified start state already has a transition with the same input "
 "symbol."
 msgstr ""
 
@@ -938,8 +881,7 @@ msgstr "Fournissez au moins un symbole de sortie (même un symbole vide)."
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:246
 msgid "An error occurred and prevented to retrieve the output symbols"
-msgstr ""
-"Une erreur s'est produite et a empêché de récupérer les symboles de sortie"
+msgstr "Une erreur s'est produite et a empêché de récupérer les symboles de sortie"
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:271
 msgid "Select an output Symbol before adding it."
@@ -967,8 +909,7 @@ msgstr "Spécifiez une durée valide (0 <= durée)"
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:324
 msgid "You cannot add multiple time the same output symbol."
-msgstr ""
-"Vous ne pouvez pas ajouter de durée multiples au même symbole de sortie."
+msgstr "Vous ne pouvez pas ajouter de durée multiples au même symbole de sortie."
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:330
 msgid "The sum of probabilities is above 100, please adapt the provided value."
@@ -1378,14 +1319,6 @@ msgid ""
 "unsupported (Only IP is currently supported, packet ethernet type = {0})"
 msgstr ""
 
-#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturer.py:264
-#: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:264
-msgid ""
-"Cannot import one of the provided packets since its layer 4 is "
-"unsupported (Only UDP and TCP are currently supported, packet IP protocol"
-" number = {0})"
-msgstr ""
-
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:101
 msgid "Incorrect device"
 msgstr ""
@@ -1489,6 +1422,13 @@ msgstr ""
 
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:127
 msgid "This pcap cannot be imported since the layer 2 is not supported ({0})"
+msgstr ""
+
+#: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:264
+msgid ""
+"Cannot import one of the provided packets since its layer 4 is "
+"unsupported (Only UDP and TCP are currently supported, packet IP protocol"
+" number = {0})"
 msgstr ""
 
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporterPlugin.py:50
@@ -1706,10 +1646,6 @@ msgstr "Type de la variable"
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:228
 msgid "Pointed ID"
-msgstr ""
-
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:257
-msgid "Browse"
 msgstr ""
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:317
@@ -2762,47 +2698,53 @@ msgstr ""
 msgid "Time limit:"
 msgstr "Délimiteur :"
 
-#~ msgid "The current variable does not implement 'forget'."
+#~ msgid "{0}, bits: ({1}, {2}), chars: ({3}, {4})"
 #~ msgstr ""
 
-#~ msgid "The current variable does not implement 'recall'."
+#~ msgid "{0}, delimiter: {1}"
+#~ msgstr "{0}, délimiteur : {1}"
+
+#~ msgid "{0}, associatedDataType: {1}"
 #~ msgstr ""
 
-#~ msgid "The current variable does not implement 'memorize'."
+#~ msgid "ReadingToken: isOk: {0}, value left: {1}"
 #~ msgstr ""
 
-#~ msgid "The current variable does not implement 'compareFormat'."
+#~ msgid "[ {0}, children:\n"
 #~ msgstr ""
 
-#~ msgid "The current variable does not implement 'learn'."
+#~ msgid "Variable {0} ({3}) (mutable: {1}, learnable: {2})"
 #~ msgstr ""
 
-#~ msgid "The current variable does not implement 'compare'."
+#~ msgid "[Computed Relation] {0}, pointed ID: {1}, type: {2}."
 #~ msgstr ""
 
-#~ msgid "The current variable does not implement 'generate'."
+#~ msgid "[Data] {0}, type: {1}, original value: {2}"
 #~ msgstr ""
 
-#~ msgid "The current variable does not implement 'writeValue'."
+#~ msgid "{0}, value: {1}"
 #~ msgstr ""
 
-#~ msgid "The current variable does not implement 'isDefined'."
+#~ msgid "[Repeat] {0}, iterations: ({1}, {2})"
 #~ msgstr ""
 
-#~ msgid "The current variable does not implement 'toXML'."
+#~ msgid ""
+#~ "[{0}, child:\n"
+#~ " - {1}]"
 #~ msgstr ""
 
-#~ msgid "The current variable does not implement 'restore'."
+#~ msgid "Cannot load file {0}, its not a file."
 #~ msgstr ""
 
-#~ msgid "The current variable does not implement 'read'."
+#~ msgid "Browse..."
+#~ msgstr "Parcourir"
+
+#~ msgid "Fermer"
+#~ msgstr "Fermer"
+
+#~ msgid ""
+#~ "The specifed start state already has "
+#~ "a transition with the same input "
+#~ "symbol."
 #~ msgstr ""
 
-#~ msgid "The current variable does not implement 'write'."
-#~ msgstr ""
-
-#~ msgid "The current variable does not implement 'lightRead'."
-#~ msgstr ""
-
-#~ msgid "The current variable does not implement 'computeValue'."
-#~ msgstr ""
