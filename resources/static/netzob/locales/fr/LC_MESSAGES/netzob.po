@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-06 12:07+0100\n"
-"PO-Revision-Date: 2012-11-06 12:52+0200\n"
+"PO-Revision-Date: 2012-11-06 14:32+0200\n"
 "Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
@@ -133,7 +133,7 @@ msgstr ""
 
 #: src/netzob/NetzobMainView.py:300
 msgid "Close _Without Saving"
-msgstr ""
+msgstr "Fermer sans sauvegarder"
 
 #: src/netzob/Common/Field.py:319 src/netzob/Common/Field.py:329
 #: src/netzob/Fuzzing/TreeViews/TreeTypeStructureGenerator.py:70
@@ -173,7 +173,7 @@ msgstr "Espace de travail courant : {0}"
 
 #: src/netzob/Common/SplashScreen.py:80
 msgid "Current workspace: NO WORKSPACE COMPUTED!"
-msgstr ""
+msgstr "Espace de travail courant : aucun espace de travail crée !"
 
 #: src/netzob/Common/Workspace.py:186
 msgid "Base64 Function"
@@ -189,27 +189,33 @@ msgstr "Fonction BZ2"
 
 #: src/netzob/Common/Workspace.py:301
 msgid "The workspace's path ({0}) is incorrect."
-msgstr ""
+msgstr "L'emplacement de l'espace de travail ({0}) est incorrect."
 
 #: src/netzob/Common/Workspace.py:306
 msgid ""
 "The workspace's configuration file can't be find (No workspace path "
 "given)."
 msgstr ""
+"La configuration de l'espace de travail n'a pas été trouvée (l'emplacement "
+"de l'espace de travail n'a pas été fourni)."
 
 #: src/netzob/Common/Workspace.py:309
 msgid ""
 "The specified workspace's configuration file ({0}) is not valid: its not "
 "a file."
 msgstr ""
+"L'espace de travail spécifié dans le fichier de configuration ({0}) n'est "
+"pas valide : il ne s'agit pas d'un fichier."
 
 #: src/netzob/Common/Workspace.py:312
 msgid "The specified workspace's configuration file ({0}) is not readable."
 msgstr ""
+"Le fichier de configuration de l'espace de travail indiqué ({0}) n'est pas "
+"lisible."
 
 #: src/netzob/Common/Workspace.py:320
 msgid "The specified workspace is not valid according the XSD definitions."
-msgstr ""
+msgstr "L'espace de travail indiqué n'est pas conforme aux définitions XSD."
 
 #: src/netzob/Common/MMSTD/Dictionary/DataTypes/AbstractType.py:79
 msgid "{0}, bits: ({1}, {2}), chars: ({3}, {4})"
