@@ -9,14 +9,16 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-06 18:01+0100\n"
-"PO-Revision-Date: 2012-11-06 14:32+0200\n"
+"PO-Revision-Date: 2012-11-06 18:43+0200\n"
 "Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Weblate 1.3-dev\n"
 "Generated-By: Babel 0.9.6\n"
 
 #: src/netzob/NetzobMainController.py:309
@@ -417,7 +419,7 @@ msgstr "Données"
 
 #: src/netzob/Import/ThirdPartyImport.py:97
 msgid "Import data from third parties"
-msgstr ""
+msgstr "Importer des données provenant de tiers"
 
 #: src/netzob/Import/ThirdPartyImport.py:115
 msgid "Select data source"
@@ -425,11 +427,11 @@ msgstr "Sélectionner la source de donnée"
 
 #: src/netzob/Import/ThirdPartyImport.py:133
 msgid "Select a third party"
-msgstr ""
+msgstr "Sélectionnez un tiers"
 
 #: src/netzob/Import/ThirdPartyImport.py:144
 msgid "Load"
-msgstr ""
+msgstr "Chargement"
 
 #: src/netzob/Import/ThirdPartyImport.py:174 src/netzob/Import/XMLImport.py:129
 msgid "Message ID"
@@ -446,11 +448,11 @@ msgstr ""
 
 #: src/netzob/Import/ThirdPartyImport.py:270 src/netzob/Import/XMLImport.py:199
 msgid "Check if this trace is a session"
-msgstr ""
+msgstr "Vérifier si cette trace est une session"
 
 #: src/netzob/Import/ThirdPartyImport.py:290 src/netzob/Import/XMLImport.py:219
 msgid "Select one or multiple file"
-msgstr ""
+msgstr "Sélectionnez un ou plusieurs fichiers"
 
 #: src/netzob/Import/XMLImport.py:109
 msgid "Select file(s)"
@@ -482,7 +484,7 @@ msgstr "Processus"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarAbstractionView.py:64
 msgid "Automatic abstraction of the current grammar"
-msgstr ""
+msgstr "Abstraction automatique de la grammaire courante"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarAbstractionView.py:68
 msgid "Start the abstraction"
@@ -498,15 +500,15 @@ msgstr "Cible :"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:85
 msgid "CLIENT"
-msgstr ""
+msgstr "CLIENT"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:86
 msgid "SERVER"
-msgstr ""
+msgstr "SERVEUR"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:92
 msgid "IP:"
-msgstr ""
+msgstr "IP : "
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:100
 msgid "Protocol:"
@@ -514,11 +516,11 @@ msgstr "Protocole :"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:104
 msgid "TCP"
-msgstr ""
+msgstr "TCP"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:105
 msgid "UDP"
-msgstr ""
+msgstr "UDP"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:113
 msgid "Our port:"
@@ -534,7 +536,7 @@ msgstr "Nombre maximum d'états :"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:137
 msgid "Reseting script:"
-msgstr ""
+msgstr "Script de remise à zéro : "
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:145
 msgid "Start inference"
@@ -618,7 +620,7 @@ msgstr "Agréger"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:219
 msgid "Alternative"
-msgstr ""
+msgstr "Alternative"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:225
 msgid "Referenced Variable"
@@ -635,7 +637,7 @@ msgstr "Ajouter un sous-élément"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:246
 msgid "Definition of the Binary Variable"
-msgstr ""
+msgstr "Définition de la variable binaire"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:254
 #: src/netzob/Inference/Vocabulary/_VariableView.py:339
@@ -657,7 +659,7 @@ msgstr "ID du parent :"
 #: src/netzob/Inference/Vocabulary/_VariableView.py:674
 #: src/netzob/Inference/Vocabulary/_VariableView.py:782
 msgid "ID:"
-msgstr ""
+msgstr "ID : "
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:272
 #: src/netzob/Inference/Vocabulary/_VariableView.py:357
@@ -669,7 +671,7 @@ msgstr "Valeur initiale : "
 #: src/netzob/Inference/Vocabulary/_VariableView.py:365
 #: src/netzob/Inference/Vocabulary/_VariableView.py:691
 msgid "Constraints when parsing / generating"
-msgstr ""
+msgstr "Contraintes lors de l'analyse / génération"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:285
 msgid "Minimum number of bits:"
@@ -693,7 +695,7 @@ msgstr "Nombre maximum de caractères héxa :"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:416
 msgid "Definition of the Alternative"
-msgstr ""
+msgstr "Définition de l'alternative"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:441
 #: src/netzob/Inference/Vocabulary/_VariableView.py:498
@@ -703,11 +705,11 @@ msgstr "Nom :"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:465
 msgid "Alternate"
-msgstr ""
+msgstr "Alterner"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:473
 msgid "Definition of the Aggregate"
-msgstr ""
+msgstr "Définition de l'agrégat"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:530
 msgid "Definition of the WORD"
@@ -765,11 +767,11 @@ msgstr ""
 
 #: src/netzob/UI/WorkspaceSelector.py:61
 msgid "Netzob stores your projects in a folder called a workspace.\n"
-msgstr ""
+msgstr "Netzob stocke vos projets dans un dossier appelé un espace de travail.\n"
 
 #: src/netzob/UI/WorkspaceSelector.py:64
 msgid "Choose a workspace folder to use."
-msgstr ""
+msgstr "Choisissez un répertoire à utiliser comme espace de travail."
 
 #: src/netzob/UI/WorkspaceSelector.py:69
 msgid "Workspace: "
@@ -777,7 +779,7 @@ msgstr "Espace de travail : "
 
 #: src/netzob/UI/WorkspaceSelector.py:75
 msgid "Browse..."
-msgstr ""
+msgstr "Parcourir"
 
 #: src/netzob/UI/WorkspaceSelector.py:110
 msgid "Select the workspace"
@@ -789,44 +791,48 @@ msgid ""
 "\n"
 "{1}"
 msgstr ""
+"Netzob est distribué sous les termes de la licence {0}.\n"
+"\n"
+"{1}"
 
 #: src/netzob/UI/Common/Controllers/BugReporterController.py:97
 msgid "Impossible to contact the remote server."
-msgstr ""
+msgstr "Impossible de contacter le serveur distant."
 
 #: src/netzob/UI/Common/Controllers/BugReporterController.py:111
 msgid "Please verify your API key."
-msgstr ""
+msgstr "Merci de vérifier votre clé d'API."
 
 #: src/netzob/UI/Common/Controllers/BugReporterController.py:117
 msgid "Fermer"
-msgstr ""
+msgstr "Fermer"
 
 #: src/netzob/UI/Common/Controllers/BugReporterController.py:131
 msgid "You've been associated to the bug report {0}/issues/{1}."
-msgstr ""
+msgstr "Vous avez été associé au rapport {0}/issues/{1}."
 
 #: src/netzob/UI/Common/Controllers/BugReporterController.py:134
 msgid ""
 "An error occurred while you were associated with the bug report "
 "{0}/issues/{1}."
 msgstr ""
+"Une erreur s'est produite lors de l'association au rapport {0}/issues/{1}."
 
 #: src/netzob/UI/Common/Controllers/BugReporterController.py:142
 msgid "The bug report has successfully been published on {0}/issues/{1}"
-msgstr ""
+msgstr "Le rapport a été publié avec succès sur {0}/issues/{1}"
 
 #: src/netzob/UI/Common/Controllers/BugReporterController.py:222
 msgid "The server's certificate won't be verified."
-msgstr ""
+msgstr "Le certificat du serveur ne sera pas vérifié."
 
 #: src/netzob/UI/Common/Controllers/CustomTransformationFunctionController.py:144
 msgid "Verify below the transformed messages"
-msgstr ""
+msgstr "Vérifiez ci-dessous les messages transformées"
 
 #: src/netzob/UI/Common/Controllers/CustomTransformationFunctionController.py:179
 msgid "Specify the name and the source code of your Function"
-msgstr ""
+msgstr "Spécifiez le nom et le code source de votre fonction"
 
 #: src/netzob/UI/Export/Controllers/RawExportController.py:93
 msgid "Select a symbol to see its XML definition"
@@ -844,7 +850,7 @@ msgstr "Sélectionner un symbol pour voir sa définition textuelle"
 
 #: src/netzob/UI/Export/Controllers/ScapyExportController.py:100
 msgid "No scapy definition found"
-msgstr ""
+msgstr "Aucune définition scapy trouvé"
 
 #: src/netzob/UI/Export/Controllers/TextExportController.py:99
 msgid "No text definition found"
@@ -867,7 +873,7 @@ msgstr "Donnez un nom à la nouvelle transition"
 #: src/netzob/UI/Grammar/Controllers/CreateCloseChannelTransitionController.py:136
 #: src/netzob/UI/Grammar/Controllers/CreateOpenChannelTransitionController.py:137
 msgid "Give a valid time (> 0ms)"
-msgstr ""
+msgstr "Donnez une durée valide (> 0 ms)"
 
 #: src/netzob/UI/Grammar/Controllers/CreateCloseChannelTransitionController.py:144
 #: src/netzob/UI/Grammar/Controllers/CreateOpenChannelTransitionController.py:156
@@ -886,12 +892,13 @@ msgstr "Sélectionnez un état final"
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:188
 msgid "An error occurred and prevented to retrieve the provided start state."
 msgstr ""
+"Une erreur s'est produite et a empêché de retrouver l'état initial fourni."
 
 #: src/netzob/UI/Grammar/Controllers/CreateCloseChannelTransitionController.py:174
 #: src/netzob/UI/Grammar/Controllers/CreateOpenChannelTransitionController.py:185
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:192
 msgid "An error occurred and prevented to retrieve the provided end state."
-msgstr ""
+msgstr "Une erreur s'est produite et a empêché de récupérer l'état final prévu."
 
 #: src/netzob/UI/Grammar/Controllers/CreateCloseChannelTransitionController.py:185
 msgid "Provided start state already has a close channel transition."
@@ -899,7 +906,7 @@ msgstr ""
 
 #: src/netzob/UI/Grammar/Controllers/CreateOpenChannelTransitionController.py:148
 msgid "Give a valid maximum number of attempt (> 1)"
-msgstr ""
+msgstr "Donnez un nombre maximal de tentatives valide (> 1)"
 
 #: src/netzob/UI/Grammar/Controllers/CreateOpenChannelTransitionController.py:197
 msgid "Provided start state already has an open channel transition."
@@ -916,6 +923,8 @@ msgstr "Sélectionnez un symbole d'entrée."
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:210
 msgid "An error occurred and prevented to retrieve the provided input symbol"
 msgstr ""
+"Une erreur s'est produite et a empêché de récupérer le symbole d'entrée "
+"fourni"
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:222
 msgid ""
@@ -925,19 +934,20 @@ msgstr ""
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:227
 msgid "Provide at least 1 output symbol (even an EmptySymbol)."
-msgstr ""
+msgstr "Fournissez au moins un symbole de sortie (même un symbole vide)."
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:246
 msgid "An error occurred and prevented to retrieve the output symbols"
 msgstr ""
+"Une erreur s'est produite et a empêché de récupérer les symboles de sortie"
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:271
 msgid "Select an output Symbol before adding it."
-msgstr ""
+msgstr "Sélectionnez un symbole de sortie avant de l'ajouter."
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:283
 msgid "An error occured and prevented to retrieved the output symbol."
-msgstr ""
+msgstr "Une erreur est survenue et a empêché de récupérer le symbole de sortie."
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:292
 msgid "Specify a valid probability defined over 100 (float)"
@@ -945,19 +955,20 @@ msgstr ""
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:297
 msgid "Specify a valid probability (0.0<=probability<=100.0)"
-msgstr ""
+msgstr "Spécifiez une probabilité valide (0,0 <= probabilité <= 100,0)"
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:306
 msgid "Specify a valid time defined in millisecond (int)"
-msgstr ""
+msgstr "Spécifiez une heure valide définie en millisecondes (entier)"
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:311
 msgid "Specify a valid time (0<=time)"
-msgstr ""
+msgstr "Spécifiez une durée valide (0 <= durée)"
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:324
 msgid "You cannot add multiple time the same output symbol."
 msgstr ""
+"Vous ne pouvez pas ajouter de durée multiples au même symbole de sortie."
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:330
 msgid "The sum of probabilities is above 100, please adapt the provided value."
@@ -2795,4 +2806,3 @@ msgstr "Délimiteur :"
 
 #~ msgid "The current variable does not implement 'computeValue'."
 #~ msgstr ""
-
