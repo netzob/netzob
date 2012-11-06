@@ -179,7 +179,7 @@ class PeachExport(object):
                 for typedValueList in typedValueLists:
                     subLength = max(subLength, len(typedValueList))
 
-                logging.debug("Sublength : {0}.".format(str(subLength)))
+                logging.debug("Sublength: {0}.".format(str(subLength)))
                 # We create one Peach subfield for each netzob subfield.
                 xmlFields = []
                 # For each subfield.
@@ -338,7 +338,7 @@ class PeachExport(object):
         if variableType == "Aggregate":
             for child in variable.getChildren():
                 # We concatenate the double lists at the lower level (inner list).
-                logging.debug("fatherValueLists : {0}.".format(str(typedValueLists)))
+                logging.debug("fatherValueLists: {0}.".format(str(typedValueLists)))
                 typedValueLists = self.concatVariableValues(typedValueLists, self.getRecVariableTypedValueLists(child))
 
         elif variableType == "Alternate":
@@ -383,9 +383,9 @@ class PeachExport(object):
         for fvl in fatherValueLists:
             for svl in sonValueLists:
                 midvl = fvl + svl
-                logging.debug("concatVariableValues : midvl before : {0}.".format(str(midvl)))
+                logging.debug("concatVariableValues : midvl before: {0}.".format(str(midvl)))
                 finalValueLists.append(midvl)
-                logging.debug("concatVariableValues : midvl after : {0}.".format(str(finalValueLists)))
+                logging.debug("concatVariableValues : midvl after: {0}.".format(str(finalValueLists)))
 
         return finalValueLists
 

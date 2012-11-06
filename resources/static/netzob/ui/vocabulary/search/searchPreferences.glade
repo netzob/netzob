@@ -187,7 +187,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="margin_right">5</property>
-                <property name="label" translatable="yes">Match case :</property>
+                <property name="label" translatable="yes">Match case:</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>

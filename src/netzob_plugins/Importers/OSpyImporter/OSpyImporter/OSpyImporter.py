@@ -144,7 +144,7 @@ class OSpyImporter(AbstractImporter):
             return message
 
     def _readBZ2CompressedFile(self, filePath):
-        self.log.debug("Decompressing file : {0}".format(filePath))
+        self.log.debug("Decompressing file: {0}".format(filePath))
         with open(filePath, "rb") as fileObj:
             compressedData = fileObj.read()
             data = bz2.decompress(compressedData)

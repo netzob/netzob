@@ -109,7 +109,7 @@ class NetworkCapturer(AbstractCapturer):
     #| Thread for sniffing work
     #+----------------------------------------------
     def sniffingThread(self, device, count, time):
-        logging.info("Launching sniff process on dev {0} with : count={1}, timeout={2}, filter=\"{3}\"".format(device, count, time, self.bpfFilter))
+        logging.info("Launching sniff process on dev {0} with: count={1}, timeout={2}, filter=\"{3}\"".format(device, count, time, self.bpfFilter))
         sniffer = pcapy.open_live(device, 1024, False, int(time))
         try:
             sniffer.setfilter(self.bpfFilter)

@@ -118,7 +118,7 @@ class ResetPartitioningController(object):
             rtotal = float(total) / float(100)
             time.sleep(0.01)
             GObject.idle_add(self._view.reset_progressbar.set_fraction, rtotal)
-        GObject.idle_add(self._view.reset_progressbar.set_text, _("Reset finished !"))
+        GObject.idle_add(self._view.reset_progressbar.set_text, _("Reset finished!"))
 
     def reset_stop_clicked_cb(self, widget):
         """Callback executed when the

@@ -236,7 +236,7 @@ class AbstractionLayer():
         return UnknownSymbol()
 
     def specialize(self, symbol):
-        self.log.info("Specializing the symbol " + symbol.getName())
+        self.log.info("Specializing the symbol {0}".format(symbol.getName()))
 
         #TODO: Replace all default values with clever values.
         writingToken = VariableWritingToken(False, self.vocabulary, self.memory, bitarray(''), ["random"])

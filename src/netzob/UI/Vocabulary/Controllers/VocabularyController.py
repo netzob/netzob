@@ -152,7 +152,7 @@ class VocabularyController(object):
         if (result == 0):
             newSymbolName = entry.get_text()
             newSymbolId = str(uuid.uuid4())
-            self.log.debug("A new symbol will be created with the given name : {0}".format(newSymbolName))
+            self.log.debug("A new symbol will be created with the given name: {0}".format(newSymbolName))
             currentProject = self.netzob.getCurrentProject()
             newSymbol = Symbol(newSymbolId, newSymbolName, currentProject)
             currentProject.getVocabulary().addSymbol(newSymbol)
@@ -599,7 +599,7 @@ class VocabularyController(object):
             NetzobErrorMessage(_("No project selected."))
             return
 
-        importerPlugins =  NetzobPlugin.getLoadedPlugins(FileImporterPlugin)
+        importerPlugins = NetzobPlugin.getLoadedPlugins(FileImporterPlugin)
         if len(importerPlugins) < 1:
             NetzobErrorMessage(_("No importer plugin available."))
             return
