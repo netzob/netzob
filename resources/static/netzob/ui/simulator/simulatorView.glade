@@ -645,7 +645,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkTreeViewColumn" id="treeviewcolumn7">
-                                        <property name="title" translatable="yes">Mesage</property>
+                                        <property name="title" translatable="yes">Message</property>
                                         <child>
                                           <object class="GtkCellRendererText" id="cellrenderertext4"/>
                                           <attributes>
