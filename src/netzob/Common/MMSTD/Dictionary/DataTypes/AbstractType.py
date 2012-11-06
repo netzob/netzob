@@ -189,7 +189,7 @@ class AbstractType():
                 @rtype: bitarray
                 @return: the value after mutation.
         """
-        raise NotImplementedError(_("The current type does not implement 'mutateValue'."))
+        raise NotImplementedError("The current type does not implement 'mutateValue'.")
 
     @abstractmethod
     def generateFixedSizeValue(self, generationStrategies, charSize):
@@ -203,7 +203,7 @@ class AbstractType():
                 @rtype: bitarray
                 @return: the generated value.
         """
-        raise NotImplementedError(_("The current type does not implement 'generateFixedSizeValue'."))
+        raise NotImplementedError("The current type does not implement 'generateFixedSizeValue'.")
 
     @abstractmethod
     def str2bin(self, stri):
@@ -216,7 +216,7 @@ class AbstractType():
                 @rtype: bitarray
                 @return: the value in bitarray.
         """
-        raise NotImplementedError(_("The current type does not implement 'str2bin'."))
+        raise NotImplementedError("The current type does not implement 'str2bin'.")
 
     @abstractmethod
     def bin2str(self, bina):
@@ -229,7 +229,7 @@ class AbstractType():
                 @rtype: string
                 @return: the value in string.
         """
-        raise NotImplementedError(_("The current type does not implement 'bin2str'."))
+        raise NotImplementedError("The current type does not implement 'bin2str'.")
 
     @abstractmethod
     def getBitSize(self, typeValue):
@@ -241,7 +241,7 @@ class AbstractType():
                 @rtype: integer
                 @return: the size in bits of the given value.
         """
-        raise NotImplementedError(_("The current type does not implement 'getBitSize'."))
+        raise NotImplementedError("The current type does not implement 'getBitSize'.")
 
     @abstractmethod
     def getMaxBitSize(self, nbChars):
@@ -253,7 +253,7 @@ class AbstractType():
                 @rtype: integer
                 @return: the size in bits of the maximal word.
         """
-        raise NotImplementedError(_("The current type does not implement 'getMaxBitSize'."))
+        raise NotImplementedError("The current type does not implement 'getMaxBitSize'.")
 
     @abstractmethod
     def getMinBitSize(self, nbChars):
@@ -265,7 +265,7 @@ class AbstractType():
                 @rtype: integer
                 @return: the size in bits of the minimal word.
         """
-        raise NotImplementedError(_("The current type does not implement 'getMinBitSize'."))
+        raise NotImplementedError("The current type does not implement 'getMinBitSize'.")
 
     @abstractmethod
     def getType(self):
@@ -275,7 +275,7 @@ class AbstractType():
                 @rtype: string
                 @return: the current type in string format.
         """
-        raise NotImplementedError(_("The current type does not implement 'getType'."))
+        raise NotImplementedError("The current type does not implement 'getType'.")
 
     @abstractmethod
     def suitsBinary(self, bina):
@@ -287,7 +287,7 @@ class AbstractType():
                 @rtype: boolean
                 @return: True if the type suits the bitarray.
         """
-        raise NotImplementedError(_("The current type does not implement 'suitsBinary'."))
+        raise NotImplementedError("The current type does not implement 'suitsBinary'.")
 
 #+---------------------------------------------------------------------------+
 #| Getters and Setters                                                       |
