@@ -199,7 +199,7 @@
                     <property name="has_tooltip">True</property>
                     <property name="tooltip_markup" translatable="yes">Display messages distributions for selected symbol(s)</property>
                     <property name="tooltip_text" translatable="yes">Display messages distributions for selected symbol(s)</property>
-                    <property name="label" translatable="yes">Messages Distribution…</property>
+                    <property name="label" translatable="yes">Messages Distribution</property>
                     <property name="use_underline">True</property>
                   </object>
                   <packing>

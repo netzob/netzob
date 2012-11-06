@@ -31,7 +31,7 @@
             </child>
             <child>
               <object class="GtkRadioButton" id="research_FocusSymbol">
-                <property name="label" translatable="yes">focus symbol</property>
+                <property name="label" translatable="yes">Focused symbol</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -49,7 +49,7 @@
             </child>
             <child>
               <object class="GtkRadioButton" id="research_displaySymbol">
-                <property name="label" translatable="yes">display symbol</property>
+                <property name="label" translatable="yes">Displayed symbols</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -67,7 +67,7 @@
             </child>
             <child>
               <object class="GtkRadioButton" id="research_allSymbol">
-                <property name="label" translatable="yes">all symbol</property>
+                <property name="label" translatable="yes">All symbols</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
