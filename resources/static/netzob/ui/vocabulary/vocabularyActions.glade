@@ -75,8 +75,8 @@
     </child>
     <child>
       <object class="GtkAction" id="environmentDep">
-        <property name="label" translatable="yes">Environment Dependencies</property>
-        <property name="tooltip" translatable="yes">Search environment dependencies for all message</property>
+        <property name="label" translatable="yes">Environmental Dependencies</property>
+        <property name="tooltip" translatable="yes">Search for environmental dependencies for all messages</property>
         <property name="stock_id">netzob-search-environment-dep</property>
         <property name="sensitive">False</property>
         <signal name="activate" handler="environmentDep_activate_cb" swapped="no"/>
@@ -174,8 +174,8 @@
     </child>
     <child>
       <object class="GtkToggleAction" id="searchText">
-        <property name="label" translatable="yes">Search Text</property>
-        <property name="tooltip" translatable="yes">Search a string in all messages of current symbol</property>
+        <property name="label" translatable="yes">Search text</property>
+        <property name="tooltip" translatable="yes">Search a string in all messages of the current symbol</property>
         <property name="stock_id">gtk-find</property>
         <property name="sensitive">False</property>
         <signal name="toggled" handler="searchText_toggled_cb" swapped="no"/>

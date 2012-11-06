@@ -302,9 +302,9 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
-                    <property name="tooltip_markup" translatable="yes">Select all symbol</property>
-                    <property name="tooltip_text" translatable="yes">Select all symbol</property>
-                    <property name="label" translatable="yes">Select all symbol</property>
+                    <property name="tooltip_markup" translatable="yes">Select all symbols</property>
+                    <property name="tooltip_text" translatable="yes">Select all symbols</property>
+                    <property name="label" translatable="yes">Select all symbols</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">netzob-select-all</property>
                     <signal name="clicked" handler="selectAllSymbolsButton_clicked_cb" swapped="no"/>
@@ -319,9 +319,9 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
-                    <property name="tooltip_markup" translatable="yes">Deselect all symbol</property>
-                    <property name="tooltip_text" translatable="yes">Deselect all symbol</property>
-                    <property name="label" translatable="yes">Deselect all symbol</property>
+                    <property name="tooltip_markup" translatable="yes">Unselect all symbols</property>
+                    <property name="tooltip_text" translatable="yes">Unselect all symbols</property>
+                    <property name="label" translatable="yes">Unselect all symbols</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">netzob-unselect-all</property>
                     <signal name="clicked" handler="unselectAllSymbolsButton_clicked_cb" swapped="no"/>
@@ -363,8 +363,8 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
-                    <property name="tooltip_markup" translatable="yes">Concatenate selected symbol(s)</property>
-                    <property name="tooltip_text" translatable="yes">Concatenate selected symbol(s)</property>
+                    <property name="tooltip_markup" translatable="yes">Concatenate selected symbols</property>
+                    <property name="tooltip_text" translatable="yes">Concatenate selected symbols</property>
                     <property name="label" translatable="yes">Concatenate</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">netzob-concat-symbol</property>
