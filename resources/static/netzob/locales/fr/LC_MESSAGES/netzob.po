@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-08 12:16+0100\n"
-"PO-Revision-Date: 2012-11-06 18:43+0200\n"
+"PO-Revision-Date: 2012-11-08 14:20+0200\n"
 "Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
@@ -1743,7 +1743,7 @@ msgstr ""
 
 #: resources/static/netzob/ui/grammar/createCloseChannelTransition.glade:172
 msgid "Time before closing (ms)"
-msgstr ""
+msgstr "Durée avant fermeture (ms)"
 
 #: resources/static/netzob/ui/grammar/createCloseChannelTransition.glade:228
 #: resources/static/netzob/ui/grammar/createOpenChannelTransition.glade:225
