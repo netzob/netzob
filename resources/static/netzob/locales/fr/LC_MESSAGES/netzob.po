@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-06 18:44+0100\n"
-"PO-Revision-Date: 2012-11-08 11:54+0200\n"
-"Last-Translator: Frédéric Guihéry <sygus@cat-lan.com>\n"
+"POT-Creation-Date: 2012-11-08 12:16+0100\n"
+"PO-Revision-Date: 2012-11-06 18:43+0200\n"
+"Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
 "Language: fr\n"
@@ -136,7 +136,6 @@ msgid "Close _Without Saving"
 msgstr "Fermer sans sauvegarder"
 
 #: src/netzob/Common/Field.py:319 src/netzob/Common/Field.py:329
-#: src/netzob/Fuzzing/TreeViews/TreeTypeStructureGenerator.py:70
 #: src/netzob/Import/ApiImport.py:120
 #: resources/static/netzob/ui/availablePluginsDialog.glade:112
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:52
@@ -221,10 +220,6 @@ msgstr "L'espace de travail indiqué n'est pas conforme aux définitions XSD."
 msgid "Import from File"
 msgstr "Importer depuis un fichier"
 
-#: src/netzob/Common/MMSTD/Dictionary/VariableProcessingToken/VariableWritingToken.py:68
-msgid "WritingToken: isOk: {0}, value: {1}"
-msgstr "WritingToken: isOk: {0}, value: {1}"
-
 #: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:287
 msgid "[Aggregate] {0} ({1})"
 msgstr "[Agrégat] {0} ({1})"
@@ -240,89 +235,12 @@ msgstr "[Alternat] {0} ({1})"
 msgid "[{0}]"
 msgstr "[{0}]"
 
-#: src/netzob/Common/MMSTD/Dictionary/Variables/_DirectRelationVariable.py:73
-msgid "[Direct Relation] {0}, pointed ID: {1}"
-msgstr "[Direct Relation] {0}, pointed ID: {1}"
-
 #: src/netzob/Common/Plugins/Capturers/AbstractCapturer.py:72
 #: src/netzob/Import/AbstractImporter.py:72
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturer.py:233
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:274
 msgid "Message ID: {0} not found in importer message list"
 msgstr "ID de message ({0}) non trouvé dans la liste d'import des messages"
-
-#: src/netzob/Fuzzing/File.py:142 src/netzob/Fuzzing/Ipc.py:145
-#: src/netzob/Fuzzing/Network.py:225
-msgid "Fuzz field"
-msgstr "Fuzzer les champs"
-
-#: src/netzob/Fuzzing/Network.py:125
-msgid "Filter"
-msgstr "Filtre"
-
-#: src/netzob/Fuzzing/Network.py:135
-msgid "Fuzz traffic"
-msgstr "Fuzzer le trafic"
-
-#: src/netzob/Fuzzing/Network.py:149
-msgid "Proto"
-msgstr "Protocole"
-
-#: src/netzob/Fuzzing/Network.py:154
-msgid "IP source"
-msgstr "IP source"
-
-#: src/netzob/Fuzzing/Network.py:159
-msgid "IP dest"
-msgstr "IP destination"
-
-#: src/netzob/Fuzzing/Network.py:164
-msgid "sport"
-msgstr "Port source"
-
-#: src/netzob/Fuzzing/Network.py:169
-msgid "dport"
-msgstr "Port destination"
-
-#: src/netzob/Fuzzing/UIfuzzing.py:93
-msgid "Network fuzzing"
-msgstr "Fuzzing réseau"
-
-#: src/netzob/Fuzzing/UIfuzzing.py:97
-msgid "IPC fuzzing"
-msgstr "Fuzzing d'IPC"
-
-#: src/netzob/Fuzzing/UIfuzzing.py:101
-msgid "File fuzzing"
-msgstr "Fuzzing de fichier"
-
-#: src/netzob/Fuzzing/TreeViews/TreeSymbolGenerator.py:75
-#: src/netzob/UI/Export/Views/RawExportView.py:94
-#: src/netzob/UI/Export/Views/ScapyExportView.py:94
-#: src/netzob/UI/Export/Views/TextExportView.py:94
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:97
-msgid "Symbols"
-msgstr "Symboles"
-
-#: src/netzob/Fuzzing/TreeViews/TreeTypeStructureGenerator.py:70
-msgid "iCol"
-msgstr "iCol"
-
-#: src/netzob/Fuzzing/TreeViews/TreeTypeStructureGenerator.py:70
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:173
-#: resources/static/netzob/ui/simulator/simulatorView.glade:300
-#: resources/static/netzob/ui/vocabulary/environmentDependenciesSearcherView.glade:153
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:498
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:563
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:652
-msgid "Value"
-msgstr "Valeur"
-
-#: src/netzob/Fuzzing/TreeViews/TreeTypeStructureGenerator.py:70
-#: resources/static/netzob/ui/availablePluginsDialog.glade:134
-#: resources/static/netzob/ui/vocabulary/editFieldDialog.glade:35
-msgid "Description"
-msgstr "Description"
 
 #: src/netzob/Import/ApiImport.py:100
 msgid "Update processes list"
@@ -805,6 +723,13 @@ msgstr "Aucune définition trouvée"
 #: src/netzob/UI/Export/Views/RawExportView.py:50
 msgid "Export project as raw XML"
 msgstr "Exporter le projet au format XML brut"
+
+#: src/netzob/UI/Export/Views/RawExportView.py:94
+#: src/netzob/UI/Export/Views/ScapyExportView.py:94
+#: src/netzob/UI/Export/Views/TextExportView.py:94
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:97
+msgid "Symbols"
+msgstr "Symboles"
 
 #: src/netzob/UI/Export/Views/ScapyExportView.py:50
 #: src/netzob/UI/Export/Views/TextExportView.py:50
@@ -1473,6 +1398,11 @@ msgstr "Importer des messages depuis un fichier XML"
 msgid "Available Plugins"
 msgstr "Plugins disponibles"
 
+#: resources/static/netzob/ui/availablePluginsDialog.glade:134
+#: resources/static/netzob/ui/vocabulary/editFieldDialog.glade:35
+msgid "Description"
+msgstr "Description"
+
 #: resources/static/netzob/ui/dialogbox.glade:63
 #: resources/static/netzob/ui/dialogbox.glade:667
 #: resources/static/netzob/ui/dialogbox.glade:838
@@ -1676,6 +1606,15 @@ msgstr "Mémorisable"
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:139
 msgid "Variable Type"
 msgstr "Type de la variable"
+
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:173
+#: resources/static/netzob/ui/simulator/simulatorView.glade:300
+#: resources/static/netzob/ui/vocabulary/environmentDependenciesSearcherView.glade:153
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:498
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:563
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:652
+msgid "Value"
+msgstr "Valeur"
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:228
 msgid "Pointed ID"
@@ -2713,52 +2652,44 @@ msgstr ""
 msgid "Time limit:"
 msgstr "Limite de durée : "
 
-#~ msgid "{0}, bits: ({1}, {2}), chars: ({3}, {4})"
+#~ msgid "WritingToken: isOk: {0}, value: {1}"
 #~ msgstr ""
 
-#~ msgid "{0}, delimiter: {1}"
-#~ msgstr "{0}, délimiteur : {1}"
-
-#~ msgid "{0}, associatedDataType: {1}"
+#~ msgid "[Direct Relation] {0}, pointed ID: {1}"
 #~ msgstr ""
 
-#~ msgid "ReadingToken: isOk: {0}, value left: {1}"
-#~ msgstr ""
+#~ msgid "Fuzz field"
+#~ msgstr "Fuzzer les champs"
 
-#~ msgid "[ {0}, children:\n"
-#~ msgstr ""
+#~ msgid "Filter"
+#~ msgstr "Filtre"
 
-#~ msgid "Variable {0} ({3}) (mutable: {1}, learnable: {2})"
-#~ msgstr ""
+#~ msgid "Fuzz traffic"
+#~ msgstr "Fuzzer le trafic"
 
-#~ msgid "[Computed Relation] {0}, pointed ID: {1}, type: {2}."
-#~ msgstr ""
+#~ msgid "Proto"
+#~ msgstr "Protocole"
 
-#~ msgid "[Data] {0}, type: {1}, original value: {2}"
-#~ msgstr ""
+#~ msgid "IP source"
+#~ msgstr "IP source"
 
-#~ msgid "{0}, value: {1}"
-#~ msgstr ""
+#~ msgid "IP dest"
+#~ msgstr "IP destination"
 
-#~ msgid "[Repeat] {0}, iterations: ({1}, {2})"
-#~ msgstr ""
+#~ msgid "sport"
+#~ msgstr "Port source"
 
-#~ msgid ""
-#~ "[{0}, child:\n"
-#~ " - {1}]"
-#~ msgstr ""
+#~ msgid "dport"
+#~ msgstr "Port destination"
 
-#~ msgid "Cannot load file {0}, its not a file."
-#~ msgstr ""
+#~ msgid "Network fuzzing"
+#~ msgstr "Fuzzing réseau"
 
-#~ msgid "Browse..."
-#~ msgstr "Parcourir"
+#~ msgid "IPC fuzzing"
+#~ msgstr "Fuzzing d'IPC"
 
-#~ msgid "Fermer"
-#~ msgstr "Fermer"
+#~ msgid "File fuzzing"
+#~ msgstr "Fuzzing de fichier"
 
-#~ msgid ""
-#~ "The specifed start state already has "
-#~ "a transition with the same input "
-#~ "symbol."
+#~ msgid "iCol"
 #~ msgstr ""
