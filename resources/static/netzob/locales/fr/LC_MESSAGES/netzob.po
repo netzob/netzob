@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-06 18:44+0100\n"
-"PO-Revision-Date: 2012-11-06 21:59+0200\n"
+"PO-Revision-Date: 2012-11-08 11:54+0200\n"
 "Last-Translator: Frédéric Guihéry <sygus@cat-lan.com>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
@@ -1368,12 +1368,17 @@ msgid ""
 "Do not forget to copy in the targeted directory our Peach plugin "
 "netzob_plugins/Exporters/PeachExporter/PeachzobAddons.py."
 msgstr ""
+"Le projet a été correctement exporté en tant que Fuzzer Peach '{0}'.\n"
+"Pour l'utilisez, n'oubliez pas de récupérer le fichier d'extension "
+"'netzob_plugins/Exporters/PeachExporter/PeachzobAddons.py'."
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:217
 msgid ""
 "The following error occurred while exporting the project as a Peach "
 "Fuzzer to '{0}': {1}"
 msgstr ""
+"L'erreur suivante est apparue lors de la tentative d'export en tant que "
+"Fuzzer Peach '{0}': {1}"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportView.py:55
 msgid "Export project as Peach pit XML"
@@ -1381,11 +1386,11 @@ msgstr "Exporter le projet au format XML Peach pit"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportView.py:123
 msgid "Fuzzing based on: "
-msgstr ""
+msgstr "Fuzzing basé sur : "
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExporterPlugin.py:56
 msgid "Provide the possibility to export netzob symbols to Peach pit files."
-msgstr ""
+msgstr "Permet l'export sous la forme d'un fuzzer pour Peach."
 
 #: src/netzob_plugins/Importers/DelimiterSeparatedImporter/DelimiterSeparatedImporter/DelimiterSeparatedImporter.py:53
 msgid "Delete Separator"
@@ -1393,15 +1398,15 @@ msgstr "Supprimer le séparateur"
 
 #: src/netzob_plugins/Importers/DelimiterSeparatedImporter/DelimiterSeparatedImporter/DelimiterSeparatedImporter.py:54
 msgid "Keep Starting Separator"
-msgstr ""
+msgstr "Garder le séparateur initial"
 
 #: src/netzob_plugins/Importers/DelimiterSeparatedImporter/DelimiterSeparatedImporter/DelimiterSeparatedImporter.py:55
 msgid "Keep Ending Separator"
-msgstr ""
+msgstr "Garder le séparateur final"
 
 #: src/netzob_plugins/Importers/DelimiterSeparatedImporter/DelimiterSeparatedImporter/DelimiterSeparatedImporterPlugin.py:50
 msgid "Provide the possibility to import messages from any binary or ascii file."
-msgstr ""
+msgstr "Permet l'import de messages depuis des fichiers binaire ou texte."
 
 #: src/netzob_plugins/Importers/DelimiterSeparatedImporter/DelimiterSeparatedImporter/DelimiterSeparatedImporterView.py:63
 msgid "Import messages from raw file"
@@ -1409,7 +1414,7 @@ msgstr "Importer des messages depuis un fichier brut"
 
 #: src/netzob_plugins/Importers/OSpyImporter/OSpyImporter/OSpyImporterPlugin.py:51
 msgid "Provides the possibility to import messages from OSpy project file."
-msgstr ""
+msgstr "Permet l'import de messages depuis le format de fichier OSpy."
 
 #: src/netzob_plugins/Importers/OSpyImporter/OSpyImporter/OSpyImporterView.py:62
 msgid "Import messages from oSpy file"
@@ -1417,21 +1422,25 @@ msgstr "Importer des messages depuis un fichier oSpy"
 
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:84
 msgid "Error while trying to open the file {0}."
-msgstr ""
+msgstr "Une erreur est apparue lors de l'ouverture du fichier {0}."
 
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:87
 msgid ""
 "Error while trying to open the file {0}, more permissions are required "
 "for reading it."
 msgstr ""
+"Une erreur est apparue lors de l'ouverture du fichier {0}, les permissions "
+"ne sont pas suffisantes."
 
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:118
 msgid "The provided filter is not valid (it should follow the BPF format)"
-msgstr ""
+msgstr "Le filtre proposé n'est pas valide (celui-ci doit être au format BPF)"
 
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:127
 msgid "This pcap cannot be imported since the layer 2 is not supported ({0})"
 msgstr ""
+"Ce PCAP ne peut être importé, car la couche protocole 2 n'est pas supportée "
+"({0})"
 
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:264
 msgid ""
@@ -1439,10 +1448,13 @@ msgid ""
 "unsupported (Only UDP and TCP are currently supported, packet IP protocol"
 " number = {0})"
 msgstr ""
+"Ne peut importer l'un des paquets réseau, car sa couche protocole 4 "
+"(protocole == {0})n'est pas supportée (seuls UDP et TCP sont actuellement "
+"supportés)"
 
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporterPlugin.py:50
 msgid "Provide the possibility to import messages from PCAP network capture files"
-msgstr ""
+msgstr "Permet l'import de messages réseau depuis des fichiers PCAP"
 
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporterView.py:64
 msgid "Import messages from PCAP file"
@@ -1450,7 +1462,7 @@ msgstr "Importer des messages depuis un fichier PCAP"
 
 #: src/netzob_plugins/Importers/XMLImporter/XMLImporter/XMLImporterPlugin.py:51
 msgid "Provide the possibility to import messages from netzob XML message files"
-msgstr ""
+msgstr "Permet l'import de messages depuis des fichiers au format XML de Netzob"
 
 #: src/netzob_plugins/Importers/XMLImporter/XMLImporter/XMLImporterView.py:59
 msgid "Import messages from XML file"
@@ -1459,7 +1471,7 @@ msgstr "Importer des messages depuis un fichier XML"
 #: resources/static/netzob/ui/availablePluginsDialog.glade:73
 #: resources/static/netzob/ui/mainActions.glade:87
 msgid "Available Plugins"
-msgstr ""
+msgstr "Plugins disponibles"
 
 #: resources/static/netzob/ui/dialogbox.glade:63
 #: resources/static/netzob/ui/dialogbox.glade:667
@@ -1472,15 +1484,18 @@ msgstr "Message d'avertissement"
 
 #: resources/static/netzob/ui/dialogbox.glade:129
 msgid "Sorry, An uncaught exception occurred !"
-msgstr ""
+msgstr "Désolé, une exception non traitée est apparue !"
 
 #: resources/static/netzob/ui/dialogbox.glade:168
 msgid "To get your API Key, please register yourself on https://dev.net"
 msgstr ""
+"Pour obtenir votre clé d'API, vous devez être inscrit sur "
+"https://dev.netzob.org et récupérer la valeur sur la page "
+"https://dev.netzob.org/my/account"
 
 #: resources/static/netzob/ui/dialogbox.glade:188
 msgid "API Key"
-msgstr ""
+msgstr "Clé d'API"
 
 #: resources/static/netzob/ui/dialogbox.glade:207
 msgid ""
@@ -1491,6 +1506,12 @@ msgid ""
 "report.\n"
 "Thank you for your help."
 msgstr ""
+"Un rapport de bug a été généré et pourrait être très utile à l'équipe de "
+"développement,\n"
+"veuillez autoriser son envoi au serveur de Netzob.\n"
+"\n"
+"Seules les informations spécifiques à cette erreur seront transmises.\n"
+"Merci pour votre contribution."
 
 #: resources/static/netzob/ui/dialogbox.glade:249
 msgid "Target"
@@ -1498,23 +1519,27 @@ msgstr "Cible"
 
 #: resources/static/netzob/ui/dialogbox.glade:279
 msgid "remember API Key"
-msgstr ""
+msgstr "Mémoriser la clé d'API"
 
 #: resources/static/netzob/ui/dialogbox.glade:437
 msgid ""
 "Warning, the remote server's certificate \n"
 "is not valid !"
 msgstr ""
+"Attention, le certificat du serveur distant\n"
+"n'est pas valide !"
 
 #: resources/static/netzob/ui/dialogbox.glade:464
 msgid "Remote certificate"
-msgstr ""
+msgstr "Certificat du serveur distant"
 
 #: resources/static/netzob/ui/dialogbox.glade:508
 msgid ""
 "Do you want to continue ? (You should not unless you know what you're "
 "doing)"
 msgstr ""
+"Voulez-vous continuer ? (Vous ne devriez pas sauf si vous savez ce que vous "
+"faites)"
 
 #: resources/static/netzob/ui/dialogbox.glade:533
 msgid "Create a new symbol"
@@ -1523,7 +1548,7 @@ msgstr "Créer un nouveau symbole"
 #: resources/static/netzob/ui/dialogbox.glade:596
 #: resources/static/netzob/ui/dialogbox.glade:1146
 msgid "Symbol's name:"
-msgstr ""
+msgstr "Nom du symbole :"
 
 #: resources/static/netzob/ui/dialogbox.glade:634
 msgid "Export project"
@@ -1537,7 +1562,7 @@ msgstr "Sélectionnez un répertoire"
 
 #: resources/static/netzob/ui/dialogbox.glade:748
 msgid "XML Output filename"
-msgstr ""
+msgstr "Fichier de sortie XML"
 
 #: resources/static/netzob/ui/dialogbox.glade:805
 #: resources/static/netzob/ui/mainActions.glade:27
@@ -1546,7 +1571,7 @@ msgstr "Importer un projet"
 
 #: resources/static/netzob/ui/dialogbox.glade:906
 msgid "Project to import:"
-msgstr ""
+msgstr "Projet à importer :"
 
 #: resources/static/netzob/ui/dialogbox.glade:943
 msgid "New project"
@@ -1554,11 +1579,11 @@ msgstr "Nouveau projet"
 
 #: resources/static/netzob/ui/dialogbox.glade:1043
 msgid "Project's name:"
-msgstr ""
+msgstr "Nom du projet :"
 
 #: resources/static/netzob/ui/dialogbox.glade:1082
 msgid "Rename the layer X"
-msgstr ""
+msgstr "Renommer la couche protocolaire"
 
 #: resources/static/netzob/ui/dialogbox.glade:1191
 msgid "Select the new workspace to switch on"
@@ -1566,7 +1591,7 @@ msgstr "Sélectionnez le nouvel espace de travail sur lequel basculer"
 
 #: resources/static/netzob/ui/dialogbox.glade:1288
 msgid "Select a folder"
-msgstr ""
+msgstr "Sélectioner un répertoire"
 
 #: resources/static/netzob/ui/mainActions.glade:7
 msgid "New Project"
@@ -1602,11 +1627,11 @@ msgstr "Changer d'espace de travail"
 
 #: resources/static/netzob/ui/mainActions.glade:42
 msgid "Choose a new working directory"
-msgstr ""
+msgstr "Sélectionner un nouveau répertoire de travail"
 
 #: resources/static/netzob/ui/mainActions.glade:49
 msgid "Quit"
-msgstr ""
+msgstr "Quitter"
 
 #: resources/static/netzob/ui/mainActions.glade:57
 msgid "About Netzob"
@@ -1630,7 +1655,7 @@ msgstr "Ouvrir un projet de l'espace de travail"
 
 #: resources/static/netzob/ui/mainActions.glade:80
 msgid "Open a project already into the workspace"
-msgstr ""
+msgstr "Ouvrir un projet déjà présent dans le répertoire de travail"
 
 #: resources/static/netzob/ui/mainWindow.glade:16
 msgid "Netzob - inference communication protocol"
@@ -1642,7 +1667,7 @@ msgstr "Changer de vue"
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:65
 msgid "Mutable"
-msgstr ""
+msgstr "Mutable"
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:79
 msgid "Learnable"
@@ -1654,19 +1679,19 @@ msgstr "Type de la variable"
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:228
 msgid "Pointed ID"
-msgstr ""
+msgstr "ID pointé"
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:317
 msgid "Maximum"
-msgstr ""
+msgstr "Maximum"
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:343
 msgid "Minimum"
-msgstr ""
+msgstr "Minimum"
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:370
 msgid "has a size"
-msgstr ""
+msgstr "possède une taille"
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:383
 msgid "Delimiter (hex)"
@@ -1674,11 +1699,11 @@ msgstr "Délimiteur (hex)"
 
 #: resources/static/netzob/ui/Variables/VariableMovingView.glade:53
 msgid "Choose the future position of this variable among this node."
-msgstr ""
+msgstr "Sélectionnez la future position de cette variable au sein du nœud."
 
 #: resources/static/netzob/ui/Variables/VariableMovingView.glade:70
 msgid "Variable position"
-msgstr ""
+msgstr "Position de la variable"
 
 #: resources/static/netzob/ui/Variables/VariableTreeView.glade:19
 msgid "Create default variable"
@@ -1697,12 +1722,12 @@ msgstr "Importer les messages"
 #: resources/static/netzob/ui/capturer/abstractCapturerView.glade:175
 #: resources/static/netzob/ui/import/abstractImporterView.glade:175
 msgid "Select all"
-msgstr ""
+msgstr "Sélectionner tout"
 
 #: resources/static/netzob/ui/capturer/abstractCapturerView.glade:191
 #: resources/static/netzob/ui/import/abstractImporterView.glade:191
 msgid "Unselect all"
-msgstr ""
+msgstr "Désélectionner tout"
 
 #: resources/static/netzob/ui/capturer/abstractCapturerView.glade:207
 #: resources/static/netzob/ui/import/abstractImporterView.glade:207
@@ -1718,7 +1743,7 @@ msgstr "Paquets affichés : "
 #: resources/static/netzob/ui/import/abstractImporterView.glade:293
 #: resources/static/netzob/ui/import/abstractImporterView.glade:324
 msgid "0"
-msgstr ""
+msgstr "0"
 
 #: resources/static/netzob/ui/capturer/abstractCapturerView.glade:307
 msgid "Selected Packets:"
@@ -1737,7 +1762,7 @@ msgstr "Nom du symbole crée"
 #: resources/static/netzob/ui/capturer/confirmImportMessagesDialog.glade:168
 #: resources/static/netzob/ui/import/confirmImportMessagesDialog.glade:168
 msgid "Remove duplicated messages (payload)"
-msgstr ""
+msgstr "Supprimer les messages en doublon"
 
 #: resources/static/netzob/ui/capturer/confirmImportMessagesDialog.glade:187
 #: resources/static/netzob/ui/import/confirmImportMessagesDialog.glade:187
@@ -1771,7 +1796,7 @@ msgstr "Confirmer la suppression de la transition"
 #: resources/static/netzob/ui/grammar/createSemiStochasticTransitionDialogs.glade:36
 #: resources/static/netzob/ui/grammar/createStateDialog.glade:35
 msgid "label"
-msgstr ""
+msgstr "label"
 
 #: resources/static/netzob/ui/grammar/createCloseChannelTransition.glade:118
 msgid "Describe the Close Channel"
