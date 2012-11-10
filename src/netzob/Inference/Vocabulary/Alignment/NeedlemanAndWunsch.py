@@ -332,7 +332,7 @@ class NeedlemanAndWunsch(object):
         t2 = time.time()
 
         self.newSymbols.extend(preResults)
-        logging.info("Time of clustering: {1}".format(str(t2 - t1)))
+        logging.info("Time of clustering: {0}".format(str(t2 - t1)))
 
     def isFinish(self):
         return self.flagStop
