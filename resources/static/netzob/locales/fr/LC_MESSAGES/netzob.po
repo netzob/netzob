@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-08 12:16+0100\n"
-"PO-Revision-Date: 2012-11-13 10:15+0200\n"
-"Last-Translator: Georges Bossert <georges.bossert@supelec.fr>\n"
+"PO-Revision-Date: 2012-11-13 15:14+0200\n"
+"Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
 "Language: fr\n"
@@ -1852,7 +1852,7 @@ msgstr "Inférence passive de grammaire"
 
 #: resources/static/netzob/ui/grammar/grammarActions.glade:17
 msgid "Infer the grammar based on provided examples"
-msgstr ""
+msgstr "Inférer la grammaire en utilisant des exemples de communications"
 
 #: resources/static/netzob/ui/grammar/grammarActions.glade:25
 msgid "Create State"
@@ -1934,7 +1934,7 @@ msgstr "Configuration réseau"
 
 #: resources/static/netzob/ui/simulator/createNetworkActor.glade:332
 msgid "Predefined Values"
-msgstr ""
+msgstr "Valeurs prédéfinies"
 
 #: resources/static/netzob/ui/simulator/createNetworkActor.glade:352
 msgid "L4_PROTOCOL"
@@ -1968,7 +1968,7 @@ msgstr "Acteurs"
 
 #: resources/static/netzob/ui/simulator/simulatorView.glade:144
 msgid "Status"
-msgstr ""
+msgstr "Statut"
 
 #: resources/static/netzob/ui/simulator/simulatorView.glade:289
 msgid "Property"
@@ -1976,11 +1976,11 @@ msgstr "Propriété"
 
 #: resources/static/netzob/ui/simulator/simulatorView.glade:462
 msgid "Grammar"
-msgstr ""
+msgstr "Grammaire"
 
 #: resources/static/netzob/ui/simulator/simulatorView.glade:504
 msgid "Communication Channel"
-msgstr ""
+msgstr "Canal de communication"
 
 #: resources/static/netzob/ui/simulator/simulatorView.glade:533
 msgid "Info :"
@@ -1988,7 +1988,7 @@ msgstr "Information :"
 
 #: resources/static/netzob/ui/simulator/simulatorView.glade:547
 msgid "Status :"
-msgstr ""
+msgstr "Statut : "
 
 #: resources/static/netzob/ui/simulator/simulatorView.glade:648
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:266
@@ -2010,15 +2010,15 @@ msgstr "Variable"
 
 #: resources/static/netzob/ui/vocabulary/customTransformationFunctionDialog.glade:7
 msgid "Create a Custom Transformation Function"
-msgstr ""
+msgstr "Créer une fonction de transformation personnalisée"
 
 #: resources/static/netzob/ui/vocabulary/customTransformationFunctionDialog.glade:156
 msgid "Custom Transformation Function"
-msgstr ""
+msgstr "Fonction de transformation personnalisée"
 
 #: resources/static/netzob/ui/vocabulary/customTransformationFunctionDialog.glade:183
 msgid "Name of the function"
-msgstr ""
+msgstr "Nom de la fonction"
 
 #: resources/static/netzob/ui/vocabulary/customTransformationFunctionDialog.glade:280
 msgid "Source code is bi-directionnal"
@@ -2026,7 +2026,7 @@ msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/customTransformationFunctionDialog.glade:309
 msgid "Test your function"
-msgstr ""
+msgstr "Tester la fonction"
 
 #: resources/static/netzob/ui/vocabulary/customTransformationFunctionDialog.glade:354
 msgid "Original"
@@ -2058,7 +2058,7 @@ msgstr "Rechercher les dépendances d'environnement"
 
 #: resources/static/netzob/ui/vocabulary/environmentDependenciesSearcherView.glade:124
 msgid "The following Environmental Dependencies will be searched"
-msgstr ""
+msgstr "Les dépendances d'environnement suivantes seront cherchées"
 
 #: resources/static/netzob/ui/vocabulary/fieldAnalysis.glade:24
 msgid "Field analysis"
@@ -2066,7 +2066,7 @@ msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/fieldAnalysis.glade:39
 msgid "Field name:"
-msgstr ""
+msgstr "Nom du champ : "
 
 #: resources/static/netzob/ui/vocabulary/fieldAnalysis.glade:52
 msgid "Domain of definition"
@@ -2074,7 +2074,7 @@ msgstr "Domaine de définition"
 
 #: resources/static/netzob/ui/vocabulary/fieldAnalysis.glade:90
 msgid "Domain"
-msgstr ""
+msgstr "Domaine"
 
 #: resources/static/netzob/ui/vocabulary/fieldAnalysis.glade:114
 msgid "Type guessing"
@@ -2099,15 +2099,17 @@ msgstr "Table de messages vide"
 #: resources/static/netzob/ui/vocabulary/messageTable.glade:48
 #: resources/static/netzob/ui/vocabulary/messageTable.glade:49
 msgid "Close the view"
-msgstr ""
+msgstr "Fermer la vue"
 
 #: resources/static/netzob/ui/vocabulary/moveMessageDialog.glade:7
 msgid "The message is not valid according to symbol target's regex"
 msgstr ""
+"Le message n'est pas valide vis-à-vis de l'expression rationnelle du symbole "
+"cible"
 
 #: resources/static/netzob/ui/vocabulary/moveMessageDialog.glade:69
 msgid "What do you want to do ?"
-msgstr ""
+msgstr "Que voulez-vous faire ?"
 
 #: resources/static/netzob/ui/vocabulary/moveMessageDialog.glade:102
 msgid ""
@@ -2117,7 +2119,7 @@ msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/moveMessageDialog.glade:126
 msgid "Move selected message and forget target message format."
-msgstr ""
+msgstr "Déplacer le message sélectionné et oublier format de message cible."
 
 #: resources/static/netzob/ui/vocabulary/moveMessageDialog.glade:144
 msgid "Move selected message and re-compute the regex"
@@ -2146,11 +2148,11 @@ msgstr "Table des variables"
 
 #: resources/static/netzob/ui/vocabulary/variableTable.glade:96
 msgid "Regex"
-msgstr ""
+msgstr "Expression rationnelle"
 
 #: resources/static/netzob/ui/vocabulary/variableTable.glade:118
 msgid "Additional information"
-msgstr ""
+msgstr "Informations additionnelles"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:7
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:147
@@ -2159,25 +2161,25 @@ msgstr "Partitionnement simple"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:8
 msgid "Use simple partioning on selected symbol"
-msgstr ""
+msgstr "Utiliser le partitionnement simple sur le symbole sélectionné"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:16
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:162
 msgid "Smooth Partitioning"
-msgstr ""
+msgstr "Partitionnement lissé"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:17
 msgid "Use smooth partioning on selected symbol"
-msgstr ""
+msgstr "Utilisez partitionnement lissé sur le symbole sélectionné"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:25
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:177
 msgid "Reset Partitioning"
-msgstr ""
+msgstr "Réinitialiser partitionnement"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:26
 msgid "Reset partitioning of selected symbol"
-msgstr "Annuler le partitionnement du symbole sélectionné"
+msgstr "Réinitialiser le partitionnement du symbole sélectionné"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:34
 msgid "Concatenate Fields"
@@ -2205,7 +2207,7 @@ msgstr "Déplacer vers un autre symbole"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:61
 msgid "Move selected messages to another symbol"
-msgstr ""
+msgstr "Déplacer les messages sélectionnés vers un autre symbole"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:69
 msgid "Delete Message(s)"
@@ -2268,11 +2270,11 @@ msgstr "Capturer des messages"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:133
 msgid "Automatic Tool"
-msgstr ""
+msgstr "Outil automatique"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:139
 msgid "Manual Tool"
-msgstr ""
+msgstr "Outil manuel"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:153
 #: resources/static/netzob/ui/vocabulary/partitioning/forcePartitioning.glade:7
@@ -2281,7 +2283,7 @@ msgstr "Forcer le partitionnement"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:154
 msgid "Use force partitioning on selected symbol"
-msgstr ""
+msgstr "Utiliser le partitionnement forcé sur le symbole sélectionné"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:168
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:117
@@ -2336,7 +2338,7 @@ msgstr "Partitionnement lissé sur le symbole sélectionné"
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:175
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:176
 msgid "Reset Partitioning on selected symbol"
-msgstr "Annuler le partitionnement sur le symbole sélectionné"
+msgstr "Réinitialiser le partitionnement du symbole sélectionné"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:277
 msgid "Field"
