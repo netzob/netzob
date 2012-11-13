@@ -33,7 +33,6 @@ import sys
 import os
 import logging
 import locale
-import gettext
 import uuid
 import shutil
 from lxml.etree import ElementTree
@@ -163,8 +162,8 @@ class NetzobMainController(object):
             sys.exit()
 
         # Initialiaze gettext
-        gettext.bindtextdomain("netzob", ResourcesConfiguration.getLocaleLocation())
-        gettext.textdomain("netzob")
+        locale.bindtextdomain("netzob", ResourcesConfiguration.getLocaleLocation())
+        locale.textdomain("netzob")
         try:
             locale.getlocale()
         except:
