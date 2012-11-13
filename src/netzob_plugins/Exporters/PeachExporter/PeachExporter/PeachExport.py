@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Global Imports                                                            |
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
+from locale import gettext as _
 import logging
 from lxml import etree
 import string

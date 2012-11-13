@@ -36,7 +36,7 @@
 #+---------------------------------------------------------------------------+
 import logging
 import time
-from gettext import gettext as _
+from locale import gettext as _
 import uuid
 
 #+---------------------------------------------------------------------------+

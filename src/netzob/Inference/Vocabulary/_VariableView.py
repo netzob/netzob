@@ -28,7 +28,7 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
-from gettext import gettext as _
+from locale import gettext as _
 from gi.repository import Gtk
 from netzob.Common.MMSTD.Dictionary.Types.BinaryType import BinaryType
 from netzob.Common.MMSTD.Dictionary.Types.DecimalWordType import DecimalWordType
