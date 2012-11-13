@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-08 12:16+0100\n"
-"PO-Revision-Date: 2012-11-13 15:14+0200\n"
-"Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
+"PO-Revision-Date: 2012-11-13 23:08+0200\n"
+"Last-Translator: Frédéric Guihéry <sygus@cat-lan.com>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
 "Language: fr\n"
@@ -1942,7 +1942,7 @@ msgstr "L4_PROTOCOL"
 
 #: resources/static/netzob/ui/simulator/createNetworkActor.glade:366
 msgid "BIND_IP"
-msgstr ""
+msgstr "BIND_IP"
 
 #: resources/static/netzob/ui/simulator/createNetworkActor.glade:380
 msgid "BIND_PORT"
@@ -1998,7 +1998,7 @@ msgstr "Message"
 
 #: resources/static/netzob/ui/simulator/simulatorView.glade:694
 msgid "Memory Accesses"
-msgstr ""
+msgstr "Accès à la mémoire"
 
 #: resources/static/netzob/ui/simulator/simulatorView.glade:737
 msgid "OP"
@@ -2022,7 +2022,7 @@ msgstr "Nom de la fonction"
 
 #: resources/static/netzob/ui/vocabulary/customTransformationFunctionDialog.glade:280
 msgid "Source code is bi-directionnal"
-msgstr ""
+msgstr "La fonction doit être bidirectionnelle"
 
 #: resources/static/netzob/ui/vocabulary/customTransformationFunctionDialog.glade:309
 msgid "Test your function"
@@ -2042,7 +2042,7 @@ msgstr "Éditer le champ"
 
 #: resources/static/netzob/ui/vocabulary/editFieldDialog.glade:22
 msgid "Field name"
-msgstr ""
+msgstr "Nom du champs"
 
 #: resources/static/netzob/ui/vocabulary/editFieldDialog.glade:48
 msgid "Regex (be careful!)"
@@ -2062,7 +2062,7 @@ msgstr "Les dépendances d'environnement suivantes seront cherchées"
 
 #: resources/static/netzob/ui/vocabulary/fieldAnalysis.glade:24
 msgid "Field analysis"
-msgstr ""
+msgstr "Analyse du champs"
 
 #: resources/static/netzob/ui/vocabulary/fieldAnalysis.glade:39
 msgid "Field name:"
@@ -2078,7 +2078,7 @@ msgstr "Domaine"
 
 #: resources/static/netzob/ui/vocabulary/fieldAnalysis.glade:114
 msgid "Type guessing"
-msgstr ""
+msgstr "Identification du type"
 
 #: resources/static/netzob/ui/vocabulary/fieldAnalysis.glade:139
 msgid "column"
@@ -2116,6 +2116,9 @@ msgid ""
 "The target symbol's regex doesn't apply to the selected message.\n"
 "Below is the available solution you have to resolve this issue."
 msgstr ""
+"L'expression rationnelle du symbole cible ne s'applique pas au message "
+"sélectionné.\n"
+"Veuillez choisir une des solutions proposées."
 
 #: resources/static/netzob/ui/vocabulary/moveMessageDialog.glade:126
 msgid "Move selected message and forget target message format."
@@ -2123,7 +2126,7 @@ msgstr "Déplacer le message sélectionné et oublier format de message cible."
 
 #: resources/static/netzob/ui/vocabulary/moveMessageDialog.glade:144
 msgid "Move selected message and re-compute the regex"
-msgstr ""
+msgstr "Déplacer le message sélectionné et recalculer l'expression régulière"
 
 #: resources/static/netzob/ui/vocabulary/moveMessageDialog.glade:162
 msgid "Move selected message to trash"
@@ -2199,7 +2202,7 @@ msgstr "Fractionner les champs sélectionnés"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:53
 msgid "Edit the variable for selected field"
-msgstr ""
+msgstr "Modifier la variable du champs sélectionné"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:60
 msgid "Move To Another Symbol"
@@ -2234,7 +2237,7 @@ msgstr "Distribution des messages"
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:200
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:201
 msgid "Display messages distributions for selected symbol(s)"
-msgstr ""
+msgstr "Afficher la répartition des messages pour les symboles sélectionnés"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:96
 msgid "Variable Table"
@@ -2246,11 +2249,13 @@ msgstr "Afficher la table des variables"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:106
 msgid "Compute Field Limits"
-msgstr ""
+msgstr "Calculer les limites des champs"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:107
 msgid "Compute min and max size of selected symbol(s)"
 msgstr ""
+"Calculer les tailles minimum et maximum des champs pour les symboles "
+"sélectionnés"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:114
 msgid "Import Messages From File"
@@ -2293,7 +2298,7 @@ msgstr "Alignement de séquence"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:169
 msgid "Use sequence alignment on selected symbol"
-msgstr ""
+msgstr "Appliquer l'alignement de séquence sur le symbole sélectionné"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:177
 msgid "Search text"
@@ -2301,7 +2306,7 @@ msgstr "Chercher un texte"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:178
 msgid "Search a string in all messages of the current symbol"
-msgstr ""
+msgstr "Rechercher un motif dans tous les messages du symbole courant"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:186
 msgid "Filter Displayed Messages"
@@ -2309,7 +2314,7 @@ msgstr "Filtrer les messages affichés"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:187
 msgid "Filter displayed messages in all messages of current symbol"
-msgstr ""
+msgstr "Filtrer les messages du symbole courant"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:115
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:116
@@ -2359,11 +2364,11 @@ msgstr "Désélectionner tous les symboles"
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:349
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:350
 msgid "Add a new empty symbol"
-msgstr ""
+msgstr "Ajouter un nouveau symbole vide"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:351
 msgid "New"
-msgstr ""
+msgstr "Nouveau"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:366
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:367
@@ -2382,7 +2387,7 @@ msgstr "Supprimer les symboles sélectionnés"
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:410
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:411
 msgid "New empty view for message of symbol"
-msgstr ""
+msgstr "Ajouter une nouvelle vue pour afficher des messages"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:412
 msgid "New MessageList"
@@ -2410,7 +2415,7 @@ msgstr "Hexadécimal"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/forcePartitioning.glade:89
 msgid "Stri"
-msgstr ""
+msgstr "Chaine de caractères"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/resetPartitioning.glade:7
 msgid "Reset partitioning"
@@ -2418,7 +2423,7 @@ msgstr "Annuler le partitionnement"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:30
 msgid "Similarity percent:"
-msgstr ""
+msgstr "Seuil de similarité :"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:87
 msgid "Unit size:"
@@ -2426,12 +2431,12 @@ msgstr "Taille de l'unité : "
 
 #: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:97
 msgid " 4 bits"
-msgstr ""
+msgstr " 4 bits"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:115
 #: resources/static/netzob/ui/vocabulary/partitioning/simplePartitioning.glade:53
 msgid "8 bits"
-msgstr ""
+msgstr "8 bits"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:147
 msgid "Option:"
@@ -2439,27 +2444,27 @@ msgstr "Option : "
 
 #: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:157
 msgid "Orphan reduction"
-msgstr ""
+msgstr "Réduction des messages orphelins"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:174
 msgid "Smooth alignement"
-msgstr ""
+msgstr "Lisser l'alignement"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:228
 msgid "Building the initial matrix"
-msgstr ""
+msgstr "Construction de la matrice initiale"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:241
 msgid "Reducing the matrix"
-msgstr ""
+msgstr "Réduction de la matrice"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:254
 msgid "Align obtained clusters"
-msgstr ""
+msgstr "Alignement de séquence dans chaque groupe"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:267
 msgid "Execute Orphan Reductions"
-msgstr ""
+msgstr "Réduction des messages orphelins"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/simplePartitioning.glade:7
 msgid "Simple partitioning"
@@ -2467,23 +2472,23 @@ msgstr "Partitionnement simple"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/simplePartitioning.glade:34
 msgid "4 bits"
-msgstr ""
+msgstr "4 bits"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/simplePartitioning.glade:71
 msgid "16 bits"
-msgstr ""
+msgstr "16 bits"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/simplePartitioning.glade:89
 msgid "32 bits"
-msgstr ""
+msgstr "32 bits"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/simplePartitioning.glade:107
 msgid "64 bits"
-msgstr ""
+msgstr "64 bits"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/smoothPartitioning.glade:7
 msgid "Smooth partitioning"
-msgstr ""
+msgstr "Lisser le partitionnement"
 
 #: resources/static/netzob/ui/vocabulary/search/searchBar.glade:35
 msgid "Search:"
@@ -2491,11 +2496,11 @@ msgstr "Chercher : "
 
 #: resources/static/netzob/ui/vocabulary/search/searchBar.glade:59
 msgid "Find previous"
-msgstr ""
+msgstr "Résultat précédent"
 
 #: resources/static/netzob/ui/vocabulary/search/searchBar.glade:77
 msgid "Find next"
-msgstr ""
+msgstr "Résultat suivant"
 
 #: resources/static/netzob/ui/vocabulary/search/searchBar.glade:97
 msgid "|  Format:"
@@ -2523,33 +2528,33 @@ msgstr "Tous les symboles"
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:162
 msgid "Use inverted search:"
-msgstr ""
+msgstr "Recherche inversée :"
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:176
 msgid "Underline found objects:"
-msgstr ""
+msgstr "Souligner les résultats :"
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:190
 msgid "Match case:"
-msgstr ""
+msgstr "Sensible à la casse :"
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:204
 msgid "Use regular expression:"
-msgstr ""
+msgstr "Activer les expressions régulières :"
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:215
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:253
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:292
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:351
 msgid "yes"
-msgstr ""
+msgstr "oui"
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:234
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:272
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:311
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:331
 msgid "no"
-msgstr ""
+msgstr "non"
 
 #: resources/static/netzob_plugins/FileImporter/ui/FileImportConfigurationWidget.glade:17
 msgid "Separator:"
@@ -2577,7 +2582,7 @@ msgstr "Réseau"
 
 #: resources/static/netzob_plugins/IpcCapturer/ui/IpcCapturerConfigurationWidget.glade:124
 msgid "IPC"
-msgstr ""
+msgstr "IPC"
 
 #: resources/static/netzob_plugins/IpcCapturer/ui/IpcCapturerConfigurationWidget.glade:141
 msgid "Update flow list"
@@ -2585,7 +2590,7 @@ msgstr "Mettre à jour les flux"
 
 #: resources/static/netzob_plugins/IpcCapturer/ui/IpcCapturerConfigurationWidget.glade:180
 msgid "FD"
-msgstr ""
+msgstr "FD"
 
 #: resources/static/netzob_plugins/IpcCapturer/ui/IpcCapturerConfigurationWidget.glade:226
 msgid "All flows"
@@ -2609,7 +2614,7 @@ msgstr "Flux sélectionnés"
 
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:16
 msgid "Device:"
-msgstr ""
+msgstr "Interface :"
 
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:52
 #: resources/static/netzob_plugins/PCAPImporter/ui/PCAPImportConfigurationWidget.glade:16
@@ -2624,31 +2629,31 @@ msgstr "Importer la couche : "
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:116
 #: resources/static/netzob_plugins/PCAPImporter/ui/PCAPImportConfigurationWidget.glade:80
 msgid "Raw"
-msgstr ""
+msgstr "Données brutes"
 
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:133
 #: resources/static/netzob_plugins/PCAPImporter/ui/PCAPImportConfigurationWidget.glade:98
 msgid "Layer 2 (Ethernet/Linux SLL)"
-msgstr ""
+msgstr "Couche 2 (Ethernet/Linux SLL)"
 
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:152
 #: resources/static/netzob_plugins/PCAPImporter/ui/PCAPImportConfigurationWidget.glade:117
 msgid "Layer 3 (IPv4)"
-msgstr ""
+msgstr "Couche 3 (IPv4)"
 
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:171
 #: resources/static/netzob_plugins/PCAPImporter/ui/PCAPImportConfigurationWidget.glade:136
 msgid "Layer 4 (UDP/TCP)"
-msgstr ""
+msgstr "Couche 4 (UDP/TCP)"
 
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:203
 msgid "Count limit:"
-msgstr ""
+msgstr "Compteur :"
 
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:216
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:241
 msgid "10"
-msgstr ""
+msgstr "10"
 
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:228
 msgid "Time limit:"
