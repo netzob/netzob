@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-08 12:16+0100\n"
-"PO-Revision-Date: 2012-11-13 23:08+0200\n"
+"PO-Revision-Date: 2012-11-13 23:10+0200\n"
 "Last-Translator: Frédéric Guihéry <sygus@cat-lan.com>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
@@ -2648,7 +2648,7 @@ msgstr "Couche 4 (UDP/TCP)"
 
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:203
 msgid "Count limit:"
-msgstr "Compteur :"
+msgstr "Quantité :"
 
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:216
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:241
@@ -2657,7 +2657,7 @@ msgstr "10"
 
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:228
 msgid "Time limit:"
-msgstr "Limite de durée : "
+msgstr "Durée de capture : "
 
 #~ msgid "WritingToken: isOk: {0}, value: {1}"
 #~ msgstr ""
