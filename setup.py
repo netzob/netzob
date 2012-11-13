@@ -289,7 +289,6 @@ if command in ["build", "develop", "install"]:
                 print "Handling plugin: " + plugin_name
                 print "Plugin path: " + plugin_fullpath
                 os.chdir(plugin_fullpath)
-                cmd = "python setup.py " + " ".join(sys.argv[1:])
+                cmd = "{0} setup.py {1}".format(sys.executable, " ".join(sys.argv[1:]))
                 print "Using following command: " + cmd
                 os.system(cmd)
-
