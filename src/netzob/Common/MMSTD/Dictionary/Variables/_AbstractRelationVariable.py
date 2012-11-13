@@ -30,7 +30,7 @@
 #+---------------------------------------------------------------------------+
 from abc import abstractmethod
 from bitarray import bitarray
-from gettext import gettext as _
+from locale import gettext as _
 import logging
 import random
 

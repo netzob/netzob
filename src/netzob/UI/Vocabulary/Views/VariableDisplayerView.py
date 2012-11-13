@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
+from locale import gettext as _
 import os
 import uuid
 import logging

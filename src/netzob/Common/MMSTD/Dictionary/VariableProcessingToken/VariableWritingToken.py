@@ -29,7 +29,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from bitarray import bitarray
-from gettext import gettext as _
+from locale import gettext as _
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |

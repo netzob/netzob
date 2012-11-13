@@ -28,7 +28,7 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
-from gettext import gettext as _
+from locale import gettext as _
 from gi.repository import Gtk, Gdk, GObject
 import gi
 from netzob.UI.Grammar.Controllers.Menus.ContextualMenuOnStateController import ContextualMenuOnStateController
