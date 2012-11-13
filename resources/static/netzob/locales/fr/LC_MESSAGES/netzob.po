@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-08 12:16+0100\n"
-"PO-Revision-Date: 2012-11-08 14:20+0200\n"
-"Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
+"PO-Revision-Date: 2012-11-13 10:14+0200\n"
+"Last-Translator: Georges Bossert <georges.bossert@supelec.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
 "Language: fr\n"
@@ -412,7 +412,7 @@ msgstr "Lancement du processus d'inférence"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:173
 msgid "Membership queries"
-msgstr ""
+msgstr "Requètes d'appartenances"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:178
 msgid "Responses"
@@ -1739,7 +1739,7 @@ msgstr "label"
 
 #: resources/static/netzob/ui/grammar/createCloseChannelTransition.glade:118
 msgid "Describe the Close Channel"
-msgstr ""
+msgstr "Décrire le transition de fermeture de canal"
 
 #: resources/static/netzob/ui/grammar/createCloseChannelTransition.glade:172
 msgid "Time before closing (ms)"
@@ -1757,11 +1757,11 @@ msgstr "État terminal"
 
 #: resources/static/netzob/ui/grammar/createOpenChannelTransition.glade:118
 msgid "Describe the Open Channel"
-msgstr ""
+msgstr "Décrire la transition d'ouverture de canal"
 
 #: resources/static/netzob/ui/grammar/createOpenChannelTransition.glade:172
 msgid "Time before opening (ms)"
-msgstr ""
+msgstr "Temps avant ouverture (ms)"
 
 #: resources/static/netzob/ui/grammar/createOpenChannelTransition.glade:289
 msgid "Max Number of Attempt"
@@ -1828,7 +1828,7 @@ msgstr "Durée"
 
 #: resources/static/netzob/ui/grammar/createStateDialog.glade:118
 msgid "Describe the State to Create"
-msgstr ""
+msgstr "Décrire l'état à créer"
 
 #: resources/static/netzob/ui/grammar/createStateDialog.glade:185
 msgid "Initial State"
@@ -1844,7 +1844,7 @@ msgstr "Inférence active de grammaire"
 
 #: resources/static/netzob/ui/grammar/grammarActions.glade:8
 msgid "Infer the grammar"
-msgstr ""
+msgstr "Inférer la grammaire"
 
 #: resources/static/netzob/ui/grammar/grammarActions.glade:16
 msgid "Passive Grammar Inferring"
@@ -1860,7 +1860,7 @@ msgstr "Créer un état"
 
 #: resources/static/netzob/ui/grammar/grammarActions.glade:26
 msgid "Create a state in the current grammar"
-msgstr ""
+msgstr "Créer un état dans la grammaire courante"
 
 #: resources/static/netzob/ui/grammar/grammarActions.glade:34
 msgid "Create Semi-Stochastic Transiton"
