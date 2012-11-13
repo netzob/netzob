@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-08 12:16+0100\n"
-"PO-Revision-Date: 2012-11-13 10:14+0200\n"
+"PO-Revision-Date: 2012-11-13 10:15+0200\n"
 "Last-Translator: Georges Bossert <georges.bossert@supelec.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
@@ -1872,7 +1872,7 @@ msgstr "Créer une transition semi-stochastique"
 
 #: resources/static/netzob/ui/grammar/grammarActions.glade:48
 msgid "Grammar Edition"
-msgstr ""
+msgstr "Edition de la grammaire"
 
 #: resources/static/netzob/ui/grammar/grammarActions.glade:53
 msgid "Create OpenChannel Transition"
@@ -1922,11 +1922,11 @@ msgstr "Créer un acteur réseau"
 
 #: resources/static/netzob/ui/simulator/createNetworkActor.glade:142
 msgid "General Informations"
-msgstr ""
+msgstr "Informations générales"
 
 #: resources/static/netzob/ui/simulator/createNetworkActor.glade:232
 msgid "Initiator"
-msgstr ""
+msgstr "Initiateur"
 
 #: resources/static/netzob/ui/simulator/createNetworkActor.glade:260
 msgid "Network Conf"
