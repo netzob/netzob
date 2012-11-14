@@ -207,24 +207,23 @@ class VocabularyView(object):
         """projectStatusHasChanged_cb:
         Callback executed when a signal is emitted."""
 
+        actions = ["importMessagesFromFile",
+                   "captureMessages",
+                   "relationsViewer",
+                   "searchMenu",
+                   "searchText",
+                   "variableTable",
+                   "automaticToolMenu",
+                   "manualToolMenu",
+                   ]
+
         if signal == SignalsManager.SIG_PROJECT_OPEN:
-            self._actionGroup.get_action('importMessagesFromFile').set_sensitive(True)
-            self._actionGroup.get_action('captureMessages').set_sensitive(True)
-            self._actionGroup.get_action('relationsViewer').set_sensitive(True)
-            self._actionGroup.get_action('searchMenu').set_sensitive(True)
-            self._actionGroup.get_action('searchText').set_sensitive(True)
-            self._actionGroup.get_action('variableTable').set_sensitive(True)
-            self._actionGroup.get_action('automaticToolMenu').set_sensitive(True)
-            self._actionGroup.get_action('manualToolMenu').set_sensitive(True)
+            for action in actions:
+                self._actionGroup.get_action(action).set_sensitive(True)
 
         elif signal == SignalsManager.SIG_PROJECT_CLOSE:
-            self._actionGroup.get_action('importMessagesFromFile').set_sensitive(False)
-            self._actionGroup.get_action('captureMessages').set_sensitive(False)
-            self._actionGroup.get_action('searchMenu').set_sensitive(False)
-            self._actionGroup.get_action('searchText').set_sensitive(False)
-            self._actionGroup.get_action('variableTable').set_sensitive(False)
-            self._actionGroup.get_action('manualToolMenu').set_sensitive(False)
-            self._actionGroup.get_action('automaticToolMenu').set_sensitive(False)
+            for action in actions:
+                self._actionGroup.get_action(action).set_sensitive(False)
 
     def _loadActionGroupUIDefinition(self):
         """Loads the action group and the UI definition of menu items
