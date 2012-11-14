@@ -41,11 +41,13 @@
     <child>
       <object class="GtkAction" id="grammarInference">
         <property name="label" translatable="yes">Grammar Inference</property>
+        <property name="sensitive">False</property>
       </object>
     </child>
     <child>
       <object class="GtkAction" id="grammarEdition">
         <property name="label" translatable="yes">Grammar Edition</property>
+        <property name="sensitive">False</property>
       </object>
     </child>
     <child>
