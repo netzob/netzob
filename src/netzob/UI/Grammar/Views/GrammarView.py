@@ -39,6 +39,7 @@ from gi.repository import Gtk, Gdk
 import gi
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.Simulator.XDotWidget import XDotWidget
+from netzob.Common.SignalsManager import SignalsManager
 from netzob.Common.MMSTD.States.impl.NormalState import NormalState
 from netzob.Common.MMSTD.MMSTD import MMSTD
 from netzob.UI.Grammar.Views.GrammarXDotWidget import GrammarXDotWidget
@@ -67,6 +68,32 @@ class GrammarView(object):
         self.xdotWidget = GrammarXDotWidget(self.controller)
         self.xdotWidget.show_all()
         self.paned1.add(self.xdotWidget)
+        self.registerSignalListeners()
+
+    def registerSignalListeners(self):
+        # Register signal processing on toolbar elements
+        signalManager = self.netzob.getSignalsManager()
+        if signalManager is None:
+            self.log.warning("No signal manager has been found.")
+            return
+
+        signalManager.attach(self.projectStatusHasChanged_cb, [SignalsManager.SIG_PROJECT_OPEN, SignalsManager.SIG_PROJECT_CLOSE])
+
+    def projectStatusHasChanged_cb(self, signal):
+        """projectStatusHasChanged_cb: Callback executed when a signal
+        is emitted."""
+
+        actions = ["grammarInference",
+                   "grammarEdition",
+                   ]
+
+        if signal == SignalsManager.SIG_PROJECT_OPEN:
+            for action in actions:
+                self._actionGroup.get_action(action).set_sensitive(True)
+
+        elif signal == SignalsManager.SIG_PROJECT_CLOSE:
+            for action in actions:
+                self._actionGroup.get_action(action).set_sensitive(False)
 
     def _loadActionGroupUIDefinition(self):
         """Loads the action group and the UI definition of menu items
