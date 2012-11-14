@@ -1,0 +1,2 @@
+export(prismaHclust, prismaDuplicatePCA, prismaNMF, loadPrismaData, getDuplicateData, estimateDimension, plot.prisma, print.prisma, plot.prismaDimension, print.prismaDimension, plot.prismaMF)
+import(Matrix, gplots, ggplot2)
