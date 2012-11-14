@@ -8,26 +8,24 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-08 12:16+0100\n"
+"POT-Creation-Date: 2012-11-14 12:49+0100\n"
 "PO-Revision-Date: 2012-11-13 23:10+0200\n"
 "Last-Translator: Frédéric Guihéry <sygus@cat-lan.com>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
-"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Weblate 1.3-dev\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: src/netzob/NetzobMainController.py:309
+#: src/netzob/NetzobMainController.py:308
 msgid "A project with this name exists"
 msgstr "Un projet avec ce nom existe déjà"
 
-#: src/netzob/NetzobMainController.py:324
-#: src/netzob/NetzobMainController.py:427
-#: src/netzob/NetzobMainController.py:499
+#: src/netzob/NetzobMainController.py:323
+#: src/netzob/NetzobMainController.py:426
+#: src/netzob/NetzobMainController.py:498
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:137
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:172
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:197
@@ -51,50 +49,53 @@ msgstr "Un projet avec ce nom existe déjà"
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:582
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:599
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturerPlugin.py:127
+#: src/netzob_plugins/Capturers/IpcCapturer/build/lib.linux-x86_64-2.7/IpcCapturer/IpcCapturerPlugin.py:127
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerPlugin.py:127
+#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-x86_64-2.7/NetworkCapturer/NetworkCapturerPlugin.py:127
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExporterPlugin.py:127
+#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-x86_64-2.7/PeachExporter/PeachExporterPlugin.py:127
 msgid "No project selected."
 msgstr "Aucun projet sélectionné."
 
-#: src/netzob/NetzobMainController.py:373
+#: src/netzob/NetzobMainController.py:372
 msgid "No file selected"
 msgstr "Aucun fichier sélectionné"
 
-#: src/netzob/NetzobMainController.py:377
+#: src/netzob/NetzobMainController.py:376
 msgid "The file doesn't define a valid project."
 msgstr "Le fichier ne contient pas de projet valide."
 
-#: src/netzob/NetzobMainController.py:395
+#: src/netzob/NetzobMainController.py:394
 msgid "Copy of {0}"
 msgstr "Copie de {0}"
 
-#: src/netzob/NetzobMainController.py:404
+#: src/netzob/NetzobMainController.py:403
 msgid "An error occurred while copying the file"
 msgstr "Une erreur est survenue durant la copie du fichier"
 
-#: src/netzob/NetzobMainController.py:449
-#: src/netzob/NetzobMainController.py:477
+#: src/netzob/NetzobMainController.py:448
+#: src/netzob/NetzobMainController.py:476
 msgid "Please open a project before exporting it."
 msgstr "Veuillez ouvrir un projet avant de l'exporter."
 
-#: src/netzob/NetzobMainController.py:472
-#: src/netzob/NetzobMainController.py:548
+#: src/netzob/NetzobMainController.py:471
+#: src/netzob/NetzobMainController.py:547
 msgid "No directory selected"
 msgstr "Aucun répertoire sélectionné"
 
-#: src/netzob/NetzobMainController.py:474
+#: src/netzob/NetzobMainController.py:473
 msgid "No filename provided"
 msgstr "Aucun nom de fichier fourni"
 
-#: src/netzob/NetzobMainController.py:488
+#: src/netzob/NetzobMainController.py:487
 msgid "An error occurred while exporting the project."
 msgstr "Une erreur est survenue durant l'export du projet."
 
-#: src/netzob/NetzobMainController.py:562
+#: src/netzob/NetzobMainController.py:561
 msgid "An error occurred while loading workspace."
 msgstr "Une erreur est survenue pendant le chargement de l'espace de travail."
 
-#: src/netzob/NetzobMainController.py:572
+#: src/netzob/NetzobMainController.py:571
 msgid "An error occurred while creating workspace."
 msgstr "Une erreur est survenue durant la création de l'espace de travail."
 
@@ -216,7 +217,7 @@ msgstr ""
 msgid "The specified workspace is not valid according the XSD definitions."
 msgstr "L'espace de travail indiqué n'est pas conforme aux définitions XSD."
 
-#: src/netzob/Common/MMSTD/Dictionary/Values/AbstractValue.py:58
+#: src/netzob/Common/MMSTD/Dictionary/Values/AbstractValue.py:57
 msgid "Import from File"
 msgstr "Importer depuis un fichier"
 
@@ -238,7 +239,9 @@ msgstr "[{0}]"
 #: src/netzob/Common/Plugins/Capturers/AbstractCapturer.py:72
 #: src/netzob/Import/AbstractImporter.py:72
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturer.py:233
+#: src/netzob_plugins/Capturers/IpcCapturer/build/lib.linux-x86_64-2.7/IpcCapturer/IpcCapturer.py:233
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:274
+#: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-x86_64-2.7/PCAPImporter/PCAPImporter.py:274
 msgid "Message ID: {0} not found in importer message list"
 msgstr "ID de message ({0}) non trouvé dans la liste d'import des messages"
 
@@ -704,6 +707,7 @@ msgstr "Sélectionner un symbole pour voir sa définition XML"
 
 #: src/netzob/UI/Export/Controllers/RawExportController.py:100
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:175
+#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-x86_64-2.7/PeachExporter/PeachExportController.py:175
 msgid "No XML definition found"
 msgstr "Aucune définition XML trouvée"
 
@@ -801,7 +805,8 @@ msgid ""
 "The specified start state already has a transition with the same input "
 "symbol."
 msgstr ""
-"L'état de départ fourni a déjà une transition avec le même symbole d'entrée."
+"L'état de départ fourni a déjà une transition avec le même symbole "
+"d'entrée."
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:227
 msgid "Provide at least 1 output symbol (even an EmptySymbol)."
@@ -842,8 +847,8 @@ msgstr "Vous ne pouvez pas ajouter de durée multiples au même symbole de sorti
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:330
 msgid "The sum of probabilities is above 100, please adapt the provided value."
 msgstr ""
-"Spécifiez des probabilités dont la somme est valide (0,0 <= probabilité <= "
-"100,0)."
+"Spécifiez des probabilités dont la somme est valide (0,0 <= probabilité "
+"<= 100,0)."
 
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:349
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:355
@@ -1231,63 +1236,79 @@ msgid "Reset Partitionment"
 msgstr "Annuler le partitionnement"
 
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturerPlugin.py:55
+#: src/netzob_plugins/Capturers/IpcCapturer/build/lib.linux-x86_64-2.7/IpcCapturer/IpcCapturerPlugin.py:55
 msgid "Provide the possibility to capture IPC trafic."
 msgstr "Permet la capture de flux IPC."
 
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturerView.py:71
+#: src/netzob_plugins/Capturers/IpcCapturer/build/lib.linux-x86_64-2.7/IpcCapturer/IpcCapturerView.py:71
 msgid "Capture IPC messages"
 msgstr "Capturer les messages IPC"
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturer.py:122
+#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-x86_64-2.7/NetworkCapturer/NetworkCapturer.py:122
 msgid "This device cannot be sniffed since the layer 2 is not supported ({0})"
 msgstr ""
-"Cette interface ne peut être utilisée car la couche 2 n'est pas supportée "
-"({0})"
+"Cette interface ne peut être utilisée car la couche 2 n'est pas supportée"
+" ({0})"
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturer.py:240
+#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-x86_64-2.7/NetworkCapturer/NetworkCapturer.py:240
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:238
+#: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-x86_64-2.7/PCAPImporter/PCAPImporter.py:238
 msgid ""
 "Cannot import one of the provided packets since its layer 3 is "
 "unsupported (Only IP is currently supported, packet ethernet type = {0})"
 msgstr ""
-"Ne peut importer ce paquet réseau car la couche 3 ({0}) n'est pas supportée "
-"(seul le protocole IP est pour l'instant supporté)"
+"Ne peut importer ce paquet réseau car la couche 3 ({0}) n'est pas "
+"supportée (seul le protocole IP est pour l'instant supporté)"
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:101
+#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-x86_64-2.7/NetworkCapturer/NetworkCapturerController.py:101
 msgid "Incorrect device"
 msgstr "Interface incorrecte"
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:107
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:110
+#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-x86_64-2.7/NetworkCapturer/NetworkCapturerController.py:107
+#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-x86_64-2.7/NetworkCapturer/NetworkCapturerController.py:110
 msgid "Incorrect count"
 msgstr "Valeur du compteur incorrecte"
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:115
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:118
+#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-x86_64-2.7/NetworkCapturer/NetworkCapturerController.py:115
+#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-x86_64-2.7/NetworkCapturer/NetworkCapturerController.py:118
 msgid "Incorrect time"
 msgstr "Valeur du temporisateur incorrecte"
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerPlugin.py:55
+#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-x86_64-2.7/NetworkCapturer/NetworkCapturerPlugin.py:55
 msgid "Provide the possibility to capture network trafic."
 msgstr "Permet la capture de flux réseau."
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerView.py:71
+#: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-x86_64-2.7/NetworkCapturer/NetworkCapturerView.py:71
 msgid "Capture network messages"
 msgstr "Capturer les messages réseau"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:76
+#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-x86_64-2.7/PeachExporter/PeachExportController.py:76
 msgid "Entire project"
 msgstr "Projet complet"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:185
+#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-x86_64-2.7/PeachExporter/PeachExportController.py:185
 msgid "Export as Peach Fuzzer (XML)"
 msgstr "Exporter en tant que Fuzzer Peach (XML)"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:197
+#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-x86_64-2.7/PeachExporter/PeachExportController.py:197
 msgid "Are you sure to override the file '{0}'?"
 msgstr "Êtes-vous sur de remplacer le fichire '{0}' ?"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:215
+#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-x86_64-2.7/PeachExporter/PeachExportController.py:215
 msgid ""
 "The project has been correctly exported as a Peach Fuzzer to '{0}'.\n"
 "Do not forget to copy in the targeted directory our Peach plugin "
@@ -1298,6 +1319,7 @@ msgstr ""
 "'netzob_plugins/Exporters/PeachExporter/PeachzobAddons.py'."
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:217
+#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-x86_64-2.7/PeachExporter/PeachExportController.py:217
 msgid ""
 "The following error occurred while exporting the project as a Peach "
 "Fuzzer to '{0}': {1}"
@@ -1306,90 +1328,109 @@ msgstr ""
 "Fuzzer Peach '{0}': {1}"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportView.py:55
+#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-x86_64-2.7/PeachExporter/PeachExportView.py:55
 msgid "Export project as Peach pit XML"
 msgstr "Exporter le projet au format XML Peach pit"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportView.py:123
+#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-x86_64-2.7/PeachExporter/PeachExportView.py:123
 msgid "Fuzzing based on: "
 msgstr "Fuzzing basé sur : "
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExporterPlugin.py:56
+#: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-x86_64-2.7/PeachExporter/PeachExporterPlugin.py:56
 msgid "Provide the possibility to export netzob symbols to Peach pit files."
 msgstr "Permet l'export sous la forme d'un fuzzer pour Peach."
 
 #: src/netzob_plugins/Importers/DelimiterSeparatedImporter/DelimiterSeparatedImporter/DelimiterSeparatedImporter.py:53
+#: src/netzob_plugins/Importers/DelimiterSeparatedImporter/build/lib.linux-x86_64-2.7/DelimiterSeparatedImporter/DelimiterSeparatedImporter.py:53
 msgid "Delete Separator"
 msgstr "Supprimer le séparateur"
 
 #: src/netzob_plugins/Importers/DelimiterSeparatedImporter/DelimiterSeparatedImporter/DelimiterSeparatedImporter.py:54
+#: src/netzob_plugins/Importers/DelimiterSeparatedImporter/build/lib.linux-x86_64-2.7/DelimiterSeparatedImporter/DelimiterSeparatedImporter.py:54
 msgid "Keep Starting Separator"
 msgstr "Garder le séparateur initial"
 
 #: src/netzob_plugins/Importers/DelimiterSeparatedImporter/DelimiterSeparatedImporter/DelimiterSeparatedImporter.py:55
+#: src/netzob_plugins/Importers/DelimiterSeparatedImporter/build/lib.linux-x86_64-2.7/DelimiterSeparatedImporter/DelimiterSeparatedImporter.py:55
 msgid "Keep Ending Separator"
 msgstr "Garder le séparateur final"
 
 #: src/netzob_plugins/Importers/DelimiterSeparatedImporter/DelimiterSeparatedImporter/DelimiterSeparatedImporterPlugin.py:50
+#: src/netzob_plugins/Importers/DelimiterSeparatedImporter/build/lib.linux-x86_64-2.7/DelimiterSeparatedImporter/DelimiterSeparatedImporterPlugin.py:50
 msgid "Provide the possibility to import messages from any binary or ascii file."
 msgstr "Permet l'import de messages depuis des fichiers binaire ou texte."
 
 #: src/netzob_plugins/Importers/DelimiterSeparatedImporter/DelimiterSeparatedImporter/DelimiterSeparatedImporterView.py:63
+#: src/netzob_plugins/Importers/DelimiterSeparatedImporter/build/lib.linux-x86_64-2.7/DelimiterSeparatedImporter/DelimiterSeparatedImporterView.py:63
 msgid "Import messages from raw file"
 msgstr "Importer des messages depuis un fichier brut"
 
 #: src/netzob_plugins/Importers/OSpyImporter/OSpyImporter/OSpyImporterPlugin.py:51
+#: src/netzob_plugins/Importers/OSpyImporter/build/lib.linux-x86_64-2.7/OSpyImporter/OSpyImporterPlugin.py:51
 msgid "Provides the possibility to import messages from OSpy project file."
 msgstr "Permet l'import de messages depuis le format de fichier OSpy."
 
 #: src/netzob_plugins/Importers/OSpyImporter/OSpyImporter/OSpyImporterView.py:62
+#: src/netzob_plugins/Importers/OSpyImporter/build/lib.linux-x86_64-2.7/OSpyImporter/OSpyImporterView.py:62
 msgid "Import messages from oSpy file"
 msgstr "Importer des messages depuis un fichier oSpy"
 
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:84
+#: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-x86_64-2.7/PCAPImporter/PCAPImporter.py:84
 msgid "Error while trying to open the file {0}."
 msgstr "Une erreur est apparue lors de l'ouverture du fichier {0}."
 
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:87
+#: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-x86_64-2.7/PCAPImporter/PCAPImporter.py:87
 msgid ""
 "Error while trying to open the file {0}, more permissions are required "
 "for reading it."
 msgstr ""
-"Une erreur est apparue lors de l'ouverture du fichier {0}, les permissions "
-"ne sont pas suffisantes."
+"Une erreur est apparue lors de l'ouverture du fichier {0}, les "
+"permissions ne sont pas suffisantes."
 
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:118
+#: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-x86_64-2.7/PCAPImporter/PCAPImporter.py:118
 msgid "The provided filter is not valid (it should follow the BPF format)"
 msgstr "Le filtre proposé n'est pas valide (celui-ci doit être au format BPF)"
 
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:127
+#: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-x86_64-2.7/PCAPImporter/PCAPImporter.py:127
 msgid "This pcap cannot be imported since the layer 2 is not supported ({0})"
 msgstr ""
-"Ce PCAP ne peut être importé, car la couche protocole 2 n'est pas supportée "
-"({0})"
+"Ce PCAP ne peut être importé, car la couche protocole 2 n'est pas "
+"supportée ({0})"
 
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:264
+#: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-x86_64-2.7/PCAPImporter/PCAPImporter.py:264
 msgid ""
 "Cannot import one of the provided packets since its layer 4 is "
 "unsupported (Only UDP and TCP are currently supported, packet IP protocol"
 " number = {0})"
 msgstr ""
 "Ne peut importer l'un des paquets réseau, car sa couche protocole 4 "
-"(protocole == {0})n'est pas supportée (seuls UDP et TCP sont actuellement "
-"supportés)"
+"(protocole == {0})n'est pas supportée (seuls UDP et TCP sont actuellement"
+" supportés)"
 
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporterPlugin.py:50
+#: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-x86_64-2.7/PCAPImporter/PCAPImporterPlugin.py:50
 msgid "Provide the possibility to import messages from PCAP network capture files"
 msgstr "Permet l'import de messages réseau depuis des fichiers PCAP"
 
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporterView.py:64
+#: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-x86_64-2.7/PCAPImporter/PCAPImporterView.py:64
 msgid "Import messages from PCAP file"
 msgstr "Importer des messages depuis un fichier PCAP"
 
 #: src/netzob_plugins/Importers/XMLImporter/XMLImporter/XMLImporterPlugin.py:51
+#: src/netzob_plugins/Importers/XMLImporter/build/lib.linux-x86_64-2.7/XMLImporter/XMLImporterPlugin.py:51
 msgid "Provide the possibility to import messages from netzob XML message files"
 msgstr "Permet l'import de messages depuis des fichiers au format XML de Netzob"
 
 #: src/netzob_plugins/Importers/XMLImporter/XMLImporter/XMLImporterView.py:59
+#: src/netzob_plugins/Importers/XMLImporter/build/lib.linux-x86_64-2.7/XMLImporter/XMLImporterView.py:59
 msgid "Import messages from XML file"
 msgstr "Importer des messages depuis un fichier XML"
 
@@ -1468,8 +1509,8 @@ msgid ""
 "Do you want to continue ? (You should not unless you know what you're "
 "doing)"
 msgstr ""
-"Voulez-vous continuer ? (Vous ne devriez pas sauf si vous savez ce que vous "
-"faites)"
+"Voulez-vous continuer ? (Vous ne devriez pas sauf si vous savez ce que "
+"vous faites)"
 
 #: resources/static/netzob/ui/dialogbox.glade:533
 msgid "Create a new symbol"
@@ -2104,8 +2145,8 @@ msgstr "Fermer la vue"
 #: resources/static/netzob/ui/vocabulary/moveMessageDialog.glade:7
 msgid "The message is not valid according to symbol target's regex"
 msgstr ""
-"Le message n'est pas valide vis-à-vis de l'expression rationnelle du symbole "
-"cible"
+"Le message n'est pas valide vis-à-vis de l'expression rationnelle du "
+"symbole cible"
 
 #: resources/static/netzob/ui/vocabulary/moveMessageDialog.glade:69
 msgid "What do you want to do ?"
@@ -2274,11 +2315,13 @@ msgid "Capture messages"
 msgstr "Capturer des messages"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:133
-msgid "Automatic Tool"
+#, fuzzy
+msgid "Automatic Tools"
 msgstr "Outil automatique"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:139
-msgid "Manual Tool"
+#, fuzzy
+msgid "Manual Tools"
 msgstr "Outil manuel"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:153
@@ -2659,44 +2702,3 @@ msgstr "10"
 msgid "Time limit:"
 msgstr "Durée de capture : "
 
-#~ msgid "WritingToken: isOk: {0}, value: {1}"
-#~ msgstr ""
-
-#~ msgid "[Direct Relation] {0}, pointed ID: {1}"
-#~ msgstr ""
-
-#~ msgid "Fuzz field"
-#~ msgstr "Fuzzer les champs"
-
-#~ msgid "Filter"
-#~ msgstr "Filtre"
-
-#~ msgid "Fuzz traffic"
-#~ msgstr "Fuzzer le trafic"
-
-#~ msgid "Proto"
-#~ msgstr "Protocole"
-
-#~ msgid "IP source"
-#~ msgstr "IP source"
-
-#~ msgid "IP dest"
-#~ msgstr "IP destination"
-
-#~ msgid "sport"
-#~ msgstr "Port source"
-
-#~ msgid "dport"
-#~ msgstr "Port destination"
-
-#~ msgid "Network fuzzing"
-#~ msgstr "Fuzzing réseau"
-
-#~ msgid "IPC fuzzing"
-#~ msgstr "Fuzzing d'IPC"
-
-#~ msgid "File fuzzing"
-#~ msgstr "Fuzzing de fichier"
-
-#~ msgid "iCol"
-#~ msgstr ""
