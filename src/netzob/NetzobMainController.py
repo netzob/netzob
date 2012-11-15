@@ -58,6 +58,7 @@ from netzob.NetzobMainView import NetzobMainView
 from netzob.Common.Project import Project
 from netzob.UI.Common.AboutDialog import AboutDialog
 from netzob.UI.Common.Controllers.BugReporterController import BugReporterController
+from netzob.UI.Common.Controllers.WorkspaceConfigurationController import WorkspaceConfigurationController
 from netzob.UI.NetzobWidgets import NetzobErrorMessage
 from netzob.UI.WorkspaceSelector import WorkspaceSelector
 from netzob.Common.Plugins.Extensions.ExportMenuExtension import ExportMenuExtension
@@ -512,6 +513,13 @@ class NetzobMainController(object):
             applyButton.set_sensitive(True)
         else:
             applyButton.set_sensitive(False)
+
+    def configureWorkspace_activate_cb(self, action):
+        """Callback executed when the user requests to configure the
+        current workspace"""
+
+        controller = WorkspaceConfigurationController(self)
+        controller.run()
 
     def switchWorkspace_activate_cb(self, action):
         """Callback executed when the user requests to switch to

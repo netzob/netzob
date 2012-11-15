@@ -10,7 +10,9 @@
       <separator />
       <placeholder name="fileMenuAdditions" />
       <separator />
+      <menuitem action="configureCurrentWorkspace" />
       <menuitem action="switchWorkspace" />
+      <separator />
       <menuitem action="quit" />
     </menu>
     <menu action="viewMenu">
