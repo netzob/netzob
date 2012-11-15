@@ -31,6 +31,7 @@
 from locale import gettext as _
 import logging.config
 import os
+import ConfigParser
 
 #+----------------------------------------------
 #| Related third party imports
@@ -58,22 +59,19 @@ def singleton(cls, *args, **kwargs):
     return getinstance
 
 
-#+----------------------------------------------
-#| LoggingConfiguration:
-#|    Configure the logging layer of Netzob
-#+----------------------------------------------
 @singleton
 class LoggingConfiguration(object):
+    """Configure the logging layer of Netzob"""
 
     #+----------------------------------------------
     #| initializeLogging:
     #+----------------------------------------------
     def __init__(self, workspace, opts):
         # First we extract the normal logging config file
-        loggingFilePath = os.path.join(workspace.getPath(), workspace.getPathOfLogging())
-        if (loggingFilePath != "" and os.path.isfile(loggingFilePath)):
-            logging.debug("Logging config file: " + loggingFilePath)
-            logging.config.fileConfig(loggingFilePath)
+        self.loggingFilePath = os.path.join(workspace.getPath(), workspace.getPathOfLogging())
+        if (self.loggingFilePath != "" and os.path.isfile(self.loggingFilePath)):
+            logging.debug("Logging config file: {0}".format(self.loggingFilePath))
+            logging.config.fileConfig(self.loggingFilePath)
         else:
             logging.info("No logging config file found, create a default one.")
             # Make a global logging object.
@@ -88,3 +86,31 @@ class LoggingConfiguration(object):
         if opts.debugLevel in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
             logger = logging.getLogger()
             logger.setLevel(opts.debugLevel)
+
+        self._parseConfigFile()
+
+    def _parseConfigFile(self):
+        self.config = ConfigParser.ConfigParser()
+        self.config.read([self.loggingFilePath])
+
+    def _writeConfigFile(self):
+        self.config.write(open(self.loggingFilePath, 'w'))
+
+    def getLoggingLevel(self):
+        """Get the logging level defined in the main configuration
+        file."""
+
+        return logging.getLevelName(logging.getLogger("").level)
+
+    def setLoggingLevel(self, level):
+        """Modify the logging level defined in the main configuration
+        file."""
+
+        logger = logging.getLogger("")
+
+        if level in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
+            logging.info("Updating logging level from {0} to {1}".format(logging.getLevelName(logger.level),
+                                                                         level))
+            self.config.set("logger_root", "level", level)
+            self._writeConfigFile()
+            logging.getLogger("").setLevel(level)
