@@ -66,3 +66,8 @@ class WorkspaceConfigurationController(object):
 
     def closebutton_clicked_cb(self, widget):
         self.view.destroy()
+
+    def advancedLoggingCombobox_changed_cb(self, combo):
+        tree_iter = combo.get_active_iter()
+        logLevel = combo.get_model()[tree_iter][0]
+        self._loggingConfiguration.setLoggingLevel(logLevel)

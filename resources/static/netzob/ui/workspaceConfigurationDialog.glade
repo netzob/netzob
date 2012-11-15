@@ -462,6 +462,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="model">model_logging_level</property>
+                                    <signal name="changed" handler="advancedLoggingCombobox_changed_cb" swapped="no"/>
                                     <child>
                                       <object class="GtkCellRendererText" id="cellrenderertext1"/>
                                       <attributes>
