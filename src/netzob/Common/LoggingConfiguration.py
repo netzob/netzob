@@ -41,17 +41,34 @@ import os
 #+----------------------------------------------
 
 
+def singleton(cls, *args, **kwargs):
+    """This decorator allows to implement some kind of Singleton
+    design pattern. In our case, we only allow one instanciation."""
+
+    instances = {}
+
+    def getinstance(*args, **kwargs):
+        if cls not in instances:
+            instances[cls] = cls(*args, **kwargs)
+        elif len(args) == 0:
+            return instances[cls]
+        else:
+            raise Exception("{0} is already initialized".format(cls.__name__))
+
+    return getinstance
+
+
 #+----------------------------------------------
 #| LoggingConfiguration:
 #|    Configure the logging layer of Netzob
 #+----------------------------------------------
+@singleton
 class LoggingConfiguration(object):
 
-    @staticmethod
     #+----------------------------------------------
     #| initializeLogging:
     #+----------------------------------------------
-    def initializeLogging(workspace, opts):
+    def __init__(self, workspace, opts):
         # First we extract the normal logging config file
         loggingFilePath = os.path.join(workspace.getPath(), workspace.getPathOfLogging())
         if (loggingFilePath != "" and os.path.isfile(loggingFilePath)):

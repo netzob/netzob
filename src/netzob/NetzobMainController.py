@@ -176,7 +176,7 @@ class NetzobMainController(object):
 
     def _initLogging(self, opts):
         # Create the logging infrastructure
-        LoggingConfiguration().initializeLogging(self.currentWorkspace, opts)
+        LoggingConfiguration(self.currentWorkspace, opts)
         self.log = logging.getLogger(__name__)
 
     def run(self):
