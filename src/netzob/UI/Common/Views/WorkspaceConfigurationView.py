@@ -49,9 +49,21 @@ class WorkspaceConfigurationView(object):
         self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
                                                 "ui",
                                                 "workspaceConfigurationDialog.glade"))
-        self._getObjects(self.builder, ["workspaceConfigurationDialog"])
+        self._getObjects(self.builder,
+                         ["workspaceConfigurationDialog",
+                          "advancedLoggingCombobox",
+                          ])
         self.controller = controller
         self.workspaceConfigurationDialog.set_transient_for(parent)
+
+        # Set combobox to the configured log level
+        model = self.advancedLoggingCombobox.get_model()
+        treeIter = model.get_iter_first()
+        while treeIter is not None:
+            if model[treeIter][0] == self.controller._loggingConfiguration.getLoggingLevel():
+                self.advancedLoggingCombobox.set_active_iter(treeIter)
+                break
+            treeIter = model.iter_next(treeIter)
 
         # Finally, connect signals to the controller
         self.builder.connect_signals(self.controller)

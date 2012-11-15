@@ -43,6 +43,7 @@ from gi.repository import Gtk, Gdk
 #+---------------------------------------------------------------------------+
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.UI.Common.Views.WorkspaceConfigurationView import WorkspaceConfigurationView
+from netzob.Common.LoggingConfiguration import LoggingConfiguration
 
 
 class WorkspaceConfigurationController(object):
@@ -51,6 +52,7 @@ class WorkspaceConfigurationController(object):
     def __init__(self, mainController):
         self.mainController = mainController
         self.log = logging.getLogger(__name__)
+        self._loggingConfiguration = LoggingConfiguration()
         self._view = WorkspaceConfigurationView(self, parent=mainController.view.mainWindow)
 
     @property
