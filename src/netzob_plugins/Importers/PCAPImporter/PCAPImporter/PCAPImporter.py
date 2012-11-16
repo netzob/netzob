@@ -123,6 +123,30 @@ class PCAPImporter(AbstractImporter):
         self.log.info("Starting import from {0} (linktype:{0})".format(filePath, str(packetReader.datalink())))
         self.datalink = packetReader.datalink()
 
+        # Available datalinks supported by pcapy
+        availableDatalinks = dict()
+        availableDatalinks[pcapy.DLT_ARCNET] = "DLT_ARCNET"
+        availableDatalinks[pcapy.DLT_FDDI] = "DLT_FDDI"
+        availableDatalinks[pcapy.DLT_LOOP] = "DLT_LOOP"
+        availableDatalinks[pcapy.DLT_PPP_ETHER] = "DLT_PPP_ETHER"
+        availableDatalinks[pcapy.DLT_ATM_RFC1483] = "DLT_ATM_RFC1483"
+        availableDatalinks[pcapy.DLT_IEEE802] = "DLT_IEEE802"
+        availableDatalinks[pcapy.DLT_LTALK] = "DLT_LTALK"
+        availableDatalinks[pcapy.DLT_PPP_SERIAL] = "DLT_PPP_SERIAL"
+        availableDatalinks[pcapy.DLT_C_HDLC] = "DLT_C_HDLC"
+        availableDatalinks[pcapy.DLT_IEEE802_11] = "IEEE802_11"
+        availableDatalinks[pcapy.DLT_NULL] = "DLT_NULL"
+        availableDatalinks[pcapy.DLT_RAW] = "DLT_RAW"
+        availableDatalinks[pcapy.DLT_EN10MB] = "DLT_EN10MB"
+        availableDatalinks[pcapy.DLT_LINUX_SLL] = "LINUX_SLL"
+        availableDatalinks[pcapy.DLT_PPP] = "DLT_PPP"
+        availableDatalinks[pcapy.DLT_SLIP] = "DLT_SLIP"
+
+        if self.datalink in availableDatalinks.keys():
+            self.log.debug("Datalinks found under the name : {0}".format(availableDatalinks[self.datalink]))
+        else:
+            self.log.warning("Unknown datalinks.")
+
         if self.importLayer > 1 and self.datalink != pcapy.DLT_EN10MB and self.datalink != pcapy.DLT_LINUX_SLL:
             errorMessage = _("This pcap cannot be imported since the "
                              + "layer 2 is not supported ({0})").format(str(self.datalink))
