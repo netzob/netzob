@@ -118,7 +118,10 @@ class NetzobMainController(object):
             logging.debug("Activate the bug reporter")
 
             def log_uncaught_exceptions(exceptionClass, exceptionInstance, traceback):
-                bugReporterController = BugReporterController(exceptionClass, exceptionInstance, traceback)
+                bugReporterController = BugReporterController(self,
+                                                              exceptionClass,
+                                                              exceptionInstance,
+                                                              traceback)
                 bugReporterController.run()
 
             sys.excepthook = log_uncaught_exceptions

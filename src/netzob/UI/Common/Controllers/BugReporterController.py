@@ -65,12 +65,12 @@ class BugReporterController(object):
     TRACKER_ID_BUG_REPORT = "1"
     CUSTOM_FIELD_SHA2_ID_BUG_REPORT = "5"
 
-    def __init__(self, exceptionClass, exceptionInstance, traceback):
+    def __init__(self, mainController, exceptionClass, exceptionInstance, traceback):
         self.exceptionClass = exceptionClass
         self.exceptionInstance = exceptionInstance
         self.traceback = traceback
         self.apiKey = ResourcesConfiguration.extractAPIKeyDefinitionFromLocalFile()
-        self._view = BugReporterView(self)
+        self._view = BugReporterView(self, parent=mainController.view.mainWindow)
         self.log = logging.getLogger(__name__)
         self.disableRemoteCertificateVerification = False
 
