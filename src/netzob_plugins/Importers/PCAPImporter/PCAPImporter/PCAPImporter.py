@@ -139,11 +139,17 @@ class PCAPImporter(AbstractImporter):
         if self.importLayer == 1:
             if len(payload) == 0:
                 return
+
+            data = payload.encode("hex")
+            if self.datalink == 201 and len(data) > 6 and data[:6] == 6 * "0":
+                self.log.info("#Tricks : Datalink = 201, we remove the 3 first zeros bytes.")
+                data = data[6:]
+
             self.messages.append(
                 RawMessage(
                     mUuid,
                     mTimestamp,
-                    payload.encode("hex")))
+                    data))
             self._payloadDict[mUuid] = payload
         elif self.importLayer == 2:
             (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = \
