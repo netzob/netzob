@@ -36,7 +36,7 @@ import logging
 #+---------------------------------------------------------------------------+
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, GObject
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -45,6 +45,9 @@ from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.UI.Common.Views.WorkspaceConfigurationView import WorkspaceConfigurationView
 from netzob.Common.LoggingConfiguration import LoggingConfiguration
 from netzob.Common.BugReporter import BugReporter, BugReporterException
+from netzob.UI.NetzobWidgets import NetzobErrorMessage
+from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask, TaskError
+from netzob.Common.Threads.Job import Job
 
 
 class WorkspaceConfigurationController(object):
@@ -93,12 +96,57 @@ class WorkspaceConfigurationController(object):
 
         self.keyUpdated = True
 
+        if len(entry.get_text()) == 0:
+            self.view.changeTestButtonSensitivity(False)
+        else:
+            self.view.changeTestButtonSensitivity(True)
+
     def advancedBugreportingEntry_focus_out_event_cb(self, entry, data):
         """Called on "focus-out" of the API key entry. If its value
         was changed, we can save the new value."""
 
         if self.keyUpdated:
             apiKey = entry.get_text()
-            logging.info("Saving the new API key: {0}".format(apiKey))
+            self.log.info("Saving the new API key: {0}".format(apiKey))
             ResourcesConfiguration.saveAPIKey(apiKey)
             self.keyUpdated = False
+
+    def advancedBugreportingTestkey_clicked_cb(self, button):
+        """Called when the use clicks on the "Test Key" button."""
+
+        self.view.testKeyUpdateSpinnerState(state=1)
+        Job(self._startKeyValidation())
+
+    def _startKeyValidation(self):
+        try:
+            (yield ThreadedTask(self._keyValidationTask))
+
+            if not self.validKey:
+                dialog = Gtk.MessageDialog(self.view.workspaceConfigurationDialog,
+                                           Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                           Gtk.MessageType.WARNING,
+                                           Gtk.ButtonsType.OK,
+                                           _("The specified key is invalid!"))
+                dialog.run()
+                dialog.destroy()
+
+        except TaskError, e:
+            self.log.error("Error while validating the API key: {0}".format(str(e)))
+
+    def _keyValidationTask(self):
+        reporter = BugReporter()
+
+        self.validKey = reporter.isAPIKeyValid()
+
+        if self.validKey:
+            self.log.error("The specified key is valid.")
+            GObject.idle_add(self.view.testKeySetValidity, True,
+                             priority=GObject.PRIORITY_DEFAULT)
+
+        else:
+            self.log.error("The specified key is invalid!")
+            GObject.idle_add(self.view.testKeySetValidity, False,
+                             priority=GObject.PRIORITY_DEFAULT)
+
+        GObject.idle_add(self.view.testKeyUpdateSpinnerState, 0,
+                         priority=GObject.PRIORITY_DEFAULT)

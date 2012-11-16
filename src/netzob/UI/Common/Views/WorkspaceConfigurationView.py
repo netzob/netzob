@@ -54,6 +54,8 @@ class WorkspaceConfigurationView(object):
                           "advancedLoggingCombobox",
                           "advancedBugreportingEntry",
                           "advancedBugreportingCheckbox",
+                          "advancedBugreportingTestkey",
+                          "advancedBugreportingTestkeySpinner",
                           ])
         self.controller = controller
         self.workspaceConfigurationDialog.set_transient_for(parent)
@@ -83,9 +85,35 @@ class WorkspaceConfigurationView(object):
         if enable:
             self.advancedBugreportingEntry.set_sensitive(True)
             self.advancedBugreportingTestkey.set_sensitive(True)
+            self.advancedBugreportingEntry.set_sensitive(True)
+
+            testkey = len(self.advancedBugreportingEntry.get_text()) > 0
+            self.advancedBugreportingTestkey.set_sensitive(testkey)
         else:
             self.advancedBugreportingEntry.set_sensitive(False)
             self.advancedBugreportingTestkey.set_sensitive(False)
+
+    def testKeySetValidity(self, validity):
+        icon = Gtk.STOCK_APPLY
+
+        if validity is False:
+            icon = Gtk.STOCK_DIALOG_WARNING
+
+        self.advancedBugreportingEntry.set_icon_from_stock(Gtk.EntryIconPosition.SECONDARY, icon)
+
+    def testKeyUpdateSpinnerState(self, state):
+        spinner = self.advancedBugreportingTestkeySpinner
+
+        if state == 0:
+            spinner.stop()
+            spinner.hide()
+
+        elif state == 1:
+            spinner.show()
+            spinner.start()
+
+    def changeTestButtonSensitivity(self, sensitivity):
+        self.advancedBugreportingTestkey.set_sensitive(sensitivity)
 
     def _getObjects(self, builder, objectsList):
         for obj in objectsList:
@@ -93,6 +121,7 @@ class WorkspaceConfigurationView(object):
 
     def run(self):
         self.workspaceConfigurationDialog.show_all()
+        self.advancedBugreportingTestkeySpinner.hide()
 
     def destroy(self):
         self.workspaceConfigurationDialog.destroy()
