@@ -81,7 +81,7 @@ class PCAPImporter(AbstractImporter):
                 fp = open(filePath)
                 fp.close()
             except IOError, e:
-                errorMessage = _("Error while trying to open the "
+                errorMessage = _("Error while trying to open the " -
                                  + "file {0}.").format(filePath)
                 if e.errno == errno.EACCES:
                     errorMessage = _("Error while trying to open the file "
@@ -159,7 +159,10 @@ class PCAPImporter(AbstractImporter):
     def _packetHandler(self, header, payload):
         """Decode a packet"""
         mUuid = str(uuid.uuid4())
-        mTimestamp = int(time.time())
+
+        (secs, usecs) = header.getts()
+        epoch = secs + (usecs / 1000000.0)
+
         if self.importLayer == 1:
             if len(payload) == 0:
                 return
@@ -172,7 +175,7 @@ class PCAPImporter(AbstractImporter):
             self.messages.append(
                 RawMessage(
                     mUuid,
-                    mTimestamp,
+                    epoch,
                     data))
             self._payloadDict[mUuid] = payload
         elif self.importLayer == 2:
@@ -183,7 +186,7 @@ class PCAPImporter(AbstractImporter):
             self.messages.append(
                 L2NetworkMessage(
                     mUuid,
-                    mTimestamp,
+                    epoch,
                     l2Payload.encode("hex"),
                     l2Proto,
                     l2SrcAddr,
@@ -199,7 +202,7 @@ class PCAPImporter(AbstractImporter):
             self.messages.append(
                 L3NetworkMessage(
                     mUuid,
-                    mTimestamp,
+                    epoch,
                     l3Payload.encode("hex"),
                     l2Proto,
                     l2SrcAddr,
@@ -220,7 +223,7 @@ class PCAPImporter(AbstractImporter):
             self.messages.append(
                 L4NetworkMessage(
                     mUuid,
-                    mTimestamp,
+                    epoch,
                     l4Payload.encode("hex"),
                     l2Proto,
                     l2SrcAddr,
