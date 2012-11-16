@@ -44,6 +44,7 @@ from gi.repository import Gtk, Gdk
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.UI.Common.Views.WorkspaceConfigurationView import WorkspaceConfigurationView
 from netzob.Common.LoggingConfiguration import LoggingConfiguration
+from netzob.Common.BugReporter import BugReporter, BugReporterException
 
 
 class WorkspaceConfigurationController(object):
@@ -53,6 +54,7 @@ class WorkspaceConfigurationController(object):
         self.mainController = mainController
         self.log = logging.getLogger(__name__)
         self._loggingConfiguration = LoggingConfiguration()
+        self.workspace = mainController.getCurrentWorkspace()
 
         self.keyUpdated = False
 
@@ -74,6 +76,15 @@ class WorkspaceConfigurationController(object):
         tree_iter = combo.get_active_iter()
         logLevel = combo.get_model()[tree_iter][0]
         self._loggingConfiguration.setLoggingLevel(logLevel)
+
+    def advancedBugreportingCheckbox_toggled_cb(self, toggle):
+        enable = toggle.get_active()
+
+        self.workspace.setEnableBugReporting(enable)
+        self.mainController.enableBugReporter(enable)
+
+        if self.view:
+            self.view.refreshEnableBugReporting(enable)
 
     def advancedBugreportingEntry_changed_cb(self, entry):
         """Called when the "API key" is changed, if so, we set the

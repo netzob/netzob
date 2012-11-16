@@ -538,12 +538,12 @@
                                     <property name="label" translatable="yes">Enable bug reporting</property>
                                     <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="use_action_appearance">False</property>
                                     <property name="xalign">0</property>
                                     <property name="draw_indicator">True</property>
+                                    <signal name="toggled" handler="advancedBugreportingCheckbox_toggled_cb" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>

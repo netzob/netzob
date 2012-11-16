@@ -53,6 +53,7 @@ class WorkspaceConfigurationView(object):
                          ["workspaceConfigurationDialog",
                           "advancedLoggingCombobox",
                           "advancedBugreportingEntry",
+                          "advancedBugreportingCheckbox",
                           ])
         self.controller = controller
         self.workspaceConfigurationDialog.set_transient_for(parent)
@@ -70,8 +71,21 @@ class WorkspaceConfigurationView(object):
         key = ResourcesConfiguration.extractAPIKeyDefinitionFromLocalFile()
         self.advancedBugreportingEntry.set_text(key or "")
 
+        # Set the 'enable bug reporting' toggle
+        enableBugReporting = controller.workspace.enableBugReporting
+        self.advancedBugreportingCheckbox.set_active(enableBugReporting)
+        self.refreshEnableBugReporting(enableBugReporting)
+
         # Finally, connect signals to the controller
         self.builder.connect_signals(self.controller)
+
+    def refreshEnableBugReporting(self, enable):
+        if enable:
+            self.advancedBugreportingEntry.set_sensitive(True)
+            self.advancedBugreportingTestkey.set_sensitive(True)
+        else:
+            self.advancedBugreportingEntry.set_sensitive(False)
+            self.advancedBugreportingTestkey.set_sensitive(False)
 
     def _getObjects(self, builder, objectsList):
         for obj in objectsList:
