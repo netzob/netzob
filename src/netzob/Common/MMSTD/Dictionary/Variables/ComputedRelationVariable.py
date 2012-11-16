@@ -227,7 +227,7 @@ class ComputedRelationVariable(AbstractVariable):
         """
         if self.getPointedVariable() is None:
             self.log.debug("No pointed variable.")
-            return False
+            return dict()
         else:
             return self.getPointedVariable().getDictOfValues(processingToken)
 
