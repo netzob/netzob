@@ -52,6 +52,7 @@ class WorkspaceConfigurationView(object):
         self._getObjects(self.builder,
                          ["workspaceConfigurationDialog",
                           "advancedLoggingCombobox",
+                          "advancedBugreportingEntry",
                           ])
         self.controller = controller
         self.workspaceConfigurationDialog.set_transient_for(parent)
@@ -64,6 +65,10 @@ class WorkspaceConfigurationView(object):
                 self.advancedLoggingCombobox.set_active_iter(treeIter)
                 break
             treeIter = model.iter_next(treeIter)
+
+        # Update API key
+        key = ResourcesConfiguration.extractAPIKeyDefinitionFromLocalFile()
+        self.advancedBugreportingEntry.set_text(key or "")
 
         # Finally, connect signals to the controller
         self.builder.connect_signals(self.controller)

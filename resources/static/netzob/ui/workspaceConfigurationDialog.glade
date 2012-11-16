@@ -583,10 +583,11 @@
                                     <child>
                                       <object class="GtkEntry" id="advancedBugreportingEntry">
                                         <property name="visible">True</property>
-                                        <property name="sensitive">False</property>
                                         <property name="can_focus">True</property>
                                         <property name="hexpand">True</property>
                                         <property name="invisible_char">●</property>
+                                        <signal name="changed" handler="advancedBugreportingEntry_changed_cb" swapped="no"/>
+                                        <signal name="focus-out-event" handler="advancedBugreportingEntry_focus_out_event_cb" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
