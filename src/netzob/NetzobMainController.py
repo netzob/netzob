@@ -75,9 +75,17 @@ class NetzobMainController(object):
         cmdLine.parse()
         opts = cmdLine.getOptions()
 
-        # Initialize everything
-        self._loadBugReporter(opts)
         self.currentWorkspace = self._loadWorkspace(opts)
+
+        # Enable bug reporting, if workspace is configured so or if
+        # netzob was explicitly started with the "-b" command line
+        # option.
+        enableBugReports = self.currentWorkspace.enableBugReporting
+        if enableBugReports != opts.bugReport:
+            enableBugReports = opts.bugReport
+        self.enableBugReporter(enableBugReports)
+
+        # Initialize everything else
         self._initLogging(opts)
         self._initResourcesAndLocales()
 
@@ -111,12 +119,11 @@ class NetzobMainController(object):
         # Refresh list of available projects
         self.updateListOfAvailableProjects()
 
-    def _loadBugReporter(self, opts):
-        """Activate the bug reporter if the command line options
-        requests it"""
+    def enableBugReporter(self, enable):
+        """Enable or disable the bug reporter."""
 
-        if opts.bugReport:
-            logging.debug("Activate the bug reporter")
+        if enable:
+            logging.debug("Bug reporter enabled")
 
             def log_uncaught_exceptions(exceptionClass, exceptionInstance, traceback):
                 bugReporterController = BugReporterController(self,
@@ -126,8 +133,10 @@ class NetzobMainController(object):
                 bugReporterController.run()
 
             sys.excepthook = log_uncaught_exceptions
+
         else:
-            logging.debug("Bug reporter not requested.")
+            logging.debug("Bug reporter disabled.")
+            sys.excepthook = sys.__excepthook__
 
     def _loadWorkspace(self, opts):
         logging.debug("+ Load workspace...")
