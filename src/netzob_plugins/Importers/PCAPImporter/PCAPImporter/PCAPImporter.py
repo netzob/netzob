@@ -61,6 +61,8 @@ class PCAPImporter(AbstractImporter):
     INVALID_LAYER3 = 2
     INVALID_LAYER4 = 3
 
+    PROTOCOL201 = 201
+
     def __init__(self, netzob):
         super(PCAPImporter, self).__init__("PCAP IMPORT", netzob)
         # create logger with the given configuration
@@ -147,7 +149,7 @@ class PCAPImporter(AbstractImporter):
         else:
             self.log.warning("Unknown datalinks.")
 
-        if self.importLayer > 1 and self.datalink != pcapy.DLT_EN10MB and self.datalink != pcapy.DLT_LINUX_SLL:
+        if self.importLayer > 1 and self.datalink != pcapy.DLT_EN10MB and self.datalink != pcapy.DLT_LINUX_SLL and self.datalink != PCAPImporter.PROTOCOL201:
             errorMessage = _("This pcap cannot be imported since the "
                              + "layer 2 is not supported ({0})").format(str(self.datalink))
             self.log.warn(errorMessage)
@@ -168,9 +170,6 @@ class PCAPImporter(AbstractImporter):
                 return
 
             data = payload.encode("hex")
-            if self.datalink == 201 and len(data) > 6 and data[:6] == 6 * "0":
-                self.log.info("#Tricks : Datalink = 201, we remove the 3 first zeros bytes.")
-                data = data[6:]
 
             self.messages.append(
                 RawMessage(
@@ -247,14 +246,27 @@ class PCAPImporter(AbstractImporter):
             layer2 = l2Decoder.decode(payload)
             l2SrcAddr = formatMacAddress(layer2.get_ether_shost())
             l2DstAddr = formatMacAddress(layer2.get_ether_dhost())
+            l2Payload = payload[layer2.get_header_size():]
+            etherType = layer2.get_ether_type()
         elif self.datalink == pcapy.DLT_LINUX_SLL:
             l2Decoder = Decoders.LinuxSLLDecoder()
             l2Proto = "Linux SLL"
             layer2 = l2Decoder.decode(payload)
             l2SrcAddr = layer2.get_addr()
             l2DstAddr = None
-        l2Payload = payload[layer2.get_header_size():]
-        etherType = layer2.get_ether_type()
+            l2Payload = payload[layer2.get_header_size():]
+            etherType = layer2.get_ether_type()
+        elif self.datalink == PCAPImporter.PROTOCOL201:
+            l2Proto = "Protocol 201"
+            hdr = payload.encode('hex')[0:8]
+            if hdr[6:] == "01":
+                l2SrcAddr = "Received"
+            else:
+                l2SrcAddr = "Sent"
+            l2DstAddr = None
+            l2Payload = payload[8:]
+            etherType = payload[4:6]
+
         return (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType)
 
     def decodeLayer3(self, etherType, l2Payload):
