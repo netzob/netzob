@@ -52,6 +52,7 @@ from netzob.Common.Type.Sign import Sign
 from netzob.Common.Type.Endianess import Endianess
 from netzob.Common.XSDResolver import XSDResolver
 from netzob.Common.Property import Property
+from netzob.Common.PropertyList import PropertyList
 from netzob.Common.Simulator import Simulator
 
 
@@ -366,7 +367,7 @@ class Project(object):
     PROJECT_SCHEMAS = {"xsds/0.1/Project.xsd": loadProject_0_1}
 
     def getProperties(self):
-        properties = []
+        properties = PropertyList()
         configuration = self.getConfiguration()
         properties.append(Property('workspace', Format.STRING, self.getPath()))
         prop = Property('name', Format.STRING, self.getName())
