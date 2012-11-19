@@ -13,6 +13,9 @@
         <menuitem action="partitioningSimple" />
         <menuitem action="partitioningSmooth" />
         <menuitem action="partitioningReset" />
+	<placeholder name="relationsIdentifierMenuAdditions">
+		<menu action="relationsIdentifier" />
+	</placeholder>
       </menu>
       <menu action="manualToolMenu">
         <menuitem action="concatField" />
