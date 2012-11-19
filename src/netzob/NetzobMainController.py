@@ -358,7 +358,7 @@ class NetzobMainController(object):
         while not finish:
             # Open Dialogbox
             builder2 = Gtk.Builder()
-            builder2.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(), "ui", "dialogbox.glade"))
+            builder2.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(), "ui", "dialogs/importProject.glade"))
             dialog = builder2.get_object("importProject")
             dialog.set_transient_for(self.view.mainWindow)
 
