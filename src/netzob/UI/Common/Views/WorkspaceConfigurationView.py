@@ -56,6 +56,11 @@ class WorkspaceConfigurationView(object):
                           "advancedBugreportingCheckbox",
                           "advancedBugreportingTestkey",
                           "advancedBugreportingTestkeySpinner",
+                          "projectsTreestore1",
+                          "projectCurrentName",
+                          "projectCurrentDate",
+                          "projectCurrentSymbolsCount",
+                          "projectCurrentMessagesCount",
                           ])
         self.controller = controller
         self.workspaceConfigurationDialog.set_transient_for(parent)
@@ -77,6 +82,9 @@ class WorkspaceConfigurationView(object):
         enableBugReporting = controller.workspace.enableBugReporting
         self.advancedBugreportingCheckbox.set_active(enableBugReporting)
         self.refreshEnableBugReporting(enableBugReporting)
+
+        # Updating the "Defined projects" list
+        self.refreshProjectList()
 
         # Finally, connect signals to the controller
         self.builder.connect_signals(self.controller)
@@ -125,3 +133,20 @@ class WorkspaceConfigurationView(object):
 
     def destroy(self):
         self.workspaceConfigurationDialog.destroy()
+
+    def updateProjectProperties(self, name, date, symbols, messages):
+        currentDate = ""
+
+        if date:
+            currentDate = date.strftime("%c")
+
+        self.projectCurrentName.set_text(name)
+        self.projectCurrentDate.set_text(currentDate)
+        self.projectCurrentSymbolsCount.set_text(str(symbols))
+        self.projectCurrentMessagesCount.set_text(str(messages))
+
+    def refreshProjectList(self):
+        projects = self.controller.mainController.getCurrentWorkspace().getNameOfProjects()
+        self.projectsTreestore1.clear()
+        for (projectName, projectPath) in projects:
+            self.projectsTreestore1.append([projectPath, projectName, ""])

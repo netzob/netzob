@@ -48,6 +48,8 @@ from netzob.Common.BugReporter import BugReporter, BugReporterException
 from netzob.UI.NetzobWidgets import NetzobErrorMessage
 from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask, TaskError
 from netzob.Common.Threads.Job import Job
+from netzob.Common.Project import Project
+from netzob.Common.Property import Property
 
 
 class WorkspaceConfigurationController(object):
@@ -59,6 +61,7 @@ class WorkspaceConfigurationController(object):
         self._loggingConfiguration = LoggingConfiguration()
         self.workspace = mainController.getCurrentWorkspace()
 
+        self.selectedProject = None
         self.keyUpdated = False
 
         self._view = WorkspaceConfigurationView(self, parent=mainController.view.mainWindow)
@@ -150,3 +153,37 @@ class WorkspaceConfigurationController(object):
 
         GObject.idle_add(self.view.testKeyUpdateSpinnerState, 0,
                          priority=GObject.PRIORITY_DEFAULT)
+
+    def projectsTreeviewSelection_changed_cb(self, selection):
+        (model, treeiter) = selection.get_selected()
+
+        if treeiter is not None:
+            (projectPath, projectName) = self._getSelectedProject()
+
+            self.log.debug("Selected project: '{0}' (path: {1})".format(projectName, projectPath))
+
+            self.selectedProject = Project.loadProject(self.workspace, projectPath)
+
+            self._refreshProjectProperties()
+
+        else:
+            self.selectedProject = None
+            self._refreshProjectProperties()
+
+    def _refreshProjectProperties(self):
+        propsProjectName = ""
+        propsDate = None
+        propsSymbols = ""
+        propsMessages = ""
+
+        if self.selectedProject:
+            props = self.selectedProject.getProperties()
+            propsProjectName = props['name'].getCurrentValue()
+            propsDate = props['date'].getCurrentValue()
+            propsSymbols = props['symbols'].getCurrentValue()
+            propsMessages = props['messages'].getCurrentValue()
+
+        self.view.updateProjectProperties(name=propsProjectName,
+                                          date=propsDate,
+                                          symbols=propsSymbols,
+                                          messages=propsMessages)
