@@ -38,6 +38,7 @@ import logging
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk
 import gi
+from netzob.Common.Plugins.Extensions.RelationsIdentifierMenuExtension import RelationsIdentifierMenuExtension
 gi.require_version('Gtk', '3.0')
 
 
@@ -92,9 +93,9 @@ class VocabularyController(object):
 
     def activate(self):
         """Activate the perspective"""
-        # Refresh list of available exporter plugins
+        # Refresh list of available plugins
         self.updateListOfCapturerPlugins()
-        pass
+        self.updateListOfRelationsIdentifierPlugins()
 
     def restart(self):
         """Restart the view"""
@@ -104,6 +105,11 @@ class VocabularyController(object):
 
     def getSignalsManager(self):
         return self.netzob.getSignalsManager()
+
+    def updateListOfRelationsIdentifierPlugins(self):
+        """fetch the list of availavable plugins for the identifications of relations"""
+        pluginExtensions = NetzobPlugin.getLoadedPluginsExtension(RelationsIdentifierMenuExtension)
+        self.view.updateListRelationsIdentifierPlugins(pluginExtensions)
 
     def updateListOfCapturerPlugins(self):
         """Fetch the list of available capturer plugins, and provide
