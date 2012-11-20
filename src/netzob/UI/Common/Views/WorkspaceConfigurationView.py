@@ -65,6 +65,7 @@ class WorkspaceConfigurationView(object):
                           "projectsDeleteButton",
                           "projectsExportButton",
                           "projectsTreeviewSelection",
+                          "projectsConfigureButton",
                           "workspaceConfigurationActionGroup",
                           ])
 
