@@ -49,11 +49,14 @@ from netzob.Common.Project import Project, ProjectException
 class ProjectImportController(object):
     """Manage import of new project."""
 
-    def __init__(self, mainController):
+    def __init__(self, mainController, parent=None):
         self.mainController = mainController
         self.log = logging.getLogger(__name__)
         self.workspace = mainController.getCurrentWorkspace()
-        self._view = ProjectImportView(self, parent=mainController.view.mainWindow)
+
+        if not parent:
+            parent = mainController.view.mainWindow
+        self._view = ProjectImportView(self, parent=parent)
 
     @property
     def view(self):
