@@ -50,6 +50,7 @@ from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask, TaskError
 from netzob.Common.Threads.Job import Job
 from netzob.Common.Project import Project
 from netzob.Common.Property import Property
+from netzob.UI.Common.Controllers.ProjectImportController import ProjectImportController
 
 
 class WorkspaceConfigurationController(object):
@@ -187,3 +188,18 @@ class WorkspaceConfigurationController(object):
                                           date=propsDate,
                                           symbols=propsSymbols,
                                           messages=propsMessages)
+
+    def _getSelectedProject(self):
+        (model, treeiter) = self.view.projectsTreeviewSelection.get_selected()
+        projectPath = model[treeiter][0]
+        projectName = model[treeiter][1]
+
+        return (projectPath, projectName)
+
+    def projectsImportButton_clicked_cb(self, button):
+        self.log.debug("Import project")
+
+        controller = ProjectImportController(self.mainController, parent=self.view.workspaceConfigurationDialog)
+        controller.run()
+
+        self.view.refreshProjectList()

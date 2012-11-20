@@ -359,10 +359,10 @@
                                     <property name="label" translatable="yes" context="Import a new project">Import</property>
                                     <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
                                     <property name="use_action_appearance">False</property>
+                                    <signal name="clicked" handler="projectsImportButton_clicked_cb" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
