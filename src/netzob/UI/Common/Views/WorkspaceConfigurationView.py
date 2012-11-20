@@ -62,8 +62,10 @@ class WorkspaceConfigurationView(object):
                           "projectCurrentSymbolsCount",
                           "projectCurrentMessagesCount",
                           "projectsDeleteButton",
+                          "projectsExportButton",
                           "projectsTreeviewSelection",
                           ])
+
         self.controller = controller
         self.workspaceConfigurationDialog.set_transient_for(parent)
 

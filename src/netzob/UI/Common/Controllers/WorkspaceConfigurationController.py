@@ -51,6 +51,7 @@ from netzob.Common.Threads.Job import Job
 from netzob.Common.Project import Project
 from netzob.Common.Property import Property
 from netzob.UI.Common.Controllers.ProjectImportController import ProjectImportController
+from netzob.UI.Common.Controllers.ProjectExportController import ProjectExportController
 
 
 class WorkspaceConfigurationController(object):
@@ -168,12 +169,14 @@ class WorkspaceConfigurationController(object):
             self._refreshProjectProperties()
 
             self.view.projectsDeleteButton.set_sensitive(True)
+            self.view.projectsExportButton.set_sensitive(True)
 
         else:
             self.selectedProject = None
             self._refreshProjectProperties()
 
             self.view.projectsDeleteButton.set_sensitive(False)
+            self.view.projectsExportButton.set_sensitive(False)
 
     def _refreshProjectProperties(self):
         propsProjectName = ""
@@ -207,6 +210,16 @@ class WorkspaceConfigurationController(object):
         controller.run()
 
         self.view.refreshProjectList()
+
+    def projectsExportButton_clicked_cb(self, button):
+        (projectPath, projectName) = self._getSelectedProject()
+
+        self.log.debug("Export project")
+
+        controller = ProjectExportController(self.mainController,
+                                             parent=self.view.workspaceConfigurationDialog,
+                                             project=self.selectedProject)
+        controller.run()
 
     def projectsDeleteButton_clicked_cb(self, button):
         (projectPath, projectName) = self._getSelectedProject()
