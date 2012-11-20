@@ -61,6 +61,7 @@
                 <property name="receives_default">False</property>
                 <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
+                <signal name="clicked" handler="closebutton_clicked_cb" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -73,13 +74,13 @@
                 <property name="label">gtk-apply</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
-                <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="has_default">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
+                <signal name="clicked" handler="exportProjectApplyButton_clicked_cb" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -135,6 +136,7 @@
                 <property name="orientation">vertical</property>
                 <property name="action">select-folder</property>
                 <property name="title" translatable="yes">Select a directory</property>
+                <signal name="current-folder-changed" handler="exportProjectFileChooserButton_current_folder_changed_cb" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -150,6 +152,7 @@
                 <property name="hexpand">True</property>
                 <property name="invisible_char">â</property>
                 <property name="activates_default">True</property>
+                <signal name="changed" handler="exportProjectFilenameEntry_changed_cb" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>

@@ -35,7 +35,6 @@ import logging
 import locale
 import uuid
 import shutil
-from lxml.etree import ElementTree
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -60,6 +59,7 @@ from netzob.UI.Common.AboutDialog import AboutDialog
 from netzob.UI.Common.Controllers.BugReporterController import BugReporterController
 from netzob.UI.Common.Controllers.WorkspaceConfigurationController import WorkspaceConfigurationController
 from netzob.UI.Common.Controllers.ProjectImportController import ProjectImportController
+from netzob.UI.Common.Controllers.ProjectExportController import ProjectExportController
 from netzob.UI.NetzobWidgets import NetzobErrorMessage
 from netzob.UI.WorkspaceSelector import WorkspaceSelector
 from netzob.Common.Plugins.Extensions.ExportMenuExtension import ExportMenuExtension
@@ -347,18 +347,6 @@ class NetzobMainController(object):
         controller = ProjectImportController(self)
         controller.run()
 
-    def fileSetFileChooserOrFilenamEntry_exportProject_cb(self, widget, fileChooser, fileEntry, applyButton):
-        """Callback executed when the user selects a file in the file
-        chooser of the export project dialog box"""
-
-        currentFolder = fileChooser.get_current_folder()
-        currentFile = fileEntry.get_text()
-
-        if currentFolder is not None and len(currentFolder) > 0 and currentFile is not None and len(currentFile) > 0:
-            applyButton.set_sensitive(True)
-        else:
-            applyButton.set_sensitive(False)
-
     def xmlExportProject_activate_cb(self, action):
         """Display the dialog in order to export the current project
         when the user request it through the menu."""
@@ -369,67 +357,8 @@ class NetzobMainController(object):
 
         logging.debug("Export project")
 
-        finish = False
-        errorMessage = None
-        while not finish:
-            #open dialogbox
-            builder2 = Gtk.Builder()
-            builder2.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(), "ui", "dialogbox.glade"))
-            dialog = builder2.get_object("exportProject")
-            dialog.set_transient_for(self.view.mainWindow)
-
-            applybutton = builder2.get_object("exportProjectApplyButton")
-            filenameEntry = builder2.get_object("exportProjectFilenameEntry")
-            fileChooserButton = builder2.get_object("exportProjectFileChooserButton")
-
-            # Set the default filename based on current project
-            if self.getCurrentProject() is not None:
-                filenameEntry.set_text("{0}.xml".format(self.getCurrentProject().getName()))
-            else:
-                errorMessage = _("Please open a project before exporting it.")
-
-            fileChooserButton.connect("current-folder-changed", self.fileSetFileChooserOrFilenamEntry_exportProject_cb, fileChooserButton, filenameEntry, applybutton)
-            filenameEntry.connect("changed", self.fileSetFileChooserOrFilenamEntry_exportProject_cb, fileChooserButton, filenameEntry, applybutton)
-
-            # Execute the CB in case default case is functionnal
-            self.fileSetFileChooserOrFilenamEntry_exportProject_cb(fileChooserButton, fileChooserButton, filenameEntry, applybutton)
-
-            if errorMessage is not None:
-                # Display a warning message on the dialog box
-                warnLabel = builder2.get_object("exportProjectWarnLabel")
-                warnLabel.set_text(errorMessage)
-                warnBox = builder2.get_object("exportProjectWarnBox")
-                warnBox.show_all()
-
-            result = dialog.run()
-
-            if result == 0:
-                selectedFolder = fileChooserButton.get_current_folder()
-                filename = filenameEntry.get_text()
-                dialog.destroy()
-
-                if selectedFolder is None:
-                    errorMessage = _("No directory selected")
-                elif filename is None or len(filename) == 0:
-                    errorMessage = _("No filename provided")
-                else:
-                    if self.getCurrentProject() is None:
-                        errorMessage = _("Please open a project before exporting it.")
-                    else:
-                        try:
-                            outputFilename = os.path.join(selectedFolder, filename)
-                            logging.debug("Output filename: {0}".format(outputFilename))
-                            xmlDefinitionOfProject = self.getCurrentProject().generateXMLConfigFile()
-                            tree = ElementTree(xmlDefinitionOfProject)
-                            tree.write(outputFilename)
-                            finish = True
-                            errorMessage = None
-                        except IOError, e:
-                            errorMessage = _("An error occurred while exporting the project.")
-                            logging.warn("Error when importing project: {0}".format(e))
-            else:
-                dialog.destroy()
-                finish = True
+        controller = ProjectExportController(self)
+        controller.run()
 
     def rawExportProject_activate_cb(self, action):
         """Display the dialog in order to export the symbols when the
