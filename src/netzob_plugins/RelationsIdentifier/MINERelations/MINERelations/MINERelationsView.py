@@ -56,7 +56,6 @@ class MINERelationsView(AbstractRelationsIdentifierView):
 
         # Import and add configuration widget
         self.builderConfWidget = Gtk.Builder()
-        curDir = os.path.dirname(__file__)
         gladePath = os.path.join(self.getPlugin().getPluginStaticResourcesPath(), "ui", MINERelationsView.GLADE_FILENAME)
         self.builderConfWidget.add_from_file(gladePath)
 
