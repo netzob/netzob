@@ -37,16 +37,16 @@ from gettext import gettext as _
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Plugins.ExporterPlugin import ExporterPlugin
+from netzob.Common.Plugins.RelationsIdentifierPlugin import RelationsIdentifierPlugin
 from netzob.Common.Plugins.Extensions.RelationsIdentifierMenuExtension import RelationsIdentifierMenuExtension
 from MINERelationsController import MINERelationsController
 
 
-class MINERelationsPlugin(ExporterPlugin):
+class MINERelationsPlugin(RelationsIdentifierPlugin):
     """MINERelationsPlugin:
             Search for relations between fields by measuring MINE.
     """
-    __plugin_name__ = "MINERelationsPlugin"
+    __plugin_name__ = "MINERelations"
     __plugin_version__ = "0.1"
     __plugin_description__ = _("Identify relations between fields.")
     __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>, Frédéric Guihéry <frederic.guihery@amossys.fr>"
@@ -91,7 +91,7 @@ class MINERelationsPlugin(ExporterPlugin):
         """getAuthor:
 
                 @rtype: string
-                @return: the plugin author.
+                @return: the plugin author.MINERelationsPlugin
         """
         return self.__plugin_author__
 
@@ -112,7 +112,7 @@ class MINERelationsPlugin(ExporterPlugin):
         """
         self.val = val
 
-    def actionCallback(self):
+    def actionCallback(self, vocabularyController):
         """setVal:
                 Callback when plugin is launched.
 

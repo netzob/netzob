@@ -74,4 +74,4 @@ class RelationsIdentifierMenuExtension(GlobalMenuExtension):
         return actions
 
     def executeAction(self, widget, vocabularyView, data=None):
-        self.controller(vocabularyView)
+        self.controller(vocabularyView.controller)
