@@ -290,7 +290,11 @@ class VocabularyView(object):
             pluginEntry = Gtk.MenuItem(pluginExtension.menuText)
             pluginEntry.connect("activate", pluginExtension.executeAction, self)
             pluginMenu.append(pluginEntry)
+            pluginEntry.set_visible(True)
+            print pluginMenu.get_children()
+
         pluginMenu.show_all()
+        pluginMenu.set_visible(True)
 
     def updateListCapturerPlugins(self, pluginsExtensions):
         """Update the menu"""
