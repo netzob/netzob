@@ -280,21 +280,25 @@ class VocabularyView(object):
 
     def updateListRelationsIdentifierPlugins(self, pluginsExtensions):
         """ Update the menu with the plugins to discover relations among symbols"""
-        pluginMenu = self.netzob.view.uiManager.get_widget("/mainMenuBar/mainMenuBarAdditions/automaticToolMenu/relationsIdentifierMenuAdditions/relationsIdentifier").get_submenu()
+        relationIdentifierMenu = self.netzob.view.uiManager.get_widget("/mainMenuBar/mainMenuBarAdditions/automaticToolMenu/relationsIdentifierMenuAdditions/relationsIdentifier")
+        pluginMenu = relationIdentifierMenu.get_submenu()
 
         # Update the list of exporters
         for i in pluginMenu.get_children():
             pluginMenu.remove(i)
 
+        # Hide or show relation menu depending of the availability of plugins
+        if len(pluginsExtensions) == 0:
+            relationIdentifierMenu.set_visible(False)
+        else:
+            relationIdentifierMenu.set_visible(True)
+
         for pluginExtension in pluginsExtensions:
             pluginEntry = Gtk.MenuItem(pluginExtension.menuText)
             pluginEntry.connect("activate", pluginExtension.executeAction, self)
             pluginMenu.append(pluginEntry)
-            pluginEntry.set_visible(True)
-            print pluginMenu.get_children()
 
         pluginMenu.show_all()
-        pluginMenu.set_visible(True)
 
     def updateListCapturerPlugins(self, pluginsExtensions):
         """Update the menu"""
