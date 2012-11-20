@@ -224,6 +224,12 @@ class Workspace(object):
         else:
             logging.warn("The project declared in {0} is already referenced in the workspace.". format(path))
 
+    def dereferenceProject(self, project_path):
+        if not project_path in self.projects_path:
+            raise WorkspaceException("The project '{0}' is not declared in the workspace".format(project_path))
+
+        self.projects_path.remove(project_path)
+
     def saveConfigFile(self):
         workspaceFile = os.path.join(self.path, Workspace.CONFIGURATION_FILENAME)
 
