@@ -161,23 +161,20 @@ class Project(object):
         return root
 
     def saveConfigFile(self, workspace):
-
-        projectPath = os.path.join(os.path.join(workspace.getPath(), self.getPath()))
+        projectPath = os.path.join(workspace.getPath(), self.getPath())
         projectFile = os.path.join(projectPath, Project.CONFIGURATION_FILENAME)
 
-        logging.info("Save the config file of project " + self.getName() + " in " + projectFile)
+        logging.info("Save the config file of project {0} in {1}".format(self.getName(), projectFile))
 
         # First we verify and create if necessary the directory of the project
         if not os.path.exists(projectPath):
-            logging.info("Creation of the directory " + projectPath)
+            logging.info("Creation of the directory: {0}".format(projectPath))
             os.mkdir(projectPath)
+
         # We generate the XML Config file
         root = self.generateXMLConfigFile()
         tree = ElementTree(root)
         tree.write(projectFile)
-
-        # Saving the workspace configuration file
-#        workspace.saveConfigFile()
 
     def hasPendingModifications(self, workspace):
         result = True
