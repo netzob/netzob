@@ -117,6 +117,10 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
     return workspace
 
 
+class WorkspaceException(Exception):
+    pass
+
+
 class Workspace(object):
     """Class definition of a Workspace"""
 
