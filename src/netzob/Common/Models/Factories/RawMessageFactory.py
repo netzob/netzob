@@ -93,7 +93,7 @@ class RawMessageFactory(object):
         msg_id = str(rootElement.get("id"))
 
         # Retrieve the timestamp
-        msg_timestamp = int(rootElement.get("timestamp"))
+        msg_timestamp = float(rootElement.get("timestamp"))
 
         from netzob.Common.Models.RawMessage import RawMessage
         result = RawMessage(msg_id, msg_timestamp, msg_data)
