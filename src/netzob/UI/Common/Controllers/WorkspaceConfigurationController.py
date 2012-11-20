@@ -167,9 +167,13 @@ class WorkspaceConfigurationController(object):
 
             self._refreshProjectProperties()
 
+            self.view.projectsDeleteButton.set_sensitive(True)
+
         else:
             self.selectedProject = None
             self._refreshProjectProperties()
+
+            self.view.projectsDeleteButton.set_sensitive(False)
 
     def _refreshProjectProperties(self):
         propsProjectName = ""
@@ -203,3 +207,36 @@ class WorkspaceConfigurationController(object):
         controller.run()
 
         self.view.refreshProjectList()
+
+    def projectsDeleteButton_clicked_cb(self, button):
+        (projectPath, projectName) = self._getSelectedProject()
+
+        questionMsg = _("Are you sure to delete the project \"{0}\" from the current workspace?").format(projectName)
+
+        dialog = Gtk.MessageDialog(self.view.workspaceConfigurationDialog,
+                                   Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                   Gtk.MessageType.WARNING,
+                                   Gtk.ButtonsType.NONE,
+                                   questionMsg)
+
+        dialog.format_secondary_text(_("If delete the project, your project files will be permanently lost."))
+
+        dialog.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
+        dialog.add_button(Gtk.STOCK_DELETE, Gtk.ResponseType.YES)
+        dialog.set_default_response(Gtk.ResponseType.CANCEL)
+
+        response = dialog.run()
+
+        if response == Gtk.ResponseType.YES:
+            self.log.info("User confirmed to delete the current project.")
+
+            self.selectedProject.deleteProject(self.workspace)
+            self.selectedProject = None
+
+            # Finally, refresh project list in Netzob's main window
+            # and in the "Workspace Configuration" dialog
+            self.view.projectsTreeviewSelection.unselect_all()
+            self.view.refreshProjectList()
+            self.mainController.updateListOfAvailableProjects()
+
+        dialog.destroy()
