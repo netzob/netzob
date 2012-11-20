@@ -193,7 +193,7 @@
     </child>
     <child>
       <object class="GtkAction" id="relationsIdentifier">
-        <property name="label" translatable="yes">relationsIdentifier</property>
+        <property name="label" translatable="yes">Identify Relations</property>
         <property name="tooltip" translatable="yes">Identify Relations</property>
       </object>
     </child>
