@@ -102,11 +102,8 @@ def loadProject_0_1(projectFile):
     return project
 
 
-#+---------------------------------------------------------------------------+
-#| Project:
-#|     Class definition of a Project
-#+---------------------------------------------------------------------------+
 class Project(object):
+    """Class definition of a Project"""
 
     # The name of the configuration file
     CONFIGURATION_FILENAME = "config.xml"
@@ -237,11 +234,13 @@ class Project(object):
     @staticmethod
     def createProject(workspace, name):
         idProject = str(uuid.uuid4())
-        path = "projects/" + idProject + "/"
+        path = os.path.join("projects", idProject)
         creationDate = datetime.datetime.now()
         project = Project(idProject, name, creationDate, path)
+
         # Creation of the config file
         project.saveConfigFile(workspace)
+
         # Register the project in the workspace
         workspace.referenceProject(project.getPath())
         workspace.saveConfigFile()
