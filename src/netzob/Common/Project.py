@@ -37,6 +37,7 @@ import uuid
 from lxml.etree import ElementTree
 from lxml import etree
 import types
+import shutil
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -315,6 +316,38 @@ class Project(object):
             else:
                 logging.warn("The project declared in file (" + projectFile + ") is not valid")
         return None
+
+    @staticmethod
+    def importNewXMLProject(workspace, xmlProjectFile):
+        # Generate the Unique ID of the imported project
+        idProject = str(uuid.uuid4())
+
+        # First we verify and create if necessary the directory of the project
+        projectPath = "projects/{0}/".format(idProject)
+        destPath = os.path.join(workspace.getPath(), projectPath)
+
+        try:
+            if not os.path.exists(destPath):
+                logging.info("Creation of the directory {0}".format(destPath))
+                os.mkdir(destPath)
+
+                # Retrieving and storing of the config file
+                destFile = os.path.join(destPath, Project.CONFIGURATION_FILENAME)
+                shutil.copy(xmlProjectFile, destFile)
+
+                project = Project.loadProject(workspace, destPath)
+                project.setID(idProject)
+                project.setName(_("Copy of {0}").format(project.getName()))
+                project.setPath(projectPath)
+                project.saveConfigFile(workspace)
+                workspace.referenceProject(project.getPath())
+                workspace.saveConfigFile()
+
+                return project
+
+        except IOError, e:
+            logging.warn("Error when importing project: {0}".format(e))
+            raise ProjectException(_("Unable to import the project: {0}.").format(e))
 
     @staticmethod
     def loadProject(workspace, projectDirectory):
