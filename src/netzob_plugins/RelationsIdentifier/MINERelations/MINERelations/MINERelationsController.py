@@ -34,6 +34,9 @@ import os
 import zlib
 import subprocess
 import uuid
+import tempfile
+import shutil
+
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -65,7 +68,8 @@ class MINERelationsController(AbstractExporterController):
         """
         super(MINERelationsController, self).__init__(netzob, plugin)
         self.plugin = plugin
-        self.view = MINERelationsView(self, plugin)
+        self.selectedSymbols = self.getVocabularyController().view.getCheckedSymbolList()
+        self.view = MINERelationsView(self, plugin, self.selectedSymbols)
 
     def run(self):
         """run:
@@ -84,43 +88,66 @@ class MINERelationsController(AbstractExporterController):
         """
         return self.view
 
-    def exportButton_clicked_cb(self, widget):
+    def cancelButton_clicked_cb(self, widget):
+        self.view.destroy()
+
+    def startButton_clicked_cb(self, widget):
         """exportButton_clicked_cb:
             Callback executed when the user clicks on the export button"""
 
-        selectedOutputDirectory = self.view.getSelectedOutputDirectory()
-        if selectedOutputDirectory is None or not os.path.isdir(selectedOutputDirectory):
-            logging.warning("Select an output directory ({0} is not valid)".format(selectedOutputDirectory))
+        # First we verify few things
+        # Can we find the java path
+        javaPath = self.view.getJavaPath()
+        if javaPath is None:
+            logging.warning("No provided Java path.")
+            self.view.showError("Please provide the path to the Java binary file")
             return
 
-        csvSymbol = self.generateCSVs()
-        if csvSymbol is None:
-            logging.warning("Impossible to generate CSV.")
+        # Can we find the MINE path
+        minePath = self.view.getMINEPath()
+        if minePath is None:
+            logging.warning("No provided MINE path.")
+            self.view.showError("Please provide the path to the MINE Jar file")
             return
 
-        results = dict()
-        for symbolName in csvSymbol.keys():
-            (symbol, csv) = csvSymbol[symbolName]
-            inputfilename = "MINE_{0}.csv".format(symbol.getName())
-            csvPath = os.path.join(selectedOutputDirectory, inputfilename)
-            f = open(csvPath, "w")
-            f.write(csv)
-            f.close()
+        # We create a temporary directory for computation in the workspace
+        temporaryDirectory = tempfile.mkdtemp(suffix='_MINERelations', prefix='netzob_', dir=tempfile.gettempdir())
 
-            # Execute the JAR
-            command = """{0} -jar {1} "{2}" -allPairs cv=0.7""".format(MINERelationsController.JAVA_PATH, MINERelationsController.JAR_PATH, csvPath)
-            print "Executing command : {0}".format(command)
-            subprocess.call(command, shell=True)
+        if temporaryDirectory is None:
+            logging.warning("Impossible to find the current temporary folder.")
+            return
+        else:
+            logging.debug("Temporary folder : {0}".format(temporaryDirectory))
 
-            # Parse results
-            outputFile = "{0},allpairs,cv=0.7,B=n^0.6,Results.csv".format(inputfilename)
-            pathOutputFile = os.path.join(selectedOutputDirectory, outputFile)
-            f = open(pathOutputFile)
-            contentOutputFile = f.read()
-            f.close()
+        try:
+            csvSymbol = self.generateCSVs()
+            # For each symbol, we write in a temp file the CSV
+            # execute the MINE relation finder and parse its results
+            results = dict()
+            for symbolName in csvSymbol.keys():
+                (symbol, csv) = csvSymbol[symbolName]
+                inputfilename = "MINE_{0}.csv".format(symbol.getName())
+                csvPath = os.path.join(temporaryDirectory, inputfilename)
+                f = open(csvPath, "w")
+                f.write(csv)
+                f.close()
 
-            tmpResults = self.parseResult(contentOutputFile, symbol)
-            results[symbol.getName()] = tmpResults
+                # Execute the JAR
+                command = """{0} -jar {1} "{2}" -allPairs cv=0.7""".format(javaPath, minePath, csvPath)
+                logging.info("Executing command : {0}".format(command))
+                subprocess.call(command, shell=True)
+
+                # Parse results
+                outputFile = "{0},allpairs,cv=0.7,B=n^0.6,Results.csv".format(inputfilename)
+                pathOutputFile = os.path.join(temporaryDirectory, outputFile)
+                f = open(pathOutputFile)
+                contentOutputFile = f.read()
+                f.close()
+                tmpResults = self.parseResult(contentOutputFile, symbol)
+                results[symbol.getName()] = tmpResults
+        finally:
+            # Delete the temporary directory and all the sub files
+            shutil.rmtree(temporaryDirectory)
 
         self.view.destroy()
 
@@ -187,13 +214,8 @@ class MINERelationsController(AbstractExporterController):
         return (field, t)
 
     def generateCSVs(self):
-        project = self.getCurrentProject()
-        if project is None:
-            return None
-
-        symbols = self.getCurrentProject().getVocabulary().getSymbols()
         csvSymbol = dict()
-        for symbol in symbols:
+        for symbol in self.selectedSymbols:
             csvSymbol[symbol.getName()] = (symbol, self.generateCSVForSymbol(symbol))
         return csvSymbol
 
@@ -297,6 +319,3 @@ class MINERelationsController(AbstractExporterController):
         result.append(str(TypeConvertor.netzobRawToDecimal(data)))
         result.append(str(len(data)))
         return result
-
-    def cancelButton_clicked_cb(self, widget):
-        self.view.destroy()

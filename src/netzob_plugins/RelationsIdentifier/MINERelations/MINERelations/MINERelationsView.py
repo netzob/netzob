@@ -49,7 +49,7 @@ class MINERelationsView(AbstractRelationsIdentifierView):
 
     GLADE_FILENAME = "MINERelationsDialog.glade"
 
-    def __init__(self, controller, plugin):
+    def __init__(self, controller, plugin, selectedSymbols):
         """Constructor of MINEExporterView"""
 
         super(MINERelationsView, self).__init__(plugin, controller)
@@ -59,8 +59,44 @@ class MINERelationsView(AbstractRelationsIdentifierView):
         gladePath = os.path.join(self.getPlugin().getPluginStaticResourcesPath(), "ui", MINERelationsView.GLADE_FILENAME)
         self.builderConfWidget.add_from_file(gladePath)
 
-        self._getObjects(self.builderConfWidget, ["dialog"])
+        self._getObjects(self.builderConfWidget, ["dialog",
+                                                  "warningImage",
+                                                  "errorLabel",
+                                                  "cancelButton",
+                                                  "startButton",
+                                                  "javaFileChooserButton",
+                                                  "MINEFileChooserButton",
+                                                  "interSymbolCheckButton",
+                                                  "selectedSymbolsListStore"])
         self.builderConfWidget.connect_signals(self.controller)
+
+        for selectedSymbol in selectedSymbols:
+            self.selectedSymbolsListStore.append([selectedSymbol.getName()])
+
+        if len(selectedSymbols) == 0:
+            self.showError(_("No symbols have been selected"))
+            self.startButton.set_sensitive(False)
+
+    def getJavaPath(self):
+        """Returns the provided java path"""
+        return self.javaFileChooserButton.get_filename()
+
+    def getMINEPath(self):
+        """Returns the path to the Jar MINE file"""
+        return self.MINEFileChooserButton.get_filename()
+
+    def isInterSymbolRelationsRequested(self):
+        """Returns True if the user checked the inter symbols relations identifications"""
+        return self.interSymbolCheckButton.get_active()
+
+    def showError(self, message):
+        if message is not None:
+            self.errorLabel.set_label(message)
+            self.errorLabel.set_visible(True)
+            self.warningImage.set_visible(True)
+        else:
+            self.errorLabel.set_visible(False)
+            self.warningImage.set_visible(False)
 
     def show(self):
         self.dialog.show()
