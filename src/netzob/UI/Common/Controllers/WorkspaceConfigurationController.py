@@ -282,3 +282,20 @@ class WorkspaceConfigurationController(object):
             self.mainController.updateListOfAvailableProjects()
 
         dialog.destroy()
+
+    def projectsTreeview_button_press_event_cb(self, treeView, event):
+        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 3:
+
+            selection = treeView.get_selection()
+
+            # Select the row on which user clicked
+            try:
+                (selectedPath, selectedColumn, x, y) = treeView.get_path_at_pos(event.x, event.y)
+                if selectedPath:
+                    selection.unselect_all()
+                    selection.select_path(selectedPath)
+
+                    self.view.popup.popup(None, None, None, None, event.button, event.time)
+                return True
+            except:
+                return False

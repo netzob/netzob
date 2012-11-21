@@ -65,6 +65,7 @@ class WorkspaceConfigurationView(object):
                           "projectsDeleteButton",
                           "projectsExportButton",
                           "projectsTreeviewSelection",
+                          "workspaceConfigurationActionGroup",
                           ])
 
         self.controller = controller
@@ -90,6 +91,12 @@ class WorkspaceConfigurationView(object):
 
         # Updating the "Defined projects" list
         self.refreshProjectList()
+
+        # Getting the popup menu
+        self.uiManager = Gtk.UIManager()
+        self.uiManager.insert_action_group(self.workspaceConfigurationActionGroup)
+        self.uiManager.add_ui_from_file(os.path.join(ResourcesConfiguration.getStaticResources(), "ui", "workspaceConfigurationPopupMenu.ui"))
+        self.popup = self.uiManager.get_widget("/PopupMenu")
 
         # Finally, connect signals to the controller
         self.builder.connect_signals(self.controller)
