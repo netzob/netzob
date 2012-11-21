@@ -179,6 +179,36 @@ class Project(object):
         tree = ElementTree(root)
         tree.write(projectFile)
 
+    def cloneProjectTo(self, workspace, cloneName):
+        try:
+            # Original project files
+            origProjectPath = os.path.join(workspace.getPath(), self.path)
+
+            # Clone project
+            idProject = str(uuid.uuid4())
+            clonePath = os.path.join(workspace.getPath(), "projects", idProject)
+            cloneFile = os.path.join(clonePath, Project.CONFIGURATION_FILENAME)
+
+            logging.info("Clone project from '{0}' to '{0}'".format(origProjectPath,
+                                                                    clonePath))
+
+            # Clone project files
+            shutil.copytree(origProjectPath, clonePath)
+
+            # Create the new project
+            project = Project.loadProject(workspace, clonePath)
+            project.setID(idProject)
+            project.setName(cloneName)
+            project.setPath(clonePath)
+            project.saveConfigFile(workspace)
+
+            # Update workspace
+            workspace.referenceProject(project.getPath())
+            workspace.saveConfigFile()
+
+        except IOError, e:
+            raise ProjectException(str(e))
+
     def hasPendingModifications(self, workspace):
         result = True
 
