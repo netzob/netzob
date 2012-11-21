@@ -237,6 +237,18 @@ class Project(object):
                 envDeps.append(prop)
         return envDeps
 
+    def deleteProject(self, workspace):
+        try:
+            # Delete project files
+            projectFullPath = os.path.join(workspace.getPath(), self.path)
+            logging.debug("Deleting project files: {0}".format(projectFullPath))
+            shutil.rmtree(projectFullPath)
+
+            # Dereference project from Workspace
+            workspace.dereferenceProject(self.path)
+        except IOError, e:
+            raise ProjectException(_("Unable to delete project: {0}").format(e))
+
     @staticmethod
     def createProject(workspace, name):
         idProject = str(uuid.uuid4())
