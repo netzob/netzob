@@ -168,6 +168,7 @@ class WorkspaceConfigurationController(object):
 
             self._refreshProjectProperties()
 
+            self.view.projectsDuplicateButton.set_sensitive(True)
             self.view.projectsDeleteButton.set_sensitive(True)
             self.view.projectsExportButton.set_sensitive(True)
 
@@ -175,6 +176,7 @@ class WorkspaceConfigurationController(object):
             self.selectedProject = None
             self._refreshProjectProperties()
 
+            self.view.projectsDuplicateButton.set_sensitive(False)
             self.view.projectsDeleteButton.set_sensitive(False)
             self.view.projectsExportButton.set_sensitive(False)
 
@@ -220,6 +222,33 @@ class WorkspaceConfigurationController(object):
                                              parent=self.view.workspaceConfigurationDialog,
                                              project=self.selectedProject)
         controller.run()
+
+    def projectsDuplicateButton_clicked_cb(self, button):
+        self.log.debug("Duplicate project")
+
+        (projectPath, projectName) = self._getSelectedProject()
+
+        response = self.view.showDuplicateProjectDialog(projectName)
+
+        if response == 1:
+            project = self.selectedProject
+            cloneName = self.view.cloneProjectNameEntry.get_text()
+
+            self.log.info("User validated to clone the project, new name: '{0}'".format(cloneName))
+
+            project.cloneProjectTo(self.workspace, cloneName)
+
+            self.selectedProject = None
+            self.view.refreshProjectList()
+            self.mainController.updateListOfAvailableProjects()
+
+        self.view.workspaceConfigurationCloneProject.hide()
+
+    def cloneProjectNameEntry_changed_cb(self, entry):
+        if len(entry.get_text()) == 0:
+            self.view.cloneProjectApplyButton.set_sensitive(False)
+        else:
+            self.view.cloneProjectApplyButton.set_sensitive(True)
 
     def projectsDeleteButton_clicked_cb(self, button):
         (projectPath, projectName) = self._getSelectedProject()

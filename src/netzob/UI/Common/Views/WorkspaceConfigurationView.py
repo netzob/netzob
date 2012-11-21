@@ -61,6 +61,7 @@ class WorkspaceConfigurationView(object):
                           "projectCurrentDate",
                           "projectCurrentSymbolsCount",
                           "projectCurrentMessagesCount",
+                          "projectsDuplicateButton",
                           "projectsDeleteButton",
                           "projectsExportButton",
                           "projectsTreeviewSelection",
@@ -154,3 +155,18 @@ class WorkspaceConfigurationView(object):
         self.projectsTreestore1.clear()
         for (projectName, projectPath) in projects:
             self.projectsTreestore1.append([projectPath, projectName, ""])
+
+    def showDuplicateProjectDialog(self, origProjectName):
+        self._getObjects(self.builder,
+                         ["workspaceConfigurationCloneProject",
+                          "cloneProjectNameEntry",
+                          "cloneProjectApplyButton",
+                          ])
+
+        dialog = self.workspaceConfigurationCloneProject
+        dialog.show_all()
+        dialog.set_transient_for(self.workspaceConfigurationDialog)
+
+        self.cloneProjectNameEntry.set_text(origProjectName)
+
+        return dialog.run()
