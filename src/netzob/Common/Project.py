@@ -103,6 +103,10 @@ def loadProject_0_1(projectFile):
     return project
 
 
+class ProjectException(Exception):
+    pass
+
+
 class Project(object):
     """Class definition of a Project"""
 
