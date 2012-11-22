@@ -59,30 +59,33 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 class IPCMessageFactory(object):
 
+    XML_SCHEMA_TYPE = "netzob-common:IPCMessage"
+
     @staticmethod
     #+-----------------------------------------------------------------------+
     #| save
     #|     Generate the XML representation of an IPC message
     #+-----------------------------------------------------------------------+
-    def save(message, xmlMessages, namespace_project, namespace):
-        root = etree.SubElement(xmlMessages, "{" + namespace + "}message")
-        root.set("id", str(message.getID()))
-        root.set("timestamp", str(message.getTimestamp()))
-        root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob-common:IPCMessage")
-        # data
-        subData = etree.SubElement(root, "{" + namespace + "}data")
-        subData.text = str(message.getData())
+    def save(message, xmlMessage, namespace_project, namespace):
+
+        xmlMessage.set("{http://www.w3.org/2001/XMLSchema-instance}type", IPCMessageFactory.XML_SCHEMA_TYPE)
+
+        # Add message properties
+        IPCMessageFactory.addPropertiesToElement(xmlMessage, message, namespace)
+
+    @staticmethod
+    def addPropertiesToElement(xmlMessage, message, namespace):
         # category
-        subCategory = etree.SubElement(root, "{" + namespace + "}category")
+        subCategory = etree.SubElement(xmlMessage, "{" + namespace + "}category")
         subCategory.text = str(message.getCategory())
         # key
-        subKey = etree.SubElement(root, "{" + namespace + "}key")
+        subKey = etree.SubElement(xmlMessage, "{" + namespace + "}key")
         subKey.text = str(message.getKey())
         # type
-        subType = etree.SubElement(root, "{" + namespace + "}type")
+        subType = etree.SubElement(xmlMessage, "{" + namespace + "}type")
         subType.text = str(message.getType())
         # direction
-        subDirection = etree.SubElement(root, "{" + namespace + "}direction")
+        subDirection = etree.SubElement(xmlMessage, "{" + namespace + "}direction")
         subDirection.text = str(message.getDirection())
 
     @staticmethod

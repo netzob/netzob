@@ -41,30 +41,16 @@ from netzob.Common.Models.Factories.L2NetworkMessageFactory import L2NetworkMess
 class L3NetworkMessageFactory(object):
     """Factory dedicated to the manipulation of network messages"""
 
+    XML_SCHEMA_TYPE = "netzob-common:L3NetworkMessage"
+
     @staticmethod
-    def save(message, xmlMessages, namespace_project, namespace):
+    def save(message, xmlMessage, namespace_project, namespace):
         """Generate the XML representation of a Network message"""
-        root = etree.SubElement(xmlMessages, "{" + namespace + "}message")
-        root.set("id", str(message.getID()))
-        root.set("timestamp", str(message.getTimestamp()))
-        root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob-common:L3NetworkMessage")
-        # data
-        subData = etree.SubElement(root, "{" + namespace + "}data")
-        subData.text = str(message.getData())
+        xmlMessage.set("{http://www.w3.org/2001/XMLSchema-instance}type", L3NetworkMessageFactory.XML_SCHEMA_TYPE)
+
         # Add network message properties
-        L2NetworkMessageFactory.addL2PropertiesToElement(root, message, namespace)
-        #pattern
-#        subPattern = etree.SubElement(root, "{" + namespace + "}pattern")
-#        subsubDirection = etree.SubElement(subPattern, "{" + namespace + "}direction")
-#        subsubDirection.text = str(message.getPattern()[0])
-#        for t in message.getPattern()[1]:
-#            subsubToken = etree.SubElement(subPattern, "{" + namespace + "}token")
-#            subsubToken.set("format", t.getFormat())
-#            subsubToken.set("length", str(t.getLength()))
-#            subsubToken.set("type", t.getType())
-#            subsubToken.set("value", t.getValue().encode("base-64"))
-        L3NetworkMessageFactory.addL3PropertiesToElement(root, message, namespace)
-        return etree.tostring(root)
+        L2NetworkMessageFactory.addL2PropertiesToElement(xmlMessage, message, namespace)
+        L3NetworkMessageFactory.addL3PropertiesToElement(xmlMessage, message, namespace)
 
     @staticmethod
     def addL3PropertiesToElement(root, message, namespace):

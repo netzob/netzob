@@ -54,19 +54,15 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 class RawMessageFactory(object):
 
+    XML_SCHEMA_TYPE = "netzob-common:RawMessage"
+
     @staticmethod
     #+-----------------------------------------------------------------------+
     #| save
     #|     Generate the XML representation of a Network message
     #+-----------------------------------------------------------------------+
-    def save(message, xmlMessages, namespace_project, namespace):
-        root = etree.SubElement(xmlMessages, "{" + namespace + "}message")
-        root.set("id", str(message.getID()))
-        root.set("timestamp", str(message.getTimestamp()))
-        root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob-common:RawMessage")
-        # data
-        subData = etree.SubElement(root, "{" + namespace + "}data")
-        subData.text = str(message.getData())
+    def save(message, xmlMessage, namespace_project, namespace):
+        xmlMessage.set("{http://www.w3.org/2001/XMLSchema-instance}type", RawMessageFactory.XML_SCHEMA_TYPE)
 
     @staticmethod
     #+---------------------------------------------------------------------------+

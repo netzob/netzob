@@ -62,38 +62,35 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 #+---------------------------------------------------------------------------+
 class FileMessageFactory():
 
+    XML_SCHEMA_TYPE = "netzob-common:FileMessage"
+
     @staticmethod
     #+-----------------------------------------------------------------------+
     #| saveInXML
     #|     Generate the XML representation of a file message
     #| @return a string which include the xml definition of the file msg
     #+-----------------------------------------------------------------------+
-    def save(message, xmlMessages, namespace_project, namespace_common):
-        root = etree.SubElement(xmlMessages, "{" + namespace_common + "}message")
-        root.set("id", str(message.getID()))
-        root.set("timestamp", str(message.getTimestamp()))
-        root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob-common:FileMessage")
-        # data
-        subData = etree.SubElement(root, "{" + namespace_common + "}data")
-        subData.text = str(message.getData())
+    def save(message, xmlMessage, namespace_project, namespace_common):
+        xmlMessage.set("{http://www.w3.org/2001/XMLSchema-instance}type", FileMessageFactory.XML_SCHEMA_TYPE)
+
         # line number
-        subLineNumber = etree.SubElement(root, "{" + namespace_common + "}lineNumber")
+        subLineNumber = etree.SubElement(xmlMessage, "{" + namespace_common + "}lineNumber")
         subLineNumber.text = str(message.getLineNumber())
         # filename
-        subFilename = etree.SubElement(root, "{" + namespace_common + "}filename")
+        subFilename = etree.SubElement(xmlMessage, "{" + namespace_common + "}filename")
         subFilename.text = message.getFilename()
         # creationDate
-        subCreationDate = etree.SubElement(root, "{" + namespace_common + "}creationDate")
+        subCreationDate = etree.SubElement(xmlMessage, "{" + namespace_common + "}creationDate")
         subCreationDate.text = TypeConvertor.pythonDatetime2XSDDatetime(message.getCreationDate())
         # creationDate
-        subModificationDate = etree.SubElement(root, "{" + namespace_common + "}modificationDate")
+        subModificationDate = etree.SubElement(xmlMessage, "{" + namespace_common + "}modificationDate")
         subModificationDate.text = TypeConvertor.pythonDatetime2XSDDatetime(message.getModificationDate())
 
         # owner
-        subOwner = etree.SubElement(root, "{" + namespace_common + "}owner")
+        subOwner = etree.SubElement(xmlMessage, "{" + namespace_common + "}owner")
         subOwner.text = message.getOwner()
         # size
-        subSize = etree.SubElement(root, "{" + namespace_common + "}size")
+        subSize = etree.SubElement(xmlMessage, "{" + namespace_common + "}size")
         subSize.text = str(message.getSize())
 
     @staticmethod

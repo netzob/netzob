@@ -33,7 +33,8 @@ from locale import gettext as _
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-
+from lxml.etree import ElementTree
+from lxml import etree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -55,25 +56,38 @@ class AbstractMessageFactory(object):
     @staticmethod
     def save(message, root, namespace_project, namespace_common):
         """Generate an XML representation of a message"""
+
+        # Create the initial xml tree
+        xmlMessage = etree.SubElement(root, "{" + namespace_common + "}message")
+        xmlMessage.set("id", str(message.getID()))
+        xmlMessage.set("timestamp", str(message.getTimestamp()))
+
+        # Add the data
+        subData = etree.SubElement(xmlMessage, "{" + namespace_common + "}data")
+        subData.text = str(message.getData())
+
+        # Depending of the type, we add its proper meta-datas
         if message.getType() == "File":
-            return FileMessageFactory.save(message, root, namespace_project, namespace_common)
+            FileMessageFactory.save(message, xmlMessage, namespace_project, namespace_common)
         elif message.getType() == "L2Network":
-            return L2NetworkMessageFactory.save(message, root, namespace_project, namespace_common)
+            L2NetworkMessageFactory.save(message, xmlMessage, namespace_project, namespace_common)
         elif message.getType() == "L3Network":
-            return L3NetworkMessageFactory.save(message, root, namespace_project, namespace_common)
+            L3NetworkMessageFactory.save(message, xmlMessage, namespace_project, namespace_common)
         elif message.getType() == "L4Network":
-            return L4NetworkMessageFactory.save(message, root, namespace_project, namespace_common)
+            L4NetworkMessageFactory.save(message, xmlMessage, namespace_project, namespace_common)
         elif message.getType() == "IPC":
-            return IPCMessageFactory.save(message, root, namespace_project, namespace_common)
+            IPCMessageFactory.save(message, xmlMessage, namespace_project, namespace_common)
         elif message.getType() == "IRP":
-            return IRPMessageFactory.save(message, root, namespace_project, namespace_common)
+            IRPMessageFactory.save(message, xmlMessage, namespace_project, namespace_common)
         elif message.getType() == "IRPDeviceIoControl":
-            return IRPDeviceIoControlMessageFactory.save(message, root, namespace_project, namespace_common)
+            IRPDeviceIoControlMessageFactory.save(message, xmlMessage, namespace_project, namespace_common)
         elif message.getType() == "RAW":
-            return RawMessageFactory.save(message, root, namespace_project, namespace_common)
+            RawMessageFactory.save(message, xmlMessage, namespace_project, namespace_common)
         else:
             raise NameError('''There is no factory which would support
             the generation of an xml representation of the message : ''' + str(message))
+
+        return etree.tostring(xmlMessage)
 
     @staticmethod
     def loadFromXML(rootElement, namespace, version):

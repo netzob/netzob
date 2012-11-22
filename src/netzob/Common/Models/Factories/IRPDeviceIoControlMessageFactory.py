@@ -37,6 +37,7 @@ from lxml.etree import ElementTree
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Token import Token
 from lxml import etree
+from netzob.Common.Models.Factories.IRPMessageFactory import IRPMessageFactory
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -50,65 +51,22 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 class IRPDeviceIoControlMessageFactory(object):
 
+    XML_SCHEMA_TYPE = "netzob-common:IRPDeviceIoControlMessage"
+
     @staticmethod
     #+-----------------------------------------------------------------------+
     #| save
     #|     Generate the XML representation of a IRP IOCTL message
     #+-----------------------------------------------------------------------+
-    def save(message, xmlMessages, namespace_project, namespace):
-        root = etree.SubElement(xmlMessages, "{" + namespace + "}message")
-        root.set("id", str(message.getID()))
-        root.set("timestamp", str(message.getTimestamp()))
-        root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob-common:IRPDeviceIoControlMessage")
-        # data
-        subData = etree.SubElement(root, "{" + namespace + "}data")
-        subData.text = str(message.getData())
-        # direction
-        subDirection = etree.SubElement(root, "{" + namespace + "}direction")
-        subDirection.text = message.getDirection()
-        # major
-        subMajor = etree.SubElement(root, "{" + namespace + "}major")
-        subMajor.text = message.getMajor()
-        # minor
-        subMinor = etree.SubElement(root, "{" + namespace + "}minor")
-        subMinor.text = str(message.getMinor())
-        # requestMode
-        subRequestMode = etree.SubElement(root, "{" + namespace + "}requestMode")
-        subRequestMode.text = message.getRequestMode()
-        # pid
-        subPid = etree.SubElement(root, "{" + namespace + "}pid")
-        subPid.text = str(message.getPID())
-        # status
-        subStatus = etree.SubElement(root, "{" + namespace + "}status")
-        subStatus.text = str(message.getStatus())
-        # information
-        subInformation = etree.SubElement(root, "{" + namespace + "}information")
-        subInformation.text = str(message.getInformation())
-        # cancel
-        subCancel = etree.SubElement(root, "{" + namespace + "}cancel")
-        subCancel.text = TypeConvertor.bool2str(message.getCancel())
-        # sizeIn
-        subSizeIn = etree.SubElement(root, "{" + namespace + "}sizeIn")
-        subSizeIn.text = str(message.getSizeIn())
-        # sizeOut
-        subSizeOut = etree.SubElement(root, "{" + namespace + "}sizeOut")
-        subSizeOut.text = str(message.getSizeOut())
+    def save(message, xmlMessage, namespace_project, namespace):
+
+        xmlMessage.set("{http://www.w3.org/2001/XMLSchema-instance}type", IRPDeviceIoControlMessageFactory.XML_SCHEMA_TYPE)
+
+        IRPMessageFactory.addPropertiesToElement(xmlMessage, message, namespace)
+
         # ioctl
-        subIoctl = etree.SubElement(root, "{" + namespace + "}ioctl")
+        subIoctl = etree.SubElement(xmlMessage, "{" + namespace + "}ioctl")
         subIoctl.text = str(message.getIOCTL())
-
-        #pattern
-        subPattern = etree.SubElement(root, "{" + namespace + "}pattern")
-        subsubDirection = etree.SubElement(subPattern, "{" + namespace + "}direction")
-        subsubDirection.text = str(message.getPattern()[0])
-        for t in message.getPattern()[1]:
-            subsubToken = etree.SubElement(subPattern, "{" + namespace + "}token")
-            subsubToken.set("format", t.getFormat())
-            subsubToken.set("length", str(t.getLength()))
-            subsubToken.set("type", t.getType())
-            subsubToken.set("value", t.getValue().encode("base-64"))
-
-        return etree.tostring(root)
 
     @staticmethod
     #+---------------------------------------------------------------------------+
