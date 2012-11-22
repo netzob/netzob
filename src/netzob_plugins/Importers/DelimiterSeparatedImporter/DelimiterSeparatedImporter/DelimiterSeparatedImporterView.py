@@ -88,5 +88,5 @@ class DelimiterSeparatedImporterView(AbstractFileImporterView):
         column.add_attribute(toggleCellRenderer, "active", 0)
         self.listTreeView.append_column(column)
         cell = Gtk.CellRendererText()
-        add_text_column("ID", 1)
-        add_text_column("Contents", 2)
+        add_text_column(_("ID"), 1)
+        add_text_column(_("Contents"), 2)

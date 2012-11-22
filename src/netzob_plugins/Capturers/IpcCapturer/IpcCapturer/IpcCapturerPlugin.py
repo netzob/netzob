@@ -65,7 +65,7 @@ class IpcCapturerPlugin(CapturerPlugin):
         """
         super(IpcCapturerPlugin, self).__init__(netzob)
         self.netzob = netzob
-        self.entryPoints = [CapturerMenuExtension(netzob, self.actionCallback, "Capture IPC traffic", "Capture IPC traffic")]
+        self.entryPoints = [CapturerMenuExtension(netzob, self.actionCallback, _("Capture IPC traffic"), _("Capture IPC traffic"))]
 
     def getName(self):
         """getName:

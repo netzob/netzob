@@ -65,7 +65,7 @@ class NetworkCapturerPlugin(CapturerPlugin):
         """
         super(NetworkCapturerPlugin, self).__init__(netzob)
         self.netzob = netzob
-        self.entryPoints = [CapturerMenuExtension(netzob, self.actionCallback, "Capture network traffic", "Capture network traffic")]
+        self.entryPoints = [CapturerMenuExtension(netzob, self.actionCallback, _("Capture network traffic"), _("Capture network traffic"))]
 
     def getName(self):
         """getName:
