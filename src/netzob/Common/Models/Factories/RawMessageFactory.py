@@ -73,25 +73,12 @@ class RawMessageFactory(object):
     #| @return an instance of a n IPC Message
     #| @throw NameError if XML invalid
     #+---------------------------------------------------------------------------+
-    def loadFromXML(rootElement, namespace, version):
+    def loadFromXML(rootElement, namespace, version, id, timestamp, data):
         # Then we verify its an IPC Message
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob-common:RawMessage":
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != RawMessageFactory.XML_SCHEMA_TYPE:
             raise NameError("The parsed xml doesn't represent a Raw message.")
 
-        # Verifies the data field
-        if rootElement.find("{" + namespace + "}data") is None or not rootElement.find("{" + namespace + "}data").text:
-            raise NameError("The parsed message has no data specified")
-
-        # Parse the data field and transform it into a byte array
-        msg_data = bytearray(rootElement.find("{" + namespace + "}data").text)
-
-        # Retrieve the id
-        msg_id = str(rootElement.get("id"))
-
-        # Retrieve the timestamp
-        msg_timestamp = float(rootElement.get("timestamp"))
-
         from netzob.Common.Models.RawMessage import RawMessage
-        result = RawMessage(msg_id, msg_timestamp, msg_data)
+        result = RawMessage(id, timestamp, data)
 
         return result

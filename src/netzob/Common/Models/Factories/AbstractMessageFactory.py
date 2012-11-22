@@ -102,25 +102,41 @@ class AbstractMessageFactory(object):
         if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "abstract":
             raise NameError("The parsed xml doesn't represent a valid type message.")
 
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:FileMessage":
-            return FileMessageFactory.loadFromXML(rootElement, namespace, version)
-        # Preserve compatibility with former traces
-        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:NetworkMessage":
-            return OldFormatNetworkMessageFactory.loadFromXML(rootElement, namespace, version)
-        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:L2NetworkMessage":
-            return L2NetworkMessageFactory.loadFromXML(rootElement, namespace, version)
-        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:L3NetworkMessage":
-            return L3NetworkMessageFactory.loadFromXML(rootElement, namespace, version)
-        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:L4NetworkMessage":
-            return L4NetworkMessageFactory.loadFromXML(rootElement, namespace, version)
-        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:IPCMessage":
-            return IPCMessageFactory.loadFromXML(rootElement, namespace, version)
-        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:IRPMessage":
-            return IRPMessageFactory.loadFromXML(rootElement, namespace, version)
-        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:IRPDeviceIoControlMessage":
-            return IRPDeviceIoControlMessageFactory.loadFromXML(rootElement, namespace, version)
-        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:RawMessage":
-            return RawMessageFactory.loadFromXML(rootElement, namespace, version)
+        # Parse common attributes (id, timestamp, data)
+        # Parse the data field and transform it into a byte array
+        if rootElement.find("{" + namespace + "}data") is None or not rootElement.find("{" + namespace + "}data").text:
+            raise NameError("The parsed message has no data specified")
+        data = bytearray(rootElement.find("{" + namespace + "}data").text)
+        id = str(rootElement.get("id"))
+        timestamp = float(rootElement.get("timestamp"))
+
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == FileMessageFactory.XML_SCHEMA_TYPE:
+            return FileMessageFactory.loadFromXML(rootElement, namespace, version, id, timestamp, data)
+
+#        # Preserve compatibility with former traces
+#        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:NetworkMessage":
+#            return OldFormatNetworkMessageFactory.loadFromXML(rootElement, namespace, version)
+
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == L2NetworkMessageFactory.XML_SCHEMA_TYPE:
+            return L2NetworkMessageFactory.loadFromXML(rootElement, namespace, version, id, timestamp, data)
+
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == L3NetworkMessageFactory.XML_SCHEMA_TYPE:
+            return L3NetworkMessageFactory.loadFromXML(rootElement, namespace, version, id, timestamp, data)
+
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == L4NetworkMessageFactory.XML_SCHEMA_TYPE:
+            return L4NetworkMessageFactory.loadFromXML(rootElement, namespace, version, id, timestamp, data)
+
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == IPCMessageFactory.XML_SCHEMA_TYPE:
+            return IPCMessageFactory.loadFromXML(rootElement, namespace, version, id, timestamp, data)
+
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == IRPMessageFactory.XML_SCHEMA_TYPE:
+            return IRPMessageFactory.loadFromXML(rootElement, namespace, version, id, timestamp, data)
+
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == IRPDeviceIoControlMessageFactory.XML_SCHEMA_TYPE:
+            return IRPDeviceIoControlMessageFactory.loadFromXML(rootElement, namespace, version, id, timestamp, data)
+
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == RawMessageFactory.XML_SCHEMA_TYPE:
+            return RawMessageFactory.loadFromXML(rootElement, namespace, version, id, timestamp, data)
         else:
             raise NameError("The parsed xml doesn't represent a valid type message.")
             return None

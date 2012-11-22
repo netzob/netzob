@@ -102,24 +102,7 @@ class FileMessageFactory():
     #| @return an instance of a FipSource (default 0.0.0.0)ileMessage
     #| @throw NameError if XML invalid
     #+---------------------------------------------------------------------------+
-    def loadFromXML(rootElement, namespace, version):
-
-        # Then we verify its an IPC Message
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob-common:FileMessage":
-            raise NameError("The parsed xml doesn't represent a File message.")
-
-        # Verifies the data field
-        if rootElement.find("{" + namespace + "}data") is None or not rootElement.find("{" + namespace + "}data").text:
-            raise NameError("The parsed message has no data specified")
-
-        # Parse the data field and transform it into a byte array
-        msg_data = bytearray(rootElement.find("{" + namespace + "}data").text)
-
-        # Retrieve the id
-        msg_id = str(rootElement.get("id"))
-
-        # Retrieve the timestamp
-        msg_timestamp = int(rootElement.get("timestamp"))
+    def loadFromXML(rootElement, namespace, version, id, timestamp, data):
 
         # Retrieves the lineNumber (default -1)
         msg_lineNumber = int(rootElement.find("{" + namespace + "}lineNumber").text)
@@ -145,7 +128,6 @@ class FileMessageFactory():
         # TODO : verify this ! Circular imports in python !
         # WARNING : verify this ! Circular imports in python !
         from netzob.Common.Models.FileMessage import FileMessage
-
-        result = FileMessage(msg_id, msg_timestamp, msg_data, msg_filename, msg_creationDate, msg_modificationDate, msg_owner, msg_size, msg_lineNumber)
+        result = FileMessage(id, timestamp, data, msg_filename, msg_creationDate, msg_modificationDate, msg_owner, msg_size, msg_lineNumber)
 
         return result

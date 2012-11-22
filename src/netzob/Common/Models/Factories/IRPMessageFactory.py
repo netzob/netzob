@@ -106,25 +106,25 @@ class IRPMessageFactory(object):
     #| @return an instance of a IRPMessage
     #| @throw NameError if XML invalid
     #+---------------------------------------------------------------------------+
-    def loadFromXML(rootElement, namespace, version):
+    def loadFromXML(rootElement, namespace, version, id, timestamp, data):
 
         # Then we verify its an IPC Message
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob-common:IRPMessage":
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != IRPMessageFactory.XML_SCHEMA_TYPE:
             raise NameError("The parsed xml doesn't represent a IRP message.")
 
-        # Verifies the data field
-        if rootElement.find("{" + namespace + "}data") is None or rootElement.find("{" + namespace + "}data").text is None or not rootElement.find("{" + namespace + "}data").text:
-            raise NameError("The parsed message has no data specified")
+        # Retrieve properties
+        (msg_direction, msg_major, msg_minor, msg_requestMode, msg_pid, msg_status, msg_information, msg_cancel, msg_sizeIn, msg_sizeOut) = IRPMessageFactory.loadProperties(rootElement, namespace)
 
-        # Parse the data field and transform it into a byte array
-        msg_data = bytearray(rootElement.find("{" + namespace + "}data").text)
+        # TODO : verify this ! Circular imports in python !
+        # WARNING : verify this ! Circular imports in python !
+        from netzob.Common.Models.IRPMessage import IRPMessage
 
-        # Retrieve the id
-        msg_id = str(rootElement.get("id"))
+        result = IRPMessage(id, timestamp, data, "IRP", msg_direction, msg_major, msg_minor, msg_requestMode, msg_pid, msg_status, msg_information, msg_cancel, msg_sizeIn, msg_sizeOut)
 
-        # Retrieve the timestamp
-        msg_timestamp = int(rootElement.get("timestamp"))
+        return result
 
+    @staticmethod
+    def loadProperties(rootElement, namespace):
         # Retrieves the direction
         msg_direction = rootElement.find("{" + namespace + "}direction").text
 
@@ -155,30 +155,4 @@ class IRPMessageFactory(object):
         # Retrieves the sizeOut
         msg_sizeOut = int(rootElement.find("{" + namespace + "}sizeOut").text)
 
-        #Retrieve pattern
-
-        pattern = []
-        try:
-            patTemp = rootElement.find("{" + namespace + "}pattern")
-            pattern.append(patTemp.find("{" + namespace + "}direction").text)
-            tokens = patTemp.findall("{" + namespace + "}token")
-            #print "find "+str(tokens)
-            tokenList = []
-            for t in tokens:
-                t_format = t.get("format")
-                t_length = t.get("length")
-                t_type = t.get("type")
-                t_value = t.get("value").decode("base-64")
-                tokenList.append(Token(t_format, t_length, t_type, t_value))
-            pattern.append(tokenList)
-        except:
-            pattern = []
-
-        #print "FACTORY "+rootElement.find("{" + namespace + "}pattern").text+" give "+str(pattern[0])+";"+str([str(i) for i in pattern[1]])
-        # TODO : verify this ! Circular imports in python !
-        # WARNING : verify this ! Circular imports in python !
-        from netzob.Common.Models.IRPMessage import IRPMessage
-
-        result = IRPMessage(msg_id, msg_timestamp, msg_data, "IRP", msg_direction, msg_major, msg_minor, msg_requestMode, msg_pid, msg_status, msg_information, msg_cancel, msg_sizeIn, msg_sizeOut, pattern)
-
-        return result
+        return (msg_direction, msg_major, msg_minor, msg_requestMode, msg_pid, msg_status, msg_information, msg_cancel, msg_sizeIn, msg_sizeOut)
