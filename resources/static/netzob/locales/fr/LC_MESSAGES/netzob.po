@@ -9,14 +9,16 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-22 15:37+0100\n"
-"PO-Revision-Date: 2012-11-14 12:51+0200\n"
+"PO-Revision-Date: 2012-11-22 15:50+0200\n"
 "Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Weblate 1.3\n"
 "Generated-By: Babel 0.9.6\n"
 
 #: src/netzob/NetzobMainController.py:311
@@ -1247,14 +1249,13 @@ msgstr "Annuler le partitionnement"
 
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturerPlugin.py:55
 #: src/netzob_plugins/Capturers/IpcCapturer/build/lib.linux-x86_64-2.7/IpcCapturer/IpcCapturerPlugin.py:55
-#, fuzzy
 msgid "Provide the possibility to capture IPC traffic."
-msgstr "Permet la capture de flux IPC."
+msgstr "Offre la possibilité de capturer un trafic IPC."
 
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturerPlugin.py:68
 #: src/netzob_plugins/Capturers/IpcCapturer/build/lib.linux-x86_64-2.7/IpcCapturer/IpcCapturerPlugin.py:68
 msgid "Capture IPC traffic"
-msgstr ""
+msgstr "Capturer un trafic IPC"
 
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturerView.py:71
 #: src/netzob_plugins/Capturers/IpcCapturer/build/lib.linux-x86_64-2.7/IpcCapturer/IpcCapturerView.py:71
@@ -1269,9 +1270,8 @@ msgstr "FD"
 
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturerView.py:95
 #: src/netzob_plugins/Capturers/IpcCapturer/build/lib.linux-x86_64-2.7/IpcCapturer/IpcCapturerView.py:95
-#, fuzzy
 msgid "Direction"
-msgstr "Description"
+msgstr "Direction"
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturer.py:122
 #: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-x86_64-2.7/NetworkCapturer/NetworkCapturer.py:122
@@ -1312,15 +1312,13 @@ msgstr "Valeur du temporisateur incorrecte"
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerPlugin.py:55
 #: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-x86_64-2.7/NetworkCapturer/NetworkCapturerPlugin.py:55
-#, fuzzy
 msgid "Provide the possibility to capture network traffic."
-msgstr "Permet la capture de flux réseau."
+msgstr "Offre la possibilité de capturer le trafic réseau."
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerPlugin.py:68
 #: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-x86_64-2.7/NetworkCapturer/NetworkCapturerPlugin.py:68
-#, fuzzy
 msgid "Capture network traffic"
-msgstr "Capturer les messages réseau"
+msgstr "Capturer le trafic réseau"
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerView.py:71
 #: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-x86_64-2.7/NetworkCapturer/NetworkCapturerView.py:71
@@ -1343,9 +1341,8 @@ msgstr "Capturer les messages réseau"
 #: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-x86_64-2.7/PCAPImporter/PCAPImporterView.py:111
 #: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-x86_64-2.7/PCAPImporter/PCAPImporterView.py:123
 #: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-x86_64-2.7/PCAPImporter/PCAPImporterView.py:139
-#, fuzzy
 msgid "Payload"
-msgstr "Début de la charge utile"
+msgstr "Charge utile"
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerView.py:116
 #: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-x86_64-2.7/NetworkCapturer/NetworkCapturerView.py:116
@@ -1354,7 +1351,7 @@ msgstr "Début de la charge utile"
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporterView.py:109
 #: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-x86_64-2.7/PCAPImporter/PCAPImporterView.py:109
 msgid "Source Address"
-msgstr ""
+msgstr "Adresse source"
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerView.py:117
 #: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-x86_64-2.7/NetworkCapturer/NetworkCapturerView.py:117
@@ -1363,7 +1360,7 @@ msgstr ""
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporterView.py:110
 #: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-x86_64-2.7/PCAPImporter/PCAPImporterView.py:110
 msgid "Destination Address"
-msgstr ""
+msgstr "Adresse destination"
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerView.py:128
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerView.py:141
@@ -1374,7 +1371,7 @@ msgstr ""
 #: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-x86_64-2.7/PCAPImporter/PCAPImporterView.py:121
 #: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-x86_64-2.7/PCAPImporter/PCAPImporterView.py:134
 msgid "Source IP"
-msgstr ""
+msgstr "IP source"
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerView.py:129
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerView.py:142
@@ -1385,7 +1382,7 @@ msgstr ""
 #: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-x86_64-2.7/PCAPImporter/PCAPImporterView.py:122
 #: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-x86_64-2.7/PCAPImporter/PCAPImporterView.py:135
 msgid "Destination IP"
-msgstr ""
+msgstr "IP destination"
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerView.py:143
 #: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-x86_64-2.7/NetworkCapturer/NetworkCapturerView.py:143
@@ -1393,9 +1390,8 @@ msgstr ""
 #: src/netzob_plugins/Importers/OSpyImporter/build/lib.linux-x86_64-2.7/OSpyImporter/OSpyImporterView.py:88
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporterView.py:136
 #: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-x86_64-2.7/PCAPImporter/PCAPImporterView.py:136
-#, fuzzy
 msgid "Protocol"
-msgstr "Protocole :"
+msgstr "Protocole"
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerView.py:144
 #: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-x86_64-2.7/NetworkCapturer/NetworkCapturerView.py:144
@@ -1403,9 +1399,8 @@ msgstr "Protocole :"
 #: src/netzob_plugins/Importers/OSpyImporter/build/lib.linux-x86_64-2.7/OSpyImporter/OSpyImporterView.py:89
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporterView.py:137
 #: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-x86_64-2.7/PCAPImporter/PCAPImporterView.py:137
-#, fuzzy
 msgid "Source Port"
-msgstr "Notre port :"
+msgstr "Port source"
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerView.py:145
 #: src/netzob_plugins/Capturers/NetworkCapturer/build/lib.linux-x86_64-2.7/NetworkCapturer/NetworkCapturerView.py:145
@@ -1414,7 +1409,7 @@ msgstr "Notre port :"
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporterView.py:138
 #: src/netzob_plugins/Importers/PCAPImporter/build/lib.linux-x86_64-2.7/PCAPImporter/PCAPImporterView.py:138
 msgid "Destination Port"
-msgstr ""
+msgstr "Port destination"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:76
 #: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-x86_64-2.7/PeachExporter/PeachExportController.py:76
@@ -1468,9 +1463,8 @@ msgstr ""
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportView.py:136
 #: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-x86_64-2.7/PeachExporter/PeachExportView.py:136
-#, fuzzy
 msgid "Export"
-msgstr "Importer"
+msgstr "Exporter"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExporterPlugin.py:56
 #: src/netzob_plugins/Exporters/PeachExporter/build/lib.linux-x86_64-2.7/PeachExporter/PeachExporterPlugin.py:56
@@ -1521,9 +1515,8 @@ msgstr "ID"
 
 #: src/netzob_plugins/Importers/DelimiterSeparatedImporter/DelimiterSeparatedImporter/DelimiterSeparatedImporterView.py:92
 #: src/netzob_plugins/Importers/DelimiterSeparatedImporter/build/lib.linux-x86_64-2.7/DelimiterSeparatedImporter/DelimiterSeparatedImporterView.py:92
-#, fuzzy
 msgid "Contents"
-msgstr "Contenu"
+msgstr "Contenus"
 
 #: src/netzob_plugins/Importers/OSpyImporter/OSpyImporter/OSpyImporterPlugin.py:51
 #: src/netzob_plugins/Importers/OSpyImporter/build/lib.linux-x86_64-2.7/OSpyImporter/OSpyImporterPlugin.py:51
@@ -2842,4 +2835,3 @@ msgstr "10"
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:228
 msgid "Time limit:"
 msgstr "Durée de capture : "
-
