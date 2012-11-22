@@ -202,15 +202,9 @@ class IpcCapturer(AbstractCapturer):
             if not fd in self.selected_fds:
                 return self.doSniff
 
-        if returnCode > 256:
-            tmp_pkt = pkt[:255] + "..."
-        else:
-            tmp_pkt = pkt
-        if len(tmp_pkt) == 0:
-            return
         mUuid = str(uuid.uuid4())
         mTimestamp = int(time.time())
-        message = IPCMessage(mUuid, mTimestamp, tmp_pkt, self.getTypeFromFD(int(fd)), fd, direction)
+        message = IPCMessage(mUuid, mTimestamp, pkt, self.getTypeFromFD(int(fd)), fd, direction)
         self._payloadDict[mUuid] = pkt
         self.messages.append(message)
         self.callback_readMessage(message)
