@@ -48,11 +48,11 @@ from netzob.UI.NetzobWidgets import NetzobErrorMessage
 
 class IpcCapturerPlugin(CapturerPlugin):
     """IpcCapturerPlugin:
-            Plugin that captures IPC trafic.
+            Plugin that captures IPC traffic.
     """
     __plugin_name__ = "IpcCapturer"
     __plugin_version__ = "1.0"
-    __plugin_description__ = _("Provide the possibility to capture IPC trafic.")
+    __plugin_description__ = _("Provide the possibility to capture IPC traffic.")
     __plugin_author__ = "Frédéric Guihéry <frederic.guihery@amossys.fr>"
     __plugin_copyright__ = "Georges Bossert and Frédéric Guihéry"
     __plugin_license__ = "GPLv3+"
@@ -65,7 +65,7 @@ class IpcCapturerPlugin(CapturerPlugin):
         """
         super(IpcCapturerPlugin, self).__init__(netzob)
         self.netzob = netzob
-        self.entryPoints = [CapturerMenuExtension(netzob, self.actionCallback, "Capture IPC trafic", "Capture IPC trafic")]
+        self.entryPoints = [CapturerMenuExtension(netzob, self.actionCallback, "Capture IPC traffic", "Capture IPC traffic")]
 
     def getName(self):
         """getName:
