@@ -102,11 +102,8 @@ def loadProject_0_1(projectFile):
     return project
 
 
-#+---------------------------------------------------------------------------+
-#| Project:
-#|     Class definition of a Project
-#+---------------------------------------------------------------------------+
 class Project(object):
+    """Class definition of a Project"""
 
     # The name of the configuration file
     CONFIGURATION_FILENAME = "config.xml"
@@ -161,23 +158,20 @@ class Project(object):
         return root
 
     def saveConfigFile(self, workspace):
-
-        projectPath = os.path.join(os.path.join(workspace.getPath(), self.getPath()))
+        projectPath = os.path.join(workspace.getPath(), self.getPath())
         projectFile = os.path.join(projectPath, Project.CONFIGURATION_FILENAME)
 
-        logging.info("Save the config file of project " + self.getName() + " in " + projectFile)
+        logging.info("Save the config file of project {0} in {1}".format(self.getName(), projectFile))
 
         # First we verify and create if necessary the directory of the project
         if not os.path.exists(projectPath):
-            logging.info("Creation of the directory " + projectPath)
+            logging.info("Creation of the directory: {0}".format(projectPath))
             os.mkdir(projectPath)
+
         # We generate the XML Config file
         root = self.generateXMLConfigFile()
         tree = ElementTree(root)
         tree.write(projectFile)
-
-        # Saving the workspace configuration file
-#        workspace.saveConfigFile()
 
     def hasPendingModifications(self, workspace):
         result = True
@@ -240,11 +234,13 @@ class Project(object):
     @staticmethod
     def createProject(workspace, name):
         idProject = str(uuid.uuid4())
-        path = "projects/" + idProject + "/"
+        path = os.path.join("projects", idProject)
         creationDate = datetime.datetime.now()
         project = Project(idProject, name, creationDate, path)
+
         # Creation of the config file
         project.saveConfigFile(workspace)
+
         # Register the project in the workspace
         workspace.referenceProject(project.getPath())
         workspace.saveConfigFile()

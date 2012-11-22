@@ -110,11 +110,8 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
     return workspace
 
 
-#+---------------------------------------------------------------------------+
-#| Workspace:
-#|     Class definition of a Workspace
-#+---------------------------------------------------------------------------+
 class Workspace(object):
+    """Class definition of a Workspace"""
 
     # The name of the configuration file
     CONFIGURATION_FILENAME = "workspace.xml"
@@ -180,8 +177,8 @@ class Workspace(object):
 #        self.saveConfigFile()
 
     def getTransformationFunctions(self):
-        """Computes and returns the list of available
-        functions"""
+        """Computes and returns the list of available functions"""
+
         functions = []
         functions.append(Base64Function(_("Base64 Function")))
         functions.append(GZipFunction(_("GZip Function")))
@@ -210,12 +207,12 @@ class Workspace(object):
         if not path in self.projects_path:
             self.projects_path.append(path)
         else:
-            logging.warn("The project declared in " + path + " is already referenced in the workspace.")
+            logging.warn("The project declared in {0} is already referenced in the workspace.". format(path))
 
     def saveConfigFile(self):
         workspaceFile = os.path.join(self.path, Workspace.CONFIGURATION_FILENAME)
 
-        logging.info("Save the config file of the workspace " + self.getName() + " in " + workspaceFile)
+        logging.info("Save the config file of the workspace {0} in {1}".format(self.getName(), workspaceFile))
 
         # Register the namespace
         etree.register_namespace('netzob', WORKSPACE_NAMESPACE)
