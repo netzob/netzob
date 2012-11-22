@@ -287,7 +287,7 @@ class NetzobMainView(object):
 
         projectName = self.controller.getCurrentProject().getName()
 
-        questionMsg = _("Save the changes to the project \"{0}\" before closing?").format(projectName)
+        questionMsg = _("Save the changes to the project \"{0}\" before closing?".format(projectName))
 
         md = Gtk.MessageDialog(self.mainWindow,
                                Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
