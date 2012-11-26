@@ -33,7 +33,7 @@ import sys
 STATIC_DIR = os.path.join(sys.exec_prefix, "share/netzob")
 LOCAL_STATIC_DIR = "./resources/static/netzob"
 
-PLUGINS_STATIC_DIR = os.path.join(sys.exec_prefix, "share/netzob_plugins")
+PLUGINS_STATIC_DIR = os.path.join(sys.exec_prefix, "share/netzob/plugins")
 LOCAL_PLUGINS_STATIC_DIR = "./resources/static/netzob_plugins"
 
 #+---------------------------------------------------------------------------+

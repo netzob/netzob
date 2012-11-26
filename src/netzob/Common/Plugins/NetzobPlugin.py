@@ -42,14 +42,17 @@ import pkg_resources
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Plugins.Extensions.NetzobExtension import NetzobExtension
-from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration, ResourcesConfigurationException
 
 
-#+---------------------------------------------------------------------------+
-#| NetzobPlugin:
-#|     Abstract class every Netzob's plugin must subclass to be registered
-#+---------------------------------------------------------------------------+
+class NetzobPluginException(Exception):
+    pass
+
+
 class NetzobPlugin(object):
+    """Abstract class every Netzob's plugin must subclass to be
+    registered"""
+
     __metaclass__ = ABCMeta
     PLUGIN_FLAG_REJECTED = "rejected"
     instances = {}
@@ -105,13 +108,16 @@ class NetzobPlugin(object):
     def getPluginStaticResourcesPath(self):
         """Computes and returns the path to the static
         resources associated with the current plugin"""
-        pluginsPath = ResourcesConfiguration.getPluginsStaticResources()
-        pluginPath = os.path.join(pluginsPath, self.getName())
-        if os.path.isdir(pluginPath):
+
+        try:
+            pluginPath = os.path.join(ResourcesConfiguration.getPluginsStaticResources(),
+                                      self.getName())
+
+            logging.debug("The computed path for plugins' static resources is: {0}.".format(pluginPath))
             return pluginPath
-        else:
-            logging.warning("The computed path ({0}) is not a valid directory.".format(pluginPath))
-            return None
+
+        except ResourcesConfigurationException, e:
+            raise NetzobPluginException(str(e))
 
     @classmethod
     def getLoadedInstance(cls):
