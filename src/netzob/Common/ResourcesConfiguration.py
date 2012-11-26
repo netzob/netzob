@@ -44,6 +44,10 @@ from netzob import NetzobResources
 from netzob.Common.Workspace import Workspace
 
 
+class ResourcesConfigurationException(Exception):
+    pass
+
+
 class ResourcesConfiguration(object):
     """Configure and verify all the resources"""
 
