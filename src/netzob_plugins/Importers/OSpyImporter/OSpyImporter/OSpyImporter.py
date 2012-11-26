@@ -68,7 +68,7 @@ class OSpyImporter(AbstractImporter):
         self.log.debug("Loading XML structure in memory")
         xmlRoot = etree.fromstring(xmlFileContents)
         if xmlRoot is None:
-            logging.error("Error while loading XML structure in memory")
+            self.log.error("Error while loading XML structure in memory")
             return None
         # Parse all found messages in the XML structure
         messageList = []
