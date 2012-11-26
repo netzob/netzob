@@ -45,6 +45,10 @@ from netzob.Common.Plugins.Extensions.NetzobExtension import NetzobExtension
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
+class NetzobPluginException(Exception):
+    pass
+
+
 class NetzobPlugin(object):
     """Abstract class every Netzob's plugin must subclass to be
     registered"""
