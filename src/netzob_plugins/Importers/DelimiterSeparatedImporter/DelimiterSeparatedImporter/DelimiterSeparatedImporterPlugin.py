@@ -42,10 +42,10 @@ from DelimiterSeparatedImporterController import DelimiterSeparatedImporterContr
 
 
 class DelimiterSeparatedImporterPlugin(FileImporterPlugin):
-    """FileImporter: Provide the possibility to import messages from
-       any binary or ascii file."""
+    """DelimiterSeparatedImporter: Provide the possibility to import
+       messages from any binary or ascii file."""
 
-    __plugin_name__ = "FileImporter"
+    __plugin_name__ = "DelimiterSeparatedImporter"
     __plugin_version__ = "1.0"
     __plugin_description__ = _("Provide the possibility to import messages from any binary or ascii file.")
     __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>"
