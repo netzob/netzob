@@ -54,7 +54,7 @@ setup(
     author_email="contact@netzob.org",
     packages=[package],
     install_requires=dependencies,
-    data_files=find_data_files(opj("share", "netzob", "plugins"),
+    data_files=find_data_files(opj("share", "netzob", "plugins", package),
                                pluginsStaticResourcesPath,
                                '*.glade',
                                recursive=True),
