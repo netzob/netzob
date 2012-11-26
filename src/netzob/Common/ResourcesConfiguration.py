@@ -204,6 +204,8 @@ class ResourcesConfiguration(object):
             return NetzobResources.LOCAL_PLUGINS_STATIC_DIR
         elif (os.path.isdir(NetzobResources.PLUGINS_STATIC_DIR)):
             return NetzobResources.PLUGINS_STATIC_DIR
+        else:
+            raise ResourcesConfigurationException(_("Unable to find plugins static resources."))
 
     @staticmethod
     def getWorkspaceDir():
