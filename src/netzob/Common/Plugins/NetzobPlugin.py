@@ -45,11 +45,10 @@ from netzob.Common.Plugins.Extensions.NetzobExtension import NetzobExtension
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
-#+---------------------------------------------------------------------------+
-#| NetzobPlugin:
-#|     Abstract class every Netzob's plugin must subclass to be registered
-#+---------------------------------------------------------------------------+
 class NetzobPlugin(object):
+    """Abstract class every Netzob's plugin must subclass to be
+    registered"""
+
     __metaclass__ = ABCMeta
     PLUGIN_FLAG_REJECTED = "rejected"
     instances = {}

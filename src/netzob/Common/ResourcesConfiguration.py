@@ -44,11 +44,8 @@ from netzob import NetzobResources
 from netzob.Common.Workspace import Workspace
 
 
-#+----------------------------------------------
-#| ResourcesConfiguration:
-#|    Configure and verify all the resources
-#+----------------------------------------------
 class ResourcesConfiguration(object):
+    """Configure and verify all the resources"""
 
     LOCALFILE = ".netzob"
     DELIMITOR_LOCALFILE = "="
