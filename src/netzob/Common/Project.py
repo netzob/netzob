@@ -79,6 +79,9 @@ def loadProject_0_1(projectFile):
     projectPath = xmlProject.get('path')
     project = Project(projectID, projectName, projectCreationDate, projectPath)
 
+    description = xmlProject.get('description')
+    project.setDescription(description)
+
     # Parse the configuration
     if xmlProject.find("{" + PROJECT_NAMESPACE + "}configuration") is not None:
         projectConfiguration = ProjectConfiguration.loadProjectConfiguration(xmlProject.find("{" + PROJECT_NAMESPACE + "}configuration"), PROJECT_NAMESPACE, "0.1")
@@ -132,6 +135,7 @@ class Project(object):
         self.grammar = Grammar()
         self.simulator = Simulator()
         self.configuration = ProjectConfiguration.loadDefaultProjectConfiguration()
+        self.description = None
 
     def generateXMLConfigFile(self):
         # Register the namespace
@@ -148,6 +152,10 @@ class Project(object):
         else:
             root.set("creation_date", TypeConvertor.pythonDatetime2XSDDatetime(self.getCreationDate()))
         root.set("name", str(self.getName()))
+
+        if self.description:
+            root.set("description", str(self.description))
+
         # Save the configuration in it
         self.getConfiguration().save(root, PROJECT_NAMESPACE)
 
@@ -452,6 +460,11 @@ class Project(object):
         prop = Property('name', Format.STRING, self.getName())
         prop.setIsEditable(True)
         properties.append(prop)
+
+        prop = Property('description', Format.STRING, self.getDescription())
+        prop.setIsEditable(True)
+        properties.append(prop)
+
         properties.append(Property('date', Format.STRING, self.getCreationDate()))
         properties.append(Property('symbols', Format.DECIMAL, len(self.getVocabulary().getSymbols())))
         properties.append(Property('messages', Format.DECIMAL, len(self.getVocabulary().getMessages())))
@@ -487,6 +500,9 @@ class Project(object):
     def getName(self):
         return self.name
 
+    def getDescription(self):
+        return self.description
+
     def getCreationDate(self):
         return self.creationDate
 
@@ -510,6 +526,9 @@ class Project(object):
 
     def setName(self, name):
         self.name = name
+
+    def setDescription(self, description):
+        self.description = description
 
     def setPath(self, path):
         self.path = path
