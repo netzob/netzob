@@ -127,12 +127,13 @@
                             <child>
                               <object class="GtkEntry" id="projectNameEntry">
                                 <property name="visible">True</property>
-                                <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
                                 <property name="hexpand">True</property>
                                 <property name="invisible_char">●</property>
                                 <property name="activates_default">True</property>
                                 <property name="invisible_char_set">True</property>
+                                <signal name="changed" handler="projectNameEntry_changed_cb" swapped="no"/>
+                                <signal name="focus-out-event" handler="projectNameEntry_focus_out_event_cb" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -158,12 +159,13 @@
                             <child>
                               <object class="GtkEntry" id="projectDescriptionEntry">
                                 <property name="visible">True</property>
-                                <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
                                 <property name="hexpand">True</property>
                                 <property name="invisible_char">●</property>
                                 <property name="activates_default">True</property>
                                 <property name="invisible_char_set">True</property>
+                                <signal name="changed" handler="projectDescriptionEntry_changed_cb" swapped="no"/>
+                                <signal name="focus-out-event" handler="projectDescriptionEntry_focus_out_event_cb" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>

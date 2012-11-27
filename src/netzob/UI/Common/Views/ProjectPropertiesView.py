@@ -51,6 +51,11 @@ class ProjectPropertiesView(object):
                                                 "projectPropertiesDialog.glade"))
         self._getObjects(self.builder,
                          ["projectPropertiesDialog",
+                          "closebutton",
+
+                          # Properties tab
+                          "projectNameEntry",
+                          "projectDescriptionEntry",
 
                           # Details tab
                           "projectDetailName",
@@ -68,6 +73,12 @@ class ProjectPropertiesView(object):
 
         self.controller = controller
         self.projectPropertiesDialog.set_transient_for(parent)
+
+        self.projectNameEntry.set_text(controller.currentProject.getName())
+
+        desc = controller.currentProject.getDescription()
+        if desc:
+            self.projectDescriptionEntry.set_text(desc)
 
         # Finally, connect signals to the controller
         self.builder.connect_signals(self.controller)

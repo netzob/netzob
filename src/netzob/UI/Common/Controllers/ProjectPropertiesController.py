@@ -60,6 +60,9 @@ class ProjectPropertiesController(object):
         else:
             parentWindow = mainController.view.mainWindow
 
+        self.projectNameChanged = False
+        self.projectDescriptionChanged = False
+
         self._view = ProjectPropertiesView(self, parent=parentWindow)
 
         vocabParameters = self.currentProject.getConfiguration().getVocabularyInferenceParameter
@@ -95,3 +98,37 @@ class ProjectPropertiesController(object):
 
     def closebutton_clicked_cb(self, widget):
         self.view.destroy()
+
+    def projectNameEntry_changed_cb(self, entry):
+        self.projectNameChanged = True
+
+        if len(entry.get_text()) >= 1:
+            self.view.closebutton.set_sensitive(True)
+        else:
+            self.view.closebutton.set_sensitive(False)
+
+    def projectNameEntry_focus_out_event_cb(self, entry, data):
+        if self.projectNameChanged:
+            projectName = entry.get_text()
+
+            self.log.debug("Updating project name, from {0}, to {1}".format(self.currentProject.getName(),
+                                                                            projectName))
+
+            self.currentProject.setName(projectName)
+            self.currentProject.saveConfigFile(self.workspace)
+            self.mainController.updateListOfAvailableProjects()
+            self._refreshProjectProperties()
+
+    def projectDescriptionEntry_changed_cb(self, entry):
+        self.projectDescriptionChanged = True
+
+    def projectDescriptionEntry_focus_out_event_cb(self, entry, data):
+        if self.projectDescriptionChanged:
+            projectDescription = entry.get_text()
+
+            self.log.debug("Updating project description, from {0}, to {1}".format(self.currentProject.getDescription(),
+                                                                                   projectDescription))
+
+            self.currentProject.setDescription(projectDescription)
+            self.currentProject.saveConfigFile(self.workspace)
+            self._refreshProjectProperties()
