@@ -62,6 +62,14 @@ class ProjectPropertiesController(object):
 
         self._view = ProjectPropertiesView(self, parent=parentWindow)
 
+        vocabParameters = self.currentProject.getConfiguration().getVocabularyInferenceParameter
+        self.projectFormat = vocabParameters(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
+        self.projectSize = vocabParameters(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
+        self.projectSign = vocabParameters(ProjectConfiguration.VOCABULARY_GLOBAL_SIGN)
+        self.projectEndianess = vocabParameters(ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS)
+
+        self._refreshProjectProperties()
+
     @property
     def view(self):
         if hasattr(self, "_view"):
@@ -73,6 +81,17 @@ class ProjectPropertiesController(object):
 
     def connectDestroySignal(self, function):
         self.view.projectPropertiesDialog.connect("destroy", function)
+
+    def _refreshProjectProperties(self):
+        props = self.currentProject.getProperties()
+
+        self.view.refreshProjectProperties(name=props['name'].getCurrentValue(),
+                                           description=props['description'].getCurrentValue(),
+                                           date=props['date'].getCurrentValue(),
+                                           symbols=props['symbols'].getCurrentValue(),
+                                           messages=props['messages'].getCurrentValue(),
+                                           fields=props['fields'].getCurrentValue(),
+                                           workspace=props['workspace'].getCurrentValue())
 
     def closebutton_clicked_cb(self, widget):
         self.view.destroy()

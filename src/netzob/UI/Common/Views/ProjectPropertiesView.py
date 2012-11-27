@@ -51,6 +51,19 @@ class ProjectPropertiesView(object):
                                                 "projectPropertiesDialog.glade"))
         self._getObjects(self.builder,
                          ["projectPropertiesDialog",
+
+                          # Details tab
+                          "projectDetailName",
+                          "projectDetailDescription",
+                          "projectDetailCreationDate",
+                          "projectDetailSymbols",
+                          "projectDetailMessages",
+                          "projectDetailsFields",
+                          "projectDetailWorkspace",
+                          "projectDetailFormat",
+                          "projectDetailUnitSize",
+                          "projectDetailSign",
+                          "projectDetailEndianess",
                           ])
 
         self.controller = controller
@@ -58,6 +71,33 @@ class ProjectPropertiesView(object):
 
         # Finally, connect signals to the controller
         self.builder.connect_signals(self.controller)
+
+    def refreshProjectProperties(self,
+                                 name,
+                                 description,
+                                 date,
+                                 symbols,
+                                 messages,
+                                 fields,
+                                 workspace):
+        self.projectDetailName.set_text(name)
+
+        if description:
+            self.projectDetailDescription.set_text(description)
+
+        currentDate = ""
+        if date:
+            currentDate = date.strftime("%c")
+        self.projectDetailCreationDate.set_text(currentDate)
+
+        self.projectDetailSymbols.set_text(str(symbols))
+        self.projectDetailMessages.set_text(str(messages))
+        self.projectDetailsFields.set_text(str(fields))
+        self.projectDetailWorkspace.set_text(str(workspace))
+        self.projectDetailFormat.set_text(self.controller.projectFormat)
+        self.projectDetailUnitSize.set_text(self.controller.projectSize)
+        self.projectDetailSign.set_text(self.controller.projectSign)
+        self.projectDetailEndianess.set_text(self.controller.projectEndianess)
 
     def _getObjects(self, builder, objectsList):
         for obj in objectsList:
