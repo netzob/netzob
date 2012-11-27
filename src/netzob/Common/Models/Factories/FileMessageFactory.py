@@ -78,7 +78,7 @@ class FileMessageFactory():
         subLineNumber.text = str(message.getLineNumber())
         # filename
         subFilename = etree.SubElement(xmlMessage, "{" + namespace_common + "}filename")
-        subFilename.text = message.getFilename()
+        subFilename.text = message.getFilename().decode('utf-8')
         # creationDate
         subCreationDate = etree.SubElement(xmlMessage, "{" + namespace_common + "}creationDate")
         subCreationDate.text = TypeConvertor.pythonDatetime2XSDDatetime(message.getCreationDate())
