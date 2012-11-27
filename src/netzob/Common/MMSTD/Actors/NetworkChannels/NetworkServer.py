@@ -166,6 +166,10 @@ class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
         self.allow_reuse_address = True
         self.multipleConnectionAllowed = True
         self.memory = None
+        self.bindIP = None
+        self.bindPort = None
+        self.targetIP = None
+        self.targetPort = None
 
     def getVocabulary(self):
         return self.vocabulary
@@ -184,6 +188,30 @@ class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
 
     def setMemory(self, memory):
         self.memory = memory
+
+    def getBindIP(self):
+        return self.bindIP
+
+    def setBindIP(self, bindIP):
+        self.bindIP = bindIP
+
+    def getBindPort(self):
+        return self.bindPort
+
+    def setBindPort(self, port):
+        self.bindPort = port
+
+    def getTargetIP(self):
+        return self.targetIP
+
+    def setTargetIP(self, targetIP):
+        self.targetIP = targetIP
+
+    def getTargetPort(self):
+        return self.targetPort
+
+    def setTargetPort(self, targetPort):
+        self.targetPort = targetPort
 
     def setInitialState(self, initialState):
         self.initialState = initialState
@@ -326,8 +354,17 @@ class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
         # we create a sub automata
         automata = MMSTD(initialState, vocabulary)
 
+        # and duplicate the memory for this instance
+        duplicatedMemory = self.server.getMemory().duplicate()
+
+        # set client IP and Port source as the target IP:Port through memory
+        targetIP = self.client_address[0]
+        targetPort = self.client_address[1]
+        self.server.setTargetIP(targetIP)
+        self.server.setTargetPort(targetPort)
+
         # We create an instantiated network server
-        instanciatedNetworkServer = InstanciatedNetworkServer("UDP", self.request, self.client_address)
+        instanciatedNetworkServer = InstanciatedNetworkServer(uuid.uuid4(), duplicatedMemory, "UDP", self.request, self.server.getBindIP(), self.server.getBindPort(), self.server.getTargetIP(), self.server.getTargetPort())
 
         # Create the input and output abstraction layer
         abstractionLayer = AbstractionLayer(instanciatedNetworkServer, vocabulary, Memory(), self.server.getCBInputSymbol(), self.server.getCBOutputSymbol())
