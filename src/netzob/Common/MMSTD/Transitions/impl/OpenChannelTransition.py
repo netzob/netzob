@@ -82,7 +82,7 @@ class OpenChannelTransition(AbstractTransition):
 
         if abstractionLayer.getCommunicationChannel().isServer():
             self.log.debug("Cleaning the memory")
-            abstractionLayer.getMemory().cleanMemory()
+#            abstractionLayer.getMemory().cleanMemory()
 
             self.activate()
             self.log.info("We instanciate a new server and close the current MMSTD")

@@ -52,8 +52,8 @@ from netzob.Common.MMSTD.Actors.AbstractChannel import AbstractChannel
 #+---------------------------------------------------------------------------+
 class InstanciatedNetworkServer(AbstractChannel):
 
-    def __init__(self, protocol, request, udp_client_address=None):
-#        AbstractChannel.__init__(self, True, True)
+    def __init__(self, idActor, memory, protocol, request, bind_ip, bind_port, target_ip, target_port):
+        AbstractChannel.__init__(self, idActor, True, True, memory, protocol, bind_ip, bind_port, target_ip, target_port)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.InstanciatedNetworkServer.py')
         self.inputMessages = []
@@ -62,7 +62,6 @@ class InstanciatedNetworkServer(AbstractChannel):
         if self.protocol == "UDP":
             dataReceived = request[0].strip()
             self.socket = request[1]
-            self.udp_client_address = udp_client_address
         else:  # TCP
             self.socket = request
 
@@ -124,9 +123,9 @@ class InstanciatedNetworkServer(AbstractChannel):
         # This work only for values between 0x00 and 0x7f
         # self.socket.send(message.tostring())
         if self.protocol == "UDP":
-            self.socket.sendto(TypeConvertor.binB2string(message), self.udp_client_address)
+            self.socket.sendto(TypeConvertor.bin2string(message), (self.getTargetIP(), self.getTargetPort()))
         else:  # TCP
-            self.socket.send(TypeConvertor.binB2string(message))
+            self.socket.send(TypeConvertor.bin2string(message))
 
         self.log.debug("Write down !")
 

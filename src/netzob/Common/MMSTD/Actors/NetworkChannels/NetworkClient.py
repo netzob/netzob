@@ -128,7 +128,7 @@ class NetworkClient(AbstractChannel):
         except:
             self.log.debug("Impossible to read from the network socket")
             return None
-        result = TypeConvertor.stringB2bin("".join(chars), "big")
+        result = TypeConvertor.string2bin("".join(chars), "big")
         self.log.debug("Read finished")
         if (len(chars) == 0):
             return result

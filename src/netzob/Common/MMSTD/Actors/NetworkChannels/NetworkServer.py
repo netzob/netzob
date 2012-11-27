@@ -60,9 +60,41 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
         self.instances = []
         self.allow_reuse_address = True
         self.multipleConnectionAllowed = True
+        self.memory = None
+        self.bindIP = None
+        self.bindPort = None
+        self.targetIP = None
+        self.targetPort = None
 
     def getVocabulary(self):
         return self.vocabulary
+
+    def getMemory(self):
+        return self.memory
+
+    def getBindIP(self):
+        return self.bindIP
+
+    def setBindIP(self, bindIP):
+        self.bindIP = bindIP
+
+    def getBindPort(self):
+        return self.bindPort
+
+    def setBindPort(self, port):
+        self.bindPort = port
+
+    def getTargetIP(self):
+        return self.targetIP
+
+    def setTargetIP(self, targetIP):
+        self.targetIP = targetIP
+
+    def getTargetPort(self):
+        return self.targetPort
+
+    def setTargetPort(self, targetPort):
+        self.targetPort = targetPort
 
     def getInitialState(self):
         return self.initialState
@@ -72,6 +104,9 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 
     def setVocabulary(self, vocabulary):
         self.vocabulary = vocabulary
+
+    def setMemory(self, memory):
+        self.memory = memory
 
     def setInitialState(self, initialState):
         self.initialState = initialState
@@ -130,9 +165,13 @@ class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
         self.instances = []
         self.allow_reuse_address = True
         self.multipleConnectionAllowed = True
+        self.memory = None
 
     def getVocabulary(self):
         return self.vocabulary
+
+    def getMemory(self):
+        return self.memory
 
     def getInitialState(self):
         return self.initialState
@@ -142,6 +181,9 @@ class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
 
     def setVocabulary(self, vocabulary):
         self.vocabulary = vocabulary
+
+    def setMemory(self, memory):
+        self.memory = memory
 
     def setInitialState(self, initialState):
         self.initialState = initialState
@@ -212,8 +254,11 @@ class TCPConnectionHandler(SocketServer.BaseRequestHandler):
         # we create a sub automata
         automata = MMSTD(initialState, vocabulary)
 
+        # and duplicate the memory for this instance
+        duplicatedMemory = self.server.getMemory().duplicate()
+
         # We create an instantiated network server
-        instanciatedNetworkServer = InstanciatedNetworkServer("TCP", self.request)
+        instanciatedNetworkServer = InstanciatedNetworkServer(uuid.uuid4(), duplicatedMemory, "TCP", self.request, self.server.getBindIP(), self.server.getBindPort(), self.server.getTargetIP(), self.server.getTargetPort())
 
         # Create the input and output abstraction layer
         abstractionLayer = AbstractionLayer(instanciatedNetworkServer, vocabulary, Memory(), self.server.getCBInputSymbol(), self.server.getCBOutputSymbol())
@@ -366,6 +411,12 @@ class NetworkServer(AbstractChannel):
             self.server.setVocabulary(vocabulary)
             self.server.setInitialState(initialState)
             self.server.setMaster(master)
+            self.server.setMemory(self.getMemory())
+            self.server.setTargetIP(self.getTargetIP())
+            self.server.setTargetPort(self.getTargetPort())
+            self.server.setBindIP(self.getBindIP())
+            self.server.setBindPort(self.getBindPort())
+
             self.server.setMultipleConnectionIsAllowed(self.allowMultipleClients)
             self.server_thread = threading.Thread(target=self.server.serve_forever)
             self.server_thread.daemon = True
@@ -389,9 +440,6 @@ class NetworkServer(AbstractChannel):
     def getOutputMessages(self):
         return []
 
-    def getMemory(self):
-        return []
-
     def setAllowMultipleClients(self, allowMultipleClients):
         self.allowMultipleClients = allowMultipleClients
 
@@ -405,6 +453,9 @@ class NetworkServer(AbstractChannel):
 
         self.close()
         #AbstractActor.stop(self)
+
+    def write(self, message):
+        self.log.warning("Oups, a network server cannot send message, only instanciated can")
 
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
