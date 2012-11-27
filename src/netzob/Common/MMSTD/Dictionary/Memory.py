@@ -59,6 +59,14 @@ class Memory():
         """Set the callback to execute after a memory access"""
         self.memory_acces_cb = cb
 
+    def duplicate(self):
+        """Duplicates in a new memory"""
+        duplicatedMemory = Memory()
+        for k in self.memory.keys():
+            duplicatedMemory.memory[k] = self.memory[k]
+        duplicatedMemory.createMemory()
+        return duplicatedMemory
+
 #+---------------------------------------------------------------------------+
 #| Functions on memories                                                     |
 #+---------------------------------------------------------------------------+
