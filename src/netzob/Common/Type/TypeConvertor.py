@@ -323,7 +323,7 @@ class TypeConvertor():
         hex_octets = []
         for dec_octet in dec_octets:
             if int(dec_octet) > 255:
-                logging.error("The provided IP is not valid ! " + str(raw))
+                logging.error("The provided IP ({0}) is not valid!".format(raw))
                 return None
             if int(dec_octet) < 16:
                 hex_octets.append('0' + hex(int(dec_octet))[2:])
@@ -441,7 +441,7 @@ class TypeConvertor():
             elif unitSize == 4:
                 data = "".join(["0" + i for i in data])
             else:
-                logging.warn("Serializing at " + str(unitSize) + " unit size not yet implemented")
+                logging.warn("Serializing at {0} unit size not yet implemented".format(unitSize))
                 return
 
             format += str(len(data) / 2) + "M"
@@ -463,7 +463,7 @@ class TypeConvertor():
             elif unitSize == 4:
                 data = "".join(["0" + i for i in value])
             else:
-                logging.warn("Serializing at " + str(unitSize) + " unit size not yet implemented")
+                logging.warn("Serializing at {0} unit size not yet implemented".format(unitSize))
                 return
 
             format += str(len(data) / 2) + "M"
@@ -503,7 +503,7 @@ class TypeConvertor():
                         messageTmp += TypeConvertor.netzobRawToPythonRaw("0" + symbol.getAlignment()[i:i + 1])
                         alignmentTmp += "\x00"
             else:
-                logging.warn("Serializing at " + str(unitSize) + " unit size not yet implemented")
+                logging.warn("Serializing at {0} unit size not yet implemented".format(unitSize))
                 return
             serialSymbol += messageTmp
             serialSymbol += alignmentTmp
@@ -518,7 +518,7 @@ class TypeConvertor():
                     format += str(len(data)) + "M"
                     data = "".join(["0" + i for i in data])
                 else:
-                    logging.warn("Serializing at " + str(unitSize) + " unit size not yet implemented")
+                    logging.warn("Serializing at {0} unit size not yet implemented".format(unitSize))
                     return
                 serialSymbol += TypeConvertor.netzobRawToPythonRaw(data)  # The message
                 serialSymbol += "".join(['\x00' for x in range(len(data) / 2)])  # The alignement == "\x00" * len(the message), the first time
