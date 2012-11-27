@@ -40,6 +40,11 @@ import logging
 #+---------------------------------------------------------------------------+
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.UI.Common.Views.ProjectPropertiesView import ProjectPropertiesView
+from netzob.Common.Type.Format import Format
+from netzob.Common.Type.UnitSize import UnitSize
+from netzob.Common.Type.Sign import Sign
+from netzob.Common.Type.Endianess import Endianess
+from netzob.Common.ProjectConfiguration import ProjectConfiguration
 
 
 class ProjectPropertiesController(object):
@@ -72,6 +77,7 @@ class ProjectPropertiesController(object):
         self.projectEndianess = vocabParameters(ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS)
 
         self._refreshProjectProperties()
+        self._initializeComboBoxes()
 
     @property
     def view(self):
@@ -95,6 +101,29 @@ class ProjectPropertiesController(object):
                                            messages=props['messages'].getCurrentValue(),
                                            fields=props['fields'].getCurrentValue(),
                                            workspace=props['workspace'].getCurrentValue())
+
+    def _initializeComboBoxes(self):
+        """This function permits to update the several combobox in the
+        dialog box."""
+
+        vocabParameters = self.currentProject.getConfiguration().getVocabularyInferenceParameter
+
+        formats = Format.getSupportedFormats()
+        projectFormat = vocabParameters(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
+
+        sizes = [UnitSize.NONE, UnitSize.BITS4, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64]
+        projectSize = vocabParameters(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
+
+        signs = [Sign.SIGNED, Sign.UNSIGNED]
+        projectSign = vocabParameters(ProjectConfiguration.VOCABULARY_GLOBAL_SIGN)
+
+        endianesses = [Endianess.BIG, Endianess.LITTLE]
+        projectEndianess = vocabParameters(ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS)
+
+        self.view.initializeComboBoxes(formats, projectFormat,
+                                       sizes, projectSize,
+                                       signs, projectSign,
+                                       endianesses, projectEndianess)
 
     def closebutton_clicked_cb(self, widget):
         self.view.destroy()
@@ -132,3 +161,39 @@ class ProjectPropertiesController(object):
             self.currentProject.setDescription(projectDescription)
             self.currentProject.saveConfigFile(self.workspace)
             self._refreshProjectProperties()
+
+    def propertiesFormatCombobox_changed_cb(self, combo):
+        tree_iter = combo.get_active_iter()
+        frmt = combo.get_model()[tree_iter][0]
+
+        setParam = self.currentProject.getConfiguration().setVocabularyInferenceParameter
+        setParam(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT, frmt)
+
+        self.currentProject.saveConfigFile(self.workspace)
+
+    def propertiesUnitsizeCombobox_changed_cb(self, combo):
+        tree_iter = combo.get_active_iter()
+        unitSize = combo.get_model()[tree_iter][0]
+
+        setParam = self.currentProject.getConfiguration().setVocabularyInferenceParameter
+        setParam(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE, unitSize)
+
+        self.currentProject.saveConfigFile(self.workspace)
+
+    def propertiesSignCombobox_changed_cb(self, combo):
+        tree_iter = combo.get_active_iter()
+        sign = combo.get_model()[tree_iter][0]
+
+        setParam = self.currentProject.getConfiguration().setVocabularyInferenceParameter
+        setParam(ProjectConfiguration.VOCABULARY_GLOBAL_SIGN, sign)
+
+        self.currentProject.saveConfigFile(self.workspace)
+
+    def propertiesEndianessCombobox_changed_cb(self, combo):
+        tree_iter = combo.get_active_iter()
+        endianess = combo.get_model()[tree_iter][0]
+
+        setParam = self.currentProject.getConfiguration().setVocabularyInferenceParameter
+        setParam(ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS, endianess)
+
+        self.currentProject.saveConfigFile(self.workspace)

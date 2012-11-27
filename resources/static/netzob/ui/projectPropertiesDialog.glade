@@ -285,9 +285,9 @@
                                 <child>
                                   <object class="GtkComboBox" id="propertiesFormatCombobox">
                                     <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
                                     <property name="can_focus">False</property>
                                     <property name="model">propertiesFormatListStore</property>
+                                    <signal name="changed" handler="propertiesFormatCombobox_changed_cb" swapped="no"/>
                                     <child>
                                       <object class="GtkCellRendererText" id="cellrenderertext3"/>
                                       <attributes>
@@ -305,9 +305,9 @@
                                 <child>
                                   <object class="GtkComboBox" id="propertiesUnitsizeCombobox">
                                     <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
                                     <property name="can_focus">False</property>
                                     <property name="model">propertiesUnitsizeListStore</property>
+                                    <signal name="changed" handler="propertiesUnitsizeCombobox_changed_cb" swapped="no"/>
                                     <child>
                                       <object class="GtkCellRendererText" id="cellrenderertext2"/>
                                       <attributes>
@@ -325,9 +325,9 @@
                                 <child>
                                   <object class="GtkComboBox" id="propertiesSignCombobox">
                                     <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
                                     <property name="can_focus">False</property>
                                     <property name="model">propertiesSignListStore</property>
+                                    <signal name="changed" handler="propertiesSignCombobox_changed_cb" swapped="no"/>
                                     <child>
                                       <object class="GtkCellRendererText" id="cellrenderertext4"/>
                                       <attributes>
@@ -345,9 +345,9 @@
                                 <child>
                                   <object class="GtkComboBox" id="propertiesEndianessCombobox">
                                     <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
                                     <property name="can_focus">False</property>
                                     <property name="model">propertiesEndianessListStore</property>
+                                    <signal name="changed" handler="propertiesEndianessCombobox_changed_cb" swapped="no"/>
                                     <child>
                                       <object class="GtkCellRendererText" id="cellrenderertext1"/>
                                       <attributes>

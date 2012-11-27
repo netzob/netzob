@@ -56,6 +56,10 @@ class ProjectPropertiesView(object):
                           # Properties tab
                           "projectNameEntry",
                           "projectDescriptionEntry",
+                          "propertiesFormatCombobox",
+                          "propertiesUnitsizeCombobox",
+                          "propertiesSignCombobox",
+                          "propertiesEndianessCombobox",
 
                           # Details tab
                           "projectDetailName",
@@ -119,3 +123,37 @@ class ProjectPropertiesView(object):
 
     def destroy(self):
         self.projectPropertiesDialog.destroy()
+
+    def initializeComboBoxes(self,
+                             formats, projectFormat,
+                             sizes, projectSize,
+                             signs, projectSign,
+                             endianesses, projectEndianess):
+
+        # Format
+        model = self.propertiesFormatCombobox.get_model()
+        for frmt in formats:
+            itr = model.append([frmt])
+            if frmt == projectFormat:
+                self.propertiesFormatCombobox.set_active_iter(itr)
+
+        # UnitSize
+        model = self.propertiesUnitsizeCombobox.get_model()
+        for size in sizes:
+            itr = model.append([size])
+            if size == projectSize:
+                self.propertiesUnitsizeCombobox.set_active_iter(itr)
+
+        # Sign
+        model = self.propertiesSignCombobox.get_model()
+        for sign in signs:
+            itr = model.append([sign])
+            if sign == projectSign:
+                self.propertiesSignCombobox.set_active_iter(itr)
+
+        # Endianess
+        model = self.propertiesEndianessCombobox.get_model()
+        for endianess in endianesses:
+            itr = model.append([endianess])
+            if endianess == projectEndianess:
+                self.propertiesEndianessCombobox.set_active_iter(itr)
