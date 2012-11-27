@@ -58,6 +58,7 @@ from netzob.Common.Project import Project
 from netzob.UI.Common.AboutDialog import AboutDialog
 from netzob.UI.Common.Controllers.BugReporterController import BugReporterController
 from netzob.UI.Common.Controllers.WorkspaceConfigurationController import WorkspaceConfigurationController
+from netzob.UI.Common.Controllers.ProjectPropertiesController import ProjectPropertiesController
 from netzob.UI.Common.Controllers.ProjectImportController import ProjectImportController
 from netzob.UI.Common.Controllers.ProjectExportController import ProjectExportController
 from netzob.UI.NetzobWidgets import NetzobErrorMessage
@@ -385,6 +386,13 @@ class NetzobMainController(object):
         current workspace"""
 
         controller = WorkspaceConfigurationController(self)
+        controller.run()
+
+    def projectProperties_activate_cb(self, action):
+        """Callback executed when the user requests to update the
+        project properties"""
+
+        controller = ProjectPropertiesController(self, project=self.currentProject)
         controller.run()
 
     def switchWorkspace_activate_cb(self, action):

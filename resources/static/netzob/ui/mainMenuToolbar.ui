@@ -10,6 +10,7 @@
       <separator />
       <placeholder name="fileMenuAdditions" />
       <separator />
+      <menuitem action="projectProperties" />
       <menuitem action="configureCurrentWorkspace" />
       <menuitem action="switchWorkspace" />
       <separator />

@@ -89,9 +89,11 @@ class NetzobMainView(object):
         if signal == SignalsManager.SIG_PROJECT_OPEN:
             self.mainActionGroup.get_action('saveProject').set_sensitive(True)
             self.mainActionGroup.get_action('exportProject').set_sensitive(True)
+            self.mainActionGroup.get_action('projectProperties').set_sensitive(True)
         elif signal == SignalsManager.SIG_PROJECT_CLOSE:
             self.mainActionGroup.get_action('saveProject').set_sensitive(False)
             self.mainActionGroup.get_action('exportProject').set_sensitive(False)
+            self.mainActionGroup.get_action('projectProperties').set_sensitive(False)
 
     def _getObjects(self, builder, objectsList):
         for object in objectsList:

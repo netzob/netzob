@@ -97,5 +97,14 @@
         <signal name="activate" handler="availablePlugins_activate_cb" swapped="no"/>
       </object>
     </child>
+    <child>
+      <object class="GtkAction" id="projectProperties">
+        <property name="label" translatable="yes">Project Properties</property>
+        <property name="short_label" translatable="yes">Properties</property>
+        <property name="stock_id">gtk-properties</property>
+        <property name="sensitive">False</property>
+        <signal name="activate" handler="projectProperties_activate_cb" swapped="no"/>
+      </object>
+    </child>
   </object>
 </interface>
