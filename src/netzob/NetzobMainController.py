@@ -528,6 +528,7 @@ class NetzobMainController(object):
                 "dialogbox.glade"))
 
             dialog = builder2.get_object("switchWorkspace")
+            dialog.set_transient_for(self.view.mainWindow)
 
             applybutton = builder2.get_object("switchWorkspaceApplyButton")
             fileChooserButton = builder2.get_object("switchWorkspaceFileChooserButton")

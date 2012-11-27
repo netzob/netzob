@@ -229,6 +229,10 @@ class NetzobMainView(object):
         """Update the menu"""
         switchProjectMenu = self.uiManager.get_widget("/mainMenuBar/fileMenu/switchProject").get_submenu()
 
+        if len(listOfProjectsNameAndPath) == 0:
+            self.uiManager.get_widget("/mainMenuBar/fileMenu/switchProject").set_sensitive(False)
+            return
+
         # Update the list of project
         for i in switchProjectMenu.get_children():
             switchProjectMenu.remove(i)
@@ -239,6 +243,7 @@ class NetzobMainView(object):
         if currentProject is not None:
             currentProjectName = currentProject.getName()
             currentProjectPath = currentProject.getPath()
+
         for (projectName, projectPath) in listOfProjectsNameAndPath:
             projectLoaded = False
             # Set toggled the current project
