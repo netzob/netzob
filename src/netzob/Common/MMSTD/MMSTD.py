@@ -169,7 +169,7 @@ class MMSTD(Automata):
                 color = "white"
 
             if state == self.initialState:
-                shape = "doublecircle"
+                shape = "doubleoctagon"
             else:
                 shape = "ellipse"
 
