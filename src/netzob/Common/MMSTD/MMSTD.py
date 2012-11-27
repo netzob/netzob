@@ -32,6 +32,7 @@ from locale import gettext as _
 from lxml import etree
 from lxml.etree import ElementTree
 import logging
+import uuid
 
 #+----------------------------------------------
 #| Related third party imports
@@ -138,7 +139,7 @@ class MMSTD(Automata):
     #| @return the generated traces (a list of symbols) by the MMSTD and the end state
     #+---------------------------------------------------------------------------+
     def getOutputTrace(self, state, symbols):
-        communicationLayer = SimpleCommunicationLayer(symbols, [], self.vocabulary, Memory())
+        communicationLayer = SimpleCommunicationLayer(uuid.uuid4(), symbols, [], self.vocabulary, Memory())
         abstractionLayer = AbstractionLayer(communicationLayer, self.vocabulary, Memory())
         # communicationLayer = SimpleCommunicationLayer(symbols, [], self.vocabulary, Memory(self.vocabulary.getVariables()))
         # abstractionLayer = AbstractionLayer(communicationLayer, self.vocabulary, Memory(self.vocabulary.getVariables()))
