@@ -111,16 +111,15 @@ class CreateNetworkActorController(object):
         # Create the Channel
 
         # retrieve the type (SERVER or CLIENT)
-        typeActor = self._view.typeComboBoxText.get_active_text()
-        if typeActor is None:
+        typeActorStr = self._view.typeComboBoxText.get_active_text()
+        if typeActorStr is None:
             errorMessage = _("Specify the type of the actor.")
             self.displayErrorMessage(errorMessage)
             return
 
-        if typeActor != "CLIENT" and typeActor != "SERVER":
-            errorMessage = _("Choose between a CLIENT or a SERVER type.")
-            self.displayErrorMessage(errorMessage)
-            return
+        actorIsClient = False
+        if typeActorStr == _("CLIENT"):
+            actorIsClient = True
 
         # retrieve the L4 protocol
         l4Protocol = self._view.l4ProtocolComboBoxText.get_active_text()
@@ -166,7 +165,7 @@ class CreateNetworkActorController(object):
         # Initialize a memory with communication channels variables
         memory = Memory()
 
-        if typeActor == "CLIENT":
+        if actorIsClient:
             # Create a Client Network Actor
             # target IP and target Port must be specified !
             if targetIP is None or len(targetIP) == 0:
@@ -180,8 +179,7 @@ class CreateNetworkActorController(object):
                 return
 
             communicationChannel = NetworkClient(idChannel, memory, l4Protocol, bindIP, bindPort, targetIP, targetPort)
-
-        if typeActor == "SERVER":
+        else:
             # Create a Server Network Actor
             # bind IP and bind Port must be specified !
             if bindIP is None or len(bindIP) == 0:
