@@ -32,7 +32,7 @@ import logging
 import os
 from lxml.etree import ElementTree
 from lxml import etree
-from locale import gettext as _
+from gettext import gettext as _
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports

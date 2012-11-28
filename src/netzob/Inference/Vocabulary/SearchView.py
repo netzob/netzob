@@ -28,7 +28,7 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 from gi.repository import Gtk
 import gi

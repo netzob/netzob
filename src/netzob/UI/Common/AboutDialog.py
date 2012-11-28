@@ -34,7 +34,7 @@ from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 gi.require_version('Gtk', '3.0')
 import os
 from netzob import release
-from locale import gettext as _
+from gettext import gettext as _
 
 
 #+----------------------------------------------
