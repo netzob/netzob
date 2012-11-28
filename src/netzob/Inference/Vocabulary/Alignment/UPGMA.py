@@ -82,15 +82,19 @@ class UPGMA(object):
         self.symbols = []
         i_symbol = 1
         self.dendro_alignments = ""
+        saveSymbols = "symbols = {}\n"
         for symbol in symbols:
             for m in symbol.getMessages():
                 tmpSymbol = Symbol(str(uuid.uuid4()), "Symbol " + str(i_symbol), project)
                 tmpSymbol.addMessage(m)
                 self.symbols.append(tmpSymbol)
                 tmpSymbol.setDendrogram(tmpSymbol.getName() + ":1")
+                saveSymbols += "symbols[\""+tmpSymbol.getName()+"\"] = \""+m.getStringData()+"\"\n"
                 self.dendro_alignments += ">" + tmpSymbol.getName() + "\n"
-                self.dendro_alignments += TypeConvertor.netzobRawToString(m.getStringData()) + "\n"
+                self.dendro_alignments += m.getStringData() + "\n"
                 i_symbol += 1
+
+        print saveSymbols
 
         # Write dendrogram data to a file
         fd = open("/tmp/dendro.log_" + str(time.time()), "w")
@@ -141,6 +145,7 @@ class UPGMA(object):
         print self.symbols[0].getDendrogram() + ";"
         t = PhyloTree( self.symbols[0].getDendrogram() + ";")
 #        t.link_to_alignment( self.dendro_alignments )
+#        print self.dendro_alignments
 #        t.show()
 
         return self.symbols
@@ -181,8 +186,9 @@ class UPGMA(object):
             for j_key in self.scores[i_key].keys():
                 row.append(self.scores[i_key][j_key])
             self.scores_tab.append(row)
-        print self.scores_tab
+#        print self.scores_tab
 
+        """
         from matplotlib.pyplot import show as sshow
         from matplotlib.pyplot import savefig
         from scipy.cluster.hierarchy import linkage, dendrogram
@@ -198,8 +204,9 @@ class UPGMA(object):
                 return "..."
 
         dendrogram( Z , orientation="left", leaf_font_size=5, leaf_label_func=llf)
-        savefig('/tmp/foo.pdf')
-        sshow()
+        """
+#        savefig('/tmp/foo.pdf')
+#        sshow()
 
         # Reduce the UPGMA matrix (merge symbols by similarity)
         self.computePhylogenicTree()
