@@ -32,6 +32,7 @@ from locale import gettext as _
 import sys
 import os
 import logging
+import gettext
 import locale
 import uuid
 import shutil
@@ -165,6 +166,8 @@ class NetzobMainController(object):
             sys.exit()
 
         # Initialiaze gettext
+        gettext.bindtextdomain("netzob", ResourcesConfiguration.getLocaleLocation())
+        gettext.textdomain("netzob")
         locale.bindtextdomain("netzob", ResourcesConfiguration.getLocaleLocation())
         locale.textdomain("netzob")
         try:
