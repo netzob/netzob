@@ -303,7 +303,7 @@ class VocabularyController(object):
             return
         layers = self.view.getCheckedLayerList()
         if layers == []:
-            NetzobErrorMessage(_("No layer(s) selected."))
+            NetzobErrorMessage(_("No layer selected."))
             return
         sequence_controller = SequenceAlignmentController(self, layers, doUpgma=True)
         sequence_controller.run()
@@ -314,7 +314,7 @@ class VocabularyController(object):
             return
         layers = self.view.getCheckedLayerList()
         if layers == []:
-            NetzobErrorMessage(_("No symbol(s) selected."))
+            NetzobErrorMessage(_("No symbol selected."))
             return
         force_controller = ForcePartitioningController(self, layers)
         force_controller.run()
@@ -325,7 +325,7 @@ class VocabularyController(object):
             return
         layers = self.view.getCheckedLayerList()
         if layers == []:
-            NetzobErrorMessage(_("No symbol(s) selected."))
+            NetzobErrorMessage(_("No symbol selected."))
             return
         simple_controller = SimplePartitioningController(self, layers)
         simple_controller.run()
@@ -336,7 +336,7 @@ class VocabularyController(object):
             return
         layers = self.view.getCheckedLayerList()
         if layers == []:
-            NetzobErrorMessage(_("No symbol(s) selected."))
+            NetzobErrorMessage(_("No symbol selected."))
             return
         smooth_controller = SmoothPartitioningController(self, layers)
         smooth_controller.run()
@@ -349,7 +349,7 @@ class VocabularyController(object):
             return
         layers = self.view.getCheckedLayerList()
         if layers == []:
-            NetzobErrorMessage(_("No symbol(s) selected."))
+            NetzobErrorMessage(_("No symbol selected."))
             return
         reset_controller = ResetPartitioningController(self, layers)
         reset_controller.run()
@@ -430,7 +430,7 @@ class VocabularyController(object):
             return
         selectedMessages = self.view.getSelectedMessagesInSelectedMessageTable()
         if selectedMessages is None or len(selectedMessages) == 0:
-            NetzobErrorMessage(_("Not selected message(s)."))
+            NetzobErrorMessage(_("No selected message."))
             return
 
         self.selectedMessagesToMove = selectedMessages
@@ -465,7 +465,7 @@ class VocabularyController(object):
             return
         selectedMessages = self.view.getSelectedMessagesInSelectedMessageTable()
         if selectedMessages == [] or selectedMessages is None:
-            NetzobErrorMessage(_("No selected message(s)."))
+            NetzobErrorMessage(_("No selected message."))
             return
         questionMsg = ngettext("Click yes to confirm the deletion of the selected message",
                                "Click yes to confirm the deletion of the selected messages",
@@ -516,7 +516,7 @@ class VocabularyController(object):
             return
         symbols = self.view.getCheckedSymbolList()
         if symbols == []:
-            NetzobErrorMessage(_("No symbol(s) selected."))
+            NetzobErrorMessage(_("No symbol selected."))
             return
         envDepController = EnvironmentDependenciesSearcherController(self, symbols)
         envDepController.run()
@@ -528,7 +528,7 @@ class VocabularyController(object):
             return
         symbols = self.view.getCheckedSymbolList()
         if symbols == []:
-            NetzobErrorMessage(_("No symbol(s) selected."))
+            NetzobErrorMessage(_("No symbol selected."))
             return
         distribution = MessagesDistributionController(self, self._view.getCheckedSymbolList())
         distribution.run()
@@ -587,7 +587,7 @@ class VocabularyController(object):
 
         layers = self.view.getCheckedLayerList()
         if layers == []:
-            NetzobErrorMessage(_("No symbol(s) selected."))
+            NetzobErrorMessage(_("No symbol selected."))
             return
 
         for layer in layers:
