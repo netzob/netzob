@@ -90,6 +90,7 @@ class Symbol(AbstractSymbol):
         self.field.setName(name)
         self.project = project
         self.pattern = None
+        self.dendrogram = ""
 
     #+----------------------------------------------
     #| getVariables:
@@ -306,6 +307,9 @@ class Symbol(AbstractSymbol):
     def getPatternString(self):
         return str(self.pattern[0]) + ";" + str([str(i) for i in self.pattern[1]])
 
+    def getDendrogram(self):
+        return self.dendrogram
+
     def getField(self):
         return self.field
 
@@ -358,6 +362,9 @@ class Symbol(AbstractSymbol):
 
     def setPattern(self, pattern):
         self.pattern = pattern
+
+    def setDendrogram(self, dendrogram):
+        self.dendrogram = dendrogram
 
     def __str__(self):
         return str(self.getName())

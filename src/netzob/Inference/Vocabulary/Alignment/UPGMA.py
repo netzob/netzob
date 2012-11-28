@@ -32,6 +32,8 @@ from locale import gettext as _
 import logging
 import uuid
 import random
+from ete2 import PhyloTree
+import time
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -79,12 +81,21 @@ class UPGMA(object):
         # Create a symbol for each message
         self.symbols = []
         i_symbol = 1
+        self.dendro_alignments = ""
         for symbol in symbols:
             for m in symbol.getMessages():
                 tmpSymbol = Symbol(str(uuid.uuid4()), "Symbol " + str(i_symbol), project)
                 tmpSymbol.addMessage(m)
                 self.symbols.append(tmpSymbol)
+                tmpSymbol.setDendrogram(tmpSymbol.getName() + ":1")
+                self.dendro_alignments += ">" + tmpSymbol.getName() + "\n"
+                self.dendro_alignments += TypeConvertor.netzobRawToString(m.getStringData()) + "\n"
                 i_symbol += 1
+
+        # Write dendrogram data to a file
+        fd = open("/tmp/dendro.log_" + str(time.time()), "w")
+        fd.write( self.dendro_alignments )
+        fd.close()
         self.log.debug("A number of {0} already aligned symbols will be clustered.".format(str(len(symbols))))
 
     def cb_executionStatus(self, stage, donePercent, currentMessage):
@@ -127,6 +138,11 @@ class UPGMA(object):
             self.currentAlignment.alignField(symbol.getField())
             self.currentAlignment.statusRatioOffset = self.currentAlignment.statusRatioOffset + 1
 
+        print self.symbols[0].getDendrogram() + ";"
+        t = PhyloTree( self.symbols[0].getDendrogram() + ";")
+#        t.link_to_alignment( self.dendro_alignments )
+#        t.show()
+
         return self.symbols
 
     def processUPGMA(self):
@@ -154,6 +170,36 @@ class UPGMA(object):
             self.scores[iuid][juid] = score
             if iuid not in self.scores[juid].keys():
                 self.scores[juid][iuid] = score
+
+        self.scores_tab = []
+        self.labels = {}
+        i = 0
+        for i_key in self.scores.keys():
+            self.labels[i] = i_key
+            i += 1
+            row = []
+            for j_key in self.scores[i_key].keys():
+                row.append(self.scores[i_key][j_key])
+            self.scores_tab.append(row)
+        print self.scores_tab
+
+        from matplotlib.pyplot import show as sshow
+        from matplotlib.pyplot import savefig
+        from scipy.cluster.hierarchy import linkage, dendrogram
+        Z = linkage( self.scores_tab , method='complete')
+
+        def llf(id):
+            if id < len(self.labels):
+                for symbol in self.symbols:
+                    if symbol.getID() == self.labels[id]:
+                        return symbol.getMessages()[0].getStringData()
+                return 
+            else:
+                return "..."
+
+        dendrogram( Z , orientation="left", leaf_font_size=5, leaf_label_func=llf)
+        savefig('/tmp/foo.pdf')
+        sshow()
 
         # Reduce the UPGMA matrix (merge symbols by similarity)
         self.computePhylogenicTree()
@@ -186,7 +232,7 @@ class UPGMA(object):
             status = (float(100) - float(maxScore)) / float(step)
             self.cb_executionStatus(1, status, infoMessage)
 
-            newuid = self.mergeEffectiveRowCol(i_maximum, j_maximum)
+            newuid = self.mergeEffectiveRowCol(i_maximum, j_maximum, maxScore)
             self.updateScore(max_i, max_j, newuid, size_i, size_j)
 #            self.log.debug("Score après: {0}".format(str(self.scores)))
             if len(self.scores) > 1:
@@ -228,7 +274,7 @@ class UPGMA(object):
             if max(self.scores[juid], key=lambda x: self.scores[juid][x]) == lastId:
                 break
 
-    def mergeEffectiveRowCol(self, i_maximum, j_maximum):
+    def mergeEffectiveRowCol(self, i_maximum, j_maximum, score):
         """Merge the symbols i and j in the "symbols" structure
         @param i_maximum: id of the first symbol to merge
         @param j_maximum: id of the second symbol to merge
@@ -247,6 +293,7 @@ class UPGMA(object):
         messages.extend(symbol2.getMessages())
 
         newSymbol = Symbol(str(uuid.uuid4()), symbol1.getName(), self.project)
+        newSymbol.setDendrogram("(" + symbol1.getDendrogram() + ", " + symbol2.getDendrogram() + "):" + str(score) + "")
         newSymbol.setMinEqu(self.minEquivalence)
         for message in messages:
             newSymbol.addMessage(message)
