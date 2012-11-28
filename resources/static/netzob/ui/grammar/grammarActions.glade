@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <!-- interface-requires gtk+ 3.0 -->
+  <object class="GtkActionGroup" id="grammarActionGroup">
+    <child>
+      <object class="GtkAction" id="activeGrammarInferring">
+        <property name="label" translatable="yes">Active Grammar Inferring</property>
+        <property name="tooltip" translatable="yes">Infer the grammar</property>
+        <property name="stock_id">gtk-media-stop</property>
+        <property name="is_important">True</property>
+        <signal name="activate" handler="activeGrammarInferring_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="passiveGrammarInferring">
+        <property name="label" translatable="yes">Passive Grammar Inferring</property>
+        <property name="tooltip" translatable="yes">Infer the grammar based on provided examples</property>
+        <property name="stock_id">gtk-media-stop</property>
+        <property name="is_important">True</property>
+        <signal name="activate" handler="passiveGrammarInferring_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="createState">
+        <property name="label" translatable="yes">Create State</property>
+        <property name="tooltip" translatable="yes">Create a state in the current grammar</property>
+        <property name="stock_id">grammar-add-state</property>
+        <property name="is_important">True</property>
+        <signal name="activate" handler="createState_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="createSemiStochasticTransition">
+        <property name="label" translatable="yes">Create Semi-Stochastic Transiton</property>
+        <property name="tooltip" translatable="yes">Create a semi stochastic transition</property>
+        <property name="stock_id">grammar-add-stochastic</property>
+        <property name="is_important">True</property>
+        <signal name="activate" handler="createSemiStochasticTransition_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="grammarInference">
+        <property name="label" translatable="yes">Grammar Inference</property>
+        <property name="sensitive">False</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="grammarEdition">
+        <property name="label" translatable="yes">Grammar Edition</property>
+        <property name="sensitive">False</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="createOpenChannelTransition">
+        <property name="label" translatable="yes">Create OpenChannel Transition</property>
+        <property name="tooltip" translatable="yes">Create Open Channel Transition</property>
+        <property name="stock_id">grammar-add-open</property>
+        <property name="is_important">True</property>
+        <signal name="activate" handler="createOpenChannelTransition_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="createCloseChannelTransition">
+        <property name="label" translatable="yes">Create CloseChannel Transition</property>
+        <property name="tooltip" translatable="yes">Create a Close Channel Transition</property>
+        <property name="stock_id">grammar-add-close</property>
+        <property name="is_important">True</property>
+        <signal name="activate" handler="createCloseChannelTransition_activate_cb" swapped="no"/>
+      </object>
+    </child>
+  </object>
+</interface>

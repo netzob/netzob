@@ -28,10 +28,11 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
-from gettext import gettext as _
-import logging
-from lxml.etree import ElementTree
+from locale import gettext as _
 from lxml import etree
+from lxml.etree import ElementTree
+import logging
+import uuid
 
 #+----------------------------------------------
 #| Related third party imports
@@ -40,12 +41,18 @@ from lxml import etree
 #+----------------------------------------------
 #| Local application imports
 #+----------------------------------------------
+from netzob.Common.Automata import Automata
+from netzob.Common.MMSTD.Actors.SimpleCommunicationChannel import \
+    SimpleCommunicationLayer
 from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
-from netzob.Common.MMSTD.Actors.SimpleCommunicationChannel import SimpleCommunicationLayer
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.MMSTD.States.AbstractState import AbstractState
-from netzob.Common.MMSTD.Transitions.AbstractTransition import AbstractTransition
-from netzob.Common.Automata import Automata
+from netzob.Common.MMSTD.Transitions.AbstractTransition import \
+    AbstractTransition
+from netzob.Common.MMSTD.Transitions.impl.SemiStochasticTransition import SemiStochasticTransition
+from netzob.Common.Symbol import Symbol
+from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
+from netzob.Common.MMSTD.Symbols.impl.UnknownSymbol import UnknownSymbol
 
 
 #+----------------------------------------------
@@ -117,7 +124,9 @@ class MMSTD(Automata):
     def removeTransition(self, transition):
         if transition in self.transitions:
             for state in self.states:
+                self.log.debug("Unregister transition {0} from state {1}".format(transition.getName(), state.getName()))
                 state.unregisterTransition(transition)
+            self.log.debug("Remove transition {0} from the MMSTD".format(transition.getName()))
             self.transitions.remove(transition)
 
     def addTransition(self, transition):
@@ -130,10 +139,12 @@ class MMSTD(Automata):
     #| @return the generated traces (a list of symbols) by the MMSTD and the end state
     #+---------------------------------------------------------------------------+
     def getOutputTrace(self, state, symbols):
-        communicationLayer = SimpleCommunicationLayer(symbols, [], self.vocabulary, Memory(self.vocabulary.getVariables()))
-        abstractionLayer = AbstractionLayer(communicationLayer, self.vocabulary, Memory(self.vocabulary.getVariables()))
+        communicationLayer = SimpleCommunicationLayer(uuid.uuid4(), symbols, [], self.vocabulary, Memory())
+        abstractionLayer = AbstractionLayer(communicationLayer, self.vocabulary, Memory())
+        # communicationLayer = SimpleCommunicationLayer(symbols, [], self.vocabulary, Memory(self.vocabulary.getVariables()))
+        # abstractionLayer = AbstractionLayer(communicationLayer, self.vocabulary, Memory(self.vocabulary.getVariables()))
         for i in range(0, len(symbols)):
-            if state != None:
+            if state is not None:
                 state = state.executeAsClient(abstractionLayer)
         outputMessages = abstractionLayer.getOutputMessages()
         generatedSymbols = []
@@ -148,22 +159,31 @@ class MMSTD(Automata):
     #| @return a string containing the dot code of the automata
     #+---------------------------------------------------------------------------+
     def getDotCode(self):
-        dotCode = "digraph G {\n"
+        dotCode = []
+        dotCode.append("digraph G {")
         # first we include all the states declared in the automata
         states = self.getStates()
         for state in states:
             if state.isActive():
-                dotCode = dotCode + "\"" + state.getName() + "\" [style=filled, fillcolor = red];\n"
+                color = "red"
             else:
-                dotCode = dotCode + "\"" + state.getName() + "\" [style=filled, fillcolor = white];\n"
+                color = "white"
+
+            if state == self.initialState:
+                shape = "doubleoctagon"
+            else:
+                shape = "ellipse"
+
+            dotCode.append('"{0}" [shape={1}, style=filled, fillcolor={2}, URL="{3}"];'.format(state.getName(), shape, color, state.getID()))
 
         for inputState in states:
             for transition in inputState.getTransitions():
                 outputState = transition.getOutputState()
-                dotCode = dotCode + "\"" + inputState.getName() + "\" -> \"" + outputState.getName() + "\" [fontsize=5, label=\"" + transition.getDescription() + "\"]\n"
+                dotCode.append('"{0}" -> "{1}" [fontsize=5, label="{2}", URL="{3}"];'.format(inputState.getName(), outputState.getName(), transition.getDescription(), transition.getID()))
 
-        dotCode = dotCode + "}"
-        return dotCode
+        dotCode.append("}")
+
+        return '\n'.join(dotCode)
 
     #+---------------------------------------------------------------------------+
     #| getAllStates:
@@ -176,7 +196,7 @@ class MMSTD(Automata):
         toAnalyze.append(self.initialState)
         while (len(toAnalyze) > 0):
             currentState = toAnalyze.pop()
-            if currentState != None:
+            if currentState is not None:
                 found = False
                 for tmpState in states:
                         if tmpState.getID() == currentState.getID():
@@ -198,6 +218,37 @@ class MMSTD(Automata):
             else:
                 self.log.error("state = NONE !!")
         return states
+
+    def update(self, vocabulary):
+        """update the definition of the automata
+        and searched for deprecated symbols"""
+        deprecatedTransitions = []
+
+        for transition in self.transitions:
+            if transition.getType() == SemiStochasticTransition.TYPE:
+                symbols = []
+                symbols.append(transition.getInputSymbol())
+                for (s, p, ti) in transition.getOutputSymbols():
+                    if s.getType() == Symbol.TYPE:
+                        symbols.append(s)
+
+                error = False
+                for symbol in symbols:
+                    found = False
+                    vocaSymbols = [EmptySymbol(), UnknownSymbol()]
+                    vocaSymbols.extend(vocabulary.getSymbols())
+                    for s in vocaSymbols:
+                        if str(s.getID()) == str(symbol.getID()):
+                            found = True
+                            break
+                    if not found:
+                        self.log.warning("Symbol {0} has not been found in vocabulary".format(symbol.getName()))
+                        error = True
+                        break
+                if error:
+                    deprecatedTransitions.append(transition)
+        for transiton in deprecatedTransitions:
+            self.removeTransition(transition)
 
     #+---------------------------------------------------------------------------+
     #| Save & Load
@@ -224,15 +275,15 @@ class MMSTD(Automata):
             # Retrieve all the states
             for xmlState in xmlRoot.findall("{" + namespace + "}states/{" + namespace + "}state"):
                 state = AbstractState.loadFromXML(xmlState, namespace, version)
-                if state != None:
+                if state is not None:
                     states.append(state)
 
             # Retrieve all the transitions
-            if xmlRoot.find("{" + namespace + "}transitions") != None:
+            if xmlRoot.find("{" + namespace + "}transitions") is not None:
                 xmlTransitions = xmlRoot.find("{" + namespace + "}transitions")
                 for xmlTransition in xmlTransitions.findall("{" + namespace + "}transition"):
                     transition = AbstractTransition.loadFromXML(states, vocabulary, xmlTransition, namespace, version)
-                    if transition != None:
+                    if transition is not None:
                         transitions.append(transition)
 
             # First we retrieve the initial state to create the grammar
@@ -241,7 +292,7 @@ class MMSTD(Automata):
                 if state.getID() == initialStateID:
                     initialState = state
 
-            if initialState == None:
+            if initialState is None:
                 logging.warn("Impossible to retrieve the initial state of the saved grammar")
                 return None
 

@@ -28,12 +28,12 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
-from gettext import gettext as _
+from locale import gettext as _
 import logging
-import gtk
-import pygtk
+from gi.repository import Gtk
+import gi
 import uuid
-pygtk.require('2.0')
+gi.require_version('Gtk', '3.0')
 
 #+----------------------------------------------
 #| Local Imports
@@ -60,18 +60,18 @@ class SearchView(object):
 
     def getPanel(self):
         # Create the main panel
-        self.panel = gtk.Table(rows=3, columns=3, homogeneous=False)
+        self.panel = Gtk.Table(rows=3, columns=3, homogeneous=False)
         self.panel.show()
 
         # Create the header (first row) with the search form
         # Search entry
-        self.searchEntry = gtk.Entry()
+        self.searchEntry = Gtk.Entry()
         self.searchEntry.show()
 
         # Combo to select the type of the input
-        self.typeCombo = gtk.combo_box_entry_new_text()
+        self.typeCombo = Gtk.ComboBoxText.new_with_entry()
         self.typeCombo.show()
-        self.typeStore = gtk.ListStore(str)
+        self.typeStore = Gtk.ListStore(str)
         self.typeCombo.set_model(self.typeStore)
         self.typeCombo.get_model().append([Format.STRING])
         self.typeCombo.get_model().append([Format.HEX])
@@ -81,28 +81,28 @@ class SearchView(object):
         self.typeCombo.get_model().append([Format.IP])
 
         # Search button
-        searchButton = gtk.Button(_("Search"))
+        searchButton = Gtk.Button(_("Search"))
         searchButton.show()
         searchButton.connect("clicked", self.prepareSearchingOperation)
 
-        self.panel.attach(self.searchEntry, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.panel.attach(self.typeCombo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.panel.attach(searchButton, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(self.searchEntry, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(self.typeCombo, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(searchButton, 2, 3, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         return self.panel
 
     def prepareSearchingOperation(self, button):
         searchedPattern = self.searchEntry.get_text()
         if len(searchedPattern) == 0:
-            self.log.info(_("Do not start the searching process since no pattern was provided by the user"))
+            self.log.info("Do not start the searching process since no pattern was provided by the user")
             return
 
         typeOfPattern = self.typeCombo.get_active_text()
         if len(typeOfPattern) == 0:
-            self.log.info(_("Do not start the searching process since no type was provided by the user"))
+            self.log.info("Do not start the searching process since no type was provided by the user")
             return
 
-        self.log.debug(_("User searches for {0} of type {1}".format(searchedPattern, typeOfPattern)))
+        self.log.debug("User searches for {0} of type {1}".format(searchedPattern, typeOfPattern))
         self.search(searchedPattern, typeOfPattern)
 
     def search(self, pattern, typeOfPattern):
@@ -126,16 +126,16 @@ class SearchView(object):
             searchedData.extend(searcher.getSearchedDataForString(pattern))
 
         if len(searchedData) == 0:
-            self.log.warn(_("No data to search after were computed."))
+            self.log.warn("No data to search after were computed.")
             return
 
-        self.log.debug(_("The following data will be searched for:"))
+        self.log.debug("The following data will be searched for:")
         for data in searchedData:
             self.log.info(" - " + str(data))
 
         # Then we search them in the list of messages included in the vocabulary
         searchTasks = searcher.search(searchedData)
-        self.log.info(_("A number of {0} results found!").format(str(len(searchTasks))))
+        self.log.info("A number of {0} results found!".format(str(len(searchTasks))))
 
         # Colorize the segments
         self.colorizeResults(searchTasks)
@@ -148,13 +148,13 @@ class SearchView(object):
         for task in searchTasks:
             for result in task.getResults():
                 for (start, end) in result.getSegments():
-                    filter = TextColorFilter(uuid.uuid4(), "Search", start, start + end + 1, "#DD0000")
+                    function = TextColorFunction(str(uuid.uuid4()), "Search", start, start + end + 1, "#DD0000")
                     message = result.getMessage()
-                    message.addVisualizationFilter(filter)
+                    message.addVisualizationFunction(function)
                     # colorize the associated symbol
                     symbol = self.project.getVocabulary().getSymbolWhichContainsMessage(message)
                     if not symbol in colorizedSymbols:
-                        symbol.addVisualizationFilter(TextColorFilter(uuid.uuid4(), "Search", None, None, "#DD0000"))
+                        symbol.addVisualizationFunction(TextColorFunction(str(uuid.uuid4()), "Search", None, None, "#DD0000"))
                         colorizedSymbols.append(symbol)
 #                    message.highlightSegment(start, end)
         # We update the different views
@@ -163,15 +163,15 @@ class SearchView(object):
 
     def updateView(self, tasks):
 
-        self.tree = gtk.TreeView()
-        colResult = gtk.TreeViewColumn()
+        self.tree = Gtk.TreeView()
+        colResult = Gtk.TreeViewColumn()
         colResult.set_title(_("Search results"))
 
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         colResult.pack_start(cell, True)
         colResult.add_attribute(cell, "text", 0)
 
-        treestore = gtk.TreeStore(str)
+        treestore = Gtk.TreeStore(str)
 
         foundSymbols = dict()
         foundMessages = dict()
@@ -203,4 +203,4 @@ class SearchView(object):
         self.tree.set_model(treestore)
         self.tree.show()
 
-        self.panel.attach(self.tree, 0, 3, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(self.tree, 0, 3, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)

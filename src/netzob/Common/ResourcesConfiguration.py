@@ -28,10 +28,9 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
-from gettext import gettext as _
+from locale import gettext as _
 import os.path
 import logging
-import gtk
 import shutil
 
 #+----------------------------------------------
@@ -43,25 +42,25 @@ import shutil
 #+----------------------------------------------
 from netzob import NetzobResources
 from netzob.Common.Workspace import Workspace
-from netzob.UI.WorkspaceSelector import WorkspaceSelector
 
 
-#+----------------------------------------------
-#| ResourcesConfiguration:
-#|    Configure and verify all the resources
-#+----------------------------------------------
+class ResourcesConfigurationException(Exception):
+    pass
+
+
 class ResourcesConfiguration(object):
+    """Configure and verify all the resources"""
 
     LOCALFILE = ".netzob"
-    CONFFILE = "global.conf"
     DELIMITOR_LOCALFILE = "="
     VAR_WORKSPACE_LOCALFILE = "workspace"
+    VAR_API_KEY_LOCALFILE = "reporterApiKey"
 
     @staticmethod
     #+----------------------------------------------
     #| initializeResources:
     #+----------------------------------------------
-    def initializeResources(forceWSCreation=False):
+    def initializeResources():
         # We search for the
         # STATIC resources (images, documentations, ...)
         # USER resources (workspaces, configurations, ...)
@@ -71,41 +70,36 @@ class ResourcesConfiguration(object):
         # While, on everyday execution, both the static and the userpath should exists
 
         staticPath = ResourcesConfiguration.verifyStaticResources()
-        if staticPath == None:
-            logging.fatal(_("The static resources were not found !"))
+        if staticPath is None:
+            logging.fatal("The static resources were not found !")
             return False
-
-        if not forceWSCreation:
-            userPath = ResourcesConfiguration.verifyUserResources()
-        else:
-            userPath = None
-
-        if userPath == None:
-            logging.info("The user resources were not found, we ask to the user its Netzob home directory")
-            userPath = ResourcesConfiguration.askForUserDir()
-            if userPath == None:
-                return False
-            else:
-                # the user has specified its home directory so we store it in
-                # a dedicated local file
-                localFilePath = os.path.join(os.path.expanduser("~"), ResourcesConfiguration.LOCALFILE)
-                # create or update the content
-                localFile = open(localFilePath, 'w')
-                localFile.write(ResourcesConfiguration.VAR_WORKSPACE_LOCALFILE + ResourcesConfiguration.DELIMITOR_LOCALFILE + str(os.path.abspath(userPath)))
-                localFile.close()
-                return True
         return True
 
     @staticmethod
-    def askForUserDir():
-        workspaceSelector = WorkspaceSelector()
-        workspaceSelector.run()
-        workspacePath = workspaceSelector.selectedWorkspace
+    def generateUserFile(worskpace, apiKey=None):
+        """Write the path to the workspace and the apiKey (if provided)
+        to the netzob configuration associated with user (~/.netzob)."""
+        # the user has specified its home directory so we store it in
+        # a dedicated local file
+        localFilePath = os.path.join(os.path.expanduser("~"), ResourcesConfiguration.LOCALFILE)
+        # create or update the content
+        localFile = open(localFilePath, 'w')
+        localFile.write(ResourcesConfiguration.VAR_WORKSPACE_LOCALFILE + ResourcesConfiguration.DELIMITOR_LOCALFILE + str(os.path.abspath(worskpace)) + '\n\r')
+        if apiKey is not None:
+            localFile.write(ResourcesConfiguration.VAR_API_KEY_LOCALFILE + ResourcesConfiguration.DELIMITOR_LOCALFILE + str(apiKey) + '\n\r')
+        localFile.close()
 
-        if workspacePath != None:
-            ResourcesConfiguration.createWorkspace(workspacePath)
-
-        return workspacePath
+    @staticmethod
+    def saveAPIKey(apiKey):
+        """Save the provided API key in the configuration file of the user.
+        It retrieves the value of the workspace from the current file and rewrite it
+        to include the api key."""
+        localFilePath = os.path.join(os.path.expanduser("~"), ResourcesConfiguration.LOCALFILE)
+        workspaceDir = ResourcesConfiguration.extractWorkspaceDirFromFile(localFilePath)
+        if workspaceDir is not None:
+            ResourcesConfiguration.generateUserFile(workspaceDir, apiKey)
+            return True
+        return False
 
     @staticmethod
     def createWorkspace(path):
@@ -126,41 +120,48 @@ class ResourcesConfiguration(object):
         if localStaticPath == "":
             return None
 
-        logging.debug("Static path declared : " + staticPath)
+        logging.debug("  System static path declared: " + staticPath)
+        logging.debug("  Local static path declared: " + localStaticPath)
         if (os.path.isdir(localStaticPath)):
+            logging.debug("  Static path used: " + localStaticPath)
             return localStaticPath
         elif (os.path.isdir(staticPath)):
+            logging.debug("  Static path used: " + staticPath)
             return staticPath
 
         return None
 
     @staticmethod
-    def verifyUserResources():
+    def verifyAndReturnWorkspaceDir():
         # the user has specified its home directory so we store it in
         # a dedicated local file
         localFilePath = os.path.join(os.path.expanduser("~"), ResourcesConfiguration.LOCALFILE)
-        workspacePath = ResourcesConfiguration.extractWorkspaceDefinitionFromFile(localFilePath)
+        logging.debug("  Local configuration file used: " + str(localFilePath))
+        workspacePath = ResourcesConfiguration.extractWorkspaceDirFromFile(localFilePath)
+        logging.debug("  Workspace path declared in configuration file: " + str(workspacePath))
 
         # Workspace not declared
-        if workspacePath == None:
+        if workspacePath is None:
+            logging.debug("  Workspace path declared does not exist: " + str(workspacePath))
             return None
         # is the workspace a directory
         if not os.path.isdir(workspacePath):
-            logging.warn("The specified workspace's path (" + str(workspacePath) + ") is not valid : its not a directory.")
+            logging.warn("  The specified workspace's path (" + str(workspacePath) + ") is not valid : its not a directory.")
             return None
         # is it readable
         if not os.access(workspacePath, os.R_OK):
-            logging.warn("The specified workspace's path (" + str(workspacePath) + ") is not readable.")
+            logging.warn("  The specified workspace's path (" + str(workspacePath) + ") is not readable.")
             return None
         # is it writable
         if not os.access(workspacePath, os.W_OK):
-            logging.warn("The specified workspace's path (" + str(workspacePath) + ") is not writable.")
+            logging.warn("  The specified workspace's path (" + str(workspacePath) + ") is not writable.")
             return None
 
+        logging.debug("  Workspace R/W access is valid: " + str(workspacePath))
         return workspacePath
 
     @staticmethod
-    def extractWorkspaceDefinitionFromFile(localFilePath):
+    def extractWorkspaceDirFromFile(localFilePath):
         workspacePath = None
         if os.path.isfile(localFilePath):
             localFile = open(localFilePath, 'r')
@@ -172,8 +173,23 @@ class ResourcesConfiguration(object):
                     workspacePath = strippedLine[indexDelimitor + 1:]
                     break
             localFile.close()
-            return workspacePath
         return workspacePath
+
+    @staticmethod
+    def extractAPIKeyDefinitionFromLocalFile():
+        localFilePath = os.path.join(os.path.expanduser("~"), ResourcesConfiguration.LOCALFILE)
+        apiKey = None
+        if os.path.isfile(localFilePath):
+            localFile = open(localFilePath, 'r')
+
+            for line in localFile:
+                strippedLine = line.strip('\n\r')
+                indexDelimitor = strippedLine.find(ResourcesConfiguration.DELIMITOR_LOCALFILE)
+                if indexDelimitor > 0 and strippedLine[:indexDelimitor] == ResourcesConfiguration.VAR_API_KEY_LOCALFILE and len(strippedLine[indexDelimitor + 1:]) > 0:
+                    apiKey = strippedLine[indexDelimitor + 1:]
+                    break
+            localFile.close()
+        return apiKey
 
     @staticmethod
     def getStaticResources():
@@ -183,9 +199,18 @@ class ResourcesConfiguration(object):
             return NetzobResources.STATIC_DIR
 
     @staticmethod
-    def getWorkspaceFile():
-        if NetzobResources.WORKSPACE_DIR == None:
-            return ResourcesConfiguration.verifyUserResources()
+    def getPluginsStaticResources():
+        if (os.path.isdir(NetzobResources.LOCAL_PLUGINS_STATIC_DIR)):
+            return NetzobResources.LOCAL_PLUGINS_STATIC_DIR
+        elif (os.path.isdir(NetzobResources.PLUGINS_STATIC_DIR)):
+            return NetzobResources.PLUGINS_STATIC_DIR
+        else:
+            raise ResourcesConfigurationException(_("Unable to find plugins static resources."))
+
+    @staticmethod
+    def getWorkspaceDir():
+        if NetzobResources.WORKSPACE_DIR is None:
+            return ResourcesConfiguration.verifyAndReturnWorkspaceDir()
         else:
             return NetzobResources.WORKSPACE_DIR
 

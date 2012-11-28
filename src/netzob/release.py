@@ -42,8 +42,8 @@ appname = name
 #|    Development version has version number increased and is
 #|    postfixed by ~git
 #+---------------------------------------------------------------------------+
-version = "0.3.4~git"
-versionName = None
+version = "0.4~git"
+versionName = "JumpingRhino"
 
 #+---------------------------------------------------------------------------+
 #| Copyright mentions
@@ -74,7 +74,11 @@ contributors = ["Georges Bossert <georges.bossert@supelec.fr>",
                 "Goulven Guiheux <goulven.guiheux@amossys.fr>",
                 "Maxime Olivier <maxime@miskin.fr>",
                 "Alexandre Pigné <alex@freesenses.net>",
-                "Franck Roland <franck.l.roland@gmail.com>"]
+                "Franck Roland <franck.l.roland@gmail.com>",
+                "Fabien André <fabien.andre@insa-rennes.fr>",
+                "Quentin Heyler <quentin.heyler@etudiant.univ-rennes1.fr>",
+                "Benjamin Dufour <benjamin.dufour@amossys.fr>"
+                ]
 
 #+---------------------------------------------------------------------------+
 #| Email to contact authors
@@ -94,31 +98,19 @@ download_url = "http://www.netzob.org/download"
 #+---------------------------------------------------------------------------+
 #| Translators
 #+---------------------------------------------------------------------------+
-translator_credits = """Français : Olivier Tétard <olivier.tetard@amossys.fr>"""
+translator_credits = """Français: Olivier Tétard <olivier.tetard@amossys.fr>"""
 
 #+---------------------------------------------------------------------------+
 #| Keywords to describe the application
 #+---------------------------------------------------------------------------+
-keywords = ["Protocol", "Inference", "Networking", "Reverse Engineering", "Security"]
+keywords = ["Protocol", "Inference", "Networking", "Reverse Engineering", "Fuzzing", "Security"]
 
 #+---------------------------------------------------------------------------+
 #| Long description
+#| <!> Do not use it anymore
 #+---------------------------------------------------------------------------+
-long_description = """
-Inferring communication protocols
-
-=================================
-
-
-Netzob simplifies the work for security auditors by providing a complete framework
-for the reverse engineering of communication protocols.
-
-
-It handles different types of protocols : text protocols (like HTTP and IRC), fixed fields protocols (like IP and TCP)
-and variable fields protocols (like ASN.1 based formats).
-Netzob is therefore suitable for reversing network protocols, structured files and system and process
-flows (IPC and communication with drivers). Netzob is provided with modules dedicated to capture data in
-multiple contexts (network, file, process and kernel data acquisition)."""
+"""@deprecated: the official long description is now the full README.rst file"""
+long_description = ""
 
 #+---------------------------------------------------------------------------+
 #| License used to publish the tool

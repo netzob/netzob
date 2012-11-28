@@ -42,7 +42,7 @@ if os.name == 'nt':
 
 try:
     # Verify that libNeedleman is in the path
-    import _libNeedleman
+    from netzob import _libNeedleman
 except:
     # Else, assume the path is gotten from the 'python setup.py build' command
     arch = os.uname()[-1]
@@ -77,15 +77,15 @@ class test_UPGMAInC(unittest.TestCase):
         
         for iSymbol in range(0, nbSymbol) :        
             # We create 6 messages of 2 group
-            originalSymbol = Symbol(uuid.uuid4(), "TestSymbol", None)        
+            originalSymbol = Symbol(str(uuid.uuid4()), "TestSymbol", None)        
             # group1 
-            message1 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("bonjour " + self.generateRandomString(20, 30) + " comment vas-tu ?"))
-            message2 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("bonjour " + self.generateRandomString(20, 30) + " comment vas-tu ?"))
-            message3 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("bonjour " + self.generateRandomString(20, 30) + " comment vas-tu ?"))
+            message1 = RawMessage(str(uuid.uuid4()), str(time.time()), TypeConvertor.stringToNetzobRaw("bonjour " + self.generateRandomString(20, 30) + " comment vas-tu ?"))
+            message2 = RawMessage(str(uuid.uuid4()), str(time.time()), TypeConvertor.stringToNetzobRaw("bonjour " + self.generateRandomString(20, 30) + " comment vas-tu ?"))
+            message3 = RawMessage(str(uuid.uuid4()), str(time.time()), TypeConvertor.stringToNetzobRaw("bonjour " + self.generateRandomString(20, 30) + " comment vas-tu ?"))
             # group2
-            message4 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("salut à toi " + self.generateRandomString(10, 15) + " what's up ?"))
-            message5 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("salut à toi " + self.generateRandomString(10, 15) + " what's up ?"))
-            message6 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("salut à toi " + self.generateRandomString(10, 15) + " what's up ?"))
+            message4 = RawMessage(str(uuid.uuid4()), str(time.time()), TypeConvertor.stringToNetzobRaw("salut à toi " + self.generateRandomString(10, 15) + " what's up ?"))
+            message5 = RawMessage(str(uuid.uuid4()), str(time.time()), TypeConvertor.stringToNetzobRaw("salut à toi " + self.generateRandomString(10, 15) + " what's up ?"))
+            message6 = RawMessage(str(uuid.uuid4()), str(time.time()), TypeConvertor.stringToNetzobRaw("salut à toi " + self.generateRandomString(10, 15) + " what's up ?"))
             
             originalSymbol.addMessage(message1)
             originalSymbol.addMessage(message2)

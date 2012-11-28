@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
+from locale import gettext as _
 import logging
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -38,7 +38,7 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Variable import Variable
+from netzob.Common.MMSTD.Dictionary._Variable import Variable
 
 
 #+---------------------------------------------------------------------------+
@@ -50,7 +50,7 @@ class IPVariable(Variable):
     def __init__(self, id, name, defaultVar):
         Variable.__init__(self, id, name, "IP")
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.IPVariable.py')
-        if defaultVar == "" or defaultVar == None:
+        if defaultVar == "" or defaultVar is None:
             self.binVal = None
             self.strVal = None
         else:
@@ -76,7 +76,7 @@ class IPVariable(Variable):
     def learn(self, val, indice, isForced, dictionary):
         self.log.debug("Received : " + str(val))
 
-        if self.strVal == None or isForced:
+        if self.strVal is None or isForced:
             tmp = val[indice:]
 
             res = ""

@@ -28,7 +28,7 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
-from gettext import gettext as _
+from locale import gettext as _
 import logging.config
 import os
 
@@ -51,11 +51,11 @@ class LoggingConfiguration(object):
     #+----------------------------------------------
     #| initializeLogging:
     #+----------------------------------------------
-    def initializeLogging(workspace):
+    def initializeLogging(workspace, opts):
         # First we extract the normal logging config file
         loggingFilePath = os.path.join(workspace.getPath(), workspace.getPathOfLogging())
         if (loggingFilePath != "" and os.path.isfile(loggingFilePath)):
-            logging.debug("Logging config file : " + loggingFilePath)
+            logging.debug("Logging config file: " + loggingFilePath)
             logging.config.fileConfig(loggingFilePath)
         else:
             logging.info("No logging config file found, create a default one.")
@@ -66,3 +66,8 @@ class LoggingConfiguration(object):
             f = logging.Formatter("[%(threadName)s]%(asctime)s - %(module)s - %(levelname)s - %(message)s")
             h.setFormatter(f)
             logger.addHandler(h)
+
+        # Override default configuration with command line option
+        if opts.debugLevel in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
+            logger = logging.getLogger()
+            logger.setLevel(opts.debugLevel)

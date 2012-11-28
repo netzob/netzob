@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
+from locale import gettext as _
 import logging
 import time
 from lxml.etree import ElementTree
@@ -46,6 +46,7 @@ from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
 from netzob.Inference.Vocabulary.Alignment.UPGMA import UPGMA
 from netzob.Common.Models.Factories.AbstractMessageFactory import AbstractMessageFactory
 from netzob.Common.MMSTD.Symbols.impl.UnknownSymbol import UnknownSymbol
+from netzob.Common.TrashSymbol import TrashSymbol
 
 
 #+---------------------------------------------------------------------------+
@@ -61,13 +62,17 @@ class Vocabulary(object):
         self.messages = []
         self.symbols = []
         self.sessions = []
+        self.trashSymbol = None
 
     def getMessages(self):
-        return self.messages
+        messages = []
+        for symbol in self.symbols:
+            messages.extend(symbol.getMessages())
+        return messages
 
     def getMessageByID(self, id):
         for message in self.messages:
-            if message.getID() == id:
+            if str(message.getID()) == str(id):
                 return message
         return None
 
@@ -80,6 +85,11 @@ class Vocabulary(object):
 
     def getSymbols(self):
         return self.symbols
+
+    def getTrashSymbol(self):
+        if self.trashSymbol == None:
+            self.trashSymbol = TrashSymbol(None)
+        return self.trashSymbol
 
     def getSessions(self):
         return self.sessions
@@ -112,6 +122,13 @@ class Vocabulary(object):
         for symbol in self.symbols:
             if str(symbol.getID()) == str(symbolID):
                 return symbol
+        return None
+
+    def getFieldByID(self, fieldID):
+        for symbol in self.symbols:
+            for field in symbol.getAllFields():
+                if str(field.getID()) == str(fieldID):
+                    return field
         return None
 
     def getSession(self, sessionID):
@@ -165,10 +182,16 @@ class Vocabulary(object):
         return variables
 
     def getVariableByID(self, idVar):
+        # logging.debug("[ Searching Variable: {0}".format(idVar))
         for symbol in self.symbols:
+            # logging.debug("[ Symbol {0}".format(symbol.getName()))
             for variable in symbol.getVariables():
-                    if str(variable.getID()) == idVar:
+                    # logging.debug("- Variable: {0}".format(str(variable.getID())))
+                    if variable.getID() == idVar:
+                        # logging.debug("Found!")
                         return variable
+            # logging.debug("Symbol {0} ]".format(symbol.getName()))
+        # logging.debug("Not found!")
         return None
 
     def estimateNeedlemanWunschNumberOfExecutionStep(self, project):
@@ -225,16 +248,16 @@ class Vocabulary(object):
             # Messages
             for xmlMessage in xmlRoot.findall("{" + namespace_project + "}messages/{" + namespace_common + "}message"):
                 message = AbstractMessageFactory.loadFromXML(xmlMessage, namespace_common, version)
-                if message != None:
+                if message is not None:
                     vocabulary.addMessage(message)
             # Symbols
             for xmlSymbol in xmlRoot.findall("{" + namespace_project + "}symbols/{" + namespace_project + "}symbol"):
                 symbol = Symbol.loadSymbol(xmlSymbol, namespace_project, namespace_common, version, project, vocabulary)
-                if symbol != None:
+                if symbol is not None:
                     vocabulary.addSymbol(symbol)
             # Sessions
             for xmlSession in xmlRoot.findall("{" + namespace_project + "}sessions/{" + namespace_common + "}session"):
                 session = Session.loadFromXML(xmlSession, namespace_project, namespace_common, version, vocabulary)
-                if session != None:
+                if session is not None:
                     vocabulary.addSession(session)
         return vocabulary

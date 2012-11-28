@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.netzob.org/common"
+	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:netzob-common="http://www.netzob.org/common">
+
+    <complexType name="Sessions">
+		<sequence>
+			<element name="session" type="netzob-common:Session" maxOccurs="unbounded" minOccurs="0"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="Session">
+		<sequence>
+			<element name="messages-ref" type="netzob-common:Messages-ref" maxOccurs="1" minOccurs="0"></element>
+		</sequence>
+		<attribute name="id" type="string"></attribute>
+		<attribute name="name" type="string"></attribute>
+		<attribute name="description" type="string"></attribute>
+	</complexType>
+
+	<complexType name="Messages-ref">
+		<choice minOccurs="0" maxOccurs="unbounded">
+			<element name="message-ref" type="netzob-common:Message-ref"></element>
+		</choice>
+	</complexType>
+
+	<complexType name="Message-ref">
+		<attribute name="id" type="string"></attribute>
+	</complexType>
+
+	<complexType name="Messages">
+		<choice minOccurs="0" maxOccurs="unbounded">
+			<element name="message" type="netzob-common:Message"></element>
+		</choice>
+	</complexType>
+
+	<complexType name="NetworkMessage">
+		<complexContent>
+			<extension base="netzob-common:Message">
+				<sequence>
+					<element name="ip_source" type="string"></element>
+					<element name="ip_destination" type="string"></element>
+					<element name="protocol">
+						<simpleType>
+							<restriction base="string">
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="l4_source_port">
+						<simpleType>
+							<restriction base="int">
+								<minInclusive value="0"></minInclusive>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="l4_destination_port">
+						<simpleType>
+							<restriction base="int">
+								<minInclusive value="0"></minInclusive>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="pattern" type="netzob-common:Pattern" minOccurs="0"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	
+	<complexType name="L2NetworkMessage">
+		<complexContent>
+			<extension base="netzob-common:Message">
+				<sequence>
+					<element name="l2Protocol" type="string"></element>
+					<element name="l2SourceAddress" type="string"></element>
+					<element name="l2DestinationAddress" type="string"></element>
+					<element name="pattern" type="netzob-common:Pattern" minOccurs="0"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	
+	<complexType name="L3NetworkMessage">
+		<complexContent>
+			<extension base="netzob-common:L2NetworkMessage">
+				<sequence>
+					<element name="l3Protocol" type="string"></element>
+					<element name="l3SourceAddress" type="string"></element>
+					<element name="l3DestinationAddress" type="string"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	
+	<complexType name="L4NetworkMessage">
+		<complexContent>
+			<extension base="netzob-common:L3NetworkMessage">
+				<sequence>
+					<element name="l4Protocol" type="string"></element>
+					<element name="l4SourcePort">
+						<simpleType>
+							<restriction base="int">
+								<minInclusive value="0"></minInclusive>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="l4DestinationPort">
+						<simpleType>
+							<restriction base="int">
+								<minInclusive value="0"></minInclusive>
+							</restriction>
+						</simpleType>
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="FileMessage">
+		<complexContent>
+			<extension base="netzob-common:Message">
+				<sequence>
+					<element name="lineNumber">
+						<simpleType>
+							<restriction base="int">
+								<minInclusive value="0"></minInclusive>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="filename">
+						<simpleType>
+							<restriction base="string">
+								<minLength value="1"></minLength>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="creationDate" type="string" maxOccurs="1"></element>
+					<element name="modificationDate" type="string"></element>
+					<element name="owner" type="string"></element>
+					<element name="size" type="int"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="IPCMessage">
+		<complexContent>
+			<extension base="netzob-common:Message">
+				<sequence>
+					<element name="category" type="string"></element>
+					<element name="key" type="string"></element>
+					<element name="type" type="string"></element>
+					<element name="direction" type="string"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	
+	<complexType name="RawMessage">
+		<complexContent>
+			<extension base="netzob-common:Message">
+			</extension>
+		</complexContent>
+	</complexType>
+
+
+	<complexType name="Message" abstract="true">
+		<sequence>
+			<element name="data">
+				<simpleType>
+					<restriction base="string">
+						<minLength value="1"></minLength>
+					</restriction>
+				</simpleType>
+			</element>
+		</sequence>
+		<attribute name="id" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="timestamp" type="double" use="required"></attribute>
+	</complexType>
+
+
+	<complexType name="Token">
+		<attribute name="format">
+			<simpleType>
+                                <restriction base="string">
+                                        <minLength value="1"></minLength>
+                                </restriction>
+                        </simpleType>
+                </attribute>
+		<attribute name="length" type="int"></attribute>
+		<attribute name="type">
+			<simpleType>
+                                <restriction base="string">
+                                        <enumeration value="constant"></enumeration>
+                                        <enumeration value="variable"></enumeration>
+                                </restriction>
+                        </simpleType>
+		</attribute>
+		<attribute name="value">
+			<simpleType>
+                                <restriction base="string">
+                                        <minLength value="1"></minLength>
+                                </restriction>
+                        </simpleType>
+		</attribute>
+	</complexType>
+	<complexType name="Pattern">
+		<sequence>
+			<element name="direction" type="string" minOccurs="0"></element>
+			<element name="token" type="netzob-common:Token" minOccurs="0" maxOccurs="unbounded"></element>
+		</sequence>	
+	</complexType>
+	<complexType name="IRPMessage">
+		<complexContent>
+			<extension base="netzob-common:Message">
+				<sequence>
+					<element name="direction">
+						<simpleType>
+							<restriction base="string">
+								<enumeration value="Request"></enumeration>
+								<enumeration value="Response"></enumeration>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="major">
+						<simpleType>
+							<restriction base="string">
+								<enumeration value="IRP_MJ_CREATE"></enumeration>
+								<enumeration
+									value="IRP_MJ_CREATE_NAMED_PIPE">
+								</enumeration>
+								<enumeration value="IRP_MJ_CLOSE"></enumeration>
+								<enumeration value="IRP_MJ_READ"></enumeration>
+								<enumeration value="IRP_MJ_WRITE"></enumeration>
+								<enumeration
+									value="IRP_MJ_QUERY_INFORMATION">
+								</enumeration>
+								<enumeration
+									value="IRP_MJ_SET_INFORMATION">
+								</enumeration>
+								<enumeration value="IRP_MJ_QUERY_EA"></enumeration>
+								<enumeration value="IRP_MJ_SET_EA"></enumeration>
+								<enumeration
+									value="IRP_MJ_FLUSH_BUFFERS">
+								</enumeration>
+								<enumeration
+									value="IRP_MJ_QUERY_VOLUME_INFORMATION">
+								</enumeration>
+								<enumeration
+									value="IRP_MJ_SET_VOLUME_INFORMATION">
+								</enumeration>
+								<enumeration
+									value="IRP_MJ_DIRECTORY_CONTROL">
+								</enumeration>
+								<enumeration
+									value="IRP_MJ_FILE_SYSTEM_CONTROL">
+								</enumeration>
+								<enumeration
+									value="IRP_MJ_DEVICE_CONTROL">
+								</enumeration>
+								<enumeration
+									value="IRP_MJ_INTERNAL_DEVICE_CONTROL">
+								</enumeration>
+								<enumeration value="IRP_MJ_SHUTDOWN"></enumeration>
+								<enumeration
+									value="IRP_MJ_LOCK_CONTROL">
+								</enumeration>
+								<enumeration value="IRP_MJ_CLEANUP"></enumeration>
+								<enumeration
+									value="IRP_MJ_CREATE_MAILSLOT">
+								</enumeration>
+								<enumeration
+									value="IRP_MJ_QUERY_SECURITY">
+								</enumeration>
+								<enumeration
+									value="IRP_MJ_SET_SECURITY">
+								</enumeration>
+								<enumeration value="IRP_MJ_POWER"></enumeration>
+								<enumeration
+									value="IRP_MJ_SYSTEM_CONTROL">
+								</enumeration>
+								<enumeration
+									value="IRP_MJ_DEVICE_CHANGE">
+								</enumeration>
+								<enumeration
+									value="IRP_MJ_QUERY_QUOTA">
+								</enumeration>
+								<enumeration value="IRP_MJ_SET_QUOTA"></enumeration>
+								<enumeration value="IRP_MJ_PNP"></enumeration>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="minor" type="unsignedInt"></element>
+					<element name="requestMode">
+						<simpleType>
+							<restriction base="string">
+								<enumeration value="KernelMode"></enumeration>
+								<enumeration value="UserMode"></enumeration>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="pid" type="unsignedInt"
+						minOccurs="0">
+					</element>
+					<element name="status" type="unsignedInt"></element>
+					<element name="information" type="unsignedLong"></element>
+					<element name="cancel" type="boolean"></element>
+					<element name="sizeIn" type="unsignedInt"></element>
+					<element name="sizeOut" type="unsignedInt"></element>
+					<element name="pattern" type="netzob-common:Pattern" minOccurs="0"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="IRPDeviceIoControlMessage">
+		<complexContent>
+			<extension base="netzob-common:IRPMessage">
+				<sequence>
+					<element name="ioctl" type="unsignedInt"></element>
+					<element name="pattern" type="netzob-common:Pattern" minOccurs="0"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	
+	<element name="messages" type="netzob-common:Messages"></element>
+
+</schema>

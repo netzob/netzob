@@ -46,10 +46,21 @@ class Format():
     BASE64_ENC = "base64enc"
     BASE64_DEC = "base64dec"
 
+    IPv4 = "ipv4"
+
     formatVisualizationUnitSizes = {BINARY: 1, HEX: 4, STRING: 8}
 
     # Complex formats
     IP = "ip"
+
+    @staticmethod
+    def getPossibleFormats(values):
+        """getPossibleFormats:
+        Given the provided values, it computes the possible formats
+        the values can be.
+        returns a list of format"""
+
+        return Format.getSupportedFormats()
 
     @staticmethod
     #+---------------------------------------------------------------------------+
@@ -58,7 +69,7 @@ class Format():
     #|     for the visualization of messages
     #+---------------------------------------------------------------------------+
     def getSupportedFormats():
-        return [Format.BINARY, Format.OCTAL, Format.DECIMAL, Format.HEX, Format.STRING]
+        return [Format.BINARY, Format.OCTAL, Format.DECIMAL, Format.HEX, Format.STRING, Format.IPv4]
 
     @staticmethod
     #+---------------------------------------------------------------------------+

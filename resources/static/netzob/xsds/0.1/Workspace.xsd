@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.netzob.org/workspace"
+	elementFormDefault="qualified" 
+	xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:netzob-ws="http://www.netzob.org/workspace" 
+	xmlns:netzob-common="http://www.netzob.org/common"
+	version="0.1">
+	
+    <import schemaLocation="common.xsd" namespace="http://www.netzob.org/common"></import>
+    <complexType name="Workspace">
+    	<sequence>
+    		<element name="configuration"
+    			type="netzob-ws:Workspace_configuration" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+    		<element name="projects" type="netzob-ws:Projects"></element>
+    		<element name="traces" type="netzob-ws:Traces"
+    			minOccurs="0">
+    		</element>
+    		<element name="functions" type="netzob-ws:Functions" minOccurs="0" maxOccurs="1"></element>
+    	</sequence>
+    	<attribute name="creation_date" type="dateTime"
+    		use="required">
+    	</attribute>
+    	<attribute name="name" use="required">
+    		<simpleType>
+    			<restriction base="string">
+    				<minLength value="1"></minLength>
+    			</restriction>
+    		</simpleType>
+    	</attribute>
+	</complexType>
+
+	<complexType name="Traces">
+		<sequence>
+			<element name="trace" type="netzob-ws:Trace" maxOccurs="unbounded" minOccurs="0"></element>
+		</sequence>
+	</complexType>
+	
+	<complexType name="Trace">
+		<sequence>
+			<element name="messages" type="netzob-common:Messages" maxOccurs="1" minOccurs="0"></element>
+			<element name="sessions" type="netzob-common:Sessions" maxOccurs="1" minOccurs="0"></element>
+		</sequence>
+		<attribute name="id" type="string"></attribute>
+		<attribute name="name" type="string"></attribute>
+		<attribute name="description" type="string"></attribute>
+		<attribute name="date" type="dateTime"></attribute>
+		<attribute name="type" type="string"></attribute>
+	</complexType>
+
+	<complexType name="Projects">
+		<sequence>
+			<element name="project" type="netzob-ws:Project_ref"
+				maxOccurs="unbounded" minOccurs="0">
+			</element>
+		</sequence>
+		<attribute name="last" type="string"></attribute>
+	</complexType>
+
+	<complexType name="Project_ref">
+    	<attribute name="path" use="required">
+    		<simpleType>
+    			<restriction base="string">
+    				<minLength value="1"></minLength>
+    			</restriction>
+    		</simpleType>
+    	</attribute>
+    </complexType>
+    
+    <complexType name="Workspace_configuration">
+    	<sequence>
+            <element name="traces" type="string"></element>
+            <element name="logging" type="string" minOccurs="0"></element>
+	    <element name="prototypes" type="string" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+
+	<complexType name="Functions">
+		<sequence>
+			<element name="function" type="netzob-ws:Function" maxOccurs="unbounded" minOccurs="0"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="Function">
+		<attribute name="type" type="string"></attribute>
+		<attribute name="name" type="string"></attribute>
+	</complexType>
+
+	<complexType name="TransformationFunction">
+		<complexContent>
+			<extension base="netzob-ws:Function">
+				
+			</extension>
+		</complexContent>
+	</complexType>
+	
+	<complexType name="CustomFunction">
+		<complexContent>
+			<extension base="netzob-ws:TransformationFunction">
+				<sequence>
+					<element name="source-code" type="string"></element>
+					<element name="source-code_reverse" type="string" minOccurs="0" maxOccurs="1"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>	
+	
+	<element name="workspace" type="netzob-ws:Workspace"></element>
+</schema>

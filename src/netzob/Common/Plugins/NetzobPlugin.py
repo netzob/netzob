@@ -31,7 +31,8 @@
 import logging
 import uuid
 import sys
-
+import os
+from abc import ABCMeta, abstractmethod, abstractproperty
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
@@ -40,17 +41,19 @@ import pkg_resources
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Plugins.PluginChecker import PluginChecker
 from netzob.Common.Plugins.Extensions.NetzobExtension import NetzobExtension
-from netzob.Common.Plugins.PluginDecorators import mandatory
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration, ResourcesConfigurationException
 
 
-#+---------------------------------------------------------------------------+
-#| NetzobPlugin:
-#|     Abstract class every Netzob's plugin must subclass to be registered
-#+---------------------------------------------------------------------------+
+class NetzobPluginException(Exception):
+    pass
+
+
 class NetzobPlugin(object):
+    """Abstract class every Netzob's plugin must subclass to be
+    registered"""
 
+    __metaclass__ = ABCMeta
     PLUGIN_FLAG_REJECTED = "rejected"
     instances = {}
 
@@ -62,36 +65,64 @@ class NetzobPlugin(object):
 
     def __init__(self, netzob):
         # Generate a unique ID
-        self.id = uuid.uuid4()
+        self.id = str(uuid.uuid4())
         self.netzob = netzob
 
     def getNetzob(self):
         return self.netzob
 
-    @mandatory
+    __plugin_name__ = abstractproperty()
+    __plugin_version__ = abstractproperty()
+    __plugin_description__ = abstractproperty()
+    __plugin_author__ = abstractproperty()
+    __plugin_copyright__ = abstractproperty()
+    __plugin_license__ = abstractproperty()
+
     def getName(self):
-        raise NotImplementedError("The plugin class doesn't implement method 'getName'")
+        return self.__plugin_name__
 
-    @mandatory
     def getVersion(self):
-        raise NotImplementedError("The plugin class doesn't implement method 'getVersion'")
+        return self.__plugin_version__
 
-    @mandatory
     def getDescription(self):
-        raise NotImplementedError("The plugin class doesn't implement method 'getDescription'")
+        return self.__plugin_description__
 
-    @mandatory
     def getAuthor(self):
-        raise NotImplementedError("The plugin class doesn't implement method 'getAuthor'")
+        return self.__plugin_author__
 
-    @mandatory
+    def getCopyright(self):
+        return self.__plugin_copyright__
+
+    def getLicense(self):
+        return self.__plugin_license__
+
+    @abstractmethod
     def getEntryPoints(self):
         raise NotImplementedError("The plugin class doesn't implement method 'getEntryPoints'")
 
-    @staticmethod
-    def getLoadedInstance():
+    def getNetzobStaticResourcesPath(self):
+        """Computes and returns the path to the static
+        resources associated with netzob"""
+        return ResourcesConfiguration.getStaticResources()
+
+    def getPluginStaticResourcesPath(self):
+        """Computes and returns the path to the static
+        resources associated with the current plugin"""
+
         try:
-            return NetzobPlugin.instances.values()[0]
+            pluginPath = os.path.join(ResourcesConfiguration.getPluginsStaticResources(),
+                                      self.getName())
+
+            logging.debug("The computed path for plugins' static resources is: {0}.".format(pluginPath))
+            return pluginPath
+
+        except ResourcesConfigurationException, e:
+            raise NetzobPluginException(str(e))
+
+    @classmethod
+    def getLoadedInstance(cls):
+        try:
+            return NetzobPlugin.instances[cls]
         except Exception, e:
             logging.warning("Impossible to retrieve loaded instance of plugin ({0})".format(e))
 
@@ -104,11 +135,11 @@ class NetzobPlugin(object):
         for sub in subs:
             # Retrieve all the subclasses of current class
             subsubs = sub.__subclasses__()
-            # We only consider a plugin if it doesn't have a child
-            if len(subsubs) == 0:
+            # We only consider a plugin if it was loaded
+            if sub in NetzobPlugin.instances:
                 try:
                     # We verify the plugin has not been rejected (by the PluginChecker)
-                    if getattr(sub.getLoadedInstance(), NetzobPlugin.PLUGIN_FLAG_REJECTED) == False:
+                    if getattr(sub.getLoadedInstance(), NetzobPlugin.PLUGIN_FLAG_REJECTED) is False:
                         plugins.append(sub.getLoadedInstance())
                 except Exception, e:
                     pass
@@ -126,12 +157,13 @@ class NetzobPlugin(object):
         logging.debug("Get plugin by extension")
         for plugin in NetzobPlugin.getLoadedPlugins(NetzobPlugin):
             try:
-                if plugin.getEntryPoints() != None:
+                if plugin.getEntryPoints() is not None:
                     for pluginExtensionClass in plugin.getEntryPoints():
+                        logging.debug("Plugin {0} has entry point {1}".format(
+                            plugin.__class__.__name__,
+                            pluginExtensionClass.__class__.__name__))
                         if issubclass(pluginExtensionClass.__class__, extensionClass):
                             pluginExtensions.append(pluginExtensionClass)
-                        else:
-                            logging.debug("oups not {0}".format(pluginExtensionClass))
             except Exception, e:
                 logging.debug("Error while loading an extension : {0}".format(e))
 
@@ -139,7 +171,8 @@ class NetzobPlugin(object):
 
     @staticmethod
     def loadPlugins(netzob):
-        logging.debug("Loading plugins:")
+        from netzob.Common.Plugins.PluginChecker import PluginChecker
+        logging.debug("+ Loading plugins:")
         for entrypoint in pkg_resources.iter_entry_points('netzob.plugins'):
             try:
                 plugin_class = entrypoint.load()
@@ -153,7 +186,7 @@ class NetzobPlugin(object):
                     setattr(instanciatedPlugin, NetzobPlugin.PLUGIN_FLAG_REJECTED, False)
                     logging.debug("Plugin {0} (v.{1}) loaded.".format(instanciatedPlugin.getName(), instanciatedPlugin.getVersion()))
             except Exception, e:
-                logging.warning("Impossible to load plugin declared in entrypoint {0} ({1}).".format(entrypoint, e))
+                logging.exception("Impossible to load plugin declared in entrypoint {0} : {1}".format(entrypoint, e))
         logging.debug("Plugins are loaded.")
 
     @staticmethod

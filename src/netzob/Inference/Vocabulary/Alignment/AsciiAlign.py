@@ -51,7 +51,7 @@ class AsciiAlign():
         self.unitSize = unitSize
         self.log = logging.getLogger('netzob.Inference.Vocabulary.AsciiAlign.py')
         self.server = ""
-        if explodeSymbols == False:
+        if explodeSymbols is False:
             self.symbols = symbols
         else:
              #Create a symbol for each message and reset to constant the tokens
@@ -61,7 +61,8 @@ class AsciiAlign():
                 for m in symbol.getMessages():
                     for t in m.getPattern()[1]:
                         t.setType("constant")
-                    tmpSymbol = Symbol(str(uuid.uuid4()), "Symbol " + str(i_symbol), project, m.getPattern())
+                    tmpSymbol = Symbol(str(uuid.uuid4()), "Symbol " + str(i_symbol), project)
+                    tmpSymbol.setPattern(m.getPattern())
                     tmpSymbol.addMessage(m)
                     self.symbols.append(tmpSymbol)
                     i_symbol += 1
@@ -109,18 +110,18 @@ class AsciiAlign():
             try:
 #                print "l"
                 al = self.computeAlignment(symbol)
-                symbol.setAlignment(al)
+                symbol.getField().setAlignment(al)
                 alignment.buildRegexFromAlignment(symbol, al, self.defaultFormat)
 
 #                for (p, fields) in zip(symbol.getPattern()[1], symbol.getFields()):
 #                    field.setFormat(p.getFormat())
             except:
-                logging.warn("Partitionnement error: too much fields ( > 100) for the symbol '" + symbol.getName() + "' len=" + str(len(symbol.getFields())) + "len " + str(len(symbol.getPattern()[1])))
-                symbol.cleanFields()
-                field = Field("Field 0", 0, "(.{, })")
+                logging.warn("Partitionnement error: too much fields ( > 100) for the symbol '" + symbol.getName() + "' len=" + str(len(symbol.getExtendedFields())) + "len " + str(len(symbol.getPattern()[1])))
+                symbol.getField().removeLocalFields()
+                field = Field("Field 0", "(.{, })", symbol)
+                symbol.addField(field)
                 # Use the default protocol type for representation
                 field.setFormat(self.defaultFormat)
-                symbol.addField(field)
 
         alignment.alignSymbols(self.symbols, self.project)
         self.symbols = alignment.getLastResult()
@@ -146,7 +147,8 @@ class AsciiAlign():
         messages.extend(symbol1.getMessages())
         messages.extend(symbol2.getMessages())
 
-        newSymbol = Symbol(str(uuid.uuid4()), symbol1.getName(), self.project, pattern=self.mergePattern(symbol1.getPattern(), symbol2.getPattern()))
+        newSymbol = Symbol(str(uuid.uuid4()), symbol1.getName(), self.project)
+        newSymbol.setPattern(self.mergePattern(symbol1.getPattern(), symbol2.getPattern()))
 #        self.log.debug("Patterns to merge: {0} with {1}: Give Result {2}".format(symbol1.getPatternString(), symbol2.getPatternString(), newSymbol.getPatternString()))
         for message in messages:
             newSymbol.addMessage(message)

@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
+from locale import gettext as _
 import logging
 import os
 import datetime
@@ -44,6 +44,10 @@ import shutil
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.XSDResolver import XSDResolver
 from netzob.Common.ImportedTrace import ImportedTrace
+from netzob.Common.Functions.Transformation.Base64Function import Base64Function
+from netzob.Common.Functions.Transformation.GZipFunction import GZipFunction
+from netzob.Common.Functions.Transformation.BZ2Function import BZ2Function
+from netzob.Common.Functions.RenderingFunction import RenderingFunction
 
 WORKSPACE_NAMESPACE = "http://www.netzob.org/workspace"
 COMMON_NAMESPACE = "http://www.netzob.org/common"
@@ -64,15 +68,15 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
     pathOfTraces = xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}traces").text
 
     pathOfLogging = None
-    if xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}logging") != None and xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}logging").text != None and len(xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}logging").text) > 0:
+    if xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}logging") is not None and xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}logging").text is not None and len(xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}logging").text) > 0:
         pathOfLogging = xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}logging").text
 
     pathOfPrototypes = None
-    if xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}prototypes") != None and xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}prototypes").text != None and len(xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}prototypes").text) > 0:
+    if xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}prototypes") is not None and xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}prototypes").text is not None and len(xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}prototypes").text) > 0:
         pathOfPrototypes = xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}prototypes").text
 
     lastProject = None
-    if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}projects") != None:
+    if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}projects") is not None:
         xmlProjects = xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}projects")
         if xmlProjects.get("last", "none") != "none":
             lastProject = xmlProjects.get("last", "none")
@@ -81,29 +85,33 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
     workspace = Workspace(wsName, wsCreationDate, workspacePath, pathOfTraces, pathOfLogging, pathOfPrototypes)
 
     # Load the already imported traces
-    if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}traces") != None:
+    if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}traces") is not None:
         xmlTraces = xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}traces")
         for xmlTrace in xmlTraces.findall("{" + WORKSPACE_NAMESPACE + "}trace"):
             trace = ImportedTrace.loadTrace(xmlTrace, WORKSPACE_NAMESPACE, COMMON_NAMESPACE, "0.1", workspace.getPathOfTraces())
-            if trace != None:
+            if trace is not None:
                 workspace.addImportedTrace(trace)
 
     # Reference the projects
-    if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}projects") != None:
+    if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}projects") is not None:
         for xmlProject in xmlWorkspace.findall("{" + WORKSPACE_NAMESPACE + "}projects/{" + WORKSPACE_NAMESPACE + "}project"):
             project_path = xmlProject.get("path")
             workspace.referenceProject(project_path)
-            if project_path == lastProject and lastProject != None:
+            if project_path == lastProject and lastProject is not None:
                 workspace.referenceLastProject(lastProject)
+
+    # Reference the functions
+    if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}functions") is not None:
+        for xmlFunction in xmlWorkspace.findall("{" + WORKSPACE_NAMESPACE + "}functions/{" + WORKSPACE_NAMESPACE + "}function"):
+            function = RenderingFunction.loadFromXML(xmlFunction, WORKSPACE_NAMESPACE, "0.1")
+            if function is not None:
+                workspace.addCustomTransformationFunction(function)
 
     return workspace
 
 
-#+---------------------------------------------------------------------------+
-#| Workspace:
-#|     Class definition of a Workspace
-#+---------------------------------------------------------------------------+
 class Workspace(object):
+    """Class definition of a Workspace"""
 
     # The name of the configuration file
     CONFIGURATION_FILENAME = "workspace.xml"
@@ -126,13 +134,14 @@ class Workspace(object):
         self.pathOfPrototypes = pathOfPrototypes
         self.lastProjectPath = lastProjectPath
         self.importedTraces = importedTraces
+        self.customTransformationFunctions = []
 
     def getNameOfProjects(self):
         nameOfProjects = []
         for project_path in self.getProjectsPath():
             from netzob.Common.Project import Project
             projectName = Project.getNameOfProject(self, project_path)
-            if projectName != None:
+            if projectName is not None:
                 nameOfProjects.append((projectName, project_path))
         return nameOfProjects
 
@@ -141,12 +150,12 @@ class Workspace(object):
         for project_path in self.getProjectsPath():
             from netzob.Common.Project import Project
             project = Project.loadProject(self, project_path)
-            if project != None:
+            if project is not None:
                 projects.append(project)
         return projects
 
     def getLastProject(self):
-        if self.lastProjectPath == None:
+        if self.lastProjectPath is None:
             return None
 
         from netzob.Common.Project import Project
@@ -167,6 +176,28 @@ class Workspace(object):
         self.importedTraces.remove(importedTrace)
 #        self.saveConfigFile()
 
+    def getTransformationFunctions(self):
+        """Computes and returns the list of available functions"""
+
+        functions = []
+        functions.append(Base64Function(_("Base64 Function")))
+        functions.append(GZipFunction(_("GZip Function")))
+        functions.append(BZ2Function(_("BZ2 Function")))
+        functions.extend(self.customTransformationFunctions)
+        return functions
+
+    def getCustomFunctions(self):
+        return self.customTransformationFunctions
+
+    def addCustomTransformationFunction(self, function):
+        found = False
+        for f in self.customTransformationFunctions:
+            if f.getName() == function.getName():
+                found = True
+                break
+        if not found:
+            self.customTransformationFunctions.append(function)
+
     #+-----------------------------------------------------------------------+
     #| referenceProject:
     #|     reference a project in the workspace
@@ -176,12 +207,12 @@ class Workspace(object):
         if not path in self.projects_path:
             self.projects_path.append(path)
         else:
-            logging.warn("The project declared in " + path + " is already referenced in the workspace.")
+            logging.warn("The project declared in {0} is already referenced in the workspace.". format(path))
 
     def saveConfigFile(self):
         workspaceFile = os.path.join(self.path, Workspace.CONFIGURATION_FILENAME)
 
-        logging.info("Save the config file of the workspace " + self.getName() + " in " + workspaceFile)
+        logging.info("Save the config file of the workspace {0} in {1}".format(self.getName(), workspaceFile))
 
         # Register the namespace
         etree.register_namespace('netzob', WORKSPACE_NAMESPACE)
@@ -205,14 +236,17 @@ class Workspace(object):
         xmlPrototypes.text = str(self.getPathOfPrototypes())
 
         xmlWorkspaceProjects = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}projects")
-        logging.info("Projects included in workspace.xml :")
-        for project in self.getProjects():
+        for projectPath in self.getProjectsPath():
             xmlProject = etree.SubElement(xmlWorkspaceProjects, "{" + WORKSPACE_NAMESPACE + "}project")
-            xmlProject.set("path", project.getPath())
+            xmlProject.set("path", projectPath)
 
         xmlWorkspaceImported = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}traces")
         for importedTrace in self.getImportedTraces():
             importedTrace.save(xmlWorkspaceImported, WORKSPACE_NAMESPACE, COMMON_NAMESPACE, os.path.join(self.path, self.getPathOfTraces()))
+
+        xmlWorkspaceFunctions = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}functions")
+        for function in self.getCustomFunctions():
+            function.save(xmlWorkspaceFunctions, WORKSPACE_NAMESPACE)
 
         tree = ElementTree(root)
         tree.write(workspaceFile)
@@ -255,32 +289,58 @@ class Workspace(object):
         return workspace
 
     @staticmethod
-    def loadWorkspace(workspacePath):
+    def isFolderAValidWorkspace(workspacePath):
+        """Computes if the provided folder
+        represents a valid (and loadable) workspace
+        @return: None if the workspace is loadable or the error message if not valid
+        """
+        if workspacePath is None:
+            return _("The workspace's path ({0}) is incorrect.".format(workspacePath))
         workspaceFile = os.path.join(workspacePath, Workspace.CONFIGURATION_FILENAME)
 
         # verify we can open and read the file
-        if workspaceFile == None:
-            logging.warn("The workspace's configuration file can't be find (No workspace path given).")
-            return None
+        if workspaceFile is None:
+            return _("The workspace's configuration file can't be find (No workspace path given).")
         # is the workspaceFile is a file
         if not os.path.isfile(workspaceFile):
-            logging.warn("The specified workspace's configuration file (" + str(workspaceFile) + ") is not valid : its not a file.")
-            return None
+            return _("The specified workspace's configuration file ({0}) is not valid: its not a file.".format(workspaceFile))
         # is it readable
         if not os.access(workspaceFile, os.R_OK):
-            logging.warn("The specified workspace's configuration file (" + str(workspaceFile) + ") is not readable.")
+            return _("The specified workspace's configuration file ({0}) is not readable.".format(workspaceFile))
+
+        for xmlSchemaFile in Workspace.WORKSPACE_SCHEMAS.keys():
+            from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+            xmlSchemaPath = os.path.join(ResourcesConfiguration.getStaticResources(), xmlSchemaFile)
+            # If we find a version which validates the XML, we parse with the associated function
+            if Workspace.isSchemaValidateXML(xmlSchemaPath, workspaceFile):
+                return None
+        return _("The specified workspace is not valid according the XSD definitions.")
+
+    @staticmethod
+    def loadWorkspace(workspacePath):
+        """Load the workspace declared in the
+        provided directory
+        @type workspacePath: str
+        @var workspacePath: folder to load as a workspace
+        @return a workspace or None if not valid"""
+
+        errorMessage = Workspace.isFolderAValidWorkspace(workspacePath)
+        if errorMessage is not None:
+            logging.warn(errorMessage)
             return None
 
+        workspaceFile = os.path.join(workspacePath, Workspace.CONFIGURATION_FILENAME)
+        logging.debug("  Workspace configuration file found: " + str(workspaceFile))
         # We validate the file given the schemas
         for xmlSchemaFile in Workspace.WORKSPACE_SCHEMAS.keys():
             from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
             xmlSchemaPath = os.path.join(ResourcesConfiguration.getStaticResources(), xmlSchemaFile)
             # If we find a version which validates the XML, we parse with the associated function
             if Workspace.isSchemaValidateXML(xmlSchemaPath, workspaceFile):
-                logging.debug("The file " + str(xmlSchemaPath) + " validates the workspace configuration file.")
+                logging.debug("  Workspace configuration file " + str(workspaceFile) + " is valid against XSD scheme " + str(xmlSchemaPath))
                 parsingFunc = Workspace.WORKSPACE_SCHEMAS[xmlSchemaFile]
                 workspace = parsingFunc(workspacePath, workspaceFile)
-                if workspace != None:
+                if workspace is not None:
                     return workspace
             else:
                 logging.fatal("The specified Workspace file is not valid according to the XSD found in %s." % (xmlSchemaPath))
@@ -302,7 +362,7 @@ class Workspace(object):
         schemaContent = schemaF.read()
         schemaF.close()
 
-        if schemaContent == None or len(schemaContent) == 0:
+        if schemaContent is None or len(schemaContent) == 0:
             logging.warn("Impossible to read the schema file (no content found in it)")
             return False
 

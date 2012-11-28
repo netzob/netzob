@@ -28,7 +28,7 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
-from gettext import gettext as _
+from locale import gettext as _
 
 
 #+----------------------------------------------
@@ -59,3 +59,10 @@ class XDotWidget(DotWidget):
     def drawAutomata(self, automata):
         self.set_dotcode(automata.getDotCode())
         self.zoom_to_fit()
+
+    def drawDotCode(self, dotCode):
+        self.set_dotcode(dotCode)
+        self.zoom_to_fit()
+
+    def clear(self):
+        pass

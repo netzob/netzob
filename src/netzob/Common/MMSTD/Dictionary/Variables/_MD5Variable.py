@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
+from locale import gettext as _
 import logging
 import hashlib
 
@@ -40,7 +40,7 @@ import hashlib
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Variable import Variable
+from netzob.Common.MMSTD.Dictionary._Variable import Variable
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
@@ -79,7 +79,7 @@ class MD5Variable(Variable):
 
     def learn(self, val, indice, isForced, dictionary):
 
-        if self.strVal == None or isForced:
+        if self.strVal is None or isForced:
             tmp = val[indice:]
             self.log.debug("Taille MD5 " + str(len(tmp)))
             # MD5 size = 16 bytes = 16*8 = 128

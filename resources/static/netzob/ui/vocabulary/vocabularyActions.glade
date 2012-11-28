@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <!-- interface-requires gtk+ 3.0 -->
+  <object class="GtkActionGroup" id="vocabularyActionGroup">
+    <child>
+      <object class="GtkAction" id="partitioningSimple">
+        <property name="label" translatable="yes">Simple Partitioning</property>
+        <property name="tooltip" translatable="yes">Use simple partioning on selected symbol</property>
+        <property name="stock_id">netzob-partitioning-simple</property>
+        <property name="sensitive">False</property>
+        <signal name="activate" handler="partitioningSimple_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="partitioningSmooth">
+        <property name="label" translatable="yes">Smooth Partitioning</property>
+        <property name="tooltip" translatable="yes">Use smooth partioning on selected symbol</property>
+        <property name="stock_id">netzob-partitioning-smooth</property>
+        <property name="sensitive">False</property>
+        <signal name="activate" handler="partitioningSmooth_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="partitioningReset">
+        <property name="label" translatable="yes">Reset Partitioning</property>
+        <property name="tooltip" translatable="yes">Reset partitioning of selected symbol</property>
+        <property name="stock_id">netzob-partitioning-reset</property>
+        <property name="sensitive">False</property>
+        <signal name="activate" handler="partitioningReset_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="concatField">
+        <property name="label" translatable="yes">Concatenate Fields</property>
+        <property name="tooltip" translatable="yes">Concatenate selected fields</property>
+        <property name="stock_id">netzob-concat-field</property>
+        <property name="sensitive">False</property>
+        <signal name="activate" handler="concatField_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="split">
+        <property name="label" translatable="yes">Split Field</property>
+        <property name="tooltip" translatable="yes">Split selected field</property>
+        <property name="stock_id">netzob-edit-cut-left</property>
+        <property name="sensitive">False</property>
+        <signal name="activate" handler="split_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="editVariable">
+        <property name="label" translatable="yes">Edit Variable</property>
+        <property name="tooltip" translatable="yes">Edit the variable for selected field</property>
+        <property name="stock_id">netzob-create-variable</property>
+        <signal name="activate" handler="editVariable_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="moveMessagesToOtherSymbol">
+        <property name="label" translatable="yes">Move To Another Symbol</property>
+        <property name="tooltip" translatable="yes">Move selected messages to another symbol</property>
+        <property name="stock_id">netzob-move-to-symbol</property>
+        <property name="sensitive">False</property>
+        <signal name="activate" handler="moveMessagesToOtherSymbol_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="deleteMessages">
+        <property name="label" translatable="yes">Delete Message(s)</property>
+        <property name="tooltip" translatable="yes">Delete selected message(s)</property>
+        <property name="stock_id">gtk-delete</property>
+        <property name="sensitive">False</property>
+        <signal name="activate" handler="deleteMessages_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="environmentDep">
+        <property name="label" translatable="yes">Environmental Dependencies</property>
+        <property name="tooltip" translatable="yes">Search for environmental dependencies for all messages</property>
+        <property name="stock_id">netzob-search-environment-dep</property>
+        <property name="sensitive">False</property>
+        <signal name="activate" handler="environmentDep_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="messagesDistribution">
+        <property name="label" translatable="yes">Messages Distribution</property>
+        <property name="tooltip" translatable="yes">Display messages distributions for selected symbol(s)</property>
+        <property name="stock_id">netzob-messages-distribution</property>
+        <property name="sensitive">False</property>
+        <signal name="activate" handler="messagesDistribution_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="variableTable">
+        <property name="label" translatable="yes">Variable Table</property>
+        <property name="tooltip" translatable="yes">Display variable table</property>
+        <property name="stock_id">netzob-variable-table</property>
+        <property name="sensitive">False</property>
+        <property name="visible">False</property>
+        <signal name="activate" handler="variableTable_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="fieldLimits">
+        <property name="label" translatable="yes">Compute Field Limits</property>
+        <property name="tooltip" translatable="yes">Compute min and max size of selected symbol(s)</property>
+        <property name="stock_id">netzob-field-limit</property>
+        <signal name="activate" handler="fieldLimits_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="importMessagesFromFile">
+        <property name="label" translatable="yes">Import Messages From File</property>
+        <property name="short_label" translatable="yes">Import</property>
+        <property name="tooltip" translatable="yes">Import messages from file</property>
+        <property name="stock_id">netzob-import-messages</property>
+        <property name="is_important">True</property>
+        <property name="sensitive">False</property>
+        <signal name="activate" handler="importMessagesFromFile_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="captureMessages">
+        <property name="label" translatable="yes">Capture Messages</property>
+        <property name="tooltip" translatable="yes">Capture messages</property>
+        <property name="hide_if_empty">False</property>
+        <property name="sensitive">False</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="automaticToolMenu">
+        <property name="label" translatable="yes">Automatic Tools</property>
+        <property name="sensitive">False</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="manualToolMenu">
+        <property name="label" translatable="yes">Manual Tools</property>
+        <property name="sensitive">False</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="relationsViewer">
+        <property name="label" translatable="yes">Relations</property>
+        <property name="sensitive">False</property>
+        <property name="visible">False</property>
+        <signal name="activate" handler="relationsViewer_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="partitioningForce">
+        <property name="label" translatable="yes">Force partitioning</property>
+        <property name="tooltip" translatable="yes">Use force partitioning on selected symbol</property>
+        <property name="stock_id">netzob-partitioning-force</property>
+        <property name="sensitive">False</property>
+        <signal name="activate" handler="partitioningForce_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="searchMenu">
+        <property name="label" translatable="yes">Search</property>
+        <property name="sensitive">False</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="sequenceAlignment">
+        <property name="label" translatable="yes">Sequence alignment</property>
+        <property name="tooltip" translatable="yes">Use sequence alignment on selected symbol</property>
+        <property name="stock_id">netzob-partitioning-sequence</property>
+        <property name="sensitive">False</property>
+        <signal name="activate" handler="sequenceAlignment_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkToggleAction" id="searchText">
+        <property name="label" translatable="yes">Search text</property>
+        <property name="tooltip" translatable="yes">Search a string in all messages of the current symbol</property>
+        <property name="stock_id">gtk-find</property>
+        <property name="sensitive">False</property>
+        <signal name="toggled" handler="searchText_toggled_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkToggleAction" id="filterMessages">
+        <property name="label" translatable="yes">Filter Displayed Messages</property>
+        <property name="tooltip" translatable="yes">Filter displayed messages in all messages of current symbol</property>
+        <property name="stock_id">netzob-filter-messages</property>
+        <property name="is_important">True</property>
+        <property name="sensitive">False</property>
+        <signal name="toggled" handler="filterMessages_toggled_cb" swapped="no"/>
+      </object>
+    </child>
+  </object>
+</interface>

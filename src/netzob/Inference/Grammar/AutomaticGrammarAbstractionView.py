@@ -28,17 +28,17 @@
 #+---------------------------------------------------------------------------+
 #| Global Imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
+from locale import gettext as _
 import logging
-import gtk
-import pygtk
-import gobject
+from gi.repository import Gtk
+import gi
+from gi.repository import GObject
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.MMSTD.Transitions.impl.OpenChannelTransition import OpenChannelTransition
 
-pygtk.require('2.0')
+gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -61,41 +61,41 @@ class AutomaticGrammarAbstractionView(object):
 
     def display(self):
         # Display the form for the creation of a word variable
-        self.dialog = gtk.Dialog(title=_("Automatic abstraction of the current grammar"), flags=0, buttons=None)
+        self.dialog = Gtk.Dialog(title=_("Automatic abstraction of the current grammar"), flags=0, buttons=None)
 
-        mainTable = gtk.Table(rows=2, columns=2, homogeneous=False)
+        mainTable = Gtk.Table(rows=2, columns=2, homogeneous=False)
         # Insert the Save button
-        self.startButton = gtk.Button(_("Start the abstraction"))
+        self.startButton = Gtk.Button(_("Start the abstraction"))
         self.startButton.show()
         self.startButton.connect("clicked", self.startAbstraction)
-        mainTable.attach(self.startButton, 0, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(self.startButton, 0, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
         self.dialog.vbox.pack_end(mainTable, True, True, 0)
         self.dialog.show_all()
 
     def startAbstraction(self, button):
-        self.log.debug(_("Start the abstraction"))
+        self.log.debug("Start the abstraction")
 
         # Retrieve available sequences
         sessions = self.project.getVocabulary().getSessions()
-        self.log.debug(_("A number of %d sessions will be injected in the grammar") % (len(sessions)))
+        self.log.debug("A number of %d sessions will be injected in the grammar" % (len(sessions)))
 
         for session in sessions:
-            self.log.debug(_("Search for a difference with a new session"))
+            self.log.debug("Search for a difference with a new session")
 
             # We apply the session on current automata and find an output symbol to include
             difference = self.applySession(session)
-            while difference != None:
+            while difference is not None:
                 (transition, outputSymbol) = difference
-                self.log.debug(_("A difference has been found, symbol %s must be added to transition %s") % (outputSymbol.getName(), transition.getName()))
+                self.log.debug("A difference has been found, symbol %s must be added to transition %s" % (outputSymbol.getName(), transition.getName()))
                 self.addOutputSymbolOnTransition(outputSymbol, transition)
 #                return
                 difference = self.applySession(session)
 
-            self.log.debug(_("The current session does not introduce other differences"))
-        self.log.debug(_("All the sessions have been applied on current automata"))
+            self.log.debug("The current session does not introduce other differences")
+        self.log.debug("All the sessions have been applied on current automata")
 
     def addOutputSymbolOnTransition(self, symbol, transition):
-        self.log.debug(_("Adding symbol %s as an output transition %s.") % (symbol.getName(), transition.getName()))
+        self.log.debug("Adding symbol %s as an output transition %s." % (symbol.getName(), transition.getName()))
         # Adding symbol as an output symbol of the provided transition
         # to do so, we have to ;
         #   - find out all current existing symbols in the transition
@@ -115,10 +115,10 @@ class AutomaticGrammarAbstractionView(object):
         # retrieve the automata
         automata = self.project.getGrammar().getAutomata()
 
-        self.log.debug(_("automata : %s") % automata.getDotCode())
+        self.log.debug("automata: %s" % automata.getDotCode())
 
-        if automata == None:
-            self.log.warn(_("Cannot apply a session on the current automata because it doesn't exist"))
+        if automata is None:
+            self.log.warn("Cannot apply a session on the current automata because it doesn't exist")
             return None
 
         difference = None
@@ -126,7 +126,8 @@ class AutomaticGrammarAbstractionView(object):
         # Configure the role-play environment
         # with :
         #  - a memory
-        memory = Memory(None)
+        memory = Memory()
+        # memory = Memory(None)
         #  - an abstraction layer
         abstractionLayer = AbstractionLayer(None, self.project.getVocabulary(), memory, None, None)
 
@@ -137,7 +138,7 @@ class AutomaticGrammarAbstractionView(object):
 
         isInput = True
         for message in session.getMessages():
-            self.log.debug(_("Inject message : %s") % (message.getData()))
+            self.log.debug("Inject message: %s" % (message.getData()))
             # we abstract the message
             symbol = abstractionLayer.abstract(TypeConvertor.netzobRawToBitArray(str(message.getData())))
             if isInput:
@@ -149,11 +150,11 @@ class AutomaticGrammarAbstractionView(object):
                     if transition.getInputSymbol() == symbol:
                         currentTransition = transition
                         break
-                if currentTransition == None:
-                    self.log.warn(_("Input symbol %s doesn't match any existing transition in current state %s") % (symbol.getName(), currentState.getName()))
-                    self.log.warn(_("We forget this message."))
+                if currentTransition is None:
+                    self.log.warn("Input symbol %s doesn't match any existing transition in current state %s" % (symbol.getName(), currentState.getName()))
+                    self.log.warn("We forget this message.")
                 else:
-                    self.log.debug(_("Input symbol %s matchs the transition %s from state %s") % (symbol.getName(), currentTransition.getName(), currentState.getName()))
+                    self.log.debug("Input symbol %s matchs the transition %s from state %s" % (symbol.getName(), currentTransition.getName(), currentState.getName()))
                     isInput = False
             else:
                 # We simulate emiting the message
@@ -167,12 +168,13 @@ class AutomaticGrammarAbstractionView(object):
                         break
 
                 if not found:
-                    self.log.info(_("A difference has been found, symbol %s is not an output symbol of transition %s") % (symbol.getName(), currentTransition.getName()))
+                    self.log.info("A difference has been found, symbol %s is not an output symbol of transition %s" % (symbol.getName(), currentTransition.getName()))
                     return (currentTransition, symbol)
         return difference
 
     def displaySession(self, session):
-        memory = Memory(None)
+        memory = Memory()
+        # memory = Memory(None)
         #  - an abstraction layer
         abstractionLayer = AbstractionLayer(None, self.project.getVocabulary(), memory, None, None)
         symbols = []

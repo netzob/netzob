@@ -41,7 +41,7 @@ import time
 #| Local Imports
 #+---------------------------------------------------------------------------+
 from netzob.Import.ThirdParties.AbstractThirdPartyImporter import AbstractThirdPartyImporter
-from netzob.Common.Models.NetworkMessage import NetworkMessage
+from netzob.Common.Models.L4NetworkMessage import L4NetworkMessage
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
@@ -58,7 +58,7 @@ class OSpy(AbstractThirdPartyImporter):
         result = []
         for path in paths:
             pathResult = self.parsePath(path)
-            if pathResult != None:
+            if pathResult is not None:
                 result.extend(pathResult)
         return result
 
@@ -67,7 +67,7 @@ class OSpy(AbstractThirdPartyImporter):
 
         # Uncompress the file
         xmlData = self.uncompressFile(path)
-        if xmlData == None or len(xmlData) == 0:
+        if xmlData is None or len(xmlData) == 0:
             logging.warning("No data have been extracted from the provided file.")
             return None
 
@@ -82,22 +82,22 @@ class OSpy(AbstractThirdPartyImporter):
         logging.debug("Load the XML structure in memory")
         xmlRoot = etree.fromstring(xmlData)
 
-        if xmlRoot == None:
+        if xmlRoot is None:
             logging.warning("Error while loading the XML.")
             return None
         listOfFunctions = []
         for xmlMessage in xmlRoot.findall("Messages"):
             message = self.extractMessageFromXML(xmlMessage)
-            if message != None:
-                if message.getProtocol() == "EncryptMessage" or message.getProtocol() == "DecryptMessage":
+            if message is not None:
+                if message.getL4Protocol() == "EncryptMessage" or message.getL4Protocol() == "DecryptMessage":
                     messages.append(message)
-                if not message.getProtocol() in listOfFunctions:
-                    listOfFunctions.append(message.getProtocol())
+                if not message.getL4Protocol() in listOfFunctions:
+                    listOfFunctions.append(message.getL4Protocol())
 
         return messages
 
     def extractMessageFromXML(self, rootElement):
-        if rootElement == None:
+        if rootElement is None:
             return None
 #        <Messages>
 #            <Index>647</Index>
@@ -124,7 +124,7 @@ class OSpy(AbstractThirdPartyImporter):
 #            <PeerPort>443</PeerPort>
 #            <Data>SFRUUC8xLjEgMjAwIE9LDQpEYXRlOiBUdWUsIDIyIE1heSAyMDEyIDA2OjU4OjExIEdNVA0KU2VydmVyOiBBcGFjaGUNCkNvbnRlbnQtRW5jb2Rpbmc6IGd6aXANClZhcnk6IEFjY2VwdC1FbmNvZGluZw0KQ29udGVudC1MZW5ndGg6IDUwDQpLZWVwLUFsaXZlOiB0aW1lb3V0PTE1LCBtYXg9OTkxDQpDb25uZWN0aW9uOiBLZWVwLUFsaXZlDQpDb250ZW50LVR5cGU6IHRleHQvaHRtbA0KDQofiwgAAAAAAAADqlYqLkksSVWyMtBRSixLzMxJTMoB8gxrAQAAAP//AwAQWBTTGQAAAA==</Data>
 #          </Messages>
-        id = uuid.uuid4()
+        id = str(uuid.uuid4())
 
         msg_timestamp = None
         msg_data = None
@@ -136,33 +136,33 @@ class OSpy(AbstractThirdPartyImporter):
         data = None
 
         # Retrieves the timestamp
-        if rootElement.find("Timestamp") != None:
+        if rootElement.find("Timestamp") is not None:
             msg_timestamp = rootElement.find("Timestamp").text
             date = dateutil.parser.parse(msg_timestamp)
             timestamp = int(time.mktime(date.timetuple()))
 
         # Retrieves the data of the message
-        if rootElement.find("Data") != None:
+        if rootElement.find("Data") is not None:
             msg_data = rootElement.find("Data").text
             data = b64decode(msg_data).encode('hex')
 
         # Retrieves the local address
-        if rootElement.find("LocalAddress") != None:
+        if rootElement.find("LocalAddress") is not None:
             msg_ipLocal = rootElement.find("LocalAddress").text
 
         # Retrieves the peer address
-        if rootElement.find("PeerAddress") != None:
+        if rootElement.find("PeerAddress") is not None:
             msg_ipPeer = rootElement.find("PeerAddress").text
 
         # Retrieves the local port
-        if rootElement.find("LocalPort") != None:
+        if rootElement.find("LocalPort") is not None:
             msg_portLocal = rootElement.find("LocalPort").text
 
         # Retrieves the peer port
-        if rootElement.find("PeerPort") != None:
+        if rootElement.find("PeerPort") is not None:
             msg_portPeer = rootElement.find("PeerPort").text
 
-        if rootElement.find("FunctionName") != None:
+        if rootElement.find("FunctionName") is not None:
             msg_protocol = rootElement.find("FunctionName").text
 
         ip_destination = msg_ipPeer
@@ -170,7 +170,7 @@ class OSpy(AbstractThirdPartyImporter):
         ip_source = msg_ipLocal
         l4_source_port = msg_portLocal
 
-        if rootElement.find("Direction") != None:
+        if rootElement.find("Direction") is not None:
             msg_direction = rootElement.find("Direction").text
             if msg_direction == 2:
                 ip_source = msg_ipPeer
@@ -178,8 +178,11 @@ class OSpy(AbstractThirdPartyImporter):
                 ip_destination = msg_ipLocal
                 l4_destination_port = msg_portLocal
 
-        if data != None:
-            message = NetworkMessage(id, timestamp, data, ip_source, ip_destination, msg_protocol, l4_source_port, l4_destination_port)
+        if data is not None:
+            message = L4NetworkMessage(id, timestamp, data,
+                                       None, None, None,
+                                       "IP", ip_source, ip_destination,
+                                       msg_protocol, l4_source_port, l4_destination_port)
             return message
 
     def uncompressFile(self, path):

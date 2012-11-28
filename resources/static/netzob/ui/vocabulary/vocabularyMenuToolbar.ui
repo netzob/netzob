@@ -1,0 +1,51 @@
+<ui>
+  <menubar name="mainMenuBar">
+    <menu action="fileMenu">
+      <placeholder name="fileMenuAdditions">
+        <menuitem action="importMessagesFromFile" />
+        <menu action="captureMessages" />
+      </placeholder>
+    </menu>
+    <placeholder name="mainMenuBarAdditions">
+      <menu action="automaticToolMenu">
+        <menuitem action="sequenceAlignment" />
+        <menuitem action="partitioningForce" />
+        <menuitem action="partitioningSimple" />
+        <menuitem action="partitioningSmooth" />
+        <menuitem action="partitioningReset" />
+      </menu>
+      <menu action="manualToolMenu">
+        <menuitem action="concatField" />
+        <menuitem action="split" />
+        <menuitem action="editVariable" />
+        <menuitem action="moveMessagesToOtherSymbol" />
+        <menuitem action="deleteMessages" />
+        <menuitem action="fieldLimits" />
+      </menu>
+      <menu action="searchMenu">
+        <menuitem action="searchText" />
+        <menuitem action="environmentDep" />
+        <menuitem action="filterMessages" />
+        <menuitem action="messagesDistribution" />
+        <menuitem action="variableTable" />
+        <menuitem action="relationsViewer" />
+      </menu>
+    </placeholder>
+  </menubar>
+  <toolbar name="mainToolbar">
+    <placeholder name="mainToolbarAdditions">
+      <toolitem action="importMessagesFromFile" />
+      <separator />
+      <toolitem action="concatField" />
+      <toolitem action="split" />
+      <toolitem action="editVariable" />
+      <toolitem action="moveMessagesToOtherSymbol" />
+      <toolitem action="deleteMessages" />
+      <separator />
+      <toolitem action="searchText" />
+      <toolitem action="environmentDep" />
+      <toolitem action="filterMessages" />
+      <toolitem action="variableTable" />
+    </placeholder>
+  </toolbar>
+</ui>

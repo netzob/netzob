@@ -28,8 +28,8 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
-
+from locale import gettext as _
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -57,32 +57,35 @@ from lxml import etree
 #|     <data></data>
 #| </message>
 #+---------------------------------------------------------------------------+
-class IPCMessageFactory():
+class IPCMessageFactory(object):
+
+    XML_SCHEMA_TYPE = "netzob-common:IPCMessage"
 
     @staticmethod
     #+-----------------------------------------------------------------------+
     #| save
     #|     Generate the XML representation of an IPC message
     #+-----------------------------------------------------------------------+
-    def save(message, xmlMessages, namespace_project, namespace):
-        root = etree.SubElement(xmlMessages, "{" + namespace + "}message")
-        root.set("id", str(message.getID()))
-        root.set("timestamp", str(message.getTimestamp()))
-        root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob-common:IPCMessage")
-        # data
-        subData = etree.SubElement(root, "{" + namespace + "}data")
-        subData.text = str(message.getData())
+    def save(message, xmlMessage, namespace_project, namespace):
+
+        xmlMessage.set("{http://www.w3.org/2001/XMLSchema-instance}type", IPCMessageFactory.XML_SCHEMA_TYPE)
+
+        # Add message properties
+        IPCMessageFactory.addPropertiesToElement(xmlMessage, message, namespace)
+
+    @staticmethod
+    def addPropertiesToElement(xmlMessage, message, namespace):
         # category
-        subCategory = etree.SubElement(root, "{" + namespace + "}category")
+        subCategory = etree.SubElement(xmlMessage, "{" + namespace + "}category")
         subCategory.text = str(message.getCategory())
         # key
-        subKey = etree.SubElement(root, "{" + namespace + "}key")
+        subKey = etree.SubElement(xmlMessage, "{" + namespace + "}key")
         subKey.text = str(message.getKey())
         # type
-        subType = etree.SubElement(root, "{" + namespace + "}type")
+        subType = etree.SubElement(xmlMessage, "{" + namespace + "}type")
         subType.text = str(message.getType())
         # direction
-        subDirection = etree.SubElement(root, "{" + namespace + "}direction")
+        subDirection = etree.SubElement(xmlMessage, "{" + namespace + "}direction")
         subDirection.text = str(message.getDirection())
 
     @staticmethod
@@ -100,14 +103,14 @@ class IPCMessageFactory():
             raise NameError("The parsed xml doesn't represent an IPC message.")
 
         # Verifies the data field
-        if rootElement.find("{" + namespace + "}data") == None or not rootElement.find("{" + namespace + "}data").text:
+        if rootElement.find("{" + namespace + "}data") is None or not rootElement.find("{" + namespace + "}data").text:
             raise NameError("The parsed message has no data specified")
 
         # Parse the data field and transform it into a byte array
         msg_data = bytearray(rootElement.find("{" + namespace + "}data").text)
 
         # Retrieve the id
-        msg_id = rootElement.get("id")
+        msg_id = str(rootElement.get("id"))
 
         # Retrieve the timestamp
         msg_timestamp = int(rootElement.get("timestamp"))

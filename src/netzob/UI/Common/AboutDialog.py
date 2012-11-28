@@ -28,27 +28,30 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
-import gtk
-import pygtk
+from gi.repository import Gtk, GdkPixbuf
+import gi
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
-pygtk.require('2.0')
+gi.require_version('Gtk', '3.0')
 import os
 from netzob import release
-from gettext import gettext as _
+from locale import gettext as _
 
 
 #+----------------------------------------------
 #| AboutDialog:
 #|     Shows the about dialog of Netzob
 #+----------------------------------------------
-class AboutDialog:
+class AboutDialog(object):
+    """Static class which includes the method
+    to display the about dialog of Netzob."""
 
-    def __init__(self):
-        about = gtk.AboutDialog()
+    @staticmethod
+    def display(parent=None):
+        about = Gtk.AboutDialog(parent=parent)
         about.set_program_name(release.appname)
         about.set_version(release.version)
         about.set_copyright(release.copyright)
-        if release.versionName != None:
+        if release.versionName is not None:
             about.set_comments("--{0}--\n{1}".format(release.versionName, release.description))
         else:
             about.set_comments(release.description)
@@ -58,6 +61,6 @@ class AboutDialog:
         about.set_authors(release.contributors)
 
         logoPath = os.path.join(ResourcesConfiguration.getStaticResources(), "logo.png")
-        about.set_logo(gtk.gdk.pixbuf_new_from_file(logoPath))
+        about.set_logo(GdkPixbuf.Pixbuf.new_from_file_at_size(logoPath, 200, 200))
         about.run()
         about.destroy()

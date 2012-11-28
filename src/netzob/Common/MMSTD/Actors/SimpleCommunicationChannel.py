@@ -26,25 +26,30 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| Standard library imports
+#| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
-import logging
 from collections import deque
+from locale import gettext as _
+import bitarray
+import logging
+
 #+---------------------------------------------------------------------------+
-#| Local application imports
+#| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from AbstractActor import AbstractActor
+from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken import \
+    VariableWritingToken
+from netzob.Common.MMSTD.Actors.AbstractChannel import AbstractChannel
 
 
 #+---------------------------------------------------------------------------+
 #| SimpleCommunicationLayer:
 #|     Definition of a simple communicationLayer
 #+---------------------------------------------------------------------------+
-class SimpleCommunicationLayer(AbstractActor):
+class SimpleCommunicationLayer(AbstractChannel):
 
-    def __init__(self, inputs, outputs, vocabulary, memory):
-        AbstractActor.__init__(self, False, False)
+    def __init__(self, id, inputs, outputs, vocabulary, memory):
+        AbstractChannel.__init__(self, id, False, False, memory, None, None, None, None, None)
+
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.SimpleCommunicationLayer.py')
         self.predefinedInputs = deque(inputs)
@@ -67,7 +72,11 @@ class SimpleCommunicationLayer(AbstractActor):
         if (len(self.predefinedInputs) > 0):
             symbol = self.predefinedInputs.popleft()
             self.log.debug("We simulate the reception of symbol " + str(symbol))
-            (value, strvalue) = symbol.getValueToSend(False, self.vocabulary, self.memory)
+
+            # TODO: replace default values by clever values.
+            writingToken = VariableWritingToken(False, self.vocabulary, self.memory, bitarray(''), ["random"])
+            self.symbol.write(writingToken)
+            value = writingToken.getValue()
             self.inputMessages.append(value)
             return value
         else:

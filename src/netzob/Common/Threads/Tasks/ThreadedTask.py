@@ -28,10 +28,10 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
+from locale import gettext as _
 
 from threading import Thread
-import gobject
+from gi.repository import GObject
 
 from netzob.Common.Threads.Task import Task
 from multiprocessing import Queue
@@ -52,7 +52,7 @@ class ThreadedTask(Task):
         thread = Thread(target=self._thread, args=(self.function, queue))
         thread.setDaemon(True)
         thread.start()
-        self.source_id = gobject.timeout_add(50, self._queue_manager, thread, queue)
+        self.source_id = GObject.timeout_add(50, self._queue_manager, thread, queue)
 
     def cancel(self):
         self.function

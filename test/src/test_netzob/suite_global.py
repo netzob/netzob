@@ -37,17 +37,18 @@ import sys
 #+---------------------------------------------------------------------------+
 from test_netzob import suite_Common
 from test_netzob import suite_Alignment
-from test_netzob import suite_Import
+#from test_netzob import suite_Import
 from common.xmlrunner import XMLTestRunner
-from test_netzob import test_NetzobGui
+#from test_netzob import test_NetzobGui
 
 
 
 def getSuite():
     globalSuite = unittest.TestSuite()
 
-    modulesOfTests = [test_NetzobGui]
-    modulesOfSuites = [suite_Common, suite_Alignment, suite_Import]
+#    modulesOfTests = [test_NetzobGui]
+    modulesOfTests = []
+    modulesOfSuites = [suite_Common, suite_Alignment]
 
     # Add individual tests    
     for module in modulesOfTests :

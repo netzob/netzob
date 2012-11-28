@@ -53,6 +53,7 @@ class TypeConvertor():
     #| @endian the endian selected (little or big) (normal = big)
     #| @return
     #+----------------------------------------------
+
     @staticmethod
     def string2bin(aStr, endian='big'):
         result = bitarray(endian=endian)
@@ -61,7 +62,7 @@ class TypeConvertor():
 
     @staticmethod
     def bin2string(bin):
-        return bin.tostring()
+        return bin.tobytes()
 
     @staticmethod
     def str2bool(val):
@@ -101,7 +102,12 @@ class TypeConvertor():
 
     @staticmethod
     def bin2strhex(bin):
-        return str(hex(int(bin.to01(), 2)))
+        if bin is None:
+            return None
+        elif len(bin) == 0:
+            return ''
+        else:
+            return str(hex(int(bin.to01(), 2)))
 
     @staticmethod
     def int2bin(i, nbbits):
@@ -140,15 +146,10 @@ class TypeConvertor():
             return TypeConvertor.netzobRawToBinary(raw)
         elif aType == Format.DECIMAL:
             return TypeConvertor.netzobRawToDecimal(raw)
-        elif aType == Format.IP:
-            return TypeConvertor.netzobRawToIP(raw)
+        elif aType == Format.IPv4:
+            return TypeConvertor.netzobRawToIPv4(raw)
         else:
             return raw
-
-    @staticmethod
-    def encodeNetzobRawToGivenField(raw, field):
-        res = TypeConvertor.applyFieldEncoding(raw, field)
-        return res
 
     @staticmethod
     def string2hex(msg):
@@ -248,11 +249,14 @@ class TypeConvertor():
 
         if len(raw) % 2 == 0:  # Even length
             for i in range(0, len(raw), 2):
-                res = res + oct(int(raw[i: i + 2], 16))
+                tmp = oct(int(raw[i: i + 2], 16))
+                res = res + tmp[1:]  # Do not consider the first 0 character
         else:  # Odd length
             for i in range(0, len(raw) - 1, 2):
-                res = res + oct(int(raw[i: i + 2], 16))
-            res = res + oct(int(raw[-1], 16))
+                tmp = oct(int(raw[i: i + 2], 16))
+                res = res + tmp[1:]
+            tmp = oct(int(raw[-1], 16))
+            res = res + tmp[1:]
         return res
 
     @staticmethod
@@ -295,9 +299,18 @@ class TypeConvertor():
     #+----------------------------------------------
     #| Return the hex string parameter in IP
     #+----------------------------------------------
-    def netzobRawToIP(raw):
-        logging.error("Not yet implemented")
-        # TODO
+    def netzobRawToIPv4(raw):
+        if len(raw) == 8:
+            try:
+                ip1 = int(raw[0:2], 16)
+                ip2 = int(raw[2:4], 16)
+                ip3 = int(raw[4:6], 16)
+                ip4 = int(raw[6:8], 16)
+                result = "{0}.{1}.{2}.{3}".format(ip1, ip2, ip3, ip4)
+                return result
+            except Exception, e:
+                logging.info("The raw ({0}) cannot be converted into an IPv4 data".format(raw))
+                pass
         return raw
 
     @staticmethod
@@ -437,6 +450,28 @@ class TypeConvertor():
 
     @staticmethod
     #+----------------------------------------------
+    #| serializeValues :
+    #|     create a serialization view of the values
+    #| @returns (serialized, format)
+    #+----------------------------------------------
+    def serializeValues(values, unitSize):
+        serialMessages = ""
+        format = ""
+        for value in values:
+            if unitSize == 8:
+                data = value
+            elif unitSize == 4:
+                data = "".join(["0" + i for i in value])
+            else:
+                logging.warn("Serializing at " + str(unitSize) + " unit size not yet implemented")
+                return
+
+            format += str(len(data) / 2) + "M"
+            serialMessages += TypeConvertor.netzobRawToPythonRaw(data)
+        return (serialMessages, format)
+
+    @staticmethod
+    #+----------------------------------------------
     #| serializeSymbol :
     #|     create a serialization view of a symbol
     #| @returns (serialized, format)
@@ -444,7 +479,7 @@ class TypeConvertor():
     def serializeSymbol(symbol, unitSize):
         serialSymbol = ""
         format = ""
-        if symbol.getAlignment() != None and symbol.getAlignment() != "":
+        if symbol.getAlignment() is not None and symbol.getAlignment() != "":
             format += "1" + "G"
             messageTmp = ""
             alignmentTmp = ""
@@ -559,85 +594,87 @@ class TypeConvertor():
 
         return res.getvalue()
 
+#+---------------------------------------------------------------------------+
+#| Convertors by Benjamin                                                    |
+#+---------------------------------------------------------------------------+
     @staticmethod
-    #+----------------------------------------------
-    #| Transform each chunk according to the endianess
-    #+----------------------------------------------
-    def applyFieldEncoding(raw, field):
-        unitSize = field.getUnitSize()
-        endianess = field.getEndianess()
-        sign = field.getSign()
-        aFormat = field.getFormat()
-
-        # Handle unitSize
-        # TODO: support 4BITS
-        if unitSize == UnitSize.NONE:
-            tmp = TypeConvertor.encodeNetzobRawToGivenType(raw, aFormat)
-            return tmp
-        elif unitSize == UnitSize.BIT:
-            size = 1
-            return TypeConvertor.encodeNetzobRawToGivenType(raw, aFormat)
-        elif unitSize == UnitSize.BITS8:
-            size = 8
-        elif unitSize == UnitSize.BITS16:
-            size = 16
-        elif unitSize == UnitSize.BITS32:
-            size = 32
-        elif unitSize == UnitSize.BITS64:
-            size = 64
-        else:  # Render with no splitting
-            tmp = TypeConvertor.encodeNetzobRawToGivenType(raw, aFormat)
-            return tmp
-
-        # Handle endianess
-        if endianess == Endianess.BIG:
-            transform = ">"
+    def stringB2bin(stri, theEndian='big'):
+        if stri is None:
+            return None
+        elif stri == "":
+            bina = bitarray(endian=theEndian)
+            return bina
         else:
-            transform = "<"
+            bina = bitarray(endian=theEndian)
+            bina.fromstring(stri)
+            return bina
 
-        res = ""
-        for i in range(0, len(raw), size / 4):
-            tmp = raw[i:i + (size / 4)]
-            initTmp = tmp
+    @staticmethod
+    def binB2string(bina):
+        if bina is not None:
+            return bina.tostring()
+        else:
+            return None
 
-            if len(tmp) == 2:  # In half-bytes
-                sizeStr = "B"
-            elif len(tmp) == 4:
-                sizeStr = "H"
-            elif len(tmp) == 8:
-                sizeStr = "I"
-            elif len(tmp) == 16:
-                sizeStr = "Q"
-            else:
-                sizeStr = "Q"
-                if endianess == Endianess.BIG:
-                    tmp = (16 - len(tmp)) * "0" + tmp  # Put padding on the left
-                else:
-                    tmp = tmp + (16 - len(tmp)) * "0"  # Put padding on the right
+    @staticmethod
+    def binstring2bin(stri):
+        if stri is not None:
+            bina = bitarray(stri)
+            return bina
+        else:
+            return None
 
-            tmp = TypeConvertor.netzobRawToPythonRaw(tmp)
+    @staticmethod
+    def bin2binstring(bina):
+        if bina is not None:
+            return bina.to01()
+        else:
+            return None
 
-            # Handle sign
-            if sign == Sign.SIGNED:
-                sizeStr = sizeStr.lower()
+    @staticmethod
+    def hexstring2bin(stri):
+        """hexstring2bin:
+                From "0123456789abcdef" to bitarray('011010111000110...').
+        """
+        if stri is not None:
+        # bitarray(bin(int(stri, 16))[2:]) : remove (int) all left-sided useful '0's.*
 
-            (tmp,) = struct.unpack(transform + sizeStr, tmp)
+            sbin = ''
+            for char in stri:
+                # We translate half-byte by half-byte.
+                onecharbin = bin(int(char, 16))[2:]  # We translate a character into binary.
+                for i in range(4 - len(onecharbin)):
+                    sbin += '0'  # We prepend '0's to match the format: one hex char = 4 binary chars.
+                sbin += onecharbin  # We append a new character's translation.
+            return bitarray(sbin)
+        else:
+            return None
 
-            # Handle format
-            if aFormat == Format.BINARY:
-                tmp = TypeConvertor.netzobRawToBinary(initTmp)
-            elif aFormat == Format.OCTAL:
-                tmp = "%o" % tmp
-            elif aFormat == Format.DECIMAL:
-                tmp = "%d" % tmp
-            elif aFormat == Format.HEX:
-                fmt = "%" + str(size / 4) + "x"
-                tmp = fmt % tmp
-            elif aFormat == Format.STRING:
-                tmp = TypeConvertor.netzobRawToString(initTmp)
-            elif aFormat == Format.FLOAT:
-                tmp = "%f" % tmp
+    @staticmethod
+    def bin2hexstring(bina):
+        if bina is not None:
+            # str(hex(int(bina.to01(), 2))) : remove (int) all left-sided useful '0's.
 
-            res += str(tmp)
+            sbin = bina.to01()  # We retrieve a string with the '0's and '1's of the binary.
+            stri = ''
+            for start in xrange(0, len(sbin), 4):
+                # We translate half-byte by half-byte.
+                stri += str(hex(int(sbin[start:start + 4], 2)))[2:]
+            return stri
+        else:
+            return None
 
-        return res  # s[:-1]  # We delete the last space character
+    @staticmethod
+    def intstring2bin(stri):
+        if stri is not None:
+            bina = bitarray(bin(int(stri))[2:])
+            return bina
+        else:
+            return None
+
+    @staticmethod
+    def bin2intstring(bina):
+        if bina is not None:
+            return str(int(bina.to01(), 2))  # Transform from a base 2 to a base 10 integer and then translate it in string.
+        else:
+            return None

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <!-- interface-requires gtk+ 3.0 -->
+  <object class="GtkActionGroup" id="simulatorActionGroup">
+    <child>
+      <object class="GtkAction" id="createNetworkActor">
+        <property name="label" translatable="yes">Create Network Actor</property>
+        <property name="short_label" translatable="yes">Create Network Actor</property>
+        <property name="tooltip" translatable="yes">Create a network actor</property>
+        <property name="stock_id">gtk-add</property>
+        <property name="is_important">True</property>
+        <signal name="activate" handler="createNetworkActor_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="actors">
+        <property name="label" translatable="yes">Actors</property>
+        <property name="short_label" translatable="yes">Actors</property>
+      </object>
+    </child>
+  </object>
+</interface>

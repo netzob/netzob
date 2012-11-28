@@ -28,10 +28,11 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
-from gettext import gettext as _
+from locale import gettext as _
 import logging
 import time
 import threading
+import uuid
 
 #+----------------------------------------------
 #| Related third party imports
@@ -65,13 +66,15 @@ class NetworkOracle(threading.Thread):
         self.log.info("Start the network oracle based on given MMSTD")
 
         # Create a new and clean memory
-        memory = Memory(self.mmstd.getVocabulary().getVariables())
+        memory = Memory()
+        # memory = Memory(self.mmstd.getVocabulary().getVariables())
         memory.createMemory()
         # Create the abstraction layer for this connection
         abstractionLayer = AbstractionLayer(self.communicationChannel, self.mmstd.getVocabulary(), memory)
 
         # And we create an MMSTD visitor for this
-        self.oracle = MMSTDVisitor("MMSTD-NetworkOracle", self.mmstd, self.isMaster, abstractionLayer)
+        anID = str(uuid.uuid4())
+        self.oracle = MMSTDVisitor(anID, "MMSTD-NetworkOracle", self.mmstd, self.isMaster, abstractionLayer)
         self.oracle.start()
 
         while (self.oracle.isAlive()):

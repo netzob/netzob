@@ -28,8 +28,8 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
-import gobject
+from locale import gettext as _
+from gi.repository import GObject
 
 from netzob.Common.Threads.Task import Task
 
@@ -43,4 +43,4 @@ class SleepTask(Task):
         def _return():
             self.return_cb()
             return False
-        self.source_id = gobject.timeout_add(int(self.seconds * 1000), _return)
+        self.source_id = GObject.timeout_add(int(self.seconds * 1000), _return)

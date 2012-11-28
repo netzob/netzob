@@ -28,20 +28,20 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
-
+from locale import gettext as _
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 from lxml.etree import ElementTree
-from netzob.Common.Type.TypeConvertor import TypeConvertor
 from lxml import etree
 import datetime
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 #+---------------------------------------------------------------------------+
@@ -62,38 +62,35 @@ import datetime
 #+---------------------------------------------------------------------------+
 class FileMessageFactory():
 
+    XML_SCHEMA_TYPE = "netzob-common:FileMessage"
+
     @staticmethod
     #+-----------------------------------------------------------------------+
     #| saveInXML
     #|     Generate the XML representation of a file message
     #| @return a string which include the xml definition of the file msg
     #+-----------------------------------------------------------------------+
-    def save(message, xmlMessages, namespace_project, namespace_common):
-        root = etree.SubElement(xmlMessages, "{" + namespace_common + "}message")
-        root.set("id", str(message.getID()))
-        root.set("timestamp", str(message.getTimestamp()))
-        root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob-common:FileMessage")
-        # data
-        subData = etree.SubElement(root, "{" + namespace_common + "}data")
-        subData.text = str(message.getData())
+    def save(message, xmlMessage, namespace_project, namespace_common):
+        xmlMessage.set("{http://www.w3.org/2001/XMLSchema-instance}type", FileMessageFactory.XML_SCHEMA_TYPE)
+
         # line number
-        subLineNumber = etree.SubElement(root, "{" + namespace_common + "}lineNumber")
+        subLineNumber = etree.SubElement(xmlMessage, "{" + namespace_common + "}lineNumber")
         subLineNumber.text = str(message.getLineNumber())
         # filename
-        subFilename = etree.SubElement(root, "{" + namespace_common + "}filename")
-        subFilename.text = message.getFilename()
+        subFilename = etree.SubElement(xmlMessage, "{" + namespace_common + "}filename")
+        subFilename.text = message.getFilename().decode('utf-8')
         # creationDate
-        subCreationDate = etree.SubElement(root, "{" + namespace_common + "}creationDate")
+        subCreationDate = etree.SubElement(xmlMessage, "{" + namespace_common + "}creationDate")
         subCreationDate.text = TypeConvertor.pythonDatetime2XSDDatetime(message.getCreationDate())
         # creationDate
-        subModificationDate = etree.SubElement(root, "{" + namespace_common + "}modificationDate")
+        subModificationDate = etree.SubElement(xmlMessage, "{" + namespace_common + "}modificationDate")
         subModificationDate.text = TypeConvertor.pythonDatetime2XSDDatetime(message.getModificationDate())
 
         # owner
-        subOwner = etree.SubElement(root, "{" + namespace_common + "}owner")
+        subOwner = etree.SubElement(xmlMessage, "{" + namespace_common + "}owner")
         subOwner.text = message.getOwner()
         # size
-        subSize = etree.SubElement(root, "{" + namespace_common + "}size")
+        subSize = etree.SubElement(xmlMessage, "{" + namespace_common + "}size")
         subSize.text = str(message.getSize())
 
     @staticmethod
@@ -105,24 +102,7 @@ class FileMessageFactory():
     #| @return an instance of a FipSource (default 0.0.0.0)ileMessage
     #| @throw NameError if XML invalid
     #+---------------------------------------------------------------------------+
-    def loadFromXML(rootElement, namespace, version):
-
-        # Then we verify its an IPC Message
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob-common:FileMessage":
-            raise NameError("The parsed xml doesn't represent a File message.")
-
-        # Verifies the data field
-        if rootElement.find("{" + namespace + "}data") == None or not rootElement.find("{" + namespace + "}data").text:
-            raise NameError("The parsed message has no data specified")
-
-        # Parse the data field and transform it into a byte array
-        msg_data = bytearray(rootElement.find("{" + namespace + "}data").text)
-
-        # Retrieve the id
-        msg_id = rootElement.get("id")
-
-        # Retrieve the timestamp
-        msg_timestamp = int(rootElement.get("timestamp"))
+    def loadFromXML(rootElement, namespace, version, id, timestamp, data):
 
         # Retrieves the lineNumber (default -1)
         msg_lineNumber = int(rootElement.find("{" + namespace + "}lineNumber").text)
@@ -134,7 +114,7 @@ class FileMessageFactory():
         msg_creationDate = TypeConvertor.xsdDatetime2PythonDatetime(rootElement.find("{" + namespace + "}creationDate").text)
 
         # Retrieves the modification date
-        if rootElement.find("{" + namespace + "}modificationDate").text != None:
+        if rootElement.find("{" + namespace + "}modificationDate").text is not None:
             msg_modificationDate = TypeConvertor.xsdDatetime2PythonDatetime(rootElement.find("{" + namespace + "}modificationDate").text)
         else:
             msg_modificationDate = msg_creationDate
@@ -148,7 +128,6 @@ class FileMessageFactory():
         # TODO : verify this ! Circular imports in python !
         # WARNING : verify this ! Circular imports in python !
         from netzob.Common.Models.FileMessage import FileMessage
-
-        result = FileMessage(msg_id, msg_timestamp, msg_data, msg_filename, msg_creationDate, msg_modificationDate, msg_owner, msg_size, msg_lineNumber)
+        result = FileMessage(id, timestamp, data, msg_filename, msg_creationDate, msg_modificationDate, msg_owner, msg_size, msg_lineNumber)
 
         return result

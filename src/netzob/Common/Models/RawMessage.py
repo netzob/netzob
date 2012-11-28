@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
+from locale import gettext as _
 import logging
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -40,6 +40,7 @@ import logging
 from netzob.Common.Models.AbstractMessage import AbstractMessage
 from netzob.Common.Models.Factories.RawMessageFactory import RawMessageFactory
 from netzob.Common.Type.Format import Format
+from netzob.Common.Property import Property
 
 
 #+---------------------------------------------------------------------------+
@@ -66,8 +67,8 @@ class RawMessage(AbstractMessage):
     #+-----------------------------------------------------------------------+
     def getProperties(self):
         properties = []
-        properties.append(['ID', Format.STRING, str(self.getID())])
-        properties.append(['Type', Format.STRING, self.getType()])
-        properties.append(['Timestamp', Format.DECIMAL, self.getTimestamp()])
-
+        properties.append(Property('ID', Format.STRING, str(self.getID())))
+        properties.append(Property('Type', Format.STRING, self.getType()))
+        properties.append(Property('Timestamp', Format.DECIMAL, self.getTimestamp()))
+        properties.extend(super(RawMessage, self).getProperties())
         return properties

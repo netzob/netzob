@@ -28,34 +28,34 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
 import logging
+import gtk
+from locale import gettext as _
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 
+
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.Common.Plugins.Extensions.GlobalMenuExtension import GlobalMenuExtension
+from netzob.Common.Menu import Menu
+from netzob_plugins.Importers.FileImporter.FileImportController import FileImportController
 
 
 #+---------------------------------------------------------------------------+
-#| AbstractValue:
-#|     Abstraction of a value
+#| GlobalMenuEntryPoint: Entry points in the menu for plugin importer
 #+---------------------------------------------------------------------------+
-class AbstractValue():
+class GlobalMenuEntryPoint(GlobalMenuExtension):
 
-    def __init__(self, type):
-        # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Values.AbstractValue.py')
-        self.type = type
+    def __init__(self, netzob):
+        self.netzob = netzob
 
-    #+-----------------------------------------------------------------------+
-    #| GETTERS AND SETTERS
-    #+-----------------------------------------------------------------------+
-    def getType(self):
-        return self.type
+    def getMenuEntries(self):
+        menuEntries = [(Menu.PATH_PROJECT_IMPORTTRACES + "/" + _("Import from File"), None, self.executeAction, 0, None)]
+        return menuEntries
 
-    def setType(self, type):
-        self.type = type
+    def executeAction(self, widget, data):
+        FileImportController(self.netzob)

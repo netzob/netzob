@@ -28,9 +28,9 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
-from gettext import gettext as _
+from locale import gettext as _
 import logging
-import gtk
+from gi.repository import Gtk
 
 #+----------------------------------------------
 #| Local Imports
@@ -66,23 +66,25 @@ class TreeProcessesGenerator():
         # str : text (process PID)
         # str : color foreground
         # str : color background
-        self.treestore = gtk.TreeStore(str, str, str, str)
-        self.treeview = gtk.TreeView(self.treestore)
+        self.treestore = Gtk.TreeStore(str, str, str, str)
+        self.treeview = Gtk.TreeView(self.treestore)
 
         # messages list
-        self.scroll = gtk.ScrolledWindow()
-        self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        self.scroll = Gtk.ScrolledWindow()
+        self.scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         self.scroll.show()
         self.scroll.set_size_request(200, 300)
         self.scroll.add(self.treeview)
 
-        lvcolumn = gtk.TreeViewColumn(_("Processes"))
+        lvcolumn = Gtk.TreeViewColumn(_("Processes"))
         lvcolumn.set_sort_column_id(1)
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         lvcolumn.pack_start(cell, True)
         cell.set_property('background-set', True)
         cell.set_property('foreground-set', True)
-        lvcolumn.set_attributes(cell, text=0, foreground=2, background=3)
+        lvcolumn.add_attribute(cell, "text", 0)
+        lvcolumn.add_attribute(cell, "foreground", 2)
+        lvcolumn.add_attribute(cell, "background", 3)
         self.treeview.append_column(lvcolumn)
         self.treeview.show()
 
@@ -98,7 +100,7 @@ class TreeProcessesGenerator():
     #|         Update the treestore in normal mode
     #+----------------------------------------------
     def default(self):
-        self.log.debug(_("Updating the treestore of the processes in default mode"))
+        self.log.debug("Updating the treestore of the processes in default mode")
         self.treestore.clear()
 
         self.updateProcessesList()
@@ -107,7 +109,7 @@ class TreeProcessesGenerator():
             iter = self.treestore.append(None, [process.getName(), process.getPid(), '#000000', '#FFFFFF'])
 
     def updateProcessesList(self):
-        self.log.debug(_("Updating the list of executing processes."))
+        self.log.debug("Updating the list of executing processes.")
         self.processes = ExecutionContext.getCurrentProcesses()
 
     #+----------------------------------------------

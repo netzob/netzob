@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
+from locale import gettext as _
 import logging
 import random
 import time
@@ -55,8 +55,10 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 class SemiStochasticTransition(AbstractTransition):
 
+    TYPE = "SemiStochastic"
+
     def __init__(self, id, name, inputState, outputState, inputSymbol):
-        AbstractTransition.__init__(self, "SemiStochastic", id, name, inputState, outputState)
+        AbstractTransition.__init__(self, SemiStochasticTransition.TYPE, id, name, inputState, outputState)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Transitions.impl.SemiStochasticTransition.py')
         self.inputSymbol = inputSymbol
@@ -175,7 +177,7 @@ class SemiStochasticTransition(AbstractTransition):
         abstractionLayer.writeSymbol(self.inputSymbol)
         while (not finish):
             (receivedSymbol, message) = abstractionLayer.receiveSymbolWithTimeout(5)
-            if receivedSymbol == None:
+            if receivedSymbol is None:
                 self.log.info("Message received = NONE ")
                 finish = True
                 errors = True
@@ -210,8 +212,7 @@ class SemiStochasticTransition(AbstractTransition):
         desc = []
         for outSymbolDesc in self.getOutputSymbols():
             desc.append("(" + str(outSymbolDesc[0].getName()) + ", " + str(outSymbolDesc[1]) + "%, " + str(outSymbolDesc[2]) + "ms)")
-
-        return "(" + str(inputSymbolName) + ";{" + ",".join(desc) + "})"
+        return self.getName() + " (" + str(inputSymbolName) + ";{" + ",".join(desc) + "})"
 
     def save(self, root, namespace):
         xmlTransition = etree.SubElement(root, "{" + namespace + "}transition")
@@ -263,7 +264,7 @@ class SemiStochasticTransition(AbstractTransition):
         inputSymbolID = xmlInput.get("symbol")
         # We retrieve the symbol associated with it
         inputSymbol = vocabulary.getSymbol(inputSymbolID)
-        if inputSymbol == None:
+        if inputSymbol is None:
             logging.warn("The vocabulary doesn't reference a symbol which ID is " + inputSymbolID)
             return None
 
@@ -277,7 +278,7 @@ class SemiStochasticTransition(AbstractTransition):
 
             outputSymbol = vocabulary.getSymbol(outputSymbolId)
 
-            if outputSymbol == None:
+            if outputSymbol is None:
                 logging.warn("The vocabulary doesn't reference a symbol which ID is " + outputSymbolId)
                 return None
 

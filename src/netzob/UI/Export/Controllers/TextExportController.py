@@ -28,11 +28,11 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
-from gettext import gettext as _
-import gtk
-import pygtk
+from locale import gettext as _
+from gi.repository import Gtk
+import gi
 import logging
-pygtk.require('2.0')
+gi.require_version('Gtk', '3.0')
 
 #+----------------------------------------------
 #| Local Imports
@@ -45,7 +45,7 @@ from netzob.Export.TextExport import TextExport
 #| TextExport:
 #|     GUI for exporting results in text mode
 #+----------------------------------------------
-class TextExportController:
+class TextExportController(object):
 
     #+----------------------------------------------
     #| Called when user select a new trace
@@ -77,22 +77,22 @@ class TextExportController:
         self.update()
 
     def initCallbacks(self):
-        self.view.symbolTreeview.connect("cursor-changed", self.symbolSelected_cb)
+        self.view.symbolTreeview.connect("changed", self.symbolSelected_cb)
 
-    def symbolSelected_cb(self, treeview):
-        (model, iter) = treeview.get_selection().get_selected()
+    def symbolSelected_cb(self, selection):
+        (model, iter) = selection.get_selected()
         if(iter):
             if(model.iter_is_valid(iter)):
                 symbolID = model.get_value(iter, 0)
                 self.showTextDefinition(symbolID)
 
     def showTextDefinition(self, symbolID):
-        if symbolID == None:
-            self.log.debug(_("No selected symbol"))
+        if symbolID is None:
+            self.log.debug("No selected symbol")
             self.view.textarea.get_buffer().set_text(_("Select a symbol to see its text definition"))
         else:
             textDefinition = self.model.getTextDefinition(symbolID)
-            if textDefinition != None:
+            if textDefinition is not None:
                 self.view.textarea.get_buffer().set_text("")
                 self.view.textarea.get_buffer().insert_with_tags_by_name(self.view.textarea.get_buffer().get_start_iter(), textDefinition, "normalTag")
             else:

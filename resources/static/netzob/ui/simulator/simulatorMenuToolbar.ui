@@ -1,0 +1,14 @@
+<ui>
+  <menubar name="mainMenuBar">
+    <placeholder name="mainMenuBarAdditions">
+      <menu action="actors">
+        <menuitem action="createNetworkActor" />
+      </menu>
+    </placeholder>
+  </menubar>
+  <toolbar name="mainToolbar">
+    <placeholder name="mainToolbarAdditions">
+      <toolitem action="createNetworkActor" />
+    </placeholder>
+  </toolbar>
+</ui>

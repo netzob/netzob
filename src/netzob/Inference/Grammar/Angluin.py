@@ -28,7 +28,7 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
-from gettext import gettext as _
+from locale import gettext as _
 import logging
 
 from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery
@@ -120,7 +120,7 @@ class Angluin(LearningAlgorithm):
         for letter in self.D:
             mq = word.getMQSuffixedWithMQ(letter)
             # we add it in the observation table
-            if self.observationTable[letter] != None:
+            if self.observationTable[letter] is not None:
                 cel = self.observationTable[letter]
             else:
                 cel = dict()
@@ -149,7 +149,7 @@ class Angluin(LearningAlgorithm):
 
         for letter in self.D:
             mq = word.getMQSuffixedWithMQ(letter)
-            if self.observationTable[letter] != None:
+            if self.observationTable[letter] is not None:
                 cel = self.observationTable[letter]
             else:
                 cel = dict()
@@ -204,15 +204,15 @@ class Angluin(LearningAlgorithm):
         for wordSA in self.SA:
             rowSA = self.getRowOfObservationTable(wordSA)
             found = False
-            self.log.info("isclosed ? : We verify with SA member : " + str(rowSA))
+            self.log.info("isClosed()? We verify with SA member: {0}".format(str(rowSA)))
             for wordS in self.S:
                 rowS = self.getRowOfObservationTable(wordS)
                 if self.rowsEquals(rowS, rowSA):
-                    self.log.debug("     is closed: YES (" + str(rowS) + " is equal !")
+                    self.log.debug("     isClosed(): YES ({0}) is equal!".format(str(rowS)))
                     found = True
 
             if not found:
-                self.log.info("The low-row associated with " + str(wordSA) + " was not found in S")
+                self.log.info("The low-row associated with {0} was not found in S".format(str(wordSA)))
                 return False
 
         return True
@@ -250,7 +250,7 @@ class Angluin(LearningAlgorithm):
                 if word != word2 and self.rowsEquals(row, row2):
                     equalsRows.append((word, word2))
 
-        self.log.info("isConsistent ? Equals Rows in S are from words : ")
+        self.log.info("isConsistent ? Equals Rows in S are from words: ")
         for (w1, w2) in equalsRows:
             self.log.info("w1=" + str(w1) + ";w2=" + str(w2))
 
@@ -280,7 +280,7 @@ class Angluin(LearningAlgorithm):
                 if word != word2 and self.rowsEquals(row, row2):
                     equalsRows.append((word, word2))
 
-        self.log.info("Equals Rows in S are from words : ")
+        self.log.info("Equals Rows in S are from words: ")
         for (w1, w2) in equalsRows:
             self.log.info("w1=" + str(w1) + ";w2=" + str(w2))
 
@@ -331,7 +331,7 @@ class Angluin(LearningAlgorithm):
                 if rN == rowName:
                     mem = rN
                     break
-            if mem != None:
+            if mem is not None:
                 cols.append(self.observationTable[letter][mem])
         return cols
 
@@ -368,15 +368,15 @@ class Angluin(LearningAlgorithm):
         # Create the states of the automata
         uniqueRowsInS = self.getUniqueRowsInS()
         for (w, r) in uniqueRowsInS:
-            self.log.info("The row with word " + str(w) + " is unique !")
+            self.log.info("The row with word {0} is unique !".format(str(w)))
             # We create a State for each unique row
             nameState = self.appendValuesInRow(r)
-            self.log.info("Create state : " + nameState)
+            self.log.info("Create state: {0}".format(nameState))
             currentState = NormalState(idState, nameState)
             states.append(currentState)
             wordAndStates.append((w, currentState))
             # Is it the starting state (wordS = [EmptySymbol])
-            if startState == None and w == MembershipQuery([EmptySymbol()]):
+            if startState is None and w == MembershipQuery([EmptySymbol()]):
                 startState = currentState
                 self.log.info("Its the starting state")
 
@@ -385,7 +385,7 @@ class Angluin(LearningAlgorithm):
         self.log.debug("Create the transition of the automata")
         # Create the transitions of the automata
         for (word, state) in wordAndStates:
-            self.log.debug("Working on state : " + str(state.getName()))
+            self.log.debug("Working on state: {0}".format(str(state.getName())))
 
             for symbol in self.initialD:
                 # retrieve the value:
@@ -407,7 +407,7 @@ class Angluin(LearningAlgorithm):
 
                         # search for the state having this name:
                         outputState = None
-                        self.log.info("Search for the output state : " + outputStateName)
+                        self.log.info("Search for the output state: {0}".format(outputStateName))
                         for (w2, s2) in wordAndStates:
                             if s2.getName() == outputStateName:
                                 outputState = s2
@@ -415,12 +415,12 @@ class Angluin(LearningAlgorithm):
                             else:
                                 self.log.info("   != " + str(s2.getName()))
 
-                        if outputState != None:
+                        if outputState is not None:
                             inputSymbol = symbol.getSymbolsWhichAreNotEmpty()[0]
 
                             self.log.info("We create a transition from " + str(state.getName()) + "=>" + str(outputState.getName()))
-                            self.log.info(" input : " + str(inputSymbol))
-                            self.log.info(" output : " + str(value))
+                            self.log.info(" input: {0}".format(str(inputSymbol)))
+                            self.log.info(" output: {0}".format(str(value)))
 
                             transition = SemiStochasticTransition(idTransition, "Transition " + str(idTransition), state, outputState, inputSymbol)
                             transition.addOutputSymbol(value, 100, 1000)
@@ -431,7 +431,7 @@ class Angluin(LearningAlgorithm):
                         else:
                             self.log.error("<!!> Impossible to retrieve the output state named " + str(s2.getName()))
 
-        if startState != None:
+        if startState is not None:
             self.log.info("An infered automata has been computed.")
 
             self.inferedAutomata = MMSTD(startState, self.dictionary)

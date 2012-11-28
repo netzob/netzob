@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
+from locale import gettext as _
 import logging
 import random
 
@@ -91,7 +91,7 @@ class StartState(AbstractState):
 
         # Wait for a message
         (receivedSymbol, message) = abstractionLayer.receiveSymbol()
-        if not receivedSymbol == None:
+        if not receivedSymbol is None:
             self.log.debug("The following symbol has been received : " + str(receivedSymbol))
             # Now we verify this symbol is an accepted one
             for transition in self.getTransitions():

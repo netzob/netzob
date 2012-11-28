@@ -28,7 +28,7 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
-from gettext import gettext as _
+from locale import gettext as _
 import logging
 
 #+----------------------------------------------
@@ -42,7 +42,7 @@ from netzob.Inference.Grammar.Angluin import Angluin
 from netzob.Inference.Grammar.MQCache import MQCache
 # Replace by previous import statement : from Angluin import Angluin
 import threading
-import gobject
+from gi.repository import GObject
 import time
 
 
@@ -86,7 +86,7 @@ class GrammarInferer(threading.Thread):
         return self.hypotheticalAutomaton
 
     def getSubmitedQueries(self):
-        if self.learner != None:
+        if self.learner is not None:
             return self.learner.getSubmitedQueries()
         return []
 
@@ -936,13 +936,13 @@ class GrammarInferer(threading.Thread):
             self.log.info("An hypothetical automaton has been computed")
 
             # Execute the call back function for the hypothetial automaton
-            gobject.idle_add(self.cb_hypotheticalAutomaton, self.hypotheticalAutomaton)
+            GObject.idle_add(self.cb_hypotheticalAutomaton, self.hypotheticalAutomaton)
 
             counterExample = self.equivalenceOracle.findCounterExample(self.hypotheticalAutomaton, self.inputDictionary, cache)
 
             if not self.active:
                 break
-            if counterExample == None:
+            if counterExample is None:
                 self.log.info("No counter-example were found !")
                 equivalent = True
             else:

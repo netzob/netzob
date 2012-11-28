@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
+from locale import gettext as _
 import logging
 import time
 
@@ -51,8 +51,10 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 class CloseChannelTransition(AbstractTransition):
 
+    TYPE = "CloseChannel"
+
     def __init__(self, id, name, inputState, outputState, disconnectionTime):
-        AbstractTransition.__init__(self, "CloseChannel", id, name, inputState, outputState)
+        AbstractTransition.__init__(self, CloseChannelTransition.TYPE, id, name, inputState, outputState)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Transitions.impl.CloseChannelTransition.py')
         self.disconnectionTime = disconnectionTime

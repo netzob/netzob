@@ -31,15 +31,19 @@ import sys
 import subprocess
 from git import *
 
-ignore_files = ["src/netzob/ExternalLibs/xdot.py",
-                ".*\.txt",
-                ".*\.png", ".*\.ico"
-                ".*\.xsd",
-                "resources/*",
-                "__init__.py",
-                "\.git/*",
-                ".*\.pyc"
-                ]
+ignore_files = [
+    "__init__.py",
+    "src/netzob/ExternalLibs/xdot.py",
+    ".*\.txt", ".*\.rst",
+    ".*\.png", ".*\.ico",
+    ".*\.xsd", ".*\.xml",
+    "resources/*",
+    ".*\.pyc",
+    "MANIFEST\.in",
+    ".*\.po", ".*\.pot",
+    "doc/netzob\.1",
+    "\.git/*",
+]
 
 def getFiles():
     currentPath = os.getcwd()
@@ -63,10 +67,28 @@ def getFiles():
 
 def checkPEP8(file):
     localResult = []
-    p = subprocess.Popen(['pep8', '--repeat', '--ignore=E501,E711,E712', file], stdout=subprocess.PIPE)
-    out, err = p.communicate()
-    for line in out.splitlines():
-        localResult.append(line)
+    try:
+        p = subprocess.Popen(['pep8', '--repeat', '--ignore=E501,E711,E712', file], stdout=subprocess.PIPE)
+        out, err = p.communicate()
+        for line in out.splitlines():
+            localResult.append(line)
+        return localResult
+    except Exception,e:
+        if str(e).find("[Errno 2] No such file or directory") != -1 :
+            print "[E] PEP8 is not installed."
+        else:
+            print "[E] PEP8 does not work, it is probably not installed.\nThe error is : {0}".format(str(e))
+        sys.exit(1)
+        
+
+def checkClassDeclation(file):
+    localResult = []
+    with open(file, 'rb') as f:
+        lineNumber = 0
+        for line in f:
+            m = re.search('class\s+[^\(]*:', line)
+            if m:
+                localResult.append("Old class definition found on {0}".format(m.group()))
     return localResult
 
 
@@ -121,9 +143,14 @@ def checkHeader(file):
 #+---------------------------------------------------------------------------+"""
     header2 = header.replace("#", "//")  # For C files
     header3 = header.replace("#", "")     # For other
+    headerGlade = header3.replace("---------------------------------------------------------------------------", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")     # For other
     with open(file, 'rb') as f:
         data = f.read()
     if not header in data and not header2 in data and not header3 in data:
+        if file.startswith(os.path.join("src", "netzob_plugins")):  # Plugin
+            headersPlugin = header.split("Georges Bossert and Frédéric Guihéry                   |")
+            if headersPlugin[0] in data and headersPlugin[1] in data:
+                return []
         return ["The header has not been found in file"]
     return []
 
@@ -132,6 +159,9 @@ def checkFile(file):
     results = dict()
 
     if file.endswith("__init__.py"):
+        return results
+
+    if file.endswith(".pyc"):
         return results
 
     # Verify no '<<<' and or conflicts info are commited
@@ -150,9 +180,9 @@ def checkFile(file):
     # Check against PEP8 rules for python files
     if os.path.splitext(file)[-1] == ".py":
         results['PEP8'] = checkPEP8(file)
+        results['Old Class'] = checkClassDeclation(file)
 
     return results
-
 
 def verifyResults(results):
     result = 0
@@ -164,7 +194,7 @@ def verifyResults(results):
             localResult = 0
             for ruleName in ruleNames:
                 ruleErrors = resultFile[ruleName]
-                if ruleErrors != None and len(ruleErrors) > 0:
+                if ruleErrors is not None and len(ruleErrors) > 0:
                     for ruleError in ruleErrors:
                         print "[E]\t %s : %s" % (ruleName, ruleError)
                     result = 1
@@ -173,15 +203,16 @@ def verifyResults(results):
                 print "[I]\t no error found."
     return result
 
+def analyze(providedFiles):
 
-def analyze(filesToAnalyze):
-
-    if filesToAnalyze == None:
+    if providedFiles is None:
         # Retrieve all the files to analyze
         print "[I] Retrieve all the files to analyze from the staged area."
         files = getFiles()
     else:
         print "[I] Retrieve all the file to analyze from the command line arguments."
+        filesToAnalyze = getFilesFromListOfPath(providedFiles)
+
         files = []
         for fileToAnalyze in filesToAnalyze:
             if os.path.isfile(fileToAnalyze):
@@ -192,7 +223,7 @@ def analyze(filesToAnalyze):
                 except:
                     print "[E] File %s exists but is not readable." % fileToAnalyze
 
-    print "[I] %d files will be analyzed." % (len(files))
+#    print "[I] %d files will be analyzed." % (len(files))
     globalResults = dict()
     for file in files:
         globalResults[file] = checkFile(file)
@@ -205,6 +236,19 @@ def analyze(filesToAnalyze):
         print "[E] Errors founds, commit not allowed."
     sys.exit(result)
 
+def getFilesFromListOfPath(paths):
+    result = []
+    for p in paths:
+        if os.path.isfile(p):
+            result.append(p)
+        elif os.path.isdir(p):
+            subfiles = os.listdir(p)
+            toAnalyze = []
+            for s in subfiles:
+                toAnalyze.append(os.path.join(p, s))
+            subfilesResult = getFilesFromListOfPath(toAnalyze)
+            result.extend(subfilesResult)
+    return result
 
 if __name__ == '__main__':
 

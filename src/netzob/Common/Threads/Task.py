@@ -28,10 +28,10 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
+from locale import gettext as _
 
 
-class Task:
+class Task(object):
 
     """Base class for asynchronous tasks."""
     def config(self, return_cb, exception_cb):

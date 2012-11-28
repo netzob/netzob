@@ -56,17 +56,7 @@ A network message is defined with the following parameters :
 
 Definition of a NetworkMessage :
 
-.. automodule:: netzob.Common.Models.NetworkMessage
-
-    .. autoclass:: NetworkMessage
-    	:members:
-
-Definition of the factory for XML processing of a NetworkMessage :
-
-.. automodule:: netzob.Common.Models.Factories.NetworkMessageFactory
-
-    .. autoclass:: NetworkMessageFactory   
-  
+ 
 FileMessage
 --------------
 A file message is defined with the following parameters :

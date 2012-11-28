@@ -26,6 +26,12 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+ 
 
+
+"""
+This is the old command line entry point for runnings tests.
+The prefered way is now through: python setup.py test
+"""
+
 import sys
 import logging.config
 import gobject
@@ -53,7 +59,7 @@ sys.path.insert(0, 'src/')
 
 from common.xmlrunner import XMLTestRunner
 from test_netzob import suite_global
-import netzob.NetzobGui as NetzobGui
+#import netzob.NetzobGui as NetzobGui
 
 if __name__ == "__main__":
 

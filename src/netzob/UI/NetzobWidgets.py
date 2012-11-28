@@ -26,13 +26,23 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| Global Imports
+#| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
-import gtk
-import pango
-import pygtk
-pygtk.require('2.0')
+from locale import gettext as _
+import os
+
+#+---------------------------------------------------------------------------+
+#| Related third party imports
+#+---------------------------------------------------------------------------+
+from gi.repository import Gtk, Gdk, Pango
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject
+
+#+---------------------------------------------------------------------------+
+#| Local application imports
+#+---------------------------------------------------------------------------+
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
 #+---------------------------------------------------------------------------+
@@ -40,9 +50,9 @@ pygtk.require('2.0')
 #| @param text: the string of the label
 #+---------------------------------------------------------------------------+
 def NetzobLabel(text):
-    label = gtk.Label(text)
+    label = Gtk.Label(label=text)
     label.show()
-    label.modify_font(pango.FontDescription("sans 9"))
+    label.modify_font(Pango.FontDescription("sans 9"))
     return label
 
 
@@ -51,15 +61,15 @@ def NetzobLabel(text):
 #| @param text: the string of the button
 #+---------------------------------------------------------------------------+
 def NetzobButton(text):
-    but = gtk.Button(gtk.STOCK_OK)
+    but = Gtk.Button(Gtk.STOCK_OK)
     but.set_label(text)
     but.show()
     if but.get_use_stock():
-        label = but.child.get_children()[1]
-        label.modify_font(pango.FontDescription("sans 9"))
-    elif isinstance(but.child, gtk.Label):
-        label = but.child
-        label.modify_font(pango.FontDescription("sans 9"))
+        label = but.get_child().get_children()[1]
+        label.modify_font(Pango.FontDescription("sans 9"))
+    elif isinstance(but.get_child(), Gtk.Label):
+        label = but.get_child()
+        label.modify_font(Pango.FontDescription("sans 9"))
     return but
 
 
@@ -68,11 +78,11 @@ def NetzobButton(text):
 #| @param text: the string of the frame
 #+---------------------------------------------------------------------------+
 def NetzobFrame(text):
-    frame = gtk.Frame()
+    frame = Gtk.Frame()
     frame.set_label(text)
     frame.show()
     label = frame.get_label_widget()
-    label.modify_font(pango.FontDescription("sans 9"))
+    label.modify_font(Pango.FontDescription("sans 9"))
     return frame
 
 
@@ -80,9 +90,9 @@ def NetzobFrame(text):
 #| NetzobComboBoxEntry:
 #+---------------------------------------------------------------------------+
 def NetzobComboBoxEntry():
-    combo = gtk.combo_box_entry_new_text()
+    combo = Gtk.ComboBoxText.new_with_entry()
     combo.show()
-    combo.set_model(gtk.ListStore(str))
+    combo.set_model(Gtk.ListStore(str))
     cell = combo.get_cells()[0]  # Get the cellrenderer
     cell.set_property("size-points", 9)
     return combo
@@ -92,8 +102,8 @@ def NetzobComboBoxEntry():
 #| NetzobProgressBar:
 #+---------------------------------------------------------------------------+
 def NetzobProgressBar(text=None):
-    pb = gtk.ProgressBar(adjustment=None)
-    if text != None:
+    pb = Gtk.ProgressBar()
+    if text is not None:
         pb.set_text(text)
 
     pb.show()
@@ -103,11 +113,11 @@ def NetzobProgressBar(text=None):
 #+---------------------------------------------------------------------------+
 #| NetzobErrorMessage:
 #+---------------------------------------------------------------------------+
-def NetzobErrorMessage(text):
-    md = gtk.MessageDialog(None,
-                           gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                           gtk.MESSAGE_ERROR,
-                           gtk.BUTTONS_CLOSE,
+def NetzobErrorMessage(text, parent=None):
+    md = Gtk.MessageDialog(parent,
+                           Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                           Gtk.MessageType.ERROR,
+                           Gtk.ButtonsType.CLOSE,
                            text)
     md.run()
     md.destroy()
@@ -117,10 +127,69 @@ def NetzobErrorMessage(text):
 #| NetzobInfoMessage:
 #+---------------------------------------------------------------------------+
 def NetzobInfoMessage(text):
-    md = gtk.MessageDialog(None,
-                           gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                           gtk.MESSAGE_INFO,
-                           gtk.BUTTONS_CLOSE,
+    md = Gtk.MessageDialog(None,
+                           Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                           Gtk.MessageType.INFO,
+                           Gtk.ButtonsType.CLOSE,
                            text)
     md.run()
     md.destroy()
+
+
+#+---------------------------------------------------------------------------+
+#| NetzobQuestionMessage:
+#+---------------------------------------------------------------------------+
+def NetzobQuestionMessage(text):
+    md = Gtk.MessageDialog(None,
+                           Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                           Gtk.MessageType.QUESTION,
+                           Gtk.ButtonsType.YES_NO,
+                           text)
+    result = md.run()
+    md.destroy()
+    return result
+
+
+def addNetzobIconsToDefaultFactory():
+    def addIconToFactory(iconStockID, iconFilename):
+        iconSet = Gtk.IconSet()
+        iconSource = Gtk.IconSource()
+        iconPath = os.path.abspath(os.path.join(
+            ResourcesConfiguration.getStaticResources(),
+            "icons",
+            "24x24",
+            iconFilename))
+        iconSource.set_filename(iconPath)
+        iconSource.set_size(Gtk.IconSize.LARGE_TOOLBAR)
+        iconSet.add_source(iconSource)
+        netzobIconFactory.add(iconStockID, iconSet)
+    netzobIconFactory = Gtk.IconFactory()
+    addIconToFactory("netzob-import-messages", "import-messages.png")
+    addIconToFactory("netzob-capture-messages", "capture-messages.png")
+    addIconToFactory("netzob-partitioning-sequence", "partitioning-sequence.png")
+    addIconToFactory("netzob-partitioning-simple", "partitioning-simple.png")
+    addIconToFactory("netzob-partitioning-force", "partitioning-force.png")
+    addIconToFactory("netzob-partitioning-smooth", "partitioning-smooth.png")
+    addIconToFactory("netzob-partitioning-reset", "partitioning-reset.png")
+    addIconToFactory("netzob-partitioning-freeze", "partitioning-freeze.png")
+    addIconToFactory("netzob-concat-field", "concat-field.png")
+    addIconToFactory("netzob-concat-symbol", "concat-symbol.png")
+    addIconToFactory("netzob-edit-cut-left", "split-field.png")
+    addIconToFactory("netzob-edit-cut-right", "edit-cut-right.png")
+    addIconToFactory("netzob-create-variable", "create-variable.png")
+    addIconToFactory("netzob-move-to-symbol", "move-to-symbol.png")
+    addIconToFactory("netzob-search-environment-dep", "search-environment-dep.png")
+    addIconToFactory("netzob-messages-distribution", "messages-distribution.png")
+    addIconToFactory("netzob-filter-messages", "filter-messages.png")
+    addIconToFactory("netzob-variable-table", "variable-table.png")
+    addIconToFactory("netzob-field-limit", "field-limit.png")
+    addIconToFactory("netzob-select-all", "select-all.png")
+    addIconToFactory("netzob-unselect-all", "unselect-all.png")
+    addIconToFactory("netzob-concat-symbol", "concat-symbol.png")
+    addIconToFactory("netzob-rename", "rename.png")
+    addIconToFactory("netzob-new-window", "new-window.png")
+    addIconToFactory("grammar-add-state", "grammar-add-state.png")
+    addIconToFactory("grammar-add-open", "grammar-add-open.png")
+    addIconToFactory("grammar-add-stochastic", "grammar-add-stochastic.png")
+    addIconToFactory("grammar-add-close", "grammar-add-close.png")
+    Gtk.IconFactory.add_default(netzobIconFactory)

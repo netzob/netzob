@@ -28,7 +28,7 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
-from gettext import gettext as _
+from locale import gettext as _
 import logging
 from netzob.Common.MMSTD.States.impl.NormalState import NormalState
 
@@ -163,7 +163,7 @@ class MembershipQuery(object):
             return False
 
     def __cmp__(self, other):
-        if other == None:
+        if other is None:
             return -1
         if self.isStrictlyEqual(other):
             return 0

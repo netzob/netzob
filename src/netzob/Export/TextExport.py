@@ -28,7 +28,7 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
-from gettext import gettext as _
+from locale import gettext as _
 import logging
 
 
@@ -36,7 +36,7 @@ import logging
 #| TextExport:
 #|     GUI for exporting results in raw mode
 #+----------------------------------------------
-class TextExport:
+class TextExport(object):
 
     #+----------------------------------------------
     #| Constructor:
@@ -55,8 +55,8 @@ class TextExport:
             if str(symbol.getID()) == symbolID:
                 resSymbol = symbol
                 break
-        if resSymbol == None:
-            self.log.warning(_("Impossible to retrieve the symbol having the id {0}").format(str(symbolID)))
+        if resSymbol is None:
+            self.log.warning("Impossible to retrieve the symbol having the id {0}".format(str(symbolID)))
             return None
         else:
             return resSymbol.getTextDefinition()

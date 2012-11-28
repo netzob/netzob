@@ -28,13 +28,14 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
+from locale import gettext as _
 import logging
 import gzip
 import os.path
 from lxml.etree import ElementTree
 from lxml import etree
 from StringIO import StringIO
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -70,11 +71,6 @@ class ImportedTrace(object):
         xmlTrace.set("name", str(self.getName()))
         xmlTrace.set("id", str(self.getID()))
 
-        # Creation of the XML File (in buffer)
-        # Compress it using gzip and save the .gz
-        tracesFile = os.path.join(pathOfTraces, str(self.getID()) + ".gz")
-        logging.info("Save the trace " + str(self.getID()) + " in " + tracesFile)
-
         # Register the namespace (2 way depending on the version)
         try:
             etree.register_namespace('netzob-common', namespace_common)
@@ -96,15 +92,15 @@ class ImportedTrace(object):
         tree = ElementTree(root)
         contentOfFile = str(etree.tostring(tree.getroot()))
 
-        # if outputfile already exists we delete it
-        if os.path.isfile(tracesFile):
-            logging.debug("The compressed version (" + tracesFile + ") of the file already exists, we replace it with the new one")
-            os.remove(tracesFile)
-
-        # Compress and write the file
-        gzipFile = gzip.open(tracesFile, 'wb')
-        gzipFile.write(contentOfFile)
-        gzipFile.close()
+        # Creation of the XML File (in buffer)
+        # Compress it using gzip and save the .gz
+        tracesFile = os.path.join(pathOfTraces, str(self.getID()) + ".gz")
+        if not os.path.isfile(tracesFile):
+            logging.debug("Save the trace " + str(self.getID()) + " in " + tracesFile)
+            # Compress and write the file
+            gzipFile = gzip.open(tracesFile, 'wb')
+            gzipFile.write(contentOfFile)
+            gzipFile.close()
 
     def addSession(self, session):
         self.sessions.append(session)
@@ -164,7 +160,7 @@ class ImportedTrace(object):
             date = TypeConvertor.xsdDatetime2PythonDatetime(str(xmlRoot.get("date")))
             type = xmlRoot.get("type")
             description = xmlRoot.get("description", "")
-            id = xmlRoot.get("id")
+            id = str(xmlRoot.get("id"))
             name = xmlRoot.get("name")
 
             importedTrace = ImportedTrace(id, date, type, description, name)
@@ -180,19 +176,19 @@ class ImportedTrace(object):
                 xmlRoot = tree.getroot()
 
                 # We retrieve the pool of messages
-                if xmlRoot.find("{" + namespace_workspace + "}messages") != None:
+                if xmlRoot.find("{" + namespace_workspace + "}messages") is not None:
                     xmlMessages = xmlRoot.find("{" + namespace_workspace + "}messages")
                     for xmlMessage in xmlMessages.findall("{" + namespace_common + "}message"):
                         message = AbstractMessageFactory.loadFromXML(xmlMessage, namespace_common, version)
-                        if message != None:
+                        if message is not None:
                             importedTrace.addMessage(message)
 
                 # We retrieve the sessions
-                if xmlRoot.find("{" + namespace_workspace + "}sessions") != None:
+                if xmlRoot.find("{" + namespace_workspace + "}sessions") is not None:
                     xmlSessions = xmlRoot.find("{" + namespace_workspace + "}sessions")
                     for xmlSession in xmlSessions.findall("{" + namespace_common + "}session"):
                         session = Session.loadFromXML(xmlSession, namespace_workspace, namespace_common, version, importedTrace)
-                        if session != None:
+                        if session is not None:
                             importedTrace.addSession(session)
             return importedTrace
         return None

@@ -1,0 +1,31 @@
+<ui>
+  <menubar name="mainMenuBar">
+    <menu action="fileMenu">
+      <menuitem action="newProject" />
+      <menu action="switchProject" />
+      <menuitem action="saveProject" />
+      <separator />
+      <menuitem action="importProject" />
+      <menu action="exportProject" />
+      <separator />
+      <placeholder name="fileMenuAdditions" />
+      <separator />
+      <menuitem action="switchWorkspace" />
+      <menuitem action="quit" />
+    </menu>
+    <menu action="viewMenu">
+      <placeholder name="viewMenuAdditions" />
+    </menu>
+    <placeholder name="mainMenuBarAdditions" />
+    <menu action="helpMenu">
+      <menuitem action="availablePlugins" />
+      <menuitem action="aboutNetzob" />
+    </menu>
+  </menubar>
+  <toolbar name="mainToolbar">
+    <toolitem action="newProject" />
+    <toolitem action="saveProject" />
+    <separator />
+    <placeholder name="mainToolbarAdditions" />
+  </toolbar>
+</ui>

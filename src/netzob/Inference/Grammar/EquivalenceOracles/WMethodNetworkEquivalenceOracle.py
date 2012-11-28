@@ -28,7 +28,7 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
-from gettext import gettext as _
+from locale import gettext as _
 import logging
 import time
 from collections import deque
@@ -239,13 +239,13 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
 
             # Verify the request is not in the cache
             cachedValue = cache.getCachedResult(test)
-            if cachedValue == None:
+            if cachedValue is None:
                 # Compute real results
                 if self.resetScript != "":
                     os.system("sh " + self.resetScript)
 
                 self.log.debug("=====================")
-                self.log.debug("Execute test " + str(i_test) + "/" + str(len(T)) + " : " + str(test))
+                self.log.debug("Execute test {0}/{1}: {2}".format(str(i_test), str(len(T)), str(test)))
                 self.log.debug("=====================")
 
                 isMaster = not self.communicationChannel.isServer()

@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Global Imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
+from locale import gettext as _
 import uuid
 from datetime import datetime
 import logging
@@ -41,72 +41,62 @@ from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.ImportedTrace import ImportedTrace
 from netzob.Common.Symbol import Symbol
 from netzob.Common.Session import Session
+from netzob.Common.NetzobException import NetzobImportException
+from netzob.UI.ModelReturnCodes import ERROR
+from netzob.UI.Import.Controllers.ConfirmImportMessagesController import ConfirmImportMessagesController
 
 
-#+---------------------------------------------------------------------------+
-#| AbstractImporter:
-#|     Abstract class which provides common methods too any kind of importers
-#+---------------------------------------------------------------------------+
-class AbstractImporter:
+class AbstractImporter(object):
+    """Abstract class which provides common methods too any kind of importers"""
 
-    def __init__(self, type):
+    def __init__(self, type, netzob):
         self.type = type
         self.messages = []
+        self.netzob = netzob
+        self.status_cb = None
+        self.end_cb = None
 
-    #+-----------------------------------------------------------------------+
-    #| saveMessagesInProject:
-    #|   Add a selection of messages to an existing project
-    #|   it also saves them in the workspace
-    #+-----------------------------------------------------------------------+
-    def saveMessagesInProject(self, workspace, project, messages, fetchEnv=True):
+    def saveMessagesInCurrentProject(self, messageIDList):
+        """Retrieve messages from the provided list of IDs
+        and add them to the current project"""
+        addMessages = []
+        # Compute the step
+        step = float(100.0 / float(len(messageIDList)))
+        status = 0.0
+        old_status = 0.0
+        for messageID in messageIDList:
+            message = self.getMessageByID(str(messageID))
+            if message is not None:
+                addMessages.append(message)
+            else:
+                errorMessage = _("Message ID: {0} not found in importer message list").format(messageID)
+                raise NetzobImportException("PCAP", errorMessage, ERROR)
+            status += step
 
-        # We register each message in the vocabulary of the project
-        for message in messages:
-            project.getVocabulary().addMessage(message)
+            if self.status_cb is not None:
+                self.status_cb(status, None)
+                old_status = status
 
-        # We create a session with each message
-        session = Session(uuid.uuid4(), "Session 1", "")
-        for message in messages:
-            session.addMessage(message)
-        # We register the session in the vocabulary of the project
-        project.getVocabulary().addSession(session)
+        self.saveMessagesInProject(self.netzob.getCurrentWorkspace(), self.netzob.getCurrentProject(), addMessages)
 
-        # We create a default symbol dedicated for this
-        symbol = Symbol(uuid.uuid4(), self.type, project)
-        for message in messages:
-            symbol.addMessage(message)
-        # We create a default field for the symbol
-        symbol.addField(Field.createDefaultField())
-        # We register the symbol in the vocabulary of the project
-        project.getVocabulary().addSymbol(symbol)
+    def saveMessagesInProject(self, workspace, project, messages):
+        """Add a selection of messages to an existing project
+           it also saves them in the workspace"""
 
-        # Add the environmental dependencies to the project
-        if fetchEnv:
-            project.getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES,
-                                                                       self.envDeps.getEnvData())
-        # Computes current date
-        date = datetime.now()
-        description = "No description (yet not implemented)"
-
-        # We also save the session and the messages in the workspace
-        trace = ImportedTrace(uuid.uuid4(), date, self.type, description, project.getName())
-        trace.addSession(session)
-        for message in messages:
-            trace.addMessage(message)
-        workspace.addImportedTrace(trace)
-
-        # Now we save the workspace
-        workspace.saveConfigFile()
+        if self.end_cb is not None:
+            self.end_cb(workspace, project, self.type, messages)
+        else:
+            confirmController = ConfirmImportMessagesController(workspace, project, self.type, messages)
+            confirmController.run()
 
     def getMessageByID(self, strID):
         selectedMessage = None
         for message in self.messages:
             if str(message.getID()) == strID:
                 selectedMessage = message
+                break
 
         return selectedMessage
 
     def saveMessages(self):
-        self.saveMessagesInProject(self.netzob.getCurrentWorkspace(),
-                                   self.netzob.getCurrentProject(),
-                                   self.messages)
+        self.saveMessagesInProject(self.netzob.getCurrentWorkspace(), self.netzob.getCurrentProject(), self.messages)

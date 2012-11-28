@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
+from locale import gettext as _
 import logging
 import random
 
@@ -122,7 +122,7 @@ class NormalState(AbstractState):
             return None
 
         (receivedSymbol, message) = tupleReception
-        if not receivedSymbol == None:
+        if not receivedSymbol is None:
             self.log.debug("The following symbol has been received : " + str(receivedSymbol))
             # Now we verify this symbol is an accepted one
             for transition in self.getTransitions():
@@ -158,7 +158,7 @@ class NormalState(AbstractState):
         newState = pickedTransition.executeAsMaster(abstractionLayer)
 
         # in case an error occured while executing the transition
-        if newState == None:
+        if newState is None:
             self.log.debug("The state has detected an error while executing the transition and consider it !")
             self.deactivate()
             return None

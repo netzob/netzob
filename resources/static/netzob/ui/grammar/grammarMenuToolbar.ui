@@ -1,0 +1,25 @@
+<ui>
+  <menubar name="mainMenuBar">
+    <placeholder name="mainMenuBarAdditions">
+      <menu action="grammarInference">
+        <menuitem action="activeGrammarInferring" />
+      </menu>
+      <menu action="grammarEdition">
+        <menuitem action="createState" />
+        <menuitem action="createSemiStochasticTransition" />
+        <menuitem action="createOpenChannelTransition" />
+        <menuitem action="createCloseChannelTransition" />
+      </menu>
+    </placeholder>
+  </menubar>
+  <toolbar name="mainToolbar">
+    <placeholder name="mainToolbarAdditions">
+      <toolitem action="activeGrammarInferring" />
+      <separator />
+      <toolitem action="createState" />
+      <toolitem action="createSemiStochasticTransition" />
+      <toolitem action="createOpenChannelTransition" />
+      <toolitem action="createCloseChannelTransition" />
+    </placeholder>
+  </toolbar>
+</ui>

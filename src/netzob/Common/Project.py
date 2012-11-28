@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
+from locale import gettext as _
 import logging
 import os
 import datetime
@@ -46,7 +46,14 @@ from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Vocabulary import Vocabulary
 from netzob.Common.Grammar import Grammar
 from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Type.Format import Format
+from netzob.Common.Type.UnitSize import UnitSize
+from netzob.Common.Type.Sign import Sign
+from netzob.Common.Type.Endianess import Endianess
 from netzob.Common.XSDResolver import XSDResolver
+from netzob.Common.Property import Property
+from netzob.Common.Simulator import Simulator
+
 
 PROJECT_NAMESPACE = "http://www.netzob.org/project"
 COMMON_NAMESPACE = "http://www.netzob.org/common"
@@ -64,36 +71,39 @@ def loadProject_0_1(projectFile):
     etree.register_namespace('netzob', PROJECT_NAMESPACE)
     etree.register_namespace('netzob-common', COMMON_NAMESPACE)
 
-    projectID = xmlProject.get('id')
+    projectID = str(xmlProject.get('id'))
     projectName = xmlProject.get('name', 'none')
     projectCreationDate = TypeConvertor.xsdDatetime2PythonDatetime(xmlProject.get('creation_date'))
     projectPath = xmlProject.get('path')
     project = Project(projectID, projectName, projectCreationDate, projectPath)
 
     # Parse the configuration
-    if xmlProject.find("{" + PROJECT_NAMESPACE + "}configuration") != None:
+    if xmlProject.find("{" + PROJECT_NAMESPACE + "}configuration") is not None:
         projectConfiguration = ProjectConfiguration.loadProjectConfiguration(xmlProject.find("{" + PROJECT_NAMESPACE + "}configuration"), PROJECT_NAMESPACE, "0.1")
         project.setConfiguration(projectConfiguration)
 
     # Parse the vocabulary
-    if xmlProject.find("{" + PROJECT_NAMESPACE + "}vocabulary") != None:
+    if xmlProject.find("{" + PROJECT_NAMESPACE + "}vocabulary") is not None:
         projectVocabulary = Vocabulary.loadVocabulary(xmlProject.find("{" + PROJECT_NAMESPACE + "}vocabulary"), PROJECT_NAMESPACE, COMMON_NAMESPACE, "0.1", project)
         project.setVocabulary(projectVocabulary)
 
     # Parse the grammar
-    if xmlProject.find("{" + PROJECT_NAMESPACE + "}grammar") != None:
+    if xmlProject.find("{" + PROJECT_NAMESPACE + "}grammar") is not None:
         projectGrammar = Grammar.loadGrammar(xmlProject.find("{" + PROJECT_NAMESPACE + "}grammar"), projectVocabulary, PROJECT_NAMESPACE, "0.1")
-        if projectGrammar != None:
+        if projectGrammar is not None:
             project.setGrammar(projectGrammar)
+
+    # Parse the simulator
+    if xmlProject.find("{" + PROJECT_NAMESPACE + "}simulator") is not None:
+        projectSimulator = Simulator.loadSimulator(xmlProject.find("{" + PROJECT_NAMESPACE + "}simulator"), PROJECT_NAMESPACE, "0.1", project.getGrammar().getAutomata(), project.getVocabulary())
+        if projectSimulator is not None:
+            project.setSimulator(projectSimulator)
 
     return project
 
 
-#+---------------------------------------------------------------------------+
-#| Project:
-#|     Class definition of a Project
-#+---------------------------------------------------------------------------+
 class Project(object):
+    """Class definition of a Project"""
 
     # The name of the configuration file
     CONFIGURATION_FILENAME = "config.xml"
@@ -114,6 +124,7 @@ class Project(object):
         self.path = path
         self.vocabulary = Vocabulary()
         self.grammar = Grammar()
+        self.simulator = Simulator()
         self.configuration = ProjectConfiguration.loadDefaultProjectConfiguration()
 
     def generateXMLConfigFile(self):
@@ -133,31 +144,34 @@ class Project(object):
         root.set("name", str(self.getName()))
         # Save the configuration in it
         self.getConfiguration().save(root, PROJECT_NAMESPACE)
+
         # Save the vocabulary in it
         self.getVocabulary().save(root, PROJECT_NAMESPACE, COMMON_NAMESPACE)
+
         # Save the grammar in it
-        if self.getGrammar() != None:
+        if self.getGrammar() is not None:
             self.getGrammar().save(root, PROJECT_NAMESPACE)
+
+        # Save the simulator in it
+        self.getSimulator().save(root, PROJECT_NAMESPACE)
+
         return root
 
     def saveConfigFile(self, workspace):
-
-        projectPath = os.path.join(os.path.join(workspace.getPath(), self.getPath()))
+        projectPath = os.path.join(workspace.getPath(), self.getPath())
         projectFile = os.path.join(projectPath, Project.CONFIGURATION_FILENAME)
 
-        logging.info("Save the config file of project " + self.getName() + " in " + projectFile)
+        logging.info("Save the config file of project {0} in {1}".format(self.getName(), projectFile))
 
         # First we verify and create if necessary the directory of the project
         if not os.path.exists(projectPath):
-            logging.info("Creation of the directory " + projectPath)
+            logging.info("Creation of the directory: {0}".format(projectPath))
             os.mkdir(projectPath)
+
         # We generate the XML Config file
         root = self.generateXMLConfigFile()
         tree = ElementTree(root)
         tree.write(projectFile)
-
-        # Saving the workspace configuration file
-#        workspace.saveConfigFile()
 
     def hasPendingModifications(self, workspace):
         result = True
@@ -178,14 +192,55 @@ class Project(object):
 
         return result
 
+    def getEnvironmentDependencies(self):
+        """Computes and returns the list of environment dependencies
+        and associates.
+        @return: a list of Properties"""
+        envDeps = []
+
+        excludedProperties = ["Data", "ID"]
+
+        symbols = []
+        if self.getVocabulary() is not None:
+            symbols.extend(self.getVocabulary().getSymbols())
+
+        # Retrieve the list of properties for each Symbol
+        for symbol in symbols:
+            for message in symbol.getMessages():
+                properties = message.getProperties()
+                for property in properties:
+
+                    if not property.getName() in excludedProperties:
+                        found = False
+                        for prop in envDeps:
+                            if prop.getCurrentValue() == property.getCurrentValue():
+                                found = True
+                                break
+                        if not found:
+                            envDeps.append(property)
+
+        # Retrieve the list of properties for the project
+        propertiesProject = self.getProperties()
+        for prop in propertiesProject:
+            found = False
+            for property in envDeps:
+                if prop.getCurrentValue() == property.getCurrentValue():
+                    found = True
+                    break
+            if not found:
+                envDeps.append(prop)
+        return envDeps
+
     @staticmethod
     def createProject(workspace, name):
         idProject = str(uuid.uuid4())
-        path = "projects/" + idProject + "/"
+        path = os.path.join("projects", idProject)
         creationDate = datetime.datetime.now()
         project = Project(idProject, name, creationDate, path)
+
         # Creation of the config file
         project.saveConfigFile(workspace)
+
         # Register the project in the workspace
         workspace.referenceProject(project.getPath())
         workspace.saveConfigFile()
@@ -197,15 +252,15 @@ class Project(object):
         projectFile = os.path.join(os.path.join(workspace.getPath(), projectDirectory), Project.CONFIGURATION_FILENAME)
 
         # verify we can open and read the file
-        if projectFile == None:
+        if projectFile is None:
             return None
         # is the projectFile is a file
         if not os.path.isfile(projectFile):
-            logging.warn("The specified project's configuration file (" + str(projectFile) + ") is not valid : its not a file.")
+            logging.warn("The specified project's configuration file ({0} is not valid: its not a file.".format(str(projectFile)))
             return None
         # is it readable
         if not os.access(projectFile, os.R_OK):
-            logging.warn("The specified project's configuration file (" + str(projectFile) + ") is not readable.")
+            logging.warn("The specified project's configuration file ({0}) is not readable.".format(str(projectFile)))
             return None
 
         # We validate the file given the schemas
@@ -213,7 +268,6 @@ class Project(object):
             xmlSchemaPath = os.path.join(ResourcesConfiguration.getStaticResources(), xmlSchemaFile)
             # If we find a version which validates the XML, we parse with the associated function
             if Project.isSchemaValidateXML(xmlSchemaPath, projectFile):
-                logging.debug("The file " + str(projectFile) + " validates the project configuration file.")
                 tree = ElementTree()
                 tree.parse(projectFile)
                 xmlProject = tree.getroot()
@@ -223,22 +277,20 @@ class Project(object):
 
                 projectName = xmlProject.get('name', 'none')
 
-                if projectName != None and projectName != 'none':
+                if projectName is not None and projectName != 'none':
                     return projectName
             else:
-                logging.warn("The project declared in file (" + projectFile + ") is not valid")
+                logging.warn("The project declared in file ({0}) is not valid".format(projectFile))
         return None
 
     @staticmethod
-    def loadProject(workspace, projectDirectory):
-        projectFile = os.path.join(os.path.join(workspace.getPath(), projectDirectory), Project.CONFIGURATION_FILENAME)
-
+    def loadProjectFromFile(projectFile):
         # verify we can open and read the file
-        if projectFile == None:
+        if projectFile is None:
             return None
         # is the projectFile is a file
         if not os.path.isfile(projectFile):
-            logging.warn("The specified project's configuration file (" + str(projectFile) + ") is not valid : its not a file.")
+            logging.warn("The specified project's configuration file (" + str(projectFile) + ") is not valid: its not a file.")
             return None
         # is it readable
         if not os.access(projectFile, os.R_OK):
@@ -250,10 +302,9 @@ class Project(object):
             xmlSchemaPath = os.path.join(ResourcesConfiguration.getStaticResources(), xmlSchemaFile)
             # If we find a version which validates the XML, we parse with the associated function
             if Project.isSchemaValidateXML(xmlSchemaPath, projectFile):
-                logging.debug("The file " + str(projectFile) + " validates the project configuration file.")
                 parsingFunc = Project.PROJECT_SCHEMAS[xmlSchemaFile]
                 project = parsingFunc(projectFile)
-                if project != None:
+                if project is not None:
                     logging.info("Loading project '" + str(project.getName()) + "' from workspace.")
                     return project
             else:
@@ -261,21 +312,26 @@ class Project(object):
         return None
 
     @staticmethod
+    def loadProject(workspace, projectDirectory):
+        projectFile = os.path.join(os.path.join(workspace.getPath(), projectDirectory), Project.CONFIGURATION_FILENAME)
+        return Project.loadProjectFromFile(projectFile)
+
+    @staticmethod
     def isSchemaValidateXML(schemaFile, xmlFile):
         # is the schema is a file
         if not os.path.isfile(schemaFile):
-            logging.warn("The specified schema file (" + str(schemaFile) + ") is not valid : its not a file.")
+            logging.warn("The specified schema file ({0}) is not valid: its not a file.".format(str(schemaFile)))
             return False
         # is it readable
         if not os.access(schemaFile, os.R_OK):
-            logging.warn("The specified schema file (" + str(schemaFile) + ") is not readable.")
+            logging.warn("The specified schema file ({0}) is not readable.".format(str(schemaFile)))
             return False
 
         schemaF = open(schemaFile, "r")
         schemaContent = schemaF.read()
         schemaF.close()
 
-        if schemaContent == None or len(schemaContent) == 0:
+        if schemaContent is None or len(schemaContent) == 0:
             logging.warn("Impossible to read the schema file (no content found in it)")
             return False
 
@@ -309,6 +365,42 @@ class Project(object):
     # Dictionary of projects versions, must be sorted by version DESC
     PROJECT_SCHEMAS = {"xsds/0.1/Project.xsd": loadProject_0_1}
 
+    def getProperties(self):
+        properties = []
+        configuration = self.getConfiguration()
+        properties.append(Property('workspace', Format.STRING, self.getPath()))
+        prop = Property('name', Format.STRING, self.getName())
+        prop.setIsEditable(True)
+        properties.append(prop)
+        properties.append(Property('date', Format.STRING, self.getCreationDate()))
+        properties.append(Property('symbols', Format.DECIMAL, len(self.getVocabulary().getSymbols())))
+        properties.append(Property('messages', Format.DECIMAL, len(self.getVocabulary().getMessages())))
+        fields = 0
+        for sym in self.getVocabulary().getSymbols():
+            fields = fields + len(sym.getField().getExtendedFields())
+        properties.append(Property('fields', Format.DECIMAL, fields))
+
+        prop = Property(configuration.VOCABULARY_GLOBAL_FORMAT, Format.STRING, configuration.getVocabularyInferenceParameter(configuration.VOCABULARY_GLOBAL_FORMAT))
+        prop.setIsEditable(True)
+        prop.setPossibleValues(Format.getSupportedFormats())
+        properties.append(prop)
+
+        prop = Property(configuration.VOCABULARY_GLOBAL_UNITSIZE, Format.STRING, configuration.getVocabularyInferenceParameter(configuration.VOCABULARY_GLOBAL_UNITSIZE))
+        prop.setIsEditable(True)
+        prop.setPossibleValues([UnitSize.NONE, UnitSize.BITS4, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64])
+        properties.append(prop)
+
+        prop = Property(configuration.VOCABULARY_GLOBAL_SIGN, Format.STRING, configuration.getVocabularyInferenceParameter(configuration.VOCABULARY_GLOBAL_SIGN))
+        prop.setIsEditable(True)
+        prop.setPossibleValues([Sign.SIGNED, Sign.UNSIGNED])
+        properties.append(prop)
+
+        prop = Property(configuration.VOCABULARY_GLOBAL_ENDIANESS, Format.STRING, configuration.getVocabularyInferenceParameter(configuration.VOCABULARY_GLOBAL_ENDIANESS))
+        prop.setIsEditable(True)
+        prop.setPossibleValues([Endianess.BIG, Endianess.LITTLE])
+        properties.append(prop)
+        return properties
+
     def getID(self):
         return self.id
 
@@ -330,8 +422,11 @@ class Project(object):
     def getConfiguration(self):
         return self.configuration
 
-    def setID(self, id):
-        self.id = id
+    def getSimulator(self):
+        return self.simulator
+
+    def setID(self, idproject):
+        self.id = idproject
 
     def setName(self, name):
         self.name = name
@@ -350,3 +445,6 @@ class Project(object):
 
     def setGrammar(self, grammar):
         self.grammar = grammar
+
+    def setSimulator(self, simulator):
+        self.simulator = simulator

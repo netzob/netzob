@@ -39,7 +39,7 @@ import logging
 #| AbstractThirdPartyImporter:
 #|     Abstract class for third parties
 #+---------------------------------------------------------------------------+
-class AbstractThirdPartyImporter:
+class AbstractThirdPartyImporter(object):
 
     def __init__(self, id, name):
         self.id = id

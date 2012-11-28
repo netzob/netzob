@@ -28,8 +28,9 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
+from locale import gettext as _
 import optparse
+import logging
 
 #+---------------------------------------------------------------------------+
 #| Local imports
@@ -37,14 +38,58 @@ import optparse
 from netzob import release
 
 
-#+---------------------------------------------------------------------------+
-#| get_parser
-#|  Creates and returns the command line parser.
-#+---------------------------------------------------------------------------+
-def get_parser():
-        usage = "usage: %prog [options]"
-        parser = optparse.OptionParser(usage, prog=release.appname,
-                                       version=release.version)
-        parser.add_option("-w", "--workspace",
-                          dest="workspace", help="Path to the workspace")
-        return parser
+#+----------------------------------------------
+#| CommandLine
+#+----------------------------------------------
+class CommandLine(object):
+    """Reads, validates and parses the command line arguments provided by
+    users"""
+
+    def __init__(self):
+        self.parser = None
+        self.providedOptions = None
+        self.providedArguments = None
+        self.configure()
+
+    def configure(self):
+        """Configure the parser based on Netzob's usage and the
+        definition of its options and arguments"""
+        self.usage = "usage: %prog [options]"
+        self.parser = optparse.OptionParser(self.usage, prog=release.appname,
+                                            version=release.version)
+        self.parser.add_option("-w", "--workspace",
+                               dest="workspace", help="Path to the workspace")
+        self.parser.add_option("-b", "--bug-reporter", action="store_true", dest="bugReport", help="Activate the bug reporter")
+        self.parser.add_option("-d", "--debugLevel", dest="debugLevel", help="Activate debug information ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL')")
+
+        # register the group of options for plugins
+        groupPlugins = optparse.OptionGroup(self.parser, "Manage Netzob's plugins")
+        groupPlugins.add_option('--plugin-list', help='List the available plugins', action="store_true", dest="plugin_list")
+        self.parser.add_option_group(groupPlugins)
+
+    def parse(self):
+        """Read and parse the provided arguments and options"""
+        (self.providedOptions, self.providedArguments) = self.parser.parse_args()
+
+    def isStartGUIRequested(self):
+        """Compute and return if the user requested (through the command line arguments and options)
+        to start the GTK GUI"""
+        if not self.isManagePluginsRequested():
+            return True
+
+    def isManagePluginsRequested(self):
+        """Compute and return is the user has requested to manage the plugins"""
+        if self.parser is None:
+            self.parse()
+        if self.providedOptions is None:
+            return False
+        return self.providedOptions.plugin_list
+
+    def getOptions(self):
+        return self.providedOptions
+
+    def getConfiguredParser(self):
+        """Return (if available) the parser configured to manage provided
+        arguments and options by user.
+        @return: the parser"""
+        return self.parser

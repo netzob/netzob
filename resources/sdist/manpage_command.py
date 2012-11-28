@@ -44,7 +44,7 @@ import datetime
 #+---------------------------------------------------------------------------+
 class manpage_command(Command):
     description = "Generates Netzob's man page"
-    
+
     user_options = [
         ('output=', 'O', 'output file'),
         ('parser=', None, 'module path to optparser (e.g. mymod:func'),
@@ -54,18 +54,28 @@ class manpage_command(Command):
         self.output = None
         self.parser = None
 
+    def configureCommandLine(self):
+        """Retrieve and instantiate Netzob's CommandLine manager
+        in order to get its usage"""
+        # First we find the commandLine class (its name is provided through setup.cfg)
+        mod_name, class_name = self.parser.split(':')
+        fromlist = mod_name.split('.')
+        try:
+            mod = __import__(mod_name, fromlist=fromlist)
+            cmdLineClass = getattr(mod, class_name)
+            # Instantiate the retrieved class
+            cmdLine = cmdLineClass()
+            self._parser = cmdLine.getConfiguredParser()
+
+        except ImportError, err:
+            raise
+
     def finalize_options(self):
         if self.output is None:
             raise DistutilsOptionError('\'output\' option is required')
         if self.parser is None:
             raise DistutilsOptionError('\'parser\' option is required')
-        mod_name, func_name = self.parser.split(':')
-        fromlist = mod_name.split('.')
-        try:
-            mod = __import__(mod_name, fromlist=fromlist)
-            self._parser = getattr(mod, func_name)()
-        except ImportError, err:
-            raise
+        self.configureCommandLine()
         self._parser.formatter = ManPageFormatter()
         self._parser.formatter.set_parser(self._parser)
         self.announce('Writing man page %s' % self.output)

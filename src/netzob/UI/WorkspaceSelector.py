@@ -28,12 +28,12 @@
 #+---------------------------------------------------------------------------+
 #| Global Imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
-import gtk
-import pygtk
-import pango
+from locale import gettext as _
+from gi.repository import Gtk
+import gi
+from gi.repository import Pango
 import logging
-pygtk.require('2.0')
+gi.require_version('Gtk', '3.0')
 
 
 class WorkspaceSelector(object):
@@ -41,18 +41,18 @@ class WorkspaceSelector(object):
 
     def __init__(self):
             # Set up GTK Window
-        self.dialog = gtk.Dialog(title=_("Select Workspace"), flags=0,
+        self.dialog = Gtk.Dialog(title=_("Select Workspace"), flags=0,
                                  buttons=None)
         self.dialog.set_size_request(600, 220)
         self.dialog.connect("destroy", self.destroy)
 
         # Instructions text view
-        instrTextView = gtk.TextView()
+        instrTextView = Gtk.TextView()
         instrTextView.set_editable(False)
         instrTextView.set_cursor_visible(False)
         instrTextView.set_left_margin(10)
         textBuffer = instrTextView.get_buffer()
-        bold_tag = textBuffer.create_tag("bold", weight=pango.WEIGHT_BOLD)
+        bold_tag = textBuffer.create_tag("bold", weight=Pango.Weight.BOLD)
         pos = textBuffer.get_end_iter()
         textBuffer.insert_with_tags(pos,
                                     _("Select a workspace\n\n"), bold_tag)
@@ -62,69 +62,73 @@ class WorkspaceSelector(object):
         pos = textBuffer.get_end_iter()
         textBuffer.insert_with_tags(pos,
                                     _("Choose a workspace folder to use."))
-        #textBuffer.insert_with_tags(pos,
-        #        "Choose a workspace folder to use for this session.")
 
         # Input Box
-        inputBox = gtk.HBox(spacing=10)
-        workLabel = gtk.Label()
+        inputBox = Gtk.HBox(spacing=10)
+        workLabel = Gtk.Label()
         workLabel.set_text(_("Workspace: "))
-        self.workEntry = gtk.Entry()
+        self.workEntry = Gtk.Entry()
+        self.workEntry.set_editable(False)
         self.workEntry.connect("changed", self.entryChanged)
-        workButton = gtk.Button(_("Browse..."))
-        workButton.connect("clicked", self.openBrowseDialog)
-        inputBox.pack_start(workLabel, expand=False)
-        inputBox.pack_start(self.workEntry)
-        inputBox.pack_start(workButton, expand=False)
+        self.workEntry.connect("focus-in-event", self.entryFocused)
+        self.workEntry.set_placeholder_text(_("Path"))
+        self.browseButton = Gtk.Button(_("Browse"))
+        self.browseButton.connect("clicked", self.openBrowseDialog)
+        self.browseButton.set_can_default(True)
+
+        inputBox.pack_start(workLabel, False, True, 0)
+        inputBox.pack_start(self.workEntry, True, True, 0)
+        inputBox.pack_start(self.browseButton, False, True, 0)
         inputBox.set_border_width(10)
 
-        # Default checkbox
-        #self.defaultCheck = gtk.CheckButton(
-        #        "Use this as default and do not ask again")
-        #self.defaultCheck.set_active(True)
-        #self.defaultCheck.set_border_width(10)
-
         # Buttons
-        okButton = gtk.Button(stock=gtk.STOCK_OK)
-        okButton.connect("clicked", self.destroy)
-        cancelButton = gtk.Button(stock=gtk.STOCK_CANCEL)
+        self.okButton = Gtk.Button(stock=Gtk.STOCK_OK)
+        self.okButton.connect("clicked", self.destroy)
+        cancelButton = Gtk.Button(stock=Gtk.STOCK_CANCEL)
         cancelButton.connect("clicked", self.cancel)
-        self.dialog.action_area.pack_end(cancelButton, expand=False)
-        self.dialog.action_area.pack_end(okButton, expand=False)
+        self.dialog.action_area.pack_end(cancelButton, False, True, 0)
+        self.dialog.action_area.pack_end(self.okButton, False, True, 0)
         self.dialog.action_area.set_border_width(10)
 
         # Global VBox
-        self.dialog.vbox.pack_start(instrTextView, expand=False)
-        self.dialog.vbox.pack_start(inputBox, expand=False)
-        self.dialog.vbox.pack_start(gtk.Alignment(0, 1, 0, 0), expand=True)
-        #self.dialog.vbox.pack_start(self.defaultCheck, expand=False)
+        self.dialog.vbox.pack_start(instrTextView, False, True, 0)
+        self.dialog.vbox.pack_start(inputBox, False, True, 0)
+        self.dialog.vbox.pack_start(Gtk.Alignment.new(0, 1, 0, 0), True, True, 0)
         self.dialog.show_all()
 
         self._selectedWorkspace = None
+        self.browseButton.grab_default()
 
     def run(self):
-        gtk.main()
+        Gtk.main()
 
     @property
     def selectedWorkspace(self):
         return self._selectedWorkspace
 
-    #@property
-    #def makeDefault(self):
-    #    return self.defaultCheck.get_active()
-
     def openBrowseDialog(self, widget, data=None):
-        chooser = gtk.FileChooserDialog(title=_("Select the workspace"),
-                                        action=gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER,
-                                        buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                                                 gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        chooser = Gtk.FileChooserDialog(title=_("Select the workspace"),
+                                        parent=self.dialog,
+                                        action=Gtk.FileChooserAction.SELECT_FOLDER,
+                                        buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                                 Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
 
-        if self.selectedWorkspace != None:
+        if self.selectedWorkspace is not None:
             chooser.set_filename(self.selectedWorkspace)
+
         res = chooser.run()
-        if res == gtk.RESPONSE_OK:
+        if res == Gtk.ResponseType.OK:
             self.workEntry.set_text(chooser.get_filename())
+
+        if self.workEntry.get_text() == "":
+            self.browseButton.grab_focus()
+        else:
+            self.okButton.grab_focus()
+
         chooser.destroy()
+
+    def entryFocused(self, widget, data=None):
+        self.openBrowseDialog(widget)
 
     def entryChanged(self, widget, data=None):
         textEntry = self.workEntry.get_text()
@@ -136,8 +140,8 @@ class WorkspaceSelector(object):
     def cancel(self, widget, data=None):
         self._selectedWorkspace = None
         self.dialog.destroy()
-        gtk.main_quit()
+        Gtk.main_quit()
 
     def destroy(self, widget, data=None):
         self.dialog.destroy()
-        gtk.main_quit()
+        Gtk.main_quit()

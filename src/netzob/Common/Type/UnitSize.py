@@ -25,6 +25,11 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
+#+----------------------------------------------
+#| Local Imports
+#+----------------------------------------------
+from netzob.Common.Type.Format import Format
+
 
 #+----------------------------------------------
 #| Class for representation potential unit size for data representation
@@ -62,4 +67,68 @@ class UnitSize():
         if unitSize in UnitSize.unitSizeInBits:
             return UnitSize.unitSizeInBits[unitSize]
         else:
-            return None
+            return 4  # Default value
+
+    @staticmethod
+    def getMaxDigitForTypeAndUnitSize(aType, unitSize):
+        res = 0
+        if unitSize == UnitSize.NONE:
+            res = 2  # Should not happen, but if so, it returns the same size as an Format.HEX in BITS8
+        elif unitSize == UnitSize.BIT:
+            res = 1
+        elif unitSize == UnitSize.BITS4:
+            if aType == Format.BINARY:
+                res = 4
+            elif aType == Format.OCTAL:
+                res = 2
+            elif aType == Format.DECIMAL:
+                res = 2
+            elif aType == Format.STRING:
+                res = 1
+            else:  # HEX for example
+                res = 1
+        elif unitSize == UnitSize.BITS8:
+            if aType == Format.BINARY:
+                res = 8
+            elif aType == Format.OCTAL:
+                res = 3
+            elif aType == Format.DECIMAL:
+                res = 3
+            elif aType == Format.STRING:
+                res = 1
+            else:  # HEX for example
+                res = 2
+        elif unitSize == UnitSize.BITS16:
+            if aType == Format.BINARY:
+                res = 16
+            elif aType == Format.OCTAL:
+                res = 6
+            elif aType == Format.DECIMAL:
+                res = 5
+            elif aType == Format.STRING:
+                res = 2
+            else:  # HEX for example
+                res = 4
+        elif unitSize == UnitSize.BITS32:
+            if aType == Format.BINARY:
+                res = 32
+            elif aType == Format.OCTAL:
+                res = 11
+            elif aType == Format.DECIMAL:
+                res = 10
+            elif aType == Format.STRING:
+                res = 4
+            else:  # HEX for example
+                res = 8
+        elif unitSize == UnitSize.BITS64:
+            if aType == Format.BINARY:
+                res =64
+            elif aType == Format.OCTAL:
+                res = 22
+            elif aType == Format.DECIMAL:
+                res = 20
+            elif aType == Format.STRING:
+                res = 8
+            else:  # HEX for example
+                res = 16
+        return res

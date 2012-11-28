@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
+from locale import gettext as _
 import logging
 from bitarray import bitarray
 
@@ -71,14 +71,14 @@ class Aggregate(AbstractValue):
 
     def compare(self, val, indice, negative, dictionary):
         result = indice
-        self.log.debug("Will compare with :")
+        self.log.debug("Will compare with:")
         for value in self.values:
             self.log.debug(str(value.getType()))
 
         for value in self.values:
-            self.log.debug("Indice = " + str(result) + " : " + value.getType())
+            self.log.debug("Indice = {0}: {1}".format(str(result), value.getType()))
             result = value.compare(val, result, negative, dictionary)
-            if result == -1 or result == None:
+            if result == -1 or result is None:
                 self.log.debug("Compare fail")
                 return -1
             else:

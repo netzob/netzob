@@ -28,36 +28,36 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
+from locale import gettext as _
 import logging
 import uuid
 import re
-import glib
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.NetzobException import NetzobException
-from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.Type.UnitSize import UnitSize
 from netzob.Common.Type.Format import Format
 from netzob.Common.Token import Token
-from netzob.Common.Filters.FilterApplicationTable import FilterApplicationTable
+from netzob.Common.Functions.FunctionApplicationTable import FunctionApplicationTable
+
+#from netzob import _libRegex
 
 
 #+---------------------------------------------------------------------------+
 #| AbstractMessage:
 #|     Definition of a message
 #+---------------------------------------------------------------------------+
-class AbstractMessage():
+class AbstractMessage(object):
 
     def __init__(self, id, timestamp, data, type, pattern=[]):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.Models.AbstractMessage.py')
-        if id == None:
-            self.id = uuid.uuid4()
+        if id is None:
+            self.id = str(uuid.uuid4())
         else:
             self.id = id
 
@@ -68,8 +68,9 @@ class AbstractMessage():
         self.session = None
         self.rightReductionFactor = 0
         self.leftReductionFactor = 0
-        self.visualizationFilters = []
-        self.encodingFilters = []
+        self.extraProperties = []
+        self.visualizationFunctions = []
+        self.transformationFunctions = []
 
         self.pattern = []
         if not pattern:
@@ -94,58 +95,12 @@ class AbstractMessage():
     #|     MUST BE IMPLEMENTED IN SUB CLASSES
     #+-----------------------------------------------------------------------+
     def getProperties(self):
-        self.log.error("The message class doesn't have a method 'getProperties' !")
-        raise NotImplementedError("The message class doesn't have a method 'getProperties' !")
+        return self.extraProperties
+#        self.log.error("The message class doesn't have a method 'getProperties' !")
+#        raise NotImplementedError("The message class doesn't have a method 'getProperties' !")
 
-    #+-----------------------------------------------------------------------+
-    #| addVisualizationFilter
-    #|     Add a visualization filter
-    #+-----------------------------------------------------------------------+
-    def addVisualizationFilter(self, filter, start, end):
-        self.visualizationFilters.append((filter, start, end))
-
-    #+-----------------------------------------------------------------------+
-    #| removeVisualizationFilter
-    #|     Remove a visualization filter
-    #+-----------------------------------------------------------------------+
-    def removeVisualizationFilter(self, filter):
-        savedFilters = []
-        for (f, start, end) in self.visualizationFilters:
-            if filter.getID() != f.getID():
-                savedFilters.append((f, start, end))
-        self.visualizationFilters = []
-        for a in savedFilters:
-            self.visualizationFilters.append(a)
-
-    #+-----------------------------------------------------------------------+
-    #| addEncodingFilter
-    #|     Add an encoding filter
-    #+-----------------------------------------------------------------------+
-    def addEncodingFilter(self, filter):
-        self.encodingFilters.append(filter)
-
-    #+-----------------------------------------------------------------------+
-    #| removeEncodingFilter
-    #|     Remove an encoding filter
-    #+-----------------------------------------------------------------------+
-    def removeEncodingFilter(self, filter):
-        if filter in self.encodingFilters:
-            self.encodingFilters.remove(filter)
-
-    #+-----------------------------------------------------------------------+
-    #| getEncodingFilters
-    #|     Computes the encoding filters associated with current message
-    #+-----------------------------------------------------------------------+
-    def getEncodingFilters(self):
-        filters = []
-
-        # First we add all the encoding filters attached to the symbol
-        filters.extend(self.symbol.getEncodingFilters())
-
-        # We add the locally defined encoding filters
-        filters.extend(self.encodingFilters)
-
-        return filters
+    def addExtraProperty(self, property):
+        self.extraProperties.append(property)
 
     #+----------------------------------------------
     #|`getStringData : compute a string representation
@@ -153,7 +108,13 @@ class AbstractMessage():
     #| @return string(data)
     #+----------------------------------------------
     def getStringData(self):
-        return str(self.data)
+        message = str(self.data)
+
+        # Function with math functions
+        for function in self.getTransformationFunctions():
+            message = function.apply(message)
+
+        return message
 
     def getReducedSize(self):
         start = 0
@@ -247,183 +208,119 @@ class AbstractMessage():
     #|  and return a table
     #+----------------------------------------------
     def applyAlignment(self, styled=False, encoded=False):
-        if self.getSymbol().getAlignmentType() == "regex":
-            return self.getFields(styled, encoded)
-        else:
-            return self.applyDelimiter(styled, encoded)
+        fields = [self.symbol.getField()]
+        dataToSplit = self.getReducedStringData()
+        splittedData = self.applyAlignmentByFields(fields, dataToSplit)
 
-    def getFields(self, encoding=False, visualization=False):
+        # Create the locationTable
+        functionTable = FunctionApplicationTable(splittedData)
+
+        if encoded is True or styled is True:
+            i_data = 0
+            for i_field in range(0, len(self.symbol.getExtendedFields())):
+                field = self.symbol.getExtendedFields()[i_field]
+                dataField = splittedData[i_field]
+
+                # Add encoding functions
+                if encoded is True:
+                    for function in field.getEncodingFunctions():
+                        functionTable.applyFunction(function, i_data, i_data + len(dataField))
+                # Add visualization functions
+                if styled is True and len(dataField) > 0:
+                    # Add visualization functions obtained from fields
+                    for function in field.getVisualizationFunctions():
+                        functionTable.applyFunction(function, i_data, i_data + len(dataField))
+
+                i_data = i_data + len(dataField)
+
+            if styled is True:
+                for (function, start, end) in self.getVisualizationFunctions():
+                    functionTable.applyFunction(function, start, end)
+
+        return functionTable.getResult()
+
+    def applyAlignmentByFields(self, fields, dataToSplit):
+        resSplittedData = []
         # Retrieve the data in columns
-        splittedData = self.getSplittedData()
+        splittedData = self.getSplittedData(fields, dataToSplit)
 
-        if len(splittedData) != len(self.symbol.getFields()):
+        if len(splittedData) != len(fields):
+            logging.error("Nb of expected fields : {0}".format(self.symbol.getExtendedFields()))
+            logging.error("fields : {0}".format(splittedData))
             logging.error("Inconsistency problem between number of fields and the regex application")
             return []
 
-        # Add Mathematics filters
+        # Apply transformation functions on each field
+        transformedData = self.getTransformedData(fields, splittedData)
+
+        # Recursive alignment on each fieldLayer
         i = 0
-        for field in self.symbol.getFields():
-            for filter in field.getMathematicFilters():
-                splittedData[i] = filter.apply(splittedData[i])
+        for field in fields:
+            if field.isLayer():
+                resSplittedData.extend(self.applyAlignmentByFields(field.getLocalFields(), transformedData[i]))
+            else:
+                resSplittedData.append(transformedData[i])
+            i += 1
+        return resSplittedData
+
+    def getTransformedData(self, fields, splittedData):
+        # Add transformation functions
+        i = 0
+        for field in fields:
+
+            functions = field.getTransformationFunctions()
+            for function in functions:
+                try:
+                    splittedData[i] = function.apply(splittedData[i])
+                except:
+                    self.log.warning("Impossible to apply function {0} on data {1}.".format(function.getName(), splittedData[i]))
             i = i + 1
-
-        # Create the locationTable
-        filterTable = FilterApplicationTable(splittedData)
-
-        if encoding == True or visualization == True:
-            i_data = 0
-            for i_field in range(0, len(self.symbol.getFields())):
-                field = self.symbol.getFields()[i_field]
-                dataField = splittedData[i_field]
-
-                # Add encoding filters
-                if encoding == True:
-                    for filter in field.getEncodingFilters():
-                        filterTable.applyFilter(filter, i_data, i_data + len(dataField))
-                # Add visualization filters
-                if visualization == True:
-                    # Add visualization filters obtained from fields
-                    for filter in field.getVisualizationFilters():
-                        if len(dataField) > 0:
-                            filterTable.applyFilter(filter, i_data, i_data + len(dataField))
-                i_data = i_data + len(dataField)
-
-            # Add visualization filters of our current message
-            if visualization == True:
-                for (filter, start, end) in self.getVisualizationFilters():
-                    filterTable.applyFilter(filter, start, end)
-
-        return filterTable.getResult()
+        return splittedData
 
     #+-----------------------------------------------------------------------+
     #| getSplittedData
     #|     Split the message using its symbol's regex and return an array of it
     #+-----------------------------------------------------------------------+
-    def getSplittedData(self):
+    def getSplittedData(self, fields, dataToSplit):
+        if len(fields) == 1:
+            return [dataToSplit]
+
         regex = []
+        aligned = None
+
         dynamicDatas = None
         # First we compute the global regex
-        for field in self.symbol.getFields():
+        for field in fields:
+            # C Version :
+            #regex.append("(" + field.getRegex() + ")")
             regex.append(field.getRegex())
 
         # Now we apply the regex over the message
         try:
             compiledRegex = re.compile("".join(regex))
-            data = self.getReducedStringData()
-            dynamicDatas = compiledRegex.match(data)
+            dynamicDatas = compiledRegex.match(dataToSplit)
 
         except AssertionError:
             raise NetzobException("This Python version only supports 100 named groups in regex")
 
-        if dynamicDatas == None:
+        if dynamicDatas is None:
             self.log.warning("The regex of the group doesn't match one of its message")
             self.log.warning("Regex: " + "".join(regex))
-            self.log.warning("Message: " + data[:255] + "...")
+            self.log.warning("Message: " + dataToSplit[:255] + "...")
             raise NetzobException("The regex of the group doesn't match one of its message")
-
         result = []
         iCol = 1
-        for field in self.symbol.getFields():
-            if field.isStatic():
-#                if encoded:
-#                    result.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(field.getRegex(), field)))
-#                else:
-#                    result.append(glib.markup_escape_text(field.getRegex()))
-                result.append(field.getRegex())
-            else:
+
+        for field in fields:
+            try:
                 start = dynamicDatas.start(iCol)
                 end = dynamicDatas.end(iCol)
-#                if encoded:
-#                    result.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(data[start:end], field)))
-#                else:
-#                    result.append(glib.markup_escape_text(data[start:end]))
-                result.append(data[start:end])
-                iCol += 1
+            except:
+                self.log.warning("Possible error.")
+            result.append(dataToSplit[start:end])
+
+            iCol += 1
         return result
-
-#    def getStyledData(self, styled=False, encoded=False):
-#        result = []
-#        splittedData = self.getSplittedData(encoded)
-#
-#        if styled == False:
-#            return splittedData
-#
-#        iGlobal = 0
-#        iCol = 0
-#
-#        for data in splittedData:
-#            localResult = ""
-#            # Retrieve the field associated with this value
-#            field = self.symbol.getFieldByIndex(iCol)
-#            # Retrieve the unit size
-#            unitSize = Format.getUnitSize(field.getFormat())
-#            # First we apply filters on all the message
-#            for filter in self.getVisualizationFilters():
-#                if filter.isValid(0, -1, data, unitSize):
-#                    localResult += filter.apply(data)
-#
-#            for iLocal in range(0, len(data)):
-#                tmp_result = data[iLocal]
-#                if sizeFormat != None:
-#                    for filter in self.getVisualizationFilters():
-#                        if filter.isValid(iGlobal + iLocal, tmp_result, sizeFormat):
-#                            tmp_result = filter.apply(tmp_result)
-#
-#                localResult += tmp_result
-#
-#            # Now we apply the color to the fields
-#            for filter in field.getVisualizationFilters():
-#                localResult = filter.apply(localResult)
-#
-#            iGlobal = iGlobal + len(data)
-#            result.append(localResult)
-#            iCol += 1
-#        return result
-#
-#    def getVisualizationData(self, styled=False, encoded=False):
-#        result = self.getStyledData(styled, encoded)
-#        return result
-
-    #+----------------------------------------------
-    #| applyDelimiter: apply the current delimiter on the message
-    #|  and return a table
-    #+----------------------------------------------
-    def applyDelimiter(self, styled=False, encoded=False):
-        delimiter = self.getSymbol().getRawDelimiter()
-        res = []
-        iField = -1
-        for field in self.symbol.getFields():
-            if field.getName() == "__sep__":
-                tmp = delimiter
-            else:
-                iField += 1
-                try:
-                    tmp = self.getStringData().split(delimiter)[iField]
-                except IndexError:
-                    tmp = ""
-
-            if field.getColor() == "" or field.getColor() == None:
-                color = 'blue'
-            else:
-                color = field.getColor()
-
-            # Define the background color
-            if field.getBackgroundColor() != None:
-                backgroundColor = 'background="' + field.getBackgroundColor() + '"'
-            else:
-                backgroundColor = ""
-
-            if styled:
-                if encoded:
-                    res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(tmp, field)) + '</span>')
-                else:
-                    res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + tmp + '</span>')
-            else:
-                if encoded:
-                    res.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(tmp, field)))
-                else:
-                    res.append(tmp)
-        return res
 
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
@@ -435,6 +332,7 @@ class AbstractMessage():
         return self.type
 
     def getData(self):
+        """@deprecated: use getStringData instead"""
         return self.data.strip()
 
     def getSymbol(self):
@@ -451,9 +349,6 @@ class AbstractMessage():
 
     def getTimestamp(self):
         return self.timestamp
-
-    def getVisualizationFilters(self):
-        return self.visualizationFilters
 
     def getPattern(self):
         return self.pattern
@@ -483,3 +378,52 @@ class AbstractMessage():
     def setLeftReductionFactor(self, factor):
         self.leftReductionFactor = factor
         self.rightReductionFactor = 0
+
+    def getVisualizationFunctions(self):
+        """getVisualizationFunctions:
+                Returns a list which contains all the visualization functions
+                attach to the current message"""
+        return self.visualizationFunctions
+
+    def addVisualizationFunction(self, function, start, end):
+        """addVisualizationFunction:
+                Register a new visu function"""
+        self.visualizationFunctions.append((function, start, end))
+
+    def removeVisualizationFunction(self, function):
+        """removeVisualizationFunction:
+                Remove the provided function."""
+        savedFunctions = []
+        for (f, start, end) in self.visualizationFunctions:
+            if function.getID() != f.getID():
+                savedFunctions.append((f, start, end))
+        self.visualizationFunctions = []
+        for a in savedFunctions:
+            self.visualizationFunctions.append(a)
+
+    def removeTransformationFunction(self, function):
+        """removeTransformationFunction:
+                Remove a precised transformation function.
+
+                @type function: netzob.Common.Functions
+                @param function: the function that is removed.
+        """
+        fToRemove = None
+        for mFunction in self.transformationFunctions:
+            if mFunction.getName() == function.getName():
+                fToRemove = mFunction
+                break
+        if fToRemove is not None:
+            self.transformationFunctions.remove(fToRemove)
+
+    def addTransformationFunction(self, function):
+        """addTransformationFunction:
+                Add a precised transformation function.
+
+                @type function: netzob.Common.Functions
+                @param function: the function that is added.
+        """
+        self.transformationFunctions.append(function)
+
+    def getTransformationFunctions(self):
+        return self.transformationFunctions
