@@ -29,6 +29,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
+from gettext import ngettext
 import os
 import uuid
 import logging
@@ -466,7 +467,9 @@ class VocabularyController(object):
         if selectedMessages == [] or selectedMessages is None:
             NetzobErrorMessage(_("No selected message(s)."))
             return
-        questionMsg = _("Click yes to confirm the deletion of the selected message(s)")
+        questionMsg = ngettext("Click yes to confirm the deletion of the selected message",
+                               "Click yes to confirm the deletion of the selected messages",
+                               len(selectedMessages))
         result = NetzobQuestionMessage(questionMsg)
         if result != Gtk.ResponseType.YES:
             return
