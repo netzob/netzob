@@ -45,6 +45,7 @@ from netzob.Common.Type.UnitSize import UnitSize
 from netzob.Common.Type.Sign import Sign
 from netzob.Common.Type.Endianess import Endianess
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
+from netzob.UI.Vocabulary.Controllers.VocabularyController import VocabularyController
 
 
 class ProjectPropertiesController(object):
@@ -197,3 +198,26 @@ class ProjectPropertiesController(object):
         setParam(ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS, endianess)
 
         self.currentProject.saveConfigFile(self.workspace)
+
+    def _getComboValue(self, combobox):
+        combo = getattr(self.view, combobox)
+        tree_iter = combo.get_active_iter()
+        return combo.get_model()[tree_iter][0]
+
+    def vocabPropertiesApplyToAll_clicked_cb(self, button):
+        symbols = self.currentProject.getVocabulary().getSymbols()
+
+        self.log.debug("Setting 'Format' setting to all symbols")
+        map(lambda x: x.field.setFormat(self._getComboValue("propertiesFormatCombobox")), symbols)
+
+        self.log.debug("Setting 'UnitSize' setting to all symbols")
+        map(lambda x: x.field.setUnitSize(self._getComboValue("propertiesUnitsizeCombobox")), symbols)
+
+        self.log.debug("Setting 'Sign' setting to all symbols")
+        map(lambda x: x.field.setSign(self._getComboValue("propertiesSignCombobox")), symbols)
+
+        self.log.debug("Setting 'Endianess' setting to all symbols")
+        map(lambda x: x.field.setEndianess(self._getComboValue("propertiesEndianessCombobox")), symbols)
+
+        vocabView = self.mainController.view.perspectiveDict[VocabularyController.PERSPECTIVE_ID][1].view
+        vocabView.updateSelectedMessageTable()
