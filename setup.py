@@ -248,7 +248,7 @@ else:
 if command in ["build", "develop", "install", "clean"]:
     root_dir = os.getcwd()
     main_plugin_dir = root_dir + os.sep + "src" + os.sep + "netzob_plugins" + os.sep
-    plugin_categories = ["Capturers", "Importers", "Exporters"]
+    plugin_categories = ["Capturers", "Importers", "Exporters", "RelationsIdentifier"]
     for plugin_category in plugin_categories:
         plugin_dir = main_plugin_dir + plugin_category + os.sep
         plugin_list = os.listdir(plugin_dir)
