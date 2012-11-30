@@ -77,7 +77,8 @@ contributors = ["Georges Bossert <georges.bossert@supelec.fr>",
                 "Franck Roland <franck.l.roland@gmail.com>",
                 "Fabien André <fabien.andre@insa-rennes.fr>",
                 "Quentin Heyler <quentin.heyler@etudiant.univ-rennes1.fr>",
-                "Benjamin Dufour <benjamin.dufour@amossys.fr>"
+                "Benjamin Dufour <benjamin.dufour@amossys.fr>",
+                "Giuseppe Massaro <n3mes1s.oxoo@gmail.com>"
                 ]
 
 #+---------------------------------------------------------------------------+
