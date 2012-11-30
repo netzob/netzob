@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -149,9 +149,10 @@ class ContextualMenuOnFieldView(object):
             if field_content is not None:
                 # Get preview of field content
                 text_preview = TypeConvertor.encodeNetzobRawToGivenType(field_content, value)
-                if len(text_preview) > 10:
-                    text_preview = text_preview[:10] + "..."
-                label = value + " (" + text_preview + ")"
+                # TRANSLATORS: {0} is the value of the format (binary,
+                # hex, decimal, etc.) and {1} is the preview of the
+                # convertion.
+                label = _("{0} ({1}…)").format(value, text_preview[:10])
 
             # Create the check item
             item = Gtk.CheckMenuItem(label)

@@ -29,7 +29,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from bitarray import bitarray
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 import select
 import socket

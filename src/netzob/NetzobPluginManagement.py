@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import pkg_resources
 import os
 import sys

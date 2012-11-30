@@ -30,7 +30,7 @@
 #+---------------------------------------------------------------------------+
 import logging
 import sys
-from locale import gettext as _
+from gettext import gettext as _
 from netzob import NetzobResources
 
 

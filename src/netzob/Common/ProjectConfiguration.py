@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 from lxml.etree import ElementTree
 from lxml import etree
 

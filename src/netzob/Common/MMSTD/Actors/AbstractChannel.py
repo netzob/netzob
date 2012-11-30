@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
 from netzob.Common.MMSTD.Dictionary.DataTypes.WordType import WordType

@@ -32,7 +32,7 @@ import logging
 import errno
 import time
 import uuid
-from locale import gettext as _
+from gettext import gettext as _
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports

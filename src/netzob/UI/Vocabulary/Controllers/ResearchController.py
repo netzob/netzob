@@ -28,7 +28,8 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
+from gettext import ngettext
 import logging
 import os
 import time
@@ -133,10 +134,8 @@ class ResearchController(object):
             else:
                 GObject.idle_add(self._view.imageWarning.hide)
                 GObject.idle_add(self._view.numberOfResultLabel.show)
-                if self.nbResult > 1:
-                    GObject.idle_add(self._view.numberOfResultLabel.set_label, _("{0} occurrences found.".format(self.nbResult)))
-                else:
-                    GObject.idle_add(self._view.numberOfResultLabel.set_label, _("{0} occurrence found.".format(self.nbResult)))
+                label = ngettext("{0} occurrence found.", "{0} occurrences found.", self.nbResult).format(self.nbResult)
+                GObject.idle_add(self._view.numberOfResultLabel.set_label, label)
 
             if not self.stopFlag and self.nbResult > 0:
                 # if search has completed (not stopped), nav. is allowed
@@ -230,10 +229,9 @@ class ResearchController(object):
             else:
                 GObject.idle_add(self._view.imageWarning.hide)
                 GObject.idle_add(self._view.numberOfResultLabel.show)
-                if self.nbResult > 1:
-                    GObject.idle_add(self._view.numberOfResultLabel.set_label, _("{0} occurrences found.".format(self.nbResult)))
-                else:
-                    GObject.idle_add(self._view.numberOfResultLabel.set_label, _("{0} occurrence found.".format(self.nbResult)))
+
+                label = ngettext("{0} occurrence found.", "{0} occurrences found.", self.nbResult).format(self.nbResult)
+                GObject.idle_add(self._view.numberOfResultLabel.set_label, label)
 
             if not self.stopFlag and self.nbResult > 0:
                 # if search has completed (not stopped), nav. is allowed

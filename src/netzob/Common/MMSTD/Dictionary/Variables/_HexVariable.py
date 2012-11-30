@@ -29,7 +29,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from bitarray import bitarray
-from locale import gettext as _
+from gettext import gettext as _
 from lxml import etree
 from netzob.Common.MMSTD.Dictionary._Variable import Variable
 from netzob.Common.Type.TypeConvertor import TypeConvertor

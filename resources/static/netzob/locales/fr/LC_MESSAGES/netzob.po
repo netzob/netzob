@@ -8,91 +8,93 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-22 15:53+0100\n"
-"PO-Revision-Date: 2012-11-22 15:50+0200\n"
+"POT-Creation-Date: 2012-11-28 18:54+0100\n"
+"PO-Revision-Date: 2012-11-28 19:00+0200\n"
 "Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
-"<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"<http://qa.netzob.org/weblate/projects/netzob/master/fr/>\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Weblate 1.3\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: src/netzob/NetzobMainController.py:311
+#: src/netzob/NetzobMainController.py:314
 msgid "A project with this name exists"
 msgstr "Un projet avec ce nom existe déjà"
 
-#: src/netzob/NetzobMainController.py:326
-#: src/netzob/NetzobMainController.py:429
-#: src/netzob/NetzobMainController.py:501
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:137
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:172
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:197
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:213
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:301
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:312
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:323
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:334
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:347
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:359
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:390
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:408
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:428
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:463
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:486
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:499
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:512
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:524
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:535
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:542
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:582
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:599
+#: src/netzob/NetzobMainController.py:329
+#: src/netzob/NetzobMainController.py:432
+#: src/netzob/NetzobMainController.py:504
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:138
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:173
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:198
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:214
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:302
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:313
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:324
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:335
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:348
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:360
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:391
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:409
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:429
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:464
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:489
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:502
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:515
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:527
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:538
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:545
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:585
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:602
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturerPlugin.py:127
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerPlugin.py:127
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExporterPlugin.py:127
 msgid "No project selected."
 msgstr "Aucun projet sélectionné."
 
-#: src/netzob/NetzobMainController.py:375
+#: src/netzob/NetzobMainController.py:378
 msgid "No file selected"
 msgstr "Aucun fichier sélectionné"
 
-#: src/netzob/NetzobMainController.py:379
+#: src/netzob/NetzobMainController.py:382
 msgid "The file doesn't define a valid project."
 msgstr "Le fichier ne contient pas de projet valide."
 
-#: src/netzob/NetzobMainController.py:397
+#: src/netzob/NetzobMainController.py:400
 msgid "Copy of {0}"
 msgstr "Copie de {0}"
 
-#: src/netzob/NetzobMainController.py:406
+#: src/netzob/NetzobMainController.py:409
 msgid "An error occurred while copying the file"
 msgstr "Une erreur est survenue durant la copie du fichier"
 
-#: src/netzob/NetzobMainController.py:451
-#: src/netzob/NetzobMainController.py:479
+#: src/netzob/NetzobMainController.py:454
+#: src/netzob/NetzobMainController.py:482
 msgid "Please open a project before exporting it."
 msgstr "Veuillez ouvrir un projet avant de l'exporter."
 
-#: src/netzob/NetzobMainController.py:474
-#: src/netzob/NetzobMainController.py:550
+#: src/netzob/NetzobMainController.py:477
+#: src/netzob/NetzobMainController.py:554
 msgid "No directory selected"
 msgstr "Aucun répertoire sélectionné"
 
-#: src/netzob/NetzobMainController.py:476
+#: src/netzob/NetzobMainController.py:479
 msgid "No filename provided"
 msgstr "Aucun nom de fichier fourni"
 
-#: src/netzob/NetzobMainController.py:490
+#: src/netzob/NetzobMainController.py:493
 msgid "An error occurred while exporting the project."
 msgstr "Une erreur est survenue durant l'export du projet."
 
-#: src/netzob/NetzobMainController.py:564
+#: src/netzob/NetzobMainController.py:568
 msgid "An error occurred while loading workspace."
 msgstr "Une erreur est survenue pendant le chargement de l'espace de travail."
 
-#: src/netzob/NetzobMainController.py:574
+#: src/netzob/NetzobMainController.py:578
 msgid "An error occurred while creating workspace."
 msgstr "Une erreur est survenue durant la création de l'espace de travail."
 
@@ -109,27 +111,27 @@ msgstr "Inférence de grammaire"
 msgid "Simulator"
 msgstr "Simulateur"
 
-#: src/netzob/NetzobMainView.py:268
+#: src/netzob/NetzobMainView.py:273
 msgid "XML"
 msgstr "XML"
 
-#: src/netzob/NetzobMainView.py:273
+#: src/netzob/NetzobMainView.py:278
 msgid "Human readable"
 msgstr "Lisible"
 
-#: src/netzob/NetzobMainView.py:290
+#: src/netzob/NetzobMainView.py:295
 msgid "Save the changes to the project \"{0}\" before closing?"
 msgstr ""
 "Voulez-vous sauvegarder les modifications du projet \"{0}\" avant la "
 "fermeture ?"
 
-#: src/netzob/NetzobMainView.py:298
+#: src/netzob/NetzobMainView.py:303
 msgid "If you don't save, changes will be permanently lost."
 msgstr ""
 "Vos modifications seront définitivement perdues si vous ne sauvegardez "
 "pas."
 
-#: src/netzob/NetzobMainView.py:300
+#: src/netzob/NetzobMainView.py:305
 msgid "Close _Without Saving"
 msgstr "Fermer sans sauvegarder"
 
@@ -156,9 +158,13 @@ msgstr "Fermer sans sauvegarder"
 msgid "Name"
 msgstr "Nom"
 
-#: src/netzob/Common/ResourcesConfiguration.py:110
+#: src/netzob/Common/ResourcesConfiguration.py:111
 msgid "New Workspace"
 msgstr "Nouvel espace de travail"
+
+#: src/netzob/Common/ResourcesConfiguration.py:208
+msgid "Unable to find plugins static resources."
+msgstr "Impossible de trouver l'emplacement des ressources statiques."
 
 #: src/netzob/Common/SplashScreen.py:54
 msgid "Netzob"
@@ -235,7 +241,7 @@ msgstr "[{0}]"
 
 #: src/netzob/Common/Plugins/Capturers/AbstractCapturer.py:72
 #: src/netzob/Import/AbstractImporter.py:72
-#: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturer.py:233
+#: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturer.py:227
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:319
 msgid "Message ID: {0} not found in importer message list"
 msgstr "ID de message ({0}) non trouvé dans la liste d'import des messages"
@@ -365,6 +371,7 @@ msgid "Target:"
 msgstr "Cible :"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:85
+#: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:121
 msgid "CLIENT"
 msgstr "CLIENT"
 
@@ -917,35 +924,31 @@ msgstr "Un acteur à déjà ce nom."
 msgid "Specify the type of the actor."
 msgstr "Spécifiez un type d'acteur."
 
-#: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:121
-msgid "Choose between a CLIENT or a SERVER type."
-msgstr "Choisissez entre un type CLIENT ou SERVER."
-
-#: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:128
+#: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:127
 msgid "Only UDP and TCP layer 4 protocols are supported."
 msgstr "Seuls les protocoles de niveau 4 UDP et TCP sont supportés."
 
-#: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:142
+#: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:141
 msgid "Specify a valid bind port (int>0)"
 msgstr "Spécifiez un port valide (int>0)"
 
-#: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:157
+#: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:156
 msgid "Specify a valid target port (int>0)"
 msgstr "Spécifier un port destination valide (int>0)"
 
-#: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:173
+#: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:172
 msgid "A network client requires a target IP."
 msgstr "Un client réseau nécessite une adresse IP."
 
-#: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:178
+#: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:177
 msgid "A network client requires a target port."
 msgstr "Un client réseau nécessite un port destination."
 
-#: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:188
+#: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:186
 msgid "A network server requires a bind IP."
 msgstr "Un serveur réseau nécessite une adresse IP."
 
-#: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:193
+#: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:191
 msgid "A network server requires a bind port."
 msgstr "Un serveur réseau nécessite un port réseau."
 
@@ -973,22 +976,19 @@ msgstr "taille du champ"
 msgid "start of payload"
 msgstr "Début de la charge utile"
 
-#: src/netzob/UI/Vocabulary/Controllers/ResearchController.py:132
-#: src/netzob/UI/Vocabulary/Controllers/ResearchController.py:229
+#: src/netzob/UI/Vocabulary/Controllers/ResearchController.py:133
+#: src/netzob/UI/Vocabulary/Controllers/ResearchController.py:228
 msgid "No occurrence found."
 msgstr "Aucune occurrence trouvée."
 
 #: src/netzob/UI/Vocabulary/Controllers/ResearchController.py:137
-#: src/netzob/UI/Vocabulary/Controllers/ResearchController.py:234
-msgid "{0} occurrences found."
-msgstr "{0} occurrence(s) trouvée(s)."
-
-#: src/netzob/UI/Vocabulary/Controllers/ResearchController.py:139
-#: src/netzob/UI/Vocabulary/Controllers/ResearchController.py:236
+#: src/netzob/UI/Vocabulary/Controllers/ResearchController.py:233
 msgid "{0} occurrence found."
-msgstr "{0} occurrence(s) trouvée(s)."
+msgid_plural "{0} occurrences found."
+msgstr[0] "{0} occurrence trouvée."
+msgstr[1] "{0} occurrences trouvées."
 
-#: src/netzob/UI/Vocabulary/Controllers/ResearchController.py:277
+#: src/netzob/UI/Vocabulary/Controllers/ResearchController.py:275
 msgid "{0}/{1}: {2}"
 msgstr "{0}/{1}: {2}"
 
@@ -1024,51 +1024,50 @@ msgstr "Cliquez sur oui pour confirmer l'édition de la variable {0}"
 msgid "Select this element"
 msgstr "Sélectionner cet élément"
 
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:305
-msgid "No layer(s) selected."
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:306
+msgid "No layer selected."
 msgstr "Aucune couche sélectionnée."
 
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:316
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:327
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:338
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:351
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:516
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:528
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:587
-msgid "No symbol(s) selected."
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:317
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:328
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:339
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:352
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:519
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:531
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:590
+msgid "No symbol selected."
 msgstr "Aucun symbole sélectionné."
 
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:363
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:412
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:364
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:413
 msgid "No selected symbol."
 msgstr "Aucun symbole sélectionné."
 
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:367
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:368
 msgid "You need to select at least two fields."
 msgstr "Vous devez sélectionner au moins deux champs."
 
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:403
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:416
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:404
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:417
 msgid "No selected field."
 msgstr "Aucun champs sélectionné."
 
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:432
-msgid "Not selected message(s)."
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:433
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:468
+msgid "No selected message."
 msgstr "Aucun message sélectionné."
 
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:467
-msgid "No selected message(s)."
-msgstr "Aucun message sélectionné."
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:472
+msgid "Click yes to confirm the deletion of the selected message"
+msgid_plural "Click yes to confirm the deletion of the selected messages"
+msgstr[0] "Cliquez sur oui pour confirmer la suppression du message sélectionné"
+msgstr[1] "Cliquez sur oui pour confirmer la suppression des messages sélectionnés"
 
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:469
-msgid "Click yes to confirm the deletion of the selected message(s)"
-msgstr "Cliquez sur oui pour confirmer la suppression du message sélectionné"
-
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:593
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:596
 msgid "Fields limits computed."
 msgstr "Limites des champs calculées."
 
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:604
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:607
 msgid "No importer plugin available."
 msgstr "Aucun plugin d'import disponible."
 
@@ -2647,7 +2646,7 @@ msgstr "oui"
 msgid "no"
 msgstr "non"
 
-#: resources/static/netzob_plugins/FileImporter/ui/FileImportConfigurationWidget.glade:17
+#: resources/static/netzob_plugins/DelimiterSeparatedImporter/ui/FileImportConfigurationWidget.glade:17
 msgid "Separator:"
 msgstr "Séparateur : "
 
@@ -2745,4 +2744,3 @@ msgstr "10"
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:228
 msgid "Time limit:"
 msgstr "Durée de capture : "
-
