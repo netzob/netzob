@@ -43,6 +43,7 @@ ignore_files = [
     ".*\.po", ".*\.pot",
     "doc/netzob\.1",
     "\.git/*",
+    ".*/PKG-INFO",
 ]
 
 def getFiles():
