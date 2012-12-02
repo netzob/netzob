@@ -56,7 +56,7 @@ class RawExportController(object):
     def update(self):
         self.view.symbolTreeview.get_model().clear()
         for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-            iter = self.view.symbolTreeview.get_model().append(None, ["{0}".format(symbol.getID()), "{0} [{1}]".format(symbol.getName(), str(len(symbol.getMessages()))), "{0}".format(symbol.getScore()), '#000000', '#DEEEF0'])
+            iter = self.view.symbolTreeview.get_model().append(None, ["{0}".format(symbol.getID()), "{0} [{1}]".format(symbol.getName(), str(len(symbol.getMessages()))), '#000000', '#DEEEF0'])
 
     def clear(self):
         pass
