@@ -258,27 +258,9 @@ class NeedlemanAndWunsch(object):
             iField = iField + 1
         if len(field.getSymbol().getExtendedFields()) >= 100:
             raise NetzobException("This Python version only supports 100 named groups in regex (found {0})".format(len(field.getSymbol().getExtendedFields())))
-        """
-        # We look for useless fields
-        doLoop = True
-        # We loop until we don't pop any field
-        while doLoop is True:
-            doLoop = False
-            for innerField in field.getExtendedFields():
 
-                if self.isFinish():
-                    return
-
-                # We try to see if this field produces only empty values when applied on messages
-                if not innerField.isStatic():
-                    cells = innerField.getCells()
-                    cells = "".join(cells)
-                    if cells == "":
-                        # Concatenate the current useless inner field with the next field
-                        if innerField.concatWithNextField() == 1:
-                            doLoop = True
-                            break
-        """
+        # Clean created fields (remove fields that produce only empty cells)
+        field.removeEmptyFields()
 
     #+----------------------------------------------
     #| alignFields:

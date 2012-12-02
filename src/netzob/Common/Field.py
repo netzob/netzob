@@ -337,9 +337,12 @@ class Field(object):
             self.addField(field)
         self.popField()
 
-        # Last loop to detect fixed-sized dynamic fields
+        # Loop to detect fixed-sized dynamic fields
         for innerField in self.getLocalFields():
             innerField.fixRegex()
+
+        # Clean created fields (remove fields that produce only empty cells)
+        self.removeEmptyFields()
 
     #+----------------------------------------------
     #| simplePartitioning:
@@ -514,9 +517,12 @@ class Field(object):
             # Add field to local fields of the current object
             self.addField(field)
 
-        # Last loop to detect fixed-sized dynamic fields
+        # Loop to detect fixed-sized dynamic fields
         for innerField in self.getLocalFields():
             innerField.fixRegex()
+
+        # Clean created fields (remove fields that produce only empty cells)
+        self.removeEmptyFields()
 
         # Stop and clean if requested
         if idStop_cb is not None:
@@ -917,6 +923,26 @@ class Field(object):
             self.fields.pop()
         else:
             self.fields.pop(index)
+
+    def removeEmptyFields(self):
+        """
+        removeEmptyFields: we look for useless fields (i.e. fields
+        that produces only empty cells) and remove them.
+        """
+        doLoop = True
+        # We loop until we don't pop any field
+        while doLoop is True:
+            doLoop = False
+            for innerField in self.getExtendedFields():
+
+                # We try to see if this field produces only empty values when applied on messages
+                cells = innerField.getCells()
+                cells = "".join(cells)
+                if cells == "":
+                    # Concatenate the current useless inner field with the next field
+                    if innerField.getParentField().removeLocalField(innerField) == 1:
+                        doLoop = True
+                        break
 
     def removeLocalField(self, field):
         """removeLocalField:
