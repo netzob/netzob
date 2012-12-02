@@ -191,18 +191,23 @@ def verifyResults(results):
     for file in results.keys():
         resultFile = results[file]
         if len(resultFile) > 0:
-            print "[I] File %s:" % (file)
             ruleNames = resultFile.keys()
             localResult = 0
+
+            errorForCurrentFile = []
             for ruleName in ruleNames:
                 ruleErrors = resultFile[ruleName]
                 if ruleErrors is not None and len(ruleErrors) > 0:
                     for ruleError in ruleErrors:
-                        print "[E]\t %s : %s" % (ruleName, ruleError)
+                        errorForCurrentFile.append("[E]\t %s : %s" % (ruleName, ruleError))
                     result = 1
                     localResult = 1
-            if localResult == 0:
-                print "[I]\t no error found."
+
+            if len(errorForCurrentFile) > 0:
+                print "[I] File %s:" % (file)
+                for err in errorForCurrentFile:
+                    print err
+
     return result
 
 def analyze(providedFiles):
@@ -225,7 +230,6 @@ def analyze(providedFiles):
                 except:
                     print "[E] File %s exists but is not readable." % fileToAnalyze
 
-#    print "[I] %d files will be analyzed." % (len(files))
     globalResults = dict()
     for file in files:
         globalResults[file] = checkFile(file)
