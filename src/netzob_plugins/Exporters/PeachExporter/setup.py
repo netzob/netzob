@@ -54,12 +54,9 @@ setup(
     author_email="contact@netzob.org",
     packages=[package],
     install_requires=dependencies,
-    data_files=find_data_files(opj("share", "netzob", "plugins", package),
-                               pluginsStaticResourcesPath,
-                               '*.glade',
-                               recursive=True),
-    entry_points="""
-    [netzob.plugins]
-    PeachExporter=PeachExporter.PeachExporterPlugin:PeachExporterPlugin
-    """
+    data_files=find_data_files(opj("share", "netzob", "plugins", package), pluginsStaticResourcesPath, '*.glade', recursive=True),
+#    entry_points="""
+#    [netzob.plugins]
+#    PeachExporter=PeachExporter.PeachExporterPlugin:PeachExporterPlugin
+#    """
 )
