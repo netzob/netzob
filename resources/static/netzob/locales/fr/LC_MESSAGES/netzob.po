@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-28 18:54+0100\n"
-"PO-Revision-Date: 2012-11-28 19:00+0200\n"
-"Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
+"PO-Revision-Date: 2012-12-03 00:20+0200\n"
+"Last-Translator: Georges Bossert <georges.bossert@supelec.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/master/fr/>\n"
 "Language: fr\n"
@@ -1390,7 +1390,7 @@ msgstr "Fuzzing basé sur : "
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportView.py:131
 msgid "Mutate static fields"
-msgstr ""
+msgstr "Muter les champs statiques"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportView.py:136
 msgid "Export"
