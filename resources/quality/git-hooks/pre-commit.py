@@ -44,6 +44,7 @@ ignore_files = [
     "doc/netzob\.1",
     "\.git/*",
     ".*/PKG-INFO",
+    ".*/.*\.so",
 ]
 
 def getFiles():
