@@ -80,7 +80,9 @@ following bunch of prerequisites before initiating Netzob's install process.
 * libxml2-dev
 * libxslt-dev
 * python-setuptools
-* gtk3
+* python-gi
+* gir1.2-gtk-3.0
+* libgtk-3-0
 * graphviz
 
 We also highly recommend to install the following additional dependencies:
