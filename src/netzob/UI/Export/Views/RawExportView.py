@@ -79,10 +79,9 @@ class RawExportView(object):
     def buildSymbolTreeview(self):
         # Tree store contains:
         # str : text (symbol Name)
-        # str : text (score)
         # str : color foreground
         # str : color background
-        self.treestore = Gtk.TreeStore(str, str, str, str, str)
+        self.treestore = Gtk.TreeStore(str, str, str, str)
         self.symbolTreeview = Gtk.TreeView(self.treestore)
 
         # Symbol list
@@ -98,7 +97,7 @@ class RawExportView(object):
         cell.set_property('background-set', True)
         cell.set_property('foreground-set', True)
         lvcolumn.add_attribute(cell, "text", 1)
-        lvcolumn.add_attribute(cell, "foreground", 3)
-        lvcolumn.add_attribute(cell, "background", 4)
+        lvcolumn.add_attribute(cell, "foreground", 2)
+        lvcolumn.add_attribute(cell, "background", 3)
         self.symbolTreeview.append_column(lvcolumn)
         self.symbolTreeview.show()

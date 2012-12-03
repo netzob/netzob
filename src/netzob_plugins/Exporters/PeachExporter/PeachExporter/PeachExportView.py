@@ -96,10 +96,9 @@ class PeachExportView(AbstractExporterView):
         """
         # Tree store contains:
         # str : text (symbol Name)
-        # str : text (score)
         # str : color foreground
         # str : color background
-        self.treestore = Gtk.TreeStore(str, str, str, str, str)
+        self.treestore = Gtk.TreeStore(str, str, str, str)
         self.symbolTreeview = Gtk.TreeView(self.treestore)
 
         renderer = Gtk.CellRendererText()
