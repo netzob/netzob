@@ -41,7 +41,7 @@ from sdist.utils import find_data_files, opj
 pluginsStaticResourcesPath = opj(resourcesPath, "static/netzob_plugins/", package)
 
 dependencies = [
-    'Netzob > 0.4'
+    'Netzob >= 0.4'
 ]
 
 #+----------------------------------------------------------------------------

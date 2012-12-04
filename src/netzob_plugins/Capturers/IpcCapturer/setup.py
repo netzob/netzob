@@ -42,7 +42,7 @@ pluginsStaticResourcesPath = opj(resourcesPath, "static/netzob_plugins/", packag
 
 dependencies = [
     'python-ptrace',
-    'Netzob > 0.4'
+    'Netzob >= 0.4'
 ]
 
 #+----------------------------------------------------------------------------

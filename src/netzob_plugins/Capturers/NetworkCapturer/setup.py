@@ -43,7 +43,7 @@ pluginsStaticResourcesPath = opj(resourcesPath, "static/netzob_plugins/", packag
 dependencies = [
     'pcapy',
     'impacket',
-    'Netzob > 0.4'
+    'Netzob >= 0.4'
 ]
 
 #+----------------------------------------------------------------------------
