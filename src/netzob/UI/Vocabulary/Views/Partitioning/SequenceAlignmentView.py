@@ -61,8 +61,9 @@ class SequenceAlignmentView(object):
                                         "sequence_adjustment", "sequence_scale", "sequence_spinbutton",
                                         "radiobutton4bit", "radiobutton8bit",
                                         "orphanButton", "smoothButton",
-                                        "sequence_progressbar", "stage0ProgressBar", "stage1ProgressBar", "stage2ProgressBar", "stage3ProgressBar",
-                                        "labelStage0", "labelStage1", "labelStage2", "labelStage3"])
+                                        "sequence_progressbar", "stage0ProgressBar", "stage1ProgressBar",
+                                        "stage2ProgressBar", "stage3ProgressBar", "stage4ProgressBar",
+                                        "labelStage0", "labelStage1", "labelStage2", "labelStage3", "labelStage4"])
         self.controller = controller
         self.builder.connect_signals(self.controller)
 
@@ -91,5 +92,9 @@ class SequenceAlignmentView(object):
         self.labelStage3.show()
         self.stage3ProgressBar.show()
         self.stage3ProgressBar.set_fraction(0)
+
+        self.labelStage4.show()
+        self.stage4ProgressBar.show()
+        self.stage4ProgressBar.set_fraction(0)
 
         self.sequence_progressbar.set_fraction(0)

@@ -250,6 +250,8 @@ class NeedlemanAndWunsch(object):
         for regexElt in regex:
             if self.isFinish():
                 return
+            if regexElt == "":
+                pass
             innerField = Field("Field " + str(iField), "(" + regexElt + ")", field.getSymbol())
             field.addField(innerField)
 
@@ -260,7 +262,7 @@ class NeedlemanAndWunsch(object):
             raise NetzobException("This Python version only supports 100 named groups in regex (found {0})".format(len(field.getSymbol().getExtendedFields())))
 
         # Clean created fields (remove fields that produce only empty cells)
-        field.removeEmptyFields()
+        field.removeEmptyFields(self.cb_status)
 
     #+----------------------------------------------
     #| alignFields:
