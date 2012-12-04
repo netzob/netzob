@@ -218,8 +218,6 @@ setup(
         "Environment :: X11 Applications :: GTK",
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
-        "Intended Audience :: Science/Research",
-        "Natural Language :: English",
         "Intended Audience :: System Administrators",
         "License :: OSI Approved :: GNU General Public License (GPL)",
         "Operating System :: OS Independent",
