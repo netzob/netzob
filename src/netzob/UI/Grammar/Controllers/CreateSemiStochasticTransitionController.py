@@ -242,7 +242,7 @@ class CreateSemiStochasticTransitionController(object):
                 if str(symbol.getID()) == str(idOutputSymbol):
                     outputSymbol = symbol
                     break
-            if outputSymbol == None:
+            if outputSymbol is None:
                 errorMessage = _("An error occurred and prevented to retrieve the output symbols")
                 self.displayErrorMessage(errorMessage)
                 return
@@ -279,7 +279,7 @@ class CreateSemiStochasticTransitionController(object):
                 outputSymbol = symbol
                 break
 
-        if outputSymbol == None:
+        if outputSymbol is None:
             errorMessage = _("An error occured and prevented to retrieved the output symbol.")
             self.displayErrorMessage(errorMessage)
             return

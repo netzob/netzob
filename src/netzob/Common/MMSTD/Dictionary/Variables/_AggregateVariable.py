@@ -59,7 +59,7 @@ class AggregateVariable(Variable):
         Variable.__init__(self, "Aggregate", idVar, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable.py')
         self.children = []
-        if children != None:
+        if children is not None:
             self.children.extend(children)
 
 #+---------------------------------------------------------------------------+
@@ -119,7 +119,7 @@ class AggregateVariable(Variable):
             self.log.debug("Indice = " + str(result) + " : " + var.getDescription(negative, vocabulary, memory))
             self.log.debug("=> " + str(value[result:]))
             result = var.compare(value, result, negative, vocabulary, memory)
-            if result == -1 or result == None:
+            if result == -1 or result is None:
                 self.log.debug("Compare fail")
                 return result
             else:
@@ -140,7 +140,7 @@ class AggregateVariable(Variable):
             self.log.debug("Indice = " + str(result) + " : " + var.getDescription(negative, vocabulary, memory))
             result = var.learn(value, result, negative, vocabulary, memory)
             toBeRestored.append(var)
-            if result == -1 or result == None:
+            if result == -1 or result is None:
                 self.log.debug("Compare fail")
                 status = False
                 break

@@ -87,7 +87,7 @@ class Vocabulary(object):
         return self.symbols
 
     def getTrashSymbol(self):
-        if self.trashSymbol == None:
+        if self.trashSymbol is None:
             self.trashSymbol = TrashSymbol(None)
         return self.trashSymbol
 

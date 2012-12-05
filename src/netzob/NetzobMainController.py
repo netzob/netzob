@@ -190,7 +190,7 @@ class NetzobMainController(object):
         workspace before stopping the GTK"""
 
         result = self.closeCurrentProject()
-        if result == True:
+        if result:
             # Save the workspace
             self.getCurrentWorkspace().saveConfigFile()
 
@@ -325,7 +325,7 @@ class NetzobMainController(object):
     def saveProject_activate_cb(self, action):
         """Save the current project"""
 
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."), self.view.mainWindow)
             return
         self.getCurrentProject().saveConfigFile(self.getCurrentWorkspace())
@@ -428,7 +428,7 @@ class NetzobMainController(object):
         """Display the dialog in order to export the current project
         when the user request it through the menu."""
 
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."), self.view.mainWindow)
             return
 
@@ -500,7 +500,7 @@ class NetzobMainController(object):
         """Display the dialog in order to export the symbols when the
         user request it through the menu."""
 
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."), self.view.mainWindow)
             return
         logging.debug("Export raw symbols")

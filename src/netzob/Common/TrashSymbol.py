@@ -63,7 +63,7 @@ class TrashSymbol(AbstractSymbol):
     def __init__(self, id=None):
         AbstractSymbol.__init__(self, "TrashSymbol")
         self.id = id
-        if self.id == None:
+        if self.id is None:
             id = str(uuid.uuid4())
         self.name = "TrashSymbol"
         self.messages = []

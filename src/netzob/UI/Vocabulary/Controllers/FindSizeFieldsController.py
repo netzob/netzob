@@ -134,7 +134,7 @@ class FindSizeFieldsController(object):
     #|   Computes if the progress bar must be updated or not
     #+----------------------------------------------
     def do_pulse_for_findSizeField(self):
-        if self.currentExecutionOfFindSizeFieldHasFinished == False:
+        if not self.currentExecutionOfFindSizeFieldHasFinished:
             self.progressBarSizeField.pulse()
             return True
         return False

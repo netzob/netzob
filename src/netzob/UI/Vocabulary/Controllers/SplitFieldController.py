@@ -63,7 +63,7 @@ class SplitFieldController(object):
         return self._view
 
     def run(self):
-        if self.initBuffer() == False:
+        if not self.initBuffer():
             return
         self._view.run()
 
