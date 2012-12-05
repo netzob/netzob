@@ -575,8 +575,8 @@ class NetzobMainController(object):
                             errorMessage = None
                             self.view.currentWorkspaceHasChanged()
                         except Exception, e:
-                                errorMessage = _("An error occurred while creating workspace.")
-                                logging.warn("Error while creating workspace declared in folder {0}: {1}".format(selectedFolder, e))
+                            errorMessage = _("An error occurred while creating workspace.")
+                            logging.warn("Error while creating workspace declared in folder {0}: {1}".format(selectedFolder, e))
             else:
                 dialog.destroy()
                 finish = True

@@ -1429,7 +1429,6 @@ class DotWidget(Gtk.DrawingArea):
         self.connect("scroll-event", self.on_area_scroll_event)
         self.connect("size-allocate", self.on_area_size_allocate)
 
-
         self.connect('key-press-event', self.on_key_press_event)
 
         self.x, self.y = 0.0, 0.0
