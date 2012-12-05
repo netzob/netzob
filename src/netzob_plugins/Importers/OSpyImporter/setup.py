@@ -40,7 +40,7 @@ from sdist.utils import find_data_files, opj
 
 pluginsStaticResourcesPath = opj(resourcesPath, "static/netzob_plugins/", package)
 
-dependencies = ['python-dateutil']
+dependencies = ['python-dateutil', 'Netzob >= 0.4']
 
 #+----------------------------------------------------------------------------
 #| Definition of Netzob for setup

@@ -521,9 +521,6 @@ class Field(object):
         for innerField in self.getLocalFields():
             innerField.fixRegex()
 
-        # Clean created fields (remove fields that produce only empty cells)
-        self.removeEmptyFields()
-
         # Stop and clean if requested
         if idStop_cb is not None:
             if idStop_cb():
@@ -924,25 +921,27 @@ class Field(object):
         else:
             self.fields.pop(index)
 
-    def removeEmptyFields(self):
+    def removeEmptyFields(self, cb_status):
         """
         removeEmptyFields: we look for useless fields (i.e. fields
         that produces only empty cells) and remove them.
         """
-        doLoop = True
-        # We loop until we don't pop any field
-        while doLoop is True:
-            doLoop = False
-            for innerField in self.getExtendedFields():
-
-                # We try to see if this field produces only empty values when applied on messages
-                cells = innerField.getCells()
-                cells = "".join(cells)
-                if cells == "":
-                    # Concatenate the current useless inner field with the next field
-                    if innerField.getParentField().removeLocalField(innerField) == 1:
-                        doLoop = True
-                        break
+        fieldsToRemove = []
+        fields = self.getExtendedFields()
+        step = float(100) / float(len(fields))
+        totalPercent = 0
+        for innerField in fields:
+            # We try to see if this field produces only empty values when applied on messages
+            cells = innerField.getCells()
+            cells = "".join(cells)
+            if cb_status is not None:
+                totalPercent += step
+                cb_status(4, totalPercent, None)
+            if cells == "":
+                # Concatenate the current useless inner field with the next field
+                fieldsToRemove.append(innerField)
+        for field in fieldsToRemove:
+            field.getParentField().removeLocalField(field)
 
     def removeLocalField(self, field):
         """removeLocalField:

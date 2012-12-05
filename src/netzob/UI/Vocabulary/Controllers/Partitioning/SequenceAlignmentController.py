@@ -140,9 +140,9 @@ class SequenceAlignmentController(object):
         # select the good progress bar in function of the stage
         progressBar = None
         totalPercent = None
-        nbStage = 3
+        nbStage = 4
         if self.vocabularyController.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION):
-            nbStage = 4
+            nbStage = 5
 
         if stage == 0:
             progressBar = self._view.stage0ProgressBar
@@ -152,8 +152,10 @@ class SequenceAlignmentController(object):
             progressBar = self._view.stage2ProgressBar
         elif stage == 3:
             progressBar = self._view.stage3ProgressBar
+        elif stage == 4:
+            progressBar = self._view.stage4ProgressBar
 
-        if nbStage != 4:
+        if nbStage != 5:
             self._view.labelStage3.hide()
             self._view.stage3ProgressBar.hide()
 
@@ -172,6 +174,10 @@ class SequenceAlignmentController(object):
         if stage > 3:
             self._view.labelStage3.hide()
             self._view.stage3ProgressBar.hide()
+
+        if stage > 4:
+            self._view.labelStage4.hide()
+            self._view.stage4ProgressBar.hide()
 
         if percent is not None:
             totalPercent = (100 / nbStage) * stage + percent / nbStage

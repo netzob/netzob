@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-28 18:54+0100\n"
-"PO-Revision-Date: 2012-12-03 00:20+0200\n"
-"Last-Translator: Georges Bossert <georges.bossert@supelec.fr>\n"
+"POT-Creation-Date: 2012-12-04 09:59+0100\n"
+"PO-Revision-Date: 2012-12-04 10:01+0200\n"
+"Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
 "Language: fr\n"
@@ -733,10 +733,10 @@ msgstr "Aucune définition trouvée"
 msgid "Export project as raw XML"
 msgstr "Exporter le projet au format XML brut"
 
-#: src/netzob/UI/Export/Views/RawExportView.py:94
+#: src/netzob/UI/Export/Views/RawExportView.py:93
 #: src/netzob/UI/Export/Views/ScapyExportView.py:94
 #: src/netzob/UI/Export/Views/TextExportView.py:94
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportView.py:106
+#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportView.py:105
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:97
 msgid "Symbols"
 msgstr "Symboles"
@@ -1148,44 +1148,48 @@ msgstr "Supprimer le message"
 msgid "Copy To Clipboard"
 msgstr "Copier dans le presse papier"
 
-#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:163
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:155
+msgid "{0} ({1}…)"
+msgstr "{0} ({1}…)"
+
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:164
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:162
 #: resources/static/netzob/ui/vocabulary/environmentDependenciesSearcherView.glade:175
 msgid "Format"
 msgstr "Format"
 
-#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:184
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:185
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:182
 msgid "UnitSize"
 msgstr "Taille unitaire"
 
-#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:205
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:206
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:202
 msgid "Sign"
 msgstr "Signe"
 
-#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:224
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:225
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:222
 msgid "Endianess"
 msgstr "Boutisme"
 
-#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:237
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:238
 msgid "Raw Message"
 msgstr "Message brut"
 
-#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:241
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:242
 msgid "Aligned Raw Message"
 msgstr "Message brut aligné"
 
-#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:245
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:246
 msgid "Aligned Formatted Message"
 msgstr "Message brut aligné"
 
-#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:249
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:250
 msgid "Raw Field"
 msgstr "Champ brut"
 
-#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:253
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:254
 msgid "Formatted Field"
 msgstr "Champ formaté"
 
@@ -1384,15 +1388,15 @@ msgstr ""
 msgid "Export project as Peach pit XML"
 msgstr "Exporter le projet au format XML Peach pit"
 
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportView.py:123
+#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportView.py:122
 msgid "Fuzzing based on: "
 msgstr "Fuzzing basé sur : "
 
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportView.py:131
+#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportView.py:130
 msgid "Mutate static fields"
 msgstr "Muter les champs statiques"
 
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportView.py:136
+#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportView.py:135
 msgid "Export"
 msgstr "Exporter"
 
@@ -2555,6 +2559,10 @@ msgstr "Alignement de séquence dans chaque groupe"
 #: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:267
 msgid "Execute Orphan Reductions"
 msgstr "Réduction des messages orphelins"
+
+#: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:280
+msgid "Clean empty fields"
+msgstr "Nettoyez les champs vides"
 
 #: resources/static/netzob/ui/vocabulary/partitioning/simplePartitioning.glade:7
 msgid "Simple partitioning"
