@@ -78,6 +78,7 @@ class NetzobMainController(object):
         # Initialize everything
         self._loadBugReporter(opts)
         self.currentWorkspace = self._loadWorkspace(opts)
+        self.currentProjet = None
         self._initLogging(opts)
         self._initResourcesAndLocales()
 
