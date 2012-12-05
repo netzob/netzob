@@ -31,7 +31,7 @@ import time
 import re
 
 from gi.repository import GObject
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, GdkPixbuf
 #import Gtk.keysyms
 import cairo
 from gi.repository import Pango, PangoCairo

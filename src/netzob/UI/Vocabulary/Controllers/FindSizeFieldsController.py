@@ -29,10 +29,8 @@
 #| Global Imports
 #+----------------------------------------------
 from gettext import gettext as _
-from gi.repository import Gtk, Gdk
-from gi.repository import Pango
+from gi.repository import Gtk, Gdk, GObject, Pango
 import gi
-from gi.repository import GObject
 gi.require_version('Gtk', '3.0')
 import logging
 

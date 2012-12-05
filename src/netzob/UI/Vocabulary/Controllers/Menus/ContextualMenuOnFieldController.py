@@ -36,11 +36,9 @@ import uuid
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from gi.repository import Gtk, Gdk, GObject
+from gi.repository import Gtk, Gdk
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject
-from gi.repository import Pango
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
