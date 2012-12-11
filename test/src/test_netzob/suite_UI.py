@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -28,21 +29,27 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-
+import unittest
+from test_netzob.test_UI import test_UI
 
 #+---------------------------------------------------------------------------+
-#| Local Imports
+#| Local application imports
 #+---------------------------------------------------------------------------+
 
-from common.NetzobTestCase import NetzobTestCase
-from netzob.NetzobGui import NetzobGui
 
+def getSuite():
+    UISuite = unittest.TestSuite()
 
-class test_NetzobGui(NetzobTestCase):
+    modulesOfTests = [test_UI]
+    modulesOfSuites = []
 
-    # DEFECT-72 : Unable to start netzob-0.3.1 if the workspace was created with netzob-git
-    # @reporter Olivier Tétard
-    def test_defect72(self):
+    # Add individual tests
+    for module in modulesOfTests:
+        t = unittest.TestLoader().loadTestsFromModule(module)
+        UISuite.addTests(t)
 
-        # And try to start Netzob with it (it should stop using Dedicated Exception)
-        self.assertRaises(SystemExit, NetzobGui)
+    # Add suites
+    for module in modulesOfSuites:
+        UISuite.addTests(module.getSuite())
+
+    return UISuite

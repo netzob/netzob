@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -29,55 +28,20 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import unittest
-import sys
+import ldtp
 
 #+---------------------------------------------------------------------------+
-#| Local application imports
+#| Local Imports
 #+---------------------------------------------------------------------------+
-from test_netzob import suite_Common
-from test_netzob import suite_Alignment
-from test_netzob import suite_UI
-#from test_netzob import suite_Import
-from common.xmlrunner import XMLTestRunner
+from common.NetzobTestCase import NetzobTestCase
 
 
-def getSuite():
-    globalSuite = unittest.TestSuite()
+class test_UI(NetzobTestCase):
 
-#    modulesOfTests = [test_NetzobGui]
-    modulesOfTests = []
-    modulesOfSuites = [suite_Common, suite_Alignment, suite_UI]
+    def test_startUI(self):
+        ldtp.launchapp("netzob")
 
-    # Add individual tests
-    for module in modulesOfTests:
-        globalSuite.addTests(unittest.TestLoader().loadTestsFromModule(module))
-
-    # Add suites
-    for module in modulesOfSuites:
-        globalSuite.addTests(module.getSuite())
-
-    return globalSuite
-
-
-if __name__ == "__main__":
-    # Output is given through argument.
-    # If no argument: output to stdout
-    outputStdout = True
-
-    if (len(sys.argv) == 2):
-        outputStdout = False
-        reportFile = sys.argv[1]
-
-    # We retrieve the current test suite
-    currentTestSuite = getSuite()
-
-    # We execute the test suite
-    if outputStdout:
-        runner = unittest.TextTestRunner()
-        testResult = runner.run(currentTestSuite)
-    else:
-        File = open(reportFile, "w")
-        reporter = XMLTestRunner(File)
-        reporter.run(currentTestSuite)
-        File.close()
+        selectWorkspaceFrame = "SelectWorkspace"
+        ldtp.waittillguiexist(selectWorkspaceFrame, guiTimeOut=30)
+        ldtp.click(selectWorkspaceFrame, "btnCancel")
+        ldtp.waittillguinotexist(selectWorkspaceFrame)
