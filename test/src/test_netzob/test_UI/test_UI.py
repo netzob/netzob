@@ -39,7 +39,7 @@ from common.NetzobTestCase import NetzobTestCase
 class test_UI(NetzobTestCase):
 
     def test_startUI(self):
-        ldtp.launchapp("netzob")
+        ldtp.launchapp("./netzob")
 
         selectWorkspaceFrame = "SelectWorkspace"
         ldtp.waittillguiexist(selectWorkspaceFrame, guiTimeOut=30)
