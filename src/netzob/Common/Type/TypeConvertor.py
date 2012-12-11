@@ -419,6 +419,54 @@ class TypeConvertor():
 
     @staticmethod
     #+----------------------------------------------
+    #| deserializeValues :
+    #|     python deserialization process
+    #| @returns (serialized, format)
+    #+----------------------------------------------
+    def deserializeValues(serializedContents, format):
+        result = []
+        # first we retrieve the size of all the messages
+        size_messages = format.split("M")
+        total = 0
+        for str_size_message in size_messages[:-1]:
+            size_message = int(str_size_message)
+            result.append(TypeConvertor.pythonRawToNetzobRaw(serializedContents[total:total + size_message]))
+            total += size_message
+        return result
+
+    @staticmethod
+    def deserializeAlignment(regex, mask, unitSize):
+        """
+        deserializeAlignment: Transforms the C extension results
+        in a python readable way
+        @param regex the C returned regex
+        @param mask the C returned mask
+        @param unitSize the unitSize
+        @returns the python alignment
+        """
+        align = ""
+        i = 0
+        for c in mask:
+            if c != '\x02':
+                if c == '\x01':
+                    if unitSize == 8:
+                        align += "--"
+                    elif unitSize == 4:
+                        align += "-"
+                    else:
+                        logging.warn("Deserializing at " + str(unitSize) + " unit size not yet implemented")
+                else:
+                    if unitSize == 8:
+                        align += regex[i:i + 1].encode("hex")
+                    elif unitSize == 4:
+                        align += regex[i:i + 1].encode("hex")[1:]
+                    else:
+                        logging.warn("Deserializing at " + str(unitSize) + " unit size not yet implemented")
+            i += 1
+        return align
+
+    @staticmethod
+    #+----------------------------------------------
     #| Return a hexdump of a hex message
     #+----------------------------------------------
     def hexdump(buf, start=0):

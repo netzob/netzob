@@ -157,38 +157,9 @@ class NeedlemanAndWunsch(object):
         if self.isFinish():
             return
 
-        alignment = self.deserializeAlignment(regex, mask)
+        alignment = TypeConvertor.deserializeAlignment(regex, mask, self.unitSize)
         alignment = self.smoothAlignment(alignment)
         return (alignment, scores)
-
-    #+-----------------------------------------------------------------------+
-    #| deserializeAlignment
-    #|     Transforms the C extension results in a python readable way
-    #| @param regex the C returned regex
-    #| @param mask the C returned mask
-    #| @returns the python alignment
-    #+-----------------------------------------------------------------------+
-    def deserializeAlignment(self, regex, mask):
-        align = ""
-        i = 0
-        for c in mask:
-            if c != '\x02':
-                if c == '\x01':
-                    if self.unitSize == 8:
-                        align += "--"
-                    elif self.unitSize == 4:
-                        align += "-"
-                    else:
-                        logging.warn("Deserializing at " + str(self.unitSize) + " unit size not yet implemented")
-                else:
-                    if self.unitSize == 8:
-                        align += regex[i:i + 1].encode("hex")
-                    elif self.unitSize == 4:
-                        align += regex[i:i + 1].encode("hex")[1:]
-                    else:
-                        logging.warn("Deserializing at " + str(self.unitSize) + " unit size not yet implemented")
-            i += 1
-        return align
 
     #+-----------------------------------------------------------------------+
     #| smoothAlignment:
