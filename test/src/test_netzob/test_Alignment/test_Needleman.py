@@ -81,17 +81,18 @@ class test_Needleman(NetzobTestCase):
             symbol = Symbol(str(uuid.uuid4()), "test_randomAlignments#" + str(i_test), currentProject)
             symbol.addMessage(message1)
             symbol.addMessage(message2)
+            field = symbol.getField()
             
             # Starts the alignment process
-            alignmentProcess = NeedlemanAndWunsch(defaultUnitSize, self.emptyAlignmentCB)
-            alignmentProcess.alignSymbol(symbol, doInternalSlick, defaultFormat)
+            alignmentProcess = NeedlemanAndWunsch(defaultUnitSize, currentProject, False, self.emptyAlignmentCB)
+            alignmentProcess.alignField(field)
             
-            if not TypeConvertor.stringToNetzobRaw(common_pattern[:]) in symbol.getAlignment() :
+            if not TypeConvertor.stringToNetzobRaw(common_pattern[:]) in field.getAlignment() :
                 if self.debug is True:
                     print "Message 1 : " + str(data1)
                     print "Message 2 : " + str(data2)
                     print "Common pattern : " + TypeConvertor.stringToNetzobRaw(common_pattern)
-                    print "Alignment : " + symbol.getAlignment()
+                    print "Alignment : " + field.getAlignment()
                 nb_failed += 1
             else :
                 nb_success += 1
@@ -125,17 +126,18 @@ class test_Needleman(NetzobTestCase):
             symbol = Symbol(str(uuid.uuid4()), "test_randomAlignments#" + str(i_test), currentProject)
             symbol.addMessage(message1)
             symbol.addMessage(message2)
-            
+            field = symbol.getField()
+
             # Starts the alignment process
-            alignmentProcess = NeedlemanAndWunsch(defaultUnitSize, self.emptyAlignmentCB)
-            alignmentProcess.alignSymbol(symbol, doInternalSlick, defaultFormat)
+            alignmentProcess = NeedlemanAndWunsch(defaultUnitSize, currentProject, False, self.emptyAlignmentCB)
+            alignmentProcess.alignField(field)
             
-            if not TypeConvertor.stringToNetzobRaw(common_pattern[:]) in symbol.getAlignment() :
+            if not TypeConvertor.stringToNetzobRaw(common_pattern[:]) in field.getAlignment() :
                 if self.debug is True:
                     print "Message 1 : " + str(data1)
                     print "Message 2 : " + str(data2)
                     print "Common pattern : " + TypeConvertor.stringToNetzobRaw(common_pattern)
-                    print "Alignment : " + symbol.getAlignment()
+                    print "Alignment : " + field.getAlignment()
                 nb_failed += 1
             else :
                 nb_success += 1
@@ -172,17 +174,18 @@ class test_Needleman(NetzobTestCase):
             symbol = Symbol(str(uuid.uuid4()), "test_randomAlignments#" + str(i_test), currentProject)
             symbol.addMessage(message1)
             symbol.addMessage(message2)
+            field = symbol.getField()
             
             # Starts the alignment process
-            alignmentProcess = NeedlemanAndWunsch(defaultUnitSize, self.emptyAlignmentCB)
-            alignmentProcess.alignSymbol(symbol, doInternalSlick, defaultFormat)
+            alignmentProcess = NeedlemanAndWunsch(defaultUnitSize, currentProject, False, self.emptyAlignmentCB)
+            alignmentProcess.alignField(field)
             
-            if not TypeConvertor.stringToNetzobRaw(common_pattern[:]) in symbol.getAlignment() :
+            if not TypeConvertor.stringToNetzobRaw(common_pattern[:]) in field.getAlignment() :
                 if self.debug is True:
                     print "Message 1 : " + str(data1)
                     print "Message 2 : " + str(data2)
                     print "Common pattern : " + TypeConvertor.stringToNetzobRaw(common_pattern)
-                    print "Alignment : " + symbol.getAlignment()
+                    print "Alignment : " + field.getAlignment()
                 nb_failed += 1
             else :
                 nb_success += 1
