@@ -8,6 +8,7 @@
     </menu>
     <placeholder name="mainMenuBarAdditions">
       <menu action="automaticToolMenu">
+	<menuitem action="findSimilarMessages" />
         <menuitem action="sequenceAlignment" />
         <menuitem action="partitioningForce" />
         <menuitem action="partitioningSimple" />

@@ -39,6 +39,7 @@ import logging
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk
 import gi
+from netzob.UI.Vocabulary.Controllers.Clustering.ClusteringProfilesController import ClusteringProfilesController
 gi.require_version('Gtk', '3.0')
 
 
@@ -183,24 +184,7 @@ class VocabularyController(object):
                 liststore_possibleValues = Gtk.ListStore(str)
                 for val in prop.getPossibleValues():
                     liststore_possibleValues.append([val])
-                self.view.projectPropertiesListstore.set(line, self.view.PROJECTPROPERTIESLISTSTORE_MODEL_COLUMN, liststore_possibleValues)
-
-    def cellrenderer_project_props_changed_cb(self, cellrenderer, path, new_value):
-        if isinstance(new_value, Gtk.TreeIter):  # a combo box entry has been selected
-            liststore_possibleValues = cellrenderer.get_property('model')
-            value = liststore_possibleValues[new_value][0]
-        else:  # the cellrenderer entry has changed
-            value = new_value
-
-        # Identify the property name/value and reconstruct the associated setter
-        name = self.view.projectPropertiesListstore[path][0]
-
-        for prop in self.getCurrentProject().getProperties():
-            if prop.getName() == name:
-                prop.setCurrentValue(TypeConvertor.encodeGivenTypeToNetzobRaw(value, prop.getFormat()))
-                break
-        self.view.updateProjectProperties()
-
+                self.view.projectPropertiesListstore.set(line, self.view.PROJECTPROPERTIESLISTSTORE_MODEL_COLUMN, liststore_possibleValues)        
 
     # Plugins update
     def updateListOfCapturerPlugins(self):
