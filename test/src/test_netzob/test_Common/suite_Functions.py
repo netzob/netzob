@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -25,13 +26,21 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-from netzob.Common.Type.Endianess import Endianess
-from common.NetzobTestCase import NetzobTestCase
+#+---------------------------------------------------------------------------+ 
+#| Standard library imports
+#+---------------------------------------------------------------------------+
+import unittest
 
-class test_Endianess(NetzobTestCase):
+#+---------------------------------------------------------------------------+
+#| Local application imports
+#+---------------------------------------------------------------------------+
+from test_netzob.test_Common.test_Functions import test_Encoding, test_Transformation, test_Visualization
 
-    def test_BIG(self):
-        self.assertEqual(Endianess.BIG, "big-endian")
 
-    def test_LITTLE(self):
-        self.assertEqual(Endianess.LITTLE, "little-endian")
+def getSuite():
+    functionsSuite = unittest.TestSuite()
+
+    modulesOfTests = [test_Encoding, test_Transformation, test_Visualization]
+    for module in modulesOfTests :
+        functionsSuite.addTests(unittest.TestLoader().loadTestsFromModule(module))
+    return functionsSuite
