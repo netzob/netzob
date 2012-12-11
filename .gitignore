@@ -30,3 +30,4 @@ src/netzob_plugins/Importers/OSpyImporter/dist/
 src/netzob_plugins/Importers/PCAPImporter/dist/
 src/netzob_plugins/Importers/XMLImporter/dist/
 src/netzob_plugins/Exporters/PeachExporter/dist/
+unittests_results.xml
