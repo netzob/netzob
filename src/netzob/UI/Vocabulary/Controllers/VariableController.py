@@ -477,7 +477,7 @@ class VariableCreationController(object):
                 @type widget: Gtk.widget
                 @param widget: the widget which modification calls this function.
         """
-        if self.view.getWidg("sizedCheck").get_active() == True:
+        if self.view.getWidg("sizedCheck").get_active():
             self.view.getWidg("minLabel").set_visible(True)
             self.view.getWidg("maxLabel").set_visible(True)
             self.view.getWidg("delimiterLabel").set_visible(False)

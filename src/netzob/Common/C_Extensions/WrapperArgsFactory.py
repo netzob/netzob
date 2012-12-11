@@ -31,6 +31,7 @@ from netzob import _libScoreComputation
 #+---------------------------------------------------------------------------+
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.C_Extensions.WrapperMessage import WrapperMessage
+from netzob.Common.NetzobException import NetzobException
 
 
 class WrapperArgsFactory(object):

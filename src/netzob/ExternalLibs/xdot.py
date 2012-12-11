@@ -31,7 +31,7 @@ import time
 import re
 
 from gi.repository import GObject
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, GdkPixbuf
 #import Gtk.keysyms
 import cairo
 from gi.repository import Pango, PangoCairo
@@ -1428,7 +1428,6 @@ class DotWidget(Gtk.DrawingArea):
         self.add_events(Gdk.EventMask.SCROLL_MASK)
         self.connect("scroll-event", self.on_area_scroll_event)
         self.connect("size-allocate", self.on_area_size_allocate)
-
 
         self.connect('key-press-event', self.on_key_press_event)
 

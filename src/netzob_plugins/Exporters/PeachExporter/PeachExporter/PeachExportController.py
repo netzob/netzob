@@ -168,7 +168,7 @@ class PeachExportController(AbstractExporterController):
         else:
             xmlDefinition = self.model.getPeachDefinition(symbolID, False)
 
-        if xmlDefinition != None:
+        if xmlDefinition is not None:
             self.view.textarea.get_buffer().set_text("")
             self.view.textarea.get_buffer().insert_with_tags_by_name(self.view.textarea.get_buffer().get_start_iter(), xmlDefinition, "normalTag")
         else:

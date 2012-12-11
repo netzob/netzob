@@ -204,7 +204,7 @@ class MessageTableView(object):
         "unsorted" state."""
         sortTypeMap = {TreeViewHeaderWidget.SORT_ASCENDING: Gtk.SortType.ASCENDING,
                        TreeViewHeaderWidget.SORT_DESCENDING: Gtk.SortType.DESCENDING}
-        if field == None:
+        if field is None:
             sortIndex = -2
         else:
             sortIndex = field.getIndex()

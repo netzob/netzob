@@ -64,7 +64,7 @@ class IRPDeviceIoControlMessage(IRPMessage):
     #| @return the associated factory
     #+-----------------------------------------------------------------------+
     def getFactory(self):
-        return IRPDeviceIoControlFactory
+        return IRPDeviceIoControlMessageFactory
 
     #+-----------------------------------------------------------------------+
     #| getProperties

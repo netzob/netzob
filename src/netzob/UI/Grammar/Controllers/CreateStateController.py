@@ -106,7 +106,7 @@ class CreateStateController(object):
             return
 
         newState = NormalState(self.idState, stateName)
-        if automata == None:
+        if automata is None:
             automata = MMSTD(newState, currentProject.getVocabulary())
             currentProject.getGrammar().setAutomata(automata)
 

@@ -136,7 +136,7 @@ class SemiStochasticTransition(AbstractTransition):
             if oldSymbol == outputSymbol:
                 savedSymbols.append([oldSymbol, oldProba, newTime])
             else:
-                saved.symbols.append([oldSymbol, oldProba, oldTime])
+                savedSymbols.append([oldSymbol, oldProba, oldTime])
 
         self.outputSymbols = []
         self.outputSymbols.extend(savedSymbols)
