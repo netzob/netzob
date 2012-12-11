@@ -148,6 +148,7 @@ class Workspace(object):
         self.importedTraces = importedTraces
         self.customTransformationFunctions = []
         self.enableBugReporting = False
+        self.clusteringProfiles = []
 
     def getNameOfProjects(self):
         nameOfProjects = []
@@ -285,6 +286,31 @@ class Workspace(object):
                 break
         if not found:
             self.customTransformationFunctions.append(function)
+
+    def getClusteringProfiles(self):
+        """Returns the existing profiles for clustering"""
+        return self.clusteringProfiles
+
+    def addClusteringProfile(self, profile):
+        """Add in the existing profiles the provided new one"""
+        found = False
+        for p in self.getClusteringProfiles():
+            if p.getID() == profile.getID():
+                found = True
+                break
+        if not found:
+            self.clusteringProfiles.append(profile)
+        else:
+            logging.warning("Cannot duplicate the provided profile ({0},{1}) in the configuration of the workspace.".format(profile.getName(), profile.getID()))
+
+    def deleteClusteringProfile(self, profile):
+        """Delete the provided profile based on its ID"""
+        newClusteringProfiles = []
+        for p in self.clusteringProfiles:
+            if p.getID() != profile.getID():
+                newClusteringProfiles.append(p)
+
+        self.clusteringProfiles = newClusteringProfiles
 
     #+-----------------------------------------------------------------------+
     #| referenceProject:
