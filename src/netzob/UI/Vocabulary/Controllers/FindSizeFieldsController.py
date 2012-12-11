@@ -29,10 +29,8 @@
 #| Global Imports
 #+----------------------------------------------
 from gettext import gettext as _
-from gi.repository import Gtk, Gdk
-from gi.repository import Pango
+from gi.repository import Gtk, Gdk, GObject, Pango
 import gi
-from gi.repository import GObject
 gi.require_version('Gtk', '3.0')
 import logging
 
@@ -134,7 +132,7 @@ class FindSizeFieldsController(object):
     #|   Computes if the progress bar must be updated or not
     #+----------------------------------------------
     def do_pulse_for_findSizeField(self):
-        if self.currentExecutionOfFindSizeFieldHasFinished == False:
+        if not self.currentExecutionOfFindSizeFieldHasFinished:
             self.progressBarSizeField.pulse()
             return True
         return False

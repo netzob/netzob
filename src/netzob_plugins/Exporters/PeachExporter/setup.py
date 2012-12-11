@@ -55,8 +55,8 @@ setup(
     packages=[package],
     install_requires=dependencies,
     data_files=find_data_files(opj("share", "netzob", "plugins", package), pluginsStaticResourcesPath, '*.glade', recursive=True),
-#    entry_points="""
-#    [netzob.plugins]
-#    PeachExporter=PeachExporter.PeachExporterPlugin:PeachExporterPlugin
-#    """
+    # entry_points="""
+    # [netzob.plugins]
+    # PeachExporter=PeachExporter.PeachExporterPlugin:PeachExporterPlugin
+    # """
 )

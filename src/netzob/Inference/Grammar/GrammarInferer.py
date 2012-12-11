@@ -968,7 +968,7 @@ class GrammarInferer(threading.Thread):
         print "Elapsed time: ", (endTime - startTime) * 1000, " msecs"
         self.inferedAutomaton = automaton
 
-    def applyMessagesOnAutomata(automaton, messages):
-        self.log.info("Apply the messages (" + str(messages) + ") on automata")
+    def applyMessagesOnAutomata(self, automaton, messages):
+        self.log.info("Apply the messages ({0}) on automata".format(messages))
         currentState = automaton.getInitialState()
         return automaton

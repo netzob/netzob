@@ -31,7 +31,6 @@
 from gettext import gettext as _
 import logging
 import os
-import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |

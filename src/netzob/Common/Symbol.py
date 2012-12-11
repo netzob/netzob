@@ -400,7 +400,7 @@ class Symbol(AbstractSymbol):
             if xmlRoot.find("{" + namespace_project + "}field") is not None:
                 xmlField = xmlRoot.find("{" + namespace_project + "}field")
                 field = Field.loadFromXML(xmlField, namespace_project, version, symbol)
-                if field != None:
+                if field is not None:
                     symbol.setField(field)
 
             return symbol

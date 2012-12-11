@@ -87,7 +87,7 @@ class PeachExport(object):
                 if str(symbol.getID()) == symbolID:
                     resSymbol = symbol
                     break
-            if resSymbol == None:
+            if resSymbol is None:
                 logging.warning("Impossible to retrieve the symbol having the id {0}".format(str(symbolID)))
                 return None
             else:

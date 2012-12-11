@@ -70,7 +70,7 @@ def getFiles():
 def checkPEP8(file):
     localResult = []
     try:
-        p = subprocess.Popen(['pep8', '--repeat', '--ignore=E501,E711,E712', file], stdout=subprocess.PIPE)
+        p = subprocess.Popen(['pep8', '--repeat', '--ignore=E501', file], stdout=subprocess.PIPE)
         out, err = p.communicate()
         for line in out.splitlines():
             localResult.append(line)

@@ -35,11 +35,9 @@ import time
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from gi.repository import Gtk, Gdk, GObject
+from gi.repository import Gtk, Gdk, GObject, Pango
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject
-from gi.repository import Pango
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -63,7 +61,7 @@ class SplitFieldController(object):
         return self._view
 
     def run(self):
-        if self.initBuffer() == False:
+        if not self.initBuffer():
             return
         self._view.run()
 
