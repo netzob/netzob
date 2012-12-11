@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 
@@ -37,13 +37,12 @@
 from common.NetzobTestCase import NetzobTestCase
 from netzob.NetzobGui import NetzobGui
 
+
 class test_NetzobGui(NetzobTestCase):
-    
+
     # DEFECT-72 : Unable to start netzob-0.3.1 if the workspace was created with netzob-git
     # @reporter Olivier Tétard
     def test_defect72(self):
-        
+
         # And try to start Netzob with it (it should stop using Dedicated Exception)
         self.assertRaises(SystemExit, NetzobGui)
-        
-    

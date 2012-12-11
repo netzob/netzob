@@ -26,7 +26,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import unittest
@@ -39,18 +39,16 @@ from test_netzob.test_Common import suite_Type, test_ExecutionContext
 
 def getSuite():
     commonSuite = unittest.TestSuite()
-    
+
     modulesOfTests = [test_ExecutionContext]
     modulesOfSuites = [suite_Type]
-    
-    # Add individual tests    
-    for module in modulesOfTests :
-        commonSuite.addTests(unittest.TestLoader().loadTestsFromModule(module))
-        
-    # Add suites    
-    for module in modulesOfSuites :
-        commonSuite.addTests(module.getSuite())
-        
-    return commonSuite
-    
 
+    # Add individual tests
+    for module in modulesOfTests:
+        commonSuite.addTests(unittest.TestLoader().loadTestsFromModule(module))
+
+    # Add suites
+    for module in modulesOfSuites:
+        commonSuite.addTests(module.getSuite())
+
+    return commonSuite

@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import uuid
@@ -48,28 +48,28 @@ from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAn
 
 
 class test_Needleman(NetzobTestCase):
-    
+
     def generateRandomString(self, min_len, max_len):
         return ''.join((random.choice(string.letters + string.digits) for _ in xrange(random.randint(min_len, max_len))))
-    
+
     def emptyAlignmentCB(self, stage, percent, message):
         pass
-  
-    def test_randomAlignmentsWithTwoCenteredMessages(self):        
+
+    def test_randomAlignmentsWithTwoCenteredMessages(self):
         workspace = self.getWorkspace()
         currentProject = workspace.getProjects()[0]
-        
+
         doInternalSlick = currentProject.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
         defaultFormat = currentProject.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
         defaultUnitSize = 8
-        
+
         # We generate 1000 random couples of data and try to align them
-        # Objectives : just test if it executes
+        # Objectives: just test if it executes
         nb_data = 1000
         nb_failed = 0
         nb_success = 0
-        for i_test in range(0, nb_data) :
-            
+        for i_test in range(0, nb_data):
+
             common_pattern = self.generateRandomString(30, 40)
             # Generate the content of two messages
             data1 = TypeConvertor.stringToNetzobRaw(self.generateRandomString(5, 100) + common_pattern + self.generateRandomString(5, 100))
@@ -81,39 +81,39 @@ class test_Needleman(NetzobTestCase):
             symbol = Symbol(str(uuid.uuid4()), "test_randomAlignments#" + str(i_test), currentProject)
             symbol.addMessage(message1)
             symbol.addMessage(message2)
-            
+
             # Starts the alignment process
             alignmentProcess = NeedlemanAndWunsch(defaultUnitSize, self.emptyAlignmentCB)
             alignmentProcess.alignSymbol(symbol, doInternalSlick, defaultFormat)
-            
-            if not TypeConvertor.stringToNetzobRaw(common_pattern[:]) in symbol.getAlignment() :
+
+            if not TypeConvertor.stringToNetzobRaw(common_pattern[:]) in symbol.getAlignment():
                 if self.debug is True:
-                    print "Message 1 : " + str(data1)
-                    print "Message 2 : " + str(data2)
-                    print "Common pattern : " + TypeConvertor.stringToNetzobRaw(common_pattern)
-                    print "Alignment : " + symbol.getAlignment()
+                    print "Message 1: " + str(data1)
+                    print "Message 2: " + str(data2)
+                    print "Common pattern: " + TypeConvertor.stringToNetzobRaw(common_pattern)
+                    print "Alignment: " + symbol.getAlignment()
                 nb_failed += 1
-            else :
+            else:
                 nb_success += 1
-        if nb_failed > 0 :
+        if nb_failed > 0:
             print "A number of " + str(nb_failed) + "/" + str(nb_data) + " alignment failed !"
         self.assertEqual(0, nb_failed)
         self.assertEqual(nb_success, nb_data)
-        
-    def test_randomAlignmentsWithTwoPrefixedMessages(self):        
+
+    def test_randomAlignmentsWithTwoPrefixedMessages(self):
         workspace = self.getWorkspace()
         currentProject = workspace.getProjects()[0]
-        
+
         doInternalSlick = currentProject.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
         defaultFormat = currentProject.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
         defaultUnitSize = 8
-        
+
         # We generate 1000 random couples of data and try to align them
-        # Objectives : just test if it executes
+        # Objectives: just test if it executes
         nb_data = 1000
         nb_failed = 0
         nb_success = 0
-        for i_test in range(0, nb_data) :            
+        for i_test in range(0, nb_data):
             common_pattern = self.generateRandomString(30, 40)
             # Generate the content of two messages
             data1 = TypeConvertor.stringToNetzobRaw(common_pattern + self.generateRandomString(5, 100))
@@ -125,42 +125,39 @@ class test_Needleman(NetzobTestCase):
             symbol = Symbol(str(uuid.uuid4()), "test_randomAlignments#" + str(i_test), currentProject)
             symbol.addMessage(message1)
             symbol.addMessage(message2)
-            
+
             # Starts the alignment process
             alignmentProcess = NeedlemanAndWunsch(defaultUnitSize, self.emptyAlignmentCB)
             alignmentProcess.alignSymbol(symbol, doInternalSlick, defaultFormat)
-            
-            if not TypeConvertor.stringToNetzobRaw(common_pattern[:]) in symbol.getAlignment() :
+
+            if not TypeConvertor.stringToNetzobRaw(common_pattern[:]) in symbol.getAlignment():
                 if self.debug is True:
-                    print "Message 1 : " + str(data1)
-                    print "Message 2 : " + str(data2)
-                    print "Common pattern : " + TypeConvertor.stringToNetzobRaw(common_pattern)
-                    print "Alignment : " + symbol.getAlignment()
+                    print "Message 1: " + str(data1)
+                    print "Message 2: " + str(data2)
+                    print "Common pattern: " + TypeConvertor.stringToNetzobRaw(common_pattern)
+                    print "Alignment: " + symbol.getAlignment()
                 nb_failed += 1
-            else :
+            else:
                 nb_success += 1
-        if nb_failed > 0 :
+        if nb_failed > 0:
             print "A number of " + str(nb_failed) + "/" + str(nb_data) + " alignment failed !"
         self.assertEqual(0, nb_failed)
         self.assertEqual(nb_success, nb_data)
-        
-    
-    
-        
-    def test_randomAlignmentsWithTwoSuffixedMessages(self):        
+
+    def test_randomAlignmentsWithTwoSuffixedMessages(self):
         workspace = self.getWorkspace()
         currentProject = workspace.getProjects()[0]
-        
+
         doInternalSlick = currentProject.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
         defaultFormat = currentProject.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
         defaultUnitSize = 8
-        
+
         # We generate 1000 random couples of data and try to align them
-        # Objectives : just test if it executes
+        # Objectives: just test if it executes
         nb_data = 1000
         nb_failed = 0
         nb_success = 0
-        for i_test in range(0, nb_data) :            
+        for i_test in range(0, nb_data):
             common_pattern = self.generateRandomString(30, 40)
             # Generate the content of two messages
             data1 = TypeConvertor.stringToNetzobRaw(self.generateRandomString(5, 100) + common_pattern)
@@ -172,24 +169,21 @@ class test_Needleman(NetzobTestCase):
             symbol = Symbol(str(uuid.uuid4()), "test_randomAlignments#" + str(i_test), currentProject)
             symbol.addMessage(message1)
             symbol.addMessage(message2)
-            
+
             # Starts the alignment process
             alignmentProcess = NeedlemanAndWunsch(defaultUnitSize, self.emptyAlignmentCB)
             alignmentProcess.alignSymbol(symbol, doInternalSlick, defaultFormat)
-            
-            if not TypeConvertor.stringToNetzobRaw(common_pattern[:]) in symbol.getAlignment() :
+
+            if not TypeConvertor.stringToNetzobRaw(common_pattern[:]) in symbol.getAlignment():
                 if self.debug is True:
-                    print "Message 1 : " + str(data1)
-                    print "Message 2 : " + str(data2)
-                    print "Common pattern : " + TypeConvertor.stringToNetzobRaw(common_pattern)
-                    print "Alignment : " + symbol.getAlignment()
+                    print "Message 1: " + str(data1)
+                    print "Message 2: " + str(data2)
+                    print "Common pattern: " + TypeConvertor.stringToNetzobRaw(common_pattern)
+                    print "Alignment: " + symbol.getAlignment()
                 nb_failed += 1
-            else :
+            else:
                 nb_success += 1
-        if nb_failed > 0 :
+        if nb_failed > 0:
             print "A number of " + str(nb_failed) + "/" + str(nb_data) + " alignment failed !"
         self.assertEqual(0, nb_failed)
         self.assertEqual(nb_success, nb_data)
-          
-  
-    
