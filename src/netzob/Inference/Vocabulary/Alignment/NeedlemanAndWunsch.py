@@ -52,7 +52,6 @@ from netzob.Common.NetzobException import NetzobException
 #| C Imports
 #+---------------------------------------------------------------------------+
 from netzob import _libNeedleman
-from netzob import _libInterface
 
 
 #+---------------------------------------------------------------------------+
@@ -329,32 +328,3 @@ class NeedlemanAndWunsch(object):
 
     def getNewSymbols(self):
         return self.newSymbols
-
-    #+-----------------------------------------------------------------------+
-    #| alignTwoMessages
-    #|     Default alignment of two messages
-    #| @param message1 the first message to align
-    #| @param message2 the second message to align
-    #| @returns (alignment, score)
-    #+-----------------------------------------------------------------------+
-    def alignTwoMessages(self, message1, message2):
-        # First we serialize the two messages
-        (serialMessages, format) = TypeConvertor.serializeMessages([message1, message2], self.unitSize)
-
-        debug = False
-        (score1, score2, score3, regex, mask) = _libNeedleman.alignTwoMessages(self.doInternalSlick, format, serialMessages, debug)
-        scores = (score1, score2, score3)
-        alignment = self.deserializeAlignment(regex, mask)
-        return (scores, alignment)
-
-    #+-----------------------------------------------------------------------+
-    #| deserializeMessages
-    #|     Useless (functionally) function created for testing purposes
-    #| @param messages a list of AbstractMessages
-    #| @returns number Of Deserialized Messages
-    #+-----------------------------------------------------------------------+
-    def deserializeMessages(self, messages):
-        # First we serialize the messages
-        (serialMessages, format) = TypeConvertor.serializeMessages(messages, self.unitSize)
-        debug = False
-        return _libInterface.deserializeMessages(len(messages), format, serialMessages, debug)
