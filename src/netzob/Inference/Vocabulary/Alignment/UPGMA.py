@@ -46,7 +46,6 @@ from netzob.Common.ProjectConfiguration import ProjectConfiguration
 #| C Imports
 #+---------------------------------------------------------------------------+
 from netzob import _libScoreComputation
-from netzob import _libInterface
 
 
 #+---------------------------------------------------------------------------+
@@ -56,7 +55,7 @@ from netzob import _libInterface
 class UPGMA(object):
     """This class provides the required methods to compute clustering
     between multiple symbols/messages using UPGMA algorithms (see U{http://en.wikipedia.org/wiki/UPGMA}).
-    When processing, the matrix of scores is computed by the C extensions (L{_libScoreComputation} and L{_libInterface})
+    When processing, the matrix of scores is computed by the C extensions (L{_libScoreComputation}
     and used to regroup messages and symbols into equivalent cluster."""
 
     def __init__(self, project, symbols, unitSize, cb_status=None, scores={}):
@@ -319,16 +318,6 @@ class UPGMA(object):
         for symbol in self.symbols:
             alignment.alignField(symbol.getField())
         return self.symbols
-
-    def deserializeGroups(self, symbols):
-        """Useless (functionally) function created for testing purposes
-        @param symbols a list of symbols
-        @returns number Of deserialized symbols"""
-        # First we serialize the messages
-        (serialSymbols, format) = TypeConvertor.serializeSymbols(symbols, self.unitSize, self.scores)
-
-        debug = False
-        return _libInterface.deserializeGroups(len(symbols), format, serialSymbols, debug)
 
     def getScores(self):
         """@return: the dictionnary of scores"""

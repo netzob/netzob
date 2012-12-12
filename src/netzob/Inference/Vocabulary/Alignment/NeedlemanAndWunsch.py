@@ -52,7 +52,6 @@ from netzob.Common.NetzobException import NetzobException
 #| C Imports
 #+---------------------------------------------------------------------------+
 from netzob import _libNeedleman
-from netzob import _libInterface
 
 
 #+---------------------------------------------------------------------------+
@@ -158,38 +157,9 @@ class NeedlemanAndWunsch(object):
         if self.isFinish():
             return
 
-        alignment = self.deserializeAlignment(regex, mask)
+        alignment = TypeConvertor.deserializeAlignment(regex, mask, self.unitSize)
         alignment = self.smoothAlignment(alignment)
         return (alignment, scores)
-
-    #+-----------------------------------------------------------------------+
-    #| deserializeAlignment
-    #|     Transforms the C extension results in a python readable way
-    #| @param regex the C returned regex
-    #| @param mask the C returned mask
-    #| @returns the python alignment
-    #+-----------------------------------------------------------------------+
-    def deserializeAlignment(self, regex, mask):
-        align = ""
-        i = 0
-        for c in mask:
-            if c != '\x02':
-                if c == '\x01':
-                    if self.unitSize == 8:
-                        align += "--"
-                    elif self.unitSize == 4:
-                        align += "-"
-                    else:
-                        logging.warn("Deserializing at " + str(self.unitSize) + " unit size not yet implemented")
-                else:
-                    if self.unitSize == 8:
-                        align += regex[i:i + 1].encode("hex")
-                    elif self.unitSize == 4:
-                        align += regex[i:i + 1].encode("hex")[1:]
-                    else:
-                        logging.warn("Deserializing at " + str(self.unitSize) + " unit size not yet implemented")
-            i += 1
-        return align
 
     #+-----------------------------------------------------------------------+
     #| smoothAlignment:
@@ -329,32 +299,3 @@ class NeedlemanAndWunsch(object):
 
     def getNewSymbols(self):
         return self.newSymbols
-
-    #+-----------------------------------------------------------------------+
-    #| alignTwoMessages
-    #|     Default alignment of two messages
-    #| @param message1 the first message to align
-    #| @param message2 the second message to align
-    #| @returns (alignment, score)
-    #+-----------------------------------------------------------------------+
-    def alignTwoMessages(self, message1, message2):
-        # First we serialize the two messages
-        (serialMessages, format) = TypeConvertor.serializeMessages([message1, message2], self.unitSize)
-
-        debug = False
-        (score1, score2, score3, regex, mask) = _libNeedleman.alignTwoMessages(self.doInternalSlick, format, serialMessages, debug)
-        scores = (score1, score2, score3)
-        alignment = self.deserializeAlignment(regex, mask)
-        return (scores, alignment)
-
-    #+-----------------------------------------------------------------------+
-    #| deserializeMessages
-    #|     Useless (functionally) function created for testing purposes
-    #| @param messages a list of AbstractMessages
-    #| @returns number Of Deserialized Messages
-    #+-----------------------------------------------------------------------+
-    def deserializeMessages(self, messages):
-        # First we serialize the messages
-        (serialMessages, format) = TypeConvertor.serializeMessages(messages, self.unitSize)
-        debug = False
-        return _libInterface.deserializeMessages(len(messages), format, serialMessages, debug)

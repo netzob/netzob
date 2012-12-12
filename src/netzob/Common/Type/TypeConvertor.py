@@ -397,59 +397,6 @@ class TypeConvertor():
 
     @staticmethod
     #+----------------------------------------------
-    #| serializeScores :
-    #|     create a serialization view of the scores
-    #| @returns (format)
-    #+---------------------------------------------
-    def serializeScores(symbol, scores, symbols):
-        format = ""
-        iuid = symbol.getID()
-        canAppend = False
-        if iuid in scores.keys():
-            for j in symbols:
-                juid = j.getID()
-                if juid in scores[iuid].keys() and canAppend:
-                    format += str(scores[iuid][juid]) + "S"
-                canAppend = (j == symbol)
-        format += "E"
-        return format
-
-    @staticmethod
-    #+----------------------------------------------
-    #| serializeScores :
-    #|     create a serialization view of the scores
-    #| @returns (format)
-    #+---------------------------------------------
-    def deserializeScores(symbols, scores):
-        listScores = [[symbols[i].getID(), symbols[j].getID(), score] for (i, j, score) in scores]
-        return listScores
-
-    @staticmethod
-    #+----------------------------------------------
-    #| serializeMessages :
-    #|     create a serialization view of the messages
-    #| @returns (serialized, format)
-    #+----------------------------------------------
-    def serializeMessages(messages, unitSize):
-        serialMessages = ""
-        format = ""
-        for m in messages:
-            data = m.getReducedStringData()
-
-            if unitSize == 8:
-                data = data
-            elif unitSize == 4:
-                data = "".join(["0" + i for i in data])
-            else:
-                logging.warn("Serializing at {0} unit size not yet implemented".format(unitSize))
-                return
-
-            format += str(len(data) / 2) + "M"
-            serialMessages += TypeConvertor.netzobRawToPythonRaw(data)
-        return (serialMessages, format)
-
-    @staticmethod
-    #+----------------------------------------------
     #| serializeValues :
     #|     create a serialization view of the values
     #| @returns (serialized, format)
@@ -472,82 +419,11 @@ class TypeConvertor():
 
     @staticmethod
     #+----------------------------------------------
-    #| serializeSymbol :
-    #|     create a serialization view of a symbol
-    #| @returns (serialized, format)
-    #+----------------------------------------------
-    def serializeSymbol(symbol, unitSize):
-        serialSymbol = ""
-        format = ""
-        if symbol.getAlignment() is not None and symbol.getAlignment() != "":
-            format += "1" + "G"
-            messageTmp = ""
-            alignmentTmp = ""
-
-            if unitSize == 8:
-                for i in range(0, len(symbol.getAlignment()), 2):
-                    format += str(len(symbol.getAlignment()) / 2) + "M"
-                    if symbol.getAlignment()[i:i + 2] == "--":
-                        messageTmp += "\xff"
-                        alignmentTmp += "\x01"
-                    else:
-                        messageTmp += TypeConvertor.netzobRawToPythonRaw(symbol.getAlignment()[i:i + 2])
-                        alignmentTmp += "\x00"
-            elif unitSize == 4:
-                format += str(len(symbol.getAlignment())) + "M"
-                for i in range(0, len(symbol.getAlignment())):
-                    if symbol.getAlignment()[i:i + 1] == "-":
-                        messageTmp += "\xff"
-                        alignmentTmp += "\x01"
-                    else:
-                        messageTmp += TypeConvertor.netzobRawToPythonRaw("0" + symbol.getAlignment()[i:i + 1])
-                        alignmentTmp += "\x00"
-            else:
-                logging.warn("Serializing at {0} unit size not yet implemented".format(unitSize))
-                return
-            serialSymbol += messageTmp
-            serialSymbol += alignmentTmp
-        else:
-            format += str(len(symbol.getMessages())) + "G"
-            for m in symbol.getMessages():
-                data = m.getReducedStringData()
-                if unitSize == 8:
-                    format += str(len(data) / 2) + "M"
-                    data = data
-                elif unitSize == 4:
-                    format += str(len(data)) + "M"
-                    data = "".join(["0" + i for i in data])
-                else:
-                    logging.warn("Serializing at {0} unit size not yet implemented".format(unitSize))
-                    return
-                serialSymbol += TypeConvertor.netzobRawToPythonRaw(data)  # The message
-                serialSymbol += "".join(['\x00' for x in range(len(data) / 2)])  # The alignement == "\x00" * len(the message), the first time
-        return (serialSymbol, format)
-
-    @staticmethod
-    #+----------------------------------------------
-    #| serializeSymbols :
-    #|     create a serialization view of symbols
-    #| @returns (serialized, format)
-    #+----------------------------------------------
-    def serializeSymbols(symbols, unitSize, scores):
-        serialSymbols = ""
-        formatSymbols = ""
-        for symbol in symbols:
-            (serialSymbol, formatSymbol) = TypeConvertor.serializeSymbol(symbol, unitSize)
-            formatScores = TypeConvertor.serializeScores(symbol, scores, symbols)
-            formatSymbols += formatScores
-            serialSymbols += serialSymbol
-            formatSymbols += formatSymbol
-        return (serialSymbols, formatSymbols)
-
-    @staticmethod
-    #+----------------------------------------------
-    #| deserializeContent :
+    #| deserializeValues :
     #|     python deserialization process
     #| @returns (serialized, format)
     #+----------------------------------------------
-    def deserializeContent(serializedContents, format):
+    def deserializeValues(serializedContents, format):
         result = []
         # first we retrieve the size of all the messages
         size_messages = format.split("M")
@@ -556,8 +432,38 @@ class TypeConvertor():
             size_message = int(str_size_message)
             result.append(TypeConvertor.pythonRawToNetzobRaw(serializedContents[total:total + size_message]))
             total += size_message
-
         return result
+
+    @staticmethod
+    def deserializeAlignment(regex, mask, unitSize):
+        """
+        deserializeAlignment: Transforms the C extension results
+        in a python readable way
+        @param regex the C returned regex
+        @param mask the C returned mask
+        @param unitSize the unitSize
+        @returns the python alignment
+        """
+        align = ""
+        i = 0
+        for c in mask:
+            if c != '\x02':
+                if c == '\x01':
+                    if unitSize == 8:
+                        align += "--"
+                    elif unitSize == 4:
+                        align += "-"
+                    else:
+                        logging.warn("Deserializing at " + str(unitSize) + " unit size not yet implemented")
+                else:
+                    if unitSize == 8:
+                        align += regex[i:i + 1].encode("hex")
+                    elif unitSize == 4:
+                        align += regex[i:i + 1].encode("hex")[1:]
+                    else:
+                        logging.warn("Deserializing at " + str(unitSize) + " unit size not yet implemented")
+            i += 1
+        return align
 
     @staticmethod
     #+----------------------------------------------
