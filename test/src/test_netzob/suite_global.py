@@ -37,7 +37,6 @@ import sys
 #+---------------------------------------------------------------------------+
 from test_netzob import suite_Common
 from test_netzob import suite_Alignment
-from test_netzob import suite_UI
 #from test_netzob import suite_Import
 from common.xmlrunner import XMLTestRunner
 
@@ -47,7 +46,13 @@ def getSuite():
 
 #    modulesOfTests = [test_NetzobGui]
     modulesOfTests = []
-    modulesOfSuites = [suite_Common, suite_Alignment, suite_UI]
+    modulesOfSuites = [suite_Common, suite_Alignment]
+
+    try:
+        from test_netzob import suite_UI
+        modulesOfSuites.append(suite_UI)
+    except ImportError, e:
+        print "As python-ldtp is not installed UI tests can't be done!"
 
     # Add individual tests
     for module in modulesOfTests:
