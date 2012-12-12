@@ -26,11 +26,11 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import unittest
-from test_netzob.test_Import import suite_Type, test_ExecutionContext # to be modified by maxime
+from test_netzob.test_Import import suite_Type, test_ExecutionContext  # to be modified by maxime
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -43,12 +43,12 @@ def getSuite():
     modulesOfTests = [test_ExecutionContext]
     modulesOfSuites = [suite_Type]
 
-    # Add individual tests    
-    for module in modulesOfTests :
+    # Add individual tests
+    for module in modulesOfTests:
         importSuite.addTests(unittest.TestLoader().loadTestsFromModule(module))
 
-    # Add suites    
-    for module in modulesOfSuites :
+    # Add suites
+    for module in modulesOfSuites:
         importSuite.addTests(module.getSuite())
 
     return importSuite

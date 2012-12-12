@@ -26,7 +26,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import unittest
@@ -39,18 +39,16 @@ from test_netzob.test_Alignment import test_Needleman
 
 def getSuite():
     alignmentSuite = unittest.TestSuite()
-    
+
     modulesOfTests = [test_Needleman]
     modulesOfSuites = []
-    
-    # Add individual tests    
-    for module in modulesOfTests :
-        alignmentSuite.addTests(unittest.TestLoader().loadTestsFromModule(module))
-        
-    # Add suites    
-    for module in modulesOfSuites :
-        alignmentSuite.addTests(module.getSuite())
-        
-    return alignmentSuite
-    
 
+    # Add individual tests
+    for module in modulesOfTests:
+        alignmentSuite.addTests(unittest.TestLoader().loadTestsFromModule(module))
+
+    # Add suites
+    for module in modulesOfSuites:
+        alignmentSuite.addTests(module.getSuite())
+
+    return alignmentSuite

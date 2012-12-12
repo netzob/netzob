@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -25,49 +26,30 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+----------------------------------------------
-#| Global Imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
+#| Standard library imports
+#+---------------------------------------------------------------------------+
 import unittest
-import random
-import string
-import uuid
-import time
+from test_netzob.test_UI import test_UI
 
-#+----------------------------------------------
-#| Local Imports
-#+----------------------------------------------
-from netzob.Common.Type.TypeIdentifier import TypeIdentifier
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Models.RawMessage import RawMessage
-from netzob.Common.Symbol import Symbol
-from common.NetzobTestCase import NetzobTestCase
+#+---------------------------------------------------------------------------+
+#| Local application imports
+#+---------------------------------------------------------------------------+
 
 
-class test_TypeConvertor(NetzobTestCase):
+def getSuite():
+    UISuite = unittest.TestSuite()
 
-    def generateRandomString(self, min_len, max_len):
-        return ''.join((random.choice(string.letters + string.digits) for _ in xrange(random.randint(min_len, max_len))))
+    modulesOfTests = [test_UI]
+    modulesOfSuites = []
 
-    def test_serializeValues(self):
-        # Generate randoms values and retrieve their
-        # serializations
-        nb_test = 100
-        for i_test in range(0, nb_test):
-            values = []
+    # Add individual tests
+    for module in modulesOfTests:
+        t = unittest.TestLoader().loadTestsFromModule(module)
+        UISuite.addTests(t)
 
-            nb_values = random.randint(5, 200)
-            for i_value in range(0, nb_values):
-                # Generate the content of a random value
-                value = TypeConvertor.stringToNetzobRaw(self.generateRandomString(5, 100))
-                values.append(value)
+    # Add suites
+    for module in modulesOfSuites:
+        UISuite.addTests(module.getSuite())
 
-            # start the serialization process
-            (serializedValues, format) = TypeConvertor.serializeValues(values, 8)
-
-            # start the deserialisation process
-            deserializedValues = TypeConvertor.deserializeValues(serializedValues, format)
-
-            for i_value in range(0, len(values)):
-                value = values[i_value]
-                self.assertEqual(value, deserializedValues[i_value])
+    return UISuite

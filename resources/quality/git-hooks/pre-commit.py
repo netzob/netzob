@@ -34,6 +34,7 @@ from git import *
 ignore_files = [
     "__init__.py",
     "src/netzob/ExternalLibs/xdot.py",
+    "test/src/common/xmlrunner.py",
     ".*\.txt", ".*\.rst",
     ".*\.png", ".*\.ico",
     ".*\.xsd", ".*\.xml",
