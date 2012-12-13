@@ -73,7 +73,6 @@ class DiscovererClustering(AbstractClusteringAlgorithm):
         # tokens = dict<message, [token,...]>
         # token = (isAscii, [byte1, byte2, ....])
         tokens = dict()
-        typeIdentifier = TypeIdentifier()
         for message in messages:
             message_tokens = []
 
