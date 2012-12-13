@@ -32,6 +32,7 @@ from locale import gettext as _
 import logging
 import uuid
 from netzob.Inference.Vocabulary.Clustering.UPGMA.UPGMAClustering import UPGMAClustering
+from netzob.Inference.Vocabulary.Clustering.Discoverer.DiscovererClustering import DiscovererClustering
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -56,6 +57,8 @@ class ClusteringProfile(object):
 
         # Discoverer
         discovererProfile = ClusteringProfile(_("Discoverer by W.Cui"), _("Cluster messages following their ASCII/Bin tokens as described in paper 'Discoverer: Automatic Protocol Reverse Engineering from Network Traces'"))
+        DiscovererAlgorithm = DiscovererClustering()
+        discovererProfile.addAlgorithm(DiscovererAlgorithm)
         defaults.append(discovererProfile)
 
         return defaults

@@ -50,6 +50,10 @@ class AbstractClusteringAlgorithm(object):
         from netzob.Inference.Vocabulary.Clustering.UPGMA.UPGMAClustering import UPGMAClustering
         defaults.append(UPGMAClustering)
 
+        # Discoverer
+        from netzob.Inference.Vocabulary.Clustering.Discoverer.DiscovererClustering import DiscovererClustering
+        defaults.append(DiscovererClustering)
+
         return defaults
 
     __algorithm_name__ = abstractproperty()
