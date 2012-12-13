@@ -421,7 +421,7 @@ msgstr "Lancement du processus d'inférence"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:173
 msgid "Membership queries"
-msgstr "Requètes d'appartenances"
+msgstr "Requêtes d'appartenances"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:178
 msgid "Responses"
@@ -556,15 +556,15 @@ msgstr "Nombre maximum de bits : "
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:331
 msgid "Definition of the Hexadecimal Variable"
-msgstr "Définition de la variable héxadécimale"
+msgstr "Définition de la variable hexadécimale"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:370
 msgid "Minimum number of hex (0xf=1):"
-msgstr "Nombre minimum de caractères héxa (0xf=1) :"
+msgstr "Nombre minimum de caractères hexa (0xf=1) :"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:378
 msgid "Maximum number of hex:"
-msgstr "Nombre maximum de caractères héxa :"
+msgstr "Nombre maximum de caractères hexa :"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:416
 msgid "Definition of the Alternative"
@@ -719,7 +719,7 @@ msgstr "Aucune définition XML trouvée"
 #: src/netzob/UI/Export/Controllers/ScapyExportController.py:93
 #: src/netzob/UI/Export/Controllers/TextExportController.py:92
 msgid "Select a symbol to see its text definition"
-msgstr "Sélectionner un symbol pour voir sa définition textuelle"
+msgstr "Sélectionner un symbole pour voir sa définition textuelle"
 
 #: src/netzob/UI/Export/Controllers/ScapyExportController.py:100
 msgid "No scapy definition found"
@@ -930,11 +930,11 @@ msgstr "Seuls les protocoles de niveau 4 UDP et TCP sont supportés."
 
 #: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:141
 msgid "Specify a valid bind port (int>0)"
-msgstr "Spécifiez un port valide (int>0)"
+msgstr "Spécifiez un port valide (entier > 0)"
 
 #: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:156
 msgid "Specify a valid target port (int>0)"
-msgstr "Spécifier un port destination valide (int>0)"
+msgstr "Spécifier un port destination valide (entier > 0)"
 
 #: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:172
 msgid "A network client requires a target IP."
@@ -1364,7 +1364,7 @@ msgstr "Exporter en tant que Fuzzer Peach (XML)"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:197
 msgid "Are you sure to override the file '{0}'?"
-msgstr "Êtes-vous sur de remplacer le fichire '{0}' ?"
+msgstr "Êtes-vous sur de remplacer le fichier '{0}' ?"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:215
 msgid ""
@@ -1541,7 +1541,7 @@ msgid ""
 "report.\n"
 "Thank you for your help."
 msgstr ""
-"Un rapport de bug a été généré et pourrait être très utile à l'équipe de "
+"Un rapport de bogue a été généré et pourrait être très utile à l'équipe de "
 "développement,\n"
 "veuillez autoriser son envoi au serveur de Netzob.\n"
 "\n"
@@ -1966,7 +1966,7 @@ msgstr "Créer une transition semi-stochastique"
 
 #: resources/static/netzob/ui/grammar/grammarActions.glade:49
 msgid "Grammar Edition"
-msgstr "Edition de la grammaire"
+msgstr "Édition de la grammaire"
 
 #: resources/static/netzob/ui/grammar/grammarActions.glade:55
 msgid "Create OpenChannel Transition"
