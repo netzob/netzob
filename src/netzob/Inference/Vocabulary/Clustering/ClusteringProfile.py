@@ -52,8 +52,11 @@ class ClusteringProfile(object):
         originalProfile = ClusteringProfile(_("Original Clustering"), _("Execute an UPGMA clustering using original similarity measure."))
         UPGMAAlgorithm = UPGMAClustering()
         originalProfile.addAlgorithm(UPGMAAlgorithm)
-
         defaults.append(originalProfile)
+
+        # Discoverer
+        discovererProfile = ClusteringProfile(_("Discoverer by W.Cui"), _("Cluster messages following their ASCII/Bin tokens as described in paper 'Discoverer: Automatic Protocol Reverse Engineering from Network Traces'"))
+        defaults.append(discovererProfile)
 
         return defaults
 
