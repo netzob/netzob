@@ -49,6 +49,7 @@ from netzob.Common.Functions.Transformation.Base64Function import Base64Function
 from netzob.Common.Functions.Transformation.GZipFunction import GZipFunction
 from netzob.Common.Functions.Transformation.BZ2Function import BZ2Function
 from netzob.Common.Functions.RenderingFunction import RenderingFunction
+from netzob.Inference.Vocabulary.Clustering.ClusteringProfile import ClusteringProfile
 
 WORKSPACE_NAMESPACE = "http://www.netzob.org/workspace"
 COMMON_NAMESPACE = "http://www.netzob.org/common"
@@ -289,7 +290,10 @@ class Workspace(object):
 
     def getClusteringProfiles(self):
         """Returns the existing profiles for clustering"""
-        return self.clusteringProfiles
+        result = []
+        result.extend(ClusteringProfile.getDefaultClusteringProfiles())
+        result.extend(self.clusteringProfiles)
+        return result
 
     def addClusteringProfile(self, profile):
         """Add in the existing profiles the provided new one"""
