@@ -60,11 +60,37 @@ class ClusteringProfilesController(object):
     def view(self):
         return self._view
 
+    def algorithmsComboBox_changed_cb(self, widget):
+        """Callback executed when the algorithms has changed"""
+        currentAlgorithm = self._view.getSelectedAlgorithmClassToAdd()
+        self._view.updateButtonsWithSelectedAlgorithm(currentAlgorithm)
+
+    def availableClusteringProfilesComboBox_changed_cb(self, widget):
+        """Callback executed when the user changes the current profile"""
+        currentProfile = self._view.getCurrentProfile()
+        self._view.updateFieldWithCurrentProfile(currentProfile)
+
     def addAlgorithmButton_clicked_cb(self, widget):
-        self.log.info("Add selected algorithm in the list")
+        currentAlgorithmClass = self._view.getSelectedAlgorithmClassToAdd()
+        currentProfile = self._view.getCurrentProfile()
+
+        currentProfile.addAlgorithm(currentAlgorithmClass())
+        self._view.updateFieldWithCurrentProfile(currentProfile)
+
+    def currentAlgorithmsTreeView_cursor_changed_cb(self, widget):
+        currentAlgorithm = self._view.getCurrentAlgorithmSelected()
+        self._view.updateViewWithSelectedAlgorithmInCurrentProfile(currentAlgorithm)
+
+        if currentAlgorithm is not None:
+            controller = currentAlgorithm.getConfigurationController()
+            controller.run(self._view.configureCurrentAlgorithmViewport)
 
     def deleteCurrentAlgorithmButton_clicked_cb(self, widget):
-        self.log.info("Delete selected algorithm")
+        currentProfil = self._view.getCurrentProfile()
+        currentAlgorithm = self._view.getCurrentAlgorithmSelected()
+        if currentProfil is not None and currentAlgorithm is not None:
+            currentProfil.removeAlgorithm(currentAlgorithm)
+        self._view.updateFieldWithCurrentProfile(currentProfil)
 
     def downCurrentAlgorithmButton_clicked_cb(self, widget):
         self.log.info("Down the selected algorithm")
@@ -79,7 +105,8 @@ class ClusteringProfilesController(object):
         self.log.info("Save selected profile")
 
     def executeProfileButton_clicked_cb(self, widget):
-        self.log.info("Execute selected profile")
+        currentProfile = self._view.getCurrentProfile()
+        currentProfile.execute(self.fields)
 
     def closeButton_clicked_cb(self, widget):
         self.destroy()

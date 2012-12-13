@@ -30,7 +30,8 @@
 #+---------------------------------------------------------------------------+
 from locale import gettext as _
 import logging
-from abc import abstractproperty, abstractmethod
+import uuid
+from netzob.Inference.Vocabulary.Clustering.UPGMA.UPGMAClustering import UPGMAClustering
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -38,42 +39,54 @@ from abc import abstractproperty, abstractmethod
 
 
 #+---------------------------------------------------------------------------+
-#| AbstractClusteringAlgorithm:
+#| ClusteringProfile:
 #+---------------------------------------------------------------------------+
-class AbstractClusteringAlgorithm(object):
-    """This abstract class must be inherited from all the clustering algorithms."""
+class ClusteringProfile(object):
+    """This class represents the clustering profiles"""
 
     @staticmethod
-    def getAllClusteringAlgorithms():
+    def getDefaultClusteringProfiles():
         defaults = []
+
         # UPGMA
-        from netzob.Inference.Vocabulary.Clustering.UPGMA.UPGMAClustering import UPGMAClustering
-        defaults.append(UPGMAClustering)
+        originalProfile = ClusteringProfile(_("Original Clustering"), _("Execute an UPGMA clustering using original similarity measure."))
+        UPGMAAlgorithm = UPGMAClustering()
+        originalProfile.addAlgorithm(UPGMAAlgorithm)
+
+        defaults.append(originalProfile)
 
         return defaults
 
-    __algorithm_name__ = abstractproperty()
-    __algorithm_description = abstractproperty()
-
-    def __init__(self, id):
+    def __init__(self, name, description=None):
         self.logger = logging.getLogger(__name__)
-        self.id = id
+        self.id = uuid.uuid4()
+        self.name = name
+        self.description = description
+        self.algorithms = []
 
     def getID(self):
         return self.id
 
     def getName(self):
-        """Returns the name of the clustering algorithm"""
-        return self.__algorithm_name__
+        return self.name
 
     def getDescription(self):
-        """Returns the description of clustering algorithm"""
-        return self.__algorithm_description
+        return self.description
 
-    @abstractmethod
-    def execute(self):
-        self.logger.warning("This method must be defined by the inherited class")
+    def getAlgorithms(self):
+        return self.algorithms
 
-    @abstractmethod
-    def getConfigurationController(self):
-        self.logger.warning("This method must be defined by the inherited class")
+    def addAlgorithm(self, algorithm):
+        self.algorithms.append(algorithm)
+
+    def removeAlgorithm(self, algorithm):
+        if algorithm in self.algorithms:
+            self.algorithms.remove(algorithm)
+        else:
+            self.logger.warning("Impossible to remove the unexisting provided algorithm ({0}) from the list of registered algorithms".format(algorithm.getID()))
+
+    def execute(self, layers):
+        tmp_layers = layers
+        for algorithm in self.getAlgorithms():
+            tmp_layers = algorithm.execute(tmp_layers)
+        return tmp_layers

@@ -38,17 +38,17 @@ from abc import abstractproperty, abstractmethod
 
 
 #+---------------------------------------------------------------------------+
-#| AbstractClusteringAlgorithm:
+#| AbstractDistanceAlgorithm:
 #+---------------------------------------------------------------------------+
-class AbstractClusteringAlgorithm(object):
-    """This abstract class must be inherited from all the clustering algorithms."""
+class AbstractDistanceAlgorithm(object):
+    """This abstract class must be inherited from all the distance algorithms."""
 
     @staticmethod
-    def getAllClusteringAlgorithms():
+    def getAllDistanceAlgorithms():
         defaults = []
-        # UPGMA
-        from netzob.Inference.Vocabulary.Clustering.UPGMA.UPGMAClustering import UPGMAClustering
-        defaults.append(UPGMAClustering)
+        # Manhattan distance
+        from netzob.Inference.Vocabulary.Clustering.Distances.ManhattanDistance import ManhattanDistance
+        defaults.append(ManhattanDistance)
 
         return defaults
 

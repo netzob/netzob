@@ -36,6 +36,7 @@ import os
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk
 import gi
+from netzob.Inference.Vocabulary.Clustering.AbstractClusteringAlgorithm import AbstractClusteringAlgorithm
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
@@ -63,23 +64,137 @@ class ClusteringProfilesView(object):
                                         "availableAlgorithmsListStore",
                                         "currentAlgorithmsListStore",
                                         "profilesListStore",
-                                        "idProfileEntry",
                                         "nameProfileEntry",
                                         "descriptionProfileTextView",
                                         "addAlgorithmButton",
                                         "deleteCurrentAlgorithmButton",
                                         "downCurrentAlgorithmButton",
-                                        "upCurrentAlgorithmButton"
+                                        "upCurrentAlgorithmButton",
+                                        "availableClusteringProfilesComboBox",
+                                        "configureCurrentAlgorithmViewport",
+                                        "algorithmsComboBox",
+                                        "availableAlgorithmsListStore",
+                                        "currentAlgorithmsListStore",
+                                        "currentAlgorithmsTreeView"
                                         ])
         self.controller = controller
         self.builder.connect_signals(self.controller)
-
-        for profile in profiles:
+        self.profiles = profiles
+        for profile in self.profiles:
             self.profilesListStore.append([str(profile.getID()), profile.getName(), str(profile.getDescription())])
 
     def _getObjects(self, builder, objectsList):
         for obj in objectsList:
             setattr(self, obj, builder.get_object(obj))
+
+    def getCurrentProfile(self):
+        """Returns the current selected profile"""
+        selectedProfileID = None
+        tree_iter = self.availableClusteringProfilesComboBox.get_active_iter()
+        if tree_iter is not None:
+            model = self.availableClusteringProfilesComboBox.get_model()
+            selectedProfileID = model[tree_iter][0]
+
+        if selectedProfileID is None:
+            return None
+
+        for profile in self.profiles:
+            if str(profile.getID()) == selectedProfileID:
+                return profile
+        return None
+
+    def getSelectedAlgorithmClassToAdd(self):
+        selectedAlgoClass = None
+        tree_iter = self.algorithmsComboBox.get_active_iter()
+        if tree_iter is not None:
+            model = self.algorithmsComboBox.get_model()
+            selectedAlgoClass = model[tree_iter][0]
+        if selectedAlgoClass is None:
+            return None
+        for algorithm in AbstractClusteringAlgorithm.getAllClusteringAlgorithms():
+            if str(algorithm.__name__) == selectedAlgoClass:
+                return algorithm
+        return None
+
+    def updateViewWithSelectedAlgorithmInCurrentProfile(self, algorithm):
+        if algorithm is None:
+            self.deleteCurrentAlgorithmButton.set_sensitive(False)
+            self.downCurrentAlgorithmButton.set_sensitive(False)
+            self.upCurrentAlgorithmButton.set_sensitive(False)
+            self.clearCurrentAlgorithmViewPort()
+        else:
+            self.deleteCurrentAlgorithmButton.set_sensitive(True)
+            self.downCurrentAlgorithmButton.set_sensitive(True)
+            self.upCurrentAlgorithmButton.set_sensitive(True)
+            self.clearCurrentAlgorithmViewPort()
+
+    def updateButtonsWithSelectedAlgorithm(self, algorithm):
+        if algorithm is None:
+            self.addAlgorithmButton.set_sensitive(False)
+        else:
+            self.addAlgorithmButton.set_sensitive(True)
+
+    def getCurrentAlgorithmSelected(self):
+        selectedAlgorithmID = None
+        selectionTreeview = self.currentAlgorithmsTreeView.get_selection()
+        if selectionTreeview is None:
+            return None
+
+        (model, tree_iter) = selectionTreeview.get_selected()
+        if tree_iter is not None:
+            selectedAlgorithmID = model[tree_iter][0]
+
+        if selectedAlgorithmID is None:
+            return None
+
+        for algorithm in self.getCurrentProfile().getAlgorithms():
+            if str(algorithm.getID()) == selectedAlgorithmID:
+                return algorithm
+        return None
+
+    def updateFieldWithCurrentProfile(self, profile):
+        if profile is None:
+            self.nameProfileEntry.set_text("")
+            self.nameProfileEntry.set_sensitive(False)
+            self.descriptionProfileTextView.get_buffer().set_text("")
+            self.descriptionProfileTextView.set_sensitive(False)
+            self.algorithmsComboBox.set_sensitive(False)
+
+            self.addAlgorithmButton.set_sensitive(False)
+            self.deleteProfileButton.set_sensitive(False)
+            self.saveProfileButton.set_sensitive(False)
+            self.executeProfileButton.set_sensitive(False)
+
+            self.clearCurrentAlgorithmViewPort()
+
+        else:
+            self.nameProfileEntry.set_text(profile.getName())
+            self.nameProfileEntry.set_sensitive(True)
+            if profile.getDescription() is not None:
+                self.descriptionProfileTextView.get_buffer().set_text(profile.getDescription())
+            else:
+                self.descriptionProfileTextView.get_buffer().set_text("")
+            self.descriptionProfileTextView.set_sensitive(True)
+            self.algorithmsComboBox.set_sensitive(True)
+            self.addAlgorithmButton.set_sensitive(False)
+            self.deleteProfileButton.set_sensitive(True)
+            self.saveProfileButton.set_sensitive(True)
+            self.executeProfileButton.set_sensitive(True)
+
+            self.availableAlgorithmsListStore.clear()
+            for algorithm in AbstractClusteringAlgorithm.getAllClusteringAlgorithms():
+                self.availableAlgorithmsListStore.append([str(algorithm.__name__), str(algorithm.__algorithm_name__)])
+
+            self.currentAlgorithmsListStore.clear()
+            for algorithm in profile.getAlgorithms():
+                self.currentAlgorithmsListStore.append([str(algorithm.getID()), algorithm.getName()])
+
+            self.clearCurrentAlgorithmViewPort()
+
+    def clearCurrentAlgorithmViewPort(self):
+        children = self.configureCurrentAlgorithmViewport.get_children()
+        for c in children:
+            self.configureCurrentAlgorithmViewport.remove(c)
 
     def run(self):
         self.clusteringProfilesDialog.run()
