@@ -30,8 +30,12 @@
 #+---------------------------------------------------------------------------+
 from locale import gettext as _
 import logging
+import re
+import string
 from netzob.Inference.Vocabulary.Clustering.AbstractClusteringAlgorithm import AbstractClusteringAlgorithm
 from netzob.UI.Vocabulary.Controllers.Clustering.Discoverer.DiscovererClusteringConfigurationController import DiscovererClusteringConfigurationController
+from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Type.TypeIdentifier import TypeIdentifier
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -49,16 +53,80 @@ class DiscovererClustering(AbstractClusteringAlgorithm):
 
     def __init__(self):
         super(DiscovererClustering, self).__init__("discoverer")
-        self.logger = logging.getLogger(__name__)
+        self.log = logging.getLogger(__name__)
+        self.minASCIIthreshold = 2
+        self.ASCIIDelimitors = string.punctuation + ''.join(['\n', '\r', '\t', ' '])
+        self.ASCIIDelimitorsPattern = re.compile("[" + self.ASCIIDelimitors + "]")
 
     def execute(self, layers):
         """Execute the clustering"""
-        self.logger.info("Execute DISCOVERER Clustering...")
+        self.log.info("Execute DISCOVERER Clustering...")
+        # Retrieve all the messages
+        messages = []
+        for layer in layers:
+            messages.extend(layer.getMessages())
+
+        self.log.info("Start the Tokenization process")
+        self.log.info("Number of messages : {0}".format(len(messages)))
+
+        # split messages in binary and ascii tokens
+        # tokens = dict<message, [token,...]>
+        # token = (isAscii, [byte1, byte2, ....])
+        tokens = dict()
+        typeIdentifier = TypeIdentifier()
+        for message in messages:
+            message_tokens = []
+
+            lastAsciiBytes = []
+            lastBinBytes = []
+            for byte in TypeConvertor.netzobRawToPythonRaw(message.getStringData()):
+                isAscii = False
+                try:
+                    byte.decode('ascii')
+                    isAscii = True
+                except:
+                    isAscii = False
+
+                if isAscii:
+                    if len(lastBinBytes) > 0:
+                        message_tokens.append((False, lastBinBytes))
+                        lastBinBytes = []
+
+                    lastAsciiBytes.append(byte)
+                else:
+                    if len(lastAsciiBytes) >= self.minASCIIthreshold:
+                        ascii_tokens = self.splitASCIIUsingDelimitors(lastAsciiBytes)
+                        message_tokens.extend(ascii_tokens)
+                        lastAsciiBytes = []
+                    elif len(lastAsciiBytes) > 0:
+                        lastBinBytes.extend(lastAsciiBytes)
+                        lastAsciiBytes = []
+
+                    lastBinBytes.append(byte)
+            if len(lastBinBytes) > 0:
+                message_tokens.append((False, lastBinBytes))
+                lastBinBytes = []
+            if len(lastAsciiBytes) >= self.minASCIIthreshold:
+
+                ascii_tokens = self.splitASCIIUsingDelimitors(lastAsciiBytes)
+                message_tokens.extend(ascii_tokens)
+
+            tokens[message] = message_tokens
+
+            self.log.debug("Tokenization of message {0} in {1} tokens".format(message.getID(), len(tokens[message])))
 
         return layers
 
-    def getConfigurationErrorMessage(self):
+    def splitASCIIUsingDelimitors(self, aBytes):
+        """Split a set of ASCII bytes in valid ASCII tokens using
+        a set of common delimitors"""
+        results = []
+        for subToken in self.ASCIIDelimitorsPattern.split(''.join(aBytes)):
+            if len(subToken) > 0:
+                results.append((True, subToken))
+        return results
 
+    def getConfigurationErrorMessage(self):
         return None
 
     def getConfigurationController(self):
