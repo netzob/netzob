@@ -189,19 +189,27 @@ class NetzobMainView(object):
         """@type  newPerspective: string
         @param newPerspective: Switch for the view.
         Value available: "vocabulary", "grammar" and "traffic"."""
+
         # Reset base menu and toolbar
         self.resetMainWindow()
         self.log.debug("Setting perspective ID {0}".format(newPerspectiveCode))
         perspective = self.perspectiveDict[newPerspectiveCode][1]
+
         # Switch central panel
         self.currentPerspectivePanel = perspective.view.getPanel()
         self.setCentralPanel(self.currentPerspectivePanel)
+
         # Add action group to UI Manager
-        self.currentPerspectiveActionGroup = perspective.view.getActionGroup()
-        self.uiManager.insert_action_group(self.currentPerspectiveActionGroup)
+        actionGroup = perspective.view.getActionGroup()
+        if actionGroup is not None:
+            self.currentPerspectiveActionGroup = actionGroup
+            self.uiManager.insert_action_group(actionGroup)
+
         # Merge UI definition into UI Manager
-        self.currentPerspectiveMergeID = self.uiManager.add_ui_from_string(
-            perspective.view.getMenuToolbarUIDefinition())
+        toolbarUIDefinition = perspective.view.getMenuToolbarUIDefinition()
+        if toolbarUIDefinition is not None:
+            self.currentPerspectiveMergeID = self.uiManager.add_ui_from_string(toolbarUIDefinition)
+
         # Activate it
         perspective.activate()
 
