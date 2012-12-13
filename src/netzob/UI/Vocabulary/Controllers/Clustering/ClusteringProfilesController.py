@@ -83,7 +83,8 @@ class ClusteringProfilesController(object):
 
         if currentAlgorithm is not None:
             controller = currentAlgorithm.getConfigurationController()
-            controller.run(self._view.configureCurrentAlgorithmViewport)
+            if controller is not None:
+                controller.run(self._view.configureCurrentAlgorithmViewport)
 
     def deleteCurrentAlgorithmButton_clicked_cb(self, widget):
         currentProfil = self._view.getCurrentProfile()
