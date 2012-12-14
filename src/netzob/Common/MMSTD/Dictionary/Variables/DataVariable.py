@@ -28,6 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+from bitarray import bitarray
 from gettext import gettext as _
 from lxml import etree
 import logging
@@ -82,7 +83,7 @@ class DataVariable(AbstractLeafVariable):
         else:
             readableValue = self.bin2str(self.originalValue)
 
-        return _("[Data] {0}, type: {1}, original value: {2}").format(AbstractVariable.toString(self), self.type.toString(), readableValue)
+        return "[Data] {0}, type: {1}, original value: {2}".format(AbstractVariable.toString(self), self.type.toString(), readableValue)
 
     def getValue(self, processingToken):
         """getValue:
@@ -125,7 +126,7 @@ class DataVariable(AbstractLeafVariable):
         else:
             readableValue = str(self.bin2str(self.getValue(writingToken)))
 
-        return _("{0}, value: {1}").format(self.toString(), readableValue)
+        return "{0}, value: {1}".format(self.toString(), readableValue)
 
     def getUncontextualizedDescription(self):
         """getUncontextualizedDescription:
@@ -145,20 +146,20 @@ class DataVariable(AbstractLeafVariable):
         """
         dictOfValues = dict()
         dictOfValues[self.getID()] = self.getValue(processingToken)
-        # self.log.debug(_("- Dict of values: {0}.").format(str(dictOfValues)))
+        # self.log.debug("- Dict of values: {0}.".format(str(dictOfValues)))
         return dictOfValues
 
     def restore(self, processingToken):
         """restore:
         """
-        self.log.debug(_("- {0}: memorized value is restored.").format(self.toString()))
+        self.log.debug("- {0}: memorized value is restored.".format(self.toString()))
         processingToken.getMemory().restore(self)
 
     def toXML(self, root, namespace):
         """toXML:
             Creates the xml tree associated to this variable.
         """
-        self.log.debug(_("- {0}: toXML:").format(self.toString()))
+        self.log.debug("- {0}: toXML:".format(self.toString()))
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         xmlVariable.set("id", str(self.getID()))
         xmlVariable.set("name", str(self.getName()))
@@ -200,7 +201,7 @@ class DataVariable(AbstractLeafVariable):
         """forget:
                 The variable forgets its value.
         """
-        self.log.debug(_("- {0}: value is forgotten.").format(self.toString()))
+        self.log.debug("- {0}: value is forgotten.".format(self.toString()))
         processingToken.getMemory().forget(self)  # We remove the memorized value.
         self.setCurrentValue(None)  # We remove the local value.
 
@@ -208,30 +209,30 @@ class DataVariable(AbstractLeafVariable):
         """recall:
                 The variable recall its memorized value.
         """
-        self.log.debug(_("- {0}: value is recalled.").format(self.toString()))
+        self.log.debug("- {0}: value is recalled.".format(self.toString()))
         self.setCurrentValue(processingToken.getMemory().recall(self))
 
     def memorize(self, processingToken):
         """memorize:
                 The variable memorizes its value.
         """
-        self.log.debug(_("- {0}: value is memorized.").format(self.toString()))
+        self.log.debug("- {0}: value is memorized.".format(self.toString()))
         processingToken.getMemory().memorize(self)
 
     def compareFormat(self, readingToken):
         """compareFormat:
                 The variable checks if its format complies with the read value's format.
         """
-        self.log.debug(_("- [ {0}: compareFormat.").format(self.toString()))
+        self.log.debug("- [ {0}: compareFormat.".format(self.toString()))
 
         self.type.compareFormat(readingToken)
 
-        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ] -".format(self.getName(), readingToken.toString()))
 
     def learn(self, readingToken):
         """learn:
         """
-        self.log.debug(_("- [ {0}: learn.").format(self.toString()))
+        self.log.debug("- [ {0}: learn.".format(self.toString()))
         if readingToken.isOk():  # A format comparison had been executed before, its result must be "OK".
             tmp = readingToken.getValue()[readingToken.getIndex():]
 
@@ -259,45 +260,45 @@ class DataVariable(AbstractLeafVariable):
                 self.setCurrentValue(tmp[:endi + len(self.type.getDelimiter())])  # The delimiter token is a part of the variable.
                 readingToken.incrementIndex(endi + len(self.type.getDelimiter()))
 
-            self.log.info(_("Learning done."))
+            self.log.info("Learning done.")
         else:
-            self.log.info(_("Learning abort because the previous format comparison failed."))
+            self.log.info("Learning abort because the previous format comparison failed.")
 
-        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ] -".format(self.getName(), readingToken.toString()))
 
     def compare(self, readingToken):
         """compare:
                 The variable compares its value to the read value.
         """
-        self.log.debug(_("- [ {0}: compare.").format(self.toString()))
+        self.log.debug("- [ {0}: compare.".format(self.toString()))
         localValue = self.getValue(readingToken)
         tmp = readingToken.getValue()[readingToken.getIndex():]
 
         if len(tmp) >= len(localValue):
             if tmp[:len(localValue)] == localValue:
-                self.log.debug(_("Comparison successful."))
+                self.log.debug("Comparison successful.")
                 readingToken.incrementIndex(len(localValue))
                 readingToken.setOk(True)
             else:
                 readingToken.setOk(False)
-                self.log.debug(_("Comparison failed: wrong value."))
+                self.log.debug("Comparison failed: wrong value.")
         else:
             readingToken.setOk(False)
-            self.log.debug(_("Comparison failed: wrong size."))
-        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
+            self.log.debug("Comparison failed: wrong size.")
+        self.log.debug("Variable {0}: {1}. ] -".format(self.getName(), readingToken.toString()))
 
     def mutate(self, writingToken):
         """mutate:
                 The current value is mutated according to the given generation strategy.
         """
-        self.log.debug(_("- {0}: mutate.").format(self.toString()))
+        self.log.debug("- {0}: mutate.".format(self.toString()))
         self.setCurrentValue(self.type.mutateValue(writingToken.getGenerationStrategy(), self.getValue()))
 
     def generate(self, writingToken):
         """generate:
                 A new current value is generated according to the variable type and the given generation strategy.
         """
-        self.log.debug(_("- {0}: generate.").format(self.toString()))
+        self.log.debug("- {0}: generate.".format(self.toString()))
         self.setCurrentValue(self.type.generateValue(writingToken.getGenerationStrategy()))
 
     def writeValue(self, writingToken):
@@ -305,10 +306,14 @@ class DataVariable(AbstractLeafVariable):
                 Write the variable value if it has one, else it returns the memorized value.
                 Write this value in the writingToken.
         """
-        self.log.debug(_("- [ {0}: writeValue.").format(self.toString()))
-        value = self.getValue(writingToken)
+        self.log.debug("- [ {0}: writeValue.".format(self.toString()))
+        value = bitarray()
+        value.extend(self.getValue(writingToken))
+        if not self.type.isSized():
+            # Do not forget to write the delimiter if the variable has one
+            value.extend(self.getType().getDelimiter())
         writingToken.write(self, value)
-        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), writingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ] -".format(self.getName(), writingToken.toString()))
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
@@ -327,7 +332,7 @@ class DataVariable(AbstractLeafVariable):
             self.type = _type
         else:
             # Default type is Binary.
-            self.log.info(_("Variable {0} (Data): type undefined.").format(self.getName()))
+            self.log.info("Variable {0} (Data): type undefined.".format(self.getName()))
             self.type = BinaryType()
 
     def setOriginalValue(self, originalValue):
@@ -338,13 +343,13 @@ class DataVariable(AbstractLeafVariable):
                     self.originalValue = self.type.str2bin(originalValue)
                 else:
                     self.originalValue = None
-                    self.log.info(_("Variable {0} (Data): The given original value has an inappropriate size.").format(self.getName()))
+                    self.log.info("Variable {0} (Data): The given original value has an inappropriate size.".format(self.getName()))
             else:
                 self.originalValue = self.type.str2bin(originalValue)
 
         else:
             self.originalValue = None
-            self.log.info(_("Variable {0} (Data): The given original value is None.").format(self.getName()))
+            self.log.info("Variable {0} (Data): The given original value is None.".format(self.getName()))
 
     def setCurrentValue(self, currentValue):
         self.currentValue = currentValue
@@ -358,7 +363,7 @@ class DataVariable(AbstractLeafVariable):
                 Loads a data variable from an XML definition.
                 We do not trust the user and check every field (even mandatory).
         """
-        logging.debug(_("[ DataVariable: loadFromXML:"))
+        logging.debug("[ DataVariable: loadFromXML:")
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
@@ -408,11 +413,11 @@ class DataVariable(AbstractLeafVariable):
                 if type is None:
                     return None
             else:
-                logging.error(_("No type specified for this variable in the xml file."))
+                logging.error("No type specified for this variable in the xml file.")
                 return None
 
             result = DataVariable(xmlID, xmlName, xmlMutable, xmlLearnable, _type, originalValue)
-            logging.debug(_("DataVariable: loadFromXML successes: {0} ]").format(result.toString()))
+            logging.debug("DataVariable: loadFromXML successes: {0} ]".format(result.toString()))
             return result
-        logging.debug(_("DataVariable: loadFromXML fails"))
+        logging.debug("DataVariable: loadFromXML fails")
         return None

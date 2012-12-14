@@ -65,7 +65,7 @@ class AbstractLeafVariable(AbstractVariable):
                 @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
                 @param processingToken: a token which contains all critical information on this access.
         """
-        raise NotImplementedError(_("The current variable does not implement 'forget'."))
+        raise NotImplementedError("The current variable does not implement 'forget'.")
 
     @abstractmethod
     def recall(self, processingToken):
@@ -75,7 +75,7 @@ class AbstractLeafVariable(AbstractVariable):
                 @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
                 @param processingToken: a token which contains all critical information on this access.
         """
-        raise NotImplementedError(_("The current variable does not implement 'recall'."))
+        raise NotImplementedError("The current variable does not implement 'recall'.")
 
     @abstractmethod
     def memorize(self, processingToken):
@@ -85,7 +85,7 @@ class AbstractLeafVariable(AbstractVariable):
                 @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
                 @param processingToken: a token which contains all critical information on this access.
         """
-        raise NotImplementedError(_("The current variable does not implement 'memorize'."))
+        raise NotImplementedError("The current variable does not implement 'memorize'.")
 
     @abstractmethod
     def compareFormat(self, readingToken):
@@ -95,7 +95,7 @@ class AbstractLeafVariable(AbstractVariable):
                 @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
                 @param readingToken: a token which contains all critical information on this access.
         """
-        raise NotImplementedError(_("The current variable does not implement 'compareFormat'."))
+        raise NotImplementedError("The current variable does not implement 'compareFormat'.")
 
     @abstractmethod
     def learn(self, readingToken):
@@ -105,7 +105,7 @@ class AbstractLeafVariable(AbstractVariable):
                 @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
                 @param readingToken: a token which contains all critical information on this access.
         """
-        raise NotImplementedError(_("The current variable does not implement 'learn'."))
+        raise NotImplementedError("The current variable does not implement 'learn'.")
 
     @abstractmethod
     def compare(self, readingToken):
@@ -115,7 +115,7 @@ class AbstractLeafVariable(AbstractVariable):
                 @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
                 @param readingToken: a token which contains all critical information on this access.
         """
-        raise NotImplementedError(_("The current variable does not implement 'compare'."))
+        raise NotImplementedError("The current variable does not implement 'compare'.")
 
     @abstractmethod
     def mutate(self, writingToken):
@@ -125,7 +125,7 @@ class AbstractLeafVariable(AbstractVariable):
                 @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
                 @param writingToken: a token which contains all critical information on this access.
         """
-        raise NotImplementedError(_("The current variable does not implement 'generate'."))
+        raise NotImplementedError("The current variable does not implement 'generate'.")
 
     @abstractmethod
     def generate(self, writingToken):
@@ -135,7 +135,7 @@ class AbstractLeafVariable(AbstractVariable):
                 @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
                 @param writingToken: a token which contains all critical information on this access.
         """
-        raise NotImplementedError(_("The current variable does not implement 'generate'."))
+        raise NotImplementedError("The current variable does not implement 'generate'.")
 
     @abstractmethod
     def writeValue(self, writingToken):
@@ -145,7 +145,7 @@ class AbstractLeafVariable(AbstractVariable):
                 @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
                 @param writingToken: a token which contains all critical information on this access.
         """
-        raise NotImplementedError(_("The current variable does not implement 'writeValue'."))
+        raise NotImplementedError("The current variable does not implement 'writeValue'.")
 
     @abstractmethod
     def getValue(self, processingToken):
@@ -155,7 +155,7 @@ class AbstractLeafVariable(AbstractVariable):
                 @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
                 @param processingToken: a token which contains all critical information on this access.
         """
-        raise NotImplementedError(_("The current variable does not implement 'writeValue'."))
+        raise NotImplementedError("The current variable does not implement 'writeValue'.")
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
@@ -164,7 +164,7 @@ class AbstractLeafVariable(AbstractVariable):
         """read:
                 The leaf element tries to compare/learn the read value.
         """
-        self.log.debug(_("[ {0} (leaf): read access:").format(AbstractVariable.toString(self)))
+        self.log.debug("[ {0} (leaf): read access:".format(AbstractVariable.toString(self)))
         if self.isMutable():
             if self.isLearnable():
                 if self.isDefined(readingToken):
@@ -208,20 +208,20 @@ class AbstractLeafVariable(AbstractVariable):
 
                 else:
                     # not mutable, not learnable and not defined.
-                    self.log.debug(_("Read abort: the variable is neither defined, nor mutable."))
+                    self.log.debug("Read abort: the variable is neither defined, nor mutable.")
                     readingToken.setOk(False)
 
         # Variable notification
         if readingToken.isOk():
             self.notifyBoundedVariables("read", readingToken, self.getValue(readingToken))
 
-        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ]".format(self.getName(), readingToken.toString()))
 
     def write(self, writingToken):
         """write:
                 The leaf element returns its value or a generated one.
         """
-        self.log.debug(_("[ {0} (leaf): write access:").format(AbstractVariable.toString(self)))
+        self.log.debug("[ {0} (leaf): write access:".format(AbstractVariable.toString(self)))
         if self.isMutable():
             if self.isLearnable():
                 if self.isDefined(writingToken):
@@ -264,11 +264,11 @@ class AbstractLeafVariable(AbstractVariable):
 
                 else:
                     # not mutable, not learnable and not defined.
-                    self.log.debug(_("Write abort: the variable is neither defined, nor mutable."))
+                    self.log.debug("Write abort: the variable is neither defined, nor mutable.")
                     writingToken.setOk(False)
 
         # Variable notification
         if writingToken.isOk():
             self.notifyBoundedVariables("write", writingToken)
 
-        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ]".format(self.getName(), writingToken.toString()))

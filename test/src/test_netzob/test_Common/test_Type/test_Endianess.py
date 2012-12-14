@@ -35,4 +35,3 @@ class test_Endianess(NetzobTestCase):
 
     def test_LITTLE(self):
         self.assertEqual(Endianess.LITTLE, "little-endian")
-

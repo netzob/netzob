@@ -113,7 +113,7 @@
                         <property name="can_focus">False</property>
                         <property name="xpad">5</property>
                         <property name="ypad">5</property>
-                        <property name="label" translatable="yes">Warning Message</property>
+                        <property name="label" translatable="yes">Warning message</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -273,7 +273,7 @@
                       <object class="GtkLabel" id="displayedLabel">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Displayed Packets:</property>
+                        <property name="label" translatable="yes">Displayed packets:</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -304,7 +304,7 @@
                       <object class="GtkLabel" id="selectLabel">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Selected Packets:</property>
+                        <property name="label" translatable="yes">Selected packets:</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>

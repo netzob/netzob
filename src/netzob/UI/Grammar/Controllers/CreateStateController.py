@@ -54,7 +54,7 @@ class CreateStateController(object):
 
     def __init__(self, grammarController):
         self.grammarController = grammarController
-        self.idState = uuid.uuid4()
+        self.idState = str(uuid.uuid4())
         self._view = CreateStateView(self, self.idState)
         self.log = logging.getLogger(__name__)
 

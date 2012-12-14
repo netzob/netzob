@@ -91,7 +91,7 @@ class ResetPartitioningController(object):
             try:
                 (yield ThreadedTask(self.reset))
             except TaskError, e:
-                self.log.error(_("Error while proceeding to the reseting of fields: {0}").format(str(e)))
+                self.log.error("Error while proceeding to the reseting of fields: {0}".format(str(e)))
         else:
             self.log.debug("No field selected")
 
@@ -118,7 +118,7 @@ class ResetPartitioningController(object):
             rtotal = float(total) / float(100)
             time.sleep(0.01)
             GObject.idle_add(self._view.reset_progressbar.set_fraction, rtotal)
-        GObject.idle_add(self._view.reset_progressbar.set_text, _("Reset finished !"))
+        GObject.idle_add(self._view.reset_progressbar.set_text, _("Reset finished!"))
 
     def reset_stop_clicked_cb(self, widget):
         """Callback executed when the

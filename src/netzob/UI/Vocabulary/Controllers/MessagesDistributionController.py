@@ -127,7 +127,7 @@ class MessagesDistributionController(object):
 
     def run(self):
         if self.vocabularyController.getCurrentProject() is None:
-            logging.info(_("Open a project before..."))
+            logging.info("Open a project before...")
             return
         self._view.show()
 
@@ -149,7 +149,6 @@ class MessagesDistributionController(object):
 
         # Initialize the buffer
         self.draw()
-
         return False
 
     def draw(self):
@@ -186,7 +185,27 @@ class MessagesDistributionController(object):
         cc.line_to(self.double_buffer.get_width() - 20, self.double_buffer.get_height() - self.low_y)
         cc.line_to(80, self.double_buffer.get_height() - self.low_y)
         cc.line_to(80, 20)
+
+        # Show different values 0 and 255
+        cc.set_font_size(8)
+        cc.move_to(60, 25)
+        cc.show_text("255")
+        cc.move_to(70, self.double_buffer.get_height() - self.low_y)
+        cc.show_text("0")
         cc.stroke()
+
+        cc.move_to(20, (self.double_buffer.get_height() - self.low_y) / 2 + 10)
+        cc.show_text("Bytes values")
+
+        # Show percent (0%, 100%)
+        cc.move_to(75, self.double_buffer.get_height() - self.low_y + 8)
+        cc.show_text("0%")
+
+        cc.move_to(self.double_buffer.get_width() - 35, self.double_buffer.get_height() - self.low_y + 8)
+        cc.show_text("100%")
+
+        cc.move_to((self.double_buffer.get_width() - 20) / 2, self.double_buffer.get_height() - self.low_y + 8)
+        cc.show_text("Bytes")
 
     def draw_symbol(self, symbol, cc):
         i = 0
@@ -205,7 +224,7 @@ class MessagesDistributionController(object):
         if len(symbolShortName) > 15:
             symbolShortName = symbolShortName[:12] + "..."
         cc.set_source_rgb(dec1Color, dec2Color, dec3Color)
-        cc.move_to(2, y_axis_symbol)
+        cc.move_to(2, y_axis_symbol + 5)
         cc.show_text(symbolShortName)
 
         # Draw symbol names and fields info
@@ -225,7 +244,7 @@ class MessagesDistributionController(object):
         (xval, yval) = self.dataPointBySymbol[symbol.getID()]
         for i in range(0, len(xval)):
             x = 80 + (xval[i] * x_scale * x_mul)
-            y = 20 + (yval[i] * y_scale * y_mul)
+            y = 20 + ((255 - yval[i]) * y_scale * y_mul)
 
             cc.arc(x, y, 1, 0, 2 * math.pi)
             cc.set_source_rgb(1, 1, 1)

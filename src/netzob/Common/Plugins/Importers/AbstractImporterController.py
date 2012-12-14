@@ -105,7 +105,7 @@ class AbstractImporterController(AbstractPluginController):
     def listTreeViewSelection_changed_cb(self, selection):
         model, treeiter = selection.get_selected()
         if treeiter is not None:
-            messageID = uuid.UUID(model[treeiter][self.COLUMN_ID])
+            messageID = str(model[treeiter][self.COLUMN_ID])
             self.view.detailTextView.get_buffer().set_text(
                 str(self.doGetMessageDetails(messageID)))
 

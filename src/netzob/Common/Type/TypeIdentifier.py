@@ -31,6 +31,7 @@
 import base64
 import logging
 import StringIO
+import re
 
 #+----------------------------------------------
 #| Local Imports
@@ -90,3 +91,13 @@ class TypeIdentifier():
         except TypeError:
             res = False
         return res
+
+    #+----------------------------------------------
+    #| Return True if the string is an hexstring '1234abcd'
+    #|  encoded
+    #+----------------------------------------------
+    def isHexString(self, val):
+        if re.match("[0-9a-f]*", val) is not None:
+            return True
+        else:
+            return False

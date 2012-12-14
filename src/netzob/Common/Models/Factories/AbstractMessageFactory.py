@@ -33,7 +33,8 @@ from gettext import gettext as _
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-
+from lxml.etree import ElementTree
+from lxml import etree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -55,25 +56,38 @@ class AbstractMessageFactory(object):
     @staticmethod
     def save(message, root, namespace_project, namespace_common):
         """Generate an XML representation of a message"""
+
+        # Create the initial xml tree
+        xmlMessage = etree.SubElement(root, "{" + namespace_common + "}message")
+        xmlMessage.set("id", str(message.getID()))
+        xmlMessage.set("timestamp", str(message.getTimestamp()))
+
+        # Add the data
+        subData = etree.SubElement(xmlMessage, "{" + namespace_common + "}data")
+        subData.text = str(message.getData())
+
+        # Depending of the type, we add its proper meta-datas
         if message.getType() == "File":
-            return FileMessageFactory.save(message, root, namespace_project, namespace_common)
+            FileMessageFactory.save(message, xmlMessage, namespace_project, namespace_common)
         elif message.getType() == "L2Network":
-            return L2NetworkMessageFactory.save(message, root, namespace_project, namespace_common)
+            L2NetworkMessageFactory.save(message, xmlMessage, namespace_project, namespace_common)
         elif message.getType() == "L3Network":
-            return L3NetworkMessageFactory.save(message, root, namespace_project, namespace_common)
+            L3NetworkMessageFactory.save(message, xmlMessage, namespace_project, namespace_common)
         elif message.getType() == "L4Network":
-            return L4NetworkMessageFactory.save(message, root, namespace_project, namespace_common)
+            L4NetworkMessageFactory.save(message, xmlMessage, namespace_project, namespace_common)
         elif message.getType() == "IPC":
-            return IPCMessageFactory.save(message, root, namespace_project, namespace_common)
+            IPCMessageFactory.save(message, xmlMessage, namespace_project, namespace_common)
         elif message.getType() == "IRP":
-            return IRPMessageFactory.save(message, root, namespace_project, namespace_common)
+            IRPMessageFactory.save(message, xmlMessage, namespace_project, namespace_common)
         elif message.getType() == "IRPDeviceIoControl":
-            return IRPDeviceIoControlMessageFactory.save(message, root, namespace_project, namespace_common)
+            IRPDeviceIoControlMessageFactory.save(message, xmlMessage, namespace_project, namespace_common)
         elif message.getType() == "RAW":
-            return RawMessageFactory.save(message, root, namespace_project, namespace_common)
+            RawMessageFactory.save(message, xmlMessage, namespace_project, namespace_common)
         else:
             raise NameError('''There is no factory which would support
             the generation of an xml representation of the message : ''' + str(message))
+
+        return etree.tostring(xmlMessage)
 
     @staticmethod
     def loadFromXML(rootElement, namespace, version):
@@ -88,25 +102,41 @@ class AbstractMessageFactory(object):
         if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "abstract":
             raise NameError("The parsed xml doesn't represent a valid type message.")
 
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:FileMessage":
-            return FileMessageFactory.loadFromXML(rootElement, namespace, version)
-        # Preserve compatibility with former traces
-        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:NetworkMessage":
-            return OldFormatNetworkMessageFactory.loadFromXML(rootElement, namespace, version)
-        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:L2NetworkMessage":
-            return L2NetworkMessageFactory.loadFromXML(rootElement, namespace, version)
-        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:L3NetworkMessage":
-            return L3NetworkMessageFactory.loadFromXML(rootElement, namespace, version)
-        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:L4NetworkMessage":
-            return L4NetworkMessageFactory.loadFromXML(rootElement, namespace, version)
-        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:IPCMessage":
-            return IPCMessageFactory.loadFromXML(rootElement, namespace, version)
-        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:IRPMessage":
-            return IRPMessageFactory.loadFromXML(rootElement, namespace, version)
-        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:IRPDeviceIoControlMessage":
-            return IRPDeviceIoControlMessageFactory.loadFromXML(rootElement, namespace, version)
-        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:RawMessage":
-            return RawMessageFactory.loadFromXML(rootElement, namespace, version)
+        # Parse common attributes (id, timestamp, data)
+        # Parse the data field and transform it into a byte array
+        if rootElement.find("{" + namespace + "}data") is None or not rootElement.find("{" + namespace + "}data").text:
+            raise NameError("The parsed message has no data specified")
+        data = bytearray(rootElement.find("{" + namespace + "}data").text)
+        id = str(rootElement.get("id"))
+        timestamp = float(rootElement.get("timestamp"))
+
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == FileMessageFactory.XML_SCHEMA_TYPE:
+            return FileMessageFactory.loadFromXML(rootElement, namespace, version, id, timestamp, data)
+
+#        # Preserve compatibility with former traces
+#        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:NetworkMessage":
+#            return OldFormatNetworkMessageFactory.loadFromXML(rootElement, namespace, version)
+
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == L2NetworkMessageFactory.XML_SCHEMA_TYPE:
+            return L2NetworkMessageFactory.loadFromXML(rootElement, namespace, version, id, timestamp, data)
+
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == L3NetworkMessageFactory.XML_SCHEMA_TYPE:
+            return L3NetworkMessageFactory.loadFromXML(rootElement, namespace, version, id, timestamp, data)
+
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == L4NetworkMessageFactory.XML_SCHEMA_TYPE:
+            return L4NetworkMessageFactory.loadFromXML(rootElement, namespace, version, id, timestamp, data)
+
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == IPCMessageFactory.XML_SCHEMA_TYPE:
+            return IPCMessageFactory.loadFromXML(rootElement, namespace, version, id, timestamp, data)
+
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == IRPMessageFactory.XML_SCHEMA_TYPE:
+            return IRPMessageFactory.loadFromXML(rootElement, namespace, version, id, timestamp, data)
+
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == IRPDeviceIoControlMessageFactory.XML_SCHEMA_TYPE:
+            return IRPDeviceIoControlMessageFactory.loadFromXML(rootElement, namespace, version, id, timestamp, data)
+
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == RawMessageFactory.XML_SCHEMA_TYPE:
+            return RawMessageFactory.loadFromXML(rootElement, namespace, version, id, timestamp, data)
         else:
             raise NameError("The parsed xml doesn't represent a valid type message.")
             return None

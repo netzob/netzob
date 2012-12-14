@@ -38,9 +38,6 @@ import uuid
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk, GObject
 import gi
-from netzob.UI.Grammar.Views.Menus.ContextualMenuOnStateView import ContextualMenuOnStateView
-from netzob.UI.Grammar.Controllers.DeleteStateController import DeleteStateController
-from netzob.UI.Grammar.Controllers.EditStateController import EditStateController
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 from gi.repository import Pango
@@ -48,6 +45,16 @@ from gi.repository import Pango
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.UI.Grammar.Controllers.CreateSemiStochasticTransitionController import CreateSemiStochasticTransitionController
+from netzob.UI.Grammar.Controllers.CreateOpenChannelTransitionController import CreateOpenChannelTransitionController
+from netzob.UI.Grammar.Controllers.CreateCloseChannelTransitionController import CreateCloseChannelTransitionController
+from netzob.Common.MMSTD.Transitions.impl.SemiStochasticTransition import SemiStochasticTransition
+from netzob.Common.MMSTD.Transitions.impl.OpenChannelTransition import OpenChannelTransition
+from netzob.Common.MMSTD.Transitions.impl.CloseChannelTransition import CloseChannelTransition
+from netzob.UI.Grammar.Views.Menus.ContextualMenuOnStateView import ContextualMenuOnStateView
+from netzob.UI.Grammar.Controllers.DeleteStateController import DeleteStateController
+from netzob.UI.Grammar.Controllers.DeleteTransitionController import DeleteTransitionController
+from netzob.UI.Grammar.Controllers.EditStateController import EditStateController
 
 
 class ContextualMenuOnStateController(object):
@@ -79,11 +86,21 @@ class ContextualMenuOnStateController(object):
         controller = DeleteStateController(self.grammarController, self.state)
         controller.run()
 
-    def editTransition_cb(self, widget, transition):
+    def editTransition_cb(self, widget, event, transition):
         """callback executed when the user wants to edit a transition"""
-        print "edit transition"
 
-    def deleteTransition_cb(self, widget, transition):
+        transitionType = transition.getType()
+        if SemiStochasticTransition.TYPE == transitionType:
+            createTransitionController = CreateSemiStochasticTransitionController(self.grammarController, transition)
+            createTransitionController.run()
+        elif OpenChannelTransition.TYPE == transitionType:
+            createTransitionController = CreateOpenChannelTransitionController(self.grammarController, transition)
+            createTransitionController.run()
+        elif CloseChannelTransition.TYPE == transitionType:
+            createTransitionController = CreateCloseChannelTransitionController(self.grammarController, transition)
+            createTransitionController.run()
+
+    def deleteTransition_cb(self, widget, event, transition):
         """callback executed when the user wants to delete a transition"""
-        controller = DeleteTransitionController(self.grammarController, self.transition)
+        controller = DeleteTransitionController(self.grammarController, transition)
         controller.run()

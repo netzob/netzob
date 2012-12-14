@@ -4,6 +4,7 @@
   <object class="GtkDialog" id="messageDistributionDialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
+    <property name="title" translatable="yes">Distribution of bytes values</property>
     <property name="default_width">500</property>
     <property name="default_height">300</property>
     <property name="type_hint">dialog</property>

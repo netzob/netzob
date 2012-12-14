@@ -40,29 +40,14 @@ from netzob.Common.Token import Token
 class L2NetworkMessageFactory(object):
     """Factory dedicated to the manipulation of network messages"""
 
+    XML_SCHEMA_TYPE = "netzob-common:L2NetworkMessage"
+
     @staticmethod
-    def save(message, xmlMessages, namespace_project, namespace):
+    def save(message, xmlMessage, namespace_project, namespace):
         """Generate the XML representation of a Network message"""
-        root = etree.SubElement(xmlMessages, "{" + namespace + "}message")
-        root.set("id", str(message.getID()))
-        root.set("timestamp", str(message.getTimestamp()))
-        root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob-common:L2NetworkMessage")
-        # data
-        subData = etree.SubElement(root, "{" + namespace + "}data")
-        subData.text = str(message.getData())
+        xmlMessage.set("{http://www.w3.org/2001/XMLSchema-instance}type", L2NetworkMessageFactory.XML_SCHEMA_TYPE)
         # Add network message properties
-        L2NetworkMessageFactory.addL2PropertiesToElement(root, message, namespace)
-        #pattern
-#        subPattern = etree.SubElement(root, "{" + namespace + "}pattern")
-#        subsubDirection = etree.SubElement(subPattern, "{" + namespace + "}direction")
-#        subsubDirection.text = str(message.getPattern()[0])
-#        for t in message.getPattern()[1]:
-#            subsubToken = etree.SubElement(subPattern, "{" + namespace + "}token")
-#            subsubToken.set("format", t.getFormat())
-#            subsubToken.set("length", str(t.getLength()))
-#            subsubToken.set("type", t.getType())
-#            subsubToken.set("value", t.getValue().encode("base-64"))
-        return etree.tostring(root)
+        L2NetworkMessageFactory.addL2PropertiesToElement(xmlMessage, message, namespace)
 
     @staticmethod
     def addL2PropertiesToElement(root, message, namespace):
@@ -74,49 +59,22 @@ class L2NetworkMessageFactory(object):
         subL2DestinationAddress.text = message.getL2DestinationAddress()
 
     @staticmethod
-    def loadFromXML(rootElement, namespace, version):
+    def loadFromXML(rootElement, namespace, version, id, timestamp, data):
         """Function which parses an XML and extract from it
            the definition of a network message
            @param rootElement: XML root of the network message
            @return an instance of a NetworkMessage
            @raise NameError if XML invalid"""
 
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob-common:L2NetworkMessage":
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != L2NetworkMessageFactory.XML_SCHEMA_TYPE:
             raise NameError("The parsed xml doesn't represent a Network message.")
-        # Verifies the data field
-        if rootElement.find("{" + namespace + "}data") is None or rootElement.find("{" + namespace + "}data").text is None or not rootElement.find("{" + namespace + "}data").text:
-            raise NameError("The parsed message has no data specified")
-        # Parse the data field and transform it into a byte array
-        msg_data = bytearray(rootElement.find("{" + namespace + "}data").text)
-        # Retrieve the id
-        msg_id = uuid.UUID(rootElement.get("id"))
-        # Retrieve the timestamp
-        msg_timestamp = int(rootElement.get("timestamp"))
+
         # Retrieve layer 2 properties
-        (l2Protocol, l2SourceAddress, l2DestinationAddress) = \
-            L2NetworkMessageFactory.loadL2Properties(rootElement, namespace)
-        #Retrieve pattern
-        pattern = []
-        try:
-            patTemp = rootElement.find("{" + namespace + "}pattern")
-            pattern.append(patTemp.find("{" + namespace + "}direction").text)
-            tokens = patTemp.findall("{" + namespace + "}token")
-            #print "find "+str(tokens)
-            tokenList = []
-            for t in tokens:
-                t_format = t.get("format")
-                t_length = t.get("length")
-                t_type = t.get("type")
-                t_value = t.get("value").decode("base-64")
-                tokenList.append(Token(t_format, t_length, t_type, t_value))
-            pattern.append(tokenList)
-        except:
-            pattern = []
+        (l2Protocol, l2SourceAddress, l2DestinationAddress) = L2NetworkMessageFactory.loadL2Properties(rootElement, namespace)
 
         # IMPORTANT : Avoid circular import
         from netzob.Common.Models.L2NetworkMessage import L2NetworkMessage
-        message = L2NetworkMessage(msg_id, msg_timestamp, msg_data, l2Protocol,
-                                   l2SourceAddress, l2DestinationAddress, pattern)
+        message = L2NetworkMessage(id, timestamp, data, l2Protocol, l2SourceAddress, l2DestinationAddress)
 
         return message
 

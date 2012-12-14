@@ -61,6 +61,6 @@ class AboutDialog(object):
         about.set_authors(release.contributors)
 
         logoPath = os.path.join(ResourcesConfiguration.getStaticResources(), "logo.png")
-        about.set_logo(GdkPixbuf.Pixbuf.new_from_file(logoPath))
+        about.set_logo(GdkPixbuf.Pixbuf.new_from_file_at_size(logoPath, 200, 200))
         about.run()
         about.destroy()

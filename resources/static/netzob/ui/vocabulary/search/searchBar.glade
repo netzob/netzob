@@ -32,7 +32,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="margin_left">10</property>
-            <property name="label" translatable="yes">Research :</property>
+            <property name="label" translatable="yes">Search:</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -94,7 +94,7 @@
           <object class="GtkLabel" id="label1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="label" translatable="yes">|  Format :</property>
+            <property name="label" translatable="yes">|  Format:</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -106,16 +106,14 @@
           <object class="GtkComboBoxText" id="research_format">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="active">0</property>
+            <property name="active">2</property>
             <property name="entry_text_column">0</property>
             <property name="id_column">1</property>
             <items>
-              <item translatable="yes">binary</item>
-              <item translatable="yes">octal</item>
               <item translatable="yes">decimal</item>
               <item translatable="yes">hexa</item>
-              <item translatable="yes">ipv4</item>
               <item translatable="yes">string</item>
+              <item translatable="yes">ipv4</item>
             </items>
           </object>
           <packing>

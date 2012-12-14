@@ -59,7 +59,6 @@ class MessageTableController(object):
     def messageTableTreeView_changed_event_cb(self, selection):
         """Callback executed when the user
         clicks on a message in the MessageTable"""
-
         if self.vocabularyPerspective.controller.selectedMessagesToMove is not None:
             self.vocabularyPerspective.controller.removePendingMessagesToMove()
 
@@ -93,8 +92,8 @@ class MessageTableController(object):
         self.vocabularyPerspective.removeMessageTable(self.view)
 
     def messageTableTreeView_button_press_event_cb(self, treeview, eventButton):
-        self.vocabularyPerspective.setSelectedMessageTable(self.view)
         # Popup a contextual menu if right click
+        self.vocabularyPerspective.setSelectedMessageTable(self.view)
         if eventButton.type == Gdk.EventType.BUTTON_PRESS and eventButton.button == 3:
             x = int(eventButton.x)
             y = int(eventButton.y)
@@ -104,20 +103,21 @@ class MessageTableController(object):
                 # No message selected
                 return
 
-            # Retrieve the selected message
+            # Retrieve the selected messages
+            messages = []
             layer = self._view.getDisplayedField()
             if layer is None:
-                logging.warn("No layer is selected, please choose one.")
+                logging.warn("No layer selected, please choose one.")
                 return
 
-            message_id = None
-            aIter = treeview.get_model().get_iter(path)
-            if aIter and treeview.get_model().iter_is_valid(aIter):
-                message_id = treeview.get_model().get_value(aIter, 0)
-                message = layer.getMessageByID(message_id)
-            else:
-                logging.warn(_("Impossible to retrieve the clicked message !"))
-                return
+            (model, paths) = treeview.get_selection().get_selected_rows()
+            for path in paths:
+                message_id = model[path][0]
+                if message_id is not None:
+                    message = layer.getMessageByID(message_id)
+                    messages.append(message)
+                else:
+                    return
 
             # Retrieve the selected field number
             iField = self.view.displayedField.getExtendedFields()[0].getIndex()  # Starting displayed field
@@ -127,12 +127,13 @@ class MessageTableController(object):
                 iField += 1
             field = layer.getFieldByIndex(iField)
             if field is None:
-                logging.warn(_("Impossible to retrieve the clicked field !"))
+                logging.warn("Impossible to retrieve the clicked field!")
                 return
 
             # Popup a contextual menu
-            menuController = ContextualMenuOnFieldController(self.vocabularyPerspective.controller, layer, message, field)
+            menuController = ContextualMenuOnFieldController(self.vocabularyPerspective.controller, layer, messages, field)
             menuController.run(eventButton)
+            return True  # Needed to block remainin signals (especially the 'changed_cb' signal)
 
     def messageTableTreeView_enter_notify_event_cb(self, treeView, data=None):
         self.view.treeViewHeaderGroup.setAllColumnsFocus(True)

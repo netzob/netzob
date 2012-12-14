@@ -209,7 +209,7 @@ class ThirdPartyImport(AbstractImporter):
                 selectedMessage = message
 
         if selectedMessage is None:
-            self.log.warn(_("Impossible to retrieve the message the user clicked on. Hum ?"))
+            self.log.warn("Impossible to retrieve the message the user clicked on. Hum?")
             return
 
         self.displayMessage(selectedMessage)
@@ -225,16 +225,15 @@ class ThirdPartyImport(AbstractImporter):
             if filename is not None and filename != "" and os.path.isfile(filename):
                 filesToBeImported.append(filename)
             else:
-                logging.warning(
-                    _("Cannot load file {0}, its not a file.").format(filename))
+                logging.warning("Cannot load file {0}, its not a file.".format(filename))
 
         # Start to load
         parsedMessages = self.loadMessagesFromPlugin(self.thirdPartyStore.get_active_text(), filesToBeImported)
 
         if parsedMessages is None:
-            logging.warning(_("Impossible to find a plugin to import data from."))
+            logging.warning("Impossible to find a plugin to import data from.")
         else:
-            logging.debug(_("A number of {0} messages were extracted.").format(len(parsedMessages)))
+            logging.debug("A number of {0} messages were extracted.".format(len(parsedMessages)))
             for message in parsedMessages:
                 self.messages.append(message)
                 self.lineView.get_model().append(None, [message.getID(), message.getData()])
@@ -331,7 +330,7 @@ class ThirdPartyImport(AbstractImporter):
                 continue
 
             # Create a message
-            message = FileMessage(uuid.uuid4(), 0, content, fileName, creationDate, modificationDate, owner, size, 0)
+            message = FileMessage(str(uuid.uuid4()), 0, content, fileName, creationDate, modificationDate, owner, size, 0)
             self.messages.append(message)
             self.lineView.get_model().append(None, [message.getID(), content])
             fileNumber += 1
@@ -365,7 +364,7 @@ class ThirdPartyImport(AbstractImporter):
                 splittedStrHexData = [message.getData()]
             for s in splittedStrHexData:
                 if len(s) > 0:
-                    message = FileMessage(uuid.uuid4(), 0, s, message.getFilename(), message.getCreationDate(), message.getModificationDate(), message.getOwner(), message.getSize(), lineNumber)
+                    message = FileMessage(str(uuid.uuid4()), 0, s, message.getFilename(), message.getCreationDate(), message.getModificationDate(), message.getOwner(), message.getSize(), lineNumber)
                     new_messages.append(message)
                     lineNumber += 1
 

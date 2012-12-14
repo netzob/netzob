@@ -160,7 +160,7 @@ class ImportedTrace(object):
             date = TypeConvertor.xsdDatetime2PythonDatetime(str(xmlRoot.get("date")))
             type = xmlRoot.get("type")
             description = xmlRoot.get("description", "")
-            id = uuid.UUID(xmlRoot.get("id"))
+            id = str(xmlRoot.get("id"))
             name = xmlRoot.get("name")
 
             importedTrace = ImportedTrace(id, date, type, description, name)

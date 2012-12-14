@@ -67,7 +67,7 @@ class XMLImporterController(AbstractFileImporterController):
         message = self.model.getMessageByID(str(messageID))
         properties = [(name, value) for (name, _, value) in message.getProperties()
                       if name != 'Data']
-        messageDetails = "\n".join(["{0} : {1}".format(*prop)
+        messageDetails = "\n".join(["{0}: {1}".format(*prop)
                                     for prop in properties])
         messageDetails += "\n\n" + TypeConvertor.hexdump(TypeConvertor.netzobRawToPythonRaw(message.getStringData()))
         return messageDetails

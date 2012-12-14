@@ -44,11 +44,12 @@ from netzob import NetzobResources
 from netzob.Common.Workspace import Workspace
 
 
-#+----------------------------------------------
-#| ResourcesConfiguration:
-#|    Configure and verify all the resources
-#+----------------------------------------------
+class ResourcesConfigurationException(Exception):
+    pass
+
+
 class ResourcesConfiguration(object):
+    """Configure and verify all the resources"""
 
     LOCALFILE = ".netzob"
     DELIMITOR_LOCALFILE = "="
@@ -70,7 +71,7 @@ class ResourcesConfiguration(object):
 
         staticPath = ResourcesConfiguration.verifyStaticResources()
         if staticPath is None:
-            logging.fatal(_("The static resources were not found !"))
+            logging.fatal("The static resources were not found !")
             return False
         return True
 
@@ -203,6 +204,8 @@ class ResourcesConfiguration(object):
             return NetzobResources.LOCAL_PLUGINS_STATIC_DIR
         elif (os.path.isdir(NetzobResources.PLUGINS_STATIC_DIR)):
             return NetzobResources.PLUGINS_STATIC_DIR
+        else:
+            raise ResourcesConfigurationException(_("Unable to find plugins static resources."))
 
     @staticmethod
     def getWorkspaceDir():

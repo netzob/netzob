@@ -182,7 +182,7 @@ class MessageTableView(object):
                 splitMessage.extend(tmpSplitMessage)
             except NetzobException:
                 logging.warn("Impossible to display one of messages since it cannot be cut according to the computed regex.")
-                logging.warn("Message : " + str(message.getStringData()))
+                logging.warn("Message: {0}".format(str(message.getStringData())))
                 continue  # We don't display the message in error
             splitMessagesMatrix.append(splitMessage)
         logging.debug("Alignent computed")
@@ -229,6 +229,8 @@ class MessageTableView(object):
             selection = self.messageTableTreeView.get_selection()
             if selection is not None:
                 selection.unselect_all()
+            for header in self.treeViewHeaderGroup.getSelectedHeaders():
+                header.setSelected(False)
             normalFont = Pango.FontDescription()
             normalFont.set_weight(Pango.Weight.NORMAL)
             self.fieldNameLabel.modify_font(normalFont)
@@ -242,6 +244,49 @@ class MessageTableView(object):
                 msgID = model[row][0]
                 if msgID is not None:
                     data.set_text("m:{0}".format(msgID), -1)
+
+    def updateBackgroundColor(self, currentSelectedHeader):
+        # Retrieve first and last selected headers
+        selectedHeaders = []
+        for header in self.treeViewHeaderGroup.getHeaders():
+            if header.getSelected():
+                selectedHeaders.append(header)
+        if len(selectedHeaders) < 1:
+            firstSelectedHeader = None
+            lastSelectedHeader = None
+        else:
+            firstSelectedHeader = selectedHeaders[0]
+            lastSelectedHeader = selectedHeaders[-1]
+
+        # Retrieve selected header range
+        goSelect = False
+        for header in self.treeViewHeaderGroup.getHeaders():
+            if header == firstSelectedHeader:
+                goSelect = True
+            if header == currentSelectedHeader and not currentSelectedHeader.getSelected():
+                goSelect = False
+            if goSelect:
+                header.setSelected(True)
+                # change background of column
+                if header.treeViewColumn is not None and header.treeViewColumn.get_cells() is not None and len(header.treeViewColumn.get_cells()) > 0:
+                    cellRenderer = header.treeViewColumn.get_cells()[0]
+                    cellRenderer.set_property("background", "grey")
+                    self.refreshProperties()
+                boldFont = Pango.FontDescription()
+                boldFont.set_weight(Pango.Weight.BOLD)
+                header.titleLabel.modify_font(boldFont)
+            else:
+                header.setSelected(False)
+               # change background of column
+                if header.treeViewColumn is not None and header.treeViewColumn.get_cells() is not None and len(header.treeViewColumn.get_cells()) > 0:
+                    cellRenderer = header.treeViewColumn.get_cells()[0]
+                    cellRenderer.set_property("background", "white")
+                    self.refreshProperties()
+                normalFont = Pango.FontDescription()
+                normalFont.set_weight(Pango.Weight.NORMAL)
+                header.titleLabel.modify_font(normalFont)
+            if header == lastSelectedHeader:
+                goSelect = False
 
     def update(self):
         self.updateFieldNameLabel()
@@ -436,40 +481,8 @@ class TreeViewHeaderWidget(Gtk.VBox):
     def setSelected(self, selected):
         """Selects or unselects the column"""
         self.selected = selected
-        if selected:
-            # change background of column
-            if self.treeViewColumn is not None and self.treeViewColumn.get_cells() is not None and len(self.treeViewColumn.get_cells()) > 0:
-                cellRenderer = self.treeViewColumn.get_cells()[0]
-                cellRenderer.set_property("background", "grey")
-                self.messageTableView.refreshProperties()
-
-            boldFont = Pango.FontDescription()
-            boldFont.set_weight(Pango.Weight.BOLD)
-            self.titleLabel.modify_font(boldFont)
-
-        else:
-            # change background of column
-            if self.treeViewColumn is not None and self.treeViewColumn.get_cells() is not None and len(self.treeViewColumn.get_cells()) > 0:
-                cellRenderer = self.treeViewColumn.get_cells()[0]
-                cellRenderer.set_property("background", "white")
-                self.messageTableView.refreshProperties()
-
-            normalFont = Pango.FontDescription()
-            normalFont.set_weight(Pango.Weight.NORMAL)
-            self.titleLabel.modify_font(normalFont)
-
-        # Emit Signals to update toolbar status
-        nbSelectedFields = len(self.messageTableView.treeViewHeaderGroup.getSelectedFields())
-        signalsManager = self.messageTableView.controller.getSignalsManager()
-        if nbSelectedFields == 0:
-            signalsManager.emitSignal(SignalsManager.SIG_FIELDS_NO_SELECTION)
-        elif nbSelectedFields == 1:
-            signalsManager.emitSignal(SignalsManager.SIG_FIELDS_SINGLE_SELECTION)
-        elif nbSelectedFields > 1:
-            signalsManager.emitSignal(SignalsManager.SIG_FIELDS_MULTIPLE_SELECTION)
 
     ## Callbacks
-
     def formatEventBox_button_press_event_cb(self, *args):
         supportedFormats = Format.getSupportedFormats()
         currentFormat = self.field.getFormat()
@@ -494,7 +507,19 @@ class TreeViewHeaderWidget(Gtk.VBox):
         self.setCollapsed(not self.collapsed)
 
     def titleEventBox_button_press_event_cb(self, *args):
+        self.messageTableView.controller.vocabularyPerspective.setSelectedMessageTable(self.messageTableView)
         self.setSelected(not self.selected)
+        self.messageTableView.updateBackgroundColor(self)
+
+        # Emit Signals to update toolbar status
+        nbSelectedFields = len(self.messageTableView.treeViewHeaderGroup.getSelectedFields())
+        signalsManager = self.messageTableView.controller.getSignalsManager()
+        if nbSelectedFields == 0:
+            signalsManager.emitSignal(SignalsManager.SIG_FIELDS_NO_SELECTION)
+        elif nbSelectedFields == 1:
+            signalsManager.emitSignal(SignalsManager.SIG_FIELDS_SINGLE_SELECTION)
+        elif nbSelectedFields > 1:
+            signalsManager.emitSignal(SignalsManager.SIG_FIELDS_MULTIPLE_SELECTION)
 
 
 class TreeViewHeaderWidgetGroup(object):
@@ -513,6 +538,10 @@ class TreeViewHeaderWidgetGroup(object):
     def clear(self):
         """Empties the group"""
         self.headerList = []
+
+    def getHeaders(self):
+        """Returns the header list"""
+        return self.headerList
 
     def getSelectedHeaders(self):
         """Returns the header widgets which are selected"""

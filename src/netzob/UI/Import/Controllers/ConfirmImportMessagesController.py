@@ -118,14 +118,14 @@ class ConfirmImportMessagesController(object):
             self.currentProject.getVocabulary().addMessage(message)
 
         # We create a session with each message
-        session = Session(uuid.uuid4(), "Session 1", "")
+        session = Session(str(uuid.uuid4()), "Session 1", "")
         for message in self.importedMessages:
             session.addMessage(message)
         # We register the session in the vocabulary of the project
         self.currentProject.getVocabulary().addSession(session)
 
         # We create a default symbol dedicated for this
-        symbol = Symbol(uuid.uuid4(), symbolName, self.currentProject)
+        symbol = Symbol(str(uuid.uuid4()), symbolName, self.currentProject)
         for message in self.importedMessages:
             symbol.addMessage(message)
         # We register the symbol in the vocabulary of the project
@@ -140,7 +140,7 @@ class ConfirmImportMessagesController(object):
         description = "No description (yet not implemented)"
 
         # We also save the session and the messages in the workspace
-        trace = ImportedTrace(uuid.uuid4(), date, self.importType, description, self.currentProject.getName())
+        trace = ImportedTrace(str(uuid.uuid4()), date, self.importType, description, self.currentProject.getName())
         trace.addSession(session)
         for message in self.importedMessages:
             trace.addMessage(message)

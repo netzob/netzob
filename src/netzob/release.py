@@ -42,8 +42,8 @@ appname = name
 #|    Development version has version number increased and is
 #|    postfixed by ~git
 #+---------------------------------------------------------------------------+
-version = "0.4~git"
-versionName = None
+version = "0.4.0"
+versionName = "JumpingRhino"
 
 #+---------------------------------------------------------------------------+
 #| Copyright mentions
@@ -77,7 +77,8 @@ contributors = ["Georges Bossert <georges.bossert@supelec.fr>",
                 "Franck Roland <franck.l.roland@gmail.com>",
                 "Fabien André <fabien.andre@insa-rennes.fr>",
                 "Quentin Heyler <quentin.heyler@etudiant.univ-rennes1.fr>",
-                "Benjamin Dufour <benjamin.dufour@amossys.fr>"
+                "Benjamin Dufour <benjamin.dufour@amossys.fr>",
+                "Giuseppe Massaro <n3mes1s.oxoo@gmail.com>"
                 ]
 
 #+---------------------------------------------------------------------------+
@@ -98,7 +99,7 @@ download_url = "http://www.netzob.org/download"
 #+---------------------------------------------------------------------------+
 #| Translators
 #+---------------------------------------------------------------------------+
-translator_credits = """Français : Olivier Tétard <olivier.tetard@amossys.fr>"""
+translator_credits = """Français: Olivier Tétard <olivier.tetard@amossys.fr>"""
 
 #+---------------------------------------------------------------------------+
 #| Keywords to describe the application

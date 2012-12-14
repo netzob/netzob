@@ -94,7 +94,7 @@ class AbstractVariableProcessingToken():
         self.linkedValue.append(value)
 
     def setOk(self, ok):
-        logging.debug(_("The token's ok flag is set to {0}.").format(ok))
+        logging.debug("The token's ok flag is set to {0}.".format(ok))
         self.ok = ok
 
     def setValue(self, value):

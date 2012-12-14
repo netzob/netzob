@@ -42,17 +42,17 @@ import random
 #+---------------------------------------------------------------------------+
 from netzob.Common.Plugins.CapturerPlugin import CapturerPlugin
 from netzob.Common.Plugins.Extensions.CapturerMenuExtension import CapturerMenuExtension
-from netzob_plugins.Capturers.NetworkCapturer.NetworkCapturer.NetworkCapturerController import NetworkCapturerController
+from NetworkCapturerController import NetworkCapturerController
 from netzob.UI.NetzobWidgets import NetzobErrorMessage
 
 
 class NetworkCapturerPlugin(CapturerPlugin):
     """NetworkCapturerPlugin:
-            Plugin that captures network trafic.
+            Plugin that captures network traffic.
     """
     __plugin_name__ = "NetworkCapturer"
     __plugin_version__ = "1.0"
-    __plugin_description__ = _("Provide the possibility to capture network trafic.")
+    __plugin_description__ = _("Provide the possibility to capture network traffic.")
     __plugin_author__ = "Frédéric Guihéry <frederic.guihery@amossys.fr>, Georges Bossert <georges.bossert@supelec.fr>"
     __plugin_copyright__ = "Georges Bossert and Frédéric Guihéry"
     __plugin_license__ = "GPLv3+"
@@ -65,7 +65,7 @@ class NetworkCapturerPlugin(CapturerPlugin):
         """
         super(NetworkCapturerPlugin, self).__init__(netzob)
         self.netzob = netzob
-        self.entryPoints = [CapturerMenuExtension(netzob, self.actionCallback, "Capture network trafic", "Capture network trafic")]
+        self.entryPoints = [CapturerMenuExtension(netzob, self.actionCallback, _("Capture network traffic"), _("Capture network traffic"))]
 
     def getName(self):
         """getName:

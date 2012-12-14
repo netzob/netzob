@@ -73,7 +73,7 @@ class AggregateVariable(AbstractNodeVariable):
                 @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
                 @param readingToken: a token which contains all critical information on this access.
         """
-        self.log.debug(_("- [ {0}: sortChildrenToRead.").format(self.toString()))
+        self.log.debug("- [ {0}: sortChildrenToRead.".format(self.toString()))
 
         # We save the state of the underlying variables and the readingToken index before the first treatment.
         globalDictOfValues = dict()
@@ -137,7 +137,7 @@ class AggregateVariable(AbstractNodeVariable):
             # The value of the variable is simply the value we 'ate'.
             self.currentValue = readingToken.getValue()[globalSavedIndex:readingToken.getIndex()]
 
-        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ] -".format(self.getName(), readingToken.toString()))
 
     def readChildren(self, readingToken):
         """readChildren:
@@ -147,7 +147,7 @@ class AggregateVariable(AbstractNodeVariable):
                 @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
                 @param readingToken: a token which contains all critical information on this access.
         """
-        self.log.debug(_("- [ {0}: readChildren.").format(self.toString()))
+        self.log.debug("- [ {0}: readChildren.".format(self.toString()))
 
         # Computing memory, contains all values before the start of the computation. So, if an error occured, we can restore the former and correct values.
         dictOfValues = dict()
@@ -184,7 +184,7 @@ class AggregateVariable(AbstractNodeVariable):
             # The value of the variable is simply the value we 'ate'.
             self.currentValue = readingToken.getValue()[savedIndex:readingToken.getIndex()]
 
-        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ] -".format(self.getName(), readingToken.toString()))
 
     def learn(self, child, readingToken):
         """learn:
@@ -197,17 +197,17 @@ class AggregateVariable(AbstractNodeVariable):
                 @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
                 @param readingToken: a token which contains all critical information on this access.
         """
-        self.log.debug(_("- [ {0}: learn.").format(self.toString()))
+        self.log.debug("- [ {0}: learn.".format(self.toString()))
         savedIndex = readingToken.getIndex()
 
         childPosition = self.indexOfChild(child)
-        repeatVariable = RepeatVariable(uuid.uuid4(), "Learned Option Variable", False, True, self, 0, 1)
+        repeatVariable = RepeatVariable(str(uuid.uuid4()), "Learned Option Variable", False, True, self, 0, 1)
         # We will insert the new child under a 0-1 repeat variable to potentially not take care of it, just before the position of the problematic child.
         self.insertChild(childPosition, repeatVariable)
         valueToBeRead = readingToken.getValue()[readingToken.getIndex():]
         for index in len(valueToBeRead):
             tmpValue = valueToBeRead[:index]
-            tmpChild = DataVariable(uuid.uuid4(), "Learned Inserted Variable", True, True, BinaryType(True, len(tmpValue), len(tmpValue)), tmpValue.to01())
+            tmpChild = DataVariable(str(uuid.uuid4()), "Learned Inserted Variable", True, True, BinaryType(True, len(tmpValue), len(tmpValue)), tmpValue.to01())
             repeatVariable.add(tmpChild)
 
             # We read this new variable in a learning context.
@@ -228,7 +228,7 @@ class AggregateVariable(AbstractNodeVariable):
             # The value of the variable is simply the value we 'ate'.
             self.currentValue = readingToken.getValue()[savedIndex:readingToken.getIndex()]
 
-        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ] -".format(self.getName(), readingToken.toString()))
 
     def writeChildren(self, writingToken):
         """writeChildren:
@@ -238,7 +238,7 @@ class AggregateVariable(AbstractNodeVariable):
                 @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
                 @param writingToken: a token which contains all critical information on this access.
         """
-        self.log.debug(_("- [ {0}: readChildren.").format(self.toString()))
+        self.log.debug("- [ {0}: readChildren.".format(self.toString()))
 
         dictOfValues = dict()
         savedValue = writingToken.getValue()
@@ -268,7 +268,7 @@ class AggregateVariable(AbstractNodeVariable):
             # The value of the variable is simply the value we made.
             self.currentValue = writingToken.getValue()[savedIndex:writingToken.getIndex()]
 
-        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), writingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ] -".format(self.getName(), writingToken.toString()))
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
@@ -303,7 +303,7 @@ class AggregateVariable(AbstractNodeVariable):
                 Each child tries sequentially to read a part of the read value.
                 If one of them fails, the whole operation is cancelled.
         """
-        self.log.debug(_("[ {0} (Aggregate): read access:").format(AbstractVariable.toString(self)))
+        self.log.debug("[ {0} (Aggregate): read access:".format(AbstractVariable.toString(self)))
         if self.getChildren() is not None:
             if self.isMutable():
                 # mutable.
@@ -315,21 +315,21 @@ class AggregateVariable(AbstractNodeVariable):
 
         else:
             # no child.
-            self.log.debug(_("Write abort: the variable has no child."))
+            self.log.debug("Write abort: the variable has no child.")
             readingToken.setOk(False)
 
         # Variable notification
         if readingToken.isOk():
             self.notifyBoundedVariables("read", readingToken, self.currentValue)
 
-        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ]".format(self.getName(), readingToken.toString()))
 
     def write(self, writingToken):
         """write:
                 Each child tries sequentially to write its value.
                 If one of them fails, the whole operation is cancelled.
         """
-        self.log.debug(_("[ {0} (Aggregate): write access:").format(AbstractVariable.toString(self)))
+        self.log.debug("[ {0} (Aggregate): write access:".format(AbstractVariable.toString(self)))
         if self.getChildren() is not None:
             if self.isMutable():
                 # mutable.
@@ -342,21 +342,21 @@ class AggregateVariable(AbstractNodeVariable):
 
         else:
             # no child.
-            self.log.debug(_("Write abort: the variable has no child."))
+            self.log.debug("Write abort: the variable has no child.")
             writingToken.setOk(False)
 
         # Variable notification
         if writingToken.isOk():
             self.notifyBoundedVariables("write", writingToken)
 
-        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ]".format(self.getName(), writingToken.toString()))
 
     def toXML(self, root, namespace):
         """toXML:
             Creates the xml tree associated to this variable.
             Adds every child's own xml definition as xml child to this tree.
         """
-        self.log.debug(_("[ {0} (Aggregate): toXML:").format(AbstractVariable.toString(self)))
+        self.log.debug("[ {0} (Aggregate): toXML:".format(AbstractVariable.toString(self)))
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         xmlVariable.set("id", str(self.getID()))
         xmlVariable.set("name", str(self.getName()))
@@ -367,7 +367,7 @@ class AggregateVariable(AbstractNodeVariable):
         # Definition of children variables
         for child in self.getChildren():
             child.toXML(xmlVariable, namespace)
-        self.log.debug(_("Variable {0}. ]").format(self.getName()))
+        self.log.debug("Variable {0}. ]".format(self.getName()))
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |
@@ -377,7 +377,7 @@ class AggregateVariable(AbstractNodeVariable):
         """loadFromXML:
                 Loads an aggregate variable from an XML definition.
         """
-        logging.debug(_("[ AggregateVariable: loadFromXML:"))
+        logging.debug("[ AggregateVariable: loadFromXML:")
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
@@ -388,7 +388,7 @@ class AggregateVariable(AbstractNodeVariable):
             for xmlChildren in xmlRoot.findall("{" + namespace + "}variable"):
                 child = AbstractVariable.loadFromXML(xmlChildren, namespace, version, symbol)
                 result.addChild(child)
-            logging.debug(_("AggregateVariable: loadFromXML successes: {0} ]").format(result.toString()))
+            logging.debug("AggregateVariable: loadFromXML successes: {0} ]".format(result.toString()))
             return result
-        logging.debug(_("AggregateVariable: loadFromXML fails"))
+        logging.debug("AggregateVariable: loadFromXML fails")
         return None

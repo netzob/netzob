@@ -47,9 +47,9 @@ import uuid
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Filters.Encoding.FormatFilter import FormatFilter
+from netzob.Common.Functions.Encoding.FormatFunction import FormatFunction
 from netzob.Common.Type.TypeIdentifier import TypeIdentifier
-from netzob.Common.Filters.Visualization.TextColorFilter import TextColorFilter
+from netzob.Common.Functions.Visualization.TextColorFunction import TextColorFunction
 from netzob.Common.MMSTD.Dictionary.DataTypes.BinaryType import BinaryType
 from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
     AbstractVariable
@@ -82,7 +82,7 @@ class Field(object):
                 @type symbol: string
                 @param symbol: the parent symbol
         """
-        self.id = uuid.uuid4()
+        self.id = str(uuid.uuid4())
         self.name = name
         self.symbol = symbol
         self.description = ""
@@ -93,10 +93,10 @@ class Field(object):
         self.alignment = ""
         self.regex = regex
 
-        # Filters
-        self.encodingFilters = []
-        self.visualizationFilters = []
-        self.mathematicFilters = []
+        # Functions
+        self.encodingFunctions = []
+        self.visualizationFunctions = []
+        self.transformationFunctions = []
 
         # Interpretation attributes
         self.format = self.symbol.project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
@@ -115,102 +115,102 @@ class Field(object):
     def __repr__(self):
         return str(self.getName())
 
-    ## Filters
-    def addVisualizationFilter(self, filter):
-        self.visualizationFilters.append(filter)
+    ## Functions
+    def addVisualizationFunction(self, function):
+        self.visualizationFunctions.append(function)
 
-    def cleanVisualizationFilters(self):
-        self.visualizationFilters = []
+    def cleanVisualizationFunctions(self):
+        self.visualizationFunctions = []
 
-#    def getVisualizationFilters(self):
-#        return self.visualizationFilters
+#    def getVisualizationFunctions(self):
+#        return self.visualizationFunctions
 
-    def removeVisualizationFilter(self, filter):
-        self.visualizationFilters.remove(filter)
+    def removeVisualizationFunction(self, function):
+        self.visualizationFunctions.remove(function)
 
-    def addEncodingFilter(self, filter):
-        self.encodingFilters.append(filter)
+    def addEncodingFunction(self, function):
+        self.encodingFunctions.append(function)
 
-    def removeEncodingFilter(self, filter):
-        if filter in self.encodingFilters:
-            self.encodingFilters.remove(filter)
+    def removeEncodingFunction(self, function):
+        if function in self.encodingFunctions:
+            self.encodingFunctions.remove(function)
 
-#    def getEncodingFilters(self):
-#        filters = []
+#    def getEncodingFunctions(self):
+#        functions = []
 #        for field in self.getExtendedFields():
-#            filters.extend(field.getEncodingFilters())
-#        filters.extend(self.encodingFilters)
+#            functions.extend(field.getEncodingFunctions())
+#        functions.extend(self.encodingFunctions)
 
-    def getVisualizationFilters(self):
-        """getVisualizationFilters:
-                Get the visualization filters applied on this field.
+    def getVisualizationFunctions(self):
+        """getVisualizationFunctions:
+                Get the visualization functions applied on this field.
 
-                @rtype: netzob.Common.Filters List
-                @return: a list of all needed filters.
+                @rtype: netzob.Common.Functions List
+                @return: a list of all needed functions.
         """
-        filters = []
+        functions = []
 
         # dynamic fields are in Blue
         if not self.isStatic():
-            filters.append(TextColorFilter("Dynamic Field", "blue"))
+            functions.append(TextColorFunction("Dynamic Field", "blue"))
 #            # fields with no variable define are in yellow
 #            if self.variable is None:
-#                filters.append(BackgroundColorFilter("Default variable", "yellow"))
+#                functions.append(BackgroundColorFunction("Default variable", "yellow"))
 
-        return filters
+        return functions
 
-    def getEncodingFilters(self):
-        """getEncodingFilters:
-                Calls computeFormatEncodingFilter.
+    def getEncodingFunctions(self):
+        """getEncodingFunctions:
+                Calls computeFormatEncodingFunction.
         """
-        filters = []
-        # Following filters must be considered :
-        filters.append(self.computeFormatEncodingFilter())
-        return filters
+        functions = []
+        # Following functions must be considered :
+        functions.append(self.computeFormatEncodingFunction())
+        return functions
 
-    def removeMathematicFilter(self, filter):
-        """removeMathematicFilter:
-                Remove a precised mathematic filter.
+    def removeTransformationFunction(self, function):
+        """removeTransformationFunction:
+                Remove a precised function.
 
-                @type filter: netzob.Common.Filters
-                @param filter: the filter that is removed.
+                @type function: netzob.Common.Functions
+                @param function: the function that is removed.
         """
         fToRemove = None
-        for mFilter in self.mathematicFilters:
-            if mFilter.getName() == filter.getName():
-                fToRemove = mFilter
+        for mFunction in self.transformationFunctions:
+            if mFunction.getName() == function.getName():
+                fToRemove = mFunction
                 break
         if fToRemove is not None:
-            self.mathematicFilters.remove(fToRemove)
+            self.transformationFunctions.remove(fToRemove)
 
-    def addMathematicFilter(self, filter):
-        """addMathematicFilter:
-                Add a precised mathematic filter.
+    def addTransformationFunction(self, function):
+        """addTransformationFunction:
+                Add a precised function.
 
-                @type filter: netzob.Common.Filters
-                @param filter: the filter that is added.
+                @type function: netzob.Common.Functions
+                @param function: the function that is added.
         """
-        self.mathematicFilters.append(filter)
+        self.transformationFunctions.append(function)
 
-    def computeFormatEncodingFilter(self):
-        """computeFormatEncodingFilter:
-                Get the format filter applied on this field. It tells how the data are displayed.
+    def computeFormatEncodingFunction(self):
+        """computeFormatEncodingFunction:
+                Get the format function applied on this field. It tells how the data are displayed.
 
-                @rtype: netzob.Common.Filters.FormatFilter
-                @return: the computed format filter.
+                @rtype: netzob.Common.Functions.FormatFunction
+                @return: the computed format function.
         """
-        return FormatFilter("Field Format Encoding", self.format, self.unitSize, self.endianess, self.sign)
+        return FormatFunction("Field Format Encoding", self.format, self.unitSize, self.endianess, self.sign)
 
-    def computeSignEncodingFilter(self):
-        """computeSignEncodingFilter:
+    def computeSignEncodingFunction(self):
+        """computeSignEncodingFunction:
                 Does nothing.
 
                 @return: None
         """
         return None
 
-    def computeEndianessEncodingFilter(self):
-        """computeEndianessEncodingFilter:
+    def computeEndianessEncodingFunction(self):
+        """computeEndianessEncodingFunction:
                 Does nothing.
 
                 @return: None
@@ -252,6 +252,18 @@ class Field(object):
                 @return: True if the regex is only dynamic.
         """
         if re.match("\(\.\{\d?,\d+\}\)", self.regex) is not None:
+            return True
+        else:
+            return False
+
+    def isRegexOptional(self):
+        """isRegexOptional:
+                Tells if a regex is optional (i.e. has a '?' at the end).
+
+                @rtype: boolean
+                @return: True if the regex is optional.
+        """
+        if self.getRegex()[-1] == '?':
             return True
         else:
             return False
@@ -325,9 +337,12 @@ class Field(object):
             self.addField(field)
         self.popField()
 
-        # Last loop to detect fixed-sized dynamic fields
+        # Loop to detect fixed-sized dynamic fields
         for innerField in self.getLocalFields():
             innerField.fixRegex()
+
+        # Clean created fields (remove fields that produce only empty cells)
+        self.removeEmptyFields()
 
     #+----------------------------------------------
     #| simplePartitioning:
@@ -344,7 +359,7 @@ class Field(object):
             curLen = len(cell)
             if curLen > maxLen:
                 maxLen = curLen
-        logging.debug("Size of the longest message : {0}".format(maxLen))
+        logging.debug("Size of the longest message: {0}".format(maxLen))
 
         # Try to see if the column is static or variable
         resultString = []
@@ -502,7 +517,7 @@ class Field(object):
             # Add field to local fields of the current object
             self.addField(field)
 
-        # Last loop to detect fixed-sized dynamic fields
+        # Loop to detect fixed-sized dynamic fields
         for innerField in self.getLocalFields():
             innerField.fixRegex()
 
@@ -523,7 +538,7 @@ class Field(object):
         parent = extendedFields[0].getParentField()
         for field in extendedFields[1:]:
             if field.getParentField() != parent:
-                logging.warn(_("Can't smooth regex from fields that are part of different layers."))
+                logging.warn("Can't smooth regex from fields that are part of different layers.")
                 return
 
         # Main smooth routine
@@ -686,7 +701,24 @@ class Field(object):
         field2.removeLocalFields()
 
         # Concatenate fields
-        field1.setRegex("(" + field1.getRegex()[1:-1] + field2.getRegex()[1:-1] + ")")
+        regex = ""
+        optional = False
+        if field1.isRegexOptional():
+            regex += field1.getRegex()[1:-2]
+            optional = True
+        else:
+            regex += field1.getRegex()[1:-1]
+
+        if field2.isRegexOptional():
+            regex += field2.getRegex()[1:-2]
+            optional = True
+        else:
+            regex += field2.getRegex()[1:-1]
+
+        if optional:
+            field1.setRegex("(" + regex + ")?")
+        else:
+            field1.setRegex("(" + regex + ")")
         localFields.remove(field2)
         return 1
 
@@ -762,30 +794,25 @@ class Field(object):
             return True
 
     #+-----------------------------------------------------------------------+
-    #| getPossibleTypesForAField:
-    #|     Retrieve all the possible types for a field
+    #| getPossibleTypes:
+    #|     Retrieve all the possible types for the current field
     #+-----------------------------------------------------------------------+
-    def getPossibleTypesForAField(self, field):
-        # first we verify the field exists in the symbol
-        if not field in self.fields:
-            logging.warn("The computing field is not part of the current symbol")
-            return []
-
+    def getPossibleTypes(self):
         # Retrieve all the part of the messages which are in the given field
         cells = self.getUniqValuesByField()
         typeIdentifier = TypeIdentifier()
-        return typeIdentifier.getTypes(cells)
+        return typeIdentifier.getTypes("".join(cells))
 
     #+-----------------------------------------------------------------------+
-    #| getStyledPossibleTypesForAField:
+    #| getStyledPossibleTypes:
     #|     Retrieve all the possibles types for a field and we colorize
     #|     the selected one we an HTML RED SPAN
     #+-----------------------------------------------------------------------+
-    def getStyledPossibleTypesForAField(self, field):
-        tmpTypes = self.getPossibleTypesForAField(field)
+    def getStyledPossibleTypes(self):
+        tmpTypes = self.getPossibleTypes()
         for i in range(len(tmpTypes)):
-            if tmpTypes[i] == field.getFormat():
-                tmpTypes[i] = "<span foreground=\"red\">" + field.getFormat() + "</span>"
+            if tmpTypes[i] == self.getFormat():
+                tmpTypes[i] = "<span foreground=\"red\">" + self.getFormat() + "</span>"
         return ", ".join(tmpTypes)
 
     ## Variable
@@ -806,7 +833,7 @@ class Field(object):
                 value = value[1:len(value) - 1]
 
             value = TypeConvertor.netzobRawToBitArray(value)
-            variable = DataVariable(uuid.uuid4(), self.getName(), False, False, BinaryType(True, len(value), len(value)), value.to01())  # A static field is neither mutable nor random.
+            variable = DataVariable(str(uuid.uuid4()), self.getName(), False, False, BinaryType(True, len(value), len(value)), value.to01())  # A static field is neither mutable nor random.
             return variable
         else:
             if self.defaultVariable is None:
@@ -829,10 +856,10 @@ class Field(object):
             tmpDomain.add(TypeConvertor.netzobRawToBitArray(cell))
         domain = sorted(tmpDomain)
 
-        variable = AggregateVariable(uuid.uuid4(), "Aggregate", False, False, None)
-        alternateVar = AlternateVariable(uuid.uuid4(), "Alternate", True, False, None)
+        variable = AggregateVariable(str(uuid.uuid4()), "Aggregate", False, False, None)
+        alternateVar = AlternateVariable(str(uuid.uuid4()), "Alternate", True, False, None)
         for d in domain:
-            child = DataVariable(uuid.uuid4(), "defaultVariable", False, False, BinaryType(True, len(d), len(d)), d.to01())
+            child = DataVariable(str(uuid.uuid4()), "defaultVariable", False, False, BinaryType(True, len(d), len(d)), d.to01())
             alternateVar.addChild(child)
         variable.addChild(alternateVar)
         return variable
@@ -894,6 +921,28 @@ class Field(object):
         else:
             self.fields.pop(index)
 
+    def removeEmptyFields(self, cb_status):
+        """
+        removeEmptyFields: we look for useless fields (i.e. fields
+        that produces only empty cells) and remove them.
+        """
+        fieldsToRemove = []
+        fields = self.getExtendedFields()
+        step = float(100) / float(len(fields))
+        totalPercent = 0
+        for innerField in fields:
+            # We try to see if this field produces only empty values when applied on messages
+            cells = innerField.getCells()
+            cells = "".join(cells)
+            if cb_status is not None:
+                totalPercent += step
+                cb_status(4, totalPercent, None)
+            if cells == "":
+                # Concatenate the current useless inner field with the next field
+                fieldsToRemove.append(innerField)
+        for field in fieldsToRemove:
+            field.getParentField().removeLocalField(field)
+
     def removeLocalField(self, field):
         """removeLocalField:
         Remove from the current field's children, the provided field"""
@@ -941,7 +990,7 @@ class Field(object):
         """
         # First we verify the field exists in the symbol
         if not self in self.getSymbol().getAllFields():
-            logging.warn(_("The computing field is not part of the current symbol"))
+            logging.warn("The computing field is not part of the current symbol")
             return []
 
         # Retrieve all sub-cells
@@ -1133,8 +1182,8 @@ class Field(object):
     def getEndianess(self):
         return self.endianess
 
-    def getMathematicFilters(self):
-        return self.mathematicFilters
+    def getTransformationFunctions(self):
+        return self.transformationFunctions
 
     def getVariable(self):
         if self.variable is None:
@@ -1244,7 +1293,7 @@ class Field(object):
                 @return: the built field.
         """
         if version == "0.1":
-            field_id = uuid.UUID(xmlRoot.get("id"))
+            field_id = str(xmlRoot.get("id"))
             field_name = xmlRoot.get("name")
             field_regex = ""
             if xmlRoot.find("{" + namespace + "}regex") is not None:

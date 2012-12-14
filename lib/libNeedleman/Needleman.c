@@ -560,13 +560,15 @@ char* alignTwoMessages(t_message * resMessage, Bool doInternalSlick, t_message *
 	  }*/
   // Try to (optionally) slick the alignment
   if(doInternalSlick == TRUE) {
-    for(i = 1; i < message1->len + message2->len - 1; i++) {
-      if( tmpMessageMask[i] == EQUAL ) {
-        if( tmpMessageMask[i - 1] == DIFFERENT ) {
-          if( tmpMessageMask[i + 1] == DIFFERENT ) {
-            tmpMessage[i] = 0xf6;
-            tmpMessageMask[i] = DIFFERENT;
-          }
+    if(message1->len + message2->len > 0) {
+      for(i = 1; i < message1->len + message2->len - 1; i++) {
+	if( tmpMessageMask[i] == EQUAL ) {
+	  if( tmpMessageMask[i - 1] == DIFFERENT ) {
+	    if( tmpMessageMask[i + 1] == DIFFERENT ) {
+	      tmpMessage[i] = 0xf6;
+	      tmpMessageMask[i] = DIFFERENT;
+	    }
+	  }
         }
       }
     }

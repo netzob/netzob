@@ -65,12 +65,12 @@ class BugReporterController(object):
     TRACKER_ID_BUG_REPORT = "1"
     CUSTOM_FIELD_SHA2_ID_BUG_REPORT = "5"
 
-    def __init__(self, exceptionClass, exceptionInstance, traceback):
+    def __init__(self, mainController, exceptionClass, exceptionInstance, traceback):
         self.exceptionClass = exceptionClass
         self.exceptionInstance = exceptionInstance
         self.traceback = traceback
         self.apiKey = ResourcesConfiguration.extractAPIKeyDefinitionFromLocalFile()
-        self._view = BugReporterView(self)
+        self._view = BugReporterView(self, parent=mainController.view.mainWindow)
         self.log = logging.getLogger(__name__)
         self.disableRemoteCertificateVerification = False
 
@@ -114,7 +114,7 @@ class BugReporterController(object):
 
         self._view.bugReporterSaveButton.set_sensitive(False)
         self._view.bugReporterCancelButton.set_sensitive(True)
-        self._view.bugReporterCancelButton.set_label(_("Fermer"))
+        self._view.bugReporterCancelButton.set_label(_("Close"))
 
         # Compute the content of the report
         reportContent = self.getReportContent()
@@ -194,7 +194,7 @@ class BugReporterController(object):
             resp, content = h.request(api_url, 'GET')
             return resp['status'] == '200'
         except Exception, e:
-            self.log.error("Error while verifying the server is up : {0}".format(e))
+            self.log.error("Error while verifying the server is up: {0}".format(e))
         return False
 
     def isAPIKeyValid(self):
@@ -238,7 +238,7 @@ class BugReporterController(object):
         except SSLHandshakeError, e:
             self.log.error("The SSL certificate of the remote server is not valid. ({0})".format(e))
         except Exception, e:
-            self.log.error("An error occurred while verifying the SSL connection with the remote server : {0}".format(e))
+            self.log.error("An error occurred while verifying the SSL connection with the remote server: {0}".format(e))
         return False
 
     def getReportContent(self):

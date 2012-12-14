@@ -181,6 +181,8 @@ class AbstractionLayer():
         self.log.info("Sending symbol '" + str(symbol) + "' over the communication channel")
         # First we specialize the symbol in a message
         binMessage = self.specialize(symbol)
+        if type(binMessage) == tuple:  # Means EmptySymbol or UnknownSymbol
+            (binMessage, dummy) = binMessage
         strMessage = TypeConvertor.bin2strhex(binMessage)
         self.log.info("Write str message = '" + strMessage + "'")
 
@@ -204,18 +206,18 @@ class AbstractionLayer():
         self.log.debug("We abstract the received message : " + TypeConvertor.bin2strhex(message))
         # we search in the vocabulary an entry which match the message
         for symbol in self.vocabulary.getSymbols():
-            self.log.debug(_("Try to abstract message through : {0}.").format(symbol.getName()))
+            self.log.debug("Try to abstract message through : {0}.".format(symbol.getName()))
             readingToken = VariableReadingToken(False, self.vocabulary, self.memory, TypeConvertor.strBitarray2Bitarray(message), 0)
             symbol.getRoot().read(readingToken)
 
-            logging.debug(_("ReadingToken: isOk: {0}, index: {1}, len(value): {2}").format(str(readingToken.isOk()), str(readingToken.getIndex()), str(len(readingToken.getValue()))))
+            logging.debug("ReadingToken: isOk: {0}, index: {1}, len(value): {2}".format(str(readingToken.isOk()), str(readingToken.getIndex()), str(len(readingToken.getValue()))))
             # The message matches if the read is ok and the whole entry was read.
             if readingToken.isOk() and readingToken.getIndex() == len(readingToken.getValue()):
-                self.log.debug(_("The message matches symbol {0}.").format(symbol.getName()))
+                self.log.debug("The message matches symbol {0}.".format(symbol.getName()))
                 # It matches so we learn from it if it's possible
                 return symbol
             else:
-                self.log.debug(_("The message doesn't match symbol {0}.").format(symbol.getName()))
+                self.log.debug("The message doesn't match symbol {0}.".format(symbol.getName()))
             # This is now managed in the variables modules.
             #===================================================================
             #    self.memory.createMemory()
@@ -234,7 +236,7 @@ class AbstractionLayer():
         return UnknownSymbol()
 
     def specialize(self, symbol):
-        self.log.info("Specializing the symbol " + symbol.getName())
+        self.log.info("Specializing the symbol {0}".format(symbol.getName()))
 
         #TODO: Replace all default values with clever values.
         writingToken = VariableWritingToken(False, self.vocabulary, self.memory, bitarray(''), ["random"])
@@ -260,7 +262,8 @@ class AbstractionLayer():
         return self.outputSymbols
 
     def getProperties(self):
-        """Compute and return the list of properties of the abstraction layer"""
+        """Compute and return the list of properties of the
+        abstraction layer"""
         properties = []
         properties.extend(self.getCommunicationChannel().getProperties())
 

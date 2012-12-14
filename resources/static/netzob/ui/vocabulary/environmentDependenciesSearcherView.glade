@@ -14,7 +14,7 @@
   <object class="GtkDialog" id="envDepsSearcherDialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">Search or Environmental Dependencies</property>
+    <property name="title" translatable="yes">Search For Environmental Dependencies</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox1">

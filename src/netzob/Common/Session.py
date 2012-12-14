@@ -97,7 +97,7 @@ class Session(object):
     @staticmethod
     def loadFromXML(xmlRoot, namespace_main, namespace_common, version, poolOfMessages):
         if version == "0.1":
-            id = uuid.UUID(xmlRoot.get("id"))
+            id = str(xmlRoot.get("id"))
             name = xmlRoot.get("name")
             description = xmlRoot.get("description")
 

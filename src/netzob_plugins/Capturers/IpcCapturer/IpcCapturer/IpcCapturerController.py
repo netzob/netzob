@@ -42,8 +42,8 @@ import time
 #+---------------------------------------------------------------------------+
 from netzob.UI.NetzobWidgets import NetzobInfoMessage, NetzobErrorMessage
 from netzob.Common.Plugins.Capturers.AbstractCapturerController import AbstractCapturerController
-from netzob_plugins.Capturers.IpcCapturer.IpcCapturer.IpcCapturerView import IpcCapturerView
-from netzob_plugins.Capturers.IpcCapturer.IpcCapturer.IpcCapturer import IpcCapturer
+from IpcCapturerView import IpcCapturerView
+from IpcCapturer import IpcCapturer
 from netzob.Common.Models.IPCMessage import IPCMessage
 from netzob.Common.NetzobException import NetzobImportException
 
@@ -105,12 +105,15 @@ class IpcCapturerController(AbstractCapturerController):
         self.model.stopSniff()
 
     def callback_readMessage(self, message):
+        shortPayload = message.getStringData()
+        if len(shortPayload) > 256:
+            shortPayload = shortPayload[:255] + '...'
         self.view.listListStore.append([str(message.getID()),
                                         False,
                                         str(message.getKey()),
                                         str(message.getCategory()),
                                         str(message.getDirection()),
-                                        str(message.getStringData())])
+                                        str(shortPayload)])
 
     def doGetMessageDetails(self, messageID):
         return self.model.getMessageDetails(messageID)
@@ -125,7 +128,7 @@ class IpcCapturerController(AbstractCapturerController):
             self.model.sniffOption = "network"
         elif self.view.ipcFlowsCheck.get_active():
             self.model.sniffOption = "ipc"
-        elif self.view.selectecFlowsCheck.get_active():
+        elif self.view.selectedFlowsCheck.get_active():
             self.model.sniffOption = "selected"
         else:
             self.model.sniffOption = "all"

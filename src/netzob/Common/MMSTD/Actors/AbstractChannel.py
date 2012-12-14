@@ -169,6 +169,9 @@ class AbstractChannel():
     def getOriginalTargetPort(self):
         return self.originalTargetPort
 
+    def getMemory(self):
+        return self.memory
+
     def getProperties(self):
         properties = []
         properties.append(Property("Protocol", Format.STRING, self.originalProtocol))

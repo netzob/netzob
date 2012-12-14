@@ -32,6 +32,7 @@ from gettext import gettext as _
 import logging
 import time
 import threading
+import uuid
 
 #+----------------------------------------------
 #| Related third party imports
@@ -72,7 +73,8 @@ class NetworkOracle(threading.Thread):
         abstractionLayer = AbstractionLayer(self.communicationChannel, self.mmstd.getVocabulary(), memory)
 
         # And we create an MMSTD visitor for this
-        self.oracle = MMSTDVisitor("MMSTD-NetworkOracle", self.mmstd, self.isMaster, abstractionLayer)
+        anID = str(uuid.uuid4())
+        self.oracle = MMSTDVisitor(anID, "MMSTD-NetworkOracle", self.mmstd, self.isMaster, abstractionLayer)
         self.oracle.start()
 
         while (self.oracle.isAlive()):

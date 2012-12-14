@@ -30,6 +30,7 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
+from netzob.Inference.Grammar.AutomaticGrammarInferenceView import AutomaticGrammarInferenceView
 from netzob.UI.Grammar.Views.GrammarView import GrammarView
 from netzob.UI.Grammar.Controllers.CreateStateController import CreateStateController
 from netzob.UI.Grammar.Controllers.CreateSemiStochasticTransitionController import CreateSemiStochasticTransitionController
@@ -83,6 +84,9 @@ class GrammarController(object):
             logging.info("No project loaded.")
             return
 
+        agi = AutomaticGrammarInferenceView(self.getCurrentProject())
+        agi.display()
+
     def passiveGrammarInferring_activate_cb(self, event):
         if self.getCurrentProject() is None:
             logging.info("No project loaded.")
@@ -103,7 +107,7 @@ class GrammarController(object):
             logging.info("No project loaded.")
             return
 
-        createTransitionController = CreateSemiStochasticTransitionController(self)
+        createTransitionController = CreateSemiStochasticTransitionController(self, None)
         createTransitionController.run()
 
     def createOpenChannelTransition_activate_cb(self, event):
@@ -111,7 +115,7 @@ class GrammarController(object):
             logging.info("No project loaded.")
             return
 
-        createTransitionController = CreateOpenChannelTransitionController(self)
+        createTransitionController = CreateOpenChannelTransitionController(self, None)
         createTransitionController.run()
 
     def createCloseChannelTransition_activate_cb(self, event):
@@ -119,5 +123,5 @@ class GrammarController(object):
             logging.info("No project loaded.")
             return
 
-        createTransitionController = CreateCloseChannelTransitionController(self)
+        createTransitionController = CreateCloseChannelTransitionController(self, None)
         createTransitionController.run()

@@ -103,7 +103,7 @@ class NetworkCapturerView(AbstractCapturerView):
             str, 'gboolean', str)
         self.listTreeView.set_model(self.listListStore)
         self.addTreeViewSelectedToggleColumn()
-        self.addTreeViewTextColumn("Payload", 2)
+        self.addTreeViewTextColumn(_("Payload"), 2)
 
     def makeL2ImportTreeView(self):
         self.removeAllTreeViewColumns()
@@ -113,9 +113,9 @@ class NetworkCapturerView(AbstractCapturerView):
             str, 'gboolean', str, str, str)
         self.listTreeView.set_model(self.listListStore)
         self.addTreeViewSelectedToggleColumn()
-        self.addTreeViewTextColumn("Source Address", 2)
-        self.addTreeViewTextColumn("Destination Address", 3)
-        self.addTreeViewTextColumn("Payload", 4)
+        self.addTreeViewTextColumn(_("Source Address"), 2)
+        self.addTreeViewTextColumn(_("Destination Address"), 3)
+        self.addTreeViewTextColumn(_("Payload"), 4)
 
     def makeL3ImportTreeView(self):
         self.removeAllTreeViewColumns()
@@ -125,9 +125,9 @@ class NetworkCapturerView(AbstractCapturerView):
             str, 'gboolean', str, str, str)
         self.listTreeView.set_model(self.listListStore)
         self.addTreeViewSelectedToggleColumn()
-        self.addTreeViewTextColumn("Source IP", 2)
-        self.addTreeViewTextColumn("Destination IP", 3)
-        self.addTreeViewTextColumn("Payload", 4)
+        self.addTreeViewTextColumn(_("Source IP"), 2)
+        self.addTreeViewTextColumn(_("Destination IP"), 3)
+        self.addTreeViewTextColumn(_("Payload"), 4)
 
     def makeL4ImportTreeView(self):
         self.removeAllTreeViewColumns()
@@ -138,9 +138,9 @@ class NetworkCapturerView(AbstractCapturerView):
             str, 'gboolean', str, str, str, str, str, str)
         self.listTreeView.set_model(self.listListStore)
         self.addTreeViewSelectedToggleColumn()
-        self.addTreeViewTextColumn("Source IP", 2)
-        self.addTreeViewTextColumn("Destination IP", 3)
-        self.addTreeViewTextColumn("Protocol", 4)
-        self.addTreeViewTextColumn("Source Port", 5)
-        self.addTreeViewTextColumn("Destination Port", 6)
-        self.addTreeViewTextColumn("Payload", 7)
+        self.addTreeViewTextColumn(_("Source IP"), 2)
+        self.addTreeViewTextColumn(_("Destination IP"), 3)
+        self.addTreeViewTextColumn(_("Protocol"), 4)
+        self.addTreeViewTextColumn(_("Source Port"), 5)
+        self.addTreeViewTextColumn(_("Destination Port"), 6)
+        self.addTreeViewTextColumn(_("Payload"), 7)

@@ -32,8 +32,6 @@
 import sys
 import os
 import uuid
-from fnmatch import fnmatch
-from glob import glob
 import subprocess
 sys.path.insert(0, 'src/')
 from setuptools import setup, Extension, find_packages
@@ -41,11 +39,7 @@ from netzob import release
 from resources.sdist.manpage_command import manpage_command
 from resources.sdist.pybuild_command import pybuild_command
 from resources.sdist.test_command import test_command
-
-
-def opj(*args):
-    path = os.path.join(*args)
-    return os.path.normpath(path)
+from resources.sdist.utils import find_data_files, opj
 
 #+----------------------------------------------------------------------------
 #| Definition of variables
@@ -83,7 +77,7 @@ pyRegexPath = opj(regexPath, "Py_lib")
 toolsPath = opj(libPath, "tools")
 
 # Generate the random binary identifier BID
-macros = [('BID', '"{0}"'.format(uuid.uuid4()))]
+macros = [('BID', '"{0}"'.format(str(uuid.uuid4())))]
 
 # Module Needleman
 moduleLibNeedleman = Extension('netzob._libNeedleman',
@@ -142,7 +136,7 @@ dependencies = [
     'babel',
     'bitarray',
     'lxml',
-    'httplib2'
+    'httplib2',
 ]
 
 extra_dependencies = {
@@ -178,33 +172,6 @@ except ImportError:
     print "Info: Babel support unavailable, translations not available"
 
 
-#+---------------------------------------------------------------------------------------------
-#| Build a mapping of merge path and local files to put in data_files argument of setup() call
-#+---------------------------------------------------------------------------------------------
-def find_data_files(dstdir, srcdir, *wildcards, **kw):
-    # get a list of all files under the srcdir matching wildcards,
-    # returned in a format to be used for install_data
-    def walk_helper(arg, dirname, files):
-        if '.git' in dirname:
-            return
-        names = []
-        (lst,) = arg
-        for wc in wildcards:
-            wc_name = opj(dirname, wc)
-            for f in files:
-                filename = opj(dirname, f)
-                if fnmatch(filename, wc_name) and not os.path.isdir(filename):
-                    names.append(filename)
-        lst.append((dirname.replace(srcdir, dstdir), names))
-
-    file_list = []
-    if kw.get('recursive', True):
-        os.path.walk(srcdir, walk_helper, (file_list,))
-    else:
-        walk_helper((file_list,), srcdir,
-                    [os.path.basename(f) for f in glob(opj(srcdir, '*'))])
-    return file_list
-
 root_data_files = find_data_files(opj("share", "netzob"), netzobStaticResourcesPath, 'logo.png', recursive=False)
 app_data_files = find_data_files(opj("share", "applications"), netzobStaticResourcesPath, 'netzob.desktop', recursive=False)
 icons_data_files = find_data_files(opj("share", "netzob", "icons"), opj(netzobStaticResourcesPath, "icons"), '*.png')
@@ -225,7 +192,10 @@ NEWS = open('NEWS.rst', 'rt').read()
 setup(
     name=release.name,
     packages=find_packages(where='src'),
-    package_dir={"netzob": "src" + os.sep + "netzob", "netzob_plugins": "src" + os.sep + "netzob_plugins"},
+    package_dir={
+        "netzob": opj("src", "netzob"),
+        "netzob_plugins": opj("src", "netzob_plugins"),
+    },
     ext_modules=[moduleLibNeedleman, moduleLibScoreComputation, moduleLibInterface, moduleLibRegex],
     data_files=data_files,
     scripts=["netzob"],
@@ -243,17 +213,18 @@ setup(
     keywords=release.keywords,
     classifiers=[
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2.6",
+        "Programming Language :: C",
         "Development Status :: 4 - Beta",
-        "Environment :: Other Environment",
+        "Environment :: X11 Applications :: GTK",
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
-        "Natural Language :: English",
         "Intended Audience :: System Administrators",
         "License :: OSI Approved :: GNU General Public License (GPL)",
         "Operating System :: OS Independent",
+        "Natural Language :: English",
+        "Natural Language :: French",
         "Topic :: Security",
-        "Topic :: System :: Networking",
+        "Topic :: System :: Networking"
     ],
     long_description=README + '\n' + NEWS,
     cmdclass=CMD_CLASS,
@@ -270,3 +241,26 @@ setup(
         ]
     },
 )
+
+if len(sys.argv) > 1:
+    command = sys.argv[1]
+else:
+    command = None
+if command in ["build", "develop", "install", "clean"]:
+    root_dir = os.getcwd()
+    main_plugin_dir = root_dir + os.sep + "src" + os.sep + "netzob_plugins" + os.sep
+    plugin_categories = ["Capturers", "Importers", "Exporters"]
+    for plugin_category in plugin_categories:
+        plugin_dir = main_plugin_dir + plugin_category + os.sep
+        plugin_list = os.listdir(plugin_dir)
+        for plugin_name in plugin_list:
+            if plugin_name != "__init__.py" and plugin_name != "__init__.pyc":
+                plugin_fullpath = plugin_dir + plugin_name
+                print ""
+                print "------------------------------"
+                print "Handling plugin: " + plugin_name
+                print "Plugin path: " + plugin_fullpath
+                os.chdir(plugin_fullpath)
+                cmd = "{0} setup.py {1}".format(sys.executable, " ".join(sys.argv[1:]))
+                print "Using following command: " + cmd
+                os.system(cmd)

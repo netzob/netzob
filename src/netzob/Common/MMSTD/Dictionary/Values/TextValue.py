@@ -60,7 +60,7 @@ class TextValue(AbstractValue):
         return (self.bintext, self.strtext)
 
     def compare(self, val, indice, negative, dictionary):
-        self.log.debug("Compare received : '" + str(val[indice:]) + "' with '" + str(self.bintext) + "' ")
+        self.log.debug("Compare received: '{0}' with '{1}'".format(str(val[indice:]), str(self.bintext)))
 
         tmp = val[indice:]
         if len(tmp) >= len(self.bintext):

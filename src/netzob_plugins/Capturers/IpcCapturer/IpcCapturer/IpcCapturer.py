@@ -168,7 +168,7 @@ class IpcCapturer(AbstractCapturer):
     #| Thread for sniffing a process
     #+----------------------------------------------
     def sniffThread(self):
-        logging.info(_("Launching sniff process"))
+        logging.info("Launching sniff process")
         self.stracePid = subprocess.Popen(["/usr/bin/strace", "-xx", "-s", "65536", "-e", "read,write", "-p", str(self.pid)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         GObject.io_add_watch(self.stracePid.stderr, GObject.IO_IN | GObject.IO_HUP, self.handle_new_pkt)
 
@@ -202,13 +202,9 @@ class IpcCapturer(AbstractCapturer):
             if not fd in self.selected_fds:
                 return self.doSniff
 
-        if returnCode > 256:
-            tmp_pkt = pkt[:255] + "..."
-        else:
-            tmp_pkt = pkt
-        mUuid = uuid.uuid4()
+        mUuid = str(uuid.uuid4())
         mTimestamp = int(time.time())
-        message = IPCMessage(mUuid, mTimestamp, tmp_pkt, self.getTypeFromFD(int(fd)), fd, direction)
+        message = IPCMessage(mUuid, mTimestamp, pkt, self.getTypeFromFD(int(fd)), fd, direction)
         self._payloadDict[mUuid] = pkt
         self.messages.append(message)
         self.callback_readMessage(message)

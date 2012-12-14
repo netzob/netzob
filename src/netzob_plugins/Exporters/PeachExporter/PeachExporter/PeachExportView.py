@@ -96,14 +96,13 @@ class PeachExportView(AbstractExporterView):
         """
         # Tree store contains:
         # str : text (symbol Name)
-        # str : text (score)
         # str : color foreground
         # str : color background
-        self.treestore = Gtk.TreeStore(str, str, str, str, str)
+        self.treestore = Gtk.TreeStore(str, str, str, str)
         self.symbolTreeview = Gtk.TreeView(self.treestore)
 
         renderer = Gtk.CellRendererText()
-        columnSymbols = Gtk.TreeViewColumn("Symbols", renderer, text=1)
+        columnSymbols = Gtk.TreeViewColumn(_("Symbols"), renderer, text=1)
         self.symbolTreeview.append_column(columnSymbols)
 
         # Symbol list
@@ -120,7 +119,7 @@ class PeachExportView(AbstractExporterView):
         self.optionsTable = Gtk.Table(rows=1, columns=4, homogeneous=False)
         self.optionsTable.show()
 
-        label = NetzobLabel(_("Fuzzing based on : "))
+        label = NetzobLabel(_("Fuzzing based on: "))
         self.comboFuzzingBase = NetzobComboBoxEntry()
         self.comboFuzzingBase.append_text("Variable")
         self.comboFuzzingBase.append_text("Regex")
@@ -128,11 +127,11 @@ class PeachExportView(AbstractExporterView):
         self.optionsTable.attach(label, 0, 1, 0, 1)
         self.optionsTable.attach(self.comboFuzzingBase, 1, 2, 0, 1)
 
-        self.checkMutateStaticFields = Gtk.CheckButton("Mutate static fields")
+        self.checkMutateStaticFields = Gtk.CheckButton(_("Mutate static fields"))
         self.checkMutateStaticFields.show()
         self.checkMutateStaticFields.set_active(True)
         self.optionsTable.attach(self.checkMutateStaticFields, 2, 3, 0, 1)
 
-        self.exportButton = Gtk.Button("Export")
+        self.exportButton = Gtk.Button(_("Export"))
         self.exportButton.show()
         self.optionsTable.attach(self.exportButton, 3, 4, 0, 1)

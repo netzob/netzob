@@ -29,6 +29,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
+from gettext import ngettext
 import os
 import uuid
 import logging
@@ -152,7 +153,7 @@ class VocabularyController(object):
         if (result == 0):
             newSymbolName = entry.get_text()
             newSymbolId = str(uuid.uuid4())
-            self.log.debug("A new symbol will be created with the given name : {0}".format(newSymbolName))
+            self.log.debug("A new symbol will be created with the given name: {0}".format(newSymbolName))
             currentProject = self.netzob.getCurrentProject()
             newSymbol = Symbol(newSymbolId, newSymbolName, currentProject)
             currentProject.getVocabulary().addSymbol(newSymbol)
@@ -175,7 +176,7 @@ class VocabularyController(object):
         symbols = self.view.getCheckedSymbolList()
 
         # Create a new symbol
-        newSymbol = Symbol(uuid.uuid4(), "Merged", self.getCurrentProject())
+        newSymbol = Symbol(str(uuid.uuid4()), "Merged", self.getCurrentProject())
 
         # fetch all their messages
         for sym in symbols:
@@ -241,13 +242,16 @@ class VocabularyController(object):
     def symbolListTreeViewSelection_changed_cb(self, selection):
         """Callback executed when the user
         clicks on a symbol in the list"""
+        if 1 != selection.count_selected_rows():
+            return
         logging.debug("The current symbol has changed")
-        model, iter = selection.get_selected()
+        (model, paths) = selection.get_selected_rows()
+        aIter = model.get_iter(paths[0])  # We work on only one symbol/layer
         currentVocabulary = self.netzob.getCurrentProject().getVocabulary()
-        if iter is not None:
+        if aIter is not None:
             logging.debug("Iter is not none")
             # We first check if the user selected a symbol
-            ID = model[iter][self.view.SYMBOLLISTSTORE_ID_COLUMN]
+            ID = model[aIter][self.view.SYMBOLLISTSTORE_ID_COLUMN]
             field = currentVocabulary.getFieldByID(ID)
             self.executeMoveTargetOperation(field.getSymbol())
             self.view.setDisplayedFieldInSelectedMessageTable(field)
@@ -257,26 +261,26 @@ class VocabularyController(object):
             self.getSignalsManager().emitSignal(SignalsManager.SIG_SYMBOLS_NO_SELECTION)
 
     def symbolListTreeView_button_press_event_cb(self, treeview, eventButton):
+        if 1 > treeview.get_selection().count_selected_rows():
+            return
         # Popup a contextual menu if right click
         if eventButton.type == Gdk.EventType.BUTTON_PRESS and eventButton.button == 3:
-            x = int(eventButton.x)
-            y = int(eventButton.y)
-            try:
-                (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
-            except:
-                # No symbol selected
-                return
+            (model, paths) = treeview.get_selection().get_selected_rows()
 
-            # Retrieve the selected layerField
-            layer_id = treeview.get_model()[path][VocabularyView.SYMBOLLISTSTORE_ID_COLUMN]
-            if layer_id is not None:
-                layer = self.getCurrentProject().getVocabulary().getFieldByID(layer_id)
-            else:
-                return
+            layers = []
+            for path in paths:
+                # Retrieve the selected layerFields
+                layer_id = model[path][VocabularyView.SYMBOLLISTSTORE_ID_COLUMN]
+                if layer_id is not None:
+                    layer = self.getCurrentProject().getVocabulary().getFieldByID(layer_id)
+                    layers.append(layer)
+                else:
+                    return
 
             # Popup a contextual menu
-            menuController = ContextualMenuOnLayerController(self, layer)
+            menuController = ContextualMenuOnLayerController(self, layers)
             menuController.run(eventButton)
+            return True  # To discard remaining signals (such as 'changed_cb')
 
 ################ TO BE FIXED
     def button_newview_cb(self, widget):
@@ -299,7 +303,7 @@ class VocabularyController(object):
             return
         layers = self.view.getCheckedLayerList()
         if layers == []:
-            NetzobErrorMessage(_("No layer(s) selected."))
+            NetzobErrorMessage(_("No layer selected."))
             return
         sequence_controller = SequenceAlignmentController(self, layers, doUpgma=True)
         sequence_controller.run()
@@ -310,7 +314,7 @@ class VocabularyController(object):
             return
         layers = self.view.getCheckedLayerList()
         if layers == []:
-            NetzobErrorMessage(_("No symbol(s) selected."))
+            NetzobErrorMessage(_("No symbol selected."))
             return
         force_controller = ForcePartitioningController(self, layers)
         force_controller.run()
@@ -321,7 +325,7 @@ class VocabularyController(object):
             return
         layers = self.view.getCheckedLayerList()
         if layers == []:
-            NetzobErrorMessage(_("No symbol(s) selected."))
+            NetzobErrorMessage(_("No symbol selected."))
             return
         simple_controller = SimplePartitioningController(self, layers)
         simple_controller.run()
@@ -332,7 +336,7 @@ class VocabularyController(object):
             return
         layers = self.view.getCheckedLayerList()
         if layers == []:
-            NetzobErrorMessage(_("No symbol(s) selected."))
+            NetzobErrorMessage(_("No symbol selected."))
             return
         smooth_controller = SmoothPartitioningController(self, layers)
         smooth_controller.run()
@@ -345,7 +349,7 @@ class VocabularyController(object):
             return
         layers = self.view.getCheckedLayerList()
         if layers == []:
-            NetzobErrorMessage(_("No symbol(s) selected."))
+            NetzobErrorMessage(_("No symbol selected."))
             return
         reset_controller = ResetPartitioningController(self, layers)
         reset_controller.run()
@@ -426,7 +430,7 @@ class VocabularyController(object):
             return
         selectedMessages = self.view.getSelectedMessagesInSelectedMessageTable()
         if selectedMessages is None or len(selectedMessages) == 0:
-            NetzobErrorMessage(_("Not selected message(s)."))
+            NetzobErrorMessage(_("No selected message."))
             return
 
         self.selectedMessagesToMove = selectedMessages
@@ -461,9 +465,11 @@ class VocabularyController(object):
             return
         selectedMessages = self.view.getSelectedMessagesInSelectedMessageTable()
         if selectedMessages == [] or selectedMessages is None:
-            NetzobErrorMessage(_("No selected message(s)."))
+            NetzobErrorMessage(_("No selected message."))
             return
-        questionMsg = _("Click yes to confirm the deletion of the selected message(s)")
+        questionMsg = ngettext("Click yes to confirm the deletion of the selected message",
+                               "Click yes to confirm the deletion of the selected messages",
+                               len(selectedMessages))
         result = NetzobQuestionMessage(questionMsg)
         if result != Gtk.ResponseType.YES:
             return
@@ -510,7 +516,7 @@ class VocabularyController(object):
             return
         symbols = self.view.getCheckedSymbolList()
         if symbols == []:
-            NetzobErrorMessage(_("No symbol(s) selected."))
+            NetzobErrorMessage(_("No symbol selected."))
             return
         envDepController = EnvironmentDependenciesSearcherController(self, symbols)
         envDepController.run()
@@ -522,7 +528,7 @@ class VocabularyController(object):
             return
         symbols = self.view.getCheckedSymbolList()
         if symbols == []:
-            NetzobErrorMessage(_("No symbol(s) selected."))
+            NetzobErrorMessage(_("No symbol selected."))
             return
         distribution = MessagesDistributionController(self, self._view.getCheckedSymbolList())
         distribution.run()
@@ -581,7 +587,7 @@ class VocabularyController(object):
 
         layers = self.view.getCheckedLayerList()
         if layers == []:
-            NetzobErrorMessage(_("No symbol(s) selected."))
+            NetzobErrorMessage(_("No symbol selected."))
             return
 
         for layer in layers:
@@ -596,7 +602,12 @@ class VocabularyController(object):
             NetzobErrorMessage(_("No project selected."))
             return
 
-        chooser = ImportFileChooserDialog(NetzobPlugin.getLoadedPlugins(FileImporterPlugin))
+        importerPlugins = NetzobPlugin.getLoadedPlugins(FileImporterPlugin)
+        if len(importerPlugins) < 1:
+            NetzobErrorMessage(_("No importer plugin available."))
+            return
+
+        chooser = ImportFileChooserDialog(importerPlugins)
         res = chooser.run()
         plugin = None
         if res == chooser.RESPONSE_OK:

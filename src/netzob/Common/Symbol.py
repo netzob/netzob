@@ -102,7 +102,7 @@ class Symbol(AbstractSymbol):
                 # We add all variable that has the root variable of field as ancestor.
                 result.extend(field.getVariable().getProgeny())
             else:
-                self.log.debug(_("Field {0} has no variable, considering default one.").format(str(field.getName())))
+                self.log.debug("Field {0} has no variable, considering default one.".format(str(field.getName())))
                 result.extend(field.getDefaultVariable(self).getProgeny())
 
         return result
@@ -239,14 +239,6 @@ class Symbol(AbstractSymbol):
         """
         self.getRoot().write(writingToken)
         result = writingToken.getValue()
-#
-#        # Before returning the value we apply available custom math filter (reverse method)
-#        print "TODO: this has been done at the Field level"
-#        for filter in self.getMathematicFilters():
-#            self.log.debug("Executing reverse method of filter {0} on {1}".format(filter.getName(), result))
-#            result = filter.reverse(result)
-        print result
-#        result = TypeConvertor.hexstring2bin(result)
 
         return result
 
@@ -382,7 +374,7 @@ class Symbol(AbstractSymbol):
             else:
                 return 1
         except:
-            self.log.warn(_("Tried to compare a Symbol with {0}").format(str(other)))
+            self.log.warn("Tried to compare a Symbol with {0}".format(str(other)))
             return 1
 
 #+---------------------------------------------------------------------------+
@@ -391,7 +383,7 @@ class Symbol(AbstractSymbol):
     @staticmethod
     def loadSymbol(xmlRoot, namespace_project, namespace_common, version, project, poolOfMessages):
         if version == "0.1":
-            idSymbol = uuid.UUID(xmlRoot.get("id"))
+            idSymbol = str(xmlRoot.get("id"))
             symbol = Symbol(idSymbol, "", project)
 
             # we parse the messages

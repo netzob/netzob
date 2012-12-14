@@ -47,8 +47,9 @@ from netzob.Common.MMSTD.Actors.AbstractChannel import AbstractChannel
 #+---------------------------------------------------------------------------+
 class SimpleCommunicationLayer(AbstractChannel):
 
-    def __init__(self, inputs, outputs, vocabulary, memory):
-        AbstractActor.__init__(self, False, False)
+    def __init__(self, id, inputs, outputs, vocabulary, memory):
+        AbstractChannel.__init__(self, id, False, False, memory, None, None, None, None, None)
+
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.SimpleCommunicationLayer.py')
         self.predefinedInputs = deque(inputs)

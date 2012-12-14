@@ -116,7 +116,7 @@
                   <object class="GtkLabel" id="label4">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Describe the transition to create</property>
+                    <property name="label" translatable="yes">Describe the transition</property>
                     <attributes>
                       <attribute name="font-desc" value="Sans Bold 14"/>
                     </attributes>
@@ -465,7 +465,7 @@
                     <property name="can_focus">False</property>
                     <child>
                       <object class="GtkButton" id="removeOutputSymbolSemiStochasticTransitionButton">
-                        <property name="label" translatable="yes">removeOutputSymbol</property>
+                        <property name="label" translatable="yes">Remove Output Symbol</property>
                         <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -511,6 +511,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="shadow_type">in</property>
+                    <property name="min_content_height">90</property>
                     <child>
                       <object class="GtkViewport" id="viewport1">
                         <property name="visible">True</property>

@@ -30,15 +30,16 @@
 #+----------------------------------------------
 from gettext import gettext as _
 import logging
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Type.Format import Format
-from netzob.Inference.Vocabulary.SearchResult import SearchResult
-from netzob.Inference.Vocabulary.SearchTask import SearchTask
 import re
 
 #+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
+from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Type.TypeIdentifier import TypeIdentifier
+from netzob.Common.Type.Format import Format
+from netzob.Inference.Vocabulary.SearchResult import SearchResult
+from netzob.Inference.Vocabulary.SearchTask import SearchTask
 
 
 #+----------------------------------------------
@@ -80,6 +81,8 @@ class Searcher(object):
     #| @param value the value to search for
     #+----------------------------------------------
     def getSearchedDataForDecimal(self, value):
+        if not value.isdigit():
+            return []
         # Creation of a SearchTask
         task = SearchTask(value, value, Format.DECIMAL)
         task.registerVariation(TypeConvertor.decimalToNetzobRaw(value), "Decimal representation of '{0}'".format(TypeConvertor.decimalToNetzobRaw(value)))
@@ -92,6 +95,9 @@ class Searcher(object):
     #| @param value the value to search for
     #+----------------------------------------------
     def getSearchedDataForHexadecimal(self, value, extraInfo=None):
+        typeIdentifier = TypeIdentifier()
+        if not typeIdentifier.isHexString(value):
+            return []
         # Creation of a SearchTask
         task = SearchTask(value, value, Format.HEX)
         task.registerVariation(value, "Hex repr of '{0}'({1}))".format(value, extraInfo))
@@ -212,7 +218,10 @@ class Searcher(object):
         symbols = self.project.getVocabulary().getSymbols()
 
         # compute the step for status notification
-        step = 100.0 / (len(symbols) * len(tasks))
+        try:
+            step = 100.0 / (len(symbols) * len(tasks))
+        except ZeroDivisionError:
+            step = 100
         status = 0.0
 
         for task in tasks:

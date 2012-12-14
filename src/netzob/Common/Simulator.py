@@ -101,3 +101,6 @@ class Simulator(object):
 
     def addActor(self, actor):
         self.actors.append(actor)
+
+    def removeActor(self, actor):
+        self.actors.remove(actor)

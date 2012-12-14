@@ -29,7 +29,6 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import os
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -42,15 +41,11 @@ from gi.repository import GObject
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.Common.Type.Format import Format
 from netzob.Common.Type.UnitSize import UnitSize
 from netzob.Common.Type.Sign import Sign
 from netzob.Common.Type.Endianess import Endianess
 from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Filters.Mathematic.Base64Filter import Base64Filter
-from netzob.Common.Filters.Mathematic.GZipFilter import GZipFilter
-from netzob.Common.Filters.Mathematic.B22Filter import BZ2Filter
 
 
 class ContextualMenuOnFieldView(object):
@@ -63,58 +58,58 @@ class ContextualMenuOnFieldView(object):
         self.menu = Gtk.Menu()
 
         # Add entry to edit field
-        item = Gtk.MenuItem(_("Edit field"))
+        item = Gtk.MenuItem(_("Edit Field"))
         item.show()
         item.connect("activate", self.controller.displayPopupToEditField_cb)
         self.menu.append(item)
 
         # Add sub-entries to change the type of a specific column
         subMenu = self.build_encoding_submenu()
-        item = Gtk.MenuItem(_("Field visualization"))
+        item = Gtk.MenuItem(_("Field Visualization"))
         item.set_submenu(subMenu)
         item.show()
         self.menu.append(item)
 
-        # Add sub-entries to add mathematic filters on a  specific column
-        subMenuMathematicFilters = self.build_mathematicFilter_submenu()
-        item = Gtk.MenuItem(_("Configure mathematic filters"))
-        item.set_submenu(subMenuMathematicFilters)
+        # Add sub-entries to add transformation function on a  specific column
+        subMenuTransformationFunctions = self.build_transformationFunction_submenu()
+        item = Gtk.MenuItem(_("Configure Transformation Functions"))
+        item.set_submenu(subMenuTransformationFunctions)
         item.show()
         self.menu.append(item)
 
         # Add entry to create layer
-        item = Gtk.MenuItem(_("Create layer"))
+        item = Gtk.MenuItem(_("Create Layer"))
         item.show()
         item.connect("activate", self.controller.displayPopupToCreateLayer_cb)
         self.menu.append(item)
 
         # Add entry to edit variable
-        item = Gtk.MenuItem(_("Edit variable"))
+        item = Gtk.MenuItem(_("Edit Variable"))
         item.show()
         item.connect("activate", self.controller.displayPopupToEditVariable_cb)
         self.menu.append(item)
 
         # Add entry to retrieve the field domain of definition
-        item = Gtk.MenuItem(_("Field's domain of definition"))
+        item = Gtk.MenuItem(_("Field Analysis"))
         item.show()
         item.connect("activate", self.controller.displayDomainOfDefinition_cb)
         self.menu.append(item)
 
         # Add entry to export fields
-        item = Gtk.MenuItem(_("Extract fields to a new symbol"))
+        item = Gtk.MenuItem(_("Extract Fields To A New Symbol"))
         item.show()
         item.connect("activate", self.controller.exportSelectedFields_cb)
         self.menu.append(item)
 
         # Add entry to delete the current message
-        item = Gtk.MenuItem(_("Delete message"))
+        item = Gtk.MenuItem(_("Delete Message"))
         item.show()
         item.connect("activate", self.controller.deleteMessage_cb)
         self.menu.append(item)
 
         # Add entries for copy functions
         subMenu = self.build_copy_submenu()
-        item = Gtk.MenuItem(_("Copy to clipboard"))
+        item = Gtk.MenuItem(_("Copy To Clipboard"))
         item.set_submenu(subMenu)
         item.show()
         self.menu.append(item)
@@ -133,9 +128,9 @@ class ContextualMenuOnFieldView(object):
         cells = field.getUniqValuesByField()
 
         # Retrieve the selected message and field content
-        if self.controller.message is not None:
+        if len(self.controller.messages) > 0 and self.controller.messages[0] is not None:
             # Retrieve content of the field
-            field_content = self.controller.message.applyAlignment()[self.controller.field.getIndex()]
+            field_content = self.controller.messages[0].applyAlignment()[self.controller.field.getIndex()]
         else:
             field_content = None
 
@@ -154,9 +149,10 @@ class ContextualMenuOnFieldView(object):
             if field_content is not None:
                 # Get preview of field content
                 text_preview = TypeConvertor.encodeNetzobRawToGivenType(field_content, value)
-                if len(text_preview) > 10:
-                    text_preview = text_preview[:10] + "..."
-                label = value + " (" + text_preview + ")"
+                # TRANSLATORS: {0} is the value of the format (binary,
+                # hex, decimal, etc.) and {1} is the preview of the
+                # convertion.
+                label = _("{0} ({1}…)").format(value, text_preview[:10])
 
             # Create the check item
             item = Gtk.CheckMenuItem(label)
@@ -239,49 +235,49 @@ class ContextualMenuOnFieldView(object):
     def build_copy_submenu(self):
         # Add entries for copy functions
         copyMenu = Gtk.Menu()
-        item = Gtk.MenuItem(_("Raw message"))
+        item = Gtk.MenuItem(_("Raw Message"))
         item.show()
         item.connect("activate", self.controller.copyToClipboard_cb, False, False, False)
         copyMenu.append(item)
-        item = Gtk.MenuItem(_("Aligned raw message"))
+        item = Gtk.MenuItem(_("Aligned Raw Message"))
         item.show()
         item.connect("activate", self.controller.copyToClipboard_cb, True, False, False)
         copyMenu.append(item)
-        item = Gtk.MenuItem(_("Aligned formatted message"))
+        item = Gtk.MenuItem(_("Aligned Formatted Message"))
         item.show()
         item.connect("activate", self.controller.copyToClipboard_cb, True, True, False)
         copyMenu.append(item)
-        item = Gtk.MenuItem(_("Raw field"))
+        item = Gtk.MenuItem(_("Raw Field"))
         item.show()
         item.connect("activate", self.controller.copyToClipboard_cb, True, False, True)
         copyMenu.append(item)
-        item = Gtk.MenuItem(_("Formatted field"))
+        item = Gtk.MenuItem(_("Formatted Field"))
         item.show()
         item.connect("activate", self.controller.copyToClipboard_cb, True, True, True)
         copyMenu.append(item)
         return copyMenu
 
     #+----------------------------------------------
-    #| build_mathematicFilter_submenu:
-    #|   Build a submenu for field/symbol mathematic filters
+    #| build_transformationFunction_submenu:
+    #|   Build a submenu for field/symbol transformation function
     #+----------------------------------------------
-    def build_mathematicFilter_submenu(self):
+    def build_transformationFunction_submenu(self):
         menu = Gtk.Menu()
 
-        # Retrieve the list of available mathematical filters
+        # Retrieve the list of available transformation function
         currentWorkspace = self.controller.vocabularyController.getCurrentWorkspace()
-        mathematicFilters = currentWorkspace.getMathematicFilters()
+        transformationFunctions = currentWorkspace.getTransformationFunctions()
 
-        for mathFilter in mathematicFilters:
+        for transformationFunction in transformationFunctions:
             toggled = False
-            for f in self.controller.field.getMathematicFilters():
-                if f.getName() == mathFilter.getName():
+            for f in self.controller.field.getTransformationFunctions():
+                if f.getName() == transformationFunction.getName():
                     toggled = True
                     break
 
-            mathFilterItem = Gtk.CheckMenuItem(mathFilter.getName())
-            mathFilterItem.set_active(toggled)
-            mathFilterItem.connect("activate", self.controller.applyMathematicalFilter_cb, mathFilter)
-            mathFilterItem.show()
-            menu.append(mathFilterItem)
+            transformationFunctionItem = Gtk.CheckMenuItem(transformationFunction.getName())
+            transformationFunctionItem.set_active(toggled)
+            transformationFunctionItem.connect("activate", self.controller.applyTransformationFunction_cb, transformationFunction)
+            transformationFunctionItem.show()
+            menu.append(transformationFunctionItem)
         return menu

@@ -37,6 +37,7 @@ from lxml.etree import ElementTree
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Token import Token
 from lxml import etree
+from netzob.Common.Models.Factories.IRPMessageFactory import IRPMessageFactory
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -50,65 +51,22 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 class IRPDeviceIoControlMessageFactory(object):
 
+    XML_SCHEMA_TYPE = "netzob-common:IRPDeviceIoControlMessage"
+
     @staticmethod
     #+-----------------------------------------------------------------------+
     #| save
     #|     Generate the XML representation of a IRP IOCTL message
     #+-----------------------------------------------------------------------+
-    def save(message, xmlMessages, namespace_project, namespace):
-        root = etree.SubElement(xmlMessages, "{" + namespace + "}message")
-        root.set("id", str(message.getID()))
-        root.set("timestamp", str(message.getTimestamp()))
-        root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob-common:IRPDeviceIoControlMessage")
-        # data
-        subData = etree.SubElement(root, "{" + namespace + "}data")
-        subData.text = str(message.getData())
-        # direction
-        subDirection = etree.SubElement(root, "{" + namespace + "}direction")
-        subDirection.text = message.getDirection()
-        # major
-        subMajor = etree.SubElement(root, "{" + namespace + "}major")
-        subMajor.text = message.getMajor()
-        # minor
-        subMinor = etree.SubElement(root, "{" + namespace + "}minor")
-        subMinor.text = str(message.getMinor())
-        # requestMode
-        subRequestMode = etree.SubElement(root, "{" + namespace + "}requestMode")
-        subRequestMode.text = message.getRequestMode()
-        # pid
-        subPid = etree.SubElement(root, "{" + namespace + "}pid")
-        subPid.text = str(message.getPID())
-        # status
-        subStatus = etree.SubElement(root, "{" + namespace + "}status")
-        subStatus.text = str(message.getStatus())
-        # information
-        subInformation = etree.SubElement(root, "{" + namespace + "}information")
-        subInformation.text = str(message.getInformation())
-        # cancel
-        subCancel = etree.SubElement(root, "{" + namespace + "}cancel")
-        subCancel.text = TypeConvertor.bool2str(message.getCancel())
-        # sizeIn
-        subSizeIn = etree.SubElement(root, "{" + namespace + "}sizeIn")
-        subSizeIn.text = str(message.getSizeIn())
-        # sizeOut
-        subSizeOut = etree.SubElement(root, "{" + namespace + "}sizeOut")
-        subSizeOut.text = str(message.getSizeOut())
+    def save(message, xmlMessage, namespace_project, namespace):
+
+        xmlMessage.set("{http://www.w3.org/2001/XMLSchema-instance}type", IRPDeviceIoControlMessageFactory.XML_SCHEMA_TYPE)
+
+        IRPMessageFactory.addPropertiesToElement(xmlMessage, message, namespace)
+
         # ioctl
-        subIoctl = etree.SubElement(root, "{" + namespace + "}ioctl")
+        subIoctl = etree.SubElement(xmlMessage, "{" + namespace + "}ioctl")
         subIoctl.text = str(message.getIOCTL())
-
-        #pattern
-        subPattern = etree.SubElement(root, "{" + namespace + "}pattern")
-        subsubDirection = etree.SubElement(subPattern, "{" + namespace + "}direction")
-        subsubDirection.text = str(message.getPattern()[0])
-        for t in message.getPattern()[1]:
-            subsubToken = etree.SubElement(subPattern, "{" + namespace + "}token")
-            subsubToken.set("format", t.getFormat())
-            subsubToken.set("length", str(t.getLength()))
-            subsubToken.set("type", t.getType())
-            subsubToken.set("value", t.getValue().encode("base-64"))
-
-        return etree.tostring(root)
 
     @staticmethod
     #+---------------------------------------------------------------------------+
@@ -119,82 +77,22 @@ class IRPDeviceIoControlMessageFactory(object):
     #| @return an instance of a IRPDeviceIoControlMessage
     #| @throw NameError if XML invalid
     #+---------------------------------------------------------------------------+
-    def loadFromXML(rootElement, namespace, version):
+    def loadFromXML(rootElement, namespace, version, id, timestamp, data):
 
         # Then we verify its an IPC Message
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob-common:IRPDeviceIoControlMessage":
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != IRPDeviceIoControlMessageFactory.XML_SCHEMA_TYPE:
             raise NameError("The parsed xml doesn't represent a IRP IOCTL message.")
 
-        # Verifies the data field
-        if rootElement.find("{" + namespace + "}data") is None or rootElement.find("{" + namespace + "}data").text is None or not rootElement.find("{" + namespace + "}data").text:
-            raise NameError("The parsed message has no data specified")
-
-        # Parse the data field and transform it into a byte array
-        msg_data = bytearray(rootElement.find("{" + namespace + "}data").text)
-
-        # Retrieve the id
-        msg_id = uuid.UUID(rootElement.get("id"))
-
-        # Retrieve the timestamp
-        msg_timestamp = int(rootElement.get("timestamp"))
-
-        # Retrieves the direction
-        msg_direction = rootElement.find("{" + namespace + "}direction").text
-
-        # Retrieves the major
-        msg_major = rootElement.find("{" + namespace + "}major").text
-
-        # Retrieves the minor
-        msg_minor = int(rootElement.find("{" + namespace + "}minor").text)
-
-        # Retrieves the requestMode
-        msg_requestMode = rootElement.find("{" + namespace + "}requestMode").text
-
-        # Retrieves the pid
-        msg_pid = int(rootElement.find("{" + namespace + "}pid").text)
-
-        # Retrieves the status
-        msg_status = int(rootElement.find("{" + namespace + "}status").text)
-
-        # Retrieves the information
-        msg_information = long(rootElement.find("{" + namespace + "}information").text)
-
-        # Retrieves the cancel
-        msg_cancel = TypeConvertor.str2bool(rootElement.find("{" + namespace + "}cancel").text)
-
-        # Retrieves the sizeIn
-        msg_sizeIn = int(rootElement.find("{" + namespace + "}sizeIn").text)
-
-        # Retrieves the sizeOut
-        msg_sizeOut = int(rootElement.find("{" + namespace + "}sizeOut").text)
+        # Retrieve properties from normal IRP
+        (msg_direction, msg_major, msg_minor, msg_requestMode, msg_pid, msg_status, msg_information, msg_cancel, msg_sizeIn, msg_sizeOut) = IRPMessageFactory.loadProperties(rootElement, namespace)
 
         # Retrieves the ioctl
         msg_ioctl = int(rootElement.find("{" + namespace + "}ioctl").text)
 
-        #Retrieve pattern
-
-        pattern = []
-        try:
-            patTemp = rootElement.find("{" + namespace + "}pattern")
-            pattern.append(patTemp.find("{" + namespace + "}direction").text)
-            tokens = patTemp.findall("{" + namespace + "}token")
-            #print "find "+str(tokens)
-            tokenList = []
-            for t in tokens:
-                t_format = t.get("format")
-                t_length = t.get("length")
-                t_type = t.get("type")
-                t_value = t.get("value").decode("base-64")
-                tokenList.append(Token(t_format, t_length, t_type, t_value))
-            pattern.append(tokenList)
-        except:
-            pattern = []
-
-        #print "FACTORY "+rootElement.find("{" + namespace + "}pattern").text+" give "+str(pattern[0])+";"+str([str(i) for i in pattern[1]])
         # TODO : verify this ! Circular imports in python !
         # WARNING : verify this ! Circular imports in python !
         from netzob.Common.Models.IRPDeviceIoControlMessage import IRPDeviceIoControlMessage
 
-        result = IRPDeviceIoControlMessage(msg_id, msg_timestamp, msg_data, msg_direction, msg_major, msg_minor, msg_requestMode, msg_pid, msg_status, msg_information, msg_cancel, msg_sizeIn, msg_sizeOut, msg_ioctl, pattern)
+        result = IRPDeviceIoControlMessage(id, timestamp, data, msg_direction, msg_major, msg_minor, msg_requestMode, msg_pid, msg_status, msg_information, msg_cancel, msg_sizeIn, msg_sizeOut, msg_ioctl)
 
         return result

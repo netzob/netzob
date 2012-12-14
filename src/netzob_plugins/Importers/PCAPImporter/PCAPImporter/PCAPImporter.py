@@ -61,6 +61,8 @@ class PCAPImporter(AbstractImporter):
     INVALID_LAYER3 = 2
     INVALID_LAYER4 = 3
 
+    PROTOCOL201 = 201
+
     def __init__(self, netzob):
         super(PCAPImporter, self).__init__("PCAP IMPORT", netzob)
         # create logger with the given configuration
@@ -81,7 +83,7 @@ class PCAPImporter(AbstractImporter):
                 fp = open(filePath)
                 fp.close()
             except IOError, e:
-                errorMessage = _("Error while trying to open the "
+                errorMessage = _("Error while trying to open the " -
                                  + "file {0}.").format(filePath)
                 if e.errno == errno.EACCES:
                     errorMessage = _("Error while trying to open the file "
@@ -120,10 +122,34 @@ class PCAPImporter(AbstractImporter):
             raise NetzobImportException("PCAP", errorMessage, ERROR,
                                         self.INVALID_BPF_FILTER)
 
-        self.log.info(_("Starting import from {0} (linktype:{0})").format(filePath, str(packetReader.datalink())))
+        self.log.info("Starting import from {0} (linktype:{0})".format(filePath, str(packetReader.datalink())))
         self.datalink = packetReader.datalink()
 
-        if self.datalink != pcapy.DLT_EN10MB and self.datalink != pcapy.DLT_LINUX_SLL:
+        # Available datalinks supported by pcapy
+        availableDatalinks = dict()
+        availableDatalinks[pcapy.DLT_ARCNET] = "DLT_ARCNET"
+        availableDatalinks[pcapy.DLT_FDDI] = "DLT_FDDI"
+        availableDatalinks[pcapy.DLT_LOOP] = "DLT_LOOP"
+        availableDatalinks[pcapy.DLT_PPP_ETHER] = "DLT_PPP_ETHER"
+        availableDatalinks[pcapy.DLT_ATM_RFC1483] = "DLT_ATM_RFC1483"
+        availableDatalinks[pcapy.DLT_IEEE802] = "DLT_IEEE802"
+        availableDatalinks[pcapy.DLT_LTALK] = "DLT_LTALK"
+        availableDatalinks[pcapy.DLT_PPP_SERIAL] = "DLT_PPP_SERIAL"
+        availableDatalinks[pcapy.DLT_C_HDLC] = "DLT_C_HDLC"
+        availableDatalinks[pcapy.DLT_IEEE802_11] = "IEEE802_11"
+        availableDatalinks[pcapy.DLT_NULL] = "DLT_NULL"
+        availableDatalinks[pcapy.DLT_RAW] = "DLT_RAW"
+        availableDatalinks[pcapy.DLT_EN10MB] = "DLT_EN10MB"
+        availableDatalinks[pcapy.DLT_LINUX_SLL] = "LINUX_SLL"
+        availableDatalinks[pcapy.DLT_PPP] = "DLT_PPP"
+        availableDatalinks[pcapy.DLT_SLIP] = "DLT_SLIP"
+
+        if self.datalink in availableDatalinks.keys():
+            self.log.debug("Datalinks found under the name : {0}".format(availableDatalinks[self.datalink]))
+        else:
+            self.log.warning("Unknown datalinks.")
+
+        if self.importLayer > 1 and self.datalink != pcapy.DLT_EN10MB and self.datalink != pcapy.DLT_LINUX_SLL and self.datalink != PCAPImporter.PROTOCOL201:
             errorMessage = _("This pcap cannot be imported since the "
                              + "layer 2 is not supported ({0})").format(str(self.datalink))
             self.log.warn(errorMessage)
@@ -134,22 +160,32 @@ class PCAPImporter(AbstractImporter):
 
     def _packetHandler(self, header, payload):
         """Decode a packet"""
-        mUuid = uuid.uuid4()
-        mTimestamp = int(time.time())
+        mUuid = str(uuid.uuid4())
+
+        (secs, usecs) = header.getts()
+        epoch = secs + (usecs / 1000000.0)
+
         if self.importLayer == 1:
+            if len(payload) == 0:
+                return
+
+            data = payload.encode("hex")
+
             self.messages.append(
                 RawMessage(
                     mUuid,
-                    mTimestamp,
-                    payload.encode("hex")))
+                    epoch,
+                    data))
             self._payloadDict[mUuid] = payload
         elif self.importLayer == 2:
             (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = \
                 self.decodeLayer2(header, payload)
+            if len(l2Payload) == 0:
+                return
             self.messages.append(
                 L2NetworkMessage(
                     mUuid,
-                    mTimestamp,
+                    epoch,
                     l2Payload.encode("hex"),
                     l2Proto,
                     l2SrcAddr,
@@ -160,10 +196,12 @@ class PCAPImporter(AbstractImporter):
                 self.decodeLayer2(header, payload)
             (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum) = \
                 self.decodeLayer3(etherType, l2Payload)
+            if len(l3Payload) == 0:
+                return
             self.messages.append(
                 L3NetworkMessage(
                     mUuid,
-                    mTimestamp,
+                    epoch,
                     l3Payload.encode("hex"),
                     l2Proto,
                     l2SrcAddr,
@@ -179,10 +217,12 @@ class PCAPImporter(AbstractImporter):
                 self.decodeLayer3(etherType, l2Payload)
             (l4Proto, l4SrcPort, l4DstPort, l4Payload) = \
                 self.decodeLayer4(ipProtocolNum, l3Payload)
+            if len(l4Payload) == 0:
+                return
             self.messages.append(
                 L4NetworkMessage(
                     mUuid,
-                    mTimestamp,
+                    epoch,
                     l4Payload.encode("hex"),
                     l2Proto,
                     l2SrcAddr,
@@ -206,14 +246,27 @@ class PCAPImporter(AbstractImporter):
             layer2 = l2Decoder.decode(payload)
             l2SrcAddr = formatMacAddress(layer2.get_ether_shost())
             l2DstAddr = formatMacAddress(layer2.get_ether_dhost())
+            l2Payload = payload[layer2.get_header_size():]
+            etherType = layer2.get_ether_type()
         elif self.datalink == pcapy.DLT_LINUX_SLL:
             l2Decoder = Decoders.LinuxSLLDecoder()
             l2Proto = "Linux SLL"
             layer2 = l2Decoder.decode(payload)
             l2SrcAddr = layer2.get_addr()
             l2DstAddr = None
-        l2Payload = payload[layer2.get_header_size():]
-        etherType = layer2.get_ether_type()
+            l2Payload = payload[layer2.get_header_size():]
+            etherType = layer2.get_ether_type()
+        elif self.datalink == PCAPImporter.PROTOCOL201:
+            l2Proto = "Protocol 201"
+            hdr = payload.encode('hex')[0:8]
+            if hdr[6:] == "01":
+                l2SrcAddr = "Received"
+            else:
+                l2SrcAddr = "Sent"
+            l2DstAddr = None
+            l2Payload = payload[8:]
+            etherType = payload[4:6]
+
         return (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType)
 
     def decodeLayer3(self, etherType, l2Payload):

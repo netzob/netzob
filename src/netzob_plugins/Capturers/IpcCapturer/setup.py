@@ -30,10 +30,19 @@
 #| Global Imports
 #+----------------------------------------------------------------------------
 from setuptools import setup
+import sys
+
+package = 'IpcCapturer'
+resourcesPath = "../../../../resources/"
+
+sys.path.append(resourcesPath)
+from sdist.utils import find_data_files, opj
+
+pluginsStaticResourcesPath = opj(resourcesPath, "static/netzob_plugins/", package)
 
 dependencies = [
     'python-ptrace',
-    'Netzob > 0.4'
+    'Netzob >= 0.4'
 ]
 
 #+----------------------------------------------------------------------------
@@ -44,8 +53,12 @@ setup(
     version="1.0.0",
     author="Georges Bossert, Frédéric Guihéry",
     author_email="contact@netzob.org",
-    packages=['IpcCapturer'],
+    packages=[package],
     install_requires=dependencies,
+    data_files=find_data_files(opj("share", "netzob", "plugins", package),
+                               pluginsStaticResourcesPath,
+                               '*.glade',
+                               recursive=True),
     entry_points="""
     [netzob.plugins]
     IpcCapturer=IpcCapturer.IpcCapturerPlugin:IpcCapturerPlugin

@@ -207,24 +207,23 @@ class VocabularyView(object):
         """projectStatusHasChanged_cb:
         Callback executed when a signal is emitted."""
 
+        actions = ["importMessagesFromFile",
+                   "captureMessages",
+                   "relationsViewer",
+                   "searchMenu",
+                   "searchText",
+                   "variableTable",
+                   "automaticToolMenu",
+                   "manualToolMenu",
+                   ]
+
         if signal == SignalsManager.SIG_PROJECT_OPEN:
-            self._actionGroup.get_action('importMessagesFromFile').set_sensitive(True)
-            self._actionGroup.get_action('captureMessages').set_sensitive(True)
-            self._actionGroup.get_action('relationsViewer').set_sensitive(True)
-            self._actionGroup.get_action('searchMenu').set_sensitive(True)
-            self._actionGroup.get_action('searchText').set_sensitive(True)
-            self._actionGroup.get_action('variableTable').set_sensitive(True)
-            self._actionGroup.get_action('automaticToolMenu').set_sensitive(True)
-            self._actionGroup.get_action('manualToolMenu').set_sensitive(True)
+            for action in actions:
+                self._actionGroup.get_action(action).set_sensitive(True)
 
         elif signal == SignalsManager.SIG_PROJECT_CLOSE:
-            self._actionGroup.get_action('importMessagesFromFile').set_sensitive(False)
-            self._actionGroup.get_action('captureMessages').set_sensitive(False)
-            self._actionGroup.get_action('searchMenu').set_sensitive(False)
-            self._actionGroup.get_action('searchText').set_sensitive(False)
-            self._actionGroup.get_action('variableTable').set_sensitive(False)
-            self._actionGroup.get_action('manualToolMenu').set_sensitive(False)
-            self._actionGroup.get_action('automaticToolMenu').set_sensitive(False)
+            for action in actions:
+                self._actionGroup.get_action(action).set_sensitive(False)
 
     def _loadActionGroupUIDefinition(self):
         """Loads the action group and the UI definition of menu items
@@ -385,13 +384,16 @@ class VocabularyView(object):
     def setSelectedMessageTable(self, selectedMessageTable):
         """Set provided message table as selected"""
 
+        if selectedMessageTable == self.selectedMessageTable:
+            return
+
         # Update appearance of old and new selected message table
         if self.selectedMessageTable is not None:
             self.selectedMessageTable.setSelected(False)
 
-        selectedMessageTable.setSelected(True)
         # Update current selected message table and
         self.selectedMessageTable = selectedMessageTable
+        self.selectedMessageTable.setSelected(True)
 
     def setDisplayedFieldInSelectedMessageTable(self, symbol):
         """Show the definition of provided symbol on the selected
@@ -583,7 +585,8 @@ class VocabularyView(object):
             line = self.projectPropertiesListstore.append()
             self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_NAME_COLUMN, prop.getName())
             self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_VALUE_COLUMN, str(prop.getCurrentValue()))
-            self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_EDITABLE_COLUMN, prop.isEditable)
+            #self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_EDITABLE_COLUMN, prop.isEditable)
+            self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_EDITABLE_COLUMN, False)
             if prop.getPossibleValues() != []:
                 liststore_possibleValues = Gtk.ListStore(str)
                 for val in prop.getPossibleValues():

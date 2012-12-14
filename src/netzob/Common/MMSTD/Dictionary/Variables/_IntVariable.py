@@ -97,7 +97,7 @@ class IntVariable(Variable):
             return indice + len(self.binValue)
 
         tmp = val[indice:]
-        self.log.debug("Learn hex given its size : " + str(self.size) + " from " + str(tmp))
+        self.log.debug("Learn hex given its size: " + str(self.size) + " from " + str(tmp))
         if len(tmp) >= self.size:
 
             self.binValueBeforeLearning = self.binValue
@@ -106,8 +106,8 @@ class IntVariable(Variable):
             self.binValue = val[indice:indice + self.size]
             self.strValue = str(TypeConvertor.bin2int(self.binValue))
 
-            self.log.debug("learning value : " + str(self.binValue))
-            self.log.debug("learning value : " + self.strValue)
+            self.log.debug("learning value: " + str(self.binValue))
+            self.log.debug("learning value: " + self.strValue)
 
             return indice + self.size
         else:

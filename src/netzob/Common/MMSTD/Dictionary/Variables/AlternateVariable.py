@@ -72,7 +72,7 @@ class AlternateVariable(AbstractNodeVariable):
                 If it fails, it restore it value and the next child try.
                 It stops if one child successes.
         """
-        self.log.debug(_("[ {0} (Alternate): readChildren:").format(AbstractVariable.toString(self)))
+        self.log.debug("[ {0} (Alternate): readChildren:".format(AbstractVariable.toString(self)))
         savedIndex = readingToken.getIndex()
         for child in self.getChildren():
             # Memorized values for the child and its successors.
@@ -101,7 +101,7 @@ class AlternateVariable(AbstractNodeVariable):
             # If we dont not found a proper child but the node can learn, we learn the value.
             self.learn(child, readingToken)
 
-        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ]".format(self.getName(), readingToken.toString()))
 
     def learn(self, child, readingToken):
         """learn:
@@ -112,7 +112,7 @@ class AlternateVariable(AbstractNodeVariable):
                 @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
                 @param readingToken: a token which contains all critical information on this access.
         """
-        self.log.debug(_("- [ {0}: learn.").format(self.toString()))
+        self.log.debug("- [ {0}: learn.".format(self.toString()))
 
         dictOfValues = dict()
         savedIndex = readingToken.getIndex()
@@ -121,7 +121,7 @@ class AlternateVariable(AbstractNodeVariable):
 
         # We create a fake father for this alternate.
         if self.getFathers()[0].getType() == AggregateVariable.TYPE:
-            fakeFather = AggregateVariable(uuid.uuid4(), "Fake father", False, False)
+            fakeFather = AggregateVariable(str(uuid.uuid4()), "Fake father", False, False)
             # We add this element and its right brother as child of the fake father in order to pursue the read access from where we are.
             fakeFather.addChild(self)
             for rightBrother in self.getFathers()[0].getChildren()[selfPosition:]:
@@ -131,16 +131,16 @@ class AlternateVariable(AbstractNodeVariable):
             # Some iterations of this treatment could have be made before. The fake father should not make more iterations than it remains for the real father.
             minIterations = max(0, minIterations - self.getFathers()[0].getCurrentIteration())
             maxIterations = max(0, maxIterations - self.getFathers()[0].getCurrentIteration())
-            fakeFather = RepeatVariable(uuid.uuid4(), "Fake father", False, False, self, minIterations, maxIterations)
+            fakeFather = RepeatVariable(str(uuid.uuid4()), "Fake father", False, False, self, minIterations, maxIterations)
         else:
-            self.log.error(_("The father is neither an aggregate nor a repeat variable."))
+            self.log.error("The father is neither an aggregate nor a repeat variable.")
 
         # We execute the treatment on the fake father.
         valueToBeRead = readingToken.getValue()[readingToken.getIndex():]
         for index in len(valueToBeRead):
             # We search if, by shifting the position of actual variable, we could read the given value.
             tmpValue = valueToBeRead[:index]
-            tmpChild = DataVariable(uuid.uuid4(), "Learned Inserted Variable", True, True, BinaryType(True, len(tmpValue), len(tmpValue)), tmpValue.to01())
+            tmpChild = DataVariable(str(uuid.uuid4()), "Learned Inserted Variable", True, True, BinaryType(True, len(tmpValue), len(tmpValue)), tmpValue.to01())
             # We add the new variable at the end, in order to minimize its impact.
             self.add(tmpChild)
 
@@ -169,7 +169,7 @@ class AlternateVariable(AbstractNodeVariable):
             # We continue the treatment. The real father's treatment will pursue.
             self.read(readingToken)
 
-        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ] -".format(self.getName(), readingToken.toString()))
 
     def writeChildren(self, writingToken):
         """write:
@@ -177,7 +177,7 @@ class AlternateVariable(AbstractNodeVariable):
                 If it fails, it restore it value and the next child try.
                 It stops if one child successes.
         """
-        self.log.debug(_("[ {0} (Alternate): writeChildren:").format(AbstractVariable.toString(self)))
+        self.log.debug("[ {0} (Alternate): writeChildren:".format(AbstractVariable.toString(self)))
 
         savedValue = writingToken.getValue()
         savedIndex = writingToken.getIndex()
@@ -204,7 +204,7 @@ class AlternateVariable(AbstractNodeVariable):
             # The value of the variable is simply the value we made.
             self.currentValue = writingToken.getValue()[savedIndex:writingToken.getIndex()]
 
-        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ]".format(self.getName(), writingToken.toString()))
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
@@ -237,7 +237,7 @@ class AlternateVariable(AbstractNodeVariable):
                 Each child tries sequentially to read a part of the read value.
                 If one of them fails, the whole operation is cancelled.
         """
-        self.log.debug(_("[ {0} (Alternate): read access:").format(AbstractVariable.toString(self)))
+        self.log.debug("[ {0} (Alternate): read access:".format(AbstractVariable.toString(self)))
         if self.getChildren() is not None:
             if self.isMutable():
                 # mutable.
@@ -250,21 +250,21 @@ class AlternateVariable(AbstractNodeVariable):
 
         else:
             # no child.
-            self.log.debug(_("Write abort: the variable has no child."))
+            self.log.debug("Write abort: the variable has no child.")
             readingToken.setOk(False)
 
         # Variable notification
         if readingToken.isOk():
             self.notifyBoundedVariables("read", readingToken, self.currentValue)
 
-        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ]".format(self.getName(), readingToken.toString()))
 
     def write(self, writingToken):
         """write:
                 Each child tries sequentially to write its value.
                 If one of them fails, the whole operation is cancelled.
         """
-        self.log.debug(_("[ {0} (Alternate): write access:").format(AbstractVariable.toString(self)))
+        self.log.debug("[ {0} (Alternate): write access:".format(AbstractVariable.toString(self)))
         if self.getChildren() is not None:
             if self.isMutable():
                 # mutable.
@@ -277,14 +277,14 @@ class AlternateVariable(AbstractNodeVariable):
 
         else:
             # no child.
-            self.log.debug(_("Write abort: the variable has no child."))
+            self.log.debug("Write abort: the variable has no child.")
             writingToken.setOk(False)
 
         # Variable notification
         if writingToken.isOk():
             self.notifyBoundedVariables("write", writingToken)
 
-        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ]".format(self.getName(), writingToken.toString()))
 
     def toXML(self, root, namespace):
         """toXML:
@@ -310,7 +310,7 @@ class AlternateVariable(AbstractNodeVariable):
         """loadFromXML:
                 Loads an alternate variable from an XML definition.
         """
-        logging.debug(_("[ AlternateVariable: loadFromXML:"))
+        logging.debug("[ AlternateVariable: loadFromXML:")
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
@@ -322,7 +322,7 @@ class AlternateVariable(AbstractNodeVariable):
                 child = AbstractVariable.loadFromXML(xmlChildren, namespace, version, symbol)
                 result.addChild(child)
 
-            logging.debug(_("AlternateVariable: loadFromXML successes: {0} ]").format(result.toString()))
+            logging.debug("AlternateVariable: loadFromXML successes: {0} ]".format(result.toString()))
             return result
-        logging.debug(_("AlternateVariable: loadFromXML fails"))
+        logging.debug("AlternateVariable: loadFromXML fails")
         return None

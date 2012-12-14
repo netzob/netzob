@@ -32,8 +32,8 @@ from gettext import gettext as _
 import sys
 import os
 import logging
-import locale
 import gettext
+import locale
 import uuid
 import shutil
 from lxml.etree import ElementTree
@@ -96,7 +96,7 @@ class NetzobMainController(object):
             sys.exit()
 
         # Initialize main view
-        self.log.info(_("Starting netzob UI"))
+        self.log.info("Starting netzob UI")
         self.view = None    # small hack since the attribute need to exists when the main glade is loaded
         self.view = NetzobMainView(self)
 
@@ -119,7 +119,10 @@ class NetzobMainController(object):
             logging.debug("Activate the bug reporter")
 
             def log_uncaught_exceptions(exceptionClass, exceptionInstance, traceback):
-                bugReporterController = BugReporterController(exceptionClass, exceptionInstance, traceback)
+                bugReporterController = BugReporterController(self,
+                                                              exceptionClass,
+                                                              exceptionInstance,
+                                                              traceback)
                 bugReporterController.run()
 
             sys.excepthook = log_uncaught_exceptions
@@ -165,6 +168,8 @@ class NetzobMainController(object):
         # Initialiaze gettext
         gettext.bindtextdomain("netzob", ResourcesConfiguration.getLocaleLocation())
         gettext.textdomain("netzob")
+        locale.bindtextdomain("netzob", ResourcesConfiguration.getLocaleLocation())
+        locale.textdomain("netzob")
         try:
             locale.getlocale()
         except:
@@ -305,10 +310,10 @@ class NetzobMainController(object):
                         found = True
                         break
                 if found:
-                    self.log.info(_("A project with the same name already exists ({0}, {1}), please change it.".format(projectName, projectPath)))
+                    self.log.info("A project with the same name already exists ({0}, {1}), please change it.".format(projectName, projectPath))
                     errorMessage = _("A project with this name exists")
                 else:
-                    self.log.debug(_("Create new project {0}").format(newProjectName))
+                    self.log.debug("Create new project {0}".format(newProjectName))
                     newProject = Project.createProject(self.getCurrentWorkspace(), newProjectName)
                     self.switchProject(newProject.getPath())
                     finish = True
@@ -478,7 +483,7 @@ class NetzobMainController(object):
                     else:
                         try:
                             outputFilename = os.path.join(selectedFolder, filename)
-                            logging.debug("Output filename : {0}".format(outputFilename))
+                            logging.debug("Output filename: {0}".format(outputFilename))
                             xmlDefinitionOfProject = self.getCurrentProject().generateXMLConfigFile()
                             tree = ElementTree(xmlDefinitionOfProject)
                             tree.write(outputFilename)
@@ -526,6 +531,7 @@ class NetzobMainController(object):
                 "dialogbox.glade"))
 
             dialog = builder2.get_object("switchWorkspace")
+            dialog.set_transient_for(self.view.mainWindow)
 
             applybutton = builder2.get_object("switchWorkspaceApplyButton")
             fileChooserButton = builder2.get_object("switchWorkspaceFileChooserButton")
@@ -560,7 +566,7 @@ class NetzobMainController(object):
                                 self.view.currentWorkspaceHasChanged()
                             except Exception, e:
                                 errorMessage = _("An error occurred while loading workspace.")
-                                logging.warn("Error while loading workspace declared in folder {0} : {1}".format(selectedFolder, e))
+                                logging.warn("Error while loading workspace declared in folder {0}: {1}".format(selectedFolder, e))
                     else:
                         # create a new workspace
                         try:
@@ -570,7 +576,7 @@ class NetzobMainController(object):
                             self.view.currentWorkspaceHasChanged()
                         except Exception, e:
                                 errorMessage = _("An error occurred while creating workspace.")
-                                logging.warn("Error while creating workspace declared in folder {0} : {1}".format(selectedFolder, e))
+                                logging.warn("Error while creating workspace declared in folder {0}: {1}".format(selectedFolder, e))
             else:
                 dialog.destroy()
                 finish = True

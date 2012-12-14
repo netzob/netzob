@@ -15,6 +15,7 @@ Contributors
   * Fabien André (developer)
   * Quentin Heyler (developer)
   * Benjamin Dufour (developer)
+  * Giuseppe Massaro (Arch Linux package maintainer)
 
 Sponsors
 --------

@@ -38,7 +38,6 @@ import uuid
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk
 import gi
-from netzob.UI.Grammar.Views.DeleteStateView import DeleteStateView
 from netzob.UI.Grammar.Views.DeleteTransitionView import DeleteTransitionView
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
@@ -49,7 +48,7 @@ from gi.repository import GObject
 
 
 class DeleteTransitionController(object):
-    """Manages the deletetion of a state"""
+    """Manages the deletion of a transition"""
 
     def __init__(self, grammarController, transition):
         self.grammarController = grammarController
@@ -61,9 +60,9 @@ class DeleteTransitionController(object):
     def view(self):
         return self._view
 
-    def deleteTransitionButton_clicked_cb(self, widget):
+    def deleteButton_clicked_cb(self, widget):
         currentProject = self.grammarController.getCurrentProject()
-        if currentProject is None or self.state is None:
+        if currentProject is None or self.transition is None:
             return
         grammar = currentProject.getGrammar()
         automata = grammar.getAutomata()

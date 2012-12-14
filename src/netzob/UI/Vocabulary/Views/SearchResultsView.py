@@ -128,13 +128,13 @@ class SearchView(object):
             self.log.warn("No data to search after were computed.")
             return
 
-        self.log.debug("The following data will be searched for :")
+        self.log.debug("The following data will be searched for:")
         for data in searchedData:
             self.log.info(" - " + str(data))
 
         # Then we search them in the list of messages included in the vocabulary
         searchTasks = searcher.search(searchedData)
-        self.log.info("A number of " + str(len(searchTasks)) + " results found !")
+        self.log.info("A number of {0} results found!".format(str(len(searchTasks))))
 
         # Colorize the segments
         self.colorizeResults(searchTasks)
@@ -147,13 +147,13 @@ class SearchView(object):
         for task in searchTasks:
             for result in task.getResults():
                 for (start, end) in result.getSegments():
-                    filter = TextColorFilter(uuid.uuid4(), "Search", start, start + end + 1, "#DD0000")
+                    function = TextColorFunction(str(uuid.uuid4()), "Search", start, start + end + 1, "#DD0000")
                     message = result.getMessage()
-                    message.addVisualizationFilter(filter)
+                    message.addVisualizationFunction(function)
                     # colorize the associated symbol
                     symbol = self.project.getVocabulary().getSymbolWhichContainsMessage(message)
                     if not symbol in colorizedSymbols:
-                        symbol.addVisualizationFilter(TextColorFilter(uuid.uuid4(), "Search", None, None, "#DD0000"))
+                        symbol.addVisualizationFunction(TextColorFunction(str(uuid.uuid4()), "Search", None, None, "#DD0000"))
                         colorizedSymbols.append(symbol)
 #                    message.highlightSegment(start, end)
         # We update the different views

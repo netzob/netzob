@@ -52,25 +52,28 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 class ContextualMenuOnLayerView(object):
 
-    def __init__(self, controller):
+    def __init__(self, controller, multipleLayers=False):
         self.controller = controller
+        self.multipleLayers = multipleLayers
 
     def run(self, event):
         # Build the contextual menu for messages
         self.menu = Gtk.Menu()
 
         # Add entry to edit layer
-        item = Gtk.MenuItem(_("Edit layer"))
-        item.show()
-        item.connect("activate", self.controller.renameLayer_cb)
-        self.menu.append(item)
+        if self.multipleLayers is False:
+            item = Gtk.MenuItem(_("Edit Layer"))
+            item.show()
+            item.connect("activate", self.controller.renameLayer_cb)
+            self.menu.append(item)
 
         # Add sub-entries for partitioning
-        subMenu = self.build_partitioning_submenu()
-        item = Gtk.MenuItem(_("Partitioning"))
-        item.set_submenu(subMenu)
-        item.show()
-        self.menu.append(item)
+        if self.multipleLayers is False:
+            subMenu = self.build_partitioning_submenu()
+            item = Gtk.MenuItem(_("Partitioning"))
+            item.set_submenu(subMenu)
+            item.show()
+            self.menu.append(item)
 
         # Add sub-entries to change the type of a specific column
         subMenu = self.build_encoding_submenu()
@@ -79,56 +82,57 @@ class ContextualMenuOnLayerView(object):
         item.show()
         self.menu.append(item)
 
-        # Add sub-entries to manage mathematical filter
-        # Add sub-entries to add mathematic filters on a  specific column
-        subMenuMathematicFilters = self.build_math_filters_submenu()
-        item = Gtk.MenuItem(_("Mathematics filters"))
-        item.set_submenu(subMenuMathematicFilters)
-        item.show()
-        self.menu.append(item)
+        # Add sub-entries to manage transformation functions
+        # Add sub-entries to add transformation functions on a  specific column
+        if self.multipleLayers is False:
+            subMenuTransformationFunctions = self.build_transformation_functions_submenu()
+            item = Gtk.MenuItem(_("Transformation Functions"))
+            item.set_submenu(subMenuTransformationFunctions)
+            item.show()
+            self.menu.append(item)
 
         # Add entry to delete layer
-        item = Gtk.MenuItem(_("Delete layer"))
+        item = Gtk.MenuItem(_("Delete Layer"))
         item.show()
         item.connect("activate", self.controller.deleteLayer_cb)
         self.menu.append(item)
 
         self.menu.popup(None, None, None, None, event.button, event.time)
 
-    def build_math_filters_submenu(self):
+    def build_transformation_functions_submenu(self):
         """Create a GTK submenu which contains
-        entries to edit the mathematical filters
+        entries to edit the transformation functions
         of selected layer"""
         menu = Gtk.Menu()
 
-        # Retrieve the list of available mathematical filters
+        # Retrieve the list of available transformation functions
         currentWorkspace = self.controller.vocabularyController.getCurrentWorkspace()
-        mathematicFilters = currentWorkspace.getMathematicFilters()
+        transformationFunctions = currentWorkspace.getTransformationFunctions()
 
-        messages = self.controller.layer.getMessages()
-        # Fetch all the filters attach to messages of current layer (either symbol of fieldLayer)
-        filtersInMessages = []
-        for filter in self.controller.layer.getSymbol().getField().getMathematicFilters():
-            if not filter in filtersInMessages:
-                filtersInMessages.append(filter)
+        messages = self.controller.layers[0].getMessages()
+        # Fetch all the functions attach to messages of current layer (either symbol of fieldLayer)
+        functionsInMessages = []
+        for function in self.controller.layers[0].getSymbol().getField().getTransformationFunctions():
+            if not function in functionsInMessages:
+                functionsInMessages.append(function)
 
-        for mathFilter in mathematicFilters:
+        for transformationFunction in transformationFunctions:
             toggled = False
-            for f in filtersInMessages:
-                if f.getName() == mathFilter.getName():
+            for f in functionsInMessages:
+                if f.getName() == transformationFunction.getName():
                     toggled = True
                     break
 
-            mathFilterItem = Gtk.CheckMenuItem(mathFilter.getName())
-            mathFilterItem.set_active(toggled)
-            mathFilterItem.connect("activate", self.controller.applyMathematicFilter_cb, mathFilter)
-            mathFilterItem.show()
-            menu.append(mathFilterItem)
+            transformationFunctionItem = Gtk.CheckMenuItem(transformationFunction.getName())
+            transformationFunctionItem.set_active(toggled)
+            transformationFunctionItem.connect("activate", self.controller.applyTransformationFunction_cb, transformationFunction)
+            transformationFunctionItem.show()
+            menu.append(transformationFunctionItem)
 
-        customFilter = Gtk.MenuItem(_("Create your Filter"))
-        customFilter.connect("activate", self.controller.createCustomFilter_cb)
-        customFilter.show()
-        menu.append(customFilter)
+        customFunction = Gtk.MenuItem(_("Create Your Function"))
+        customFunction.connect("activate", self.controller.createCustomFunction_cb)
+        customFunction.show()
+        menu.append(customFunction)
 
         menu.show_all()
         return menu
@@ -145,8 +149,9 @@ class ContextualMenuOnLayerView(object):
         for value in possible_choices:
             # Compute if its activated
             toggled = False
-            if self.controller.layer.getFormat() == value:
-                toggled = True
+            if self.multipleLayers is False:
+                if self.controller.layers[0].getFormat() == value:
+                    toggled = True
 
             # Create the check item
             item = Gtk.CheckMenuItem(value)
@@ -165,8 +170,9 @@ class ContextualMenuOnLayerView(object):
         for value in possible_choices:
             # Compute if its activated
             toggled = False
-            if self.controller.layer.getUnitSize() == value:
-                toggled = True
+            if self.multipleLayers is False:
+                if self.controller.layers[0].getUnitSize() == value:
+                    toggled = True
 
             item = Gtk.CheckMenuItem(value)
             item.set_active(toggled)
@@ -184,8 +190,9 @@ class ContextualMenuOnLayerView(object):
         for value in possible_choices:
             # Compute if its activated
             toggled = False
-            if self.controller.layer.getSign() == value:
-                toggled = True
+            if self.multipleLayers is False:
+                if self.controller.layers[0].getSign() == value:
+                    toggled = True
 
             item = Gtk.CheckMenuItem(value)
             item.set_active(toggled)
@@ -203,8 +210,9 @@ class ContextualMenuOnLayerView(object):
         for value in possible_choices:
             # Compute if its activated
             toggled = False
-            if self.controller.layer.getEndianess() == value:
-                toggled = True
+            if self.multipleLayers is False:
+                if self.controller.layers[0].getEndianess() == value:
+                    toggled = True
 
             item = Gtk.CheckMenuItem(value)
             item.set_active(toggled)
@@ -223,31 +231,31 @@ class ContextualMenuOnLayerView(object):
         menu = Gtk.Menu()
 
         # Sequence alignment
-        item = Gtk.MenuItem(_("Sequence alignment"))
+        item = Gtk.MenuItem(_("Sequence Alignment"))
         item.connect("activate", self.controller.sequenceAlignment_cb)
         item.show()
         menu.append(item)
 
         # Force partitionment
-        item = Gtk.MenuItem(_("Force partitionment"))
+        item = Gtk.MenuItem(_("Force Partitionment"))
         item.connect("activate", self.controller.forcePartitionment_cb)
         item.show()
         menu.append(item)
 
         # Simple partitionment
-        item = Gtk.MenuItem(_("Simple partitionment"))
+        item = Gtk.MenuItem(_("Simple Partitionment"))
         item.connect("activate", self.controller.simplePartitionment_cb)
         item.show()
         menu.append(item)
 
         # Smooth partitionment
-        item = Gtk.MenuItem(_("Smooth partitionment"))
+        item = Gtk.MenuItem(_("Smooth Partitionment"))
         item.connect("activate", self.controller.smoothPartitionment_cb)
         item.show()
         menu.append(item)
 
         # Reset partitionment
-        item = Gtk.MenuItem(_("Reset partitionment"))
+        item = Gtk.MenuItem(_("Reset Partitionment"))
         item.connect("activate", self.controller.resetPartitionment_cb)
         item.show()
         menu.append(item)

@@ -37,6 +37,7 @@ from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
 from netzob.Common.Property import Property
 from netzob.Common.Type.TypeIdentifier import TypeIdentifier
 from netzob.Common.Type.Format import Format
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -170,11 +171,7 @@ class MMSTDVisitor(threading.Thread):
         xmlActor = etree.SubElement(root, "{" + namespace + "}actor")
         xmlActor.set('id', str(self.getID()))
         xmlActor.set('name', str(self.getName()))
-        if self.isInitiator():
-            xmlActor.set('initiator', "true")
-        else:
-            xmlActor.set('initiator', "false")
-
+        xmlActor.set('initiator', TypeConvertor.bool2str(self.isInitiator()))
         self.abstractionLayer.save(xmlActor, namespace)
 
     @staticmethod
@@ -183,7 +180,7 @@ class MMSTDVisitor(threading.Thread):
 
             id = xmlRoot.get('id')
             name = xmlRoot.get('name')
-            initiator = bool(xmlRoot.get('initiator'))
+            initiator = TypeConvertor.str2bool(xmlRoot.get('initiator'))
 
             abstractionLayer = None
             if xmlRoot.find("{" + namespace + "}abstractionLayer") is not None:

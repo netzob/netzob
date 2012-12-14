@@ -180,7 +180,7 @@
 				</restriction>
 			</simpleType>
 		</attribute>
-		<attribute name="timestamp" type="int" use="required"></attribute>
+		<attribute name="timestamp" type="double" use="required"></attribute>
 	</complexType>
 
 

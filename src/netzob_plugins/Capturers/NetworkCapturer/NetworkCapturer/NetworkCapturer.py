@@ -94,7 +94,7 @@ class NetworkCapturer(AbstractCapturer):
         try:
             interfaces = pcapy.findalldevs()
         except:
-            logging.warn(_("You don't have enough permissions to open any network interface on this system. Please look at the README.rst file for more information."))
+            logging.warn("You don't have enough permissions to open any network interface on this system. Please look at the README.rst file for more information.")
         return interfaces
 
     def readMessages(self, callback_readMessage, device, count, time):
@@ -109,12 +109,12 @@ class NetworkCapturer(AbstractCapturer):
     #| Thread for sniffing work
     #+----------------------------------------------
     def sniffingThread(self, device, count, time):
-        logging.info(_("Launching sniff process on dev {0} with : count={1}, timeout={2}, filter=\"{3}\"").format(device, count, time, self.bpfFilter))
+        logging.info("Launching sniff process on dev {0} with: count={1}, timeout={2}, filter=\"{3}\"".format(device, count, time, self.bpfFilter))
         sniffer = pcapy.open_live(device, 1024, False, int(time))
         try:
             sniffer.setfilter(self.bpfFilter)
         except:
-            logging.warn(_("The provided filter is not valid (it should respects the BPF format"))
+            logging.warn("The provided filter is not valid (it should respects the BPF format")
             return
 
         self.datalink = sniffer.datalink()
@@ -129,10 +129,12 @@ class NetworkCapturer(AbstractCapturer):
 
     def _packetHandler(self, header, payload):
         """Decode a packet"""
-        mUuid = uuid.uuid4()
+        mUuid = str(uuid.uuid4())
         mTimestamp = int(time.time())
         message = None
         if self.importLayer == 1:
+            if len(payload) == 0:
+                return
             message = RawMessage(
                 mUuid,
                 mTimestamp,
@@ -141,6 +143,8 @@ class NetworkCapturer(AbstractCapturer):
         elif self.importLayer == 2:
             (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = \
                 self.decodeLayer2(header, payload)
+            if len(l2Payload) == 0:
+                return
             message = L2NetworkMessage(
                 mUuid,
                 mTimestamp,
@@ -156,6 +160,8 @@ class NetworkCapturer(AbstractCapturer):
                 (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum) = \
                     self.decodeLayer3(etherType, l2Payload)
             except TypeError:
+                return
+            if len(l3Payload) == 0:
                 return
             message = L3NetworkMessage(
                 mUuid,
@@ -179,6 +185,8 @@ class NetworkCapturer(AbstractCapturer):
             except TypeError:
                 return
             if l4Payload.encode("hex") == "":
+                return
+            if len(l4Payload) == 0:
                 return
             message = L4NetworkMessage(
                 mUuid,
@@ -253,16 +261,12 @@ class NetworkCapturer(AbstractCapturer):
                 l4Payload = layer4.get_data_as_string()
                 return (l4Proto, l4SrcPort, l4DstPort, l4Payload)
             else:
-                warnMessage = _("Cannot import one of the provided packets since " +
-                                "its layer 4 is unsupported (Only UDP and TCP " +
-                                "are currently supported, packet IP protocol " +
-                                "number = {0})").format(ipProtocolNum)
+                warnMessage = "Cannot import one of the provided packets since its layer 4 is unsupported (Only UDP and TCP are currently supported, packet IP protocol number = {0})".format(ipProtocolNum)
                 logging.warn(warnMessage)
 
     def getMessageDetails(self, messageID):
         if not messageID in self._payloadDict:
-            errorMessage = _("Message ID: {0} not found in importer " +
-                             "message list").format(messageID)
+            errorMessage = "Message ID: {0} not found in importer message list".format(messageID)
             logging.error(errorMessage)
             raise NetzobImportException("PCAP", errorMessage, ERROR)
         decoder = Decoders.EthDecoder()

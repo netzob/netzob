@@ -64,7 +64,7 @@ class TrashSymbol(AbstractSymbol):
         AbstractSymbol.__init__(self, "TrashSymbol")
         self.id = id
         if self.id == None:
-            id = uuid.uuid4()
+            id = str(uuid.uuid4())
         self.name = "TrashSymbol"
         self.messages = []
         self.encodingFilters = []
@@ -293,7 +293,7 @@ class TrashSymbol(AbstractSymbol):
             else:
                 return 1
         except:
-            self.log.warn(_("Tried to compare a Symbol with {0}").format(str(other)))
+            self.log.warn("Tried to compare a Symbol with {0}".format(str(other)))
             return 1
 
     #+----------------------------------------------

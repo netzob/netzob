@@ -30,8 +30,17 @@
 #| Global Imports
 #+----------------------------------------------------------------------------
 from setuptools import setup
+import sys
 
-dependencies = ['python-dateutil']
+package = 'OSpyImporter'
+resourcesPath = "../../../../resources/"
+
+sys.path.append(resourcesPath)
+from sdist.utils import find_data_files, opj
+
+pluginsStaticResourcesPath = opj(resourcesPath, "static/netzob_plugins/", package)
+
+dependencies = ['python-dateutil', 'Netzob >= 0.4']
 
 #+----------------------------------------------------------------------------
 #| Definition of Netzob for setup
@@ -41,8 +50,12 @@ setup(
     version="1.0.0",
     author="Georges Bossert, Frédéric Guihéry",
     author_email="contact@netzob.org",
-    packages=['OSpyImporter'],
+    packages=[package],
     install_requires=dependencies,
+    data_files=find_data_files(opj("share", "netzob", "plugins", package),
+                               pluginsStaticResourcesPath,
+                               '*.glade',
+                               recursive=True),
     entry_points="""
     [netzob.plugins]
     OSpyImporter=OSpyImporter.OSpyImporterPlugin:OSpyImporterPlugin

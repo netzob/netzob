@@ -30,11 +30,19 @@
 #| Global Imports
 #+----------------------------------------------------------------------------
 from setuptools import setup
+import sys
+
+package = 'DelimiterSeparatedImporter'
+resourcesPath = "../../../../resources/"
+
+sys.path.append(resourcesPath)
+from sdist.utils import find_data_files, opj
+
+pluginsStaticResourcesPath = opj(resourcesPath, "static/netzob_plugins/", package)
 
 dependencies = [
-
+    'Netzob >= 0.4'
 ]
-
 #+----------------------------------------------------------------------------
 #| Definition of Netzob for setup
 #+----------------------------------------------------------------------------
@@ -43,8 +51,12 @@ setup(
     version="1.0.0",
     author="Georges Bossert, Frédéric Guihéry",
     author_email="contact@netzob.org",
-    packages=['DelimiterSeparatedImporter'],
+    packages=[package],
     install_requires=dependencies,
+    data_files=find_data_files(opj("share", "netzob", "plugins", package),
+                               pluginsStaticResourcesPath,
+                               '*.glade',
+                               recursive=True),
     entry_points="""
     [netzob.plugins]
     DelimiterSeparatedImporter=DelimiterSeparatedImporter.DelimiterSeparatedImporterPlugin:DelimiterSeparatedImporterPlugin

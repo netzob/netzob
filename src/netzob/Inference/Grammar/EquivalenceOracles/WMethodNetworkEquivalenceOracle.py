@@ -245,7 +245,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
                     os.system("sh " + self.resetScript)
 
                 self.log.debug("=====================")
-                self.log.debug("Execute test " + str(i_test) + "/" + str(len(T)) + " : " + str(test))
+                self.log.debug("Execute test {0}/{1}: {2}".format(str(i_test), str(len(T)), str(test)))
                 self.log.debug("=====================")
 
                 isMaster = not self.communicationChannel.isServer()

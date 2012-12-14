@@ -72,7 +72,7 @@ class WorkspaceSelector(object):
         self.workEntry.connect("changed", self.entryChanged)
         self.workEntry.connect("focus-in-event", self.entryFocused)
         self.workEntry.set_placeholder_text(_("Path"))
-        self.browseButton = Gtk.Button(_("Browse..."))
+        self.browseButton = Gtk.Button(_("Browse"))
         self.browseButton.connect("clicked", self.openBrowseDialog)
         self.browseButton.set_can_default(True)
 

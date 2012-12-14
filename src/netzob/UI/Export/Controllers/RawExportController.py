@@ -56,7 +56,7 @@ class RawExportController(object):
     def update(self):
         self.view.symbolTreeview.get_model().clear()
         for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-            iter = self.view.symbolTreeview.get_model().append(None, ["{0}".format(symbol.getID()), "{0} [{1}]".format(symbol.getName(), str(len(symbol.getMessages()))), "{0}".format(symbol.getScore()), '#000000', '#DEEEF0'])
+            iter = self.view.symbolTreeview.get_model().append(None, ["{0}".format(symbol.getID()), "{0} [{1}]".format(symbol.getName(), str(len(symbol.getMessages()))), '#000000', '#DEEEF0'])
 
     def clear(self):
         pass
@@ -89,7 +89,7 @@ class RawExportController(object):
 
     def showXMLDefinition(self, symbolID):
         if symbolID is None:
-            self.log.debug(_("No selected symbol"))
+            self.log.debug("No selected symbol")
             self.view.textarea.get_buffer().set_text(_("Select a symbol to see its XML definition"))
         else:
             xmlDefinition = self.model.getXMLDefinition(symbolID)

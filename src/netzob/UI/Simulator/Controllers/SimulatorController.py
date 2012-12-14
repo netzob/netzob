@@ -30,8 +30,7 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
-from netzob.UI.Simulator.Views.SimulatorView import SimulatorView
-from netzob.UI.Simulator.Controllers.CreateNetworkActorController import CreateNetworkActorController
+from gi.repository import Gtk
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -40,6 +39,9 @@ from netzob.UI.Simulator.Controllers.CreateNetworkActorController import CreateN
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.UI.NetzobWidgets import NetzobQuestionMessage, NetzobErrorMessage, NetzobInfoMessage
+from netzob.UI.Simulator.Views.SimulatorView import SimulatorView
+from netzob.UI.Simulator.Controllers.CreateNetworkActorController import CreateNetworkActorController
 
 
 #+---------------------------------------------------------------------------+
@@ -98,6 +100,17 @@ class SimulatorController(object):
         if self.getCurrentProject() is None:
             logging.info("No project loaded.")
             return
+        model, iter = self.view.listOfActorsTreeView.get_selection().get_selected()
+        if iter is not None:
+            actorID = model[iter][2]
+            actor = self.getCurrentProject().getSimulator().getActorByID(actorID)
+            if actor is not None:
+                questionMsg = _("Click yes to confirm the deletion of the selected actor")
+                result = NetzobQuestionMessage(questionMsg)
+                if result == Gtk.ResponseType.YES:
+                    self.getCurrentProject().getSimulator().removeActor(actor)
+                    self._view.refreshListOfActors()
+                    self._view.deleteActorButton.set_sensitive(False)
 
     def stopActorButton_clicked_cb(self, event):
         """Callback executed when the user wants to stop a selected actor"""
@@ -149,4 +162,5 @@ class SimulatorController(object):
         if iter is not None:
             actorID = model[iter][2]
             self.currentActor = self.getCurrentProject().getSimulator().getActorByID(actorID)
+            self._view.deleteActorButton.set_sensitive(True)
         self._view.updateCurrentActor()

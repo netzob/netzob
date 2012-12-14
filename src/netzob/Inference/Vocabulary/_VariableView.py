@@ -120,7 +120,7 @@ class VariableView(object):
         self.registerVariable(None, self.rootVariable, "Root")
 
     def registerVariable(self, rootEntry, variable, name):
-        self.log.debug(_("Register: {0}").format(str(name)))
+        self.log.debug("Register: {0}".format(str(name)))
         self.datas[str(variable.getID())] = variable
         newEntry = self.treestore.append(rootEntry, [str(variable.getID()), name])
         if variable.getType() == AggregateVariable.TYPE or variable.getType() == AlternateVariable.TYPE:
@@ -159,7 +159,7 @@ class VariableView(object):
                             rootVariable = self.datas[varid]
 
         if rootVariable is None:
-            self.log.debug(_("Impossible to find the selected variable."))
+            self.log.debug("Impossible to find the selected variable.")
             return
 
         # We display the menu for the insertion of sub-elements if its an Aggregate or an Alternative
@@ -246,7 +246,7 @@ class VariableView(object):
         dialog.set_markup(_("Definition of the Binary Variable"))
 
         # Create the ID of the new variable
-        varID = uuid.uuid4()
+        varID = str(uuid.uuid4())
         variableID = str(varID)
 
         mainTable = Gtk.Table(rows=3, columns=2, homogeneous=False)
@@ -331,7 +331,7 @@ class VariableView(object):
         dialog.set_markup(_("Definition of the Hexadecimal Variable"))
 
         # Create the ID of the new variable
-        varID = uuid.uuid4()
+        varID = str(uuid.uuid4())
         variableID = str(varID)
 
         mainTable = Gtk.Table(rows=3, columns=2, homogeneous=False)
@@ -657,7 +657,7 @@ class VariableView(object):
         dialog.set_markup(_("Definition of the IPv4 Variable"))
 
         # Create the ID of the new variable
-        varID = uuid.uuid4()
+        varID = str(uuid.uuid4())
         variableID = str(varID)
 
         mainTable = Gtk.Table(rows=3, columns=2, homogeneous=False)
@@ -812,7 +812,7 @@ class VariableView(object):
             return
 
         idReferencedVariable = self.varCombo.get_model().get_value(self.varCombo.get_active_iter(), 1)
-        referencedVariable = ReferencedVariable(uuid.uuid4(), "Ref", True, False, idReferencedVariable)
+        referencedVariable = ReferencedVariable(str(uuid.uuid4()), "Ref", True, False, idReferencedVariable)
         rootVariable.addChild(referencedVariable)
 
         self.datas[str(referencedVariable.getID())] = referencedVariable

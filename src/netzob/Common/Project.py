@@ -71,7 +71,7 @@ def loadProject_0_1(projectFile):
     etree.register_namespace('netzob', PROJECT_NAMESPACE)
     etree.register_namespace('netzob-common', COMMON_NAMESPACE)
 
-    projectID = uuid.UUID(xmlProject.get('id'))
+    projectID = str(xmlProject.get('id'))
     projectName = xmlProject.get('name', 'none')
     projectCreationDate = TypeConvertor.xsdDatetime2PythonDatetime(xmlProject.get('creation_date'))
     projectPath = xmlProject.get('path')
@@ -102,11 +102,8 @@ def loadProject_0_1(projectFile):
     return project
 
 
-#+---------------------------------------------------------------------------+
-#| Project:
-#|     Class definition of a Project
-#+---------------------------------------------------------------------------+
 class Project(object):
+    """Class definition of a Project"""
 
     # The name of the configuration file
     CONFIGURATION_FILENAME = "config.xml"
@@ -161,23 +158,20 @@ class Project(object):
         return root
 
     def saveConfigFile(self, workspace):
-
-        projectPath = os.path.join(os.path.join(workspace.getPath(), self.getPath()))
+        projectPath = os.path.join(workspace.getPath(), self.getPath())
         projectFile = os.path.join(projectPath, Project.CONFIGURATION_FILENAME)
 
-        logging.info("Save the config file of project " + self.getName() + " in " + projectFile)
+        logging.info("Save the config file of project {0} in {1}".format(self.getName(), projectFile))
 
         # First we verify and create if necessary the directory of the project
         if not os.path.exists(projectPath):
-            logging.info("Creation of the directory " + projectPath)
+            logging.info("Creation of the directory: {0}".format(projectPath))
             os.mkdir(projectPath)
+
         # We generate the XML Config file
         root = self.generateXMLConfigFile()
         tree = ElementTree(root)
         tree.write(projectFile)
-
-        # Saving the workspace configuration file
-#        workspace.saveConfigFile()
 
     def hasPendingModifications(self, workspace):
         result = True
@@ -240,11 +234,13 @@ class Project(object):
     @staticmethod
     def createProject(workspace, name):
         idProject = str(uuid.uuid4())
-        path = "projects/" + idProject + "/"
+        path = os.path.join("projects", idProject)
         creationDate = datetime.datetime.now()
         project = Project(idProject, name, creationDate, path)
+
         # Creation of the config file
         project.saveConfigFile(workspace)
+
         # Register the project in the workspace
         workspace.referenceProject(project.getPath())
         workspace.saveConfigFile()
@@ -260,11 +256,11 @@ class Project(object):
             return None
         # is the projectFile is a file
         if not os.path.isfile(projectFile):
-            logging.warn("The specified project's configuration file (" + str(projectFile) + ") is not valid : its not a file.")
+            logging.warn("The specified project's configuration file ({0} is not valid: its not a file.".format(str(projectFile)))
             return None
         # is it readable
         if not os.access(projectFile, os.R_OK):
-            logging.warn("The specified project's configuration file (" + str(projectFile) + ") is not readable.")
+            logging.warn("The specified project's configuration file ({0}) is not readable.".format(str(projectFile)))
             return None
 
         # We validate the file given the schemas
@@ -284,7 +280,7 @@ class Project(object):
                 if projectName is not None and projectName != 'none':
                     return projectName
             else:
-                logging.warn("The project declared in file (" + projectFile + ") is not valid")
+                logging.warn("The project declared in file ({0}) is not valid".format(projectFile))
         return None
 
     @staticmethod
@@ -294,7 +290,7 @@ class Project(object):
             return None
         # is the projectFile is a file
         if not os.path.isfile(projectFile):
-            logging.warn("The specified project's configuration file (" + str(projectFile) + ") is not valid : its not a file.")
+            logging.warn("The specified project's configuration file (" + str(projectFile) + ") is not valid: its not a file.")
             return None
         # is it readable
         if not os.access(projectFile, os.R_OK):
@@ -324,11 +320,11 @@ class Project(object):
     def isSchemaValidateXML(schemaFile, xmlFile):
         # is the schema is a file
         if not os.path.isfile(schemaFile):
-            logging.warn("The specified schema file (" + str(schemaFile) + ") is not valid : its not a file.")
+            logging.warn("The specified schema file ({0}) is not valid: its not a file.".format(str(schemaFile)))
             return False
         # is it readable
         if not os.access(schemaFile, os.R_OK):
-            logging.warn("The specified schema file (" + str(schemaFile) + ") is not readable.")
+            logging.warn("The specified schema file ({0}) is not readable.".format(str(schemaFile)))
             return False
 
         schemaF = open(schemaFile, "r")

@@ -54,9 +54,7 @@ class GlobalMenuEntryPoint(GlobalMenuExtension):
         self.netzob = netzob
 
     def getMenuEntries(self):
-        menuEntries = [
-                       (Menu.PATH_PROJECT_IMPORTTRACES + "/" + _("Import from File"), None, self.executeAction, 0, None)
-                       ]
+        menuEntries = [(Menu.PATH_PROJECT_IMPORTTRACES + "/" + _("Import from File"), None, self.executeAction, 0, None)]
         return menuEntries
 
     def executeAction(self, widget, data):

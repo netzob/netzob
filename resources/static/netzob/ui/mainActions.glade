@@ -5,7 +5,7 @@
     <child>
       <object class="GtkAction" id="newProject">
         <property name="label" translatable="yes">New Project</property>
-        <property name="tooltip" translatable="yes">Create new project</property>
+        <property name="tooltip" translatable="yes">Create a new project</property>
         <property name="stock_id">gtk-new</property>
         <signal name="activate" handler="newProject_activate_cb" swapped="no"/>
       </object>
@@ -14,7 +14,7 @@
     <child>
       <object class="GtkAction" id="saveProject">
         <property name="label" translatable="yes">Save Project</property>
-        <property name="tooltip" translatable="yes">Save current project</property>
+        <property name="tooltip" translatable="yes">Save the current project</property>
         <property name="stock_id">gtk-save</property>
         <property name="sensitive">False</property>
         <signal name="activate" handler="saveProject_activate_cb" swapped="no"/>
@@ -23,14 +23,14 @@
     </child>
     <child>
       <object class="GtkAction" id="importProject">
-        <property name="label" translatable="yes">Import Project…</property>
+        <property name="label" translatable="yes">Import Project</property>
         <property name="tooltip" translatable="yes">Import a project</property>
         <signal name="activate" handler="importProject_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>
       <object class="GtkAction" id="exportProject">
-        <property name="label" translatable="yes">Export Project…</property>
+        <property name="label" translatable="yes">Export Project</property>
         <property name="tooltip" translatable="yes">Save current project</property>
         <property name="hide_if_empty">False</property>
         <property name="sensitive">False</property>
@@ -38,8 +38,8 @@
     </child>
     <child>
       <object class="GtkAction" id="switchWorkspace">
-        <property name="label" translatable="yes">Switch Workspace…</property>
-        <property name="tooltip" translatable="yes">Select a new working directory</property>
+        <property name="label" translatable="yes">Switch Workspace</property>
+        <property name="tooltip" translatable="yes">Choose a new working directory</property>
         <property name="stock_id">gtk-jump-to</property>
         <signal name="activate" handler="switchWorkspace_activate_cb" swapped="no"/>
       </object>
@@ -76,7 +76,7 @@
     </child>
     <child>
       <object class="GtkAction" id="switchProject">
-        <property name="label" translatable="yes">Open project from workspace</property>
+        <property name="label" translatable="yes">Open Project From Workspace</property>
         <property name="tooltip" translatable="yes">Open a project already into the workspace</property>
         <property name="hide_if_empty">False</property>
       </object>

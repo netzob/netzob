@@ -61,7 +61,7 @@ class AbstractRelationType():
         self.associatedDataType = self.makeAssociatedDataType(sized, nbChars, nbChars, delimiter)
 
     def toString(self):
-        return (_("{0}, associatedDataType: {1}").format(self.getType(), self.associatedDataType.toString()))
+        return "{0}, associatedDataType: {1}".format(self.getType(), self.associatedDataType.toString())
 
 #+---------------------------------------------------------------------------+
 #| Abstract methods                                                          |
@@ -74,7 +74,7 @@ class AbstractRelationType():
                 @rtype: string
                 @return: the current type in string format.
         """
-        raise NotImplementedError(_("The current type does not implement 'getType'."))
+        raise NotImplementedError("The current type does not implement 'getType'.")
 
     def makeAssociatedDataType(self, sized, minChars, maxChars, delimiter):
         """makeAssociatedDataType
@@ -89,7 +89,7 @@ class AbstractRelationType():
                 @type delimiter: bitarray
                 @param delimiter: a set of bits that tells where the associated variable ends.
         """
-        raise NotImplementedError(_("The current type does not implement 'makeAssociatedDataType'."))
+        raise NotImplementedError("The current type does not implement 'makeAssociatedDataType'.")
 
     @abstractmethod
     def computeValue(self, writingToken):
@@ -101,7 +101,7 @@ class AbstractRelationType():
                 @rtype: bitarray
                 @return: the computed value.
         """
-        raise NotImplementedError(_("The current type does not implement 'computeValue'."))
+        raise NotImplementedError("The current type does not implement 'computeValue'.")
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
@@ -128,5 +128,5 @@ class AbstractRelationType():
         if typeString == SizeRelationType.TYPE:
             _type = SizeRelationType(sized, minChars, maxChars, delimiter)
         else:
-            logging.error(_("Wrong type specified for this variable."))
+            logging.error("Wrong type specified for this variable.")
         return _type

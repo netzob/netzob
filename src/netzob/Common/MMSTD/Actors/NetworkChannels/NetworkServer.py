@@ -60,9 +60,41 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
         self.instances = []
         self.allow_reuse_address = True
         self.multipleConnectionAllowed = True
+        self.memory = None
+        self.bindIP = None
+        self.bindPort = None
+        self.targetIP = None
+        self.targetPort = None
 
     def getVocabulary(self):
         return self.vocabulary
+
+    def getMemory(self):
+        return self.memory
+
+    def getBindIP(self):
+        return self.bindIP
+
+    def setBindIP(self, bindIP):
+        self.bindIP = bindIP
+
+    def getBindPort(self):
+        return self.bindPort
+
+    def setBindPort(self, port):
+        self.bindPort = port
+
+    def getTargetIP(self):
+        return self.targetIP
+
+    def setTargetIP(self, targetIP):
+        self.targetIP = targetIP
+
+    def getTargetPort(self):
+        return self.targetPort
+
+    def setTargetPort(self, targetPort):
+        self.targetPort = targetPort
 
     def getInitialState(self):
         return self.initialState
@@ -72,6 +104,9 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 
     def setVocabulary(self, vocabulary):
         self.vocabulary = vocabulary
+
+    def setMemory(self, memory):
+        self.memory = memory
 
     def setInitialState(self, initialState):
         self.initialState = initialState
@@ -130,9 +165,17 @@ class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
         self.instances = []
         self.allow_reuse_address = True
         self.multipleConnectionAllowed = True
+        self.memory = None
+        self.bindIP = None
+        self.bindPort = None
+        self.targetIP = None
+        self.targetPort = None
 
     def getVocabulary(self):
         return self.vocabulary
+
+    def getMemory(self):
+        return self.memory
 
     def getInitialState(self):
         return self.initialState
@@ -142,6 +185,33 @@ class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
 
     def setVocabulary(self, vocabulary):
         self.vocabulary = vocabulary
+
+    def setMemory(self, memory):
+        self.memory = memory
+
+    def getBindIP(self):
+        return self.bindIP
+
+    def setBindIP(self, bindIP):
+        self.bindIP = bindIP
+
+    def getBindPort(self):
+        return self.bindPort
+
+    def setBindPort(self, port):
+        self.bindPort = port
+
+    def getTargetIP(self):
+        return self.targetIP
+
+    def setTargetIP(self, targetIP):
+        self.targetIP = targetIP
+
+    def getTargetPort(self):
+        return self.targetPort
+
+    def setTargetPort(self, targetPort):
+        self.targetPort = targetPort
 
     def setInitialState(self, initialState):
         self.initialState = initialState
@@ -212,15 +282,19 @@ class TCPConnectionHandler(SocketServer.BaseRequestHandler):
         # we create a sub automata
         automata = MMSTD(initialState, vocabulary)
 
+        # and duplicate the memory for this instance
+        duplicatedMemory = self.server.getMemory().duplicate()
+
         # We create an instantiated network server
-        instanciatedNetworkServer = InstanciatedNetworkServer(self.request)
+        instanciatedNetworkServer = InstanciatedNetworkServer(uuid.uuid4(), duplicatedMemory, "TCP", self.request, self.server.getBindIP(), self.server.getBindPort(), self.server.getTargetIP(), self.server.getTargetPort())
 
         # Create the input and output abstraction layer
         abstractionLayer = AbstractionLayer(instanciatedNetworkServer, vocabulary, Memory(), self.server.getCBInputSymbol(), self.server.getCBOutputSymbol())
         # abstractionLayer = AbstractionLayer(instanciatedNetworkServer, vocabulary, Memory(vocabulary.getVariables()), self.server.getCBInputSymbol(), self.server.getCBOutputSymbol())
 
         # And we create an MMSTD visitor for this
-        self.subVisitor = MMSTDVisitor("Instance-" + str(uuid.uuid4()), automata, isMaster, abstractionLayer)
+        anID = str(uuid.uuid4())
+        self.subVisitor = MMSTDVisitor(anID, "Instance-" + anID, automata, isMaster, abstractionLayer)
 
         self.log.info("An MMSTDVistor has been instantiated and assigned to the current network client.")
         self.subVisitor.start()
@@ -258,6 +332,7 @@ class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
 
     def __init__(self, request, client_address, server):
         server.allow_reuse_address = True
+        self.client_address = client_address
         SocketServer.BaseRequestHandler.__init__(self, request, client_address, server)
         self.subVisitor = None
 
@@ -279,15 +354,25 @@ class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
         # we create a sub automata
         automata = MMSTD(initialState, vocabulary)
 
+        # and duplicate the memory for this instance
+        duplicatedMemory = self.server.getMemory().duplicate()
+
+        # set client IP and Port source as the target IP:Port through memory
+        targetIP = self.client_address[0]
+        targetPort = self.client_address[1]
+        self.server.setTargetIP(targetIP)
+        self.server.setTargetPort(targetPort)
+
         # We create an instantiated network server
-        instanciatedNetworkServer = InstanciatedNetworkServer(self.request)
+        instanciatedNetworkServer = InstanciatedNetworkServer(uuid.uuid4(), duplicatedMemory, "UDP", self.request, self.server.getBindIP(), self.server.getBindPort(), self.server.getTargetIP(), self.server.getTargetPort())
 
         # Create the input and output abstraction layer
         abstractionLayer = AbstractionLayer(instanciatedNetworkServer, vocabulary, Memory(), self.server.getCBInputSymbol(), self.server.getCBOutputSymbol())
         # abstractionLayer = AbstractionLayer(instanciatedNetworkServer, vocabulary, Memory(vocabulary.getVariables()), self.server.getCBInputSymbol(), self.server.getCBOutputSymbol())
 
         # And we create an MMSTD visitor for this
-        self.subVisitor = MMSTDVisitor("Instance-" + str(uuid.uuid4()), automata, isMaster, abstractionLayer)
+        anID = str(uuid.uuid4())
+        self.subVisitor = MMSTDVisitor(anID, "Instance-" + anID, automata, isMaster, abstractionLayer)
 
         self.log.info("An MMSTDVistor has been instantiated and assigned to the current network client.")
         self.subVisitor.start()
@@ -303,7 +388,7 @@ class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
                 time.sleep(0.1)
                 finish = not self.subVisitor.isAlive()
             except:
-                self.log.warn("The socket is not anymore opened !")
+                self.log.warn("The socket is not opened anymore!")
                 finish = True
 
         self.subVisitor.join(None)
@@ -320,8 +405,8 @@ class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
 #+---------------------------------------------------------------------------+
 class NetworkServer(AbstractChannel):
 
-    def __init__(self, id, memory, bind_ip, bind_port, target_ip, target_port):
-        AbstractActor.__init__(self, id, True, False, memory, bind_ip, bind_port, target_ip, target_port)
+    def __init__(self, id, memory, protocol, bind_ip, bind_port, target_ip, target_port):
+        AbstractChannel.__init__(self, id, True, False, memory, protocol, bind_ip, bind_port, target_ip, target_port)
         # create logger with the given configuration
         self.log = logging.getLogger(__name__)
 
@@ -338,14 +423,15 @@ class NetworkServer(AbstractChannel):
         while not finish:
             finish = True
             try:
-                if self.protocol == "UDP":
-                    self.log.info("Configure an UDP Network Server to listen on " + self.host + ":" + str(self.port) + ".")
-                    self.server = ThreadedUDPServer((self.host, self.port), UDPConnectionHandler)
+                if self.getProtocol() == "UDP":
+                    self.log.info("Configure an UDP Network Server to listen on " + self.getBindIP() + ":" + str(self.getBindPort()) + ".")
+                    self.server = ThreadedUDPServer((self.getBindIP(), self.getBindPort()), UDPConnectionHandler)
                 else:
-                    self.log.info("Configure a TCP Network Server to listen on " + self.host + ":" + str(self.port) + ".")
-                    self.server = ThreadedTCPServer((self.host, self.port), TCPConnectionHandler)
-            except:
+                    self.log.info("Configure a TCP Network Server to listen on " + str(self.getBindIP()) + ":" + str(self.getBindPort()) + ".")
+                    self.server = ThreadedTCPServer((self.getBindIP(), self.getBindPort()), TCPConnectionHandler)
+            except Exception as e:
                 self.log.warn("Impossible to open a server, attempts = " + str(nbAttempts) + "/" + str(maxNumberOfAttempts))
+                self.log.warn("Error reason: {0}".format(e))
                 finish = False
                 nbAttempts += 1
                 if nbAttempts > maxNumberOfAttempts:
@@ -362,6 +448,12 @@ class NetworkServer(AbstractChannel):
             self.server.setVocabulary(vocabulary)
             self.server.setInitialState(initialState)
             self.server.setMaster(master)
+            self.server.setMemory(self.getMemory())
+            self.server.setTargetIP(self.getTargetIP())
+            self.server.setTargetPort(self.getTargetPort())
+            self.server.setBindIP(self.getBindIP())
+            self.server.setBindPort(self.getBindPort())
+
             self.server.setMultipleConnectionIsAllowed(self.allowMultipleClients)
             self.server_thread = threading.Thread(target=self.server.serve_forever)
             self.server_thread.daemon = True
@@ -385,9 +477,6 @@ class NetworkServer(AbstractChannel):
     def getOutputMessages(self):
         return []
 
-    def getMemory(self):
-        return []
-
     def setAllowMultipleClients(self, allowMultipleClients):
         self.allowMultipleClients = allowMultipleClients
 
@@ -400,17 +489,14 @@ class NetworkServer(AbstractChannel):
         self.log.debug("Stopping the thread of the network server")
 
         self.close()
-        AbstractActor.stop(self)
+        #AbstractActor.stop(self)
+
+    def write(self, message):
+        self.log.warning("Oups, a network server cannot send message, only instanciated can")
 
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
-    def getPort(self):
-        return self.port
-
-    def setPort(self, port):
-        self.port = port
-
     def save(self, root, namespace):
         """Save in the XML tree the actor definition"""
         xmlActor = etree.SubElement(root, "{" + namespace + "}communicationChannel")
@@ -441,11 +527,11 @@ class NetworkServer(AbstractChannel):
         else:
             xmlTargetIp.text = ""
 
-        xmlTragetPort = etree.SubElement(xmlActor, "{" + namespace + "}target_port")
+        xmlTargetPort = etree.SubElement(xmlActor, "{" + namespace + "}target_port")
         if self.getOriginalTargetPort() is not None:
-            xmlTargetIp.text = str(self.getOriginalTargetPort())
+            xmlTargetPort.text = str(self.getOriginalTargetPort())
         else:
-            xmlTargetIp.text = ""
+            xmlTargetPort.text = ""
 
     @staticmethod
     def loadFromXML(rootElement, namespace, version, memory):

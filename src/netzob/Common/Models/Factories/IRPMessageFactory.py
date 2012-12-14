@@ -50,61 +50,52 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 class IRPMessageFactory(object):
 
+    XML_SCHEMA_TYPE = "netzob-common:IRPMessage"
+
     @staticmethod
     #+-----------------------------------------------------------------------+
     #| save
     #|     Generate the XML representation of a IRP message
     #+-----------------------------------------------------------------------+
-    def save(message, xmlMessages, namespace_project, namespace):
-        root = etree.SubElement(xmlMessages, "{" + namespace + "}message")
-        root.set("id", str(message.getID()))
-        root.set("timestamp", str(message.getTimestamp()))
-        root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob-common:IRPMessage")
-        # data
-        subData = etree.SubElement(root, "{" + namespace + "}data")
-        subData.text = str(message.getData())
+    def save(message, xmlMessage, namespace_project, namespace):
+
+        xmlMessage.set("{http://www.w3.org/2001/XMLSchema-instance}type", IRPMessageFactory.XML_SCHEMA_TYPE)
+
+        # Add message properties
+        IRPMessageFactory.addPropertiesToElement(xmlMessage, message, namespace)
+
+    @staticmethod
+    def addPropertiesToElement(xmlMessage, message, namespace):
         # direction
-        subDirection = etree.SubElement(root, "{" + namespace + "}direction")
+        subDirection = etree.SubElement(xmlMessage, "{" + namespace + "}direction")
         subDirection.text = message.getDirection()
         # major
-        subMajor = etree.SubElement(root, "{" + namespace + "}major")
+        subMajor = etree.SubElement(xmlMessage, "{" + namespace + "}major")
         subMajor.text = message.getMajor()
         # minor
-        subMinor = etree.SubElement(root, "{" + namespace + "}minor")
+        subMinor = etree.SubElement(xmlMessage, "{" + namespace + "}minor")
         subMinor.text = str(message.getMinor())
         # requestMode
-        subRequestMode = etree.SubElement(root, "{" + namespace + "}requestMode")
+        subRequestMode = etree.SubElement(xmlMessage, "{" + namespace + "}requestMode")
         subRequestMode.text = message.getRequestMode()
         # pid
-        subPid = etree.SubElement(root, "{" + namespace + "}pid")
+        subPid = etree.SubElement(xmlMessage, "{" + namespace + "}pid")
         subPid.text = str(message.getPID())
         # status
-        subStatus = etree.SubElement(root, "{" + namespace + "}status")
+        subStatus = etree.SubElement(xmlMessage, "{" + namespace + "}status")
         subStatus.text = str(message.getStatus())
         # information
-        subInformation = etree.SubElement(root, "{" + namespace + "}information")
+        subInformation = etree.SubElement(xmlMessage, "{" + namespace + "}information")
         subInformation.text = str(message.getInformation())
         # cancel
-        subCancel = etree.SubElement(root, "{" + namespace + "}cancel")
+        subCancel = etree.SubElement(xmlMessage, "{" + namespace + "}cancel")
         subCancel.text = TypeConvertor.bool2str(message.getCancel())
         # sizeIn
-        subSizeIn = etree.SubElement(root, "{" + namespace + "}sizeIn")
+        subSizeIn = etree.SubElement(xmlMessage, "{" + namespace + "}sizeIn")
         subSizeIn.text = str(message.getSizeIn())
         # sizeOut
-        subSizeOut = etree.SubElement(root, "{" + namespace + "}sizeOut")
+        subSizeOut = etree.SubElement(xmlMessage, "{" + namespace + "}sizeOut")
         subSizeOut.text = str(message.getSizeOut())
-
-        #pattern
-        subPattern = etree.SubElement(root, "{" + namespace + "}pattern")
-        subsubDirection = etree.SubElement(subPattern, "{" + namespace + "}direction")
-        subsubDirection.text = str(message.getPattern()[0])
-        for t in message.getPattern()[1]:
-            subsubToken = etree.SubElement(subPattern, "{" + namespace + "}token")
-            subsubToken.set("format", t.getFormat())
-            subsubToken.set("length", str(t.getLength()))
-            subsubToken.set("type", t.getType())
-            subsubToken.set("value", t.getValue().encode("base-64"))
-        return etree.tostring(root)
 
     @staticmethod
     #+---------------------------------------------------------------------------+
@@ -115,25 +106,25 @@ class IRPMessageFactory(object):
     #| @return an instance of a IRPMessage
     #| @throw NameError if XML invalid
     #+---------------------------------------------------------------------------+
-    def loadFromXML(rootElement, namespace, version):
+    def loadFromXML(rootElement, namespace, version, id, timestamp, data):
 
         # Then we verify its an IPC Message
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob-common:IRPMessage":
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != IRPMessageFactory.XML_SCHEMA_TYPE:
             raise NameError("The parsed xml doesn't represent a IRP message.")
 
-        # Verifies the data field
-        if rootElement.find("{" + namespace + "}data") is None or rootElement.find("{" + namespace + "}data").text is None or not rootElement.find("{" + namespace + "}data").text:
-            raise NameError("The parsed message has no data specified")
+        # Retrieve properties
+        (msg_direction, msg_major, msg_minor, msg_requestMode, msg_pid, msg_status, msg_information, msg_cancel, msg_sizeIn, msg_sizeOut) = IRPMessageFactory.loadProperties(rootElement, namespace)
 
-        # Parse the data field and transform it into a byte array
-        msg_data = bytearray(rootElement.find("{" + namespace + "}data").text)
+        # TODO : verify this ! Circular imports in python !
+        # WARNING : verify this ! Circular imports in python !
+        from netzob.Common.Models.IRPMessage import IRPMessage
 
-        # Retrieve the id
-        msg_id = uuid.UUID(rootElement.get("id"))
+        result = IRPMessage(id, timestamp, data, "IRP", msg_direction, msg_major, msg_minor, msg_requestMode, msg_pid, msg_status, msg_information, msg_cancel, msg_sizeIn, msg_sizeOut)
 
-        # Retrieve the timestamp
-        msg_timestamp = int(rootElement.get("timestamp"))
+        return result
 
+    @staticmethod
+    def loadProperties(rootElement, namespace):
         # Retrieves the direction
         msg_direction = rootElement.find("{" + namespace + "}direction").text
 
@@ -164,30 +155,4 @@ class IRPMessageFactory(object):
         # Retrieves the sizeOut
         msg_sizeOut = int(rootElement.find("{" + namespace + "}sizeOut").text)
 
-        #Retrieve pattern
-
-        pattern = []
-        try:
-            patTemp = rootElement.find("{" + namespace + "}pattern")
-            pattern.append(patTemp.find("{" + namespace + "}direction").text)
-            tokens = patTemp.findall("{" + namespace + "}token")
-            #print "find "+str(tokens)
-            tokenList = []
-            for t in tokens:
-                t_format = t.get("format")
-                t_length = t.get("length")
-                t_type = t.get("type")
-                t_value = t.get("value").decode("base-64")
-                tokenList.append(Token(t_format, t_length, t_type, t_value))
-            pattern.append(tokenList)
-        except:
-            pattern = []
-
-        #print "FACTORY "+rootElement.find("{" + namespace + "}pattern").text+" give "+str(pattern[0])+";"+str([str(i) for i in pattern[1]])
-        # TODO : verify this ! Circular imports in python !
-        # WARNING : verify this ! Circular imports in python !
-        from netzob.Common.Models.IRPMessage import IRPMessage
-
-        result = IRPMessage(msg_id, msg_timestamp, msg_data, "IRP", msg_direction, msg_major, msg_minor, msg_requestMode, msg_pid, msg_status, msg_information, msg_cancel, msg_sizeIn, msg_sizeOut, pattern)
-
-        return result
+        return (msg_direction, msg_major, msg_minor, msg_requestMode, msg_pid, msg_status, msg_information, msg_cancel, msg_sizeIn, msg_sizeOut)

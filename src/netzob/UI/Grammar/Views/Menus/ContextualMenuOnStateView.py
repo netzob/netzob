@@ -79,12 +79,14 @@ class ContextualMenuOnStateView(object):
 
         item = Gtk.MenuItem(_("Edit"))
         item.show()
-        item.connect("activate", self.controller.editTransition_cb, transition)
+        item.connect("button-press-event", self.controller.editTransition_cb, transition)
+        # We use 'button-press-event', because 'activate' does not always work in submenu
         menu.append(item)
 
         item = Gtk.MenuItem(_("Delete"))
         item.show()
-        item.connect("activate", self.controller.deleteTransition_cb, transition)
+        item.connect("button-press-event", self.controller.deleteTransition_cb, transition)
+        # We use 'button-press-event', because 'activate' does not always work in submenu
         menu.append(item)
 
         return menu

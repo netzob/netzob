@@ -49,9 +49,9 @@ from netzob.UI.Vocabulary.Views.Menus.ContextualMenuOnFieldView import Contextua
 from netzob.UI.NetzobWidgets import NetzobLabel
 from netzob.Common.Symbol import Symbol
 from netzob.Common.Field import Field
-from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Models.RawMessage import RawMessage
 from netzob.UI.Vocabulary.Controllers.PopupEditFieldController import PopupEditFieldController
+from netzob.UI.Vocabulary.Controllers.FieldAnalysisController import FieldAnalysisController
 from netzob.UI.Vocabulary.Controllers.VariableController import VariableTreeController
 from netzob.UI.Import.Controllers.ConfirmImportMessagesController import ConfirmImportMessagesController
 from netzob.UI.NetzobWidgets import NetzobErrorMessage
@@ -61,10 +61,10 @@ class ContextualMenuOnFieldController(object):
     """Contextual menu on field (copy to clipboard, message
     visualization, etc.)"""
 
-    def __init__(self, vocabularyController, layer, message, field):
+    def __init__(self, vocabularyController, layer, messages, field):
         self.vocabularyController = vocabularyController
         self.layer = layer
-        self.message = message
+        self.messages = messages
         self.field = field
         self._view = ContextualMenuOnFieldView(self)
         self.log = logging.getLogger(__name__)
@@ -85,14 +85,20 @@ class ContextualMenuOnFieldController(object):
     #+----------------------------------------------
     def copyToClipboard_cb(self, event, aligned, encoded, fieldLevel):
         if aligned is False:  # Copy the entire raw message
-            text = self.message.getStringData()
+            text = ""
+            for message in self.messages:
+                text += message.getStringData() + "\n"
             self.vocabularyController.netzob.clipboard.set_text(text, -1)
         elif fieldLevel is False:  # Copy the entire aligned message
-            text = self.message.applyAlignment(styled=False, encoded=encoded)
-            text = str(text)
+            text = ""
+            for message in self.messages:
+                tmp = message.applyAlignment(styled=False, encoded=encoded)
+                text += str(tmp) + "\n"
             self.vocabularyController.netzob.clipboard.set_text(text, -1)
         else:  # Just copy the selected field
-            text = self.message.applyAlignment(styled=False, encoded=encoded)[self.field.getIndex()]
+            text = ""
+            for message in self.messages:
+                text += str(message.applyAlignment(styled=False, encoded=encoded)[self.field.getIndex()]) + "\n"
             self.vocabularyController.netzob.clipboard.set_text(text, -1)
 
     #+----------------------------------------------
@@ -136,53 +142,20 @@ class ContextualMenuOnFieldController(object):
     #|   Retrieve the domain of definition of the selected column
     #+----------------------------------------------
     def displayDomainOfDefinition_cb(self, event):
-        cells = self.field.getUniqValuesByField()
-        tmpDomain = set()
-        for cell in cells:
-            tmpDomain.add(TypeConvertor.encodeNetzobRawToGivenType(cell, self.field.getFormat()))
-        domain = sorted(tmpDomain)
+        controller = FieldAnalysisController(self.vocabularyController, self.field)
+        controller.run()
 
-        dialog = Gtk.Dialog(title=_("Domain of definition for the column ") + self.field.getName(), flags=0, buttons=None)
-
-        # Text view containing domain of definition
-        ## ListStore format:
-        # str: symbol.id
-        treeview = Gtk.TreeView(Gtk.ListStore(str))
-        treeview.show()
-
-        cell = Gtk.CellRendererText()
-        cell.set_sensitive(True)
-        cell.set_property('editable', True)
-
-        column = Gtk.TreeViewColumn(_("Column ") + str(self.field.getIndex()))
-        column.pack_start(cell, True)
-        column.add_attribute(cell, "text", 0)
-
-        treeview.append_column(column)
-
-        for elt in domain:
-            treeview.get_model().append([elt])
-
-        scroll = Gtk.ScrolledWindow()
-        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        scroll.show()
-        scroll.add(treeview)
-
-        dialog.set_size_request(500, 300)
-        dialog.vbox.pack_start(scroll, True, True, 0)
-        dialog.show()
-
-    def applyMathematicalFilter_cb(self, object, filter):
-        appliedFilters = self.field.getMathematicFilters()
+    def applyTransformationFunction_cb(self, object, function):
+        appliedFunctions = self.field.getTransformationFunctions()
         found = False
-        for appliedFilter in appliedFilters:
-            if appliedFilter.getName() == filter.getName():
+        for appliedFunction in appliedFunctions:
+            if appliedFunction.getName() == function.getName():
                 found = True
         if found:
-            #deactivate the selected filter
-            self.field.removeMathematicFilter(filter)
+            #deactivate the selected function
+            self.field.removeTransformationFunction(function)
         else:
-            self.field.addMathematicFilter(filter)
+            self.field.addTransformationFunction(function)
         self.vocabularyController.view.updateSelectedMessageTable()
 
     def displayPopupToCreateLayer_cb(self, event):
@@ -254,7 +227,8 @@ class ContextualMenuOnFieldController(object):
     def deleteMessage_cb(self, event):
         """Callback executed when the user requests
         to delete the current message"""
-        self.getSymbol().removeMessage(self.message)
+        for message in self.messages:
+            self.getSymbol().removeMessage(message)
         self.vocabularyController.view.updateSelectedMessageTable()
         self.vocabularyController.view.updateLeftPanel()
 
@@ -275,7 +249,7 @@ class ContextualMenuOnFieldController(object):
         # We initialize the correct number of new messages
         newMessages = []
         for message in self.getSymbol().getMessages():
-            mUuid = uuid.uuid4()
+            mUuid = str(uuid.uuid4())
             newMessages.append(RawMessage(mUuid, message.getTimestamp(), ""))
         # We concatenate between the first and last cells
         for index in range(firstField.getIndex(), lastField.getIndex() + 1):

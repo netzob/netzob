@@ -151,7 +151,7 @@ class VariableTreeController(object):
             return
 
         if variable is None:
-            logging.debug(_("Impossible to find the selected variable."))
+            logging.debug("Impossible to find the selected variable.")
             return
 
         # We display the menu for the insertion of sub-elements if its an Aggregate or an Alternative
@@ -216,7 +216,7 @@ class VariableTreeController(object):
             self.dictVariable.pop(str(variable.getID()))
 
         else:
-            logging.info(_("The user didn't confirm the deletion of the variable {0}").format(variable.getName()))
+            logging.info("The user didn't confirm the deletion of the variable {0}".format(variable.getName()))
 
     def editVariable(self, variable):
         """editVariable:
@@ -230,6 +230,7 @@ class VariableTreeController(object):
         result = md.run()
         md.destroy()
         if result == Gtk.ResponseType.YES:
+            pass
             if variable.getID() == self.field.getVariable().getID():
                 # Edit the variable
                 self.field.setVariable(variable)
@@ -240,14 +241,15 @@ class VariableTreeController(object):
                 self.registerVariable(None, variable)
             else:
                 # Edit the variable
-                variable.getFathers()[0].editChildByID(variable)
+                father = variable.getFathers()[0]
+                father.editChildByID(variable)
 
                 # Update its entry
                 entry = self.dictEntry[variable.getID()]
-                self.treestore.remove(entry)
-                self.registerVariable(self.dictEntry[variable.getFathers()[0].getID()], variable)
+                self.treestore.set_value(entry, 1, variable.toString())
+                #self.registerVariable(self.dictEntry[father.getID()], variable)
         else:
-            logging.info(_("The user didn't confirm the edition of the variable {0}").format(variable.getName()))
+            logging.info("The user didn't confirm the edition of the variable {0}".format(variable.getName()))
 
     def createDefaultVariable_cb(self, event):
         """createDefaultVariable_cb:
@@ -258,7 +260,7 @@ class VariableTreeController(object):
         self.field.variable = self.field.getDefaultVariable(self.symbol)
         self.registerContent(self.field.getVariable())
 #        else:
-#            logging.info(_("A variable already exists."))
+#            logging.info("A variable already exists.")
 
 
 class VariableCreationController(object):
@@ -551,8 +553,8 @@ class VariableCreationController(object):
 
                 if self.variable.type.isSized():
                     self.view.getWidg("sizedCheck").set_active(True)
-                    self.view.getWidg("minSpin").set_text(str(self.variable.getMinChars()))
-                    self.view.getWidg("maxSpin").set_text(str(self.variable.getMaxChars()))
+                    self.view.getWidg("minSpin").set_text(str(self.variable.getType().getMinChars()))
+                    self.view.getWidg("maxSpin").set_text(str(self.variable.getType().getMaxChars()))
                     self.view.getWidg("delimiterEntry").set_text('')
                 else:
                     self.view.getWidg("sizedCheck").set_active(False)
@@ -580,8 +582,8 @@ class VariableCreationController(object):
 
                 if self.variable.type.isSized():
                     self.view.getWidg("sizedCheck").set_active(True)
-                    self.view.getWidg("minSpin").set_text(str(self.variable.getMinChars()))
-                    self.view.getWidg("maxSpin").set_text(str(self.variable.getMaxChars()))
+                    self.view.getWidg("minSpin").set_text(str(self.variable.getType().getMinChars()))
+                    self.view.getWidg("maxSpin").set_text(str(self.variable.getType().getMaxChars()))
                     self.view.getWidg("delimiterEntry").set_text('')
                 else:
                     self.view.getWidg("sizedCheck").set_active(False)
@@ -676,6 +678,7 @@ class VariableCreationController(object):
         if variable is not None:
             # This part is for saving and transfering children when transforming a node variable into an other kind of node variable.
             if self.editOverCreate:
+                father = self.variable.getFathers()[0]
                 # We transform a node variable into a node variable.
                 if (self.variable.getVariableType() == AggregateVariable.TYPE or self.variable.getVariableType() == AlternateVariable.TYPE) and (variable.getVariableType() == AggregateVariable.TYPE or variable.getVariableType() == AlternateVariable.TYPE):
                     children = self.variable.getChildren()
@@ -698,7 +701,7 @@ class VariableCreationController(object):
                 # We do not manage/save children.
                 else:
                     self.variable = variable
-                self.variable.addFather(self.variable)
+                self.variable.addFather(father)
                 self.treeController.editVariable(self.variable)
 
             else:
@@ -789,7 +792,7 @@ class VariableMovingController(object):
         self.treeController.treestore.move_before(entry, self.treeController.dictEntry[self.variable.getFathers()[0].getChildren()[position].getID()])
 
         # Move the variable.
-        self.variable.getFathers[0]().moveChild(self.variable, position)
+        self.variable.getFathers()[0].moveChild(self.variable, position)
 
         self.view.getWidg("dialog").destroy()
 
@@ -879,7 +882,7 @@ class VariableIDTreeController(object):
             return
 
         if variable is None:
-            logging.debug(_("Impossible to find the selected variable."))
+            logging.debug("Impossible to find the selected variable.")
             return
 
         # We display the menu for the insertion of sub-elements if its an Aggregate or an Alternative

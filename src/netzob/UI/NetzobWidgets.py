@@ -188,4 +188,8 @@ def addNetzobIconsToDefaultFactory():
     addIconToFactory("netzob-concat-symbol", "concat-symbol.png")
     addIconToFactory("netzob-rename", "rename.png")
     addIconToFactory("netzob-new-window", "new-window.png")
+    addIconToFactory("grammar-add-state", "grammar-add-state.png")
+    addIconToFactory("grammar-add-open", "grammar-add-open.png")
+    addIconToFactory("grammar-add-stochastic", "grammar-add-stochastic.png")
+    addIconToFactory("grammar-add-close", "grammar-add-close.png")
     Gtk.IconFactory.add_default(netzobIconFactory)

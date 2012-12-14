@@ -47,7 +47,7 @@ from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 class BugReporterView(object):
 
-    def __init__(self, controller):
+    def __init__(self, controller, parent=None):
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
                                                 "ui",
@@ -59,6 +59,7 @@ class BugReporterView(object):
                                         "bugReporterInfoImg", "bugReporterWarnImg", "bugReporterWarnLabel", "bugReporterRememberAPIKeyCheckButton"])
         self.controller = controller
         self.builder.connect_signals(self.controller)
+        self.bugReporter.set_transient_for(parent)
 
     def _getObjects(self, builder, objectsList):
         for obj in objectsList:

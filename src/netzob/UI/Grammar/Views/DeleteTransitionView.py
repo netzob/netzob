@@ -55,24 +55,14 @@ class DeleteTransitionView(object):
         self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
                                                 "ui", "grammar",
                                                 "DeleteTransitionDialog.glade"))
-        self._getObjects(self.builder, ["deleteTransitionteDialog",
-                                        "IDEntry", "nameEntry", "startStateEntry", "endStateEntry",
-                                        "typeEntry"])
+        self._getObjects(self.builder, ["deleteTransitionDialog",
+                                        "IDEntry", "nameEntry", "typeEntry"])
         self.controller = controller
         self.builder.connect_signals(self.controller)
 
-        self.IDEntry.set_text(str(transition.getID()))
-        self.nameEntry.set_text(transition.getName())
-        self.typeEntry.set_text(str(transition.getType()))
-
-        inputState = transition.getInputState()
-        outputState = transition.getOutputState()
-
-        if inputState is not None:
-            self.startStateEntry.set_text(inputState.getName())
-
-        if outputState is not None:
-            self.endStateEntry.set_text(outputState.getName())
+        self.IDEntry.set_text(str(self.controller.transition.getID()))
+        self.nameEntry.set_text(self.controller.transition.getName())
+        self.typeEntry.set_text(str(self.controller.transition.getType()))
 
     def _getObjects(self, builder, objectsList):
         for obj in objectsList:

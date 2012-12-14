@@ -52,7 +52,6 @@ from netzob.Common.NetzobException import NetzobException
 #| C Imports
 #+---------------------------------------------------------------------------+
 from netzob import _libNeedleman
-from netzob import _libInterface
 
 
 #+---------------------------------------------------------------------------+
@@ -125,7 +124,7 @@ class NeedlemanAndWunsch(object):
                 return
 
             field.setAlignment(alignment)
-            logging.debug("Alignment : {0}".format(alignment))
+            logging.debug("Alignment: {0}".format(alignment))
 
             # We update the regex based on the results
             try:
@@ -158,38 +157,9 @@ class NeedlemanAndWunsch(object):
         if self.isFinish():
             return
 
-        alignment = self.deserializeAlignment(regex, mask)
+        alignment = TypeConvertor.deserializeAlignment(regex, mask, self.unitSize)
         alignment = self.smoothAlignment(alignment)
         return (alignment, scores)
-
-    #+-----------------------------------------------------------------------+
-    #| deserializeAlignment
-    #|     Transforms the C extension results in a python readable way
-    #| @param regex the C returned regex
-    #| @param mask the C returned mask
-    #| @returns the python alignment
-    #+-----------------------------------------------------------------------+
-    def deserializeAlignment(self, regex, mask):
-        align = ""
-        i = 0
-        for c in mask:
-            if c != '\x02':
-                if c == '\x01':
-                    if self.unitSize == 8:
-                        align += "--"
-                    elif self.unitSize == 4:
-                        align += "-"
-                    else:
-                        logging.warn("Deserializing at " + str(self.unitSize) + " unit size not yet implemented")
-                else:
-                    if self.unitSize == 8:
-                        align += regex[i:i + 1].encode("hex")
-                    elif self.unitSize == 4:
-                        align += regex[i:i + 1].encode("hex")[1:]
-                    else:
-                        logging.warn("Deserializing at " + str(self.unitSize) + " unit size not yet implemented")
-            i += 1
-        return align
 
     #+-----------------------------------------------------------------------+
     #| smoothAlignment:
@@ -250,6 +220,8 @@ class NeedlemanAndWunsch(object):
         for regexElt in regex:
             if self.isFinish():
                 return
+            if regexElt == "":
+                pass
             innerField = Field("Field " + str(iField), "(" + regexElt + ")", field.getSymbol())
             field.addField(innerField)
 
@@ -258,27 +230,9 @@ class NeedlemanAndWunsch(object):
             iField = iField + 1
         if len(field.getSymbol().getExtendedFields()) >= 100:
             raise NetzobException("This Python version only supports 100 named groups in regex (found {0})".format(len(field.getSymbol().getExtendedFields())))
-        """
-        # We look for useless fields
-        doLoop = True
-        # We loop until we don't pop any field
-        while doLoop is True:
-            doLoop = False
-            for innerField in field.getExtendedFields():
 
-                if self.isFinish():
-                    return
-
-                # We try to see if this field produces only empty values when applied on messages
-                if not innerField.isStatic():
-                    cells = innerField.getCells()
-                    cells = "".join(cells)
-                    if cells == "":
-                        # Concatenate the current useless inner field with the next field
-                        if innerField.concatWithNextField() == 1:
-                            doLoop = True
-                            break
-        """
+        # Clean created fields (remove fields that produce only empty cells)
+        field.removeEmptyFields(self.cb_status)
 
     #+----------------------------------------------
     #| alignFields:
@@ -304,7 +258,7 @@ class NeedlemanAndWunsch(object):
                 if str(symbol.getID()) == str(field.getSymbol().getID()):
                     found = True
             if not found:
-                logging.debug("Symbol " + str(symbol.getName()) + "[" + str(symbol.getID()) + "]] wont be aligned")
+                logging.debug("Symbol {0} [{1}] wont be aligned".format(str(symbol.getName()), str(symbol.getID())))
                 preResults.append(symbol)
 
         # Create a symbol for each message
@@ -332,7 +286,7 @@ class NeedlemanAndWunsch(object):
         t2 = time.time()
 
         self.newSymbols.extend(preResults)
-        logging.info("Time of clustering : " + str(t2 - t1))
+        logging.info("Time of clustering: {0}".format(str(t2 - t1)))
 
     def isFinish(self):
         return self.flagStop
@@ -345,32 +299,3 @@ class NeedlemanAndWunsch(object):
 
     def getNewSymbols(self):
         return self.newSymbols
-
-    #+-----------------------------------------------------------------------+
-    #| alignTwoMessages
-    #|     Default alignment of two messages
-    #| @param message1 the first message to align
-    #| @param message2 the second message to align
-    #| @returns (alignment, score)
-    #+-----------------------------------------------------------------------+
-    def alignTwoMessages(self, message1, message2):
-        # First we serialize the two messages
-        (serialMessages, format) = TypeConvertor.serializeMessages([message1, message2], self.unitSize)
-
-        debug = False
-        (score1, score2, score3, regex, mask) = _libNeedleman.alignTwoMessages(self.doInternalSlick, format, serialMessages, debug)
-        scores = (score1, score2, score3)
-        alignment = self.deserializeAlignment(regex, mask)
-        return (scores, alignment)
-
-    #+-----------------------------------------------------------------------+
-    #| deserializeMessages
-    #|     Useless (functionally) function created for testing purposes
-    #| @param messages a list of AbstractMessages
-    #| @returns number Of Deserialized Messages
-    #+-----------------------------------------------------------------------+
-    def deserializeMessages(self, messages):
-        # First we serialize the messages
-        (serialMessages, format) = TypeConvertor.serializeMessages(messages, self.unitSize)
-        debug = False
-        return _libInterface.deserializeMessages(len(messages), format, serialMessages, debug)

@@ -74,12 +74,12 @@ class RepeatVariable(AbstractNodeVariable):
         if minIterations is not None and minIterations >= 0:
             self.minIterations = minIterations
         else:
-            self.log.info(_("Variable {0} (Repeat): Construction of RepeatVariable: minIterations undefined or < 0. minIterations value is fixed to 0.").format(self.getName()))
+            self.log.info("Variable {0} (Repeat): Construction of RepeatVariable: minIterations undefined or < 0. minIterations value is fixed to 0.".format(self.getName()))
             self.minIterations = 0
         if maxIterations is not None and maxIterations >= minIterations:
             self.maxIterations = maxIterations
         else:
-            self.log.info(_("Variable {0} (Repeat): Construction of RepeatVariable: maxIterations undefined or < minIterations. maxIterations value is fixed to minIterations.").format(self.getName()))
+            self.log.info("Variable {0} (Repeat): Construction of RepeatVariable: maxIterations undefined or < minIterations. maxIterations value is fixed to minIterations.".format(self.getName()))
             self.maxIterations = self.minIterations
         self.currentIteration = 0  # Tells on which iteration we currently are.
 
@@ -87,7 +87,7 @@ class RepeatVariable(AbstractNodeVariable):
         """read:
                 The pointed variable reads the value.
         """
-        self.log.debug(_("[ {0}: read access:").format(self.toString()))
+        self.log.debug("[ {0}: read access:".format(self.toString()))
         (minIterations, maxIterations) = self.getNumberIterations()
         self.currentIteration = 0
 
@@ -137,13 +137,13 @@ class RepeatVariable(AbstractNodeVariable):
             # The value of the variable is simply the value we 'ate'.
             self.currentValue = readingToken.getValue()[savedIndex:readingToken.getIndex()]
 
-        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ]".format(self.getName(), readingToken.toString()))
 
     def writeChild(self, writingToken):
         """write:
                 The pointed variable writes its value.
         """
-        self.log.debug(_("[ {0}: write access:").format(self.toString()))
+        self.log.debug("[ {0}: write access:".format(self.toString()))
         (minIterations, maxIterations) = self.getNumberIterations()
         self.currentIteration = 0
         savedIndex = writingToken.getIndex()
@@ -178,7 +178,7 @@ class RepeatVariable(AbstractNodeVariable):
             # The value of the variable is simply the value we made.
             self.currentValue = writingToken.getValue()[savedIndex:writingToken.getIndex()]
 
-        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ]".format(self.getName(), writingToken.toString()))
 
     def randomizeIterations(self):
         """randomizeIterations:
@@ -202,17 +202,17 @@ class RepeatVariable(AbstractNodeVariable):
     def toString(self):
         """toString:
         """
-        return _("[Repeat] {0}, iterations: ({1}, {2})").format(AbstractVariable.toString(self), str(self.minIterations), str(self.maxIterations))
+        return "[Repeat] {0}, iterations: ({1}, {2})".format(AbstractVariable.toString(self), str(self.minIterations), str(self.maxIterations))
 
     def getDescription(self, processingToken):
         """getDescription:
         """
-        return _("[{0}, child:\n - {1}]").format(self.toString(), self.getChild().getDescription(processingToken))
+        return "[{0}, child:\n - {1}]".format(self.toString(), self.getChild().getDescription(processingToken))
 
     def getUncontextualizedDescription(self):
         """getUncontextualizedDescription:
         """
-        return _("[{0}, child:\n - {1}]").format(self.toString(), self.getChild().getUncontextualizedDescription())
+        return "[{0}, child:\n - {1}]".format(self.toString(), self.getChild().getUncontextualizedDescription())
 
     def isDefined(self, processingToken):
         """isDefined:
@@ -224,27 +224,27 @@ class RepeatVariable(AbstractNodeVariable):
                 Each child tries sequentially to read a part of the read value.
                 If one of them fails, the whole operation is cancelled.
         """
-        self.log.debug(_("[ {0} (Aggregate): read access:").format(AbstractVariable.toString(self)))
+        self.log.debug("[ {0} (Aggregate): read access:".format(AbstractVariable.toString(self)))
         if self.getChildren() is not None:
             self.readChild(readingToken)
 
         else:
             # no child.
-            self.log.debug(_("Write abort: the variable has no child."))
+            self.log.debug("Write abort: the variable has no child.")
             readingToken.setOk(False)
 
         # Variable notification
         if readingToken.isOk():
             self.notifyBoundedVariables("read", readingToken, self.currentValue)
 
-        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ]".format(self.getName(), readingToken.toString()))
 
     def write(self, writingToken):
         """write:
                 Each child tries sequentially to write its value.
                 If one of them fails, the whole operation is cancelled.
         """
-        self.log.debug(_("[ {0} (Aggregate): write access:").format(AbstractVariable.toString(self)))
+        self.log.debug("[ {0} (Aggregate): write access:".format(AbstractVariable.toString(self)))
         if self.getChildren() is not None:
             if self.isMutable():
                 # mutable.
@@ -257,21 +257,21 @@ class RepeatVariable(AbstractNodeVariable):
 
         else:
             # no child.
-            self.log.debug(_("Write abort: the variable has no child."))
+            self.log.debug("Write abort: the variable has no child.")
             writingToken.setOk(False)
 
         # Variable notification
         if writingToken.isOk():
             self.notifyBoundedVariables("write", writingToken)
 
-        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
+        self.log.debug("Variable {0}: {1}. ]".format(self.getName(), writingToken.toString()))
 
     def toXML(self, root, namespace):
         """toXML:
             Creates the xml tree associated to this variable.
             Adds every child's own xml definition as xml child to this tree.
         """
-        self.log.debug(_("[ {0}: toXML:").format(self.toString()))
+        self.log.debug("[ {0}: toXML:".format(self.toString()))
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         xmlVariable.set("id", str(self.getID()))
         xmlVariable.set("name", str(self.getName()))
@@ -289,7 +289,7 @@ class RepeatVariable(AbstractNodeVariable):
         # maxIterations
         xmlMaxIterations = etree.SubElement(xmlVariable, "{" + namespace + "}maxIterations")
         xmlMaxIterations.text = str(self.maxIterations)
-        self.log.debug(_("Variable {0}. ]").format(self.getName()))
+        self.log.debug("Variable {0}. ]".format(self.getName()))
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
@@ -316,7 +316,7 @@ class RepeatVariable(AbstractNodeVariable):
                 Loads a repeat variable from an XML definition.
                 We do not trust the user and check every field (even mandatory).
         """
-        logging.debug(_("[ RepeatVariable: loadFromXML:"))
+        logging.debug("[ RepeatVariable: loadFromXML:")
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
@@ -341,7 +341,7 @@ class RepeatVariable(AbstractNodeVariable):
                 maxIterations = RepeatVariable.MAX_ITERATIONS
 
             result = RepeatVariable(xmlID, xmlName, xmlMutable, xmlLearnable, child, minIterations, maxIterations)
-            logging.debug(_("RepeatVariable: loadFromXML successes: {0} ]").format(result.toString()))
+            logging.debug("RepeatVariable: loadFromXML successes: {0} ]".format(result.toString()))
             return result
-        logging.debug(_("RepeatVariable: loadFromXML fails"))
+        logging.debug("RepeatVariable: loadFromXML fails")
         return None

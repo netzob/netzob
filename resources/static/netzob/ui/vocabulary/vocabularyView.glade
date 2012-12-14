@@ -184,10 +184,8 @@
                 </child>
                 <child>
                   <object class="GtkSeparatorToolItem" id="separatorXXX">
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="use_action_appearance">False</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -201,7 +199,7 @@
                     <property name="has_tooltip">True</property>
                     <property name="tooltip_markup" translatable="yes">Display messages distributions for selected symbol(s)</property>
                     <property name="tooltip_text" translatable="yes">Display messages distributions for selected symbol(s)</property>
-                    <property name="label" translatable="yes">Messages Distribution…</property>
+                    <property name="label" translatable="yes">Messages Distribution</property>
                     <property name="use_underline">True</property>
                   </object>
                   <packing>
@@ -232,6 +230,7 @@
                     <property name="enable_tree_lines">True</property>
                     <child internal-child="selection">
                       <object class="GtkTreeSelection" id="symbolListTreeViewSelection">
+                        <property name="mode">multiple</property>
                         <signal name="changed" handler="symbolListTreeViewSelection_changed_cb" swapped="no"/>
                       </object>
                     </child>
@@ -300,14 +299,12 @@
                 <property name="can_focus">False</property>
                 <child>
                   <object class="GtkToolButton" id="selectAllSymbolsButton">
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
-                    <property name="tooltip_markup" translatable="yes">Select all symbol</property>
-                    <property name="tooltip_text" translatable="yes">Select all symbol</property>
-                    <property name="use_action_appearance">False</property>
-                    <property name="label" translatable="yes">Select all symbol</property>
+                    <property name="tooltip_markup" translatable="yes">Select all symbols</property>
+                    <property name="tooltip_text" translatable="yes">Select all symbols</property>
+                    <property name="label" translatable="yes">Select all symbols</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">netzob-select-all</property>
                     <signal name="clicked" handler="selectAllSymbolsButton_clicked_cb" swapped="no"/>
@@ -319,14 +316,12 @@
                 </child>
                 <child>
                   <object class="GtkToolButton" id="unselectAllSymbolsButton">
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
-                    <property name="tooltip_markup" translatable="yes">Deselect all symbol</property>
-                    <property name="tooltip_text" translatable="yes">Deselect all symbol</property>
-                    <property name="use_action_appearance">False</property>
-                    <property name="label" translatable="yes">Deselect all symbol</property>
+                    <property name="tooltip_markup" translatable="yes">Unselect all symbols</property>
+                    <property name="tooltip_text" translatable="yes">Unselect all symbols</property>
+                    <property name="label" translatable="yes">Unselect all symbols</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">netzob-unselect-all</property>
                     <signal name="clicked" handler="unselectAllSymbolsButton_clicked_cb" swapped="no"/>
@@ -338,10 +333,8 @@
                 </child>
                 <child>
                   <object class="GtkSeparatorToolItem" id="toolbutton3">
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="use_action_appearance">False</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -350,13 +343,11 @@
                 </child>
                 <child>
                   <object class="GtkToolButton" id="createSymbolButton">
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
                     <property name="tooltip_markup" translatable="yes">Add a new empty symbol</property>
                     <property name="tooltip_text" translatable="yes">Add a new empty symbol</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">New</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-add</property>
@@ -369,13 +360,11 @@
                 </child>
                 <child>
                   <object class="GtkToolButton" id="concatSymbolButton">
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
-                    <property name="tooltip_markup" translatable="yes">Concatenate selected symbol(s)</property>
-                    <property name="tooltip_text" translatable="yes">Concatenate selected symbol(s)</property>
-                    <property name="use_action_appearance">False</property>
+                    <property name="tooltip_markup" translatable="yes">Concatenate selected symbols</property>
+                    <property name="tooltip_text" translatable="yes">Concatenate selected symbols</property>
                     <property name="label" translatable="yes">Concatenate</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">netzob-concat-symbol</property>
@@ -388,13 +377,11 @@
                 </child>
                 <child>
                   <object class="GtkToolButton" id="deleteSymbolButton">
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
                     <property name="tooltip_markup" translatable="yes">Delete selected symbol(s)</property>
                     <property name="tooltip_text" translatable="yes">Delete selected symbol(s)</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Delete</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-delete</property>
@@ -407,10 +394,8 @@
                 </child>
                 <child>
                   <object class="GtkSeparatorToolItem" id="toolbutton1">
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="use_action_appearance">False</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -419,13 +404,11 @@
                 </child>
                 <child>
                   <object class="GtkToolButton" id="newMessageTableButton">
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
                     <property name="tooltip_markup" translatable="yes">New empty view for message of symbol</property>
                     <property name="tooltip_text" translatable="yes">New empty view for message of symbol</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">New MessageList</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">netzob-new-window</property>

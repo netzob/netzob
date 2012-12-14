@@ -60,7 +60,7 @@ class VariableReadingToken(AbstractVariableProcessingToken):
         """toString:
                 Used for debug purpose.
         """
-        return _("ReadingToken: isOk: {0}, value left: {1}").format(str(self.isOk()), TypeConvertor.bin2strhex(self.value[self.index:]))
+        return "ReadingToken: isOk: {0}, value left: {1}".format(str(self.isOk()), TypeConvertor.bin2strhex(self.value[self.index:]))
 
     def read(self, variable, increment):
         """read:
