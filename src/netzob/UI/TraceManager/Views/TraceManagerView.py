@@ -50,3 +50,6 @@ class TraceManagerView(NetzobAbstractPerspectiveView):
                                                root="TraceManagerView",
                                                uiMenuBar=menubar,
                                                actionGroup="actionGroup")
+
+        self._getObjects(["traceTreeview",
+                          ])

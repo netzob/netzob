@@ -31,6 +31,7 @@
 from gettext import gettext as _
 import logging
 from gi.repository import Gtk
+import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -49,4 +50,119 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
     main view, using the switch panel dropdown."""
 
     def __init__(self, mainController):
+        self.workspace = mainController.getCurrentWorkspace()
         super(TraceManagerController, self).__init__(mainController, TraceManagerView)
+
+        self._refreshTraceList()
+
+    def _refreshTraceList(self, traceListIds=[], removedTraces=[]):
+        """This function is the central place for updating the left
+        treeview. It is in charge of adding or updating the model
+        associated to the treeview, in a way the user won't notice it
+        (the expanded rows are kept expanded, etc.).
+
+        :param traceListIds: the list of traces that needs to be
+        updated. If this list is empty, it means that we have to
+        refresh the whole treeview."""
+
+        def compare(a, b):
+            return cmp(a.name.lower(), b.name.lower())
+
+        traceListIds = set(traceListIds)
+
+        view = self.view.traceTreeview
+        model = view.get_model()
+
+        # We refresh the complete trace list if no argument is passed.
+        # In all cases, we store all traces to be added/updated in a
+        # traceList list.
+        if len(traceListIds) == 0:
+            traceList = self.workspace.getImportedTraces()
+            traceList.sort(cmp=compare)
+            model.clear()
+        else:
+            traceList = map(lambda tid: self.workspace.getImportedTrace(tid), traceListIds)
+
+        # All traces that are already in the 'model' are added in the
+        # tracesInModel list.
+        tracesInModel = []
+        for item in model:
+            tracesInModel.append(item[0])
+
+        # First, we add all the traces that are not in the model.
+        for trace in traceList:
+
+            # Check if the trace is already in the model. If so, we
+            # don't need to add in the model now.
+            insert = True
+            if trace.id in tracesInModel:
+                insert = False
+                continue
+
+            # If not, let's insert it. We don't need to update the
+            # sessions here, since these will be updated in the next
+            # big block
+            if insert:
+                traceListIds.add(trace.id)
+
+                date = trace.date.strftime("%x %X")
+                tstamp = time.mktime(trace.date.timetuple())
+
+                model.append(None,
+                             [trace.id, trace.name, str(len(trace.messages)), date, str(tstamp)])
+
+        selection = view.get_selection()
+
+        # We save the selected rows, to select them again at the end.
+        (model, selectedPaths) = selection.get_selected_rows()
+
+        try:
+            # We hold the 'changed' signal on the treeselection to avoid conflicts.
+            selection.handler_block_by_func(self.traceTreeviewSelection_changed_cb)
+
+            treeIter = model.get_iter_first()
+            while treeIter is not None:
+                # We iter over the traces in the model and update the
+                # sessions if requested. Here we pay attention to keep
+                # selection and expanded rows.
+
+                path = model.get_path(treeIter)
+                row = model[treeIter]
+                expanded = view.row_expanded(path)
+
+                # If we asked to refresh this trace
+                if row[0] in traceListIds and row[0] not in removedTraces:
+                    # Remove all children
+                    for child in row.iterchildren():
+                        model.remove(child.iter)
+
+                    trace = self.workspace.getImportedTrace(row[0])
+                    sessions = trace.getSessions()
+                    sessions.sort(cmp=compare)
+
+                    # Append all defined sessions
+                    for session in sessions:
+                        model.append(treeIter,
+                                     [session.id, session.name, str(len(session.getMessages())), "", ""])
+
+                    model.set_value(row.iter, 2, str(len(trace.getMessages())))
+
+                # Let's expand the trace, if it was expanded before.
+                if expanded:
+                    view.expand_to_path(path)
+
+                treeIter = model.iter_next(treeIter)
+
+                # Trace has gone, we can remove it. We have to do this
+                # at the end, just after we retrieve the next iter
+                # (else, the iter_next() call will fail).
+                if row[0] in removedTraces:
+                    model.remove(row.iter)
+        finally:
+            # We unhold the 'changed' signal
+            selection.handler_unblock_by_func(self.traceTreeviewSelection_changed_cb)
+
+        # We select the previously selected rows
+        if len(selectedPaths) > 0:
+            selection.unselect_all()
+            selection.select_path(selectedPaths[0])
