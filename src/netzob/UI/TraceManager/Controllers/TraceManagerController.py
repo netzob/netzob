@@ -240,6 +240,7 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
                     trace = self.workspace.getImportedTrace(traceId)
                     sessionFilter = trace.getSession(row[0])
 
+                self.view.traceDeleteAction.set_sensitive(True)
                 self._refreshProjectProperties(trace, session=sessionFilter)
                 self.currentTrace = trace
                 self.view.traceNameCellrenderertext.set_property('editable', True)
@@ -250,9 +251,63 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
                 self.view.traceNameCellrenderertext.set_property('editable', False)
 
         else:
+            self.view.traceDeleteAction.set_sensitive(False)
             self.view.traceNameEntry.set_sensitive(False)
             self.view.traceDescriptionEntry.set_sensitive(False)
             self._resetCurrentTrace()
+
+    def traceDeleteAction_activate_cb(self, button):
+        """This callback is called when user clicks on the 'Remove
+        Selected Traces' button. A warning dialog is displayed before
+        deleting the traces."""
+
+        selection = self.view.traceTreeview.get_selection()
+        model, paths = selection.get_selected_rows()
+
+        # UI prevents to select more than one type of item in the left
+        # treeview. We just have to check the first item.
+        if model[paths[0]].get_parent() is None:
+            result = self.view.showTraceDeletionConfirmDialog()
+
+            removedTraces = []
+
+            if result == Gtk.ResponseType.YES:
+                for treeiter in paths:
+                    traceId = model[treeiter][0]
+                    trace = self.workspace.getImportedTrace(traceId)
+                    removedTraces.append(traceId)
+
+                    self.log.info("You asked to remove trace {0} (id={1}).".format(trace.name, traceId))
+                    self.workspace.removeImportedTrace(trace)
+
+                self._refreshProjectProperties()
+                selection.unselect_all()
+                self._refreshTraceList(removedTraces=removedTraces)
+
+        # Selected item is a session
+        else:
+            sessionsToDelete = []
+            sessionsNames = []
+            for path in paths:
+                trace = self.workspace.getImportedTrace(model[path].get_parent()[0])
+                session = trace.getSession(model[path][0])
+                sessionsNames.append(session)
+                sessionsToDelete.extend([(trace, session)])
+
+            result = self.view.showSessionDeletionConfirmDialog(sessionsNames)
+
+            if result == Gtk.ResponseType.YES:
+                updatedTraces = []
+
+                for (trace, session) in sessionsToDelete:
+                    self.log.info("You asked to remove session {0} (id={1}) from trace {2}.".format(session.name, session.id, trace.name))
+                    trace.removeSession(session)
+                    updatedTraces.append(trace.id)
+
+                self.workspace.saveConfigFile(overrideTraces=updatedTraces)
+                self._refreshProjectProperties()
+                self._refreshTraceList(updatedTraces)
+                selection.unselect_all()
 
     def _resetCurrentTrace(self):
         """Unset the currently selected trace and update variables

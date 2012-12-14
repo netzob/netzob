@@ -57,6 +57,7 @@ class TraceManagerView(NetzobAbstractPerspectiveView):
                           "messageListTreeview",
                           "traceNameCellrenderertext",
                           "traceTreeviewSelection",
+                          "traceDeleteAction",
                           "traceNameEntry",
                           "traceDescriptionEntry",
                           "traceImportDate",
@@ -73,6 +74,51 @@ class TraceManagerView(NetzobAbstractPerspectiveView):
 
         # Getting popup for the Trace List
         self.traceListPopup = self.uiManager.get_widget("/TraceListPopupMenu")
+
+    def showTraceDeletionConfirmDialog(self):
+        """A warning dialog is displayed before deleting the traces."""
+
+        dlg = Gtk.MessageDialog(self.controller.mainController.view.mainWindow,
+                                Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                Gtk.MessageType.WARNING,
+                                Gtk.ButtonsType.NONE,
+                                _("Are you sure you want to delete the selected traces?"))
+        dlg.format_secondary_text(_("If you confirm, the selected traces will be permanently lost."))
+
+        dlg.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
+        dlg.add_button(_("Delete Traces"), Gtk.ResponseType.YES)
+        dlg.set_default_response(Gtk.ResponseType.YES)
+
+        result = dlg.run()
+        dlg.destroy()
+
+        return result
+
+    def showSessionDeletionConfirmDialog(self, sessionNames):
+        """A warning dialog is displayed before deleting the
+        sessions.
+
+        :param sessionNames: list of the session names."""
+
+        dlg = Gtk.MessageDialog(self.controller.mainController.view.mainWindow,
+                                Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                Gtk.MessageType.WARNING,
+                                Gtk.ButtonsType.NONE,
+                                _("Are you sure you want to delete selected sessions and all the messages it contains?"))
+
+        sessions = ", ".join(map(lambda s: "\"{0}\"".format(s.name), sessionNames))
+
+        text = _("If you confirm, session {0} and associated messages will be permanently lost.".format(sessions))
+        dlg.format_secondary_text(text)
+
+        dlg.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
+        dlg.add_button(_("Delete Session"), Gtk.ResponseType.YES)
+        dlg.set_default_response(Gtk.ResponseType.YES)
+
+        result = dlg.run()
+        dlg.destroy()
+
+        return result
 
     def showNameErrorWarningDialog(self):
         dlg = Gtk.MessageDialog(self.controller.mainController.view.mainWindow,

@@ -9,6 +9,7 @@
         <property name="tooltip" translatable="yes">Remove Selected Trace</property>
         <property name="stock_id">gtk-remove</property>
         <property name="sensitive">False</property>
+        <signal name="activate" handler="traceDeleteAction_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>
