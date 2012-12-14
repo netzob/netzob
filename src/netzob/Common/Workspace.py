@@ -137,12 +137,12 @@ class Workspace(object):
     #+-----------------------------------------------------------------------+
     def __init__(self, name, creationDate, path, pathOfTraces, pathOfLogging, pathOfPrototypes, lastProjectPath=None, importedTraces=[]):
         self.name = name
-        self.path = path
+        self.path = os.path.abspath(path)
         self.creationDate = creationDate
         self.projects_path = []
-        self.pathOfTraces = pathOfTraces
-        self.pathOfLogging = pathOfLogging
-        self.pathOfPrototypes = pathOfPrototypes
+        self.pathOfTraces = os.path.join(self.path, pathOfTraces)
+        self.pathOfLogging = os.path.join(self.path, pathOfLogging)
+        self.pathOfPrototypes = os.path.join(self.path, pathOfPrototypes)
         self.lastProjectPath = lastProjectPath
         self.importedTraces = importedTraces
         self.customTransformationFunctions = []
