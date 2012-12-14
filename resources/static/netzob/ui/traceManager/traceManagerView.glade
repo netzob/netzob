@@ -102,6 +102,7 @@
                     <property name="sort_column_id">1</property>
                     <child>
                       <object class="GtkCellRendererText" id="traceNameCellrenderertext">
+                        <signal name="edited" handler="traceNameCellrenderertext_edited_cb" swapped="no"/>
                       </object>
                       <attributes>
                         <attribute name="text">1</attribute>
@@ -304,6 +305,8 @@
                                 <property name="hexpand">True</property>
                                 <property name="invisible_char">●</property>
                                 <property name="invisible_char_set">True</property>
+                                <signal name="changed" handler="traceDescriptionEntry_changed_cb" swapped="no"/>
+                                <signal name="focus-out-event" handler="traceDescriptionEntry_focus_out_event_cb" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -320,6 +323,8 @@
                                 <property name="hexpand">True</property>
                                 <property name="invisible_char">●</property>
                                 <property name="invisible_char_set">True</property>
+                                <signal name="changed" handler="traceNameEntry_changed_cb" swapped="no"/>
+                                <signal name="focus-out-event" handler="traceNameEntry_focus_out_event_cb" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>

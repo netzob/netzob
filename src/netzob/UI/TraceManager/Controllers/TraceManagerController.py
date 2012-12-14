@@ -54,6 +54,8 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
         super(TraceManagerController, self).__init__(mainController, TraceManagerView)
 
         self.currentTrace = None
+        self.nameUpdated = False
+        self.descriptionUpdated = False
 
         self._refreshTraceList()
 
@@ -173,6 +175,16 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
         model, paths = selection.get_selected_rows()
 
         if len(paths) > 0:
+            # Save name, if it was updated
+            if self.nameUpdated:
+                self.currentTrace.name = self.view.traceNameEntry.get_text()
+                self.nameUpdated = False
+
+            # Save description, if it was updated
+            if self.descriptionUpdated:
+                self.currentTrace.description = self.view.traceDescriptionEntry.get_text()
+                self.descriptionUpdated = False
+
             if len(paths) == 1:
                 # If only one item is selected, update the 'Trace
                 # Properties' box.
@@ -192,12 +204,16 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
 
                 self._refreshProjectProperties(trace, session=sessionFilter)
                 self.currentTrace = trace
+                self.view.traceNameCellrenderertext.set_property('editable', True)
 
             else:
                 # Else, we can't display nor edit anything.
                 self._resetCurrentTrace()
+                self.view.traceNameCellrenderertext.set_property('editable', False)
 
         else:
+            self.view.traceNameEntry.set_sensitive(False)
+            self.view.traceDescriptionEntry.set_sensitive(False)
             self._resetCurrentTrace()
 
     def _resetCurrentTrace(self):
@@ -205,6 +221,8 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
         related to it."""
 
         self.currentTrace = None
+        self.nameUpdated = False
+        self.descriptionUpdated = False
 
         self._refreshProjectProperties()
 
@@ -268,12 +286,15 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
         # Name
         self.view.traceNameEntry.set_sensitive(sensitivity)
         self.view.traceNameEntry.set_text(name)
+        self.nameUpdated = False
 
         # Description
         self.view.traceDescriptionEntry.set_sensitive(sensitivity)
         self.view.traceDescriptionEntry.set_text(description)
+        self.descriptionUpdated = False
 
         # Date
+        self.view.traceImportDate.set_sensitive(sensitivity)
         self.view.traceImportDate.set_sensitive(sensitivity)
         self.view.traceImportDate.set_text(date)
 
@@ -301,3 +322,73 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
 
             except:
                 return False
+
+    def traceNameCellrenderertext_edited_cb(self, cell, path, value):
+        """This callbacks allows to change the name of a trace or the
+        name of a session."""
+
+        if len(value) == 0:
+            self.view.showNameErrorWarningDialog()
+            self.nameUpdated = False
+            return False
+
+        # If the selected row doesn't has a parent, we have to update
+        # the ImportedTrace name. Else, we have to update the session
+        # name.
+
+        row = self.view.traceTreestore[path]
+        if row.get_parent() is not None:
+            session = self.currentTrace.getSession(row[0])
+            session.name = value
+            self.view.traceTreestore[path][1] = value
+            self.log.info("Updated session name (id={0}) from {1} to {2}".format(session.id, session.name, value))
+            self.workspace.saveConfigFile(overrideTraces=[self.currentTrace.id])
+
+        else:
+            self._changeCurrentTraceName(value, path)
+
+    def traceNameEntry_changed_cb(self, text):
+        self.nameUpdated = True
+
+    def traceNameEntry_focus_out_event_cb(self, entry, data):
+        if self.nameUpdated:
+            self.nameUpdated = False
+
+            newName = entry.get_text()
+            if len(newName) == 0:
+                self.view.showNameErrorWarningDialog()
+                self.view.traceNameEntry.grab_focus()
+                self.nameUpdated = True
+                return
+
+            model, paths = self.view.traceTreeviewSelection.get_selected_rows()
+
+            assert len(paths) == 1
+            self._changeCurrentTraceName(newName, paths[0])
+
+    def traceDescriptionEntry_changed_cb(self, text):
+        if len(text.get_text()) > 0:
+            self.descriptionUpdated = True
+
+    def traceDescriptionEntry_focus_out_event_cb(self, entry, data):
+        if self.descriptionUpdated:
+            self.descriptionUpdated = False
+
+            model, treeiter = self.view.traceTreeviewSelection.get_selected_rows()
+            if treeiter is not None:
+                newDescription = entry.get_text()
+                self.currentTrace.description = newDescription
+
+    def _changeCurrentTraceName(self, newName, path):
+        """This method allows to change the name of the currently
+        selected trace, to update the left panel, etc."""
+
+        trace = self.currentTrace
+
+        self.log.info("Updating trace (id={0}) from {1} to {2}".format(trace.id, trace.name, newName))
+
+        trace.name = newName
+        self.view.traceTreestore[path][1] = newName
+        self.view.traceNameEntry.set_text(newName)
+
+        self.nameUpdated = False

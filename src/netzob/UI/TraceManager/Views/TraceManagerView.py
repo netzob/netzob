@@ -55,6 +55,7 @@ class TraceManagerView(NetzobAbstractPerspectiveView):
         self._getObjects(["traceTreeview",
                           "traceTreestore",
                           "messageListTreeview",
+                          "traceNameCellrenderertext",
                           "traceTreeviewSelection",
                           "traceNameEntry",
                           "traceDescriptionEntry",
@@ -69,3 +70,14 @@ class TraceManagerView(NetzobAbstractPerspectiveView):
 
         # Getting popup for the Trace List
         self.traceListPopup = self.uiManager.get_widget("/TraceListPopupMenu")
+
+    def showNameErrorWarningDialog(self):
+        dlg = Gtk.MessageDialog(self.controller.mainController.view.mainWindow,
+                                Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                Gtk.MessageType.ERROR,
+                                Gtk.ButtonsType.OK,
+                                _("You can't change the trace name to an empty one"))
+        dlg.format_secondary_text(_("Please update the name of your trace set."))
+
+        result = dlg.run()
+        dlg.destroy()
