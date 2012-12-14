@@ -164,9 +164,9 @@ class ImportedTrace(object):
             name = xmlRoot.get("name")
 
             importedTrace = ImportedTrace(id, date, type, description, name)
-            tracesFile = os.path.join(pathOfTraces, str(id) + ".gz")
+            tracesFile = os.path.join(pathOfTraces, "{0}.gz".format(id))
             if not os.path.isfile(tracesFile):
-                logging.warn("The trace file " + str(tracesFile) + " is referenced but doesn't exist.")
+                logging.warn("The trace file {0} is referenced but doesn't exist.".format(tracesFile))
             else:
                 gzipFile = gzip.open(tracesFile, 'rb')
                 xml_content = gzipFile.read()
@@ -176,8 +176,8 @@ class ImportedTrace(object):
                 xmlRoot = tree.getroot()
 
                 # We retrieve the pool of messages
-                if xmlRoot.find("{" + namespace_workspace + "}messages") is not None:
-                    xmlMessages = xmlRoot.find("{" + namespace_workspace + "}messages")
+                xmlMessages = xmlRoot.find("{" + namespace_workspace + "}messages")
+                if xmlMessages is not None:
                     for xmlMessage in xmlMessages.findall("{" + namespace_common + "}message"):
                         message = AbstractMessageFactory.loadFromXML(xmlMessage, namespace_common, version)
                         if message is not None:
