@@ -63,6 +63,9 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
         # can't have two types.
         self.traceSelectionIsATrace = None
 
+        # Do we keep a copy of old traces on merge operations?
+        self.mergeKeepCopy = True
+
         self._refreshTraceList()
 
     def _refreshTraceList(self, traceListIds=[], removedTraces=[]):
@@ -253,10 +256,16 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
                 self._resetCurrentTrace()
                 self.view.traceNameCellrenderertext.set_property('editable', False)
 
+                if self.traceSelectionIsATrace:
+                    self.view.traceMergeAction.set_sensitive(True)
+                else:
+                    self.view.traceMergeAction.set_sensitive(False)
+
         else:
             self.view.traceDeleteAction.set_sensitive(False)
             self.view.traceNameEntry.set_sensitive(False)
             self.view.traceDescriptionEntry.set_sensitive(False)
+            self.view.traceMergeAction.set_sensitive(False)
             self._resetCurrentTrace()
 
     def traceDeleteAction_activate_cb(self, button):
@@ -488,3 +497,41 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
         self.view.traceNameEntry.set_text(newName)
 
         self.nameUpdated = False
+
+    def traceMergeAction_activate_cb(self, button):
+        response = self.view.showMergeTracesDialog()
+
+        if response == 1:
+            self.log.info("Asked to clone traces")
+
+            model, paths = self.view.traceTreeview.get_selection().get_selected_rows()
+
+            traceIds = []
+            for treeiter in paths:
+                traceIds.append(model[treeiter][0])
+
+            newName = self.view.mergeDialogNameEntry.get_text()
+            newTrace = self.workspace.mergeImportedTraces(traceIds, name=newName, keep=self.mergeKeepCopy)
+
+            if self.mergeKeepCopy:
+                updatedTraces = traceIds
+                removedTraces = []
+            else:
+                updatedTraces = []
+                removedTraces = traceIds
+            updatedTraces.append(newTrace.id)
+
+            self.view.traceTreeview.get_selection().unselect_all()
+            self._refreshTraceList(traceIds, removedTraces=removedTraces)
+
+    def mergeDialogNameEntry_changed_cb(self, entry):
+        if len(entry.get_text()) > 0:
+            self.view.mergeDialogValidate.set_sensitive(True)
+        else:
+            self.view.mergeDialogValidate.set_sensitive(False)
+
+    def mergeDialogCreateCopyCheckbox_toggled_cb(self, toggle):
+        if toggle.get_active():
+            self.mergeKeepCopy = True
+        else:
+            self.mergeKeepCopy = False

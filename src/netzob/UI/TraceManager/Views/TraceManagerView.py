@@ -63,6 +63,12 @@ class TraceManagerView(NetzobAbstractPerspectiveView):
                           "traceImportDate",
                           "traceDataType",
                           "currentTraceMessageListstore",
+                          "traceMergeAction",
+
+                          # Merge dialog
+                          "mergeDialogValidate",
+                          "mergeDialogCreateCopyCheckbox",
+                          "mergeDialogNameEntry",
                           ])
 
         self.traceTreeviewSelection.set_select_function(self.controller.traceTreeviewSelection_select_function_cb,
@@ -130,3 +136,15 @@ class TraceManagerView(NetzobAbstractPerspectiveView):
 
         result = dlg.run()
         dlg.destroy()
+
+    def showMergeTracesDialog(self):
+        dlg = self.builder.get_object("mergeTracesDialog")
+        dlg.set_transient_for(self.controller.mainController.view.mainWindow)
+
+        self.mergeDialogNameEntry.set_text("")
+        self.mergeDialogCreateCopyCheckbox.set_active(True)
+
+        result = dlg.run()
+        dlg.hide()
+
+        return result
