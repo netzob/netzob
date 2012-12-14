@@ -53,6 +53,14 @@ class TraceManagerView(NetzobAbstractPerspectiveView):
                                                actionGroup="actionGroup")
 
         self._getObjects(["traceTreeview",
+                          "traceTreestore",
+                          "messageListTreeview",
+                          "traceTreeviewSelection",
+                          "traceNameEntry",
+                          "traceDescriptionEntry",
+                          "traceImportDate",
+                          "traceDataType",
+                          "currentTraceMessageListstore",
                           ])
 
         self.uiManager = Gtk.UIManager()

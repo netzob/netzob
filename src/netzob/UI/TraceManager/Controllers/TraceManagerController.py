@@ -53,6 +53,8 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
         self.workspace = mainController.getCurrentWorkspace()
         super(TraceManagerController, self).__init__(mainController, TraceManagerView)
 
+        self.currentTrace = None
+
         self._refreshTraceList()
 
     def _refreshTraceList(self, traceListIds=[], removedTraces=[]):
@@ -166,6 +168,121 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
         if len(selectedPaths) > 0:
             selection.unselect_all()
             selection.select_path(selectedPaths[0])
+
+    def traceTreeviewSelection_changed_cb(self, selection):
+        model, paths = selection.get_selected_rows()
+
+        if len(paths) > 0:
+            if len(paths) == 1:
+                # If only one item is selected, update the 'Trace
+                # Properties' box.
+
+                row = model[paths[0]]
+                parentRow = row.get_parent()
+
+                if parentRow is None:
+                    traceId = row[0]
+                    trace = self.workspace.getImportedTrace(traceId)
+                    sessionFilter = None
+
+                else:
+                    traceId = parentRow[0]
+                    trace = self.workspace.getImportedTrace(traceId)
+                    sessionFilter = trace.getSession(row[0])
+
+                self._refreshProjectProperties(trace, session=sessionFilter)
+                self.currentTrace = trace
+
+            else:
+                # Else, we can't display nor edit anything.
+                self._resetCurrentTrace()
+
+        else:
+            self._resetCurrentTrace()
+
+    def _resetCurrentTrace(self):
+        """Unset the currently selected trace and update variables
+        related to it."""
+
+        self.currentTrace = None
+
+        self._refreshProjectProperties()
+
+    def _refreshProjectProperties(self, trace=None, session=None):
+        """This method allows to refresh the project properties
+        panel. This code is in charge of enabling or disabling entries
+        used for name and description.
+
+        If trace is None, this means that there is no currently
+        selected trace (which was removed or something).
+
+        If sessionFilter is not None, it means that only a specific
+        session should be displayed.
+
+        :param trace: the currently selected trace (of type
+        ImportedTrace)
+        :param session: the currently selected session (of type
+        Session)"""
+
+        model = self.view.currentTraceMessageListstore
+        model.clear()
+
+        if trace is None:
+            sensitivity = False
+            name = ""
+            description = ""
+            date = ""
+            dataType = ""
+
+        else:
+            sensitivity = True
+            name = trace.name
+            description = trace.description
+            date = trace.date.strftime("%c")
+            dataType = trace.type
+
+            # If a session filter was given asked, we only show the
+            # messages related to that session. Else, we display all
+            # messages.
+            if session is not None:
+                messageList = session.getMessages()
+            else:
+                messageList = trace.getMessages()
+
+            for message in messageList:
+                if message.session is not None:
+                    sessionName = message.session.name
+                    sessionSortKey = "{0};{1}".format(message.session.id,
+                                                      message.session.messages.index(message))
+                else:
+                    sessionName = ""
+                    sessionSortKey = ""
+
+                model.append([message.id,
+                              message.timestamp,
+                              message.type,
+                              message.getStringData(),
+                              sessionName,
+                              sessionSortKey])
+
+        # Name
+        self.view.traceNameEntry.set_sensitive(sensitivity)
+        self.view.traceNameEntry.set_text(name)
+
+        # Description
+        self.view.traceDescriptionEntry.set_sensitive(sensitivity)
+        self.view.traceDescriptionEntry.set_text(description)
+
+        # Date
+        self.view.traceImportDate.set_sensitive(sensitivity)
+        self.view.traceImportDate.set_text(date)
+
+        # Data type
+        self.view.traceDataType.set_sensitive(sensitivity)
+        self.view.traceDataType.set_text(dataType)
+
+        # Message list
+        self.view.messageListTreeview.set_sensitive(sensitivity)
 
     def traceTreeview_button_press_event_cb(self, treeView, event):
         if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 3:

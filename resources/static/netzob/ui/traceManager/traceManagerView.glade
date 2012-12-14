@@ -90,6 +90,7 @@
                 <child internal-child="selection">
                   <object class="GtkTreeSelection" id="traceTreeviewSelection">
                     <property name="mode">multiple</property>
+                    <signal name="changed" handler="traceTreeviewSelection_changed_cb" swapped="no"/>
                   </object>
                 </child>
                 <child>
