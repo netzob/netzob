@@ -135,7 +135,7 @@ class Workspace(object):
     #| Constructor
     #| @param path : path of the workspace
     #+-----------------------------------------------------------------------+
-    def __init__(self, name, creationDate, path, pathOfTraces, pathOfLogging, pathOfPrototypes, lastProjectPath=None, importedTraces=[]):
+    def __init__(self, name, creationDate, path, pathOfTraces, pathOfLogging, pathOfPrototypes, lastProjectPath=None, importedTraces={}):
         self.name = name
         self.path = os.path.abspath(path)
         self.creationDate = creationDate
@@ -181,15 +181,18 @@ class Workspace(object):
         self.lastProjectPath = lastProject
 
     def getImportedTraces(self):
-        return self.importedTraces
+        return self.importedTraces.values()
+
+    def getImportedTrace(self, traceId):
+        """Retrieve a specific trace, which identifier is traceId."""
+
+        return self.importedTraces[traceId]
 
     def addImportedTrace(self, importedTrace):
-        self.importedTraces.append(importedTrace)
-#        self.saveConfigFile()
+        self.importedTraces.update({importedTrace.id: importedTrace})
 
     def removeImportedTrace(self, importedTrace):
-        self.importedTraces.remove(importedTrace)
-#        self.saveConfigFile()
+        self.importedTraces.pop(importedTrace.id)
 
     def getTransformationFunctions(self):
         """Computes and returns the list of available functions"""
