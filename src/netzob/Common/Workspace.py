@@ -195,6 +195,7 @@ class Workspace(object):
         self.importedTraces.update({importedTrace.id: importedTrace})
 
     def removeImportedTrace(self, importedTrace):
+        ImportedTrace.deleteTrace(importedTrace, self.pathOfTraces)
         self.importedTraces.pop(importedTrace.id)
 
     def getTransformationFunctions(self):

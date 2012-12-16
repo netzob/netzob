@@ -229,3 +229,11 @@ class ImportedTrace(object):
                             importedTrace.addSession(session)
             return importedTrace
         return None
+
+    @staticmethod
+    def deleteTrace(trace, pathOfTraces):
+        path = os.path.join(pathOfTraces, "{0}.gz".format(trace.id))
+        try:
+            os.unlink(path)
+        except OSError, e:
+            logging.error("Unable to delete file '{0}' while deleting trace '{1}': {2}".format(path, trace.id, e))
