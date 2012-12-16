@@ -36,6 +36,7 @@ import re
 from lxml.etree import ElementTree
 from lxml import etree
 import shutil
+import uuid
 
 
 #+---------------------------------------------------------------------------+
@@ -197,6 +198,53 @@ class Workspace(object):
     def removeImportedTrace(self, importedTrace):
         ImportedTrace.deleteTrace(importedTrace, self.pathOfTraces)
         self.importedTraces.pop(importedTrace.id)
+
+    def mergeImportedTraces(self, traceIds, name, keep=True):
+        """This methods allows to merge multiple traces. The merged
+        traces gets a new unique id.
+
+        If the 'keep' parameter is True, a copy of the initial traces
+        is kept.
+
+        We retrieve the 'ImportedTrace' object from its ID. Then we
+        merge all traces' messages and sessions into a new
+        'ImportedTrace'."""
+
+        messages = {}
+        sessions = {}
+        names = []
+        types = []
+
+        for traceId in traceIds:
+            trace = self.getImportedTrace(traceId)
+
+            messages.update(trace.messages)
+            sessions.update(trace.sessions)
+            names.append("'{0}'".format(trace.name))
+
+            # If the type is already a multiple type merge, types are
+            # comma separated values.
+            types.extend(trace.type.split(";"))
+
+            if keep is False:
+                self.removeImportedTrace(trace)
+
+        # The type of the new trace is a list of the multiple types of
+        # the traces to be merged.
+        newTraceType = "{0}".format(";".join(set(types)))
+        description = "Merge of traces {0} and {1}".format(', '.join(names[:-1]), names[-1])
+
+        newTrace = ImportedTrace(str(uuid.uuid4()),
+                                 datetime.datetime.now(),
+                                 newTraceType,
+                                 description,
+                                 name)
+        newTrace.messages = messages
+        newTrace.sessions = sessions
+
+        self.addImportedTrace(newTrace)
+
+        return newTrace
 
     def getTransformationFunctions(self):
         """Computes and returns the list of available functions"""
