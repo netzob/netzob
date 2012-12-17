@@ -30,7 +30,6 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 from lxml import etree
-from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import \
     AggregateVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import \
@@ -197,6 +196,7 @@ class PeachExport(object):
                     xmlFields.append(etree.SubElement(xmlDataModel, peachType, valueType="hex", name=("{0}_{1}").format(field.getName(), i)))
                     # We write down all possible values the subfield can have.
                     paramValues = []
+                    logging.debug("TypedValueLists : {0}".format(str(typedValueLists)))
                     for typedValueList in typedValueLists:
                         # If we have such a field. (The double list typedValueLists is lacunar)
                         if len(typedValueList) > i:
@@ -367,7 +367,7 @@ class PeachExport(object):
             # We are only interested in current values.
             value = variable.getCurrentValue()
             if value is not None:
-                typedValueLists.append([(variableType, value[0])])
+                typedValueLists.append([(variableType, value)])
         elif variableType == RepeatVariable.TYPE:
             # TODO : implement this.
             pass
