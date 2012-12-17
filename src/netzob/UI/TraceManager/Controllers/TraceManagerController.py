@@ -597,3 +597,11 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
             self._refreshTraceList([trace.id])
             self._refreshProjectProperties(trace)
             selection.unselect_all()
+
+    def traceNewAction_activate_cb(self, button):
+        name = _("New empty trace")
+        trace = self.workspace.newEmptyImportedTrace(name)
+
+        self.log.info("New empty trace was created: {0} (id={1})".format(name, trace.id))
+
+        self._refreshTraceList([trace.id])

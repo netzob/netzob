@@ -53,6 +53,7 @@
         <property name="short_label" translatable="yes">New Trace</property>
         <property name="tooltip" translatable="yes">Create A New Trace</property>
         <property name="stock_id">gtk-add</property>
+        <signal name="activate" handler="traceNewAction_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>
