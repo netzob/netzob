@@ -199,6 +199,24 @@ class Workspace(object):
         ImportedTrace.deleteTrace(importedTrace, self.pathOfTraces)
         self.importedTraces.pop(importedTrace.id)
 
+    def newEmptyImportedTrace(self, name, description=""):
+        """This function is in charge of creating an empty
+        `ImportedTrace`.
+
+        :param name: 'name' of the new trace.
+        :param description (optional): description of the new
+        trace."""
+
+        newTrace = ImportedTrace(str(uuid.uuid4()),
+                                 datetime.datetime.now(),
+                                 "UNKNOWN",
+                                 description,
+                                 name)
+
+        self.addImportedTrace(newTrace)
+
+        return newTrace
+
     def mergeImportedTraces(self, traceIds, name, keep=True):
         """This methods allows to merge multiple traces. The merged
         traces gets a new unique id.
