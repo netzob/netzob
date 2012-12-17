@@ -225,18 +225,19 @@ class PeachExport(object):
             else:
                 logging.debug(_("The fuzzing is based on regexes."))
                 peachType = self.getPeachFieldTypeFromNetzobFormat(field)
+                regex = field.getRegex()
                 if field.isStatic():
                     if peachType == "Number":
-                        xmlField = etree.SubElement(xmlDataModel, peachType, name=field.getName(), value=str(self.hexstring2int(field.getRegex())))
+                        regex = regex[1:len(regex) - 1]
+                        xmlField = etree.SubElement(xmlDataModel, peachType, name=field.getName(), value=str(self.hexstring2int(regex)))
                     else:
-                        xmlField = etree.SubElement(xmlDataModel, peachType, name=field.getName(), valueType="hex", value=field.getRegex())
+                        xmlField = etree.SubElement(xmlDataModel, peachType, name=field.getName(), valueType="hex", value=regex)
                     if not self.mutateStaticFields:
                         xmlField.attrib["mutable"] = "false"
                 else:
                     # Fields not declared static in netzob are assumed to be dynamic, have a random default value and are mutable.
-                    # We assume that the regex is composed of a random number of fixed and dynamic (.{n,p}, .{,n} and .{n}) subregexs. Each subregex will have its own peach subfield.
+                    # We assume that the regex is composed of a random number of fixed and dynamic ((.{n,p}), (.{,n}) and (.{n})) subregexs. Each subregex will have its own peach subfield.
                     # We will illustrate it with the following example "(abcd.{m,n}efg.{,o}.{p}hij)"
-                    regex = field.getRegex()
                     if (regex != "()"):
                         regex = regex[1:len(regex) - 1]  # regex = "abcd.{m,n}efg.{,o}.{p}hij"
 
