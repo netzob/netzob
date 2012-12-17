@@ -32,7 +32,7 @@
 from setuptools import setup
 
 dependencies = [
-    'Netzob > 0.4'
+    'Netzob >= 0.3'
 ]
 
 #+----------------------------------------------------------------------------
