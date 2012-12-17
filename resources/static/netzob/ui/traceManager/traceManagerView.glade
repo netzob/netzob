@@ -91,6 +91,10 @@
                 <property name="model">traceTreestore</property>
                 <property name="search_column">1</property>
                 <property name="tooltip_column">1</property>
+                <signal name="button-press-event" handler="traceTreeview_button_press_event_cb" swapped="no"/>
+                <signal name="drag-data-received" handler="traceTreeview_drag_data_received_cb" swapped="no"/>
+                <signal name="drag-motion" handler="traceTreeview_drag_motion_cb" swapped="no"/>
+                <signal name="drag-drop" handler="traceTreeview_drag_drop_cb" swapped="no"/>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection" id="traceTreeviewSelection">
                     <property name="mode">multiple</property>
@@ -429,6 +433,10 @@
                     <property name="model">currentTraceMessageListstore</property>
                     <property name="search_column">3</property>
                     <signal name="button-press-event" handler="messageListTreeview_button_press_event_cb" swapped="no"/>
+                    <signal name="button-release-event" handler="messageListTreeview_button_release_event_cb" swapped="no"/>
+                    <signal name="drag-data-get" handler="messageListTreeview_drag_data_get_cb" swapped="no"/>
+                    <signal name="drag-end" handler="messageListTreeview_drag_end_cb" swapped="no"/>
+                    <signal name="drag-begin" handler="messageListTreeview_drag_begin_cb" after="yes" swapped="no"/>
                     <child internal-child="selection">
                       <object class="GtkTreeSelection" id="messageListSelection">
                         <property name="mode">multiple</property>

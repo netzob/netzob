@@ -29,7 +29,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 import logging
 import os
 
@@ -87,6 +87,17 @@ class TraceManagerView(NetzobAbstractPerspectiveView):
 
         # Getting popup for the Message List
         self.messageListPopup = self.uiManager.get_widget("/MessageListPopupMenu")
+
+        # Configuring Drag&Drop
+        self.messageListTreeview.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK,
+                                                          [],
+                                                          Gdk.DragAction.MOVE | Gdk.DragAction.COPY)
+        self.messageListTreeview.drag_source_add_text_targets()
+
+        self.traceTreeview.drag_dest_set(Gtk.DestDefaults.ALL, [], Gdk.DragAction.MOVE)
+        self.traceTreeview.enable_model_drag_dest([],
+                                                  Gdk.DragAction.MOVE | Gdk.DragAction.COPY)
+        self.traceTreeview.drag_dest_add_text_targets()
 
     def showTraceDeletionConfirmDialog(self):
         """A warning dialog is displayed before deleting the traces."""

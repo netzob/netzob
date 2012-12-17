@@ -66,6 +66,8 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
         # Do we keep a copy of old traces on merge operations?
         self.mergeKeepCopy = True
 
+        self.deferSelect = None
+
         self._refreshTraceList()
 
     def _refreshTraceList(self, traceListIds=[], removedTraces=[]):
@@ -546,8 +548,14 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
             self.mergeKeepCopy = False
 
     def messageListTreeview_button_press_event_cb(self, treeView, event):
-        """This code is in charge of enabling the popup menu when
-        clicking a row of the message list view."""
+        """This code is both in charge of enabling the popup menu when
+        clicking a row of the message list view and allow multiple
+        item drag.
+
+        This is an ugly hack that permits to drag multiple items from
+        the TreeView. This code is highly inspired by Kevin Mehall's
+        post:
+        http://blog.kevinmehall.net/2010/pygtk_multi_select_drag_drop"""
 
         if event.type == Gdk.EventType.BUTTON_PRESS:
             # Select the row on which user clicked
@@ -569,6 +577,29 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
 
                 self.view.messageListPopup.popup(None, None, None, None, event.button, event.time)
                 return True
+            elif (selectedPath is not None
+                  and not (event.state & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK))
+                  and treeView.get_selection().path_is_selected(selectedPath)):
+
+                treeView.get_selection().set_select_function(lambda *ignore: False, None)
+                self.deferSelect = selectedPath
+
+    def messageListTreeview_button_release_event_cb(self, treeView, event):
+        """This function is called when releasing the button on the
+        messageListTreeview. This code is here to allow a multiple
+        selection drag."""
+
+        treeView.get_selection().set_select_function(lambda *ignore: True, None)
+
+        try:
+            (targetPath, targetColumn, x, y) = treeView.get_path_at_pos(event.x, event.y)
+
+            if (self.deferSelect == targetPath and not (event.x == 0 and event.y == 0)):
+                treeView.set_cursor(targetPath, targetColumn, False)
+                self.deferSelect = None
+
+        except TypeError, e:
+            return False
 
     def messageDeleteAction_activate_cb(self, button):
         assert self.currentTrace is not None
@@ -605,3 +636,145 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
         self.log.info("New empty trace was created: {0} (id={1})".format(name, trace.id))
 
         self._refreshTraceList([trace.id])
+
+    def traceTreeview_drag_data_received_cb(self, treeView, drag_context, x, y, data, info, time):
+        self.log.info("Just receive DND data: {0}".format(data.get_text()))
+
+        currentTrace = self.currentTrace
+
+        # Find the dest trace
+        model = treeView.get_model()
+        path, pos = treeView.get_dest_row_at_pos(x, y)
+
+        row = model[path]
+        parentRow = row.get_parent()
+
+        if parentRow is not None:
+            destTrace = self.workspace.getImportedTrace(parentRow[0])
+            destSession = destTrace.getSession(row[0])
+
+            for messageId in data.get_text().split(";"):
+                receivedMessage = currentTrace.getMessageByID(messageId)
+                currentSession = receivedMessage.getSession()
+
+                if destSession.id == currentSession.id:
+                    self.log.error("Source and destination sessions are the same {0} == {1}".format(destSession.id, currentSession.id))
+                    Gtk.drag_finish(drag_context, False, False, time)
+
+                else:
+                    self.log.info("Message {0} moved from trace {1} to {2} (session={3})".format(messageId,
+                                                                                                 currentTrace.id,
+                                                                                                 destTrace.id,
+                                                                                                 destSession.id))
+
+                    # Move message if requested
+                    if drag_context.get_selected_action() == Gdk.DragAction.MOVE:
+                        currentSession.removeMessage(receivedMessage)
+                        currentTrace.removeMessage(receivedMessage.id)
+
+                    message = receivedMessage.copy()
+                    destSession.addMessage(message)
+                    destTrace.addMessage(message)
+                    message.setSession(destSession)
+
+            # We force rewrite of the two traces (source and dest) and
+            # update the left treeview.
+            updatedTraces = [destTrace.id, currentTrace.id]
+            self.workspace.saveConfigFile(overrideTraces=updatedTraces)
+            self._refreshTraceList(traceListIds=updatedTraces)
+
+            # Everything went file, we can tell the source to delete
+            # data, if asked by the drag.
+            if drag_context.get_selected_action() == Gdk.DragAction.MOVE:
+                Gtk.drag_finish(drag_context, True, True, time)
+            else:
+                Gtk.drag_finish(drag_context, True, False, time)
+
+        else:
+            self.log.error("Messages can only be moved to a session. Traces can't be destination")
+            Gtk.drag_finish(drag_context, False, False, time)
+
+    def messageListTreeview_drag_data_get_cb(self, widget, drag_context, data, info, time):
+        text = []
+
+        (model, rows) = widget.get_selection().get_selected_rows()
+
+        if rows is not None:
+            for row in rows:
+
+                msgId = model[row][0]
+                if msgId is not None:
+                    text.append(msgId)
+
+            data.set_text("{0}".format(";".join(text)), -1)
+
+    def messageListTreeview_drag_end_cb(self, widget, drag_context):
+        currentTrace = self.currentTrace
+        self._refreshTraceList([currentTrace.id])
+
+    def messageListTreeview_drag_begin_cb(self, treeView, context):
+        """This callback is in charge of changing the drag icon. This
+        callback should be called 'after' (connect_after) so it can
+        work properly!"""
+
+        if treeView.get_selection().count_selected_rows() > 1:
+            Gtk.drag_set_icon_stock(context, Gtk.STOCK_DND_MULTIPLE, 0, 0)
+        else:
+            Gtk.drag_set_icon_stock(context, Gtk.STOCK_DND, 0, 0)
+
+    def traceTreeview_drag_motion_cb(self, treeView, context, x, y, time):
+        """This callbacks helps managing highlight of the dest
+        treeview when draging data onto it. Here, we highlight
+        treeView only when target is a 'Session' and that it's not a
+        new item (but rather, data are droped into it)."""
+
+        dropInfo = treeView.get_dest_row_at_pos(x, y)
+
+        if dropInfo is not None:
+            (path, position) = dropInfo
+            model = treeView.get_model()
+
+            # We only allow to drop data *into* a row (and not before
+            # and after) and to drop data in a session, items that
+            # have a parent.
+            if model[path].get_parent() is not None:
+                if position in (Gtk.TreeViewDropPosition.INTO_OR_BEFORE, Gtk.TreeViewDropPosition.INTO_OR_AFTER):
+                    treeView.drag_highlight()
+                    Gdk.drag_status(context, 0, time)
+                    return False
+            else:
+                # We are on an ImportedTrace item, we try to expand
+                # it.
+                treeView.expand_to_path(path)
+
+        treeView.drag_unhighlight()
+        Gdk.drag_status(context, 0, time)
+        return True
+
+    def traceTreeview_drag_drop_cb(self, treeView, context, x, y, time):
+        """This callbacks allows to check if the data was dragged on
+        the right widget. Here, we only allows to drop data on a
+        session (which means that the target needs to have a
+        parent).
+
+        The callback needs to return False if the drop is ok, True
+        instead."""
+
+        # We are managing manually widget highlight, when droping
+        # data, we first unhighlight widget.
+        treeView.drag_unhighlight()
+
+        dropInfo = treeView.get_dest_row_at_pos(x, y)
+        if dropInfo is not None:
+            (path, position) = dropInfo
+            model = treeView.get_model()
+
+            # We only allow to drop data *into* a row (and not before
+            # and after) and to drop data in a session, items that
+            # have a parent.
+            if not (position not in (Gtk.TreeViewDropPosition.INTO_OR_BEFORE, Gtk.TreeViewDropPosition.INTO_OR_AFTER)
+                    or model[path].get_parent() is None):
+                return False
+
+        self.log.debug("Unable to drop data here!")
+        return True
