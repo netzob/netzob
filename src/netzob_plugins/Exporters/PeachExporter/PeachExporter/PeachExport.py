@@ -32,7 +32,6 @@ from gettext import gettext as _
 import logging
 from lxml import etree
 import string
-from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Local Imports                                                             |
@@ -70,7 +69,7 @@ class PeachExport(object):
         logging.debug(_("Targeted symbolID: {0}").format(str(symbolID)))
         # TODO(stateful fuzzer): Make one state model for each state of the protocol.
         xmlRoot = etree.Element("Peach")
-        xmlInclude = etree.SubElement(xmlRoot, "Include", ns="default", src="file:defaults.xml")
+        etree.SubElement(xmlRoot, "Include", ns="default", src="file:defaults.xml")
         xmlImport = etree.SubElement(xmlRoot, "Import")
         xmlImport.attrib["import"] = "PeachzobAddons"
 
@@ -103,19 +102,19 @@ class PeachExport(object):
         xmlCommentTest2 = etree.Comment("TODO: Configure the test. The following lines are given in example.")
         xmlTest.append(xmlCommentTest1)
         xmlTest.append(xmlCommentTest2)
-        xmlTestStateModel = etree.SubElement(xmlTest, "StateModel", ref="SimpleStateModel")
+        etree.SubElement(xmlTest, "StateModel", ref="SimpleStateModel")
         xmlPublisher = etree.SubElement(xmlTest, "Publisher")
         xmlPublisher.attrib["class"] = "udp.Udp"
-        xmlParamHost = etree.SubElement(xmlPublisher, "Param", name="host", value="0.0.0.0")
-        xmlParamPort = etree.SubElement(xmlPublisher, "Param", name="port", value="0000")
+        etree.SubElement(xmlPublisher, "Param", name="host", value="0.0.0.0")
+        etree.SubElement(xmlPublisher, "Param", name="port", value="0000")
 
         xmlRun = etree.SubElement(xmlRoot, "Run", name="DefaultRun")
         xmlCommentRun = etree.Comment("TODO: Configure the run.")
         xmlRun.append(xmlCommentRun)
         xmlLogger = etree.SubElement(xmlRun, "Logger")
         xmlLogger.attrib["class"] = "logger.Filesystem"
-        xmlParamLogger = etree.SubElement(xmlLogger, "Param", name="path", value="logs")
-        xmlTestRed = etree.SubElement(xmlRun, "Test", ref="DefaultTest")
+        etree.SubElement(xmlLogger, "Param", name="path", value="logs")
+        etree.SubElement(xmlRun, "Test", ref="DefaultTest")
 
         tree = etree.ElementTree(xmlRoot)
         toStringedTree = etree.tostring(tree, pretty_print=True)
@@ -203,7 +202,7 @@ class PeachExport(object):
                         for paramValue in paramValues:
                             formattedValue = ("{0}; {1}").format(formattedValue, paramValue)
                         formattedValue = formattedValue[2:]  # Remove the '; ' prefix.
-                        xmlOrFixupValueParam = etree.SubElement(xmlOrFixup, "Param", name="values", value=formattedValue)
+                        etree.SubElement(xmlOrFixup, "Param", name="values", value=formattedValue)
                     elif len(paramValues) == 1:
                         # We assume that fields that has only one value are "static".
                         formattedValue = (string.split(paramValues[0], ","))[1]
@@ -241,7 +240,6 @@ class PeachExport(object):
                         for i in range(len(splittedRegex)):
                             # Dynamic subfield (splittedRegex will always contain dynamic subfields in even position).
                             if (i % 2) == 1:
-                                fieldLength = 0
                                 if splittedRegex[i].find(",") == -1:  # regex = {n}
                                     fieldMaxLength = int(splittedRegex[i])
                                     fieldMinLength = fieldMaxLength
@@ -257,9 +255,9 @@ class PeachExport(object):
                                 xmlField = etree.SubElement(xmlDataModel, peachType, name=("{0}_{1}").format(field.getName(), i))
                                 xmlRanStringFixup = etree.SubElement(xmlField, "Fixup")
                                 xmlRanStringFixup.attrib["class"] = "PeachzobAddons.RandomField"
-                                xmlRSFParamMinlen = etree.SubElement(xmlRanStringFixup, "Param", name="minlen", value=str(fieldMinLength))
-                                xmlRSFParamMaxlen = etree.SubElement(xmlRanStringFixup, "Param", name="maxlen", value=str(fieldMaxLength))
-                                xmlRSFType = etree.SubElement(xmlRanStringFixup, "Param", name="type", value=peachType)
+                                etree.SubElement(xmlRanStringFixup, "Param", name="minlen", value=str(fieldMinLength))
+                                etree.SubElement(xmlRanStringFixup, "Param", name="maxlen", value=str(fieldMaxLength))
+                                etree.SubElement(xmlRanStringFixup, "Param", name="type", value=peachType)
                             else:
                                 # Static subfield.
                                 if splittedRegex[i] != "":
@@ -430,11 +428,11 @@ class PeachExport(object):
             @return: the peach field type.
         """
         peachType = ""
-        format = field.getFormat()
-        logging.debug(_("Format of the field {0} is {1}.").format(field.getName(), format))
-        if format == "string":
+        formt = field.getFormat()
+        logging.debug(_("Format of the field {0} is {1}.").format(field.getName(), formt))
+        if formt == "string":
             peachType = "String"
-        elif format == "decimal":
+        elif formt == "decimal":
             peachType = "Number"
         else:
             peachType = "Blob"
@@ -459,7 +457,7 @@ class PeachExport(object):
         for symbol in vocabulary.getSymbols():
             # If the current state has a precursor, we link them from older to newer.
             if xmlState is not None:
-                xmlAction = etree.SubElement(xmlState, "Action", type="changeState", ref=("state{0}").format(stateid))
+                etree.SubElement(xmlState, "Action", type="changeState", ref=("state{0}").format(stateid))
             xmlState = self.makeAState(xmlStateModel, stateid)
             stateid = stateid + 1
 
@@ -471,9 +469,7 @@ class PeachExport(object):
                 @param xmlFather: the xml tree father of the current element.
         """
         xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="SimpleStateModel", initialState="state0")
-        project = self.netzob.getCurrentProject()
-        vocabulary = project.getVocabulary()
-        xmlState = self.makeAState(xmlStateModel, 0)
+        self.makeAState(xmlStateModel, 0)
 
     def makeAState(self, xmlFather, stateid):
         """makeAState:
@@ -491,8 +487,8 @@ class PeachExport(object):
         xmlAction = etree.SubElement(xmlState, "Action", type="output")
 
         # xml link to the previously made data model.
-        xmlDataModel = etree.SubElement(xmlAction, "DataModel", ref=("dataModel{0}").format(str(stateid)))
-        xmlData = etree.SubElement(xmlAction, "Data", name="data")
+        etree.SubElement(xmlAction, "DataModel", ref=("dataModel{0}").format(str(stateid)))
+        etree.SubElement(xmlAction, "Data", name="data")
         return xmlState
 
     def setVariableOverRegex(self, value):

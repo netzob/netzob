@@ -40,7 +40,7 @@ from gi.repository import Gtk
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.UI.NetzobWidgets import NetzobInfoMessage, NetzobErrorMessage
+from netzob.UI.NetzobWidgets import NetzobInfoMessage
 from netzob.Common.Plugins.Exporters.AbstractExporterController import AbstractExporterController
 from netzob_plugins.Exporters.PeachExporter.PeachExporter.PeachExportView import PeachExportView
 from netzob_plugins.Exporters.PeachExporter.PeachExporter.PeachExport import PeachExport
@@ -73,10 +73,10 @@ class PeachExportController(AbstractExporterController):
         logging.debug("The current project is {0}".format(str(self.netzob.getCurrentProject())))
         if self.netzob.getCurrentProject() is not None:
             # Append an "Entire project" leaf to the tree view.
-            iter = self.view.symbolTreeview.get_model().append(None, ["-1", "{0} [{1}, {2}]".format(_("Entire project"), str(len(self.netzob.getCurrentProject().getVocabulary().getSymbols())), str(len(self.netzob.getCurrentProject().getVocabulary().getMessages()))), "0", '#000000', '#DEEEF0'])
+            self.view.symbolTreeview.get_model().append(None, ["-1", "{0} [{1}, {2}]".format(_("Entire project"), str(len(self.netzob.getCurrentProject().getVocabulary().getSymbols())), str(len(self.netzob.getCurrentProject().getVocabulary().getMessages()))), "0", '#000000', '#DEEEF0'])
 
             for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-                iter = self.view.symbolTreeview.get_model().append(None, ["{0}".format(symbol.getID()), "{0} [{1}]".format(symbol.getName(), str(len(symbol.getMessages()))), "{0}".format(symbol.getScore()), '#000000', '#DEEEF0'])
+                self.view.symbolTreeview.get_model().append(None, ["{0}".format(symbol.getID()), "{0} [{1}]".format(symbol.getName(), str(len(symbol.getMessages()))), "{0}".format(symbol.getScore()), '#000000', '#DEEEF0'])
 
     def clear(self):
         """clear:
@@ -117,10 +117,10 @@ class PeachExportController(AbstractExporterController):
                 @param treeview: the symbol tree view.
         """
         if treeview.get_selection() is not None:
-            (model, iter) = treeview.get_selection().get_selected()
-            if(iter):
-                if(model.iter_is_valid(iter)):
-                    symbolID = model.get_value(iter, 0)
+            (model, itr) = treeview.get_selection().get_selected()
+            if(itr):
+                if(model.iter_is_valid(itr)):
+                    symbolID = model.get_value(itr, 0)
                     self.showXMLDefinition(symbolID)
 
     def changeFuzzingBase(self, combo):
@@ -208,9 +208,9 @@ class PeachExportController(AbstractExporterController):
                 else:
                     xmlDefinition = self.model.getPeachDefinition(self.selectedSymbolID, False)
                 try:
-                    file = open(fileName, 'w')
-                    file.write(xmlDefinition)
-                    file.close()
+                    fuzzfile = open(fileName, 'w')
+                    fuzzfile.write(xmlDefinition)
+                    fuzzfile.close()
                     # TODO: maybe copy the plugin file with shutil
                     NetzobInfoMessage(_("The project has been correctly exported as a Peach Fuzzer to '{0}'.\nDo not forget to copy in the targeted directory our Peach plugin netzob_plugins/Exporters/PeachExporter/PeachzobAddons.py.").format(fileName))
                 except Exception, e:
