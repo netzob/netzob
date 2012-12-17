@@ -285,7 +285,17 @@ class Workspace(object):
 
         self.projects_path.remove(project_path)
 
-    def saveConfigFile(self):
+    def saveConfigFile(self, overrideTraces=[]):
+        """This functions allows to save the current (and only)
+        instance of the Workspace. You can supply a list of traces
+        that should be written on-disk through the `overrideTraces`
+        variable. This allows to override specific traces that where
+        modified.
+
+        :param overrideTraces: a list of trace identifiers that should
+        be written on-disk, even if they already exists.
+        """
+
         workspaceFile = os.path.join(self.path, Workspace.CONFIGURATION_FILENAME)
 
         logging.info("Save the config file of the workspace {0} in {1}".format(self.getName(), workspaceFile))
@@ -321,7 +331,13 @@ class Workspace(object):
 
         xmlWorkspaceImported = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}traces")
         for importedTrace in self.getImportedTraces():
-            importedTrace.save(xmlWorkspaceImported, WORKSPACE_NAMESPACE, COMMON_NAMESPACE, os.path.join(self.path, self.getPathOfTraces()))
+            # overrideTraces variable contains the list of
+            # ImportedTraces that should be overriden. This is useful
+            # in case of message removal for example.
+            forceOverride = (importedTrace.id in overrideTraces)
+
+            importedTrace.save(xmlWorkspaceImported, WORKSPACE_NAMESPACE, COMMON_NAMESPACE,
+                               os.path.join(self.path, self.getPathOfTraces()), forceOverride)
 
         xmlWorkspaceFunctions = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}functions")
         for function in self.getCustomFunctions():

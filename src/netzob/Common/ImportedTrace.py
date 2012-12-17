@@ -72,7 +72,7 @@ class ImportedTrace(object):
                                                                               ",".join(self.sessions),
                                                                               self.type)
 
-    def save(self, root, namespace_workspace, namespace_common, pathOfTraces):
+    def save(self, root, namespace_workspace, namespace_common, pathOfTraces, override=False):
         xmlTrace = etree.SubElement(root, "{" + namespace_workspace + "}trace")
         xmlTrace.set("date", str(TypeConvertor.pythonDatetime2XSDDatetime(self.getDate())))
         xmlTrace.set("type", str(self.getType()))
@@ -104,7 +104,7 @@ class ImportedTrace(object):
         # Creation of the XML File (in buffer)
         # Compress it using gzip and save the .gz
         tracesFile = os.path.join(pathOfTraces, str(self.getID()) + ".gz")
-        if not os.path.isfile(tracesFile):
+        if not os.path.isfile(tracesFile) or override:
             logging.debug("Save the trace " + str(self.getID()) + " in " + tracesFile)
             # Compress and write the file
             gzipFile = gzip.open(tracesFile, 'wb')
