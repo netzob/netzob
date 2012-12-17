@@ -29,14 +29,23 @@
 #| Global Imports                                                            |
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import logging
 from lxml import etree
+from netzob.Common.MMSTD.Dictionary.Memory import Memory
+from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import \
+    AggregateVariable
+from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import \
+    AlternateVariable
+from netzob.Common.MMSTD.Dictionary.Variables.ComputedRelationVariable import \
+    ComputedRelationVariable
+from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
+from netzob.Common.MMSTD.Dictionary.Variables.RepeatVariable import \
+    RepeatVariable
+import logging
 import string
 
 #+---------------------------------------------------------------------------+
 #| Local Imports                                                             |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Memory import Memory
 
 
 class PeachExport(object):
@@ -333,31 +342,36 @@ class PeachExport(object):
         logging.debug(_("<[ variable  : {0}.").format(str(variable.getName())))
         variableType = variable.getVariableType()
         typedValueLists = []  # List of list of couple type-value.
-        if variableType == "Aggregate Variable":
+        if variableType == AggregateVariable.TYPE:
             for child in variable.getChildren():
                 # We concatenate the double lists at the lower level (inner list).
                 logging.debug(_("fatherValueLists : {0}.").format(str(typedValueLists)))
                 typedValueLists = self.concatVariableValues(typedValueLists, self.getRecVariableTypedValueLists(child))
 
-        elif variableType == "Alternate Variable":
+        elif variableType == AlternateVariable.TYPE:
             for child in variable.getChildren():
                 # We simply concatenate the two double lists as simple list.
                 for value in self.getRecVariableTypedValueLists(child):
                     typedValueLists.append(value)
 
-# TODO: Integrate Pointing Variable & Repeat Variable.
-#        elif variableType == "ReferencedVariable":
+        elif variableType == ComputedRelationVariable.TYPE:
+#            TODO: Integrate Pointing Variable & Repeat Variable.
 #            # We retrieve the typedValueLists of the pointed variable. Referenced variable are variable pointing to another variable.
 #            vocabulary = self.netzob.getCurrentProject().getVocabulary()
 #            pointedVariable = variable.getPointedVariable(vocabulary)
 #            typedValueLists = self.getRecVariableTypedValueLists(pointedVariable)
-        else:
+            pass
+
+        elif variableType == DataVariable.TYPE:
             # We add the variable type and its binary value as a singleton list in the higher list.
-            vocabulary = self.netzob.getCurrentProject().getVocabulary()
-            memory = Memory(vocabulary.getVariables())
-            value = variable.getValue(False, vocabulary, memory)
+            # We are only interested in current values.
+            value = variable.getCurrentValue()
             if value is not None:
                 typedValueLists.append([(variableType, value[0])])
+        elif variableType == RepeatVariable.TYPE:
+            # TODO : implement this.
+            pass
+
         # typedValueLists = [[("Word", "a")], [("Word", "b"), ("Word", "c"), ("Word", "e")], [("Word", "d"), ("Word", "e")]]
         # <=> variable = a + bce + de
         logging.debug(_("typedValueLists  : {0}.").format(str(typedValueLists)))
