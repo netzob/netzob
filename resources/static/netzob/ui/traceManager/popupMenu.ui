@@ -1,0 +1,8 @@
+<ui>
+  <popup name='TraceListPopupMenu'>
+    <menuitem action='traceDeleteAction' />
+    <menuitem action='traceImportInProjectAction' />
+    <menuitem action='traceMergeAction' />
+    <menuitem action='traceSessionNewAction' />
+  </popup>
+</ui>

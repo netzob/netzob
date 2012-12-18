@@ -44,6 +44,7 @@ class TraceManagerView(NetzobAbstractPerspectiveView):
     def __init__(self, controller):
         gladeFile = os.path.join("traceManager", "traceManagerView.glade")
         menubar = os.path.join("traceManager", "traceManagerMenuToolbar.ui")
+        popupFile = os.path.join("traceManager", "popupMenu.ui")
 
         super(TraceManagerView, self).__init__(controller,
                                                gladeFile,
@@ -53,3 +54,10 @@ class TraceManagerView(NetzobAbstractPerspectiveView):
 
         self._getObjects(["traceTreeview",
                           ])
+
+        self.uiManager = Gtk.UIManager()
+        self.uiManager.insert_action_group(self.actionGroup)
+        self.uiManager.add_ui_from_file(self._findUiResource(popupFile))
+
+        # Getting popup for the Trace List
+        self.traceListPopup = self.uiManager.get_widget("/TraceListPopupMenu")

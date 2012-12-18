@@ -30,7 +30,7 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 import time
 
 #+---------------------------------------------------------------------------+
@@ -166,3 +166,21 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
         if len(selectedPaths) > 0:
             selection.unselect_all()
             selection.select_path(selectedPaths[0])
+
+    def traceTreeview_button_press_event_cb(self, treeView, event):
+        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 3:
+            selection = treeView.get_selection()
+            (model, selected_paths) = selection.get_selected_rows()
+
+            try:
+                # Select the row on which user clicked
+                (selectedPath, selectedColumn, x, y) = treeView.get_path_at_pos(event.x, event.y)
+                if selectedPath not in selected_paths:
+                    selection.unselect_all()
+                    selection.select_path(selectedPath)
+
+                self.view.traceListPopup.popup(None, None, None, None, event.button, event.time)
+                return True
+
+            except:
+                return False
