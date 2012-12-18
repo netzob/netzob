@@ -535,3 +535,28 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
             self.mergeKeepCopy = True
         else:
             self.mergeKeepCopy = False
+
+    def messageListTreeview_button_press_event_cb(self, treeView, event):
+        """This code is in charge of enabling the popup menu when
+        clicking a row of the message list view."""
+
+        if event.type == Gdk.EventType.BUTTON_PRESS:
+            # Select the row on which user clicked
+            selection = treeView.get_selection()
+            (model, selected_paths) = selection.get_selected_rows()
+            path = treeView.get_path_at_pos(event.x, event.y)
+
+            if path is None:
+                return False
+
+            (selectedPath, selectedColumn, x, y) = path
+
+            if event.button == 3:
+                # Select the row on which user clicked
+                if selectedPath not in selected_paths:
+                    selection.unselect_all()
+                    selection.select_path(selectedPath)
+                    (model, selected_paths) = selection.get_selected_rows()
+
+                self.view.messageListPopup.popup(None, None, None, None, event.button, event.time)
+                return True

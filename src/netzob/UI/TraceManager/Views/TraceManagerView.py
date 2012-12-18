@@ -65,6 +65,9 @@ class TraceManagerView(NetzobAbstractPerspectiveView):
                           "currentTraceMessageListstore",
                           "traceMergeAction",
 
+                          "currentTraceMessageListstore",
+                          "messageListTreeview",
+
                           # Merge dialog
                           "mergeDialogValidate",
                           "mergeDialogCreateCopyCheckbox",
@@ -80,6 +83,9 @@ class TraceManagerView(NetzobAbstractPerspectiveView):
 
         # Getting popup for the Trace List
         self.traceListPopup = self.uiManager.get_widget("/TraceListPopupMenu")
+
+        # Getting popup for the Message List
+        self.messageListPopup = self.uiManager.get_widget("/MessageListPopupMenu")
 
     def showTraceDeletionConfirmDialog(self):
         """A warning dialog is displayed before deleting the traces."""

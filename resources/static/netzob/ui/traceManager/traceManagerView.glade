@@ -426,6 +426,7 @@
                     <property name="can_focus">True</property>
                     <property name="model">currentTraceMessageListstore</property>
                     <property name="search_column">3</property>
+                    <signal name="button-press-event" handler="messageListTreeview_button_press_event_cb" swapped="no"/>
                     <child internal-child="selection">
                       <object class="GtkTreeSelection" id="messageListSelection">
                         <property name="mode">multiple</property>
