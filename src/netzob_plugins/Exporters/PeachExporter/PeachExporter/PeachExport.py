@@ -515,8 +515,14 @@ class PeachExport(object):
             etree.SubElement(xmlFather, "StateModel", name="No state model defined in Netzob.")
             return
 
+        # A simple dictionary of all the xml states.
         xmlStatesDict = dict()
-        probaDict = dict()  # Associate the ID of a symbol to the sum of the probabilities of all the transitions that leads to the state it comes from.
+
+        # Associate the ID of a symbol to the sum of the probabilities of all the transitions that leads to the state it comes from.
+        probaDict = dict()
+
+        # List of transitions formed like [startStateID, endStateID, weighting (probability), isTheTransitionFinal]
+        transList = []
 
         # TODO: manage unknown and empty symbols.
         # There is a structural difference between Peach and Netzob state models. Globally, states of the first are transitions of the second.
@@ -540,15 +546,9 @@ class PeachExport(object):
                     for outTrans in mmstd.getTransitionsStartingFromState(outputState):
                         if outTrans.getType() == SemiStochasticTransition.TYPE:
                             for outSymbol in outTrans.getOutputSymbols():
-                                if probaDict[0] == outSymbol[1]:  # Last transition.
-                                    etree.SubElement(xmlState, "Action", type="changeState", ref=("state {0}").format(str(self.dictSymbol[str(outSymbol[0].getID())])))
-                                else:
-                                    etree.SubElement(xmlState, "Action", type="changeState", ref=("state {0}").format(str(self.dictSymbol[str(outSymbol[0].getID())])),
-                                                     when="random.randint(1,{0})<={1}".format(str(int(probaDict[0])), str(int(outSymbol[1]))))
-                                    # Reduce probability. The tests will be successive, for instance: test1: 20%, test2: 30%, test3: 40% test4: 10% of a single dice is equivalent to:
-                                    # test1 20/100, test2 (if not test1) 30/80 (30/100 = 30/80*80/100), test3 (if neither test1 nor test2) 40/50 ...
-                                    probaDict[0] = probaDict[0] - outSymbol[1]
+                                    transList.append([0, outSymbol[0].getID(), outSymbol[1]])
                     break
+
         # Create all other states.
         for transition in transitions:
             if transition.getType() == SemiStochasticTransition.TYPE:
@@ -586,17 +586,43 @@ class PeachExport(object):
                         for outTrans in mmstd.getTransitionsStartingFromState(state):
                             if outTrans.getType() == SemiStochasticTransition.TYPE:
                                 for outSymbol in outTrans.getOutputSymbols():
-                                    if probaDict[inSymbol[0].getID()] == outSymbol[1]:  # Last transition.
-                                        etree.SubElement(xmlStatesDict[inSymbol[0].getID()], "Action", type="changeState",
-                                                         ref=("state {0}").format(str(self.dictSymbol[str(outSymbol[0].getID())])))
-                                    else:
-                                        etree.SubElement(xmlStatesDict[inSymbol[0].getID()], "Action", type="changeState",
-                                                         ref=("state {0}").format(str(self.dictSymbol[str(outSymbol[0].getID())])),
-                                                         when="random.randint(1,{0})<={1}".format(str(int(probaDict[inSymbol[0].getID()])), str(int(outSymbol[1]))))
-                                        probaDict[inSymbol[0].getID()] -= outSymbol[1]
+                                    transList.append([inSymbol[0].getID(), outSymbol[0].getID(), outSymbol[1]])
                             if outTrans.getType() == CloseChannelTransition.TYPE:
                                 # Eventual transition to the end and the first state above.
-                                etree.SubElement(xmlStatesDict[inSymbol[0].getID()], "Action", type="changeState", ref="state 0")
+                                transList.append([inSymbol[0].getID(), 0, 100])
+
+        # Normalize transitions: pack transitions which go from the same state and to the same state.
+        normTransList = []
+        for transition in transList:
+            found = False
+            for normTransition in normTransList:
+                if transition[0] == normTransition[0] and transition[1] == normTransition[1]:
+                    # Similar transitions, we sum their weighting.
+                    normTransition[2] += transition[2]
+                    found = True
+                    break
+            if not found:
+                # New transitions, we add it.
+                normTransList.append(transition)
+
+        # Add transitions to the xml file.
+        for normTransition in normTransList:
+            stateName = ""
+            if normTransition[0] == 0:  # First state.
+                stateName = "state 0"
+            else:
+                stateName = ("state {0}").format(str(self.dictSymbol[str(normTransition[0])]))
+
+            if probaDict[normTransition[0]] == normTransition[2]:  # Last transition.
+                etree.SubElement(xmlStatesDict[normTransition[0]], "Action", type="changeState",
+                                 ref=stateName)
+            else:
+                etree.SubElement(xmlStatesDict[normTransition[0]], "Action", type="changeState",
+                                 ref=stateName,
+                                 when="random.randint(1,{0})<={1}".format(str(int(probaDict[normTransition[0]])), str(int(normTransition[2]))))
+                # Reduce probability. The tests will be successive, for instance: test1: 20%, test2: 30%, test3: 40% test4: 10% of a single dice is equivalent to:
+                # test1 20/100, test2 (if not test1) 30/80 (30/100 = 30/80*80/100), test3 (if neither test1 nor test2) 40/50 ...
+                probaDict[normTransition[0]] -= normTransition[2]
 
 #+---------------------------------------------------------------------------+
 #| Utils                                                                     |
