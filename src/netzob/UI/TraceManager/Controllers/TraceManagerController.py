@@ -177,6 +177,9 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
             selection.unselect_all()
             selection.select_path(selectedPaths[0])
 
+    def deactivate(self):
+        self.workspace.saveConfigFile()
+
     def traceTreeviewSelection_select_function_cb(self, selection, model, path, is_path_selected, treeStore):
         """This function is in charge of allowing or not, the
         selection of an item in the traceTreeview. This Treeview
