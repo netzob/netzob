@@ -32,6 +32,7 @@ from gettext import gettext as _
 import logging
 from gi.repository import Gtk, Gdk
 import time
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -42,6 +43,7 @@ import time
 #+---------------------------------------------------------------------------+
 from netzob.UI.TraceManager.Views.TraceManagerView import TraceManagerView
 from netzob.UI.NetzobAbstractPerspectiveController import NetzobAbstractPerspectiveController
+from netzob.Common.Symbol import Symbol
 
 
 class TraceManagerController(NetzobAbstractPerspectiveController):
@@ -221,6 +223,8 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
         model, paths = selection.get_selected_rows()
 
         if len(paths) > 0:
+            self.view.traceImportInProjectAction.set_sensitive(True)
+
             # Save name, if it was updated
             if self.nameUpdated:
                 self.currentTrace.name = self.view.traceNameEntry.get_text()
@@ -263,11 +267,13 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
                 else:
                     self.view.traceMergeAction.set_sensitive(False)
 
+                self.view.traceImportInProjectAction.set_sensitive(False)
         else:
             self.view.traceDeleteAction.set_sensitive(False)
             self.view.traceNameEntry.set_sensitive(False)
             self.view.traceDescriptionEntry.set_sensitive(False)
             self.view.traceMergeAction.set_sensitive(False)
+            self.view.traceImportInProjectAction.set_sensitive(False)
             self._resetCurrentTrace()
 
     def messageListSelection_changed_cb(self, selection):
@@ -778,3 +784,60 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
 
         self.log.debug("Unable to drop data here!")
         return True
+
+    def traceImportInProjectAction_activate_cb(self, button):
+        """This callback is called by the 'ImportInProjectAction'. It
+        allows to import a trace or a session in the currently opened
+        project.
+
+        FIXME: the code doesn't allow to remove duplicated messages.
+        """
+
+        project = self.mainController.getCurrentProject()
+
+        # We are only able to import a trace if a project is open.
+        if project is None:
+            self.view.showErrorMessage(_("No project is currently opened"),
+                                       _("A project has to be opened before importing a trace."))
+            return
+
+        response = self.view.showImportInProjectDialog()
+
+        if response == 1:
+            self.log.info("Asked to import trace '{1}' (id={2}) in the current project".format(self.currentTrace.name,
+                                                                                               self.currentTrace.id))
+
+            symbolName = self.view.importInProjectNameEntry.get_text()
+
+            if self.traceSelectionIsATrace:
+                messages = self.currentTrace.getMessages()
+                sessions = self.currentTrace.getSessions()
+            else:
+                model, path = self.view.traceTreeview.get_selection().get_selected_rows()
+
+                # UI prevents from importing multiple sessions at a
+                # time.
+                assert len(path) == 1
+
+                session = self.currentTrace.getSession(model[path.pop()][0])
+                sessions = [session]
+                messages = session.getMessages()
+
+            # We add a new Symbol
+            symbol = Symbol(str(uuid.uuid4()), symbolName, project)
+
+            # We register each message in the vocabulary of the project
+            for message in messages:
+                project.getVocabulary().addMessage(message)
+                symbol.addMessage(message)
+
+            project.getVocabulary().addSymbol(symbol)
+
+            for session in sessions:
+                project.getVocabulary().addSession(session)
+
+    def importInProjectNameEntry_changed_cb(self, entry):
+        if len(entry.get_text()) > 0:
+            self.view.importInProjectDialogValidate.set_sensitive(True)
+        else:
+            self.view.importInProjectDialogValidate.set_sensitive(False)

@@ -64,6 +64,7 @@ class TraceManagerView(NetzobAbstractPerspectiveView):
                           "traceDataType",
                           "currentTraceMessageListstore",
                           "traceMergeAction",
+                          "traceImportInProjectAction",
 
                           "currentTraceMessageListstore",
                           "messageListTreeview",
@@ -73,6 +74,12 @@ class TraceManagerView(NetzobAbstractPerspectiveView):
                           "mergeDialogValidate",
                           "mergeDialogCreateCopyCheckbox",
                           "mergeDialogNameEntry",
+
+                          # Import in project dialog
+                          "importInProjectNameEntry",
+                          "importInProjectKeepDuplicatesCheckbox",
+                          "importInProjectKeepPropsCheckbox",
+                          "importInProjectDialogValidate",
                           ])
 
         self.traceTreeviewSelection.set_select_function(self.controller.traceTreeviewSelection_select_function_cb,
@@ -180,3 +187,29 @@ class TraceManagerView(NetzobAbstractPerspectiveView):
         dlg.hide()
 
         return result
+
+    def showImportInProjectDialog(self):
+        dlg = self.builder.get_object("importInProjectDialog")
+        dlg.set_transient_for(self.controller.mainController.view.mainWindow)
+
+        self.importInProjectNameEntry.set_text("")
+        self.importInProjectKeepDuplicatesCheckbox.set_active(True)
+        self.importInProjectKeepPropsCheckbox.set_active(True)
+
+        result = dlg.run()
+        dlg.hide()
+
+        return result
+
+    def showErrorMessage(self, errorMessage, secondaryMessage=None):
+        dlg = Gtk.MessageDialog(self.controller.mainController.view.mainWindow,
+                                Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                Gtk.MessageType.ERROR,
+                                Gtk.ButtonsType.OK,
+                                errorMessage)
+
+        if secondaryMessage is not None:
+            dlg.format_secondary_text(secondaryMessage)
+
+        result = dlg.run()
+        dlg.destroy()
