@@ -195,8 +195,8 @@ class NetzobMainView(object):
         self.currentPerspectivePanel = perspective.view.getPanel()
         self.setCentralPanel(self.currentPerspectivePanel)
         # Add action group to UI Manager
-        self.currentPerpectiveActionGroup = perspective.view.getActionGroup()
-        self.uiManager.insert_action_group(self.currentPerpectiveActionGroup)
+        self.currentPerspectiveActionGroup = perspective.view.getActionGroup()
+        self.uiManager.insert_action_group(self.currentPerspectiveActionGroup)
         # Merge UI definition into UI Manager
         self.currentPerspectiveMergeID = self.uiManager.add_ui_from_string(
             perspective.view.getMenuToolbarUIDefinition())
