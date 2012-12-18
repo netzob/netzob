@@ -88,7 +88,7 @@ class PeachExportView(AbstractExporterView):
         self.panel.add1(self.hpanel)
         self.panel.pack2(self.optionsTable, resize=False)
         self.panel.set_position(550)
-        self.hpanel.set_position(150)
+        self.hpanel.set_position(300)
 
     def buildSymbolTreeview(self):
         """builSymbolTreeView:
@@ -102,7 +102,7 @@ class PeachExportView(AbstractExporterView):
         self.symbolTreeview = Gtk.TreeView(self.treestore)
 
         renderer = Gtk.CellRendererText()
-        columnSymbols = Gtk.TreeViewColumn(_("Symbols"), renderer, text=1)
+        columnSymbols = Gtk.TreeViewColumn(_("Fuzzer type"), renderer, text=1)
         self.symbolTreeview.append_column(columnSymbols)
 
         # Symbol list
