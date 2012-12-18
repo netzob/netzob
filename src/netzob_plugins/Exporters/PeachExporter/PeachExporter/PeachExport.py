@@ -82,14 +82,18 @@ class PeachExport(object):
             self.dictSymbol[str(symbol.getID())] = dataModelid
             dataModelid += 1
 
-    def getPeachDefinition(self, symbolID, entireProject):
+    def getPeachDefinition(self, symbolID, level):
         """getXMLDefinition:
                 Returns the Peach pit file (XML format) made on the  netzob information.
 
                 @type symbolID: integer
                 @param symbolID: a number which identifies the symbol the xml definition of which we need.
-                @type entireProject: boolean
-                @param entireProject: true if we want to see the Peach definition of the whole project, false elsewhere.
+                @type level: integer
+                @param level:
+                    0: one-state fuzzer ;
+                    1: randomized state order fuzzer ;
+                    2: randomized transitions stateful fuzzer ;
+                    3: fully stateful fuzzer.
                 @rtype: string
                 @return: the string representation of the generated Peach xml pit file.
         """
@@ -99,12 +103,7 @@ class PeachExport(object):
         xmlImport = etree.SubElement(xmlRoot, "Import")
         xmlImport.attrib["import"] = "PeachzobAddons"
 
-        if entireProject:
-            self.makeAllDataModels(xmlRoot)
-            #self.makeBasicStateModel(xmlRoot)
-            self.makeProbaStateModel(xmlRoot)
-
-        else:
+        if level == 0:
             project = self.netzob.getCurrentProject()
             vocabulary = project.getVocabulary()
             symbols = vocabulary.getSymbols()
@@ -120,13 +119,26 @@ class PeachExport(object):
                 self.makeDataModel(xmlRoot, symbol)
                 self.makeSingleStateModel(xmlRoot, symbol)
 
+        if level == 1:
+            self.makeAllDataModels(xmlRoot)
+            self.makeBasicStateModel(xmlRoot)
+
+        if level == 2:
+            self.makeAllDataModels(xmlRoot)
+            self.makeProbaStateModel(xmlRoot)
+
+        if level == 3:  # TODO: implement this.
+            self.makeAllDataModels(xmlRoot)
+            self.makeBasicStateModel(xmlRoot)
+
+        # Add the supplementary xml info.
         xmlAgent = etree.SubElement(xmlRoot, "Agent", name="DefaultAgent")
-        xmlCommentAgent = etree.Comment("TODO: Configure the Agents.")
+        xmlCommentAgent = etree.Comment("Todo: Configure the Agents.")
         xmlAgent.append(xmlCommentAgent)
 
         xmlTest = etree.SubElement(xmlRoot, "Test", name="DefaultTest")
-        xmlCommentTest1 = etree.Comment('TODO: Enable Agent <Agent ref="TheAgent"/> ')
-        xmlCommentTest2 = etree.Comment("TODO: Configure the test. The following lines are given in example.")
+        xmlCommentTest1 = etree.Comment('Todo: Enable Agent <Agent ref="TheAgent"/> ')
+        xmlCommentTest2 = etree.Comment("Todo: Configure the test. The following lines are given in example.")
         xmlTest.append(xmlCommentTest1)
         xmlTest.append(xmlCommentTest2)
         etree.SubElement(xmlTest, "StateModel", ref="SimpleStateModel")
@@ -136,7 +148,7 @@ class PeachExport(object):
         etree.SubElement(xmlPublisher, "Param", name="port", value="0000")
 
         xmlRun = etree.SubElement(xmlRoot, "Run", name="DefaultRun")
-        xmlCommentRun = etree.Comment("TODO: Configure the run.")
+        xmlCommentRun = etree.Comment("Todo: Configure the run.")
         xmlRun.append(xmlCommentRun)
         xmlLogger = etree.SubElement(xmlRun, "Logger")
         xmlLogger.attrib["class"] = "logger.Filesystem"
