@@ -100,9 +100,9 @@ class PeachExport(object):
         xmlImport.attrib["import"] = "PeachzobAddons"
 
         if entireProject:
-            self.getAllDataModels(xmlRoot)
-            #self.makeAllStateModels(xmlRoot)
-            self.getProbaStateModel(xmlRoot)
+            self.makeAllDataModels(xmlRoot)
+            #self.makeBasicStateModel(xmlRoot)
+            self.makeProbaStateModel(xmlRoot)
 
         else:
             project = self.netzob.getCurrentProject()
@@ -117,8 +117,8 @@ class PeachExport(object):
                 logging.warning(_("Impossible to retrieve the symbol having the id {0}").format(str(symbolID)))
                 return None
             else:
-                self.getDataModel(xmlRoot, symbol)
-                self.makeAStateModel(xmlRoot)
+                self.makeDataModel(xmlRoot, symbol)
+                self.makeSingleStateModel(xmlRoot, symbol)
 
         xmlAgent = etree.SubElement(xmlRoot, "Agent", name="DefaultAgent")
         xmlCommentAgent = etree.Comment("TODO: Configure the Agents.")
@@ -159,8 +159,8 @@ class PeachExport(object):
 #+---------------------------------------------------------------------------+
 #| Data Models                                                               |
 #+---------------------------------------------------------------------------+
-    def getAllDataModels(self, xmlFather):
-        """getAllDataModels:
+    def makeAllDataModels(self, xmlFather):
+        """makeAllDataModels:
                 Transform every netzob symbol into a Peach data model.
 
                 @type xmlFather: lxml.etree.element
@@ -171,10 +171,10 @@ class PeachExport(object):
 
         for symbol in vocabulary.getSymbols():
             # Each symbol is translated in a Peach data model
-            self.getDataModel(xmlFather, symbol)
+            self.makeDataModel(xmlFather, symbol)
 
-    def getDataModel(self, xmlFather, symbol):
-        """getDataModel:
+    def makeDataModel(self, xmlFather, symbol):
+        """makeDataModel:
                 Dissect a netzob symbol in order to extract essential data for the making of Peach fields in its data Model
 
                 @type xmlFather: lxml.etree.element
@@ -442,61 +442,60 @@ class PeachExport(object):
 #+---------------------------------------------------------------------------+
 #| Sate Models                                                               |
 #+---------------------------------------------------------------------------+
-    def makeAllStateModels(self, xmlFather):  # TODO: repair this
-        """makeAllStateModels:
-                Create a Peach state model. Create one state by data model and chain it to the previously created one.
+    def makeSingleStateModel(self, xmlFather, symbol):
+        """makeSingleStateModel:
+                Make just one state model that emits fuzzed data according to the given symbol.
 
                 @type xmlFather: lxml.etree.element
                 @param xmlFather: the xml tree father of the current element.
         """
-        # TODO: Make a complete state model.
-        xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="SimpleStateModel", initialState="state 0")
-        # There is always at least one state, the first state which is naturally called state0 and is the initial state.
+        xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="singleStateModel", initialState="state 0")
+        xmlState = etree.SubElement(xmlStateModel, "State", name="state 0")
+        # We create one action which will output fuzzed data.
+        xmlAction = etree.SubElement(xmlState, "Action", type="output")
+        etree.SubElement(xmlAction, "DataModel", ref=("dataModel {0}").format(str(self.dictSymbol[symbol.getID()])))
+        etree.SubElement(xmlAction, "Data", name="data")
 
-        project = self.netzob.getCurrentProject()
-        vocabulary = project.getVocabulary()
-        stateid = 0
-        xmlState = None
+    def makeBasicStateModel(self, xmlFather):
+        """makeBasicStateModel:
+                Create a basic Peach state model. One state per sybmol, all these states are accessed randomly.
+
+                @type xmlFather: lxml.etree.element
+                @param xmlFather: the xml tree father of the current element.
+        """
+        xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="BasicStateModel", initialState="state 0")
+        # There is always at least one state, the first state which is naturally called state0 and is the initial state.
+        xmlFirstState = etree.SubElement(xmlStateModel, "State", name="state 0")
+
+        # Count symbols in the current project.
+        vocabulary = self.netzob.getCurrentProject().getVocabulary()
+        nbSymbols = 0
+        for symbol in vocabulary.getSymbols():
+            nbSymbols += 1
+
         # We make one state by symbol. So, all symbols will be fuzz-tested sequentially and equally.
+        i = 0
         for symbol in vocabulary.getSymbols():
             # If the current state has a precursor, we link them from older to newer.
-            if xmlState is not None:
-                etree.SubElement(xmlState, "Action", type="changeState", ref=("state {0}").format(stateid))
-            xmlState = self.makeAState(xmlStateModel, stateid)
-            stateid = stateid + 1
+            xmlState = etree.SubElement(xmlStateModel, "State", name=("state {0}").format(str(self.dictSymbol[symbol.getID()])))
+            # We create one action which will output fuzzed data.
+            xmlAction = etree.SubElement(xmlState, "Action", type="output")
+            etree.SubElement(xmlAction, "DataModel", ref=("dataModel {0}").format(str(self.dictSymbol[symbol.getID()])))
+            etree.SubElement(xmlAction, "Data", name="data")
 
-    def makeAStateModel(self, xmlFather):  # TODO: repair this
-        """makeAStateModel:
-                Create a Peach state model with only one state.
+            # Create a transition between the first state and this state.
+            if i == nbSymbols - 1:  # Last transition.
+                etree.SubElement(xmlFirstState, "Action", type="changeState", ref="state {0}".format(str(self.dictSymbol[symbol.getID()])))
+            else:
+                etree.SubElement(xmlFirstState, "Action", type="changeState", ref="state {0}".format(str(self.dictSymbol[symbol.getID()])),
+                                 when="random.randint(1,{0})==1".format(str(nbSymbols - i)))
+            i += 1
 
-                @type xmlFather: lxml.etree.element
-                @param xmlFather: the xml tree father of the current element.
-        """
-        xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="SimpleStateModel", initialState="state 0")
-        self.makeAState(xmlStateModel, 0)
+            # Create a reverse transition between this state and the first state.
+            etree.SubElement(xmlState, "Action", type="changeState", ref="state 0")
 
-    def makeAState(self, xmlFather, stateid):  # TODO: repair this
-        """makeAState:
-                Create one state which will output data formatted according to a previously created data model.
-
-                @type xmlFather: lxml.etree.element
-                @param xmlFather: the xml tree father of the current element.
-                @type stateid: integer
-                @param stateid: a number that identifies the state in the state model and links to the proper data model.
-                @rtype: lxml.etree.element
-                @return: a Peach state in xml format.
-        """
-        # We create one state which will output fuzzed data.
-        xmlState = etree.SubElement(xmlFather, "State", name=("state {0}").format(str(stateid)))
-        xmlAction = etree.SubElement(xmlState, "Action", type="output")
-
-        # xml link to the previously made data model.
-        etree.SubElement(xmlAction, "DataModel", ref=("dataModel {0}").format(str(stateid)))
-        etree.SubElement(xmlAction, "Data", name="data")
-        return xmlState
-
-    def getProbaStateModel(self, xmlFather):
-        """getProbaStateModel:
+    def makeProbaStateModel(self, xmlFather):
+        """makeProbaStateModel:
                 Return a state model based on the transitions and states inferred from Netzob. At each state, a transition is chosen according to a dice throw.
                 Inputs are not managed.
 
@@ -558,10 +557,10 @@ class PeachExport(object):
                 # Create one Peach state per output symbol.
                 for symbol in outputSymbols:
                     if not symbol[0].getID() in xmlStatesDict.keys():
-                        xmlState = etree.SubElement(xmlStateModel, "State", name=("state {0}").format(str(self.dictSymbol[str(symbol[0].getID())])))
+                        xmlState = etree.SubElement(xmlStateModel, "State", name=("state {0}").format(str(self.dictSymbol[symbol[0].getID()])))
                         # We create one action which will output fuzzed data.
                         xmlAction = etree.SubElement(xmlState, "Action", type="output")
-                        etree.SubElement(xmlAction, "DataModel", ref=("dataModel {0}").format(str(self.dictSymbol[str(symbol[0].getID())])))
+                        etree.SubElement(xmlAction, "DataModel", ref=("dataModel {0}").format(str(self.dictSymbol[symbol[0].getID()])))
                         etree.SubElement(xmlAction, "Data", name="data")
                         xmlStatesDict[symbol[0].getID()] = xmlState
                         probaDict[symbol[0].getID()] = 0
@@ -611,14 +610,13 @@ class PeachExport(object):
             if normTransition[0] == 0:  # First state.
                 stateName = "state 0"
             else:
-                stateName = ("state {0}").format(str(self.dictSymbol[str(normTransition[0])]))
+                stateName = ("state {0}").format(str(self.dictSymbol[normTransition[0]]))
 
             if probaDict[normTransition[0]] == normTransition[2]:  # Last transition.
                 etree.SubElement(xmlStatesDict[normTransition[0]], "Action", type="changeState",
                                  ref=stateName)
             else:
-                etree.SubElement(xmlStatesDict[normTransition[0]], "Action", type="changeState",
-                                 ref=stateName,
+                etree.SubElement(xmlStatesDict[normTransition[0]], "Action", type="changeState", ref=stateName,
                                  when="random.randint(1,{0})<={1}".format(str(int(probaDict[normTransition[0]])), str(int(normTransition[2]))))
                 # Reduce probability. The tests will be successive, for instance: test1: 20%, test2: 30%, test3: 40% test4: 10% of a single dice is equivalent to:
                 # test1 20/100, test2 (if not test1) 30/80 (30/100 = 30/80*80/100), test3 (if neither test1 nor test2) 40/50 ...
