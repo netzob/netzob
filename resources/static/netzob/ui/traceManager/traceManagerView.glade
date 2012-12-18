@@ -34,6 +34,7 @@
         <property name="tooltip" translatable="yes">Delete Selected Messages</property>
         <property name="stock_id">gtk-remove</property>
         <property name="sensitive">False</property>
+        <signal name="activate" handler="messageDeleteAction_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>
@@ -430,6 +431,7 @@
                     <child internal-child="selection">
                       <object class="GtkTreeSelection" id="messageListSelection">
                         <property name="mode">multiple</property>
+                        <signal name="changed" handler="messageListSelection_changed_cb" swapped="no"/>
                       </object>
                     </child>
                     <child>

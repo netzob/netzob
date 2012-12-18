@@ -268,6 +268,15 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
             self.view.traceMergeAction.set_sensitive(False)
             self._resetCurrentTrace()
 
+    def messageListSelection_changed_cb(self, selection):
+        model, paths = selection.get_selected_rows()
+
+        if len(paths) > 0:
+            self.view.messageDeleteAction.set_sensitive(True)
+
+        else:
+            self.view.messageDeleteAction.set_sensitive(False)
+
     def traceDeleteAction_activate_cb(self, button):
         """This callback is called when user clicks on the 'Remove
         Selected Traces' button. A warning dialog is displayed before
@@ -560,3 +569,31 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
 
                 self.view.messageListPopup.popup(None, None, None, None, event.button, event.time)
                 return True
+
+    def messageDeleteAction_activate_cb(self, button):
+        assert self.currentTrace is not None
+
+        selection = self.view.messageListTreeview.get_selection()
+        (model, paths) = selection.get_selected_rows()
+
+        result = self.view.showMessageDeletionConfirmDialog()
+
+        if result == Gtk.ResponseType.YES:
+            trace = self.currentTrace
+
+            for treeiter in paths:
+                messageId = model[treeiter][0]
+
+                self.log.info("You asked to remove message '{0}' from trace '{1}' (id={2}).".format(messageId,
+                                                                                                    trace.name,
+                                                                                                    trace.id))
+
+                trace.removeMessage(messageId)
+
+            # Lets save the new modified trace. Here we force trace
+            # save.
+            self.workspace.saveConfigFile(overrideTraces=[trace.id])
+
+            self._refreshTraceList([trace.id])
+            self._refreshProjectProperties(trace)
+            selection.unselect_all()

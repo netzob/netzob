@@ -67,6 +67,7 @@ class TraceManagerView(NetzobAbstractPerspectiveView):
 
                           "currentTraceMessageListstore",
                           "messageListTreeview",
+                          "messageDeleteAction",
 
                           # Merge dialog
                           "mergeDialogValidate",
@@ -131,6 +132,20 @@ class TraceManagerView(NetzobAbstractPerspectiveView):
         dlg.destroy()
 
         return result
+
+    def showMessageDeletionConfirmDialog(self):
+        """A warning dialog is displayed before deleting the
+        messages."""
+
+        dlg = Gtk.MessageDialog(self.controller.mainController.view.mainWindow,
+                                Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                Gtk.MessageType.WARNING,
+                                Gtk.ButtonsType.NONE,
+                                _("Are you sure you want to delete the selected messages?"))
+        dlg.format_secondary_text(_("If you confirm, the selected messages will be permanently lost."))
+
+        dlg.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
+        dlg.add_button(_("Delete Messages"), Gtk.ResponseType.YES)
 
     def showNameErrorWarningDialog(self):
         dlg = Gtk.MessageDialog(self.controller.mainController.view.mainWindow,
