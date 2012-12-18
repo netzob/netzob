@@ -97,6 +97,9 @@ class VocabularyController(object):
         self.updateListOfCapturerPlugins()
         pass
 
+    def deactivate(self):
+        pass
+
     def restart(self):
         """Restart the view"""
         logging.debug("Restarting the vocabulary view")

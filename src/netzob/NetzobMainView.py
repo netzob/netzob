@@ -70,6 +70,7 @@ class NetzobMainView(object):
         self.currentPerspectiveMergeID = None
         self.currentPerspectiveActionGroup = None
         self.currentPerspectivePanel = None
+        self.currentPerspectiveController = None
         self.loadBaseMenuBarAndToolbar()
         self.registerSignalListeners()
 
@@ -190,6 +191,9 @@ class NetzobMainView(object):
         @param newPerspective: Switch for the view.
         Value available: "vocabulary", "grammar" and "traffic"."""
 
+        if self.currentPerspectiveController is not None:
+            self.currentPerspectiveController.deactivate()
+
         # Reset base menu and toolbar
         self.resetMainWindow()
         self.log.debug("Setting perspective ID {0}".format(newPerspectiveCode))
@@ -198,6 +202,7 @@ class NetzobMainView(object):
         # Switch central panel
         self.currentPerspectivePanel = perspective.view.getPanel()
         self.setCentralPanel(self.currentPerspectivePanel)
+        self.currentPerspectiveController = perspective
 
         # Add action group to UI Manager
         actionGroup = perspective.view.getActionGroup()
