@@ -91,6 +91,10 @@ class PeachExportController(AbstractExporterController):
             for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
                 self.view.symbolTreeview.get_model().append(None, ["{0}".format(symbol.getID()), "One-state fuzzer (symbol \"{0}\")".format(symbol.getName()), '#000000', '#DEEEF0'])
 
+            self.view.symbolTreeview.set_tooltip_text("Randomized state order fuzzer: a fuzzer that have one state per symbol of the Netzob project. It goes to one of this state randomly chosen at each step.\n\n" +
+                                                      "Randomized transitions stateful fuzzer: a stateful fuzzer that follows Netzob's states and transitions. It does not take inputs into account and goes from one state to another by choosing randomly one of the transitions allowed by Netzob.\n\n" +
+                                                      "Fully stateful fuzzer:a stateful fuzzer that respect as strictly as possible the Netzob grammar in its state model.\n\n")
+
     def clear(self):
         """clear:
         """
@@ -123,6 +127,7 @@ class PeachExportController(AbstractExporterController):
                 if(model.iter_is_valid(itr)):
                     symbolID = model.get_value(itr, 0)
                     self.showXMLDefinition(symbolID)
+                    logging.debug("Selected treepath : {0}".format(str(model.get_path(itr))))
 
     def changeFuzzingBase(self, combo):
         """changeFuzzingBase:
