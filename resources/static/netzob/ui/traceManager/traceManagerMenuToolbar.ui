@@ -1,0 +1,20 @@
+<ui>
+  <toolbar name="mainToolbar">
+    <placeholder name="mainToolbarAdditions">
+      <toolitem action="traceNewAction" />
+      <toolitem action="traceDeleteAction" />
+      <toolitem action="traceImportInProjectAction" />
+      <toolitem action="traceMergeAction" />
+    </placeholder>
+  </toolbar>
+  <menubar name="mainMenuBar">
+    <placeholder name="mainMenuBarAdditions">
+      <menu action="traceManagerAction">
+        <menuitem action="traceNewAction" />
+        <menuitem action="traceDeleteAction" />
+        <menuitem action="traceImportInProjectAction" />
+        <menuitem action="traceMergeAction" />
+      </menu>
+    </placeholder>
+  </menubar>
+</ui>
