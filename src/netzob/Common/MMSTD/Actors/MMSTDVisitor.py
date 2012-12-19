@@ -50,6 +50,8 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 #+---------------------------------------------------------------------------+
 class MMSTDVisitor(threading.Thread):
 
+    TYPE = "MMSTD Visitor"
+
     def __init__(self, id, name, mmstd, initiator, abstractionLayer):
         threading.Thread.__init__(self)
         # create logger with the given configuration
@@ -143,6 +145,9 @@ class MMSTDVisitor(threading.Thread):
 
     def getModel(self):
         return self.model
+
+    def getType(self):
+        return self.TYPE
 
     def isInitiator(self):
         return self.initiator
