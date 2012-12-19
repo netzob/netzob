@@ -39,6 +39,8 @@ from netzob.Common.MMSTD.Dictionary.Variables.ComputedRelationVariable import \
 from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
 from netzob.Common.MMSTD.Dictionary.Variables.RepeatVariable import \
     RepeatVariable
+from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
+from netzob.Common.MMSTD.Symbols.impl.UnknownSymbol import UnknownSymbol
 from netzob.Common.MMSTD.Transitions.impl.CloseChannelTransition import \
     CloseChannelTransition
 from netzob.Common.MMSTD.Transitions.impl.OpenChannelTransition import \
@@ -58,6 +60,8 @@ class PeachExport(object):
             Utility for exporting netzob information into Peach pit file.
             Simplify the construction of a fuzzer with Peach.
     """
+
+    UNKNOWNSYMBOL_MAX_SIZE = 1024
 
     def __init__(self, netzob):
         """Constructor of PeachExport:
@@ -81,6 +85,12 @@ class PeachExport(object):
         for symbol in vocabulary.getSymbols():
             self.dictSymbol[str(symbol.getID())] = dataModelid
             dataModelid += 1
+        # An empty symbol leads to the initial state.
+        self.dictSymbol["-1"] = dataModelid
+        dataModelid += 1
+        # An unknown symbol has its own data model.
+        self.dictSymbol["-2"] = dataModelid
+        dataModelid += 1
 
     def getPeachDefinition(self, symbolID, level):
         """getXMLDefinition:
@@ -184,6 +194,7 @@ class PeachExport(object):
         for symbol in vocabulary.getSymbols():
             # Each symbol is translated in a Peach data model
             self.makeDataModel(xmlFather, symbol)
+        self.makeUnknownSymbolDataModel(xmlFather)
 
     def makeDataModel(self, xmlFather, symbol):
         """makeDataModel:
@@ -310,6 +321,22 @@ class PeachExport(object):
                         # If the field's regex is (), we add a null-length Peach field type.
                         xmlField = etree.SubElement(xmlDataModel, "Blob", name=field.getName(), length=0)
                         logging.debug(_("The field {0} is empty.").format(field.getName()))
+
+    def makeUnknownSymbolDataModel(self, xmlFather):
+        """makeUnknownSymbolDataModel:
+                Make a data model for unknown symbols.
+
+                @type xmlFather: lxml.etree.element
+                @param xmlFather: the xml tree father of the current element
+        """
+        dataModelid = self.dictSymbol["-2"]
+        xmlDataModel = etree.SubElement(xmlFather, "DataModel", name=("dataModel {0}").format(str(dataModelid)))
+        xmlField = etree.SubElement(xmlDataModel, "Blob", name="Field 0")
+        xmlRanStringFixup = etree.SubElement(xmlField, "Fixup")
+        xmlRanStringFixup.attrib["class"] = "PeachzobAddons.RandomField"
+        etree.SubElement(xmlRanStringFixup, "Param", name="minlen", value=str(0))
+        etree.SubElement(xmlRanStringFixup, "Param", name="maxlen", value=str(PeachExport.UNKNOWNSYMBOL_MAX_SIZE))
+        etree.SubElement(xmlRanStringFixup, "Param", name="type", value="Blob")
 
     def netzobTypeToPeachType(self, netzobType):
         """netzobTypeToPeachType:
@@ -481,7 +508,7 @@ class PeachExport(object):
 
         # Count symbols in the current project.
         vocabulary = self.netzob.getCurrentProject().getVocabulary()
-        nbSymbols = 0
+        nbSymbols = 1  # 1 for the unknown symbol, we do not care of the empty symbol which is useless in outputs.
         for symbol in vocabulary.getSymbols():
             nbSymbols += 1
 
@@ -496,19 +523,28 @@ class PeachExport(object):
             etree.SubElement(xmlAction, "Data", name="data")
 
             # Create a transition between the first state and this state.
-            if i == nbSymbols - 1:  # Last transition.
-                etree.SubElement(xmlFirstState, "Action", type="changeState", ref="state {0}".format(str(self.dictSymbol[symbol.getID()])))
-            else:
-                etree.SubElement(xmlFirstState, "Action", type="changeState", ref="state {0}".format(str(self.dictSymbol[symbol.getID()])),
-                                 when="random.randint(1,{0})==1".format(str(nbSymbols - i)))
+            etree.SubElement(xmlFirstState, "Action", type="changeState", ref="state {0}".format(str(self.dictSymbol[symbol.getID()])),
+                             when="random.randint(1,{0})==1".format(str(nbSymbols - i)))
             i += 1
 
             # Create a reverse transition between this state and the first state.
             etree.SubElement(xmlState, "Action", type="changeState", ref="state 0")
 
+        # Unknown symbol.
+        xmlState = etree.SubElement(xmlStateModel, "State", name=("state {0}").format(str(self.dictSymbol["-2"])))
+        # We create one action which will output fuzzed data.
+        xmlAction = etree.SubElement(xmlState, "Action", type="output")
+        etree.SubElement(xmlAction, "DataModel", ref=("dataModel {0}").format(str(self.dictSymbol["-2"])))
+        etree.SubElement(xmlAction, "Data", name="data")
+        # Last transition.
+        etree.SubElement(xmlFirstState, "Action", type="changeState", ref="state {0}".format(str(self.dictSymbol["-2"])))
+        etree.SubElement(xmlState, "Action", type="changeState", ref="state 0")
+
     def makeProbaStateModel(self, xmlFather):
         """makeProbaStateModel:
-                Return a state model based on the transitions and states inferred from Netzob. At each state, a transition is chosen according to a dice throw.
+                Return a state model based on the transitions and states inferred from Netzob. At each state, a transition is chosen according to a dice throw among all
+                transitions allowed by netzob. One symbol is created for every *different* symbols. So if a symbol is used in different states, it will create instant transition
+                bewteen these state. That is assumed and part of the state fuzzing of this model.
                 Inputs are not managed.
 
                 @type xmlFather: lxml.etree.element
@@ -535,7 +571,6 @@ class PeachExport(object):
         # List of transitions formed like [startStateID, endStateID, weighting (probability), isTheTransitionFinal]
         transList = []
 
-        # TODO: manage unknown and empty symbols.
         # There is a structural difference between Peach and Netzob state models. Globally, states of the first are transitions of the second.
         xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="probaStateModel", initialState="state 0")
 
@@ -557,25 +592,31 @@ class PeachExport(object):
                     for outTrans in mmstd.getTransitionsStartingFromState(outputState):
                         if outTrans.getType() == SemiStochasticTransition.TYPE:
                             for outSymbol in outTrans.getOutputSymbols():
-                                    transList.append([0, outSymbol[0].getID(), outSymbol[1]])
+                                    transList.append([0, self.getSymbolID(outSymbol[0]), outSymbol[1]])
                     break
 
         # Create all other states.
         for transition in transitions:
             if transition.getType() == SemiStochasticTransition.TYPE:
-                # Output Symbols : [[Symbol, Probability, Time], [Symbol, Probability, Time]]
+                # Output Symbols : [[Symbol, Probability, Time], [Symbol, Probability, Time], ...]
                 outputSymbols = transition.getOutputSymbols()
 
                 # Create one Peach state per output symbol.
                 for symbol in outputSymbols:
-                    if not symbol[0].getID() in xmlStatesDict.keys():
-                        xmlState = etree.SubElement(xmlStateModel, "State", name=("state {0}").format(str(self.dictSymbol[symbol[0].getID()])))
-                        # We create one action which will output fuzzed data.
-                        xmlAction = etree.SubElement(xmlState, "Action", type="output")
-                        etree.SubElement(xmlAction, "DataModel", ref=("dataModel {0}").format(str(self.dictSymbol[symbol[0].getID()])))
-                        etree.SubElement(xmlAction, "Data", name="data")
-                        xmlStatesDict[symbol[0].getID()] = xmlState
-                        probaDict[symbol[0].getID()] = 0
+                    if not self.getSymbolID(symbol[0]) in xmlStatesDict.keys():
+                        if self.getSymbolID(symbol[0]) == "-1":  # Empty symbol.
+                            # We create an empty state with no actions.
+                            xmlState = etree.SubElement(xmlStateModel, "State", name=("state {0}").format(self.dictSymbol[self.getSymbolID(symbol[0])]))
+                            xmlStatesDict[self.getSymbolID(symbol[0])] = xmlState
+                        else:
+                            xmlState = etree.SubElement(xmlStateModel, "State", name=("state {0}").format(self.dictSymbol[self.getSymbolID(symbol[0])]))
+                            # We create one action which will output fuzzed data.
+                            xmlAction = etree.SubElement(xmlState, "Action", type="output")
+                            etree.SubElement(xmlAction, "DataModel", ref=("dataModel {0}").format(self.dictSymbol[self.getSymbolID(symbol[0])]))
+                            etree.SubElement(xmlAction, "Data", name="data")
+                            xmlStatesDict[self.getSymbolID(symbol[0])] = xmlState
+
+                    probaDict[self.getSymbolID(symbol[0])] = 0
 
         # Determine the upper bound.
         for state in states:
@@ -585,9 +626,9 @@ class PeachExport(object):
                         for outTrans in mmstd.getTransitionsStartingFromState(state):
                             if outTrans.getType() == SemiStochasticTransition.TYPE:
                                 for outSymbol in outTrans.getOutputSymbols():
-                                    probaDict[inSymbol[0].getID()] += outSymbol[1]
+                                    probaDict[self.getSymbolID(inSymbol[0])] += outSymbol[1]
                             if outTrans.getType() == CloseChannelTransition.TYPE:
-                                    probaDict[inSymbol[0].getID()] += 100
+                                    probaDict[self.getSymbolID(inSymbol[0])] += 100
 
         # Create probabilistic transitions.
         for state in states:
@@ -597,10 +638,10 @@ class PeachExport(object):
                         for outTrans in mmstd.getTransitionsStartingFromState(state):
                             if outTrans.getType() == SemiStochasticTransition.TYPE:
                                 for outSymbol in outTrans.getOutputSymbols():
-                                    transList.append([inSymbol[0].getID(), outSymbol[0].getID(), outSymbol[1]])
+                                    transList.append([self.getSymbolID(inSymbol[0]), self.getSymbolID(outSymbol[0]), outSymbol[1]])
                             if outTrans.getType() == CloseChannelTransition.TYPE:
                                 # Eventual transition to the end and the first state above.
-                                transList.append([inSymbol[0].getID(), 0, 100])
+                                transList.append([self.getSymbolID(inSymbol[0]), 0, 100])
 
         # Normalize transitions: pack transitions which go from the same state and to the same state.
         normTransList = []
@@ -608,7 +649,7 @@ class PeachExport(object):
             found = False
             for normTransition in normTransList:
                 if transition[0] == normTransition[0] and transition[1] == normTransition[1]:
-                    # Similar transitions, we sum their weighting.
+                    # Similar transitions, we sum their weightings.
                     normTransition[2] += transition[2]
                     found = True
                     break
@@ -618,17 +659,16 @@ class PeachExport(object):
 
         # Add transitions to the xml file.
         for normTransition in normTransList:
-            stateName = ""
-            if normTransition[0] == 0:  # First state.
-                stateName = "state 0"
+            toStateName = ""
+            if normTransition[1] == 0:  # First state.
+                toStateName = "state 0"
             else:
-                stateName = ("state {0}").format(str(self.dictSymbol[normTransition[0]]))
+                toStateName = ("state {0}").format(str(self.dictSymbol[normTransition[1]]))
 
             if probaDict[normTransition[0]] == normTransition[2]:  # Last transition.
-                etree.SubElement(xmlStatesDict[normTransition[0]], "Action", type="changeState",
-                                 ref=stateName)
+                etree.SubElement(xmlStatesDict[normTransition[0]], "Action", type="changeState", ref=toStateName)
             else:
-                etree.SubElement(xmlStatesDict[normTransition[0]], "Action", type="changeState", ref=stateName,
+                etree.SubElement(xmlStatesDict[normTransition[0]], "Action", type="changeState", ref=toStateName,
                                  when="random.randint(1,{0})<={1}".format(str(int(probaDict[normTransition[0]])), str(int(normTransition[2]))))
                 # Reduce probability. The tests will be successive, for instance: test1: 20%, test2: 30%, test3: 40% test4: 10% of a single dice is equivalent to:
                 # test1 20/100, test2 (if not test1) 30/80 (30/100 = 30/80*80/100), test3 (if neither test1 nor test2) 40/50 ...
@@ -669,6 +709,17 @@ class PeachExport(object):
             @return: the integer extracted from the hex string 'hexstring'
         """
         return int('0x' + hexstring, 16)
+
+    def getSymbolID(self, symbol):
+        """getSymbolID:
+                Custom function to retrieve a symbol ID even if he does not have one. (this is the case for EmptySymbol and UnknownSymbol).
+        """
+        if symbol.getType() == EmptySymbol.TYPE:
+            return "-1"
+        elif symbol.getType() == UnknownSymbol.TYPE:
+            return "-2"
+        else:
+            return str(symbol.getID())
 
 #+---------------------------------------------------------------------------+
 #| Getters And Setters                                                       |
