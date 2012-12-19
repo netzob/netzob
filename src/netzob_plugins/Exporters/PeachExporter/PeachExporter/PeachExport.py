@@ -30,6 +30,9 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 from lxml import etree
+from netzob.Common.MMSTD.Actors.MMSTDVisitor import MMSTDVisitor
+from netzob.Common.MMSTD.Actors.NetworkChannels.NetworkClient import \
+    NetworkClient
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import \
     AggregateVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import \
@@ -147,15 +150,13 @@ class PeachExport(object):
         xmlAgent.append(xmlCommentAgent)
 
         xmlTest = etree.SubElement(xmlRoot, "Test", name="DefaultTest")
-        xmlCommentTest1 = etree.Comment('Todo: Enable Agent <Agent ref="TheAgent"/> ')
-        xmlCommentTest2 = etree.Comment("Todo: Configure the test. The following lines are given in example.")
-        xmlTest.append(xmlCommentTest1)
-        xmlTest.append(xmlCommentTest2)
+        xmlCommentTest = etree.Comment('Todo: Enable Agent <Agent ref="TheAgent"/> ')
+
+        xmlTest.append(xmlCommentTest)
         etree.SubElement(xmlTest, "StateModel", ref="SimpleStateModel")
-        xmlPublisher = etree.SubElement(xmlTest, "Publisher")
-        xmlPublisher.attrib["class"] = "udp.Udp"  # TODO: retrieve this in Netzob.
-        etree.SubElement(xmlPublisher, "Param", name="host", value="0.0.0.0")
-        etree.SubElement(xmlPublisher, "Param", name="port", value="0000")
+
+        # Create the publisher.
+        self.makePublisher(xmlTest)
 
         xmlRun = etree.SubElement(xmlRoot, "Run", name="DefaultRun")
         xmlCommentRun = etree.Comment("Todo: Configure the run.")
@@ -177,6 +178,49 @@ class PeachExport(object):
         result = result + '<Peach xmlns="http://phed.org/2008/Peach" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://phed.org/2008/Peach /peach/peach.xsd">\n'
         result = result + toStringedTree
         return result
+
+    def makePublisher(self, xmlFather):
+        """makePublisher:
+                Retrieve information from Netzob simulator. These information as the communication protocol, the targeted IP and port are used to make the Peach publisher.
+
+                @type xmlFather: lxml.etree.element
+                @param xmlFather: the xml tree father of the current element
+        """
+        simulator = self.netzob.getCurrentProject().getSimulator()
+        mmstdVisitor = None
+        visitorCount = 0
+        for actor in simulator.getActors():
+            # We search a MMSTDVisitor. Actors might be of other types.
+            if actor.getType() == MMSTDVisitor.TYPE:
+                try:  # Informations might be false or the communication channel migth not be an AbstractChannel.
+                    mmstdVisitor = actor
+                    comChannel = mmstdVisitor.getAbstractionLayer().getCommunicationChannel()
+
+                    logging.debug("Communication layer : {0}".format(str(comChannel)))
+                    logging.debug("Protocol : {0}".format(str(comChannel.getProtocol())))
+                    if comChannel.getProtocol() == "TCP":
+                        xmlPublisher = etree.SubElement(xmlFather, "Publisher")
+                        xmlPublisher.attrib["class"] = "tcp.Tcp"
+                        etree.SubElement(xmlPublisher, "Param", name="host", value="{0}".format(comChannel.getTargetIP()))
+                        etree.SubElement(xmlPublisher, "Param", name="port", value="{0}".format(comChannel.getTargetPort()))
+                    if comChannel.getProtocol() == "UDP":
+                        xmlPublisher = etree.SubElement(xmlFather, "Publisher")
+                        xmlPublisher.attrib["class"] = "udp.Udp"
+                        etree.SubElement(xmlPublisher, "Param", name="host", value="{0}".format(comChannel.getTargetIP()))
+                        etree.SubElement(xmlPublisher, "Param", name="port", value="{0}".format(comChannel.getTargetPort()))
+                    visitorCount += 1
+                except:
+                    pass
+        if visitorCount == 0:
+                xmlCommentTest = etree.Comment("The Netzob project has no simulator actors, you must create one. Below is a simple example.")
+                xmlFather.append(xmlCommentTest)
+                xmlPublisher = etree.SubElement(xmlFather, "Publisher")
+                xmlPublisher.attrib["class"] = "tcp.Tcp"
+                etree.SubElement(xmlPublisher, "Param", name="host", value="0.0.0.0")
+                etree.SubElement(xmlPublisher, "Param", name="port", value="0")
+        if visitorCount > 1:
+                xmlCommentTest = etree.Comment("The Netzob project has several simulator actors, so this file have several publishers. Choose one of them and remove the others.")
+                xmlFather.append(xmlCommentTest)
 
 #+---------------------------------------------------------------------------+
 #| Data Models                                                               |
@@ -546,13 +590,14 @@ class PeachExport(object):
                 transitions allowed by netzob. One symbol is created for every *different* symbols. So if a symbol is used in different states, it will create instant transition
                 bewteen these state. That is assumed and part of the state fuzzing of this model.
                 Inputs are not managed.
+                There is a structural difference between Peach and Netzob state models. Globally, states of the first are transitions of the second.
 
                 @type xmlFather: lxml.etree.element
                 @param xmlFather: the xml tree father of the current element.
         """
         mmstd = None
         try:
-            # If mmstd is None, these few lines should raised an alert.
+            # If mmstd is None, these few lines should raise an alert.
             mmstd = self.netzob.getCurrentProject().getGrammar().getAutomata()
             initialState = mmstd.getInitialState()
             transitions = mmstd.getTransitions()
@@ -571,7 +616,6 @@ class PeachExport(object):
         # List of transitions formed like [startStateID, endStateID, weighting (probability), isTheTransitionFinal]
         transList = []
 
-        # There is a structural difference between Peach and Netzob state models. Globally, states of the first are transitions of the second.
         xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="probaStateModel", initialState="state 0")
 
         # Create the initial state.
