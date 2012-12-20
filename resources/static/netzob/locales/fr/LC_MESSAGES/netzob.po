@@ -9,14 +9,16 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-12-20 10:45+0100\n"
-"PO-Revision-Date: 2012-12-04 10:01+0200\n"
+"PO-Revision-Date: 2012-12-20 11:07+0200\n"
 "Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
-"<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"<http://qa.netzob.org/weblate/projects/netzob/master/fr/>\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Weblate 1.3\n"
 "Generated-By: Babel 0.9.6\n"
 
 #: src/netzob/NetzobMainController.py:326
@@ -150,7 +152,7 @@ msgstr "Nom"
 
 #: src/netzob/Common/Project.py:280
 msgid "Unable to delete project: {0}"
-msgstr ""
+msgstr "Impossible de supprimer le projet : {0}"
 
 #: src/netzob/Common/Project.py:382
 msgid "Copy of {0}"
@@ -158,7 +160,7 @@ msgstr "Copie de {0}"
 
 #: src/netzob/Common/Project.py:392
 msgid "Unable to import the project: {0}."
-msgstr ""
+msgstr "Impossible d'importer le projet : {0}."
 
 #: src/netzob/Common/ResourcesConfiguration.py:111
 msgid "New Workspace"
@@ -705,18 +707,17 @@ msgstr "Aucun nom de fichier fourni"
 
 #: src/netzob/UI/Common/Controllers/ProjectExportController.py:119
 msgid "A file named \"{0}\" already exists. Do you want to replace it?"
-msgstr ""
+msgstr "Un fichier nommé « {0} » existe déjà. Voulez-vous le remplacer ?"
 
 #: src/netzob/UI/Common/Controllers/ProjectExportController.py:127
 msgid ""
 "The file already exists in \"{0}\". Replacing it will overwrite its "
 "contents."
-msgstr ""
+msgstr "Le fichier existe déjà dans « {0} ». Le remplacer écrasera son contenu."
 
 #: src/netzob/UI/Common/Controllers/ProjectExportController.py:130
-#, fuzzy
 msgid "Replace"
-msgstr "Créer"
+msgstr "Remplacer"
 
 #: src/netzob/UI/Common/Controllers/ProjectExportController.py:147
 msgid "An error occurred while exporting the project."
@@ -732,18 +733,19 @@ msgstr "Le fichier ne contient pas de projet valide."
 
 #: src/netzob/UI/Common/Controllers/WorkspaceConfigurationController.py:134
 msgid "The specified key is invalid!"
-msgstr ""
+msgstr "La clé spécifiée est invalide !"
 
 #: src/netzob/UI/Common/Controllers/WorkspaceConfigurationController.py:256
 msgid "Are you sure to delete the project \"{0}\" from the current workspace?"
 msgstr ""
+"Êtes-vous de vouloir supprimer le projet « {0} » de l'espace de travail "
+"courant ?"
 
 #: src/netzob/UI/Common/Controllers/WorkspaceConfigurationController.py:264
-#, fuzzy
 msgid "If delete the project, your project files will be permanently lost."
 msgstr ""
-"Vos modifications seront définitivement perdues si vous ne sauvegardez "
-"pas."
+"Si vous supprimer le projet, les fichiers associés seront définitivement "
+"perdus."
 
 #: src/netzob/UI/Export/Controllers/RawExportController.py:93
 msgid "Select a symbol to see its XML definition"
@@ -1768,14 +1770,12 @@ msgid "Save current project"
 msgstr "Enregistrer le projet courant"
 
 #: resources/static/netzob/ui/mainActions.glade:41
-#, fuzzy
 msgid "Configure Current Workspace"
-msgstr "Espace de travail courant : {0}"
+msgstr "Configurer l'espace de travail courant"
 
 #: resources/static/netzob/ui/mainActions.glade:42
-#, fuzzy
 msgid "Configure the current workspace"
-msgstr "Espace de travail courant : {0}"
+msgstr "Configurer l'espace de travail courant"
 
 #: resources/static/netzob/ui/mainActions.glade:49
 msgid "Switch Workspace"
@@ -1823,12 +1823,11 @@ msgstr "Changer de vue"
 
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:39
 msgid "Workspace Configuration"
-msgstr ""
+msgstr "Configuration de l'espace de travail"
 
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:96
-#, fuzzy
 msgid "Defined projects:"
-msgstr "Souligner les résultats :"
+msgstr "Projets définis : "
 
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:134
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:521
@@ -1836,53 +1835,49 @@ msgid "Project"
 msgstr "Projet"
 
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:204
-#, fuzzy
 msgid "Creation Date:"
-msgstr "Créer un état"
+msgstr "Date de création : "
 
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:247
-#, fuzzy
 msgid "Number of symbols:"
-msgstr "Nombre minimum de bits : "
+msgstr "Nombre de symboles : "
 
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:260
-#, fuzzy
 msgid "Number of messages:"
-msgstr "Nombre maximum d'états :"
+msgstr "Nombre de messages : "
 
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:312
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:829
 msgid "Duplicate"
-msgstr ""
+msgstr "Dupliquer"
 
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:406
-#, fuzzy
 msgid "Projects"
-msgstr "Projet"
+msgstr "Projets"
 
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:429
 msgid "<b>Logging</b>"
-msgstr ""
+msgstr "<b>Journalisation</b>"
 
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:457
 msgid "Logging level:"
-msgstr ""
+msgstr "Niveau de journalisation : "
 
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:517
 msgid "<b>Bug Reporting</b>"
-msgstr ""
+msgstr "<b>Remontée de bogues</b>"
 
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:543
 msgid "Enable bug reporting"
-msgstr ""
+msgstr "Activer la remontée de bogues"
 
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:580
 msgid "API key:"
-msgstr ""
+msgstr "Clé d'API : "
 
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:615
 msgid "Test Key"
-msgstr ""
+msgstr "Tester la clé"
 
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:650
 msgid ""
@@ -1890,30 +1885,29 @@ msgid ""
 "href=\"https://dev.netzob.org/projects/netzob/wiki/How_to_get_an_API_key\">this"
 " page</a> to in order to get your API key."
 msgstr ""
+"Veuillez visiter <a href=\"https://dev.netzob.org/projects/netzob/wiki/How_to"
+"_get_an_API_key\">cette page</a> pour afin d'obtenir votre clé API."
 
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:684
 msgid "Advanced"
-msgstr ""
+msgstr "Avancé"
 
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:707
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:828
-#, fuzzy
 msgid "Duplicate Project"
-msgstr "Exporter le projet"
+msgstr "Dupliquer le projet"
 
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:771
 msgid "<b>Please choose a name for the new project</b>"
-msgstr ""
+msgstr "<b>Merci de choisir un nom pour le nouveau projet</b>"
 
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:811
-#, fuzzy
 msgid "Delete Project"
-msgstr "Nouveau projet"
+msgstr "Supprimer le projet"
 
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:813
-#, fuzzy
 msgid "Delete the specified project"
-msgstr "Enregistrer le projet courant"
+msgstr "Supprimer le projet spécifié"
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:65
 msgid "Mutable"
@@ -2331,25 +2325,23 @@ msgstr "Variable"
 
 #: resources/static/netzob/ui/traceManager/mergeTracesDialog.glade:11
 #: resources/static/netzob/ui/traceManager/tracesMergeDialog.glade:9
-#, fuzzy
 msgid "Name of the new traces?"
-msgstr "Nom de la fonction"
+msgstr "Nom de la nouvelle trace ?"
 
 #: resources/static/netzob/ui/traceManager/mergeTracesDialog.glade:12
 #: resources/static/netzob/ui/traceManager/tracesMergeDialog.glade:10
 msgid "Please choose a name for the new traces."
-msgstr ""
+msgstr "Merci de choisir un nom pour les nouvelles traces."
 
 #: resources/static/netzob/ui/traceManager/mergeTracesDialog.glade:74
 #: resources/static/netzob/ui/traceManager/tracesMergeDialog.glade:69
-#, fuzzy
 msgid "New Name:"
-msgstr "Nom du champ : "
+msgstr "Nouveau nom : "
 
 #: resources/static/netzob/ui/traceManager/mergeTracesDialog.glade:106
 #: resources/static/netzob/ui/traceManager/tracesMergeDialog.glade:100
 msgid "Create a copy of the trace sets"
-msgstr ""
+msgstr "Créer une copie du jeu de traces"
 
 #: resources/static/netzob/ui/vocabulary/customTransformationFunctionDialog.glade:7
 msgid "Create a Custom Transformation Function"
@@ -3003,4 +2995,3 @@ msgstr "Durée de capture : "
 
 #~ msgid "Please open a project before exporting it."
 #~ msgstr "Veuillez ouvrir un projet avant de l'exporter."
-
