@@ -57,6 +57,7 @@ class TraceManagerView(NetzobAbstractPerspectiveView):
                           "messageListTreeview",
                           "traceNameCellrenderertext",
                           "traceTreeviewSelection",
+                          "traceSessionNewAction",
                           "traceDeleteAction",
                           "traceNameEntry",
                           "traceDescriptionEntry",

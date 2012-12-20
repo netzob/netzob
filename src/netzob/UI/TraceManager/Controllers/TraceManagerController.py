@@ -44,6 +44,7 @@ import uuid
 from netzob.UI.TraceManager.Views.TraceManagerView import TraceManagerView
 from netzob.UI.NetzobAbstractPerspectiveController import NetzobAbstractPerspectiveController
 from netzob.Common.Symbol import Symbol
+from netzob.Common.Session import Session
 
 
 class TraceManagerController(NetzobAbstractPerspectiveController):
@@ -246,11 +247,13 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
                     traceId = row[0]
                     trace = self.workspace.getImportedTrace(traceId)
                     sessionFilter = None
+                    self.view.traceSessionNewAction.set_sensitive(True)
 
                 else:
                     traceId = parentRow[0]
                     trace = self.workspace.getImportedTrace(traceId)
                     sessionFilter = trace.getSession(row[0])
+                    self.view.traceSessionNewAction.set_sensitive(False)
 
                 self.view.traceDeleteAction.set_sensitive(True)
                 self._refreshProjectProperties(trace, session=sessionFilter)
@@ -784,6 +787,15 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
 
         self.log.debug("Unable to drop data here!")
         return True
+
+    def traceSessionNewAction_activate_cb(self, button):
+        session = Session(str(uuid.uuid4()), _("Empty Session"), "")
+        self.currentTrace.addSession(session)
+        self.workspace.saveConfigFile(overrideTraces=[self.currentTrace.id])
+
+        self.log.info("New empty session was created: {0} (id={1})".format(session.name, session.id))
+
+        self._refreshTraceList([self.currentTrace.id])
 
     def traceImportInProjectAction_activate_cb(self, button):
         """This callback is called by the 'ImportInProjectAction'. It

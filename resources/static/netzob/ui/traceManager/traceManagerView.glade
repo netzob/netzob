@@ -68,6 +68,7 @@
         <property name="label" translatable="yes">Create A New Session</property>
         <property name="short_label" translatable="yes">New Session</property>
         <property name="stock_id">gtk-new</property>
+        <signal name="activate" handler="traceSessionNewAction_activate_cb" swapped="no"/>
       </object>
     </child>
   </object>
