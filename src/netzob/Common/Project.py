@@ -37,6 +37,7 @@ import uuid
 from lxml.etree import ElementTree
 from lxml import etree
 import types
+import shutil
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -52,6 +53,7 @@ from netzob.Common.Type.Sign import Sign
 from netzob.Common.Type.Endianess import Endianess
 from netzob.Common.XSDResolver import XSDResolver
 from netzob.Common.Property import Property
+from netzob.Common.PropertyList import PropertyList
 from netzob.Common.Simulator import Simulator
 
 
@@ -100,6 +102,10 @@ def loadProject_0_1(projectFile):
             project.setSimulator(projectSimulator)
 
     return project
+
+
+class ProjectException(Exception):
+    pass
 
 
 class Project(object):
@@ -173,6 +179,36 @@ class Project(object):
         tree = ElementTree(root)
         tree.write(projectFile)
 
+    def cloneProjectTo(self, workspace, cloneName):
+        try:
+            # Original project files
+            origProjectPath = os.path.join(workspace.getPath(), self.path)
+
+            # Clone project
+            idProject = str(uuid.uuid4())
+            clonePath = os.path.join(workspace.getPath(), "projects", idProject)
+            cloneFile = os.path.join(clonePath, Project.CONFIGURATION_FILENAME)
+
+            logging.info("Clone project from '{0}' to '{0}'".format(origProjectPath,
+                                                                    clonePath))
+
+            # Clone project files
+            shutil.copytree(origProjectPath, clonePath)
+
+            # Create the new project
+            project = Project.loadProject(workspace, clonePath)
+            project.setID(idProject)
+            project.setName(cloneName)
+            project.setPath(clonePath)
+            project.saveConfigFile(workspace)
+
+            # Update workspace
+            workspace.referenceProject(project.getPath())
+            workspace.saveConfigFile()
+
+        except IOError, e:
+            raise ProjectException(str(e))
+
     def hasPendingModifications(self, workspace):
         result = True
 
@@ -230,6 +266,18 @@ class Project(object):
             if not found:
                 envDeps.append(prop)
         return envDeps
+
+    def deleteProject(self, workspace):
+        try:
+            # Delete project files
+            projectFullPath = os.path.join(workspace.getPath(), self.path)
+            logging.debug("Deleting project files: {0}".format(projectFullPath))
+            shutil.rmtree(projectFullPath)
+
+            # Dereference project from Workspace
+            workspace.dereferenceProject(self.path)
+        except IOError, e:
+            raise ProjectException(_("Unable to delete project: {0}").format(e))
 
     @staticmethod
     def createProject(workspace, name):
@@ -312,6 +360,38 @@ class Project(object):
         return None
 
     @staticmethod
+    def importNewXMLProject(workspace, xmlProjectFile):
+        # Generate the Unique ID of the imported project
+        idProject = str(uuid.uuid4())
+
+        # First we verify and create if necessary the directory of the project
+        projectPath = "projects/{0}/".format(idProject)
+        destPath = os.path.join(workspace.getPath(), projectPath)
+
+        try:
+            if not os.path.exists(destPath):
+                logging.info("Creation of the directory {0}".format(destPath))
+                os.mkdir(destPath)
+
+                # Retrieving and storing of the config file
+                destFile = os.path.join(destPath, Project.CONFIGURATION_FILENAME)
+                shutil.copy(xmlProjectFile, destFile)
+
+                project = Project.loadProject(workspace, destPath)
+                project.setID(idProject)
+                project.setName(_("Copy of {0}").format(project.getName()))
+                project.setPath(projectPath)
+                project.saveConfigFile(workspace)
+                workspace.referenceProject(project.getPath())
+                workspace.saveConfigFile()
+
+                return project
+
+        except IOError, e:
+            logging.warn("Error when importing project: {0}".format(e))
+            raise ProjectException(_("Unable to import the project: {0}.").format(e))
+
+    @staticmethod
     def loadProject(workspace, projectDirectory):
         projectFile = os.path.join(os.path.join(workspace.getPath(), projectDirectory), Project.CONFIGURATION_FILENAME)
         return Project.loadProjectFromFile(projectFile)
@@ -366,7 +446,7 @@ class Project(object):
     PROJECT_SCHEMAS = {"xsds/0.1/Project.xsd": loadProject_0_1}
 
     def getProperties(self):
-        properties = []
+        properties = PropertyList()
         configuration = self.getConfiguration()
         properties.append(Property('workspace', Format.STRING, self.getPath()))
         prop = Property('name', Format.STRING, self.getName())

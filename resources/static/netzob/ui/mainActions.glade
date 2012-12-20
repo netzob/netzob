@@ -37,6 +37,14 @@
       </object>
     </child>
     <child>
+      <object class="GtkAction" id="configureCurrentWorkspace">
+        <property name="label" translatable="yes">Configure Current Workspace</property>
+        <property name="tooltip" translatable="yes">Configure the current workspace</property>
+        <property name="stock_id">gtk-preferences</property>
+        <signal name="activate" handler="configureWorkspace_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
       <object class="GtkAction" id="switchWorkspace">
         <property name="label" translatable="yes">Switch Workspace</property>
         <property name="tooltip" translatable="yes">Choose a new working directory</property>
