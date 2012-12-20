@@ -122,7 +122,7 @@ class GladeParser(object):
     def _enqueue(self, kind, data=None, comments=None, pos=None):
         if pos is None:
             pos = self._getpos()
-        if kind in (u'property', 'property'):
+        if kind in (u'property', 'property', 'col', u'col', 'item', u'item'):
             if '\n' in data:
                 lines = data.splitlines()
                 lineno = pos[0] - len(lines) + 1
