@@ -309,7 +309,7 @@
                                 <property name="layout_style">start</property>
                                 <child>
                                   <object class="GtkButton" id="projectsDuplicateButton">
-                                    <property name="label" translatable="yes" context=" Duplicate project">Duplicate</property>
+                                    <property name="label" translatable="yes" comments="Duplicate project">Duplicate</property>
                                     <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="sensitive">False</property>
@@ -326,7 +326,7 @@
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="projectsExportButton">
-                                    <property name="label" translatable="yes" context="Export project">Export</property>
+                                    <property name="label" translatable="yes" comments="Export project">Export</property>
                                     <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="sensitive">False</property>
@@ -343,7 +343,7 @@
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="projectsDeleteButton">
-                                    <property name="label" translatable="yes" context="Delete project">Delete</property>
+                                    <property name="label" translatable="yes" comments="Delete project">Delete</property>
                                     <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="sensitive">False</property>
@@ -360,7 +360,7 @@
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="projectsImportButton">
-                                    <property name="label" translatable="yes" context="Import a new project">Import</property>
+                                    <property name="label" translatable="yes" comments="Import a new project">Import</property>
                                     <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
