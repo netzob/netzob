@@ -45,11 +45,13 @@ from netzob.Common.Models.Factories.AbstractMessageFactory import AbstractMessag
 from netzob.Common.Session import Session
 
 
-#+---------------------------------------------------------------------------+
-#| ImportedTrace:
-#|     Class definition of an imported trace registered in a workspace
-#+---------------------------------------------------------------------------+
+class ImportedTraceException(Exception):
+    pass
+
+
 class ImportedTrace(object):
+    """Class definition of an imported trace registered in a
+    workspace"""
 
     #+-----------------------------------------------------------------------+
     #| Constructor
