@@ -123,5 +123,5 @@ class PeachExporterPlugin(ExporterPlugin):
         if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        controller = PeachExportController(self.netzob)
+        controller = PeachExportController(self.netzob, self)
         controller.run()
