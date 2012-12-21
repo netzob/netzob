@@ -87,7 +87,7 @@ class PeachExportController(AbstractExporterController):
         if self.netzob.getCurrentProject() is not None:
             self.view.symbolTreeview.get_model().append(None, ["-1", _("Randomized state order fuzzer"), '#000000', '#DEEEF0'])
             self.view.symbolTreeview.get_model().append(None, ["-2", _("Randomized transitions stateful fuzzer"), '#000000', '#DEEEF0'])
-            self.view.symbolTreeview.get_model().append(None, ["-3", _("Fully stateful fuzzer"), '#000000', '#DEEEF0'])
+            #self.view.symbolTreeview.get_model().append(None, ["-3", _("Fully stateful fuzzer"), '#000000', '#DEEEF0'])
             for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
                 self.view.symbolTreeview.get_model().append(None, ["{0}".format(symbol.getID()), "One-state fuzzer (symbol \"{0}\")".format(symbol.getName()), '#000000', '#DEEEF0'])
 
