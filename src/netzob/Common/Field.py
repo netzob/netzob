@@ -921,7 +921,7 @@ class Field(object):
         else:
             self.fields.pop(index)
 
-    def removeEmptyFields(self, cb_status):
+    def removeEmptyFields(self, cb_status=None):
         """
         removeEmptyFields: we look for useless fields (i.e. fields
         that produces only empty cells) and remove them.
