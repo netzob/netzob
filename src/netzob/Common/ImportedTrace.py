@@ -152,6 +152,19 @@ class ImportedTrace(object):
     def getMessageByID(self, id):
         return self.messages[id]
 
+    def removeSession(self, session):
+        """This functions allows to remove a session from the current
+        instance of ImportedTrace. It also removes all the specified
+        message included in the session."""
+
+        if session.id not in self.sessions.keys():
+            raise ImportedTraceException("The session is not part of the ImportedTrace, can't remove it.")
+
+        for message in session.getMessages():
+            self.messages.pop(message.id)
+
+        return self.sessions.pop(session.id)
+
     def setID(self, id):
         self.id = id
 
