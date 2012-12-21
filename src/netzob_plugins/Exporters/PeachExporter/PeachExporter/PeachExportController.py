@@ -51,13 +51,14 @@ class PeachExportController(AbstractExporterController):
             A controller liking the Peach export and its view in the netzob GUI.
     """
 
-    def __init__(self, netzob):
+    def __init__(self, netzob, plugin):
         """Constructor of PeachExportController:
 
                 @type netzob: netzob.NetzobGUI.NetzobGUI
                 @param netzob: the main netzob project.
         """
         self.netzob = netzob
+        self.plugin = plugin
         self.model = PeachExport(netzob)
         self.view = PeachExportView()
         self.initCallbacks()
@@ -187,7 +188,19 @@ class PeachExportController(AbstractExporterController):
             fileName = ""
             if res == Gtk.ResponseType.OK:
                 fileName = chooser.get_filename()
+                filePath = chooser.get_current_folder()
+            else:
+                return
             chooser.destroy()
+            peachzobAddonsPath = os.path.join(self.getPlugin().getPluginStaticResourcesPath(), "PeachzobAddons.py.default")
+            logging.debug("Path: {0}".format(peachzobAddonsPath))
+
+            # Write down the PeachzobAddons essential for Peach to interprete files exported by Netzob.
+            defaultAddonsFile = open(peachzobAddonsPath, 'r')
+            addonsFile = open(os.path.join(filePath, "PeachzobAddons.py"), 'w')
+            addonsFile.write(defaultAddonsFile.read())
+            defaultAddonsFile.close()
+            addonsFile.close()
 
             doCreateFile = False
             isFile = os.path.isfile(fileName)
@@ -206,8 +219,6 @@ class PeachExportController(AbstractExporterController):
                     fuzzfile = open(fileName, 'w')
                     fuzzfile.write(xmlDefinition)
                     fuzzfile.close()
-                    # TODO: maybe copy the plugin file with shutil
-                    NetzobInfoMessage(_("The project has been correctly exported as a Peach Fuzzer to '{0}'.\nDo not forget to copy in the targeted directory our Peach plugin netzob_plugins/Exporters/PeachExporter/PeachzobAddons.py.").format(fileName))
                 except Exception, e:
                     NetzobInfoMessage(_("The following error occurred while exporting the project as a Peach Fuzzer to '{0}': {1}").format(fileName, e))
 
@@ -234,3 +245,8 @@ class PeachExportController(AbstractExporterController):
                 @return: the plugin view.
         """
         return self.view
+
+    def getPlugin(self):
+        """getPlugin:
+        """
+        return self.plugin
