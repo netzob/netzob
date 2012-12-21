@@ -313,8 +313,8 @@ class PeachExport(object):
                 peachType = self.getPeachFieldTypeFromNetzobFormat(field)
                 regex = field.getRegex()
                 if field.isStatic():
+                    regex = regex[1:len(regex) - 1]
                     if peachType == "Number":
-                        regex = regex[1:len(regex) - 1]
                         xmlField = etree.SubElement(xmlDataModel, peachType, name=field.getName(), value=str(self.hexstring2int(regex)))
                     else:
                         xmlField = etree.SubElement(xmlDataModel, peachType, name=field.getName(), valueType="hex", value=regex)
