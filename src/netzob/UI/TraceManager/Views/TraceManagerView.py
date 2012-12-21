@@ -64,6 +64,9 @@ class TraceManagerView(NetzobAbstractPerspectiveView):
                           "currentTraceMessageListstore",
                           ])
 
+        self.traceTreeviewSelection.set_select_function(self.controller.traceTreeviewSelection_select_function_cb,
+                                                        self.traceTreestore)
+
         self.uiManager = Gtk.UIManager()
         self.uiManager.insert_action_group(self.actionGroup)
         self.uiManager.add_ui_from_file(self._findUiResource(popupFile))

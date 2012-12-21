@@ -57,6 +57,12 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
         self.nameUpdated = False
         self.descriptionUpdated = False
 
+        # Type of the data selected on the left treeview
+        # ('TraceTreeView'). True means that ImportedTrace is/are
+        # selected, else it means that Session is/are selected. We
+        # can't have two types.
+        self.traceSelectionIsATrace = None
+
         self._refreshTraceList()
 
     def _refreshTraceList(self, traceListIds=[], removedTraces=[]):
@@ -170,6 +176,38 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
         if len(selectedPaths) > 0:
             selection.unselect_all()
             selection.select_path(selectedPaths[0])
+
+    def traceTreeviewSelection_select_function_cb(self, selection, model, path, is_path_selected, treeStore):
+        """This function is in charge of allowing or not, the
+        selection of an item in the traceTreeview. This Treeview
+        contains 'ImportedTrace' and 'Session', but we don't want the
+        user to select two different kind of data."""
+
+        # We allow the user to unselect an item.
+        if is_path_selected:
+            return True
+
+        # This set permits to know if there is more than one type of
+        # data selected.
+        isRowATrace = set()
+
+        isRowATrace.add(model[path].get_parent() is None)
+
+        (model, selectedPaths) = selection.get_selected_rows()
+        for path in selectedPaths:
+            isRowATrace.add(model[path].get_parent() is None)
+
+        # If 'isRowATrace' set contains two items, it means that user
+        # wants to select one ImportedTrace and one Session at the
+        # same time. We can't. Really.
+        if len(isRowATrace) == 2:
+            return False
+
+        # Selected item type is kept, to avoid this whole check each
+        # time.
+        self.traceSelectionIsATrace = isRowATrace.pop()
+
+        return True
 
     def traceTreeviewSelection_changed_cb(self, selection):
         model, paths = selection.get_selected_rows()
