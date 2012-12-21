@@ -279,7 +279,7 @@ class PeachExport(object):
                 for i in range(subLength):
                     # We retrieve the peach type of the field for Peach to be as efficient and precise as possible.
                     peachType = self.getPeachFieldType(typedValueLists, i)
-                    xmlFields.append(etree.SubElement(xmlDataModel, peachType, valueType="hex", name=("{0}.{1}").format(field.getName(), i)))
+                    xmlFields.append(etree.SubElement(xmlDataModel, peachType, valueType="hex", name=("{0}_{1}").format(field.getName(), i)))
                     # We write down all possible values the subfield can have.
                     paramValues = []
                     logging.debug("TypedValueLists : {0}".format(str(typedValueLists)))
@@ -348,7 +348,7 @@ class PeachExport(object):
                                 # The given field length is the length in half-bytes.
                                 fieldMaxLength = (fieldMaxLength + 1) / 2
                                 fieldMinLength = fieldMinLength / 2
-                                xmlField = etree.SubElement(xmlDataModel, peachType, name=("{0}.{1}").format(field.getName(), i))
+                                xmlField = etree.SubElement(xmlDataModel, peachType, name=("{0}_{1}").format(field.getName(), i))
                                 xmlRanStringFixup = etree.SubElement(xmlField, "Fixup")
                                 xmlRanStringFixup.attrib["class"] = "PeachzobAddons.RandomField"
                                 etree.SubElement(xmlRanStringFixup, "Param", name="minlen", value=str(fieldMinLength))
@@ -357,7 +357,7 @@ class PeachExport(object):
                             else:
                                 # Static subfield.
                                 if splittedRegex[i] != "":
-                                    xmlField = etree.SubElement(xmlDataModel, peachType, name=("{0}.{1}").format(field.getName(), i), valueType="hex", value=splittedRegex[i])
+                                    xmlField = etree.SubElement(xmlDataModel, peachType, name=("{0}_{1}").format(field.getName(), i), valueType="hex", value=splittedRegex[i])
                                     logging.debug(_("The field {0} has a static subfield of value {1}.").format(field.getName(), splittedRegex[i]))
                                     if not self.mutateStaticFields:
                                         xmlField.attrib["mutable"] = "false"
