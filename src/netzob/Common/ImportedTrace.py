@@ -110,6 +110,21 @@ class ImportedTrace(object):
     def addMessage(self, message):
         self.messages.update({message.id: message})
 
+    def removeMessage(self, messageId):
+        """This functions allows to remove a message from the current
+        instance of ImportedTrace. It also removes the specified
+        message from all sessions."""
+
+        message = self.messages.pop(messageId)
+
+        for session in self.sessions.values():
+            try:
+                session.messages.remove(message)
+            except ValueError, e:
+                pass
+
+        return message
+
     def getID(self):
         return self.id
 
