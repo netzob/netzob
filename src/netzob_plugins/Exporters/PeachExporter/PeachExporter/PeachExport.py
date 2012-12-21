@@ -153,7 +153,7 @@ class PeachExport(object):
         xmlCommentTest = etree.Comment('Todo: Enable Agent <Agent ref="TheAgent"/> ')
 
         xmlTest.append(xmlCommentTest)
-        etree.SubElement(xmlTest, "StateModel", ref="SimpleStateModel")
+        etree.SubElement(xmlTest, "StateModel", ref="stateModel")
 
         # Create the publisher.
         self.makePublisher(xmlTest)
@@ -532,7 +532,7 @@ class PeachExport(object):
                 @type xmlFather: lxml.etree.element
                 @param xmlFather: the xml tree father of the current element.
         """
-        xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="singleStateModel", initialState="state 0")
+        xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="stateModel", initialState="state 0")
         xmlState = etree.SubElement(xmlStateModel, "State", name="state 0")
         # We create one action which will output fuzzed data.
         xmlAction = etree.SubElement(xmlState, "Action", type="output")
@@ -546,7 +546,7 @@ class PeachExport(object):
                 @type xmlFather: lxml.etree.element
                 @param xmlFather: the xml tree father of the current element.
         """
-        xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="BasicStateModel", initialState="state 0")
+        xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="stateModel", initialState="state 0")
         # There is always at least one state, the first state which is naturally called state0 and is the initial state.
         xmlFirstState = etree.SubElement(xmlStateModel, "State", name="state 0")
 
@@ -616,7 +616,7 @@ class PeachExport(object):
         # List of transitions formed like [startStateID, endStateID, weighting (probability), isTheTransitionFinal]
         transList = []
 
-        xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="probaStateModel", initialState="state 0")
+        xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="stateModel", initialState="state 0")
 
         # Create the initial state.
         for transition in transitions:
