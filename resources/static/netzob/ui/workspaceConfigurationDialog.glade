@@ -308,6 +308,23 @@
                                 <property name="spacing">12</property>
                                 <property name="layout_style">start</property>
                                 <child>
+                                  <object class="GtkButton" id="projectsConfigureButton">
+                                    <property name="label" translatable="yes" context=" Configure project">Properties</property>
+                                    <property name="use_action_appearance">False</property>
+                                    <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="use_action_appearance">False</property>
+                                    <signal name="clicked" handler="projectsConfigureButton_clicked_cb" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
                                   <object class="GtkButton" id="projectsDuplicateButton">
                                     <property name="label" translatable="yes" comments="Duplicate project">Duplicate</property>
                                     <property name="use_action_appearance">False</property>
@@ -806,6 +823,13 @@
     </action-widgets>
   </object>
   <object class="GtkActionGroup" id="workspaceConfigurationActionGroup">
+    <child>
+      <object class="GtkAction" id="configureProject">
+        <property name="label" translatable="yes">Project Properties</property>
+        <property name="short_label" translatable="yes">Properties</property>
+        <property name="stock_id">gtk-properties</property>
+      </object>
+    </child>
     <child>
       <object class="GtkAction" id="deleteProject">
         <property name="label" translatable="yes">Delete Project</property>

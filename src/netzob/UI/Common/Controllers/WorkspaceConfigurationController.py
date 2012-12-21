@@ -52,6 +52,7 @@ from netzob.Common.Project import Project
 from netzob.Common.Property import Property
 from netzob.UI.Common.Controllers.ProjectImportController import ProjectImportController
 from netzob.UI.Common.Controllers.ProjectExportController import ProjectExportController
+from netzob.UI.Common.Controllers.ProjectPropertiesController import ProjectPropertiesController
 
 
 class WorkspaceConfigurationController(object):
@@ -171,6 +172,7 @@ class WorkspaceConfigurationController(object):
             self.view.projectsDuplicateButton.set_sensitive(True)
             self.view.projectsDeleteButton.set_sensitive(True)
             self.view.projectsExportButton.set_sensitive(True)
+            self.view.projectsConfigureButton.set_sensitive(True)
 
         else:
             self.selectedProject = None
@@ -179,6 +181,7 @@ class WorkspaceConfigurationController(object):
             self.view.projectsDuplicateButton.set_sensitive(False)
             self.view.projectsDeleteButton.set_sensitive(False)
             self.view.projectsExportButton.set_sensitive(False)
+            self.view.projectsConfigureButton.set_sensitive(False)
 
     def _refreshProjectProperties(self):
         propsProjectName = ""
@@ -299,3 +302,14 @@ class WorkspaceConfigurationController(object):
                 return True
             except:
                 return False
+
+    def projectsConfigureButton_clicked_cb(self, button):
+        controller = ProjectPropertiesController(self.mainController,
+                                                 parent=self.view.workspaceConfigurationDialog,
+                                                 project=self.selectedProject)
+
+        def _refreshProjectList(window):
+            self.view.refreshProjectList()
+
+        controller.connectDestroySignal(_refreshProjectList)
+        controller.run()
