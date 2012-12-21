@@ -572,7 +572,7 @@ class PeachExport(object):
             i += 1
 
             # Create a reverse transition between this state and the first state.
-            etree.SubElement(xmlState, "Action", type="changeState", ref="state 0")
+            #etree.SubElement(xmlState, "Action", type="changeState", ref="state 0")
 
         # Unknown symbol.
         xmlState = etree.SubElement(xmlStateModel, "State", name=("state {0}").format(str(self.dictSymbol["-2"])))
@@ -582,7 +582,7 @@ class PeachExport(object):
         etree.SubElement(xmlAction, "Data", name="data")
         # Last transition.
         etree.SubElement(xmlFirstState, "Action", type="changeState", ref="state {0}".format(str(self.dictSymbol["-2"])))
-        etree.SubElement(xmlState, "Action", type="changeState", ref="state 0")
+        #etree.SubElement(xmlState, "Action", type="changeState", ref="state 0")
 
     def makeProbaStateModel(self, xmlFather):
         """makeProbaStateModel:
@@ -683,9 +683,9 @@ class PeachExport(object):
                             if outTrans.getType() == SemiStochasticTransition.TYPE:
                                 for outSymbol in outTrans.getOutputSymbols():
                                     transList.append([self.getSymbolID(inSymbol[0]), self.getSymbolID(outSymbol[0]), outSymbol[1]])
-                            if outTrans.getType() == CloseChannelTransition.TYPE:
+                            #if outTrans.getType() == CloseChannelTransition.TYPE:
                                 # Eventual transition to the end and the first state above.
-                                transList.append([self.getSymbolID(inSymbol[0]), 0, 100])
+                                #transList.append([self.getSymbolID(inSymbol[0]), 0, 100])
 
         # Normalize transitions: pack transitions which go from the same state and to the same state.
         normTransList = []
