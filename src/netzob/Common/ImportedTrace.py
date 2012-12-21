@@ -62,8 +62,8 @@ class ImportedTrace(object):
         self.type = type
         self.description = description
         self.name = name
-        self.messages = []
-        self.sessions = []
+        self.messages = {}
+        self.sessions = {}
 
     def save(self, root, namespace_workspace, namespace_common, pathOfTraces):
         xmlTrace = etree.SubElement(root, "{" + namespace_workspace + "}trace")
@@ -105,10 +105,10 @@ class ImportedTrace(object):
             gzipFile.close()
 
     def addSession(self, session):
-        self.sessions.append(session)
+        self.sessions.update({session.id: session})
 
     def addMessage(self, message):
-        self.messages.append(message)
+        self.messages.update({message.id: message})
 
     def getID(self):
         return self.id
@@ -126,16 +126,16 @@ class ImportedTrace(object):
         return self.name
 
     def getSessions(self):
-        return self.sessions
+        return self.sessions.values()
+
+    def getSession(self, sessionId):
+        return self.sessions[sessionId]
 
     def getMessages(self):
-        return self.messages
+        return self.messages.values()
 
     def getMessageByID(self, id):
-        for message in self.messages:
-            if message.getID() == id:
-                return message
-        return None
+        return self.messages[id]
 
     def setID(self, id):
         self.id = id
