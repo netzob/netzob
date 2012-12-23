@@ -124,7 +124,7 @@ class ComputedRelationVariable(AbstractRelationVariable):
 
         # delimiter
         xmlDelimiter = etree.SubElement(xmlVariable, "{" + namespace + "}delimiter")
-        xmlDelimiter.text = str(TypeConvertor.bin2hexstring(self.relationType.getAssociatedDataType().getDelimiter()))
+        xmlDelimiter.text = str(TypeConvertor.bitarray2NetzobRaw(self.relationType.getAssociatedDataType().getDelimiter()))
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractRelationVariable                         |

@@ -79,7 +79,7 @@ class DataVariable(AbstractLeafVariable):
         """
         # We simply avoid to print unreadable binary.
         if self.type.getType() == BinaryType.TYPE:
-            readableValue = TypeConvertor.bin2strhex(self.originalValue)
+            readableValue = TypeConvertor.bitarray2strHex(self.originalValue)
         else:
             readableValue = self.bin2str(self.originalValue)
 
@@ -122,7 +122,7 @@ class DataVariable(AbstractLeafVariable):
         """
         # We simply avoid to print unreadable binary.
         if self.type.getType() == BinaryType.TYPE:
-            readableValue = TypeConvertor.bin2strhex(self.getValue(writingToken))
+            readableValue = TypeConvertor.bitarray2strHex(self.getValue(writingToken))
         else:
             readableValue = str(self.bin2str(self.getValue(writingToken)))
 
@@ -192,7 +192,7 @@ class DataVariable(AbstractLeafVariable):
 
         # delimiter
         xmlDelimiter = etree.SubElement(xmlVariable, "{" + namespace + "}delimiter")
-        xmlDelimiter.text = str(TypeConvertor.bin2hexstring(self.type.getDelimiter()))
+        xmlDelimiter.text = str(TypeConvertor.bitarray2NetzobRaw(self.type.getDelimiter()))
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractLeafVariable                             |

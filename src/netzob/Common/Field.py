@@ -832,7 +832,7 @@ class Field(object):
             else:
                 value = value[1:len(value) - 1]
 
-            value = TypeConvertor.netzobRawToBitArray(value)
+            value = TypeConvertor.netzobRawToBitarray(value)
             variable = DataVariable(str(uuid.uuid4()), self.getName(), False, False, BinaryType(True, len(value), len(value)), value.to01())  # A static field is neither mutable nor random.
             return variable
         else:
@@ -853,7 +853,7 @@ class Field(object):
         cells = self.getUniqValuesByField()
         tmpDomain = set()
         for cell in cells:
-            tmpDomain.add(TypeConvertor.netzobRawToBitArray(cell))
+            tmpDomain.add(TypeConvertor.netzobRawToBitarray(cell))
         domain = sorted(tmpDomain)
 
         variable = AggregateVariable(str(uuid.uuid4()), "Aggregate", False, False, None)

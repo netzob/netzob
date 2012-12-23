@@ -89,12 +89,12 @@ class IPv4Variable(Variable):
         if strValue is not None:
             if self.format == Format.ASCII:
                 strCurrentValue = str(strValue)
-                binCurrentValue = TypeConvertor.string2bin(strValue, 'big')
+                binCurrentValue = TypeConvertor.pythonRaw2bitarray(strValue, 'big')
             elif self.format == Format.HEX:
                 hexVal = TypeConvertor.ipToNetzobRaw(strValue)
                 if hexVal is not None:
                     strCurrentValue = str(strValue)
-                    binCurrentValue = TypeConvertor.netzobRawToBitArray(hexVal)
+                    binCurrentValue = TypeConvertor.netzobRawToBitarray(hexVal)
                 else:
                     strCurrentValue = str("None:Error")
                     binCurrentValue = None
@@ -142,7 +142,7 @@ class IPv4Variable(Variable):
                 @return: the size of the biggest compliant data, -1 if it does not comply.
         """
         if self.format == Format.ASCII:
-            currentContent = TypeConvertor.bin2string(value[indice:])
+            currentContent = TypeConvertor.bitarray2pythonRaw(value[indice:])
             IPRegex = re.compile("(((?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))")
             hasMatched = False
             for t in range(min(len(currentContent), 15), 7, -1):
@@ -156,7 +156,7 @@ class IPv4Variable(Variable):
             if hasMatched:
                 result = currentContent[:t + 2]
                 self.log.debug("Compare on format was successfull : " + str(result))
-                return len(TypeConvertor.string2bin(result, 'big'))
+                return len(TypeConvertor.pythonRaw2bitarray(result, 'big'))
             else:
                 self.log.debug("Compare on format was not successfull")
                 return -1
@@ -248,7 +248,7 @@ class IPv4Variable(Variable):
                 Return the number of letters that matches, -1 if it does not match.
         """
         if self.format == Format.ASCII:
-            currentContent = TypeConvertor.bin2string(value[indice:])
+            currentContent = TypeConvertor.bitarray2pythonRaw(value[indice:])
             IPRegex = re.compile("(((?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))")
             hasMatched = False
             for t in range(min(len(currentContent), 15), 7, -1):
@@ -264,10 +264,10 @@ class IPv4Variable(Variable):
                 self.log.debug("Learn from received message : " + str(result))
 
                 strCurrentValue = str(result)
-                binCurrentValue = TypeConvertor.string2bin(result, 'big')
+                binCurrentValue = TypeConvertor.pythonRaw2bitarray(result, 'big')
                 memory.memorize(self, (binCurrentValue, strCurrentValue))
 
-                return len(TypeConvertor.string2bin(result, 'big'))
+                return len(TypeConvertor.pythonRaw2bitarray(result, 'big'))
             else:
                 self.log.debug("Compare on format was not successfull")
                 return -1

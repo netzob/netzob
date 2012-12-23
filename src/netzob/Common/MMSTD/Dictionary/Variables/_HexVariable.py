@@ -84,7 +84,7 @@ class HexVariable(Variable):
         """
         if strValue is not None:
             strCurrentValue = strValue
-            binCurrentValue = TypeConvertor.netzobRawToBitArray(strValue)
+            binCurrentValue = TypeConvertor.netzobRawToBitarray(strValue)
             self.currentValue = (binCurrentValue, strCurrentValue)
         else:
             self.currentValue = None
