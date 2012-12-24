@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-12-21 15:16+0100\n"
-"PO-Revision-Date: 2012-12-20 11:07+0200\n"
+"PO-Revision-Date: 2012-12-24 11:50+0200\n"
 "Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/master/fr/>\n"
@@ -1741,9 +1741,8 @@ msgstr "Ouvrir un projet déjà présent dans le répertoire de travail"
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:32
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:436
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:828
-#, fuzzy
 msgid "Project Properties"
-msgstr "Propriétés de la recherche"
+msgstr "Propriétés du projet"
 
 #: resources/static/netzob/ui/mainActions.glade:103
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:312
@@ -1762,95 +1761,84 @@ msgstr "Changer de vue"
 
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:93
 msgid "<b>Project Basic Properties</b>"
-msgstr ""
+msgstr "<b>Propriétés de base du projet</b>"
 
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:118
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:485
-#, fuzzy
 msgid "Name: "
-msgstr "Nom :"
+msgstr "Nom : "
 
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:150
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:499
-#, fuzzy
 msgid "Description: "
-msgstr "Description"
+msgstr "Description : "
 
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:203
 msgid "<b>Default Vocabulary Properties</b>"
-msgstr ""
+msgstr "<b>Propriétés du vocabulaire par défaut</b>"
 
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:234
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:729
-#, fuzzy
 msgid "Format: "
-msgstr "Format :"
+msgstr "Format : "
 
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:248
-#, fuzzy
 msgid "Unit Size: "
 msgstr "Taille de l'unité : "
 
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:262
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:757
-#, fuzzy
 msgid "Sign: "
-msgstr "Signe"
+msgstr "Signe : "
 
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:276
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:771
-#, fuzzy
 msgid "Endianess: "
-msgstr "Boutisme"
+msgstr "Boutisme : "
 
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:378
-#, fuzzy
 msgid "Apply To All Symbols"
-msgstr "Sélectionner tous les symboles"
+msgstr "Appliquer à tous les symboles"
 
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:397
 msgid ""
 "<i><b>Caution</b>: By clicking this button, you will override all symbols"
 " and fields settings.</i>"
 msgstr ""
+"<i><b>Attention</b> : en cliquant sur ce bouton, tous les paramètres des "
+"symboles et des champs vont être remplacés.</i>"
 
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:458
-#, fuzzy
 msgid "<b>Basic Properties</b>"
-msgstr "Propriétés de la recherche"
+msgstr "<b>Propriétés de base</b>"
 
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:541
-#, fuzzy
 msgid "Creation Date: "
 msgstr "Date de création : "
 
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:555
-#, fuzzy
 msgid "Number of symbols: "
 msgstr "Nombre de symboles : "
 
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:569
-#, fuzzy
 msgid "Number of messages: "
 msgstr "Nombre de messages : "
 
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:639
-#, fuzzy
 msgid "Number of fields: "
-msgstr "Nombre de symboles : "
+msgstr "Nombre de champs : "
 
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:702
 msgid "<b>Vocabulary Properties</b>"
-msgstr ""
+msgstr "<b>Propriétés de vocabulaire</b>"
 
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:743
-#, fuzzy
 msgid "Unit size: "
 msgstr "Taille de l'unité : "
 
 #: resources/static/netzob/ui/projectPropertiesDialog.glade:861
 msgid "Details"
-msgstr ""
+msgstr "Détails"
 
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:14
 msgid "All Messages (<i>debug</i>)"
