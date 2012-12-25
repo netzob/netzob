@@ -186,7 +186,10 @@ class Workspace(object):
     def getImportedTrace(self, traceId):
         """Retrieve a specific trace, which identifier is traceId."""
 
-        return self.importedTraces[traceId]
+        try:
+            return self.importedTraces[traceId]
+        except KeyError:
+            raise WorkspaceException("Unable to find the requested trace ({0})".format(traceId))
 
     def addImportedTrace(self, importedTrace):
         self.importedTraces.update({importedTrace.id: importedTrace})
