@@ -58,6 +58,12 @@ class Session(object):
     def addMessage(self, message):
         self.messages.append(message)
 
+    def removeMessage(self, message):
+        try:
+            return self.messages.remove(message)
+        except ValueError, e:
+            raise SessionException("The message was not found in the session: unable to remove it.")
+
     def getID(self):
         return self.id
 
