@@ -80,6 +80,12 @@ class AbstractMessage(object):
             self.pattern = pattern
             # self.log.debug("not empty {0}".format(self.getPatternString()))
 
+    def __str__(self):
+        return "[{0}: data={1}...; type={2}; session={3}]".format(self.id,
+                                                                  self.data[:15],
+                                                                  self.type,
+                                                                  self.session.id)
+
     #+-----------------------------------------------------------------------+
     #| getFactory
     #|     Abstract method to retrieve the associated factory

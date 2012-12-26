@@ -65,6 +65,13 @@ class ImportedTrace(object):
         self.messages = {}
         self.sessions = {}
 
+    def __str__(self):
+        return "[{0}: name={1}; messages={2}; sessions={3}; type={4}]".format(self.id,
+                                                                              self.name,
+                                                                              ",".join(self.messages),
+                                                                              ",".join(self.sessions),
+                                                                              self.type)
+
     def save(self, root, namespace_workspace, namespace_common, pathOfTraces):
         xmlTrace = etree.SubElement(root, "{" + namespace_workspace + "}trace")
         xmlTrace.set("date", str(TypeConvertor.pythonDatetime2XSDDatetime(self.getDate())))
