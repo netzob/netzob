@@ -34,7 +34,7 @@ import os
 import datetime
 import re
 import uuid
-from lxml.etree import ElementTree
+from lxml.etree import ElementTree, DocumentInvalid
 from lxml import etree
 import types
 import shutil
@@ -346,11 +346,11 @@ class Project(object):
             return None
         # is the projectFile is a file
         if not os.path.isfile(projectFile):
-            logging.warn("The specified project's configuration file (" + str(projectFile) + ") is not valid: its not a file.")
+            logging.warn("The specified project's configuration file ({0}) is not valid: its not a file.".format(projectFile))
             return None
         # is it readable
         if not os.access(projectFile, os.R_OK):
-            logging.warn("The specified project's configuration file (" + str(projectFile) + ") is not readable.")
+            logging.warn("The specified project's configuration file ({0}) is not readable.".format(projectFile))
             return None
 
         # We validate the file given the schemas
@@ -361,10 +361,10 @@ class Project(object):
                 parsingFunc = Project.PROJECT_SCHEMAS[xmlSchemaFile]
                 project = parsingFunc(projectFile)
                 if project is not None:
-                    logging.info("Loading project '" + str(project.getName()) + "' from workspace.")
+                    logging.info("Loading project '{0}' from workspace.".format(project.getName()))
                     return project
             else:
-                logging.warn("The project declared in file (" + projectFile + ") is not valid")
+                logging.warn("The project declared in file ({0}) is not valid".format(projectFile))
         return None
 
     @staticmethod
@@ -438,15 +438,16 @@ class Project(object):
             try:
                 schema.assertValid(xmlRoot)
                 return True
-            except:
+            except DocumentInvalid, err:
                 log = schema.error_log
                 error = log.last_error
-                logging.debug(error)
+                logging.error(error)
+                logging.error("XML Document in invalid: {0}".format(err))
                 return False
 
         except etree.XMLSyntaxError, e:
             log = e.error_log.filter_from_level(etree.ErrorLevels.FATAL)
-            logging.debug(log)
+            logging.error(log)
 
         return False
 
