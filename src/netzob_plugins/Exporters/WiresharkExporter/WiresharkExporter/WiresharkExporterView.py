@@ -34,6 +34,8 @@ from gettext import gettext as _
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Pango
+from pygments.lexers import LuaLexer
+from pygments.styles.pastie import PastieStyle as STYLE
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
@@ -50,11 +52,13 @@ class WiresharkExporterView(AbstractExporterView, Observable):
     def __init__(self, plugin, controller):
         super(WiresharkExporterView, self).__init__(plugin, controller)
         self.register_signals('SymbolChanged', 'SaveScript')
+        self.styles = {}
 
     def getDialog(self):
         return self.dialog
 
     def buildDialog(self):
+        self.styles.clear()
         self.buffer = self.sym_store = None
         self.panel = self.buildPanel()
         self.panel.set_size_request(800, 600)
@@ -118,12 +122,32 @@ class WiresharkExporterView(AbstractExporterView, Observable):
     def clearText(self):
         self.buffer.set_text("")
 
-    def setText(self, txt):
+    def setText(self, txt, with_colors=True):
         self.clearText()
-        self.appendText(txt)
+        self.appendText(txt, with_colors)
 
-    def appendText(self, txt):
-        self.buffer.insert(self.buffer.get_end_iter(), txt)
+    def appendText(self, txt, with_colors=True):
+        if with_colors:
+            for token, value in LuaLexer().get_tokens(txt):
+                while not STYLE.styles_token(token) and token.parent:
+                    token = token.parent
+                if token not in self.styles:
+                    self.styles[token] = tag = self.buffer.create_tag()
+                    style = STYLE.style_for_token(token)
+                    if style['bgcolor']:
+                        tag.set_property('background', '#' + style['bgcolor'])
+                    if style['color']:
+                        tag.set_property('foreground', '#' + style['color'])
+                    if style['bold']:
+                        tag.set_property('weight', Pango.Weight.BOLD)
+                    if style['italic']:
+                        tag.set_property('style', Pango.Style.ITALIC)
+                    if style['underline']:
+                        tag.set_property('underline', Pango.Underline.SINGLE)
+                start = self.buffer.get_end_iter()
+                self.buffer.insert_with_tags(start, value, self.styles[token])
+        else:
+            self.buffer.insert(self.buffer.get_end_iter(), txt)
 
     ##########
     # Events #
