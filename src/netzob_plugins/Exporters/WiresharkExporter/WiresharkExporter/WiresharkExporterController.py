@@ -172,12 +172,13 @@ DissectorTable.get("{0}"):add({1}, {class_var})
                 try:
                     self.view.appendText(self.generateSymbolDissector(sym))
                 except WiresharkExporterError, wee:
-                    self.view.appendText("-- {}\n".format(wee))
+                    self.view.appendComment(wee)
                     NetzobWarningMessage("[{}] {}".format(sym.getName(), wee))
         else:
             try:
                 self.view.setText(self.generateSymbolDissector(sym))
             except WiresharkExporterError, wee:
+                self.view.setComment(wee)
                 NetzobErrorMessage("[{}] {}".format(sym.getName(), wee))
 
     def _onSaveScript_cb(self, fname, value):

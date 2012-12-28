@@ -126,6 +126,10 @@ class WiresharkExporterView(AbstractExporterView, Observable):
         self.clearText()
         self.appendText(txt, with_colors)
 
+    def setComment(self, txt, with_colors=True):
+        self.clearText()
+        self.appendComment(txt, with_colors)
+
     def appendText(self, txt, with_colors=True):
         if with_colors:
             for token, value in LuaLexer().get_tokens(txt):
@@ -148,6 +152,10 @@ class WiresharkExporterView(AbstractExporterView, Observable):
                 self.buffer.insert_with_tags(start, value, self.styles[token])
         else:
             self.buffer.insert(self.buffer.get_end_iter(), txt)
+
+    def appendComment(self, txt, with_colors=True):
+        for line in str(txt).split('\n'):
+            self.appendText("-- {}\n".format(line), with_colors)
 
     ##########
     # Events #
