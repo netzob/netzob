@@ -281,9 +281,6 @@ class TrashSymbol(AbstractSymbol):
     def __str__(self):
         return str(self.getName())
 
-    def __repr__(self):
-        return str(self.getName())
-
     def __cmp__(self, other):
         if other is None:
             return 1

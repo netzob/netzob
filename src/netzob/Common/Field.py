@@ -112,9 +112,6 @@ class Field(object):
     def __str__(self):
         return str(self.getName())
 
-    def __repr__(self):
-        return str(self.getName())
-
     ## Functions
     def addVisualizationFunction(self, function):
         self.visualizationFunctions.append(function)
