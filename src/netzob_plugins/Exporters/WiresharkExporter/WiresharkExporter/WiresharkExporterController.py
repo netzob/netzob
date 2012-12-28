@@ -53,6 +53,7 @@ class WiresharkExporterController(AbstractExporterController):
     def __init__(self, netzob, plugin):
         view = WiresharkExporterView(plugin, self)
         view.subscribe_signal('SymbolChanged', self._onSymbolChanged_cb)
+        view.subscribe_signal('SaveScript', self._onSaveScript_cb)
         super(WiresharkExporterController, self).__init__(netzob, plugin, view)
 
     def getMessageContext(self, msg):
@@ -178,6 +179,10 @@ DissectorTable.get("{0}"):add({1}, {class_var})
                 self.view.setText(self.generateSymbolDissector(sym))
             except WiresharkExporterError, wee:
                 NetzobErrorMessage("[{}] {}".format(sym.getName(), wee))
+
+    def _onSaveScript_cb(self, fname, value):
+        with open(fname, 'w') as f:
+            f.write(value)
 
 
 def _getLuaTableType(pytype):

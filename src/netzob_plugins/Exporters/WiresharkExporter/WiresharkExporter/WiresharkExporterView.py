@@ -49,7 +49,7 @@ class WiresharkExporterView(AbstractExporterView, Observable):
 
     def __init__(self, plugin, controller):
         super(WiresharkExporterView, self).__init__(plugin, controller)
-        self.register_signals('SymbolChanged')
+        self.register_signals('SymbolChanged', 'SaveScript')
 
     def getDialog(self):
         return self.dialog
@@ -96,6 +96,16 @@ class WiresharkExporterView(AbstractExporterView, Observable):
         sw.add(textarea)
         return sw
 
+    def buildToolbar(self):
+        tb = Gtk.Toolbar()
+        save_but = Gtk.ToolButton(Gtk.STOCK_SAVE)
+        save_but.connect("clicked", self._onSaveClicked_cb)
+        close_but = Gtk.ToolButton(Gtk.STOCK_CLOSE)
+        close_but.connect("clicked", self._onCloseClicked_cb)
+        tb.insert(save_but, 0)
+        tb.insert(close_but, 1)
+        return tb
+
     def updateSymbols(self, syms):
         self.sym_store.clear()
         self.sym_store.append(None, ("-1", "{} [{}]".format(_("Entire project"), len(syms)), "0"))
@@ -124,3 +134,18 @@ class WiresharkExporterView(AbstractExporterView, Observable):
 
     def onSymbolChanged(self, func, *args):
         self.__cursor_changed_obs.add((func, args))
+
+    def _onSaveClicked_cb(self, tb):
+        chooser = Gtk.FileChooserDialog(_("Export as Wireshark script (LUA)"),
+                                        action=Gtk.FileChooserAction.SAVE,
+                                        buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                                 Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT))
+        chooser.set_current_name("wireshark.lua")
+        chooser.set_do_overwrite_confirmation(True)
+        if Gtk.ResponseType.ACCEPT == chooser.run():
+            fname = chooser.get_filename()
+            self._send_signal("SaveScript", fname, self.getText())
+        chooser.destroy()
+
+    def _onCloseClicked_cb(self, tb):
+        self.dialog.destroy()
