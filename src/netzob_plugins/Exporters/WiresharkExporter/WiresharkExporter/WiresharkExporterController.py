@@ -77,7 +77,7 @@ class WiresharkExporterController(AbstractExporterController):
         elif isinstance(msg, L2NetworkMessage):
             filter_name = msg.getL2Protocol()
         else:
-            raise ValueError("Cannot find a compatible protocol for {}.".format(msg))
+            raise WiresharkExporterError("Cannot find a compatible protocol for {}.".format(msg))
 
         del sym
 
