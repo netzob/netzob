@@ -126,8 +126,8 @@ def NetzobErrorMessage(text, parent=None):
 #+---------------------------------------------------------------------------+
 #| NetzobInfoMessage:
 #+---------------------------------------------------------------------------+
-def NetzobInfoMessage(text):
-    md = Gtk.MessageDialog(None,
+def NetzobInfoMessage(text, parent=None):
+    md = Gtk.MessageDialog(parent,
                            Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
                            Gtk.MessageType.INFO,
                            Gtk.ButtonsType.CLOSE,
@@ -139,8 +139,8 @@ def NetzobInfoMessage(text):
 #+---------------------------------------------------------------------------+
 #| NetzobQuestionMessage:
 #+---------------------------------------------------------------------------+
-def NetzobQuestionMessage(text):
-    md = Gtk.MessageDialog(None,
+def NetzobQuestionMessage(text, parent=None):
+    md = Gtk.MessageDialog(parent,
                            Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
                            Gtk.MessageType.QUESTION,
                            Gtk.ButtonsType.YES_NO,
