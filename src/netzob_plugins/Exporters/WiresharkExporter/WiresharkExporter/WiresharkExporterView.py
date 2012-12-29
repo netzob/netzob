@@ -64,6 +64,7 @@ class WiresharkExporterView(AbstractExporterView, Observable):
         self.panel.set_size_request(800, 600)
         self.dialog = Gtk.Dialog(_("Export project as Wireshark dissector"),
                                  flags=0, buttons=None)
+        self.dialog.set_transient_for(self.controller.netzob.view.mainWindow)
         self.dialog.vbox.pack_start(self.panel, True, True, 0)
         return self.dialog
 
