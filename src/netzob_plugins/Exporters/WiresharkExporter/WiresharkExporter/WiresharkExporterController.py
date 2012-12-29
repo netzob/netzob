@@ -141,7 +141,7 @@ DissectorTable.get("{0}"):add({1}, {class_var})
         proj = self.netzob.getCurrentProject()
 
         if not proj:
-            NetzobErrorMessage(_("No project selected."))
+            NetzobErrorMessage(_("No project selected."), parent=self.netzob.view.mainWindow)
             return
 
         syms = proj.getVocabulary().getSymbols()
@@ -173,13 +173,13 @@ DissectorTable.get("{0}"):add({1}, {class_var})
                     self.view.appendText(self.generateSymbolDissector(sym))
                 except WiresharkExporterError, wee:
                     self.view.appendComment(wee)
-                    NetzobWarningMessage("[{}] {}".format(sym.getName(), wee))
+                    NetzobWarningMessage("[{}] {}".format(sym.getName(), wee), self.view.dialog)
         else:
             try:
                 self.view.setText(self.generateSymbolDissector(sym))
             except WiresharkExporterError, wee:
                 self.view.setComment(wee)
-                NetzobErrorMessage("[{}] {}".format(sym.getName(), wee))
+                NetzobErrorMessage("[{}] {}".format(sym.getName(), wee), self.view.dialog)
 
     def _onSaveScript_cb(self, fname, value):
         with open(fname, 'w') as f:
