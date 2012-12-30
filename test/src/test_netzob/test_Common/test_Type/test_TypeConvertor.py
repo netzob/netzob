@@ -33,7 +33,6 @@ import random
 import string
 import uuid
 import time
-from bitarray import bitarray
 
 #+----------------------------------------------
 #| Local Imports
@@ -72,47 +71,3 @@ class test_TypeConvertor(NetzobTestCase):
             for i_value in range(0, len(values)):
                 value = values[i_value]
                 self.assertEqual(value, deserializedValues[i_value])
-
-    def test_pythonRaw2bitarray(self):
-        value = TypeConvertor.pythonRaw2bitarray("\xab\xcd")
-        self.assertEqual(value, bitarray('1010101111001101'))
-
-    def test_bitarray2pythonRaw(self):
-        value = TypeConvertor.bitarray2pythonRaw(bitarray('1010101111001101'))
-        self.assertEqual(value, '\xab\xcd')
-
-    def test_str2bool(self):
-        value = TypeConvertor.str2bool("true")
-        self.assertEqual(value, True)
-
-    def test_bool2str(self):
-        value = TypeConvertor.bool2str(True)
-        self.assertEqual(value, 'true')
-
-    def test_bitarray2StrBitarray(self):
-        value = TypeConvertor.bitarray2StrBitarray(bitarray('1010101111001101'))
-        self.assertEqual(value, '1010101111001101')
-
-    def test_strBitarray2Bitarray(self):
-        value = TypeConvertor.strBitarray2Bitarray('1010101111001101')
-        self.assertEqual(value, bitarray('1010101111001101'))
-
-    def test_bitarray2strHex(self):
-        value = TypeConvertor.bitarray2strHex(bitarray('1010101111001101'))
-        self.assertEqual(value, '0xabcd')
-
-    def test_int2bitarray(self):
-        value = TypeConvertor.int2bitarray(4242, 16)
-        self.assertEqual(value, bitarray('0001000010010010'))
-
-    def test_bitarray2int(self):
-        value = TypeConvertor.bitarray2int(bitarray('0001000010010010'))
-        self.assertEqual(value, 4242)
-
-    def test_netzobRaw2bitarray(self):
-        value = TypeConvertor.netzobRaw2bitarray("abcd")
-        self.assertEqual(value, bitarray('1010101111001101'))
-
-    def test_bitarray2NetzobRaw(self):
-        value = TypeConvertor.bitarray2NetzobRaw(bitarray('1010101111001101'))
-        self.assertEqual(value, 'abcd')

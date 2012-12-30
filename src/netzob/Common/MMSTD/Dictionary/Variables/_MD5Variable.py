@@ -66,15 +66,15 @@ class MD5Variable(Variable):
         var = dictionary.getVariableByID(self.id_var)
         (binToHash, strToHash) = var.getValue(negative, dictionary)
 
-        toHash = TypeConvertor.bitarray2pythonRaw(binToHash)
+        toHash = TypeConvertor.bin2string(binToHash)
         self.log.debug("Will hash the followings : " + toHash)
 
         md5core = hashlib.md5(self.init)
         md5core.update(toHash)
 
         md5Hex = md5core.digest()
-        self.binVal = TypeConvertor.pythonRaw2bitarray(md5Hex)
-        self.strVal = TypeConvertor.bitarray2strHex(self.binVal)
+        self.binVal = TypeConvertor.hex2bin(md5Hex)
+        self.strVal = TypeConvertor.bin2strhex(self.binVal)
         self.log.debug("Generated MD5 = " + self.strVal)
 
     def learn(self, val, indice, isForced, dictionary):
@@ -89,7 +89,7 @@ class MD5Variable(Variable):
                 var = dictionary.getVariableByID(self.id_var)
                 (binToHash, strToHash) = var.getValue(False, dictionary)
 
-                toHash = TypeConvertor.bitarray2pythonRaw(binToHash)
+                toHash = TypeConvertor.bin2string(binToHash)
                 self.log.debug("Will hash the followings : " + toHash)
 
                 md5core = hashlib.md5(self.init)
@@ -97,12 +97,12 @@ class MD5Variable(Variable):
 
                 md5Hex = md5core.digest()
 
-                self.log.debug("We should received an MD5 = " + str(TypeConvertor.pythonRaw2bitarray(md5Hex)))
+                self.log.debug("We should received an MD5 = " + str(TypeConvertor.hex2bin(md5Hex)))
                 self.log.debug("We have received " + str(binVal))
 
-                if (TypeConvertor.pythonRaw2bitarray(md5Hex) == binVal):
-                    self.binVal = TypeConvertor.pythonRaw2bitarray(md5Hex)
-                    self.strVal = TypeConvertor.bitarray2strHex(self.binVal)
+                if (TypeConvertor.hex2bin(md5Hex) == binVal):
+                    self.binVal = TypeConvertor.hex2bin(md5Hex)
+                    self.strVal = TypeConvertor.bin2strhex(self.binVal)
                     self.log.debug("Perfect, there are equals we return  " + str(len(binVal)))
                     return indice + len(binVal)
                 else:

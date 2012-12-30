@@ -54,7 +54,7 @@ class TextValue(AbstractValue):
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Values.TextValue.py')
 
         self.strtext = text
-        self.bintext = TypeConvertor.pythonRaw2bitarray(self.strtext, 'big')
+        self.bintext = TypeConvertor.string2bin(self.strtext, 'big')
 
     def send(self, negative, dictionary):
         return (self.bintext, self.strtext)

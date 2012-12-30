@@ -70,7 +70,7 @@ class AbstractType():
         self.delimiter = None
         try:
             # We assume that delimiters are written by the user as hex string.
-            self.delimiter = TypeConvertor.netzobRaw2bitarray(delimiter)
+            self.delimiter = TypeConvertor.hexstring2bin(delimiter)
         except:
             self.log.error("The delimiter {0} is not a valid hexadecimal string.".format(str(delimiter)))
 

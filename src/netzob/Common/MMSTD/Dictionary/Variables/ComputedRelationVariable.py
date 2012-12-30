@@ -112,7 +112,7 @@ class ComputedRelationVariable(AbstractVariable):
                 Try to guess the pointed variable's value and give it to the current value.
         """
         # The 'TEMP' value is explicit enough.
-        self.currentValue = TypeConvertor.pythonRaw2bitarray("TEMP")
+        self.currentValue = TypeConvertor.stringB2bin("TEMP")
 
     def compare(self, readingToken):
         """compare:
@@ -320,7 +320,7 @@ class ComputedRelationVariable(AbstractVariable):
 
         # delimiter
         xmlDelimiter = etree.SubElement(xmlVariable, "{" + namespace + "}delimiter")
-        xmlDelimiter.text = str(TypeConvertor.bitarray2NetzobRaw(self.relationType.getAssociatedDataType().getDelimiter()))
+        xmlDelimiter.text = str(TypeConvertor.bin2hexstring(self.relationType.getAssociatedDataType().getDelimiter()))
 
 #+---------------------------------------------------------------------------+
 #| Notified functions                                                        |

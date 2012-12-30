@@ -140,7 +140,7 @@ class AutomaticGrammarAbstractionView(object):
         for message in session.getMessages():
             self.log.debug("Inject message: %s" % (message.getData()))
             # we abstract the message
-            symbol = abstractionLayer.abstract(TypeConvertor.netzobRawToBitarray(str(message.getData())))
+            symbol = abstractionLayer.abstract(TypeConvertor.netzobRawToBitArray(str(message.getData())))
             if isInput:
                 # We simulate the reception of the message
                 #  - verify its a valid input symbol
@@ -179,7 +179,7 @@ class AutomaticGrammarAbstractionView(object):
         abstractionLayer = AbstractionLayer(None, self.project.getVocabulary(), memory, None, None)
         symbols = []
         for message in session.getMessages():
-            symbols.append(abstractionLayer.abstract(TypeConvertor.netzobRawToBitarray(str(message.getData()))))
+            symbols.append(abstractionLayer.abstract(TypeConvertor.netzobRawToBitArray(str(message.getData()))))
 
         for symbol in symbols:
             self.log.debug("- %s" % symbol.getName())

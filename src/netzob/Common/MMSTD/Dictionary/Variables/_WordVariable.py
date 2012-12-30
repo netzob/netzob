@@ -77,7 +77,7 @@ class WordVariable(Variable):
         """
         if strValue is not None:
             strCurrentValue = strValue
-            binCurrentValue = TypeConvertor.pythonRaw2bitarray(strValue)
+            binCurrentValue = TypeConvertor.string2bin(strValue)
             self.currentValue = (binCurrentValue, strCurrentValue)
         else:
             self.currentValue = None
@@ -122,7 +122,7 @@ class WordVariable(Variable):
         for i in range(size, 16, -1):
             subValue = value[indice:indice + i - 1]
             if (i - 1) % 8 == 0:
-                strVal = TypeConvertor.bitarray2pythonRaw(TypeConvertor.strBitarray2Bitarray(subValue))
+                strVal = TypeConvertor.bin2string(TypeConvertor.strBitarray2Bitarray(subValue))
                 typeIdentifier = TypeIdentifier()
                 if typeIdentifier.isAscii(strVal):
                     self.log.debug("Its an ascii : (" + str(strVal) + ")")
@@ -160,7 +160,7 @@ class WordVariable(Variable):
 
         # We generate a new value
         strValue = self.generateValue()
-        binValue = TypeConvertor.pythonRaw2bitarray(strValue)
+        binValue = TypeConvertor.string2bin(strValue)
 
         # We save in memory the current value
         memory.memorize(self, (binValue, strValue))
@@ -218,7 +218,7 @@ class WordVariable(Variable):
         if size > 0:
             # memorize
             self.log.debug("Memorize : " + str(value[indice:size]))
-            memory.memorize(self, (value[indice:size], TypeConvertor.bitarray2pythonRaw(TypeConvertor.strBitarray2Bitarray(value[indice:size]))))
+            memory.memorize(self, (value[indice:size], TypeConvertor.bin2string(TypeConvertor.strBitarray2Bitarray(value[indice:size]))))
             return size
         else:
             self.log.debug("Incompatible for learning")

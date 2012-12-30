@@ -105,10 +105,10 @@ class BinaryType(AbstractType):
         return self.str2bin(value)
 
     def str2bin(self, stri):
-        return TypeConvertor.strBitarray2Bitarray(stri)
+        return TypeConvertor.binstring2bin(stri)
 
     def bin2str(self, bina):
-        return TypeConvertor.bitarray2StrBitarray(bina)
+        return TypeConvertor.bin2binstring(bina)
 
     def getBitSize(self, typeValue):
         return len(typeValue)

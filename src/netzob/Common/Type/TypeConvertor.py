@@ -34,130 +34,74 @@ import datetime
 import logging
 import base64
 import struct
-import StringIO
 
 #+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.Type.Format import Format
 from netzob.Common.Type.UnitSize import UnitSize
+import StringIO
 from netzob.Common.Type.Sign import Sign
 from netzob.Common.Type.Endianess import Endianess
 
 
 class TypeConvertor():
 
-    @staticmethod
-    def pythonRaw2bitarray(rawString, theEndian='big'):
-        """
-        pythonRaw2bitarray: Transform a pythonRaw byte string to a bitarray object
-            i.e.: "\xab\xcd" -> bitarray('1010101111001101')
-        @param the string to transform
-        @endian the endian selected (little or big) (normal = big)
-        @return
-        """
-        if rawString is None:
-            return None
-        elif rawString == "":
-            bits = bitarray(endian=theEndian)
-            return bits
-        else:
-            bits = bitarray(endian=theEndian)
-            bits.frombytes(rawString)
-            return bits
+    #+----------------------------------------------
+    #| Transform a string to its binary representation
+    #| @param the string to transform
+    #| @endian the endian selected (little or big) (normal = big)
+    #| @return
+    #+----------------------------------------------
 
     @staticmethod
-    def bitarray2pythonRaw(bits):
-        """
-        bitarray2pythonRaw: Transform a bitarray object to a pythonRaw byte string
-            i.e.: bitarray('1010101111001101') -> "\xab\xcd"
-        @param the string to transform
-        @endian the endian selected (little or big) (normal = big)
-        @return
-        """
-        if bits is not None:
-            return bits.tobytes()
-        else:
-            return None
+    def string2bin(aStr, endian='big'):
+        result = bitarray(endian=endian)
+        result.fromstring(aStr)
+        return result
+
+    @staticmethod
+    def bin2string(bin):
+        return bin.tobytes()
 
     @staticmethod
     def str2bool(val):
-        """
-        str2bool:
-            i.e.: "true" -> True
-        """
         return val.lower() in ("yes", "true", "t", "1")
 
     @staticmethod
     def bool2str(b):
-        """
-        str2bool:
-            i.e.: True -> "true"
-        """
         if b:
             return "true"
         else:
             return "false"
 
+    #+----------------------------------------------
+    #| Transforms : bitarray('011101010') -> 011101010
+    #+----------------------------------------------
     @staticmethod
     def bitarray2StrBitarray(bin):
-        """
-        bitarray2StrBitarray:
-            i.e.: bitarray('011101010') -> "011101010"
-        """
-        return str(bin)[10:-2]
+        return str(bin)[10:len(str(bin)) - 2]
 
+    #+----------------------------------------------
+    #| Transforms : 011101010 -> bitarray('011101010')
+    #+----------------------------------------------
     @staticmethod
     def strBitarray2Bitarray(strBin):
-        """
-        strBitarray2Bitarray:
-            i.e.: "011101010" -> bitarray('011101010')
-        """
         result = bitarray(strBin)
         return result
 
+    #+----------------------------------------------
+    #| Transform an hex to the bits : \xc9\xa1\x8d => bitarray
+    #| @return
+    #+----------------------------------------------
     @staticmethod
-    def netzobRaw2bitarray(stri):
-        """netzobRaw2bitarray:
-               i.e.: "0123456789abcdef" -> bitarray('011010111000110...').
-        """
-        if stri is not None:
-        # bitarray(bin(int(stri, 16))[2:]) : remove (int) all left-sided useful '0's.*
-
-            sbin = ''
-            for char in stri:
-                # We translate half-byte by half-byte.
-                onecharbin = bin(int(char, 16))[2:]  # We translate a character into binary.
-                for i in range(4 - len(onecharbin)):
-                    sbin += '0'  # We prepend '0's to match the format: one hex char = 4 binary chars.
-                sbin += onecharbin  # We append a new character's translation.
-            return bitarray(sbin)
-        else:
-            return None
+    def hex2bin(hex):
+        result = bitarray(endian='big')
+        result.fromstring(hex)
+        return result
 
     @staticmethod
-    def bitarray2NetzobRaw(bina):
-        """bitarray2NetzobRaw:
-               i.e.: bitarray('011010111000110...') -> "0123456789abcdef"
-        """
-        if bina is not None:
-            # str(hex(int(bina.to01(), 2))) : remove (int) all left-sided useful '0's.
-
-            sbin = bina.to01()  # We retrieve a string with the '0's and '1's of the binary.
-            stri = ''
-            for start in xrange(0, len(sbin), 4):
-                # We translate half-byte by half-byte.
-                stri += str(hex(int(sbin[start:start + 4], 2)))[2:]
-            return stri
-        else:
-            return None
-
-    @staticmethod
-    def bitarray2strHex(bin):
-        """
-        bitarray2strHex:
-            i.e.: bitarray('1010101111001101') -> '0xabcd'
-        """
+    def bin2strhex(bin):
         if bin is None:
             return None
         elif len(bin) == 0:
@@ -166,16 +110,7 @@ class TypeConvertor():
             return str(hex(int(bin.to01(), 2)))
 
     @staticmethod
-    def int2bitarray(i, nbbits=None):
-        """
-        int2bitarray:
-            i.e.: 4242 -> bitarray('0001000010010010')
-        """
-        if nbbits is None:
-            # Round nbbits to the upper multiple of 4
-            nbbits = len(bin(i)[2:])
-            if nbbits % 4 != 0:
-                nbbits =  4 * (nbbits / 4) + 4
+    def int2bin(i, nbbits):
         l = nbbits - len(bin(i)[2:])
         b = bitarray(l, endian='big')
         b.setall(False)
@@ -183,12 +118,16 @@ class TypeConvertor():
         return b
 
     @staticmethod
-    def bitarray2int(bin):
-        """
-        bitarray2int:
-            i.e.: bitarray('0001000010010010') -> 4242
-        """
+    def bin2int(bin):
         return int(bin.to01(), 2)
+
+    @staticmethod
+    def string2int(aStr):
+        return int(aStr)
+
+    @staticmethod
+    def int2string(int):
+        return str(int)
 
     @staticmethod
     def encodePythonRawToGivenType(raw, aType):
@@ -204,13 +143,17 @@ class TypeConvertor():
         elif aType == Format.OCTAL:
             return TypeConvertor.netzobRawToOctal(raw)
         elif aType == Format.BINARY:
-            return TypeConvertor.netzobRawToStrBitarray(raw)
+            return TypeConvertor.netzobRawToBinary(raw)
         elif aType == Format.DECIMAL:
             return TypeConvertor.netzobRawToDecimal(raw)
         elif aType == Format.IPv4:
             return TypeConvertor.netzobRawToIPv4(raw)
         else:
             return raw
+
+    @staticmethod
+    def string2hex(msg):
+        return [hex(ord(x)) for x in msg]
 
     @staticmethod
     def encodeGivenTypeToNetzobRaw(raw, aType):
@@ -221,7 +164,7 @@ class TypeConvertor():
         elif aType == Format.OCTAL:
             return TypeConvertor.octalToNetzobRaw(raw)
         elif aType == Format.BINARY:
-            return TypeConvertor.strBitarrayToNetzobRaw(raw)
+            return TypeConvertor.binaryToNetzobRaw(raw)
         elif aType == Format.DECIMAL:
             return TypeConvertor.decimalToNetzobRaw(raw)
         elif aType == Format.IP:
@@ -394,16 +337,33 @@ class TypeConvertor():
     #+----------------------------------------------
     #| Return the string parameter in bit
     #+----------------------------------------------
-    def netzobRawToStrBitarray(raw):
-        res = TypeConvertor.netzobRaw2bitarray(raw)
-        res = str(res)[10:-2]
+    def netzobRawToBinary(raw):
+        res = bitarray()
+        for c in raw:
+            tmp = bitarray()
+            tmp.fromstring(chr(int(c, 16)))
+            tmp = str(tmp)[10:len(str(tmp)) - 2][4:]
+            res.extend(tmp)
+        return res.to01()
+
+    @staticmethod
+    #+----------------------------------------------
+    #| Return the string parameter in a bitarray
+    #+----------------------------------------------
+    def netzobRawToBitArray(raw):
+        res = bitarray()
+        for c in raw:
+            tmp = bitarray()
+            tmp.fromstring(chr(int(c, 16)))
+            tmp = str(tmp)[10:len(str(tmp)) - 2][4:]
+            res.extend(tmp)
         return res
 
     @staticmethod
     #+----------------------------------------------
     #| Return the bits parameter in raw
     #+----------------------------------------------
-    def strBitarrayToNetzobRaw(raw):
+    def binaryToNetzobRaw(raw):
         logging.error("Not yet implemented")
         # TODO
         return raw
@@ -540,4 +500,87 @@ class TypeConvertor():
 
         return res.getvalue()
 
+#+---------------------------------------------------------------------------+
+#| Convertors by Benjamin                                                    |
+#+---------------------------------------------------------------------------+
+    @staticmethod
+    def stringB2bin(stri, theEndian='big'):
+        if stri is None:
+            return None
+        elif stri == "":
+            bina = bitarray(endian=theEndian)
+            return bina
+        else:
+            bina = bitarray(endian=theEndian)
+            bina.fromstring(stri)
+            return bina
 
+    @staticmethod
+    def binB2string(bina):
+        if bina is not None:
+            return bina.tostring()
+        else:
+            return None
+
+    @staticmethod
+    def binstring2bin(stri):
+        if stri is not None:
+            bina = bitarray(stri)
+            return bina
+        else:
+            return None
+
+    @staticmethod
+    def bin2binstring(bina):
+        if bina is not None:
+            return bina.to01()
+        else:
+            return None
+
+    @staticmethod
+    def hexstring2bin(stri):
+        """hexstring2bin:
+                From "0123456789abcdef" to bitarray('011010111000110...').
+        """
+        if stri is not None:
+        # bitarray(bin(int(stri, 16))[2:]) : remove (int) all left-sided useful '0's.*
+
+            sbin = ''
+            for char in stri:
+                # We translate half-byte by half-byte.
+                onecharbin = bin(int(char, 16))[2:]  # We translate a character into binary.
+                for i in range(4 - len(onecharbin)):
+                    sbin += '0'  # We prepend '0's to match the format: one hex char = 4 binary chars.
+                sbin += onecharbin  # We append a new character's translation.
+            return bitarray(sbin)
+        else:
+            return None
+
+    @staticmethod
+    def bin2hexstring(bina):
+        if bina is not None:
+            # str(hex(int(bina.to01(), 2))) : remove (int) all left-sided useful '0's.
+
+            sbin = bina.to01()  # We retrieve a string with the '0's and '1's of the binary.
+            stri = ''
+            for start in xrange(0, len(sbin), 4):
+                # We translate half-byte by half-byte.
+                stri += str(hex(int(sbin[start:start + 4], 2)))[2:]
+            return stri
+        else:
+            return None
+
+    @staticmethod
+    def intstring2bin(stri):
+        if stri is not None:
+            bina = bitarray(bin(int(stri))[2:])
+            return bina
+        else:
+            return None
+
+    @staticmethod
+    def bin2intstring(bina):
+        if bina is not None:
+            return str(int(bina.to01(), 2))  # Transform from a base 2 to a base 10 integer and then translate it in string.
+        else:
+            return None

@@ -128,11 +128,11 @@ class NetworkClient(AbstractChannel):
         except:
             self.log.debug("Impossible to read from the network socket")
             return None
-        result = TypeConvertor.pythonRaw2bitarray("".join(chars), "big")
+        result = TypeConvertor.string2bin("".join(chars), "big")
         self.log.debug("Read finished")
         if (len(chars) == 0):
             return result
-        self.log.debug("Received : {0}".format(TypeConvertor.bitarray2strHex(result)))
+        self.log.debug("Received : {0}".format(TypeConvertor.bin2strhex(result)))
         return result
 
     def write(self, message):
@@ -140,7 +140,7 @@ class NetworkClient(AbstractChannel):
         self.outputMessages.append(message)
 
         try:
-            self.outputFile.write(TypeConvertor.bitarray2pythonRaw(message))
+            self.outputFile.write(TypeConvertor.binB2string(message))
             self.outputFile.flush()
         except:
             self.log.warn("An error occured while trying to write on the communication channel")

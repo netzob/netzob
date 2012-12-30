@@ -67,9 +67,9 @@ class DynLenStringVariable(Variable):
         (binValue, strValue) = variable.getValue(negative, dictionary)
 
         self.log.debug("GENERATE VALUE of size : " + str(binValue))
-        nb_letter = TypeConvertor.bitarray2int(binValue)
+        nb_letter = TypeConvertor.bin2int(binValue)
         self.strVal = ''.join(random.choice(string.ascii_letters) for x in range(nb_letter))
-        self.binVal = TypeConvertor.pythonRaw2bitarray(self.strVal, 'big')
+        self.binVal = TypeConvertor.string2bin(self.strVal, 'big')
         self.log.debug("Generated value = " + self.strVal)
         self.log.debug("Generated value = " + str(self.binVal))
 
@@ -77,13 +77,13 @@ class DynLenStringVariable(Variable):
         self.log.debug("LEARN")
         variable = dictionary.getVariableByID(self.idVar)
         (binValue, strValue) = variable.getValue(False, dictionary)
-        nb_letter = TypeConvertor.bitarray2int(binValue) * 8
+        nb_letter = TypeConvertor.bin2int(binValue) * 8
         self.log.debug("nb_letter = " + str(nb_letter))
         tmp = val[indice:]
         self.log.debug("tmp size : " + str(len(tmp)))
         if (len(tmp) >= nb_letter):
             self.binVal = tmp[:nb_letter]
-            self.strVal = TypeConvertor.bitarray2pythonRaw(self.binVal)
+            self.strVal = TypeConvertor.bin2string(self.binVal)
             self.log.debug("Value learnt : " + self.strVal)
             return indice + nb_letter
 

@@ -155,14 +155,14 @@ class AbstractionLayer():
         if len(receivedData) > 0:
             now = datetime.datetime.now()
             receptionTime = now.strftime("%H:%M:%S")
-            self.log.info("Received following message : " + TypeConvertor.bitarray2strHex(receivedData))
+            self.log.info("Received following message : " + TypeConvertor.bin2strhex(receivedData))
 
             # Now we abstract the message
             symbol = self.abstract(receivedData)
 
             # We store the received messages its time and its abstract representation
-            self.inputMessages.append([receptionTime, TypeConvertor.bitarray2strHex(receivedData), symbol.getName()])
-            self.registerInputSymbol(receptionTime, TypeConvertor.bitarray2strHex(receivedData), symbol)
+            self.inputMessages.append([receptionTime, TypeConvertor.bin2strhex(receivedData), symbol.getName()])
+            self.registerInputSymbol(receptionTime, TypeConvertor.bin2strhex(receivedData), symbol)
 
             return (symbol, receivedData)
         else:
@@ -183,7 +183,7 @@ class AbstractionLayer():
         binMessage = self.specialize(symbol)
         if type(binMessage) == tuple:  # Means EmptySymbol or UnknownSymbol
             (binMessage, dummy) = binMessage
-        strMessage = TypeConvertor.bitarray2strHex(binMessage)
+        strMessage = TypeConvertor.bin2strhex(binMessage)
         self.log.info("Write str message = '" + strMessage + "'")
 
         # now we send it
@@ -203,7 +203,7 @@ class AbstractionLayer():
                 @rtype: netzob.Common.Symbol
                 @return: the symbol which content matches the message.
         """
-        self.log.debug("We abstract the received message : " + TypeConvertor.bitarray2strHex(message))
+        self.log.debug("We abstract the received message : " + TypeConvertor.bin2strhex(message))
         # we search in the vocabulary an entry which match the message
         for symbol in self.vocabulary.getSymbols():
             self.log.debug("Try to abstract message through : {0}.".format(symbol.getName()))

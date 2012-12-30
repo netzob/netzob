@@ -65,7 +65,7 @@ class VariableWritingToken(AbstractVariableProcessingToken):
         """toString:
                 Used for debug purpose.
         """
-        return "WritingToken: isOk: {0}, value: {1}".format(str(self.isOk()), TypeConvertor.bitarray2strHex(self.value))
+        return "WritingToken: isOk: {0}, value: {1}".format(str(self.isOk()), TypeConvertor.bin2strhex(self.value))
 
     def updateValue(self):
         """updateValue:

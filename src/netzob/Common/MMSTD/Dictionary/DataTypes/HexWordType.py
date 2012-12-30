@@ -77,10 +77,10 @@ class HexWordType(AbstractWordType):
         return self.str2bin(value)
 
     def str2bin(self, stri):
-        return TypeConvertor.netzobRaw2bitarray(stri)
+        return TypeConvertor.hexstring2bin(stri)
 
     def bin2str(self, bina):
-        return TypeConvertor.bitarray2NetzobRaw(bina)
+        return TypeConvertor.bin2hexstring(bina)
 
     def getBitSize(self, typeValue):
         return (len(typeValue) * 4)

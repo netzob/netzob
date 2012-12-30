@@ -126,7 +126,7 @@ class FormatFunction(EncodingFunction):
             elif self.formatType == Format.STRING:
                 encodedSplittedData.append(TypeConvertor.netzobRawToString(origNetzobRaw))
             elif self.formatType == Format.BINARY:
-                encodedSplittedData.append(TypeConvertor.netzobRawToStrBitarray(origNetzobRaw))
+                encodedSplittedData.append(TypeConvertor.netzobRawToBinary(origNetzobRaw))
             elif self.formatType == Format.IPv4:
                 encodedSplittedData.append(TypeConvertor.netzobRawToIPv4(origNetzobRaw))
             elif UnitSize.getSizeInBits(self.unitsize) < UnitSize.getSizeInBits(UnitSize.BITS8):

@@ -112,20 +112,20 @@ class InstanciatedNetworkServer(AbstractChannel):
 
         if (len(chars) == 0):
             return result
-        result = TypeConvertor.pythonRaw2bitarray(chars)
+        result = TypeConvertor.stringB2bin(chars)
 
-        self.log.debug("Received : {0}".format(TypeConvertor.bitarray2strHex(result)))
+        self.log.debug("Received : {0}".format(TypeConvertor.bin2strhex(result)))
         return result
 
     def write(self, message):
         self.log.debug("Writing to the socket")
         self.outputMessages.append(message)
         # This work only for values between 0x00 and 0x7f
-        # self.socket.send(message.tobytes())
+        # self.socket.send(message.tostring())
         if self.protocol == "UDP":
-            self.socket.sendto(TypeConvertor.bitarray2pythonRaw(message), (self.getTargetIP(), self.getTargetPort()))
+            self.socket.sendto(TypeConvertor.bin2string(message), (self.getTargetIP(), self.getTargetPort()))
         else:  # TCP
-            self.socket.send(TypeConvertor.bitarray2pythonRaw(message))
+            self.socket.send(TypeConvertor.bin2string(message))
 
         self.log.debug("Write down !")
 

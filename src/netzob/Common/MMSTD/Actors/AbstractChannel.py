@@ -120,7 +120,7 @@ class AbstractChannel():
         if binProtocol is None:
             self.log.warn("Impossible to find the memorized value of the protocol")
             return None
-        return TypeConvertor.netzobRawToString(TypeConvertor.bitarray2NetzobRaw(binProtocol))
+        return TypeConvertor.netzobRawToString(TypeConvertor.bin2hexstring(binProtocol))
 
     def getBindIP(self):
         """Returns in string the value of the bind IP retrieved from memory"""
@@ -128,7 +128,7 @@ class AbstractChannel():
         if binIP is None:
             self.log.warn("Impossible to find the memorized value of the Bind IP")
             return None
-        return TypeConvertor.netzobRawToString(TypeConvertor.bitarray2NetzobRaw(binIP))
+        return TypeConvertor.netzobRawToString(TypeConvertor.bin2hexstring(binIP))
 
     def getBindPort(self):
         """Returns in int the value of the bind Port retrieved from memory"""
@@ -136,7 +136,7 @@ class AbstractChannel():
         if binPort is None:
             self.log.warn("Impossible to find the memorized value of the Bind Port")
             return None
-        return TypeConvertor.bitarray2int(binPort)
+        return TypeConvertor.bin2int(binPort)
 
     def getTargetIP(self):
         """Returns in string the value of the target IP retrieved from memory"""
@@ -144,7 +144,7 @@ class AbstractChannel():
         if binIP is None:
             self.log.warn("Impossible to find the memorized value of the Target IP")
             return None
-        return TypeConvertor.netzobRawToString(TypeConvertor.bitarray2NetzobRaw(binIP))
+        return TypeConvertor.netzobRawToString(TypeConvertor.bin2hexstring(binIP))
 
     def getTargetPort(self):
         """Returns in int the value of the bind Port retrieved from memory"""
@@ -152,7 +152,7 @@ class AbstractChannel():
         if binPort is None:
             self.log.warn("Impossible to find the memorized value of the Target Port")
             return None
-        return TypeConvertor.bitarray2int(binPort)
+        return TypeConvertor.bin2int(binPort)
 
     def getOriginalL4Protocol(self):
         return self.originalProtocol

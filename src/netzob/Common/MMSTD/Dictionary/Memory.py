@@ -132,7 +132,7 @@ class Memory():
             if self.memory_acces_cb is not None:
                 value = variable.getCurrentValue()
                 if value is not None:
-                    value = TypeConvertor.bitarray2strHex(value)
+                    value = TypeConvertor.bin2strhex(value)
                 self.memory_acces_cb("W", variable, value)
 
     def memorize(self, variable):
@@ -146,7 +146,7 @@ class Memory():
             if self.memory_acces_cb is not None:
                 value = variable.getCurrentValue()
                 if value is not None:
-                    value = TypeConvertor.bitarray2strHex(value)
+                    value = TypeConvertor.bin2strhex(value)
                 self.memory_acces_cb("W", variable, value)
 
     def forget(self, variable):
@@ -169,7 +169,7 @@ class Memory():
             if self.memory_acces_cb is not None:
                 value = self.temporaryMemory[variable.getID()]
                 if value is not None:
-                    value = TypeConvertor.bitarray2strHex(value)
+                    value = TypeConvertor.bin2strhex(value)
                 self.memory_acces_cb("R", variable, value)
             return self.temporaryMemory[variable.getID()]
         else:

@@ -74,6 +74,6 @@ class SizeRelationType(AbstractRelationType):
         if value is not None:
             size = len(value)
             self.log.debug("Compute the size of {0} = {1}".format(value, size))
-            return TypeConvertor.int2bitarray(size)
+            return TypeConvertor.intstring2bin(str(size))
         else:
             return 0

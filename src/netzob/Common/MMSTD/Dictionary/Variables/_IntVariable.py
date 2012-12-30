@@ -60,8 +60,8 @@ class IntVariable(Variable):
         self.max = -1
         self.reset = "normal"
         if self.value is not None:
-            self.binValue = TypeConvertor.int2bitarray(self.value, self.size)
-            self.strValue = str(self.value)
+            self.binValue = TypeConvertor.int2bin(self.value, self.size)
+            self.strValue = TypeConvertor.int2string(self.value)
         else:
             self.binValue = None
             self.strValue = None
@@ -87,8 +87,8 @@ class IntVariable(Variable):
             # generate a value in int
             r = random.randint(self.min, self.max)
             self.log.debug("Generating hex of value : " + str(r))
-            self.binValue = TypeConvertor.int2bitarray(r, self.size)
-            self.strValue = str(r)
+            self.binValue = TypeConvertor.int2bin(r, self.size)
+            self.strValue = TypeConvertor.int2string(r)
 
     def learn(self, val, indice, isForced, dictionary):
         self.log.debug("Learn on " + str(indice) + " : " + str(val[indice:]))
@@ -104,7 +104,7 @@ class IntVariable(Variable):
             self.strValueBeforeLearning = self.strValue
 
             self.binValue = val[indice:indice + self.size]
-            self.strValue = str(TypeConvertor.bitarray2int(self.binValue))
+            self.strValue = str(TypeConvertor.bin2int(self.binValue))
 
             self.log.debug("learning value: " + str(self.binValue))
             self.log.debug("learning value: " + self.strValue)

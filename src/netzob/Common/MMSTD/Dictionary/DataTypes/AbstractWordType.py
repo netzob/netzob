@@ -108,10 +108,10 @@ class AbstractWordType(AbstractType):
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
     def str2bin(self, stri):
-        return TypeConvertor.pythonRaw2bitarray(stri)
+        return TypeConvertor.stringB2bin(stri)
 
     def bin2str(self, bina):
-        return TypeConvertor.bitarray2pythonRaw(bina)
+        return TypeConvertor.binB2string(bina)
 
     def getBitSize(self, typeValue):
         return (len(typeValue) * 8)
