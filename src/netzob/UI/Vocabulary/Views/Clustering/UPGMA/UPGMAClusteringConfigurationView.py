@@ -71,7 +71,8 @@ class UPGMAClusteringConfigurationView(object):
         # register all the distance available algorithms
         distancesAlgorithms = AbstractDistanceAlgorithm.getAllDistanceAlgorithms()
         for algo in distancesAlgorithms:
-            self.distanceAlgorithmListStore.append([str(algo)])
+            instanceAlgo = algo()
+            self.distanceAlgorithmListStore.append([str(instanceAlgo.getID()), instanceAlgo.getName()])
 
     def getEquivalenceThresholdValue(self):
         return self.equivalenceThresholdAdjustement.get_value()
