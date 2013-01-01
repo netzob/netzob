@@ -45,9 +45,9 @@
                       <object class="GtkLabel" id="label2">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="halign">end</property>
+                        <property name="halign">start</property>
                         <property name="hexpand">True</property>
-                        <property name="label" translatable="yes">Equivalence Threshold:</property>
+                        <property name="label" translatable="yes">Equivalence Threshold</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -102,8 +102,8 @@
                       <object class="GtkLabel" id="label1">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="halign">end</property>
-                        <property name="label" translatable="yes">Distance:</property>
+                        <property name="halign">start</property>
+                        <property name="label" translatable="yes">Distance Formula</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -131,74 +131,6 @@
                         <property name="height">1</property>
                       </packing>
                     </child>
-                    <child>
-                      <object class="GtkLabel" id="label3">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="halign">end</property>
-                        <property name="valign">start</property>
-                        <property name="label" translatable="yes">Similarity Coefficients:</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">0</property>
-                        <property name="top_attach">2</property>
-                        <property name="width">1</property>
-                        <property name="height">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkScrolledWindow" id="scrolledwindow1">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="shadow_type">in</property>
-                        <child>
-                          <object class="GtkViewport" id="viewport1">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <child>
-                              <object class="GtkTreeView" id="similarityCoefficientsTreeView">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="model">similarityCoefficientsListStore</property>
-                                <child internal-child="selection">
-                                  <object class="GtkTreeSelection" id="treeview-selection1"/>
-                                </child>
-                                <child>
-                                  <object class="GtkTreeViewColumn" id="treeviewcolumn1">
-                                    <property name="title" translatable="yes">Activate</property>
-                                    <child>
-                                      <object class="GtkCellRendererToggle" id="cellrenderertoggle1"/>
-                                    </child>
-                                  </object>
-                                </child>
-                                <child>
-                                  <object class="GtkTreeViewColumn" id="treeviewcolumn2">
-                                    <property name="title" translatable="yes">Measure</property>
-                                    <child>
-                                      <object class="GtkCellRendererText" id="cellrenderertext2"/>
-                                    </child>
-                                  </object>
-                                </child>
-                                <child>
-                                  <object class="GtkTreeViewColumn" id="treeviewcolumn3">
-                                    <property name="title" translatable="yes">Options</property>
-                                    <child>
-                                      <object class="GtkCellRendererCombo" id="cellrenderercombo1"/>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="top_attach">2</property>
-                        <property name="width">1</property>
-                        <property name="height">1</property>
-                      </packing>
-                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -207,7 +139,58 @@
                   </packing>
                 </child>
                 <child>
-                  <placeholder/>
+                  <object class="GtkScrolledWindow" id="scrolledwindow1">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="shadow_type">in</property>
+                    <child>
+                      <object class="GtkViewport" id="viewport1">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <child>
+                          <object class="GtkTreeView" id="similarityCoefficientsTreeView">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="model">similarityCoefficientsListStore</property>
+                            <property name="headers_clickable">False</property>
+                            <child internal-child="selection">
+                              <object class="GtkTreeSelection" id="treeview-selection"/>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn1">
+                                <property name="clickable">True</property>
+                                <child>
+                                  <object class="GtkCellRendererToggle" id="cellrenderertoggle1">
+                                    <signal name="toggled" handler="activateCoefficientMeasure_toggled_cb" swapped="no"/>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="active">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn2">
+                                <property name="title" translatable="yes">Similary Coefficient</property>
+                                <property name="clickable">True</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="cellrenderertext2"/>
+                                  <attributes>
+                                    <attribute name="text">2</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
                 </child>
               </object>
               <packing>
@@ -235,5 +218,14 @@
       </object>
     </child>
   </object>
-  <object class="GtkListStore" id="similarityCoefficientsListStore"/>
+  <object class="GtkListStore" id="similarityCoefficientsListStore">
+    <columns>
+      <!-- column-name activate -->
+      <column type="gboolean"/>
+      <!-- column-name similarityCoefID -->
+      <column type="gchararray"/>
+      <!-- column-name similarityCoefName -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
 </interface>

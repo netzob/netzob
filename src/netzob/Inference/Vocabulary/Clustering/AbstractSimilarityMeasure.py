@@ -30,8 +30,7 @@
 #+---------------------------------------------------------------------------+
 from locale import gettext as _
 import logging
-from netzob.Inference.Vocabulary.Clustering.AbstractClusteringAlgorithm import AbstractClusteringAlgorithm
-from netzob.UI.Vocabulary.Controllers.Clustering.UPGMA.UPGMAClusteringConfigurationController import UPGMAClusteringConfigurationController
+from abc import abstractproperty, abstractmethod
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -39,50 +38,41 @@ from netzob.UI.Vocabulary.Controllers.Clustering.UPGMA.UPGMAClusteringConfigurat
 
 
 #+---------------------------------------------------------------------------+
-#| UPGMAClustering:
+#| AbstractSimilarityMeasure
 #+---------------------------------------------------------------------------+
-class UPGMAClustering(AbstractClusteringAlgorithm):
-    """This class represents the UPGMA algorithm"""
-
-    __algorithm_name__ = "UPGMA"
-    __algorithm_description = "Hierarchical clustering"
+class AbstractSimilarityMeasure(object):
+    """This abstract class must be inherited from all the similarity measures."""
 
     @staticmethod
-    def getDefaultSimilarityMeasures():
-        return None
+    def getAllSimilarityMeasures():
+        defaults = []
+        from netzob.Inference.Vocabulary.Clustering.SimilarityMeasures.RatioOfDynamicBytes import RatioOfDynamicBytes
+        defaults.append(RatioOfDynamicBytes)
 
-    @staticmethod
-    def getDefaultEquivalenceThreshold():
-        return 50.0
+        return defaults
 
-    def __init__(self, similarityMeasures=None, equivalenceThreshold=None):
-        super(UPGMAClustering, self).__init__("upgma")
+    __measure_name = abstractproperty()
+    __measure_description = abstractproperty()
+
+    def __init__(self, id):
         self.logger = logging.getLogger(__name__)
-        if similarityMeasures is None or len(similarityMeasures) == 0:
-            similarityMeasures = UPGMAClustering.getDefaultSimilarityMeasures()
-        self.similarityMeasures = similarityMeasures
-        if equivalenceThreshold is None:
-            UPGMAClustering.getDefaultEquivalenceThreshold()
-        self.equivalenceThreshold = equivalenceThreshold
+        self.id = id
 
-    def execute(self, layers):
-        """Execute the UPGMA clustering"""
-        self.logger.info("Execute UPGMA Clustering...")
+    def getID(self):
+        return self.id
 
-        return layers
+    def getName(self):
+        """Returns the name of the measure"""
+        return self.__algorithm_name__
 
-    def getConfigurationErrorMessage(self):
-        if self.equivalenceThreshold is None:
-            return _("Equivalence Threshold is not valid")
-        return None
+    def getDescription(self):
+        """Returns the description of measure"""
+        return self.__algorithm_description
 
+    @abstractmethod
+    def execute(self):
+        self.logger.warning("This method must be defined by the inherited class")
+
+    @abstractmethod
     def getConfigurationController(self):
-        """Create the controller which allows the configuration of the algorithm"""
-        controller = UPGMAClusteringConfigurationController(self)
-        return controller
-
-    def getEquivalenceThreshold(self):
-        return self.equivalenceThreshold
-
-    def setEquivalenceThreshold(self, equivalenceThreshold):
-        self.equivalenceThreshold = equivalenceThreshold
+        self.logger.warning("This method must be defined by the inherited class")

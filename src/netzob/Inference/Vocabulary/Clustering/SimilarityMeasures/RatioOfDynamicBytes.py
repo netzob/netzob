@@ -30,8 +30,7 @@
 #+---------------------------------------------------------------------------+
 from locale import gettext as _
 import logging
-from netzob.Inference.Vocabulary.Clustering.AbstractClusteringAlgorithm import AbstractClusteringAlgorithm
-from netzob.UI.Vocabulary.Controllers.Clustering.UPGMA.UPGMAClusteringConfigurationController import UPGMAClusteringConfigurationController
+from netzob.Inference.Vocabulary.Clustering.AbstractSimilarityMeasure import AbstractSimilarityMeasure
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -39,50 +38,20 @@ from netzob.UI.Vocabulary.Controllers.Clustering.UPGMA.UPGMAClusteringConfigurat
 
 
 #+---------------------------------------------------------------------------+
-#| UPGMAClustering:
+#| ManhattanDistance:
 #+---------------------------------------------------------------------------+
-class UPGMAClustering(AbstractClusteringAlgorithm):
-    """This class represents the UPGMA algorithm"""
+class RatioOfDynamicBytes(AbstractSimilarityMeasure):
+    """This class represents the ratio of dynamic bytes over the total amounts"""
 
-    __algorithm_name__ = "UPGMA"
-    __algorithm_description = "Hierarchical clustering"
+    __algorithm_name__ = "Ratio Of Dynamic Bytes"
+    __algorithm_description = "That's the description of the similarity measure"
 
-    @staticmethod
-    def getDefaultSimilarityMeasures():
-        return None
-
-    @staticmethod
-    def getDefaultEquivalenceThreshold():
-        return 50.0
-
-    def __init__(self, similarityMeasures=None, equivalenceThreshold=None):
-        super(UPGMAClustering, self).__init__("upgma")
+    def __init__(self):
+        super(RatioOfDynamicBytes, self).__init__("manhattan")
         self.logger = logging.getLogger(__name__)
-        if similarityMeasures is None or len(similarityMeasures) == 0:
-            similarityMeasures = UPGMAClustering.getDefaultSimilarityMeasures()
-        self.similarityMeasures = similarityMeasures
-        if equivalenceThreshold is None:
-            UPGMAClustering.getDefaultEquivalenceThreshold()
-        self.equivalenceThreshold = equivalenceThreshold
 
-    def execute(self, layers):
-        """Execute the UPGMA clustering"""
-        self.logger.info("Execute UPGMA Clustering...")
+    def execute(self):
+        """Computes the measure"""
+        self.logger.info("Compute the similarity measure")
 
-        return layers
-
-    def getConfigurationErrorMessage(self):
-        if self.equivalenceThreshold is None:
-            return _("Equivalence Threshold is not valid")
-        return None
-
-    def getConfigurationController(self):
-        """Create the controller which allows the configuration of the algorithm"""
-        controller = UPGMAClusteringConfigurationController(self)
-        return controller
-
-    def getEquivalenceThreshold(self):
-        return self.equivalenceThreshold
-
-    def setEquivalenceThreshold(self, equivalenceThreshold):
-        self.equivalenceThreshold = equivalenceThreshold
+        return 10

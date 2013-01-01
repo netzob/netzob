@@ -38,6 +38,7 @@ import logging
 from gi.repository import Gtk, Gdk
 import gi
 from netzob.Inference.Vocabulary.Clustering.AbstractDistanceAlgorithm import AbstractDistanceAlgorithm
+from netzob.Inference.Vocabulary.Clustering.AbstractSimilarityMeasure import AbstractSimilarityMeasure
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
@@ -63,7 +64,8 @@ class UPGMAClusteringConfigurationView(object):
                                         "equivalenceSpinButton",
                                         "equivalenceThresholdScale",
                                         "equivalenceThresholdAdjustement",
-                                        "distanceAlgorithmListStore"
+                                        "distanceAlgorithmListStore",
+                                        "similarityCoefficientsListStore"
                                         ])
         self.controller = controller
         self.builder.connect_signals(self.controller)
@@ -73,6 +75,12 @@ class UPGMAClusteringConfigurationView(object):
         for algo in distancesAlgorithms:
             instanceAlgo = algo()
             self.distanceAlgorithmListStore.append([str(instanceAlgo.getID()), instanceAlgo.getName()])
+
+        # register all the available similarity coefficients
+        similarityCoefs = AbstractSimilarityMeasure.getAllSimilarityMeasures()
+        for similarityCoef in similarityCoefs:
+            instanceAlgo = similarityCoef()
+            self.similarityCoefficientsListStore.append([False, str(instanceAlgo.getID()), str(instanceAlgo.getName())])
 
     def getEquivalenceThresholdValue(self):
         return self.equivalenceThresholdAdjustement.get_value()

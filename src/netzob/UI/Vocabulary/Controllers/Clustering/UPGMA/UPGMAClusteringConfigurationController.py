@@ -47,14 +47,14 @@ class UPGMAClusteringConfigurationController(object):
     def __init__(self, UPGMAClustering):
         self.UPGMAClustering = UPGMAClustering
         self._view = UPGMAClusteringConfigurationView(self)
-        self.logger = logging.getLogger(__name__)
+        self.log = logging.getLogger(__name__)
 
     def equivalenceThresholdAdjustement_value_changed_cb(self, widget):
         """Callback executed when something happen in the equivalence threshold adjustment"""
         try:
             equivalenceThresholdValue = int(self._view.getEquivalenceThresholdValue())
         except Exception, e:
-            self.logger.warn("Invalid equivalence threshold ({0}))".format(e))
+            self.log.warn("Invalid equivalence threshold ({0}))".format(e))
             equivalenceThresholdValue = None
         self.UPGMAClustering.setEquivalenceThreshold(equivalenceThresholdValue)
 
@@ -67,3 +67,7 @@ class UPGMAClusteringConfigurationController(object):
 
     def destroy(self):
         self._view.destroy()
+
+    def activateCoefficientMeasure_toggled_cb(self, widget, buttonid):
+        model = self.view.similarityCoefficientsListStore
+        model[buttonid][0] = not model[buttonid][0]
