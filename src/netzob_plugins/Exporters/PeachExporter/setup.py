@@ -6,7 +6,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2012 AMOSSYS                                                |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -30,9 +30,18 @@
 #| Global Imports
 #+----------------------------------------------------------------------------
 from setuptools import setup
+import sys
+
+package = 'PCAPImporter'
+resourcesPath = "../../../../resources/"
+
+sys.path.append(resourcesPath)
+from sdist.utils import find_data_files, opj
+
+pluginsStaticResourcesPath = opj(resourcesPath, "static/netzob_plugins/", package)
 
 dependencies = [
-    'Netzob >= 0.3'
+    'Netzob >= 0.4'
 ]
 
 #+----------------------------------------------------------------------------
@@ -43,8 +52,12 @@ setup(
     version="1.0.0",
     author="Benjamin Dufour",
     author_email="contact@netzob.org",
-    packages=['PeachExporter'],
+    packages=[package],
     install_requires=dependencies,
+    data_files=find_data_files(opj("share", "netzob", "plugins", package),
+                               pluginsStaticResourcesPath,
+                               '*.glade',
+                               recursive=True),
     entry_points="""
     [netzob.plugins]
     PeachExporter = PeachExporter.PeachExporterPlugin:PeachExporterPlugin

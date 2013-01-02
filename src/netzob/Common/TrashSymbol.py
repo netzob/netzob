@@ -63,7 +63,7 @@ class TrashSymbol(AbstractSymbol):
     def __init__(self, id=None):
         AbstractSymbol.__init__(self, "TrashSymbol")
         self.id = id
-        if self.id == None:
+        if self.id is None:
             id = str(uuid.uuid4())
         self.name = "TrashSymbol"
         self.messages = []
@@ -279,9 +279,6 @@ class TrashSymbol(AbstractSymbol):
             field.setEndianess(endianess)
 
     def __str__(self):
-        return str(self.getName())
-
-    def __repr__(self):
         return str(self.getName())
 
     def __cmp__(self, other):

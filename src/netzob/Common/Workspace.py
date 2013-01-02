@@ -107,7 +107,18 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
             if function is not None:
                 workspace.addCustomTransformationFunction(function)
 
+    enableBugReporting = False
+    if xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}enable_bug_reporting") is not None and xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}enable_bug_reporting").text is not None and len(xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}enable_bug_reporting").text) > 0:
+        val = xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}enable_bug_reporting").text
+        if val == "true":
+            enableBugReporting = True
+    workspace.setEnableBugReporting(enableBugReporting)
+
     return workspace
+
+
+class WorkspaceException(Exception):
+    pass
 
 
 class Workspace(object):
@@ -135,6 +146,7 @@ class Workspace(object):
         self.lastProjectPath = lastProjectPath
         self.importedTraces = importedTraces
         self.customTransformationFunctions = []
+        self.enableBugReporting = False
 
     def getNameOfProjects(self):
         nameOfProjects = []
@@ -161,6 +173,9 @@ class Workspace(object):
         from netzob.Common.Project import Project
         project = Project.loadProject(self, self.lastProjectPath)
         return project
+
+    def setEnableBugReporting(self, enable):
+        self.enableBugReporting = enable
 
     def referenceLastProject(self, lastProject):
         self.lastProjectPath = lastProject
@@ -209,6 +224,12 @@ class Workspace(object):
         else:
             logging.warn("The project declared in {0} is already referenced in the workspace.". format(path))
 
+    def dereferenceProject(self, project_path):
+        if not project_path in self.projects_path:
+            raise WorkspaceException("The project '{0}' is not declared in the workspace".format(project_path))
+
+        self.projects_path.remove(project_path)
+
     def saveConfigFile(self):
         workspaceFile = os.path.join(self.path, Workspace.CONFIGURATION_FILENAME)
 
@@ -234,6 +255,9 @@ class Workspace(object):
 
         xmlPrototypes = etree.SubElement(xmlWorkspaceConfig, "{" + WORKSPACE_NAMESPACE + "}prototypes")
         xmlPrototypes.text = str(self.getPathOfPrototypes())
+
+        xmlPrototypes = etree.SubElement(xmlWorkspaceConfig, "{" + WORKSPACE_NAMESPACE + "}enable_bug_reporting")
+        xmlPrototypes.text = str(self.enableBugReporting).lower()
 
         xmlWorkspaceProjects = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}projects")
         for projectPath in self.getProjectsPath():

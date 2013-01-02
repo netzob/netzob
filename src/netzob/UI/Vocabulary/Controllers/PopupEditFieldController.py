@@ -35,11 +35,9 @@ import time
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from gi.repository import Gtk, Gdk, GObject
+from gi.repository import Gtk, Gdk, GObject, Pango
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject
-from gi.repository import Pango
 
 #+---------------------------------------------------------------------------+
 #| Local application imports

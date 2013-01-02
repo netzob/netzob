@@ -396,7 +396,7 @@ class VocabularyController(object):
 #            return
         fields = self.view.selectedMessageTable.treeViewHeaderGroup.getSelectedFields()
         # Split field
-        if fields != None and len(fields) > 0:
+        if fields is not None and len(fields) > 0:
             field = fields[-1]  # We take the last selected field
             controller = SplitFieldController(self, field)
             controller.run()
@@ -485,7 +485,7 @@ class VocabularyController(object):
         """Callback executed when the user clicks
         on the research toggle button"""
         if self.getCurrentProject() is None:
-            if action.get_active() == True:
+            if action.get_active():
                 NetzobErrorMessage(_("No project selected."))
             action.set_active(False)
             return
@@ -498,7 +498,7 @@ class VocabularyController(object):
         """Callback executed when the user clicks
         on the filter messages toggle button"""
         if self.getCurrentProject() is None:
-            if action.get_active() == True:
+            if action.get_active():
                 NetzobErrorMessage(_("No project selected."))
             action.set_active(False)
             return

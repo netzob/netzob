@@ -123,11 +123,25 @@ def NetzobErrorMessage(text, parent=None):
     md.destroy()
 
 
+def NetzobWarningMessage(text, parent=None):
+    """Display a GTK warning message.
+
+    @param text: text to display in the warning dialog."""
+
+    md = Gtk.MessageDialog(parent,
+                           Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                           Gtk.MessageType.WARNING,
+                           Gtk.ButtonsType.CLOSE,
+                           text)
+    md.run()
+    md.destroy()
+
+
 #+---------------------------------------------------------------------------+
 #| NetzobInfoMessage:
 #+---------------------------------------------------------------------------+
-def NetzobInfoMessage(text):
-    md = Gtk.MessageDialog(None,
+def NetzobInfoMessage(text, parent=None):
+    md = Gtk.MessageDialog(parent,
                            Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
                            Gtk.MessageType.INFO,
                            Gtk.ButtonsType.CLOSE,
@@ -139,8 +153,8 @@ def NetzobInfoMessage(text):
 #+---------------------------------------------------------------------------+
 #| NetzobQuestionMessage:
 #+---------------------------------------------------------------------------+
-def NetzobQuestionMessage(text):
-    md = Gtk.MessageDialog(None,
+def NetzobQuestionMessage(text, parent=None):
+    md = Gtk.MessageDialog(parent,
                            Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
                            Gtk.MessageType.QUESTION,
                            Gtk.ButtonsType.YES_NO,

@@ -34,7 +34,7 @@ import string
 import uuid
 import time
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.Type.TypeIdentifier import TypeIdentifier
@@ -45,29 +45,29 @@ from common.NetzobTestCase import NetzobTestCase
 
 
 class test_TypeConvertor(NetzobTestCase):
-    
+
     def generateRandomString(self, min_len, max_len):
         return ''.join((random.choice(string.letters + string.digits) for _ in xrange(random.randint(min_len, max_len))))
-    
+
     def test_serializeValues(self):
-        # Generate randoms values and retrieve their 
+        # Generate randoms values and retrieve their
         # serializations
         nb_test = 100
-        for i_test in range(0, nb_test) :       
+        for i_test in range(0, nb_test):
             values = []
-                 
+
             nb_values = random.randint(5, 200)
-            for i_value in range(0, nb_values) :
+            for i_value in range(0, nb_values):
                 # Generate the content of a random value
                 value = TypeConvertor.stringToNetzobRaw(self.generateRandomString(5, 100))
                 values.append(value)
 
             # start the serialization process
             (serializedValues, format) = TypeConvertor.serializeValues(values, 8)
-            
+
             # start the deserialisation process
             deserializedValues = TypeConvertor.deserializeValues(serializedValues, format)
-            
-            for i_value in range(0, len(values)) :
+
+            for i_value in range(0, len(values)):
                 value = values[i_value]
                 self.assertEqual(value, deserializedValues[i_value])

@@ -28,6 +28,7 @@
 from netzob.Common.Type.Endianess import Endianess
 from common.NetzobTestCase import NetzobTestCase
 
+
 class test_Endianess(NetzobTestCase):
 
     def test_BIG(self):

@@ -33,7 +33,7 @@ import bz2
 import uuid
 from lxml.etree import ElementTree
 from lxml import etree
-from base64 import *
+from base64 import b64decode
 import dateutil.parser
 import time
 

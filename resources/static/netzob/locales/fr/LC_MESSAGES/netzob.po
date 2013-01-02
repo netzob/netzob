@@ -8,11 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-04 09:59+0100\n"
-"PO-Revision-Date: 2012-12-04 10:01+0200\n"
+"POT-Creation-Date: 2012-12-28 14:30+0100\n"
+"PO-Revision-Date: 2012-12-28 15:14+0200\n"
 "Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
-"<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
+"<http://qa.netzob.org/weblate/projects/netzob/master/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -21,13 +21,13 @@ msgstr ""
 "X-Generator: Weblate 1.3\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: src/netzob/NetzobMainController.py:314
+#: src/netzob/NetzobMainController.py:327
 msgid "A project with this name exists"
 msgstr "Un projet avec ce nom existe déjà"
 
-#: src/netzob/NetzobMainController.py:329
-#: src/netzob/NetzobMainController.py:432
-#: src/netzob/NetzobMainController.py:504
+#: src/netzob/NetzobMainController.py:342
+#: src/netzob/NetzobMainController.py:360
+#: src/netzob/NetzobMainController.py:373
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:138
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:173
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:198
@@ -56,84 +56,73 @@ msgstr "Un projet avec ce nom existe déjà"
 msgid "No project selected."
 msgstr "Aucun projet sélectionné."
 
-#: src/netzob/NetzobMainController.py:378
-msgid "No file selected"
-msgstr "Aucun fichier sélectionné"
-
-#: src/netzob/NetzobMainController.py:382
-msgid "The file doesn't define a valid project."
-msgstr "Le fichier ne contient pas de projet valide."
-
-#: src/netzob/NetzobMainController.py:400
-msgid "Copy of {0}"
-msgstr "Copie de {0}"
-
-#: src/netzob/NetzobMainController.py:409
-msgid "An error occurred while copying the file"
-msgstr "Une erreur est survenue durant la copie du fichier"
-
-#: src/netzob/NetzobMainController.py:454
-#: src/netzob/NetzobMainController.py:482
-msgid "Please open a project before exporting it."
-msgstr "Veuillez ouvrir un projet avant de l'exporter."
-
-#: src/netzob/NetzobMainController.py:477
-#: src/netzob/NetzobMainController.py:554
+#: src/netzob/NetzobMainController.py:437
+#: src/netzob/UI/Common/Controllers/ProjectExportController.py:110
 msgid "No directory selected"
 msgstr "Aucun répertoire sélectionné"
 
-#: src/netzob/NetzobMainController.py:479
-msgid "No filename provided"
-msgstr "Aucun nom de fichier fourni"
-
-#: src/netzob/NetzobMainController.py:493
-msgid "An error occurred while exporting the project."
-msgstr "Une erreur est survenue durant l'export du projet."
-
-#: src/netzob/NetzobMainController.py:568
+#: src/netzob/NetzobMainController.py:451
 msgid "An error occurred while loading workspace."
 msgstr "Une erreur est survenue pendant le chargement de l'espace de travail."
 
-#: src/netzob/NetzobMainController.py:578
+#: src/netzob/NetzobMainController.py:461
 msgid "An error occurred while creating workspace."
 msgstr "Une erreur est survenue durant la création de l'espace de travail."
 
-#: src/netzob/NetzobMainView.py:105
+#: src/netzob/NetzobMainView.py:107
 msgid "Vocabulary Inference"
 msgstr "Inférence de vocabulaire"
 
-#: src/netzob/NetzobMainView.py:108
+#: src/netzob/NetzobMainView.py:110
 #: resources/static/netzob/ui/grammar/grammarActions.glade:43
 msgid "Grammar Inference"
 msgstr "Inférence de grammaire"
 
-#: src/netzob/NetzobMainView.py:111
+#: src/netzob/NetzobMainView.py:113
 msgid "Simulator"
 msgstr "Simulateur"
 
-#: src/netzob/NetzobMainView.py:273
+#: src/netzob/NetzobMainView.py:275
 msgid "XML"
 msgstr "XML"
 
-#: src/netzob/NetzobMainView.py:278
+#: src/netzob/NetzobMainView.py:280
 msgid "Human readable"
 msgstr "Lisible"
 
-#: src/netzob/NetzobMainView.py:295
+#: src/netzob/NetzobMainView.py:297
 msgid "Save the changes to the project \"{0}\" before closing?"
 msgstr ""
 "Voulez-vous sauvegarder les modifications du projet \"{0}\" avant la "
 "fermeture ?"
 
-#: src/netzob/NetzobMainView.py:303
+#: src/netzob/NetzobMainView.py:305
 msgid "If you don't save, changes will be permanently lost."
 msgstr ""
 "Vos modifications seront définitivement perdues si vous ne sauvegardez "
 "pas."
 
-#: src/netzob/NetzobMainView.py:305
+#: src/netzob/NetzobMainView.py:307
 msgid "Close _Without Saving"
 msgstr "Fermer sans sauvegarder"
+
+#: src/netzob/Common/BugReporter.py:81
+msgid "Please verify your API key."
+msgstr "Merci de vérifier votre clé d'API."
+
+#: src/netzob/Common/BugReporter.py:95
+msgid "You've been associated to the bug report {0}/issues/{1}."
+msgstr "Vous avez été associé au rapport {0}/issues/{1}."
+
+#: src/netzob/Common/BugReporter.py:98
+msgid ""
+"An error occurred while you were associated with the bug report "
+"{0}/issues/{1}."
+msgstr "Une erreur s'est produite lors de l'association au rapport {0}/issues/{1}."
+
+#: src/netzob/Common/BugReporter.py:107
+msgid "The bug report has successfully been published on {0}/issues/{1}"
+msgstr "Le rapport a été publié avec succès sur {0}/issues/{1}"
 
 #: src/netzob/Common/Field.py:319 src/netzob/Common/Field.py:329
 #: src/netzob/Import/ApiImport.py:120
@@ -158,6 +147,18 @@ msgstr "Fermer sans sauvegarder"
 msgid "Name"
 msgstr "Nom"
 
+#: src/netzob/Common/Project.py:288
+msgid "Unable to delete project: {0}"
+msgstr "Impossible de supprimer le projet : {0}"
+
+#: src/netzob/Common/Project.py:390
+msgid "Copy of {0}"
+msgstr "Copie de {0}"
+
+#: src/netzob/Common/Project.py:400
+msgid "Unable to import the project: {0}."
+msgstr "Impossible d'importer le projet : {0}."
+
 #: src/netzob/Common/ResourcesConfiguration.py:111
 msgid "New Workspace"
 msgstr "Nouvel espace de travail"
@@ -178,23 +179,23 @@ msgstr "Espace de travail courant : {0}"
 msgid "Current workspace: NO WORKSPACE COMPUTED!"
 msgstr "Espace de travail courant : aucun espace de travail crée !"
 
-#: src/netzob/Common/Workspace.py:183
+#: src/netzob/Common/Workspace.py:198
 msgid "Base64 Function"
 msgstr "Fonction Base64"
 
-#: src/netzob/Common/Workspace.py:184
+#: src/netzob/Common/Workspace.py:199
 msgid "GZip Function"
 msgstr "Fonction GZip"
 
-#: src/netzob/Common/Workspace.py:185
+#: src/netzob/Common/Workspace.py:200
 msgid "BZ2 Function"
 msgstr "Fonction BZ2"
 
-#: src/netzob/Common/Workspace.py:298
+#: src/netzob/Common/Workspace.py:322
 msgid "The workspace's path ({0}) is incorrect."
 msgstr "L'emplacement de l'espace de travail ({0}) est incorrect."
 
-#: src/netzob/Common/Workspace.py:303
+#: src/netzob/Common/Workspace.py:327
 msgid ""
 "The workspace's configuration file can't be find (No workspace path "
 "given)."
@@ -202,7 +203,7 @@ msgstr ""
 "La configuration de l'espace de travail n'a pas été trouvée "
 "(l'emplacement de l'espace de travail n'a pas été fourni)."
 
-#: src/netzob/Common/Workspace.py:306
+#: src/netzob/Common/Workspace.py:330
 msgid ""
 "The specified workspace's configuration file ({0}) is not valid: its not "
 "a file."
@@ -210,13 +211,13 @@ msgstr ""
 "L'espace de travail spécifié dans le fichier de configuration ({0}) n'est"
 " pas valide : il ne s'agit pas d'un fichier."
 
-#: src/netzob/Common/Workspace.py:309
+#: src/netzob/Common/Workspace.py:333
 msgid "The specified workspace's configuration file ({0}) is not readable."
 msgstr ""
 "Le fichier de configuration de l'espace de travail indiqué ({0}) n'est "
 "pas lisible."
 
-#: src/netzob/Common/Workspace.py:317
+#: src/netzob/Common/Workspace.py:341
 msgid "The specified workspace is not valid according the XSD definitions."
 msgstr "L'espace de travail indiqué n'est pas conforme aux définitions XSD."
 
@@ -241,7 +242,7 @@ msgstr "[{0}]"
 
 #: src/netzob/Common/Plugins/Capturers/AbstractCapturer.py:72
 #: src/netzob/Import/AbstractImporter.py:72
-#: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturer.py:227
+#: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturer.py:228
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:319
 msgid "Message ID: {0} not found in importer message list"
 msgstr "ID de message ({0}) non trouvé dans la liste d'import des messages"
@@ -290,36 +291,37 @@ msgstr "Paramètre"
 msgid "Data"
 msgstr "Données"
 
-#: src/netzob/Import/ThirdPartyImport.py:97
+#: src/netzob/Import/ThirdPartyImport.py:98
 msgid "Import data from third parties"
 msgstr "Importer des données provenant de tiers"
 
-#: src/netzob/Import/ThirdPartyImport.py:115
+#: src/netzob/Import/ThirdPartyImport.py:116
 msgid "Select data source"
 msgstr "Sélectionner la source de donnée"
 
-#: src/netzob/Import/ThirdPartyImport.py:133
+#: src/netzob/Import/ThirdPartyImport.py:134
 msgid "Select a third party"
 msgstr "Sélectionnez un tiers"
 
-#: src/netzob/Import/ThirdPartyImport.py:144
+#: src/netzob/Import/ThirdPartyImport.py:145
 msgid "Load"
 msgstr "Chargement"
 
-#: src/netzob/Import/ThirdPartyImport.py:174 src/netzob/Import/XMLImport.py:129
+#: src/netzob/Import/ThirdPartyImport.py:175 src/netzob/Import/XMLImport.py:129
 msgid "Message ID"
 msgstr "ID de message"
 
-#: src/netzob/Import/ThirdPartyImport.py:186 src/netzob/Import/XMLImport.py:149
+#: src/netzob/Import/ThirdPartyImport.py:187 src/netzob/Import/XMLImport.py:149
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:380
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:115
 msgid "Import"
 msgstr "Importer"
 
-#: src/netzob/Import/ThirdPartyImport.py:269 src/netzob/Import/XMLImport.py:199
+#: src/netzob/Import/ThirdPartyImport.py:270 src/netzob/Import/XMLImport.py:199
 msgid "Check if this trace is a session"
 msgstr "Vérifier si cette trace est une session"
 
-#: src/netzob/Import/ThirdPartyImport.py:289 src/netzob/Import/XMLImport.py:219
+#: src/netzob/Import/ThirdPartyImport.py:290 src/netzob/Import/XMLImport.py:219
 msgid "Select one or multiple file"
 msgstr "Sélectionnez un ou plusieurs fichiers"
 
@@ -372,10 +374,12 @@ msgstr "Cible :"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:85
 #: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:121
+#: resources/static/netzob/ui/simulator/createNetworkActor.glade:310
 msgid "CLIENT"
 msgstr "CLIENT"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:86
+#: resources/static/netzob/ui/simulator/createNetworkActor.glade:309
 msgid "SERVER"
 msgstr "SERVEUR"
 
@@ -388,10 +392,12 @@ msgid "Protocol:"
 msgstr "Protocole :"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:104
+#: resources/static/netzob/ui/simulator/createNetworkActor.glade:481
 msgid "TCP"
 msgstr "TCP"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:105
+#: resources/static/netzob/ui/simulator/createNetworkActor.glade:482
 msgid "UDP"
 msgstr "UDP"
 
@@ -421,7 +427,7 @@ msgstr "Lancement du processus d'inférence"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:173
 msgid "Membership queries"
-msgstr "Requètes d'appartenances"
+msgstr "Requêtes d'appartenances"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:178
 msgid "Responses"
@@ -459,18 +465,22 @@ msgid "Create"
 msgstr "Créer"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:171
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:292
 msgid "Word"
 msgstr "Mot"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:177
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:287
 msgid "Decimal Word"
 msgstr "Mot hexadécimal"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:183
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:290
 msgid "IPv4 Word"
 msgstr "Mot IPv4"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:189
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:291
 msgid "MAC Word"
 msgstr "MAC hexadécimal"
 
@@ -479,10 +489,12 @@ msgid "Hexadecimal Word"
 msgstr "Mot hexadécimal"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:201
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:286
 msgid "Binary"
 msgstr "Binaire"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:207
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:289
 msgid "Integer"
 msgstr "Entier"
 
@@ -500,6 +512,7 @@ msgid "Referenced Variable"
 msgstr "Variable référencée"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:231
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:158
 msgid "Repeat Variable"
 msgstr "Variable de répétition"
 
@@ -556,15 +569,15 @@ msgstr "Nombre maximum de bits : "
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:331
 msgid "Definition of the Hexadecimal Variable"
-msgstr "Définition de la variable héxadécimale"
+msgstr "Définition de la variable hexadécimale"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:370
 msgid "Minimum number of hex (0xf=1):"
-msgstr "Nombre minimum de caractères héxa (0xf=1) :"
+msgstr "Nombre minimum de caractères hexa (0xf=1) :"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:378
 msgid "Maximum number of hex:"
-msgstr "Nombre maximum de caractères héxa :"
+msgstr "Nombre maximum de caractères hexa :"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:416
 msgid "Definition of the Alternative"
@@ -573,6 +586,7 @@ msgstr "Définition de l'alternative"
 #: src/netzob/Inference/Vocabulary/_VariableView.py:441
 #: src/netzob/Inference/Vocabulary/_VariableView.py:498
 #: src/netzob/Inference/Vocabulary/_VariableView.py:555
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:190
 msgid "Name:"
 msgstr "Nom :"
 
@@ -647,6 +661,7 @@ msgid "Choose a workspace folder to use."
 msgstr "Choisissez un répertoire à utiliser comme espace de travail."
 
 #: src/netzob/UI/WorkspaceSelector.py:69
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:625
 msgid "Workspace: "
 msgstr "Espace de travail : "
 
@@ -669,33 +684,15 @@ msgstr ""
 "\n"
 "{1}"
 
-#: src/netzob/UI/Common/Controllers/BugReporterController.py:97
+#: src/netzob/UI/Common/Controllers/BugReporterController.py:85
 msgid "Impossible to contact the remote server."
 msgstr "Impossible de contacter le serveur distant."
 
-#: src/netzob/UI/Common/Controllers/BugReporterController.py:111
-msgid "Please verify your API key."
-msgstr "Merci de vérifier votre clé d'API."
-
-#: src/netzob/UI/Common/Controllers/BugReporterController.py:117
+#: src/netzob/UI/Common/Controllers/BugReporterController.py:115
 msgid "Close"
 msgstr "Fermer"
 
-#: src/netzob/UI/Common/Controllers/BugReporterController.py:131
-msgid "You've been associated to the bug report {0}/issues/{1}."
-msgstr "Vous avez été associé au rapport {0}/issues/{1}."
-
-#: src/netzob/UI/Common/Controllers/BugReporterController.py:134
-msgid ""
-"An error occurred while you were associated with the bug report "
-"{0}/issues/{1}."
-msgstr "Une erreur s'est produite lors de l'association au rapport {0}/issues/{1}."
-
-#: src/netzob/UI/Common/Controllers/BugReporterController.py:142
-msgid "The bug report has successfully been published on {0}/issues/{1}"
-msgstr "Le rapport a été publié avec succès sur {0}/issues/{1}"
-
-#: src/netzob/UI/Common/Controllers/BugReporterController.py:222
+#: src/netzob/UI/Common/Controllers/BugReporterController.py:174
 msgid "The server's certificate won't be verified."
 msgstr "Le certificat du serveur ne sera pas vérifié."
 
@@ -706,6 +703,52 @@ msgstr "Vérifiez ci-dessous les messages transformées"
 #: src/netzob/UI/Common/Controllers/CustomTransformationFunctionController.py:179
 msgid "Specify the name and the source code of your Function"
 msgstr "Spécifiez le nom et le code source de votre fonction"
+
+#: src/netzob/UI/Common/Controllers/ProjectExportController.py:112
+msgid "No filename provided"
+msgstr "Aucun nom de fichier fourni"
+
+#: src/netzob/UI/Common/Controllers/ProjectExportController.py:119
+msgid "A file named \"{0}\" already exists. Do you want to replace it?"
+msgstr "Un fichier nommé « {0} » existe déjà. Voulez-vous le remplacer ?"
+
+#: src/netzob/UI/Common/Controllers/ProjectExportController.py:127
+msgid ""
+"The file already exists in \"{0}\". Replacing it will overwrite its "
+"contents."
+msgstr "Le fichier existe déjà dans « {0} ». Le remplacer écrasera son contenu."
+
+#: src/netzob/UI/Common/Controllers/ProjectExportController.py:130
+msgid "Replace"
+msgstr "Remplacer"
+
+#: src/netzob/UI/Common/Controllers/ProjectExportController.py:147
+msgid "An error occurred while exporting the project."
+msgstr "Une erreur est survenue durant l'export du projet."
+
+#: src/netzob/UI/Common/Controllers/ProjectImportController.py:90
+msgid "No file selected"
+msgstr "Aucun fichier sélectionné"
+
+#: src/netzob/UI/Common/Controllers/ProjectImportController.py:94
+msgid "The file doesn't define a valid project."
+msgstr "Le fichier ne contient pas de projet valide."
+
+#: src/netzob/UI/Common/Controllers/WorkspaceConfigurationController.py:135
+msgid "The specified key is invalid!"
+msgstr "La clé spécifiée est invalide !"
+
+#: src/netzob/UI/Common/Controllers/WorkspaceConfigurationController.py:259
+msgid "Are you sure to delete the project \"{0}\" from the current workspace?"
+msgstr ""
+"Êtes-vous de vouloir supprimer le projet « {0} » de l'espace de travail "
+"courant ?"
+
+#: src/netzob/UI/Common/Controllers/WorkspaceConfigurationController.py:267
+msgid "If delete the project, your project files will be permanently lost."
+msgstr ""
+"Si vous supprimer le projet, les fichiers associés seront définitivement "
+"perdus."
 
 #: src/netzob/UI/Export/Controllers/RawExportController.py:93
 msgid "Select a symbol to see its XML definition"
@@ -719,7 +762,7 @@ msgstr "Aucune définition XML trouvée"
 #: src/netzob/UI/Export/Controllers/ScapyExportController.py:93
 #: src/netzob/UI/Export/Controllers/TextExportController.py:92
 msgid "Select a symbol to see its text definition"
-msgstr "Sélectionner un symbol pour voir sa définition textuelle"
+msgstr "Sélectionner un symbole pour voir sa définition textuelle"
 
 #: src/netzob/UI/Export/Controllers/ScapyExportController.py:100
 msgid "No scapy definition found"
@@ -895,6 +938,8 @@ msgid "Edit"
 msgstr "Éditer"
 
 #: src/netzob/UI/Grammar/Views/Menus/ContextualMenuOnStateView.py:86
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:363
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:836
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:385
 msgid "Delete"
 msgstr "Effacer"
@@ -930,11 +975,11 @@ msgstr "Seuls les protocoles de niveau 4 UDP et TCP sont supportés."
 
 #: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:141
 msgid "Specify a valid bind port (int>0)"
-msgstr "Spécifiez un port valide (int>0)"
+msgstr "Spécifiez un port valide (entier > 0)"
 
 #: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:156
 msgid "Specify a valid target port (int>0)"
-msgstr "Spécifier un port destination valide (int>0)"
+msgstr "Spécifier un port destination valide (entier > 0)"
 
 #: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:172
 msgid "A network client requires a target IP."
@@ -956,23 +1001,23 @@ msgstr "Un serveur réseau nécessite un port réseau."
 msgid "Click yes to confirm the deletion of the selected actor"
 msgstr "Cliquez sur oui pour valider la suppression de l'acteur sélectionné"
 
-#: src/netzob/UI/Vocabulary/Controllers/FindSizeFieldsController.py:83
+#: src/netzob/UI/Vocabulary/Controllers/FindSizeFieldsController.py:81
 msgid "Size Fields Identifications"
 msgstr "Identification des champs taille"
 
-#: src/netzob/UI/Vocabulary/Controllers/FindSizeFieldsController.py:92
+#: src/netzob/UI/Vocabulary/Controllers/FindSizeFieldsController.py:90
 msgid "Cancel"
 msgstr "Annuler"
 
-#: src/netzob/UI/Vocabulary/Controllers/FindSizeFieldsController.py:93
+#: src/netzob/UI/Vocabulary/Controllers/FindSizeFieldsController.py:91
 msgid "Start"
 msgstr "Démarrer"
 
-#: src/netzob/UI/Vocabulary/Controllers/FindSizeFieldsController.py:235
+#: src/netzob/UI/Vocabulary/Controllers/FindSizeFieldsController.py:233
 msgid "size field"
 msgstr "taille du champ"
 
-#: src/netzob/UI/Vocabulary/Controllers/FindSizeFieldsController.py:236
+#: src/netzob/UI/Vocabulary/Controllers/FindSizeFieldsController.py:234
 msgid "start of payload"
 msgstr "Début de la charge utile"
 
@@ -992,7 +1037,7 @@ msgstr[1] "{0} occurrences trouvées."
 msgid "{0}/{1}: {2}"
 msgstr "{0}/{1}: {2}"
 
-#: src/netzob/UI/Vocabulary/Controllers/SplitFieldController.py:90
+#: src/netzob/UI/Vocabulary/Controllers/SplitFieldController.py:88
 msgid "Can't split field with empty cell(s)."
 msgstr "Ne peux pas découper un champs sans cellule."
 
@@ -1071,15 +1116,15 @@ msgstr "Limites des champs calculées."
 msgid "No importer plugin available."
 msgstr "Aucun plugin d'import disponible."
 
-#: src/netzob/UI/Vocabulary/Controllers/Menus/ContextualMenuOnFieldController.py:184
+#: src/netzob/UI/Vocabulary/Controllers/Menus/ContextualMenuOnFieldController.py:182
 msgid "Selected field range overlaps existing layer."
 msgstr "La plage de champs sélectionnée chevauche une couche protocolaire."
 
-#: src/netzob/UI/Vocabulary/Controllers/Menus/ContextualMenuOnFieldController.py:187
+#: src/netzob/UI/Vocabulary/Controllers/Menus/ContextualMenuOnFieldController.py:185
 msgid "Layer creation"
 msgstr "Création d'une couche protocolaire"
 
-#: src/netzob/UI/Vocabulary/Controllers/Menus/ContextualMenuOnLayerController.py:166
+#: src/netzob/UI/Vocabulary/Controllers/Menus/ContextualMenuOnLayerController.py:164
 msgid "Rename the layer {0}"
 msgstr "Renommer la couche {0}"
 
@@ -1091,11 +1136,11 @@ msgstr "Partitionnement forcé du champ {0}"
 msgid "Force partitioning finished!"
 msgstr "Partitionnement forcé terminé !"
 
-#: src/netzob/UI/Vocabulary/Controllers/Partitioning/ResetPartitioningController.py:113
+#: src/netzob/UI/Vocabulary/Controllers/Partitioning/ResetPartitioningController.py:112
 msgid "Reset field {0}"
 msgstr "Réinitialiser le champ {0}"
 
-#: src/netzob/UI/Vocabulary/Controllers/Partitioning/ResetPartitioningController.py:121
+#: src/netzob/UI/Vocabulary/Controllers/Partitioning/ResetPartitioningController.py:120
 msgid "Reset finished!"
 msgstr "Réinitialisation terminé !"
 
@@ -1103,11 +1148,11 @@ msgstr "Réinitialisation terminé !"
 msgid "Simple partitioning field {0}"
 msgstr "Partitionnement simple du champ {0}"
 
-#: src/netzob/UI/Vocabulary/Controllers/Partitioning/SmoothPartitioningController.py:114
+#: src/netzob/UI/Vocabulary/Controllers/Partitioning/SmoothPartitioningController.py:113
 msgid "Smooth field {0}"
 msgstr "Lisser le champ {0}"
 
-#: src/netzob/UI/Vocabulary/Controllers/Partitioning/SmoothPartitioningController.py:122
+#: src/netzob/UI/Vocabulary/Controllers/Partitioning/SmoothPartitioningController.py:121
 msgid "Smooth finished!"
 msgstr "Lissage terminé !"
 
@@ -1273,17 +1318,17 @@ msgstr ""
 "Ne peut importer ce paquet réseau car la couche 3 ({0}) n'est pas "
 "supportée (seul le protocole IP est pour l'instant supporté)"
 
-#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:101
+#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:100
 msgid "Incorrect device"
 msgstr "Interface incorrecte"
 
-#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:107
-#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:110
+#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:106
+#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:109
 msgid "Incorrect count"
 msgstr "Valeur du compteur incorrecte"
 
-#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:115
-#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:118
+#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:114
+#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:117
 msgid "Incorrect time"
 msgstr "Valeur du temporisateur incorrecte"
 
@@ -1364,7 +1409,7 @@ msgstr "Exporter en tant que Fuzzer Peach (XML)"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:197
 msgid "Are you sure to override the file '{0}'?"
-msgstr "Êtes-vous sur de remplacer le fichire '{0}' ?"
+msgstr "Êtes-vous sur de remplacer le fichier '{0}' ?"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:215
 msgid ""
@@ -1397,6 +1442,8 @@ msgid "Mutate static fields"
 msgstr "Muter les champs statiques"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportView.py:135
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:346
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:846
 msgid "Export"
 msgstr "Exporter"
 
@@ -1499,21 +1546,22 @@ msgid "Import messages from XML file"
 msgstr "Importer des messages depuis un fichier XML"
 
 #: resources/static/netzob/ui/availablePluginsDialog.glade:73
-#: resources/static/netzob/ui/mainActions.glade:87
+#: resources/static/netzob/ui/mainActions.glade:95
 msgid "Available Plugins"
 msgstr "Plugins disponibles"
 
 #: resources/static/netzob/ui/availablePluginsDialog.glade:134
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:145
 #: resources/static/netzob/ui/vocabulary/editFieldDialog.glade:35
 msgid "Description"
 msgstr "Description"
 
 #: resources/static/netzob/ui/dialogbox.glade:63
-#: resources/static/netzob/ui/dialogbox.glade:667
-#: resources/static/netzob/ui/dialogbox.glade:838
-#: resources/static/netzob/ui/dialogbox.glade:975
-#: resources/static/netzob/ui/dialogbox.glade:1223
+#: resources/static/netzob/ui/dialogbox.glade:666
+#: resources/static/netzob/ui/dialogbox.glade:914
 #: resources/static/netzob/ui/capturer/abstractCapturerView.glade:116
+#: resources/static/netzob/ui/dialogs/exportProject.glade:40
+#: resources/static/netzob/ui/dialogs/importProject.glade:40
 msgid "Warning Message"
 msgstr "Message d'avertissement"
 
@@ -1541,8 +1589,8 @@ msgid ""
 "report.\n"
 "Thank you for your help."
 msgstr ""
-"Un rapport de bug a été généré et pourrait être très utile à l'équipe de "
-"développement,\n"
+"Un rapport de bogue a été généré et pourrait être très utile à l'équipe "
+"de développement,\n"
 "veuillez autoriser son envoi au serveur de Netzob.\n"
 "\n"
 "Seules les informations spécifiques à cette erreur seront transmises.\n"
@@ -1581,52 +1629,35 @@ msgid "Create a new symbol"
 msgstr "Créer un nouveau symbole"
 
 #: resources/static/netzob/ui/dialogbox.glade:596
-#: resources/static/netzob/ui/dialogbox.glade:1146
+#: resources/static/netzob/ui/dialogbox.glade:837
 msgid "Symbol's name:"
 msgstr "Nom du symbole :"
 
 #: resources/static/netzob/ui/dialogbox.glade:634
-msgid "Export project"
-msgstr "Exporter le projet"
-
-#: resources/static/netzob/ui/dialogbox.glade:734
-#: resources/static/netzob/ui/dialogbox.glade:764
-#: resources/static/netzob/ui/dialogbox.glade:1302
-msgid "Select a directory"
-msgstr "Sélectionnez un répertoire"
-
-#: resources/static/netzob/ui/dialogbox.glade:748
-msgid "XML Output filename"
-msgstr "Fichier de sortie XML"
-
-#: resources/static/netzob/ui/dialogbox.glade:805
-#: resources/static/netzob/ui/mainActions.glade:27
-msgid "Import a project"
-msgstr "Importer un projet"
-
-#: resources/static/netzob/ui/dialogbox.glade:906
-msgid "Project to import:"
-msgstr "Projet à importer :"
-
-#: resources/static/netzob/ui/dialogbox.glade:943
 msgid "New project"
 msgstr "Nouveau projet"
 
-#: resources/static/netzob/ui/dialogbox.glade:1043
+#: resources/static/netzob/ui/dialogbox.glade:734
 msgid "Project's name:"
 msgstr "Nom du projet :"
 
-#: resources/static/netzob/ui/dialogbox.glade:1082
+#: resources/static/netzob/ui/dialogbox.glade:773
 msgid "Rename the layer X"
 msgstr "Renommer la couche protocolaire"
 
-#: resources/static/netzob/ui/dialogbox.glade:1191
+#: resources/static/netzob/ui/dialogbox.glade:882
 msgid "Select the new workspace to switch on"
 msgstr "Sélectionnez le nouvel espace de travail sur lequel basculer"
 
-#: resources/static/netzob/ui/dialogbox.glade:1288
+#: resources/static/netzob/ui/dialogbox.glade:979
 msgid "Select a folder"
 msgstr "Sélectioner un répertoire"
+
+#: resources/static/netzob/ui/dialogbox.glade:993
+#: resources/static/netzob/ui/dialogs/exportProject.glade:108
+#: resources/static/netzob/ui/dialogs/exportProject.glade:138
+msgid "Select a directory"
+msgstr "Sélectionnez un répertoire"
 
 #: resources/static/netzob/ui/mainActions.glade:7
 msgid "New Project"
@@ -1648,49 +1679,77 @@ msgstr "Enregistrer le projet courant"
 msgid "Import Project"
 msgstr "Importer un projet"
 
+#: resources/static/netzob/ui/mainActions.glade:27
+#: resources/static/netzob/ui/dialogs/importProject.glade:7
+msgid "Import a project"
+msgstr "Importer un projet"
+
 #: resources/static/netzob/ui/mainActions.glade:33
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:845
 msgid "Export Project"
 msgstr "Exporter le projet"
 
 #: resources/static/netzob/ui/mainActions.glade:34
-msgid "Save current project"
-msgstr "Enregistrer le projet courant"
+msgid "Export current project"
+msgstr "Exporter le projet courant"
 
 #: resources/static/netzob/ui/mainActions.glade:41
+msgid "Configure Current Workspace"
+msgstr "Configurer l'espace de travail courant"
+
+#: resources/static/netzob/ui/mainActions.glade:42
+msgid "Configure the current workspace"
+msgstr "Configurer l'espace de travail courant"
+
+#: resources/static/netzob/ui/mainActions.glade:49
 msgid "Switch Workspace"
 msgstr "Changer d'espace de travail"
 
-#: resources/static/netzob/ui/mainActions.glade:42
+#: resources/static/netzob/ui/mainActions.glade:50
 msgid "Choose a new working directory"
 msgstr "Sélectionner un nouveau répertoire de travail"
 
-#: resources/static/netzob/ui/mainActions.glade:49
+#: resources/static/netzob/ui/mainActions.glade:57
 msgid "Quit"
 msgstr "Quitter"
 
-#: resources/static/netzob/ui/mainActions.glade:57
+#: resources/static/netzob/ui/mainActions.glade:65
 msgid "About Netzob"
 msgstr "À propos de Netzob"
 
-#: resources/static/netzob/ui/mainActions.glade:64
+#: resources/static/netzob/ui/mainActions.glade:72
 msgid "File"
 msgstr "Fichier"
 
-#: resources/static/netzob/ui/mainActions.glade:69
+#: resources/static/netzob/ui/mainActions.glade:77
 msgid "View"
 msgstr "Vue"
 
-#: resources/static/netzob/ui/mainActions.glade:74
+#: resources/static/netzob/ui/mainActions.glade:82
 msgid "Help"
 msgstr "Aide"
 
-#: resources/static/netzob/ui/mainActions.glade:79
+#: resources/static/netzob/ui/mainActions.glade:87
 msgid "Open Project From Workspace"
 msgstr "Ouvrir un projet de l'espace de travail"
 
-#: resources/static/netzob/ui/mainActions.glade:80
+#: resources/static/netzob/ui/mainActions.glade:88
 msgid "Open a project already into the workspace"
 msgstr "Ouvrir un projet déjà présent dans le répertoire de travail"
+
+#: resources/static/netzob/ui/mainActions.glade:102
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:32
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:436
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:828
+msgid "Project Properties"
+msgstr "Propriétés du projet"
+
+#: resources/static/netzob/ui/mainActions.glade:103
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:312
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:829
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:457
+msgid "Properties"
+msgstr "Propriétés"
 
 #: resources/static/netzob/ui/mainWindow.glade:16
 msgid "Netzob - inference communication protocol"
@@ -1699,6 +1758,188 @@ msgstr "Netzob - Inférence de protocole de communication"
 #: resources/static/netzob/ui/mainWindow.glade:39
 msgid "Switch perspective"
 msgstr "Changer de vue"
+
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:93
+msgid "<b>Project Basic Properties</b>"
+msgstr "<b>Propriétés de base du projet</b>"
+
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:118
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:485
+msgid "Name: "
+msgstr "Nom : "
+
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:150
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:499
+msgid "Description: "
+msgstr "Description : "
+
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:203
+msgid "<b>Default Vocabulary Properties</b>"
+msgstr "<b>Propriétés du vocabulaire par défaut</b>"
+
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:234
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:729
+msgid "Format: "
+msgstr "Format : "
+
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:248
+msgid "Unit Size: "
+msgstr "Taille de l'unité : "
+
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:262
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:757
+msgid "Sign: "
+msgstr "Signe : "
+
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:276
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:771
+msgid "Endianess: "
+msgstr "Boutisme : "
+
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:378
+msgid "Apply To All Symbols"
+msgstr "Appliquer à tous les symboles"
+
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:397
+msgid ""
+"<i><b>Caution</b>: By clicking this button, you will override all symbols"
+" and fields settings.</i>"
+msgstr ""
+"<i><b>Attention</b> : en cliquant sur ce bouton, tous les paramètres des "
+"symboles et des champs vont être remplacés.</i>"
+
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:458
+msgid "<b>Basic Properties</b>"
+msgstr "<b>Propriétés de base</b>"
+
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:541
+msgid "Creation Date: "
+msgstr "Date de création : "
+
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:555
+msgid "Number of symbols: "
+msgstr "Nombre de symboles : "
+
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:569
+msgid "Number of messages: "
+msgstr "Nombre de messages : "
+
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:639
+msgid "Number of fields: "
+msgstr "Nombre de champs : "
+
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:702
+msgid "<b>Vocabulary Properties</b>"
+msgstr "<b>Propriétés de vocabulaire</b>"
+
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:743
+msgid "Unit size: "
+msgstr "Taille de l'unité : "
+
+#: resources/static/netzob/ui/projectPropertiesDialog.glade:861
+msgid "Details"
+msgstr "Détails"
+
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:14
+msgid "All Messages (<i>debug</i>)"
+msgstr "Tous les messages (<i>debug</i>)"
+
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:18
+msgid "Warning Messages (<i>normal</i>)"
+msgstr "Messages d'avertissement (<i>normal</i>)"
+
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:22
+msgid "Fatal Errors Only"
+msgstr "Erreurs critiques uniquement"
+
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:39
+msgid "Workspace Configuration"
+msgstr "Configuration de l'espace de travail"
+
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:96
+msgid "Defined projects:"
+msgstr "Projets définis : "
+
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:134
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:521
+msgid "Project"
+msgstr "Projet"
+
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:204
+msgid "Creation Date:"
+msgstr "Date de création : "
+
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:247
+msgid "Number of symbols:"
+msgstr "Nombre de symboles : "
+
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:260
+msgid "Number of messages:"
+msgstr "Nombre de messages : "
+
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:329
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:853
+msgid "Duplicate"
+msgstr "Dupliquer"
+
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:423
+msgid "Projects"
+msgstr "Projets"
+
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:446
+msgid "<b>Logging</b>"
+msgstr "<b>Journalisation</b>"
+
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:474
+msgid "Logging level:"
+msgstr "Niveau de journalisation : "
+
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:534
+msgid "<b>Bug Reporting</b>"
+msgstr "<b>Remontée de bogues</b>"
+
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:560
+msgid "Enable bug reporting"
+msgstr "Activer la remontée de bogues"
+
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:597
+msgid "API key:"
+msgstr "Clé d'API : "
+
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:632
+msgid "Test Key"
+msgstr "Tester la clé"
+
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:667
+msgid ""
+"Please visit <a "
+"href=\"https://dev.netzob.org/projects/netzob/wiki/How_to_get_an_API_key\">this"
+" page</a> to in order to get your API key."
+msgstr ""
+"Veuillez visiter <a "
+"href=\"https://dev.netzob.org/projects/netzob/wiki/How_to_get_an_API_key\">cette"
+" page</a> pour afin d'obtenir votre clé API."
+
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:701
+msgid "Advanced"
+msgstr "Avancé"
+
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:724
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:852
+msgid "Duplicate Project"
+msgstr "Dupliquer le projet"
+
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:788
+msgid "<b>Please choose a name for the new project</b>"
+msgstr "<b>Merci de choisir un nom pour le nouveau projet</b>"
+
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:835
+msgid "Delete Project"
+msgstr "Supprimer le projet"
+
+#: resources/static/netzob/ui/workspaceConfigurationDialog.glade:837
+msgid "Delete the specified project"
+msgstr "Supprimer le projet spécifié"
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:65
 msgid "Mutable"
@@ -1712,6 +1953,31 @@ msgstr "Mémorisable"
 msgid "Variable Type"
 msgstr "Type de la variable"
 
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:155
+#, fuzzy
+msgid "Data Variable"
+msgstr "Éditer la variable"
+
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:156
+#, fuzzy
+msgid "Aggregate Variable"
+msgstr "Créer une variable par défaut"
+
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:157
+#, fuzzy
+msgid "Alternate Variable"
+msgstr "Variable de répétition"
+
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:159
+#, fuzzy
+msgid "Direct Relation Variable"
+msgstr "Création d'une variable"
+
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:160
+#, fuzzy
+msgid "Computed Relation Variable"
+msgstr "Création d'une variable"
+
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:173
 #: resources/static/netzob/ui/simulator/simulatorView.glade:300
 #: resources/static/netzob/ui/vocabulary/environmentDependenciesSearcherView.glade:153
@@ -1721,9 +1987,18 @@ msgstr "Type de la variable"
 msgid "Value"
 msgstr "Valeur"
 
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:214
+#, fuzzy
+msgid "Size Relation"
+msgstr "Création d'une couche protocolaire"
+
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:228
 msgid "Pointed ID"
 msgstr "ID pointé"
+
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:288
+msgid "Hex Word"
+msgstr ""
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:317
 msgid "Maximum"
@@ -1794,24 +2069,36 @@ msgid "Selected Packets:"
 msgstr "Paquets sélectionnés : "
 
 #: resources/static/netzob/ui/capturer/confirmImportMessagesDialog.glade:117
-#: resources/static/netzob/ui/import/confirmImportMessagesDialog.glade:117
+#: resources/static/netzob/ui/import/confirmImportMessagesDialog.glade:119
 msgid "Import messages in project"
 msgstr "Import de messages dans le projet"
 
 #: resources/static/netzob/ui/capturer/confirmImportMessagesDialog.glade:157
-#: resources/static/netzob/ui/import/confirmImportMessagesDialog.glade:157
+#: resources/static/netzob/ui/import/confirmImportMessagesDialog.glade:159
 msgid "Name of created symbol"
 msgstr "Nom du symbole crée"
 
 #: resources/static/netzob/ui/capturer/confirmImportMessagesDialog.glade:168
-#: resources/static/netzob/ui/import/confirmImportMessagesDialog.glade:168
+#: resources/static/netzob/ui/import/confirmImportMessagesDialog.glade:170
 msgid "Remove duplicated messages (payload)"
 msgstr "Supprimer les messages en doublon"
 
 #: resources/static/netzob/ui/capturer/confirmImportMessagesDialog.glade:187
-#: resources/static/netzob/ui/import/confirmImportMessagesDialog.glade:187
+#: resources/static/netzob/ui/import/confirmImportMessagesDialog.glade:189
 msgid "Keep properties of duplicated messages"
 msgstr "Conserver les propriétés des messages dupliqués"
+
+#: resources/static/netzob/ui/dialogs/exportProject.glade:7
+msgid "Export project"
+msgstr "Exporter le projet"
+
+#: resources/static/netzob/ui/dialogs/exportProject.glade:122
+msgid "XML Output filename"
+msgstr "Fichier de sortie XML"
+
+#: resources/static/netzob/ui/dialogs/importProject.glade:110
+msgid "Project to import:"
+msgstr "Projet à importer :"
 
 #: resources/static/netzob/ui/grammar/DeleteStateDialog.glade:7
 #: resources/static/netzob/ui/grammar/DeleteStateDialog.glade:86
@@ -1966,7 +2253,7 @@ msgstr "Créer une transition semi-stochastique"
 
 #: resources/static/netzob/ui/grammar/grammarActions.glade:49
 msgid "Grammar Edition"
-msgstr "Edition de la grammaire"
+msgstr "Édition de la grammaire"
 
 #: resources/static/netzob/ui/grammar/grammarActions.glade:55
 msgid "Create OpenChannel Transition"
@@ -2000,7 +2287,7 @@ msgstr "Paquets sélectionnés : "
 msgid "Selected files:"
 msgstr "Fichiers sélectionnés : "
 
-#: resources/static/netzob/ui/import/importFileChooserDialog.glade:74
+#: resources/static/netzob/ui/import/importFileChooserDialog.glade:76
 msgid "Import as:"
 msgstr "Importer comme : "
 
@@ -2487,14 +2774,6 @@ msgstr "Ajouter une nouvelle vue pour afficher des messages"
 msgid "New MessageList"
 msgstr "Nouvelle liste de messages"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:457
-msgid "Properties"
-msgstr "Propriétés"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:521
-msgid "Project"
-msgstr "Projet"
-
 #: resources/static/netzob/ui/vocabulary/partitioning/forcePartitioning.glade:23
 msgid "Delimiter:"
 msgstr "Délimiteur : "
@@ -2603,6 +2882,22 @@ msgstr "Résultat suivant"
 #: resources/static/netzob/ui/vocabulary/search/searchBar.glade:97
 msgid "|  Format:"
 msgstr "| Format : "
+
+#: resources/static/netzob/ui/vocabulary/search/searchBar.glade:113
+msgid "decimal"
+msgstr "décimal"
+
+#: resources/static/netzob/ui/vocabulary/search/searchBar.glade:114
+msgid "hexa"
+msgstr "hexadécimal"
+
+#: resources/static/netzob/ui/vocabulary/search/searchBar.glade:115
+msgid "string"
+msgstr "chaine"
+
+#: resources/static/netzob/ui/vocabulary/search/searchBar.glade:116
+msgid "ipv4"
+msgstr "ipv4"
 
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:7
 msgid "Search properties"
@@ -2752,3 +3047,15 @@ msgstr "10"
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:228
 msgid "Time limit:"
 msgstr "Durée de capture : "
+
+#~ msgid "Name of the new traces?"
+#~ msgstr "Nom de la nouvelle trace ?"
+
+#~ msgid "Please choose a name for the new traces."
+#~ msgstr "Merci de choisir un nom pour les nouvelles traces."
+
+#~ msgid "New Name:"
+#~ msgstr "Nouveau nom : "
+
+#~ msgid "Create a copy of the trace sets"
+#~ msgstr "Créer une copie du jeu de traces"

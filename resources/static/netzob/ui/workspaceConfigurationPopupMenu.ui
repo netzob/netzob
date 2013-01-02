@@ -1,0 +1,8 @@
+<ui>
+  <popup name='PopupMenu'>
+    <menuitem action='configureProject' />
+    <menuitem action='exportProject' />
+    <menuitem action='duplicateProject' />
+    <menuitem action='deleteProject' />
+  </popup>
+</ui>

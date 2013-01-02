@@ -37,10 +37,9 @@ import time
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk, GObject
 import gi
+gi.require_version('Gtk', '3.0')
 from netzob.Common.Threads.Job import Job
 from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask, TaskError
-gi.require_version('Gtk', '3.0')
-from gi.repository import GObject
 
 #+---------------------------------------------------------------------------+
 #| Local application imports

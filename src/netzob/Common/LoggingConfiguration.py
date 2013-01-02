@@ -31,6 +31,7 @@
 from gettext import gettext as _
 import logging.config
 import os
+import ConfigParser
 
 #+----------------------------------------------
 #| Related third party imports
@@ -41,22 +42,36 @@ import os
 #+----------------------------------------------
 
 
-#+----------------------------------------------
-#| LoggingConfiguration:
-#|    Configure the logging layer of Netzob
-#+----------------------------------------------
-class LoggingConfiguration(object):
+def singleton(cls, *args, **kwargs):
+    """This decorator allows to implement some kind of Singleton
+    design pattern. In our case, we only allow one instanciation."""
 
-    @staticmethod
+    instances = {}
+
+    def getinstance(*args, **kwargs):
+        if cls not in instances:
+            instances[cls] = cls(*args, **kwargs)
+        elif len(args) == 0:
+            return instances[cls]
+        else:
+            raise Exception("{0} is already initialized".format(cls.__name__))
+
+    return getinstance
+
+
+@singleton
+class LoggingConfiguration(object):
+    """Configure the logging layer of Netzob"""
+
     #+----------------------------------------------
     #| initializeLogging:
     #+----------------------------------------------
-    def initializeLogging(workspace, opts):
+    def __init__(self, workspace, opts):
         # First we extract the normal logging config file
-        loggingFilePath = os.path.join(workspace.getPath(), workspace.getPathOfLogging())
-        if (loggingFilePath != "" and os.path.isfile(loggingFilePath)):
-            logging.debug("Logging config file: " + loggingFilePath)
-            logging.config.fileConfig(loggingFilePath)
+        self.loggingFilePath = os.path.join(workspace.getPath(), workspace.getPathOfLogging())
+        if (self.loggingFilePath != "" and os.path.isfile(self.loggingFilePath)):
+            logging.debug("Logging config file: {0}".format(self.loggingFilePath))
+            logging.config.fileConfig(self.loggingFilePath)
         else:
             logging.info("No logging config file found, create a default one.")
             # Make a global logging object.
@@ -71,3 +86,31 @@ class LoggingConfiguration(object):
         if opts.debugLevel in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
             logger = logging.getLogger()
             logger.setLevel(opts.debugLevel)
+
+        self._parseConfigFile()
+
+    def _parseConfigFile(self):
+        self.config = ConfigParser.ConfigParser()
+        self.config.read([self.loggingFilePath])
+
+    def _writeConfigFile(self):
+        self.config.write(open(self.loggingFilePath, 'w'))
+
+    def getLoggingLevel(self):
+        """Get the logging level defined in the main configuration
+        file."""
+
+        return logging.getLevelName(logging.getLogger("").level)
+
+    def setLoggingLevel(self, level):
+        """Modify the logging level defined in the main configuration
+        file."""
+
+        logger = logging.getLogger("")
+
+        if level in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
+            logging.info("Updating logging level from {0} to {1}".format(logging.getLevelName(logger.level),
+                                                                         level))
+            self.config.set("logger_root", "level", level)
+            self._writeConfigFile()
+            logging.getLogger("").setLevel(level)

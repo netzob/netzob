@@ -78,7 +78,7 @@ class ReferencedVariable(Variable):
                 Get the current value of the variable it can be the original value if its set and not forget or the value in memory if it has one else its NONE.
         """
         var = vocabulary.getVariableByID(self.varID)
-        if var == None:
+        if var is None:
             self.log.error("Impossible to retrieve the referenced variable which's ID = " + self.varID)
             return None
         return var.getValue(negative, vocabulary, memory)
@@ -88,7 +88,7 @@ class ReferencedVariable(Variable):
                 Get the current value of the variable it can be the original value if its set and not forget or the value in memory if it has one or it generates one and save its value in memory.
         """
         var = vocabulary.getVariableByID(self.varID)
-        if var == None:
+        if var is None:
             self.log.error("Impossible to retrieve the referenced variable which's ID = " + self.varID)
             return None
         return var.getValueToSend(negative, vocabulary, memory)
@@ -111,7 +111,7 @@ class ReferencedVariable(Variable):
                 Return the number of letters that matches, -1 if it does not match.
         """
         var = vocabulary.getVariableByID(self.varID)
-        if var == None:
+        if var is None:
             self.log.error("Impossible to retrieve the referenced variable which's ID = " + self.varID)
             return None
         return var.compare(value, indice, negative, vocabulary, memory)
@@ -123,7 +123,7 @@ class ReferencedVariable(Variable):
                 Return the number of letters that matches, -1 if it does not match.
         """
         var = vocabulary.getVariableByID(self.varID)
-        if var == None:
+        if var is None:
             self.log.error("Impossible to retrieve the referenced variable which's ID = " + self.varID)
             return None
         self.log.info("Compare with a referenced variable")
@@ -134,7 +134,7 @@ class ReferencedVariable(Variable):
                 Restore learned value from the last execution of the variable.
         """
         var = vocabulary.getVariableByID(self.varID)
-        if var == None:
+        if var is None:
             self.log.error("Impossible to retrieve the referenced variable which's ID = " + self.varID)
             return None
         self.log.info("Compare with a referenced variable")

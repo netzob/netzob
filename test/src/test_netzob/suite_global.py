@@ -26,7 +26,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import unittest
@@ -39,8 +39,6 @@ from test_netzob import suite_Common
 from test_netzob import suite_Alignment
 #from test_netzob import suite_Import
 from common.xmlrunner import XMLTestRunner
-#from test_netzob import test_NetzobGui
-
 
 
 def getSuite():
@@ -50,23 +48,29 @@ def getSuite():
     modulesOfTests = []
     modulesOfSuites = [suite_Common, suite_Alignment]
 
-    # Add individual tests    
-    for module in modulesOfTests :
+    try:
+        from test_netzob import suite_UI
+        modulesOfSuites.append(suite_UI)
+    except ImportError, e:
+        print "As python-ldtp is not installed UI tests can't be done!"
+
+    # Add individual tests
+    for module in modulesOfTests:
         globalSuite.addTests(unittest.TestLoader().loadTestsFromModule(module))
 
     # Add suites
-    for module in modulesOfSuites :
+    for module in modulesOfSuites:
         globalSuite.addTests(module.getSuite())
 
     return globalSuite
 
 
-if __name__ == "__main__":    
+if __name__ == "__main__":
     # Output is given through argument.
-    # If no argument : output to stdout 
+    # If no argument: output to stdout
     outputStdout = True
 
-    if (len(sys.argv) == 2) :
+    if (len(sys.argv) == 2):
         outputStdout = False
         reportFile = sys.argv[1]
 
@@ -74,10 +78,10 @@ if __name__ == "__main__":
     currentTestSuite = getSuite()
 
     # We execute the test suite
-    if (outputStdout == True) :
+    if outputStdout:
         runner = unittest.TextTestRunner()
         testResult = runner.run(currentTestSuite)
-    else :
+    else:
         File = open(reportFile, "w")
         reporter = XMLTestRunner(File)
         reporter.run(currentTestSuite)

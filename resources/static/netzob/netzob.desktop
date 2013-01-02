@@ -9,4 +9,4 @@ Exec=netzob
 Terminal=false
 # Categorie entry according to version 1.0 of
 # http://www.freedesktop.org/wiki/Specifications/menu-spec
-Categories=GNOME;Network;
+Categories=GTK;GNOME;Network;

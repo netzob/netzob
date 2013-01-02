@@ -117,7 +117,7 @@ class AbstractChannel():
     def getProtocol(self):
         """Return in string the value of the protocol retrieved from the current memory"""
         binProtocol = self.memory.recall(self.varL4Protocol)
-        if binProtocol == None:
+        if binProtocol is None:
             self.log.warn("Impossible to find the memorized value of the protocol")
             return None
         return TypeConvertor.netzobRawToString(TypeConvertor.bin2hexstring(binProtocol))
@@ -125,7 +125,7 @@ class AbstractChannel():
     def getBindIP(self):
         """Returns in string the value of the bind IP retrieved from memory"""
         binIP = self.memory.recall(self.varBindIP)
-        if binIP == None:
+        if binIP is None:
             self.log.warn("Impossible to find the memorized value of the Bind IP")
             return None
         return TypeConvertor.netzobRawToString(TypeConvertor.bin2hexstring(binIP))
@@ -133,7 +133,7 @@ class AbstractChannel():
     def getBindPort(self):
         """Returns in int the value of the bind Port retrieved from memory"""
         binPort = self.memory.recall(self.varBindPort)
-        if binPort == None:
+        if binPort is None:
             self.log.warn("Impossible to find the memorized value of the Bind Port")
             return None
         return TypeConvertor.bin2int(binPort)
@@ -141,7 +141,7 @@ class AbstractChannel():
     def getTargetIP(self):
         """Returns in string the value of the target IP retrieved from memory"""
         binIP = self.memory.recall(self.varTargetIP)
-        if binIP == None:
+        if binIP is None:
             self.log.warn("Impossible to find the memorized value of the Target IP")
             return None
         return TypeConvertor.netzobRawToString(TypeConvertor.bin2hexstring(binIP))
@@ -149,7 +149,7 @@ class AbstractChannel():
     def getTargetPort(self):
         """Returns in int the value of the bind Port retrieved from memory"""
         binPort = self.memory.recall(self.varTargetPort)
-        if binPort == None:
+        if binPort is None:
             self.log.warn("Impossible to find the memorized value of the Target Port")
             return None
         return TypeConvertor.bin2int(binPort)

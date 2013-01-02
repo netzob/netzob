@@ -134,7 +134,7 @@ moduleLibRegex = Extension('netzob._libRegex',
 #+----------------------------------------------------------------------------
 dependencies = [
     'babel',
-    'bitarray',
+    'bitarray >= 0.4',
     'lxml',
     'httplib2',
 ]

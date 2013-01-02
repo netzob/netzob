@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import unittest
@@ -37,7 +37,7 @@ from netzob.Common.ExecutionContext import ExecutionContext
 
 
 class test_ExecutionContext(unittest.TestCase):
-  
+
     def test_getCurrentProcesses(self):
         current = ExecutionContext.getCurrentProcesses()
         self.assertGreater(len(current), 5)

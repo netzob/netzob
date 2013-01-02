@@ -112,9 +112,6 @@ class Field(object):
     def __str__(self):
         return str(self.getName())
 
-    def __repr__(self):
-        return str(self.getName())
-
     ## Functions
     def addVisualizationFunction(self, function):
         self.visualizationFunctions.append(function)
@@ -640,7 +637,7 @@ class Field(object):
         logging.debug("Concat field from {0} to {1}".format(self.getName(), lastField.getName()))
 
         # If no last field is provided we stop here
-        if lastField == None:
+        if lastField is None:
             msg = "Last field is not provided."
             return (False, msg)
 
@@ -921,7 +918,7 @@ class Field(object):
         else:
             self.fields.pop(index)
 
-    def removeEmptyFields(self, cb_status):
+    def removeEmptyFields(self, cb_status=None):
         """
         removeEmptyFields: we look for useless fields (i.e. fields
         that produces only empty cells) and remove them.
@@ -1340,7 +1337,7 @@ class Field(object):
                 xmlInnerFields = xmlRoot.find("{" + namespace + "}fields")
                 for xmlInnerField in xmlInnerFields.findall("{" + namespace + "}field"):
                     innerField = Field.loadFromXML(xmlInnerField, namespace, version, symbol)
-                    if innerField != None:
+                    if innerField is not None:
                         field.addField(innerField)
 
             return field

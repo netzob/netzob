@@ -72,7 +72,7 @@ class Or(Fixup):
                 @return: the new value of the father field.
         """
         values = string.split(self.values, self.mainSep)
-        if values == None:
+        if values is None:
             raise Exception("Error: Or was unable to locate its values.")
         rvalue = ""
         ran = random.randint(0, len(values) - 1)
@@ -115,9 +115,9 @@ class RandomField(Fixup):
         """
         minlen = self.minlen
         maxlen = self.maxlen
-        if minlen == None:
+        if minlen is None:
             raise Exception("Error: RandomField was unable to locate minlen.")
-        if maxlen == None:
+        if maxlen is None:
             raise Exception("Error: RandomField was unable to locate maxlen.")
         if int(minlen) > int(maxlen):
             raise Exception("Error: minlen ({0}) > maxlen ({1}).".format(minlen, maxlen))
@@ -184,8 +184,8 @@ def PeachTranslate(value):
         valueLen = len(value)
         for i in range(len(regsHex)):
             match = regsHex[i].search(value)
-            if match != None:
-                while match != None:
+            if match is not None:
+                while match is not None:
                     ret += chr(int(match.group(2), 16))
                     value = regsHex[i].sub('', value)
                     match = regsHex[i].search(value)

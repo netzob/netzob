@@ -121,7 +121,7 @@ class CreateCloseChannelTransitionController(object):
 
         # Transition's name
         transitionName = self._view.nameEntry.get_text()
-        if transitionName == None or len(transitionName) == 0:
+        if transitionName is None or len(transitionName) == 0:
             errorMessage = _("Give a name to the transition")
             self.displayErrorMessage(errorMessage)
             return

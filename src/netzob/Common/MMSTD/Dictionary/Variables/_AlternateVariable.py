@@ -55,7 +55,7 @@ class AlternateVariable(Variable):
         Variable.__init__(self, "Alternate", idVar, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.AlternativeVariable.py')
         self.children = []
-        if children != None:
+        if children is not None:
             self.children.extend(children)
 
 #+---------------------------------------------------------------------------+
@@ -67,7 +67,7 @@ class AlternateVariable(Variable):
         """
         self.log.info("getValue")
         for var in self.children:
-            if var.getValue(negative, vocabulary, memory) != None:
+            if var.getValue(negative, vocabulary, memory) is not None:
                 return var.getValue(negative, vocabulary, memory)
         return None
 #        validVars = []
@@ -86,7 +86,7 @@ class AlternateVariable(Variable):
         picked = self.children[idRandom]
         return picked.getValueToSend(negative, vocabulary, memory)
 #        for var in self.children:
-#            if var.getValue(negative, vocabulary, memory) != None:
+#            if var.getValue(negative, vocabulary, memory) is not None:
 #                return var.getValueToSend(negative, vocabulary, memory)
 #        return None
 
@@ -117,7 +117,7 @@ class AlternateVariable(Variable):
         for var in self.children:
             self.log.info("Indice = " + str(saved) + " : " + var.getDescription(negative, vocabulary, memory))
             result = var.compare(value, saved, negative, vocabulary, memory)
-            if result != -1 and result != None:
+            if result != -1 and result is not None:
                 self.log.info("Compare successful")
                 return result
         return -1
@@ -132,7 +132,7 @@ class AlternateVariable(Variable):
         for var in self.children:
             self.log.info("Indice = " + str(saved) + " : " + var.getDescription(negative, vocabulary, memory))
             result = var.learn(value, saved, negative, vocabulary, memory)
-            if result != -1 and result != None:
+            if result != -1 and result is not None:
                 self.log.info("Compare successful")
                 return result
             else:

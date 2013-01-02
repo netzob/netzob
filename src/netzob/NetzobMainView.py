@@ -89,9 +89,11 @@ class NetzobMainView(object):
         if signal == SignalsManager.SIG_PROJECT_OPEN:
             self.mainActionGroup.get_action('saveProject').set_sensitive(True)
             self.mainActionGroup.get_action('exportProject').set_sensitive(True)
+            self.mainActionGroup.get_action('projectProperties').set_sensitive(True)
         elif signal == SignalsManager.SIG_PROJECT_CLOSE:
             self.mainActionGroup.get_action('saveProject').set_sensitive(False)
             self.mainActionGroup.get_action('exportProject').set_sensitive(False)
+            self.mainActionGroup.get_action('projectProperties').set_sensitive(False)
 
     def _getObjects(self, builder, objectsList):
         for object in objectsList:
@@ -195,8 +197,8 @@ class NetzobMainView(object):
         self.currentPerspectivePanel = perspective.view.getPanel()
         self.setCentralPanel(self.currentPerspectivePanel)
         # Add action group to UI Manager
-        self.currentPerpectiveActionGroup = perspective.view.getActionGroup()
-        self.uiManager.insert_action_group(self.currentPerpectiveActionGroup)
+        self.currentPerspectiveActionGroup = perspective.view.getActionGroup()
+        self.uiManager.insert_action_group(self.currentPerspectiveActionGroup)
         # Merge UI definition into UI Manager
         self.currentPerspectiveMergeID = self.uiManager.add_ui_from_string(
             perspective.view.getMenuToolbarUIDefinition())

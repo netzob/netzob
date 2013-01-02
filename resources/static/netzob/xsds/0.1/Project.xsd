@@ -43,6 +43,13 @@
 				</restriction>
 			</simpleType>
 		</attribute>
+		<attribute name="description">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
 	</complexType>
 
 
