@@ -235,7 +235,6 @@ class VocabularyController(object):
             moveMessageController = MoveMessageController(self, [message], targetSymbol)
             moveMessageController.run()
 
-
     # Actions on messages
     def moveMessagesToOtherSymbol_activate_cb(self, action):
         """Callback executed when the user clicks on the move

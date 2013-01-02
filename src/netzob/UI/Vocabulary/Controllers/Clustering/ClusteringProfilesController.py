@@ -48,9 +48,9 @@ from gi.repository import GObject
 class ClusteringProfilesController(object):
     """Manages the selection of the available clustering profiles"""
 
-    def __init__(self, vocabularyController, fields=[]):
+    def __init__(self, vocabularyController, symbols=[]):
         self.vocabularyController = vocabularyController
-        self.fields = fields
+        self.symbols = symbols
         self.profiles = []
         self.profiles.extend(vocabularyController.getCurrentWorkspace().getClusteringProfiles())
         self._view = ClusteringProfilesView(self, self.profiles)
@@ -107,7 +107,23 @@ class ClusteringProfilesController(object):
 
     def executeProfileButton_clicked_cb(self, widget):
         currentProfile = self._view.getCurrentProfile()
-        currentProfile.execute(self.fields)
+        newSymbols = currentProfile.execute(self.symbols)
+        if newSymbols is None or len(newSymbols) == 0:
+            self.log.warning("An error occured while executing the clustering process")
+            return
+        # Update the current project with the new symbols
+        currentVocabulary = self.vocabularyController.getCurrentProject().getVocabulary()
+        for symbol in self.symbols:
+            currentVocabulary.removeSymbol(symbol)
+        for newSymbol in newSymbols:
+            if len(newSymbol.getMessages()) > 0:
+                currentVocabulary.addSymbol(newSymbol)
+            else:
+                self.log.debug("Remove an empty cluster from the results of the clustering algorithm")
+        self.vocabularyController.restart()
+
+        # Close the clustering profile view
+        self.destroy()
 
     def closeButton_clicked_cb(self, widget):
         self.destroy()
