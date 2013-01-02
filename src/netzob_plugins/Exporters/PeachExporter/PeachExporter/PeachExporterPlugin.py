@@ -49,7 +49,7 @@ class PeachExporterPlugin(ExporterPlugin):
             Simplify the construction of a fuzzer with Peach.
     """
     __plugin_name__ = "PeachExporter"
-    __plugin_version__ = "0.9"
+    __plugin_version__ = "1.0"
     __plugin_description__ = _("Provide the possibility to export netzob symbols to Peach pit files.")
     __plugin_author__ = "Benjamin Dufour <benjamin.dufour@amossys.fr>"
     __plugin_copyright__ = "AMOSSYS"
