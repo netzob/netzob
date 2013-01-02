@@ -30,6 +30,15 @@
 #| Global Imports
 #+----------------------------------------------------------------------------
 from setuptools import setup
+import sys
+
+package = 'PeachExporter'
+resourcesPath = "../../../../resources/"
+
+sys.path.append(resourcesPath)
+from sdist.utils import find_data_files, opj
+
+pluginsStaticResourcesPath = opj(resourcesPath, "static/netzob_plugins/", package)
 
 dependencies = [
     'Netzob >= 0.3'
