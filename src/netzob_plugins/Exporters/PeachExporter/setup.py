@@ -32,7 +32,7 @@
 from setuptools import setup
 import sys
 
-package = 'PCAPImporter'
+package = 'PeachExporter'
 resourcesPath = "../../../../resources/"
 
 sys.path.append(resourcesPath)
