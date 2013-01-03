@@ -47,6 +47,9 @@ gi.require_version('Gtk', '3.0')
 #+---------------------------------------------------------------------------+
 from netzob.UI.Vocabulary.Controllers.EnvironmentDependenciesSearcherController import EnvironmentDependenciesSearcherController
 from netzob.UI.Vocabulary.Views.VocabularyView import VocabularyView
+from netzob.UI.Vocabulary.Controllers.SymbolController import SymbolController
+#from netzob.UI.Vocabulary.Controllers.SessionController import SessionController
+#from netzob.UI.Vocabulary.Controllers.SequenceController import SequenceController
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.Common.Symbol import Symbol
 from netzob.UI.Common.Controllers.MoveMessageController import MoveMessageController
@@ -81,11 +84,11 @@ class VocabularyController(object):
         self.netzob = netzob
         self._view = VocabularyView(self)
         self.log = logging.getLogger(__name__)
-        self.view.updateLeftPanel()
-        self.selectedMessagesToMove = None
 
-        self.view.symbolListTreeViewSelection.set_select_function(self.symbol_list_selection_function, None)
-        self.symbol_list_set_selection = True
+        self.symbolController = SymbolController(netzob)
+
+        self.updateLeftPanel()
+        self.selectedMessagesToMove = None
 
     @property
     def view(self):
@@ -101,10 +104,44 @@ class VocabularyController(object):
         """Restart the view"""
         logging.debug("Restarting the vocabulary view")
         self.view.removeAllMessageTables()
-        self.view.updateLeftPanel()
+        self.updateLeftPanel()
 
     def getSignalsManager(self):
         return self.netzob.getSignalsManager()
+
+    def updateLeftPanel(self):
+        self.updateProjectProperties()
+        self.symbolController.updateLeftPanel()
+        #self.sessionController.updateLeftPanel()
+        #self.sequenceController.updateLeftPanel()
+
+    def getProjectProperties(self):
+        """Computes the set of properties
+        on the current project, and displays them
+        in the treeview"""
+        properties = []
+        project = self.getCurrentProject()
+        if project is not None:
+            properties = project.getProperties()
+        return properties
+
+    def updateProjectProperties(self):
+        # clean store
+        self.view.projectPropertiesListstore.clear()
+        # get project properties
+        properties = self.getProjectProperties()
+        # add project properties
+        for prop in properties:
+            line = self.view.projectPropertiesListstore.append()
+            self.view.projectPropertiesListstore.set(line, self.view.PROJECTPROPERTIESLISTSTORE_NAME_COLUMN, prop.getName())
+            self.view.projectPropertiesListstore.set(line, self.view.PROJECTPROPERTIESLISTSTORE_VALUE_COLUMN, str(prop.getCurrentValue()))
+            #self.view.projectPropertiesListstore.set(line, self.view.PROJECTPROPERTIESLISTSTORE_EDITABLE_COLUMN, prop.isEditable)
+            self.view.projectPropertiesListstore.set(line, self.view.PROJECTPROPERTIESLISTSTORE_EDITABLE_COLUMN, False)
+            if prop.getPossibleValues() != []:
+                liststore_possibleValues = Gtk.ListStore(str)
+                for val in prop.getPossibleValues():
+                    liststore_possibleValues.append([val])
+                self.view.projectPropertiesListstore.set(line, self.view.PROJECTPROPERTIESLISTSTORE_MODEL_COLUMN, liststore_possibleValues)
 
     def updateListOfCapturerPlugins(self):
         """Fetch the list of available capturer plugins, and provide
@@ -112,248 +149,7 @@ class VocabularyController(object):
         pluginExtensions = NetzobPlugin.getLoadedPluginsExtension(CapturerMenuExtension)
         self.view.updateListCapturerPlugins(pluginExtensions)
 
-    ## Symbol List toolbar callbacks
-    def selectAllSymbolsButton_clicked_cb(self, toolButton):
-        """
-        select all the symbol in the symbol list
-        @type  widget: boolean
-        @param widget: if selected symbol
-        """
-        for row in self.view.symbolListStore:
-            row[self.view.SYMBOLLISTSTORE_SELECTED_COLUMN] = True
-        self.view.updateSymbolListToolbar()
-
-    def unselectAllSymbolsButton_clicked_cb(self, toolButton):
-        """
-        unselect all the symbol in the symbol list
-        @type  widget: boolean
-        @param widget: if selected symbol
-        """
-        for row in self.view.symbolListStore:
-            row[self.view.SYMBOLLISTSTORE_SELECTED_COLUMN] = False
-        self.view.updateSymbolListToolbar()
-
-    def createSymbolButton_clicked_cb(self, toolButton):
-        if self.getCurrentProject() is None:
-            NetzobErrorMessage(_("No project selected."))
-            return
-
-        builder2 = Gtk.Builder()
-        builder2.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(), "ui", "dialogbox.glade"))
-        dialog = builder2.get_object("createsymbol")
-        dialog.set_transient_for(self.netzob.view.mainWindow)
-
-        # Disable apply button if no text
-        applybutton = builder2.get_object("button1")
-        entry = builder2.get_object("entry1")
-        entry.connect("changed", self.entry_disableButtonIfEmpty_cb, applybutton)
-
-        result = dialog.run()
-
-        if (result == 0):
-            newSymbolName = entry.get_text()
-            newSymbolId = str(uuid.uuid4())
-            self.log.debug("A new symbol will be created with the given name: {0}".format(newSymbolName))
-            currentProject = self.netzob.getCurrentProject()
-            newSymbol = Symbol(newSymbolId, newSymbolName, currentProject)
-            currentProject.getVocabulary().addSymbol(newSymbol)
-            self.view.updateLeftPanel()
-            dialog.destroy()
-        if (result == 1):
-            dialog.destroy()
-
-    def entry_disableButtonIfEmpty_cb(self, widget, button):
-        if(len(widget.get_text()) > 0):
-            button.set_sensitive(True)
-        else:
-            button.set_sensitive(False)
-
-    def concatSymbolButton_clicked_cb(self, toolButton):
-        if self.getCurrentProject() is None:
-            NetzobErrorMessage(_("No project selected."))
-            return
-        # retrieve the checked symbols
-        symbols = self.view.getCheckedSymbolList()
-
-        # Create a new symbol
-        newSymbol = Symbol(str(uuid.uuid4()), "Merged", self.getCurrentProject())
-
-        # fetch all their messages
-        for sym in symbols:
-            newSymbol.addMessages(sym.getMessages())
-
-        #delete all selected symbols
-        self.view.emptyMessageTableDisplayingSymbols(symbols)
-        for sym in symbols:
-            self.getCurrentProject().getVocabulary().removeSymbol(sym)
-
-        #add the concatenate symbol
-        self.getCurrentProject().getVocabulary().addSymbol(newSymbol)
-
-        #refresh view
-        self.view.updateLeftPanel()
-
-    def deleteSymbolButton_clicked_cb(self, toolButton):
-        if self.getCurrentProject() is None:
-            NetzobErrorMessage(_("No project selected."))
-            return
-        # Delete symbol
-        for sym in self.view.getCheckedSymbolList():
-            currentProject = self.netzob.getCurrentProject()
-            currentVocabulary = currentProject.getVocabulary()
-            for mess in sym.getMessages():
-                currentVocabulary.removeMessage(mess)
-            currentVocabulary.removeSymbol(sym)
-            self.view.emptyMessageTableDisplayingSymbols([sym])
-        # Update view
-        self.view.updateLeftPanel()
-        self.view.updateSelectedMessageTable()
-
-    def newMessageTableButton_clicked_cb(self, toolButton):
-        if self.getCurrentProject() is None:
-            NetzobErrorMessage(_("No project selected."))
-            return
-        self.view.addMessageTable()
-
-    def toggleCellRenderer_toggled_cb(self, widget, buttonid):
-        # Update this flag so the line won't be selected.
-        self.symbol_list_set_selection = False
-        model = self.view.symbolListStore
-        model[buttonid][0] = not model[buttonid][0]
-        self.view.updateSymbolListToolbar()
-
-    def symbol_list_selection_function(self, selection, model, path, selected, data):
-        """This method is in charge of deciding if the current line of
-        symbol tree view (symbolListTreeViewSelection) should be
-        selected.
-
-        If the users clicked on the checkbox, then, the current line
-        should _not_ be selected. In other cases, the current line is
-        selected.
-
-        """
-
-        if not self.symbol_list_set_selection:
-            self.symbol_list_set_selection = True
-            return False
-
-        return True
-
-    def symbolListTreeViewSelection_changed_cb(self, selection):
-        """Callback executed when the user
-        clicks on a symbol in the list"""
-        if 1 != selection.count_selected_rows():
-            return
-        logging.debug("The current symbol has changed")
-        (model, paths) = selection.get_selected_rows()
-        aIter = model.get_iter(paths[0])  # We work on only one symbol/layer
-        currentVocabulary = self.netzob.getCurrentProject().getVocabulary()
-        if aIter is not None:
-            logging.debug("Iter is not none")
-            # We first check if the user selected a symbol
-            ID = model[aIter][self.view.SYMBOLLISTSTORE_ID_COLUMN]
-            field = currentVocabulary.getFieldByID(ID)
-            self.executeMoveTargetOperation(field.getSymbol())
-            self.view.setDisplayedFieldInSelectedMessageTable(field)
-            self._view.updateSymbolProperties()
-            self.getSignalsManager().emitSignal(SignalsManager.SIG_SYMBOLS_SINGLE_SELECTION)
-        else:
-            self.getSignalsManager().emitSignal(SignalsManager.SIG_SYMBOLS_NO_SELECTION)
-
-    def symbolListTreeView_button_press_event_cb(self, treeview, eventButton):
-        if 1 > treeview.get_selection().count_selected_rows():
-            return
-        # Popup a contextual menu if right click
-        if eventButton.type == Gdk.EventType.BUTTON_PRESS and eventButton.button == 3:
-            (model, paths) = treeview.get_selection().get_selected_rows()
-
-            layers = []
-            for path in paths:
-                # Retrieve the selected layerFields
-                layer_id = model[path][VocabularyView.SYMBOLLISTSTORE_ID_COLUMN]
-                if layer_id is not None:
-                    layer = self.getCurrentProject().getVocabulary().getFieldByID(layer_id)
-                    layers.append(layer)
-                else:
-                    return
-
-            # Popup a contextual menu
-            menuController = ContextualMenuOnLayerController(self, layers)
-            menuController.run(eventButton)
-            return True  # To discard remaining signals (such as 'changed_cb')
-
-################ TO BE FIXED
-    def button_newview_cb(self, widget):
-        self.focus = self.addSpreadSheet("empty", 0)
-        self.focus.idsymbol = None
-
-    def button_closeview_cb(self, widget, spreadsheet):
-        spreadsheet.destroy()
-
-        #refresh focus
-        if self.focus.get_object("spreadsheet") == spreadsheet:
-            self.focus = None
-
-###############
-
-######### MENU / TOOLBAR ENTRIES CONTROLLERS
-    def sequenceAlignment_activate_cb(self, action):
-        if self.getCurrentProject() is None:
-            NetzobErrorMessage(_("No project selected."))
-            return
-        layers = self.view.getCheckedLayerList()
-        if layers == []:
-            NetzobErrorMessage(_("No layer selected."))
-            return
-        sequence_controller = SequenceAlignmentController(self, layers, doUpgma=True)
-        sequence_controller.run()
-
-    def partitioningForce_activate_cb(self, action):
-        if self.getCurrentProject() is None:
-            NetzobErrorMessage(_("No project selected."))
-            return
-        layers = self.view.getCheckedLayerList()
-        if layers == []:
-            NetzobErrorMessage(_("No symbol selected."))
-            return
-        force_controller = ForcePartitioningController(self, layers)
-        force_controller.run()
-
-    def partitioningSimple_activate_cb(self, action):
-        if self.getCurrentProject() is None:
-            NetzobErrorMessage(_("No project selected."))
-            return
-        layers = self.view.getCheckedLayerList()
-        if layers == []:
-            NetzobErrorMessage(_("No symbol selected."))
-            return
-        simple_controller = SimplePartitioningController(self, layers)
-        simple_controller.run()
-
-    def partitioningSmooth_activate_cb(self, action):
-        if self.getCurrentProject() is None:
-            NetzobErrorMessage(_("No project selected."))
-            return
-        layers = self.view.getCheckedLayerList()
-        if layers == []:
-            NetzobErrorMessage(_("No symbol selected."))
-            return
-        smooth_controller = SmoothPartitioningController(self, layers)
-        smooth_controller.run()
-
-    def partitioningReset_activate_cb(self, action):
-        """Callback executed when the user clicks
-        on the reset button. It starts the dedicated controller."""
-        if self.getCurrentProject() is None:
-            NetzobErrorMessage(_("No project selected."))
-            return
-        layers = self.view.getCheckedLayerList()
-        if layers == []:
-            NetzobErrorMessage(_("No symbol selected."))
-            return
-        reset_controller = ResetPartitioningController(self, layers)
-        reset_controller.run()
-
+    ## Main actions of vocabulary inference
     def concatField_activate_cb(self, action):
         # Sanity check
         if self.getCurrentProject() is None:
@@ -383,7 +179,7 @@ class VocabularyController(object):
             NetzobErrorMessage(errorMsg)
         else:
             self.view.updateSelectedMessageTable()
-            self.view.updateLeftPanel()
+            self.updateLeftPanel()
 
     def split_activate_cb(self, action):
         # Sanity check
@@ -451,7 +247,7 @@ class VocabularyController(object):
                         moveMessageController.run()
             self.removePendingMessagesToMove()
             self.view.updateSelectedMessageTable()
-            self.view.updateLeftPanel()
+            self.updateLeftPanel()
 
     def removePendingMessagesToMove(self):
         """Clean the pending messages the user wanted to move (using the button)."""
@@ -479,7 +275,7 @@ class VocabularyController(object):
             message.getSymbol().removeMessage(message)
         # Update view
         self.view.updateSelectedMessageTable()
-        self.view.updateLeftPanel()
+        self.updateLeftPanel()
 
     def searchText_toggled_cb(self, action):
         """Callback executed when the user clicks
@@ -520,18 +316,6 @@ class VocabularyController(object):
             return
         envDepController = EnvironmentDependenciesSearcherController(self, symbols)
         envDepController.run()
-
-    def messagesDistribution_activate_cb(self, action):
-        # Sanity check
-        if self.getCurrentProject() is None:
-            NetzobErrorMessage(_("No project selected."))
-            return
-        symbols = self.view.getCheckedSymbolList()
-        if symbols == []:
-            NetzobErrorMessage(_("No symbol selected."))
-            return
-        distribution = MessagesDistributionController(self, self._view.getCheckedSymbolList())
-        distribution.run()
 
     def relationsViewer_activate_cb(self, action):
         if self.getCurrentProject() is None:

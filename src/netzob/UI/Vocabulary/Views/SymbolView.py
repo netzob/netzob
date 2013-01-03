@@ -55,7 +55,7 @@ from netzob.UI.Common.Controllers.MoveMessageController import MoveMessageContro
 from netzob.UI.Vocabulary.Controllers.VariableDisplayerController import VariableDisplayerController
 
 
-class VocabularyView(object):
+class SymbolView(object):
     SYMBOLLISTSTORE_SELECTED_COLUMN = 0
     SYMBOLLISTSTORE_TOPLEVEL_COLUMN = 1
     SYMBOLLISTSTORE_NAME_COLUMN = 2
@@ -63,45 +63,10 @@ class VocabularyView(object):
     SYMBOLLISTSTORE_FIELD_COLUMN = 4
     SYMBOLLISTSTORE_ID_COLUMN = 5
 
-    SESSIONLISTSTORE_SELECTED_COLUMN = 0
-    SESSIONLISTSTORE_TOPLEVEL_COLUMN = 1
-    SESSIONLISTSTORE_NAME_COLUMN = 2
-    SESSIONLISTSTORE_MESSAGE_COLUMN = 3
-    SESSIONLISTSTORE_ID_COLUMN = 4
-
-    SEQUENCELISTSTORE_SELECTED_COLUMN = 0
-    SEQUENCELISTSTORE_TOPLEVEL_COLUMN = 1
-    SEQUENCELISTSTORE_NAME_COLUMN = 2
-    SEQUENCELISTSTORE_MESSAGE_COLUMN = 3
-    SEQUENCELISTSTORE_ID_COLUMN = 4
-
-    PROJECTPROPERTIESLISTSTORE_NAME_COLUMN = 0
-    PROJECTPROPERTIESLISTSTORE_VALUE_COLUMN = 1
-    PROJECTPROPERTIESLISTSTORE_EDITABLE_COLUMN = 2
-    PROJECTPROPERTIESLISTSTORE_MODEL_COLUMN = 3
-
     SYMBOLPROPERTIESLISTSTORE_NAME_COLUMN = 0
     SYMBOLPROPERTIESLISTSTORE_VALUE_COLUMN = 1
     SYMBOLPROPERTIESLISTSTORE_EDITABLE_COLUMN = 2
     SYMBOLPROPERTIESLISTSTORE_MODEL_COLUMN = 3
-
-    SESSIONPROPERTIESLISTSTORE_NAME_COLUMN = 0
-    SESSIONPROPERTIESLISTSTORE_VALUE_COLUMN = 1
-    SESSIONPROPERTIESLISTSTORE_EDITABLE_COLUMN = 2
-    SESSIONPROPERTIESLISTSTORE_MODEL_COLUMN = 3
-
-    SEQUENCEPROPERTIESLISTSTORE_NAME_COLUMN = 0
-    SEQUENCEPROPERTIESLISTSTORE_VALUE_COLUMN = 1
-    SEQUENCEPROPERTIESLISTSTORE_EDITABLE_COLUMN = 2
-    SEQUENCEPROPERTIESLISTSTORE_MODEL_COLUMN = 3
-
-    MESSAGEPROPERTIESLISTSTORE_NAME_COLUMN = 0
-    MESSAGEPROPERTIESLISTSTORE_VALUE_COLUMN = 1
-    MESSAGEPROPERTIESLISTSTORE_EDITABLE_COLUMN = 2
-    MESSAGEPROPERTIESLISTSTORE_MODEL_COLUMN = 3
-
-    FIELDPROPERTIESLISTSTORE_NAME_COLUMN = 0
-    FIELDPROPERTIESLISTSTORE_VALUE_COLUMN = 1
 
     def __init__(self, controller):
         self.controller = controller
@@ -111,38 +76,21 @@ class VocabularyView(object):
             ResourcesConfiguration.getStaticResources(),
             "ui", "vocabulary",
             "vocabularyView.glade"))
-        self._getObjects(self.builder, ["vocabularyPanel", "symbolListStore", "sessionListStore", "sequenceListStore",
-                                        "concatSymbolButton", "deleteSymbolButton", "newMessageList",
-                                        "sequenceAlignmentButton",
-                                        "partitioningForceButton",
-                                        "partitioningSimpleButton",
-                                        "partitioningSmoothButton",
-                                        "partitioningResetButton",
-                                        "messagesDistributionButton",
-                                        "projectTreeview", "symbolTreeview", "messageTreeview", "fieldTreeview",
-                                        "projectPropertiesListstore", "symbolPropertiesListstore", "messagePropertiesListstore",
-                                        "messageTableBox", "symbolListTreeView", "sessionListTreeView", "sequenceListTreeView",
-                                        "symbolListTreeViewSelection", "sessionListTreeViewSelection", "sequenceListTreeViewSelection", 
-                                        "messagesDistributionSymbolViewport", "messageTableBoxAndResearchBox"
+        self._getObjects(self.builder, ["symbolListStore", "concatSymbolButton", "deleteSymbolButton", "newMessageList",
+                                        "sequenceAlignmentButton", "partitioningForceButton", "partitioningSimpleButton",
+                                        "partitioningSmoothButton", "partitioningResetButton", "messagesDistributionButton",
+                                        "symbolTreeview", "symbolPropertiesListstore", "messageTableBox", "symbolListTreeView",
+                                        "symbolListTreeViewSelection", "messagesDistributionSymbolViewport"
                                         ])
         self._loadActionGroupUIDefinition()
         self.builder.connect_signals(self.controller)
+        # Configure the drag and drop
+        self.symbolListTreeView.drag_dest_set(Gtk.DestDefaults.ALL, [], Gdk.DragAction.MOVE)
+        self.symbolListTreeView.connect("drag-data-received", self.drag_data_received_event)
+        self.symbolListTreeView.connect("button-press-event", self.controller.symbolListTreeView_button_press_event_cb)
+        self.symbolListTreeView.enable_model_drag_dest([], Gdk.DragAction.MOVE)
+        self.symbolListTreeView.drag_dest_add_text_targets()
 
-        # List of currently displayed message tables
-        self.messageTableList = []
-        self.selectedMessageTable = None
-        # add the netzobBegin label attribute
-        self.netzobBegin = None
-        # add the researchBar
-        self.researchController = ResearchController(self.controller)
-        self.messageTableBoxAndResearchBox.pack_end(self.researchController._view.researchBar, False, False, 0)
-        self.researchController._view.research_format.set_active(4)
-        self.researchController.hide()
-
-        # add the filterBar
-        self.filterMessagesController = FilterMessagesController(self.controller)
-        self.messageTableBoxAndResearchBox.pack_end(self.filterMessagesController._view.filterBar, False, False, 0)
-        self.filterMessagesController.hide()
         self.registerSignalListeners()
 
     def registerSignalListeners(self):
@@ -152,42 +100,8 @@ class VocabularyView(object):
             self.log.warning("No signal manager has been found.")
             return
 
-        signalManager.attach(self.projectStatusHasChanged_cb, [SignalsManager.SIG_PROJECT_OPEN, SignalsManager.SIG_PROJECT_CLOSE])
         signalManager.attach(self.symbolCheckedHasChanged_cb, [SignalsManager.SIG_SYMBOLS_NONE_CHECKED, SignalsManager.SIG_SYMBOLS_SINGLE_CHECKED, SignalsManager.SIG_SYMBOLS_MULTIPLE_CHECKED])
         signalManager.attach(self.symbolSelectionHasChanged_cb, [SignalsManager.SIG_SYMBOLS_NO_SELECTION, SignalsManager.SIG_SYMBOLS_SINGLE_SELECTION, SignalsManager.SIG_SYMBOLS_MULTIPLE_SELECTION])
-        signalManager.attach(self.fieldSelectionHasChanged_cb, [SignalsManager.SIG_FIELDS_NO_SELECTION, SignalsManager.SIG_FIELDS_SINGLE_SELECTION, SignalsManager.SIG_FIELDS_MULTIPLE_SELECTION])
-        signalManager.attach(self.messageSelectionHasChanged_cb, [SignalsManager.SIG_MESSAGES_NO_SELECTION, SignalsManager.SIG_MESSAGES_SINGLE_SELECTION, SignalsManager.SIG_MESSAGES_MULTIPLE_SELECTION])
-
-    def messageSelectionHasChanged_cb(self, signal):
-        """messageSelectionHasChanged_cb:
-            Callback executed when none, single or multiple messages are selected"""
-        if signal == SignalsManager.SIG_MESSAGES_NO_SELECTION:
-            self._actionGroup.get_action('moveMessagesToOtherSymbol').set_sensitive(False)
-            self._actionGroup.get_action('deleteMessages').set_sensitive(False)
-
-        elif signal == SignalsManager.SIG_MESSAGES_SINGLE_SELECTION:
-            self._actionGroup.get_action('moveMessagesToOtherSymbol').set_sensitive(True)
-            self._actionGroup.get_action('deleteMessages').set_sensitive(True)
-
-        elif signal == SignalsManager.SIG_MESSAGES_MULTIPLE_SELECTION:
-            self._actionGroup.get_action('moveMessagesToOtherSymbol').set_sensitive(True)
-            self._actionGroup.get_action('deleteMessages').set_sensitive(True)
-
-    def fieldSelectionHasChanged_cb(self, signal):
-        """fieldSelectionHasChanhed_cb:
-            Callback executed when none, single or multiple fields are selected."""
-        if signal == SignalsManager.SIG_FIELDS_NO_SELECTION:
-            self._actionGroup.get_action('concatField').set_sensitive(False)
-            self._actionGroup.get_action('split').set_sensitive(False)
-            self._actionGroup.get_action('editVariable').set_sensitive(False)
-        elif signal == SignalsManager.SIG_FIELDS_SINGLE_SELECTION:
-            self._actionGroup.get_action('concatField').set_sensitive(False)
-            self._actionGroup.get_action('split').set_sensitive(True)
-            self._actionGroup.get_action('editVariable').set_sensitive(True)
-        elif signal == SignalsManager.SIG_FIELDS_MULTIPLE_SELECTION:
-            self._actionGroup.get_action('concatField').set_sensitive(True)
-            self._actionGroup.get_action('split').set_sensitive(False)
-            self._actionGroup.get_action('editVariable').set_sensitive(False)
 
     def symbolCheckedHasChanged_cb(self, signal):
         """symbolCheckedHasChanged_cb:
@@ -219,28 +133,6 @@ class VocabularyView(object):
             self._actionGroup.get_action('filterMessages').set_sensitive(False)
         elif signal == SignalsManager.SIG_SYMBOLS_SINGLE_SELECTION:
             self._actionGroup.get_action('filterMessages').set_sensitive(True)
-
-    def projectStatusHasChanged_cb(self, signal):
-        """projectStatusHasChanged_cb:
-        Callback executed when a signal is emitted."""
-
-        actions = ["importMessagesFromFile",
-                   "captureMessages",
-                   "relationsViewer",
-                   "searchMenu",
-                   "searchText",
-                   "variableTable",
-                   "automaticToolMenu",
-                   "manualToolMenu",
-                   ]
-
-        if signal == SignalsManager.SIG_PROJECT_OPEN:
-            for action in actions:
-                self._actionGroup.get_action(action).set_sensitive(True)
-
-        elif signal == SignalsManager.SIG_PROJECT_CLOSE:
-            for action in actions:
-                self._actionGroup.get_action(action).set_sensitive(False)
 
     def _loadActionGroupUIDefinition(self):
         """Loads the action group and the UI definition of menu items
@@ -282,32 +174,6 @@ class VocabularyView(object):
     def _getObjects(self, builder, objectsList):
         for object in objectsList:
             setattr(self, object, builder.get_object(object))
-
-    ## Mandatory view methods
-    def getPanel(self):
-        return self.vocabularyPanel
-
-    # Return the actions
-    def getActionGroup(self):
-        return self._actionGroup
-
-    # Return toolbar and menu
-    def getMenuToolbarUIDefinition(self):
-        return self._uiDefinition
-
-    def updateListCapturerPlugins(self, pluginsExtensions):
-        """Update the menu"""
-        pluginMenu = self.netzob.view.uiManager.get_widget("/mainMenuBar/fileMenu/fileMenuAdditions/captureMessages").get_submenu()
-
-        # Update the list of exporters
-        for i in pluginMenu.get_children():
-            pluginMenu.remove(i)
-
-        for pluginExtension in pluginsExtensions:
-            pluginEntry = Gtk.MenuItem(pluginExtension.menuText)
-            pluginEntry.connect("activate", pluginExtension.executeAction, self)
-            pluginMenu.append(pluginEntry)
-        pluginMenu.show_all()
 
     def drag_data_received_event(self, widget, drag_context, x, y, data, info, time):
         """Callback executed when the user drops
@@ -422,10 +288,161 @@ class VocabularyView(object):
         else:
             return self.selectedMessageTable.displayedField
 
-    def getCurrentProject(self):
-        return self.controller.netzob.getCurrentProject()
+    ## Symbol List
+    def updateSymbolList(self):
+        """Updates the symbol list of the left panel, preserving the current
+        selection"""
+        # Retrieve symbols of the current project vocabulary (if one selected)
+        layerList = []
+        if self.getCurrentProject() is not None and self.getCurrentProject().getVocabulary() is not None:
+            for symbol in self.getCurrentProject().getVocabulary().getSymbols():
+                layerList.append(symbol.getField())
+
+        checkedMessagesIDList = []
+        for row in self.symbolListStore:
+            if (row[self.SYMBOLLISTSTORE_SELECTED_COLUMN]):
+                checkedMessagesIDList.append(row[self.SYMBOLLISTSTORE_ID_COLUMN])
+        # Block selection changed handler
+        self.symbolListTreeViewSelection.handler_block_by_func(self.controller.symbolListTreeViewSelection_changed_cb)
+        self.symbolListStore.clear()
+        for layer in layerList:
+            pIter = self.addRowSymbolList(checkedMessagesIDList, layer.getName(),
+                                          len(layer.getMessages()),
+                                          len(layer.getExtendedFields()),
+                                          str(layer.getID()))
+            for fieldLayer in layer.getFieldLayers():
+                self.addLayerRowSymbolList(pIter, checkedMessagesIDList, layer, fieldLayer)
+        self.setSelectedSymbolFromSelectedMessageTable()
+        self.symbolListTreeViewSelection.handler_unblock_by_func(self.controller.symbolListTreeViewSelection_changed_cb)
+
+    def setSelectedSymbolFromSelectedMessageTable(self):
+        if self.selectedMessageTable is None:
+            self.setSelectedSymbol(None)
+        else:
+            messageTableSymbol = self.selectedMessageTable.displayedField
+            self.setSelectedSymbol(messageTableSymbol)
+
+    def addRowSymbolList(self, checkedMessagesIDList, name, message, field, symID):
+        """Adds a row in the symbol list of left panel
+        @type  selection: boolean
+        @param selection: if selected symbol
+        @type  name: string
+        @param name: name of the symbol
+        @type  message: string
+        @param message: number of message in the symbol
+        @type  field: string
+        @param field: number of field in the symbol
+        @type  image: string
+        @param image: image of the lock button (freeze partitioning)"""
+        i = self.symbolListStore.append(None)
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_SELECTED_COLUMN, (symID in checkedMessagesIDList))
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_TOPLEVEL_COLUMN, True)
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_NAME_COLUMN, name)
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_MESSAGE_COLUMN, message)
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_FIELD_COLUMN, field)
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_ID_COLUMN, symID)
+        return i
+
+    def addLayerRowSymbolList(self, parentIter, checkedMessagesIDList, symbol, fieldLayer):
+        """Adds a layer row in the symbol list of left panel
+        @type  parentIter: string
+        @param parentIter: parent iter
+        @type  selection: boolean
+        @param selection: if selected symbol
+        @type  name: fieldLayer
+        @param name: the targeted fieldLayer
+        """
+        i = self.symbolListStore.append(parentIter)
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_SELECTED_COLUMN, (str(fieldLayer.getID()) in checkedMessagesIDList))
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_TOPLEVEL_COLUMN, False)
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_NAME_COLUMN, fieldLayer.getName())
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_MESSAGE_COLUMN, len(symbol.getMessages()))
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_FIELD_COLUMN, len(fieldLayer.getExtendedFields()))
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_ID_COLUMN, str(fieldLayer.getID()))
+        # Add inner layers
+        for innerFieldLayer in fieldLayer.getFieldLayers():
+            self.addLayerRowSymbolList(i, checkedMessagesIDList, symbol, innerFieldLayer)
+
+    def updateSymbolListToolbar(self):
+        """Enables or disable buttons of the symbol list toolbar"""
+        selectedSymbolsCount = self.countSelectedSymbols()
+        self.concatSymbolButton.set_sensitive((selectedSymbolsCount >= 2))
+        self.deleteSymbolButton.set_sensitive((selectedSymbolsCount >= 1))
+
+        # We emit signals depending of the number of selected symbols
+        if selectedSymbolsCount == 0:
+            self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SYMBOLS_NONE_CHECKED)
+        elif selectedSymbolsCount == 1:
+            self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SYMBOLS_SINGLE_CHECKED)
+        else:
+            self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SYMBOLS_MULTIPLE_CHECKED)
+
+    def countSelectedSymbols(self):
+        count = 0
+        for row in self.symbolListStore:
+            if row[self.SYMBOLLISTSTORE_SELECTED_COLUMN]:
+                count += 1
+        return count
+
+    def getCheckedLayerList(self):
+        if self.getCurrentProject() is None:
+            return []
+        currentVocabulary = self.getCurrentProject().getVocabulary()
+        selectedLayerList = []
+        for row in self.symbolListStore:
+            if row[self.SYMBOLLISTSTORE_SELECTED_COLUMN]:
+                layer_id = row[self.SYMBOLLISTSTORE_ID_COLUMN]
+                layer = currentVocabulary.getFieldByID(layer_id)
+                selectedLayerList.append(layer)
+        return selectedLayerList
+
+    def getCheckedSymbolList(self):
+        if self.getCurrentProject() is None:
+            return []
+        currentVocabulary = self.getCurrentProject().getVocabulary()
+        selectedSymbolList = []
+        for row in self.symbolListStore:
+            if row[self.SYMBOLLISTSTORE_SELECTED_COLUMN]:
+                layer_id = row[self.SYMBOLLISTSTORE_ID_COLUMN]
+                layer = currentVocabulary.getFieldByID(layer_id)
+                if not layer.getSymbol() in selectedSymbolList:
+                    selectedSymbolList.append(layer.getSymbol())
+        return selectedSymbolList
+
+    def setSelectedSymbol(self, symbol):
+        selection = self.symbolListTreeView.get_selection()
+        if symbol is None:
+            selection.unselect_all()
+        else:
+            path = self.getSymbolPathInSymbolList(symbol)
+            if path is not None:
+                selection.select_path(path)
+
+    def getSelectedSymbol(self):
+        """Returns the selected symbol in the list of symbols"""
+        currentVocabulary = self.getCurrentProject().getVocabulary()
+        model, iter = self.symbolListTreeView.get_selection().get_selected()
+        if iter is not None:
+            symID = model[iter][self.SYMBOLLISTSTORE_ID_COLUMN]
+            return currentVocabulary.getSymbolByID(symID)
+        return None
+
+    def getSelectedMessagesInSelectedMessageTable(self):
+        if self.selectedMessageTable is not None:
+            return self.selectedMessageTable.controller.getSelectedMessages()
+        else:
+            return None
+
+    def getSymbolPathInSymbolList(self, symbol):
+        symID = symbol.getID()
+        for path, row in enumerate(self.symbolListStore):
+            if row[self.SYMBOLLISTSTORE_ID_COLUMN] == symID:
+                return path
 
     def getDisplayedField(self):
         if self.selectedMessageTable is None:
             return None
         return self.selectedMessageTable.getDisplayedField()
+
+    def getCurrentProject(self):
+        return self.controller.netzob.getCurrentProject()

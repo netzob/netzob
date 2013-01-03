@@ -49,6 +49,34 @@
       <column type="gchararray"/>
     </columns>
   </object>
+  <object class="GtkTreeStore" id="sessionListStore">
+    <columns>
+      <!-- column-name selected -->
+      <column type="gboolean"/>
+      <!-- column-name toplevel -->
+      <column type="gboolean"/>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name numOfMessages -->
+      <column type="gint"/>
+      <!-- column-name id -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkTreeStore" id="sequenceListStore">
+    <columns>
+      <!-- column-name selected -->
+      <column type="gboolean"/>
+      <!-- column-name toplevel -->
+      <column type="gboolean"/>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name numOfMessages -->
+      <column type="gint"/>
+      <!-- column-name numOfFields -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkListStore" id="symbolPropertiesListstore">
     <columns>
       <!-- column-name name -->
@@ -85,358 +113,846 @@
         <property name="margin_bottom">6</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkBox" id="symbolListBox">
+          <object class="GtkNotebook" id="objectsNotebook">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="orientation">vertical</property>
+            <property name="can_focus">True</property>
             <child>
-              <object class="GtkLabel" id="symbolListLabel">
+              <object class="GtkBox" id="symbolListBox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="double_buffered">False</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkToolbar" id="symbolListToolbar2">
+                    <property name="width_request">270</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkToolButton" id="sequenceAlignmentButton">
+                        <property name="use_action_appearance">True</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Sequence alignment on selected symbol</property>
+                        <property name="tooltip_text" translatable="yes">Sequence alignment on selected symbol</property>
+                        <property name="label" translatable="yes">Sequence alignment</property>
+                        <property name="use_underline">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToolButton" id="partitioningForceButton">
+                        <property name="use_action_appearance">True</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Force Partitioning on selected symbol</property>
+                        <property name="tooltip_text" translatable="yes">Force Partitioning on selected symbol</property>
+                        <property name="label" translatable="yes">Force Partitioning</property>
+                        <property name="use_underline">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToolButton" id="partitioningSimpleButton">
+                        <property name="use_action_appearance">True</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Simple Partitioning on selected symbol</property>
+                        <property name="tooltip_text" translatable="yes">Simple Partitioning on selected symbol</property>
+                        <property name="label" translatable="yes">Simple Partitioning</property>
+                        <property name="use_underline">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToolButton" id="partitioningSmoothButton">
+                        <property name="use_action_appearance">True</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Smooth Partitioning on selected symbol</property>
+                        <property name="tooltip_text" translatable="yes">Smooth Partitioning on selected symbol</property>
+                        <property name="label" translatable="yes">Smooth Partitioning</property>
+                        <property name="use_underline">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToolButton" id="partitioningResetButton">
+                        <property name="use_action_appearance">True</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Reset Partitioning on selected symbol</property>
+                        <property name="tooltip_text" translatable="yes">Reset Partitioning on selected symbol</property>
+                        <property name="label" translatable="yes">Reset Partitioning</property>
+                        <property name="use_underline">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorToolItem" id="separatorXXX">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToolButton" id="messagesDistributionButton">
+                        <property name="use_action_appearance">True</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Display messages distributions for selected symbol(s)</property>
+                        <property name="tooltip_text" translatable="yes">Display messages distributions for selected symbol(s)</property>
+                        <property name="label" translatable="yes">Messages Distribution</property>
+                        <property name="use_underline">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkScrolledWindow" id="symbolScrolledwindow">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="shadow_type">in</property>
+                    <child>
+                      <object class="GtkTreeView" id="symbolListTreeView">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="model">symbolListStore</property>
+                        <property name="headers_clickable">False</property>
+                        <property name="search_column">0</property>
+                        <property name="enable_grid_lines">both</property>
+                        <property name="enable_tree_lines">True</property>
+                        <child internal-child="selection">
+                          <object class="GtkTreeSelection" id="symbolListTreeViewSelection">
+                            <property name="mode">multiple</property>
+                            <signal name="changed" handler="symbolListTreeViewSelection_changed_cb" swapped="no"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="symbolTreeviewcolumn1">
+                            <child>
+                              <object class="GtkCellRendererText" id="symbolTextCellRenderer"/>
+                            </child>
+                            <child>
+                              <object class="GtkCellRendererToggle" id="symbolToggleCellRenderer">
+                                <signal name="toggled" handler="toggleSymbolCellRenderer_toggled_cb" swapped="no"/>
+                              </object>
+                              <attributes>
+                                <attribute name="visible">1</attribute>
+                                <attribute name="active">0</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="symbolTreeviewcolumn2">
+                            <property name="title" translatable="yes">Name</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="symbolCellrenderertext1"/>
+                              <attributes>
+                                <attribute name="text">2</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="symbolTreeviewcolumn">
+                            <property name="title" translatable="yes">Message</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="symbolCellrenderertext2"/>
+                              <attributes>
+                                <attribute name="text">3</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="symbolTreeviewcolumn7">
+                            <property name="title" translatable="yes">Field</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="symbolCellrenderertext5"/>
+                              <attributes>
+                                <attribute name="text">4</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolbar" id="symbolListToolbar">
+                    <property name="width_request">270</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkToolButton" id="selectAllSymbolsButton">
+                        <property name="use_action_appearance">True</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Select all symbols</property>
+                        <property name="tooltip_text" translatable="yes">Select all symbols</property>
+                        <property name="label" translatable="yes">Select all symbols</property>
+                        <property name="use_underline">True</property>
+                        <property name="stock_id">netzob-select-all</property>
+                        <signal name="clicked" handler="selectAllSymbolsButton_clicked_cb" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToolButton" id="unselectAllSymbolsButton">
+                        <property name="use_action_appearance">True</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Unselect all symbols</property>
+                        <property name="tooltip_text" translatable="yes">Unselect all symbols</property>
+                        <property name="label" translatable="yes">Unselect all symbols</property>
+                        <property name="use_underline">True</property>
+                        <property name="stock_id">netzob-unselect-all</property>
+                        <signal name="clicked" handler="unselectAllSymbolsButton_clicked_cb" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorToolItem" id="symbolToolbutton3">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToolButton" id="createSymbolButton">
+                        <property name="use_action_appearance">True</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Add a new empty symbol</property>
+                        <property name="tooltip_text" translatable="yes">Add a new empty symbol</property>
+                        <property name="label" translatable="yes">New</property>
+                        <property name="use_underline">True</property>
+                        <property name="stock_id">gtk-add</property>
+                        <signal name="clicked" handler="createSymbolButton_clicked_cb" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToolButton" id="concatSymbolButton">
+                        <property name="use_action_appearance">True</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Concatenate selected symbols</property>
+                        <property name="tooltip_text" translatable="yes">Concatenate selected symbols</property>
+                        <property name="label" translatable="yes">Concatenate</property>
+                        <property name="use_underline">True</property>
+                        <property name="stock_id">netzob-concat-symbol</property>
+                        <signal name="clicked" handler="concatSymbolButton_clicked_cb" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToolButton" id="deleteSymbolButton">
+                        <property name="use_action_appearance">True</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Delete selected symbol(s)</property>
+                        <property name="tooltip_text" translatable="yes">Delete selected symbol(s)</property>
+                        <property name="label" translatable="yes">Delete</property>
+                        <property name="use_underline">True</property>
+                        <property name="stock_id">gtk-delete</property>
+                        <signal name="clicked" handler="deleteSymbolButton_clicked_cb" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorToolItem" id="symbolToolbutton1">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToolButton" id="symbolNewMessageTableButton">
+                        <property name="use_action_appearance">True</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">New empty view for message of symbol</property>
+                        <property name="tooltip_text" translatable="yes">New empty view for message of symbol</property>
+                        <property name="label" translatable="yes">New MessageList</property>
+                        <property name="use_underline">True</property>
+                        <property name="stock_id">netzob-new-window</property>
+                        <signal name="clicked" handler="newSymbolTableButton_clicked_cb" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparator" id="symbolLeftSeparator">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="padding">1</property>
+                    <property name="position">3</property>
+                  </packing>
+                </child>
+              </object>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="symbolListTabLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Symbols</property>
               </object>
               <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
+                <property name="menu_label">Symbols</property>
+                <property name="tab_expand">True</property>
+                <property name="tab_fill">False</property>
               </packing>
             </child>
+
             <child>
-              <object class="GtkToolbar" id="symbolListToolbar2">
-                <property name="width_request">270</property>
+              <object class="GtkBox" id="sessionListBox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkToolButton" id="sequenceAlignmentButton">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="has_tooltip">True</property>
-                    <property name="tooltip_markup" translatable="yes">Sequence alignment on selected symbol</property>
-                    <property name="tooltip_text" translatable="yes">Sequence alignment on selected symbol</property>
-                    <property name="label" translatable="yes">Sequence alignment</property>
-                    <property name="use_underline">True</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkToolButton" id="partitioningForceButton">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="has_tooltip">True</property>
-                    <property name="tooltip_markup" translatable="yes">Force Partitioning on selected symbol</property>
-                    <property name="tooltip_text" translatable="yes">Force Partitioning on selected symbol</property>
-                    <property name="label" translatable="yes">Force Partitioning</property>
-                    <property name="use_underline">True</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkToolButton" id="partitioningSimpleButton">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="has_tooltip">True</property>
-                    <property name="tooltip_markup" translatable="yes">Simple Partitioning on selected symbol</property>
-                    <property name="tooltip_text" translatable="yes">Simple Partitioning on selected symbol</property>
-                    <property name="label" translatable="yes">Simple Partitioning</property>
-                    <property name="use_underline">True</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkToolButton" id="partitioningSmoothButton">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="has_tooltip">True</property>
-                    <property name="tooltip_markup" translatable="yes">Smooth Partitioning on selected symbol</property>
-                    <property name="tooltip_text" translatable="yes">Smooth Partitioning on selected symbol</property>
-                    <property name="label" translatable="yes">Smooth Partitioning</property>
-                    <property name="use_underline">True</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkToolButton" id="partitioningResetButton">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="has_tooltip">True</property>
-                    <property name="tooltip_markup" translatable="yes">Reset Partitioning on selected symbol</property>
-                    <property name="tooltip_text" translatable="yes">Reset Partitioning on selected symbol</property>
-                    <property name="label" translatable="yes">Reset Partitioning</property>
-                    <property name="use_underline">True</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSeparatorToolItem" id="separatorXXX">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkToolButton" id="messagesDistributionButton">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="has_tooltip">True</property>
-                    <property name="tooltip_markup" translatable="yes">Display messages distributions for selected symbol(s)</property>
-                    <property name="tooltip_text" translatable="yes">Display messages distributions for selected symbol(s)</property>
-                    <property name="label" translatable="yes">Messages Distribution</property>
-                    <property name="use_underline">True</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkScrolledWindow" id="scrolledwindow1">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="shadow_type">in</property>
-                <child>
-                  <object class="GtkTreeView" id="symbolListTreeView">
+                  <object class="GtkScrolledWindow" id="sessionScrolledwindow">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="model">symbolListStore</property>
-                    <property name="headers_clickable">False</property>
-                    <property name="search_column">0</property>
-                    <property name="enable_grid_lines">both</property>
-                    <property name="enable_tree_lines">True</property>
-                    <child internal-child="selection">
-                      <object class="GtkTreeSelection" id="symbolListTreeViewSelection">
-                        <property name="mode">multiple</property>
-                        <signal name="changed" handler="symbolListTreeViewSelection_changed_cb" swapped="no"/>
-                      </object>
-                    </child>
+                    <property name="shadow_type">in</property>
                     <child>
-                      <object class="GtkTreeViewColumn" id="treeviewcolumn13">
-                        <child>
-                          <object class="GtkCellRendererText" id="textCelleRenderer"/>
-                        </child>
-                        <child>
-                          <object class="GtkCellRendererToggle" id="toggleCellRenderer">
-                            <signal name="toggled" handler="toggleCellRenderer_toggled_cb" swapped="no"/>
+                      <object class="GtkTreeView" id="sessionListTreeView">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="model">sessionListStore</property>
+                        <property name="headers_clickable">False</property>
+                        <property name="search_column">0</property>
+                        <property name="enable_grid_lines">both</property>
+                        <property name="enable_tree_lines">True</property>
+                        <child internal-child="selection">
+                          <object class="GtkTreeSelection" id="sessionListTreeViewSelection">
+                            <property name="mode">multiple</property>
+                            <signal name="changed" handler="sessionListTreeViewSelection_changed_cb" swapped="no"/>
                           </object>
-                          <attributes>
-                            <attribute name="visible">1</attribute>
-                            <attribute name="active">0</attribute>
-                          </attributes>
                         </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkTreeViewColumn" id="treeviewcolumn5">
-                        <property name="title" translatable="yes">Name</property>
                         <child>
-                          <object class="GtkCellRendererText" id="cellrenderertext1"/>
-                          <attributes>
-                            <attribute name="text">2</attribute>
-                          </attributes>
+                          <object class="GtkTreeViewColumn" id="sessionTreeviewcolumn1">
+                            <child>
+                              <object class="GtkCellRendererText" id="sessionTextCellRenderer"/>
+                            </child>
+                            <child>
+                              <object class="GtkCellRendererToggle" id="sessionToggleCellRenderer">
+                                <signal name="toggled" handler="toggleSessionCellRenderer_toggled_cb" swapped="no"/>
+                              </object>
+                              <attributes>
+                                <attribute name="visible">1</attribute>
+                                <attribute name="active">0</attribute>
+                              </attributes>
+                            </child>
+                          </object>
                         </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkTreeViewColumn" id="treeviewcolumn6">
-                        <property name="title" translatable="yes">Message</property>
                         <child>
-                          <object class="GtkCellRendererText" id="cellrenderertext2"/>
-                          <attributes>
-                            <attribute name="text">3</attribute>
-                          </attributes>
+                          <object class="GtkTreeViewColumn" id="sessionTreeviewcolumn2">
+                            <property name="title" translatable="yes">Name</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="sessionCellrenderertext1"/>
+                              <attributes>
+                                <attribute name="text">2</attribute>
+                              </attributes>
+                            </child>
+                          </object>
                         </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkTreeViewColumn" id="treeviewcolumn7">
-                        <property name="title" translatable="yes">Field</property>
                         <child>
-                          <object class="GtkCellRendererText" id="cellrenderertext5"/>
-                          <attributes>
-                            <attribute name="text">4</attribute>
-                          </attributes>
+                          <object class="GtkTreeViewColumn" id="sessionTreeviewcolumn">
+                            <property name="title" translatable="yes">Message</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="sessionCellrenderertext2"/>
+                              <attributes>
+                                <attribute name="text">3</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="sessionTreeviewcolumn7">
+                            <property name="title" translatable="yes">Field</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="sessionCellrenderertext5"/>
+                              <attributes>
+                                <attribute name="text">4</attribute>
+                              </attributes>
+                            </child>
+                          </object>
                         </child>
                       </object>
                     </child>
                   </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolbar" id="sessionListToolbar">
+                    <property name="width_request">270</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkToolButton" id="selectAllSessionsButton">
+                        <property name="use_action_appearance">True</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Select all sessions</property>
+                        <property name="tooltip_text" translatable="yes">Select all sessions</property>
+                        <property name="label" translatable="yes">Select all sessions</property>
+                        <property name="use_underline">True</property>
+                        <property name="stock_id">netzob-select-all</property>
+                        <signal name="clicked" handler="selectAllSessionsButton_clicked_cb" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToolButton" id="unselectAllSessionsButton">
+                        <property name="use_action_appearance">True</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Unselect all sessions</property>
+                        <property name="tooltip_text" translatable="yes">Unselect all sessions</property>
+                        <property name="label" translatable="yes">Unselect all sessions</property>
+                        <property name="use_underline">True</property>
+                        <property name="stock_id">netzob-unselect-all</property>
+                        <signal name="clicked" handler="unselectAllSessionsButton_clicked_cb" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorToolItem" id="sessionToolbutton3">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToolButton" id="createSessionButton">
+                        <property name="use_action_appearance">True</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Add a new empty session</property>
+                        <property name="tooltip_text" translatable="yes">Add a new empty session</property>
+                        <property name="label" translatable="yes">New</property>
+                        <property name="use_underline">True</property>
+                        <property name="stock_id">gtk-add</property>
+                        <signal name="clicked" handler="createSessionButton_clicked_cb" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToolButton" id="deleteSessionButton">
+                        <property name="use_action_appearance">True</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Delete selected session(s)</property>
+                        <property name="tooltip_text" translatable="yes">Delete selected session(s)</property>
+                        <property name="label" translatable="yes">Delete</property>
+                        <property name="use_underline">True</property>
+                        <property name="stock_id">gtk-delete</property>
+                        <signal name="clicked" handler="deleteSessionButton_clicked_cb" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorToolItem" id="sessionToolbutton1">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToolButton" id="sessionNewMessageTableButton">
+                        <property name="use_action_appearance">True</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">New empty view for message of session</property>
+                        <property name="tooltip_text" translatable="yes">New empty view for message of session</property>
+                        <property name="label" translatable="yes">New MessageList</property>
+                        <property name="use_underline">True</property>
+                        <property name="stock_id">netzob-new-window</property>
+                        <signal name="clicked" handler="newSessionTableButton_clicked_cb" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparator" id="sessionLeftSeparator">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="padding">1</property>
+                    <property name="position">2</property>
+                  </packing>
                 </child>
               </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
-              </packing>
             </child>
-            <child>
-              <object class="GtkToolbar" id="symbolListToolbar">
-                <property name="width_request">270</property>
+            <child type="tab">
+              <object class="GtkLabel" id="sessionListTabLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <child>
-                  <object class="GtkToolButton" id="selectAllSymbolsButton">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="has_tooltip">True</property>
-                    <property name="tooltip_markup" translatable="yes">Select all symbols</property>
-                    <property name="tooltip_text" translatable="yes">Select all symbols</property>
-                    <property name="label" translatable="yes">Select all symbols</property>
-                    <property name="use_underline">True</property>
-                    <property name="stock_id">netzob-select-all</property>
-                    <signal name="clicked" handler="selectAllSymbolsButton_clicked_cb" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkToolButton" id="unselectAllSymbolsButton">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="has_tooltip">True</property>
-                    <property name="tooltip_markup" translatable="yes">Unselect all symbols</property>
-                    <property name="tooltip_text" translatable="yes">Unselect all symbols</property>
-                    <property name="label" translatable="yes">Unselect all symbols</property>
-                    <property name="use_underline">True</property>
-                    <property name="stock_id">netzob-unselect-all</property>
-                    <signal name="clicked" handler="unselectAllSymbolsButton_clicked_cb" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSeparatorToolItem" id="toolbutton3">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkToolButton" id="createSymbolButton">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="has_tooltip">True</property>
-                    <property name="tooltip_markup" translatable="yes">Add a new empty symbol</property>
-                    <property name="tooltip_text" translatable="yes">Add a new empty symbol</property>
-                    <property name="label" translatable="yes">New</property>
-                    <property name="use_underline">True</property>
-                    <property name="stock_id">gtk-add</property>
-                    <signal name="clicked" handler="createSymbolButton_clicked_cb" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkToolButton" id="concatSymbolButton">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="has_tooltip">True</property>
-                    <property name="tooltip_markup" translatable="yes">Concatenate selected symbols</property>
-                    <property name="tooltip_text" translatable="yes">Concatenate selected symbols</property>
-                    <property name="label" translatable="yes">Concatenate</property>
-                    <property name="use_underline">True</property>
-                    <property name="stock_id">netzob-concat-symbol</property>
-                    <signal name="clicked" handler="concatSymbolButton_clicked_cb" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkToolButton" id="deleteSymbolButton">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="has_tooltip">True</property>
-                    <property name="tooltip_markup" translatable="yes">Delete selected symbol(s)</property>
-                    <property name="tooltip_text" translatable="yes">Delete selected symbol(s)</property>
-                    <property name="label" translatable="yes">Delete</property>
-                    <property name="use_underline">True</property>
-                    <property name="stock_id">gtk-delete</property>
-                    <signal name="clicked" handler="deleteSymbolButton_clicked_cb" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSeparatorToolItem" id="toolbutton1">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkToolButton" id="newMessageTableButton">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="has_tooltip">True</property>
-                    <property name="tooltip_markup" translatable="yes">New empty view for message of symbol</property>
-                    <property name="tooltip_text" translatable="yes">New empty view for message of symbol</property>
-                    <property name="label" translatable="yes">New MessageList</property>
-                    <property name="use_underline">True</property>
-                    <property name="stock_id">netzob-new-window</property>
-                    <signal name="clicked" handler="newMessageTableButton_clicked_cb" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
+                <property name="label" translatable="yes">Sessions</property>
               </object>
               <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">3</property>
+                <property name="menu_label">Sessions</property>
+                <property name="tab_expand">True</property>
+                <property name="tab_fill">False</property>
               </packing>
             </child>
+
             <child>
-              <object class="GtkSeparator" id="leftSeparator">
+              <object class="GtkBox" id="sequenceListBox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkScrolledWindow" id="sequenceScrolledwindow">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="shadow_type">in</property>
+                    <child>
+                      <object class="GtkTreeView" id="sequenceListTreeView">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="model">sequenceListStore</property>
+                        <property name="headers_clickable">False</property>
+                        <property name="search_column">0</property>
+                        <property name="enable_grid_lines">both</property>
+                        <property name="enable_tree_lines">True</property>
+                        <child internal-child="selection">
+                          <object class="GtkTreeSelection" id="sequenceListTreeViewSelection">
+                            <property name="mode">multiple</property>
+                            <signal name="changed" handler="sequenceListTreeViewSelection_changed_cb" swapped="no"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="sequenceTreeviewcolumn1">
+                            <child>
+                              <object class="GtkCellRendererText" id="sequenceTextCellRenderer"/>
+                            </child>
+                            <child>
+                              <object class="GtkCellRendererToggle" id="sequenceToggleCellRenderer">
+                                <signal name="toggled" handler="toggleSequenceCellRenderer_toggled_cb" swapped="no"/>
+                              </object>
+                              <attributes>
+                                <attribute name="visible">1</attribute>
+                                <attribute name="active">0</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="sequenceTreeviewcolumn2">
+                            <property name="title" translatable="yes">Name</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="sequenceCellrenderertext1"/>
+                              <attributes>
+                                <attribute name="text">2</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="sequenceTreeviewcolumn">
+                            <property name="title" translatable="yes">Message</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="sequenceCellrenderertext2"/>
+                              <attributes>
+                                <attribute name="text">3</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="sequenceTreeviewcolumn7">
+                            <property name="title" translatable="yes">Field</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="sequenceCellrenderertext5"/>
+                              <attributes>
+                                <attribute name="text">4</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolbar" id="sequenceListToolbar">
+                    <property name="width_request">270</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkToolButton" id="selectAllSequencesButton">
+                        <property name="use_action_appearance">True</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Select all sequences</property>
+                        <property name="tooltip_text" translatable="yes">Select all sequences</property>
+                        <property name="label" translatable="yes">Select all sequences</property>
+                        <property name="use_underline">True</property>
+                        <property name="stock_id">netzob-select-all</property>
+                        <signal name="clicked" handler="selectAllSequencesButton_clicked_cb" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToolButton" id="unselectAllSequencesButton">
+                        <property name="use_action_appearance">True</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Unselect all sequences</property>
+                        <property name="tooltip_text" translatable="yes">Unselect all sequences</property>
+                        <property name="label" translatable="yes">Unselect all sequences</property>
+                        <property name="use_underline">True</property>
+                        <property name="stock_id">netzob-unselect-all</property>
+                        <signal name="clicked" handler="unselectAllSequencesButton_clicked_cb" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorToolItem" id="sequenceToolbutton3">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToolButton" id="createSequenceButton">
+                        <property name="use_action_appearance">True</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Add a new empty sequence</property>
+                        <property name="tooltip_text" translatable="yes">Add a new empty sequence</property>
+                        <property name="label" translatable="yes">New</property>
+                        <property name="use_underline">True</property>
+                        <property name="stock_id">gtk-add</property>
+                        <signal name="clicked" handler="createSequenceButton_clicked_cb" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToolButton" id="deleteSequenceButton">
+                        <property name="use_action_appearance">True</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Delete selected sequence(s)</property>
+                        <property name="tooltip_text" translatable="yes">Delete selected sequence(s)</property>
+                        <property name="label" translatable="yes">Delete</property>
+                        <property name="use_underline">True</property>
+                        <property name="stock_id">gtk-delete</property>
+                        <signal name="clicked" handler="deleteSequenceButton_clicked_cb" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorToolItem" id="sequenceToolbutton1">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToolButton" id="sequenceNewMessageTableButton">
+                        <property name="use_action_appearance">True</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">New empty view for message of sequence</property>
+                        <property name="tooltip_text" translatable="yes">New empty view for message of sequence</property>
+                        <property name="label" translatable="yes">New MessageList</property>
+                        <property name="use_underline">True</property>
+                        <property name="stock_id">netzob-new-window</property>
+                        <signal name="clicked" handler="newSequenceTableButton_clicked_cb" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparator" id="sequenceLeftSeparator">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="padding">1</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+              </object>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="sequenceListTabLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Sequences</property>
               </object>
               <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="padding">1</property>
-                <property name="position">5</property>
+                <property name="menu_label">Sequences</property>
+                <property name="tab_expand">True</property>
+                <property name="tab_fill">False</property>
               </packing>
+            </child>
+
+            <child>
+              <placeholder/>
+            </child>
+            <child type="tab">
+              <placeholder/>
             </child>
           </object>
           <packing>
