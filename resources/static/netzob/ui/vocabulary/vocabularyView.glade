@@ -89,6 +89,30 @@
       <column type="GtkListStore"/>
     </columns>
   </object>
+  <object class="GtkListStore" id="sessionPropertiesListstore">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name value -->
+      <column type="gchararray"/>
+      <!-- column-name isEditable -->
+      <column type="gboolean"/>
+      <!-- column-name model -->
+      <column type="GtkListStore"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="sequencePropertiesListstore">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name value -->
+      <column type="gchararray"/>
+      <!-- column-name isEditable -->
+      <column type="gboolean"/>
+      <!-- column-name model -->
+      <column type="GtkListStore"/>
+    </columns>
+  </object>
   <object class="GtkListStore" id="variableListstore">
     <columns>
       <!-- column-name name -->
@@ -256,7 +280,6 @@
                         <child internal-child="selection">
                           <object class="GtkTreeSelection" id="symbolListTreeViewSelection">
                             <property name="mode">multiple</property>
-                            <signal name="changed" handler="symbolListTreeViewSelection_changed_cb" swapped="no"/>
                           </object>
                         </child>
                         <child>
@@ -265,9 +288,7 @@
                               <object class="GtkCellRendererText" id="symbolTextCellRenderer"/>
                             </child>
                             <child>
-                              <object class="GtkCellRendererToggle" id="symbolToggleCellRenderer">
-                                <signal name="toggled" handler="toggleSymbolCellRenderer_toggled_cb" swapped="no"/>
-                              </object>
+                              <object class="GtkCellRendererToggle" id="symbolToggleCellRenderer"/>
                               <attributes>
                                 <attribute name="visible">1</attribute>
                                 <attribute name="active">0</attribute>
@@ -332,8 +353,6 @@
                         <property name="tooltip_text" translatable="yes">Select all symbols</property>
                         <property name="label" translatable="yes">Select all symbols</property>
                         <property name="use_underline">True</property>
-                        <property name="stock_id">netzob-select-all</property>
-                        <signal name="clicked" handler="selectAllSymbolsButton_clicked_cb" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -350,8 +369,6 @@
                         <property name="tooltip_text" translatable="yes">Unselect all symbols</property>
                         <property name="label" translatable="yes">Unselect all symbols</property>
                         <property name="use_underline">True</property>
-                        <property name="stock_id">netzob-unselect-all</property>
-                        <signal name="clicked" handler="unselectAllSymbolsButton_clicked_cb" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -378,8 +395,6 @@
                         <property name="tooltip_text" translatable="yes">Add a new empty symbol</property>
                         <property name="label" translatable="yes">New</property>
                         <property name="use_underline">True</property>
-                        <property name="stock_id">gtk-add</property>
-                        <signal name="clicked" handler="createSymbolButton_clicked_cb" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -396,8 +411,6 @@
                         <property name="tooltip_text" translatable="yes">Concatenate selected symbols</property>
                         <property name="label" translatable="yes">Concatenate</property>
                         <property name="use_underline">True</property>
-                        <property name="stock_id">netzob-concat-symbol</property>
-                        <signal name="clicked" handler="concatSymbolButton_clicked_cb" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -414,8 +427,6 @@
                         <property name="tooltip_text" translatable="yes">Delete selected symbol(s)</property>
                         <property name="label" translatable="yes">Delete</property>
                         <property name="use_underline">True</property>
-                        <property name="stock_id">gtk-delete</property>
-                        <signal name="clicked" handler="deleteSymbolButton_clicked_cb" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -433,7 +444,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkToolButton" id="symbolNewMessageTableButton">
+                      <object class="GtkToolButton" id="newSymbolTableButton">
                         <property name="use_action_appearance">True</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -442,8 +453,6 @@
                         <property name="tooltip_text" translatable="yes">New empty view for message of symbol</property>
                         <property name="label" translatable="yes">New MessageList</property>
                         <property name="use_underline">True</property>
-                        <property name="stock_id">netzob-new-window</property>
-                        <signal name="clicked" handler="newSymbolTableButton_clicked_cb" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -506,7 +515,6 @@
                         <child internal-child="selection">
                           <object class="GtkTreeSelection" id="sessionListTreeViewSelection">
                             <property name="mode">multiple</property>
-                            <signal name="changed" handler="sessionListTreeViewSelection_changed_cb" swapped="no"/>
                           </object>
                         </child>
                         <child>
@@ -515,9 +523,7 @@
                               <object class="GtkCellRendererText" id="sessionTextCellRenderer"/>
                             </child>
                             <child>
-                              <object class="GtkCellRendererToggle" id="sessionToggleCellRenderer">
-                                <signal name="toggled" handler="toggleSessionCellRenderer_toggled_cb" swapped="no"/>
-                              </object>
+                              <object class="GtkCellRendererToggle" id="sessionToggleCellRenderer"/>
                               <attributes>
                                 <attribute name="visible">1</attribute>
                                 <attribute name="active">0</attribute>
@@ -547,24 +553,13 @@
                             </child>
                           </object>
                         </child>
-                        <child>
-                          <object class="GtkTreeViewColumn" id="sessionTreeviewcolumn7">
-                            <property name="title" translatable="yes">Field</property>
-                            <child>
-                              <object class="GtkCellRendererText" id="sessionCellrenderertext5"/>
-                              <attributes>
-                                <attribute name="text">4</attribute>
-                              </attributes>
-                            </child>
-                          </object>
-                        </child>
                       </object>
                     </child>
                   </object>
                   <packing>
                     <property name="expand">True</property>
                     <property name="fill">True</property>
-                    <property name="position">0</property>
+                    <property name="position">1</property>
                   </packing>
                 </child>
                 <child>
@@ -582,8 +577,6 @@
                         <property name="tooltip_text" translatable="yes">Select all sessions</property>
                         <property name="label" translatable="yes">Select all sessions</property>
                         <property name="use_underline">True</property>
-                        <property name="stock_id">netzob-select-all</property>
-                        <signal name="clicked" handler="selectAllSessionsButton_clicked_cb" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -600,8 +593,6 @@
                         <property name="tooltip_text" translatable="yes">Unselect all sessions</property>
                         <property name="label" translatable="yes">Unselect all sessions</property>
                         <property name="use_underline">True</property>
-                        <property name="stock_id">netzob-unselect-all</property>
-                        <signal name="clicked" handler="unselectAllSessionsButton_clicked_cb" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -628,8 +619,22 @@
                         <property name="tooltip_text" translatable="yes">Add a new empty session</property>
                         <property name="label" translatable="yes">New</property>
                         <property name="use_underline">True</property>
-                        <property name="stock_id">gtk-add</property>
-                        <signal name="clicked" handler="createSessionButton_clicked_cb" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToolButton" id="concatSessionButton">
+                        <property name="use_action_appearance">True</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Concatenate selected sessions</property>
+                        <property name="tooltip_text" translatable="yes">Concatenate selected sessions</property>
+                        <property name="label" translatable="yes">Concatenate</property>
+                        <property name="use_underline">True</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -646,8 +651,6 @@
                         <property name="tooltip_text" translatable="yes">Delete selected session(s)</property>
                         <property name="label" translatable="yes">Delete</property>
                         <property name="use_underline">True</property>
-                        <property name="stock_id">gtk-delete</property>
-                        <signal name="clicked" handler="deleteSessionButton_clicked_cb" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -665,7 +668,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkToolButton" id="sessionNewMessageTableButton">
+                      <object class="GtkToolButton" id="newSessionTableButton">
                         <property name="use_action_appearance">True</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -674,8 +677,6 @@
                         <property name="tooltip_text" translatable="yes">New empty view for message of session</property>
                         <property name="label" translatable="yes">New MessageList</property>
                         <property name="use_underline">True</property>
-                        <property name="stock_id">netzob-new-window</property>
-                        <signal name="clicked" handler="newSessionTableButton_clicked_cb" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -686,7 +687,7 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">1</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
                 <child>
@@ -698,7 +699,7 @@
                     <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="padding">1</property>
-                    <property name="position">2</property>
+                    <property name="position">3</property>
                   </packing>
                 </child>
               </object>
@@ -738,7 +739,6 @@
                         <child internal-child="selection">
                           <object class="GtkTreeSelection" id="sequenceListTreeViewSelection">
                             <property name="mode">multiple</property>
-                            <signal name="changed" handler="sequenceListTreeViewSelection_changed_cb" swapped="no"/>
                           </object>
                         </child>
                         <child>
@@ -747,9 +747,7 @@
                               <object class="GtkCellRendererText" id="sequenceTextCellRenderer"/>
                             </child>
                             <child>
-                              <object class="GtkCellRendererToggle" id="sequenceToggleCellRenderer">
-                                <signal name="toggled" handler="toggleSequenceCellRenderer_toggled_cb" swapped="no"/>
-                              </object>
+                              <object class="GtkCellRendererToggle" id="sequenceToggleCellRenderer"/>
                               <attributes>
                                 <attribute name="visible">1</attribute>
                                 <attribute name="active">0</attribute>
@@ -779,24 +777,13 @@
                             </child>
                           </object>
                         </child>
-                        <child>
-                          <object class="GtkTreeViewColumn" id="sequenceTreeviewcolumn7">
-                            <property name="title" translatable="yes">Field</property>
-                            <child>
-                              <object class="GtkCellRendererText" id="sequenceCellrenderertext5"/>
-                              <attributes>
-                                <attribute name="text">4</attribute>
-                              </attributes>
-                            </child>
-                          </object>
-                        </child>
                       </object>
                     </child>
                   </object>
                   <packing>
                     <property name="expand">True</property>
                     <property name="fill">True</property>
-                    <property name="position">0</property>
+                    <property name="position">1</property>
                   </packing>
                 </child>
                 <child>
@@ -814,8 +801,6 @@
                         <property name="tooltip_text" translatable="yes">Select all sequences</property>
                         <property name="label" translatable="yes">Select all sequences</property>
                         <property name="use_underline">True</property>
-                        <property name="stock_id">netzob-select-all</property>
-                        <signal name="clicked" handler="selectAllSequencesButton_clicked_cb" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -832,8 +817,6 @@
                         <property name="tooltip_text" translatable="yes">Unselect all sequences</property>
                         <property name="label" translatable="yes">Unselect all sequences</property>
                         <property name="use_underline">True</property>
-                        <property name="stock_id">netzob-unselect-all</property>
-                        <signal name="clicked" handler="unselectAllSequencesButton_clicked_cb" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -860,8 +843,22 @@
                         <property name="tooltip_text" translatable="yes">Add a new empty sequence</property>
                         <property name="label" translatable="yes">New</property>
                         <property name="use_underline">True</property>
-                        <property name="stock_id">gtk-add</property>
-                        <signal name="clicked" handler="createSequenceButton_clicked_cb" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToolButton" id="concatSequenceButton">
+                        <property name="use_action_appearance">True</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Concatenate selected sequences</property>
+                        <property name="tooltip_text" translatable="yes">Concatenate selected sequences</property>
+                        <property name="label" translatable="yes">Concatenate</property>
+                        <property name="use_underline">True</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -878,8 +875,6 @@
                         <property name="tooltip_text" translatable="yes">Delete selected sequence(s)</property>
                         <property name="label" translatable="yes">Delete</property>
                         <property name="use_underline">True</property>
-                        <property name="stock_id">gtk-delete</property>
-                        <signal name="clicked" handler="deleteSequenceButton_clicked_cb" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -897,7 +892,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkToolButton" id="sequenceNewMessageTableButton">
+                      <object class="GtkToolButton" id="newSequenceTableButton">
                         <property name="use_action_appearance">True</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -906,8 +901,6 @@
                         <property name="tooltip_text" translatable="yes">New empty view for message of sequence</property>
                         <property name="label" translatable="yes">New MessageList</property>
                         <property name="use_underline">True</property>
-                        <property name="stock_id">netzob-new-window</property>
-                        <signal name="clicked" handler="newSequenceTableButton_clicked_cb" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -918,7 +911,7 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">1</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
                 <child>
@@ -930,7 +923,7 @@
                     <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="padding">1</property>
-                    <property name="position">2</property>
+                    <property name="position">3</property>
                   </packing>
                 </child>
               </object>

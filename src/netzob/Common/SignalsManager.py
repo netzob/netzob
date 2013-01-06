@@ -54,6 +54,22 @@ class SignalsManager(object):
     SIG_SYMBOLS_SINGLE_SELECTION = "symbols.single_selection"
     SIG_SYMBOLS_MULTIPLE_SELECTION = "symbols.multiple_selection"
 
+    SIG_SESSIONS_NONE_CHECKED = "sessions.none_checked"
+    SIG_SESSIONS_SINGLE_CHECKED = "sessions.single_checked"
+    SIG_SESSIONS_MULTIPLE_CHECKED = "sessions.multiple_checked"
+
+    SIG_SESSIONS_NO_SELECTION = "sessions.no_selection"
+    SIG_SESSIONS_SINGLE_SELECTION = "sessions.single_selection"
+    SIG_SESSIONS_MULTIPLE_SELECTION = "sessions.multiple_selection"
+
+    SIG_SEQUENCES_NONE_CHECKED = "sequences.none_checked"
+    SIG_SEQUENCES_SINGLE_CHECKED = "sequences.single_checked"
+    SIG_SEQUENCES_MULTIPLE_CHECKED = "sequences.multiple_checked"
+
+    SIG_SEQUENCES_NO_SELECTION = "sequences.no_selection"
+    SIG_SEQUENCES_SINGLE_SELECTION = "sequences.single_selection"
+    SIG_SEQUENCES_MULTIPLE_SELECTION = "sequences.multiple_selection"
+
     SIG_FIELDS_NO_SELECTION = "fields.no_selection"
     SIG_FIELDS_SINGLE_SELECTION = "field.single_selection"
     SIG_FIELDS_MULTIPLE_SELECTION = "field.multiple_selection"

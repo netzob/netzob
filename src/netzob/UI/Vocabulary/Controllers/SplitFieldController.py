@@ -97,7 +97,7 @@ class SplitFieldController(object):
 
     def cancel_clicked_cb(self, widget):
         self.view.splitFieldDialog.destroy()
-        self.vocabularyController.view.updateSymbolList()
+        self.vocabularyController.symbolController.updateSymbolList()
 
     def doSplit_clicked_cb(self, widget):
         if self.split_max_len <= 1:
@@ -110,7 +110,7 @@ class SplitFieldController(object):
             split_index = self.split_position
         self.field.splitField(split_index, self.split_align)
         self.view.splitFieldDialog.destroy()
-        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.updateSelectedMessageTable()
 
     def adjustSplitLeft_clicked_cb(self, widget):
         self.adjustSplit_clicked("left")

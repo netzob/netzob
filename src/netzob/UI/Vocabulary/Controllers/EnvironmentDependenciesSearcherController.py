@@ -92,7 +92,7 @@ class EnvironmentDependenciesSearcherController(object):
         self._view.destroy()
 
         if self.searchTasks is not None:
-            self.vocabularyController.executeAbritrarySearch(self.searchTasks)
+            self.vocabularyController.executeArbritrarySearch(self.searchTasks)
 
     def envDepsSearch(self):
         """Search within symbol the environmental deps"""

@@ -94,7 +94,7 @@ class PopupEditFieldController(object):
         text = self.view.regex.get_text()
         if (len(text) > 0):
             self.field.setRegex(text)
-        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.updateSelectedMessageTable()
         # UI update
         self.view.dialog.destroy()
-        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.updateSelectedMessageTable()

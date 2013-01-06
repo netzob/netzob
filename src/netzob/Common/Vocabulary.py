@@ -124,6 +124,12 @@ class Vocabulary(object):
                 return symbol
         return None
 
+    def getSessionByID(self, sessionID):
+        for session in self.sessions:
+            if str(session.getID()) == str(sessionID):
+                return session
+        return None
+
     def getFieldByID(self, fieldID):
         for symbol in self.symbols:
             for field in symbol.getAllFields():
@@ -257,7 +263,7 @@ class Vocabulary(object):
                     vocabulary.addSymbol(symbol)
             # Sessions
             for xmlSession in xmlRoot.findall("{" + namespace_project + "}sessions/{" + namespace_common + "}session"):
-                session = Session.loadFromXML(xmlSession, namespace_project, namespace_common, version, vocabulary)
+                session = Session.loadFromXML(xmlSession, namespace_project, namespace_common, version, project, vocabulary)
                 if session is not None:
                     vocabulary.addSession(session)
         return vocabulary

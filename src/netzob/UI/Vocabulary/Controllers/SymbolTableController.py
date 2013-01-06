@@ -34,16 +34,16 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.UI.Vocabulary.Views.MessageTableView import MessageTableView
+from netzob.UI.Vocabulary.Views.SymbolTableView import SymbolTableView
 from netzob.UI.Vocabulary.Controllers.Menus.ContextualMenuOnFieldController import ContextualMenuOnFieldController
 from netzob.Common.SignalsManager import SignalsManager
 
 
-class MessageTableController(object):
+class SymbolTableController(object):
 
-    def __init__(self, vocabularyPerspective):
-        self.vocabularyPerspective = vocabularyPerspective
-        self._view = MessageTableView(self)
+    def __init__(self, vocabularyController):
+        self.vocabularyController = vocabularyController
+        self._view = SymbolTableView(self)
         self.selectedMessages = []
 
     @property
@@ -51,16 +51,16 @@ class MessageTableController(object):
         return self._view
 
     def getSignalsManager(self):
-        return self.vocabularyPerspective.netzob.getSignalsManager()
+        return self.vocabularyController.netzob.getSignalsManager()
 
     def getSelectedMessages(self):
         return self.selectedMessages
 
-    def messageTableTreeView_changed_event_cb(self, selection):
+    def symbolTableTreeView_changed_event_cb(self, selection):
         """Callback executed when the user
-        clicks on a message in the MessageTable"""
-        if self.vocabularyPerspective.controller.selectedMessagesToMove is not None:
-            self.vocabularyPerspective.controller.removePendingMessagesToMove()
+        clicks on a message in the SymbolTable"""
+        if self.vocabularyController.selectedMessagesToMove is not None:
+            self.vocabularyController.removePendingMessagesToMove()
 
         self.selectedMessages = []
         if selection is not None:
@@ -69,12 +69,12 @@ class MessageTableController(object):
                 iter = model.get_iter(row)
                 msgID = model[iter][0]
                 if msgID is not None:
-                    message = self.vocabularyPerspective.getCurrentProject().getVocabulary().getMessageByID(msgID)
+                    message = self.vocabularyController.getCurrentProject().getVocabulary().getMessageByID(msgID)
                     if message is None:
                         logging.warn("Impossible to retrieve the requested message ({0})".format(msgID))
                     else:
                         self.selectedMessages.append(message)
-        self.vocabularyPerspective.updateMessageProperties()
+        self.vocabularyController.symbolController.updateMessageProperties()
 
         # Send signals to update toolbar
         nbSelectedMessage = len(self.selectedMessages)
@@ -86,14 +86,14 @@ class MessageTableController(object):
             self.getSignalsManager().emitSignal(SignalsManager.SIG_MESSAGES_MULTIPLE_SELECTION)
 
     def messageListBox_button_press_event_cb(self, box, eventButton):
-        self.vocabularyPerspective.setSelectedMessageTable(self.view)
+        self.vocabularyController.setSelectedMessageTable(self.view)
 
     def closeButton_clicked_cb(self, button):
-        self.vocabularyPerspective.removeMessageTable(self.view)
+        self.vocabularyController.removeMessageTable(self.view)
 
-    def messageTableTreeView_button_press_event_cb(self, treeview, eventButton):
+    def symbolTableTreeView_button_press_event_cb(self, treeview, eventButton):
         # Popup a contextual menu if right click
-        self.vocabularyPerspective.setSelectedMessageTable(self.view)
+        self.vocabularyController.setSelectedMessageTable(self.view)
         if eventButton.type == Gdk.EventType.BUTTON_PRESS and eventButton.button == 3:
             x = int(eventButton.x)
             y = int(eventButton.y)
@@ -105,7 +105,7 @@ class MessageTableController(object):
 
             # Retrieve the selected messages
             messages = []
-            layer = self._view.getDisplayedField()
+            layer = self._view.getDisplayedObject()
             if layer is None:
                 logging.warn("No layer selected, please choose one.")
                 return
@@ -120,7 +120,7 @@ class MessageTableController(object):
                     return
 
             # Retrieve the selected field number
-            iField = self.view.displayedField.getExtendedFields()[0].getIndex()  # Starting displayed field
+            iField = self.view.displayedObject.getExtendedFields()[0].getIndex()  # Starting displayed field
             for col in treeview.get_columns():
                 if col == treeviewColumn:
                     break
@@ -131,18 +131,18 @@ class MessageTableController(object):
                 return
 
             # Popup a contextual menu
-            menuController = ContextualMenuOnFieldController(self.vocabularyPerspective.controller, layer, messages, field)
+            menuController = ContextualMenuOnFieldController(self.vocabularyController, layer, messages, field)
             menuController.run(eventButton)
             return True  # Needed to block remainin signals (especially the 'changed_cb' signal)
 
-    def messageTableTreeView_enter_notify_event_cb(self, treeView, data=None):
+    def symbolTableTreeView_enter_notify_event_cb(self, treeView, data=None):
         self.view.treeViewHeaderGroup.setAllColumnsFocus(True)
 
-    def messageTableTreeView_leave_notify_event_cb(self, treeView, data=None):
+    def symbolTableTreeView_leave_notify_event_cb(self, treeView, data=None):
         self.view.treeViewHeaderGroup.setAllColumnsFocus(False)
 
-    def messageTableBox_enter_notify_event_cb(self, treeView, data=None):
+    def symbolTableBox_enter_notify_event_cb(self, treeView, data=None):
         self.view.treeViewHeaderGroup.setAllColumnsFocus(True)
 
-    def messageTableBox_leave_notify_event_cb(self, treeView, data=None):
+    def symbolTableBox_leave_notify_event_cb(self, treeView, data=None):
         self.view.treeViewHeaderGroup.setAllColumnsFocus(False)

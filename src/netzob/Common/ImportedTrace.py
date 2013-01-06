@@ -187,7 +187,8 @@ class ImportedTrace(object):
                 if xmlRoot.find("{" + namespace_workspace + "}sessions") is not None:
                     xmlSessions = xmlRoot.find("{" + namespace_workspace + "}sessions")
                     for xmlSession in xmlSessions.findall("{" + namespace_common + "}session"):
-                        session = Session.loadFromXML(xmlSession, namespace_workspace, namespace_common, version, importedTrace)
+                        project = None
+                        session = Session.loadFromXML(xmlSession, namespace_workspace, namespace_common, version, project, importedTrace)
                         if session is not None:
                             importedTrace.addSession(session)
             return importedTrace

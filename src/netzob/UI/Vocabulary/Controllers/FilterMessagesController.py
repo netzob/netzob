@@ -74,20 +74,20 @@ class FilterMessagesController(object):
         # Sanity checks
         if self.vocabularyController.getCurrentProject() is None:
             return
-        symbol = self.vocabularyController.view.getDisplayedFieldInSelectedMessageTable()
+        symbol = self.vocabularyController.getDisplayedObjectInSelectedSMessageTable()
         if symbol is None:
             return
         toSearch = widget.get_text()
         if toSearch == "":
-            self.vocabularyController.view.selectedMessageTable.updateMessageTableListStore()
+            self.vocabularyController.selectedMessageTable.updateSymbolTableListStore()
             return
 
         # Update the message list model
-        self.vocabularyController.view.selectedMessageTable.updateMessageTableListStore()
+        self.vocabularyController.selectedMessageTable.updateSymbolTableListStore()
 
         # Search non-matching messages
         messagesToRemove = []
-        messagesStore = self.vocabularyController.view.selectedMessageTable.messageTableListStore
+        messagesStore = self.vocabularyController.selectedMessageTable.symbolTableListStore
         for message in symbol.getMessages():
             messageData = "".join(message.applyAlignment(styled=False, encoded=True))
             if messageData.find(toSearch) == -1:
@@ -107,7 +107,7 @@ class FilterMessagesController(object):
 
     def filter_close_clicked_cb(self, widget):
         """Callback executed when the user closes the results"""
-        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.updateSelectedMessageTable()
         checkMenuItem = self.vocabularyController.netzob.view.uiManager.get_widget("/mainMenuBar/mainMenuBarAdditions/searchMenu/filterMessages")
         checkMenuItem.set_active(False)
         self.hide()

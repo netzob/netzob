@@ -118,7 +118,7 @@ class ConfirmImportMessagesController(object):
             self.currentProject.getVocabulary().addMessage(message)
 
         # We create a session with each message
-        session = Session(str(uuid.uuid4()), "Session 1", "")
+        session = Session(str(uuid.uuid4()), "Session 1", self.currentProject, "")
         for message in self.importedMessages:
             session.addMessage(message)
         # We register the session in the vocabulary of the project

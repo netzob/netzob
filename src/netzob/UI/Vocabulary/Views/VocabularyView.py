@@ -45,17 +45,19 @@ from collections import OrderedDict
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+from netzob.Common.SignalsManager import SignalsManager
+from netzob.UI.Common.Controllers.MoveMessageController import MoveMessageController
 from netzob.UI.Vocabulary.Controllers.ResearchController import ResearchController
 from netzob.UI.Vocabulary.Controllers.FilterMessagesController import FilterMessagesController
-from netzob.UI.Vocabulary.Controllers.MessageTableController import MessageTableController
-from netzob.Common.SignalsManager import SignalsManager
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.UI.Vocabulary.Controllers.MessagesDistributionController import MessagesDistributionController
-from netzob.UI.Common.Controllers.MoveMessageController import MoveMessageController
-from netzob.UI.Vocabulary.Controllers.VariableDisplayerController import VariableDisplayerController
 
 
 class VocabularyView(object):
+    PROJECTPROPERTIESLISTSTORE_NAME_COLUMN = 0
+    PROJECTPROPERTIESLISTSTORE_VALUE_COLUMN = 1
+    PROJECTPROPERTIESLISTSTORE_EDITABLE_COLUMN = 2
+    PROJECTPROPERTIESLISTSTORE_MODEL_COLUMN = 3
+
+    # Symbols
     SYMBOLLISTSTORE_SELECTED_COLUMN = 0
     SYMBOLLISTSTORE_TOPLEVEL_COLUMN = 1
     SYMBOLLISTSTORE_NAME_COLUMN = 2
@@ -63,87 +65,233 @@ class VocabularyView(object):
     SYMBOLLISTSTORE_FIELD_COLUMN = 4
     SYMBOLLISTSTORE_ID_COLUMN = 5
 
+    SYMBOLPROPERTIESLISTSTORE_NAME_COLUMN = 0
+    SYMBOLPROPERTIESLISTSTORE_VALUE_COLUMN = 1
+    SYMBOLPROPERTIESLISTSTORE_EDITABLE_COLUMN = 2
+    SYMBOLPROPERTIESLISTSTORE_MODEL_COLUMN = 3
+
+    # Sessions
     SESSIONLISTSTORE_SELECTED_COLUMN = 0
     SESSIONLISTSTORE_TOPLEVEL_COLUMN = 1
     SESSIONLISTSTORE_NAME_COLUMN = 2
     SESSIONLISTSTORE_MESSAGE_COLUMN = 3
     SESSIONLISTSTORE_ID_COLUMN = 4
 
+    SESSIONPROPERTIESLISTSTORE_NAME_COLUMN = 0
+    SESSIONPROPERTIESLISTSTORE_VALUE_COLUMN = 1
+    SESSIONPROPERTIESLISTSTORE_EDITABLE_COLUMN = 2
+    SESSIONPROPERTIESLISTSTORE_MODEL_COLUMN = 3
+
+    # Sequences
     SEQUENCELISTSTORE_SELECTED_COLUMN = 0
     SEQUENCELISTSTORE_TOPLEVEL_COLUMN = 1
     SEQUENCELISTSTORE_NAME_COLUMN = 2
     SEQUENCELISTSTORE_MESSAGE_COLUMN = 3
     SEQUENCELISTSTORE_ID_COLUMN = 4
 
-    PROJECTPROPERTIESLISTSTORE_NAME_COLUMN = 0
-    PROJECTPROPERTIESLISTSTORE_VALUE_COLUMN = 1
-    PROJECTPROPERTIESLISTSTORE_EDITABLE_COLUMN = 2
-    PROJECTPROPERTIESLISTSTORE_MODEL_COLUMN = 3
-
-    SYMBOLPROPERTIESLISTSTORE_NAME_COLUMN = 0
-    SYMBOLPROPERTIESLISTSTORE_VALUE_COLUMN = 1
-    SYMBOLPROPERTIESLISTSTORE_EDITABLE_COLUMN = 2
-    SYMBOLPROPERTIESLISTSTORE_MODEL_COLUMN = 3
-
-    SESSIONPROPERTIESLISTSTORE_NAME_COLUMN = 0
-    SESSIONPROPERTIESLISTSTORE_VALUE_COLUMN = 1
-    SESSIONPROPERTIESLISTSTORE_EDITABLE_COLUMN = 2
-    SESSIONPROPERTIESLISTSTORE_MODEL_COLUMN = 3
-
     SEQUENCEPROPERTIESLISTSTORE_NAME_COLUMN = 0
     SEQUENCEPROPERTIESLISTSTORE_VALUE_COLUMN = 1
     SEQUENCEPROPERTIESLISTSTORE_EDITABLE_COLUMN = 2
     SEQUENCEPROPERTIESLISTSTORE_MODEL_COLUMN = 3
 
+    # Messages
     MESSAGEPROPERTIESLISTSTORE_NAME_COLUMN = 0
     MESSAGEPROPERTIESLISTSTORE_VALUE_COLUMN = 1
     MESSAGEPROPERTIESLISTSTORE_EDITABLE_COLUMN = 2
     MESSAGEPROPERTIESLISTSTORE_MODEL_COLUMN = 3
 
+    # Fields
     FIELDPROPERTIESLISTSTORE_NAME_COLUMN = 0
     FIELDPROPERTIESLISTSTORE_VALUE_COLUMN = 1
 
     def __init__(self, controller):
         self.controller = controller
         self.netzob = self.controller.netzob
+        self.actionsBuilder = Gtk.Builder()
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
             "ui", "vocabulary",
             "vocabularyView.glade"))
-        self._getObjects(self.builder, ["vocabularyPanel", "symbolListStore", "sessionListStore", "sequenceListStore",
-                                        "concatSymbolButton", "deleteSymbolButton", "newMessageList",
-                                        "sequenceAlignmentButton",
-                                        "partitioningForceButton",
-                                        "partitioningSimpleButton",
-                                        "partitioningSmoothButton",
-                                        "partitioningResetButton",
-                                        "messagesDistributionButton",
-                                        "projectTreeview", "symbolTreeview", "messageTreeview", "fieldTreeview",
-                                        "projectPropertiesListstore", "symbolPropertiesListstore", "messagePropertiesListstore",
-                                        "messageTableBox", "symbolListTreeView", "sessionListTreeView", "sequenceListTreeView",
-                                        "symbolListTreeViewSelection", "sessionListTreeViewSelection", "sequenceListTreeViewSelection", 
-                                        "messagesDistributionSymbolViewport", "messageTableBoxAndResearchBox"
+        self._getObjects(self.builder, ["vocabularyPanel", "projectTreeview", "projectPropertiesListstore",
+                                        "messageTableBox", "messageTableBoxAndResearchBox",
+                                        "messagePropertiesListstore",
+                                        # Symbols
+                                        "symbolListStore", "concatSymbolButton", "deleteSymbolButton",
+                                        "sequenceAlignmentButton", "partitioningForceButton", "partitioningSimpleButton",
+                                        "partitioningSmoothButton", "partitioningResetButton", "messagesDistributionButton",
+                                        "symbolTreeview", "symbolPropertiesListstore", "symbolListTreeView",
+                                        "symbolListTreeViewSelection", "messagesDistributionSymbolViewport",
+                                        "messageTableBoxAndResearchBox", "messagePropertiesListstore",
+                                        "selectAllSymbolsButton", "unselectAllSymbolsButton", "createSymbolButton",
+                                        "newSymbolTableButton", "symbolToggleCellRenderer",
+                                        # Sessions
+                                        "sessionListStore", "sessionTreeview", "sessionPropertiesListstore", "sessionListTreeView",
+                                        "sessionListTreeViewSelection",
+                                        "selectAllSessionsButton", "unselectAllSessionsButton", "createSessionButton",
+                                        "concatSessionButton", "deleteSessionButton", "newSessionTableButton", "sessionToggleCellRenderer",
+                                        # Sequences
+                                        "sequenceListStore", "sequenceTreeview", "sequencePropertiesListstore", "sequenceListTreeView",
+                                        "sequenceListTreeViewSelection",
+                                        "selectAllSequencesButton", "unselectAllSequencesButton", "createSequenceButton",
+                                        "concatSequenceButton", "deleteSequenceButton", "newSequenceTableButton", "sequenceToggleCellRenderer"
                                         ])
         self._loadActionGroupUIDefinition()
         self.builder.connect_signals(self.controller)
 
-        # List of currently displayed message tables
-        self.messageTableList = []
-        self.selectedMessageTable = None
-        # add the netzobBegin label attribute
-        self.netzobBegin = None
-        # add the researchBar
+        # Add the researchBar
         self.researchController = ResearchController(self.controller)
         self.messageTableBoxAndResearchBox.pack_end(self.researchController._view.researchBar, False, False, 0)
         self.researchController._view.research_format.set_active(4)
         self.researchController.hide()
 
-        # add the filterBar
+        # Add the filterBar
         self.filterMessagesController = FilterMessagesController(self.controller)
         self.messageTableBoxAndResearchBox.pack_end(self.filterMessagesController._view.filterBar, False, False, 0)
         self.filterMessagesController.hide()
         self.registerSignalListeners()
+
+        self.registerSignalListeners()
+
+    def _loadActionGroupUIDefinition(self):
+        """Loads the action group and the UI definition of menu items
+        . This method should only be called in the constructor"""
+        # Load vocabulary actions
+        self.actionsBuilder.add_from_file(os.path.join(
+            ResourcesConfiguration.getStaticResources(),
+            "ui", "vocabulary",
+            "vocabularyActions.glade"))
+        self.actionsBuilder.connect_signals(self.controller)
+        self._actionGroup = self.actionsBuilder.get_object("vocabularyActionGroup")
+
+        # Load UI definition
+        uiDefinitionFilePath = os.path.join(
+            ResourcesConfiguration.getStaticResources(),
+            "ui", "vocabulary",
+            "vocabularyMenuToolbar.ui")
+        with open(uiDefinitionFilePath, "r") as uiDefinitionFile:
+            self._uiDefinition = uiDefinitionFile.read()
+
+    def loadSymbolActionGroupUIDefinition(self):
+        """Loads the action group and the UI definition of menu items
+        . This method should only be called in the constructor"""
+        # Load symbol actions
+        self.actionsBuilder.add_from_file(os.path.join(
+            ResourcesConfiguration.getStaticResources(),
+            "ui", "vocabulary",
+            "symbolActions.glade"))
+        self.actionsBuilder.connect_signals(self.controller.symbolController)
+
+        # Trick to remove actions from symbolActionGroup and to add them to the main vocabularyActionGroup
+        aSymbolActionGroup = self.actionsBuilder.get_object("symbolActionGroup")
+        for action in aSymbolActionGroup.list_actions():
+            aSymbolActionGroup.remove_action(action)
+            self._actionGroup.add_action(action)
+        self._actionGroup = self.actionsBuilder.get_object("vocabularyActionGroup")
+
+        # Attach actions from the vocabularyActionGroup to the small panel on top of symbols
+        sequenceAlignmentAction = self._actionGroup.get_action('sequenceAlignment')
+        partitioningForceAction = self._actionGroup.get_action('partitioningForce')
+        partitioningSimpleAction = self._actionGroup.get_action('partitioningSimple')
+        partitioningSmoothAction = self._actionGroup.get_action('partitioningSmooth')
+        partitioningResetAction = self._actionGroup.get_action('partitioningReset')
+        messagesDistributionAction = self._actionGroup.get_action('messagesDistribution')
+        selectAllSymbolsAction = self._actionGroup.get_action('selectAllSymbols')
+        unselectAllSymbolsAction = self._actionGroup.get_action('unselectAllSymbols')
+        createSymbolAction = self._actionGroup.get_action('createSymbol')
+        concatSymbolAction = self._actionGroup.get_action('concatSymbol')
+        deleteSymbolAction = self._actionGroup.get_action('deleteSymbol')
+        newSymbolTableAction = self._actionGroup.get_action('newSymbolTable')
+
+        self.sequenceAlignmentButton.set_related_action(sequenceAlignmentAction)
+        self.partitioningForceButton.set_related_action(partitioningForceAction)
+        self.partitioningSimpleButton.set_related_action(partitioningSimpleAction)
+        self.partitioningSmoothButton.set_related_action(partitioningSmoothAction)
+        self.partitioningResetButton.set_related_action(partitioningResetAction)
+        self.messagesDistributionButton.set_related_action(messagesDistributionAction)
+        self.selectAllSymbolsButton.set_related_action(selectAllSymbolsAction)
+        self.unselectAllSymbolsButton.set_related_action(unselectAllSymbolsAction)
+        self.createSymbolButton.set_related_action(createSymbolAction)
+        self.concatSymbolButton.set_related_action(concatSymbolAction)
+        self.deleteSymbolButton.set_related_action(deleteSymbolAction)
+        self.newSymbolTableButton.set_related_action(newSymbolTableAction)
+
+        self.symbolToggleCellRenderer.connect("toggled", self.controller.symbolController.toggleSymbolCellRenderer_toggled_cb)
+        self.symbolListTreeViewSelection.connect("changed", self.controller.symbolController.symbolListTreeViewSelection_changed_cb)
+
+    def loadSessionActionGroupUIDefinition(self):
+        """Loads the action group and the UI definition of menu items
+        . This method should only be called in the constructor"""
+        # Load session actions
+        self.actionsBuilder.add_from_file(os.path.join(
+            ResourcesConfiguration.getStaticResources(),
+            "ui", "vocabulary",
+            "sessionActions.glade"))
+        self.actionsBuilder.connect_signals(self.controller.sessionController)
+
+        # Trick to remove actions from sessionActionGroup and to add them to the main vocabularyActionGroup
+        aSessionActionGroup = self.actionsBuilder.get_object("sessionActionGroup")
+        for action in aSessionActionGroup.list_actions():
+            aSessionActionGroup.remove_action(action)
+            self._actionGroup.add_action(action)
+        self._actionGroup = self.actionsBuilder.get_object("vocabularyActionGroup")
+
+        # Attach actions from the vocabularyActionGroup to the small panel on top of sessions
+        selectAllSessionsAction = self._actionGroup.get_action('selectAllSessions')
+        unselectAllSessionsAction = self._actionGroup.get_action('unselectAllSessions')
+        createSessionAction = self._actionGroup.get_action('createSession')
+        concatSessionAction = self._actionGroup.get_action('concatSession')
+        deleteSessionAction = self._actionGroup.get_action('deleteSession')
+        newSessionTableAction = self._actionGroup.get_action('newSessionTable')
+
+        self.selectAllSessionsButton.set_related_action(selectAllSessionsAction)
+        self.unselectAllSessionsButton.set_related_action(unselectAllSessionsAction)
+        self.createSessionButton.set_related_action(createSessionAction)
+        self.concatSessionButton.set_related_action(concatSessionAction)
+        self.deleteSessionButton.set_related_action(deleteSessionAction)
+        self.newSessionTableButton.set_related_action(newSessionTableAction)
+
+        self.sessionToggleCellRenderer.connect("toggled", self.controller.sessionController.toggleSessionCellRenderer_toggled_cb)
+        self.sessionListTreeViewSelection.connect("changed", self.controller.sessionController.sessionListTreeViewSelection_changed_cb)
+
+    def loadSequenceActionGroupUIDefinition(self):
+        """Loads the action group and the UI definition of menu items
+        . This method should only be called in the constructor"""
+        # Load sequence actions
+        self.actionsBuilder.add_from_file(os.path.join(
+            ResourcesConfiguration.getStaticResources(),
+            "ui", "vocabulary",
+            "sequenceActions.glade"))
+        self.actionsBuilder.connect_signals(self.controller.sequenceController)
+
+        # Trick to remove actions from sequenceActionGroup and to add them to the main vocabularyActionGroup
+        aSequenceActionGroup = self.actionsBuilder.get_object("sequenceActionGroup")
+        for action in aSequenceActionGroup.list_actions():
+            aSequenceActionGroup.remove_action(action)
+            self._actionGroup.add_action(action)
+        self._actionGroup = self.actionsBuilder.get_object("vocabularyActionGroup")
+
+        # Attach actions from the vocabularyActionGroup to the small panel on top of sequences
+        selectAllSequencesAction = self._actionGroup.get_action('selectAllSequences')
+        unselectAllSequencesAction = self._actionGroup.get_action('unselectAllSequences')
+        createSequenceAction = self._actionGroup.get_action('createSequence')
+        concatSequenceAction = self._actionGroup.get_action('concatSequence')
+        deleteSequenceAction = self._actionGroup.get_action('deleteSequence')
+        newSequenceTableAction = self._actionGroup.get_action('newSequenceTable')
+
+        self.selectAllSequencesButton.set_related_action(selectAllSequencesAction)
+        self.unselectAllSequencesButton.set_related_action(unselectAllSequencesAction)
+        self.createSequenceButton.set_related_action(createSequenceAction)
+        self.concatSequenceButton.set_related_action(concatSequenceAction)
+        self.deleteSequenceButton.set_related_action(deleteSequenceAction)
+        self.newSequenceTableButton.set_related_action(newSequenceTableAction)
+
+        self.sequenceToggleCellRenderer.connect("toggled", self.controller.sequenceController.toggleSequenceCellRenderer_toggled_cb)
+        self.sequenceListTreeViewSelection.connect("changed", self.controller.sequenceController.sequenceListTreeViewSelection_changed_cb)
+
+    def _getObjects(self, builder, objectsList):
+        for object in objectsList:
+            setattr(self, object, builder.get_object(object))
 
     def registerSignalListeners(self):
         # Register signal processing on toolbar elements
@@ -157,6 +305,30 @@ class VocabularyView(object):
         signalManager.attach(self.symbolSelectionHasChanged_cb, [SignalsManager.SIG_SYMBOLS_NO_SELECTION, SignalsManager.SIG_SYMBOLS_SINGLE_SELECTION, SignalsManager.SIG_SYMBOLS_MULTIPLE_SELECTION])
         signalManager.attach(self.fieldSelectionHasChanged_cb, [SignalsManager.SIG_FIELDS_NO_SELECTION, SignalsManager.SIG_FIELDS_SINGLE_SELECTION, SignalsManager.SIG_FIELDS_MULTIPLE_SELECTION])
         signalManager.attach(self.messageSelectionHasChanged_cb, [SignalsManager.SIG_MESSAGES_NO_SELECTION, SignalsManager.SIG_MESSAGES_SINGLE_SELECTION, SignalsManager.SIG_MESSAGES_MULTIPLE_SELECTION])
+
+
+    # Synchronize sensitivity of buttons based on authorized actions
+    def projectStatusHasChanged_cb(self, signal):
+        """projectStatusHasChanged_cb:
+        Callback executed when a signal is emitted."""
+
+        actions = ["importMessagesFromFile",
+                   "captureMessages",
+                   "relationsViewer",
+                   "searchMenu",
+                   "searchText",
+                   "variableTable",
+                   "automaticToolMenu",
+                   "manualToolMenu",
+                   ]
+
+        if signal == SignalsManager.SIG_PROJECT_OPEN:
+            for action in actions:
+                self._actionGroup.get_action(action).set_sensitive(True)
+
+        elif signal == SignalsManager.SIG_PROJECT_CLOSE:
+            for action in actions:
+                self._actionGroup.get_action(action).set_sensitive(False)
 
     def messageSelectionHasChanged_cb(self, signal):
         """messageSelectionHasChanged_cb:
@@ -220,68 +392,6 @@ class VocabularyView(object):
         elif signal == SignalsManager.SIG_SYMBOLS_SINGLE_SELECTION:
             self._actionGroup.get_action('filterMessages').set_sensitive(True)
 
-    def projectStatusHasChanged_cb(self, signal):
-        """projectStatusHasChanged_cb:
-        Callback executed when a signal is emitted."""
-
-        actions = ["importMessagesFromFile",
-                   "captureMessages",
-                   "relationsViewer",
-                   "searchMenu",
-                   "searchText",
-                   "variableTable",
-                   "automaticToolMenu",
-                   "manualToolMenu",
-                   ]
-
-        if signal == SignalsManager.SIG_PROJECT_OPEN:
-            for action in actions:
-                self._actionGroup.get_action(action).set_sensitive(True)
-
-        elif signal == SignalsManager.SIG_PROJECT_CLOSE:
-            for action in actions:
-                self._actionGroup.get_action(action).set_sensitive(False)
-
-    def _loadActionGroupUIDefinition(self):
-        """Loads the action group and the UI definition of menu items
-        . This method should only be called in the constructor"""
-        # Load actions
-        actionsBuilder = Gtk.Builder()
-        actionsBuilder.add_from_file(os.path.join(
-            ResourcesConfiguration.getStaticResources(),
-            "ui", "vocabulary",
-            "vocabularyActions.glade"))
-        self._actionGroup = actionsBuilder.get_object("vocabularyActionGroup")
-        actionsBuilder.connect_signals(self.controller)
-        uiDefinitionFilePath = os.path.join(
-            ResourcesConfiguration.getStaticResources(),
-            "ui", "vocabulary",
-            "vocabularyMenuToolbar.ui")
-        with open(uiDefinitionFilePath, "r") as uiDefinitionFile:
-            self._uiDefinition = uiDefinitionFile.read()
-
-        # Attach actions from the vocabularyActionGroup to the small panel on top of symbols
-        sequenceAlignmentAction = self._actionGroup.get_action('sequenceAlignment')
-        self.sequenceAlignmentButton.set_related_action(sequenceAlignmentAction)
-
-        partitioningForceAction = self._actionGroup.get_action('partitioningForce')
-        self.partitioningForceButton.set_related_action(partitioningForceAction)
-
-        partitioningSimpleAction = self._actionGroup.get_action('partitioningSimple')
-        self.partitioningSimpleButton.set_related_action(partitioningSimpleAction)
-
-        partitioningSmoothAction = self._actionGroup.get_action('partitioningSmooth')
-        self.partitioningSmoothButton.set_related_action(partitioningSmoothAction)
-
-        partitioningResetAction = self._actionGroup.get_action('partitioningReset')
-        self.partitioningResetButton.set_related_action(partitioningResetAction)
-
-        messagesDistributionAction = self._actionGroup.get_action('messagesDistribution')
-        self.messagesDistributionButton.set_related_action(messagesDistributionAction)
-
-    def _getObjects(self, builder, objectsList):
-        for object in objectsList:
-            setattr(self, object, builder.get_object(object))
 
     ## Mandatory view methods
     def getPanel(self):
@@ -295,6 +405,7 @@ class VocabularyView(object):
     def getMenuToolbarUIDefinition(self):
         return self._uiDefinition
 
+    # Plugins update
     def updateListCapturerPlugins(self, pluginsExtensions):
         """Update the menu"""
         pluginMenu = self.netzob.view.uiManager.get_widget("/mainMenuBar/fileMenu/fileMenuAdditions/captureMessages").get_submenu()
@@ -308,124 +419,3 @@ class VocabularyView(object):
             pluginEntry.connect("activate", pluginExtension.executeAction, self)
             pluginMenu.append(pluginEntry)
         pluginMenu.show_all()
-
-    def drag_data_received_event(self, widget, drag_context, x, y, data, info, time):
-        """Callback executed when the user drops
-        some data in the treeview of symbols."""
-        receivedData = data.get_text()
-
-        if widget is None:
-            logging.debug("No widget selected, cannot move the message")
-            return
-
-        # retrieve the drop row
-        path, position = widget.get_dest_row_at_pos(x, y)
-        targetSymbol = None
-        if path is not None:
-            layerID = widget.get_model()[path][VocabularyView.SYMBOLLISTSTORE_ID_COLUMN]
-            if layerID is not None:
-                targetField = self.controller.getCurrentProject().getVocabulary().getFieldByID(layerID)
-                targetSymbol = targetField.getSymbol()
-        if targetSymbol is None:
-            return
-
-        if receivedData is not None and len(receivedData) > 2:
-            if targetSymbol is not None and receivedData[:2] == "m:":
-                for msgID in receivedData[2:].split(","):
-                    message = self.controller.getCurrentProject().getVocabulary().getMessageByID(msgID)
-                    # verify if the target symbol's regex is valid according to the message
-                    if message is not None:
-                        if targetSymbol.getField().isRegexValidForMessage(message):
-                            self.controller.moveMessage(message, targetSymbol)
-                        else:
-                            self.drag_receivedMessages(targetSymbol, message)
-                        self.updateSelectedMessageTable()
-                        self.controller.updateLeftPanel()
-
-    def drag_receivedMessages(self, targetSymbol, message):
-        """Executed by the drop callback which has discovered
-        some messages (identified by their ID) to be moved from their
-        current symbol to the selected symbol"""
-        if message is not None:
-            moveMessageController = MoveMessageController(self.controller, [message], targetSymbol)
-            moveMessageController.run()
-
-    ## Message Tables management
-    def addMessageTable(self):
-        """ Create a new message table and selects it"""
-        messageTableController = MessageTableController(self)
-        messageTable = messageTableController.view
-        self.messageTableList.append(messageTable)
-        self.setSelectedMessageTable(messageTable)
-        self.messageTableBox.pack_start(messageTable.getPanel(), True, True, 0)
-
-    def removeMessageTable(self, messageTable):
-        self.messageTableBox.remove(messageTable.getPanel())
-        messageTable.destroy()
-        self.messageTableList = [mTable for mTable in self.messageTableList
-                                 if mTable != messageTable]
-        # Select a new table in messageTable was the selected message table
-        if len(self.messageTableList) > 0:
-            self.setSelectedMessageTable(self.messageTableList[0])
-
-    def removeAllMessageTables(self):
-        for child in self.messageTableBox.get_children():
-            self.messageTableBox.remove(child)
-
-        self.messageTableList = []
-
-    def emptyMessageTableDisplayingSymbols(self, symbolList):
-        toBeRemovedTables = [mTable for mTable in self.messageTableList
-                             if mTable.getDisplayedField() in symbolList]
-        for mTable in toBeRemovedTables:
-            mTable.setDisplayedField(None)
-
-    def updateSelectedMessageTable(self):
-        if self.selectedMessageTable is not None:
-            self.selectedMessageTable.update()
-
-    def updateMessageTableDisplayingSymbols(self, symbolList):
-        toBeUpdatedTables = [mTable for mTable in self.messageTableList
-                             if mTable.getDisplayedField() in symbolList]
-        for mTable in toBeUpdatedTables:
-            mTable.update()
-
-    def setSelectedMessageTable(self, selectedMessageTable):
-        """Set provided message table as selected"""
-
-        if selectedMessageTable == self.selectedMessageTable:
-            return
-
-        # Update appearance of old and new selected message table
-        if self.selectedMessageTable is not None:
-            self.selectedMessageTable.setSelected(False)
-
-        # Update current selected message table and
-        self.selectedMessageTable = selectedMessageTable
-        self.selectedMessageTable.setSelected(True)
-
-    def setDisplayedFieldInSelectedMessageTable(self, symbol):
-        """Show the definition of provided symbol on the selected
-        message table"""
-        logging.debug("Update the displayed symbol in selected table message")
-
-        # Open a message table if none is available
-        if len(self.messageTableList) == 0:
-            self.addMessageTable()
-
-        # if a message table is selected we update its symbol
-        self.selectedMessageTable.setDisplayedField(symbol)
-
-    def getDisplayedFieldInSelectedMessageTable(self):
-        if self.selectedMessageTable is None:
-            return None
-        else:
-            return self.selectedMessageTable.displayedField
-
-    def getCurrentProject(self):
-        return self.controller.netzob.getCurrentProject()
-
-    def getDisplayedField(self):
-        if self.selectedMessageTable is None:
-            return None
-        return self.selectedMessageTable.getDisplayedField()

@@ -101,9 +101,9 @@ class SmoothPartitioningController(object):
         self._view.smoothDialog.destroy()
 
         # Update the message table view
-        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.updateSelectedMessageTable()
         # Update the field properties view
-        self.vocabularyController.view.updateLeftPanel()
+        self.vocabularyController.updateLeftPanel()
 
     def smooth(self):
         """Smooth the provided fields"""

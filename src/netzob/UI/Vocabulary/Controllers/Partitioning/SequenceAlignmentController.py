@@ -132,9 +132,9 @@ class SequenceAlignmentController(object):
             # Close dialog box
             self._view.sequenceDialog.destroy()
             # Update the message table view
-            self.vocabularyController.view.updateSelectedMessageTable()
+            self.vocabularyController.updateSelectedMessageTable()
             # Update the field properties view
-            self.vocabularyController.view.updateLeftPanel()
+            self.vocabularyController.updateLeftPanel()
 
     def percentOfAlignmentProgessBar(self, stage, percent, message):
         # select the good progress bar in function of the stage

@@ -44,28 +44,13 @@ gi.require_version('Gtk', '3.0')
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.UI.Vocabulary.Controllers.EnvironmentDependenciesSearcherController import EnvironmentDependenciesSearcherController
-from netzob.UI.Vocabulary.Views.SessionView import SessionView
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.Common.Session import Session
-from netzob.UI.Common.Controllers.MoveMessageController import MoveMessageController
-from netzob.UI.Vocabulary.Controllers.Partitioning.SequenceAlignmentController import SequenceAlignmentController
-from netzob.UI.Vocabulary.Controllers.Partitioning.ForcePartitioningController import ForcePartitioningController
-from netzob.UI.Vocabulary.Controllers.Partitioning.SimplePartitioningController import SimplePartitioningController
-from netzob.UI.Vocabulary.Controllers.Partitioning.SmoothPartitioningController import SmoothPartitioningController
-from netzob.UI.Vocabulary.Controllers.MessagesDistributionController import MessagesDistributionController
-from netzob.UI.Vocabulary.Controllers.Partitioning.ResetPartitioningController import ResetPartitioningController
-from netzob.UI.Vocabulary.Controllers.SplitFieldController import SplitFieldController
-from netzob.UI.Import.ImportFileChooserDialog import ImportFileChooserDialog
 from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
-from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
-from netzob.UI.NetzobWidgets import NetzobQuestionMessage, NetzobErrorMessage, NetzobInfoMessage
-from netzob.UI.Vocabulary.Controllers.RelationsController import RelationsController
-from netzob.UI.Vocabulary.Controllers.Menus.ContextualMenuOnLayerController import ContextualMenuOnLayerController
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.UI.Vocabulary.Controllers.VariableController import VariableTreeController
-from netzob.Common.Plugins.Extensions.CapturerMenuExtension import CapturerMenuExtension
 from netzob.Common.SignalsManager import SignalsManager
+from netzob.UI.Common.Controllers.MoveMessageController import MoveMessageController
+from netzob.UI.Vocabulary.Controllers.Menus.ContextualMenuOnLayerController import ContextualMenuOnLayerController
+from netzob.UI.NetzobWidgets import NetzobQuestionMessage, NetzobErrorMessage, NetzobInfoMessage
 
 
 #+----------------------------------------------
@@ -74,9 +59,10 @@ from netzob.Common.SignalsManager import SignalsManager
 #+----------------------------------------------
 class SessionController(object):
 
-    def __init__(self, netzob):
-        self.netzob = netzob
-        self._view = SessionView(self)
+    def __init__(self, vocabularyController):
+        self.vocabularyController = vocabularyController
+        self.netzob = vocabularyController.netzob
+        self._view = vocabularyController._view
         self.log = logging.getLogger(__name__)
 
         self.view.sessionListTreeViewSelection.set_select_function(self.session_list_selection_function, None)
@@ -85,6 +71,180 @@ class SessionController(object):
     @property
     def view(self):
         return self._view
+
+    def updateLeftPanel(self):
+        self.updateSessionList()
+        self.updateSessionListToolbar()
+        self.updateSessionProperties()
+
+    ## Session List
+    def updateSessionList(self):
+        """Updates the session list of the left panel, preserving the current
+        selection"""
+        # Retrieve sessions of the current project vocabulary (if one selected)
+        sessionList = []
+        if self.getCurrentProject() is not None and self.getCurrentProject().getVocabulary() is not None:
+            sessionList.extend(self.getCurrentProject().getVocabulary().getSessions())
+
+        checkedSessionsIDList = []
+        for row in self.view.sessionListStore:
+            if (row[self.view.SESSIONLISTSTORE_SELECTED_COLUMN]):
+                checkedSessionsIDList.append(row[self.view.SESSIONLISTSTORE_ID_COLUMN])
+        # Block selection changed handler
+        self.view.sessionListTreeViewSelection.handler_block_by_func(self.sessionListTreeViewSelection_changed_cb)
+        self.view.sessionListStore.clear()
+        for session in sessionList:
+            pIter = self.addRowSessionList(checkedSessionsIDList, session.getName(),
+                                          len(session.getMessages()),
+                                          str(session.getID()))
+        self.setSelectedSessionFromSelectedSessionTable()
+        self.view.sessionListTreeViewSelection.handler_unblock_by_func(self.sessionListTreeViewSelection_changed_cb)
+
+    def setSelectedSessionFromSelectedSessionTable(self):
+        if self.vocabularyController.selectedMessageTable is None:
+            self.setSelectedSession(None)
+        else:
+            sessionTableSession = self.vocabularyController.selectedMessageTable.displayedObject
+            self.setSelectedSession(sessionTableSession)
+
+    def addRowSessionList(self, checkedSessionsIDList, name, message, symID):
+        """Adds a row in the session list of left panel
+        @type  selection: boolean
+        @param selection: if selected session
+        @type  name: string
+        @param name: name of the session
+        @type  message: string
+        @param message: number of message in the session
+        @type  image: string
+        @param image: image of the lock button (freeze partitioning)"""
+        i = self.view.sessionListStore.append(None)
+        self.view.sessionListStore.set(i, self.view.SESSIONLISTSTORE_SELECTED_COLUMN, (symID in checkedSessionsIDList))
+        self.view.sessionListStore.set(i, self.view.SESSIONLISTSTORE_TOPLEVEL_COLUMN, True)
+        self.view.sessionListStore.set(i, self.view.SESSIONLISTSTORE_NAME_COLUMN, name)
+        self.view.sessionListStore.set(i, self.view.SESSIONLISTSTORE_MESSAGE_COLUMN, message)
+        self.view.sessionListStore.set(i, self.view.SESSIONLISTSTORE_ID_COLUMN, symID)
+        return i
+
+    def updateSessionListToolbar(self):
+        """Enables or disable buttons of the session list toolbar"""
+        selectedSessionsCount = self.countSelectedSessions()
+        self.view.concatSessionButton.set_sensitive((selectedSessionsCount >= 2))
+        self.view.deleteSessionButton.set_sensitive((selectedSessionsCount >= 1))
+
+        # We emit signals depending of the number of selected sessions
+        if selectedSessionsCount == 0:
+            self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SESSIONS_NONE_CHECKED)
+        elif selectedSessionsCount == 1:
+            self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SESSIONS_SINGLE_CHECKED)
+        else:
+            self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SESSIONS_MULTIPLE_CHECKED)
+
+    def countSelectedSessions(self):
+        count = 0
+        for row in self.view.sessionListStore:
+            if row[self.view.SESSIONLISTSTORE_SELECTED_COLUMN]:
+                count += 1
+        return count
+
+    def getCheckedSessionList(self):
+        if self.getCurrentProject() is None:
+            return []
+        currentVocabulary = self.getCurrentProject().getVocabulary()
+        selectedSessionList = []
+        for row in self.view.sessionListStore:
+            if row[self.view.SESSIONLISTSTORE_SELECTED_COLUMN]:
+                session_id = row[self.view.SESSIONLISTSTORE_ID_COLUMN]
+                session = currentVocabulary.getSessionByID(session_id)
+                selectedSessionList.append(session)
+        return selectedSessionList
+
+    def setSelectedSession(self, session):
+        selection = self.view.sessionListTreeView.get_selection()
+        if session is None:
+            selection.unselect_all()
+        else:
+            path = self.getSessionPathInSessionList(session)
+            if path is not None:
+                selection.select_path(path)
+
+    def getSelectedSession(self):
+        """Returns the selected session in the list of sessions"""
+        currentVocabulary = self.getCurrentProject().getVocabulary()
+        model, iter = self.view.sessionListTreeView.get_selection().get_selected()
+        if iter is not None:
+            symID = model[iter][self.view.SESSIONLISTSTORE_ID_COLUMN]
+            return currentVocabulary.getSessionByID(symID)
+        return None
+
+    def getSessionPathInSessionList(self, session):
+        symID = session.getID()
+        for path, row in enumerate(self.view.sessionListStore):
+            if row[self.view.SESSIONLISTSTORE_ID_COLUMN] == symID:
+                return path
+
+    def getDisplayedObject(self):
+        if self.vocabularyController.selectedMessageTable is None:
+            return None
+        return self.vocabularyController.selectedMessageTable.getDisplayedObject()
+
+    def getCurrentProject(self):
+        return self.netzob.getCurrentProject()
+
+
+    # Properties
+    def getSessionProperties(self):
+        """Create the list of properties associated
+        with the current displayed session"""
+        properties = []
+        session = self.vocabularyController.getDisplayedObjectInSelectedMessageTable()
+        if session is not None:
+            properties = session.getProperties()
+        return properties
+
+    def updateSessionProperties(self):
+        # clean store
+        self.view.sessionPropertiesListstore.clear()
+        # get session properties
+        properties = self.getSessionProperties()
+#        # add session properties
+        for prop in properties:
+            line = self.view.sessionPropertiesListstore.append()
+            self.view.sessionPropertiesListstore.set(line, self.view.SESSIONPROPERTIESLISTSTORE_NAME_COLUMN, prop.getName())
+            self.view.sessionPropertiesListstore.set(line, self.view.SESSIONPROPERTIESLISTSTORE_VALUE_COLUMN, str(prop.getCurrentValue()))
+            self.view.sessionPropertiesListstore.set(line, self.view.SESSIONPROPERTIESLISTSTORE_EDITABLE_COLUMN, prop.isEditable)
+            if prop.getPossibleValues() != []:
+                liststore_possibleValues = Gtk.ListStore(str)
+                for val in prop.getPossibleValues():
+                    liststore_possibleValues.append([val])
+                self.view.sessionPropertiesListstore.set(line, self.view.SESSIONPROPERTIESLISTSTORE_MODEL_COLUMN, liststore_possibleValues)
+
+    def getMessageProperties(self):
+        """Retrieve the current first selected message (in the
+        selected TableMessage) and return its properties"""
+        properties = []
+        messages = self.vocabularyController.getSelectedMessagesInSelectedMessageTable()
+        if messages is not None and len(messages) > 0:
+            message = messages[0]
+            if message is not None:
+                properties = message.getProperties()
+        return properties
+
+    def updateMessageProperties(self):
+        # clean store
+        self.view.messagePropertiesListstore.clear()
+        # get message properties
+        properties = self.getMessageProperties()
+        # add message properties
+        for prop in properties:
+            line = self.view.messagePropertiesListstore.append()
+            self.view.messagePropertiesListstore.set(line, self.view.MESSAGEPROPERTIESLISTSTORE_NAME_COLUMN, prop.getName())
+            self.view.messagePropertiesListstore.set(line, self.view.MESSAGEPROPERTIESLISTSTORE_VALUE_COLUMN, str(prop.getCurrentValue()))
+            self.view.messagePropertiesListstore.set(line, self.view.MESSAGEPROPERTIESLISTSTORE_EDITABLE_COLUMN, prop.isEditable)
+            if prop.getPossibleValues() != []:
+                liststore_possibleValues = Gtk.ListStore(str)
+                for val in prop.getPossibleValues():
+                    liststore_possibleValues.append([val])
+                self.view.messagePropertiesListstore.set(line, self.view.MESSAGEPROPERTIESLISTSTORE_MODEL_COLUMN, liststore_possibleValues)
 
     ## Session List toolbar callbacks
     def selectAllSessionsButton_clicked_cb(self, toolButton):
@@ -95,7 +255,7 @@ class SessionController(object):
         """
         for row in self.view.sessionListStore:
             row[self.view.SESSIONLISTSTORE_SELECTED_COLUMN] = True
-        self.view.updateSessionListToolbar()
+        self.updateSessionListToolbar()
 
     def unselectAllSessionsButton_clicked_cb(self, toolButton):
         """
@@ -105,7 +265,7 @@ class SessionController(object):
         """
         for row in self.view.sessionListStore:
             row[self.view.SESSIONLISTSTORE_SELECTED_COLUMN] = False
-        self.view.updateSessionListToolbar()
+        self.updateSessionListToolbar()
 
     def createSessionButton_clicked_cb(self, toolButton):
         if self.getCurrentProject() is None:
@@ -118,20 +278,19 @@ class SessionController(object):
         dialog.set_transient_for(self.netzob.view.mainWindow)
 
         # Disable apply button if no text
-        applybutton = builder2.get_object("button1")
-        entry = builder2.get_object("entry1")
+        applybutton = builder2.get_object("session-button1")
+        entry = builder2.get_object("session-entry1")
         entry.connect("changed", self.entry_disableButtonIfEmpty_cb, applybutton)
 
         result = dialog.run()
-
         if (result == 0):
             newSessionName = entry.get_text()
             newSessionId = str(uuid.uuid4())
             self.log.debug("A new session will be created with the given name: {0}".format(newSessionName))
             currentProject = self.netzob.getCurrentProject()
-            newSession = Session(newSessionId, newSessionName, currentProject)
+            newSession = Session(newSessionId, newSessionName, currentProject, "")
             currentProject.getVocabulary().addSession(newSession)
-            self.view.updateLeftPanel()
+            self.updateLeftPanel()
             dialog.destroy()
         if (result == 1):
             dialog.destroy()
@@ -141,6 +300,31 @@ class SessionController(object):
             button.set_sensitive(True)
         else:
             button.set_sensitive(False)
+
+    def concatSessionButton_clicked_cb(self, toolButton):
+        if self.getCurrentProject() is None:
+            NetzobErrorMessage(_("No project selected."))
+            return
+        # retrieve the checked sessions
+        sessions = self.view.getCheckedSessionList()
+
+        # Create a new session
+        newSession = Session(str(uuid.uuid4()), "Merged", self.getCurrentProject())
+
+        # fetch all their messages
+        for sym in sessions:
+            newSession.addMessages(sym.getMessages())
+
+        #delete all selected sessions
+        self.vocabularyController.emptyMessageTableDisplayingObjects(sessions)
+        for sym in sessions:
+            self.getCurrentProject().getVocabulary().removeSession(sym)
+
+        #add the concatenate session
+        self.getCurrentProject().getVocabulary().addSession(newSession)
+
+        #refresh view
+        self.updateLeftPanel()
 
     def deleteSessionButton_clicked_cb(self, toolButton):
         if self.getCurrentProject() is None:
@@ -153,23 +337,23 @@ class SessionController(object):
             for mess in sym.getMessages():
                 currentVocabulary.removeMessage(mess)
             currentVocabulary.removeSession(sym)
-            self.view.emptyMessageTableDisplayingSessions([sym])
+            self.vocabularyController.emptyMessageTableDisplayingObjects([sym])
         # Update view
-        self.view.updateLeftPanel()
-        self.view.updateSelectedMessageTable()
+        self.vocabularyController.updateSelectedMessageTable()
+        self.updateLeftPanel()
 
     def newSessionTableButton_clicked_cb(self, toolButton):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        self.view.addMessageTable()
+        self.vocabularyController.addMessageTable(Session)
 
     def toggleSessionCellRenderer_toggled_cb(self, widget, buttonid):
         # Update this flag so the line won't be selected.
         self.session_list_set_selection = False
         model = self.view.sessionListStore
         model[buttonid][0] = not model[buttonid][0]
-        self.view.updateSessionListToolbar()
+        self.updateSessionListToolbar()
 
     def session_list_selection_function(self, selection, model, path, selected, data):
         """This method is in charge of deciding if the current line of
@@ -201,13 +385,13 @@ class SessionController(object):
             logging.debug("Iter is not none")
             # We first check if the user selected a session
             ID = model[aIter][self.view.SESSIONLISTSTORE_ID_COLUMN]
-            field = currentVocabulary.getFieldByID(ID)
-            self.executeMoveTargetOperation(field.getSession())
-            self.view.setDisplayedFieldInSelectedMessageTable(field)
-            self._view.updateSessionProperties()
-            self.getSignalsManager().emitSignal(SignalsManager.SIG_SESSIONS_SINGLE_SELECTION)
+            session = currentVocabulary.getSessionByID(ID)
+            #self.vocabularyController.executeMoveTargetOperation(field.getSession())
+            self.vocabularyController.setDisplayedObjectInSelectedMessageTable(session)
+            self.updateSessionProperties()
+            self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SESSIONS_SINGLE_SELECTION)
         else:
-            self.getSignalsManager().emitSignal(SignalsManager.SIG_SESSIONS_NO_SELECTION)
+            self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SESSIONS_NO_SELECTION)
 
     def sessionListTreeView_button_press_event_cb(self, treeview, eventButton):
         if 1 > treeview.get_selection().count_selected_rows():

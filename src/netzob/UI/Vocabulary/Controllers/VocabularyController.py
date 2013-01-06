@@ -45,31 +45,30 @@ gi.require_version('Gtk', '3.0')
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.UI.Vocabulary.Controllers.EnvironmentDependenciesSearcherController import EnvironmentDependenciesSearcherController
-from netzob.UI.Vocabulary.Views.VocabularyView import VocabularyView
-from netzob.UI.Vocabulary.Controllers.SymbolController import SymbolController
-#from netzob.UI.Vocabulary.Controllers.SessionController import SessionController
-#from netzob.UI.Vocabulary.Controllers.SequenceController import SequenceController
-from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
-from netzob.Common.Symbol import Symbol
-from netzob.UI.Common.Controllers.MoveMessageController import MoveMessageController
-from netzob.UI.Vocabulary.Controllers.Partitioning.SequenceAlignmentController import SequenceAlignmentController
-from netzob.UI.Vocabulary.Controllers.Partitioning.ForcePartitioningController import ForcePartitioningController
-from netzob.UI.Vocabulary.Controllers.Partitioning.SimplePartitioningController import SimplePartitioningController
-from netzob.UI.Vocabulary.Controllers.Partitioning.SmoothPartitioningController import SmoothPartitioningController
-from netzob.UI.Vocabulary.Controllers.MessagesDistributionController import MessagesDistributionController
-from netzob.UI.Vocabulary.Controllers.Partitioning.ResetPartitioningController import ResetPartitioningController
-from netzob.UI.Vocabulary.Controllers.SplitFieldController import SplitFieldController
-from netzob.UI.Import.ImportFileChooserDialog import ImportFileChooserDialog
 from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
-from netzob.UI.NetzobWidgets import NetzobQuestionMessage, NetzobErrorMessage, NetzobInfoMessage
-from netzob.UI.Vocabulary.Controllers.RelationsController import RelationsController
-from netzob.UI.Vocabulary.Controllers.Menus.ContextualMenuOnLayerController import ContextualMenuOnLayerController
 from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.UI.Vocabulary.Controllers.VariableController import VariableTreeController
 from netzob.Common.Plugins.Extensions.CapturerMenuExtension import CapturerMenuExtension
 from netzob.Common.SignalsManager import SignalsManager
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+from netzob.Common.Field import Field
+from netzob.Common.Session import Session
+from netzob.Common.Sequence import Sequence
+from netzob.UI.Vocabulary.Controllers.SymbolTableController import SymbolTableController
+from netzob.UI.Vocabulary.Controllers.SessionTableController import SessionTableController
+from netzob.UI.Vocabulary.Controllers.SequenceTableController import SequenceTableController
+from netzob.UI.Vocabulary.Controllers.RelationsController import RelationsController
+from netzob.UI.Vocabulary.Controllers.EnvironmentDependenciesSearcherController import EnvironmentDependenciesSearcherController
+from netzob.UI.Vocabulary.Views.VocabularyView import VocabularyView
+from netzob.UI.Vocabulary.Views.SymbolTableView import SymbolTableView
+from netzob.UI.Vocabulary.Views.SessionTableView import SessionTableView
+from netzob.UI.Vocabulary.Views.SequenceTableView import SequenceTableView
+from netzob.UI.Vocabulary.Controllers.SymbolController import SymbolController
+from netzob.UI.Vocabulary.Controllers.SessionController import SessionController
+from netzob.UI.Vocabulary.Controllers.SequenceController import SequenceController
+from netzob.UI.Common.Controllers.MoveMessageController import MoveMessageController
+from netzob.UI.Import.ImportFileChooserDialog import ImportFileChooserDialog
+from netzob.UI.NetzobWidgets import NetzobQuestionMessage, NetzobErrorMessage, NetzobInfoMessage
 
 
 #+----------------------------------------------
@@ -85,10 +84,31 @@ class VocabularyController(object):
         self._view = VocabularyView(self)
         self.log = logging.getLogger(__name__)
 
-        self.symbolController = SymbolController(netzob)
+        # List of currently displayed message tables
+        self.messageTableList = []
+        self.selectedMessageTable = None
+
+        # Create symbol controller and connect signals
+        self.symbolController = SymbolController(self)
+        self._view.loadSymbolActionGroupUIDefinition()
+
+        # Create session controller and connect signals
+        self.sessionController = SessionController(self)
+        self._view.loadSessionActionGroupUIDefinition()
+
+        # Create sequence controller and connect signals
+        self.sequenceController = SequenceController(self)
+        self._view.loadSequenceActionGroupUIDefinition()
+
+        # Configure the drag and drop
+        self.view.symbolListTreeView.drag_dest_set(Gtk.DestDefaults.ALL, [], Gdk.DragAction.MOVE)
+        self.view.symbolListTreeView.connect("drag-data-received", self.drag_data_received_event)
+        self.view.symbolListTreeView.connect("button-press-event", self.symbolController.symbolListTreeView_button_press_event_cb)
+        self.view.symbolListTreeView.enable_model_drag_dest([], Gdk.DragAction.MOVE)
+        self.view.symbolListTreeView.drag_dest_add_text_targets()
+        self.selectedMessagesToMove = None
 
         self.updateLeftPanel()
-        self.selectedMessagesToMove = None
 
     @property
     def view(self):
@@ -103,7 +123,7 @@ class VocabularyController(object):
     def restart(self):
         """Restart the view"""
         logging.debug("Restarting the vocabulary view")
-        self.view.removeAllMessageTables()
+        self.removeAllMessageTables()
         self.updateLeftPanel()
 
     def getSignalsManager(self):
@@ -112,9 +132,11 @@ class VocabularyController(object):
     def updateLeftPanel(self):
         self.updateProjectProperties()
         self.symbolController.updateLeftPanel()
-        #self.sessionController.updateLeftPanel()
-        #self.sequenceController.updateLeftPanel()
+        self.sessionController.updateLeftPanel()
+        self.sequenceController.updateLeftPanel()
 
+
+    # Project properties
     def getProjectProperties(self):
         """Computes the set of properties
         on the current project, and displays them
@@ -143,79 +165,75 @@ class VocabularyController(object):
                     liststore_possibleValues.append([val])
                 self.view.projectPropertiesListstore.set(line, self.view.PROJECTPROPERTIESLISTSTORE_MODEL_COLUMN, liststore_possibleValues)
 
+    def cellrenderer_project_props_changed_cb(self, cellrenderer, path, new_value):
+        if isinstance(new_value, Gtk.TreeIter):  # a combo box entry has been selected
+            liststore_possibleValues = cellrenderer.get_property('model')
+            value = liststore_possibleValues[new_value][0]
+        else:  # the cellrenderer entry has changed
+            value = new_value
+
+        # Identify the property name/value and reconstruct the associated setter
+        name = self.view.projectPropertiesListstore[path][0]
+
+        for prop in self.getCurrentProject().getProperties():
+            if prop.getName() == name:
+                prop.setCurrentValue(TypeConvertor.encodeGivenTypeToNetzobRaw(value, prop.getFormat()))
+                break
+        self.view.updateProjectProperties()
+
+
+    # Plugins update
     def updateListOfCapturerPlugins(self):
         """Fetch the list of available capturer plugins, and provide
         them to its associated view"""
         pluginExtensions = NetzobPlugin.getLoadedPluginsExtension(CapturerMenuExtension)
         self.view.updateListCapturerPlugins(pluginExtensions)
 
-    ## Main actions of vocabulary inference
-    def concatField_activate_cb(self, action):
-        # Sanity check
-        if self.getCurrentProject() is None:
-            NetzobErrorMessage(_("No project selected."))
-            return
-        symbol = self.view.getDisplayedField()
-        if symbol is None:
-            NetzobErrorMessage(_("No selected symbol."))
-            return
-        selectedFields = self.view.selectedMessageTable.treeViewHeaderGroup.getSelectedFields()
-        if selectedFields is None or len(selectedFields) < 2:
-            NetzobErrorMessage(_("You need to select at least two fields."))
-            return
-        # We retrieve the first and last fields selected
-        firstField = selectedFields[0]
-        lastField = selectedFields[0]
 
-        for selectedField in selectedFields:
-            if selectedField.getIndex() < firstField.getIndex():
-                firstField = selectedField
-            if selectedField.getIndex() > lastField.getIndex():
-                lastField = selectedField
+    # Drag and drop of messages
+    def drag_data_received_event(self, widget, drag_context, x, y, data, info, time):
+        """Callback executed when the user drops
+        some data in the treeview of symbols."""
+        receivedData = data.get_text()
 
-        # We concat all the fields in the first one
-        (errorCode, errorMsg) = firstField.concatFields(lastField)
-        if errorCode is False:
-            NetzobErrorMessage(errorMsg)
-        else:
-            self.view.updateSelectedMessageTable()
-            self.updateLeftPanel()
+        if widget is None:
+            logging.debug("No widget selected, cannot move the message")
+            return
 
-    def split_activate_cb(self, action):
-        # Sanity check
-        if self.getCurrentProject() is None:
-            NetzobErrorMessage(_("No project selected."))
+        # retrieve the drop row
+        path, position = widget.get_dest_row_at_pos(x, y)
+        targetSymbol = None
+        if path is not None:
+            layerID = widget.get_model()[path][VocabularyView.SYMBOLLISTSTORE_ID_COLUMN]
+            if layerID is not None:
+                targetField = self.getCurrentProject().getVocabulary().getFieldByID(layerID)
+                targetSymbol = targetField.getSymbol()
+        if targetSymbol is None:
             return
-#        displayedField = self.view.getDisplayedField()
-#        if displayedField is None:
-#            NetzobErrorMessage(_("No selected symbol."))
-#            return
-        fields = self.view.selectedMessageTable.treeViewHeaderGroup.getSelectedFields()
-        # Split field
-        if fields is not None and len(fields) > 0:
-            field = fields[-1]  # We take the last selected field
-            controller = SplitFieldController(self, field)
-            controller.run()
-        else:
-            NetzobErrorMessage(_("No selected field."))
 
-    def editVariable_activate_cb(self, action):
-        # Sanity check
-        if self.getCurrentProject() is None:
-            NetzobErrorMessage(_("No project selected."))
-            return
-        symbol = self.view.getDisplayedField()
-        if symbol is None:
-            NetzobErrorMessage(_("No selected symbol."))
-            return
-        fields = self.view.selectedMessageTable.treeViewHeaderGroup.getSelectedFields()
-        if fields is None or len(fields) < 1:
-            NetzobErrorMessage(_("No selected field."))
-            return
-        # Open a popup to edit the variable
-        field = fields[-1]  # We take the last selected field
-        creationPanel = VariableTreeController(self.netzob, symbol, field)
+        if receivedData is not None and len(receivedData) > 2:
+            if targetSymbol is not None and receivedData[:2] == "m:":
+                for msgID in receivedData[2:].split(","):
+                    message = self.getCurrentProject().getVocabulary().getMessageByID(msgID)
+                    # verify if the target symbol's regex is valid according to the message
+                    if message is not None:
+                        if targetSymbol.getField().isRegexValidForMessage(message):
+                            self.moveMessage(message, targetSymbol)
+                        else:
+                            self.drag_receivedMessages(targetSymbol, message)
+                        self.updateSelectedMessageTable()
+                        self.updateLeftPanel()
 
+    def drag_receivedMessages(self, targetSymbol, message):
+        """Executed by the drop callback which has discovered
+        some messages (identified by their ID) to be moved from their
+        current symbol to the selected symbol"""
+        if message is not None:
+            moveMessageController = MoveMessageController(self, [message], targetSymbol)
+            moveMessageController.run()
+
+
+    # Actions on messages
     def moveMessagesToOtherSymbol_activate_cb(self, action):
         """Callback executed when the user clicks on the move
         button. It retrieves the selected message, and change the cursor
@@ -224,7 +242,7 @@ class VocabularyController(object):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        selectedMessages = self.view.getSelectedMessagesInSelectedMessageTable()
+        selectedMessages = self.getSelectedMessagesInSelectedMessageTable()
         if selectedMessages is None or len(selectedMessages) == 0:
             NetzobErrorMessage(_("No selected message."))
             return
@@ -246,8 +264,18 @@ class VocabularyController(object):
                         moveMessageController = MoveMessageController(self, self.selectedMessagesToMove, targetSymbol)
                         moveMessageController.run()
             self.removePendingMessagesToMove()
-            self.view.updateSelectedMessageTable()
+            self.updateSelectedMessageTable()
             self.updateLeftPanel()
+
+    def moveMessage(self, message, targetSymbol):
+        """Move the provided message in the specified symbol.
+        Warning, this method do not consider the possible regex problems
+        which needs to be addressed by a set of dedicated solutions"""
+        if message is not None and targetSymbol is not None:
+            sourceSymbolID = message.getSymbol().getID()
+            sourceSymbol = self.getCurrentProject().getVocabulary().getSymbolByID(sourceSymbolID)
+            sourceSymbol.removeMessage(message)
+            targetSymbol.addMessage(message)
 
     def removePendingMessagesToMove(self):
         """Clean the pending messages the user wanted to move (using the button)."""
@@ -259,7 +287,7 @@ class VocabularyController(object):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        selectedMessages = self.view.getSelectedMessagesInSelectedMessageTable()
+        selectedMessages = self.getSelectedMessagesInSelectedMessageTable()
         if selectedMessages == [] or selectedMessages is None:
             NetzobErrorMessage(_("No selected message."))
             return
@@ -274,7 +302,7 @@ class VocabularyController(object):
             self.netzob.getCurrentProject().getVocabulary().removeMessage(message)
             message.getSymbol().removeMessage(message)
         # Update view
-        self.view.updateSelectedMessageTable()
+        self.updateSelectedMessageTable()
         self.updateLeftPanel()
 
     def searchText_toggled_cb(self, action):
@@ -289,6 +317,11 @@ class VocabularyController(object):
             self._view.researchController.show()
         else:
             self._view.researchController.hide()
+
+    def executeArbritrarySearch(self, searchTasks):
+        """Execute a search (shows the dedicated view) but
+        the user can't edit the searched informations. Only a displayer."""
+        self._view.researchController.executeArbitrarySearch(searchTasks)
 
     def filterMessages_toggled_cb(self, action):
         """Callback executed when the user clicks
@@ -317,6 +350,108 @@ class VocabularyController(object):
         envDepController = EnvironmentDependenciesSearcherController(self, symbols)
         envDepController.run()
 
+
+    # Message Tables management
+    def addMessageTable(self, objectType):
+        """ Create a new message table and selects it"""
+        if objectType is Field:
+            messageTableController = SymbolTableController(self)
+        elif objectType is Session:
+            messageTableController = SessionTableController(self)
+        elif objectType is Sequence:
+            messageTableController = SequenceTableController(self)
+        else:
+            return
+        messageTable = messageTableController.view
+        self.messageTableList.append(messageTable)
+        self.setSelectedMessageTable(messageTable)
+        self.view.messageTableBox.pack_start(messageTable.getPanel(), True, True, 0)
+
+    def removeMessageTable(self, messageTable):
+        self.view.messageTableBox.remove(messageTable.getPanel())
+        messageTable.destroy()
+        self.messageTableList = [mTable for mTable in self.messageTableList
+                                 if mTable != messageTable]
+        # Select a new table in messageTable was the selected message table
+        if len(self.messageTableList) > 0:
+            self.setSelectedMessageTable(self.messageTableList[0])
+
+    def removeAllMessageTables(self):
+        for child in self.view.messageTableBox.get_children():
+            self.view.messageTableBox.remove(child)
+
+        self.messageTableList = []
+
+    def emptyMessageTableDisplayingObjects(self, objectList):
+        toBeRemovedTables = [mTable for mTable in self.messageTableList
+                             if mTable.getDisplayedObject() in objectList]
+        for mTable in toBeRemovedTables:
+            mTable.setDisplayedObject(None)
+
+    def updateSelectedMessageTable(self):
+        if self.selectedMessageTable is not None:
+            self.selectedMessageTable.update()
+
+    def updateMessageTableDisplayingObjects(self, objectList):
+        toBeUpdatedTables = [mTable for mTable in self.messageTableList
+                             if mTable.getDisplayedObject() in objectList]
+        for mTable in toBeUpdatedTables:
+            mTable.update()
+
+    def setSelectedMessageTable(self, selectedMessageTable):
+        """Set provided message table as selected"""
+
+        if selectedMessageTable == self.selectedMessageTable:
+            return
+
+        # Update appearance of old and new selected message table
+        if self.selectedMessageTable is not None:
+            self.selectedMessageTable.setSelected(False)
+
+        # Update current selected message table and
+        self.selectedMessageTable = selectedMessageTable
+        self.selectedMessageTable.setSelected(True)
+
+    def getSelectedMessageTable(self):
+        """Return the selected message table"""
+        return self.selectedMessageTable
+
+    def setDisplayedObjectInSelectedMessageTable(self, anObject):
+        """Show the definition of provided object on the selected
+        message table"""
+        logging.debug("Update the displayed object in selected message table")
+
+        # Open a message table if none is available
+        if len(self.messageTableList) == 0:
+            self.addMessageTable(type(anObject))
+        else:
+            recreateMessageTable = True
+            if isinstance(anObject, Field) and type(self.getSelectedMessageTable()) is SymbolTableView:
+                recreateMessageTable = False
+            elif isinstance(anObject, Session) and type(self.getSelectedMessageTable()) is SessionTableView:
+                recreateMessageTable = False
+            elif isinstance(anObject, Sequence) and type(self.getSelectedMessageTable()) is SequenceTableView:
+                recreateMessageTable = False
+            if recreateMessageTable:
+                self.removeMessageTable(self.getSelectedMessageTable())
+                self.addMessageTable(type(anObject))
+
+        # if a message table is selected we update its object
+        self.selectedMessageTable.setDisplayedObject(anObject)
+
+    def getDisplayedObjectInSelectedMessageTable(self):
+        if self.selectedMessageTable is None:
+            return None
+        else:
+            return self.selectedMessageTable.displayedObject
+
+    def getSelectedMessagesInSelectedMessageTable(self):
+        if self.selectedMessageTable is not None:
+            return self.selectedMessageTable.controller.getSelectedMessages()
+        else:
+            return None
+
+    # Variable management
     def relationsViewer_activate_cb(self, action):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
@@ -363,22 +498,8 @@ class VocabularyController(object):
         if (result == 0):
             dialog.destroy()
 
-    def fieldLimits_activate_cb(self, action):
-        # Sanity checks
-        if self.netzob.getCurrentProject() is None:
-            NetzobErrorMessage(_("No project selected."))
-            return
 
-        layers = self.view.getCheckedLayerList()
-        if layers == []:
-            NetzobErrorMessage(_("No symbol selected."))
-            return
-
-        for layer in layers:
-            layer.computeFieldsLimits()
-            self.view.updateSelectedMessageTable()
-        NetzobInfoMessage(_("Fields limits computed."))
-
+    # Import and capture of messages
     def importMessagesFromFile_activate_cb(self, action):
         """Execute all the plugins associated with
         file import."""
@@ -401,6 +522,8 @@ class VocabularyController(object):
             plugin.setFinish_cb(self.view.updateSymbolList)
             plugin.importFile(filePathList)
 
+
+    # Misc
     def getCurrentProject(self):
         """Return the current project (can be None)"""
         return self.netzob.getCurrentProject()
@@ -408,34 +531,3 @@ class VocabularyController(object):
     def getCurrentWorkspace(self):
         """Return the current workspace"""
         return self.netzob.getCurrentWorkspace()
-
-    def moveMessage(self, message, targetSymbol):
-        """Move the provided message in the specified symbol.
-        Warning, this method do not consider the possible regex problems
-        which needs to be addressed by a set of dedicated solutions"""
-        if message is not None and targetSymbol is not None:
-            sourceSymbolID = message.getSymbol().getID()
-            sourceSymbol = self.getCurrentProject().getVocabulary().getSymbolByID(sourceSymbolID)
-            sourceSymbol.removeMessage(message)
-            targetSymbol.addMessage(message)
-
-    def cellrenderer_project_props_changed_cb(self, cellrenderer, path, new_value):
-        if isinstance(new_value, Gtk.TreeIter):  # a combo box entry has been selected
-            liststore_possibleValues = cellrenderer.get_property('model')
-            value = liststore_possibleValues[new_value][0]
-        else:  # the cellrenderer entry has changed
-            value = new_value
-
-        # Identify the property name/value and reconstruct the associated setter
-        name = self.view.projectPropertiesListstore[path][0]
-
-        for prop in self.getCurrentProject().getProperties():
-            if prop.getName() == name:
-                prop.setCurrentValue(TypeConvertor.encodeGivenTypeToNetzobRaw(value, prop.getFormat()))
-                break
-        self.view.updateProjectProperties()
-
-    def executeAbritrarySearch(self, searchTasks):
-        """Execute a search (shows the dedicated view) but
-        the user can't edit the searched informations. Only a displayer."""
-        self._view.researchController.executeArbitrarySearch(searchTasks)

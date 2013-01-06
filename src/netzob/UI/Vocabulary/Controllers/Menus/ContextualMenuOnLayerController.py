@@ -83,7 +83,7 @@ class ContextualMenuOnLayerController(object):
     def changeFormat_cb(self, event, aFormat):
         for layer in self.layers:
             layer.setFormat(aFormat)
-        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.updateSelectedMessageTable()
 
     #+----------------------------------------------
     #| rightClickToChangeUnitSize:
@@ -93,7 +93,7 @@ class ContextualMenuOnLayerController(object):
     def changeUnitSize_cb(self, event, unitSize):
         for layer in self.layers:
             layer.setUnitSize(unitSize)
-        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.updateSelectedMessageTable()
 
     #+----------------------------------------------
     #| rightClickToChangeSign:
@@ -103,7 +103,7 @@ class ContextualMenuOnLayerController(object):
     def changeSign_cb(self, event, sign):
         for layer in self.layers:
             layer.setSign(sign)
-        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.updateSelectedMessageTable()
 
     #+----------------------------------------------
     #| rightClickToChangeEndianess:
@@ -113,7 +113,7 @@ class ContextualMenuOnLayerController(object):
     def changeEndianess_cb(self, event, endianess):
         for layer in self.layers:
             layer.setEndianess(endianess)
-        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.updateSelectedMessageTable()
 
     def applyTransformationFunction_cb(self, event, transformationFunction):
         """Add the selected transformation function"""
@@ -145,7 +145,7 @@ class ContextualMenuOnLayerController(object):
                 message.removeTransformationFunction(transformationFunction)
 
         self.layers[0].resetPartitioning()
-        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.updateSelectedMessageTable()
 
     def createCustomFunction_cb(self, event):
         """Callback executed when the user
@@ -174,8 +174,8 @@ class ContextualMenuOnLayerController(object):
             self.log.debug("Renamed layer {0} to {1}".format(self.layers[0].getName(), newLayerName))
             currentProject = self.vocabularyController.netzob.getCurrentProject()
             currentProject.getVocabulary().getFieldByID(self.layers[0].getID()).setName(newLayerName)
-            self.vocabularyController.view.updateLeftPanel()
-            self.vocabularyController.view.updateSelectedMessageTable()
+            self.vocabularyController.updateLeftPanel()
+            self.vocabularyController.updateSelectedMessageTable()
             dialog.destroy()
 
         dialog.destroy()
@@ -196,11 +196,11 @@ class ContextualMenuOnLayerController(object):
                 for mess in layer.getSymbol().getMessages():
                     currentVocabulary.removeMessage(mess)
                 currentVocabulary.removeSymbol(layer.getSymbol())
-                self.vocabularyController.view.emptyMessageTableDisplayingSymbols([layer.getSymbol()])
+                self.vocabularyController.emptyMessageTableDisplayingObjects([layer.getSymbol()])
             else:
                 layer.flattenLocalFields()
-        self.vocabularyController.view.updateLeftPanel()
-        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.updateLeftPanel()
+        self.vocabularyController.updateSelectedMessageTable()
 
     def sequenceAlignment_cb(self, action):
         sequence_controller = SequenceAlignmentController(self.vocabularyController, [self.layers[0]])

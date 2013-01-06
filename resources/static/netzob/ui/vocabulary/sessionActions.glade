@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <!-- interface-requires gtk+ 3.0 -->
+  <object class="GtkActionGroup" id="sessionActionGroup">
+    <child>
+      <object class="GtkAction" id="selectAllSessions">
+        <property name="label" translatable="yes">Select all sessions</property>
+        <property name="tooltip" translatable="yes">Select all sessions</property>
+        <property name="stock_id">netzob-select-all</property>
+        <property name="sensitive">True</property>
+        <signal name="activate" handler="selectAllSessionsButton_clicked_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="unselectAllSessions">
+        <property name="label" translatable="yes">Unselect all sessions</property>
+        <property name="tooltip" translatable="yes">Unselect all sessions</property>
+        <property name="stock_id">netzob-unselect-all</property>
+        <property name="sensitive">True</property>
+        <signal name="activate" handler="unselectAllSessionsButton_clicked_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="createSession">
+        <property name="label" translatable="yes">Add a new empty session</property>
+        <property name="tooltip" translatable="yes">Add a new empty session</property>
+        <property name="stock_id">gtk-add</property>
+        <property name="sensitive">True</property>
+        <signal name="activate" handler="createSessionButton_clicked_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="concatSession">
+        <property name="label" translatable="yes">Concatenate selected sessions</property>
+        <property name="tooltip" translatable="yes">Concatenate selected sessions</property>
+        <property name="stock_id">netzob-concat-symbol</property>
+        <property name="sensitive">False</property>
+        <signal name="activate" handler="concatSessionButton_clicked_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="deleteSession">
+        <property name="label" translatable="yes">Delete selected session(s)</property>
+        <property name="tooltip" translatable="yes">Delete selected session(s)</property>
+        <property name="stock_id">gtk-delete</property>
+        <property name="sensitive">False</property>
+        <signal name="activate" handler="deleteSessionButton_clicked_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="newSessionTable">
+        <property name="label" translatable="yes">New empty view for message of session</property>
+        <property name="tooltip" translatable="yes">New empty view for message of session</property>
+        <property name="stock_id">netzob-new-window</property>
+        <property name="sensitive">True</property>
+        <signal name="activate" handler="newSessionTableButton_clicked_cb" swapped="no"/>
+      </object>
+    </child>
+  </object>
+</interface>
