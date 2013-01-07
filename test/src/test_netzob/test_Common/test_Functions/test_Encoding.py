@@ -33,6 +33,7 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Type.UnitSize import UnitSize
 from common.NetzobTestCase import NetzobTestCase
 
+
 class test_Encoding(NetzobTestCase):
 
     # UnitSize.NONE
@@ -46,15 +47,25 @@ class test_Encoding(NetzobTestCase):
         res = ff.apply("30313233343536373839")
         self.assertEqual(res, "0123456789")
 
-    def test_DECIMAL(self):
-        ff = FormatFunction("Field Format Encoding", Format.DECIMAL, UnitSize.NONE, Endianess.BIG, Sign.UNSIGNED)
+    def test_DECIMAL_4BITS(self):
+        ff = FormatFunction("Field Format Encoding", Format.DECIMAL, UnitSize.BITS4, Endianess.BIG, Sign.UNSIGNED)
         res = ff.apply("abcdef")
-        self.assertEqual(res, "11259375")
+        self.assertEqual(res, "10 11 12 13 14 15")
 
-    def test_OCTAL(self):
-        ff = FormatFunction("Field Format Encoding", Format.OCTAL, UnitSize.NONE, Endianess.BIG, Sign.UNSIGNED)
+    def test_DECIMAL_8BITS(self):
+        ff = FormatFunction("Field Format Encoding", Format.DECIMAL, UnitSize.BITS8, Endianess.BIG, Sign.UNSIGNED)
         res = ff.apply("abcdef")
-        self.assertEqual(res, "52746757")
+        self.assertEqual(res, "171 205 239")
+
+    def test_OCTAL_4BITS(self):
+        ff = FormatFunction("Field Format Encoding", Format.OCTAL, UnitSize.BITS4, Endianess.BIG, Sign.UNSIGNED)
+        res = ff.apply("abcdef")
+        self.assertEqual(res, "12 13 14 15 16 17")
+
+    def test_OCTAL_8BITS(self):
+        ff = FormatFunction("Field Format Encoding", Format.OCTAL, UnitSize.BITS8, Endianess.BIG, Sign.UNSIGNED)
+        res = ff.apply("abcdef")
+        self.assertEqual(res, "253 315 357")
 
     def test_BINARY(self):
         ff = FormatFunction("Field Format Encoding", Format.BINARY, UnitSize.NONE, Endianess.BIG, Sign.UNSIGNED)
@@ -112,4 +123,3 @@ class test_Encoding(NetzobTestCase):
         ff = FormatFunction("Field Format Encoding", Format.BINARY, UnitSize.BITS8, Endianess.BIG, Sign.UNSIGNED)
         res = ff.apply("abcdef")
         self.assertEqual(res, "10101011 11001101 11101111")
-
