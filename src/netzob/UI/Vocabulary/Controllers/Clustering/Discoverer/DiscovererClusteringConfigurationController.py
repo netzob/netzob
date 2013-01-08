@@ -45,9 +45,65 @@ class DiscovererClusteringConfigurationController(object):
     """Controller for the configuration of the Discoverer Clustering process"""
 
     def __init__(self, DiscovererClustering):
-        self.DiscovererClustering = DiscovererClustering
+        self.discovererClustering = DiscovererClustering
         self._view = DiscovererClusteringConfigurationView(self)
         self.logger = logging.getLogger(__name__)
+
+    def maximumMessagePrefixAdjustment_value_changed_cb(self, widget):
+        try:
+            value = int(self._view.getMaximumMessagePrefix())
+        except Exception, e:
+            self.log.warn("Invalid Maximum Message Prefix ({0}))".format(e))
+            value = None
+        self.discovererClustering.setMaximumMessagePrefix(value)
+
+    def minimumLengthTextSegmentsAdjustment_value_changed_cb(self, widget):
+        try:
+            value = int(self._view.getMinimumLengthTextSegments())
+        except Exception, e:
+            self.log.warn("Invalid Minimum Length Text Segments ({0}))".format(e))
+            value = None
+        self.discovererClustering.setMinimumLengthTextSegments(value)
+
+    def minimumClusterSizeAdjustment_value_changed_cb(self, widget):
+        try:
+            value = int(self._view.getMinimumClusterSize())
+        except Exception, e:
+            self.log.warn("Invalid Minimum Cluster Size ({0}))".format(e))
+            value = None
+        self.discovererClustering.setMinimumClusterSize(value)
+
+    def maximumDistinctValuesFDAdjustment_value_changed_cb(self, widget):
+        try:
+            value = int(self._view.getMaximumDistinctValuesFD())
+        except Exception, e:
+            self.log.warn("Invalid Maximum Distinct Values for FD ({0}))".format(e))
+            value = None
+        self.discovererClustering.setMaximumDistinctValuesFD(value)
+
+    def alignmentMatchScoreAdjustment_value_changed_cb(self, widget):
+        try:
+            value = int(self._view.getAlignmentMatchScore())
+        except Exception, e:
+            self.log.warn("Invalid Alignment Match Score ({0}))".format(e))
+            value = None
+        self.discovererClustering.setAlignmentMatchScore(value)
+
+    def alignmentMismatchScoreAdjustment_value_changed_cb(self, widget):
+        try:
+            value = int(self._view.getAlignmentMismatchScore())
+        except Exception, e:
+            self.log.warn("Invalid Alignment Mismatch Score ({0}))".format(e))
+            value = None
+        self.discovererClustering.setAlignmentMismatchScore(value)
+
+    def alignmentGapScoreAdjustment_value_changed_cb(self, widget):
+        try:
+            value = int(self._view.getAlignmentGapScore())
+        except Exception, e:
+            self.log.warn("Invalid Alignment Gap Score ({0}))".format(e))
+            value = None
+        self.discovererClustering.setAliggnmentGapScore(value)
 
     @property
     def view(self):

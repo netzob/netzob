@@ -38,6 +38,7 @@ import logging
 from gi.repository import Gtk, Gdk
 import gi
 from netzob.Inference.Vocabulary.Clustering.AbstractDistanceAlgorithm import AbstractDistanceAlgorithm
+
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
@@ -58,9 +59,47 @@ class DiscovererClusteringConfigurationView(object):
         self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
                                                 "ui", "vocabulary", "clustering",
                                                 "DiscovererClusteringConfigurationView.glade"))
-        self._getObjects(self.builder, ["frame"])
+        self._getObjects(self.builder, ["frame",
+                                        "maximumMessagePrefixAdjustment",
+                                        "minimumLengthTextSegmentsAdjustment",
+                                        "minimumClusterSizeAdjustment",
+                                        "maximumDistinctValuesFDAdjustment",
+                                        "alignmentMatchScoreAdjustment",
+                                        "alignmentMismatchScoreAdjustment",
+                                        "alignmentGapScoreAdjustment"])
+        from netzob.Inference.Vocabulary.Clustering.Discoverer.DiscovererClustering import DiscovererClustering
+        # Set the default value given the Discoverer Implementations
+        self.maximumMessagePrefixAdjustment.set_value(DiscovererClustering.getDefaultMaximumMessagePrefix())
+        self.minimumLengthTextSegmentsAdjustment.set_value(DiscovererClustering.getDefaultMaximumMessagePrefix())
+        self.minimumClusterSizeAdjustment.set_value(DiscovererClustering.getDefaultMinimumLengthTextSegments())
+        self.maximumDistinctValuesFDAdjustment.set_value(DiscovererClustering.getDefaultMaximumDistinctValuesFD())
+        self.alignmentMatchScoreAdjustment.set_value(DiscovererClustering.getDefaultAlignmentMatchScore())
+        self.alignmentMismatchScoreAdjustment.set_value(DiscovererClustering.getDefaultAlignmentMismatchScore())
+        self.alignmentGapScoreAdjustment.set_value(DiscovererClustering.getDefaultAlignmentGapScore())
+
         self.controller = controller
         self.builder.connect_signals(self.controller)
+
+    def getMaximumMessagePrefix(self):
+        return self.maximumMessagePrefixAdjustment.get_value()
+
+    def getMinimumLengthTextSegments(self):
+        return self.minimumLengthTextSegmentsAdjustment.get_value()
+
+    def getMinimumClusterSize(self):
+        return self.minimumClusterSizeAdjustment.get_value()
+
+    def getMaximumDistinctValuesFD(self):
+        return self.maximumDistinctValuesFDAdjustment.get_value()
+
+    def getAlignmentMatchScore(self):
+        return self.alignmentMatchScoreAdjustment.get_value()
+
+    def getAlignmentMismatchScore(self):
+        return self.alignmentMismatchScoreAdjustment.get_value()
+
+    def getAlignmentGapScore(self):
+        return self.alignmentGapScoreAdjustment.get_value()
 
     def _getObjects(self, builder, objectsList):
         for obj in objectsList:
