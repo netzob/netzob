@@ -60,6 +60,7 @@ class ClusteringProfilesView(object):
                                         "closeButton",
                                         "deleteProfileButton",
                                         "saveProfileButton",
+                                        "customizeProfileToggleButton",
                                         "executeProfileButton",
                                         "availableAlgorithmsListStore",
                                         "currentAlgorithmsListStore",
@@ -75,11 +76,14 @@ class ClusteringProfilesView(object):
                                         "algorithmsComboBox",
                                         "availableAlgorithmsListStore",
                                         "currentAlgorithmsListStore",
-                                        "currentAlgorithmsTreeView"
+                                        "currentAlgorithmsTreeView",
+                                        "executionProgressBar",
+                                        "customizeProfileBox"
                                         ])
         self.controller = controller
         self.builder.connect_signals(self.controller)
         self.profiles = profiles
+
         for profile in self.profiles:
             self.profilesListStore.append([str(profile.getID()), profile.getName(), str(profile.getDescription())])
 
@@ -154,8 +158,6 @@ class ClusteringProfilesView(object):
 
     def updateFieldWithCurrentProfile(self, profile):
         if profile is None:
-            self.nameProfileEntry.set_text("")
-            self.nameProfileEntry.set_sensitive(False)
             self.descriptionProfileTextView.get_buffer().set_text("")
             self.descriptionProfileTextView.set_sensitive(False)
             self.algorithmsComboBox.set_sensitive(False)
@@ -166,10 +168,10 @@ class ClusteringProfilesView(object):
             self.executeProfileButton.set_sensitive(False)
 
             self.clearCurrentAlgorithmViewPort()
-
+            self.hideCustomizeProfile()
+            self.customizeProfileToggleButton.set_active(False)
+            self.customizeProfileToggleButton.set_sensitive(False)
         else:
-            self.nameProfileEntry.set_text(profile.getName())
-            self.nameProfileEntry.set_sensitive(True)
             if profile.getDescription() is not None:
                 self.descriptionProfileTextView.get_buffer().set_text(profile.getDescription())
             else:
@@ -191,6 +193,8 @@ class ClusteringProfilesView(object):
 
             self.clearCurrentAlgorithmViewPort()
 
+            self.customizeProfileToggleButton.set_sensitive(True)
+
     def clearCurrentAlgorithmViewPort(self):
         children = self.configureCurrentAlgorithmViewport.get_children()
         for c in children:
@@ -201,3 +205,9 @@ class ClusteringProfilesView(object):
 
     def destroy(self):
         self.clusteringProfilesDialog.destroy()
+
+    def showCustomizeProfile(self):
+        self.customizeProfileBox.show_all()
+
+    def hideCustomizeProfile(self):
+        self.customizeProfileBox.hide()

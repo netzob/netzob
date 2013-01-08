@@ -125,6 +125,12 @@ class ClusteringProfilesController(object):
         # Close the clustering profile view
         self.destroy()
 
+    def customizeProfileToggleButton_toggled_cb(self, widget):
+        if widget.get_active() and self._view.getCurrentProfile() is not None:
+            self.view.showCustomizeProfile()
+        elif not widget.get_active():
+            self._view.hideCustomizeProfile()
+
     def closeButton_clicked_cb(self, widget):
         self.destroy()
 

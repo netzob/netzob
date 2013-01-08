@@ -9,21 +9,11 @@
       <column type="gchararray"/>
     </columns>
   </object>
-  <object class="GtkListStore" id="currentAlgorithmsListStore">
-    <columns>
-      <!-- column-name algorithmID -->
-      <column type="gchararray"/>
-      <!-- column-name algorithmName -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
   <object class="GtkDialog" id="clusteringProfilesDialog">
     <property name="width_request">800</property>
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Find Similar Messages</property>
-    <property name="default_width">800</property>
-    <property name="default_height">500</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox1">
@@ -88,6 +78,23 @@
               </packing>
             </child>
             <child>
+              <object class="GtkToggleButton" id="customizeProfileToggleButton">
+                <property name="label" translatable="yes">Customize</property>
+                <property name="use_action_appearance">False</property>
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
+                <signal name="toggled" handler="customizeProfileToggleButton_toggled_cb" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkButton" id="executeProfileButton">
                 <property name="label">gtk-execute</property>
                 <property name="use_action_appearance">False</property>
@@ -102,7 +109,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">3</property>
+                <property name="position">4</property>
               </packing>
             </child>
           </object>
@@ -134,7 +141,8 @@
                       <object class="GtkLabel" id="label1">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Clustering Profiles:</property>
+                        <property name="margin_right">5</property>
+                        <property name="label" translatable="yes">Clustering Profiles</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -177,77 +185,22 @@
                 <property name="orientation">vertical</property>
                 <property name="spacing">5</property>
                 <child>
-                  <object class="GtkGrid" id="grid1">
+                  <object class="GtkViewport" id="viewport1">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="hexpand">True</property>
                     <child>
-                      <object class="GtkLabel" id="label4">
+                      <object class="GtkScrolledWindow" id="scrolledwindow1">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="halign">start</property>
-                        <property name="valign">start</property>
-                        <property name="label" translatable="yes">Description</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">0</property>
-                        <property name="top_attach">1</property>
-                        <property name="width">1</property>
-                        <property name="height">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkViewport" id="viewport1">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="hexpand">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="shadow_type">in</property>
                         <child>
-                          <object class="GtkScrolledWindow" id="scrolledwindow1">
+                          <object class="GtkTextView" id="descriptionProfileTextView">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="shadow_type">in</property>
-                            <child>
-                              <object class="GtkTextView" id="descriptionProfileTextView">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                              </object>
-                            </child>
                           </object>
                         </child>
                       </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="top_attach">1</property>
-                        <property name="width">1</property>
-                        <property name="height">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkEntry" id="nameProfileEntry">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="invisible_char">●</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="top_attach">0</property>
-                        <property name="width">1</property>
-                        <property name="height">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="label3">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="halign">start</property>
-                        <property name="valign">start</property>
-                        <property name="label" translatable="yes">Name</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">0</property>
-                        <property name="top_attach">0</property>
-                        <property name="width">1</property>
-                        <property name="height">1</property>
-                      </packing>
                     </child>
                   </object>
                   <packing>
@@ -257,8 +210,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="box4">
-                    <property name="visible">True</property>
+                  <object class="GtkBox" id="customizeProfileBox">
                     <property name="can_focus">False</property>
                     <child>
                       <object class="GtkBox" id="box5">
@@ -333,6 +285,9 @@
                                     <property name="headers_clickable">False</property>
                                     <property name="search_column">0</property>
                                     <signal name="cursor-changed" handler="currentAlgorithmsTreeView_cursor_changed_cb" swapped="no"/>
+                                    <child internal-child="selection">
+                                      <object class="GtkTreeSelection" id="treeview-selection"/>
+                                    </child>
                                     <child>
                                       <object class="GtkTreeViewColumn" id="treeviewcolumn1">
                                         <property name="title" translatable="yes">Algorithms</property>
@@ -457,7 +412,18 @@
                   <packing>
                     <property name="expand">True</property>
                     <property name="fill">True</property>
-                    <property name="position">1</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkProgressBar" id="executionProgressBar">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">3</property>
                   </packing>
                 </child>
               </object>
@@ -480,8 +446,17 @@
       <action-widget response="1">closeButton</action-widget>
       <action-widget response="0">deleteProfileButton</action-widget>
       <action-widget response="0">saveProfileButton</action-widget>
+      <action-widget response="0">customizeProfileToggleButton</action-widget>
       <action-widget response="0">executeProfileButton</action-widget>
     </action-widgets>
+  </object>
+  <object class="GtkListStore" id="currentAlgorithmsListStore">
+    <columns>
+      <!-- column-name algorithmID -->
+      <column type="gchararray"/>
+      <!-- column-name algorithmName -->
+      <column type="gchararray"/>
+    </columns>
   </object>
   <object class="GtkListStore" id="profilesListStore">
     <columns>
