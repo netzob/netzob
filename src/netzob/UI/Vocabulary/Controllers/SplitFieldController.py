@@ -62,6 +62,7 @@ class SplitFieldController(object):
 
     def run(self):
         if not self.initBuffer():
+            self.log.warning("An error occured while initiating the split field controller.")
             return
         self._view.run()
 
@@ -94,6 +95,8 @@ class SplitFieldController(object):
         for m in cells:
             self.view.buffer.get_buffer().insert_with_tags_by_name(self.view.buffer.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[:self.split_position], self.field.getFormat()) + "  ", "redTag")
             self.view.buffer.get_buffer().insert_with_tags_by_name(self.view.buffer.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[self.split_position:], self.field.getFormat()) + "\n", "greenTag")
+
+        return True
 
     def cancel_clicked_cb(self, widget):
         self.view.splitFieldDialog.destroy()
