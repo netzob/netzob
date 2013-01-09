@@ -116,19 +116,8 @@ class SessionTableController(object):
                 else:
                     return
 
-            # Retrieve the selected field number
-            iField = self.view.displayedObject.getExtendedFields()[0].getIndex()  # Starting displayed field
-            for col in treeview.get_columns():
-                if col == treeviewColumn:
-                    break
-                iField += 1
-            field = layer.getFieldByIndex(iField)
-            if field is None:
-                logging.warn("Impossible to retrieve the clicked field!")
-                return
-
             # Popup a contextual menu
-            menuController = ContextualMenuOnFieldController(self.vocabularyController, layer, messages, field)
+            menuController = ContextualMenuOnFieldController(self.vocabularyController, layer, messages)
             menuController.run(eventButton)
             return True  # Needed to block remainin signals (especially the 'changed_cb' signal)
 

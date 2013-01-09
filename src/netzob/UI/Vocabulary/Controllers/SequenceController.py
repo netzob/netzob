@@ -54,7 +54,6 @@ from netzob.UI.Vocabulary.Controllers.Partitioning.ForcePartitioningController i
 from netzob.UI.Vocabulary.Controllers.Partitioning.SimplePartitioningController import SimplePartitioningController
 from netzob.UI.Vocabulary.Controllers.Partitioning.SmoothPartitioningController import SmoothPartitioningController
 from netzob.UI.Vocabulary.Controllers.Partitioning.ResetPartitioningController import ResetPartitioningController
-from netzob.UI.Vocabulary.Controllers.MessagesDistributionController import MessagesDistributionController
 from netzob.UI.Vocabulary.Controllers.SplitFieldController import SplitFieldController
 from netzob.UI.Vocabulary.Controllers.Menus.ContextualMenuOnLayerController import ContextualMenuOnLayerController
 from netzob.UI.Vocabulary.Controllers.VariableController import VariableTreeController
@@ -246,8 +245,8 @@ class SequenceController(object):
     def updateSequenceVariableDefinition(self):
         currentSequence = self.vocabularyController.getDisplayedObjectInSelectedMessageTable()
         if currentSequence is not None:
-            variableDisplayerController = VariableDisplayerController(self, currentSequence, True)
-            variableDisplayerController.run(self.view.messagesDistributionSequenceViewport)
+            variableDisplayerController = VariableDisplayerController(self.vocabularyController, currentSequence, True)
+            variableDisplayerController.run(self.view.messagesDistributionSymbolViewport)
 
     def getMessageProperties(self):
         """Retrieve the current first selected message (in the
@@ -443,7 +442,7 @@ class SequenceController(object):
                     return
 
             # Popup a contextual menu
-            menuController = ContextualMenuOnLayerController(self, layers)
+            menuController = ContextualMenuOnLayerController(self.vocabularyController, layers)
             menuController.run(eventButton)
             return True  # To discard remaining signals (such as 'changed_cb')
 

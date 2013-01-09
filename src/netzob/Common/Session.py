@@ -86,6 +86,14 @@ class Session(object):
     def getMessages(self):
         return self.messages
 
+    def getMessageByID(self, messageID):
+        """getMessageByID: Return the message which ID is provided.
+        """
+        for message in self.messages:
+            if str(message.getID()) == str(messageID):
+                return message
+        return None
+
     def getFormat(self):
         return self.format
 

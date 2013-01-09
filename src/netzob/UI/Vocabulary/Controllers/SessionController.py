@@ -411,7 +411,7 @@ class SessionController(object):
                     return
 
             # Popup a contextual menu
-            menuController = ContextualMenuOnLayerController(self, layers)
+            menuController = ContextualMenuOnLayerController(self.vocabularyController, layers)
             menuController.run(eventButton)
             return True  # To discard remaining signals (such as 'changed_cb')
 

@@ -49,6 +49,7 @@ from netzob.Common.Symbol import Symbol
 from netzob.Common.Field import Field
 from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 from netzob.Common.SignalsManager import SignalsManager
+from netzob.UI.Vocabulary.Views.VocabularyView import VocabularyView
 from netzob.UI.Common.Controllers.MoveMessageController import MoveMessageController
 from netzob.UI.Vocabulary.Controllers.Partitioning.SequenceAlignmentController import SequenceAlignmentController
 from netzob.UI.Vocabulary.Controllers.Partitioning.ForcePartitioningController import ForcePartitioningController
@@ -274,7 +275,7 @@ class SymbolController(object):
     def updateSymbolVariableDefinition(self):
         currentSymbol = self.vocabularyController.getDisplayedObjectInSelectedMessageTable()
         if currentSymbol is not None:
-            variableDisplayerController = VariableDisplayerController(self, currentSymbol, True)
+            variableDisplayerController = VariableDisplayerController(self.vocabularyController, currentSymbol, True)
             variableDisplayerController.run(self.view.messagesDistributionSymbolViewport)
 
     def getMessageProperties(self):
@@ -366,7 +367,7 @@ class SymbolController(object):
             NetzobErrorMessage(_("No project selected."))
             return
         # retrieve the checked symbols
-        symbols = self.view.getCheckedSymbolList()
+        symbols = self.getCheckedSymbolList()
 
         # Create a new symbol
         newSymbol = Symbol(str(uuid.uuid4()), "Merged", self.getCurrentProject())
@@ -391,7 +392,7 @@ class SymbolController(object):
             NetzobErrorMessage(_("No project selected."))
             return
         # Delete symbol
-        for sym in self.view.getCheckedSymbolList():
+        for sym in self.getCheckedSymbolList():
             currentProject = self.netzob.getCurrentProject()
             currentVocabulary = currentProject.getVocabulary()
             for mess in sym.getMessages():
@@ -471,7 +472,7 @@ class SymbolController(object):
                     return
 
             # Popup a contextual menu
-            menuController = ContextualMenuOnLayerController(self, layers)
+            menuController = ContextualMenuOnLayerController(self.vocabularyController, layers)
             menuController.run(eventButton)
             return True  # To discard remaining signals (such as 'changed_cb')
 
@@ -492,44 +493,44 @@ class SymbolController(object):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        layers = self.view.getCheckedLayerList()
+        layers = self.getCheckedLayerList()
         if layers == []:
             NetzobErrorMessage(_("No layer selected."))
             return
-        sequence_controller = SequenceAlignmentController(self, layers, doUpgma=True)
+        sequence_controller = SequenceAlignmentController(self.vocabularyController, layers, doUpgma=True)
         sequence_controller.run()
 
     def partitioningForce_activate_cb(self, action):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        layers = self.view.getCheckedLayerList()
+        layers = self.getCheckedLayerList()
         if layers == []:
             NetzobErrorMessage(_("No symbol selected."))
             return
-        force_controller = ForcePartitioningController(self, layers)
+        force_controller = ForcePartitioningController(self.vocabularyController, layers)
         force_controller.run()
 
     def partitioningSimple_activate_cb(self, action):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        layers = self.view.getCheckedLayerList()
+        layers = self.getCheckedLayerList()
         if layers == []:
             NetzobErrorMessage(_("No symbol selected."))
             return
-        simple_controller = SimplePartitioningController(self, layers)
+        simple_controller = SimplePartitioningController(self.vocabularyController, layers)
         simple_controller.run()
 
     def partitioningSmooth_activate_cb(self, action):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        layers = self.view.getCheckedLayerList()
+        layers = self.getCheckedLayerList()
         if layers == []:
             NetzobErrorMessage(_("No symbol selected."))
             return
-        smooth_controller = SmoothPartitioningController(self, layers)
+        smooth_controller = SmoothPartitioningController(self.vocabularyController, layers)
         smooth_controller.run()
 
     def partitioningReset_activate_cb(self, action):
@@ -538,11 +539,11 @@ class SymbolController(object):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        layers = self.view.getCheckedLayerList()
+        layers = self.getCheckedLayerList()
         if layers == []:
             NetzobErrorMessage(_("No symbol selected."))
             return
-        reset_controller = ResetPartitioningController(self, layers)
+        reset_controller = ResetPartitioningController(self.vocabularyController, layers)
         reset_controller.run()
 
     def messagesDistribution_activate_cb(self, action):
@@ -550,11 +551,11 @@ class SymbolController(object):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        symbols = self.view.getCheckedSymbolList()
+        symbols = self.getCheckedSymbolList()
         if symbols == []:
             NetzobErrorMessage(_("No symbol selected."))
             return
-        distribution = MessagesDistributionController(self, self._view.getCheckedSymbolList())
+        distribution = MessagesDistributionController(self.vocabularyController, self.getCheckedSymbolList())
         distribution.run()
 
 
@@ -596,7 +597,7 @@ class SymbolController(object):
             NetzobErrorMessage(_("No project selected."))
             return
 
-        layers = self.view.getCheckedLayerList()
+        layers = self.getCheckedLayerList()
         if layers == []:
             NetzobErrorMessage(_("No symbol selected."))
             return
@@ -619,7 +620,7 @@ class SymbolController(object):
         # Split field
         if fields is not None and len(fields) > 0:
             field = fields[-1]  # We take the last selected field
-            controller = SplitFieldController(self, field)
+            controller = SplitFieldController(self.vocabularyController, field)
             controller.run()
         else:
             NetzobErrorMessage(_("No selected field."))
