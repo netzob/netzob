@@ -26,65 +26,33 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| Global Imports
+#| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from abc import abstractmethod
 import logging
-from abc import abstractproperty, abstractmethod
+
+#+---------------------------------------------------------------------------+
+#| Related third party imports
+#+---------------------------------------------------------------------------+
 
 
 #+---------------------------------------------------------------------------+
-#| Local Imports
+#| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
+
 
 #+---------------------------------------------------------------------------+
-#| AbstractClusteringAlgorithm:
+#| ClusteringPlugin:
 #+---------------------------------------------------------------------------+
-class AbstractClusteringAlgorithm(object):
-    """This abstract class must be inherited from all the clustering algorithms."""
+class ClusteringPlugin(NetzobPlugin):
+    """Abstract class from which all the clustering plugins must inherit"""
 
-    @staticmethod
-    def getAllClusteringAlgorithms():
-        defaults = []
-        # UPGMA
-        from netzob.Inference.Vocabulary.Clustering.UPGMA.UPGMAClustering import UPGMAClustering
-        defaults.append(UPGMAClustering)
-
-        # Discoverer
-        from netzob.Inference.Vocabulary.Clustering.Discoverer.DiscovererClustering import DiscovererClustering
-        defaults.append(DiscovererClustering)
-
-        # Add all the registered plugins
-        from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
-        from netzob.Common.Plugins.ClusteringPlugin import ClusteringPlugin
-        clusteringPlugins = NetzobPlugin.getLoadedPlugins(ClusteringPlugin)
-        for clusteringPlugin in clusteringPlugins:
-            defaults.append(clusteringPlugin.getAlgorithmClass())
-
-        return defaults
-
-    __algorithm_name__ = abstractproperty()
-    __algorithm_description = abstractproperty()
-
-    def __init__(self, id):
+    def __init__(self, netzob):
+        NetzobPlugin.__init__(self, netzob)
         self.logger = logging.getLogger(__name__)
-        self.id = id
-
-    def getID(self):
-        return self.id
-
-    def getName(self):
-        """Returns the name of the clustering algorithm"""
-        return self.__algorithm_name__
-
-    def getDescription(self):
-        """Returns the description of clustering algorithm"""
-        return self.__algorithm_description
 
     @abstractmethod
-    def execute(self):
+    def getAlgorithmClass(self):
         self.logger.warning("This method must be defined by the inherited class")
-
-    @abstractmethod
-    def getConfigurationController(self):
-        self.logger.warning("This method must be defined by the inherited class")
+        return None
