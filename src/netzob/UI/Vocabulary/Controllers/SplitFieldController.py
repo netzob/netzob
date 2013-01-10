@@ -93,9 +93,7 @@ class SplitFieldController(object):
         self.view.buffer.get_buffer().create_tag("redTag", weight=Pango.Weight.BOLD, foreground="red", family="Courier")
         self.view.buffer.get_buffer().create_tag("greenTag", weight=Pango.Weight.BOLD, foreground="#006400", family="Courier")
 
-        for m in cells:
-            self.view.buffer.get_buffer().insert_with_tags_by_name(self.view.buffer.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[:self.split_position], self.field.getFormat()) + "  ", "redTag")
-            self.view.buffer.get_buffer().insert_with_tags_by_name(self.view.buffer.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[self.split_position:], self.field.getFormat()) + "\n", "greenTag")
+        self.updateDisplayFollowingSplitPosition()
 
         self.view.setMaxSizeOfSplitPositionAdjustment(self.split_min_len - 1)
 
@@ -178,19 +176,21 @@ class SplitFieldController(object):
         messages = self.field.getCells()
         # Colorize text according to position
         self.view.buffer.get_buffer().set_text("")
+
         for m in messages:
             # Crate padding in case of right alignment
             if self.split_align == "right":
-                padding = ""
-                messageLen = len(m)
-                for i in range(self.split_max_len - messageLen):
-                    padding += " "
+                padding = " " * (self.split_max_len - len(m))
                 self.view.buffer.get_buffer().insert_with_tags_by_name(self.view.buffer.get_buffer().get_end_iter(), padding, "greenTag")
                 split_index = -self.split_position
             else:
                 split_index = self.split_position
-            self.view.buffer.get_buffer().insert_with_tags_by_name(self.view.buffer.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[:split_index], self.field.getFormat()) + "  ", "redTag")
-            self.view.buffer.get_buffer().insert_with_tags_by_name(self.view.buffer.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[split_index:], self.field.getFormat()) + "\n", "greenTag")
+
+            leftContent = m[:split_index]
+            rightContent = m[split_index:]
+
+            self.view.buffer.get_buffer().insert_with_tags_by_name(self.view.buffer.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(leftContent, self.field.getFormat()) + "  ", "redTag")
+            self.view.buffer.get_buffer().insert_with_tags_by_name(self.view.buffer.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(rightContent, self.field.getFormat()) + "\n", "greenTag")
 
         value = self.split_position * (self.view.getMaxSizeOfHBuffer() / self.split_max_len)
         self.view.adjustHPositionOfBuffer(value)
