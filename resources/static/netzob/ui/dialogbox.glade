@@ -527,6 +527,7 @@ is not valid !</property>
       <action-widget response="0">certificateErrorApplyButton</action-widget>
     </action-widgets>
   </object>
+<<<<<<< HEAD
   <object class="GtkDialog" id="createsession">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
@@ -628,7 +629,7 @@ is not valid !</property>
       <action-widget response="0">session-button1</action-widget>
     </action-widgets>
   </object>
-  <object class="GtkDialog" id="createsymbol">
+  <object class="GtkDialog" id="netzobInputDialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Create a new symbol</property>
@@ -643,7 +644,7 @@ is not valid !</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="button435">
+              <object class="GtkButton" id="netzobInputCancelButton">
                 <property name="label">gtk-cancel</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
@@ -659,7 +660,7 @@ is not valid !</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button1">
+              <object class="GtkButton" id="netzobInputApplyButton">
                 <property name="label">gtk-apply</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
@@ -691,10 +692,10 @@ is not valid !</property>
             <property name="can_focus">False</property>
             <property name="spacing">5</property>
             <child>
-              <object class="GtkLabel" id="label1">
+              <object class="GtkLabel" id="netzobInputLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Symbol's name:</property>
+                <property name="label" translatable="yes">Default Label</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -703,7 +704,7 @@ is not valid !</property>
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="entry1">
+              <object class="GtkEntry" id="netzobInputEntry">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="invisible_char">â</property>
@@ -725,8 +726,8 @@ is not valid !</property>
       </object>
     </child>
     <action-widgets>
-      <action-widget response="1">button435</action-widget>
-      <action-widget response="0">button1</action-widget>
+      <action-widget response="1">netzobInputCancelButton</action-widget>
+      <action-widget response="0">netzobInputApplyButton</action-widget>
     </action-widgets>
   </object>
   <object class="GtkDialog" id="newProject">
