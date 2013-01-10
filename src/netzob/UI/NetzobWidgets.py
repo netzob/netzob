@@ -39,6 +39,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
+
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
@@ -162,6 +163,47 @@ def NetzobQuestionMessage(text, parent=None):
     result = md.run()
     md.destroy()
     return result
+
+
+def NetzobInputDialog(attachedWindow, inputTitle, inputLabel, valueMandatory=False):
+    """Create a new dialog which contains a label and an input entry. The user
+    can provide the requested value (through the inputLabel).
+    If valueMandatory is set to True, the apply button will be deactivated
+    when no value is provided by the user.
+    It returns either the provided value or None if the user canceled"""
+
+    builder = Gtk.Builder()
+    builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(), "ui", "dialogbox.glade"))
+    # Configure objects
+    dialog = builder.get_object("netzobInputDialog")
+    label = builder.get_object("netzobInputLabel")
+    entry = builder.get_object("netzobInputEntry")
+    applyButton = builder.get_object("netzobInputApplyButton")
+    if attachedWindow is not None:
+        dialog.set_transient_for(attachedWindow)
+        dialog.set_title(inputTitle)
+
+    label.set_label(inputLabel)
+    # Disable apply button if no text
+    if valueMandatory:
+        entry.connect("changed", NetzobInputDialog_disableButtonIfEmpty_cb, applyButton)
+
+    result = dialog.run()
+
+    if result == 0:
+        result = entry.get_text()
+    else:
+        result = None
+
+    dialog.destroy()
+    return result
+
+
+def NetzobInputDialog_disableButtonIfEmpty_cb(widget, button):
+    if(len(widget.get_text()) > 0):
+        button.set_sensitive(True)
+    else:
+        button.set_sensitive(False)
 
 
 def addNetzobIconsToDefaultFactory():
