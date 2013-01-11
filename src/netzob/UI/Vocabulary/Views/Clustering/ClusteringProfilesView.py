@@ -44,6 +44,7 @@ from gi.repository import GObject
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+from netzob.UI import NetzobWidgets
 
 
 class ClusteringProfilesView(object):
@@ -82,8 +83,12 @@ class ClusteringProfilesView(object):
                                         ])
         self.controller = controller
         self.builder.connect_signals(self.controller)
-        self.profiles = profiles
 
+        self.updateViewWithListOfClusteringProfiles(profiles)
+
+    def updateViewWithListOfClusteringProfiles(self, profiles):
+        self.profiles = profiles
+        self.profilesListStore.clear()
         for profile in self.profiles:
             self.profilesListStore.append([str(profile.getID()), profile.getName(), str(profile.getDescription())])
 
@@ -199,6 +204,15 @@ class ClusteringProfilesView(object):
         children = self.configureCurrentAlgorithmViewport.get_children()
         for c in children:
             self.configureCurrentAlgorithmViewport.remove(c)
+
+    def requestForDuplicateProfileName(self):
+        """Request the new name of the profile through
+        a dedicated dialog"""
+        return NetzobWidgets.NetzobInputDialog(self.clusteringProfilesDialog, "Save as a new profile", "Profile's name", True)
+
+    def displayError(self, message):
+        """Display a specific dialog to show an error to the user"""
+        NetzobWidgets.NetzobErrorMessage(message, self.clusteringProfilesDialog)
 
     def run(self):
         self.clusteringProfilesDialog.run()

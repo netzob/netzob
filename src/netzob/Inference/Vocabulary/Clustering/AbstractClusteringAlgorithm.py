@@ -44,6 +44,13 @@ class AbstractClusteringAlgorithm(object):
     """This abstract class must be inherited from all the clustering algorithms."""
 
     @staticmethod
+    def getClusteringAlgorithmClassByID(id):
+        for algo in AbstractClusteringAlgorithm.getAllClusteringAlgorithms():
+            if algo().getID() == id:
+                return algo
+        return None
+
+    @staticmethod
     def getAllClusteringAlgorithms():
         defaults = []
         # UPGMA
@@ -87,4 +94,14 @@ class AbstractClusteringAlgorithm(object):
 
     @abstractmethod
     def getConfigurationController(self):
+        self.logger.warning("This method must be defined by the inherited class")
+
+    @abstractmethod
+    def getConfigurationParameters(self):
+        """This method should be defined in every clustering algorithms. Its implementation
+        should return a dictionnary containing the id of the parameter and its string value."""
+        self.logger.warning("This method must be defined by the inherited class")
+
+    @abstractmethod
+    def setConfigurationParameters(self, parameters):
         self.logger.warning("This method must be defined by the inherited class")

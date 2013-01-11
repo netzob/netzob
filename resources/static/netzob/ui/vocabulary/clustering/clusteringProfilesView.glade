@@ -9,6 +9,14 @@
       <column type="gchararray"/>
     </columns>
   </object>
+  <object class="GtkListStore" id="currentAlgorithmsListStore">
+    <columns>
+      <!-- column-name algorithmID -->
+      <column type="gchararray"/>
+      <!-- column-name algorithmName -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkDialog" id="clusteringProfilesDialog">
     <property name="width_request">800</property>
     <property name="can_focus">False</property>
@@ -78,6 +86,23 @@
               </packing>
             </child>
             <child>
+              <object class="GtkButton" id="saveAsProfileButton">
+                <property name="label">gtk-save-as</property>
+                <property name="use_action_appearance">False</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
+                <property name="use_stock">True</property>
+                <signal name="clicked" handler="saveAsProfileButton_clicked_cb" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkToggleButton" id="customizeProfileToggleButton">
                 <property name="label" translatable="yes">Customize</property>
                 <property name="use_action_appearance">False</property>
@@ -91,7 +116,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">3</property>
+                <property name="position">4</property>
               </packing>
             </child>
             <child>
@@ -109,7 +134,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">4</property>
+                <property name="position">5</property>
               </packing>
             </child>
           </object>
@@ -446,17 +471,10 @@
       <action-widget response="1">closeButton</action-widget>
       <action-widget response="0">deleteProfileButton</action-widget>
       <action-widget response="0">saveProfileButton</action-widget>
+      <action-widget response="0">saveAsProfileButton</action-widget>
       <action-widget response="0">customizeProfileToggleButton</action-widget>
       <action-widget response="0">executeProfileButton</action-widget>
     </action-widgets>
-  </object>
-  <object class="GtkListStore" id="currentAlgorithmsListStore">
-    <columns>
-      <!-- column-name algorithmID -->
-      <column type="gchararray"/>
-      <!-- column-name algorithmName -->
-      <column type="gchararray"/>
-    </columns>
   </object>
   <object class="GtkListStore" id="profilesListStore">
     <columns>

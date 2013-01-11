@@ -109,6 +109,13 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
             if function is not None:
                 workspace.addCustomTransformationFunction(function)
 
+    # Reference the Clustering Profiles
+    if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}clusteringProfiles") is not None:
+        for xmlClusteringProfile in xmlWorkspace.findall("{" + WORKSPACE_NAMESPACE + "}clusteringProfiles/{" + WORKSPACE_NAMESPACE + "}clusteringProfile"):
+            clusteringProfile = ClusteringProfile.loadFromXML(xmlClusteringProfile, WORKSPACE_NAMESPACE, "0.1")
+            if clusteringProfile is not None:
+                workspace.addClusteringProfile(clusteringProfile)
+
     enableBugReporting = False
     if xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}enable_bug_reporting") is not None and xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}enable_bug_reporting").text is not None and len(xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}enable_bug_reporting").text) > 0:
         val = xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}enable_bug_reporting").text
@@ -391,6 +398,9 @@ class Workspace(object):
         for function in self.getCustomFunctions():
             function.save(xmlWorkspaceFunctions, WORKSPACE_NAMESPACE)
 
+        xmlClusteringProfiles = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}clusteringProfiles")
+        for clusteringProfile in self.getClusteringProfiles():
+            clusteringProfile.save(xmlClusteringProfiles, WORKSPACE_NAMESPACE)
         tree = ElementTree(root)
         tree.write(workspaceFile, pretty_print=True)
 
