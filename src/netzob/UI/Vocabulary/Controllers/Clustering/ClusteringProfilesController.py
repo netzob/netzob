@@ -55,6 +55,7 @@ class ClusteringProfilesController(object):
         self.profiles.extend(vocabularyController.getCurrentWorkspace().getClusteringProfiles())
         self._view = ClusteringProfilesView(self, self.profiles)
         self.log = logging.getLogger(__name__)
+        self._view.updateFieldWithCurrentProfile()
 
     @property
     def view(self):

@@ -79,7 +79,8 @@ class ClusteringProfilesView(object):
                                         "currentAlgorithmsListStore",
                                         "currentAlgorithmsTreeView",
                                         "executionProgressBar",
-                                        "customizeProfileBox"
+                                        "customizeProfileBox",
+                                        "saveAsProfileButton"
                                         ])
         self.controller = controller
         self.builder.connect_signals(self.controller)
@@ -161,7 +162,7 @@ class ClusteringProfilesView(object):
                 return algorithm
         return None
 
-    def updateFieldWithCurrentProfile(self, profile):
+    def updateFieldWithCurrentProfile(self, profile=None):
         if profile is None:
             self.descriptionProfileTextView.get_buffer().set_text("")
             self.descriptionProfileTextView.set_sensitive(False)
@@ -170,6 +171,7 @@ class ClusteringProfilesView(object):
             self.addAlgorithmButton.set_sensitive(False)
             self.deleteProfileButton.set_sensitive(False)
             self.saveProfileButton.set_sensitive(False)
+            self.saveAsProfileButton.set_sensitive(False)
             self.executeProfileButton.set_sensitive(False)
 
             self.clearCurrentAlgorithmViewPort()
@@ -184,8 +186,15 @@ class ClusteringProfilesView(object):
             self.descriptionProfileTextView.set_sensitive(True)
             self.algorithmsComboBox.set_sensitive(True)
             self.addAlgorithmButton.set_sensitive(False)
-            self.deleteProfileButton.set_sensitive(True)
-            self.saveProfileButton.set_sensitive(True)
+
+            if profile.isWritable():
+                self.saveProfileButton.set_sensitive(True)
+                self.deleteProfileButton.set_sensitive(True)
+            else:
+                self.saveProfileButton.set_sensitive(False)
+                self.deleteProfileButton.set_sensitive(False)
+
+            self.saveAsProfileButton.set_sensitive(True)
             self.executeProfileButton.set_sensitive(True)
 
             self.availableAlgorithmsListStore.clear()
