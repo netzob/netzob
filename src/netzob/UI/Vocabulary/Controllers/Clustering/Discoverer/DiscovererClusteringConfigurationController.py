@@ -49,6 +49,9 @@ class DiscovererClusteringConfigurationController(object):
         self._view = DiscovererClusteringConfigurationView(self)
         self.logger = logging.getLogger(__name__)
 
+    def getAlgorithm(self):
+        return self.discovererClustering
+
     def maximumMessagePrefixAdjustment_value_changed_cb(self, widget):
         try:
             value = int(self._view.getMaximumMessagePrefix())

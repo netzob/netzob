@@ -55,6 +55,7 @@ class DiscovererClusteringConfigurationView(object):
         '''
         self.logger = logging.getLogger(__name__)
         from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+        self.controller = controller
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
                                                 "ui", "vocabulary", "clustering",
@@ -67,17 +68,18 @@ class DiscovererClusteringConfigurationView(object):
                                         "alignmentMatchScoreAdjustment",
                                         "alignmentMismatchScoreAdjustment",
                                         "alignmentGapScoreAdjustment"])
-        from netzob.Inference.Vocabulary.Clustering.Discoverer.DiscovererClustering import DiscovererClustering
-        # Set the default value given the Discoverer Implementations
-        self.maximumMessagePrefixAdjustment.set_value(DiscovererClustering.getDefaultMaximumMessagePrefix())
-        self.minimumLengthTextSegmentsAdjustment.set_value(DiscovererClustering.getDefaultMaximumMessagePrefix())
-        self.minimumClusterSizeAdjustment.set_value(DiscovererClustering.getDefaultMinimumLengthTextSegments())
-        self.maximumDistinctValuesFDAdjustment.set_value(DiscovererClustering.getDefaultMaximumDistinctValuesFD())
-        self.alignmentMatchScoreAdjustment.set_value(DiscovererClustering.getDefaultAlignmentMatchScore())
-        self.alignmentMismatchScoreAdjustment.set_value(DiscovererClustering.getDefaultAlignmentMismatchScore())
-        self.alignmentGapScoreAdjustment.set_value(DiscovererClustering.getDefaultAlignmentGapScore())
 
-        self.controller = controller
+        # Set the current value of the algorithm parameters
+        algoInstance = controller.getAlgorithm()
+        # Set the default value given the Discoverer Implementations
+        self.maximumMessagePrefixAdjustment.set_value(algoInstance.getMaximumMessagePrefix())
+        self.minimumLengthTextSegmentsAdjustment.set_value(algoInstance.getMinimumLengthTextSegments())
+        self.minimumClusterSizeAdjustment.set_value(algoInstance.getMinimumClusterSize())
+        self.maximumDistinctValuesFDAdjustment.set_value(algoInstance.getMaximumDistinctValuesFD())
+        self.alignmentMatchScoreAdjustment.set_value(algoInstance.getAlignmentMatchScore())
+        self.alignmentMismatchScoreAdjustment.set_value(algoInstance.getAlignmentMismatchScore())
+        self.alignmentGapScoreAdjustment.set_value(algoInstance.getAlignmentGapScore())
+
         self.builder.connect_signals(self.controller)
 
     def getMaximumMessagePrefix(self):

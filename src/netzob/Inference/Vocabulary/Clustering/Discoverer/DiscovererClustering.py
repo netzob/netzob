@@ -50,6 +50,14 @@ from netzob.Common.Symbol import Symbol
 class DiscovererClustering(AbstractClusteringAlgorithm):
     """This represents the Discoverer algorithm as described in the paper 'Discoverer: Automatic Protocol Reverse Engineering from Network Traces'"""
 
+    MIN_LENGTH_TEXT_SEG = "min_length_text_size"
+    MAX_DISTINCT_FD = "max_distinct_fd"
+    MIN_CLUSTER_SIZE = "min_cluster_size"
+    MAX_MESSAGE_PREFIX = "max_message_prefix"
+    ALIGNMENT_MATCH_SCORE = "alignment_match_score"
+    ALIGNMENT_MISMATCH_SCORE = "alignment_mismatch_score"
+    ALIGNMENT_GAP_SCORE = "alignment_gap_score"
+
     __algorithm_name__ = "Discoverer"
     __algorithm_description = "Cluster messages following their ASCII/Bin tokens as described in the paper 'Discoverer: Automatic Protocol Reverse Engineering from Network Traces'"
 
@@ -192,6 +200,26 @@ class DiscovererClustering(AbstractClusteringAlgorithm):
         self.alignmentMismatchScore = DiscovererClustering.getDefaultAlignmentMismatchScore()
         self.alignmentGapScore = DiscovererClustering.getDefaultAlignmentGapScore()
         self.maximumMessagePrefix = DiscovererClustering.getDefaultMaximumMessagePrefix()
+
+    def getConfigurationParameters(self):
+        parameters = dict()
+        parameters[DiscovererClustering.MIN_LENGTH_TEXT_SEG] = self.minimumLengthTextSegments
+        parameters[DiscovererClustering.MAX_DISTINCT_FD] = self.maximumDistinctValuesFD
+        parameters[DiscovererClustering.MIN_CLUSTER_SIZE] = self.minimumClusterSize
+        parameters[DiscovererClustering.MAX_MESSAGE_PREFIX] = self.maximumMessagePrefix
+        parameters[DiscovererClustering.ALIGNMENT_MATCH_SCORE] = self.alignmentMatchScore
+        parameters[DiscovererClustering.ALIGNMENT_MISMATCH_SCORE] = self.alignmentMismatchScore
+        parameters[DiscovererClustering.ALIGNMENT_GAP_SCORE] = self.alignmentGapScore
+        return parameters
+
+    def setConfigurationParameters(self, parameters):
+        self.minimumLengthTextSegments = int(parameters[DiscovererClustering.MIN_LENGTH_TEXT_SEG])
+        self.maximumDistinctValuesFD = int(parameters[DiscovererClustering.MAX_DISTINCT_FD])
+        self.minimumClusterSize = int(parameters[DiscovererClustering.MIN_CLUSTER_SIZE])
+        self.alignmentMatchScore = int(parameters[DiscovererClustering.ALIGNMENT_MATCH_SCORE])
+        self.alignmentMismatchScore = int(parameters[DiscovererClustering.ALIGNMENT_MISMATCH_SCORE])
+        self.alignmentGapScore = int(parameters[DiscovererClustering.ALIGNMENT_GAP_SCORE])
+        self.maximumMessagePrefix = int(parameters[DiscovererClustering.MAX_MESSAGE_PREFIX])
 
     def execute(self, symbols):
         """Execute the clustering"""
@@ -423,20 +451,41 @@ class DiscovererClustering(AbstractClusteringAlgorithm):
     def setMaximumMessagePrefix(self, value):
         self.maximumMessagePrefix = value
 
+    def getMaximumMessagePrefix(self):
+        return self.maximumMessagePrefix
+
     def setMinimumLengthTextSegments(self, value):
         self.minimumLengthTextSegments = value
+
+    def getMinimumLengthTextSegments(self):
+        return self.minimumLengthTextSegments
 
     def setMinimumClusterSize(self, value):
         self.minimumClusterSize = value
 
+    def getMinimumClusterSize(self):
+        return self.minimumClusterSize
+
     def setMaximumDistinctValuesFD(self, value):
         self.maximumDistinctValuesFD = value
+
+    def getMaximumDistinctValuesFD(self):
+        return self.maximumDistinctValuesFD
 
     def setAlignmentMatchScore(self, value):
         self.alignmentMatchScore = value
 
+    def getAlignmentMatchScore(self):
+        return self.alignmentMatchScore
+
     def setAlignmentMismatchScore(self, value):
         self.alignmentMismatchScore = value
 
+    def getAlignmentMismatchScore(self):
+        return self.alignmentMismatchScore
+
     def setAlignmentGapScore(self, value):
         self.alignmentGapScore = value
+
+    def getAlignmentGapScore(self):
+        return self.alignmentGapScore
