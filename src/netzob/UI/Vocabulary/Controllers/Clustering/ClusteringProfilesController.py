@@ -105,6 +105,57 @@ class ClusteringProfilesController(object):
     def saveProfileButton_clicked_cb(self, widget):
         self.log.info("Save selected profile")
 
+        currentProfile = self._view.getCurrentProfile()
+        if currentProfile is None:
+            self.log.warning("No profile selected")
+            return
+
+        if not currentProfile.isWritable():
+            self.log.warning("Cannot save the profile {0} since its not a writable one.".format(self.currentProfile.getName()))
+            return
+
+    def saveAsProfileButton_clicked_cb(self, widget):
+        """This callback offers to duplicate the current profile
+        under a new profile"""
+        self.log.debug("Execute the save-as action on the current clustering profile")
+
+        currentProfile = self._view.getCurrentProfile()
+        if currentProfile is None:
+            self.log.warning("No profile selected")
+            return
+
+        duplicateName = None
+        # Request for profile name
+        while duplicateName is None:
+            duplicateName = self.view.requestForDuplicateProfileName()
+            if duplicateName is None:
+                return
+
+            # Verify no profile already exists with this name
+            found = False
+            for profile in self.profiles:
+                if profile.getName() == duplicateName:
+                    found = True
+                    break
+
+            if found:
+                self.log.debug("A profile with the name already exists.")
+                self.view.displayError(_("A profile already exists with this name, please provide another one"))
+                duplicateName = None
+
+        self.log.debug("A new profil ({0}) will be created.".format(duplicateName))
+
+        newProfile = currentProfile.duplicate(duplicateName)
+
+        if newProfile is not None:
+            # Save this profile in the workspace
+            self.vocabularyController.getCurrentWorkspace().addClusteringProfile(newProfile)
+            self.profiles.append(newProfile)
+            self.view.updateViewWithListOfClusteringProfiles(self.profiles)
+            self.log.debug("A duplicated profile has been successfuly created.")
+        else:
+            self.log.warning("An error occured which prevented the creation of the new profile")
+
     def executeProfileButton_clicked_cb(self, widget):
         currentProfile = self._view.getCurrentProfile()
         newSymbols = currentProfile.execute(self.symbols)
