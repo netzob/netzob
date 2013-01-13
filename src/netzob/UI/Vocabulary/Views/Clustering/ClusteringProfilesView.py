@@ -219,6 +219,13 @@ class ClusteringProfilesView(object):
         a dedicated dialog"""
         return NetzobWidgets.NetzobInputDialog(self.clusteringProfilesDialog, "Save as a new profile", "Profile's name", True)
 
+    def askUserToConfirmDeleteProfile(self, profile):
+        """Request the user to confirm before deleting
+        the provided profile.
+        @param profile the profile which will be deleted if the user accepts
+        @return True if the user confirms the deletion of the profile"""
+        return NetzobWidgets.NetzobQuestionMessage(_("Do you confirm the deletion of the clustering profile {0}".format(profile.getName())))
+
     def displayError(self, message):
         """Display a specific dialog to show an error to the user"""
         NetzobWidgets.NetzobErrorMessage(message, self.clusteringProfilesDialog)

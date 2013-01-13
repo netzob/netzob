@@ -101,7 +101,23 @@ class ClusteringProfilesController(object):
         self.log.info("Up the selected algorithm")
 
     def deleteProfileButton_clicked_cb(self, widget):
-        self.log.info("Delete selected profile")
+        """Callback executed
+        when the user has requested the deletion of the current profile"""
+        currentProfile = self._view.getCurrentProfile()
+
+        if currentProfile is None:
+            self.log.warning("No profile selected")
+            return
+
+        if not currentProfile.isWritable():
+            self.log.warning("The profile is not writable, it can't be deleted")
+            return
+
+        # Ask for confirmation
+        result = self._view.askUserToConfirmDeleteProfile(currentProfile)
+        if result == Gtk.ResponseType.YES:
+            self.vocabularyController.getCurrentWorkspace().deleteClusteringProfile(currentProfile)
+            self._view.updateViewWithListOfClusteringProfiles(self.vocabularyController.getCurrentWorkspace().getClusteringProfiles())
 
     def saveProfileButton_clicked_cb(self, widget):
         self.log.info("Save selected profile")
