@@ -155,6 +155,11 @@ def NetzobInfoMessage(text, parent=None):
 #| NetzobQuestionMessage:
 #+---------------------------------------------------------------------------+
 def NetzobQuestionMessage(text, parent=None):
+
+    """Create a new dialog to ask a question to the user. This user can answer YES or NO to
+    this question. The question can be customized through the text param.
+    @param text the question the user has to answer
+    @return L{Gtk.ResponseType.YES} if he answers yes, or L{Gtk.ResponseType.NO} if he answers no"""
     md = Gtk.MessageDialog(parent,
                            Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
                            Gtk.MessageType.QUESTION,
