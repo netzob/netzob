@@ -219,6 +219,11 @@ class ClusteringProfilesView(object):
         a dedicated dialog"""
         return NetzobWidgets.NetzobInputDialog(self.clusteringProfilesDialog, "Save as a new profile", "Profile's name", True)
 
+    def requestForProfileName(self):
+        """Request the new name of the profile through
+        a dedicated dialog"""
+        return NetzobWidgets.NetzobInputDialog(self.clusteringProfilesDialog, "Create a new clustering profile", "Profile's name", True)
+
     def askUserToConfirmDeleteProfile(self, profile):
         """Request the user to confirm before deleting
         the provided profile.

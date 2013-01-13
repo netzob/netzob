@@ -36,13 +36,14 @@ import logging
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk
 import gi
-from netzob.UI.Vocabulary.Views.Clustering.ClusteringProfilesView import ClusteringProfilesView
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.UI.Vocabulary.Views.Clustering.ClusteringProfilesView import ClusteringProfilesView
+from netzob.Inference.Vocabulary.Clustering.ClusteringProfile import ClusteringProfile
 
 
 class ClusteringProfilesController(object):
@@ -51,9 +52,7 @@ class ClusteringProfilesController(object):
     def __init__(self, vocabularyController, symbols=[]):
         self.vocabularyController = vocabularyController
         self.symbols = symbols
-        self.profiles = []
-        self.profiles.extend(vocabularyController.getCurrentWorkspace().getClusteringProfiles())
-        self._view = ClusteringProfilesView(self, self.profiles)
+        self._view = ClusteringProfilesView(self, self.vocabularyController.getCurrentWorkspace().getClusteringProfiles())
         self.log = logging.getLogger(__name__)
         self._view.updateFieldWithCurrentProfile()
 
@@ -99,6 +98,35 @@ class ClusteringProfilesController(object):
 
     def upCurrentAlgorithmButton_clicked_cb(self, widget):
         self.log.info("Up the selected algorithm")
+
+    def createProfileButton_clicked_cb(self, widget):
+        """Callback executed when the user wants to create
+        a new fresh clustering profile"""
+
+        duplicateName = None
+        # Request for profile name
+        while duplicateName is None:
+            duplicateName = self.view.requestForProfileName()
+            if duplicateName is None:
+                return
+
+            # Verify no profile already exists with this name
+            found = False
+            for profile in self.vocabularyController.getCurrentWorkspace().getClusteringProfiles():
+                if profile.getName() == duplicateName:
+                    found = True
+                    break
+
+            if found:
+                self.log.debug("A profile with the name already exists.")
+                self.view.displayError(_("A profile already exists with this name, please provide another one"))
+                duplicateName = None
+
+        self.log.debug("A new profil ({0}) will be created.".format(duplicateName))
+
+        newprofile = ClusteringProfile(duplicateName, None)
+        self.vocabularyController.getCurrentWorkspace().addClusteringProfile(newprofile)
+        self._view.updateViewWithListOfClusteringProfiles(self.vocabularyController.getCurrentWorkspace().getClusteringProfiles())
 
     def deleteProfileButton_clicked_cb(self, widget):
         """Callback executed
@@ -150,7 +178,7 @@ class ClusteringProfilesController(object):
 
             # Verify no profile already exists with this name
             found = False
-            for profile in self.profiles:
+            for profile in self.vocabularyController.getCurrentWorkspace().getClusteringProfiles():
                 if profile.getName() == duplicateName:
                     found = True
                     break
@@ -167,8 +195,7 @@ class ClusteringProfilesController(object):
         if newProfile is not None:
             # Save this profile in the workspace
             self.vocabularyController.getCurrentWorkspace().addClusteringProfile(newProfile)
-            self.profiles.append(newProfile)
-            self.view.updateViewWithListOfClusteringProfiles(self.profiles)
+            self.view.updateViewWithListOfClusteringProfiles(self.vocabularyController.getCurrentWorkspace().getClusteringProfiles())
             self.log.debug("A duplicated profile has been successfuly created.")
         else:
             self.log.warning("An error occured which prevented the creation of the new profile")
