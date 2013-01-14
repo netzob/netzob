@@ -70,7 +70,6 @@ class ClusteringProfile(object):
     @staticmethod
     def loadFromXML(rootElement, namespace, version):
         nameProfile = rootElement.get("name")
-
         descriptionProfile = None
         descriptionXML = rootElement.find("{" + namespace + "}description")
         if descriptionXML is not None:
@@ -83,6 +82,7 @@ class ClusteringProfile(object):
         if algorithms is not None:
             for algorithm in algorithms.findall("{" + namespace + "}clusteringAlgorithm"):
                 algorithmID = algorithm.get("id")
+                logging.debug("Algorithm '{0}' is referenced in profile.".format(algorithmID))
                 parameters = dict()
                 for parameter in algorithm.findall("{" + namespace + "}parameter"):
                     parameterName = parameter.get('name')
@@ -97,7 +97,7 @@ class ClusteringProfile(object):
                     instanceAlgorithm.setConfigurationParameters(parameters)
                     profile.addAlgorithm(instanceAlgorithm)
                 else:
-                    logging.warning("Impossible to find the algorithm ({0}) required for clustering profile {1}")
+                    logging.warning("Impossible to find the algorithm ({0}) required for clustering profile {1}".format(algorithmID, nameProfile))
         return profile
 
     def __init__(self, name, description=None):
@@ -116,6 +116,9 @@ class ClusteringProfile(object):
 
     def getDescription(self):
         return self.description
+
+    def setDescription(self, description):
+        self.description = description
 
     def getAlgorithms(self):
         return self.algorithms
@@ -176,7 +179,8 @@ class ClusteringProfile(object):
                 xmlCPAlgo = etree.SubElement(xmlCPAlgos, "{" + namespace + "}clusteringAlgorithm")
                 xmlCPAlgo.set("id", str(algorithm.getID()))
                 parameters = algorithm.getConfigurationParameters()
-                for paramKey in parameters.keys():
-                    xmlCPAlgoParam = etree.SubElement(xmlCPAlgo, "{" + namespace + "}parameter")
-                    xmlCPAlgoParam.set("name", str(paramKey))
-                    xmlCPAlgoParam.text = str(parameters[paramKey])
+                if parameters is not None:
+                    for paramKey in parameters.keys():
+                        xmlCPAlgoParam = etree.SubElement(xmlCPAlgo, "{" + namespace + "}parameter")
+                        xmlCPAlgoParam.set("name", str(paramKey))
+                        xmlCPAlgoParam.text = str(parameters[paramKey])

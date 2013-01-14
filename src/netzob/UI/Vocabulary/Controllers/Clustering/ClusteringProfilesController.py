@@ -159,6 +159,14 @@ class ClusteringProfilesController(object):
             self.log.warning("Cannot save the profile {0} since its not a writable one.".format(self.currentProfile.getName()))
             return
 
+        # TODO : the moment only the description is saved with this solution
+        # the other parameters are automaticaly saved
+        description = self._view.getDescriptionOfCurrentProfile()
+        if len(description) == 0:
+            description = None
+
+        currentProfile.setDescription(description)
+
     def saveAsProfileButton_clicked_cb(self, widget):
         """This callback offers to duplicate the current profile
         under a new profile"""

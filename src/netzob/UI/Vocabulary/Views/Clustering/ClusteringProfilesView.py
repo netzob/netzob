@@ -113,6 +113,11 @@ class ClusteringProfilesView(object):
                 return profile
         return None
 
+    def getDescriptionOfCurrentProfile(self):
+        descriptionBuffer = self.descriptionProfileTextView.get_buffer()
+        if descriptionBuffer is not None:
+            return descriptionBuffer.get_text(descriptionBuffer.get_start_iter(), descriptionBuffer.get_end_iter(), False)
+
     def getSelectedAlgorithmClassToAdd(self):
         selectedAlgoClass = None
         tree_iter = self.algorithmsComboBox.get_active_iter()
