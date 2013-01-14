@@ -189,8 +189,8 @@ def checkFile(file):
 
 def verifyResults(results):
     result = 0
-    for file in results.keys():
-        resultFile = results[file]
+    for f in results.keys():
+        resultFile = results[f]
         if len(resultFile) > 0:
             ruleNames = resultFile.keys()
             localResult = 0
@@ -205,7 +205,7 @@ def verifyResults(results):
                     localResult = 1
 
             if len(errorForCurrentFile) > 0:
-                print "[I] File %s:" % (file)
+                print "[I] File %s:" % (f)
                 for err in errorForCurrentFile:
                     print err
 
@@ -216,7 +216,13 @@ def analyze(providedFiles):
     if providedFiles is None:
         # Retrieve all the files to analyze
         print "[I] Retrieve all the files to analyze from the staged area."
-        files = getFiles()
+        tmp_files = getFiles()
+        files = []
+        # Filters directories which could appears in files due to submodules creation
+        # TODO : should be invastigated in details why this could happen
+        for f in tmp_files:
+            if os.path.isfile(f):
+                files.append(f)
     else:
         print "[I] Retrieve all the file to analyze from the command line arguments."
         filesToAnalyze = getFilesFromListOfPath(providedFiles)
@@ -232,8 +238,8 @@ def analyze(providedFiles):
                     print "[E] File %s exists but is not readable." % fileToAnalyze
 
     globalResults = dict()
-    for file in files:
-        globalResults[file] = checkFile(file)
+    for fileToAnalyze in files:
+        globalResults[fileToAnalyze] = checkFile(fileToAnalyze)
 
     # Compute the final result (0=sucess, 1=cannot commit)
     result = verifyResults(globalResults)
