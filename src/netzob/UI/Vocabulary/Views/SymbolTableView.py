@@ -191,11 +191,19 @@ class SymbolTableView(object):
                            len(self.displayedObject.getExtendedFields()))
         # the list store must include the ID and a column for every field
         listStoreTypes = [str] * (numOfColumns + 1)
+
         self.symbolTableListStore = Gtk.ListStore(*listStoreTypes)
+
+        # Deactivate temporary the link between the treeview and the liststore
+        self.symbolTableTreeView.freeze_child_notify()
+        self.symbolTableTreeView.set_model(None)
+        
         # Fill listStore with split messages
         for splitMessage in splitMessagesMatrix:
             self.symbolTableListStore.append(splitMessage)
+
         self.symbolTableTreeView.set_model(self.symbolTableListStore)
+        self.symbolTableTreeView.thaw_child_notify()
 
     def sortMessagesByField(self, field, sortType):
         """Sorts the messages displayed in the treeview by field field in the
