@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
-  <object class="GtkAdjustment" id="sequence_adjustment">
+  <object class="GtkAdjustment" id="bufferHAdjustment">
     <property name="upper">100</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="splitPositionAdjustment">
+    <property name="lower">1</property>
+    <property name="upper">100</property>
+    <property name="value">1</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+    <signal name="value-changed" handler="splitPositionAdjustment_value_changed_cb" swapped="no"/>
   </object>
   <object class="GtkDialog" id="splitFieldDialog">
     <property name="can_focus">False</property>
@@ -20,6 +28,7 @@
           <object class="GtkScrolledWindow" id="scrolledwindow1">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="hadjustment">bufferHAdjustment</property>
             <property name="shadow_type">in</property>
             <property name="min_content_width">500</property>
             <property name="min_content_height">300</property>
@@ -31,9 +40,27 @@
             </child>
           </object>
           <packing>
-            <property name="expand">False</property>
+            <property name="expand">True</property>
             <property name="fill">True</property>
             <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkScale" id="scale1">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="adjustment">splitPositionAdjustment</property>
+            <property name="show_fill_level">True</property>
+            <property name="round_digits">1</property>
+            <property name="digits">0</property>
+            <property name="value_pos">left</property>
+            <signal name="button-press-event" handler="scale1_button_press_event_cb" swapped="no"/>
+            <signal name="button-release-event" handler="scale1_button_release_event_cb" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
           </packing>
         </child>
         <child internal-child="action_area">

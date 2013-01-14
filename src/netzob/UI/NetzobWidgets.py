@@ -177,6 +177,7 @@ def addNetzobIconsToDefaultFactory():
         iconSource.set_size(Gtk.IconSize.LARGE_TOOLBAR)
         iconSet.add_source(iconSource)
         netzobIconFactory.add(iconStockID, iconSet)
+
     netzobIconFactory = Gtk.IconFactory()
     addIconToFactory("netzob-import-messages", "import-messages.png")
     addIconToFactory("netzob-capture-messages", "capture-messages.png")
