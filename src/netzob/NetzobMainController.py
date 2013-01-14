@@ -76,6 +76,9 @@ class NetzobMainController(object):
         cmdLine.parse()
         opts = cmdLine.getOptions()
 
+        # Load all available plugins
+        NetzobPlugin.loadPlugins(self)
+
         # Current workspace path can be provided in command line argument
         if opts.workspace is None:
             workspaceDir = ResourcesConfiguration.getWorkspaceDir()
@@ -89,7 +92,6 @@ class NetzobMainController(object):
         if self.currentWorkspace is None:
             sys.exit()
 
-        #self.currentWorkspace = self._loadWorkspace(opts)
         self.currentProjet = None
 
         # Enable bug reporting, if workspace is configured so or if
@@ -122,9 +124,6 @@ class NetzobMainController(object):
         self.log.info("Starting netzob UI")
         self.view = None    # small hack since the attribute need to exists when the main glade is loaded
         self.view = NetzobMainView(self)
-
-        # Load all available plugins
-        NetzobPlugin.loadPlugins(self)
 
         self.view.registerPerspectives()
 
