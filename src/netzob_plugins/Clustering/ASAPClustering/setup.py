@@ -40,7 +40,8 @@ from sdist.utils import find_data_files, opj
 pluginsStaticResourcesPath = opj(resourcesPath, "static/netzob_plugins/", package)
 
 dependencies = [
-    'Netzob >= 0.4.1-git'
+    'Netzob >= 0.4.1-git',
+    'rpy2 >= 2.3'
 ]
 
 setup(
