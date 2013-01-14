@@ -1,0 +1,3 @@
+[submodule "resources/static/netzob_plugins/ASAPClustering/libs/PRISMA"]
+	path = resources/static/netzob_plugins/ASAPClustering/libs/PRISMA
+	url = https://github.com/tammok/PRISMA
