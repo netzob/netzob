@@ -30,13 +30,15 @@
 #+---------------------------------------------------------------------------+
 from locale import gettext as _
 import logging
-from netzob.Inference.Vocabulary.Clustering.AbstractClusteringAlgorithm import AbstractClusteringAlgorithm
-
+import rpy2.robjects as robjects
+import tempfile
+import os
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
 from ASAPClusteringConfigurationController import ASAPClusteringConfigurationController
+from netzob.Inference.Vocabulary.Clustering.AbstractClusteringAlgorithm import AbstractClusteringAlgorithm
 
 
 #+---------------------------------------------------------------------------+
@@ -54,6 +56,46 @@ class ASAPClustering(AbstractClusteringAlgorithm):
     def execute(self, symbols):
         """Execute the clustering"""
         self.log.info("Execute ASAP Clustering...")
+        """ Steps of the algorithm
+        Step 1 : Create a specific alphabet based on provided messages
+        Step 2 : Matrix factorization
+        Step 3 : Construction of communication template"""
+
+        self.log.debug("Create an alphabet based on provided messages")
+
+        # Step 1 :
+        # Generate the raw files for sally
+        # Generate the sally config file
+        # Execute sally : sally -c asap.cfg asap.raw asap.sally
+        # Clean the sally output file using the PRISMA file : libs/PRISMA/inst/extdata/sallyPreprocessing.py
+        # Load the data in PRISMA with R source code loadPrismaData()
+
+        sallyRawFile = self.generateSallyRawFile(symbols)
+        self.log.debug("Sally raw file created at {0}".format(sallyRawFile))
+
+        sallyConfigFile = self.generateSallyConfigFile()
+        self.log.debug("Sally config file created at {0}".format(sallyConfigFile))
+
+        # Remove temporary files
+        os.remove(sallyRawFile)
+        os.remove(sallyConfigFile)
+
+        # self.log.debug("Execute a simple test R test")
+        # pi = robjects.r['pi']
+        # self.log.debug("PI = {0}".format(pi[0]))
+
+    def generateSallyRawFile(self, symbols):
+        (sallyRawFile, sallyRawFileName) = tempfile.mkstemp(suffix='netzob_sally')
+        for symbol in symbols:
+            for message in symbol.getMessages():
+                os.write(sallyRawFile, message.getStringData() + '\n')
+                print message.getStringData()
+        os.close(sallyRawFile)
+        return sallyRawFileName
+
+    def generateSallyConfigFile(self):
+        (sallyConfigFile, sallyConfigFilename) = tempfile.mkstemp(suffix='netzob_sally.cfg')
+        return sallyConfigFilename
 
     def getConfigurationController(self):
         """Create the controller which allows the configuration of the algorithm"""
