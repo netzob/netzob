@@ -161,13 +161,6 @@ class WiresharkExporterView(AbstractExporterView, Observable):
     ##########
     # Events #
     ##########
-    def __onSymbolChanged_cb(self, tv, *args):
-        for cb_f, cb_args in self.__cursor_changed_obs:
-            cb_f(tv, *cb_args)
-
-    def onSymbolChanged(self, func, *args):
-        self.__cursor_changed_obs.add((func, args))
-
     def _onSaveClicked_cb(self, tb):
         chooser = Gtk.FileChooserDialog(_("Export as Wireshark script (LUA)"),
                                         action=Gtk.FileChooserAction.SAVE,
