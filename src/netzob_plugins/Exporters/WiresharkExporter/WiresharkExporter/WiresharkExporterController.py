@@ -29,6 +29,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
+from operator import methodcaller
 import re
 import struct
 
@@ -40,7 +41,7 @@ from netzob.Common.Models.L3NetworkMessage import L3NetworkMessage
 from netzob.Common.Models.L2NetworkMessage import L2NetworkMessage
 from netzob.Common.Plugins.Exporters.AbstractExporterController import AbstractExporterController
 from netzob.UI.NetzobWidgets import NetzobErrorMessage, NetzobWarningMessage
-from CodeBuffer import CodeBuffer
+from CodeBuffer import LUACodeBuffer
 from WiresharkExporterError import WiresharkExporterError
 from WiresharkExporterView import WiresharkExporterView
 from WiresharkFilter import WiresharkFilterFactory
@@ -83,56 +84,64 @@ class WiresharkExporterController(AbstractExporterController):
 
         return locals()
 
+    def __writeDynSizeBlock(self, buf, field, sorted_ivalues):
+        with buf.new_block("do"):
+            buf << "local values = {{{}}}"\
+                .format(", ".join('"{}"'.format(val) for val in sorted_ivalues))
+            with buf.new_block("for k,v in next,values,nil do"):
+                buf << "local vlen = v:len() / 2"
+                with buf.new_block("if buffer(idx):len() >= vlen and tostring(ByteArray.new(v)) == tostring(buffer(idx,vlen):bytes()) then"):
+                    buf << 'subtree:add(buffer(idx,vlen), "{prefix}: " .. v)'\
+                        .format(prefix=field.getName())
+                    buf << "idx = idx + vlen"
+                    buf << "break"
+
+    def __writeUniqueSizeBlock(self, buf, field, values):
+        j = min(map(len, values))
+        with buf.new_block("if buffer(idx):len() >= {} then".format(j)):
+            buf << 'subtree:add(buffer(idx,{length}), "{prefix}: " .. buffer(idx,{length}))'\
+                .format(length=j, prefix=field.getName())
+            buf << "idx = idx + {}".format(j)
+
     def generateSymbolDissector(self, sym):
-        msg_ref = sym.getMessages()[0]
-        ctx = self.getMessageContext(msg_ref)
-        buf = CodeBuffer()
-        buf.write("--\n-- Symbol {proto_keyname}\n--\n".format(**ctx))
-        buf.write("""{class_var} = Proto("{proto_name}", "{proto_name} Protocol")
+        msgs = sym.getMessages()
+        ctx = self.getMessageContext(msgs[0])
+        buf = LUACodeBuffer()
+        buf << "--\n-- Symbol {proto_keyname}\n--\n".format(**ctx)
+        buf << """{class_var} = Proto("{proto_name}", "{proto_name} Protocol")
 function {class_var}.dissector(buffer, pinfo, tree)
   pinfo.cols.protocol = "{proto_keyname}"
   local subtree = tree:add({class_var}, buffer(), "{proto_desc}")
-""".format(**ctx))
-        i = 0
+  local idx = 0
+""".format(**ctx)
 
-        # XXX: do not use msg_ref here, not valid for all msgs
         fields = sym.getExtendedFields()
-        splittedData = msg_ref.getSplittedData(fields, msg_ref.data)
-        for field, ivalue in zip(fields, splittedData):
-            value = ivalue.decode('hex')
-            fmt = field.getFormat()
+        splittedData = [msg.getSplittedData(fields, msg.data) for msg in msgs]
+        with buf.new_block():
+            for field, ivalues in zip(fields, zip(*splittedData)):
+                sorted_ivalues = sorted(set(str(v) for v in ivalues if v), key=len, reverse=True)
+                values = map(methodcaller('decode', 'hex'), ivalues)
 
-            # raise an error when a non-trailing dynamic regex is encountered
-            if field.isRegexOnlyDynamic() and field.getIndex() < len(fields) - 1:
-                raise WiresharkExporterError(_("Cannot handle dynamic-size fields"))
-
-            with buf:
-                buf.write('if buffer({start}):len() > 0 then\n'.format(start=i))
-                j = len(value)
-                with buf:
-                    if field.isRegexOnlyDynamic():
-                        buf.write('subtree:add(buffer({start}), "{prefix}: " .. buffer({start})'
-                                  .format(start=i, prefix=field.getName()))
-                    else:
-                        buf.write('subtree:add(buffer({start},{length}), "{prefix}: " .. buffer({start},{length})'
-                                  .format(start=i, length=j, prefix=field.getName()))
-                    buf_type = _getLuaTvbType(field)
-                    if buf_type is not None:
-                        buf.write(':{}()'.format(buf_type))
-                    buf.write(')\n')
-            buf.write('end\n')
-            i += j
-        buf.write("end\n")  # end of dissector function
+                if len(set(map(len, values))) > 1:
+                    self.__writeDynSizeBlock(buf, field, sorted_ivalues)
+                else:
+                    self.__writeUniqueSizeBlock(buf, field, values)
+                # TODO: re-implement this...
+                ## with buf.new_block():
+                ##     buf_type = _getLuaTvbType(field)
+                ##     if buf_type is not None:
+                ##         buf << ':{}()'.format(buf_type))
+                ##     buf << ')'
 
         # Register dissector function to specific filter criterion
         filter_ = WiresharkFilterFactory.getFilter(sym)
         luatype = _getLuaTableType(filter_.pytype)
         for expr in filter_.getExpressions():
-            buf.write("""if not pcall(DissectorTable.get, "{0}") then
+            buf << """if not pcall(DissectorTable.get, "{0}") then
   DissectorTable.new("{0}", "Netzob-generated table", {type})
 end
 DissectorTable.get("{0}"):add({1}, {class_var})
-""".format(*expr, type=luatype, **ctx))
+""".format(*expr, type=luatype, **ctx)
 
         return buf.getvalue()
 
@@ -194,15 +203,16 @@ def _getLuaTableType(pytype):
     raise ValueError("Cannot match LUA type for {!s}".format(pytype))
 
 
-def _getLuaTvbType(field):
-    fmt = field.getFormat()
-    typ = None
-    if fmt in ['string', 'ipv4']:
-        typ = fmt
-    if 'decimal' == fmt:
-        typ = 'uint'
-# XXX: bug in lua
-#    if 'binary' == fmt: typ = 'bytes'
-    if 'little-endian' == field.getEndianess() and typ:
-        typ = 'le_{}'.format(typ)
-    return typ
+# TODO: re-implement this...
+## def _getLuaTvbType(field):
+##     fmt = field.getFormat()
+##     typ = None
+##     if fmt in ['string', 'ipv4']:
+##         typ = fmt
+##     if 'decimal' == fmt:
+##         typ = 'uint'
+## # XXX: bug in lua
+## #    if 'binary' == fmt: typ = 'bytes'
+##     if 'little-endian' == field.getEndianess() and typ:
+##         typ = 'le_{}'.format(typ)
+##     return typ

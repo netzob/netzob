@@ -34,21 +34,64 @@ from StringIO import StringIO
 class CodeBuffer(StringIO):
     """
     StringIO class with indentation capabilities
+    Used to write indent-based blocks of code (Python, LUA...)
+
+    Use like this:
+    > buffer = CodeBuffer()
+    > buffer << "rabbits eats"
+    > with buffer.new_block("carrots, but also"):
+    >   buffer << "hay,"
+    >   buffer << "vegetables,"
+    >   buffer << "and grass."
+    > print buffer
+    < rabbits eats
+    < carrots, but also
+    <   hay,
+    <   vegetables,
+    <   and grass.
     """
     INDENT_SIZE = 2
 
     def __init__(self, *args, **kwargs):
         StringIO.__init__(self, *args, **kwargs)
-        self._indent = 0
+        self._stack = [self.new_block()]
+
+    def __lshift__(self, elm):
+        self._stack[-1].write(elm)
+        return self
+
+    def enter(self, elm):
+        self._stack.append(elm)
+
+    def exit(self):
+        self._stack.pop()
 
     def write(self, s):
-        indent_s = ' ' * (self._indent * self.INDENT_SIZE) + s
+        indent_s = ' ' * ((len(self._stack) - 1) * self.INDENT_SIZE) + s + '\n'
         StringIO.write(self, indent_s)
 
-    def indent(self):
-        self._indent += 1
-    __enter__ = indent
+    def new_block(self, data=None):
+        cb = CodeBlock(self)
+        if data is not None:
+            self << data
+        return cb
 
-    def dedent(self):
-        self._indent -= 1
-    __exit__ = lambda self, *args: self.dedent()
+
+class LUACodeBuffer(CodeBuffer):
+    def exit(self):
+        self << "end"
+        CodeBuffer.exit(self)
+
+
+class CodeBlock(object):
+    def __init__(self, buf):
+        self._buf = buf
+
+    def __enter__(self):
+        return self._buf.enter(self)
+
+    def __exit__(self, exception, data, tb):
+        self._buf.exit()
+
+    def write(self, data):
+        self._buf.write(data)
