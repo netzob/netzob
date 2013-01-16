@@ -257,8 +257,10 @@ class VariableTreeController(object):
         md = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO, questionMsg)
         result = md.run()
         md.destroy()
+
         if result == Gtk.ResponseType.YES:
             pass
+            # The root variable.
             if variable.getID() == self.field.getVariable().getID():
                 # Edit the variable
                 self.field.setVariable(variable)
@@ -267,6 +269,7 @@ class VariableTreeController(object):
                 entry = self.dictEntry[variable.getID()]
                 self.treestore.remove(entry)
                 self.registerVariable(None, variable)
+            # Other variables.
             else:
                 # Edit the variable
                 father = variable.getFathers()[0]
@@ -629,6 +632,7 @@ class VariableCreationController(object):
                 @type widget: Gtk.widget
                 @param widget: the widget which calls this function.
         """
+
         dialog = self.view.getWidg("dialog")
         if self.editOverCreate:
             anid = self.variable.getID()
@@ -705,7 +709,9 @@ class VariableCreationController(object):
         if variable is not None:
             # This part is for saving and transfering children when transforming a node variable into an other kind of node variable.
             if self.editOverCreate:
-                father = self.variable.getFathers()[0]
+                father = None
+                if len(self.variable.getFathers()) > 0:
+                    father = self.variable.getFathers()[0]
                 # We transform a node variable into a node variable.
                 if (self.variable.getVariableType() == AggregateVariable.TYPE or self.variable.getVariableType() == AlternateVariable.TYPE) and (variable.getVariableType() == AggregateVariable.TYPE or variable.getVariableType() == AlternateVariable.TYPE):
                     children = self.variable.getChildren()
@@ -728,7 +734,8 @@ class VariableCreationController(object):
                 # We do not manage/save children.
                 else:
                     self.variable = variable
-                self.variable.addFather(father)
+                if father is not None:
+                    self.variable.addFather(father)
                 self.treeController.editVariable(self.variable)
 
             else:
