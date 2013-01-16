@@ -275,10 +275,12 @@ class VariableTreeController(object):
                 father = variable.getFathers()[0]
                 father.editChildByID(variable)
 
+                logging.debug("variable: {0}, fathers: {1}".format(variable.getName(), variable.getFathers()))
+
                 # Update its entry
                 entry = self.dictEntry[variable.getID()]
                 self.treestore.set_value(entry, 1, variable.toString())
-                #self.registerVariable(self.dictEntry[father.getID()], variable)
+                self.dictVariable[variable.getID()] = variable
         else:
             logging.info("The user didn't confirm the edition of the variable {0}".format(variable.getName()))
 
