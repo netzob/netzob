@@ -102,6 +102,9 @@ class AbstractNodeVariable(AbstractVariable):
             for son in self.children:
                 if son.getID() == child.getID():
                     # We edit the element.
+                    # We purge all child's fathers before inserting him (it will attribute him a father).
+                    for father in child.getFathers():
+                        child.removeFather(father)
                     self.insertChild(self.indexOfChild(son), child)
                     self.removeChild(son)
                     break
