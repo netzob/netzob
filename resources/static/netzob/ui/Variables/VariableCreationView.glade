@@ -149,15 +149,15 @@
               <object class="GtkComboBoxText" id="variableTypeCombo">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="wrap_width">1</property>
                 <property name="entry_text_column">0</property>
                 <property name="id_column">1</property>
                 <items>
-                  <item translatable="yes">Data Variable</item>
                   <item translatable="yes">Aggregate Variable</item>
                   <item translatable="yes">Alternate Variable</item>
-                  <item translatable="yes">Repeat Variable</item>
-                  <item translatable="yes">Direct Relation Variable</item>
                   <item translatable="yes">Computed Relation Variable</item>
+                  <item translatable="yes">Data Variable</item>
+                  <item translatable="yes">Repeat Variable</item>
                 </items>
               </object>
               <packing>
