@@ -105,7 +105,7 @@ class ComputedRelationVariable(AbstractVariable):
             self.log.debug("No pointed variable.")
             self.currentValue = None
         else:
-            self.currentValue = self.computeValue(self.getPointedVariable().getValue(processingToken))
+            self.currentValue = self.computeValue(self.getPointedVariable().getTokenValue(processingToken))
 
     def guessValue(self):
         """guessValue:

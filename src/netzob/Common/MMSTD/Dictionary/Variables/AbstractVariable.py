@@ -110,6 +110,15 @@ class AbstractVariable(object):
             for bound in self.boundedVariables:
                 bound.notifiedWrite(processingToken)
 
+    def getTokenValue(self, processingToken):
+        """getTokenValue:
+                return the value represented by the tokenChoppedIndexes.
+        """
+        value = ""
+        for index in self.tokenChoppedIndexes:
+            value += processingToken.getLinkedValue()[index]
+        return value
+
 #+---------------------------------------------------------------------------+
 #| Abstract methods                                                          |
 #+---------------------------------------------------------------------------+
@@ -234,6 +243,9 @@ class AbstractVariable(object):
 
     def getBoundedVariables(self):
         return self.boundedVariables
+
+    def getTokenChoppedIndexes(self):
+        return self.tokenChoppedIndexes
 
     def getCurrentValue(self):
         return self.currentValue
