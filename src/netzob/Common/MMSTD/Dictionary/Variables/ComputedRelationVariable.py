@@ -106,7 +106,6 @@ class ComputedRelationVariable(AbstractVariable):
             self.currentValue = None
         else:
             self.currentValue = self.computeValue(self.getPointedVariable().getTokenValue(processingToken))
-            self.log.debug("Take the value: {0} and turn it into: {1}".format(self.getPointedVariable().getTokenValue(processingToken), self.currentValue))
 
     def guessValue(self):
         """guessValue:
@@ -265,6 +264,7 @@ class ComputedRelationVariable(AbstractVariable):
                 The relation variable returns a computed or a generated value.
         """
         self.log.debug("[ {0} (relation): write access:".format(AbstractVariable.toString(self)))
+        self.resetTokenChoppedIndexes()  # New write access => new final value and new reference to it.
         self.directPointer = self.findDirectPointer()
 
         if self.isDefined(writingToken):

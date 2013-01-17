@@ -222,6 +222,7 @@ class AbstractLeafVariable(AbstractVariable):
                 The leaf element returns its value or a generated one.
         """
         self.log.debug("[ {0} (leaf): write access:".format(AbstractVariable.toString(self)))
+        self.resetTokenChoppedIndexes()  # New write access => new final value and new reference to it.
         if self.isMutable():
             if self.isLearnable():
                 if self.isDefined(writingToken):
