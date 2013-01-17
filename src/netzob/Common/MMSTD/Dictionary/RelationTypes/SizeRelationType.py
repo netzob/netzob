@@ -38,10 +38,9 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.DataTypes.IntegerType import IntegerType
+from netzob.Common.MMSTD.Dictionary.DataTypes.DecimalWordType import DecimalWordType
 from netzob.Common.MMSTD.Dictionary.RelationTypes.AbstractRelationType import \
     AbstractRelationType
-from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 class SizeRelationType(AbstractRelationType):
@@ -66,14 +65,13 @@ class SizeRelationType(AbstractRelationType):
         """makeAssociatedDataType:
                 The data type associated to a size field is obviously an integer.
         """
-        return IntegerType(sized, minChars, maxChars, delimiter)
+        return DecimalWordType(sized, minChars, maxChars, delimiter)
 
     def computeValue(self, value):
         """computeValue:
         """
+        size = 0
         if value is not None:
             size = len(value)
             self.log.debug("Compute the size of {0} = {1}".format(value, size))
-            return TypeConvertor.intstring2bin(str(size))
-        else:
-            return 0
+        return self.getAssociatedDataType().str2bin(str(size))
