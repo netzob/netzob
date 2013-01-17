@@ -59,7 +59,8 @@ class AbstractNodeVariable(AbstractVariable):
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AbstractNodeVariable.py')
         self.children = []
         if children is not None:
-            self.children.extend(children)
+            for child in children:
+                self.addChild(child)
         self.learning = False  # (read access with mutable flag) Tells if the variable reads normally or through an attempt of learning.
 
     def moveChild(self, child, position):

@@ -304,7 +304,10 @@ class RepeatVariable(AbstractNodeVariable):
         return self.children[0]
 
     def addChild(self, child):
-        self.children[0] = child
+        if len(self.children) == 0:
+            self.children.append(child)
+        else:
+            self.children[0] = child
         child.addFather(self)
 
 #+---------------------------------------------------------------------------+
