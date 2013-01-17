@@ -106,6 +106,7 @@ class ComputedRelationVariable(AbstractVariable):
             self.currentValue = None
         else:
             self.currentValue = self.computeValue(self.getPointedVariable().getTokenValue(processingToken))
+            self.log.debug("Take the value: {0} and turn it into: {1}".format(self.getPointedVariable().getTokenValue(processingToken), self.currentValue))
 
     def guessValue(self):
         """guessValue:

@@ -313,6 +313,9 @@ class DataVariable(AbstractLeafVariable):
             # Do not forget to write the delimiter if the variable has one
             value.extend(self.getType().getDelimiter())
         writingToken.write(self, value)
+        # We impact the value this variable has written on its tokenChoppedIndex list and its fathers token list.
+        self.log.debug("WritingToken linkedValue: {0}".format(writingToken.getLinkedValue()))
+        self.addTokenChoppedIndex(len(writingToken.getLinkedValue()) - 1)
         self.log.debug("Variable {0}: {1}. ] -".format(self.getName(), writingToken.toString()))
 
 #+---------------------------------------------------------------------------+

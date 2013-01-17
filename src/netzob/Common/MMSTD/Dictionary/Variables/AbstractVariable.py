@@ -30,6 +30,7 @@
 #+---------------------------------------------------------------------------+
 from abc import abstractmethod
 from gettext import gettext as _
+from bitarray import bitarray
 import logging
 
 #+---------------------------------------------------------------------------+
@@ -112,12 +113,22 @@ class AbstractVariable(object):
 
     def getTokenValue(self, processingToken):
         """getTokenValue:
-                return the value represented by the tokenChoppedIndexes.
+                Return the value represented by the tokenChoppedIndexes as a bitarray.
         """
-        value = ""
+        value = bitarray()
         for index in self.tokenChoppedIndexes:
-            value += processingToken.getLinkedValue()[index]
+            value.extend(processingToken.getLinkedValue()[index][1])
         return value
+
+    def addTokenChoppedIndex(self, choppedIndex):
+        """addTokenChoppedIndex:
+                Add a pointer (choppedIndex) in the tokenChoppedIndexes of this variable and its fathers.
+                This pointer shows that this variable and its fathers are responsible for a given part of the final value.
+        """
+        self.tokenChoppedIndexes.append(choppedIndex)
+        # Each father gains this value too.
+        for father in self.fathers:
+            father.addTokenChoppedIndex(choppedIndex)
 
 #+---------------------------------------------------------------------------+
 #| Abstract methods                                                          |
