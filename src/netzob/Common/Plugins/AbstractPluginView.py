@@ -44,6 +44,7 @@ class AbstractPluginView(object):
     """Regroup methods any plugins' view must be able to access"""
 
     def __init__(self, plugin, controller):
+        super(AbstractPluginView, self).__init__()
         self.plugin = plugin
         self.controller = controller
 
