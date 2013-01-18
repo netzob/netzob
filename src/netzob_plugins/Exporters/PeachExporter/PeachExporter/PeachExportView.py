@@ -47,14 +47,18 @@ class PeachExportView(AbstractExporterView):
             GUI for exporting results in Peach pit XML.
     """
 
-    def __init__(self):
+    def __init__(self, plugin, controller):
         """Constructor of PeachExportView:
         """
+        super(PeachExportView, self).__init__(plugin, controller)
         self.buildPanel()
 
         self.dialog = Gtk.Dialog(title=_("Export project as Peach pit XML"), flags=0, buttons=None)
         self.dialog.vbox.pack_start(self.panel, True, True, 0)
         self.dialog.set_size_request(600, 400)
+
+    def getDialog(self):
+        return self.dialog
 
     def buildPanel(self):
         """buildPanel:

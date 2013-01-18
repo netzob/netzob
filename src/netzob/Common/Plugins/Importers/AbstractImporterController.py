@@ -51,8 +51,8 @@ from netzob.UI.Import.Controllers.ConfirmImportMessagesController import Confirm
 class AbstractImporterController(AbstractPluginController):
     """Abstract controller for importers plugins"""
 
-    def __init__(self, netzob, plugin):
-        super(AbstractImporterController, self).__init__(netzob, plugin)
+    def __init__(self, *args, **kwargs):
+        super(AbstractImporterController, self).__init__(*args, **kwargs)
         self.log = logging.getLogger(__name__)
         self.selectedPacketCount = 0
 

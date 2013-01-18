@@ -45,9 +45,6 @@ from netzob.Common.Plugins.Importers.AbstractImporterController import AbstractI
 
 class AbstractFileImporterController(AbstractImporterController):
 
-    def __init__(self, netzob, plugin):
-        super(AbstractImporterController, self).__init__(netzob, plugin)
-
     def setSourceFiles(self, filePathList):
         self.view.setSourceFiles(filePathList)
         self.doSetSourceFiles(filePathList)

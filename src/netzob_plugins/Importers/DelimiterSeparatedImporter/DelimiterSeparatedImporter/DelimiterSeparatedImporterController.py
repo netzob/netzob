@@ -52,9 +52,9 @@ class DelimiterSeparatedImporterController(AbstractFileImporterController):
     COLUMN_SELECTED = 0
 
     def __init__(self, netzob, plugin):
-        super(DelimiterSeparatedImporterController, self).__init__(netzob, plugin)
+        view = DelimiterSeparatedImporterView(plugin, self)
+        super(DelimiterSeparatedImporterController, self).__init__(netzob, plugin, view)
         self.model = DelimiterSeparatedImporter(self.netzob)
-        self.view = DelimiterSeparatedImporterView(plugin, self)
 
     def run(self):
         self.view.run()
