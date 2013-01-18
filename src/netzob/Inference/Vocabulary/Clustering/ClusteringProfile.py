@@ -139,8 +139,10 @@ class ClusteringProfile(object):
             self.log.warning("Impossible to remove the unexisting provided algorithm ({0}) from the list of registered algorithms".format(algorithm.getID()))
 
     def execute(self, layers):
+        self.log.debug("Execute clustering profile {0}".format(self.getName()))
         tmp_layers = layers
         for algorithm in self.getAlgorithms():
+            self.log.debug(" - Execute Algorithm {0}".format(algorithm.getName()))
             tmp_layers = algorithm.execute(tmp_layers)
         return tmp_layers
 
