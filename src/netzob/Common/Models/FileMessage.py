@@ -109,6 +109,12 @@ class FileMessage(AbstractMessage):
     def getSize(self):
         return self.size
 
+    def getSource(self):
+        return "-"
+
+    def getDestination(self):
+        return "-"
+
     #+----------------------------------------------
     #| SETTERS:
     #+----------------------------------------------

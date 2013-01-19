@@ -84,6 +84,12 @@ class IRPDeviceIoControlMessage(IRPMessage):
     def getIOCTL(self):
         return self.ioctl
 
+    def getSource(self):
+        return "-"
+
+    def getDestination(self):
+        return "-"
+
     #+----------------------------------------------
     #| SETTERS:
     #+----------------------------------------------

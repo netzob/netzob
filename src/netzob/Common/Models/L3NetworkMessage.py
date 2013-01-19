@@ -74,3 +74,9 @@ class L3NetworkMessage(L2NetworkMessage):
         properties.append(Property('Layer 3 Source Address', Format.IP, self.getL3SourceAddress()))
         properties.append(Property('Layer 3 Destination Address', Format.IP, self.getL3DestinationAddress()))
         return properties
+
+    def getSource(self):
+        return str(self.getL3SourceAddress())
+
+    def getDestination(self):
+        return str(self.getL3DestinationAddress())

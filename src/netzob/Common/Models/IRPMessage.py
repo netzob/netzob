@@ -138,6 +138,12 @@ class IRPMessage(AbstractMessage):
     def getSizeOut(self):
         return self.sizeOut
 
+    def getSource(self):
+        return "-"
+
+    def getDestination(self):
+        return "-"
+
     #+----------------------------------------------
     #| SETTERS:
     #+----------------------------------------------

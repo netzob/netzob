@@ -97,6 +97,12 @@ class IPCMessage(AbstractMessage):
     def getDirection(self):
         return self.direction
 
+    def getSource(self):
+        return "-"
+
+    def getDestination(self):
+        return "-"
+
     #+----------------------------------------------
     #| SETTERS:
     #+----------------------------------------------

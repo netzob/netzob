@@ -89,6 +89,20 @@ class AbstractMessage(object):
         self.log.error("The message class doesn't have an associated factory !")
         raise NotImplementedError("The message class doesn't have an associated factory !")
 
+    def getSource(self):
+        """
+        getSource: return the actor that sent the message, if it exists.
+        """
+        self.log.error("The message class doesn't have a source !")
+        raise NotImplementedError("The message class doesn't have a source !")
+
+    def getDestination(self):
+        """
+        getDestination: return the actor that received the message, if it exists.
+        """
+        self.log.error("The message class doesn't have a destination !")
+        raise NotImplementedError("The message class doesn't have a destination !")
+
     #+-----------------------------------------------------------------------+
     #| getProperties
     #|     Abstract method to retrieve the properties of the message
