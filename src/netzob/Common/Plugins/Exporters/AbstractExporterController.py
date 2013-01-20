@@ -48,7 +48,7 @@ class AbstractExporterController(AbstractPluginController):
         Abstract controller for exporters plugins
     """
 
-    def __init__(self, netzob, plugin):
+    def __init__(self, *args, **kwargs):
         """Constructor of AbstractExporterController:
 
             @type netzob: netzob.NetzobGUI.NetzobGUI
@@ -56,7 +56,7 @@ class AbstractExporterController(AbstractPluginController):
             @type plugin: netzob.Common.Plugins.ExporterPlugin.ExporterPlugin
             @param plugin: the plugin that encapsulates this controller.
         """
-        super(AbstractExporterController, self).__init__(netzob, plugin)
+        super(AbstractExporterController, self).__init__(*args, **kwargs)
         self.log = logging.getLogger(__name__)
         self.selectedPacketCount = 0
 
@@ -64,5 +64,6 @@ class AbstractExporterController(AbstractPluginController):
         """run:
             Show the plugin view.
         """
-        self.view.dialog.show_all()
-        self.view.hideWarning()
+        view = self.getView()
+        view.getDialog().show_all()
+        view.hideWarning()

@@ -52,9 +52,9 @@ class PCAPImporterController(AbstractFileImporterController):
     COLUMN_SELECTED = 1
 
     def __init__(self, netzob, plugin):
-        super(PCAPImporterController, self).__init__(netzob, plugin)
+        view = PCAPImporterView(plugin, self)
+        super(PCAPImporterController, self).__init__(netzob, plugin, view)
         self.model = PCAPImporter(netzob)
-        self.view = PCAPImporterView(plugin, self)
 
     def getImportLayer(self):
         return self.model.importLayer

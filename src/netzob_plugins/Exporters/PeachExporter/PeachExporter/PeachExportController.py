@@ -88,15 +88,16 @@ class PeachExportController(AbstractExporterController):
         """
         pass
 
-    def __init__(self, netzob):
+    def __init__(self, netzob, plugin):
         """Constructor of PeachExportController:
 
                 @type netzob: netzob.NetzobGUI.NetzobGUI
                 @param netzob: the main netzob project.
         """
+        view = PeachExportView(plugin, self)
+        super(PeachExportController, self).__init__(netzob, plugin, view)
         self.netzob = netzob
         self.model = PeachExport(netzob)
-        self.view = PeachExportView()
         self.initCallbacks()
         self.selectedSymbolID = -2
 

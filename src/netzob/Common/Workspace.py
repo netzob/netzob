@@ -273,7 +273,7 @@ class Workspace(object):
             function.save(xmlWorkspaceFunctions, WORKSPACE_NAMESPACE)
 
         tree = ElementTree(root)
-        tree.write(workspaceFile)
+        tree.write(workspaceFile, pretty_print=True)
 
     @staticmethod
     def createWorkspace(name, path):

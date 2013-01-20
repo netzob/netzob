@@ -47,9 +47,9 @@ class OSpyImporterController(AbstractFileImporterController):
     COLUMN_SELECTED = 0
 
     def __init__(self, netzob, plugin):
-        super(OSpyImporterController, self).__init__(netzob, plugin)
+        view = OSpyImporterView(plugin, self)
+        super(OSpyImporterController, self).__init__(netzob, plugin, view)
         self.model = OSpyImporter(netzob)
-        self.view = OSpyImporterView(plugin, self)
 
     def run(self):
         self.view.run()
