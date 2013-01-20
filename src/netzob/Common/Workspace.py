@@ -435,12 +435,12 @@ class Workspace(object):
         provided directory
         @type workspacePath: str
         @var workspacePath: folder to load as a workspace
-        @return a workspace or None if not valid"""
+        @return a tupple with the workspace or None if not valid and the error message"""
 
         errorMessage = Workspace.isFolderAValidWorkspace(workspacePath)
         if errorMessage is not None:
             logging.warn(errorMessage)
-            return None
+            return (None, errorMessage)
 
         workspaceFile = os.path.join(workspacePath, Workspace.CONFIGURATION_FILENAME)
         logging.debug("  Workspace configuration file found: " + str(workspaceFile))
@@ -454,11 +454,11 @@ class Workspace(object):
                 parsingFunc = Workspace.WORKSPACE_SCHEMAS[xmlSchemaFile]
                 workspace = parsingFunc(workspacePath, workspaceFile)
                 if workspace is not None:
-                    return workspace
+                    return (workspace, None)
             else:
                 logging.fatal("The specified Workspace file is not valid according to the XSD found in %s." % (xmlSchemaPath))
 
-        return None
+        return (None, _("An unknown error prevented to open the workspace."))
 
     @staticmethod
     def isSchemaValidateXML(schemaFile, xmlFile):
