@@ -42,8 +42,8 @@ from gi.repository import Gtk
 #+---------------------------------------------------------------------------+
 from netzob.UI.NetzobWidgets import NetzobInfoMessage
 from netzob.Common.Plugins.Exporters.AbstractExporterController import AbstractExporterController
-from netzob_plugins.Exporters.PeachExporter.PeachExporter.PeachExportView import PeachExportView
-from netzob_plugins.Exporters.PeachExporter.PeachExporter.PeachExport import PeachExport
+from PeachExportView import PeachExportView
+from PeachExport import PeachExport
 
 
 class PeachExportController(AbstractExporterController):
@@ -60,7 +60,7 @@ class PeachExportController(AbstractExporterController):
         self.netzob = netzob
         self.plugin = plugin
         self.model = PeachExport(netzob)
-        self.view = PeachExportView()
+        self.view = PeachExportView(plugin, self)
         self.initCallbacks()
         self.selectedSymbolID = -4
 

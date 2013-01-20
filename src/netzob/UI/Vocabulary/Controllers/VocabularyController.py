@@ -386,6 +386,7 @@ class VocabularyController(object):
             self.view.updateLeftPanel()
 
     def split_activate_cb(self, action):
+        self.log.debug("Split field action requested by user")
         # Sanity check
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))

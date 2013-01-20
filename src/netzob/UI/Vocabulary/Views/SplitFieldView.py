@@ -55,7 +55,7 @@ class SplitFieldView(object):
         self.builder.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
             "ui", "vocabulary", "splitFieldDialog.glade"))
-        self._getObjects(self.builder, ["splitFieldDialog", "buffer"])
+        self._getObjects(self.builder, ["splitFieldDialog", "buffer", "splitPositionAdjustment", "bufferHAdjustment", "scale1"])
         self.controller = controller
         self.builder.connect_signals(self.controller)
 
@@ -65,3 +65,27 @@ class SplitFieldView(object):
 
     def run(self):
         self.splitFieldDialog.run()
+
+    def setMaxSizeOfSplitPositionAdjustment(self, value):
+        # Configure the size of the adjustment following the longuest value of the field values
+        self.splitPositionAdjustment.set_upper(value)
+
+    def getSplitPosition(self):
+        return self.splitPositionAdjustment.get_value()
+
+    def setSplitPosition(self, position):
+        self.splitPositionAdjustment.set_value(position)
+
+    def getMaxSizeOfHBuffer(self):
+        return self.bufferHAdjustment.get_upper()
+
+    def adjustHPositionOfBuffer(self, value):
+        v = value - int(self.bufferHAdjustment.get_page_size() / 2)
+        t = min(max(0, v), self.getMaxSizeOfHBuffer())
+        if self.scale1.get_inverted():
+            t = self.getMaxSizeOfHBuffer() - t
+
+        self.bufferHAdjustment.set_value(t)
+
+    def invertScale(self, value):
+        self.scale1.set_inverted(value)

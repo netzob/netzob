@@ -159,10 +159,13 @@ class WorkspaceConfigurationView(object):
         self.projectCurrentMessagesCount.set_text(str(messages))
 
     def refreshProjectList(self):
-        projects = self.controller.mainController.getCurrentWorkspace().getNameOfProjects()
+        workspace = self.controller.mainController.getCurrentWorkspace()
+
         self.projectsTreestore1.clear()
-        for (projectName, projectPath) in projects:
-            self.projectsTreestore1.append([projectPath, projectName, ""])
+        for project in workspace.getProjects():
+            self.projectsTreestore1.append([project.getPath(),
+                                            project.getName(),
+                                            project.getDescription()])
 
     def showDuplicateProjectDialog(self, origProjectName):
         self._getObjects(self.builder,

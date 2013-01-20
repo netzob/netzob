@@ -70,7 +70,7 @@ from netzob.UI.Export.Controllers.RawExportController import RawExportController
 
 
 class NetzobMainController(object):
-    """"Netzob main window controller"""
+    """Netzob main window controller"""
 
     def __init__(self):
         # Parse command line arguments
@@ -151,7 +151,7 @@ class NetzobMainController(object):
 
         # Loading the workspace
         workspace = (Workspace.loadWorkspace(workspaceDir))
-        if workspace is None:
+        while workspace is None:
             # We force the creation (or specification) of the workspace
             logging.info("Workspace not found: we ask to the user its new Netzob home directory")
             workspaceDir = self.askForWorkspaceDir()

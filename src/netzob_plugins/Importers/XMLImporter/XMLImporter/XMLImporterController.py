@@ -48,9 +48,9 @@ class XMLImporterController(AbstractFileImporterController):
     COLUMN_SELECTED = 0
 
     def __init__(self, netzob, plugin):
-        super(XMLImporterController, self).__init__(netzob, plugin)
+        view = XMLImporterView(plugin, self)
+        super(XMLImporterController, self).__init__(netzob, plugin, view)
         self.model = XMLImporter(netzob)
-        self.view = XMLImporterView(plugin, self)
 
     def run(self):
         self.view.run()
@@ -66,8 +66,8 @@ class XMLImporterController(AbstractFileImporterController):
     def doGetMessageDetails(self, messageID):
         message = self.model.getMessageByID(str(messageID))
 
-        properties = [(props.getName(),props.getCurrentValue()) for props in message.getProperties()
-                    if props.getName() != 'Data']
+        properties = [(props.getName(), props.getCurrentValue()) for props in message.getProperties()
+                      if props.getName() != 'Data']
         messageDetails = "\n".join(["{0}: {1}".format(*prop)
                                     for prop in properties])
         messageDetails += "\n\n" + TypeConvertor.hexdump(TypeConvertor.netzobRawToPythonRaw(message.getStringData()))
