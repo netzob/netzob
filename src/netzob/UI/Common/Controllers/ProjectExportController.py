@@ -140,7 +140,7 @@ class ProjectExportController(object):
 
                 xmlDefinitionOfProject = self.project.generateXMLConfigFile()
                 tree = ElementTree(xmlDefinitionOfProject)
-                tree.write(outputFilename)
+                tree.write(outputFilename, pretty_print=True)
                 self.view.destroy()
 
         except Exception, e:
