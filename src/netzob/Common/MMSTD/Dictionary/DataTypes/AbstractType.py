@@ -29,6 +29,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from abc import abstractmethod
+from bitarray import bitarray
 from gettext import gettext as _
 import logging
 import random
@@ -96,6 +97,26 @@ class AbstractType():
             if bina[i] != self.delimiter[i]:
                 return False
         return True
+
+    def normalizeValue(self, value):
+        """normalizeValue:
+                If the value has a size bigger than the maximum, the value loses its final characters.
+                If the value has a size smaller than the minimum, the value gains '0' at its beginning.
+        """
+        if value is None:
+            return None
+        if self.isSized():
+            bitsNeeded = self.minBits - len(value)
+            bitsRejected = len(value) - self.maxBits
+            if bitsNeeded > 0:
+                padding = bitarray()
+                for i in range(bitsNeeded):
+                    padding.append('0')
+                padding.extend(value)
+                return padding
+            if bitsRejected > 0:
+                return value[bitsRejected:]
+        return value
 
     def generateValue(self, generationStrategies):
         """generateValue:

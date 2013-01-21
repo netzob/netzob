@@ -105,14 +105,14 @@ class ComputedRelationVariable(AbstractVariable):
             self.log.debug("No pointed variable.")
             self.currentValue = None
         else:
-            self.currentValue = self.computeValue(self.getPointedVariable().getTokenValue(processingToken))
+            self.setCurrentValue(self.computeValue(self.getPointedVariable().getTokenValue(processingToken)))
 
     def guessValue(self):
         """guessValue:
                 Try to guess the pointed variable's value and give it to the current value.
         """
         # The 'TEMP' value is explicit enough.
-        self.currentValue = TypeConvertor.stringB2bin("TEMP")
+        self.setCurrentValue(TypeConvertor.stringB2bin("TEMP"))
 
     def compare(self, readingToken):
         """compare:
@@ -409,7 +409,7 @@ class ComputedRelationVariable(AbstractVariable):
         return self.directPointer
 
     def setCurrentValue(self, currentValue):
-        self.currentValue = currentValue
+        self.currentValue = self.relationType.getAssociatedDataType().normalizeValue(currentValue)
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |

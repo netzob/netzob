@@ -339,23 +339,10 @@ class DataVariable(AbstractLeafVariable):
             self.type = BinaryType()
 
     def setOriginalValue(self, originalValue):
-        if originalValue is not None:
-            if self.type.isSized():
-                size = self.type.getBitSize(originalValue)
-                if size >= self.type.getMinBits() and size <= self.type.getMaxBits():
-                    self.originalValue = self.type.str2bin(originalValue)
-                else:
-                    self.originalValue = None
-                    self.log.info("Variable {0} (Data): The given original value has an inappropriate size.".format(self.getName()))
-            else:
-                self.originalValue = self.type.str2bin(originalValue)
-
-        else:
-            self.originalValue = None
-            self.log.info("Variable {0} (Data): The given original value is None.".format(self.getName()))
+        self.originalValue = self.getType().normalizeValue(originalValue)
 
     def setCurrentValue(self, currentValue):
-        self.currentValue = currentValue
+        self.currentValue = self.getType().normalizeValue(currentValue)
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |
