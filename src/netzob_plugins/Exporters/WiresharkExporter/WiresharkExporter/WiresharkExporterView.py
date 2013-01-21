@@ -40,18 +40,16 @@ from pygments.styles.pastie import PastieStyle as STYLE
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Pattern.Observer import Observable
+from Constants import SIG_SYMBOL_CHANGED, SIG_SAVE_SCRIPT
 from netzob.Common.Plugins.Exporters.AbstractExporterView import AbstractExporterView
 
-
-class WiresharkExporterView(AbstractExporterView, Observable):
+class WiresharkExporterView(AbstractExporterView):
     """
     GUI for exporting results in Wireshark LUA script.
     """
 
     def __init__(self, plugin, controller):
         super(WiresharkExporterView, self).__init__(plugin, controller)
-        self.register_signals('SymbolChanged', 'SaveScript')
         self.styles = {}
 
     def getDialog(self):
@@ -81,7 +79,7 @@ class WiresharkExporterView(AbstractExporterView, Observable):
     def buildSymbolTreeview(self):
         self.sym_store = Gtk.TreeStore(str, str, str)
         sym_tv = Gtk.TreeView(self.sym_store)
-        sym_tv.connect("cursor-changed", lambda tv: self._send_signal('SymbolChanged', tv))
+        sym_tv.connect("cursor-changed", lambda tv: self.controller.getSignalsManager().emitSignal(SIG_SYMBOL_CHANGED, tv))
 
         rdr = Gtk.CellRendererText()
         col_syms = Gtk.TreeViewColumn(_("Symbols"), rdr, text=1)
@@ -170,7 +168,7 @@ class WiresharkExporterView(AbstractExporterView, Observable):
         chooser.set_do_overwrite_confirmation(True)
         if Gtk.ResponseType.ACCEPT == chooser.run():
             fname = chooser.get_filename()
-            self._send_signal("SaveScript", fname, self.getText())
+            self.controller.getSignalsManager().emitSignal(SIG_SAVE_SCRIPT, fname, self.getText())
         chooser.destroy()
 
     def _onCloseClicked_cb(self, tb):

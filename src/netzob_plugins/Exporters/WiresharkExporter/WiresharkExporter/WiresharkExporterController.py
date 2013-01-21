@@ -36,16 +36,17 @@ import struct
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from CodeBuffer import LUACodeBuffer
+from Constants import SIG_SYMBOL_CHANGED, SIG_SAVE_SCRIPT
 from netzob.Common.Models.L4NetworkMessage import L4NetworkMessage
 from netzob.Common.Models.L3NetworkMessage import L3NetworkMessage
 from netzob.Common.Models.L2NetworkMessage import L2NetworkMessage
 from netzob.Common.Plugins.Exporters.AbstractExporterController import AbstractExporterController
+from netzob.Common.SignalsManager import SignalsManager
 from netzob.UI.NetzobWidgets import NetzobErrorMessage, NetzobWarningMessage
-from CodeBuffer import LUACodeBuffer
 from WiresharkExporterError import WiresharkExporterError
 from WiresharkExporterView import WiresharkExporterView
 from WiresharkFilter import WiresharkFilterFactory
-
 
 class WiresharkExporterController(AbstractExporterController):
     """
@@ -53,24 +54,25 @@ class WiresharkExporterController(AbstractExporterController):
     """
     def __init__(self, netzob, plugin):
         view = WiresharkExporterView(plugin, self)
-        view.subscribe_signal('SymbolChanged', self._onSymbolChanged_cb)
-        view.subscribe_signal('SaveScript', self._onSaveScript_cb)
         super(WiresharkExporterController, self).__init__(netzob, plugin, view)
 
-    def getMessageContext(self, msg):
+        # Intialize signals manager
+        self.signalsManager = SignalsManager()
 
+        # Attach events
+        self.signalsManager.attach(self._onSymbolChanged_cb, (SIG_SYMBOL_CHANGED,))
+        self.signalsManager.attach(self._onSaveScript_cb, (SIG_SAVE_SCRIPT,))
+
+    def getMessageContext(self, msg):
         def clean(s):
             # Respect wireshark syntax.
             # Allowed are lower characters, digits, '-', '_' and '.'
             return re.sub("[^a-z\-_\.]", "_", str(s).lower())
-
         sym = msg.getSymbol()
         proto_name = clean(sym.getName())
-
         proto_keyname = proto_name.upper()
         proto_desc = "{} Protocol".format(proto_name.capitalize())
         class_var = "proto_{}".format(msg.getID().replace('-', '_'))
-
         if isinstance(msg, L4NetworkMessage):
             filter_name = msg.getL4Protocol()
         elif isinstance(msg, L3NetworkMessage):
@@ -160,11 +162,14 @@ DissectorTable.get("{0}"):add({1}, {class_var})
 
     def __call__(self):
         self.run()
+    def getSignalsManager(self):
+        """returns the signals manager"""
+        return self.signalsManager
 
     ##########
     # Events #
     ##########
-    def _onSymbolChanged_cb(self, tv):
+    def _onSymbolChanged_cb(self, sig, tv):
         sel = tv.get_selection()
 
         if not sel:
@@ -190,7 +195,7 @@ DissectorTable.get("{0}"):add({1}, {class_var})
                 self.view.setComment(wee)
                 NetzobErrorMessage("[{}] {}".format(sym.getName(), wee), self.view.dialog)
 
-    def _onSaveScript_cb(self, fname, value):
+    def _onSaveScript_cb(self, sig, fname, value):
         with open(fname, 'w') as f:
             f.write(value)
 
