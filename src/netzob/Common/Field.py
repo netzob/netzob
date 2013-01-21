@@ -843,7 +843,7 @@ class Field(object):
                 value = value[1:len(value) - 1]
 
             value = TypeConvertor.netzobRawToBitArray(value)
-            variable = DataVariable(str(uuid.uuid4()), self.getName(), False, False, BinaryType(True, len(value), len(value)), value.to01())  # A static field is neither mutable nor random.
+            variable = DataVariable(str(uuid.uuid4()), "Default variable of {0}".format(self.getName()), False, False, BinaryType(True, len(value), len(value)), value.to01())  # A static field is neither mutable nor random.
             return variable
         else:
             if self.defaultVariable is None:
@@ -866,9 +866,11 @@ class Field(object):
             tmpDomain.add(TypeConvertor.netzobRawToBitArray(cell))
         domain = sorted(tmpDomain)
 
-        variable = AlternateVariable(str(uuid.uuid4()), "Alternate", True, False, None)
+        variable = AlternateVariable(str(uuid.uuid4()), "Default variable of {0}".format(self.getName()), True, False, None)
+        i = 0
         for d in domain:
-            child = DataVariable(str(uuid.uuid4()), "defaultVariable", False, False, BinaryType(True, len(d), len(d)), d.to01())
+            child = DataVariable(str(uuid.uuid4()), "Default child variable {0}".format(i), False, False, BinaryType(True, len(d), len(d)), d.to01())
+            i += 1
             variable.addChild(child)
         return variable
 
