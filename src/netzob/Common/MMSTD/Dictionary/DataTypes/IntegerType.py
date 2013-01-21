@@ -60,6 +60,7 @@ class IntegerType(AbstractType):
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
     def mutateValue(self, generationStrategies, value, mutationRate=10, deletionRate=5, additionRate=5):
+        # value is a bitarray
         for generationStrategy in generationStrategies:
             if generationStrategy == "random":
                 mutatedValue = self.bin2str(value)
@@ -90,7 +91,7 @@ class IntegerType(AbstractType):
         value = 0
         for generationStrategy in generationStrategies:
             if generationStrategy == "random":
-                value = random.randint(10 ** (charSize - 1), (10 ** charSize) - 1)
+                value = random.randint(0, (2 ** charSize) - 1)
                 break
         return self.str2bin(value)
 
@@ -104,10 +105,10 @@ class IntegerType(AbstractType):
         return int(typeValue).bit_length()
 
     def getMaxBitSize(self, nbChars):
-        return self.getBitSize((10 ** nbChars) - 1)
+        return nbChars
 
     def getMinBitSize(self, nbChars):
-        return self.getBitSize(10 ** (nbChars - 1))
+        return nbChars
 
     def getType(self):
         return IntegerType.TYPE
