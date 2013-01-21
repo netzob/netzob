@@ -866,12 +866,10 @@ class Field(object):
             tmpDomain.add(TypeConvertor.netzobRawToBitArray(cell))
         domain = sorted(tmpDomain)
 
-        variable = AggregateVariable(str(uuid.uuid4()), "Aggregate", False, False, None)
-        alternateVar = AlternateVariable(str(uuid.uuid4()), "Alternate", True, False, None)
+        variable = AlternateVariable(str(uuid.uuid4()), "Alternate", True, False, None)
         for d in domain:
             child = DataVariable(str(uuid.uuid4()), "defaultVariable", False, False, BinaryType(True, len(d), len(d)), d.to01())
-            alternateVar.addChild(child)
-        variable.addChild(alternateVar)
+            variable.addChild(child)
         return variable
 
     ## Fields
