@@ -71,11 +71,11 @@ class SignalsManager(object):
         for signal in signals:
             self.emitSignal(signal)
 
-    def emitSignal(self, signal):
+    def emitSignal(self, signal, *cb_args, **cb_kwargs):
         """emitSignal"""
         listeners = self.getListenersMethodsForSignal(signal)
         for listener in listeners:
-            listener(signal)
+            listener(signal, *cb_args, **cb_kwargs)
 
     def attach(self, methodToExecute, signals):
         self.listeners[methodToExecute] = signals
