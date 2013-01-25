@@ -29,7 +29,7 @@
 #include "commonLib.h"
 
 
-unsigned int deserializeMessages(t_group *, char *, int, unsigned char *, int, int, Bool);
+unsigned int deserializeMessages(t_group *, char *, int, unsigned char *, unsigned int, int, Bool);
 unsigned int deserializeGroups(t_groups *, unsigned char *, int, unsigned char *, int, int, Bool);
 
 //+---------------------------------------------------------------------------+

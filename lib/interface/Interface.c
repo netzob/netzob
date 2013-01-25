@@ -63,8 +63,8 @@ int callbackStatus(int stage, double percent, char* message, ...) {
 //+---------------------------------------------------------------------------+
 //| deserializeMessages : Deserialization of messages
 //+---------------------------------------------------------------------------+
-unsigned int deserializeMessages(t_group * group, char *format, int sizeFormat, unsigned char *serialMessages, int nbMessages, int sizeSerialMessages, Bool debugMode) {
-  int i_message = 0;
+unsigned int deserializeMessages(t_group * group, char *format, int sizeFormat, unsigned char *serialMessages, unsigned int nbMessages, int sizeSerialMessages, Bool debugMode) {
+  unsigned int i_message = 0;
   char * p;
   unsigned int serial_shift = 0;
   unsigned int format_shift = 0;
@@ -102,7 +102,7 @@ unsigned int deserializeMessages(t_group * group, char *format, int sizeFormat, 
   if (debugMode == TRUE) {
     printf("A number of %d messages has been deserialized.\n", nbDeserializedMessages);
     for (i_message = 0; i_message<nbDeserializedMessages; i_message++) {
-      printf("Message %d : \n", i_message);
+      printf("Message %u : \n", i_message);
       hexdump(group->messages[i_message].alignment, group->messages[i_message].len);
     }
   }
