@@ -119,7 +119,7 @@ int callbackStatus(int stage, double percent, char* message, ...) {
 //+---------------------------------------------------------------------------+
 PyObject* py_deserializeMessages(PyObject* self, PyObject* args) {
   unsigned int nbMessages = (unsigned int) PyObject_Size(args);
-  unsigned char *format;
+  char *format;
   int sizeFormat;
   unsigned char *serialMessages;
   int sizeSerialMessages;

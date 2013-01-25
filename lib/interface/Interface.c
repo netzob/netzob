@@ -63,9 +63,9 @@ int callbackStatus(int stage, double percent, char* message, ...) {
 //+---------------------------------------------------------------------------+
 //| deserializeMessages : Deserialization of messages
 //+---------------------------------------------------------------------------+
-unsigned int deserializeMessages(t_group * group, unsigned char *format, int sizeFormat, unsigned char *serialMessages, int nbMessages, int sizeSerialMessages, Bool debugMode) {
+unsigned int deserializeMessages(t_group * group, char *format, int sizeFormat, unsigned char *serialMessages, int nbMessages, int sizeSerialMessages, Bool debugMode) {
   int i_message = 0;
-  unsigned char * p;
+  char * p;
   unsigned int serial_shift = 0;
   unsigned int format_shift = 0;
   unsigned int len_size_message=0;
