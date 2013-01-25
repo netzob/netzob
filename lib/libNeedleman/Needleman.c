@@ -346,19 +346,19 @@ char* alignTwoMessages(t_message * resMessage, Bool doInternalSlick, t_message *
 
   if (contentMessage1 == NULL) {
     printf("Error while trying to allocate memory for variable : contentMessage1.\n");
-    return -1;
+    return NULL;
   }
   if (contentMessage2 == NULL) {
     printf("Error while trying to allocate memory for variable : contentMessage2.\n");
-    return -1;
+    return NULL;
   }
   if (maskMessage1 == NULL) {
     printf("Error while trying to allocate memory for variable : maskMessage1.\n");
-    return -1;
+    return NULL;
   }
   if (maskMessage2 == NULL) {
     printf("Error while trying to allocate memory for variable : maskMessage2.\n");
-    return -1;
+    return NULL;
   }
   // Fullfill the mask with END like filling it with a '\0'
   memset(maskMessage1, END, (message1->len + message2->len) * sizeof(unsigned char));
