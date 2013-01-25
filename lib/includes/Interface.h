@@ -30,7 +30,7 @@
 
 
 unsigned int deserializeMessages(t_group *, char *, unsigned char *, unsigned int, Bool);
-unsigned int deserializeGroups(t_groups *, char *, int, unsigned char *, int, int, Bool);
+unsigned int deserializeGroups(t_groups *, char *, unsigned char *, int, Bool);
 
 //+---------------------------------------------------------------------------+
 //| hexdump : for debug purposes

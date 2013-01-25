@@ -109,7 +109,7 @@ unsigned int deserializeMessages(t_group * group, char *format, unsigned char *s
   return nbDeserializedMessages;
 }
 
-unsigned int deserializeGroups(t_groups * groups, char * format, int sizeFormat, unsigned char * serialGroups, int nbGroups, int sizeSerialGroups, Bool debugMode) {
+unsigned int deserializeGroups(t_groups * groups, char * format, unsigned char * serialGroups, int nbGroups, Bool debugMode) {
   int i_group = 0;
   int j_group = 0;
   int l = 0;
@@ -181,6 +181,9 @@ unsigned int deserializeGroups(t_groups * groups, char * format, int sizeFormat,
       free(size_message_str );
     }
     free(size_group_str);
+  }
+  if (debugMode == TRUE) {
+    printf("A number of %d group has been deserialized.\n", nbGroups);
   }
   return i_group;
 }

@@ -199,7 +199,7 @@ PyObject* py_deserializeGroups(PyObject* self, PyObject* args) {
   groups_result.len = nbGroups;
   groups_result.groups = malloc(nbGroups*sizeof(t_group));
 
-  nbDeserializedGroup = deserializeGroups(&groups_result, format, sizeFormat, serialGroups, nbGroups, sizeSerialGroups, debugMode);
+  nbDeserializedGroup = deserializeGroups(&groups_result, format, serialGroups, nbGroups, debugMode);
 //  deserializeSymbols(&groups_result, args, debugMode);
   if (nbDeserializedGroup != nbGroups) {
     printf("Error : impossible to deserialize all the provided groups, %d/%d were effectly parsed.\n", nbDeserializedGroup, nbGroups);
