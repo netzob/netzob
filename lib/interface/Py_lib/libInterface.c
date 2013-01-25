@@ -141,7 +141,7 @@ PyObject* py_deserializeMessages(PyObject* self, PyObject* args) {
   group_result.len = nbMessages;
   group_result.messages = malloc(nbMessages*sizeof(t_message));
 
-  nbDeserializedMessage = deserializeMessages(&group_result, format, sizeFormat, serialMessages, nbMessages, sizeSerialMessages, debugMode);
+  nbDeserializedMessage = deserializeMessages(&group_result, format, serialMessages, nbMessages, sizeSerialMessages, debugMode);
 
   if (nbDeserializedMessage != nbMessages) {
     printf("Error : impossible to deserialize all the provided messages.\n");

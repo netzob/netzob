@@ -103,7 +103,7 @@ PyObject* py_alignMessages(PyObject* self, PyObject* args) {
   if (debugMode == 1) {
     printf("py_alignSequences : Deserialization of the arguments (format, serialMessages).\n");
   }
-  nbDeserializedMessage = deserializeMessages(&group, format, sizeFormat, serialMessages, nbMessages, sizeSerialMessages, debugMode);
+  nbDeserializedMessage = deserializeMessages(&group, format, serialMessages, nbMessages, sizeSerialMessages, debugMode);
 
   if (nbDeserializedMessage != nbMessages) {
     printf("Error : impossible to deserialize all the provided messages.\n");
@@ -198,7 +198,7 @@ PyObject* py_alignTwoMessages(PyObject* self, PyObject* args) {
   group.len = 2;
   group.messages = malloc(2*sizeof(t_message));
 
-  nbDeserializedMessage = deserializeMessages(&group, format, sizeFormat, serialMessages, 2, sizeSerialMessages, debugMode);
+  nbDeserializedMessage = deserializeMessages(&group, format, serialMessages, 2, sizeSerialMessages, debugMode);
 
   if (nbDeserializedMessage != 2) {
     printf("Error : impossible to deserialize all the provided messages.\n");
