@@ -123,10 +123,10 @@ unsigned int deserializeGroups(t_groups * groups, char * format, int sizeFormat,
   unsigned int len_score_group = 0;
   unsigned int size_group = 0;
   unsigned int size_message = 0;
-  unsigned char * size_group_str;
+  char * size_group_str;
   unsigned char * size_message_str;
   char * score_group;
-  int i_message = 0;
+  unsigned int i_message = 0;
 
   for (i_group = 0; i_group <nbGroups; i_group++)  {
     //Retrieve the precompiled scores
@@ -152,10 +152,10 @@ unsigned int deserializeGroups(t_groups * groups, char * format, int sizeFormat,
     // retrieve the number of messages in the current group
     p = strchr(format + format_shift, 'G');
     len_size_group = (unsigned int) (p - (format + format_shift));
-    size_group_str = malloc((len_size_group + 1) * sizeof(unsigned char));
+    size_group_str = malloc((len_size_group + 1) * sizeof(char));
     memcpy(size_group_str, format + format_shift, len_size_group);
     size_group_str[len_size_group] = '\0';
-    size_group = atoi(size_group_str);
+    size_group = (unsigned int) atoi(size_group_str);
     format_shift += len_size_group + 1;
 
     // Allocate pointers to store the messages of current group
