@@ -31,13 +31,13 @@
 //+---------------------------------------------------------------------------+
 //| Imports
 //+---------------------------------------------------------------------------+
-#include "commonLib.h"
 //Check if have compile with -DCCALLFORDEBUG option (means we want to analyse the C program without python modules"
 #ifndef CCALLFORDEBUG
 #include "libInterface.h"
 #else
 #include "Interface.h"
 #endif
+#include "commonLib.h"
 
 #include "Needleman.h"
 
