@@ -30,7 +30,7 @@
 #include "commonPythonLib.h"
 
 
-int callbackIsFinish();
+int callbackIsFinish(void);
 
 //+---------------------------------------------------------------------------+
 //| python_callback : The ref to the python callback function
