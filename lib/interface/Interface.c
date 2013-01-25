@@ -124,7 +124,7 @@ unsigned int deserializeGroups(t_groups * groups, char * format, int sizeFormat,
   unsigned int size_group = 0;
   unsigned int size_message = 0;
   char * size_group_str;
-  unsigned char * size_message_str;
+  char * size_message_str;
   char * score_group;
   unsigned int i_message = 0;
 
@@ -166,7 +166,7 @@ unsigned int deserializeGroups(t_groups * groups, char * format, int sizeFormat,
       // Retrieve the size of each message
       q = strchr(format + format_shift, 'M');
       len_size_message = (unsigned int) (q - (format + format_shift));
-      size_message_str = malloc((len_size_message + 1) * sizeof(unsigned char));
+      size_message_str = malloc((len_size_message + 1) * sizeof(char));
       memcpy(size_message_str, format + format_shift, len_size_message);
       size_message_str[len_size_message] = '\0';
       size_message = atoi(size_message_str);
