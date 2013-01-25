@@ -167,7 +167,7 @@ PyObject* py_deserializeMessages(PyObject* self, PyObject* args) {
 //+---------------------------------------------------------------------------+
 PyObject* py_deserializeGroups(PyObject* self, PyObject* args) {
   unsigned int nbGroups = 0;
-  unsigned char *format;
+  char *format;
   int sizeFormat;
   unsigned char *serialGroups;
   int sizeSerialGroups;

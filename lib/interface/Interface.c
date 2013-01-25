@@ -109,14 +109,14 @@ unsigned int deserializeMessages(t_group * group, char *format, unsigned char *s
   return nbDeserializedMessages;
 }
 
-unsigned int deserializeGroups(t_groups * groups, unsigned char * format, int sizeFormat, unsigned char * serialGroups, int nbGroups, int sizeSerialGroups, Bool debugMode) {
+unsigned int deserializeGroups(t_groups * groups, char * format, int sizeFormat, unsigned char * serialGroups, int nbGroups, int sizeSerialGroups, Bool debugMode) {
   int i_group = 0;
   int j_group = 0;
   int l = 0;
-  unsigned char * p;
-  unsigned char *q;
-  unsigned char *r;
-  unsigned char *s;
+  char * p;
+  char *q;
+  char *r;
+  char *s;
   unsigned short int format_shift = 0;
   unsigned int len_size_group = 0;
   unsigned int len_size_message = 0;
