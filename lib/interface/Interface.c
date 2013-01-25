@@ -125,7 +125,7 @@ unsigned int deserializeGroups(t_groups * groups, char * format, int sizeFormat,
   unsigned int size_message = 0;
   unsigned char * size_group_str;
   unsigned char * size_message_str;
-  unsigned char * score_group;
+  char * score_group;
   int i_message = 0;
 
   for (i_group = 0; i_group <nbGroups; i_group++)  {
