@@ -218,7 +218,7 @@ void hexdump(unsigned char *buf, int dlen) {
 
 
 void dumpMessage(t_message message) {
-  int i;
+  unsigned int i;
   printf("%d ", message.len);
   for(i = 0; i < message.len; i++) {
     if(message.mask[i] == 0)
