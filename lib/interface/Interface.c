@@ -70,14 +70,14 @@ unsigned int deserializeMessages(t_group * group, char *format, int sizeFormat, 
   unsigned int format_shift = 0;
   unsigned int len_size_message=0;
   unsigned int size_message=0;
-  unsigned char * size_message_str;
+  char * size_message_str;
   unsigned int nbDeserializedMessages = 0;
 
   for (i_message=0; i_message < nbMessages; i_message++) {
     // Retrieve the size of each message
     p = strchr(format + format_shift, 'M');
     len_size_message = (unsigned int) (p - (format + format_shift));
-    size_message_str = malloc((len_size_message + 1) * sizeof(unsigned char));
+    size_message_str = malloc((len_size_message + 1) * sizeof(char));
     memcpy(size_message_str, format + format_shift, len_size_message);
     size_message_str[len_size_message] = '\0';
     size_message = atoi(size_message_str);
