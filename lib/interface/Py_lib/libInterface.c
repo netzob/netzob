@@ -227,8 +227,7 @@ PyObject * py_deserializeSymbols(__attribute__((unused))PyObject* self, PyObject
      deserializeSymbols(NULL,args,0);
      return Py_BuildValue("i", 1);
 }
-unsigned int deserializeSymbols(t_groups * groups, PyObject *args, Bool debugMode) {
-  
+unsigned int deserializeSymbols(t_groups * groups, PyObject *args, Bool debugMode) {  
   PyObject *symbols = PyTuple_GetItem(args, 0);
   int nbGroups = PyObject_Size(symbols);
   int nbScore = 0;
@@ -248,8 +247,11 @@ unsigned int deserializeSymbols(t_groups * groups, PyObject *args, Bool debugMod
     return 0;
   }
   else {
-    printf("Size %d\n",nbGroups);
-    printf("InElse\n");
+    if(debugMode == 1) {
+      printf("Size %d\n",nbGroups);
+      printf("InElse\n");
+    }
+
     for (i_group = 0; i_group <nbGroups; i_group++)  {
 
       current_position = PyList_GetItem(symbols, i_group);
@@ -265,9 +267,16 @@ unsigned int deserializeSymbols(t_groups * groups, PyObject *args, Bool debugMod
       
       for (j_group = 0; j_group < nbScore ; j_group ++){
         tempScore = (float) PyFloat_AsDouble(PyList_GetItem(scoresList,j_group));
-        printf("tempScore %f\n",tempScore);
+	if(debugMode == 1) {
+	  printf("tempScore %f\n",tempScore);
+	}
+
       }
-      printf("END SCORE\n");
+      if(debugMode == 1) {
+	printf("END SCORE\n");
+      }
+
+
 
       /* Decrease the ref at the end of the loop*/
       if (i_group == nbGroups-1) {
@@ -280,8 +289,11 @@ unsigned int deserializeSymbols(t_groups * groups, PyObject *args, Bool debugMod
       }
     }
   }
-   
-  printf("End of else\n");
+  if(debugMode == 1) {
+    printf("End of else\n");
+  }
+
+  
   return 1;
 }
 
