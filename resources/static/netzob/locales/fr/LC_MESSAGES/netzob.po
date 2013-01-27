@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-12-28 14:30+0100\n"
-"PO-Revision-Date: 2013-01-07 10:07+0200\n"
+"PO-Revision-Date: 2013-01-27 20:29+0200\n"
 "Last-Translator: Georges Bossert <georges.bossert@supelec.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/master/fr/>\n"
@@ -1970,12 +1970,11 @@ msgstr "Variable de répétition"
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:159
 #, fuzzy
 msgid "Direct Relation Variable"
-msgstr "Création d'une variable"
+msgstr "Variable de relation directe"
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:160
-#, fuzzy
 msgid "Computed Relation Variable"
-msgstr "Création d'une variable"
+msgstr "Variable de relation calculée"
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:173
 #: resources/static/netzob/ui/simulator/simulatorView.glade:300
@@ -1987,9 +1986,8 @@ msgid "Value"
 msgstr "Valeur"
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:214
-#, fuzzy
 msgid "Size Relation"
-msgstr "Création d'une couche protocolaire"
+msgstr "Relation de taille"
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:228
 msgid "Pointed ID"
@@ -1997,7 +1995,7 @@ msgstr "ID pointé"
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:288
 msgid "Hex Word"
-msgstr ""
+msgstr "Mot hexadecimal"
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:317
 msgid "Maximum"
