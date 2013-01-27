@@ -41,7 +41,7 @@
 PyObject *python_callback;
 PyObject *python_callback_isFinish;
 
-unsigned int deserializeSymbols(t_groups * groups, PyObject *symbols, Bool debugMode);
+unsigned int deserializeSymbols(PyObject *symbols, Bool debugMode);
 PyObject* py_deserializeSymbols(PyObject* self, PyObject* args);
 
 static PyMethodDef libInterface_methods[] = {
@@ -127,12 +127,12 @@ PyObject* py_deserializeMessages(__attribute__((unused))PyObject* self, PyObject
   unsigned int nbDeserializedMessage = 0;
   t_group group_result;
   // Converts the arguments
-  
+
   if (!PyArg_ParseTuple(args, "hss#h", &nbMessages, &format, &sizeFormat, &serialMessages, &sizeSerialMessages, &debugMode)) {
     printf("Error while parsing the arguments provided to py_deserializeMessages\n");
     return NULL;
   }
-  
+
   // Deserializes the provided arguments
   if (debugMode == 1) {
     printf("py_alignSequences : Deserialization of the arguments (format, serialMessages).\n");
@@ -174,7 +174,7 @@ PyObject* py_deserializeGroups(__attribute__((unused))PyObject* self, PyObject* 
   unsigned int debugMode = 0;
   unsigned int nbDeserializedGroup = 0;
   t_groups groups_result;
-  
+
   // Get the number of group (need python>=2.5)
   if(PyObject_Size(args) == -1) {
     printf("The argument has no length");
@@ -218,16 +218,16 @@ PyObject* py_deserializeGroups(__attribute__((unused))PyObject* self, PyObject* 
 }
 
 /********************************************************************
-*  deserializeSymbols: 
-*         push list of symbols in the groups 
+*  deserializeSymbols:
+*         push list of symbols in the groups
 *
 *********************************************************************/
 PyObject * py_deserializeSymbols(__attribute__((unused))PyObject* self, PyObject* args) {
 
-     deserializeSymbols(NULL,args,0);
+     deserializeSymbols(args,0);
      return Py_BuildValue("i", 1);
 }
-unsigned int deserializeSymbols(t_groups * groups, PyObject *args, Bool debugMode) {  
+unsigned int deserializeSymbols(PyObject *args, Bool debugMode) {
   PyObject *symbols = PyTuple_GetItem(args, 0);
   int nbGroups = PyObject_Size(symbols);
   int nbScore = 0;
@@ -264,7 +264,7 @@ unsigned int deserializeSymbols(t_groups * groups, PyObject *args, Bool debugMod
       current_symbol = PyList_GetItem(current_position, 0); // The Symbols Object
       scoresList = PyList_GetItem(current_position, 1);     // The list of scores
       nbScore = PyObject_Size(scoresList);                  // # of scores recorded
-      
+
       for (j_group = 0; j_group < nbScore ; j_group ++){
         tempScore = (float) PyFloat_AsDouble(PyList_GetItem(scoresList,j_group));
 	if(debugMode == 1) {
@@ -293,7 +293,7 @@ unsigned int deserializeSymbols(t_groups * groups, PyObject *args, Bool debugMod
     printf("End of else\n");
   }
 
-  
+
   return 1;
 }
 
