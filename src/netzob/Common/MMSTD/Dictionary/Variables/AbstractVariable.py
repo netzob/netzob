@@ -317,7 +317,9 @@ class AbstractVariable(object):
         self.fathers.remove(father)
 
     def bindVariable(self, variable):
-        self.boundedVariables.append(variable)
+        if not variable in self.boundedVariables:
+            self.boundedVariables.append(variable)
+
     def resetBoundedVariable(self):
         self.boundedVariables = []
 
