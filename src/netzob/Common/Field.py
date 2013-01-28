@@ -690,7 +690,6 @@ class Field(object):
         except IndexError:
             return None
 
-
     #+----------------------------------------------
     #| concatWithNextField:
     #|  Concatenate the current field with the next one at the same level
@@ -952,7 +951,20 @@ class Field(object):
                 # Concatenate the current useless inner field with the next field
                 fieldsToRemove.append(innerField)
         for field in fieldsToRemove:
+            # compute if the remaining fields aroung deleted one need to be merged
+            doConcat = False
+            # retrieve next and previous field and if there are both static
+            # or both dynamic we concat them
+            previousField = field.getPreviousFieldInCurrentLayer()
+            if previousField is not None:
+                nextField = field.getNextFieldInCurrentLayer()
+                if nextField is not None:
+                    # both static
+                    if previousField.isStatic() == nextField.isStatic():
+                        doConcat = True
             field.getParentField().removeLocalField(field)
+            if doConcat:
+                previousField.concatWithNextField()
 
     def removeLocalField(self, field):
         """removeLocalField:
