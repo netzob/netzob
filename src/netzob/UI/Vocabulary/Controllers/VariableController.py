@@ -769,7 +769,7 @@ class VariableCreationController(object):
                 elif (self.variable.getVariableType() == RepeatVariable.TYPE) and (variable.getVariableType() == RepeatVariable.TYPE):
                     child = self.variable.getChild()
                     self.variable = variable
-                    self.variable.addChild(child)
+                    self.variable.setChild(child)
 
                 # We do not manage/save children.
                 else:
@@ -779,7 +779,10 @@ class VariableCreationController(object):
                 self.treeController.editVariable(self.variable)
 
             else:
-                self.variable.addChild(variable)
+                if self.variable.getVariableType() == RepeatVariable.TYPE:
+                    self.variable.setChild(variable)
+                else:
+                    self.variable.addChild(variable)
                 self.treeController.registerVariable(self.rootEntry, variable)
         dialog.destroy()
 
