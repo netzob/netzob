@@ -157,7 +157,7 @@ PyObject* py_alignMessages(PyObject* self, PyObject* args) {
 PyObject* py_alignTwoMessages(PyObject* self, PyObject* args) {
   // Parameters (in order)
   unsigned int doInternalSlick = 0;
-  unsigned char *format;
+  char *format;
   int sizeFormat;
   unsigned char *serialMessages;
   int sizeSerialMessages;
@@ -188,7 +188,7 @@ PyObject* py_alignTwoMessages(PyObject* self, PyObject* args) {
     printf("The following arguments were received : \n");
     printf("doInternalSlick : %d\n", doInternalSlick);
     printf("Format :\n");
-    hexdump(format, sizeFormat);
+    hexdump((unsigned char*)format, sizeFormat);
     printf("Serial :\n");
     hexdump(serialMessages, sizeSerialMessages);
     printf("Debug mode : %d\n", debugMode);
