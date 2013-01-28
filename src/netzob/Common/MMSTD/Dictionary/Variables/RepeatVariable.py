@@ -146,30 +146,24 @@ class RepeatVariable(AbstractNodeVariable):
         savedIndex = writingToken.getIndex()
         savedValue = writingToken.getValue()
 
-        # Memorized initial values for the child and its successors.
-        dictOfValues = dict()
-        dictOfValue = self.getChild().getDictOfValues(writingToken)
-        for key, val in dictOfValue.iteritems():
-            dictOfValues[key] = val
-
+        # We clean the children list.
+        self.children = []
         for i in range(maxIterations):
-            self.getChild().write(writingToken)
+            # We add a new child in the children list that is a clone of the original child.
+            newChild = self.getChild().cloneVariable()
+            newChild.write(writingToken)
             if writingToken.isOk():
+                self.addChild(newChild)
                 self.currentIteration += 1
             else:
                 break
+
         # We search if we have done the minimum number of iterations.
         if self.currentIteration < minIterations:
             writingToken.setOk(False)
             # If not, we clean our traces.
             writingToken.setValue(savedValue)
-            vocabulary = writingToken.getVocabulary()
-            for key, val in dictOfValues.iteritems():
-                child = vocabulary.getVariableByID(key)
-                # We restore the current values.
-                child.setCurrentValue(val)
-                # We restore the cached values.
-                child.restore(writingToken)
+            self.children = []
         else:
             writingToken.setOk(True)
             # The value of the variable is simply the value we made.
