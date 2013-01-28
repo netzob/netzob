@@ -9,14 +9,16 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-01-28 22:13+0100\n"
-"PO-Revision-Date: 2013-01-28 22:08+0200\n"
+"PO-Revision-Date: 2013-01-28 22:54+0200\n"
 "Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/master/fr/>\n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Weblate 1.4\n"
 "Generated-By: Babel 0.9.6\n"
 
 #: src/netzob/NetzobMainController.py:309
@@ -72,7 +74,7 @@ msgstr "Une erreur est survenue durant la création de l'espace de travail."
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:27
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:28
 msgid "Trace Manager"
-msgstr ""
+msgstr "Gestionnaire de traces"
 
 #: src/netzob/NetzobMainView.py:113
 msgid "Vocabulary Inference"
@@ -228,7 +230,7 @@ msgstr "L'espace de travail indiqué n'est pas conforme aux définitions XSD."
 
 #: src/netzob/Common/Workspace.py:461
 msgid "An unknown error prevented to open the workspace."
-msgstr ""
+msgstr "Une erreur inconnue a empêché l'ouverture de l'espace de travail."
 
 #: src/netzob/Common/MMSTD/Dictionary/Values/AbstractValue.py:57
 msgid "Import from File"
@@ -654,7 +656,7 @@ msgstr "Variable référencée :"
 
 #: src/netzob/UI/NetzobAbstractView.py:79
 msgid "Requested file ({0}) was not found."
-msgstr ""
+msgstr "Le fichier demandé ({0}) n'a pas été trouvé."
 
 #: src/netzob/UI/Common/AboutDialog.py:58
 msgid ""
@@ -733,9 +735,8 @@ msgstr ""
 "perdus."
 
 #: src/netzob/UI/Common/Controllers/WorkspaceSelectorController.py:112
-#, fuzzy
 msgid "No workspace provided."
-msgstr "Aucun nom de fichier fourni"
+msgstr "Aucun espace de travail fourni."
 
 #: src/netzob/UI/Common/Views/WorkspaceSelectorView.py:85
 msgid "Select the workspace"
@@ -996,83 +997,73 @@ msgstr "Cliquez sur oui pour valider la suppression de l'acteur sélectionné"
 
 #: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:642
 msgid "New empty trace"
-msgstr ""
+msgstr "Nouvelle trace vide"
 
 #: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:792
 msgid "Empty Session"
-msgstr ""
+msgstr "Session vide"
 
 #: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:812
-#, fuzzy
 msgid "No project is currently opened"
-msgstr "Aucun projet sélectionné."
+msgstr "Aucun projet n'est ouvert actuellement"
 
 #: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:813
 msgid "A project has to be opened before importing a trace."
-msgstr ""
+msgstr "Un projet doit être ouvert avant d'y importer une trace."
 
 #: src/netzob/UI/TraceManager/Views/TraceManagerView.py:117
-#, fuzzy
 msgid "Are you sure you want to delete the selected traces?"
-msgstr ""
-"Êtes-vous de vouloir supprimer le projet « {0} » de l'espace de travail "
-"courant ?"
+msgstr "Êtes vous sûr de vouloir supprimer les traces sélectionnées ?"
 
 #: src/netzob/UI/TraceManager/Views/TraceManagerView.py:118
-#, fuzzy
 msgid "If you confirm, the selected traces will be permanently lost."
 msgstr ""
-"Vos modifications seront définitivement perdues si vous ne sauvegardez "
-"pas."
+"Si vous confirmez, les traces sélectionnées seront définitivement perdues."
 
 #: src/netzob/UI/TraceManager/Views/TraceManagerView.py:121
-#, fuzzy
 msgid "Delete Traces"
-msgstr "Supprimez un état"
+msgstr "Supprimer les traces"
 
 #: src/netzob/UI/TraceManager/Views/TraceManagerView.py:139
 msgid ""
 "Are you sure you want to delete selected sessions and all the messages it"
 " contains?"
 msgstr ""
+"Êtes-vous sûr de que vouloir supprimer les sessions sélectionnées ainsi que "
+"tous les messages qu'elles contiennent ?"
 
 #: src/netzob/UI/TraceManager/Views/TraceManagerView.py:143
-#, fuzzy
 msgid ""
 "If you confirm, session {0} and associated messages will be permanently "
 "lost."
 msgstr ""
-"Vos modifications seront définitivement perdues si vous ne sauvegardez "
-"pas."
+"Si vous confirmez, la session {0} et les messages associées seront "
+"définitivement perdus."
 
 #: src/netzob/UI/TraceManager/Views/TraceManagerView.py:147
-#, fuzzy
 msgid "Delete Session"
-msgstr "Supprimer le message"
+msgstr "Supprimer la session"
 
 #: src/netzob/UI/TraceManager/Views/TraceManagerView.py:163
 msgid "Are you sure you want to delete the selected messages?"
-msgstr ""
+msgstr "Êtes-vous sur de vouloir supprimer les messages sélectionnés ?"
 
 #: src/netzob/UI/TraceManager/Views/TraceManagerView.py:164
-#, fuzzy
 msgid "If you confirm, the selected messages will be permanently lost."
 msgstr ""
-"Vos modifications seront définitivement perdues si vous ne sauvegardez "
-"pas."
+"Si vous confirmez, les messages sélectionnés seront définitivement perdus."
 
 #: src/netzob/UI/TraceManager/Views/TraceManagerView.py:167
-#, fuzzy
 msgid "Delete Messages"
-msgstr "Supprimer le message"
+msgstr "Supprimer les messages"
 
 #: src/netzob/UI/TraceManager/Views/TraceManagerView.py:174
 msgid "You can't change the trace name to an empty one"
-msgstr ""
+msgstr "Vous ne pouvez pas définir un nom de trace vide"
 
 #: src/netzob/UI/TraceManager/Views/TraceManagerView.py:175
 msgid "Please update the name of your trace set."
-msgstr ""
+msgstr "Merci de mettre à jour le nom de votre jeu de traces."
 
 #: src/netzob/UI/Vocabulary/Controllers/FindSizeFieldsController.py:81
 msgid "Size Fields Identifications"
@@ -1528,15 +1519,16 @@ msgstr "Permet l'export sous la forme d'un fuzzer pour Peach."
 #: src/netzob_plugins/Exporters/WiresharkExporter/WiresharkExporter/WiresharkExporterPlugin.py:47
 msgid "Generate a LUA script used by Wireshark to dissect specific symbols."
 msgstr ""
+"Générer un script LUA utilisé par Wireshark pour disséquer les symboles "
+"spécifiques."
 
 #: src/netzob_plugins/Exporters/WiresharkExporter/WiresharkExporter/WiresharkExporterView.py:63
-#, fuzzy
 msgid "Export project as Wireshark dissector"
-msgstr "Exporter le projet au format XML brut"
+msgstr "Exporter le projet en un dissecteur Wireshark"
 
 #: src/netzob_plugins/Exporters/WiresharkExporter/WiresharkExporter/WiresharkExporterView.py:163
 msgid "Export as Wireshark script (LUA)"
-msgstr ""
+msgstr "Exporter en un script Wireshark (LUA)"
 
 #: src/netzob_plugins/Importers/DelimiterSeparatedImporter/DelimiterSeparatedImporter/DelimiterSeparatedImporter.py:53
 msgid "Delete Separator"
@@ -2037,7 +2029,6 @@ msgid "Select Workspace"
 msgstr "Sélectionner l'espace de travail"
 
 #: resources/static/netzob/ui/workspaceSelectorDialog.glade:95
-#, fuzzy
 msgid "Workspace:"
 msgstr "Espace de travail : "
 
@@ -2047,12 +2038,14 @@ msgid "Browse"
 msgstr "Parcourir"
 
 #: resources/static/netzob/ui/workspaceSelectorDialog.glade:148
-#, fuzzy
 msgid ""
 "<b>Select a worskpace</b>\n"
 "Netzob stores your projects in a folder called a workspace.\n"
 "Choose a workspace folder to use."
-msgstr "Netzob stocke vos projets dans un dossier appelé un espace de travail.\n"
+msgstr ""
+"<b>Sélectionnez un espace de travail</b>\n"
+"Netzob stocke vos projets dans un répertoire appelé espace de travail.\n"
+"Choisissez le répertoire de travail à utiliser."
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:65
 msgid "Mutable"
@@ -2503,47 +2496,40 @@ msgstr "Variable"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:7
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:9
-#, fuzzy
 msgid "Remove Selected Trace"
-msgstr "Déplacer les messages sélectionnés vers la corbeille"
+msgstr "Supprimer la trace sélectionnée"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:8
 msgid "Remove"
-msgstr ""
+msgstr "Supprimer"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:17
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:19
-#, fuzzy
 msgid "Import Trace in Current Project"
-msgstr "Exporter le projet courant"
+msgstr "Exporter la trace dans le projet courant"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:33
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:35
-#, fuzzy
 msgid "Delete Selected Messages"
 msgstr "Supprimer les messages sélectionnés"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:43
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:45
-#, fuzzy
 msgid "Merge Selected Traces"
-msgstr "Paquets sélectionnés : "
+msgstr "Fusionner les traces sélectionnées"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:44
-#, fuzzy
 msgid "Merge"
-msgstr "Expression rationnelle"
+msgstr "Fusionner"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:53
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:55
-#, fuzzy
 msgid "Create A New Trace"
-msgstr "Créer un nouveau projet"
+msgstr "Créer une nouvelle trace"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:54
-#, fuzzy
 msgid "New Trace"
-msgstr "Nouvel espace de travail"
+msgstr "Nouvelle trace"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:62
 msgid "Configure Session"
@@ -2551,89 +2537,78 @@ msgstr ""
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:63
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:466
-#, fuzzy
 msgid "Session"
-msgstr "Version"
+msgstr "Session"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:68
-#, fuzzy
 msgid "Create A New Session"
-msgstr "Créer un nouveau symbole"
+msgstr "Créer une nouvelle session"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:69
 msgid "New Session"
-msgstr ""
+msgstr "Nouvelle session"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:110
-#, fuzzy
 msgid "Trace Name"
-msgstr "Nom du champs"
+msgstr "Nom de la trace"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:126
-#, fuzzy
 msgid "Import Date"
-msgstr "Importer la couche : "
+msgstr "Date d'import"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:142
-#, fuzzy
 msgid "Message Count"
-msgstr "ID de message"
+msgstr "Nombre de messages"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:256
-#, fuzzy
 msgid "<b>Trace Properties</b>"
-msgstr "<b>Propriétés de base</b>"
+msgstr "<b>Propriétés de la trace</b>"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:301
-#, fuzzy
 msgid "Description:"
 msgstr "Description : "
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:351
-#, fuzzy
 msgid "Import Date:"
-msgstr "Importer comme : "
+msgstr "Date d'import : "
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:365
 msgid "Type Of Data:"
-msgstr ""
+msgstr "Type de données : "
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:451
 msgid "Data Type"
-msgstr ""
+msgstr "Type de donnée"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:481
 msgid "Timestamp"
-msgstr ""
+msgstr "Horodatage"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:549
-#, fuzzy
 msgid "Name of the new traces?"
-msgstr "Nom de la fonction"
+msgstr "Nom de la nouvelle trace ?"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:550
-#, fuzzy
 msgid "Please choose a name for the new traces."
-msgstr "<b>Merci de choisir un nom pour le nouveau projet</b>"
+msgstr "Merci de choisir un nom pour les nouvelles traces."
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:612
-#, fuzzy
 msgid "New Name:"
-msgstr "Nom du champ : "
+msgstr "Nouveau nom : "
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:643
 msgid "Create a copy of the trace sets"
-msgstr ""
+msgstr "Créer une copie du jeu de traces"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:689
-#, fuzzy
 msgid "Please choose a name for the new symbol to import in the current project"
-msgstr "<b>Merci de choisir un nom pour le nouveau projet</b>"
+msgstr ""
+"Merci de choisir un nom pour le nouveau symbole a importer dans le projet "
+"courant"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:751
-#, fuzzy
 msgid "Name of the imported symbol:"
-msgstr "Nom du symbole crée"
+msgstr "Nom du symbole importé : "
 
 #: resources/static/netzob/ui/vocabulary/customTransformationFunctionDialog.glade:7
 msgid "Create a Custom Transformation Function"
@@ -3303,4 +3278,3 @@ msgstr "Durée de capture : "
 
 #~ msgid "Choose a workspace folder to use."
 #~ msgstr "Choisissez un répertoire à utiliser comme espace de travail."
-
