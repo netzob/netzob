@@ -698,7 +698,6 @@ class VariableCreationController(object):
 
         # Data Variable
         elif varTypeIndex == VariableTreeController.VARIABLE_INDEX_LIST.index(DataVariable.TYPE):
-            originalValue = str(self.view.getWidg("valueEntry").get_text())
             sized = self.view.getWidg("sizedCheck").get_active()
             if sized:
                 # If the variable is defined by a size.
@@ -711,6 +710,7 @@ class VariableCreationController(object):
                 maxChars = 0
                 delimiter = self.view.getWidg("delimiterEntry").get_text()
             vtype = AbstractType.makeType(VariableTreeController.TYPE_INDEX_LIST[self.view.getWidg("typeCombo").get_active()], sized, minChars, maxChars, delimiter)
+            originalValue = vtype.str2bin(self.view.getWidg("valueEntry").get_text())
             variable = DataVariable(anid, name, mutable, learnable, vtype, originalValue)
 
 #===============================================================================

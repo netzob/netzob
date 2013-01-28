@@ -414,6 +414,9 @@ class DataVariable(AbstractLeafVariable):
                 logging.error("No type specified for this variable in the xml file.")
                 return None
 
+            if originalValue is not None:
+                originalValue = _type.str2bin(originalValue)
+
             result = DataVariable(xmlID, xmlName, xmlMutable, xmlLearnable, _type, originalValue)
             logging.debug("DataVariable: loadFromXML successes: {0} ]".format(result.toString()))
             return result
