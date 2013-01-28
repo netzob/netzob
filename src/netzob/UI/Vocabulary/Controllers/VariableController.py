@@ -365,6 +365,11 @@ class VariableCreationController(object):
             self.view.getWidg("IDButton").set_visible(False)
             self.view.getWidg("sizedCheck").set_visible(False)
 
+            self.view.getWidg("factorLabel").set_visible(False)
+            self.view.getWidg("factorEntry").set_visible(False)
+            self.view.getWidg("offsetLabel").set_visible(False)
+            self.view.getWidg("offsetEntry").set_visible(False)
+
             self.updateDelimiterAndSize(default=True)
 
             if handler_id is not None:
@@ -390,6 +395,11 @@ class VariableCreationController(object):
             self.view.getWidg("IDEntry").set_visible(True)
             self.view.getWidg("IDButton").set_visible(True)
             self.view.getWidg("sizedCheck").set_visible(True)
+
+            self.view.getWidg("factorLabel").set_visible(True)
+            self.view.getWidg("factorEntry").set_visible(True)
+            self.view.getWidg("offsetLabel").set_visible(True)
+            self.view.getWidg("offsetEntry").set_visible(True)
 
             self.updateDelimiterAndSize()
 
@@ -417,6 +427,11 @@ class VariableCreationController(object):
             self.view.getWidg("IDEntry").set_visible(False)
             self.view.getWidg("IDButton").set_visible(False)
             self.view.getWidg("sizedCheck").set_visible(True)
+
+            self.view.getWidg("factorLabel").set_visible(False)
+            self.view.getWidg("factorEntry").set_visible(False)
+            self.view.getWidg("offsetLabel").set_visible(False)
+            self.view.getWidg("offsetEntry").set_visible(False)
 
             self.updateDelimiterAndSize()
 
@@ -450,6 +465,11 @@ class VariableCreationController(object):
             self.view.getWidg("minSpin").set_visible(True)
             self.view.getWidg("maxSpin").set_visible(True)
             self.view.getWidg("delimiterEntry").set_visible(False)
+
+            self.view.getWidg("factorLabel").set_visible(False)
+            self.view.getWidg("factorEntry").set_visible(False)
+            self.view.getWidg("offsetLabel").set_visible(False)
+            self.view.getWidg("offsetEntry").set_visible(False)
 
             if handler_id is not None:
                 object.disconnect(handler_id)
@@ -497,6 +517,11 @@ class VariableCreationController(object):
             self.view.getWidg("IDEntry").set_visible(False)
             self.view.getWidg("IDButton").set_visible(False)
             self.view.getWidg("sizedCheck").set_visible(False)
+
+            self.view.getWidg("factorLabel").set_visible(False)
+            self.view.getWidg("factorEntry").set_visible(False)
+            self.view.getWidg("offsetLabel").set_visible(False)
+            self.view.getWidg("offsetEntry").set_visible(False)
 
             self.updateDelimiterAndSize(default=True)
 
@@ -612,19 +637,22 @@ class VariableCreationController(object):
 
             # Computed Relation Variable
             elif self.variable.getVariableType() == ComputedRelationVariable.TYPE:
-                self.view.getWidg("IDEntry").set_text(self.variable.getPointedVariable().getID())
-                self.view.getWidg("relationTypeCombo").set_active(VariableTreeController.RELATION_TYPE_INDEX_LIST.index(self.variable.getType().getType()))
+                self.view.getWidg("IDEntry").set_text(self.variable.getPointedID())
+                self.view.getWidg("relationTypeCombo").set_active(VariableTreeController.RELATION_TYPE_INDEX_LIST.index(self.variable.getRelationType().getType()))
 
-                if self.variable.type.isSized():
+                if self.variable.getRelationType().getAssociatedDataType().isSized():
                     self.view.getWidg("sizedCheck").set_active(True)
-                    self.view.getWidg("minSpin").set_text(str(self.variable.getType().getMinChars()))
-                    self.view.getWidg("maxSpin").set_text(str(self.variable.getType().getMaxChars()))
+                    self.view.getWidg("minSpin").set_text(str(self.variable.getRelationType().getAssociatedDataType().getMinChars()))
+                    self.view.getWidg("maxSpin").set_text(str(self.variable.getRelationType().getAssociatedDataType().getMaxChars()))
                     self.view.getWidg("delimiterEntry").set_text('')
                 else:
                     self.view.getWidg("sizedCheck").set_active(False)
                     self.view.getWidg("minSpin").set_text('0')
                     self.view.getWidg("maxSpin").set_text('0')
-                    self.view.getWidg("delimiterEntry").set_text(self.variable.bin2str(self.variable.getDelimiter()))
+                    self.view.getWidg("delimiterEntry").set_text(self.variable.bin2str(self.variable.getRelationType().getAssociatedDataType().getDelimiter()))
+
+                self.view.getWidg("factorEntry").set_text(str(self.variable.getRelationType().getFactor()))
+                self.view.getWidg("offsetEntry").set_text(str(self.variable.getRelationType().getOffset()))
 
         self.updateOptions()
         dialog.run()
@@ -708,7 +736,10 @@ class VariableCreationController(object):
                 minChars = 0
                 maxChars = 0
                 delimiter = self.view.getWidg("delimiterEntry").get_text()
-            vtype = AbstractRelationType.makeType(VariableTreeController.RELATION_TYPE_INDEX_LIST[self.view.getWidg("relationTypeCombo").get_active()], sized, minChars, maxChars, delimiter)
+
+            factor = float(self.view.getWidg("factorEntry").get_text())
+            offset = float(self.view.getWidg("offsetEntry").get_text())
+            vtype = AbstractRelationType.makeType(VariableTreeController.RELATION_TYPE_INDEX_LIST[self.view.getWidg("relationTypeCombo").get_active()], sized, minChars, maxChars, delimiter, factor, offset)
             variable = ComputedRelationVariable(anid, name, mutable, learnable, vtype, pointedID, self.treeController.symbol)
 
         if variable is not None:
