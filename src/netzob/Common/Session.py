@@ -74,6 +74,9 @@ class Session(object):
     def addMessage(self, message):
         self.messages.append(message)
 
+    def addMessages(self, messages):
+        self.messages.extend(messages)
+
     def getCouples(self):
         couples = []
         for message in self.getMessages():
@@ -84,6 +87,14 @@ class Session(object):
             if (not couple1 in couples) and (not couple2 in couples):
                 couples.append(couple1)
         return couples
+
+    def removeMessage(self, message):
+        """removeMessage: remove any ref to the given message
+        """
+        if message in self.messages:
+            self.messages.remove(message)
+        else:
+            self.log.error("Cannot remove message {0} from symbol {1}, since it doesn't exist.".format(message.getID(), self.getName()))
 
     ## Getters and setters
 
