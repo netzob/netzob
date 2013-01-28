@@ -34,8 +34,6 @@ import os
 import logging
 import gettext
 import locale
-import uuid
-import shutil
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
