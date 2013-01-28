@@ -73,7 +73,10 @@ class WorkspaceSelectorView(object):
         else:
             self.imageLabel.show()
             self.errorTextBuffer.delete(self.errorTextBuffer.get_start_iter(), self.errorTextBuffer.get_end_iter())
-            self.errorTextBuffer.insert_with_tags(self.errorTextBuffer.get_start_iter(), message, self.errorBoldTag)
+            requestedWorkspace = self.controller.getSelectedWorkspace()
+            if requestedWorkspace is not None:
+                self.errorTextBuffer.insert_with_tags(self.errorTextBuffer.get_start_iter(), "{0}:\n".format(requestedWorkspace), self.errorBoldTag)
+            self.errorTextBuffer.insert(self.errorTextBuffer.get_end_iter(), message)
             self.errorTextView.show()
 
     def openBrowseDialog(self, currentSelectedWorkspace=None):

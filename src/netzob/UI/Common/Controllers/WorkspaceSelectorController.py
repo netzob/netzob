@@ -66,6 +66,8 @@ class WorkspaceSelectorController(object):
         has been retrieved or the loaded workspace."""
         logging.debug("+ Load workspace...")
 
+        self._selectedWorkspace = workspaceDir
+
         # Loading the workspace
         if workspaceDir is not None:
             (self.loadedWorkspace, error) = (Workspace.loadWorkspace(workspaceDir))
