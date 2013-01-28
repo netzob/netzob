@@ -56,5 +56,13 @@
         <signal name="activate" handler="newSessionTableButton_clicked_cb" swapped="no"/>
       </object>
     </child>
+    <child>
+      <object class="GtkAction" id="compareSessions">
+        <property name="label" translatable="yes">Compare selected sessions</property>
+        <property name="tooltip" translatable="yes">Compare selected sessions</property>
+        <property name="stock_id">netzob-field-limit</property>
+        <signal name="activate" handler="compare_sessions_activate_cb" swapped="no"/>
+      </object>
+    </child>
   </object>
 </interface>
