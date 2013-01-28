@@ -211,7 +211,8 @@
                 <property name="entry_text_column">0</property>
                 <property name="id_column">1</property>
                 <items>
-                  <item translatable="yes">Size Relation</item>
+                  <item translatable="yes">Binary Size Relation</item>
+                  <item translatable="yes">Word Size Relation</item>
                 </items>
               </object>
               <packing>

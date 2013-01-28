@@ -51,8 +51,10 @@ from netzob.Common.MMSTD.Dictionary.DataTypes.MACWordType import MACWordType
 from netzob.Common.MMSTD.Dictionary.DataTypes.WordType import WordType
 from netzob.Common.MMSTD.Dictionary.RelationTypes.AbstractRelationType import \
     AbstractRelationType
-from netzob.Common.MMSTD.Dictionary.RelationTypes.SizeRelationType import \
-    SizeRelationType
+from netzob.Common.MMSTD.Dictionary.RelationTypes.WordSizeRelationType import \
+    WordSizeRelationType
+from netzob.Common.MMSTD.Dictionary.RelationTypes.BinarySizeRelationType import \
+    BinarySizeRelationType
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import \
     AggregateVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import \
@@ -105,7 +107,7 @@ class VariableTreeController(object):
         """
         VariableTreeController.VARIABLE_INDEX_LIST = [AggregateVariable.TYPE, AlternateVariable.TYPE, ComputedRelationVariable.TYPE, DataVariable.TYPE, RepeatVariable.TYPE]
         VariableTreeController.TYPE_INDEX_LIST = [BinaryType.TYPE, DecimalWordType.TYPE, HexWordType.TYPE, IntegerType.TYPE, IPv4WordType.TYPE, MACWordType.TYPE, WordType.TYPE]
-        VariableTreeController.RELATION_TYPE_INDEX_LIST = [SizeRelationType.TYPE]
+        VariableTreeController.RELATION_TYPE_INDEX_LIST = [BinarySizeRelationType.TYPE, WordSizeRelationType.TYPE]
 
     def initCallbacks(self):
         """initCallbacks:
