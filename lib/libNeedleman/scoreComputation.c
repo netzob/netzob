@@ -81,9 +81,7 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
 			if (groups->groups[i].scores[p - i - 1] == -1) { //Check if the score has been allready computed
 				unsigned int m, n;
 				float similarityScore = 0.0;
-				t_message tmpMessage;
 				t_score score;
-				tmpMessage.score = &score;
 
 				// We loop over each couple of messages
 				for (m = 0; m < groups->groups[i].len; ++m) {
