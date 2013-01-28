@@ -323,6 +323,14 @@ class ComputedRelationVariable(AbstractVariable):
         xmlDelimiter = etree.SubElement(xmlVariable, "{" + namespace + "}delimiter")
         xmlDelimiter.text = str(TypeConvertor.bin2hexstring(self.relationType.getAssociatedDataType().getDelimiter()))
 
+        # factor
+        xmlFactor = etree.SubElement(xmlVariable, "{" + namespace + "}factor")
+        xmlFactor.text = str(self.relationType.getFactor())
+
+        # offset
+        xmlOffset = etree.SubElement(xmlVariable, "{" + namespace + "}offset")
+        xmlOffset.text = str(self.relationType.getOffset())
+
 #+---------------------------------------------------------------------------+
 #| Notified functions                                                        |
 #+---------------------------------------------------------------------------+
@@ -454,11 +462,25 @@ class ComputedRelationVariable(AbstractVariable):
             else:
                 delimiter = None
 
+            # factor
+            xmlFactor = xmlRoot.find("{" + namespace + "}factor")
+            if xmlFactor is not None and xmlFactor.text != "None":
+                factor = float(xmlFactor.text)
+            else:
+                factor = 1
+
+            # offset
+            xmlOffset = xmlRoot.find("{" + namespace + "}offset")
+            if xmlOffset is not None and xmlOffset.text != "None":
+                offset = float(xmlOffset.text)
+            else:
+                offset = 0
+
             # type
             _type = None
             xmlType = xmlRoot.find("{" + namespace + "}type")
             if xmlType is not None:
-                _type = AbstractRelationType.makeType(xmlType.text, sized, minChars, maxChars, delimiter)
+                _type = AbstractRelationType.makeType(xmlType.text, sized, minChars, maxChars, delimiter, factor, offset)
                 if _type is None:
                     return None
             else:
