@@ -63,7 +63,7 @@ PyObject* py_alignMessages(PyObject* self, PyObject* args) {
   // Parameters (in order)
   unsigned int doInternalSlick = 0;
   unsigned int nbMessages = 0;
-  unsigned char *format;
+  char *format;
   int sizeFormat;
   unsigned char *serialMessages;
   int sizeSerialMessages;
