@@ -140,7 +140,7 @@ class NetworkClient(AbstractChannel):
         self.outputMessages.append(message)
 
         try:
-            self.outputFile.write(TypeConvertor.binB2string(message))
+            self.outputFile.write(TypeConvertor.bin2string(message))
             self.outputFile.flush()
         except:
             self.log.warn("An error occured while trying to write on the communication channel")
