@@ -81,14 +81,10 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
 			if (groups->groups[i].scores[p - i - 1] == -1) { //Check if the score has been allready computed
 				unsigned int m, n;
 				float similarityScore = 0.0;
-				t_score score;
 
 				// We loop over each couple of messages
 				for (m = 0; m < groups->groups[i].len; ++m) {
 					for (n = 0; n < groups->groups[p].len; ++n) {
-						score.s1 = 0;
-						score.s2 = 0;
-						score.s3 = 0;
 //        alignTwoMessages(&tmpMessage, doInternalSlick, &groups->groups[i].messages[m], &groups->groups[p].messages[n], debugMode);
 						similarityScore += NeedlemanScore(
 								&groups->groups[i].messages[m],
