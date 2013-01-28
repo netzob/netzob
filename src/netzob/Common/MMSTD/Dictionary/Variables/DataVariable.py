@@ -184,7 +184,7 @@ class DataVariable(AbstractLeafVariable):
         xmlType.text = self.type.getType()
 
         # originalValue (can be None)
-        if self.originalValue is not None:
+        if self.originalValue is not None and self.isMutable() is not None:  # We do not memorize random values.
             xmlOriginalValue = etree.SubElement(xmlVariable, "{" + namespace + "}originalValue")
             # We memorize the current value as the future original value.
             # I assume that the user want the last current value (that he may have hand-edited) of the variable to be memorized.
