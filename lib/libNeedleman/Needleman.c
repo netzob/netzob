@@ -93,15 +93,15 @@ void alignMessages2(t_message *resMessage, Bool doInternalSlick, t_group* group,
     	return;
     }
 	
-	/*initialize the next message*/
+    /*initialize the next message*/
     new_message.len = group->messages[i_message].len;
     new_message.alignment = group->messages[i_message].alignment;
     new_message.mask = malloc(group->messages[i_message].len * sizeof(unsigned char));
     memset(new_message.mask, 0, group->messages[i_message].len);
 
-	/*Check if the current common regex is not null. If so, try to match the current message with it*/
-	if(commonregex!=NULL)
-		matchstatus=matchonly(commonregex,new_message.alignment);
+    /*Check if the current common regex is not null. If so, try to match the current message with it*/
+    if(commonregex!=NULL)
+      matchstatus=matchonly(commonregex,(char *)new_message.alignment);
 		
     // Align current_message with new_message
     if(matchstatus<0){
