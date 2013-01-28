@@ -43,6 +43,7 @@ from pygments.styles.pastie import PastieStyle as STYLE
 from Constants import SIG_SYMBOL_CHANGED, SIG_SAVE_SCRIPT
 from netzob.Common.Plugins.Exporters.AbstractExporterView import AbstractExporterView
 
+
 class WiresharkExporterView(AbstractExporterView):
     """
     GUI for exporting results in Wireshark LUA script.

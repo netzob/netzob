@@ -48,6 +48,7 @@ from WiresharkExporterError import WiresharkExporterError
 from WiresharkExporterView import WiresharkExporterView
 from WiresharkFilter import WiresharkFilterFactory
 
+
 class WiresharkExporterController(AbstractExporterController):
     """
     Controller of Wireshark export plugin.
@@ -162,6 +163,7 @@ DissectorTable.get("{0}"):add({1}, {class_var})
 
     def __call__(self):
         self.run()
+
     def getSignalsManager(self):
         """returns the signals manager"""
         return self.signalsManager

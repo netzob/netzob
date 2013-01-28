@@ -27,6 +27,7 @@
 
 __all__ = []
 
+
 def define_symbols(*syms):
     for sym in syms:
         globals()[sym] = "WIRESHARK_EXPORTER_" + sym
