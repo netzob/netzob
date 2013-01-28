@@ -104,16 +104,23 @@ class AbstractType():
                 If the value has a size smaller than the minimum, the value gains '0' at its beginning.
         """
         if value is None:
-            return None
+            if self.isSized():
+                normalizedValue = bitarray()
+                for i in range(self.minBits):
+                    normalizedValue.extend(bitarray('0'))
+                return normalizedValue
+            else:
+                return None
         if self.isSized():
             bitsNeeded = self.minBits - len(value)
             bitsRejected = len(value) - self.maxBits
             if bitsNeeded > 0:
-                padding = bitarray()
+                normalizedValue = bitarray()
+                # Padding.
                 for i in range(bitsNeeded):
-                    padding.append('0')
-                padding.extend(value)
-                return padding
+                    normalizedValue.extend(bitarray('0'))
+                normalizedValue.extend(value)
+                return normalizedValue
             if bitsRejected > 0:
                 return value[bitsRejected:]
         return value
