@@ -439,6 +439,9 @@ class ComputedRelationVariable(AbstractVariable):
     def setCurrentValue(self, currentValue):
         self.currentValue = self.relationType.getAssociatedDataType().normalizeValue(currentValue)
 
+    def setPointedID(self, pointedID):
+        self.pointedID = pointedID
+
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |
 #+---------------------------------------------------------------------------+
