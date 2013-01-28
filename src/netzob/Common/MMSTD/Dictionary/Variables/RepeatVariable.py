@@ -70,8 +70,9 @@ class RepeatVariable(AbstractNodeVariable):
                 @type maxIterations: integer
                 @param maxIterations: the maximum number of iteration each treatment will be repeated.
         """
-        AbstractNodeVariable.__init__(self, _id, name, mutable, learnable, [child])
+        AbstractNodeVariable.__init__(self, _id, name, mutable, learnable, None)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.RepeatVariable.py')
+        self.setChild(child)
         if minIterations is not None and minIterations >= 0:
             self.minIterations = minIterations
         else:
@@ -312,14 +313,10 @@ class RepeatVariable(AbstractNodeVariable):
         return self.currentIteration
 
     def getChild(self):
-        return self.children[0]
+        return self.child
 
-    def addChild(self, child):
-        if len(self.children) == 0:
-            self.children.append(child)
-        else:
-            self.children[0] = child
-        child.addFather(self)
+    def setChild(self, child):
+        self.child = child
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |
