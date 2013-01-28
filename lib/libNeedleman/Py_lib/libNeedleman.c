@@ -58,7 +58,7 @@ PyMODINIT_FUNC init_libNeedleman(void) {
 //+---------------------------------------------------------------------------+
 //| py_alignSequences : Python wrapper for alignMessages
 //+---------------------------------------------------------------------------+
-PyObject* py_alignMessages(PyObject* self, PyObject* args) {
+PyObject* py_alignMessages(__attribute__((unused))PyObject* self, PyObject* args) {
 
   // Parameters (in order)
   unsigned int doInternalSlick = 0;
@@ -154,7 +154,7 @@ PyObject* py_alignMessages(PyObject* self, PyObject* args) {
 //+---------------------------------------------------------------------------+
 //| py_alignTwoMessages : Python wrapper for alignTwoMessages
 //+---------------------------------------------------------------------------+
-PyObject* py_alignTwoMessages(PyObject* self, PyObject* args) {
+PyObject* py_alignTwoMessages(__attribute__((unused))PyObject* self, PyObject* args) {
   // Parameters (in order)
   unsigned int doInternalSlick = 0;
   char *format;
