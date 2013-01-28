@@ -55,7 +55,6 @@ char* alignTwoMessages(t_message * resMessage, Bool doInternalSlick, t_message *
 //+---------------------------------------------------------------------------+
 float getScoreRatio(t_message *);
 float getScoreDynSize(unsigned int, unsigned int);
-float getScoreRang(t_message *);
 float computeDistance(t_score *);
 
 #endif

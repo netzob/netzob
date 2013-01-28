@@ -262,7 +262,6 @@ char* alignTwoMessages(t_message * resMessage, Bool doInternalSlick, t_message *
   unsigned int firstj = 0;
   unsigned int diagloop = 0;
   unsigned int blockLoop = 0;
-  unsigned int lastIndex1 = 0;
   unsigned int iblock = 0;
   unsigned int jblock = 0;
   unsigned int maxLoopi = 0;
@@ -332,7 +331,7 @@ char* alignTwoMessages(t_message * resMessage, Bool doInternalSlick, t_message *
   
   
   levenshtein = MATCH*(float)matrix[message1->len][message2->len] / maxLen;
-  float levcop = matrix[message1->len][message2->len];
+  //float levcop = matrix[message1->len][message2->len];
   //levenshtein = levenshtein * 10 / maxLen;
 
   //+------------------------------------------------------------------------+
@@ -685,11 +684,6 @@ float getScoreDynSize(unsigned int nbDynTotal, unsigned int nbDynCommon) {
   else {
     result = (100.0 - 1) / nbDynTotal * nbDynCommon;
   }
-  return result;
-}
-float getScoreRang(t_message * message) {
-  float result = 0;
-  
   return result;
 }
 float computeDistance(t_score * score) {
