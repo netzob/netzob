@@ -254,7 +254,7 @@ class RepeatVariable(AbstractNodeVariable):
                 Each child tries sequentially to write its value.
                 If one of them fails, the whole operation is cancelled.
         """
-        self.log.debug("[ {0} (Aggregate): write access:".format(AbstractVariable.toString(self)))
+        self.log.debug("[ {0} (Repeat): write access:".format(AbstractVariable.toString(self)))
         self.resetTokenChoppedIndexes()  # New write access => new final value and new reference to it.
         if self.getChildren() is not None:
             if self.isMutable():

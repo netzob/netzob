@@ -309,7 +309,7 @@ class VariableCreationController(object):
     """
 
     def __init__(self, item, treeController, variable, rootEntry, editOverCreate):
-        """Constructor of DataVariable:
+        """Constructor of VariableCreationController:
                 Called by a click on the tree view of all variables.
 
                 @type item: Gtk.Menuitem

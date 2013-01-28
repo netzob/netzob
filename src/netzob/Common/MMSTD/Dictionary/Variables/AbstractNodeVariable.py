@@ -49,13 +49,13 @@ class AbstractNodeVariable(AbstractVariable):
             An abstract variable defined in a dictionary which is a node (alternate, aggregate...) in the global variable tree.
     """
 
-    def __init__(self, _id, name, mutable, random, children=None):
+    def __init__(self, _id, name, mutable, learnable, children=None):
         """Constructor of AbstractNodeVariable:
 
                 @type children: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable List
                 @param children: the list of this variable's children.
         """
-        AbstractVariable.__init__(self, _id, name, mutable, random, True)
+        AbstractVariable.__init__(self, _id, name, mutable, learnable, True)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AbstractNodeVariable.py')
         self.children = []
@@ -174,7 +174,7 @@ class AbstractNodeVariable(AbstractVariable):
 
     def getProgeny(self):
         """getProgeny:
-                Get this variable and all variable that descends from it. (i.e. son, grandson...)
+                Get this variable and all variables that descend from it. (i.e. son, grandson...)
         """
         progeny = []
         progeny.append(self)

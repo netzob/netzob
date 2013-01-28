@@ -128,7 +128,7 @@ class AlternateVariable(AbstractNodeVariable):
                 fakeFather.addChild(rightBrother)
         elif self.getFathers()[0].getType() == RepeatVariable.TYPE:
             (minIterations, maxIterations) = self.getFathers()[0].getNumberIterations()
-            # Some iterations of this treatment could have be made before. The fake father should not make more iterations than it remains for the real father.
+            # Some iterations of this treatment could have been made before. The fake father should not make more iterations than it remains for the real father.
             minIterations = max(0, minIterations - self.getFathers()[0].getCurrentIteration())
             maxIterations = max(0, maxIterations - self.getFathers()[0].getCurrentIteration())
             fakeFather = RepeatVariable(str(uuid.uuid4()), "Fake father", False, False, self, minIterations, maxIterations)
