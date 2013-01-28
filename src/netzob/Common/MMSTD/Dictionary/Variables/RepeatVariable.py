@@ -219,6 +219,16 @@ class RepeatVariable(AbstractNodeVariable):
         """
         return self.getChild().isDefined(processingToken)
 
+    def getProgeny(self):
+        """getProgeny:
+                Get this variable and all variables that descend from it. (i.e. son, grandson...)
+        """
+        progeny = []
+        progeny.append(self)
+        if self.child is not None:
+            progeny.extend(self.child.getProgeny())
+        return progeny
+
     def read(self, readingToken):
         """read:
                 Each child tries sequentially to read a part of the read value.
