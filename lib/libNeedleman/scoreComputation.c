@@ -157,7 +157,9 @@ float NeedlemanScore(t_message * message1, t_message * message2, Bool debugMode)
 		free(matrix[i]);
 	}
 	free(matrix);
-	//printf("score %lf\n",levenshtein);
+	if (debugMode) {
+	  printf("score %lf\n",levenshtein);
+	}
 	return levenshtein;
 }
 
