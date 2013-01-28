@@ -225,8 +225,10 @@ class ContextualMenuOnFieldController(object):
     def deleteMessage_cb(self, event):
         """Callback executed when the user requests
         to delete the current message"""
+        currentProject = self.vocabularyController.netzob.getCurrentProject()
+        vocabulary = currentProject.getVocabulary()
         for message in self.messages:
-            self.getSymbol().removeMessage(message)
+            vocabulary.removeMessage(message)
         self.vocabularyController.updateSelectedMessageTable()
         self.vocabularyController.updateLeftPanel()
 
