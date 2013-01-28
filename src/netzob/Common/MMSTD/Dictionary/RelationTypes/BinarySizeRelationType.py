@@ -38,40 +38,42 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.DataTypes.DecimalWordType import DecimalWordType
+from netzob.Common.MMSTD.Dictionary.DataTypes.IntegerType import IntegerType
 from netzob.Common.MMSTD.Dictionary.RelationTypes.AbstractRelationType import \
     AbstractRelationType
 
 
-class SizeRelationType(AbstractRelationType):
-    """SizeRelationType:
-            It defines the type of a size relation variable.
+class BinarySizeRelationType(AbstractRelationType):
+    """BinarySizeRelationType:
+            It defines the type of a size relation variable. This size will be written in binary.
     """
 
-    TYPE = "Size Relation"
+    TYPE = "Binary Size Relation"
 
-    def __init__(self, sized, minChars, maxChars, delimiter):
-        """Constructor of SizeRelationType:
+    def __init__(self, sized, minChars, maxChars, delimiter, factor, offset):
+        """Constructor of WordSizeRelationType:
         """
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.RelationTypes.SizeRelationType.py')
-        self.setAssociatedDataType(self.makeAssociatedDataType(sized, minChars, maxChars, delimiter))
+        AbstractRelationType.__init__(self, sized, minChars, maxChars, delimiter, factor, offset)
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.RelationTypes.WordSizeRelationType.py')
 
     def getType(self):
         """getType:
         """
-        return SizeRelationType.TYPE
+        return BinarySizeRelationType.TYPE
 
     def makeAssociatedDataType(self, sized, minChars, maxChars, delimiter):
         """makeAssociatedDataType:
                 The data type associated to a size field is obviously an integer.
         """
-        return DecimalWordType(sized, minChars, maxChars, delimiter)
+        return IntegerType(sized, minChars, maxChars, delimiter)
 
     def computeValue(self, value):
         """computeValue:
         """
-        size = 0
+        computedValue = 0
         if value is not None:
             size = len(value)
             self.log.debug("Compute the size of {0} = {1}".format(value, size))
-        return self.getAssociatedDataType().str2bin(str(size))
+            computedValue = int(self.factor * size + self.offset)
+            self.log.debug("Compute the value : {0} * {1} + {2} = {3}".format(self.factor, size, self.offset, computedValue))
+        return self.getAssociatedDataType().str2bin(str(computedValue))
