@@ -92,31 +92,32 @@ class RepeatVariable(AbstractNodeVariable):
         self.log.debug("[ {0}: read access:".format(self.toString()))
         (minIterations, maxIterations) = self.getNumberIterations()
         self.currentIteration = 0
-
-        # Memorized initial values for the child and its successors.
-        dictOfValues = dict()
-        dictOfValue = self.getChild().getDictOfValues(readingToken)
         savedIndex = readingToken.getIndex()
+        self.children = []
 
-        for key, val in dictOfValue.iteritems():
-            dictOfValues[key] = val
-
+        # We adapt min and max iterations to the number of time we happen to read the child variable.
         if self.isLearnable():
             # We assume to be unlimited.
             while True:
-                self.getChild().read(readingToken)
+                newChild = self.getChild().cloneVariable()
+                newChild.read(readingToken)
                 if readingToken.isOk():
+                    self.addChild(newChild)
                     self.currentIteration += 1
                 else:
                     break
             self.maxIterations = max(self.currentIteration, self.maxIterations)
+
         else:
             for i in range(maxIterations):
-                self.getChild().read(readingToken)
+                newChild = self.getChild().cloneVariable()
+                newChild.read(readingToken)
                 if readingToken.isOk():
+                    self.addChild(newChild)
                     self.currentIteration += 1
                 else:
                     break
+
         # We search if we have done the minimum number of iterations.
         if self.currentIteration < minIterations:
             if self.isLearnable():
@@ -127,13 +128,7 @@ class RepeatVariable(AbstractNodeVariable):
                 readingToken.setOk(False)
                 # If not, we clean our traces.
                 readingToken.setIndex(savedIndex)
-                vocabulary = readingToken.getVocabulary()
-                for key, val in dictOfValues.iteritems():
-                    child = vocabulary.getVariableByID(key)
-                    # We restore the current values.
-                    child.setCurrentValue(val)
-                    # We restore the cached values.
-                    child.restore(readingToken)
+                self.children = []
         else:
             readingToken.setOk(True)
             # The value of the variable is simply the value we 'ate'.
