@@ -36,7 +36,9 @@
 #include <stdio.h>
 #include <malloc.h>
 #endif
+
 float NeedlemanScore(t_message * message1, t_message * message2, Bool debugMode);
+
 void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
 		int nbGroups, t_groups* groups, Bool debugMode) {
 	// Compute the matrix
@@ -77,7 +79,7 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
 	for (i = 0; i < nbGroups; i++) {
 		for (p = i + 1; p < nbGroups; p++) {
 			if (groups->groups[i].scores[p - i - 1] == -1) { //Check if the score has been allready computed
-				int m, n;
+				unsigned int m, n;
 				float similarityScore = 0.0;
 				t_message tmpMessage;
 				t_score score;
