@@ -40,7 +40,7 @@ from gi.repository import Gtk
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.UI.NetzobWidgets import NetzobInfoMessage, NetzobErrorMessage
+from netzob.UI.NetzobWidgets import NetzobInfoMessage
 from netzob.Common.Plugins.Exporters.AbstractExporterController import AbstractExporterController
 from PeachExportView import PeachExportView
 from PeachExport import PeachExport
@@ -50,6 +50,19 @@ class PeachExportController(AbstractExporterController):
     """PeachExportController:
             A controller liking the Peach export and its view in the netzob GUI.
     """
+
+    def __init__(self, netzob, plugin):
+        """Constructor of PeachExportController:
+
+                @type netzob: netzob.NetzobGUI.NetzobGUI
+                @param netzob: the main netzob project.
+        """
+        self.netzob = netzob
+        self.plugin = plugin
+        self.model = PeachExport(netzob)
+        self.view = PeachExportView(plugin, self)
+        self.initCallbacks()
+        self.selectedSymbolID = -4
 
     def run(self):
         """run:
@@ -71,12 +84,17 @@ class PeachExportController(AbstractExporterController):
         """
         self.view.symbolTreeview.get_model().clear()
         logging.debug("The current project is {0}".format(str(self.netzob.getCurrentProject())))
+        # TODO: Add tooltips to explain each case.
         if self.netzob.getCurrentProject() is not None:
-            # Append an "Entire project" leaf to the tree view.
-            iter = self.view.symbolTreeview.get_model().append(None, ["-1", "{0} [{1}, {2}]".format(_("Entire project"), str(len(self.netzob.getCurrentProject().getVocabulary().getSymbols())), str(len(self.netzob.getCurrentProject().getVocabulary().getMessages()))), '#000000', '#DEEEF0'])
-
+            self.view.symbolTreeview.get_model().append(None, ["-1", _("Randomized state order fuzzer"), '#000000', '#DEEEF0'])
+            self.view.symbolTreeview.get_model().append(None, ["-2", _("Randomized transitions stateful fuzzer"), '#000000', '#DEEEF0'])
+            #self.view.symbolTreeview.get_model().append(None, ["-3", _("Fully stateful fuzzer"), '#000000', '#DEEEF0'])
             for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-                iter = self.view.symbolTreeview.get_model().append(None, ["{0}".format(symbol.getID()), "{0} [{1}]".format(symbol.getName(), str(len(symbol.getMessages()))), '#000000', '#DEEEF0'])
+                self.view.symbolTreeview.get_model().append(None, ["{0}".format(symbol.getID()), "One-state fuzzer (symbol \"{0}\")".format(symbol.getName()), '#000000', '#DEEEF0'])
+
+            self.view.symbolTreeview.set_tooltip_text("Randomized state order fuzzer: a fuzzer that have one state per symbol of the Netzob project. It goes to one of this state randomly chosen at each step.\n\n" +
+                                                      "Randomized transitions stateful fuzzer: a stateful fuzzer that follows Netzob's states and transitions. It does not take inputs into account and goes from one state to another by choosing randomly one of the transitions allowed by Netzob.\n\n" +
+                                                      "Fully stateful fuzzer:a stateful fuzzer that respect as strictly as possible the Netzob grammar in its state model.\n\n")
 
     def clear(self):
         """clear:
@@ -87,18 +105,6 @@ class PeachExportController(AbstractExporterController):
         """kill:
         """
         pass
-
-    def __init__(self, netzob):
-        """Constructor of PeachExportController:
-
-                @type netzob: netzob.NetzobGUI.NetzobGUI
-                @param netzob: the main netzob project.
-        """
-        self.netzob = netzob
-        self.model = PeachExport(netzob)
-        self.view = PeachExportView()
-        self.initCallbacks()
-        self.selectedSymbolID = -2
 
     def initCallbacks(self):
         """initCallbacks:
@@ -117,11 +123,12 @@ class PeachExportController(AbstractExporterController):
                 @param treeview: the symbol tree view.
         """
         if treeview.get_selection() is not None:
-            (model, iter) = treeview.get_selection().get_selected()
-            if(iter):
-                if(model.iter_is_valid(iter)):
-                    symbolID = model.get_value(iter, 0)
+            (model, itr) = treeview.get_selection().get_selected()
+            if(itr):
+                if(model.iter_is_valid(itr)):
+                    symbolID = model.get_value(itr, 0)
                     self.showXMLDefinition(symbolID)
+                    logging.debug("Selected treepath : {0}".format(str(model.get_path(itr))))
 
     def changeFuzzingBase(self, combo):
         """changeFuzzingBase:
@@ -138,7 +145,7 @@ class PeachExportController(AbstractExporterController):
             self.model.setVariableOverRegex(False)
 
         # If nothing is currently displayed, nothing is updated.
-        if self.selectedSymbolID > -2:
+        if self.selectedSymbolID > -4:
             self.showXMLDefinition(self.selectedSymbolID)
 
     def toggleStaticFieldsMutation(self, check):
@@ -150,7 +157,7 @@ class PeachExportController(AbstractExporterController):
         """
         self.model.setMutateStaticFields(check.get_active())
         # If nothing is currently displayed, nothing is updated.
-        if self.selectedSymbolID > -2:
+        if self.selectedSymbolID > -4:
             self.showXMLDefinition(self.selectedSymbolID)
 
     def showXMLDefinition(self, symbolID):
@@ -161,14 +168,8 @@ class PeachExportController(AbstractExporterController):
                 @param symbolID: a number which identifies the symbol which XML Definition is displayed.
         """
         self.selectedSymbolID = symbolID
-        # Special case "entire project"
-        if symbolID == "-1":
-            xmlDefinition = self.model.getPeachDefinition(0, True)
-        # Usual case with usual symbolID
-        else:
-            xmlDefinition = self.model.getPeachDefinition(symbolID, False)
-
-        if xmlDefinition is not None:
+        xmlDefinition = self.getXmlDefinition()
+        if xmlDefinition != None:
             self.view.textarea.get_buffer().set_text("")
             self.view.textarea.get_buffer().insert_with_tags_by_name(self.view.textarea.get_buffer().get_start_iter(), xmlDefinition, "normalTag")
         else:
@@ -187,7 +188,19 @@ class PeachExportController(AbstractExporterController):
             fileName = ""
             if res == Gtk.ResponseType.OK:
                 fileName = chooser.get_filename()
+                filePath = chooser.get_current_folder()
+            else:
+                return
             chooser.destroy()
+            peachzobAddonsPath = os.path.join(self.getPlugin().getPluginStaticResourcesPath(), "PeachzobAddons.py.default")
+            logging.debug("Path: {0}".format(peachzobAddonsPath))
+
+            # Write down the PeachzobAddons essential for Peach to interprete files exported by Netzob.
+            defaultAddonsFile = open(peachzobAddonsPath, 'r')
+            addonsFile = open(os.path.join(filePath, "PeachzobAddons.py"), 'w')
+            addonsFile.write(defaultAddonsFile.read())
+            defaultAddonsFile.close()
+            addonsFile.close()
 
             doCreateFile = False
             isFile = os.path.isfile(fileName)
@@ -201,20 +214,29 @@ class PeachExportController(AbstractExporterController):
                     doCreateFile = True
 
             if doCreateFile:
-                # Special case "entire project"
-                if self.selectedSymbolID == "-1":
-                    xmlDefinition = self.model.getPeachDefinition(0, True)
-                # Usual case with usual symbolID
-                else:
-                    xmlDefinition = self.model.getPeachDefinition(self.selectedSymbolID, False)
+                xmlDefinition = self.getXmlDefinition()
                 try:
-                    file = open(fileName, 'w')
-                    file.write(xmlDefinition)
-                    file.close()
-                    # TODO: maybe copy the plugin file with shutil
-                    NetzobInfoMessage(_("The project has been correctly exported as a Peach Fuzzer to '{0}'.\nDo not forget to copy in the targeted directory our Peach plugin netzob_plugins/Exporters/PeachExporter/PeachzobAddons.py.").format(fileName))
+                    fuzzfile = open(fileName, 'w')
+                    fuzzfile.write(xmlDefinition)
+                    fuzzfile.close()
                 except Exception, e:
                     NetzobInfoMessage(_("The following error occurred while exporting the project as a Peach Fuzzer to '{0}': {1}").format(fileName, e))
+
+    def getXmlDefinition(self):
+        """getXmlDefinition:
+                Return the xml definition corresponding to the selected symbol.
+        """
+        # Special cases for stateful fuzzer:
+        if self.selectedSymbolID == "-1":
+            xmlDefinition = self.model.getPeachDefinition(0, 1)
+        elif self.selectedSymbolID == "-2":
+            xmlDefinition = self.model.getPeachDefinition(0, 2)
+        elif self.selectedSymbolID == "-3":
+            xmlDefinition = self.model.getPeachDefinition(0, 3)
+        # Usual case with usual symbolID
+        else:
+            xmlDefinition = self.model.getPeachDefinition(self.selectedSymbolID, 0)
+        return xmlDefinition
 
     def getPanel(self):
         """getPanel:
@@ -223,3 +245,8 @@ class PeachExportController(AbstractExporterController):
                 @return: the plugin view.
         """
         return self.view
+
+    def getPlugin(self):
+        """getPlugin:
+        """
+        return self.plugin

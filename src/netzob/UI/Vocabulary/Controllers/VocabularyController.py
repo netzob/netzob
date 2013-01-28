@@ -189,7 +189,6 @@ class VocabularyController(object):
         pluginExtensions = NetzobPlugin.getLoadedPluginsExtension(CapturerMenuExtension)
         self.view.updateListCapturerPlugins(pluginExtensions)
 
-
     # Drag and drop of messages
     def drag_data_received_event(self, widget, drag_context, x, y, data, info, time):
         """Callback executed when the user drops

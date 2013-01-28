@@ -29,9 +29,6 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import logging
-import uuid
-import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -52,7 +49,7 @@ class PeachExporterPlugin(ExporterPlugin):
             Simplify the construction of a fuzzer with Peach.
     """
     __plugin_name__ = "PeachExporter"
-    __plugin_version__ = "0.9"
+    __plugin_version__ = "1.0"
     __plugin_description__ = _("Provide the possibility to export netzob symbols to Peach pit files.")
     __plugin_author__ = "Benjamin Dufour <benjamin.dufour@amossys.fr>"
     __plugin_copyright__ = "AMOSSYS"
@@ -126,5 +123,5 @@ class PeachExporterPlugin(ExporterPlugin):
         if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        controller = PeachExportController(self.netzob)
+        controller = PeachExportController(self.netzob, self)
         controller.run()

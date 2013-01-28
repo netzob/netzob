@@ -107,6 +107,17 @@ class MMSTD(Automata):
 
         return transitions
 
+    def getTransitionsStartingFromState(self, state):
+        """getTransitionsStartingFromState:
+                Retreive all the transitions which starts from the provide state.
+                @return: a list of transition
+        """
+        transitions = []
+        for transition in self.getTransitions():
+            if transition.getInputState().getID() == state.getID():
+                transitions.append(transition)
+        return transitions
+
     def removeState(self, state):
         # First we remove the transitions
         transitionsToRemove = []

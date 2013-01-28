@@ -115,6 +115,8 @@ Miscellaneous
 
 Configuration requirements for Network and PCAP input::
 
+*Note: Capturing data from network interfaces often requires admin privileges. Before we provide a cleaner and secure way (see issue 425 on the bugtracker for updated information - https://dev.netzob.org/issues/425), a possible HACK is to provide additionnal capabilities to the python binary.* ::
+
   $ sudo setcap cap_net_raw=ep /usr/bin/python2.XX
 
 Configuration requirements for IPC input on Ubuntu::

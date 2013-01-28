@@ -185,7 +185,7 @@ class Project(object):
         # We generate the XML Config file
         root = self.generateXMLConfigFile()
         tree = ElementTree(root)
-        tree.write(projectFile)
+        tree.write(projectFile, pretty_print=True)
 
     def cloneProjectTo(self, workspace, cloneName):
         try:

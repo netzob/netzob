@@ -44,11 +44,11 @@ from netzob.Common.Plugins.AbstractPluginView import AbstractPluginView
 class AbstractExporterView(AbstractPluginView):
     GLADE_FILENAME = "AbstractExporterView.glade"
 
-    def __init__(self, plugin, controller):
-        super(AbstractExporterView, self).__init__(plugin, controller)
+    def getDialog(self):
+        raise NotImplementedError
 
     def run(self):
-        self.dialog.show_all()
+        self.getDialog().show_all()
         self.hideWarning()
 
     def showWarning(self, text):
