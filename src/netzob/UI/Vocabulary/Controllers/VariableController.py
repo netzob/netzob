@@ -164,19 +164,22 @@ class VariableTreeController(object):
         """
         variable = None
         if event.button == 3:
-            x = int(event.x)
-            y = int(event.y)
-            (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
+            try:
+                x = int(event.x)
+                y = int(event.y)
+                (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
 
-            # Retrieve the selected variable
-            varid = None
-            aniter = treeview.get_model().get_iter(path)
-            if aniter:
-                if treeview.get_model().iter_is_valid(aniter):
-                    varid = treeview.get_model().get_value(aniter, 0)
+                # Retrieve the selected variable
+                varid = None
+                aniter = treeview.get_model().get_iter(path)
+                if aniter:
+                    if treeview.get_model().iter_is_valid(aniter):
+                        varid = treeview.get_model().get_value(aniter, 0)
 
-                    if varid is not None:
-                        variable = self.dictVariable[varid]
+                        if varid is not None:
+                            variable = self.dictVariable[varid]
+            except:
+                logging.debug(_("The user clicks on no variable."))
         else:
             # Wrong mouse click
             return
