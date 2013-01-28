@@ -36,6 +36,7 @@ import re
 from lxml.etree import ElementTree
 from lxml import etree
 import shutil
+import uuid
 
 
 #+---------------------------------------------------------------------------+
@@ -135,14 +136,14 @@ class Workspace(object):
     #| Constructor
     #| @param path : path of the workspace
     #+-----------------------------------------------------------------------+
-    def __init__(self, name, creationDate, path, pathOfTraces, pathOfLogging, pathOfPrototypes, lastProjectPath=None, importedTraces=[]):
+    def __init__(self, name, creationDate, path, pathOfTraces, pathOfLogging, pathOfPrototypes, lastProjectPath=None, importedTraces={}):
         self.name = name
-        self.path = path
+        self.path = os.path.abspath(path)
         self.creationDate = creationDate
         self.projects_path = []
-        self.pathOfTraces = pathOfTraces
-        self.pathOfLogging = pathOfLogging
-        self.pathOfPrototypes = pathOfPrototypes
+        self.pathOfTraces = os.path.join(self.path, pathOfTraces)
+        self.pathOfLogging = os.path.join(self.path, pathOfLogging)
+        self.pathOfPrototypes = os.path.join(self.path, pathOfPrototypes)
         self.lastProjectPath = lastProjectPath
         self.importedTraces = importedTraces
         self.customTransformationFunctions = []
@@ -181,15 +182,87 @@ class Workspace(object):
         self.lastProjectPath = lastProject
 
     def getImportedTraces(self):
-        return self.importedTraces
+        return self.importedTraces.values()
+
+    def getImportedTrace(self, traceId):
+        """Retrieve a specific trace, which identifier is traceId."""
+
+        try:
+            return self.importedTraces[traceId]
+        except KeyError:
+            raise WorkspaceException("Unable to find the requested trace ({0})".format(traceId))
 
     def addImportedTrace(self, importedTrace):
-        self.importedTraces.append(importedTrace)
-#        self.saveConfigFile()
+        self.importedTraces.update({importedTrace.id: importedTrace})
 
     def removeImportedTrace(self, importedTrace):
-        self.importedTraces.remove(importedTrace)
-#        self.saveConfigFile()
+        ImportedTrace.deleteTrace(importedTrace, self.pathOfTraces)
+        self.importedTraces.pop(importedTrace.id)
+
+    def newEmptyImportedTrace(self, name, description=""):
+        """This function is in charge of creating an empty
+        `ImportedTrace`.
+
+        :param name: 'name' of the new trace.
+        :param description (optional): description of the new
+        trace."""
+
+        newTrace = ImportedTrace(str(uuid.uuid4()),
+                                 datetime.datetime.now(),
+                                 "UNKNOWN",
+                                 description,
+                                 name)
+
+        self.addImportedTrace(newTrace)
+
+        return newTrace
+
+    def mergeImportedTraces(self, traceIds, name, keep=True):
+        """This methods allows to merge multiple traces. The merged
+        traces gets a new unique id.
+
+        If the 'keep' parameter is True, a copy of the initial traces
+        is kept.
+
+        We retrieve the 'ImportedTrace' object from its ID. Then we
+        merge all traces' messages and sessions into a new
+        'ImportedTrace'."""
+
+        messages = {}
+        sessions = {}
+        names = []
+        types = []
+
+        for traceId in traceIds:
+            trace = self.getImportedTrace(traceId)
+
+            messages.update(trace.messages)
+            sessions.update(trace.sessions)
+            names.append("'{0}'".format(trace.name))
+
+            # If the type is already a multiple type merge, types are
+            # comma separated values.
+            types.extend(trace.type.split(";"))
+
+            if keep is False:
+                self.removeImportedTrace(trace)
+
+        # The type of the new trace is a list of the multiple types of
+        # the traces to be merged.
+        newTraceType = "{0}".format(";".join(set(types)))
+        description = "Merge of traces {0} and {1}".format(', '.join(names[:-1]), names[-1])
+
+        newTrace = ImportedTrace(str(uuid.uuid4()),
+                                 datetime.datetime.now(),
+                                 newTraceType,
+                                 description,
+                                 name)
+        newTrace.messages = messages
+        newTrace.sessions = sessions
+
+        self.addImportedTrace(newTrace)
+
+        return newTrace
 
     def getTransformationFunctions(self):
         """Computes and returns the list of available functions"""
@@ -230,7 +303,17 @@ class Workspace(object):
 
         self.projects_path.remove(project_path)
 
-    def saveConfigFile(self):
+    def saveConfigFile(self, overrideTraces=[]):
+        """This functions allows to save the current (and only)
+        instance of the Workspace. You can supply a list of traces
+        that should be written on-disk through the `overrideTraces`
+        variable. This allows to override specific traces that where
+        modified.
+
+        :param overrideTraces: a list of trace identifiers that should
+        be written on-disk, even if they already exists.
+        """
+
         workspaceFile = os.path.join(self.path, Workspace.CONFIGURATION_FILENAME)
 
         logging.info("Save the config file of the workspace {0} in {1}".format(self.getName(), workspaceFile))
@@ -266,7 +349,13 @@ class Workspace(object):
 
         xmlWorkspaceImported = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}traces")
         for importedTrace in self.getImportedTraces():
-            importedTrace.save(xmlWorkspaceImported, WORKSPACE_NAMESPACE, COMMON_NAMESPACE, os.path.join(self.path, self.getPathOfTraces()))
+            # overrideTraces variable contains the list of
+            # ImportedTraces that should be overriden. This is useful
+            # in case of message removal for example.
+            forceOverride = (importedTrace.id in overrideTraces)
+
+            importedTrace.save(xmlWorkspaceImported, WORKSPACE_NAMESPACE, COMMON_NAMESPACE,
+                               os.path.join(self.path, self.getPathOfTraces()), forceOverride)
 
         xmlWorkspaceFunctions = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}functions")
         for function in self.getCustomFunctions():
