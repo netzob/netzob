@@ -39,99 +39,6 @@
 
 float NeedlemanScore(t_message * message1, t_message * message2, Bool debugMode);
 
-void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
-		int nbGroups, t_groups* groups, Bool debugMode) {
-	// Compute the matrix
-	float **matrix;
-	int i, j;
-	float maxScore = -1.0f;
-	int i_maximum = -1;
-	int j_maximum = -1;
-	// local variable
-	int p = 0;
-	double status = 0.0;
-	/*
-	 Bool debugMode_copy = debugMode;
-	 Bool doInternalSlick_copy = doInternalSlick;
-	 */
-	// First we fill the matrix with 0s
-	if (callbackStatus(0, status, "Building the scoring matrix for %d groups",
-			nbGroups) == -1) {
-		printf("Error, error while executing C callback.\n");
-	}
-
-	if (callbackIsFinish() == 1) {
-		printf("Python has requested to stop the C Code.");
-		return;
-	}
-
-	matrix = (float **) calloc(nbGroups, sizeof(float*));
-	for (i = 0; i < nbGroups; i++) {
-		matrix[i] = (float *) calloc(nbGroups, sizeof(float));
-		for (j = 0; j < nbGroups; j++) {
-			matrix[i][j] = 0.0;
-		}
-	}
-
-	status = 2.0;
-
-	// We loop over each couple of groups
-	for (i = 0; i < nbGroups; i++) {
-		for (p = i + 1; p < nbGroups; p++) {
-			if (groups->groups[i].scores[p - i - 1] == -1) { //Check if the score has been allready computed
-				unsigned int m, n;
-				float similarityScore = 0.0;
-
-				// We loop over each couple of messages
-				for (m = 0; m < groups->groups[i].len; ++m) {
-					for (n = 0; n < groups->groups[p].len; ++n) {
-//        alignTwoMessages(&tmpMessage, doInternalSlick, &groups->groups[i].messages[m], &groups->groups[p].messages[n], debugMode);
-						similarityScore += NeedlemanScore(
-								&groups->groups[i].messages[m],
-								&groups->groups[p].messages[n], debugMode);
-						//      similarityScore += computeDistance( tmpMessage.score );
-						//    free((&tmpMessage)->alignment);
-						//  free((&tmpMessage)->mask);
-					}
-				}
-
-				{
-					matrix[i][p] = similarityScore
-							/ (groups->groups[i].len * groups->groups[p].len);
-					(&groups->groups[i])->scores[p - i - 1] = matrix[i][p];
-				}
-
-			} else {
-				matrix[i][p] = groups->groups[i].scores[p - i - 1]; // Put the score allready computed
-			}
-
-			if (((maxScore < matrix[i][p]) || (maxScore == -1))) {
-				maxScore = matrix[i][p];
-				i_maximum = i;
-				j_maximum = p;
-			}
-
-			//Record the scores for the next time
-			if (debugMode) {
-				printf("matrix %d,%d = %f\n", i, p, matrix[i][p]);
-			}
-		}
-	}
-	// Room service
-	for (i = 0; i < nbGroups; i++) {
-		free(matrix[i]);
-	}
-	free(matrix);
-
-	if (callbackStatus(0, status, "Two equivalent groups were found.") == -1) {
-		printf("Error, error while executing C callback.\n");
-	}
-
-	result->i = i_maximum;
-	result->j = j_maximum;
-	result->score = maxScore;
-}
-
 float NeedlemanScore(t_message * message1, t_message * message2, Bool debugMode) {
 	// local variables
 	unsigned int **matrix;
@@ -254,7 +161,7 @@ float NeedlemanScore(t_message * message1, t_message * message2, Bool debugMode)
 	return levenshtein;
 }
 
-void getHighestEquivalentGroup2(t_equivalentGroup * result,
+void getHighestEquivalentGroup(t_equivalentGroup * result,
 		Bool doInternalSlick, int nbMessage, t_message* messages,
 		Bool debugMode, float** scoreMatrix) {
 	int i;

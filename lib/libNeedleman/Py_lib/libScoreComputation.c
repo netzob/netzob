@@ -116,7 +116,7 @@ PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
     bool_debugMode = FALSE;
   }
   
-  getHighestEquivalentGroup2(&result, doInternalSlick, nbmessage, mesmessages, debugMode, scoreMatrix);
+  getHighestEquivalentGroup(&result, doInternalSlick, nbmessage, mesmessages, debugMode, scoreMatrix);
   
   //Compute the scores recorded in a python list://TODO Return Factory
   PyObject *recordedScores = PyList_New((nbmessage*(nbmessage-1))/2);
