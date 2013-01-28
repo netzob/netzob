@@ -178,3 +178,6 @@ class IPv4WordType(AbstractWordType):
 
     def getMinBitSize(self, nbChars):
         return (7 * 8)  # 1.1.1.1
+
+    def normalizeValue(self, value):
+        return value  # No normalization needed.
