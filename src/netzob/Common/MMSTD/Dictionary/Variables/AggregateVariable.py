@@ -207,7 +207,7 @@ class AggregateVariable(AbstractNodeVariable):
         valueToBeRead = readingToken.getValue()[readingToken.getIndex():]
         for index in len(valueToBeRead):
             tmpValue = valueToBeRead[:index]
-            tmpChild = DataVariable(str(uuid.uuid4()), "Learned Inserted Variable", True, True, BinaryType(True, len(tmpValue), len(tmpValue)), tmpValue.to01())
+            tmpChild = DataVariable(str(uuid.uuid4()), "Learned Inserted Variable", True, True, BinaryType(True, len(tmpValue), len(tmpValue)), tmpValue)
             repeatVariable.add(tmpChild)
 
             # We read this new variable in a learning context.

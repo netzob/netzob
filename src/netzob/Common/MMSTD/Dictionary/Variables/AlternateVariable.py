@@ -140,7 +140,7 @@ class AlternateVariable(AbstractNodeVariable):
         for index in len(valueToBeRead):
             # We search if, by shifting the position of actual variable, we could read the given value.
             tmpValue = valueToBeRead[:index]
-            tmpChild = DataVariable(str(uuid.uuid4()), "Learned Inserted Variable", True, True, BinaryType(True, len(tmpValue), len(tmpValue)), tmpValue.to01())
+            tmpChild = DataVariable(str(uuid.uuid4()), "Learned Inserted Variable", True, True, BinaryType(True, len(tmpValue), len(tmpValue)), tmpValue)
             # We add the new variable at the end, in order to minimize its impact.
             self.add(tmpChild)
 

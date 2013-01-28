@@ -843,7 +843,7 @@ class Field(object):
                 value = value[1:len(value) - 1]
 
             value = TypeConvertor.netzobRawToBitArray(value)
-            variable = DataVariable(str(uuid.uuid4()), "Default variable of {0}".format(self.getName()), False, False, BinaryType(True, len(value), len(value)), value.to01())  # A static field is neither mutable nor random.
+            variable = DataVariable(str(uuid.uuid4()), "Default variable of {0}".format(self.getName()), False, False, BinaryType(True, len(value), len(value)), value)  # A static field is neither mutable nor random.
             return variable
         else:
             if self.defaultVariable is None:

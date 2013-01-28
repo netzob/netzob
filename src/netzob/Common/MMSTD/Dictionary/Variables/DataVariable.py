@@ -64,7 +64,7 @@ class DataVariable(AbstractLeafVariable):
 
                 @type type: string
                 @param typeVariable: the type of the variable being constructed.
-                @type originalValue: linked to type.
+                @type originalValue: bitarray.
                 @param originalValue: the original value of the variable.
         """
         AbstractLeafVariable.__init__(self, _id, name, mutable, learnable)
