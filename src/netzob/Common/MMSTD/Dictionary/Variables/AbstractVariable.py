@@ -85,6 +85,22 @@ class AbstractVariable(object):
         self.setLastClone(clone)
         self.transferBoundedVariables(clone)
         return clone
+
+    def transferBoundedVariables(self, variableToBind):
+        """transferBoundedVariables:
+                Transfer the variable bounded to this variable to the variableToBind.
+        """
+        # Transfer all variables that are bounded to this variable to the clone.
+        for boundedVariable in self.getBoundedVariables():
+            # Two possibilities:  either the boundedVariable is a cloned variable and so we do not touch it because clones catch their pointedVariable according to the cloned
+            # pointedVariable. Or it is a clone variable and we bind it to the clone of the current variable.
+            if boundedVariable.isCloned():
+                # We bind the clone relation variable to the variable to bind.
+                variableToBind.bindVariable(boundedVariable)
+                # And change its pointed ID. So we create a bilateral link between both clone boundedVariable and clone variableToBind.
+                boundedVariable.setPointedID(variableToBind.getID())
+        #self.resetBoundedVariable()
+
     def toString(self):
         """toString:
                 For debugging purpose.
@@ -301,6 +317,8 @@ class AbstractVariable(object):
 
     def bindVariable(self, variable):
         self.boundedVariables.append(variable)
+    def resetBoundedVariable(self):
+        self.boundedVariables = []
 
     def resetTokenChoppedIndexes(self):
         self.tokenChoppedIndexes = []
