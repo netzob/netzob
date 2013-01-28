@@ -95,6 +95,9 @@ class VocabularyController(object):
         """Activate the perspective"""
         # Refresh list of available exporter plugins
         self.updateListOfCapturerPlugins()
+        self.view.updateLeftPanel()
+
+    def deactivate(self):
         pass
 
     def restart(self):
