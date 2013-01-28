@@ -34,7 +34,7 @@
         <property name="label" translatable="yes">Concatenate selected sessions</property>
         <property name="tooltip" translatable="yes">Concatenate selected sessions</property>
         <property name="stock_id">netzob-concat-symbol</property>
-        <property name="sensitive">False</property>
+        <property name="sensitive">True</property>
         <signal name="activate" handler="concatSessionButton_clicked_cb" swapped="no"/>
       </object>
     </child>
@@ -43,7 +43,7 @@
         <property name="label" translatable="yes">Delete selected session(s)</property>
         <property name="tooltip" translatable="yes">Delete selected session(s)</property>
         <property name="stock_id">gtk-delete</property>
-        <property name="sensitive">False</property>
+        <property name="sensitive">True</property>
         <signal name="activate" handler="deleteSessionButton_clicked_cb" swapped="no"/>
       </object>
     </child>

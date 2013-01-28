@@ -34,7 +34,7 @@
         <property name="label" translatable="yes">Concatenate selected sequences</property>
         <property name="tooltip" translatable="yes">Concatenate selected sequences</property>
         <property name="stock_id">netzob-concat-symbol</property>
-        <property name="sensitive">False</property>
+        <property name="sensitive">True</property>
         <signal name="activate" handler="concatSequenceButton_clicked_cb" swapped="no"/>
       </object>
     </child>
@@ -43,7 +43,7 @@
         <property name="label" translatable="yes">Delete selected sequence(s)</property>
         <property name="tooltip" translatable="yes">Delete selected sequence(s)</property>
         <property name="stock_id">gtk-delete</property>
-        <property name="sensitive">False</property>
+        <property name="sensitive">True</property>
         <signal name="activate" handler="deleteSequenceButton_clicked_cb" swapped="no"/>
       </object>
     </child>

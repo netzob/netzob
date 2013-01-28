@@ -140,6 +140,7 @@
           <object class="GtkNotebook" id="objectsNotebook">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+	    <signal name="switch-page" handler="objectsNotebook_switch_cb" swapped="no"/>
             <child>
               <object class="GtkBox" id="symbolListBox">
                 <property name="visible">True</property>
@@ -1036,7 +1037,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkPaned" id="paned1">
+                  <object class="GtkPaned" id="symbolPropertiesPaned">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="orientation">vertical</property>
@@ -1060,7 +1061,7 @@
                               <object class="GtkTreeViewColumn" id="treeviewcolumn3">
                                 <property name="title" translatable="yes">Name</property>
                                 <child>
-                                  <object class="GtkCellRendererText" id="cellrenderertext3"/>
+                                  <object class="GtkCellRendererText" id="cellrenderertext6"/>
                                   <attributes>
                                     <attribute name="text">0</attribute>
                                   </attributes>
@@ -1130,6 +1131,132 @@
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkScrolledWindow" id="sessionScrolledWindow">
+                    <property name="visible">False</property>
+                    <property name="can_focus">True</property>
+                    <property name="shadow_type">in</property>
+                    <child>
+                      <object class="GtkTreeView" id="sessionTreeview">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="model">sessionPropertiesListstore</property>
+                        <property name="headers_clickable">False</property>
+                        <property name="search_column">0</property>
+                        <property name="enable_grid_lines">both</property>
+                        <child internal-child="selection">
+                          <object class="GtkTreeSelection" id="treeview-selection2"/>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="treeviewcolumn31">
+                            <property name="title" translatable="yes">Name</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="cellrenderertext"/>
+                              <attributes>
+                                <attribute name="text">0</attribute>
+                              </attributes>
+			    </child>
+			  </object>
+			</child>
+			<child>
+			  <object class="GtkTreeViewColumn" id="treeviewcolumn41">
+			    <property name="title" translatable="yes">Value</property>
+			    <child>
+			      <object class="GtkCellRendererCombo" id="cellrenderercombo_session_props">
+				<property name="text_column">0</property>
+			      </object>
+			      <attributes>
+				<attribute name="editable">2</attribute>
+				<attribute name="text">1</attribute>
+				<attribute name="model">3</attribute>
+			      </attributes>
+			    </child>
+			  </object>
+			</child>
+		      </object>
+		    </child>
+		  </object>
+                  <packing>
+                    <property name="position">2</property>
+                    <property name="reorderable">True</property>
+                  </packing>
+                </child>
+                <child type="tab">
+                  <object class="GtkLabel" id="sessionLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Session</property>
+                  </object>
+                  <packing>
+                    <property name="menu_label">Iu</property>
+                    <property name="position">2</property>
+                    <property name="tab_expand">True</property>
+                    <property name="tab_fill">False</property>
+                  </packing>
+                </child>
+                <child>
+		  <object class="GtkScrolledWindow" id="sequenceScrolledWindow">
+		    <property name="visible">False</property>
+		    <property name="can_focus">True</property>
+		    <property name="shadow_type">in</property>
+		    <child>
+		      <object class="GtkTreeView" id="sequenceTreeview">
+			<property name="visible">True</property>
+			<property name="can_focus">True</property>
+			<property name="model">sequencePropertiesListstore</property>
+			<property name="headers_clickable">False</property>
+			<property name="search_column">0</property>
+			<property name="enable_grid_lines">both</property>
+			<child internal-child="selection">
+			  <object class="GtkTreeSelection" id="treeview-selection4"/>
+			</child>
+			<child>
+			  <object class="GtkTreeViewColumn" id="treeviewcolumn32">
+			    <property name="title" translatable="yes">Name</property>
+			    <child>
+			      <object class="GtkCellRendererText" id="cellrenderertext3"/>
+			      <attributes>
+				<attribute name="text">0</attribute>
+			      </attributes>
+			    </child>
+			  </object>
+			</child>
+			<child>
+			  <object class="GtkTreeViewColumn" id="treeviewcolumn42">
+			    <property name="title" translatable="yes">Value</property>
+			    <child>
+			      <object class="GtkCellRendererCombo" id="cellrenderercombo_sequence_props">
+				<property name="text_column">0</property>
+			      </object>
+			      <attributes>
+				<attribute name="editable">2</attribute>
+				<attribute name="text">1</attribute>
+				<attribute name="model">3</attribute>
+			      </attributes>
+			    </child>
+			  </object>
+			</child>
+		      </object>
+		    </child>
+		  </object>
+		  <packing>
+                    <property name="position">3</property>
+                    <property name="reorderable">True</property>
+		  </packing>
+                </child>
+                <child type="tab">
+                  <object class="GtkLabel" id="sequenceLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Sequence</property>
+                  </object>
+                  <packing>
+                    <property name="menu_label">Iu</property>
+                    <property name="position">3</property>
+                    <property name="tab_expand">True</property>
+                    <property name="tab_fill">False</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkScrolledWindow" id="messageScrolledWindow">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
@@ -1175,7 +1302,7 @@
                     </child>
                   </object>
                   <packing>
-                    <property name="position">2</property>
+                    <property name="position">4</property>
                   </packing>
                 </child>
                 <child type="tab">
@@ -1186,7 +1313,7 @@
                   </object>
                   <packing>
                     <property name="menu_label">rdg</property>
-                    <property name="position">2</property>
+                    <property name="position">4</property>
                     <property name="tab_expand">True</property>
                     <property name="tab_fill">False</property>
                   </packing>
