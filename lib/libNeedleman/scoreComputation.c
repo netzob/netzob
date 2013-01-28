@@ -163,8 +163,7 @@ float NeedlemanScore(t_message * message1, t_message * message2, Bool debugMode)
 	return levenshtein;
 }
 
-void getHighestEquivalentGroup(t_equivalentGroup * result,
-		Bool doInternalSlick, int nbMessage, t_message* messages,
+void getHighestEquivalentGroup(t_equivalentGroup * result, int nbMessage, t_message* messages,
 		Bool debugMode, float** scoreMatrix) {
 	int i;
 	float maxScore = -1.0f;
@@ -174,7 +173,7 @@ void getHighestEquivalentGroup(t_equivalentGroup * result,
 	int p = 0;
 
 	if (callbackIsFinish() == 1) {
-		return;
+	  return;
 	}
 
 	// We loop over each couple of messages
@@ -184,14 +183,6 @@ void getHighestEquivalentGroup(t_equivalentGroup * result,
 		}
 
 		for (p = i + 1; p < nbMessage; p++) {
-
-			t_message tmpMessage;
-			t_score score;
-			tmpMessage.score = &score;
-
-			score.s1 = 0;
-			score.s2 = 0;
-			score.s3 = 0;
 			//alignTwoMessages(&tmpMessage, doInternalSlick, &messages[i], &messages[p], debugMode);
 			scoreMatrix[i][p] = NeedlemanScore(&messages[i], &messages[p],
 					debugMode);

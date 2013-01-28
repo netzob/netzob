@@ -41,6 +41,6 @@
 
 #include "Needleman.h"
 
-void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick, int nbMessage, t_message* messages, Bool debugMode, float** scoreMatrix);
+void getHighestEquivalentGroup(t_equivalentGroup * result, int nbMessage, t_message* messages, Bool debugMode, float** scoreMatrix);
 
 #endif
