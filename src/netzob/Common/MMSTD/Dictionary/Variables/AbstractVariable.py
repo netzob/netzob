@@ -310,7 +310,8 @@ class AbstractVariable(object):
         self.node = node
 
     def addFather(self, father):
-        self.fathers.append(father)
+        if not father in self.fathers:
+            self.fathers.append(father)
 
     def removeFather(self, father):
         self.fathers.remove(father)
