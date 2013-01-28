@@ -74,6 +74,19 @@ class Session(object):
     def addMessage(self, message):
         self.messages.append(message)
 
+    def getCouples(self):
+        couples = []
+        for message in self.getMessages():
+            src = message.getSource()
+            dst = message.getDestination()
+            couple1 = (src, dst)
+            couple2 = (dst, src)
+            if (not couple1 in couples) and (not couple2 in couples):
+                couples.append(couple1)
+        return couples
+
+    ## Getters and setters
+
     def getID(self):
         return self.id
 
