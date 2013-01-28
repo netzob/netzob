@@ -66,6 +66,7 @@ from netzob.Common.MMSTD.Dictionary.Variables.RepeatVariable import \
     RepeatVariable
 from netzob.UI.Vocabulary.Views.VariableView import VariableTreeView, \
     VariableCreationView, VariableMovingView
+from netzob.UI.NetzobWidgets import NetzobErrorMessage
 
 
 class VariableTreeController(object):
@@ -865,13 +866,15 @@ class VariableIDTreeController(object):
         self.netzob = variableCreationController.netzob
         self.variableCreationController = variableCreationController
         self.registerContent()
+        self.selectedVariable = None
+        self.view.getWidg("createDefaultVariable_button").set_visible(False)
 
     def initCallbacks(self):
         """initCallbacks:
                 Init the callbacks.
         """
-        self.view.getWidg("treeview").connect('button-press-event', self.showMenu)
-        self.view.getWidg("button").connect('clicked', self.view.destroyDialog)
+        self.view.getWidg("treeview").connect('button-press-event', self.clickOnElement)
+        self.view.getWidg("button").connect('clicked', self.selectElement)
 
     def registerContent(self):
         """registerContent:
@@ -907,54 +910,42 @@ class VariableIDTreeController(object):
             if variable.getChild() is not None:
                 self.registerVariable(newEntry, variable.getChild())
 
-    def showMenu(self, treeview, event):
-        """showMenu:
-                Called on right click on a variable.
+    def clickOnElement(self, treeview, event):
+        """clickOnElement:
+                Called on click on a variable.
 
                 @param treeview: the treeview which contains the triggering variable.
                 @param event: the mouse event which called this function.
         """
-        variable = None
-        if event.button == 3:
-            x = int(event.x)
-            y = int(event.y)
-            (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
+        if event.button == 1:  # left click
+            try:
+                x = int(event.x)
+                y = int(event.y)
+                (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
 
-            # Retrieve the selected variable
-            varid = None
-            aniter = treeview.get_model().get_iter(path)
-            if aniter:
-                if treeview.get_model().iter_is_valid(aniter):
-                    varid = treeview.get_model().get_value(aniter, 0)
+                # Retrieve the selected variable
+                varid = None
+                aniter = treeview.get_model().get_iter(path)
+                if aniter:
+                    if treeview.get_model().iter_is_valid(aniter):
+                        varid = treeview.get_model().get_value(aniter, 0)
 
-                    if varid is not None:
-                        variable = self.dictVariable[varid]
+                        if varid is not None:
+                            self.selectedVariable = self.dictVariable[varid]
+            except:
+                logging.debug(_("The user clicks on no variable."))
         else:
             # Wrong mouse click
             return
 
-        if variable is None:
-            logging.debug("Impossible to find the selected variable.")
-            return
-
-        # We display the menu for the insertion of sub-elements if its an Aggregate or an Alternative
-        self.menu = Gtk.Menu()
-
-        # To select an element.
-        itemSelect = Gtk.MenuItem(_("Select this element"))
-        itemSelect.connect("activate", self.selectElement, variable)
-        itemSelect.show()
-
-        self.menu.append(itemSelect)
-        self.menu.popup(None, None, None, None, event.button, event.time)
-
-    def selectElement(self, widget, variable):
+    def selectElement(self, widget):
         """selectElement:
                 Give the ID of the variable associated to the selected element to the globally calling variableCreationController.
 
                 @param widget: the widget on which this function is connected.
-                @type variable: netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable
-                @param variable: the variable that is selected/of which we want the ID.
         """
-        self.variableCreationController.view.getWidg("IDEntry").set_text(str(variable.getID()))
-        self.view.getWidg("dialog").destroy()
+        if self.selectedVariable is not None:
+            self.variableCreationController.view.getWidg("IDEntry").set_text(str(self.selectedVariable.getID()))
+            self.view.getWidg("dialog").destroy()
+        else:
+            NetzobErrorMessage(_("No variable selected."))
