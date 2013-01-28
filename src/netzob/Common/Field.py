@@ -677,6 +677,20 @@ class Field(object):
         except IndexError:
             return None
 
+    def getPreviousFieldInCurrentLayer(self):
+        """getPreviousFieldInCurrentLayer:
+        Computes and returns the previous field declared
+        on the same layer. It returns None if it doesn't exist"""
+        parentField = self.getParentField()
+        localFields = parentField.getLocalFields()
+        indexField1 = localFields.index(self)
+        indexField2 = indexField1 - 1
+        try:
+            return localFields[indexField2]
+        except IndexError:
+            return None
+
+
     #+----------------------------------------------
     #| concatWithNextField:
     #|  Concatenate the current field with the next one at the same level
