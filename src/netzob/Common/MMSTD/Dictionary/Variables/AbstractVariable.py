@@ -32,6 +32,7 @@ from abc import abstractmethod
 from gettext import gettext as _
 from bitarray import bitarray
 import logging
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -72,6 +73,8 @@ class AbstractVariable(object):
         self.boundedVariables = []  # A list containing all variables which value is bind to the value of this variable.
         self.tokenChoppedIndexes = []  # An integer list which contain the index of each segment this variable is responsible for (they have been created from its value)
         self.currentValue = None  # The value we see from the current variable if we flatten the subtree which starts here.
+        self.cloned = False  # Tells if the variable is a clone or not.
+        self.lastClone = None  # The last clone of this variable that has been made.
 
     def toString(self):
         """toString:
@@ -263,6 +266,12 @@ class AbstractVariable(object):
     def getCurrentValue(self):
         return self.currentValue
 
+    def isCloned(self):
+        return self.cloned
+
+    def getLastClone(self):
+        return self.lastClone
+
     def setID(self, _id):
         self.id = _id
 
@@ -286,6 +295,13 @@ class AbstractVariable(object):
 
     def resetTokenChoppedIndexes(self):
         self.tokenChoppedIndexes = []
+
+    def setCloned(self, cloned):
+        self.cloned = cloned
+
+    def setLastClone(self, clone):
+        self.lastClone = clone
+
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |
 #+---------------------------------------------------------------------------+
