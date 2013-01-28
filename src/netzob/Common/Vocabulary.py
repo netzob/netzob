@@ -178,6 +178,12 @@ class Vocabulary(object):
 
     def removeMessage(self, message):
         self.messages.remove(message)
+        for symbol in self.symbols:
+            if message in symbol.getMessages():
+                symbol.removeMessage(message)
+        for session in self.sessions:
+            if message in session.getMessages():
+                session.removeMessage(message)
 
     def getVariables(self):
         variables = []
