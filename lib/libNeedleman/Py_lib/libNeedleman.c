@@ -42,10 +42,10 @@
 extern PyObject *python_callback;
 
 static PyMethodDef libNeedleman_methods[] = {
-		{"getBID", py_getBID, METH_NOARGS},
-		{"alignTwoMessages", py_alignTwoMessages, METH_VARARGS},
-		{"alignMessages", py_alignMessages, METH_VARARGS},
-		{NULL, NULL}
+  {"getBID", py_getBID, METH_NOARGS, NULL},
+  {"alignTwoMessages", py_alignTwoMessages, METH_VARARGS, NULL},
+  {"alignMessages", py_alignMessages, METH_VARARGS, NULL},
+  {NULL, NULL, 0, NULL}
 };
 
 //+---------------------------------------------------------------------------+
