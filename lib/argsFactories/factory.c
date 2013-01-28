@@ -44,7 +44,6 @@
 int parseArgs(PyObject* factobj, ...){
 	va_list args;
 	va_start(args,factobj);
-	int ret = 0;
 	
 	if(PyObject_HasAttrString(factobj,"function")){
 		char* function=NULL;
