@@ -171,13 +171,16 @@ class Vocabulary(object):
             logging.warn("The session cannot be added in the vocabulary since it's already declared in.")
 
     def removeSymbol(self, symbol):
-        self.symbols.remove(symbol)
+        if symbol in self.symbols:
+            self.symbols.remove(symbol)
 
     def removeSession(self, session):
-        self.sessions.remove(session)
+        if session in self.sessions:
+            self.sessions.remove(session)
 
     def removeMessage(self, message):
-        self.messages.remove(message)
+        if message in self.messages:
+            self.messages.remove(message)
         for symbol in self.symbols:
             if message in symbol.getMessages():
                 symbol.removeMessage(message)
