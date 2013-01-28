@@ -32,6 +32,7 @@ from bitarray import bitarray
 from gettext import gettext as _
 from lxml import etree
 import logging
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -97,6 +98,13 @@ class DataVariable(AbstractLeafVariable):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
+    def cloneVariable(self):
+        clone = DataVariable(uuid.uuid4(), self.getName(), self.isMutable(), self.isLearnable(), self.getType(), self.getOriginalValue())
+        clone.setCloned(True)
+        self.setLastClone(clone)
+        self.transferBoundedVariables(clone)
+        return clone
+
     def bin2str(self, bina):
         """bin2str:
                 Transform a bitarray in a well-formatted string according to the type of the variable.

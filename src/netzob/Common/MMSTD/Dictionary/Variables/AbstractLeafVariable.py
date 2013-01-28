@@ -31,6 +31,7 @@
 from abc import abstractmethod
 from gettext import gettext as _
 import logging
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -160,6 +161,13 @@ class AbstractLeafVariable(AbstractVariable):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
+    def cloneVariable(self):
+        clone = AbstractLeafVariable(uuid.uuid4(), self.getName(), self.isMutable(), self.isLearnable())
+        clone.setCloned(True)
+        self.setLastClone(clone)
+        self.transferBoundedVariables(clone)
+        return clone
+
     def read(self, readingToken):
         """read:
                 The leaf element tries to compare/learn the read value.

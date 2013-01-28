@@ -31,6 +31,7 @@
 from gettext import gettext as _
 from lxml import etree
 import logging
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -184,6 +185,25 @@ class ComputedRelationVariable(AbstractVariable):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
+    def cloneVariable(self):
+        self.directPointer = self.findDirectPointer()
+
+        if self.directPointer:
+            try:
+                pointedID = self.getPointedVariable().getLastClone().getID()
+            except:
+                self.log.debug(_("The variable points nowhere."))
+                return None
+        else:
+            # If it is an indirect pointer, it will be set by the pointed Variable when she will be cloned.
+            pointedID = self.getPointedID()
+
+        clone = ComputedRelationVariable(uuid.uuid4(), self.getName(), self.isMutable(), self.isLearnable(), self.getRelationType(), pointedID, self.symbol)
+        clone.setCloned(True)
+        self.setLastClone(clone)
+        self.transferBoundedVariables(clone)
+        return clone
+
     def getVariableType(self):
         """getVariableType:
         """

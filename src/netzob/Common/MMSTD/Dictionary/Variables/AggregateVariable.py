@@ -273,6 +273,18 @@ class AggregateVariable(AbstractNodeVariable):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
+    def cloneVariable(self):
+        # Clone the variable.
+        clone = AggregateVariable(uuid.uuid4(), self.getName(), self.isMutable(), self.isLearnable(), None)
+        clone.setCloned(True)
+        # Clone its children and add them to the previously cloned variable.
+        for child in self.children:
+            clonedChild = child.cloneVariable()
+            clone.addChild(clonedChild)
+        self.setLastClone(clone)
+        self.transferBoundedVariables(clone)
+        return clone
+
     def getVariableType(self):
         """getVariableType:
         """

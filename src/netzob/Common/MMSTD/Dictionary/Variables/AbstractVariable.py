@@ -76,6 +76,15 @@ class AbstractVariable(object):
         self.cloned = False  # Tells if the variable is a clone or not.
         self.lastClone = None  # The last clone of this variable that has been made.
 
+    def cloneVariable(self):
+        """cloneVariable:
+                Return a clone of the given variable. The ID is the only thing that changed.
+        """
+        clone = AbstractVariable(uuid.uuid4(), self.getName(), self.isMutable(), self.isLearnable(), self.isNode())
+        clone.setCloned(True)
+        self.setLastClone(clone)
+        self.transferBoundedVariables(clone)
+        return clone
     def toString(self):
         """toString:
                 For debugging purpose.

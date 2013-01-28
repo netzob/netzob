@@ -31,6 +31,7 @@
 from gettext import gettext as _
 from lxml import etree
 import logging
+import uuid
 import random
 
 #+---------------------------------------------------------------------------+
@@ -194,6 +195,15 @@ class RepeatVariable(AbstractNodeVariable):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
+    def cloneVariable(self):
+        clonedChild = self.child.cloneVariable()
+        (minIterations, maxIterations) = self.getNumberIterations()
+        clone = RepeatVariable(uuid.uuid4(), self.getName(), self.isMutable(), self.isLearnable(), clonedChild, minIterations, maxIterations)
+        clone.setCloned(True)
+        self.setLastClone(clone)
+        self.transferBoundedVariables(clone)
+        return clone
+
     def getVariableType(self):
         """getVariableType:
         """
