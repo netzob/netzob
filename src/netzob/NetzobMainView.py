@@ -49,6 +49,7 @@ from netzob.Common.SignalsManager import SignalsManager
 from netzob.UI.Vocabulary.Controllers.VocabularyController import VocabularyController
 from netzob.UI.Grammar.Controllers.GrammarController import GrammarController
 from netzob.UI.Simulator.Controllers.SimulatorController import SimulatorController
+from netzob.UI.TraceManager.Controllers.TraceManagerController import TraceManagerController
 
 
 class NetzobMainView(object):
@@ -56,6 +57,7 @@ class NetzobMainView(object):
 
     GRAMMAR_INFERENCE_VIEW = "grammar-inference-view"
     TRAFFIC_SIMULATOR_VIEW = "traffic-simulator-view"
+    TRACE_MANAGER_VIEW = "trace-manager-view"
 
     def __init__(self, controller):
         addNetzobIconsToDefaultFactory()
@@ -70,6 +72,7 @@ class NetzobMainView(object):
         self.currentPerspectiveMergeID = None
         self.currentPerspectiveActionGroup = None
         self.currentPerspectivePanel = None
+        self.currentPerspectiveController = None
         self.loadBaseMenuBarAndToolbar()
         self.registerSignalListeners()
 
@@ -103,6 +106,9 @@ class NetzobMainView(object):
         self.mainWindow.show()
 
     def registerPerspectives(self):
+        self.registerPerspective(self.TRACE_MANAGER_VIEW,
+                                 _("Trace Manager"),
+                                 TraceManagerController)
         self.registerPerspective(VocabularyController.PERSPECTIVE_ID,
                                  _("Vocabulary Inference"),
                                  VocabularyController)
@@ -112,9 +118,9 @@ class NetzobMainView(object):
         self.registerPerspective(self.TRAFFIC_SIMULATOR_VIEW,
                                  _("Simulator"),
                                  SimulatorController)
-        # Useless
-#        self.switchPerspective(self.VOCABULARY_INFERENCE_VIEW)
-        self.perspectiveComboBox.set_active(0)
+
+        # Set 'Vocabulary Inference' as the default view
+        self.perspectiveComboBox.set_active(1)
 
     def loadBaseMenuBarAndToolbar(self):
         # Load actions
@@ -189,19 +195,31 @@ class NetzobMainView(object):
         """@type  newPerspective: string
         @param newPerspective: Switch for the view.
         Value available: "vocabulary", "grammar" and "traffic"."""
+
+        if self.currentPerspectiveController is not None:
+            self.currentPerspectiveController.deactivate()
+
         # Reset base menu and toolbar
         self.resetMainWindow()
         self.log.debug("Setting perspective ID {0}".format(newPerspectiveCode))
         perspective = self.perspectiveDict[newPerspectiveCode][1]
+
         # Switch central panel
         self.currentPerspectivePanel = perspective.view.getPanel()
         self.setCentralPanel(self.currentPerspectivePanel)
+        self.currentPerspectiveController = perspective
+
         # Add action group to UI Manager
-        self.currentPerspectiveActionGroup = perspective.view.getActionGroup()
-        self.uiManager.insert_action_group(self.currentPerspectiveActionGroup)
+        actionGroup = perspective.view.getActionGroup()
+        if actionGroup is not None:
+            self.currentPerspectiveActionGroup = actionGroup
+            self.uiManager.insert_action_group(actionGroup)
+
         # Merge UI definition into UI Manager
-        self.currentPerspectiveMergeID = self.uiManager.add_ui_from_string(
-            perspective.view.getMenuToolbarUIDefinition())
+        toolbarUIDefinition = perspective.view.getMenuToolbarUIDefinition()
+        if toolbarUIDefinition is not None:
+            self.currentPerspectiveMergeID = self.uiManager.add_ui_from_string(toolbarUIDefinition)
+
         # Activate it
         perspective.activate()
 

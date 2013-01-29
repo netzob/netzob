@@ -44,12 +44,10 @@ from gi.repository import Gtk, Gdk, GObject
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.UI.Common.Views.WorkspaceConfigurationView import WorkspaceConfigurationView
 from netzob.Common.LoggingConfiguration import LoggingConfiguration
-from netzob.Common.BugReporter import BugReporter, BugReporterException
-from netzob.UI.NetzobWidgets import NetzobErrorMessage
+from netzob.Common.BugReporter import BugReporter
 from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask, TaskError
 from netzob.Common.Threads.Job import Job
 from netzob.Common.Project import Project
-from netzob.Common.Property import Property
 from netzob.UI.Common.Controllers.ProjectImportController import ProjectImportController
 from netzob.UI.Common.Controllers.ProjectExportController import ProjectExportController
 from netzob.UI.Common.Controllers.ProjectPropertiesController import ProjectPropertiesController

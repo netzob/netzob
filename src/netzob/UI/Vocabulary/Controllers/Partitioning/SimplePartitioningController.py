@@ -112,9 +112,9 @@ class SimplePartitioningController(object):
         self._view.simpleDialog.destroy()
 
         # Update the message table view
-        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.updateSelectedMessageTable()
         # Update the field properties view
-        self.vocabularyController.view.updateLeftPanel()
+        self.vocabularyController.updateLeftPanel()
 
     def simplePartitioning(self, unitSize):
         """Simple partitioning the provided fields"""

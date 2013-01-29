@@ -220,4 +220,4 @@ class ProjectPropertiesController(object):
         map(lambda x: x.field.setEndianess(self._getComboValue("propertiesEndianessCombobox")), symbols)
 
         vocabView = self.mainController.view.perspectiveDict[VocabularyController.PERSPECTIVE_ID][1].view
-        vocabView.updateSelectedMessageTable()
+        vocabView.controller.updateSelectedMessageTable()

@@ -7,13 +7,13 @@
     <property name="stock">gtk-close</property>
     <property name="icon-size">1</property>
   </object>
-  <object class="GtkBox" id="messageTableBox">
+  <object class="GtkBox" id="symbolTableBox">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="orientation">vertical</property>
     <signal name="button-press-event" handler="messageListBox_button_press_event_cb" swapped="no"/>
-    <signal name="enter-notify-event" handler="messageTableBox_enter_notify_event_cb" swapped="no"/>
-    <signal name="leave-notify-event" handler="messageTableBox_leave_notify_event_cb" swapped="no"/>
+    <signal name="enter-notify-event" handler="symbolTableBox_enter_notify_event_cb" swapped="no"/>
+    <signal name="leave-notify-event" handler="symbolTableBox_leave_notify_event_cb" swapped="no"/>
     <child>
       <object class="GtkBox" id="symbolNameBox">
         <property name="visible">True</property>
@@ -67,7 +67,7 @@
       </packing>
     </child>
     <child>
-      <object class="GtkScrolledWindow" id="messageTableScrolledWindow">
+      <object class="GtkScrolledWindow" id="symbolTableScrolledWindow">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="shadow_type">in</property>

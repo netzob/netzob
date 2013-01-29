@@ -88,7 +88,6 @@ class Symbol(AbstractSymbol):
         self.messages = []
         self.field = Field.createDefaultField(self)
         self.field.setName(name)
-        self.project = project
         self.pattern = None
 
     #+----------------------------------------------

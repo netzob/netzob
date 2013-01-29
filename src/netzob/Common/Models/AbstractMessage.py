@@ -32,6 +32,7 @@ from gettext import gettext as _
 import logging
 import uuid
 import re
+import copy
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -80,6 +81,21 @@ class AbstractMessage(object):
             self.pattern = pattern
             # self.log.debug("not empty {0}".format(self.getPatternString()))
 
+    def copy(self):
+        """This function allows to copy an object an update the
+        message's unique id to avoid conflicts between traces and
+        sessions."""
+
+        message = copy.copy(self)
+        message.id = str(uuid.uuid4())
+        return message
+
+    def __str__(self):
+        return "[{0}: data={1}...; type={2}; session={3}]".format(self.id,
+                                                                  self.data[:15],
+                                                                  self.type,
+                                                                  self.session.id)
+
     #+-----------------------------------------------------------------------+
     #| getFactory
     #|     Abstract method to retrieve the associated factory
@@ -88,6 +104,20 @@ class AbstractMessage(object):
     def getFactory(self):
         self.log.error("The message class doesn't have an associated factory !")
         raise NotImplementedError("The message class doesn't have an associated factory !")
+
+    def getSource(self):
+        """
+        getSource: return the actor that sent the message, if it exists.
+        """
+        self.log.error("The message class doesn't have a source !")
+        raise NotImplementedError("The message class doesn't have a source !")
+
+    def getDestination(self):
+        """
+        getDestination: return the actor that received the message, if it exists.
+        """
+        self.log.error("The message class doesn't have a destination !")
+        raise NotImplementedError("The message class doesn't have a destination !")
 
     #+-----------------------------------------------------------------------+
     #| getProperties

@@ -315,8 +315,8 @@ class ResearchController(object):
     def showResult(self, result):
         """Show the result pointed message"""
         currentMessage = result.getMessage()
-        self.vocabularyController.view.setDisplayedFieldInSelectedMessageTable(currentMessage.getSymbol().getField())
-        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.setDisplayedObjectInSelectedMessageTable(currentMessage.getSymbol().getField())
+        self.vocabularyController.updateSelectedMessageTable()
 
     def updateNextAndPreviousButtons(self):
         """Update the sensitivity of next and previous buttons"""
@@ -347,7 +347,7 @@ class ResearchController(object):
         self.executedSearchTasks = None
         self.idResult = 0
         self.decolorizeAllResult()
-        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.updateSelectedMessageTable()
         checkMenuItem = self.vocabularyController.netzob.view.uiManager.get_widget("/mainMenuBar/mainMenuBarAdditions/searchMenu/searchText")
         checkMenuItem.set_active(False)
         self.hide()

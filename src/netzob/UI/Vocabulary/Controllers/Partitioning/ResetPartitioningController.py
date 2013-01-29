@@ -101,8 +101,8 @@ class ResetPartitioningController(object):
         self._view.resetDialog.destroy()
 
         # Update the UI
-        self.vocabularyController.view.updateLeftPanel()
-        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.updateLeftPanel()
+        self.vocabularyController.updateSelectedMessageTable()
 
     def reset(self):
         """Reset the provided fields"""

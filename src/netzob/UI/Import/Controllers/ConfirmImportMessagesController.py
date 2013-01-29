@@ -113,16 +113,17 @@ class ConfirmImportMessagesController(object):
                     for property in message.getProperties():
                         eq_message.addExtraProperty(property)
 
-        # We register each message in the vocabulary of the project
-        for message in self.importedMessages:
-            self.currentProject.getVocabulary().addMessage(message)
-
         # We create a session with each message
-        session = Session(str(uuid.uuid4()), "Session 1", "")
+        session = Session(str(uuid.uuid4()), "Session 1", self.currentProject, "")
         for message in self.importedMessages:
             session.addMessage(message)
         # We register the session in the vocabulary of the project
         self.currentProject.getVocabulary().addSession(session)
+
+        # We register each message in the vocabulary of the project
+        for message in self.importedMessages:
+            self.currentProject.getVocabulary().addMessage(message)
+            message.setSession(session)
 
         # We create a default symbol dedicated for this
         symbol = Symbol(str(uuid.uuid4()), symbolName, self.currentProject)

@@ -124,6 +124,12 @@ class Vocabulary(object):
                 return symbol
         return None
 
+    def getSessionByID(self, sessionID):
+        for session in self.sessions:
+            if str(session.getID()) == str(sessionID):
+                return session
+        return None
+
     def getFieldByID(self, fieldID):
         for symbol in self.symbols:
             for field in symbol.getAllFields():
@@ -165,13 +171,22 @@ class Vocabulary(object):
             logging.warn("The session cannot be added in the vocabulary since it's already declared in.")
 
     def removeSymbol(self, symbol):
-        self.symbols.remove(symbol)
+        if symbol in self.symbols:
+            self.symbols.remove(symbol)
 
     def removeSession(self, session):
-        self.sessions.remove(session)
+        if session in self.sessions:
+            self.sessions.remove(session)
 
     def removeMessage(self, message):
-        self.messages.remove(message)
+        if message in self.messages:
+            self.messages.remove(message)
+        for symbol in self.symbols:
+            if message in symbol.getMessages():
+                symbol.removeMessage(message)
+        for session in self.sessions:
+            if message in session.getMessages():
+                session.removeMessage(message)
 
     def getVariables(self):
         variables = []
@@ -257,7 +272,7 @@ class Vocabulary(object):
                     vocabulary.addSymbol(symbol)
             # Sessions
             for xmlSession in xmlRoot.findall("{" + namespace_project + "}sessions/{" + namespace_common + "}session"):
-                session = Session.loadFromXML(xmlSession, namespace_project, namespace_common, version, vocabulary)
+                session = Session.loadFromXML(xmlSession, namespace_project, namespace_common, version, project, vocabulary)
                 if session is not None:
                     vocabulary.addSession(session)
         return vocabulary
