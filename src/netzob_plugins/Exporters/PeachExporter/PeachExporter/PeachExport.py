@@ -110,7 +110,7 @@ class PeachExport(object):
                 @rtype: string
                 @return: the string representation of the generated Peach xml pit file.
         """
-        logging.debug(_("Targeted symbolID: {0}").format(str(symbolID)))
+        logging.debug("Targeted symbolID: {0}".format(str(symbolID)))
         xmlRoot = etree.Element("Peach")
         etree.SubElement(xmlRoot, "Include", ns="default", src="file:defaults.xml")
         xmlImport = etree.SubElement(xmlRoot, "Import")
@@ -126,7 +126,7 @@ class PeachExport(object):
                     resSymbol = symbol
                     break
             if resSymbol is None:
-                logging.warning(_("Impossible to retrieve the symbol having the id {0}").format(str(symbolID)))
+                logging.warning("Impossible to retrieve the symbol having the id {0}".format(str(symbolID)))
                 return None
             else:
                 self.makeDataModel(xmlRoot, symbol)
@@ -258,21 +258,21 @@ class PeachExport(object):
             # Variable/Defaultvalue Management: #
             #-----------------------------------#
             if self.variableOverRegex:
-                logging.debug(_("The fuzzing is based on variables."))
+                logging.debug("The fuzzing is based on variables.")
                 variable = field.getVariable()
                 if variable is None:
                     variable = field.getDefaultVariable(symbol)
 
                 # We retrieve the values of the variable in text format.
                 typedValueLists = self.getRecVariableTypedValueLists(variable)
-                logging.debug(_("The field {0} has the value {1}.").format(field.getName(), str(typedValueLists)))
+                logging.debug("The field {0} has the value {1}.".format(field.getName(), str(typedValueLists)))
 
                 # We count the subfields for the selected field. Aggregate variable can cause multiple subfields.
                 subLength = 0
                 for typedValueList in typedValueLists:
                     subLength = max(subLength, len(typedValueList))
 
-                logging.debug(_("Sublength : {0}.").format(str(subLength)))
+                logging.debug("Sublength : {0}.".format(str(subLength)))
                 # We create one Peach subfield for each netzob subfield.
                 xmlFields = []
                 # For each subfield.
@@ -309,7 +309,7 @@ class PeachExport(object):
             # Regex management: #
             #-------------------#
             else:
-                logging.debug(_("The fuzzing is based on regexes."))
+                logging.debug("The fuzzing is based on regexes.")
                 peachType = self.getPeachFieldTypeFromNetzobFormat(field)
                 regex = field.getRegex()
                 if field.isStatic():
@@ -331,7 +331,7 @@ class PeachExport(object):
                         for lterm in string.split(regex, ".{"):
                                 for rterm in string.split(lterm, "}"):
                                     splittedRegex.append(rterm)  # splittedRegex = ["abcd", "m,n", "efg", ",o", "", "p", "hij"]
-                                    logging.debug(_("The field {0} has the splitted Regex = {1}").format(field.getName(), str(splittedRegex)))
+                                    logging.debug("The field {0} has the splitted Regex = {1}".format(field.getName(), str(splittedRegex)))
 
                         for i in range(len(splittedRegex)):
                             # Dynamic subfield (splittedRegex will always contain dynamic subfields in even position).
@@ -361,13 +361,13 @@ class PeachExport(object):
                                 # Static subfield.
                                 if splittedRegex[i] != "":
                                     xmlField = etree.SubElement(xmlDataModel, peachType, name=("{0}_{1}").format(field.getName(), i), valueType="hex", value=splittedRegex[i])
-                                    logging.debug(_("The field {0} has a static subfield of value {1}.").format(field.getName(), splittedRegex[i]))
+                                    logging.debug("The field {0} has a static subfield of value {1}.".format(field.getName(), splittedRegex[i]))
                                     if not self.mutateStaticFields:
                                         xmlField.attrib["mutable"] = "false"
                     else:
                         # If the field's regex is (), we add a null-length Peach field type.
                         xmlField = etree.SubElement(xmlDataModel, "Blob", name=field.getName(), length=0)
-                        logging.debug(_("The field {0} is empty.").format(field.getName()))
+                        logging.debug("The field {0} is empty.".format(field.getName()))
 
     def makeUnknownSymbolDataModel(self, xmlFather):
         """makeUnknownSymbolDataModel:
@@ -412,13 +412,13 @@ class PeachExport(object):
                 @rtype: (string, bitarray.bitarray) list list.
                 @return: the list, representing aggregations, of lists, representing alternations, of couple (type of a leaf variable, value (in bitarray) of leaf variable).
         """
-        logging.debug(_("<[ variable  : {0}.").format(str(variable.getName())))
+        logging.debug("<[ variable  : {0}.".format(str(variable.getName())))
         variableType = variable.getVariableType()
         typedValueLists = []  # List of list of couple type-value.
         if variableType == AggregateVariable.TYPE:
             for child in variable.getChildren():
                 # We concatenate the double lists at the lower level (inner list).
-                logging.debug(_("fatherValueLists : {0}.").format(str(typedValueLists)))
+                logging.debug("fatherValueLists : {0}.".format(str(typedValueLists)))
                 typedValueLists = self.concatVariableValues(typedValueLists, self.getRecVariableTypedValueLists(child))
 
         elif variableType == AlternateVariable.TYPE:
@@ -447,8 +447,8 @@ class PeachExport(object):
 
         # typedValueLists = [[("Word", "a")], [("Word", "b"), ("Word", "c"), ("Word", "e")], [("Word", "d"), ("Word", "e")]]
         # <=> variable = a + bce + de
-        logging.debug(_("typedValueLists  : {0}.").format(str(typedValueLists)))
-        logging.debug(_("variable  : {0}. ]>").format(str(variable.getName())))
+        logging.debug("typedValueLists  : {0}.".format(str(typedValueLists)))
+        logging.debug("variable  : {0}. ]>".format(str(variable.getName())))
         return typedValueLists
 
     def concatVariableValues(self, fatherValueLists, sonValueLists):
@@ -470,9 +470,9 @@ class PeachExport(object):
         for fvl in fatherValueLists:
             for svl in sonValueLists:
                 midvl = fvl + svl
-                logging.debug(_("concatVariableValues : midvl before : {0}.").format(str(midvl)))
+                logging.debug("concatVariableValues : midvl before : {0}.".format(str(midvl)))
                 finalValueLists.append(midvl)
-                logging.debug(_("concatVariableValues : midvl after : {0}.").format(str(finalValueLists)))
+                logging.debug("concatVariableValues : midvl after : {0}.".format(str(finalValueLists)))
 
         return finalValueLists
 
@@ -516,7 +516,7 @@ class PeachExport(object):
         """
         peachType = ""
         formt = field.getFormat()
-        logging.debug(_("Format of the field {0} is {1}.").format(field.getName(), formt))
+        logging.debug("Format of the field {0} is {1}.".format(field.getName(), formt))
         if formt == "string":
             peachType = "String"
         elif formt == "decimal":
@@ -606,7 +606,7 @@ class PeachExport(object):
             transitions = mmstd.getTransitions()
             states = mmstd.getAllStates()
         except:
-            logging.info(_("No state model defined in Netzob."))
+            logging.info("No state model defined in Netzob.")
             etree.SubElement(xmlFather, "StateModel", name="No state model defined in Netzob.")
             return
 
