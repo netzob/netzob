@@ -46,12 +46,23 @@ class ASAPClusteringConfigurationController(object):
 
     def __init__(self, ASAPClustering):
         self.ASAPClustering = ASAPClustering
+        self.log = logging.getLogger(__name__)
         self._view = ASAPClusteringConfigurationView(self)
-        self.logger = logging.getLogger(__name__)
 
     @property
     def view(self):
         return self._view
+
+    def getAlgorithm(self):
+        return self.ASAPClustering
+
+    def clusteringThresholdAdjustment_value_changed_cb(self, widget):
+        try:
+            value = float(widget.get_value())
+        except Exception, e:
+            self.log.warn("Invalid Clustering threshold ({0}))".format(e))
+            value = None
+        self.ASAPClustering.setClusteringThreshold(value)
 
     def run(self, attachedView):
         self._view.run(attachedView)

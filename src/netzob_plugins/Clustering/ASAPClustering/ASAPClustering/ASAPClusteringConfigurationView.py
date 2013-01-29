@@ -52,18 +52,25 @@ class ASAPClusteringConfigurationView(object):
         '''
         Constructor
         '''
-        self.logger = logging.getLogger(__name__)
+        self.log = logging.getLogger(__name__)
         from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(ResourcesConfiguration.getPluginsStaticResources(), "ASAPClustering",
                                                 "ui", "ASAPClusteringConfigurationView.glade"))
-        self._getObjects(self.builder, ["frame"])
+        self._getObjects(self.builder, ["frame",
+                                        "clusteringThresholdAdjustment"])
         self.controller = controller
         self.builder.connect_signals(self.controller)
+        algoInstance = self.controller.getAlgorithm()
+
+        self.clusteringThresholdAdjustment.set_value(algoInstance.getClusteringThreshold())
 
     def _getObjects(self, builder, objectsList):
         for obj in objectsList:
             setattr(self, obj, builder.get_object(obj))
+
+    def getClusteringThreshold(self):
+        return self.clusteringThresholdAdjustment.get_value()
 
     def run(self, viewport):
         viewport.add(self.frame)
