@@ -90,8 +90,8 @@ class SessionTableView(object):
         # Create columns
         if self.displayedObject is None:
             return sessionTableTreeView
-        startOfColumns = 1 + 1
-        numOfColumns = startOfColumns + 1
+        startOfColumns = 3
+        numOfColumns = startOfColumns + 3
 
         self.treeViewHeaderGroup.clear()
         for colIdx in range(startOfColumns, numOfColumns):
@@ -129,7 +129,8 @@ class SessionTableView(object):
         treeViewColumn.set_widget(headerWidget)
         treeViewColumn.set_resizable(True)
         treeViewColumn.pack_start(markupCellRenderer, True)
-        treeViewColumn.add_attribute(markupCellRenderer, "markup", i + 2 - startOfColumns)
+        treeViewColumn.add_attribute(markupCellRenderer, "markup", i + 3 - startOfColumns)
+        treeViewColumn.add_attribute(markupCellRenderer, "background", 1)
         markupCellRenderer.set_property("font", "monospace")
         return (treeViewColumn, headerWidget)
 
@@ -167,20 +168,25 @@ class SessionTableView(object):
         You should call this method when you need the messages
         displayed in the treeview to be refreshed and the session have
         not changed. (ie the columns of the treeview won't be updated)"""
-        splitMessagesMatrix = []
-
-        messages = self.displayedObject.getMessages()
 
         # Setup listStore
-        numOfColumns = 1
+        numOfColumns = 4
         # The list store must include the ID and a column for every field
         listStoreTypes = [str] * (numOfColumns + 1)
         self.sessionTableListStore = Gtk.ListStore(*listStoreTypes)
         # Fill listStore with messages
         session = self.getDisplayedObject()
+        rgba_white = "#ffffff"
+
+        # Retrieve session messages
+        messages = self.displayedObject.getMessages()
         for message in messages:
-            data = TypeConvertor.encodeNetzobRawToGivenType(message.getStringData(), session.getFormat())
-            self.sessionTableListStore.append([str(message.getID()), data])
+            splittedMessage = message.applyAlignment(styled=True, encoded=True)
+            # Remove empty fields
+            splittedMessage = [v for v in splittedMessage if v != ""]
+            # Add to the liststore
+            data = " ".join(splittedMessage)
+            self.sessionTableListStore.append([str(message.getID()), rgba_white, str(message.getSource()), str(message.getDestination()), data])
         self.sessionTableTreeView.set_model(self.sessionTableListStore)
 
     def updateFieldNameLabel(self):

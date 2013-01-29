@@ -135,6 +135,23 @@ class VocabularyController(object):
         self.sessionController.updateLeftPanel()
         self.sequenceController.updateLeftPanel()
 
+    def objectsNotebook_switch_cb(self, notebook, page, page_num):
+        # Only show the property paned of selected object (symbol, session or sequence)
+        if page_num == 0:  # Symbol selected
+            self.view.symbolPropertiesPaned.show()
+            self.view.sessionScrolledWindow.hide()
+            self.view.sequenceScrolledWindow.hide()
+            self.view.propertiesNotebook.set_current_page(1 + page_num)
+        elif page_num == 1:  # Session selected
+            self.view.symbolPropertiesPaned.hide()
+            self.view.sessionScrolledWindow.show()
+            self.view.sequenceScrolledWindow.hide()
+            self.view.propertiesNotebook.set_current_page(1 + page_num)
+        elif page_num == 2:  # Sequence selected
+            self.view.symbolPropertiesPaned.hide()
+            self.view.sessionScrolledWindow.hide()
+            self.view.sequenceScrolledWindow.show()
+            self.view.propertiesNotebook.set_current_page(1 + page_num)
 
     # Project properties
     def getProjectProperties(self):
@@ -435,7 +452,7 @@ class VocabularyController(object):
                 self.removeMessageTable(self.getSelectedMessageTable())
                 self.addMessageTable(type(anObject))
 
-        # if a message table is selected we update its object
+        # If a message table is selected we update its object
         self.selectedMessageTable.setDisplayedObject(anObject)
 
     def getDisplayedObjectInSelectedMessageTable(self):
@@ -518,7 +535,7 @@ class VocabularyController(object):
             (filePathList, plugin) = chooser.getFilenameListAndPlugin()
         chooser.destroy()
         if plugin is not None:
-            plugin.setFinish_cb(self.view.updateSymbolList)
+            plugin.setFinish_cb(self.updateLeftPanel)
             plugin.importFile(filePathList)
 
 

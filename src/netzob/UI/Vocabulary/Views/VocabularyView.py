@@ -115,7 +115,8 @@ class VocabularyView(object):
             "vocabularyView.glade"))
         self._getObjects(self.builder, ["vocabularyPanel", "projectTreeview", "projectPropertiesListstore",
                                         "messageTableBox", "messageTableBoxAndResearchBox",
-                                        "messagePropertiesListstore",
+                                        "objectsNotebook", "propertiesNotebook",
+                                        "symbolPropertiesPaned", "sessionScrolledWindow", "sequenceScrolledWindow",
                                         # Symbols
                                         "symbolListStore", "concatSymbolButton", "deleteSymbolButton",
                                         "sequenceAlignmentButton", "partitioningForceButton", "partitioningSimpleButton",

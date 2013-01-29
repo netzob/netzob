@@ -239,15 +239,6 @@ class SequenceController(object):
                     liststore_possibleValues.append([val])
                 self.view.sequencePropertiesListstore.set(line, self.view.SEQUENCEPROPERTIESLISTSTORE_MODEL_COLUMN, liststore_possibleValues)
 
-        # update the variable definition
-        self.updateSequenceVariableDefinition()
-
-    def updateSequenceVariableDefinition(self):
-        currentSequence = self.vocabularyController.getDisplayedObjectInSelectedMessageTable()
-        if currentSequence is not None:
-            variableDisplayerController = VariableDisplayerController(self.vocabularyController, currentSequence, True)
-            variableDisplayerController.run(self.view.messagesDistributionSymbolViewport)
-
     def getMessageProperties(self):
         """Retrieve the current first selected message (in the
         selected TableMessage) and return its properties"""

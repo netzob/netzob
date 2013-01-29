@@ -92,6 +92,7 @@ class SymbolController(object):
     def updateSymbolList(self):
         """Updates the symbol list of the left panel, preserving the current
         selection"""
+        self.view.symbolListStore.clear()
         # Retrieve symbols of the current project vocabulary (if one selected)
         layerList = []
         if self.getCurrentProject() is not None and self.getCurrentProject().getVocabulary() is not None:
@@ -104,7 +105,6 @@ class SymbolController(object):
                 checkedSymbolsIDList.append(row[self.view.SYMBOLLISTSTORE_ID_COLUMN])
         # Block selection changed handler
         self.view.symbolListTreeViewSelection.handler_block_by_func(self.symbolListTreeViewSelection_changed_cb)
-        self.view.symbolListStore.clear()
         for layer in layerList:
             pIter = self.addRowSymbolList(checkedSymbolsIDList, layer.getName(),
                                           len(layer.getMessages()),
@@ -273,9 +273,9 @@ class SymbolController(object):
         self.updateSymbolVariableDefinition()
 
     def updateSymbolVariableDefinition(self):
-        currentSymbol = self.vocabularyController.getDisplayedObjectInSelectedMessageTable()
-        if currentSymbol is not None:
-            variableDisplayerController = VariableDisplayerController(self.vocabularyController, currentSymbol, True)
+        displayedObject = self.vocabularyController.getDisplayedObjectInSelectedMessageTable()
+        if (displayedObject is not None) and (isinstance(displayedObject, Field)):
+            variableDisplayerController = VariableDisplayerController(self.vocabularyController, displayedObject, True)
             variableDisplayerController.run(self.view.messagesDistributionSymbolViewport)
 
     def getMessageProperties(self):
@@ -447,10 +447,13 @@ class SymbolController(object):
             # We first check if the user selected a symbol
             ID = model[aIter][self.view.SYMBOLLISTSTORE_ID_COLUMN]
             field = currentVocabulary.getFieldByID(ID)
-            self.vocabularyController.executeMoveTargetOperation(field.getSymbol())
-            self.vocabularyController.setDisplayedObjectInSelectedMessageTable(field)
+            if field is not None:
+                self.vocabularyController.executeMoveTargetOperation(field.getSymbol())
+                self.vocabularyController.setDisplayedObjectInSelectedMessageTable(field)
+                self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SYMBOLS_SINGLE_SELECTION)
+            else:
+                self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SYMBOLS_NO_SELECTION)
             self.updateSymbolProperties()
-            self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SYMBOLS_SINGLE_SELECTION)
         else:
             self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SYMBOLS_NO_SELECTION)
 

@@ -51,6 +51,7 @@ from netzob.Common.SignalsManager import SignalsManager
 from netzob.UI.Common.Controllers.MoveMessageController import MoveMessageController
 from netzob.UI.Vocabulary.Controllers.Menus.ContextualMenuOnLayerController import ContextualMenuOnLayerController
 from netzob.UI.NetzobWidgets import NetzobQuestionMessage, NetzobErrorMessage, NetzobInfoMessage
+from netzob.Inference.Vocabulary.SessionsDiff import SessionsDiff
 
 
 #+----------------------------------------------
@@ -81,6 +82,7 @@ class SessionController(object):
     def updateSessionList(self):
         """Updates the session list of the left panel, preserving the current
         selection"""
+        self.view.sessionListStore.clear()
         # Retrieve sessions of the current project vocabulary (if one selected)
         sessionList = []
         if self.getCurrentProject() is not None and self.getCurrentProject().getVocabulary() is not None:
@@ -306,14 +308,14 @@ class SessionController(object):
             NetzobErrorMessage(_("No project selected."))
             return
         # retrieve the checked sessions
-        sessions = self.view.getCheckedSessionList()
+        sessions = self.getCheckedSessionList()
 
         # Create a new session
-        newSession = Session(str(uuid.uuid4()), "Merged", self.getCurrentProject())
+        newSession = Session(str(uuid.uuid4()), "Merged", self.getCurrentProject(), "")
 
         # fetch all their messages
-        for sym in sessions:
-            newSession.addMessages(sym.getMessages())
+        for session in sessions:
+            newSession.addMessages(session.getMessages())
 
         #delete all selected sessions
         self.vocabularyController.emptyMessageTableDisplayingObjects(sessions)
@@ -331,7 +333,7 @@ class SessionController(object):
             NetzobErrorMessage(_("No project selected."))
             return
         # Delete session
-        for sym in self.view.getCheckedSessionList():
+        for sym in self.getCheckedSessionList():
             currentProject = self.netzob.getCurrentProject()
             currentVocabulary = currentProject.getVocabulary()
             for mess in sym.getMessages():
@@ -387,9 +389,12 @@ class SessionController(object):
             ID = model[aIter][self.view.SESSIONLISTSTORE_ID_COLUMN]
             session = currentVocabulary.getSessionByID(ID)
             #self.vocabularyController.executeMoveTargetOperation(field.getSession())
-            self.vocabularyController.setDisplayedObjectInSelectedMessageTable(session)
+            if session is not None:
+                self.vocabularyController.setDisplayedObjectInSelectedMessageTable(session)
+                self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SESSIONS_SINGLE_SELECTION)
+            else:
+                self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SESSIONS_NO_SELECTION)
             self.updateSessionProperties()
-            self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SESSIONS_SINGLE_SELECTION)
         else:
             self.netzob.getSignalsManager().emitSignal(SignalsManager.SIG_SESSIONS_NO_SELECTION)
 

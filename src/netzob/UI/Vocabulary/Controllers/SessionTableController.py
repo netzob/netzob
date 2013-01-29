@@ -35,7 +35,7 @@ import logging
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.UI.Vocabulary.Views.SessionTableView import SessionTableView
-from netzob.UI.Vocabulary.Controllers.Menus.ContextualMenuOnFieldController import ContextualMenuOnFieldController
+from netzob.UI.Vocabulary.Controllers.Menus.ContextualMenuOnSessionMessageController import ContextualMenuOnSessionMessageController
 from netzob.Common.SignalsManager import SignalsManager
 
 
@@ -102,22 +102,22 @@ class SessionTableController(object):
 
             # Retrieve the selected messages
             messages = []
-            layer = self._view.getDisplayedObject()
-            if layer is None:
-                logging.warn("No layer selected, please choose one.")
+            session = self._view.getDisplayedObject()
+            if session is None:
+                logging.warn("No session selected, please choose one.")
                 return
 
             (model, paths) = treeview.get_selection().get_selected_rows()
             for path in paths:
                 message_id = model[path][0]
                 if message_id is not None:
-                    message = layer.getMessageByID(message_id)
+                    message = session.getMessageByID(message_id)
                     messages.append(message)
                 else:
                     return
 
             # Popup a contextual menu
-            menuController = ContextualMenuOnFieldController(self.vocabularyController, layer, messages)
+            menuController = ContextualMenuOnSessionMessageController(self.vocabularyController, session, messages)
             menuController.run(eventButton)
             return True  # Needed to block remainin signals (especially the 'changed_cb' signal)
 
