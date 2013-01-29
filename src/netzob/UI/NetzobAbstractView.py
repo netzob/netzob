@@ -30,6 +30,8 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
+import os
+from gi.repository import Gtk
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -38,51 +40,44 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
-class SignalsManager(object):
-    """Manage the signals for feature availability"""
+class NetzobAbstractViewException(Exception):
+    pass
 
-    SIG_PROJECT_OPEN = "project.open"
-    SIG_PROJECT_CLOSE = "project.close"
 
-    SIG_SYMBOLS_NONE_CHECKED = "symbols.none_checked"
-    SIG_SYMBOLS_SINGLE_CHECKED = "symbols.single_checked"
-    SIG_SYMBOLS_MULTIPLE_CHECKED = "symbols.multiple_checked"
+class NetzobAbstractView(object):
 
-    SIG_SYMBOLS_NO_SELECTION = "symbols.no_selection"
-    SIG_SYMBOLS_SINGLE_SELECTION = "symbols.single_selection"
-    SIG_SYMBOLS_MULTIPLE_SELECTION = "symbols.multiple_selection"
+    def __init__(self, controller, viewFilePath, root="root", parent=None):
+        self.builder = Gtk.Builder()
+        self.builder.add_from_file(self._findUiResource(viewFilePath))
 
-    SIG_FIELDS_NO_SELECTION = "fields.no_selection"
-    SIG_FIELDS_SINGLE_SELECTION = "field.single_selection"
-    SIG_FIELDS_MULTIPLE_SELECTION = "field.multiple_selection"
+        self._getObjects([root])
+        self.root = getattr(self, root)
 
-    SIG_MESSAGES_NO_SELECTION = "messages.no_selection"
-    SIG_MESSAGES_SINGLE_SELECTION = "messages.single_selection"
-    SIG_MESSAGES_MULTIPLE_SELECTION = "messages.multiple_selection"
+        self.controller = controller
 
-    def __init__(self):
-        self.log = logging.getLogger(__name__)
-        self.log.debug("Initialize signals manager")
-        self.listeners = dict()
+        if parent is not None:
+            window = getattr(self, root)
+            window.set_transient_for(parent)
 
-    def emitSignals(self, signals):
-        for signal in signals:
-            self.emitSignal(signal)
+        self.builder.connect_signals(self.controller)
 
-    def emitSignal(self, signal, *cb_args, **cb_kwargs):
-        """emitSignal"""
-        listeners = self.getListenersMethodsForSignal(signal)
-        for listener in listeners:
-            listener(signal, *cb_args, **cb_kwargs)
+    def run(self):
+        self.root.show_all()
 
-    def attach(self, methodToExecute, signals):
-        self.listeners[methodToExecute] = signals
+    def _findUiResource(self, resource):
+        r = os.path.join(ResourcesConfiguration.getStaticResources(), "ui", resource)
+        if os.path.isfile(r):
+            return r
 
-    def getListenersMethodsForSignal(self, signal):
-        result = []
-        for l in self.listeners.keys():
-            if signal in self.listeners[l]:
-                result.append(l)
-        return result
+        r = os.path.join(ResourcesConfiguration.getPluginsStaticResources(), "ui", resource)
+        if os.path.isfile(r):
+            return r
+
+        raise NetzobAbstractViewException(_("Requested file ({0}) was not found.").format(resource))
+
+    def _getObjects(self, objectsList):
+        for obj in objectsList:
+            setattr(self, obj, self.builder.get_object(obj))

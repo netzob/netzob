@@ -29,7 +29,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import logging
+from gi.repository import Gtk
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -38,51 +38,34 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.UI.NetzobAbstractView import NetzobAbstractView
 
 
-class SignalsManager(object):
-    """Manage the signals for feature availability"""
+class NetzobAbstractPerspectiveView(NetzobAbstractView):
+    def __init__(self, controller, viewFilePath, root="root", actionGroup="actionGroup", actionGroupFilePath=None, uiMenuBar=None):
+        super(NetzobAbstractPerspectiveView, self).__init__(controller, viewFilePath, root)
 
-    SIG_PROJECT_OPEN = "project.open"
-    SIG_PROJECT_CLOSE = "project.close"
+        self.actionGroup = None
+        self.menubarUIDefinition = None
 
-    SIG_SYMBOLS_NONE_CHECKED = "symbols.none_checked"
-    SIG_SYMBOLS_SINGLE_CHECKED = "symbols.single_checked"
-    SIG_SYMBOLS_MULTIPLE_CHECKED = "symbols.multiple_checked"
+        if actionGroup is not None:
+            if actionGroupFilePath is not None:
+                builder = Gtk.Builder()
+                builder.add_from_file(self._findUiResource(actionGroupFilePath))
+                self.actionGroup = builder.get_object(actionGroup)
+                builder.connect_signals(controller)
+            else:
+                self.actionGroup = self.builder.get_object(actionGroup)
 
-    SIG_SYMBOLS_NO_SELECTION = "symbols.no_selection"
-    SIG_SYMBOLS_SINGLE_SELECTION = "symbols.single_selection"
-    SIG_SYMBOLS_MULTIPLE_SELECTION = "symbols.multiple_selection"
+        if uiMenuBar is not None:
+            with open(self._findUiResource(uiMenuBar), "r") as menubarUIDefinitionFile:
+                self.menubarUIDefinition = menubarUIDefinitionFile.read()
 
-    SIG_FIELDS_NO_SELECTION = "fields.no_selection"
-    SIG_FIELDS_SINGLE_SELECTION = "field.single_selection"
-    SIG_FIELDS_MULTIPLE_SELECTION = "field.multiple_selection"
+    def getPanel(self):
+        return self.root
 
-    SIG_MESSAGES_NO_SELECTION = "messages.no_selection"
-    SIG_MESSAGES_SINGLE_SELECTION = "messages.single_selection"
-    SIG_MESSAGES_MULTIPLE_SELECTION = "messages.multiple_selection"
+    def getActionGroup(self):
+        return self.actionGroup
 
-    def __init__(self):
-        self.log = logging.getLogger(__name__)
-        self.log.debug("Initialize signals manager")
-        self.listeners = dict()
-
-    def emitSignals(self, signals):
-        for signal in signals:
-            self.emitSignal(signal)
-
-    def emitSignal(self, signal, *cb_args, **cb_kwargs):
-        """emitSignal"""
-        listeners = self.getListenersMethodsForSignal(signal)
-        for listener in listeners:
-            listener(signal, *cb_args, **cb_kwargs)
-
-    def attach(self, methodToExecute, signals):
-        self.listeners[methodToExecute] = signals
-
-    def getListenersMethodsForSignal(self, signal):
-        result = []
-        for l in self.listeners.keys():
-            if signal in self.listeners[l]:
-                result.append(l)
-        return result
+    def getMenuToolbarUIDefinition(self):
+        return self.menubarUIDefinition

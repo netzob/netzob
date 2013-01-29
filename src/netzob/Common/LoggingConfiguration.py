@@ -112,5 +112,7 @@ class LoggingConfiguration(object):
             logging.info("Updating logging level from {0} to {1}".format(logging.getLevelName(logger.level),
                                                                          level))
             self.config.set("logger_root", "level", level)
+            self.config.set("handler_consoleHandler", "level", level)
+
             self._writeConfigFile()
-            logging.getLogger("").setLevel(level)
+            logging.getLogger().setLevel(level)
