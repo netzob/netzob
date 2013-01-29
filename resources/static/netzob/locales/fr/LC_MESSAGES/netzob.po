@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-01-29 18:18+0100\n"
-"PO-Revision-Date: 2013-01-29 18:20+0200\n"
-"Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
+"PO-Revision-Date: 2013-01-29 18:51+0200\n"
+"Last-Translator: Frédéric Guihéry <sygus@cat-lan.com>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/master/fr/>\n"
 "Language: fr\n"
@@ -1462,11 +1462,11 @@ msgstr "Port destination"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:89
 msgid "Randomized state order fuzzer"
-msgstr ""
+msgstr "Fuzzer avec ordre aléatoire des états"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:90
 msgid "Randomized transitions stateful fuzzer"
-msgstr ""
+msgstr "Fuzzer avec transitions aléatoires"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:186
 msgid "Export as Peach Fuzzer (XML)"
