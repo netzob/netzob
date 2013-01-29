@@ -244,6 +244,7 @@ class VocabularyView(object):
         concatSessionAction = self._actionGroup.get_action('concatSession')
         deleteSessionAction = self._actionGroup.get_action('deleteSession')
         newSessionTableAction = self._actionGroup.get_action('newSessionTable')
+        newSessionTableAction = self._actionGroup.get_action('newSessionTable')
 
         self.selectAllSessionsButton.set_related_action(selectAllSessionsAction)
         self.unselectAllSessionsButton.set_related_action(unselectAllSessionsAction)
@@ -306,7 +307,6 @@ class VocabularyView(object):
         signalManager.attach(self.symbolSelectionHasChanged_cb, [SignalsManager.SIG_SYMBOLS_NO_SELECTION, SignalsManager.SIG_SYMBOLS_SINGLE_SELECTION, SignalsManager.SIG_SYMBOLS_MULTIPLE_SELECTION])
         signalManager.attach(self.fieldSelectionHasChanged_cb, [SignalsManager.SIG_FIELDS_NO_SELECTION, SignalsManager.SIG_FIELDS_SINGLE_SELECTION, SignalsManager.SIG_FIELDS_MULTIPLE_SELECTION])
         signalManager.attach(self.messageSelectionHasChanged_cb, [SignalsManager.SIG_MESSAGES_NO_SELECTION, SignalsManager.SIG_MESSAGES_SINGLE_SELECTION, SignalsManager.SIG_MESSAGES_MULTIPLE_SELECTION])
-
 
     # Synchronize sensitivity of buttons based on authorized actions
     def projectStatusHasChanged_cb(self, signal):
@@ -392,7 +392,6 @@ class VocabularyView(object):
             self._actionGroup.get_action('filterMessages').set_sensitive(False)
         elif signal == SignalsManager.SIG_SYMBOLS_SINGLE_SELECTION:
             self._actionGroup.get_action('filterMessages').set_sensitive(True)
-
 
     ## Mandatory view methods
     def getPanel(self):

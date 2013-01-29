@@ -3,6 +3,15 @@
   <!-- interface-requires gtk+ 3.0 -->
   <object class="GtkActionGroup" id="symbolActionGroup">
     <child>
+      <object class="GtkAction" id="findSimilarMessages">
+        <property name="label" translatable="yes">Find Similar Messages</property>
+        <property name="tooltip" translatable="yes">Regroups similar messages in symbols</property>
+        <property name="stock_id">gtk-dialog-warning</property>
+        <signal name="activate" handler="findSimilarMessages_activate_cb" swapped="no"/>
+      </object>
+    </child>
+
+    <child>
       <object class="GtkAction" id="partitioningSimple">
         <property name="label" translatable="yes">Simple Partitioning</property>
         <property name="tooltip" translatable="yes">Use simple partioning on selected symbol</property>

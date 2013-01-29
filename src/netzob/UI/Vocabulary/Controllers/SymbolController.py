@@ -62,6 +62,7 @@ from netzob.UI.Vocabulary.Controllers.Menus.ContextualMenuOnLayerController impo
 from netzob.UI.Vocabulary.Controllers.VariableController import VariableTreeController
 from netzob.UI.Vocabulary.Controllers.VariableDisplayerController import VariableDisplayerController
 from netzob.UI.NetzobWidgets import NetzobQuestionMessage, NetzobErrorMessage, NetzobInfoMessage
+from netzob.UI.Vocabulary.Controllers.Clustering.ClusteringProfilesController import ClusteringProfilesController
 
 
 #+----------------------------------------------
@@ -240,7 +241,6 @@ class SymbolController(object):
 
     def getCurrentProject(self):
         return self.netzob.getCurrentProject()
-
 
     # Properties
     def getSymbolProperties(self):
@@ -492,6 +492,17 @@ class SymbolController(object):
             self.focus = None
 
 ######### MENU / TOOLBAR ENTRIES CONTROLLERS
+    def findSimilarMessages_activate_cb(self, action):
+        if self.getCurrentProject() is None:
+            NetzobErrorMessage(_("No project selected."))
+            return
+        symbols = self.getCheckedSymbolList()
+        if symbols == []:
+            NetzobErrorMessage(_("No symbol selected."))
+            return
+        clusteringController = ClusteringProfilesController(self.vocabularyController, symbols)
+        clusteringController.run()
+
     def sequenceAlignment_activate_cb(self, action):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
@@ -560,7 +571,6 @@ class SymbolController(object):
             return
         distribution = MessagesDistributionController(self.vocabularyController, self.getCheckedSymbolList())
         distribution.run()
-
 
     ## Actions on fields
     def concatField_activate_cb(self, action):
