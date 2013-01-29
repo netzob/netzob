@@ -137,13 +137,14 @@ PyObject* py_alignMessages(__attribute__((unused))PyObject* self, PyObject* args
   //+------------------------------------------------------------------------+
   // Execute the alignment process
   //+------------------------------------------------------------------------+
-  void (*alignMessagesfunctions[2])(t_message *, Bool , t_group* , Bool )={alignMessages,alignMessages2};
   int t=clock();
-  int functionnb = 0;
-  (*alignMessagesfunctions[functionnb])(&resMessage, bool_doInternalSlick, &group, bool_debugMode);
+
+  alignMessages(&resMessage, bool_doInternalSlick, &group, bool_debugMode);
+
   int t1=clock();
+
   if (debugMode == 1) {
-    printf ("It took you for function %d %f operation \n",functionnb, (float)(t1-t)/CLOCKS_PER_SEC);
+    printf ("It took %f operation to align messages.\n",(float)(t1-t)/CLOCKS_PER_SEC);
   }
   
   // Return the results

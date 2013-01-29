@@ -115,8 +115,8 @@ pyNeedlemanPath = opj(needlemanPath, "Py_lib")
 argsFactoriesPath = opj(libPath, "argsFactories")
 
 # Regex path
-regexPath = opj(libPath, "libRegex")
-pyRegexPath = opj(regexPath, "Py_lib")
+# regexPath = opj(libPath, "libRegex")
+# pyRegexPath = opj(regexPath, "Py_lib")
 
 # Tools path
 toolsPath = opj(libPath, "tools")
@@ -133,8 +133,8 @@ moduleLibNeedleman = Extension('netzob._libNeedleman',
                                         opj(needlemanPath, "Needleman.c"),
                                         opj(needlemanPath, "scoreComputation.c"),
                                         opj(argsFactoriesPath, "factory.c"),
-                                        opj(regexPath, "regex.c"),
-                                        opj(regexPath, "manipulate.c"),
+#                                        opj(regexPath, "regex.c"),
+#                                        opj(regexPath, "manipulate.c"),
                                         opj(toolsPath, "getBID.c")],
                                define_macros=macros,
                                include_dirs=includes)
@@ -148,8 +148,8 @@ moduleLibScoreComputation = Extension('netzob._libScoreComputation',
                                                opj(interfacePath, "Interface.c"),
                                                opj(pyInterfacePath, "libInterface.c"),
                                                opj(argsFactoriesPath, "factory.c"),
-                                               opj(regexPath, "regex.c"),
-                                               opj(regexPath, "manipulate.c"),
+#                                               opj(regexPath, "regex.c"),
+#                                               opj(regexPath, "manipulate.c"),
                                                opj(toolsPath, "getBID.c")],
                                       define_macros=macros,
                                       include_dirs=includes)
@@ -163,15 +163,15 @@ moduleLibInterface = Extension('netzob._libInterface',
                                define_macros=macros,
                                include_dirs=includes)
 
-# Module Regex
-moduleLibRegex = Extension('netzob._libRegex',
-                           extra_compile_args=extraCompileArgs,
-                           sources=[opj(regexPath, "regex.c"),
-                                    opj(pyRegexPath, "libRegex.c"),
-                                    opj(regexPath, "manipulate.c"),
-                                    opj(toolsPath, "getBID.c")],
-                           define_macros=macros,
-                           include_dirs=includes)
+# # Module Regex
+# moduleLibRegex = Extension('netzob._libRegex',
+#                            extra_compile_args=extraCompileArgs,
+#                            sources=[opj(regexPath, "regex.c"),
+#                                     opj(pyRegexPath, "libRegex.c"),
+#                                     opj(regexPath, "manipulate.c"),
+#                                     opj(toolsPath, "getBID.c")],
+#                            define_macros=macros,
+#                            include_dirs=includes)
 
 
 #+----------------------------------------------------------------------------
@@ -241,7 +241,7 @@ setup(
         "netzob": opj("src", "netzob"),
         "netzob_plugins": opj("src", "netzob_plugins"),
     },
-    ext_modules=[moduleLibNeedleman, moduleLibScoreComputation, moduleLibInterface, moduleLibRegex],
+    ext_modules=[moduleLibNeedleman, moduleLibScoreComputation, moduleLibInterface],#, moduleLibRegex],
     data_files=data_files,
     scripts=["netzob"],
     install_requires=dependencies,

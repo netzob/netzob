@@ -44,7 +44,7 @@
 //|  alignMessages : align a group of messages and get their common regex
 //+---------------------------------------------------------------------------+
 void alignMessages(t_message * resMessage, Bool doInternalSlick, t_group* messages, Bool debugMode);
-void alignMessages2(t_message *resMessage, Bool doInternalSlick, t_group* group, Bool debugMode);
+
 //+---------------------------------------------------------------------------+
 //| alignTwoMessages : align 2 messages and get common regex
 //+---------------------------------------------------------------------------+

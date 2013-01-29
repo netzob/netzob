@@ -32,113 +32,11 @@
 //| Import Associated Header
 //+---------------------------------------------------------------------------+
 #include "Needleman.h"
-#include "regex.h"
 
 #ifdef _WIN32
 #include <stdio.h>
 #include <malloc.h>
 #endif
-
-
-
-
-
-void alignMessages2(t_message *resMessage, Bool doInternalSlick, t_group* group, Bool debugMode) {
-  // local variable
-  unsigned int numberOfOperations = 0;
-  double costOfOperation;
-  double status = 0.0;
-  int matchstatus = -1;
-  char* commonregex=NULL;
-  
-  // Local variables
-  t_message current_message;
-  t_message new_message;
-  t_score score;
-  unsigned int i_message = 0;
-
-  score.s1 = 0;
-  score.s2 = 0;
-  score.s3 = 0;
-  score.value = 0;
-
-  //+------------------------------------------------------------------------+
-  // Estimate the number of operation
-  //+------------------------------------------------------------------------+
-  numberOfOperations = group->len - 1;
-  costOfOperation = 100.0 / numberOfOperations;
-
-  // Create a current message (using first message)
-  // current message = Align N+1 message with current message
-  current_message.len = group->messages[0].len;
-  current_message.alignment = group->messages[0].alignment;
-  current_message.mask = malloc(group->messages[0].len * sizeof(unsigned char));
-  memset(current_message.mask, 0, group->messages[0].len);
-  current_message.score = &score;
-
-  // Prepare for the resMessage
-  if (group->len == 1) {
-    resMessage->len = current_message.len;
-    resMessage->mask = current_message.mask;
-    resMessage->alignment = current_message.alignment;
-    resMessage->score = current_message.score;
-  }
-  for (i_message=1; i_message < group->len; i_message++) {
-    matchstatus = -1;
-    // Update the execution status
-    if (callbackStatus(0, status, "Consider message %d in the alignment process", i_message) == -1) {
-      printf("Error, error while executing C callback.\n");
-    }
-    if (callbackIsFinish() == 1) {
-    	return;
-    }
-	
-    /*initialize the next message*/
-    new_message.len = group->messages[i_message].len;
-    new_message.alignment = group->messages[i_message].alignment;
-    new_message.mask = malloc(group->messages[i_message].len * sizeof(unsigned char));
-    memset(new_message.mask, 0, group->messages[i_message].len);
-
-    /*Check if the current common regex is not null. If so, try to match the current message with it*/
-    if(commonregex!=NULL)
-      matchstatus=matchonly(commonregex,(char *)new_message.alignment);
-		
-    // Align current_message with new_message
-    if(matchstatus<0){
-    if(commonregex!=NULL){
-    	free(commonregex);
-    	commonregex = NULL;
-    }
-    commonregex=alignTwoMessages(resMessage, doInternalSlick, &current_message, &new_message, debugMode);
-
-    free(current_message.mask);
-    free(new_message.mask);
-    // Copy result in the current message
-    current_message.len = resMessage->len;
-    current_message.alignment = resMessage->alignment;
-    current_message.mask = resMessage->mask;
-	}
-    //udpate status
-    status += costOfOperation;
-  }
-
-  // Update the execution status
-  if (callbackStatus(0, status, "The %d messages have sucessfully been aligned.", group->len) == -1) {
-    printf("Error, error while executing C callback.\n");
-  }
-
-  if(commonregex!=NULL){
-    	free(commonregex);
-    	commonregex = NULL;
-    }
-  free(group->messages);
-}
-
-
-
-
-
-
 
 void alignMessages(t_message *resMessage, Bool doInternalSlick, t_group* group, Bool debugMode) {
   // local variable
