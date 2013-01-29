@@ -126,7 +126,7 @@ class PeachExport(object):
                     resSymbol = symbol
                     break
             if resSymbol is None:
-                logging.warning("Impossible to retrieve the symbol having the id {0}".format(str(symbolID)))
+                logging.warning(_("Impossible to retrieve the symbol having the id {0}").format(str(symbolID)))
                 return None
             else:
                 self.makeDataModel(xmlRoot, symbol)
@@ -258,21 +258,21 @@ class PeachExport(object):
             # Variable/Defaultvalue Management: #
             #-----------------------------------#
             if self.variableOverRegex:
-                logging.debug("The fuzzing is based on variables.")
+                logging.debug(_("The fuzzing is based on variables."))
                 variable = field.getVariable()
                 if variable is None:
                     variable = field.getDefaultVariable(symbol)
 
                 # We retrieve the values of the variable in text format.
                 typedValueLists = self.getRecVariableTypedValueLists(variable)
-                logging.debug("The field {0} has the value {1}.".format(field.getName(), str(typedValueLists)))
+                logging.debug(_("The field {0} has the value {1}.").format(field.getName(), str(typedValueLists)))
 
                 # We count the subfields for the selected field. Aggregate variable can cause multiple subfields.
                 subLength = 0
                 for typedValueList in typedValueLists:
                     subLength = max(subLength, len(typedValueList))
 
-                logging.debug("Sublength: {0}.".format(str(subLength)))
+                logging.debug(_("Sublength : {0}.").format(str(subLength)))
                 # We create one Peach subfield for each netzob subfield.
                 xmlFields = []
                 # For each subfield.
@@ -309,7 +309,7 @@ class PeachExport(object):
             # Regex management: #
             #-------------------#
             else:
-                logging.debug("The fuzzing is based on regexes.")
+                logging.debug(_("The fuzzing is based on regexes."))
                 peachType = self.getPeachFieldTypeFromNetzobFormat(field)
                 regex = field.getRegex()
                 if field.isStatic():
@@ -331,7 +331,7 @@ class PeachExport(object):
                         for lterm in string.split(regex, ".{"):
                                 for rterm in string.split(lterm, "}"):
                                     splittedRegex.append(rterm)  # splittedRegex = ["abcd", "m,n", "efg", ",o", "", "p", "hij"]
-                                    logging.debug("The field {0} has the splitted Regex = {1}".format(field.getName(), str(splittedRegex)))
+                                    logging.debug(_("The field {0} has the splitted Regex = {1}").format(field.getName(), str(splittedRegex)))
 
                         for i in range(len(splittedRegex)):
                             # Dynamic subfield (splittedRegex will always contain dynamic subfields in even position).
@@ -339,6 +339,9 @@ class PeachExport(object):
                                 if splittedRegex[i].find(",") == -1:  # regex = {n}
                                     fieldMaxLength = int(splittedRegex[i])
                                     fieldMinLength = fieldMaxLength
+                                elif splittedRegex[i] == ",":  # regex = {,}
+                                    fieldMaxLength = 9999  # TODO: find a more precise max length
+                                    fieldMinLength = 0
                                 elif splittedRegex[i].find(",") == 0:  # regex = {,p}
                                     fieldMaxLength = int((splittedRegex[i])[1:len(splittedRegex[i])])
                                     fieldMinLength = 0
@@ -364,7 +367,7 @@ class PeachExport(object):
                     else:
                         # If the field's regex is (), we add a null-length Peach field type.
                         xmlField = etree.SubElement(xmlDataModel, "Blob", name=field.getName(), length=0)
-                        logging.debug("The field {0} is empty.".format(field.getName()))
+                        logging.debug(_("The field {0} is empty.").format(field.getName()))
 
     def makeUnknownSymbolDataModel(self, xmlFather):
         """makeUnknownSymbolDataModel:
@@ -415,7 +418,7 @@ class PeachExport(object):
         if variableType == AggregateVariable.TYPE:
             for child in variable.getChildren():
                 # We concatenate the double lists at the lower level (inner list).
-                logging.debug("fatherValueLists: {0}.".format(str(typedValueLists)))
+                logging.debug(_("fatherValueLists : {0}.").format(str(typedValueLists)))
                 typedValueLists = self.concatVariableValues(typedValueLists, self.getRecVariableTypedValueLists(child))
 
         elif variableType == AlternateVariable.TYPE:
@@ -444,8 +447,8 @@ class PeachExport(object):
 
         # typedValueLists = [[("Word", "a")], [("Word", "b"), ("Word", "c"), ("Word", "e")], [("Word", "d"), ("Word", "e")]]
         # <=> variable = a + bce + de
-        logging.debug("typedValueLists  : {0}.".format(str(typedValueLists)))
-        logging.debug("variable  : {0}. ]>".format(str(variable.getName())))
+        logging.debug(_("typedValueLists  : {0}.").format(str(typedValueLists)))
+        logging.debug(_("variable  : {0}. ]>").format(str(variable.getName())))
         return typedValueLists
 
     def concatVariableValues(self, fatherValueLists, sonValueLists):
@@ -467,9 +470,9 @@ class PeachExport(object):
         for fvl in fatherValueLists:
             for svl in sonValueLists:
                 midvl = fvl + svl
-                logging.debug("concatVariableValues : midvl before: {0}.".format(str(midvl)))
+                logging.debug(_("concatVariableValues : midvl before : {0}.").format(str(midvl)))
                 finalValueLists.append(midvl)
-                logging.debug("concatVariableValues : midvl after: {0}.".format(str(finalValueLists)))
+                logging.debug(_("concatVariableValues : midvl after : {0}.").format(str(finalValueLists)))
 
         return finalValueLists
 

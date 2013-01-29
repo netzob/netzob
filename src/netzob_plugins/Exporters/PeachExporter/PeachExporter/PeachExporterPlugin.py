@@ -39,7 +39,7 @@ from gettext import gettext as _
 #+---------------------------------------------------------------------------+
 from netzob.Common.Plugins.ExporterPlugin import ExporterPlugin
 from netzob.Common.Plugins.Extensions.ExportMenuExtension import ExportMenuExtension
-from netzob_plugins.Exporters.PeachExporter.PeachExporter.PeachExportController import PeachExportController
+from PeachExportController import PeachExportController
 from netzob.UI.NetzobWidgets import NetzobErrorMessage
 
 
