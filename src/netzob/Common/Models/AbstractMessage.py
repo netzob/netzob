@@ -32,6 +32,7 @@ from gettext import gettext as _
 import logging
 import uuid
 import re
+import copy
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -79,6 +80,21 @@ class AbstractMessage(object):
         else:
             self.pattern = pattern
             # self.log.debug("not empty {0}".format(self.getPatternString()))
+
+    def copy(self):
+        """This function allows to copy an object an update the
+        message's unique id to avoid conflicts between traces and
+        sessions."""
+
+        message = copy.copy(self)
+        message.id = str(uuid.uuid4())
+        return message
+
+    def __str__(self):
+        return "[{0}: data={1}...; type={2}; session={3}]".format(self.id,
+                                                                  self.data[:15],
+                                                                  self.type,
+                                                                  self.session.id)
 
     #+-----------------------------------------------------------------------+
     #| getFactory

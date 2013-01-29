@@ -34,8 +34,6 @@ import os
 import logging
 import gettext
 import locale
-import uuid
-import shutil
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -63,7 +61,7 @@ from netzob.UI.Common.Controllers.ProjectPropertiesController import ProjectProp
 from netzob.UI.Common.Controllers.ProjectImportController import ProjectImportController
 from netzob.UI.Common.Controllers.ProjectExportController import ProjectExportController
 from netzob.UI.NetzobWidgets import NetzobErrorMessage
-from netzob.UI.WorkspaceSelector import WorkspaceSelector
+from netzob.UI.Common.Controllers.WorkspaceSelectorController import WorkspaceSelectorController
 from netzob.Common.Plugins.Extensions.ExportMenuExtension import ExportMenuExtension
 from netzob.UI.Common.Controllers.AvailablePluginsController import AvailablePluginsController
 from netzob.UI.Export.Controllers.RawExportController import RawExportController
@@ -78,7 +76,20 @@ class NetzobMainController(object):
         cmdLine.parse()
         opts = cmdLine.getOptions()
 
-        self.currentWorkspace = self._loadWorkspace(opts)
+        # Current workspace path can be provided in command line argument
+        if opts.workspace is None:
+            workspaceDir = ResourcesConfiguration.getWorkspaceDir()
+        else:
+            workspaceDir = opts.workspace
+
+        # Start the workspace management
+        self.workspaceSelectorController = WorkspaceSelectorController(self)
+        self.currentWorkspace = self.workspaceSelectorController.getWorkspace(workspaceDir)
+
+        if self.currentWorkspace is None:
+            sys.exit()
+
+        #self.currentWorkspace = self._loadWorkspace(opts)
         self.currentProjet = None
 
         # Enable bug reporting, if workspace is configured so or if
@@ -141,35 +152,6 @@ class NetzobMainController(object):
         else:
             logging.debug("Bug reporter disabled.")
             sys.excepthook = sys.__excepthook__
-
-    def _loadWorkspace(self, opts):
-        logging.debug("+ Load workspace...")
-        if opts.workspace is None:
-            workspaceDir = ResourcesConfiguration.getWorkspaceDir()
-        else:
-            workspaceDir = opts.workspace
-
-        # Loading the workspace
-        workspace = (Workspace.loadWorkspace(workspaceDir))
-        while workspace is None:
-            # We force the creation (or specification) of the workspace
-            logging.info("Workspace not found: we ask to the user its new Netzob home directory")
-            workspaceDir = self.askForWorkspaceDir()
-            if workspaceDir is None:
-                logging.fatal("Stopping the execution (no workspace computed)!")
-                sys.exit()
-            else:
-                ResourcesConfiguration.generateUserFile(workspaceDir)
-                workspace = (Workspace.loadWorkspace(workspaceDir))
-        return workspace
-
-    def askForWorkspaceDir(self):
-        workspaceSelector = WorkspaceSelector()
-        workspaceSelector.run()
-        workspacePath = workspaceSelector.selectedWorkspace
-        if workspacePath is not None:
-            ResourcesConfiguration.createWorkspace(workspacePath)
-        return workspacePath
 
     def _initResourcesAndLocales(self):
         # Initialize resources
@@ -442,7 +424,7 @@ class NetzobMainController(object):
                         errorMessage = Workspace.isFolderAValidWorkspace(selectedFolder)
                         if errorMessage is None:
                             try:
-                                self.currentWorkspace = (Workspace.loadWorkspace(selectedFolder))
+                                (self.currentWorkspace, error) = (Workspace.loadWorkspace(selectedFolder))
                                 self.currentProject = self.currentWorkspace.getLastProject()
                                 finish = True
                                 errorMessage = None

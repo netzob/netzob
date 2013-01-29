@@ -43,11 +43,12 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 
 
-#+---------------------------------------------------------------------------+
-#| Session:
-#|     Class definition of a session of messages
-#+---------------------------------------------------------------------------+
+class SessionException(Exception):
+    pass
+
+
 class Session(object):
+    """Class definition of a session of messages"""
 
     #+-----------------------------------------------------------------------+
     #| Constructor
@@ -89,14 +90,10 @@ class Session(object):
         return couples
 
     def removeMessage(self, message):
-        """removeMessage: remove any ref to the given message
-        """
-        if message in self.messages:
-            self.messages.remove(message)
-        else:
-            self.log.error("Cannot remove message {0} from symbol {1}, since it doesn't exist.".format(message.getID(), self.getName()))
-
-    ## Getters and setters
+        try:
+            return self.messages.remove(message)
+        except ValueError, e:
+            raise SessionException("The message was not found in the session: unable to remove it.")
 
     def getID(self):
         return self.id
