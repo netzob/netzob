@@ -431,3 +431,28 @@ class SessionController(object):
         #refresh focus
         if self.focus.get_object("spreadsheet") == spreadsheet:
             self.focus = None
+
+
+    # Inference functions callbacks
+
+    def compare_sessions_activate_cb(self, action):
+        # Sanity checks
+        if self.netzob.getCurrentProject() is None:
+            NetzobErrorMessage(_("No project selected."))
+            return
+
+        sessions = self.getCheckedSessionList()
+        if sessions == []:
+            NetzobErrorMessage(_("No session selected."))
+            return
+
+        self.vocabularyController.removeAllMessageTables()
+        for session in sessions:
+            self.vocabularyController.addMessageTable(Session)
+            self.vocabularyController.setDisplayedObjectInSelectedMessageTable(session)
+
+        sd = SessionsDiff(self.getCurrentProject(), sessions)
+        sd.execute()
+        sd.colorizeResults()
+
+        self.vocabularyController.updateMessageTableDisplayingObjects(sessions)
