@@ -859,19 +859,25 @@ class Field(object):
                 @rtype: netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable.AggregateVariable
                 @return: the generated variable
         """
-        # The default variable is an alternative of all the possibilities (in binary type)
-        cells = self.getUniqValuesByField()
-        tmpDomain = set()
-        for cell in cells:
-            tmpDomain.add(TypeConvertor.netzobRawToBitArray(cell))
-        domain = sorted(tmpDomain)
+        variable = None
+        if self.isStatic():
+            # The default variable is simple DataVariable (in binary type)
+            data = TypeConvertor.netzobRawToBitArray(self.getRegexData())
+            variable = DataVariable(str(uuid.uuid4()), "Default variable", False, False, BinaryType(True, len(data), len(data)), data.to01())
+        else:
+            # The default variable is an alternative of all the possibilities (in binary type)
+            cells = self.getUniqValuesByField()
+            tmpDomain = set()
+            for cell in cells:
+                tmpDomain.add(TypeConvertor.netzobRawToBitArray(cell))
+            domain = sorted(tmpDomain)
 
-        variable = AlternateVariable(str(uuid.uuid4()), "Default variable of {0}".format(self.getName()), True, False, None)
-        i = 0
-        for d in domain:
-            child = DataVariable(str(uuid.uuid4()), "Default child variable {0}".format(i), False, False, BinaryType(True, len(d), len(d)), d.to01())
-            i += 1
-            variable.addChild(child)
+            variable = AlternateVariable(str(uuid.uuid4()), "Default variable of {0}".format(self.getName()), True, False, None)
+            i = 0
+            for d in domain:
+                child = DataVariable(str(uuid.uuid4()), "Default child variable {0}".format(i), False, False, BinaryType(True, len(d), len(d)), d.to01())
+                i += 1
+                variable.addChild(child)
         return variable
 
     ## Fields
