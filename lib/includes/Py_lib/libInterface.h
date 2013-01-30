@@ -26,11 +26,11 @@
 //+---------------------------------------------------------------------------+
 #ifndef libInterface_H
 #define libInterface_H 
-#include "Interface.h"
 #include "commonPythonLib.h"
+#include "Interface.h"
 
 
-int callbackIsFinish();
+int callbackIsFinish(void);
 
 //+---------------------------------------------------------------------------+
 //| python_callback : The ref to the python callback function
