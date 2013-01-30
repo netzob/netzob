@@ -56,3 +56,6 @@ class ClusteringPlugin(NetzobPlugin):
     def getAlgorithmClass(self):
         self.logger.warning("This method must be defined by the inherited class")
         return None
+
+    def getEntryPoints(self):
+        return []
