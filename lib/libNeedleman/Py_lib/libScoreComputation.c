@@ -60,7 +60,7 @@ PyMODINIT_FUNC init_libScoreComputation(void) {
 PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
   unsigned int doInternalSlick = 0;
   unsigned int debugMode = 0;
-  int i = 0,j = 0;
+  int i = 0;
   PyObject *temp_cb;
   PyObject *temp2_cb;
   t_equivalentGroup result;
