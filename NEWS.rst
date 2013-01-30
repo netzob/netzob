@@ -1,8 +1,24 @@
 NEWS
 ====
 
-v0.4 -- 2012-11-15
+v0.4.1 -- 2013-02-02
 --------------------
+
+:Version name: ?
+
+* Export plugins
+    * Automatic generation of Wireshark dissectors
+    * Automatic generation of Peach fuzzers
+* Workspaces and projects
+    * Workspace manager
+    * Project manager
+    * Trace manager
+* Pretty print of XML files
+* Simplify the default Variable
+* Provide extra compile arguments to the build process
+
+v0.4 -- 2012-11-15
+------------------
 
 :Version name: JumpingRhino
 
