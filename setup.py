@@ -32,9 +32,9 @@
 import sys
 import os
 import uuid
-import subprocess
 sys.path.insert(0, 'src/')
 from setuptools import setup, Extension, find_packages
+
 from netzob import release
 from resources.sdist.manpage_command import manpage_command
 from resources.sdist.pybuild_command import pybuild_command
@@ -48,6 +48,51 @@ from resources.sdist.utils import find_data_files, opj
 staticResourcesPath = opj("resources", "static")
 netzobStaticResourcesPath = opj(staticResourcesPath, "netzob")
 pluginsStaticResourcesPath = opj(staticResourcesPath, "plugins")
+
+#+----------------------------------------------------------------------------
+#| Compute the compilation arguments given the current compilation profile
+#+----------------------------------------------------------------------------
+# compileProfile = "[no-verify] debug|release"
+#
+# Note :
+# if defined, the environment variable "NETZOB_COMPILE_PROFILE" sets
+# the compileProfile
+#
+# Available compilation profile
+#   - debug     : no optimization, include debugging symbols
+#   - release   : activate optimization and symbols are stripped (default mode)
+# Static analysis
+#   - no-verify : deactivate the source code static analysis while compiling
+compileProfile = "release"
+
+NETZOB_COMPILE_PROFILE_ENV = "NETZOB_COMPILE_PROFILE"
+# extract requested mode from the environment variable
+if NETZOB_COMPILE_PROFILE_ENV in os.environ.keys():
+    compileProfile = os.environ[NETZOB_COMPILE_PROFILE_ENV]
+
+# Default compile arguments
+extraCompileArgs = ["-std=c99"]
+if "no-verify" not in compileProfile:
+    extraCompileArgs.extend([
+        "-Wall",                # gcc says: "Enable most warning messages"
+        "-Wextra",              # gcc says: "Print extra (possibly unwanted) warnings"
+        "-Werror",              # gcc says: "Error out the compiler on warnings"
+        "-pedantic-errors",     # gcc says: Issue errors "needed for strict compliance to the standard"
+        "-Wunused",             # gcc says: "Enable all -Wunused- warnings"
+        "-Wsign-compare",       # gcc says: "Warn about signed-unsigned comparisons"
+        "-Wstrict-prototypes",  # gcc says: "Warn about unprototyped function declarations"
+        "-Wuninitialized"])     # gcc says: "Warn about uninitialized automatic variables"
+
+
+if "debug" in compileProfile:
+    extraCompileArgs.extend([
+        "-O0",                  # gcc says: "Optimization level 0"
+        "-g"])                  # gcc says: "Generate debug information in default format"
+
+elif "release" in compileProfile:
+    extraCompileArgs.extend([
+        "-O2"])                 # gcc says: "Optimization level 2"
+
 
 #+----------------------------------------------------------------------------
 #| Definition of the extensions
@@ -70,8 +115,8 @@ pyNeedlemanPath = opj(needlemanPath, "Py_lib")
 argsFactoriesPath = opj(libPath, "argsFactories")
 
 # Regex path
-regexPath = opj(libPath, "libRegex")
-pyRegexPath = opj(regexPath, "Py_lib")
+# regexPath = opj(libPath, "libRegex")
+# pyRegexPath = opj(regexPath, "Py_lib")
 
 # Tools path
 toolsPath = opj(libPath, "tools")
@@ -81,52 +126,52 @@ macros = [('BID', '"{0}"'.format(str(uuid.uuid4())))]
 
 # Module Needleman
 moduleLibNeedleman = Extension('netzob._libNeedleman',
-                               # extra_compile_args=["-fopenmp"],
-                               # extra_link_args=["-fopenmp"],
+                               extra_compile_args=extraCompileArgs,
                                sources=[opj(interfacePath, "Interface.c"),
                                         opj(pyInterfacePath, "libInterface.c"),
                                         opj(pyNeedlemanPath, "libNeedleman.c"),
                                         opj(needlemanPath, "Needleman.c"),
                                         opj(needlemanPath, "scoreComputation.c"),
                                         opj(argsFactoriesPath, "factory.c"),
-                                        opj(regexPath, "regex.c"),
-                                        opj(regexPath, "manipulate.c"),
+#                                        opj(regexPath, "regex.c"),
+#                                        opj(regexPath, "manipulate.c"),
                                         opj(toolsPath, "getBID.c")],
                                define_macros=macros,
                                include_dirs=includes)
 
 # Module ScoreComputation
 moduleLibScoreComputation = Extension('netzob._libScoreComputation',
-                                      # extra_compile_args=["-fopenmp"],
-                                      # extra_link_args=["-fopenmp"],
+                                      extra_compile_args=extraCompileArgs,
                                       sources=[opj(needlemanPath, "scoreComputation.c"),
                                                opj(pyNeedlemanPath, "libScoreComputation.c"),
                                                opj(needlemanPath, "Needleman.c"),
                                                opj(interfacePath, "Interface.c"),
                                                opj(pyInterfacePath, "libInterface.c"),
                                                opj(argsFactoriesPath, "factory.c"),
-                                               opj(regexPath, "regex.c"),
-                                               opj(regexPath, "manipulate.c"),
+#                                               opj(regexPath, "regex.c"),
+#                                               opj(regexPath, "manipulate.c"),
                                                opj(toolsPath, "getBID.c")],
                                       define_macros=macros,
                                       include_dirs=includes)
 
 # Module Interface
 moduleLibInterface = Extension('netzob._libInterface',
+                               extra_compile_args=extraCompileArgs,
                                sources=[opj(interfacePath, "Interface.c"),
                                         opj(pyInterfacePath, "libInterface.c"),
                                         opj(toolsPath, "getBID.c")],
                                define_macros=macros,
                                include_dirs=includes)
 
-# Module Regex
-moduleLibRegex = Extension('netzob._libRegex',
-                           sources=[opj(regexPath, "regex.c"),
-                                    opj(pyRegexPath, "libRegex.c"),
-                                    opj(regexPath, "manipulate.c"),
-                                    opj(toolsPath, "getBID.c")],
-                           define_macros=macros,
-                           include_dirs=includes)
+# # Module Regex
+# moduleLibRegex = Extension('netzob._libRegex',
+#                            extra_compile_args=extraCompileArgs,
+#                            sources=[opj(regexPath, "regex.c"),
+#                                     opj(pyRegexPath, "libRegex.c"),
+#                                     opj(regexPath, "manipulate.c"),
+#                                     opj(toolsPath, "getBID.c")],
+#                            define_macros=macros,
+#                            include_dirs=includes)
 
 
 #+----------------------------------------------------------------------------
@@ -196,7 +241,7 @@ setup(
         "netzob": opj("src", "netzob"),
         "netzob_plugins": opj("src", "netzob_plugins"),
     },
-    ext_modules=[moduleLibNeedleman, moduleLibScoreComputation, moduleLibInterface, moduleLibRegex],
+    ext_modules=[moduleLibNeedleman, moduleLibScoreComputation, moduleLibInterface],#, moduleLibRegex],
     data_files=data_files,
     scripts=["netzob"],
     install_requires=dependencies,

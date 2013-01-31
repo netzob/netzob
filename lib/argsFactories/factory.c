@@ -44,7 +44,6 @@
 int parseArgs(PyObject* factobj, ...){
 	va_list args;
 	va_start(args,factobj);
-	int ret = 0;
 	
 	if(PyObject_HasAttrString(factobj,"function")){
 		char* function=NULL;
@@ -70,7 +69,7 @@ void parseLibscoreComputation(PyObject* factobj, va_list args){
 	PyObject* pysize = NULL;
 	long* nbmess = va_arg(args,long*);
 	t_message** messages = va_arg(args,t_message**);
-	
+	char * tmp_alignment;
 	//list of args
 	PyObject* list = PyObject_GetAttr(factobj,PyString_FromString("args"));
 	
@@ -83,8 +82,11 @@ void parseLibscoreComputation(PyObject* factobj, va_list args){
 	for(i=0;i<*nbmess;i++){
 		PyObject* item;
 		item = PyList_GetItem(list,(Py_ssize_t)i);
-		(*messages)[i].alignment = getstringattr(item,"alignment");
-		(*messages)[i].mask = calloc(strlen((*messages)[i].alignment)+1,sizeof(unsigned char*));
+
+		tmp_alignment = getstringattr(item,"alignment");
+
+		(*messages)[i].alignment = (unsigned char*) tmp_alignment;
+		(*messages)[i].mask = calloc(strlen(tmp_alignment)+1,sizeof(unsigned char*));
 		(*messages)[i].len = (unsigned int) getUnsignedLongAttribute(item,"length");
 		(*messages)[i].uid = getstringattr(item,"uid");
 	}

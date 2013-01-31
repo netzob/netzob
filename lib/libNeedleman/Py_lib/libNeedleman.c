@@ -42,10 +42,10 @@
 extern PyObject *python_callback;
 
 static PyMethodDef libNeedleman_methods[] = {
-		{"getBID", py_getBID, METH_NOARGS},
-		{"alignTwoMessages", py_alignTwoMessages, METH_VARARGS},
-		{"alignMessages", py_alignMessages, METH_VARARGS},
-		{NULL, NULL}
+  {"getBID", py_getBID, METH_NOARGS, NULL},
+  {"alignTwoMessages", py_alignTwoMessages, METH_VARARGS, NULL},
+  {"alignMessages", py_alignMessages, METH_VARARGS, NULL},
+  {NULL, NULL, 0, NULL}
 };
 
 //+---------------------------------------------------------------------------+
@@ -58,12 +58,12 @@ PyMODINIT_FUNC init_libNeedleman(void) {
 //+---------------------------------------------------------------------------+
 //| py_alignSequences : Python wrapper for alignMessages
 //+---------------------------------------------------------------------------+
-PyObject* py_alignMessages(PyObject* self, PyObject* args) {
+PyObject* py_alignMessages(__attribute__((unused))PyObject* self, PyObject* args) {
 
   // Parameters (in order)
   unsigned int doInternalSlick = 0;
   unsigned int nbMessages = 0;
-  unsigned char *format;
+  char *format;
   int sizeFormat;
   unsigned char *serialMessages;
   int sizeSerialMessages;
@@ -103,7 +103,7 @@ PyObject* py_alignMessages(PyObject* self, PyObject* args) {
   if (debugMode == 1) {
     printf("py_alignSequences : Deserialization of the arguments (format, serialMessages).\n");
   }
-  nbDeserializedMessage = deserializeMessages(&group, format, sizeFormat, serialMessages, nbMessages, sizeSerialMessages, debugMode);
+  nbDeserializedMessage = deserializeMessages(&group, format, serialMessages, nbMessages, debugMode);
 
   if (nbDeserializedMessage != nbMessages) {
     printf("Error : impossible to deserialize all the provided messages.\n");
@@ -137,13 +137,14 @@ PyObject* py_alignMessages(PyObject* self, PyObject* args) {
   //+------------------------------------------------------------------------+
   // Execute the alignment process
   //+------------------------------------------------------------------------+
-  void (*alignMessagesfunctions[2])(t_message *, Bool , t_group* , Bool )={alignMessages,alignMessages2};
   int t=clock();
-  int functionnb = 0;
-  (*alignMessagesfunctions[functionnb])(&resMessage, bool_doInternalSlick, &group, bool_debugMode);
+
+  alignMessages(&resMessage, bool_doInternalSlick, &group, bool_debugMode);
+
   int t1=clock();
+
   if (debugMode == 1) {
-    printf ("It took you for function %d %f operation \n",functionnb, (float)(t1-t)/CLOCKS_PER_SEC);
+    printf ("It took %f operation to align messages.\n",(float)(t1-t)/CLOCKS_PER_SEC);
   }
   
   // Return the results
@@ -154,10 +155,10 @@ PyObject* py_alignMessages(PyObject* self, PyObject* args) {
 //+---------------------------------------------------------------------------+
 //| py_alignTwoMessages : Python wrapper for alignTwoMessages
 //+---------------------------------------------------------------------------+
-PyObject* py_alignTwoMessages(PyObject* self, PyObject* args) {
+PyObject* py_alignTwoMessages(__attribute__((unused))PyObject* self, PyObject* args) {
   // Parameters (in order)
   unsigned int doInternalSlick = 0;
-  unsigned char *format;
+  char *format;
   int sizeFormat;
   unsigned char *serialMessages;
   int sizeSerialMessages;
@@ -188,7 +189,7 @@ PyObject* py_alignTwoMessages(PyObject* self, PyObject* args) {
     printf("The following arguments were received : \n");
     printf("doInternalSlick : %d\n", doInternalSlick);
     printf("Format :\n");
-    hexdump(format, sizeFormat);
+    hexdump((unsigned char*)format, sizeFormat);
     printf("Serial :\n");
     hexdump(serialMessages, sizeSerialMessages);
     printf("Debug mode : %d\n", debugMode);
@@ -198,7 +199,7 @@ PyObject* py_alignTwoMessages(PyObject* self, PyObject* args) {
   group.len = 2;
   group.messages = malloc(2*sizeof(t_message));
 
-  nbDeserializedMessage = deserializeMessages(&group, format, sizeFormat, serialMessages, 2, sizeSerialMessages, debugMode);
+  nbDeserializedMessage = deserializeMessages(&group, format, serialMessages, 2, debugMode);
 
   if (nbDeserializedMessage != 2) {
     printf("Error : impossible to deserialize all the provided messages.\n");

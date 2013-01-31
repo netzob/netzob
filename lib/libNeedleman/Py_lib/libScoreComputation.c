@@ -42,9 +42,9 @@ extern PyObject *python_callback;
 extern PyObject *python_callback_isFinish;
 
 static PyMethodDef libScoreComputation_methods[] = {
-		{"getBID", py_getBID, METH_NOARGS},
-		{"getHighestEquivalentGroup", py_getHighestEquivalentGroup, METH_VARARGS},
-		{NULL, NULL}
+  {"getBID", py_getBID, METH_NOARGS, NULL},
+  {"getHighestEquivalentGroup", py_getHighestEquivalentGroup, METH_VARARGS, NULL},
+  {NULL, NULL, 0, NULL}
 };
 
 //+---------------------------------------------------------------------------+
@@ -57,10 +57,10 @@ PyMODINIT_FUNC init_libScoreComputation(void) {
 //+---------------------------------------------------------------------------+
 //| py_getHighestEquivalenceGroup : Python wrapper for getHighestEquivalenceGroup
 //+---------------------------------------------------------------------------+
-PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
+PyObject* py_getHighestEquivalentGroup(__attribute__((unused))PyObject* self, PyObject* args) {
   unsigned int doInternalSlick = 0;
   unsigned int debugMode = 0;
-  int i = 0,j = 0;
+  int i = 0;
   PyObject *temp_cb;
   PyObject *temp2_cb;
   t_equivalentGroup result;
@@ -116,7 +116,7 @@ PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
     bool_debugMode = FALSE;
   }
   
-  getHighestEquivalentGroup2(&result, doInternalSlick, nbmessage, mesmessages, debugMode, scoreMatrix);
+  getHighestEquivalentGroup(&result, nbmessage, mesmessages, debugMode, scoreMatrix);
   
   //Compute the scores recorded in a python list://TODO Return Factory
   PyObject *recordedScores = PyList_New((nbmessage*(nbmessage-1))/2);
@@ -152,6 +152,11 @@ PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
   }
   free(scoreMatrix);
   free(mesmessages);
+
+  if (bool_debugMode){
+    printf("Score of the Highest equivalent group : %f", result.score);
+  }
+
   return Py_BuildValue("(iifS)", result.i, result.j, result.score,recordedScores);
 }
 

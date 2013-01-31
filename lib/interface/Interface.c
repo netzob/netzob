@@ -63,21 +63,21 @@ int callbackStatus(int stage, double percent, char* message, ...) {
 //+---------------------------------------------------------------------------+
 //| deserializeMessages : Deserialization of messages
 //+---------------------------------------------------------------------------+
-unsigned int deserializeMessages(t_group * group, unsigned char *format, int sizeFormat, unsigned char *serialMessages, int nbMessages, int sizeSerialMessages, Bool debugMode) {
-  int i_message = 0;
-  unsigned char * p;
+unsigned int deserializeMessages(t_group * group, char *format, unsigned char *serialMessages, unsigned int nbMessages, Bool debugMode) {
+  unsigned int i_message = 0;
+  char * p;
   unsigned int serial_shift = 0;
   unsigned int format_shift = 0;
   unsigned int len_size_message=0;
   unsigned int size_message=0;
-  unsigned char * size_message_str;
+  char * size_message_str;
   unsigned int nbDeserializedMessages = 0;
 
   for (i_message=0; i_message < nbMessages; i_message++) {
     // Retrieve the size of each message
     p = strchr(format + format_shift, 'M');
     len_size_message = (unsigned int) (p - (format + format_shift));
-    size_message_str = malloc((len_size_message + 1) * sizeof(unsigned char));
+    size_message_str = malloc((len_size_message + 1) * sizeof(char));
     memcpy(size_message_str, format + format_shift, len_size_message);
     size_message_str[len_size_message] = '\0';
     size_message = atoi(size_message_str);
@@ -102,31 +102,31 @@ unsigned int deserializeMessages(t_group * group, unsigned char *format, int siz
   if (debugMode == TRUE) {
     printf("A number of %d messages has been deserialized.\n", nbDeserializedMessages);
     for (i_message = 0; i_message<nbDeserializedMessages; i_message++) {
-      printf("Message %d : \n", i_message);
+      printf("Message %u : \n", i_message);
       hexdump(group->messages[i_message].alignment, group->messages[i_message].len);
     }
   }
   return nbDeserializedMessages;
 }
 
-unsigned int deserializeGroups(t_groups * groups, unsigned char * format, int sizeFormat, unsigned char * serialGroups, int nbGroups, int sizeSerialGroups, Bool debugMode) {
+unsigned int deserializeGroups(t_groups * groups, char * format, unsigned char * serialGroups, int nbGroups, Bool debugMode) {
   int i_group = 0;
   int j_group = 0;
   int l = 0;
-  unsigned char * p;
-  unsigned char *q;
-  unsigned char *r;
-  unsigned char *s;
+  char * p;
+  char *q;
+  char *r;
+  char *s;
   unsigned short int format_shift = 0;
   unsigned int len_size_group = 0;
   unsigned int len_size_message = 0;
   unsigned int len_score_group = 0;
   unsigned int size_group = 0;
   unsigned int size_message = 0;
-  unsigned char * size_group_str;
-  unsigned char * size_message_str;
-  unsigned char * score_group;
-  int i_message = 0;
+  char * size_group_str;
+  char * size_message_str;
+  char * score_group;
+  unsigned int i_message = 0;
 
   for (i_group = 0; i_group <nbGroups; i_group++)  {
     //Retrieve the precompiled scores
@@ -152,10 +152,10 @@ unsigned int deserializeGroups(t_groups * groups, unsigned char * format, int si
     // retrieve the number of messages in the current group
     p = strchr(format + format_shift, 'G');
     len_size_group = (unsigned int) (p - (format + format_shift));
-    size_group_str = malloc((len_size_group + 1) * sizeof(unsigned char));
+    size_group_str = malloc((len_size_group + 1) * sizeof(char));
     memcpy(size_group_str, format + format_shift, len_size_group);
     size_group_str[len_size_group] = '\0';
-    size_group = atoi(size_group_str);
+    size_group = (unsigned int) atoi(size_group_str);
     format_shift += len_size_group + 1;
 
     // Allocate pointers to store the messages of current group
@@ -166,7 +166,7 @@ unsigned int deserializeGroups(t_groups * groups, unsigned char * format, int si
       // Retrieve the size of each message
       q = strchr(format + format_shift, 'M');
       len_size_message = (unsigned int) (q - (format + format_shift));
-      size_message_str = malloc((len_size_message + 1) * sizeof(unsigned char));
+      size_message_str = malloc((len_size_message + 1) * sizeof(char));
       memcpy(size_message_str, format + format_shift, len_size_message);
       size_message_str[len_size_message] = '\0';
       size_message = atoi(size_message_str);
@@ -181,6 +181,9 @@ unsigned int deserializeGroups(t_groups * groups, unsigned char * format, int si
       free(size_message_str );
     }
     free(size_group_str);
+  }
+  if (debugMode == TRUE) {
+    printf("A number of %d group has been deserialized.\n", nbGroups);
   }
   return i_group;
 }
@@ -215,7 +218,7 @@ void hexdump(unsigned char *buf, int dlen) {
 
 
 void dumpMessage(t_message message) {
-  int i;
+  unsigned int i;
   printf("%d ", message.len);
   for(i = 0; i < message.len; i++) {
     if(message.mask[i] == 0)

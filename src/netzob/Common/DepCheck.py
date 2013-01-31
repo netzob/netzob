@@ -56,8 +56,8 @@ class DepCheck(object):
         # Verify we can load the lib Needleman
         try:
             from netzob import _libNeedleman
-        except ImportError:
-            logging.error("Impossible to import the libNeedleman")
+        except ImportError as e:
+            logging.error("Impossible to import the libNeedleman: {0}".format(e))
             return False
 
         pathToImportedLib = "Unknown path"
@@ -78,8 +78,8 @@ class DepCheck(object):
         # Verify we can load the lib ScoreComputation
         try:
             from netzob import _libScoreComputation
-        except ImportError:
-            logging.error("Impossible to import the libScoreComputation")
+        except ImportError as e:
+            logging.error("Impossible to import the libScoreComputation: {0}".format(e))
             return False
 
         pathToImportedLib = "Unknown path"
@@ -100,8 +100,8 @@ class DepCheck(object):
         # Verify we can load the lib Interface
         try:
             from netzob import _libInterface
-        except ImportError:
-            logging.error("Impossible to import the libInterface")
+        except ImportError as e:
+            logging.error("Impossible to import the libInterface: {0}".format(e))
             return False
 
         pathToImportedLib = "Unknown path"
@@ -119,27 +119,27 @@ class DepCheck(object):
             logging.error("The _libInterface imported ({0}) is not the expected one and do not provide all the required methods.".format(pathToImportedLib))
             return False
 
-        # Verify we can load the lib Regex
-        try:
-            from netzob import _libRegex
-        except ImportError:
-            logging.error("Impossible to import the libRegex")
-            return False
+        # # Verify we can load the lib Regex
+        # try:
+        #     from netzob import _libRegex
+        # except ImportError:
+        #     logging.error("Impossible to import the libRegex")
+        #     return False
 
-        pathToImportedLib = "Unknown path"
-        for m in sys.modules.keys():
-            if m == "_libRegex":
-                pathToImportedLib = sys.modules[m].__file__
-                logging.debug("Imported _libRegex from {0}".format(pathToImportedLib))
-        try:
-            BIDRegex = _libRegex.getBID()
-            if BIDRegex != NetzobResources.BID and NetzobResources.BID != "$BID":
-                logging.error("Binary Identifier is {0} (expected {1}).".format(BIDRegex, NetzobResources.BID))
-                logging.error("The loaded libRegex library is deprecated, please rebuild it.")
-                return False
-        except AttributeError:
-            logging.error("The _libScoreComputation imported ({0}) is not the expected one and do not provide all the required methods.".format(pathToImportedLib))
-            return False
+        # pathToImportedLib = "Unknown path"
+        # for m in sys.modules.keys():
+        #     if m == "_libRegex":
+        #         pathToImportedLib = sys.modules[m].__file__
+        #         logging.debug("Imported _libRegex from {0}".format(pathToImportedLib))
+        # try:
+        #     BIDRegex = _libRegex.getBID()
+        #     if BIDRegex != NetzobResources.BID and NetzobResources.BID != "$BID":
+        #         logging.error("Binary Identifier is {0} (expected {1}).".format(BIDRegex, NetzobResources.BID))
+        #         logging.error("The loaded libRegex library is deprecated, please rebuild it.")
+        #         return False
+        # except AttributeError:
+        #     logging.error("The _libScoreComputation imported ({0}) is not the expected one and do not provide all the required methods.".format(pathToImportedLib))
+        #     return False
 
         if NetzobResources.BID == "$BID":
             logging.warning("The current executed python code has not been built using setup.py, hence it's not possible to compare the BID of executed libs.")
@@ -157,7 +157,7 @@ class DepCheck(object):
             else:
                 logging.error("The loaded version of lxml ({0}) is not compatible.".format(LXML_VERSION))
                 return False
-        except ImportError:
-            logging.error("Impossible to find and load the lxml dependency.")
+        except ImportError as e:
+            logging.error("Impossible to find and load the lxml dependency: {0}".format(e))
             return False
         return True
