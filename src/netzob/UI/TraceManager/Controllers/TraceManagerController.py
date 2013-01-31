@@ -73,6 +73,9 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
 
         self._refreshTraceList()
 
+    def activate(self):
+        self._refreshTraceList()
+
     def _refreshTraceList(self, traceListIds=[], removedTraces=[]):
         """This function is the central place for updating the left
         treeview. It is in charge of adding or updating the model
