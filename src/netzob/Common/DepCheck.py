@@ -56,8 +56,8 @@ class DepCheck(object):
         # Verify we can load the lib Needleman
         try:
             from netzob import _libNeedleman
-        except ImportError:
-            logging.error("Impossible to import the libNeedleman")
+        except ImportError as e:
+            logging.error("Impossible to import the libNeedleman: {0}".format(e))
             return False
 
         pathToImportedLib = "Unknown path"
@@ -78,8 +78,8 @@ class DepCheck(object):
         # Verify we can load the lib ScoreComputation
         try:
             from netzob import _libScoreComputation
-        except ImportError:
-            logging.error("Impossible to import the libScoreComputation")
+        except ImportError as e:
+            logging.error("Impossible to import the libScoreComputation: {0}".format(e))
             return False
 
         pathToImportedLib = "Unknown path"
@@ -100,8 +100,8 @@ class DepCheck(object):
         # Verify we can load the lib Interface
         try:
             from netzob import _libInterface
-        except ImportError:
-            logging.error("Impossible to import the libInterface")
+        except ImportError as e:
+            logging.error("Impossible to import the libInterface: {0}".format(e))
             return False
 
         pathToImportedLib = "Unknown path"
@@ -157,7 +157,7 @@ class DepCheck(object):
             else:
                 logging.error("The loaded version of lxml ({0}) is not compatible.".format(LXML_VERSION))
                 return False
-        except ImportError:
-            logging.error("Impossible to find and load the lxml dependency.")
+        except ImportError as e:
+            logging.error("Impossible to find and load the lxml dependency: {0}".format(e))
             return False
         return True
