@@ -90,14 +90,17 @@ We also highly recommend to install the following additional dependencies:
 * python-babel (for the translations)
 * python-sphinx (for the documentation)
 
-Once the required dependencies are installed, you can test (developer mode) Netzob::
+Once the required dependencies are installed, you can test Netzob in
+developer mode::
+
+  python setup.py build
+  python setup.py develop --user
+
+Otherwise, if you want to install Netzob on the system::
 
   python setup.py build
   python setup.py develop
-
-and install it::
-
-  $ python setup.py install
+  python setup.py install
 
 Start it
 --------
@@ -107,7 +110,7 @@ Once installed, running Netzob is as simple as executing the provided script::
   $ ./netzob
 
 This script is in Python's path if you've installed Netzob, otherwise
-(in developer mode), its located in the top distribution directory.
+(in developer mode), it's located in the top distribution directory.
 
 
 Miscellaneous
