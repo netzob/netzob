@@ -42,9 +42,9 @@ extern PyObject *python_callback;
 extern PyObject *python_callback_isFinish;
 
 static PyMethodDef libScoreComputation_methods[] = {
-		{"getBID", py_getBID, METH_NOARGS},
-		{"getHighestEquivalentGroup", py_getHighestEquivalentGroup, METH_VARARGS},
-		{NULL, NULL}
+  {"getBID", py_getBID, METH_NOARGS, NULL},
+  {"getHighestEquivalentGroup", py_getHighestEquivalentGroup, METH_VARARGS, NULL},
+  {NULL, NULL, 0, NULL}
 };
 
 //+---------------------------------------------------------------------------+
