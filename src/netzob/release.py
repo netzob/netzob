@@ -43,7 +43,7 @@ appname = name
 #|    postfixed by ~git
 #+---------------------------------------------------------------------------+
 version = "0.4.1"
-versionName = "JumpingRhino"
+versionName = "WaddlingPeccary"
 
 #+---------------------------------------------------------------------------+
 #| Copyright mentions
