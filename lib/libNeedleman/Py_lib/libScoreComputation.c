@@ -57,7 +57,7 @@ PyMODINIT_FUNC init_libScoreComputation(void) {
 //+---------------------------------------------------------------------------+
 //| py_getHighestEquivalenceGroup : Python wrapper for getHighestEquivalenceGroup
 //+---------------------------------------------------------------------------+
-PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
+PyObject* py_getHighestEquivalentGroup(__attribute__((unused))PyObject* self, PyObject* args) {
   unsigned int doInternalSlick = 0;
   unsigned int debugMode = 0;
   int i = 0;
@@ -152,6 +152,11 @@ PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
   }
   free(scoreMatrix);
   free(mesmessages);
+
+  if (bool_debugMode){
+    printf("Score of the Highest equivalent group : %f", result.score);
+  }
+
   return Py_BuildValue("(iifS)", result.i, result.j, result.score,recordedScores);
 }
 
