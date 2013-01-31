@@ -8,17 +8,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-29 18:18+0100\n"
+"POT-Creation-Date: 2013-01-31 18:23+0100\n"
 "PO-Revision-Date: 2013-01-29 18:51+0200\n"
 "Last-Translator: Frédéric Guihéry <sygus@cat-lan.com>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/master/fr/>\n"
-"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Weblate 1.4\n"
 "Generated-By: Babel 0.9.6\n"
 
 #: src/netzob/NetzobMainController.py:309
@@ -225,7 +223,8 @@ msgstr ""
 "pas lisible."
 
 #: src/netzob/Common/Workspace.py:430
-msgid "The specified workspace is not valid according the XSD definitions."
+#, fuzzy
+msgid "The specified workspace is not valid according to the XSD definitions."
 msgstr "L'espace de travail indiqué n'est pas conforme aux définitions XSD."
 
 #: src/netzob/Common/Workspace.py:461
@@ -994,19 +993,19 @@ msgstr "Un serveur réseau nécessite un port réseau."
 msgid "Click yes to confirm the deletion of the selected actor"
 msgstr "Cliquez sur oui pour valider la suppression de l'acteur sélectionné"
 
-#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:642
+#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:645
 msgid "New empty trace"
 msgstr "Nouvelle trace vide"
 
-#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:792
+#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:795
 msgid "Empty Session"
 msgstr "Session vide"
 
-#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:812
+#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:815
 msgid "No project is currently opened"
 msgstr "Aucun projet n'est ouvert actuellement"
 
-#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:813
+#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:816
 msgid "A project has to be opened before importing a trace."
 msgstr "Un projet doit être ouvert avant d'y importer une trace."
 
@@ -3265,53 +3264,3 @@ msgstr "10"
 msgid "Time limit:"
 msgstr "Durée de capture : "
 
-#~ msgid "Targeted symbolID: {0}"
-#~ msgstr ""
-
-#~ msgid "Impossible to retrieve the symbol having the id {0}"
-#~ msgstr "Impossible de récupérer le symbole ayant comme identifiant '{0}'"
-
-#~ msgid "The fuzzing is based on variables."
-#~ msgstr "Le fuzzing est basé sur des variables."
-
-#~ msgid "The field {0} has the value {1}."
-#~ msgstr "Le champ {0} a comme valeur {1}."
-
-#~ msgid "Sublength : {0}."
-#~ msgstr ""
-
-#~ msgid "The fuzzing is based on regexes."
-#~ msgstr "Le fuzzing est basé sur des expressions rationnelles."
-
-#~ msgid "The field {0} has the splitted Regex = {1}"
-#~ msgstr ""
-
-#~ msgid "The field {0} has a static subfield of value {1}."
-#~ msgstr ""
-
-#~ msgid "The field {0} is empty."
-#~ msgstr "Le champ {0} est vide."
-
-#~ msgid "<[ variable  : {0}."
-#~ msgstr ""
-
-#~ msgid "fatherValueLists : {0}."
-#~ msgstr ""
-
-#~ msgid "typedValueLists  : {0}."
-#~ msgstr ""
-
-#~ msgid "variable  : {0}. ]>"
-#~ msgstr ""
-
-#~ msgid "concatVariableValues : midvl before : {0}."
-#~ msgstr ""
-
-#~ msgid "concatVariableValues : midvl after : {0}."
-#~ msgstr ""
-
-#~ msgid "Format of the field {0} is {1}."
-#~ msgstr ""
-
-#~ msgid "No state model defined in Netzob."
-#~ msgstr ""
