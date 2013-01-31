@@ -4,7 +4,7 @@ NEWS
 v0.4.1 -- 2013-02-02
 --------------------
 
-:Version name: ?
+:Version name: WaddlingPeccary
 
 * Export plugins
     * Automatic generation of Wireshark dissectors
