@@ -63,6 +63,11 @@ pluginsStaticResourcesPath = opj(staticResourcesPath, "plugins")
 #   - release   : activate optimization and symbols are stripped (default mode)
 # Static analysis
 #   - no-verify : deactivate the source code static analysis while compiling
+#
+# TODO : an unoptimized profile with options like -mno-mmx, -mno-sse,
+#        -mno-sse2, -mno-3dnow, -fno-dwarf2-cfi-asm
+#
+
 compileProfile = "release"
 
 NETZOB_COMPILE_PROFILE_ENV = "NETZOB_COMPILE_PROFILE"
@@ -81,8 +86,9 @@ if "no-verify" not in compileProfile:
         "-Wunused",             # gcc says: "Enable all -Wunused- warnings"
         "-Wsign-compare",       # gcc says: "Warn about signed-unsigned comparisons"
         "-Wstrict-prototypes",  # gcc says: "Warn about unprototyped function declarations"
-        "-Wuninitialized"])     # gcc says: "Warn about uninitialized automatic variables"
-
+        "-Wuninitialized",      # gcc says: "Warn about uninitialized automatic variables"
+        "-Wshadow",             # gcc says: "Warn when one local variable shadows another"
+        "-Wpointer-arith"])     # gcc says: "Warn about function pointer arithmetic"
 
 if "debug" in compileProfile:
     extraCompileArgs.extend([
@@ -92,7 +98,6 @@ if "debug" in compileProfile:
 elif "release" in compileProfile:
     extraCompileArgs.extend([
         "-O2"])                 # gcc says: "Optimization level 2"
-
 
 #+----------------------------------------------------------------------------
 #| Definition of the extensions
@@ -133,8 +138,6 @@ moduleLibNeedleman = Extension('netzob._libNeedleman',
                                         opj(needlemanPath, "Needleman.c"),
                                         opj(needlemanPath, "scoreComputation.c"),
                                         opj(argsFactoriesPath, "factory.c"),
-#                                        opj(regexPath, "regex.c"),
-#                                        opj(regexPath, "manipulate.c"),
                                         opj(toolsPath, "getBID.c")],
                                define_macros=macros,
                                include_dirs=includes)
@@ -148,8 +151,6 @@ moduleLibScoreComputation = Extension('netzob._libScoreComputation',
                                                opj(interfacePath, "Interface.c"),
                                                opj(pyInterfacePath, "libInterface.c"),
                                                opj(argsFactoriesPath, "factory.c"),
-#                                               opj(regexPath, "regex.c"),
-#                                               opj(regexPath, "manipulate.c"),
                                                opj(toolsPath, "getBID.c")],
                                       define_macros=macros,
                                       include_dirs=includes)
@@ -162,17 +163,6 @@ moduleLibInterface = Extension('netzob._libInterface',
                                         opj(toolsPath, "getBID.c")],
                                define_macros=macros,
                                include_dirs=includes)
-
-# # Module Regex
-# moduleLibRegex = Extension('netzob._libRegex',
-#                            extra_compile_args=extraCompileArgs,
-#                            sources=[opj(regexPath, "regex.c"),
-#                                     opj(pyRegexPath, "libRegex.c"),
-#                                     opj(regexPath, "manipulate.c"),
-#                                     opj(toolsPath, "getBID.c")],
-#                            define_macros=macros,
-#                            include_dirs=includes)
-
 
 #+----------------------------------------------------------------------------
 #| Definition of the dependencies
@@ -241,7 +231,7 @@ setup(
         "netzob": opj("src", "netzob"),
         "netzob_plugins": opj("src", "netzob_plugins"),
     },
-    ext_modules=[moduleLibNeedleman, moduleLibScoreComputation, moduleLibInterface],#, moduleLibRegex],
+    ext_modules=[moduleLibNeedleman, moduleLibScoreComputation, moduleLibInterface],
     data_files=data_files,
     scripts=["netzob"],
     install_requires=dependencies,
