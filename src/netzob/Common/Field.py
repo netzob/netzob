@@ -243,7 +243,7 @@ class Field(object):
                 @rtype: boolean
                 @return: True if the regex is only dynamic.
         """
-        if re.match("\(\.\{\d?,\d+\}\)", self.regex) is not None:
+        if re.match("\(\.\{\d?,?\d+\}\)", self.regex) is not None:
             return True
         else:
             return False
@@ -279,6 +279,18 @@ class Field(object):
             return False
         return True
 
+    def hasRegexFixedSize(self):
+        """hasRegexFixedSize:
+                Tells if a regex (i.e. field) has a fixed size.
+
+                @rtype: boolean
+                @return: True if the regex has a fixed size.
+        """
+        if re.match("\(\.\{\d+\}\)", self.regex) is not None:
+            return True
+        else:
+            return False
+
     def fixRegex(self):
         """fixRegex: for regex that only renders fixed-size cells,
         directly fix the regex."""
@@ -290,6 +302,29 @@ class Field(object):
             if len(cell) != refSize:
                 return
         self.setRegex("(.{" + str(refSize) + "})")
+
+    def getRegexFixedSize(self):
+        """getRegexFixedSize: return the size of the regex only if this one
+        has a fixed size."""
+        if self.hasRegexFixedSize():
+            return int(self.getRegex()[3:-2])  # Retrieve 'n' in '(.{n})'
+        else:
+            return None
+
+    def getRegexMinMaxSize(self):
+        """getRegexMinSize: return the couple (minSize,maxSize) of the
+        regex."""
+        minSize = 0
+        maxSize = 99999
+        m = re.match(".*{(\d*),(\d*)}.*", self.getRegex())
+        if m is None:
+            return None
+        else:
+            if m.group(1) != "":
+                minSize = int(m.group(1))
+            if m.group(2) != "":  # Should always happen
+                maxSize = int(m.group(2))
+            return (minSize, maxSize)
 
     #+----------------------------------------------
     #| forcePartitioning:
@@ -549,25 +584,36 @@ class Field(object):
                         nextField = self.getFieldByIndex(i + 1)
                         if nextField.isRegexOnlyDynamic():
                             mergeDone = True
+
+                            # Build the new field
                             minSize = len(aField.getRegexData())
                             maxSize = len(aField.getRegexData())
 
-                            # Build the new field
-                            regex = re.compile(".*{(\d*),(\d*)}.*")
+                            # The new regex is concatenated with the precedent field
+                            if precField.hasRegexFixedSize():
+                                size = precField.getRegexFixedSize()
+                                minSize += size
+                                maxSize += size
+                            else:
+                                sizes = precField.getRegexMinMaxSize()
+                                if sizes is None:
+                                    break
+                                (minS, maxS) = sizes
+                                minSize += minS
+                                maxSize += maxS
 
-                            # Get the minSize/maxSize of precField
-                            m = regex.match(precField.getRegex())
-                            if m.group(1) != "":
-                                minSize += int(m.group(1))
-                            if m.group(2) != "":
-                                maxSize += int(m.group(2))
-
-                            # Get the minSize/maxSize of nextField
-                            m = regex.match(nextField.getRegex())
-                            if m.group(1) != "":
-                                minSize += int(m.group(1))
-                            if m.group(2) != "":
-                                maxSize += int(m.group(2))
+                            # The new regex is concatenated with the next field
+                            if nextField.hasRegexFixedSize():
+                                size = nextField.getRegexFixedSize()
+                                minSize += size
+                                maxSize += size
+                            else:
+                                sizes = nextField.getRegexMinMaxSize()
+                                if sizes is None:
+                                    break
+                                (minS, maxS) = sizes
+                                minSize += minS
+                                maxSize += maxS
 
                             minSize = str(minSize)
                             maxSize = str(maxSize)
@@ -580,6 +626,7 @@ class Field(object):
                             parent.removeLocalField(nextField)
                             parent = precField.getParentField()
                             parent.removeLocalField(precField)
+                            break
             i += 1
 
         if mergeDone:
