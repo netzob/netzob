@@ -29,13 +29,16 @@ from netzob import _libScoreComputation
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.C_Extensions.WrapperMessage import WrapperMessage
 from netzob.Common.NetzobException import NetzobException
 
 
 class WrapperArgsFactory(object):
-    """Factory dedicated to the manipulation of arguments passed to C wrapper"""
+    """Factory dedicated to the manipulation of arguments passed to C wrapper.
+    This object will be transfered to the C extensions with its attributes which are:
+    - self.typeList : a map between function name and function pointer
+    - self.function : the function for which the parameters will be wrapped.
+    """
 
     def __init__(self, function):
         self.typeList = {"_libScoreComputation.getHighestEquivalentGroup": self.getHighestEquivalentGroup}
