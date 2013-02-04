@@ -584,9 +584,17 @@ float getScoreDynSize(unsigned int nbDynTotal, unsigned int nbDynCommon) {
   }
   return result;
 }
+
+/**
+   computeDistance:
+   This function computes a distance given a set of scores
+
+   @param score : the scores to merge
+   @return the distance
+*/
 float computeDistance(t_score * score) {
   float result = 0;
-  result = sqrt(0.0 * pow(score->s1,2) + 0.0 * pow(score->s2,2) + 1.0 * pow(score->s3,2));
+  result = sqrt((1.0 * pow(score->s1,2) + 1.0 * pow(score->s2,2) + 1.0 * pow(score->s3,2))/3.0);
   return result;
 }
   

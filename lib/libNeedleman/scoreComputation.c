@@ -227,7 +227,7 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, int nbMessage, t_mess
       if (debugMode) {
 	printf("Regex = %s\n", regex);
       }
-      scoreMatrix[i][p] = normalizeScore(tmpResultMessage.score);
+      scoreMatrix[i][p] = computeDistance(tmpResultMessage.score);
       /**
 	 Verifies if the computed score is the highest
       */
