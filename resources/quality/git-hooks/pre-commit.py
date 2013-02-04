@@ -151,7 +151,7 @@ def checkHeader(file):
         data = f.read()
     if not header in data and not header2 in data and not header3 in data:
         if file.startswith(os.path.join("src", "netzob_plugins")):  # Plugin
-            headersPlugin = header.split("Georges Bossert and Frédéric Guihéry                   |")
+            headersPlugin = header.split("2011 Georges Bossert and Frédéric Guihéry                   |")
             if headersPlugin[0] in data and headersPlugin[1] in data:
                 return []
         return ["The header has not been found in file"]
