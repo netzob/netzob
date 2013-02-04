@@ -96,7 +96,7 @@ class VariableTreeController(object):
         self.field = field
 
         self.view = VariableTreeView(self)
-        self.view.getWidg("dialog").set_title(_("Editing variables of field: {0}").format(field.getName()))
+        self.view.getWidg("dialog").set_title(_("Configure definition domain for the field: {0}").format(field.getName()))
 #        if self.field.getVariable() is not None:
         self.registerContent(self.field.getVariable())
         self.initIndexesList()

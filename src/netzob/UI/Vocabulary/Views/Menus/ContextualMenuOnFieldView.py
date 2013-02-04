@@ -83,8 +83,8 @@ class ContextualMenuOnFieldView(object):
         item.connect("activate", self.controller.displayPopupToCreateLayer_cb)
         self.menu.append(item)
 
-        # Add entry to edit variable
-        item = Gtk.MenuItem(_("Edit Variable"))
+        # Add entry to edit the configuration domain
+        item = Gtk.MenuItem(_("Configure definition domain"))
         item.show()
         item.connect("activate", self.controller.displayPopupToEditVariable_cb)
         self.menu.append(item)
