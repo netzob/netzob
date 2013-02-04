@@ -106,7 +106,6 @@ class Field(object):
 
         # Data
         self.variable = None
-        self.defaultVariable = None
         self.fields = []
 
     def __str__(self):
@@ -147,13 +146,9 @@ class Field(object):
         """
         functions = []
 
-        # dynamic fields are in Blue
+        # Dynamic fields are in Blue
         if not self.isStatic():
             functions.append(TextColorFunction("Dynamic Field", "blue"))
-#            # fields with no variable define are in yellow
-#            if self.variable is None:
-#                functions.append(BackgroundColorFunction("Default variable", "yellow"))
-
         return functions
 
     def getEncodingFunctions(self):
@@ -826,16 +821,18 @@ class Field(object):
         return ", ".join(tmpTypes)
 
     ## Variable
-    def getDefaultVariable(self, symbol):
-        """getDefaultVariable:
-                Generates and returns a variable which is an aggregate that has one child which is an alternate of all default values of the field picked in the current symbol values.
+    def generateDefaultVariable(self, symbol):
+        """generateDefaultVariable:
+                generates the default variable and returns it
 
                 @type symbol: netzob.Common.Symbol
                 @param symbol: the parent symbol.
-                @rtype: netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable.AggregateVariable
+                @rtype: netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable
                 @return: the generated variable
         """
+        variable = None
         if self.isStatic():
+            # The default variable is simple DataVariable (in binary type)
             value = self.getRegex()
             if value.endswith("?"):
                 value = value[1:len(value) - 2]
@@ -844,26 +841,6 @@ class Field(object):
 
             value = TypeConvertor.netzobRawToBitArray(value)
             variable = DataVariable(str(uuid.uuid4()), "Default variable of {0}".format(self.getName()), False, False, BinaryType(True, len(value), len(value)), value)  # A static field is neither mutable nor random.
-            return variable
-        else:
-            if self.defaultVariable is None:
-                self.defaultVariable = self.generateDefaultVariable(symbol)
-            return self.defaultVariable
-
-    def generateDefaultVariable(self, symbol):
-        """generateDefaultVariable:
-                generates the default variable and returns it
-
-                @type symbol: netzob.Common.Symbol
-                @param symbol: the parent symbol.
-                @rtype: netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable.AggregateVariable
-                @return: the generated variable
-        """
-        variable = None
-        if self.isStatic():
-            # The default variable is simple DataVariable (in binary type)
-            data = TypeConvertor.netzobRawToBitArray(self.getRegexData())
-            variable = DataVariable(str(uuid.uuid4()), "Default variable", False, False, BinaryType(True, len(data), len(data)), data.to01())
         else:
             # The default variable is an alternative of all the possibilities (in binary type)
             cells = self.getUniqValuesByField()
@@ -875,10 +852,10 @@ class Field(object):
             variable = AlternateVariable(str(uuid.uuid4()), "Default variable of {0}".format(self.getName()), True, False, None)
             i = 0
             for d in domain:
-                child = DataVariable(str(uuid.uuid4()), "Default child variable {0}".format(i), False, False, BinaryType(True, len(d), len(d)), d.to01())
+                child = DataVariable(str(uuid.uuid4()), "Default child variable {0}".format(i), False, False, BinaryType(True, len(d), len(d)), d)
                 i += 1
                 variable.addChild(child)
-        return variable
+        self.variable = variable
 
     ## Fields
     def getAllFields(self):
@@ -1216,7 +1193,7 @@ class Field(object):
 
     def getVariable(self):
         if self.variable is None:
-            self.variable = self.generateDefaultVariable(self.symbol)
+            self.generateDefaultVariable(self.symbol)
         return self.variable
 
     def getLocalFields(self):

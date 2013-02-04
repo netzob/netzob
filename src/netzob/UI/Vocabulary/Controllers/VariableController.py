@@ -296,11 +296,8 @@ class VariableTreeController(object):
                 Create a default variable, which is an alternate of
                 all the possible values of the field.
         """
-#        if self.field.getVariable() is None:
-        self.field.variable = self.field.getDefaultVariable(self.symbol)
+        self.field.generateDefaultVariable(self.symbol)
         self.registerContent(self.field.getVariable())
-#        else:
-#            logging.info("A variable already exists.")
 
 
 class VariableCreationController(object):

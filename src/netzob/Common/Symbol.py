@@ -102,9 +102,7 @@ class Symbol(AbstractSymbol):
                 # We add all variable that has the root variable of field as ancestor.
                 result.extend(field.getVariable().getProgeny())
             else:
-                self.log.debug("Field {0} has no variable, considering default one.".format(str(field.getName())))
-                result.extend(field.getDefaultVariable(self).getProgeny())
-
+                self.log.warn("Field {0} has no variable, this should not happen.".format(str(field.getName())))
         return result
 
     ### Messages ###
@@ -246,10 +244,7 @@ class Symbol(AbstractSymbol):
         # We create an aggregate of all the fields
         rootSymbol = AggregateVariable(self.getID(), self.getName(), False, False, None)
         for field in self.getExtendedFields():
-            if field.getVariable() is None:
-                variable = field.getDefaultVariable(self)
-            else:
-                variable = field.getVariable()
+            variable = field.getVariable()
             rootSymbol.addChild(variable)
         return rootSymbol
 

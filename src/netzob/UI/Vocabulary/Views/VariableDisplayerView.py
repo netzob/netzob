@@ -72,9 +72,8 @@ class VariableDisplayerView(object):
         fields = dict()
         for field in self.controller.symbol.getExtendedFields():
             var = field.getVariable()
-            if var is None:
-                var = field.getDefaultVariable(self.controller.symbol)
-            fields["F{0}".format(field.getIndex())] = var
+            if var is not None:
+                fields["F{0}".format(field.getIndex())] = var
 
         dotCode = ["digraph G {"]
         dotCode.extend(self.addDotCodeForFields(fields))

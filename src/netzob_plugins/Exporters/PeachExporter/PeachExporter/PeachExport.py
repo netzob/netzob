@@ -260,8 +260,6 @@ class PeachExport(object):
             if self.variableOverRegex:
                 logging.debug("The fuzzing is based on variables.")
                 variable = field.getVariable()
-                if variable is None:
-                    variable = field.getDefaultVariable(symbol)
 
                 # We retrieve the values of the variable in text format.
                 typedValueLists = self.getRecVariableTypedValueLists(variable)
