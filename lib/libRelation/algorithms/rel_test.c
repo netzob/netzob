@@ -29,12 +29,12 @@
 
 static struct relation_matches*
 relation_test_find(const char** messages, int row, int idx,
-									 size_t vlen, size_t hlen)
+		   size_t vlen, size_t hlen)
 {
-	return NULL;
+    return NULL;
 }
 
 struct relation_algorithm_operations operations = {
-	.name = "test",
-	.find = relation_test_find
+    .name = "test",
+    .find = relation_test_find
 };

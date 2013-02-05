@@ -34,16 +34,16 @@
 PyObject *exception = NULL;
 
 static PyMethodDef relation_methods[] = {
-	{"find", py_find, METH_VARARGS,
-	 "Iterate over relation algorithms"},
-	{NULL, NULL, 0, NULL}
+    {"find", py_find, METH_VARARGS,
+     "Iterate over relation algorithms"},
+    {NULL, NULL, 0, NULL}
 };
 
 PyMODINIT_FUNC init_libRelation(void) {
-	/* PyObject *d = PyDict_New(); */
-	(void) Py_InitModule("_libRelation", relation_methods);
-	/* exception = PyErr_NewException("_libRelation.error", NULL, NULL); */
-	/* PyDict_SetItemString(d, "error", exception); */
+    /* PyObject *d = PyDict_New(); */
+    (void) Py_InitModule("_libRelation", relation_methods);
+    /* exception = PyErr_NewException("_libRelation.error", NULL, NULL); */
+    /* PyDict_SetItemString(d, "error", exception); */
 }
 
 /*
@@ -52,74 +52,74 @@ PyMODINIT_FUNC init_libRelation(void) {
  * > [(m0f0, m0f1, ...), (m1f0, m1f1, ...)]
  */
 static PyObject*
-py_find(PyObject* self, PyObject* args) {
-	PyObject* pListCells;
-	PyObject* pCells;
-	PyObject* pCell;
-	PyObject* pDm = NULL;
-	size_t cells_hlen, cells_vlen;
-	int i, j;
-	char ***pppCells;
-	struct relation_datamodel* dm = NULL;
+py_find(__attribute__((unused))PyObject* self, PyObject* args) {
+    PyObject* pListCells;
+    PyObject* pCells;
+    PyObject* pCell;
+    PyObject* pDm = NULL;
+    size_t cells_hlen, cells_vlen;
+    unsigned int i, j;
+    char ***pppCells = NULL;
+    struct relation_datamodel* dm = NULL;
 
-	/* Parse arguments */
-	if ((pListCells = PyTuple_GetItem(args, 0)) == NULL) {
+    /* Parse arguments */
+    if ((pListCells = PyTuple_GetItem(args, 0)) == NULL) {
     fprintf(stderr, "ERROR: Unable to parse args\n");
-		goto end;
-	}
+        goto end;
+    }
 
-	/* Check type of arguments */
-	if (!PySequence_Check(pListCells)) {
-		fprintf(stderr, "ERROR: Unable to parse arg as list\n");
-		goto end;
-	}
+    /* Check type of arguments */
+    if (!PySequence_Check(pListCells)) {
+        fprintf(stderr, "ERROR: Unable to parse arg as list\n");
+        goto end;
+    }
 
-	cells_hlen = PySequence_Size(pListCells);
+    cells_hlen = PySequence_Size(pListCells);
 
-	if ((pppCells = malloc(cells_hlen * sizeof(*pppCells))) == NULL)
-		goto end;
+    if ((pppCells = malloc(cells_hlen * sizeof(*pppCells))) == NULL)
+        goto end;
 
-	/* Allocation is based on the length of the first row */
-	pCells = PySequence_GetItem(pListCells, 0);
-	if (!PySequence_Check(pCells)) {
-		fprintf(stderr, "ERROR: Unable to get list item\n");
-		goto end;
-	}
+    /* Allocation is based on the length of the first row */
+    pCells = PySequence_GetItem(pListCells, 0);
+    if (!PySequence_Check(pCells)) {
+        fprintf(stderr, "ERROR: Unable to get list item\n");
+        goto end;
+    }
 
-	/* Do str dups */
-	cells_vlen = PySequence_Size(pCells);
-	for (i = 0; i < cells_hlen; i++) {
-		/* Get, check and copy messages refs */
-		pCells = PySequence_GetItem(pListCells, i);
-		if (!PySequence_Check(pCells))
-			goto end2;
-		if ((pppCells[i] = malloc(cells_vlen * sizeof(**pppCells))) == NULL)
-			goto end2;
-		for (j = 0; j < cells_vlen; j++) {
-			/* Get, check and copy cells */
-			pCell = PySequence_GetItem(pCells, j);
-			if (!PyString_Check(pCell))
-				goto end2;
-			if ((pppCells[i][j] = malloc(PyString_Size(pCell) * sizeof(**pppCells))) == NULL)
-				goto end2;
-			strcpy(pppCells[i][j], PyString_AsString(pCell));
-		}
-	}
-	relation_find(&dm, (const char***)pppCells, cells_hlen, cells_vlen);
-	pDm = create_python_dm(dm);
+    /* Do str dups */
+    cells_vlen = PySequence_Size(pCells);
+    for (i = 0; i < cells_hlen; i++) {
+        /* Get, check and copy messages refs */
+        pCells = PySequence_GetItem(pListCells, i);
+        if (!PySequence_Check(pCells))
+            goto end2;
+        if ((pppCells[i] = malloc(cells_vlen * sizeof(**pppCells))) == NULL)
+            goto end2;
+        for (j = 0; j < cells_vlen; j++) {
+            /* Get, check and copy cells */
+            pCell = PySequence_GetItem(pCells, j);
+            if (!PyString_Check(pCell))
+                goto end2;
+            if ((pppCells[i][j] = malloc(PyString_Size(pCell) * sizeof(**pppCells))) == NULL)
+                goto end2;
+            strcpy(pppCells[i][j], PyString_AsString(pCell));
+        }
+    }
+    relation_find(&dm, (const char***)pppCells, cells_hlen, cells_vlen);
+    pDm = create_python_dm(dm);
 
  end2:
-	for (i = 0; i < cells_hlen; i++) {
-		if (pppCells[i] != NULL)
-			for (j = 0; j < cells_vlen; j++)
-				if (pppCells[i][j] != NULL)
-					free(pppCells[i][j]);
-		free(pppCells[i]);
-	}
+    for (i = 0; i < cells_hlen; i++) {
+        if (pppCells[i] != NULL)
+            for (j = 0; j < cells_vlen; j++)
+                if (pppCells[i][j] != NULL)
+                    free(pppCells[i][j]);
+        free(pppCells[i]);
+    }
  end:
-	if (pppCells != NULL)
-		free(pppCells);
-	return pDm;
+    if (pppCells != NULL)
+        free(pppCells);
+    return pDm;
 }
 
 /*
@@ -128,54 +128,53 @@ py_find(PyObject* self, PyObject* args) {
 static PyObject*
 create_python_dm(struct relation_datamodel* dm)
 {
-	struct relation_datamodel* dm_it = dm;
-	struct relation_matches* matches;
-	struct relation_matches* matches_tmp;
-	PyObject* pDm = NULL;
-	PyObject* pAlgoName;
-	PyObject* pRefs;
-	PyObject* pRefConfig;
-	PyObject* pRels;
-	PyObject* pRelConfig;
-	PyObject* pObj;
+    struct relation_datamodel* dm_it = dm;
+    struct relation_matches* matches;
+    struct relation_matches* matches_tmp;
+    PyObject* pDm = NULL;
+    PyObject* pAlgoName;
+    PyObject* pRefs;
+    PyObject* pRefConfig;
+    PyObject* pRels;
+    PyObject* pRelConfig;
 
-	if (!(pDm = PyDict_New()))
-		goto error;
-	while (dm_it) {
-		pAlgoName = PyString_FromString(dm_it->algo_name);
+    if (!(pDm = PyDict_New()))
+        goto error;
+    while (dm_it) {
+        pAlgoName = PyString_FromString(dm_it->algo_name);
 
-		/* Amend/append a algo/match node */
-		if (!(pRefs = PyDict_GetItem(pDm, pAlgoName)))
-			if (!(pRefs = PyList_New(0)))
-				goto error;
+        /* Amend/append a algo/match node */
+        if (!(pRefs = PyDict_GetItem(pDm, pAlgoName)))
+            if (!(pRefs = PyList_New(0)))
+                goto error;
 
-		matches = dm_it->matches;
-		while (matches != NULL) {
-			pRelConfig = Py_BuildValue("(Ikk)",
-																 matches->match.cell_rel_idx,
-																 matches->match.cell_rel_off,
-																 matches->match.cell_rel_size);
-			pRels = Py_BuildValue("[O]", pRelConfig);
+        matches = dm_it->matches;
+        while (matches != NULL) {
+            pRelConfig = Py_BuildValue("(Ikk)",
+				       matches->match.cell_rel_idx,
+				       matches->match.cell_rel_off,
+				       matches->match.cell_rel_size);
+            pRels = Py_BuildValue("[O]", pRelConfig);
 
-			pRefConfig = Py_BuildValue("(IOOO)",
-																 matches->match.cell_ref_idx,
-																 Py_None,
-																 Py_None,
-																 pRels);
-			PyList_Append(pRefs, pRefConfig);
+            pRefConfig = Py_BuildValue("(IOOO)",
+				       matches->match.cell_ref_idx,
+				       Py_None,
+				       Py_None,
+				       pRels);
+            PyList_Append(pRefs, pRefConfig);
 
-			matches_tmp = matches->next;
-			free(matches);
-			matches = matches_tmp;
-		}
+            matches_tmp = matches->next;
+            free(matches);
+            matches = matches_tmp;
+        }
 
-		/* Append configuration of reference as tuple */
-		PyDict_SetItem(pDm, pAlgoName , pRefs);
+        /* Append configuration of reference as tuple */
+        PyDict_SetItem(pDm, pAlgoName , pRefs);
 
-		/* next algo */
-		dm_it = dm_it->next;
-	}
-	return pDm;
+        /* next algo */
+        dm_it = dm_it->next;
+    }
+    return pDm;
  error:
-	Py_RETURN_NONE;
+    Py_RETURN_NONE;
 }

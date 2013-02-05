@@ -39,22 +39,22 @@ static unsigned int MIN_SIZE = 2;
  */
 static int
 get_match(const char* cell_ref, const char* cell_rel,
-					off_t start, size_t len)
+	  size_t start, size_t len)
 {
-	int ret;
+    int ret;
 #if defined(__DEBUG__) && false
-	char* new_rel;
-	if ((new_rel = malloc((len + 1) * sizeof(*new_rel)))) {
-		new_rel[len] = '\0';
-		DLOG("%s == %s ?", cell_ref, strncpy(new_rel, &cell_rel[start], len));
-		free(new_rel);
-	}
+    char* new_rel;
+    if ((new_rel = malloc((len + 1) * sizeof(*new_rel)))) {
+        new_rel[len] = '\0';
+        DLOG("%s == %s ?", cell_ref, strncpy(new_rel, &cell_rel[start], len));
+        free(new_rel);
+    }
 #endif
-	ret = strncmp(cell_ref, &cell_rel[start], len);
+    ret = strncmp(cell_ref, &cell_rel[start], len);
 #if defined(__DEBUG__) && false
-	DLOG(" %d\n", ret);
+    DLOG(" %d\n", ret);
 #endif
-	return ret;
+    return ret;
 }
 
 /*
@@ -62,16 +62,16 @@ get_match(const char* cell_ref, const char* cell_rel,
  */
 static struct relation_matches*
 append_match(struct relation_matches** matches,
-						 const struct relation_match* match)
+	     const struct relation_match* match)
 {
-	struct relation_matches* new = NULL;
+    struct relation_matches* new = NULL;
 
-	if (!(new = malloc(sizeof(*new))))
-		return NULL;
-	new->next = *matches;
-	memcpy(&new->match, match, sizeof(new->match));
-	*matches = new;
-	return new;
+    if (!(new = malloc(sizeof(*new))))
+        return NULL;
+    new->next = *matches;
+    memcpy(&new->match, match, sizeof(new->match));
+    *matches = new;
+    return new;
 }
 
 /*
@@ -79,29 +79,29 @@ append_match(struct relation_matches** matches,
  */
 static int
 verify_match(const char*** messages, size_t msgs_len, size_t cells_len,
-						 const struct relation_match* match)
+	     const struct relation_match* match)
 {
-	int i;
-	int ret = 0;
-	const char** cells;
-	const char* ref;
-	const char* rel;
+    int i;
+    int ret = 0;
+    const char** cells;
+    const char* ref;
+    const char* rel;
 
-	DLOG("Verifying M%04d", 0);
-	for (i = 0; i < msgs_len; i++) {
-		if (i == match->message_idx)
-			continue;
-		cells = messages[i];
-		ref = cells[match->cell_ref_idx];
-		rel = cells[match->cell_rel_idx];
-		DLOG2("\b\b\b\b%04d", i);
-		if (get_match(ref, rel, match->cell_rel_off, match->cell_rel_size)) {
-			ret = i;
-			break;
-		}
-	}
-	DLOG2("\n");
-	return ret;
+    DLOG("Verifying M%04d", 0);
+    for (i = 0; i < msgs_len; i++) {
+        if (i == match->message_idx)
+            continue;
+        cells = messages[i];
+        ref = cells[match->cell_ref_idx];
+        rel = cells[match->cell_rel_idx];
+        DLOG2("\b\b\b\b%04d", i);
+        if (get_match(ref, rel, match->cell_rel_off, match->cell_rel_size)) {
+            ret = i;
+            break;
+        }
+    }
+    DLOG2("\n");
+    return ret;
 }
 
 /*
@@ -109,53 +109,53 @@ verify_match(const char*** messages, size_t msgs_len, size_t cells_len,
  */
 static struct relation_matches*
 relation_equality_find(const char*** messages, int row, int idx,
-											 size_t vlen, size_t hlen)
+		       size_t vlen, size_t hlen)
 {
-	int i, ret;
-	off_t off;
-	int found = 0;
-	int match_res;
-	const char** cells;
-	const char* ref;
-	size_t ref_len;
-	const char* rel;
-	size_t rel_len;
-	struct relation_matches* matches = NULL;
-	struct relation_match match;
+    int i, ret;
+    size_t off;
+    int found = 0;
+    int match_res;
+    const char** cells;
+    const char* ref;
+    size_t ref_len;
+    const char* rel;
+    size_t rel_len;
+    struct relation_matches* matches = NULL;
+    struct relation_match match;
 
-	cells = messages[row];
-	ref = cells[idx];
-	ref_len = strlen(ref);
-	for (i = 0; i < hlen; i++) {
-		rel = cells[i];
-		rel_len = strlen(rel);
-		if (i != idx && rel && ref_len <= rel_len && ref_len >= MIN_SIZE) {
-			for (off = 0; off <= rel_len - ref_len; off++) {
-				if (!(match_res = get_match(ref, rel, off, ref_len))) {
-					match.message_idx = row;
-					match.cell_ref_idx = idx;
-					match.cell_rel_idx = i;
-					match.cell_rel_off = off;
-					match.cell_rel_size = ref_len;
-					DLOG("possible match found: M%d F%d[:], F%d[%ld:%ld] (%s)\n",
-							 row, idx, i, off, off+ref_len, ref);
-					if ((ret = verify_match(messages, vlen, hlen,
-																	(const struct relation_match*)&match)) != 0) {
-						DLOG("verification failed at M%d\n", ret);
-						continue;
-					}
-					DLOG("MATCH FOUND\n");
-					DLOG(">> %p\n", matches);
-					append_match(&matches, (const struct relation_match*)&match);
-					DLOG(">> %p\n", matches);
-				}
-			}
-		}
-	}
-	return matches;
+    cells = messages[row];
+    ref = cells[idx];
+    ref_len = strlen(ref);
+    for (i = 0; i < hlen; i++) {
+        rel = cells[i];
+        rel_len = strlen(rel);
+        if (i != idx && rel && ref_len <= rel_len && ref_len >= MIN_SIZE) {
+            for (off = 0; off <= rel_len - ref_len; off++) {
+                if (!(match_res = get_match(ref, rel, off, ref_len))) {
+                    match.message_idx = row;
+                    match.cell_ref_idx = idx;
+                    match.cell_rel_idx = i;
+                    match.cell_rel_off = off;
+                    match.cell_rel_size = ref_len;
+                    DLOG("possible match found: M%d F%d[:], F%d[%ld:%ld] (%s)\n",
+			 row, idx, i, off, off+ref_len, ref);
+                    if ((ret = verify_match(messages, vlen, hlen,
+					    (const struct relation_match*)&match)) != 0) {
+                        DLOG("verification failed at M%d\n", ret);
+                        continue;
+                    }
+                    DLOG("MATCH FOUND\n");
+                    DLOG(">> %p\n", matches);
+                    append_match(&matches, (const struct relation_match*)&match);
+                    DLOG(">> %p\n", matches);
+                }
+            }
+        }
+    }
+    return matches;
 }
 
 struct relation_algorithm_operations operations = {
-	.name = "equality",
-	.find = relation_equality_find
+    .name = "equality",
+    .find = relation_equality_find
 };

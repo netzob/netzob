@@ -35,52 +35,52 @@
 # undef  __need_size_t
 
 struct relation_datamodel {
-	const unsigned char* algo_name;
-	struct relation_matches* matches;
-	struct relation_datamodel* next;
+    const char* algo_name;
+    struct relation_matches* matches;
+    struct relation_datamodel* next;
 };
 
 struct relation_match {
-	unsigned int message_idx;
-	unsigned int cell_ref_idx;
-	unsigned int cell_rel_idx;
-	off_t cell_rel_off;
-	size_t cell_rel_size;
+    unsigned int message_idx;
+    unsigned int cell_ref_idx;
+    unsigned int cell_rel_idx;
+    size_t cell_rel_off;
+    size_t cell_rel_size;
 };
 
 struct relation_matches {
-	struct relation_match match;
-	struct relation_matches* next;
+    struct relation_match match;
+    struct relation_matches* next;
 };
 
 struct relation_algorithm_operations {
-	const unsigned char* name;
-	struct relation_matches* (*find) (const char***, int, int, size_t, size_t);
+    const char* name;
+    struct relation_matches* (*find) (const char***, int, int, size_t, size_t);
 };
 
 struct relation_algorithm_operations_list {
-	void* pHandle;
-	struct relation_algorithm_operations data;
-	struct relation_algorithm_operations_list* next;
+    void* pHandle;
+    struct relation_algorithm_operations data;
+    struct relation_algorithm_operations_list* next;
 };
 
 void relation_find(struct relation_datamodel**, const char***, size_t, size_t);
-static struct relation_datamodel*
+struct relation_datamodel*
 append_algo_matches(struct relation_datamodel**,
-										struct relation_algorithm_operations_list*,
-										struct relation_matches*);
-static struct relation_algorithm_operations_list* search_algorithms();
-static void clean_algo(struct relation_algorithm_operations_list* algo);
+                                        struct relation_algorithm_operations_list*,
+                                        struct relation_matches*);
+struct relation_algorithm_operations_list* search_algorithms(void);
+void clean_algo(struct relation_algorithm_operations_list* algo);
 
 # ifdef __DEBUG__
-#  define DLOG(args...) {															\
-		fprintf(stderr, "[%s:%d] ", __FILE__, __LINE__);	\
-		DLOG2(args);																			\
-	}
+#  define DLOG(args...) {						\
+    fprintf(stderr, "[%s:%d] ", __FILE__, __LINE__);			\
+    DLOG2(args);							\
+  }
 #  define DLOG2(args...) fprintf(stderr, args)
 # else
-#  define DLOG(args...)
-#  define DLOG2(args...)
+#  define DLOG(...)
+#  define DLOG2(...)
 # endif /* __DEBUG__ */
 
 #endif /* RELATION_H */

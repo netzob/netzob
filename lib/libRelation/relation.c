@@ -41,122 +41,122 @@ static const char* algorithm_path = "lib/libRelation/algorithms";
  */
 void
 relation_find(struct relation_datamodel** dm,
-							const char*** data,
-							size_t vlen, size_t hlen)
+	      const char*** data,
+	      size_t vlen, size_t hlen)
 {
-	int i, j;
-	struct relation_matches* matches;
-	struct relation_algorithm_operations_list* algo_opers;
+    unsigned int i, j;
+    struct relation_matches* matches;
+    struct relation_algorithm_operations_list* algo_opers;
 
-	algo_opers = search_algorithms();
-	while (algo_opers) {
-		DLOG("ALGO %s\n", algo_opers->data.name);
-		for (i = 0; i < vlen; i++) {
-			for (j = 0; j < hlen; j++) {
-				matches = algo_opers->data.find(data, i, j, vlen, hlen);
-				if (matches != NULL)
-					append_algo_matches(dm, algo_opers, matches);
-			}
-			/* only search over the first row, others are useless */
-			break;
-		}
-		algo_opers = algo_opers->next;
-	}
-	clean_algo(algo_opers);
+    algo_opers = search_algorithms();
+    while (algo_opers) {
+        DLOG("ALGO %s\n", algo_opers->data.name);
+        for (i = 0; i < vlen; i++) {
+            for (j = 0; j < hlen; j++) {
+                matches = algo_opers->data.find(data, i, j, vlen, hlen);
+                if (matches != NULL)
+                    append_algo_matches(dm, algo_opers, matches);
+            }
+            /* only search over the first row, others are useless */
+            break;
+        }
+        algo_opers = algo_opers->next;
+    }
+    clean_algo(algo_opers);
 }
 
 /*
  * Append a result to the datamodel structure.
  */
-static struct relation_datamodel*
+struct relation_datamodel*
 append_algo_matches(struct relation_datamodel** dm,
-										struct relation_algorithm_operations_list* opers,
-										struct relation_matches* matches)
+		    struct relation_algorithm_operations_list* opers,
+		    struct relation_matches* matches)
 {
-	struct relation_datamodel* new;
+    struct relation_datamodel* new;
 
-	if (!(new = malloc(sizeof(*new))))
-		return NULL;
-	new->next = *dm;
-	new->matches = matches;
-	new->algo_name = opers->data.name;
-	*dm = new;
-	return new;
+    if (!(new = malloc(sizeof(*new))))
+        return NULL;
+    new->next = *dm;
+    new->matches = matches;
+    new->algo_name = opers->data.name;
+    *dm = new;
+    return new;
 }
 
 /*
  * Build a list of libRelation algorithm.
  * This structure contains a handle returned by dlopen() of libraries.
  */
-static struct relation_algorithm_operations_list*
-search_algorithms()
+struct relation_algorithm_operations_list*
+search_algorithms(void)
 {
-	DIR* pDir;
-	struct dirent* entry;
-	void* pLib;
-	unsigned char* libPath;
-	int libPathLen;
-	struct relation_algorithm_operations* algo_oper;
-	struct relation_algorithm_operations_list* algo_opers = NULL;
-	struct relation_algorithm_operations_list* algo_opers_prev = NULL;
+    DIR* pDir;
+    struct dirent* entry;
+    void* pLib;
+    char* libPath;
+    int libPathLen;
+    struct relation_algorithm_operations* algo_oper;
+    struct relation_algorithm_operations_list* algo_opers = NULL;
+    struct relation_algorithm_operations_list* algo_opers_prev = NULL;
 
-	DLOG("Searching in %s\n", algorithm_path);
-	if ((pDir = opendir(algorithm_path)) == NULL)
-		goto end;
-	while ((entry = readdir(pDir)) != NULL) {
-		if (strstr(entry->d_name, ".so") != NULL) {
-			libPathLen = strlen(algorithm_path) + 1 + strlen(entry->d_name);
-			if (!(libPath = malloc(sizeof(*libPath) * (libPathLen + 1)))) {
-				perror("search_algorithms()");
-				goto end;
-			}
-			if (snprintf(libPath, libPathLen + 1, "%s/%s", algorithm_path, entry->d_name) != libPathLen) {
-				fprintf(stderr, "snprintf() failed at %s:%d\n", __FILE__, __LINE__);
-				fprintf(stderr, " %s\n", libPath);
-				goto end;
-			}
-			if (!(pLib = dlopen(libPath, RTLD_NOW|RTLD_GLOBAL))) {
-				DLOG("Skipping '%s'\n", libPath);
-				goto next;
-			}
-			dlerror(); // clear last error
-			algo_oper = dlsym(pLib, "operations");
-			/* Check current error flag */
-			if (dlerror() != NULL)
-				goto next;
-			DLOG("[%s] Operations loaded\n", libPath);
-			if (!(algo_opers = malloc(sizeof(*algo_opers))))
-				goto next;
-			algo_opers->next = algo_opers_prev;
-			algo_opers->pHandle = pLib;
-			memcpy(&algo_opers->data, algo_oper, sizeof(*algo_oper));
-			algo_opers_prev = algo_opers;
-			DLOG("[%s] Algo added\n", algo_opers->data.name);
-		next:
-			free(libPath);
-			continue;
-		}
-	}
+    DLOG("Searching in %s\n", algorithm_path);
+    if ((pDir = opendir(algorithm_path)) == NULL)
+        goto end;
+    while ((entry = readdir(pDir)) != NULL) {
+        if (strstr(entry->d_name, ".so") != NULL) {
+            libPathLen = strlen(algorithm_path) + 1 + strlen(entry->d_name);
+            if (!(libPath = malloc(sizeof(*libPath) * (libPathLen + 1)))) {
+                perror("search_algorithms()");
+                goto end;
+            }
+            if (snprintf(libPath, libPathLen + 1, "%s/%s", algorithm_path, entry->d_name) != libPathLen) {
+                fprintf(stderr, "snprintf() failed at %s:%d\n", __FILE__, __LINE__);
+                fprintf(stderr, " %s\n", libPath);
+                goto end;
+            }
+            if (!(pLib = dlopen(libPath, RTLD_NOW|RTLD_GLOBAL))) {
+                DLOG("Skipping '%s'\n", libPath);
+                goto next;
+            }
+            dlerror(); // clear last error
+            algo_oper = dlsym(pLib, "operations");
+            /* Check current error flag */
+            if (dlerror() != NULL)
+                goto next;
+            DLOG("[%s] Operations loaded\n", libPath);
+            if (!(algo_opers = malloc(sizeof(*algo_opers))))
+                goto next;
+            algo_opers->next = algo_opers_prev;
+            algo_opers->pHandle = pLib;
+            memcpy(&algo_opers->data, algo_oper, sizeof(*algo_oper));
+            algo_opers_prev = algo_opers;
+            DLOG("[%s] Algo added\n", algo_opers->data.name);
+        next:
+            free(libPath);
+            continue;
+        }
+    }
 
-	closedir(pDir);
+    closedir(pDir);
  end:
-	return algo_opers;
+    return algo_opers;
 }
 
 /*
  * Correctly free a relation_algorithm_operations_list recursively.
  */
-static void
+void
 clean_algo(struct relation_algorithm_operations_list* algo)
 {
-	struct relation_algorithm_operations_list* cur = algo;
-	struct relation_algorithm_operations_list* next;
+    struct relation_algorithm_operations_list* cur = algo;
+    struct relation_algorithm_operations_list* next;
 
-	while (cur) {
-		if (cur->pHandle)
-			dlclose(cur->pHandle);
-		next = cur->next;
-		free(cur);
-		cur = next;
-	}
+    while (cur) {
+        if (cur->pHandle)
+            dlclose(cur->pHandle);
+        next = cur->next;
+        free(cur);
+        cur = next;
+    }
 }

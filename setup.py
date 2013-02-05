@@ -170,12 +170,13 @@ moduleLibInterface = Extension('netzob._libInterface',
                                include_dirs=includes)
 
 # Module Relation
-moduleLibRelation = Extension('_libRelation',
-                                sources=[os.path.join(relPath, "relation.c"),
-                                         os.path.join(pyRelPath, "libRelation.c")],
-                                define_macros=macros,
-                                include_dirs=includes,
-                                libraries=["dl"])
+moduleLibRelation = Extension('netzob._libRelation',
+                              extra_compile_args=extraCompileArgs,
+                              sources=[os.path.join(relPath, "relation.c"),
+                                       os.path.join(pyRelPath, "libRelation.c")],
+                              define_macros=macros,
+                              include_dirs=includes,
+                              libraries=["dl"])
 
 #+----------------------------------------------------------------------------
 #| Definition of the dependencies
