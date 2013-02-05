@@ -12,10 +12,23 @@
 	<complexType name="Session">
 		<sequence>
 			<element name="messages-ref" type="netzob-common:Messages-ref" maxOccurs="1" minOccurs="0"></element>
+			<element name="applicativeData" type="netzob-common:ApplicativeData" maxOccurs="1" minOccurs="0"></element>
 		</sequence>
 		<attribute name="id" type="string"></attribute>
 		<attribute name="name" type="string"></attribute>
 		<attribute name="description" type="string"></attribute>
+	</complexType>
+
+	<complexType name="ApplicativeData">
+	  <choice minOccurs="0" maxOccurs="unbounded">
+	    <element name="data" type="netzob-common:data"></element>
+	  </choice>
+	</complexType>
+
+	<complexType name="data">
+	  <attribute name="id" type="string"></attribute>
+	  <attribute name="name" type="string"></attribute>
+	  <attribute name="type" type="string"></attribute>
 	</complexType>
 
 	<complexType name="Messages-ref">

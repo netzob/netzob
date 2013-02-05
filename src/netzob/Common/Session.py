@@ -32,11 +32,12 @@ from gettext import gettext as _
 import logging
 from lxml.etree import ElementTree
 from lxml import etree
-import uuid
+
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
+from netzob.Common.ApplicativeData import ApplicativeData
 
 
 class SessionException(Exception):
@@ -54,6 +55,7 @@ class Session(object):
         self.name = name
         self.description = description
         self.messages = []
+        self.applicativeData = []
 
     def addMessage(self, message):
         self.messages.append(message)
@@ -85,6 +87,18 @@ class Session(object):
     def setDescription(self, description):
         self.description = description
 
+    def getApplicativeData(self):
+        return self.applicativeData
+
+    def addApplicativeData(self, data):
+        self.applicativeData.append(data)
+
+    def removeApplicativeData(self, data):
+        try:
+            self.applicativeData.remove(data)
+        except ValueError, e:
+            raise SessionException("The applicative data was not found in the session: unable to remove it. ({0})".format(e))
+
     def save(self, root, namespace_main, namespace_common):
         xmlSession = etree.SubElement(root, "{" + namespace_common + "}session")
         xmlSession.set("id", str(self.getID()))
@@ -97,6 +111,11 @@ class Session(object):
         for message in self.getMessages():
             xmlMessage = etree.SubElement(xmlMessagesRef, "{" + namespace_common + "}message-ref")
             xmlMessage.set("id", str(message.getID()))
+
+        if len(self.getApplicativeData()) > 0:
+            xmlApplicativeData = etree.SubElement(xmlSession, "{" + namespace_common + "}applicativeData")
+            for applicativeData in self.getApplicativeData():
+                applicativeData.save(xmlApplicativeData, namespace_common)
 
     #+----------------------------------------------
     #| Static methods
@@ -118,5 +137,13 @@ class Session(object):
                     if message is not None:
                         message.setSession(session)
                         session.addMessage(message)
+
+            if xmlRoot.find("{" + namespace_common + "}applicativeData") is not None:
+                xmlApplicativeData = xmlRoot.find("{" + namespace_common + "}applicativeData")
+                for xmlData in xmlApplicativeData.findall("{" + namespace_common + "}data"):
+                    data = ApplicativeData.loadFromXML(xmlData)
+                    if data is not None:
+                        session.addApplicativeData(data)
+
             return session
         return None
