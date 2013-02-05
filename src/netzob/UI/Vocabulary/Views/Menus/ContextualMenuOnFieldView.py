@@ -96,6 +96,12 @@ class ContextualMenuOnFieldView(object):
         self.menu.append(item)
 
         # Add entry to export fields
+        item = Gtk.MenuItem(_("Build symbols according to the field value"))
+        item.show()
+        item.connect("activate", self.controller.extractByFieldValue_cb)
+        self.menu.append(item)
+
+        # Add entry to export fields
         item = Gtk.MenuItem(_("Extract Fields To A New Symbol"))
         item.show()
         item.connect("activate", self.controller.exportSelectedFields_cb)

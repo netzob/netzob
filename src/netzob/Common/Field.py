@@ -111,6 +111,22 @@ class Field(object):
     def __str__(self):
         return str(self.getName())
 
+    def dupplicate(self, newSymbol):
+        """duplicate: dupplicate the current field hierarchy, but not
+        the underlying variables.
+        """
+        newField = Field(self.getName(), self.getRegex(), newSymbol)
+        # Copy fields interpretation attributes
+        newField.setFormat(self.getFormat())
+        newField.setUnitSize(self.getUnitSize())
+        newField.setSign(self.getSign())
+        newField.setEndianess(self.getEndianess())
+        # Copy subfields
+        for field in self.getLocalFields():
+            newLocalField = field.dupplicate(newSymbol)
+            newField.addField(newLocalField)
+        return newField
+
     ## Functions
     def addVisualizationFunction(self, function):
         self.visualizationFunctions.append(function)
@@ -325,6 +341,39 @@ class Field(object):
             if m.group(2) != "":  # Should always happen
                 maxSize = int(m.group(2))
             return (minSize, maxSize)
+
+    def createSymbolsWithFixedField(self, fixedField):
+        """createSymbolsWithFixedField: Create new symbols according to a
+        specific fixed field.
+        """
+        if fixedField is None:
+            return
+
+        project = self.symbol.project
+        fixedIndex = fixedField.getIndex()
+
+        uniqueValues = fixedField.getUniqValuesByField()
+        self.setName("Symbol-" + str(uniqueValues[0]))
+        for uniqueValue in uniqueValues[1:]:
+            # Extract new messages (that can be sub-parts of entire messages if the user work on a layer)
+            newMessages = []
+            for message in self.getMessages():
+                splittedMessage = message.applyAlignment(styled=False, encoded=False)
+                splittedMessage = splittedMessage[self.getExtendedFields()[0].getIndex():self.getExtendedFields()[-1].getIndex() + 1]
+                if fixedIndex < len(splittedMessage) and splittedMessage[fixedIndex] == uniqueValue:
+                    newMessages.append(message)
+
+            # Remove found messages from the current symbol
+            for message in newMessages:
+                self.getSymbol().removeMessage(message)
+
+            # Build new symbols and dupplicate field structure each time
+            from netzob.Common.Symbol import Symbol
+            symbol = Symbol(str(uuid.uuid4()), "Symbol-" + str(uniqueValue), project)
+            symbol.addMessages(newMessages)
+            newField = self.dupplicate(symbol)
+            symbol.setField(newField)
+            project.getVocabulary().addSymbol(symbol)
 
     #+----------------------------------------------
     #| forcePartitioning:
@@ -1068,7 +1117,6 @@ class Field(object):
             return res
 
     def getUniqValuesByField(self):
-        # First we verify the field exists in the symbol
         res = []
         for cell in self.getCells():
             if len(cell) > 0 and not cell in res:
