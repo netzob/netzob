@@ -135,14 +135,12 @@ class UPGMA(object):
 
         # Execute the Clustering part in C
         debug = False
-        wrapper = WrapperArgsFactory("_libScoreComputation.getHighestEquivalentGroup")
+        wrapper = WrapperArgsFactory("_libScoreComputation.computeSimilarityMatrix")
         wrapper.typeList[wrapper.function](self.symbols)
-        (i_max, j_max, maxScore, listScores) = _libScoreComputation.getHighestEquivalentGroup(self.doInternalSlick, self.cb_executionStatus, self.isFinish, debug, wrapper)
-
+        (listScores) = _libScoreComputation.computeSimilarityMatrix(self.doInternalSlick, self.cb_executionStatus, self.isFinish, debug, wrapper)
         # Retrieve the scores for each association of symbols
         self.scores = {}
         for (iuid, juid, score) in listScores:
-
             if self.isFinish():
                 return (None, None, None)
 
@@ -156,7 +154,6 @@ class UPGMA(object):
 
         # Reduce the UPGMA matrix (merge symbols by similarity)
         self.computePhylogenicTree()
-        return (i_max, j_max, maxScore)
 
     def computePhylogenicTree(self):
         """Compute the phylogenic tree

@@ -41,6 +41,6 @@
 
 #include "Needleman.h"
 
-void getHighestEquivalentGroup(t_equivalentGroup * result, int nbMessage, t_message* messages, Bool debugMode, float** scoreMatrix);
+void computeSimilarityMatrix(int nbMessage, t_message* messages, Bool debugMode, float** scoreMatrix);
 
 #endif

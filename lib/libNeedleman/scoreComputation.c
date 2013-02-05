@@ -171,20 +171,17 @@
 /* } */
 
 /**
-   getHighestEquivalentGroup:
+   computeSimilarityMatrix:
 
-   This method computes which of the provided messages are the most equivalent. It also returns the matrix which allowed to obtain this result
-   @param result: describes wich cell in the score matrix is the higher
+   This functions computes a matrix which contains the similarity scores
+   between the provided messages
    @param nbMessage: the number of provided messages in the param messages
    @param messages: a list containing messages to work with
    @param debug: activate or deactive debug messages
    @param scoreMatrix: a double-dimension array where the matrix score will be stored
 */
-void getHighestEquivalentGroup(t_equivalentGroup * result, int nbMessage, t_message* messages, Bool debugMode, float** scoreMatrix) {
+void computeSimilarityMatrix(int nbMessage, t_message* messages, Bool debugMode, float** scoreMatrix) {
   int i;
-  float maxScore = -1.0f;
-  int i_maximum = -1;
-  int j_maximum = -1;
   t_message tmpResultMessage;
   t_score score;
 
@@ -216,7 +213,6 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, int nbMessage, t_mess
 	 Computes the NeedlemanScore between messages i and p
 	 result is stored in the matrix[i][p]
       */
-      //scoreMatrix[i][p] = NeedlemanScore(&messages[i], &messages[p], debugMode);
       tmpResultMessage.len = 0;
       score.s1 = 0;
       score.s2 = 0;
@@ -228,14 +224,6 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, int nbMessage, t_mess
 	printf("Regex = %s\n", regex);
       }
       scoreMatrix[i][p] = computeDistance(tmpResultMessage.score);
-      /**
-	 Verifies if the computed score is the highest
-      */
-      if (((maxScore < scoreMatrix[i][p]) || (maxScore == -1))) {
-	maxScore = scoreMatrix[i][p];
-	i_maximum = i;
-	j_maximum = p;
-      }
     }
 
     /**
@@ -247,7 +235,4 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, int nbMessage, t_mess
     }
   }
 
-  result->i = i_maximum;
-  result->j = j_maximum;
-  result->score = maxScore;
 }
