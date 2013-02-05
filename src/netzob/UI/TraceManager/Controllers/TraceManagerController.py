@@ -45,6 +45,7 @@ from netzob.UI.TraceManager.Views.TraceManagerView import TraceManagerView
 from netzob.UI.NetzobAbstractPerspectiveController import NetzobAbstractPerspectiveController
 from netzob.Common.Symbol import Symbol
 from netzob.Common.Session import Session
+from netzob.UI.TraceManager.Controllers.ApplicativeDataManagerController import ApplicativeDataManagerController
 
 
 class TraceManagerController(NetzobAbstractPerspectiveController):
@@ -59,6 +60,7 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
         self.currentTrace = None
         self.nameUpdated = False
         self.descriptionUpdated = False
+        self.currentSession = None
 
         # Type of the data selected on the left treeview
         # ('TraceTreeView'). True means that ImportedTrace is/are
@@ -72,6 +74,9 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
         self.deferSelect = None
 
         self._refreshTraceList()
+
+        # Deactivate the management of applicative data
+        self.view.deactivateManagementOfApplicativeData(_("Select a session to manage its applicative data"))
 
     def activate(self):
         self._refreshTraceList()
@@ -249,17 +254,17 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
                 if parentRow is None:
                     traceId = row[0]
                     trace = self.workspace.getImportedTrace(traceId)
-                    sessionFilter = None
+                    self.currentSession = None
                     self.view.traceSessionNewAction.set_sensitive(True)
 
                 else:
                     traceId = parentRow[0]
                     trace = self.workspace.getImportedTrace(traceId)
-                    sessionFilter = trace.getSession(row[0])
+                    self.currentSession = trace.getSession(row[0])
                     self.view.traceSessionNewAction.set_sensitive(False)
 
                 self.view.traceDeleteAction.set_sensitive(True)
-                self._refreshProjectProperties(trace, session=sessionFilter)
+                self._refreshProjectProperties(trace, session=self.currentSession)
                 self.currentTrace = trace
                 self.view.traceNameCellrenderertext.set_property('editable', True)
 
@@ -872,4 +877,10 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
         """manageApplicativeDataButton:
         Callback executed when the user wants to manage the applicative data.
         So we starts the specific MVC controller for this operation"""
-        self.log.debug("Start the management of applicative data")
+        if self.currentSession is None:
+            self.log.warning("No session selected, cannot manage the applicative data")
+            return
+        self.log.debug("Start the management of applicative data for session {0}".format(self.currentSession))
+
+        controller = ApplicativeDataManagerController(self, self.currentSession)
+        controller.run()
