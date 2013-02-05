@@ -32,6 +32,7 @@ from bitarray import bitarray
 from gettext import gettext as _
 from lxml import etree
 import logging
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -64,7 +65,7 @@ class DataVariable(AbstractLeafVariable):
 
                 @type type: string
                 @param typeVariable: the type of the variable being constructed.
-                @type originalValue: linked to type.
+                @type originalValue: bitarray.
                 @param originalValue: the original value of the variable.
         """
         AbstractLeafVariable.__init__(self, _id, name, mutable, learnable)
@@ -97,6 +98,13 @@ class DataVariable(AbstractLeafVariable):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
+    def cloneVariable(self):
+        clone = DataVariable(uuid.uuid4(), self.getName(), self.isMutable(), self.isLearnable(), self.getType(), self.getOriginalValue())
+        clone.setCloned(True)
+        self.setLastClone(clone)
+        self.transferBoundedVariables(clone)
+        return clone
+
     def bin2str(self, bina):
         """bin2str:
                 Transform a bitarray in a well-formatted string according to the type of the variable.
@@ -176,7 +184,7 @@ class DataVariable(AbstractLeafVariable):
         xmlType.text = self.type.getType()
 
         # originalValue (can be None)
-        if self.originalValue is not None:
+        if self.originalValue is not None and self.isMutable() is not None:  # We do not memorize random values.
             xmlOriginalValue = etree.SubElement(xmlVariable, "{" + namespace + "}originalValue")
             # We memorize the current value as the future original value.
             # I assume that the user want the last current value (that he may have hand-edited) of the variable to be memorized.
@@ -313,6 +321,9 @@ class DataVariable(AbstractLeafVariable):
             # Do not forget to write the delimiter if the variable has one
             value.extend(self.getType().getDelimiter())
         writingToken.write(self, value)
+        # We impact the value this variable has written on its tokenChoppedIndex list and its fathers token list.
+        self.log.debug("WritingToken linkedValue: {0}".format(writingToken.getLinkedValue()))
+        self.addTokenChoppedIndex(len(writingToken.getLinkedValue()) - 1)
         self.log.debug("Variable {0}: {1}. ] -".format(self.getName(), writingToken.toString()))
 
 #+---------------------------------------------------------------------------+
@@ -336,23 +347,10 @@ class DataVariable(AbstractLeafVariable):
             self.type = BinaryType()
 
     def setOriginalValue(self, originalValue):
-        if originalValue is not None:
-            if self.type.isSized():
-                size = self.type.getBitSize(originalValue)
-                if size >= self.type.getMinBits() and size <= self.type.getMaxBits():
-                    self.originalValue = self.type.str2bin(originalValue)
-                else:
-                    self.originalValue = None
-                    self.log.info("Variable {0} (Data): The given original value has an inappropriate size.".format(self.getName()))
-            else:
-                self.originalValue = self.type.str2bin(originalValue)
-
-        else:
-            self.originalValue = None
-            self.log.info("Variable {0} (Data): The given original value is None.".format(self.getName()))
+        self.originalValue = self.getType().normalizeValue(originalValue)
 
     def setCurrentValue(self, currentValue):
-        self.currentValue = currentValue
+        self.currentValue = self.getType().normalizeValue(currentValue)
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |
@@ -415,6 +413,9 @@ class DataVariable(AbstractLeafVariable):
             else:
                 logging.error("No type specified for this variable in the xml file.")
                 return None
+
+            if originalValue is not None:
+                originalValue = _type.str2bin(originalValue)
 
             result = DataVariable(xmlID, xmlName, xmlMutable, xmlLearnable, _type, originalValue)
             logging.debug("DataVariable: loadFromXML successes: {0} ]".format(result.toString()))

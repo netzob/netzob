@@ -467,7 +467,7 @@ class Workspace(object):
             # If we find a version which validates the XML, we parse with the associated function
             if Workspace.isSchemaValidateXML(xmlSchemaPath, workspaceFile):
                 return None
-        return _("The specified workspace is not valid according the XSD definitions.")
+        return _("The specified workspace is not valid according to the XSD definitions.")
 
     @staticmethod
     def loadWorkspace(workspacePath):

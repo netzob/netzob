@@ -122,3 +122,6 @@ class MACWordType(AbstractWordType):
 
     def getMinBitSize(self, nbChars):
         return (17 * 8)
+
+    def normalizeValue(self, value):
+        return value  # No normalization needed.

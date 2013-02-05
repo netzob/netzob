@@ -31,6 +31,7 @@
 from gettext import gettext as _
 from lxml import etree
 import logging
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -105,14 +106,14 @@ class ComputedRelationVariable(AbstractVariable):
             self.log.debug("No pointed variable.")
             self.currentValue = None
         else:
-            self.currentValue = self.computeValue(self.getPointedVariable().getValue(processingToken))
+            self.setCurrentValue(self.computeValue(self.getPointedVariable().getTokenValue(processingToken)))
 
     def guessValue(self):
         """guessValue:
                 Try to guess the pointed variable's value and give it to the current value.
         """
         # The 'TEMP' value is explicit enough.
-        self.currentValue = TypeConvertor.stringB2bin("TEMP")
+        self.setCurrentValue(TypeConvertor.stringB2bin("TEMP"))
 
     def compare(self, readingToken):
         """compare:
@@ -184,6 +185,25 @@ class ComputedRelationVariable(AbstractVariable):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
+    def cloneVariable(self):
+        self.directPointer = self.findDirectPointer()
+
+        if self.directPointer:
+            try:
+                pointedID = self.getPointedVariable().getLastClone().getID()
+            except:
+                self.log.debug(_("The variable points nowhere."))
+                return None
+        else:
+            # If it is an indirect pointer, it will be set by the pointed Variable when she will be cloned.
+            pointedID = self.getPointedID()
+
+        clone = ComputedRelationVariable(uuid.uuid4(), self.getName(), self.isMutable(), self.isLearnable(), self.getRelationType(), pointedID, self.symbol)
+        clone.setCloned(True)
+        self.setLastClone(clone)
+        self.transferBoundedVariables(clone)
+        return clone
+
     def getVariableType(self):
         """getVariableType:
         """
@@ -264,6 +284,7 @@ class ComputedRelationVariable(AbstractVariable):
                 The relation variable returns a computed or a generated value.
         """
         self.log.debug("[ {0} (relation): write access:".format(AbstractVariable.toString(self)))
+        self.resetTokenChoppedIndexes()  # New write access => new final value and new reference to it.
         self.directPointer = self.findDirectPointer()
 
         if self.isDefined(writingToken):
@@ -321,6 +342,14 @@ class ComputedRelationVariable(AbstractVariable):
         # delimiter
         xmlDelimiter = etree.SubElement(xmlVariable, "{" + namespace + "}delimiter")
         xmlDelimiter.text = str(TypeConvertor.bin2hexstring(self.relationType.getAssociatedDataType().getDelimiter()))
+
+        # factor
+        xmlFactor = etree.SubElement(xmlVariable, "{" + namespace + "}factor")
+        xmlFactor.text = str(self.relationType.getFactor())
+
+        # offset
+        xmlOffset = etree.SubElement(xmlVariable, "{" + namespace + "}offset")
+        xmlOffset.text = str(self.relationType.getOffset())
 
 #+---------------------------------------------------------------------------+
 #| Notified functions                                                        |
@@ -408,7 +437,10 @@ class ComputedRelationVariable(AbstractVariable):
         return self.directPointer
 
     def setCurrentValue(self, currentValue):
-        self.currentValue = currentValue
+        self.currentValue = self.relationType.getAssociatedDataType().normalizeValue(currentValue)
+
+    def setPointedID(self, pointedID):
+        self.pointedID = pointedID
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |
@@ -453,11 +485,25 @@ class ComputedRelationVariable(AbstractVariable):
             else:
                 delimiter = None
 
+            # factor
+            xmlFactor = xmlRoot.find("{" + namespace + "}factor")
+            if xmlFactor is not None and xmlFactor.text != "None":
+                factor = float(xmlFactor.text)
+            else:
+                factor = 1
+
+            # offset
+            xmlOffset = xmlRoot.find("{" + namespace + "}offset")
+            if xmlOffset is not None and xmlOffset.text != "None":
+                offset = float(xmlOffset.text)
+            else:
+                offset = 0
+
             # type
             _type = None
             xmlType = xmlRoot.find("{" + namespace + "}type")
             if xmlType is not None:
-                _type = AbstractRelationType.makeType(xmlType.text, sized, minChars, maxChars, delimiter)
+                _type = AbstractRelationType.makeType(xmlType.text, sized, minChars, maxChars, delimiter, factor, offset)
                 if _type is None:
                     return None
             else:

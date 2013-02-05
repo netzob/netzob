@@ -42,7 +42,8 @@ from netzob.Simulator.XDotWidget import XDotWidget
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
 from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
-from netzob.Common.MMSTD.Dictionary.RelationTypes.SizeRelationType import SizeRelationType
+from netzob.Common.MMSTD.Dictionary.RelationTypes.WordSizeRelationType import WordSizeRelationType
+from netzob.Common.MMSTD.Dictionary.RelationTypes.BinarySizeRelationType import BinarySizeRelationType
 from netzob.Common.MMSTD.Dictionary.Variables.ComputedRelationVariable import ComputedRelationVariable
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
@@ -71,9 +72,8 @@ class VariableDisplayerView(object):
         fields = dict()
         for field in self.controller.symbol.getExtendedFields():
             var = field.getVariable()
-            if var is None:
-                var = field.getDefaultVariable(self.controller.symbol)
-            fields["F{0}".format(field.getIndex())] = var
+            if var is not None:
+                fields["F{0}".format(field.getIndex())] = var
 
         dotCode = ["digraph G {"]
         dotCode.extend(self.addDotCodeForFields(fields))
@@ -150,7 +150,7 @@ class VariableDisplayerView(object):
 
         relationType = var.getRelationType()
         pointedID = var.getPointedID()
-        if relationType.getType() == SizeRelationType.TYPE:
+        if relationType.getType() == WordSizeRelationType.TYPE or relationType.getType() == BinarySizeRelationType.TYPE:
             labelRelation = "Size"
         else:
             labelRelation = "Unknown"

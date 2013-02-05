@@ -29,20 +29,32 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-from gi.repository import Gtk
 import logging
 import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
+from gi.repository import Gtk
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.DataTypes.AbstractType import AbstractType
+from netzob.Common.MMSTD.Dictionary.DataTypes.BinaryType import BinaryType
+from netzob.Common.MMSTD.Dictionary.DataTypes.DecimalWordType import \
+    DecimalWordType
+from netzob.Common.MMSTD.Dictionary.DataTypes.HexWordType import HexWordType
+from netzob.Common.MMSTD.Dictionary.DataTypes.IPv4WordType import IPv4WordType
+from netzob.Common.MMSTD.Dictionary.DataTypes.IntegerType import IntegerType
+from netzob.Common.MMSTD.Dictionary.DataTypes.MACWordType import MACWordType
+from netzob.Common.MMSTD.Dictionary.DataTypes.WordType import WordType
 from netzob.Common.MMSTD.Dictionary.RelationTypes.AbstractRelationType import \
     AbstractRelationType
+from netzob.Common.MMSTD.Dictionary.RelationTypes.WordSizeRelationType import \
+    WordSizeRelationType
+from netzob.Common.MMSTD.Dictionary.RelationTypes.BinarySizeRelationType import \
+    BinarySizeRelationType
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import \
     AggregateVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import \
@@ -54,12 +66,22 @@ from netzob.Common.MMSTD.Dictionary.Variables.RepeatVariable import \
     RepeatVariable
 from netzob.UI.Vocabulary.Views.VariableView import VariableTreeView, \
     VariableCreationView, VariableMovingView
+from netzob.UI.NetzobWidgets import NetzobErrorMessage
 
 
 class VariableTreeController(object):
     """VariableTreeController:
             Controls a variable's tree view display
     """
+
+    # Indexes of variable in the variable type combo box.
+    VARIABLE_INDEX_LIST = []
+
+    # Indexes of DataVariable type in the type combo box.
+    TYPE_INDEX_LIST = []
+
+    # Index of ComputedRelationVariable type in the relation type combo box.
+    RELATION_TYPE_INDEX_LIST = []
 
     def __init__(self, netzob, symbol, field):
         """Constructor of VariableTreeController:
@@ -74,9 +96,19 @@ class VariableTreeController(object):
         self.field = field
 
         self.view = VariableTreeView(self)
+        self.view.getWidg("dialog").set_title(_("Configure definition domain for the field: {0}").format(field.getName()))
 #        if self.field.getVariable() is not None:
         self.registerContent(self.field.getVariable())
+        self.initIndexesList()
         self.initCallbacks()
+
+    def initIndexesList(self):
+        """initIndexesList:
+                Initiate the indexes list. These list keep links between index in combo box and type.
+        """
+        VariableTreeController.VARIABLE_INDEX_LIST = [AggregateVariable.TYPE, AlternateVariable.TYPE, ComputedRelationVariable.TYPE, DataVariable.TYPE, RepeatVariable.TYPE]
+        VariableTreeController.TYPE_INDEX_LIST = [BinaryType.TYPE, DecimalWordType.TYPE, HexWordType.TYPE, IntegerType.TYPE, IPv4WordType.TYPE, MACWordType.TYPE, WordType.TYPE]
+        VariableTreeController.RELATION_TYPE_INDEX_LIST = [BinarySizeRelationType.TYPE, WordSizeRelationType.TYPE]
 
     def initCallbacks(self):
         """initCallbacks:
@@ -133,19 +165,22 @@ class VariableTreeController(object):
         """
         variable = None
         if event.button == 3:
-            x = int(event.x)
-            y = int(event.y)
-            (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
+            try:
+                x = int(event.x)
+                y = int(event.y)
+                (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
 
-            # Retrieve the selected variable
-            varid = None
-            aniter = treeview.get_model().get_iter(path)
-            if aniter:
-                if treeview.get_model().iter_is_valid(aniter):
-                    varid = treeview.get_model().get_value(aniter, 0)
+                # Retrieve the selected variable
+                varid = None
+                aniter = treeview.get_model().get_iter(path)
+                if aniter:
+                    if treeview.get_model().iter_is_valid(aniter):
+                        varid = treeview.get_model().get_value(aniter, 0)
 
-                    if varid is not None:
-                        variable = self.dictVariable[varid]
+                        if varid is not None:
+                            variable = self.dictVariable[varid]
+            except:
+                logging.debug(_("The user clicks on no variable."))
         else:
             # Wrong mouse click
             return
@@ -229,8 +264,10 @@ class VariableTreeController(object):
         md = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO, questionMsg)
         result = md.run()
         md.destroy()
+
         if result == Gtk.ResponseType.YES:
             pass
+            # The root variable.
             if variable.getID() == self.field.getVariable().getID():
                 # Edit the variable
                 self.field.setVariable(variable)
@@ -239,15 +276,18 @@ class VariableTreeController(object):
                 entry = self.dictEntry[variable.getID()]
                 self.treestore.remove(entry)
                 self.registerVariable(None, variable)
+            # Other variables.
             else:
                 # Edit the variable
                 father = variable.getFathers()[0]
                 father.editChildByID(variable)
 
+                logging.debug("variable: {0}, fathers: {1}".format(variable.getName(), variable.getFathers()))
+
                 # Update its entry
                 entry = self.dictEntry[variable.getID()]
                 self.treestore.set_value(entry, 1, variable.toString())
-                #self.registerVariable(self.dictEntry[father.getID()], variable)
+                self.dictVariable[variable.getID()] = variable
         else:
             logging.info("The user didn't confirm the edition of the variable {0}".format(variable.getName()))
 
@@ -256,11 +296,8 @@ class VariableTreeController(object):
                 Create a default variable, which is an alternate of
                 all the possible values of the field.
         """
-#        if self.field.getVariable() is None:
-        self.field.variable = self.field.getDefaultVariable(self.symbol)
+        self.field.generateDefaultVariable(self.symbol)
         self.registerContent(self.field.getVariable())
-#        else:
-#            logging.info("A variable already exists.")
 
 
 class VariableCreationController(object):
@@ -269,7 +306,7 @@ class VariableCreationController(object):
     """
 
     def __init__(self, item, treeController, variable, rootEntry, editOverCreate):
-        """Constructor of DataVariable:
+        """Constructor of VariableCreationController:
                 Called by a click on the tree view of all variables.
 
                 @type item: Gtk.Menuitem
@@ -309,11 +346,11 @@ class VariableCreationController(object):
                 @type widget: Gtk.widget
                 @param widget: the widget which modification calls this function.
         """
-        strVarType = self.view.getWidg("variableTypeCombo").get_active_text()
+        varTypeIndex = self.view.getWidg("variableTypeCombo").get_active()
         handler_id = None
 
-        # Node variable
-        if strVarType == AggregateVariable.TYPE or strVarType == AlternateVariable.TYPE:
+        # Aggregate or alternate variable
+        if varTypeIndex == VariableTreeController.VARIABLE_INDEX_LIST.index(AggregateVariable.TYPE) or varTypeIndex == VariableTreeController.VARIABLE_INDEX_LIST.index(AlternateVariable.TYPE):
             self.view.getWidg("valueLabel").set_visible(False)
             self.view.getWidg("typeLabel").set_visible(False)
             self.view.getWidg("relationTypeLabel").set_visible(False)
@@ -329,14 +366,50 @@ class VariableCreationController(object):
             self.view.getWidg("IDButton").set_visible(False)
             self.view.getWidg("sizedCheck").set_visible(False)
 
+            self.view.getWidg("factorLabel").set_visible(False)
+            self.view.getWidg("factorEntry").set_visible(False)
+            self.view.getWidg("offsetLabel").set_visible(False)
+            self.view.getWidg("offsetEntry").set_visible(False)
+
             self.updateDelimiterAndSize(default=True)
 
             if handler_id is not None:
                 object.disconnect(handler_id)
                 handler_id = None
 
+        # Computed Relation variable
+        elif varTypeIndex == VariableTreeController.VARIABLE_INDEX_LIST.index(ComputedRelationVariable.TYPE):
+            self.view.getWidg("minLabel").set_text("Minimum number of characters")
+            self.view.getWidg("maxLabel").set_text("Maximum number of characters")
+
+            self.view.getWidg("valueLabel").set_visible(False)
+            self.view.getWidg("typeLabel").set_visible(False)
+            self.view.getWidg("relationTypeLabel").set_visible(True)
+            self.view.getWidg("sizedLabel").set_visible(True)
+
+            self.view.getWidg("valueEntry").set_visible(False)
+            self.view.getWidg("typeCombo").set_visible(False)
+
+            self.view.getWidg("relationTypeCombo").set_visible(True)
+            self.view.getWidg("IDGrid").set_visible(True)
+            self.view.getWidg("IDLabel").set_visible(True)
+            self.view.getWidg("IDEntry").set_visible(True)
+            self.view.getWidg("IDButton").set_visible(True)
+            self.view.getWidg("sizedCheck").set_visible(True)
+
+            self.view.getWidg("factorLabel").set_visible(True)
+            self.view.getWidg("factorEntry").set_visible(True)
+            self.view.getWidg("offsetLabel").set_visible(True)
+            self.view.getWidg("offsetEntry").set_visible(True)
+
+            self.updateDelimiterAndSize()
+
+            if handler_id is not None:
+                object.disconnect(handler_id)
+                handler_id = None
+
         # Data variable
-        elif strVarType == DataVariable.TYPE:
+        elif varTypeIndex == VariableTreeController.VARIABLE_INDEX_LIST.index(DataVariable.TYPE):
             self.view.getWidg("valueLabel").set_text("Original Value")
             self.view.getWidg("minLabel").set_text("Minimum number of characters")
             self.view.getWidg("maxLabel").set_text("Maximum number of characters")
@@ -356,12 +429,17 @@ class VariableCreationController(object):
             self.view.getWidg("IDButton").set_visible(False)
             self.view.getWidg("sizedCheck").set_visible(True)
 
+            self.view.getWidg("factorLabel").set_visible(False)
+            self.view.getWidg("factorEntry").set_visible(False)
+            self.view.getWidg("offsetLabel").set_visible(False)
+            self.view.getWidg("offsetEntry").set_visible(False)
+
             self.updateDelimiterAndSize()
 
             handler_id = self.view.getWidg("valueEntry").connect('changed', self.updateMinSpin)
 
         # Repeat variable
-        elif strVarType == RepeatVariable.TYPE:
+        elif varTypeIndex == VariableTreeController.VARIABLE_INDEX_LIST.index(RepeatVariable.TYPE):
             self.view.getWidg("minLabel").set_text("Minimum number of iterations")
             self.view.getWidg("maxLabel").set_text("Maximum number of iterations")
 
@@ -388,6 +466,11 @@ class VariableCreationController(object):
             self.view.getWidg("minSpin").set_visible(True)
             self.view.getWidg("maxSpin").set_visible(True)
             self.view.getWidg("delimiterEntry").set_visible(False)
+
+            self.view.getWidg("factorLabel").set_visible(False)
+            self.view.getWidg("factorEntry").set_visible(False)
+            self.view.getWidg("offsetLabel").set_visible(False)
+            self.view.getWidg("offsetEntry").set_visible(False)
 
             if handler_id is not None:
                 object.disconnect(handler_id)
@@ -419,32 +502,6 @@ class VariableCreationController(object):
 #                handler_id = None
 #===============================================================================
 
-        # Computed Relation variable
-        elif strVarType == ComputedRelationVariable.TYPE:
-            self.view.getWidg("minLabel").set_text("Minimum number of characters")
-            self.view.getWidg("maxLabel").set_text("Maximum number of characters")
-
-            self.view.getWidg("valueLabel").set_visible(False)
-            self.view.getWidg("typeLabel").set_visible(False)
-            self.view.getWidg("relationTypeLabel").set_visible(True)
-            self.view.getWidg("sizedLabel").set_visible(True)
-
-            self.view.getWidg("valueEntry").set_visible(False)
-            self.view.getWidg("typeCombo").set_visible(False)
-
-            self.view.getWidg("relationTypeCombo").set_visible(True)
-            self.view.getWidg("IDGrid").set_visible(True)
-            self.view.getWidg("IDLabel").set_visible(True)
-            self.view.getWidg("IDEntry").set_visible(True)
-            self.view.getWidg("IDButton").set_visible(True)
-            self.view.getWidg("sizedCheck").set_visible(True)
-
-            self.updateDelimiterAndSize()
-
-            if handler_id is not None:
-                object.disconnect(handler_id)
-                handler_id = None
-
         # Default case
         else:
             self.view.getWidg("valueLabel").set_visible(False)
@@ -461,6 +518,11 @@ class VariableCreationController(object):
             self.view.getWidg("IDEntry").set_visible(False)
             self.view.getWidg("IDButton").set_visible(False)
             self.view.getWidg("sizedCheck").set_visible(False)
+
+            self.view.getWidg("factorLabel").set_visible(False)
+            self.view.getWidg("factorEntry").set_visible(False)
+            self.view.getWidg("offsetLabel").set_visible(False)
+            self.view.getWidg("offsetEntry").set_visible(False)
 
             self.updateDelimiterAndSize(default=True)
 
@@ -507,12 +569,10 @@ class VariableCreationController(object):
         """updateMinSpin:
                 Fix the value of minspin to len(value) in order to help the user to know the size of the value he entered.
         """
-        strVarType = self.view.getWidg("variableTypeCombo").get_active_text()
-        if strVarType == DataVariable.TYPE:
-            size = len(str(self.view.getWidg("valueEntry").get_text()))
-            # Protect previously defined minValue.
-            # if self.view.getWidg("minSpin").get_text() is None or str(self.view.getWidg("minSpin").get_text()) == '' or size < int(self.view.getWidg("minSpin").get_text()):
-            self.view.getWidg("minSpin").set_text(str(size))
+        size = len(str(self.view.getWidg("valueEntry").get_text()))
+        # Protect previously defined minValue.
+        # if self.view.getWidg("minSpin").get_text() is None or str(self.view.getWidg("minSpin").get_text()) == '' or size < int(self.view.getWidg("minSpin").get_text()):
+        self.view.getWidg("minSpin").set_text(str(size))
 
     def updateMaxSpin(self, widget):
         """updateMaxSpin:
@@ -537,12 +597,13 @@ class VariableCreationController(object):
         dialog = self.view.getWidg("dialog")
         dialog.show_all()
 
+        # Edition of an existing variable.
         if self.editOverCreate:
-            # We writes the former values of the variable.
+            # We write the former values of the variable.
             self.view.getWidg("nameEntry").set_text(self.variable.getName())
             self.view.getWidg("mutableCheck").set_active(self.variable.isMutable())
             self.view.getWidg("learnableCheck").set_active(self.variable.isLearnable())
-            self.setComboText(self.view.getWidg("variableTypeCombo"), self.variable.getVariableType())
+            self.view.getWidg("variableTypeCombo").set_active(VariableTreeController.VARIABLE_INDEX_LIST.index(self.variable.getVariableType()))
 
             # Data Variable
             if self.variable.getVariableType() == DataVariable.TYPE:
@@ -562,7 +623,7 @@ class VariableCreationController(object):
                     self.view.getWidg("maxSpin").set_text('0')
                     self.view.getWidg("delimiterEntry").set_text(self.variable.bin2str(self.variable.getDelimiter()))
 
-                self.setComboText(self.view.getWidg("typeCombo"), self.variable.getType().getType())
+                self.view.getWidg("typeCombo").set_active(VariableTreeController.TYPE_INDEX_LIST.index(self.variable.getType().getType()))
 
             # Repeat Variable
             elif self.variable.getVariableType() == RepeatVariable.TYPE:
@@ -577,19 +638,22 @@ class VariableCreationController(object):
 
             # Computed Relation Variable
             elif self.variable.getVariableType() == ComputedRelationVariable.TYPE:
-                self.view.getWidg("IDEntry").set_text(self.variable.getPointedVariable().getID())
-                self.setComboText(self.view.getWidg("relationTypeCombo"), self.variable.getType().getType())
+                self.view.getWidg("IDEntry").set_text(self.variable.getPointedID())
+                self.view.getWidg("relationTypeCombo").set_active(VariableTreeController.RELATION_TYPE_INDEX_LIST.index(self.variable.getRelationType().getType()))
 
-                if self.variable.type.isSized():
+                if self.variable.getRelationType().getAssociatedDataType().isSized():
                     self.view.getWidg("sizedCheck").set_active(True)
-                    self.view.getWidg("minSpin").set_text(str(self.variable.getType().getMinChars()))
-                    self.view.getWidg("maxSpin").set_text(str(self.variable.getType().getMaxChars()))
+                    self.view.getWidg("minSpin").set_text(str(self.variable.getRelationType().getAssociatedDataType().getMinChars()))
+                    self.view.getWidg("maxSpin").set_text(str(self.variable.getRelationType().getAssociatedDataType().getMaxChars()))
                     self.view.getWidg("delimiterEntry").set_text('')
                 else:
                     self.view.getWidg("sizedCheck").set_active(False)
                     self.view.getWidg("minSpin").set_text('0')
                     self.view.getWidg("maxSpin").set_text('0')
-                    self.view.getWidg("delimiterEntry").set_text(self.variable.bin2str(self.variable.getDelimiter()))
+                    self.view.getWidg("delimiterEntry").set_text(self.variable.bin2str(self.variable.getRelationType().getAssociatedDataType().getDelimiter()))
+
+                self.view.getWidg("factorEntry").set_text(str(self.variable.getRelationType().getFactor()))
+                self.view.getWidg("offsetEntry").set_text(str(self.variable.getRelationType().getOffset()))
 
         self.updateOptions()
         dialog.run()
@@ -602,6 +666,7 @@ class VariableCreationController(object):
                 @type widget: Gtk.widget
                 @param widget: the widget which calls this function.
         """
+
         dialog = self.view.getWidg("dialog")
         if self.editOverCreate:
             anid = self.variable.getID()
@@ -611,26 +676,25 @@ class VariableCreationController(object):
         name = self.view.getWidg("nameEntry").get_text()
         mutable = self.view.getWidg("mutableCheck").get_active()
         learnable = self.view.getWidg("learnableCheck").get_active()
-        strVarType = self.view.getWidg("variableTypeCombo").get_active_text()
+        varTypeIndex = self.view.getWidg("variableTypeCombo").get_active()
 
         variable = None
         # Aggregate variable
-        if strVarType == AggregateVariable.TYPE:
+        if varTypeIndex == VariableTreeController.VARIABLE_INDEX_LIST.index(AggregateVariable.TYPE):
             variable = AggregateVariable(anid, name, mutable, learnable)
 
         # Alternate Variable
-        elif strVarType == AlternateVariable.TYPE:
+        elif varTypeIndex == VariableTreeController.VARIABLE_INDEX_LIST.index(AlternateVariable.TYPE):
             variable = AlternateVariable(anid, name, mutable, learnable)
 
         # Repeat Variable
-        elif strVarType == RepeatVariable.TYPE:
+        elif varTypeIndex == VariableTreeController.VARIABLE_INDEX_LIST.index(RepeatVariable.TYPE):
             minIterations = int(self.view.getWidg("minSpin").get_text())
             maxIterations = int(self.view.getWidg("maxSpin").get_text())
             variable = RepeatVariable(anid, name, mutable, learnable, None, minIterations, maxIterations)
 
         # Data Variable
-        elif strVarType == DataVariable.TYPE:
-            originalValue = str(self.view.getWidg("valueEntry").get_text())
+        elif varTypeIndex == VariableTreeController.VARIABLE_INDEX_LIST.index(DataVariable.TYPE):
             sized = self.view.getWidg("sizedCheck").get_active()
             if sized:
                 # If the variable is defined by a size.
@@ -642,7 +706,8 @@ class VariableCreationController(object):
                 minChars = 0
                 maxChars = 0
                 delimiter = self.view.getWidg("delimiterEntry").get_text()
-            vtype = AbstractType.makeType(self.view.getWidg("typeCombo").get_active_text(), sized, minChars, maxChars, delimiter)
+            vtype = AbstractType.makeType(VariableTreeController.TYPE_INDEX_LIST[self.view.getWidg("typeCombo").get_active()], sized, minChars, maxChars, delimiter)
+            originalValue = vtype.str2bin(self.view.getWidg("valueEntry").get_text())
             variable = DataVariable(anid, name, mutable, learnable, vtype, originalValue)
 
 #===============================================================================
@@ -656,7 +721,7 @@ class VariableCreationController(object):
 #===============================================================================
 
         # Computed Relation Variable
-        elif strVarType == ComputedRelationVariable.TYPE:
+        elif varTypeIndex == VariableTreeController.VARIABLE_INDEX_LIST.index(ComputedRelationVariable.TYPE):
 
             # We find the variable by its ID.
             pointedID = str(self.view.getWidg("IDEntry").get_text())
@@ -672,13 +737,18 @@ class VariableCreationController(object):
                 minChars = 0
                 maxChars = 0
                 delimiter = self.view.getWidg("delimiterEntry").get_text()
-            vtype = AbstractRelationType.makeType(self.view.getWidg("relationTypeCombo").get_active_text(), sized, minChars, maxChars, delimiter)
+
+            factor = float(self.view.getWidg("factorEntry").get_text())
+            offset = float(self.view.getWidg("offsetEntry").get_text())
+            vtype = AbstractRelationType.makeType(VariableTreeController.RELATION_TYPE_INDEX_LIST[self.view.getWidg("relationTypeCombo").get_active()], sized, minChars, maxChars, delimiter, factor, offset)
             variable = ComputedRelationVariable(anid, name, mutable, learnable, vtype, pointedID, self.treeController.symbol)
 
         if variable is not None:
             # This part is for saving and transfering children when transforming a node variable into an other kind of node variable.
             if self.editOverCreate:
-                father = self.variable.getFathers()[0]
+                father = None
+                if len(self.variable.getFathers()) > 0:
+                    father = self.variable.getFathers()[0]
                 # We transform a node variable into a node variable.
                 if (self.variable.getVariableType() == AggregateVariable.TYPE or self.variable.getVariableType() == AlternateVariable.TYPE) and (variable.getVariableType() == AggregateVariable.TYPE or variable.getVariableType() == AlternateVariable.TYPE):
                     children = self.variable.getChildren()
@@ -696,39 +766,22 @@ class VariableCreationController(object):
                 elif (self.variable.getVariableType() == RepeatVariable.TYPE) and (variable.getVariableType() == RepeatVariable.TYPE):
                     child = self.variable.getChild()
                     self.variable = variable
-                    self.variable.addChild(child)
+                    self.variable.setChild(child)
 
                 # We do not manage/save children.
                 else:
                     self.variable = variable
-                self.variable.addFather(father)
+                if father is not None:
+                    self.variable.addFather(father)
                 self.treeController.editVariable(self.variable)
 
             else:
-                self.variable.addChild(variable)
+                if self.variable.getVariableType() == RepeatVariable.TYPE:
+                    self.variable.setChild(variable)
+                else:
+                    self.variable.addChild(variable)
                 self.treeController.registerVariable(self.rootEntry, variable)
         dialog.destroy()
-
-    def setComboText(self, combo, text):
-        """setComboText:
-                Fix the displayed value of a combo box to the item which value is "text".
-                This value must be one of the possible values of the combobox.
-
-                @type combo: Gtk.Combobox
-                @param combo: the combobox which displayed value we want to change.
-                @type text: string
-                @param text: the string value we want that the combobox displays.
-        """
-        model = combo.get_model()
-        aniter = model.get_iter_first()
-        while True:
-            if str(model[aniter][0]) == text:
-                combo.set_active_iter(aniter)
-                break
-            if model.iter_next(aniter) is not None:
-                aniter = model.iter_next(aniter)
-            else:
-                break
 
     def chooseSelectedVariable(self, widget):
         """chooseSelectedVariable:
@@ -813,13 +866,15 @@ class VariableIDTreeController(object):
         self.netzob = variableCreationController.netzob
         self.variableCreationController = variableCreationController
         self.registerContent()
+        self.selectedVariable = None
+        self.view.getWidg("createDefaultVariable_button").set_visible(False)
 
     def initCallbacks(self):
         """initCallbacks:
                 Init the callbacks.
         """
-        self.view.getWidg("treeview").connect('button-press-event', self.showMenu)
-        self.view.getWidg("button").connect('clicked', self.view.destroyDialog)
+        self.view.getWidg("treeview").connect('button-press-event', self.clickOnElement)
+        self.view.getWidg("button").connect('clicked', self.selectElement)
 
     def registerContent(self):
         """registerContent:
@@ -855,54 +910,42 @@ class VariableIDTreeController(object):
             if variable.getChild() is not None:
                 self.registerVariable(newEntry, variable.getChild())
 
-    def showMenu(self, treeview, event):
-        """showMenu:
-                Called on right click on a variable.
+    def clickOnElement(self, treeview, event):
+        """clickOnElement:
+                Called on click on a variable.
 
                 @param treeview: the treeview which contains the triggering variable.
                 @param event: the mouse event which called this function.
         """
-        variable = None
-        if event.button == 3:
-            x = int(event.x)
-            y = int(event.y)
-            (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
+        if event.button == 1:  # left click
+            try:
+                x = int(event.x)
+                y = int(event.y)
+                (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
 
-            # Retrieve the selected variable
-            varid = None
-            aniter = treeview.get_model().get_iter(path)
-            if aniter:
-                if treeview.get_model().iter_is_valid(aniter):
-                    varid = treeview.get_model().get_value(aniter, 0)
+                # Retrieve the selected variable
+                varid = None
+                aniter = treeview.get_model().get_iter(path)
+                if aniter:
+                    if treeview.get_model().iter_is_valid(aniter):
+                        varid = treeview.get_model().get_value(aniter, 0)
 
-                    if varid is not None:
-                        variable = self.dictVariable[varid]
+                        if varid is not None:
+                            self.selectedVariable = self.dictVariable[varid]
+            except:
+                logging.debug(_("The user clicks on no variable."))
         else:
             # Wrong mouse click
             return
 
-        if variable is None:
-            logging.debug("Impossible to find the selected variable.")
-            return
-
-        # We display the menu for the insertion of sub-elements if its an Aggregate or an Alternative
-        self.menu = Gtk.Menu()
-
-        # To select an element.
-        itemSelect = Gtk.MenuItem(_("Select this element"))
-        itemSelect.connect("activate", self.selectElement, variable)
-        itemSelect.show()
-
-        self.menu.append(itemSelect)
-        self.menu.popup(None, None, None, None, event.button, event.time)
-
-    def selectElement(self, widget, variable):
+    def selectElement(self, widget):
         """selectElement:
                 Give the ID of the variable associated to the selected element to the globally calling variableCreationController.
 
                 @param widget: the widget on which this function is connected.
-                @type variable: netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable
-                @param variable: the variable that is selected/of which we want the ID.
         """
-        self.variableCreationController.view.getWidg("IDEntry").set_text(str(variable.getID()))
-        self.view.getWidg("dialog").destroy()
+        if self.selectedVariable is not None:
+            self.variableCreationController.view.getWidg("IDEntry").set_text(str(self.selectedVariable.getID()))
+            self.view.getWidg("dialog").destroy()
+        else:
+            NetzobErrorMessage(_("No variable selected."))

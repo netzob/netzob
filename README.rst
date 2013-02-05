@@ -8,19 +8,19 @@ About Netzob
 Functional Description
 -----------------------
 
-Netzob is an opensource tool for reverse engineering, traffic generation 
-and fuzzing of communication protocols. This tool allows to infer the message format (vocabulary) 
-and the state machine (grammar) of a protocol through passive and active processes. 
-Its objective is to bring state of art academic researches to the operational field, 
+Netzob is an opensource tool for reverse engineering, traffic generation
+and fuzzing of communication protocols. This tool allows to infer the message format (vocabulary)
+and the state machine (grammar) of a protocol through passive and active processes.
+Its objective is to bring state of art academic researches to the operational field,
 by leveraging bio-informatic and grammatical inferring algorithms in a semi-automatic manner.
 
-Netzob is suitable for reversing network protocols, structured files and system and 
-process flows (IPC and communication with drivers and devices). 
-Dedicated modules are provided to capture and import data in multiple contexts (network, file and process data acquisition). 
-Once inferred, a protocol model can afterward be exported to third party tools (Peach, Scapy, Wireshark, etc.) 
+Netzob is suitable for reversing network protocols, structured files and system and
+process flows (IPC and communication with drivers and devices).
+Dedicated modules are provided to capture and import data in multiple contexts (network, file and process data acquisition).
+Once inferred, a protocol model can afterward be exported to third party tools (Peach, Scapy, Wireshark, etc.)
 or used in the traffic generation engine, to allow simulation of realistic and controllable communication endpoints and flows.
 
-Netzob handles different types of protocols: text protocols (like HTTP and IRC), delimiter-based protocols, 
+Netzob handles different types of protocols: text protocols (like HTTP and IRC), delimiter-based protocols,
 fixed fields protocols (like IP and TCP) and variable-length fields protocols (like TLV-based protocols).
 
 Technical Description
@@ -34,7 +34,7 @@ plugins (exporters, importers, ...). Some plugins are provided by the team while
 created and managed directly by users.
 
 More Information
----------------- 
+----------------
 
 :Website: `http://www.netzob.org <http://www.netzob.org>`_
 :Email: `contact@netzob.org <contact@netzob.org>`_
@@ -49,7 +49,7 @@ Get Started with Netzob
 Install it
 ----------
 
-There are two main ways of installing Netzob. The first one is based on 
+There are two main ways of installing Netzob. The first one is based on
 per-OS installers while the other one is more 'pythonic'.
 
 We recommend the per-OS installers for 'normal' users while
@@ -71,7 +71,7 @@ As a 'classic' python project, Netzob is provided with its
 python hosting OS.
 
 This file depends on ``setuptools`` which like few other modules cannot be
-automatically installed. The reason why, you have to manually install the 
+automatically installed. The reason why, you have to manually install the
 following bunch of prerequisites before initiating Netzob's install process.
 
 * python
@@ -90,14 +90,17 @@ We also highly recommend to install the following additional dependencies:
 * python-babel (for the translations)
 * python-sphinx (for the documentation)
 
-Once the required dependencies are installed, you can test (developer mode) Netzob::
+Once the required dependencies are installed, you can test Netzob in
+developer mode::
+
+  python setup.py build
+  python setup.py develop --user
+
+Otherwise, if you want to install Netzob on the system::
 
   python setup.py build
   python setup.py develop
-
-and install it::
-
-  $ python setup.py install
+  python setup.py install
 
 Start it
 --------
@@ -107,7 +110,7 @@ Once installed, running Netzob is as simple as executing the provided script::
   $ ./netzob
 
 This script is in Python's path if you've installed Netzob, otherwise
-(in developer mode), its located in the top distribution directory.
+(in developer mode), it's located in the top distribution directory.
 
 
 Miscellaneous
@@ -126,7 +129,7 @@ Configuration requirements for IPC input on Ubuntu::
 Documentation
 =============
 
-The folder ``doc/documentation`` contains all the documentation of Netzob. 
+The folder ``doc/documentation`` contains all the documentation of Netzob.
 
 The user manual can be generated based on RST sources located in folder
 ``doc/documentation/source`` with the following command::
@@ -146,14 +149,14 @@ Help-us by reporting bugs and requesting features using the `Bug Tracker <https:
 Translation
 -----------
 
-Netzob has `support <https://dev.netzob.org/projects/netzob/wiki/Translation_support>`_ for translation. 
+Netzob has `support <https://dev.netzob.org/projects/netzob/wiki/Translation_support>`_ for translation.
 Currently English and French languages are supported. New languages are welcome.
 
 Join the Development Team
 -------------------------
 
 To participate in the development, you need to get the latest version,
-modify it and submit your changes. 
+modify it and submit your changes.
 
 These operations are detailed on Netzob's wiki through the following
 pages:
@@ -166,7 +169,7 @@ You're interested in joining, please contact-us !
 Authors, Contributors and Sponsors
 ==================================
 
-See the top distribution file ``AUTHORS.txt`` for the detailed and updated list 
+See the top distribution file ``AUTHORS.txt`` for the detailed and updated list
 of authors, contributors and sponsors.
 
 License
@@ -174,3 +177,14 @@ License
 
 This software is licensed under the GPLv3 License. See the ``COPYING.txt`` file
 in the top distribution directory for the full license text.
+
+
+Extra
+=====
+
+.. figure:: http://www.netzob.org/img/logo.png
+   :width: 200 px
+   :alt: Zoby, the official mascot of Netzob
+   :align: center
+
+   Zoby, the official mascot of Netzob.

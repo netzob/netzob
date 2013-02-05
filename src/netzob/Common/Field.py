@@ -106,11 +106,26 @@ class Field(object):
 
         # Data
         self.variable = None
-        self.defaultVariable = None
         self.fields = []
 
     def __str__(self):
         return str(self.getName())
+
+    def dupplicate(self, newSymbol):
+        """duplicate: dupplicate the current field hierarchy, but not
+        the underlying variables.
+        """
+        newField = Field(self.getName(), self.getRegex(), newSymbol)
+        # Copy fields interpretation attributes
+        newField.setFormat(self.getFormat())
+        newField.setUnitSize(self.getUnitSize())
+        newField.setSign(self.getSign())
+        newField.setEndianess(self.getEndianess())
+        # Copy subfields
+        for field in self.getLocalFields():
+            newLocalField = field.dupplicate(newSymbol)
+            newField.addField(newLocalField)
+        return newField
 
     ## Functions
     def addVisualizationFunction(self, function):
@@ -147,13 +162,9 @@ class Field(object):
         """
         functions = []
 
-        # dynamic fields are in Blue
+        # Dynamic fields are in Blue
         if not self.isStatic():
             functions.append(TextColorFunction("Dynamic Field", "blue"))
-#            # fields with no variable define are in yellow
-#            if self.variable is None:
-#                functions.append(BackgroundColorFunction("Default variable", "yellow"))
-
         return functions
 
     def getEncodingFunctions(self):
@@ -248,7 +259,7 @@ class Field(object):
                 @rtype: boolean
                 @return: True if the regex is only dynamic.
         """
-        if re.match("\(\.\{\d?,\d+\}\)", self.regex) is not None:
+        if re.match("\(\.\{\d?,?\d+\}\)", self.regex) is not None:
             return True
         else:
             return False
@@ -284,6 +295,18 @@ class Field(object):
             return False
         return True
 
+    def hasRegexFixedSize(self):
+        """hasRegexFixedSize:
+                Tells if a regex (i.e. field) has a fixed size.
+
+                @rtype: boolean
+                @return: True if the regex has a fixed size.
+        """
+        if re.match("\(\.\{\d+\}\)", self.regex) is not None:
+            return True
+        else:
+            return False
+
     def fixRegex(self):
         """fixRegex: for regex that only renders fixed-size cells,
         directly fix the regex."""
@@ -295,6 +318,62 @@ class Field(object):
             if len(cell) != refSize:
                 return
         self.setRegex("(.{" + str(refSize) + "})")
+
+    def getRegexFixedSize(self):
+        """getRegexFixedSize: return the size of the regex only if this one
+        has a fixed size."""
+        if self.hasRegexFixedSize():
+            return int(self.getRegex()[3:-2])  # Retrieve 'n' in '(.{n})'
+        else:
+            return None
+
+    def getRegexMinMaxSize(self):
+        """getRegexMinSize: return the couple (minSize,maxSize) of the
+        regex."""
+        minSize = 0
+        maxSize = 99999
+        m = re.match(".*{(\d*),(\d*)}.*", self.getRegex())
+        if m is None:
+            return None
+        else:
+            if m.group(1) != "":
+                minSize = int(m.group(1))
+            if m.group(2) != "":  # Should always happen
+                maxSize = int(m.group(2))
+            return (minSize, maxSize)
+
+    def createSymbolsWithFixedField(self, fixedField):
+        """createSymbolsWithFixedField: Create new symbols according to a
+        specific fixed field.
+        """
+        if fixedField is None:
+            return
+
+        project = self.symbol.project
+        fixedIndex = fixedField.getIndex()
+
+        uniqueValues = fixedField.getUniqValuesByField()
+        self.setName("Symbol-" + str(uniqueValues[0]))
+        for uniqueValue in uniqueValues[1:]:
+            # Extract new messages (that can be sub-parts of entire messages if the user work on a layer)
+            newMessages = []
+            for message in self.getMessages():
+                splittedMessage = message.applyAlignment(styled=False, encoded=False)
+                splittedMessage = splittedMessage[self.getExtendedFields()[0].getIndex():self.getExtendedFields()[-1].getIndex() + 1]
+                if fixedIndex < len(splittedMessage) and splittedMessage[fixedIndex] == uniqueValue:
+                    newMessages.append(message)
+
+            # Remove found messages from the current symbol
+            for message in newMessages:
+                self.getSymbol().removeMessage(message)
+
+            # Build new symbols and dupplicate field structure each time
+            from netzob.Common.Symbol import Symbol
+            symbol = Symbol(str(uuid.uuid4()), "Symbol-" + str(uniqueValue), project)
+            symbol.addMessages(newMessages)
+            newField = self.dupplicate(symbol)
+            symbol.setField(newField)
+            project.getVocabulary().addSymbol(symbol)
 
     #+----------------------------------------------
     #| forcePartitioning:
@@ -554,25 +633,36 @@ class Field(object):
                         nextField = self.getFieldByIndex(i + 1)
                         if nextField.isRegexOnlyDynamic():
                             mergeDone = True
+
+                            # Build the new field
                             minSize = len(aField.getRegexData())
                             maxSize = len(aField.getRegexData())
 
-                            # Build the new field
-                            regex = re.compile(".*{(\d*),(\d*)}.*")
+                            # The new regex is concatenated with the precedent field
+                            if precField.hasRegexFixedSize():
+                                size = precField.getRegexFixedSize()
+                                minSize += size
+                                maxSize += size
+                            else:
+                                sizes = precField.getRegexMinMaxSize()
+                                if sizes is None:
+                                    break
+                                (minS, maxS) = sizes
+                                minSize += minS
+                                maxSize += maxS
 
-                            # Get the minSize/maxSize of precField
-                            m = regex.match(precField.getRegex())
-                            if m.group(1) != "":
-                                minSize += int(m.group(1))
-                            if m.group(2) != "":
-                                maxSize += int(m.group(2))
-
-                            # Get the minSize/maxSize of nextField
-                            m = regex.match(nextField.getRegex())
-                            if m.group(1) != "":
-                                minSize += int(m.group(1))
-                            if m.group(2) != "":
-                                maxSize += int(m.group(2))
+                            # The new regex is concatenated with the next field
+                            if nextField.hasRegexFixedSize():
+                                size = nextField.getRegexFixedSize()
+                                minSize += size
+                                maxSize += size
+                            else:
+                                sizes = nextField.getRegexMinMaxSize()
+                                if sizes is None:
+                                    break
+                                (minS, maxS) = sizes
+                                minSize += minS
+                                maxSize += maxS
 
                             minSize = str(minSize)
                             maxSize = str(maxSize)
@@ -585,6 +675,7 @@ class Field(object):
                             parent.removeLocalField(nextField)
                             parent = precField.getParentField()
                             parent.removeLocalField(precField)
+                            break
             i += 1
 
         if mergeDone:
@@ -826,16 +917,18 @@ class Field(object):
         return ", ".join(tmpTypes)
 
     ## Variable
-    def getDefaultVariable(self, symbol):
-        """getDefaultVariable:
-                Generates and returns a variable which is an aggregate that has one child which is an alternate of all default values of the field picked in the current symbol values.
+    def generateDefaultVariable(self, symbol):
+        """generateDefaultVariable:
+                generates the default variable and returns it
 
                 @type symbol: netzob.Common.Symbol
                 @param symbol: the parent symbol.
-                @rtype: netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable.AggregateVariable
+                @rtype: netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable
                 @return: the generated variable
         """
+        variable = None
         if self.isStatic():
+            # The default variable is simple DataVariable (in binary type)
             value = self.getRegex()
             if value.endswith("?"):
                 value = value[1:len(value) - 2]
@@ -843,36 +936,22 @@ class Field(object):
                 value = value[1:len(value) - 1]
 
             value = TypeConvertor.netzobRawToBitArray(value)
-            variable = DataVariable(str(uuid.uuid4()), self.getName(), False, False, BinaryType(True, len(value), len(value)), value.to01())  # A static field is neither mutable nor random.
-            return variable
+            variable = DataVariable(str(uuid.uuid4()), "Default variable of {0}".format(self.getName()), False, False, BinaryType(True, len(value), len(value)), value)  # A static field is neither mutable nor random.
         else:
-            if self.defaultVariable is None:
-                self.defaultVariable = self.generateDefaultVariable(symbol)
-            return self.defaultVariable
+            # The default variable is an alternative of all the possibilities (in binary type)
+            cells = self.getUniqValuesByField()
+            tmpDomain = set()
+            for cell in cells:
+                tmpDomain.add(TypeConvertor.netzobRawToBitArray(cell))
+            domain = sorted(tmpDomain)
 
-    def generateDefaultVariable(self, symbol):
-        """generateDefaultVariable:
-                generates the default variable and returns it
-
-                @type symbol: netzob.Common.Symbol
-                @param symbol: the parent symbol.
-                @rtype: netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable.AggregateVariable
-                @return: the generated variable
-        """
-        # The default variable is an alternative of all the possibilities (in binary type)
-        cells = self.getUniqValuesByField()
-        tmpDomain = set()
-        for cell in cells:
-            tmpDomain.add(TypeConvertor.netzobRawToBitArray(cell))
-        domain = sorted(tmpDomain)
-
-        variable = AggregateVariable(str(uuid.uuid4()), "Aggregate", False, False, None)
-        alternateVar = AlternateVariable(str(uuid.uuid4()), "Alternate", True, False, None)
-        for d in domain:
-            child = DataVariable(str(uuid.uuid4()), "defaultVariable", False, False, BinaryType(True, len(d), len(d)), d.to01())
-            alternateVar.addChild(child)
-        variable.addChild(alternateVar)
-        return variable
+            variable = AlternateVariable(str(uuid.uuid4()), "Default variable of {0}".format(self.getName()), True, False, None)
+            i = 0
+            for d in domain:
+                child = DataVariable(str(uuid.uuid4()), "Default child variable {0}".format(i), False, False, BinaryType(True, len(d), len(d)), d)
+                i += 1
+                variable.addChild(child)
+        self.variable = variable
 
     ## Fields
     def getAllFields(self):
@@ -1038,7 +1117,6 @@ class Field(object):
             return res
 
     def getUniqValuesByField(self):
-        # First we verify the field exists in the symbol
         res = []
         for cell in self.getCells():
             if len(cell) > 0 and not cell in res:
@@ -1210,7 +1288,7 @@ class Field(object):
 
     def getVariable(self):
         if self.variable is None:
-            self.variable = self.generateDefaultVariable(self.symbol)
+            self.generateDefaultVariable(self.symbol)
         return self.variable
 
     def getLocalFields(self):

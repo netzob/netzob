@@ -232,6 +232,17 @@ class ContextualMenuOnFieldController(object):
         self.vocabularyController.updateSelectedMessageTable()
         self.vocabularyController.updateLeftPanel()
 
+    def extractByFieldValue_cb(self, event):
+        if self.field is None or self.layer is None:
+            return
+
+        # Create new symbols according to a specific fixed field
+        self.layer.createSymbolsWithFixedField(self.field)
+
+        # Update UI
+        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.view.updateLeftPanel()
+
     def exportSelectedFields_cb(self, event):
         # If fields header are selected, we get it
         fields = self.vocabularyController.selectedMessageTable.treeViewHeaderGroup.getSelectedFields()

@@ -64,6 +64,8 @@ class NetworkClient(AbstractChannel):
         self.outputMessages = []
 
     def open(self):
+        targetIp = self.getTargetIP()
+        targetPort = self.getTargetPort()
         try:
             if (self.getProtocol() == "UDP"):
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -77,8 +79,6 @@ class NetworkClient(AbstractChannel):
 
             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 
-            targetIp = self.getTargetIP()
-            targetPort = self.getTargetPort()
             self.log.debug("Try to connect on {0}:{1}".format(targetIp, targetPort))
             self.socket.connect((targetIp, targetPort))
             self.socket.setblocking(True)
@@ -140,7 +140,7 @@ class NetworkClient(AbstractChannel):
         self.outputMessages.append(message)
 
         try:
-            self.outputFile.write(TypeConvertor.binB2string(message))
+            self.outputFile.write(TypeConvertor.bin2string(message))
             self.outputFile.flush()
         except:
             self.log.warn("An error occured while trying to write on the communication channel")

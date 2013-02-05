@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2012 AMOSSYS                                                |
+#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -28,37 +28,52 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
+import logging
+
+#+---------------------------------------------------------------------------+
+#| Related third party imports                                               |
+#+---------------------------------------------------------------------------+
+
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Plugins.ExporterPlugin import ExporterPlugin
-from netzob.Common.Plugins.Extensions.ExportMenuExtension import ExportMenuExtension
-from WiresharkExporterController import WiresharkExporterController
+from netzob.Common.MMSTD.Dictionary.DataTypes.DecimalWordType import DecimalWordType
+from netzob.Common.MMSTD.Dictionary.RelationTypes.AbstractRelationType import \
+    AbstractRelationType
 
 
-class WiresharkExporterPlugin(ExporterPlugin):
+class WordSizeRelationType(AbstractRelationType):
+    """WordSizeRelationType:
+            It defines the type of a size relation variable. This size will be written in an ASCII string.
     """
-    Wireshark dissector generator
-    """
-    __plugin_name__ = "WiresharkExporter"
-    __plugin_version__ = "0.1"
-    __plugin_description__ = _("Generate a LUA script used by Wireshark to dissect specific symbols.")
-    __plugin_author__ = "Alexandre PIGNÉ <alex@freesenses.net>"
-    __plugin_copyright__ = "AMOSSYS"
-    __plugin_license__ = "GPLv3+"
 
-    def __init__(self, netzobb):
-        super(WiresharkExporterPlugin, self).__init__(netzobb)
-        self.controller = WiresharkExporterController(netzobb, self)
-        self.entry_points = [ExportMenuExtension(netzobb, self.controller,
-                                                 "wiresharkExporter", "Wireshark LUA script")]
+    TYPE = "Word Size Relation"
 
-    def getEntryPoints(self):
-        """getEntryPoints:
-
-                @rtype: netzob_plugins.Exporters.WiresharkExporter.EntryPoints.GlobalMenuEntryPoint.GlobalMenuEntryPoint
-                @return: the plugin entry point, so it can be linked to the netzob project.
+    def __init__(self, sized, minChars, maxChars, delimiter, factor, offset):
+        """Constructor of WordSizeRelationType:
         """
-        return self.entry_points
+        AbstractRelationType.__init__(self, sized, minChars, maxChars, delimiter, factor, offset)
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.RelationTypes.WordSizeRelationType.py')
+
+    def getType(self):
+        """getType:
+        """
+        return WordSizeRelationType.TYPE
+
+    def makeAssociatedDataType(self, sized, minChars, maxChars, delimiter):
+        """makeAssociatedDataType:
+                The data type associated to a size field is obviously an integer.
+        """
+        return DecimalWordType(sized, minChars, maxChars, delimiter)
+
+    def computeValue(self, value):
+        """computeValue:
+        """
+        computedValue = 0
+        if value is not None:
+            size = len(value)
+            self.log.debug("Compute the size of {0} = {1}".format(value, size))
+            computedValue = int(self.factor * size + self.offset)
+            self.log.debug("Compute the value : {0} * {1} + {2} = {3}".format(self.factor, size, self.offset, computedValue))
+        return self.getAssociatedDataType().str2bin(str(computedValue))

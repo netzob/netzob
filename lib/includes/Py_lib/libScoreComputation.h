@@ -32,8 +32,8 @@
 //| Imports
 //+---------------------------------------------------------------------------+
 
-#include "commonLib.h"
 #include "commonPythonLib.h"
+#include "commonLib.h"
 #include "scoreComputation.h"
 
 //+---------------------------------------------------------------------------+

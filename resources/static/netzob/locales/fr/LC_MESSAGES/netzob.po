@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-28 22:13+0100\n"
-"PO-Revision-Date: 2013-01-29 16:32+0200\n"
-"Last-Translator: Georges Bossert <georges.bossert@supelec.fr>\n"
+"POT-Creation-Date: 2013-01-31 18:23+0100\n"
+"PO-Revision-Date: 2013-01-31 18:24+0200\n"
+"Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
 "Language: fr\n"
@@ -52,8 +52,8 @@ msgstr "Un projet avec ce nom existe déjà"
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:606
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturerPlugin.py:127
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerPlugin.py:127
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExporterPlugin.py:127
-#: src/netzob_plugins/Exporters/WiresharkExporter/WiresharkExporter/WiresharkExporterController.py:155
+#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExporterPlugin.py:124
+#: src/netzob_plugins/Exporters/WiresharkExporter/WiresharkExporter/WiresharkExporterController.py:156
 msgid "No project selected."
 msgstr "Aucun projet sélectionné."
 
@@ -225,7 +225,7 @@ msgstr ""
 "pas lisible."
 
 #: src/netzob/Common/Workspace.py:430
-msgid "The specified workspace is not valid according the XSD definitions."
+msgid "The specified workspace is not valid according to the XSD definitions."
 msgstr "L'espace de travail indiqué n'est pas conforme aux définitions XSD."
 
 #: src/netzob/Common/Workspace.py:461
@@ -771,8 +771,7 @@ msgstr "Exporter le projet au format XML brut"
 #: src/netzob/UI/Export/Views/RawExportView.py:93
 #: src/netzob/UI/Export/Views/ScapyExportView.py:94
 #: src/netzob/UI/Export/Views/TextExportView.py:94
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportView.py:109
-#: src/netzob_plugins/Exporters/WiresharkExporter/WiresharkExporter/WiresharkExporterView.py:85
+#: src/netzob_plugins/Exporters/WiresharkExporter/WiresharkExporter/WiresharkExporterView.py:86
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:97
 msgid "Symbols"
 msgstr "Symboles"
@@ -995,19 +994,19 @@ msgstr "Un serveur réseau nécessite un port réseau."
 msgid "Click yes to confirm the deletion of the selected actor"
 msgstr "Cliquez sur oui pour valider la suppression de l'acteur sélectionné"
 
-#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:642
+#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:645
 msgid "New empty trace"
 msgstr "Nouvelle trace vide"
 
-#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:792
+#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:795
 msgid "Empty Session"
 msgstr "Session vide"
 
-#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:812
+#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:815
 msgid "No project is currently opened"
 msgstr "Aucun projet n'est ouvert actuellement"
 
-#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:813
+#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:816
 msgid "A project has to be opened before importing a trace."
 msgstr "Un projet doit être ouvert avant d'y importer une trace."
 
@@ -1017,8 +1016,7 @@ msgstr "Êtes vous sûr de vouloir supprimer les traces sélectionnées ?"
 
 #: src/netzob/UI/TraceManager/Views/TraceManagerView.py:118
 msgid "If you confirm, the selected traces will be permanently lost."
-msgstr ""
-"Si vous confirmez, les traces sélectionnées seront définitivement perdues."
+msgstr "Si vous confirmez, les traces sélectionnées seront définitivement perdues."
 
 #: src/netzob/UI/TraceManager/Views/TraceManagerView.py:121
 msgid "Delete Traces"
@@ -1029,8 +1027,8 @@ msgid ""
 "Are you sure you want to delete selected sessions and all the messages it"
 " contains?"
 msgstr ""
-"Êtes-vous sûr de que vouloir supprimer les sessions sélectionnées ainsi que "
-"tous les messages qu'elles contiennent ?"
+"Êtes-vous sûr de que vouloir supprimer les sessions sélectionnées ainsi "
+"que tous les messages qu'elles contiennent ?"
 
 #: src/netzob/UI/TraceManager/Views/TraceManagerView.py:143
 msgid ""
@@ -1050,8 +1048,7 @@ msgstr "Êtes-vous sur de vouloir supprimer les messages sélectionnés ?"
 
 #: src/netzob/UI/TraceManager/Views/TraceManagerView.py:164
 msgid "If you confirm, the selected messages will be permanently lost."
-msgstr ""
-"Si vous confirmez, les messages sélectionnés seront définitivement perdus."
+msgstr "Si vous confirmez, les messages sélectionnés seront définitivement perdus."
 
 #: src/netzob/UI/TraceManager/Views/TraceManagerView.py:167
 msgid "Delete Messages"
@@ -1463,30 +1460,23 @@ msgstr "Port source"
 msgid "Destination Port"
 msgstr "Port destination"
 
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:76
-#: src/netzob_plugins/Exporters/WiresharkExporter/WiresharkExporter/WiresharkExporterView.py:114
-msgid "Entire project"
-msgstr "Projet complet"
+#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:89
+msgid "Randomized state order fuzzer"
+msgstr "Fuzzer avec ordre aléatoire des états"
+
+#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:90
+msgid "Randomized transitions stateful fuzzer"
+msgstr "Fuzzer avec transitions aléatoires"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:186
 msgid "Export as Peach Fuzzer (XML)"
 msgstr "Exporter en tant que Fuzzer Peach (XML)"
 
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:198
+#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:210
 msgid "Are you sure to override the file '{0}'?"
 msgstr "Êtes-vous sur de remplacer le fichier '{0}' ?"
 
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:216
-msgid ""
-"The project has been correctly exported as a Peach Fuzzer to '{0}'.\n"
-"Do not forget to copy in the targeted directory our Peach plugin "
-"netzob_plugins/Exporters/PeachExporter/PeachzobAddons.py."
-msgstr ""
-"Le projet a été correctement exporté en tant que Fuzzer Peach '{0}'.\n"
-"Pour l'utilisez, n'oubliez pas de récupérer le fichier d'extension "
-"'netzob_plugins/Exporters/PeachExporter/PeachzobAddons.py'."
-
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:218
+#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:223
 msgid ""
 "The following error occurred while exporting the project as a Peach "
 "Fuzzer to '{0}': {1}"
@@ -1497,6 +1487,10 @@ msgstr ""
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportView.py:56
 msgid "Export project as Peach pit XML"
 msgstr "Exporter le projet au format XML Peach pit"
+
+#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportView.py:109
+msgid "Fuzzer type"
+msgstr "Type de fuzzer"
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportView.py:126
 msgid "Fuzzing based on: "
@@ -1512,7 +1506,7 @@ msgstr "Muter les champs statiques"
 msgid "Export"
 msgstr "Exporter"
 
-#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExporterPlugin.py:56
+#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExporterPlugin.py:53
 msgid "Provide the possibility to export netzob symbols to Peach pit files."
 msgstr "Permet l'export sous la forme d'un fuzzer pour Peach."
 
@@ -1522,11 +1516,15 @@ msgstr ""
 "Générer un script LUA utilisé par Wireshark pour disséquer les symboles "
 "spécifiques."
 
-#: src/netzob_plugins/Exporters/WiresharkExporter/WiresharkExporter/WiresharkExporterView.py:63
+#: src/netzob_plugins/Exporters/WiresharkExporter/WiresharkExporter/WiresharkExporterView.py:64
 msgid "Export project as Wireshark dissector"
 msgstr "Exporter le projet en un dissecteur Wireshark"
 
-#: src/netzob_plugins/Exporters/WiresharkExporter/WiresharkExporter/WiresharkExporterView.py:163
+#: src/netzob_plugins/Exporters/WiresharkExporter/WiresharkExporter/WiresharkExporterView.py:115
+msgid "Entire project"
+msgstr "Projet complet"
+
+#: src/netzob_plugins/Exporters/WiresharkExporter/WiresharkExporter/WiresharkExporterView.py:164
 msgid "Export as Wireshark script (LUA)"
 msgstr "Exporter en un script Wireshark (LUA)"
 
@@ -2531,7 +2529,7 @@ msgstr "Nouvelle trace"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:62
 msgid "Configure Session"
-msgstr ""
+msgstr "Configurer la session"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:63
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:466
@@ -2601,8 +2599,8 @@ msgstr "Créer une copie du jeu de traces"
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:689
 msgid "Please choose a name for the new symbol to import in the current project"
 msgstr ""
-"Merci de choisir un nom pour le nouveau symbole a importer dans le projet "
-"courant"
+"Merci de choisir un nom pour le nouveau symbole a importer dans le projet"
+" courant"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:751
 msgid "Name of the imported symbol:"
@@ -3266,13 +3264,3 @@ msgstr "10"
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:228
 msgid "Time limit:"
 msgstr "Durée de capture : "
-
-#~ msgid ""
-#~ "Select a workspace\n"
-#~ "\n"
-#~ msgstr ""
-#~ "Sélectionner un espace de travail\n"
-#~ "\n"
-
-#~ msgid "Choose a workspace folder to use."
-#~ msgstr "Choisissez un répertoire à utiliser comme espace de travail."

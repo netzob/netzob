@@ -42,8 +42,8 @@ appname = name
 #|    Development version has version number increased and is
 #|    postfixed by ~git
 #+---------------------------------------------------------------------------+
-version = "0.4.1~git"
-versionName = "JumpingRhino"
+version = "0.4.2~git"
+versionName = "WaddlingPeccary"
 
 #+---------------------------------------------------------------------------+
 #| Copyright mentions
