@@ -54,6 +54,6 @@ class FindRelationsController(object):
     #+----------------------------------------------
     #| Called when user wants to find the potential relations
     #+----------------------------------------------
-    def buildRelations(self, symbol):
+    def buildRelations(self, symbols):
         finder = RelationFinder(self.netzob.getCurrentProject())
-        finder.execute(symbol)
+        finder.execute(symbols[0])

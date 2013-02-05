@@ -458,17 +458,20 @@ class SessionController(object):
 
         self.vocabularyController.updateMessageTableDisplayingObjects(sessions)
 
-    def find_relations_sessions_activate_cb(self, but):
-        """findRelations_cb: Called when user wants to detects
-        relations between messages in sessions.
+    def find_relations_activate_cb(self, but):
+        """find_relations_activate_cb: Called when user wants to
+        detects relations between messages in sessions.
         """
         # Sanity checks
         if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        if self.treeSymbolController.selectedSymbol is None:
-            NetzobErrorMessage(_("No symbol selected."))
+        sessions = self.getCheckedSessionList()
+        if sessions == []:
+            NetzobErrorMessage(_("No session selected."))
             return
 
-        rel_ctrl = FindRelationsController(self.netzob)
-        rel_ctrl.buildRelations(self.treeSymbolController.selectedSymbol)
+        # Launch the controller
+        #rel_ctrl = FindRelationsController(self.netzob)
+        #rel_ctrl.buildRelations(sessions)
+        logging.warn("find_relations_sessions_activate_cb(): not implemented")

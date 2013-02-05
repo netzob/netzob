@@ -54,8 +54,8 @@ class RelationFinder(object):
     #| @param symbol : if not None, the operation will be limited to provided symbol
     #+----------------------------------------------
     def execute(self, symbol):
-        cells = [symbol.getCellsByField(field) \
-                 for field in symbol.getFields() \
+        cells = [field.getCells() \
+                 for field in symbol.getExtendedFields() \
                  #if not field.isStatic()
                  ]
         if cells:

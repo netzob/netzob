@@ -63,6 +63,7 @@ from netzob.UI.Vocabulary.Controllers.VariableController import VariableTreeCont
 from netzob.UI.Vocabulary.Controllers.VariableDisplayerController import VariableDisplayerController
 from netzob.UI.NetzobWidgets import NetzobQuestionMessage, NetzobErrorMessage, NetzobInfoMessage
 from netzob.UI.Vocabulary.Controllers.Clustering.ClusteringProfilesController import ClusteringProfilesController
+from netzob.UI.Vocabulary.Controllers.FindRelationsController import FindRelationsController
 
 
 #+----------------------------------------------
@@ -571,6 +572,24 @@ class SymbolController(object):
             return
         distribution = MessagesDistributionController(self.vocabularyController, self.getCheckedSymbolList())
         distribution.run()
+
+    def find_relations_activate_cb(self, but):
+        """find_relations_activate_cb: Called when user wants to
+        detects relations between messages in symbols.
+        """
+        # Sanity checks
+        if self.netzob.getCurrentProject() is None:
+            NetzobErrorMessage(_("No project selected."))
+            return
+        symbols = self.getCheckedSymbolList()
+        if symbols == []:
+            NetzobErrorMessage(_("No symbol selected."))
+            return
+
+        # Launch the controller
+        rel_ctrl = FindRelationsController(self.netzob)
+        rel_ctrl.buildRelations(symbols)
+
 
     ## Actions on fields
     def concatField_activate_cb(self, action):

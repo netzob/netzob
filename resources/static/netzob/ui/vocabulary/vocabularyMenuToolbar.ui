@@ -15,6 +15,7 @@
         <menuitem action="partitioningSmooth" />
         <menuitem action="partitioningReset" />
         <menuitem action="compareSessions" />
+        <menuitem action="findRelationsInSymbols" />
         <menuitem action="findRelationsInSessions" />
       </menu>
       <menu action="manualToolMenu">

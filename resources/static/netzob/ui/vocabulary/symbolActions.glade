@@ -10,7 +10,6 @@
         <signal name="activate" handler="findSimilarMessages_activate_cb" swapped="no"/>
       </object>
     </child>
-
     <child>
       <object class="GtkAction" id="partitioningSimple">
         <property name="label" translatable="yes">Simple Partitioning</property>
@@ -151,6 +150,13 @@
         <property name="tooltip" translatable="yes">Edit the variable for selected field</property>
         <property name="stock_id">netzob-create-variable</property>
         <signal name="activate" handler="editVariable_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="findRelationsInSymbols">
+        <property name="label" translatable="yes">Find relations in symbols</property>
+        <property name="tooltip" translatable="yes">Find relations symbols</property>
+        <signal name="activate" handler="find_relations_activate_cb" swapped="no"/>
       </object>
     </child>
   </object>
