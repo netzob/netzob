@@ -386,14 +386,25 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
             description = trace.description
             date = trace.date.strftime("%c")
             dataType = trace.type
+            numberOfApplicativeData = 0
 
             # If a session filter was given asked, we only show the
             # messages related to that session. Else, we display all
             # messages.
             if session is not None:
                 messageList = session.getMessages()
+                numberOfApplicativeData = len(session.getApplicativeData())
+                # Activate the management of applicative data
+                self.view.activateManagementOfApplicativeData()
             else:
                 messageList = trace.getMessages()
+                for session in trace.getSessions():
+                    numberOfApplicativeData += len(session.getApplicativeData())
+                # Deactivate the management of applicative data
+                self.view.deactivateManagementOfApplicativeData(_("Select a session to manage its applicative data"))
+
+            # Display the number of applicative data in the view
+            self.view.setNumberOfApplicativeData(numberOfApplicativeData)
 
             for message in messageList:
                 if message.session is not None:
@@ -856,3 +867,9 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
             self.view.importInProjectDialogValidate.set_sensitive(True)
         else:
             self.view.importInProjectDialogValidate.set_sensitive(False)
+
+    def manageApplicativeDataButton_clicked_cb(self, button):
+        """manageApplicativeDataButton:
+        Callback executed when the user wants to manage the applicative data.
+        So we starts the specific MVC controller for this operation"""
+        self.log.debug("Start the management of applicative data")
