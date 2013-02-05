@@ -81,3 +81,8 @@ class NetzobAbstractView(object):
     def _getObjects(self, objectsList):
         for obj in objectsList:
             setattr(self, obj, self.builder.get_object(obj))
+
+    def getController(self):
+        """getController:
+        Returns the controller instance associated with the current view"""
+        return self.controller
