@@ -90,6 +90,12 @@ class Session(object):
     def getApplicativeData(self):
         return self.applicativeData
 
+    def getApplicativeDataByID(self, id):
+        for data in self.applicativeData:
+            if str(data.getID()) == str(id):
+                return data
+        return None
+
     def addApplicativeData(self, data):
         self.applicativeData.append(data)
 
@@ -141,9 +147,8 @@ class Session(object):
             if xmlRoot.find("{" + namespace_common + "}applicativeData") is not None:
                 xmlApplicativeData = xmlRoot.find("{" + namespace_common + "}applicativeData")
                 for xmlData in xmlApplicativeData.findall("{" + namespace_common + "}data"):
-                    data = ApplicativeData.loadFromXML(xmlData)
+                    data = ApplicativeData.loadFromXML(xmlData, namespace_common, version)
                     if data is not None:
                         session.addApplicativeData(data)
-
             return session
         return None

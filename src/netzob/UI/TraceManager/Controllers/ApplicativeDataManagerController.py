@@ -42,15 +42,46 @@ gi.require_version('Gtk', '3.0')
 #+---------------------------------------------------------------------------+
 from netzob.UI.NetzobAbstractController import NetzobAbstractController
 from netzob.UI.TraceManager.Views.ApplicativeDataManagerView import ApplicativeDataManagerView
+from netzob.UI import NetzobWidgets
+from netzob.Common.ApplicativeData import ApplicativeData, ApplicativeDataException
+from netzob.UI.TraceManager.Controllers.ApplicativeDataImportController import ApplicativeDataImportController
 
 
 class ApplicativeDataManagerController(NetzobAbstractController):
     """Manage the list of available plugins"""
 
-    def __init__(self, mainController, session):
+    def __init__(self, mainController, trace, session):
+        self.trace = trace
         self.session = session
+        self.mainController = mainController
         super(ApplicativeDataManagerController, self).__init__(mainController, ApplicativeDataManagerView)
         self.logger = logging.getLogger(__name__)
 
     def getSession(self):
         return self.session
+
+    def refresh(self):
+        self.view.refresh()
+
+    def applicativeDataManagerWindow_destroy_cb(self, widget):
+        super(ApplicativeDataManagerController, self).destroy()
+        self.mainController._refreshProjectProperties(trace=self.trace, session=self.session)
+
+    def removeButton_clicked_cb(self, button):
+        """removeButton_clicked_cb:
+        Callback executed when the user wants to delete some selected new applicative data"""
+        self.logger.debug("Remove selected applicative data")
+        toRemove = self.view.getSelectedApplicativeData()
+        if len(toRemove) > 0:
+            for applicativeData in toRemove:
+                self.session.removeApplicativeData(applicativeData)
+            self.view.refresh()
+
+    def importButton_clicked_cb(self, button):
+        """importButton_clicked_cb:
+        Callback executed when the user wants to import some Application Data from CSV"""
+        self.logger.debug("Import Application Data from CSV")
+
+        # Starts the proper controller
+        importController = ApplicativeDataImportController(self)
+        importController.run()

@@ -194,7 +194,11 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
             selection.select_path(selectedPaths[0])
 
     def deactivate(self):
-        self.workspace.saveConfigFile()
+        traceToOveride = []
+        for trace in self.workspace.getImportedTraces():
+            traceToOveride.append(str(trace.getID()))
+        print traceToOveride
+        self.workspace.saveConfigFile(traceToOveride)
 
     def traceTreeviewSelection_select_function_cb(self, selection, model, path, is_path_selected, treeStore):
         """This function is in charge of allowing or not, the
@@ -882,5 +886,5 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
             return
         self.log.debug("Start the management of applicative data for session {0}".format(self.currentSession))
 
-        controller = ApplicativeDataManagerController(self, self.currentSession)
+        controller = ApplicativeDataManagerController(self, self.currentTrace, self.currentSession)
         controller.run()

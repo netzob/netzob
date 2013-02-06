@@ -33,10 +33,14 @@ import logging
 from lxml.etree import ElementTree
 from lxml import etree
 import uuid
+import csv
+
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
+class ApplicativeDataException(Exception):
+    pass
 
 
 class ApplicativeData(object):
@@ -97,3 +101,30 @@ class ApplicativeData(object):
             else:
                 return None
         return None
+
+    @staticmethod
+    def loadFromCSV(fileToImport):
+        result = []
+        with open(fileToImport, 'rb') as csvFile:
+            # We use the sniffer to compute which dialect is used in current CSV
+            dialect = csv.Sniffer().sniff(csvFile.read(1024))
+            csvFile.seek(0)
+            dataReader = csv.reader(csvFile, dialect)
+            errorMessage = None
+            idLine = 0
+            for row in dataReader:
+                idLine += 1
+                if len(row) != 3:
+                    errorMessage = _("line {0} in CSV has not 3 columns, format must be : Name, Type, Value".format(idLine))
+                    break
+                else:
+                    try:
+                        data = ApplicativeData(uuid.uuid4(), row[0], row[1], row[2])
+                        result.append(data)
+                    except ApplicativeDataException, e:
+                        errorMessage = _("line {0} in CSV, invalid format of data : {1}".format(idLine, e))
+                        break
+        if errorMessage is not None:
+            raise ApplicativeDataException(errorMessage)
+
+        return result

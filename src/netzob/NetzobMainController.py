@@ -183,6 +183,9 @@ class NetzobMainController(object):
     def close(self):
         """The method which closes the current project and the
         workspace before stopping the GTK"""
+        # deactivate current perspective
+        if self.view.currentPerspectiveController is not None:
+            self.view.currentPerspectiveController.deactivate()
 
         result = self.closeCurrentProject()
         if result:

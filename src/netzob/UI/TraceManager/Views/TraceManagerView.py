@@ -241,4 +241,4 @@ class TraceManagerView(NetzobAbstractPerspectiveView):
         if nbApplicativeData == 0:
             self.numberOfApplicativeDataLabel.set_label(_("None found"))
         else:
-            self.numberOfApplicativeDataLabel.set_label(_("{0} registered"))
+            self.numberOfApplicativeDataLabel.set_label(_("{0} registered".format(nbApplicativeData)))

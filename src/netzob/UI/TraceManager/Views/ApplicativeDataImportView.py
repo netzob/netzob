@@ -37,32 +37,65 @@ import os
 from netzob.UI.NetzobAbstractView import NetzobAbstractView
 
 
-class ApplicativeDataManagerView(NetzobAbstractView):
+class ApplicativeDataImportView(NetzobAbstractView):
 
     def __init__(self, controller):
-        gladeFile = os.path.join("traceManager", "applicativeDataManagerDialog.glade")
-        super(ApplicativeDataManagerView, self).__init__(controller, gladeFile, root="applicativeDataManagerWindow", parent=None)
-        self._getObjects(['applicativeDataTreeStore', 'applicativeDataTreeView', 'importApplicationDataDialog'])
+        gladeFile = os.path.join("traceManager", "applicativeDataImportDialog.glade")
+        super(ApplicativeDataImportView, self).__init__(controller, gladeFile, root="applicativeDataImportDialog", parent=None)
+        self._getObjects(["importFileChooserButton", "errorImage", "okImage", "statusLabel", "applyButton"])
         self.logger = logging.getLogger(__name__)
-        self.refresh()
+        self.deactivateApply()
 
-    def refresh(self):
-        self.applicativeDataTreeStore.clear()
-        # Fullfill the treeview with current applicative data of the session
-        for applicativeData in self.getController().getSession().getApplicativeData():
-            self.applicativeDataTreeStore.append([str(applicativeData.getID()), applicativeData.getName(), applicativeData.getType(), applicativeData.getValue()])
+    def run(self):
+        super(ApplicativeDataImportView, self).run()
+        self.displayErrorMessage(None)
+        self.displayStatusMessage(None)
 
-    def getSelectedApplicativeData(self):
-        """getSelectedApplicativeData:
-        Computes user's selection on applicative data treestore and retrives the associated
-        applicativeData by their ID.
-        @return the list of selected applicative data (list can be empty)"""
-        (model, rows) = self.applicativeDataTreeView.get_selection().get_selected_rows()
-        selectedApplicativeData = []
-        if rows is not None:
-            for row in rows:
-                applicativeData = self.controller.getSession().getApplicativeDataByID(model[row][0])
-                if applicativeData is not None:
-                    selectedApplicativeData.append(applicativeData)
+    def getSelectedFileToImport(self):
+        """getSelectedFileToImport:
+        returns the file which has been provided by the user
+        through the interface."""
+        return self.importFileChooserButton.get_filename()
 
-        return selectedApplicativeData
+    def displayStatusMessage(self, message):
+        """displayStatusMessages:
+        This method display the informtive message on the import status
+        on the Interface and destroy any error message"""
+        self.errorImage.set_visible(False)
+        if message is None:
+            self.okImage.set_visible(False)
+            self.statusLabel.set_label("")
+            self.statusLabel.set_visible(False)
+        else:
+            self.okImage.set_visible(True)
+            self.statusLabel.set_label(message)
+            self.statusLabel.set_visible(True)
+
+    def displayErrorMessage(self, message):
+        """displayErrorMessage:
+        This method displays provided error message with its image and
+        hide any status message"""
+        self.okImage.set_visible(False)
+        if message is None:
+            self.errorImage.set_visible(False)
+            self.statusLabel.set_label("")
+            self.statusLabel.set_visible(False)
+        else:
+            self.errorImage.set_visible(True)
+            self.statusLabel.set_label(message)
+            self.statusLabel.set_visible(True)
+
+    def cancelButton_clicked_cb(self, button):
+        """cancelButton_clicked_cb:
+        Callback executed when the user wants to close the import view"""
+        self.destroy()
+
+    def activateApply(self):
+        """activateApply:
+        This method set sensitive the apply button"""
+        self.applyButton.set_sensitive(True)
+
+    def deactivateApply(self):
+        """deactivateApply:
+        This methode prevent the user to click on the apply button"""
+        self.applyButton.set_sensitive(False)

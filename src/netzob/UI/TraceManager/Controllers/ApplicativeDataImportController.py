@@ -30,64 +30,59 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
-import os
-from gi.repository import Gtk
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
+import gi
+gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+from netzob.Common.ApplicativeData import ApplicativeData, ApplicativeDataException
+from netzob.UI.NetzobAbstractController import NetzobAbstractController
+from netzob.UI.TraceManager.Views.ApplicativeDataImportView import ApplicativeDataImportView
 
 
-class NetzobAbstractViewException(Exception):
-    pass
+class ApplicativeDataImportController(NetzobAbstractController):
+    """Allow to import applicative data from files"""
 
+    def __init__(self, mainController):
+        super(ApplicativeDataImportController, self).__init__(mainController, ApplicativeDataImportView)
+        self.logger = logging.getLogger(__name__)
+        self.parsedApplicativeData = []
 
-class NetzobAbstractView(object):
+    def applyButton_clicked_cb(self, button):
+        """applyButton_clicked_cb:
+        Callback executed when the user apply the imports of found Applicative Data"""
+        for data in self.parsedApplicativeData:
+            self.logger.debug("Registerig application data {0} in session".format(data.getName()))
+            self.mainController.getSession().addApplicativeData(data)
+        self.parsedApplicativeData = []
+        self.mainController.refresh()
+        self.destroy()
 
-    def __init__(self, controller, viewFilePath, root="root", parent=None):
-        self.builder = Gtk.Builder()
-        self.builder.add_from_file(self._findUiResource(viewFilePath))
+    def cancelButton_clicked_cb(self, button):
+        """cancelButton_clicked_cb:
+        Callback executed when the user users wants to stop the import MVC"""
+        self.destroy()
 
-        self._getObjects([root])
-        self.root = getattr(self, root)
+    def importFileChooserButton_file_set_cb(self, button):
+        """importFileChooserButton_file_set_cb:
+        Callback executed when the user has provided a new file"""
+        # Retrieve the selected file
+        toImport = self.view.getSelectedFileToImport()
+        if toImport is None:
+            self.logger.debug("No file selected, impossible to import it")
+            return
 
-        self.controller = controller
-
-        if parent is not None:
-            window = getattr(self, root)
-            window.set_transient_for(parent)
-
-        self.builder.connect_signals(self.controller)
-
-    def run(self):
-        self.root.show_all()
-
-    def destroy(self):
-        """destroy:
-        Execute this method to stop the current view"""
-        self.root.destroy()
-
-    def _findUiResource(self, resource):
-        r = os.path.join(ResourcesConfiguration.getStaticResources(), "ui", resource)
-        if os.path.isfile(r):
-            return r
-
-        r = os.path.join(ResourcesConfiguration.getPluginsStaticResources(), "ui", resource)
-        if os.path.isfile(r):
-            return r
-
-        raise NetzobAbstractViewException(_("Requested file ({0}) was not found.").format(resource))
-
-    def _getObjects(self, objectsList):
-        for obj in objectsList:
-            setattr(self, obj, self.builder.get_object(obj))
-
-    def getController(self):
-        """getController:
-        Returns the controller instance associated with the current view"""
-        return self.controller
+        self.logger.debug("File to import: {0}".format(toImport))
+        try:
+            self.parsedApplicativeData = ApplicativeData.loadFromCSV(toImport)
+            self.view.displayStatusMessage(_("{0} applicative data have been found.".format(len(self.parsedApplicativeData))))
+            self.view.activateApply()
+        except ApplicativeDataException, e:
+            self.logger.warning("An error prevented to parse and extract the applicative data from provided file {0} : {1}".format(toImport, e))
+            self.view.displayErrorMessage(_("Error : {0}".format(e)))
+            self.view.deactivateApply()

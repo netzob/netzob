@@ -21,11 +21,11 @@
 
 	<complexType name="ApplicativeData">
 	  <choice minOccurs="0" maxOccurs="unbounded">
-	    <element name="data" type="netzob-common:data"></element>
+	    <element name="data" type="netzob-common:ApplicationDataSingle"></element>
 	  </choice>
 	</complexType>
 
-	<complexType name="data">
+	<complexType name="ApplicationDataSingle">
 	  <attribute name="id" type="string"></attribute>
 	  <attribute name="name" type="string"></attribute>
 	  <attribute name="type" type="string"></attribute>

@@ -19,28 +19,12 @@
     <property name="window_position">center</property>
     <property name="default_width">500</property>
     <property name="default_height">400</property>
+    <signal name="destroy" handler="applicativeDataManagerWindow_destroy_cb" swapped="no"/>
     <child>
       <object class="GtkBox" id="box1">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
-        <child>
-          <object class="GtkLabel" id="label1">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="halign">start</property>
-            <property name="margin_left">10</property>
-            <property name="label" translatable="yes">Manage Applicative Data</property>
-            <attributes>
-              <attribute name="weight" value="bold"/>
-            </attributes>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
         <child>
           <object class="GtkScrolledWindow" id="scrolledwindow1">
             <property name="visible">True</property>
@@ -51,12 +35,14 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkTreeView" id="treeview1">
+                  <object class="GtkTreeView" id="applicativeDataTreeView">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="model">applicativeDataTreeStore</property>
                     <child internal-child="selection">
-                      <object class="GtkTreeSelection" id="treeview-selection1"/>
+                      <object class="GtkTreeSelection" id="treeview-selection1">
+                        <property name="mode">multiple</property>
+                      </object>
                     </child>
                     <child>
                       <object class="GtkTreeViewColumn" id="treeviewcolumn1">
@@ -103,45 +89,54 @@
           </packing>
         </child>
         <child>
-          <object class="GtkToolbar" id="toolbar1">
+          <object class="GtkAlignment" id="alignment1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkToolButton" id="addButton">
-                <property name="use_action_appearance">False</property>
+              <object class="GtkToolbar" id="toolbar1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes">Add a new applicative data</property>
-                <property name="use_action_appearance">False</property>
-                <property name="label" translatable="yes">toolbutton1</property>
-                <property name="use_underline">True</property>
-                <property name="stock_id">gtk-add</property>
+                <property name="hexpand">True</property>
+                <child>
+                  <object class="GtkToolButton" id="removeButton">
+                    <property name="use_action_appearance">False</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="label" translatable="yes">Delete Selected</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">gtk-delete</property>
+                    <signal name="clicked" handler="removeButton_clicked_cb" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="importButton">
+                    <property name="use_action_appearance">False</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="label" translatable="yes">Import from CSV</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">gtk-file</property>
+                    <signal name="clicked" handler="importButton_clicked_cb" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
               </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToolButton" id="removeButton">
-                <property name="use_action_appearance">False</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
-                <property name="label" translatable="yes">toolbutton1</property>
-                <property name="use_underline">True</property>
-                <property name="stock_id">gtk-delete</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
             </child>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">2</property>
+            <property name="pack_type">end</property>
+            <property name="position">1</property>
           </packing>
         </child>
       </object>
