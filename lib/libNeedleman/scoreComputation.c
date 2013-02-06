@@ -221,8 +221,9 @@ void computeSimilarityMatrix(int nbMessage, t_message* messages, Bool debugMode,
 
       char * regex = alignTwoMessages(&tmpResultMessage, FALSE, &messages[i], &messages[p], debugMode);
       if (debugMode) {
-	printf("Regex = %s\n", regex);
+		printf("Regex = %s\n", regex);
       }
+      free(regex);
       scoreMatrix[i][p] = computeDistance(tmpResultMessage.score);
     }
 
