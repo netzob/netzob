@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -6,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2012 Georges Bossert and Frédéric Guihéry                   |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -30,25 +29,52 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import unittest
-from test_netzob.test_Common import suite_Type, suite_Functions, suite_Plugins, test_ExecutionContext
+import sys
+import os
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from common.NetzobTestCase import NetzobTestCase
+import pkg_resources
 
 
 def getSuite():
-    commonSuite = unittest.TestSuite()
+    functionsSuite = unittest.TestSuite()
 
-    modulesOfTests = [test_ExecutionContext]
-    modulesOfSuites = [suite_Type, suite_Functions, suite_Plugins]
-
-    # Add individual tests
+    modulesOfTests = [test_Plugins]
     for module in modulesOfTests:
-        commonSuite.addTests(unittest.TestLoader().loadTestsFromModule(module))
+        functionsSuite.addTests(unittest.TestLoader().loadTestsFromTestCase(module))
+    return functionsSuite
 
-    # Add suites
-    for module in modulesOfSuites:
-        commonSuite.addTests(module.getSuite())
 
-    return commonSuite
+class test_Plugins(NetzobTestCase):
+
+    def test_PluginList(self):
+        """This test checks if all declared modules in the main source
+        tree are compiled and loaded correctly.
+
+        This is done by comparing the number of 'setup.py' under the
+        src/netzob_plugins/*/* directory and the number of loadable
+        plugins."""
+
+        # Find loadable plugins
+        loadedPlugins = 0
+        for entrypoint in pkg_resources.iter_entry_points('netzob.plugins'):
+            plugin_class = entrypoint.load()
+            plugin_path = sys.modules[plugin_class.__module__].__file__
+            loadedPlugins += 1
+
+        # Find declared plugins (count plugins.py in src/netzob_plugins)
+        availablePlugins = 0
+        main_plugin_dir = os.path.abspath(os.path.join("src", "netzob_plugins"))
+        plugin_categories = ["Capturers", "Importers", "Exporters"]
+        for plugin_category in plugin_categories:
+            plugin_dir = os.path.join(main_plugin_dir, plugin_category)
+            plugin_list = os.listdir(plugin_dir)
+            for plugin_name in plugin_list:
+                if plugin_name != "__init__.py" and plugin_name != "__init__.pyc":
+                    if os.path.isfile(os.path.join(plugin_dir, plugin_name, "setup.py")):
+                        availablePlugins += 1
+
+        self.assertEqual(loadedPlugins, availablePlugins)
