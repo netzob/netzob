@@ -839,7 +839,7 @@ class TraceManagerController(NetzobAbstractPerspectiveController):
         response = self.view.showImportInProjectDialog()
 
         if response == 1:
-            self.log.info("Asked to import trace '{1}' (id={2}) in the current project".format(self.currentTrace.name,
+            self.log.info("Asked to import trace '{0}' (id={1}) in the current project".format(self.currentTrace.name,
                                                                                                self.currentTrace.id))
 
             symbolName = self.view.importInProjectNameEntry.get_text()
