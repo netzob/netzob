@@ -34,6 +34,7 @@ from lxml.etree import ElementTree
 from lxml import etree
 import uuid
 import csv
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 #+---------------------------------------------------------------------------+
@@ -84,7 +85,13 @@ class ApplicativeData(object):
         xmlData.set("id", str(self.getID()))
         xmlData.set("name", str(self.getName()))
         xmlData.set("type", str(self.getType()))
-        xmlData.text = self.value
+
+        hexValue = TypeConvertor.stringToNetzobRaw(self.value)
+
+        if self.value is None or len(self.value) == 0:
+            xmlData.text = ""
+        else:
+            xmlData.text = etree.CDATA(hexValue)
 
     #+----------------------------------------------
     #| Static methods
@@ -95,7 +102,12 @@ class ApplicativeData(object):
             idData = xmlRoot.get('id')
             nameData = xmlRoot.get('name')
             typeData = xmlRoot.get('type')
-            valueData = xmlRoot.text
+            hexValueData = xmlRoot.text
+            if hexValueData is None:
+                valueData = ""
+            else:
+                valueData = TypeConvertor.netzobRawToString(hexValueData)
+
             if idData is not None and nameData is not None and typeData is not None and valueData is not None:
                 return ApplicativeData(uuid.UUID(idData), nameData, typeData, valueData)
             else:
