@@ -35,6 +35,7 @@ from lxml import etree
 import uuid
 import csv
 from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Type.Format import Format
 
 
 #+---------------------------------------------------------------------------+
@@ -85,13 +86,13 @@ class ApplicativeData(object):
         xmlData.set("id", str(self.getID()))
         xmlData.set("name", str(self.getName()))
         xmlData.set("type", str(self.getType()))
-
+        xmlValueData = etree.SubElement(xmlData, "{" + namespace_common + "}value")
         hexValue = TypeConvertor.stringToNetzobRaw(self.value)
 
         if self.value is None or len(self.value) == 0:
-            xmlData.text = ""
+            xmlValueData.text = ""
         else:
-            xmlData.text = etree.CDATA(hexValue)
+            xmlValueData.text = etree.CDATA(hexValue)
 
     #+----------------------------------------------
     #| Static methods
@@ -102,7 +103,10 @@ class ApplicativeData(object):
             idData = xmlRoot.get('id')
             nameData = xmlRoot.get('name')
             typeData = xmlRoot.get('type')
-            hexValueData = xmlRoot.text
+            hexValueData = None
+            if xmlRoot.find("{" + namespace_common + "}value") is not None:
+                hexValueData = xmlRoot.find("{" + namespace_common + "}value").text
+
             if hexValueData is None:
                 valueData = ""
             else:
@@ -131,8 +135,12 @@ class ApplicativeData(object):
                     break
                 else:
                     try:
-                        data = ApplicativeData(uuid.uuid4(), row[0], row[1], row[2])
-                        result.append(data)
+                        formatData = str.lower(row[1])
+                        if formatData in Format.getExtendedSupportedFormats() and len(row[2]) > 0:
+                            data = ApplicativeData(uuid.uuid4(), row[0], formatData, row[2])
+                            result.append(data)
+                        else:
+                            logging.warning("Cannot import data with format : {0}".format(row[1]))
                     except ApplicativeDataException, e:
                         errorMessage = _("line {0} in CSV, invalid format of data : {1}".format(idLine, e))
                         break

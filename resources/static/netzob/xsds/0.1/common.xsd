@@ -26,6 +26,10 @@
 	</complexType>
 
 	<complexType name="ApplicationDataSingle">
+	  <sequence>
+	    <element name="value" type="string"></element>
+	  </sequence>
+
 	  <attribute name="id" type="string"></attribute>
 	  <attribute name="name" type="string"></attribute>
 	  <attribute name="type" type="string"></attribute>
