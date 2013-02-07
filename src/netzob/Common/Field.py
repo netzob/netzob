@@ -369,10 +369,11 @@ class Field(object):
 
             # Build new symbols and dupplicate field structure each time
             from netzob.Common.Symbol import Symbol
-            symbol = Symbol(str(uuid.uuid4()), "Symbol-" + str(uniqueValue), project)
+            symbol = Symbol(str(uuid.uuid4()), "Name", project)
             symbol.addMessages(newMessages)
             newField = self.dupplicate(symbol)
             symbol.setField(newField)
+            symbol.setName("Symbol-" + str(uniqueValue))
             project.getVocabulary().addSymbol(symbol)
 
     #+----------------------------------------------

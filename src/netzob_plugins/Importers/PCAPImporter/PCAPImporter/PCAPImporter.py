@@ -68,7 +68,7 @@ class PCAPImporter(AbstractImporter):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Import.PcapImport.py')
         self.filesToBeImported = []
-        self.bpfFilter = None
+        self.bpfFilter = ""
         self.importLayer = 4
         self._payloadDict = {}
 
