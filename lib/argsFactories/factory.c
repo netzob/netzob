@@ -56,9 +56,9 @@ int parseArgs(PyObject* factobj, ...){
        Function name found.
        It searches for a parser which can manage this format of wrapper
     */
-    if(!strcmp(function,"_libScoreComputation.getHighestEquivalentGroup")){
+    if(!strcmp(function,"_libScoreComputation.computeSimilarityMatrix")){
       /**
-	 Function : getHighestEquivalentGroup
+	 Function : computeSimilarityMatrix
 	 Parse the wrapper given its format
       */
       parseLibscoreComputation(factobj,args);
@@ -81,7 +81,7 @@ int parseArgs(PyObject* factobj, ...){
 
    This function parses the arguments wrapper following a specific format.
    The definition of this format can be found in the Python function:
-   netzob.Common.C_Extensions.WrapperArgsFactory:WrapperArgsFactory.getHighestEquivalentGroup()
+   netzob.Common.C_Extensions.WrapperArgsFactory:WrapperArgsFactory.computeSimilarityMatrix()
    Once parsed, the wrapper reveal arguments which will be stored in the args parameter.
    Format:
    - List<Message> with Message: (alignment, mask, length, uid)

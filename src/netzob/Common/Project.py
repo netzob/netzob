@@ -253,7 +253,6 @@ class Project(object):
             for message in symbol.getMessages():
                 properties = message.getProperties()
                 for property in properties:
-
                     if not property.getName() in excludedProperties:
                         found = False
                         for prop in envDeps:
@@ -274,6 +273,16 @@ class Project(object):
             if not found:
                 envDeps.append(prop)
         return envDeps
+
+    def getApplicativeData(self):
+        """getApplicativeData:
+        Returns list which contains all the applicative data
+        used in the project"""
+        appData = []
+        if self.getVocabulary() is not None:
+            for session in self.getVocabulary().getSessions():
+                appData.extend(session.getApplicativeData())
+        return appData
 
     def deleteProject(self, workspace):
         try:

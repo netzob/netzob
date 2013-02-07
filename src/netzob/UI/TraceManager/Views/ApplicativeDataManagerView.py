@@ -25,32 +25,44 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-from netzob import _libScoreComputation
+#+---------------------------------------------------------------------------+
+#| Standard library imports
+#+---------------------------------------------------------------------------+
+import logging
+import os
+
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.C_Extensions.WrapperMessage import WrapperMessage
-from netzob.Common.NetzobException import NetzobException
+from netzob.UI.NetzobAbstractView import NetzobAbstractView
 
 
-class WrapperArgsFactory(object):
-    """Factory dedicated to the manipulation of arguments passed to C wrapper.
-    This object will be transfered to the C extensions with its attributes which are:
-    - self.typeList : a map between function name and function pointer
-    - self.function : the function for which the parameters will be wrapped.
-    """
+class ApplicativeDataManagerView(NetzobAbstractView):
 
-    def __init__(self, function):
-        self.typeList = {"_libScoreComputation.computeSimilarityMatrix": self.computeSimilarityMatrix}
-        if(function in self.typeList.keys()):
-            self.function = function
-        else:
-            raise NetzobException("Function " + str(function) + " not implemented")
+    def __init__(self, controller):
+        gladeFile = os.path.join("traceManager", "applicativeDataManagerDialog.glade")
+        super(ApplicativeDataManagerView, self).__init__(controller, gladeFile, root="applicativeDataManagerWindow", parent=None)
+        self._getObjects(['applicativeDataTreeStore', 'applicativeDataTreeView', 'importApplicationDataDialog'])
+        self.logger = logging.getLogger(__name__)
+        self.refresh()
 
-    def __str__(self):
-        return str(self.args)
+    def refresh(self):
+        self.applicativeDataTreeStore.clear()
+        # Fullfill the treeview with current applicative data of the session
+        for applicativeData in self.getController().getSession().getApplicativeData():
+            self.applicativeDataTreeStore.append([str(applicativeData.getID()), applicativeData.getName(), applicativeData.getType(), applicativeData.getValue()])
 
-    def computeSimilarityMatrix(self, symbols):
-        self.args = []
-        for s in symbols:
-            self.args.append(WrapperMessage(s.getMessages()[0], s))
+    def getSelectedApplicativeData(self):
+        """getSelectedApplicativeData:
+        Computes user's selection on applicative data treestore and retrives the associated
+        applicativeData by their ID.
+        @return the list of selected applicative data (list can be empty)"""
+        (model, rows) = self.applicativeDataTreeView.get_selection().get_selected_rows()
+        selectedApplicativeData = []
+        if rows is not None:
+            for row in rows:
+                applicativeData = self.controller.getSession().getApplicativeDataByID(model[row][0])
+                if applicativeData is not None:
+                    selectedApplicativeData.append(applicativeData)
+
+        return selectedApplicativeData

@@ -37,9 +37,9 @@
 #include "scoreComputation.h"
 
 //+---------------------------------------------------------------------------+
-//| py_getHighestEquivalentGroup : Python wrapper for getHighestEquivalentGroup
+//| py_computeSimilarityMatrix : Python wrapper for computeSimilarityMatrix
 //+---------------------------------------------------------------------------+
-PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args);
+PyObject* py_computeSimilarityMatrix(PyObject* self, PyObject* args);
 
 //+---------------------------------------------------------------------------+
 //| initLibNeedleman : Python will use this function to init the module

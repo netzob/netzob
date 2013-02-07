@@ -116,7 +116,7 @@ void alignMessages(t_message *resMessage, Bool doInternalSlick, t_group* group, 
 
 char* alignTwoMessages(t_message * resMessage, Bool doInternalSlick, t_message * message1, t_message * message2, Bool debugMode){
   // local variables
-  short int **matrix;
+  short int ** matrix = NULL;
   unsigned int i = 0;
   unsigned int j = 0;
 
@@ -126,21 +126,24 @@ char* alignTwoMessages(t_message * resMessage, Bool doInternalSlick, t_message *
   float levenshtein = 0.0;
   unsigned int maxLen = 0;
   // Traceback
-  unsigned char *contentMessage1;
-  unsigned char *contentMessage2;
-  unsigned char *maskMessage1;
-  unsigned char *maskMessage2;
+  unsigned char * contentMessage1 = NULL;
+  unsigned char * contentMessage2 = NULL;
+  unsigned char * maskMessage1 = NULL;
+  unsigned char * maskMessage2 = NULL;
   unsigned int iReg1 = 0;
   unsigned int iReg2 = 0;
 
   // Computing resMessage
-  unsigned char *tmpMessage;
-  unsigned char *tmpMessageMask;
+  unsigned char *tmpMessage  = NULL;
+  unsigned char *tmpMessageMask = NULL;
 
   // Score computation
   unsigned int nbDynTotal = 0;
   unsigned int nbDynCommon = 0;
 
+  // Regex returned by the function
+  char * regex = NULL;
+  
   //+------------------------------------------------------------------------+
   // Create and initialize the matrix
   //+------------------------------------------------------------------------+
@@ -243,19 +246,19 @@ char* alignTwoMessages(t_message * resMessage, Bool doInternalSlick, t_message *
 
   if (contentMessage1 == NULL) {
     printf("Error while trying to allocate memory for variable : contentMessage1.\n");
-    return NULL;
+    goto end;
   }
   if (contentMessage2 == NULL) {
     printf("Error while trying to allocate memory for variable : contentMessage2.\n");
-    return NULL;
+    goto end;
   }
   if (maskMessage1 == NULL) {
     printf("Error while trying to allocate memory for variable : maskMessage1.\n");
-    return NULL;
+    goto end;
   }
   if (maskMessage2 == NULL) {
     printf("Error while trying to allocate memory for variable : maskMessage2.\n");
-    return NULL;
+    goto end;
   }
   // Fullfill the mask with END like filling it with a '\0'
   memset(maskMessage1, END, (message1->len + message2->len) * sizeof(unsigned char));
@@ -394,7 +397,6 @@ char* alignTwoMessages(t_message * resMessage, Bool doInternalSlick, t_message *
   }
 
   // Compute the common alignment
-  char* regex=NULL;
   char hexrepr[3];
    //printf("taille %lf\n",levcop);
   //printf("taille %d\n",(int)(levcop/10)*2+(int)(levcop/10)+2);
@@ -514,30 +516,48 @@ char* alignTwoMessages(t_message * resMessage, Bool doInternalSlick, t_message *
     printf("Score Rang : %0.2f.\n", resMessage->score->s3);
   }
 
+end:
+	if(matrix) {
+		// Room service
+		for (i = 0; i < (message1->len + 1); i++) {
+			/*if(!(i%BLEN)){
+			//printf("----------------------------------------------------------------------------------\n");
+			}
+			for(j = 0; j < (message2->len + 1); j++) {
+			if(!(j%BLEN))
+			//printf("|\t",matrix[i][j]);   
+			printf("%d,\t",matrix[i][j]);
 
-  // Room service
-  for (i = 0; i < (message1->len + 1); i++) {
-  /*if(!(i%BLEN)){
-  	//printf("----------------------------------------------------------------------------------\n");
-  }
-     for(j = 0; j < (message2->len + 1); j++) {
-     if(!(j%BLEN))
-  		//printf("|\t",matrix[i][j]);   
-  printf("%d,\t",matrix[i][j]);
+			}
+			printf("\n");
+			*/
+			if(matrix[i]) {
+				free(matrix[i]);
+			}
+		}
+		free(matrix);
+	}
   
-  }
-  printf("\n");
-  */
-    free( matrix[i] );
-  }
-  free( matrix );
-  free(contentMessage1);
-  free(contentMessage2);
-  free(maskMessage1);
-  free(maskMessage2);
-  free(tmpMessage);
-  free(tmpMessageMask);
-  return regex;
+	if(contentMessage1) {
+		free(contentMessage1);
+	}
+	if(contentMessage2) {
+		free(contentMessage2);
+	}
+	if(maskMessage1) {
+		free(maskMessage1);
+	}
+	if(maskMessage2) {
+		free(maskMessage2);
+	}
+	if(tmpMessage) {
+		free(tmpMessage);
+	}
+	if(tmpMessageMask) {
+		free(tmpMessageMask);
+	}
+	
+	return regex;
 }
 
 
@@ -584,9 +604,17 @@ float getScoreDynSize(unsigned int nbDynTotal, unsigned int nbDynCommon) {
   }
   return result;
 }
+
+/**
+   computeDistance:
+   This function computes a distance given a set of scores
+
+   @param score : the scores to merge
+   @return the distance
+*/
 float computeDistance(t_score * score) {
   float result = 0;
-  result = sqrt(0.0 * pow(score->s1,2) + 0.0 * pow(score->s2,2) + 1.0 * pow(score->s3,2));
+  result = sqrt((1.0 * pow(score->s1,2) + 1.0 * pow(score->s2,2) + 1.0 * pow(score->s3,2))/3.0);
   return result;
 }
   

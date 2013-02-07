@@ -30,64 +30,58 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
-import os
-from gi.repository import Gtk
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
+import gi
+gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+from netzob.UI.NetzobAbstractController import NetzobAbstractController
+from netzob.UI.TraceManager.Views.ApplicativeDataManagerView import ApplicativeDataManagerView
+from netzob.UI import NetzobWidgets
+from netzob.Common.ApplicativeData import ApplicativeData, ApplicativeDataException
+from netzob.UI.TraceManager.Controllers.ApplicativeDataImportController import ApplicativeDataImportController
 
 
-class NetzobAbstractViewException(Exception):
-    pass
+class ApplicativeDataManagerController(NetzobAbstractController):
+    """Manage the list of available plugins"""
 
+    def __init__(self, mainController, trace, session):
+        self.trace = trace
+        self.session = session
+        self.mainController = mainController
+        super(ApplicativeDataManagerController, self).__init__(mainController, ApplicativeDataManagerView)
+        self.logger = logging.getLogger(__name__)
 
-class NetzobAbstractView(object):
+    def getSession(self):
+        return self.session
 
-    def __init__(self, controller, viewFilePath, root="root", parent=None):
-        self.builder = Gtk.Builder()
-        self.builder.add_from_file(self._findUiResource(viewFilePath))
+    def refresh(self):
+        self.view.refresh()
 
-        self._getObjects([root])
-        self.root = getattr(self, root)
+    def applicativeDataManagerWindow_destroy_cb(self, widget):
+        super(ApplicativeDataManagerController, self).destroy()
+        self.mainController._refreshProjectProperties(trace=self.trace, session=self.session)
 
-        self.controller = controller
+    def removeButton_clicked_cb(self, button):
+        """removeButton_clicked_cb:
+        Callback executed when the user wants to delete some selected new applicative data"""
+        self.logger.debug("Remove selected applicative data")
+        toRemove = self.view.getSelectedApplicativeData()
+        if len(toRemove) > 0:
+            for applicativeData in toRemove:
+                self.session.removeApplicativeData(applicativeData)
+            self.view.refresh()
 
-        if parent is not None:
-            window = getattr(self, root)
-            window.set_transient_for(parent)
+    def importButton_clicked_cb(self, button):
+        """importButton_clicked_cb:
+        Callback executed when the user wants to import some Application Data from CSV"""
+        self.logger.debug("Import Application Data from CSV")
 
-        self.builder.connect_signals(self.controller)
-
-    def run(self):
-        self.root.show_all()
-
-    def destroy(self):
-        """destroy:
-        Execute this method to stop the current view"""
-        self.root.destroy()
-
-    def _findUiResource(self, resource):
-        r = os.path.join(ResourcesConfiguration.getStaticResources(), "ui", resource)
-        if os.path.isfile(r):
-            return r
-
-        r = os.path.join(ResourcesConfiguration.getPluginsStaticResources(), "ui", resource)
-        if os.path.isfile(r):
-            return r
-
-        raise NetzobAbstractViewException(_("Requested file ({0}) was not found.").format(resource))
-
-    def _getObjects(self, objectsList):
-        for obj in objectsList:
-            setattr(self, obj, self.builder.get_object(obj))
-
-    def getController(self):
-        """getController:
-        Returns the controller instance associated with the current view"""
-        return self.controller
+        # Starts the proper controller
+        importController = ApplicativeDataImportController(self)
+        importController.run()

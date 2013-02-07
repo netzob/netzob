@@ -66,6 +66,8 @@ class TraceManagerView(NetzobAbstractPerspectiveView):
                           "currentTraceMessageListstore",
                           "traceMergeAction",
                           "traceImportInProjectAction",
+                          "numberOfApplicativeDataLabel",
+                          "manageApplicativeDataButton",
 
                           "currentTraceMessageListstore",
                           "messageListTreeview",
@@ -214,3 +216,29 @@ class TraceManagerView(NetzobAbstractPerspectiveView):
 
         result = dlg.run()
         dlg.destroy()
+
+    def activateManagementOfApplicativeData(self):
+        """activateManagementOfApplicativeData:
+        Execute this action to activate the button which can starts
+        the controller for the management of the application data.
+        """
+        self.manageApplicativeDataButton.set_sensitive(True)
+        self.manageApplicativeDataButton.set_label(_("Manage Applicative Data"))
+
+    def deactivateManagementOfApplicativeData(self, reason):
+        """deactivateManagementOfApplicativeData:
+        Execute this action to deactivate the button which provide
+        the management of the application data.
+        @param reason: the reason why the user cannot management the applicative data
+        """
+        self.manageApplicativeDataButton.set_sensitive(False)
+        self.manageApplicativeDataButton.set_label(reason)
+
+    def setNumberOfApplicativeData(self, nbApplicativeData):
+        """setNumberofApplicativeData:
+        Execute this function will update the view and displays the
+        provided number of applicative data in a label"""
+        if nbApplicativeData == 0:
+            self.numberOfApplicativeDataLabel.set_label(_("None found"))
+        else:
+            self.numberOfApplicativeDataLabel.set_label(_("{0} registered".format(nbApplicativeData)))

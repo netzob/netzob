@@ -38,6 +38,8 @@ from netzob.Common.Threads.Tasks.ThreadedTask import TaskError, ThreadedTask
 from netzob.Inference.Vocabulary.Searcher import Searcher
 from netzob.Common.Threads.Job import Job
 from netzob.Common.Type.Format import Format
+from netzob.Common.Property import Property
+
 gi.require_version('Gtk', '3.0')
 import logging
 
@@ -107,12 +109,18 @@ class EnvironmentDependenciesSearcherController(object):
         # Retrieve all the possibles env dependencies (properties of messages And vocabulary env deps)
         envDeps = currentProject.getEnvironmentDependencies()
 
+        # Search in the same time all the applicative data in the project
+        appData = currentProject.getApplicativeData()
+        for data in appData:
+            print "data found"
+            envDeps.append(Property(data.getName(), data.getType(), data.getValue()))
+
         # Create the search tasks
         self.searchTasks = []
         for prop in envDeps:
             if prop.getFormat() == Format.STRING:
                 self.log.debug("Search for String {0}...".format(prop.getCurrentValue()))
-#                self.searchTasks.extend(searcher.getSearchedDataForString(str(prop.getCurrentValue())))
+                self.searchTasks.extend(searcher.getSearchedDataForString(str(prop.getCurrentValue())))
             elif prop.getFormat() == Format.IP:
                 self.log.debug("Search for IP {0}...".format(prop.getCurrentValue()))
                 self.searchTasks.extend(searcher.getSearchedDataForIP(prop.getCurrentValue()))
