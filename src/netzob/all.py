@@ -41,8 +41,6 @@ from netzob.Common.EnvironmentalDependencies import EnvironmentalDependencies
 from netzob.Common.EnvironmentalDependency import EnvironmentalDependency
 from netzob.Common.ExecutionContext import ExecutionContext
 from netzob.Common.Field import Field
-from netzob.Common.Filters.Encoding.FormatFilter import FormatFilter
-from netzob.Common.Filters.Visualization.TextColorFilter import TextColorFilter
 from netzob.Common.Functions.Encoding.FormatFunction import FormatFunction
 from netzob.Common.Functions.EncodingFunction import EncodingFunction
 from netzob.Common.Functions.FunctionApplicationTable import FunctionApplicationTable
