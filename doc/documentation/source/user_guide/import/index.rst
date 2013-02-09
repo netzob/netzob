@@ -2,8 +2,9 @@
 
 .. _import:
 
-Import
-======
+Importing Data
+==============
+
 Communication protocols can be found is every parts of a system, as shown on the following picture:
 
 .. image:: netzob_comprot.png
