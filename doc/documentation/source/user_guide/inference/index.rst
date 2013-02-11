@@ -1,13 +1,13 @@
 .. currentmodule:: netzob
 
-.. _modelization:
+.. _inference:
 
-************
-Modelization
-************
+==================
+Protocol inference
+==================
 
 Definition of a communication protocol
-======================================
+--------------------------------------
 
 A communication protocol is as language. A language is defined
 through~:
@@ -51,7 +51,7 @@ Field's content can be~:
 * random (the initial value of the TCP sequence number for example).
 
 Modelization in Netzob
-======================
+----------------------
 
 Netzob provides a framework for the semi-automated modelization (inference) of communication protocols, i.e. inferring its vocabular and grammar.
 

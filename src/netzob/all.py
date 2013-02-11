@@ -31,6 +31,7 @@
 
 # Common
 from netzob.Common.Automata import Automata
+from netzob.Common.ApplicativeData import ApplicativeData
 from netzob.Common.BugReporter import BugReporter
 from netzob.Common.BugReporter import BugReporter, BugReporterException
 from netzob.Common.C_Extensions.WrapperArgsFactory import WrapperArgsFactory

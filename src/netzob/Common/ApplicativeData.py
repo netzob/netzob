@@ -135,12 +135,15 @@ class ApplicativeData(object):
                     break
                 else:
                     try:
-                        formatData = str.lower(row[1])
-                        if formatData in Format.getExtendedSupportedFormats() and len(row[2]) > 0:
-                            data = ApplicativeData(uuid.uuid4(), row[0], formatData, row[2])
-                            result.append(data)
+                        if len(row[2]) > 0:
+                            formatData = str.lower(row[1])
+                            if formatData in Format.getExtendedSupportedFormats():
+                                data = ApplicativeData(uuid.uuid4(), row[0], formatData, row[2])
+                                result.append(data)
+                            else:
+                                logging.warning("Cannot import data with format : {0}, only {1} available".format(formatData, Format.getExtendedSupportedFormats()))
                         else:
-                            logging.warning("Cannot import data with format : {0}".format(row[1]))
+                            logging.warning("Don't consider empty applicative data.")
                     except ApplicativeDataException, e:
                         errorMessage = _("line {0} in CSV, invalid format of data : {1}".format(idLine, e))
                         break

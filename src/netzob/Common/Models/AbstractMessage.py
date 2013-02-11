@@ -91,10 +91,13 @@ class AbstractMessage(object):
         return message
 
     def __str__(self):
+        if self.session is None:
+            sessionID = "None"
+        else:
+            sessionID = str(self.session.id)
         return "[{0}: data={1}...; type={2}; session={3}]".format(self.id,
                                                                   self.data[:15],
-                                                                  self.type,
-                                                                  self.session.id)
+                                                                  self.type, sessionID)
 
     #+-----------------------------------------------------------------------+
     #| getFactory

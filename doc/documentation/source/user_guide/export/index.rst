@@ -2,8 +2,8 @@
 
 .. _export:
 
-Export
-======
+Exporting protocol model
+========================
 
 Netzob supports the export of the modelization of the protocol in the following formats:
 * XML meta representation
