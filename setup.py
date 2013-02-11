@@ -39,7 +39,7 @@ from netzob import release
 from resources.sdist.manpage_command import manpage_command
 from resources.sdist.pybuild_command import pybuild_command
 from resources.sdist.test_command import test_command
-from resources.sdist.utils import find_data_files, opj
+from resources.sdist.utils import find_data_files, opj, getPluginPaths
 
 #+----------------------------------------------------------------------------
 #| Definition of variables
@@ -291,25 +291,25 @@ setup(
     },
 )
 
-if len(sys.argv) > 1:
-    command = sys.argv[1]
-else:
-    command = None
-if command in ["build", "develop", "install", "clean"]:
-    root_dir = os.getcwd()
-    main_plugin_dir = root_dir + os.sep + "src" + os.sep + "netzob_plugins" + os.sep
-    plugin_categories = ["Capturers", "Importers", "Exporters"]
-    for plugin_category in plugin_categories:
-        plugin_dir = main_plugin_dir + plugin_category + os.sep
-        plugin_list = os.listdir(plugin_dir)
-        for plugin_name in plugin_list:
-            if plugin_name != "__init__.py" and plugin_name != "__init__.pyc":
-                plugin_fullpath = plugin_dir + plugin_name
-                print ""
-                print "------------------------------"
-                print "Handling plugin: " + plugin_name
-                print "Plugin path: " + plugin_fullpath
-                os.chdir(plugin_fullpath)
-                cmd = "{0} setup.py {1}".format(sys.executable, " ".join(sys.argv[1:]))
-                print "Using following command: " + cmd
-                os.system(cmd)
+#+----------------------------------------------------------------------------
+#| Automaticaly apply the command to attached plugins
+#+----------------------------------------------------------------------------
+# that's a fun one :)
+# this if block is executed if sys.argv[1] in ["build", ....]
+if (None, sys.argv[1])[len(sys.argv) > 1] in ["build", "develop", "install", "clean"]:
+    # find all the available plugins sources
+    pluginsPath = getPluginPaths()
+
+    for pluginName, pluginPath in pluginsPath.items():
+        print "------------------------------"
+        print "[I] Plugin Name:\t{0}".format(pluginName)
+        print "[ ] Path:\t\t{0}".format(pluginPath)
+        pluginSetupPath = opj(pluginPath, "setup.py")
+        # Verifies plugin contains a setup.py
+        if not os.path.exists(pluginSetupPath):
+            print "[E] Impossible to find the 'setup.py' file : {0}".format(pluginSetupPath)
+            continue
+        # Create the command to execute
+        os.chdir(pluginPath)
+        cmd = "{0} setup.py {1}".format(sys.executable, " ".join(sys.argv[1:]))
+        os.system(cmd)

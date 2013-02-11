@@ -43,7 +43,7 @@ extern PyObject *python_callback_isFinish;
 
 static PyMethodDef libScoreComputation_methods[] = {
   {"getBID", py_getBID, METH_NOARGS, NULL},
-  {"getHighestEquivalentGroup", py_getHighestEquivalentGroup, METH_VARARGS, NULL},
+  {"computeSimilarityMatrix", py_computeSimilarityMatrix, METH_VARARGS, NULL},
   {NULL, NULL, 0, NULL}
 };
 
@@ -55,15 +55,14 @@ PyMODINIT_FUNC init_libScoreComputation(void) {
 }
 
 //+---------------------------------------------------------------------------+
-//| py_getHighestEquivalenceGroup : Python wrapper for getHighestEquivalenceGroup
+//| py_computeSimilarityMatrix : Python wrapper for computeSimilarityMatrix
 //+---------------------------------------------------------------------------+
-PyObject* py_getHighestEquivalentGroup(__attribute__((unused))PyObject* self, PyObject* args) {
+PyObject* py_computeSimilarityMatrix(__attribute__((unused))PyObject* self, PyObject* args) {
   unsigned int doInternalSlick = 0;
   unsigned int debugMode = 0;
   int i = 0;
   PyObject *temp_cb;
   PyObject *temp2_cb;
-  t_equivalentGroup result;
   Bool bool_debugMode;
   PyObject* wrapperFactory;
   float **scoreMatrix = NULL;
@@ -86,14 +85,14 @@ PyObject* py_getHighestEquivalentGroup(__attribute__((unused))PyObject* self, Py
   }
 
   // Parse the callback
-    Py_XINCREF(temp_cb);          /* Add a reference to new callback */
-    Py_XDECREF(python_callback);  /* Dispose of previous callback */
-    python_callback = temp_cb;    /* Remember new callback */
+  Py_XINCREF(temp_cb);          /* Add a reference to new callback */
+  Py_XDECREF(python_callback);  /* Dispose of previous callback */
+  python_callback = temp_cb;    /* Remember new callback */
 
-    // Parse the callback2
-    Py_XINCREF(temp2_cb);          /* Add a reference to new callback */
-    Py_XDECREF(python_callback_isFinish);  /* Dispose of previous callback */
-    python_callback_isFinish = temp2_cb;    /* Remember new callback */
+  // Parse the callback2
+  Py_XINCREF(temp2_cb);          /* Add a reference to new callback */
+  Py_XDECREF(python_callback_isFinish);  /* Dispose of previous callback */
+  python_callback_isFinish = temp2_cb;    /* Remember new callback */
 
   int parseRet;
   parseRet = parseArgs(wrapperFactory,&nbmessage,&mesmessages);
@@ -106,7 +105,7 @@ PyObject* py_getHighestEquivalentGroup(__attribute__((unused))PyObject* self, Py
   scoreMatrix = (float**) malloc (nbmessage*sizeof(float*));
   for(i=0;i<nbmessage;i++)
   {
-  	scoreMatrix[i] = calloc (nbmessage,sizeof(float*));
+    scoreMatrix[i] = calloc (nbmessage,sizeof(float*));
   } 
   
   // Convert debugMode parameter in a BOOL
@@ -116,7 +115,7 @@ PyObject* py_getHighestEquivalentGroup(__attribute__((unused))PyObject* self, Py
     bool_debugMode = FALSE;
   }
   
-  getHighestEquivalentGroup(&result, nbmessage, mesmessages, debugMode, scoreMatrix);
+  computeSimilarityMatrix(nbmessage, mesmessages, bool_debugMode, scoreMatrix);
   
   //Compute the scores recorded in a python list://TODO Return Factory
   PyObject *recordedScores = PyList_New((nbmessage*(nbmessage-1))/2);
@@ -153,11 +152,7 @@ PyObject* py_getHighestEquivalentGroup(__attribute__((unused))PyObject* self, Py
   free(scoreMatrix);
   free(mesmessages);
 
-  if (bool_debugMode){
-    printf("Score of the Highest equivalent group : %f", result.score);
-  }
-
-  return Py_BuildValue("(iifS)", result.i, result.j, result.score,recordedScores);
+  return Py_BuildValue("S", recordedScores);
 }
 
 

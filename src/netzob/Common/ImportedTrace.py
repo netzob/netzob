@@ -98,8 +98,7 @@ class ImportedTrace(object):
         for session in self.getSessions():
             session.save(xmlSessions, namespace_workspace, namespace_common)
 
-        tree = ElementTree(root)
-        contentOfFile = str(etree.tostring(tree.getroot()))
+        contentOfFile = str(etree.tostring(root))
 
         # Creation of the XML File (in buffer)
         # Compress it using gzip and save the .gz
@@ -192,7 +191,6 @@ class ImportedTrace(object):
     #+----------------------------------------------
     @staticmethod
     def loadTrace(xmlRoot, namespace_workspace, namespace_common, version, pathOfTraces):
-
         if version == "0.1":
             date = TypeConvertor.xsdDatetime2PythonDatetime(str(xmlRoot.get("date")))
             type = xmlRoot.get("type")

@@ -62,6 +62,9 @@ class SearchResult(object):
     def getDescription(self):
         return self.description
 
+    def setDescription(self, description):
+        self.description = description
+
     def addSegment(self, i_start, i_end):
         self.segments.append([i_start, i_end])
 
@@ -70,3 +73,6 @@ class SearchResult(object):
 
     def setVariationDescription(self, variationDescription):
         self.variationDescription = variationDescription
+
+    def __str__(self):
+        return "{0} found in {1} segments of message {2}".format(self.getVariationDescription(), len(self.getSegments()), self.getMessage())

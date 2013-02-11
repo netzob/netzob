@@ -59,6 +59,40 @@ class Searcher(object):
         self.project = project
         self.status_cb = status_cb
 
+    def searchApplicativeDataInMessage(self, message):
+        """searchApplicativeDataInMessage:
+        Search for any applicative data attached to the current project
+        in the provided message.
+        """
+        if message is None:
+            self.log.warning("No message provided")
+            return []
+        applicativeData = self.project.getVocabulary().getApplicativeData()
+        # Create search tasks
+        tasks = []
+        for appData in applicativeData:
+            if appData.getType() == Format.STRING:
+                tasks.extend(self.getSearchedDataForString(appData.getValue()))
+            elif appData.getType() == Format.DECIMAL:
+                tasks.extend(self.getSearchedDataForDecimal(appData.getValue()))
+            elif appData.getType() == Format.IP:
+                tasks.extend(self.getSearchedDataForIP(appData.getValue()))
+            else:
+                self.log.warning("Type of the applicative data {0} cannot be used in a search.".format(appData.getType()))
+        if len(tasks) == 0:
+            self.log.warning("Nothing to search after")
+            return []
+        self.log.info("{0} search tasks will be executed.".format(len(tasks)))
+
+        newTasks = self.searchInMessage(tasks, message)
+        results = []
+        for task in newTasks:
+            if len(task.getResults()) > 0:
+                for r in task.getResults():
+                    r.setDescription(task.getDescription())
+                results.extend(task.getResults())
+        return results
+
     #+----------------------------------------------
     #| getSearchedDataForBinary:
     #|   Generates data which can represent the specified Binary

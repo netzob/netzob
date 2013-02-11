@@ -94,9 +94,9 @@
                 <property name="search_column">1</property>
                 <property name="tooltip_column">1</property>
                 <signal name="button-press-event" handler="traceTreeview_button_press_event_cb" swapped="no"/>
+                <signal name="drag-drop" handler="traceTreeview_drag_drop_cb" swapped="no"/>
                 <signal name="drag-data-received" handler="traceTreeview_drag_data_received_cb" swapped="no"/>
                 <signal name="drag-motion" handler="traceTreeview_drag_motion_cb" swapped="no"/>
-                <signal name="drag-drop" handler="traceTreeview_drag_drop_cb" swapped="no"/>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection" id="traceTreeviewSelection">
                     <property name="mode">multiple</property>
@@ -399,6 +399,64 @@
                                 <property name="height">1</property>
                               </packing>
                             </child>
+                            <child>
+                              <object class="GtkLabel" id="label8">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Applicative Data:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">4</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkBox" id="box6">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="hexpand">True</property>
+                                <property name="spacing">10</property>
+                                <child>
+                                  <object class="GtkLabel" id="numberOfApplicativeDataLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="label" translatable="yes">Unknown</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="manageApplicativeDataButton">
+                                    <property name="label" translatable="yes">Manage Applicative Data</property>
+                                    <property name="use_action_appearance">False</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">end</property>
+                                    <property name="use_action_appearance">False</property>
+                                    <signal name="clicked" handler="manageApplicativeDataButton_clicked_cb" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">4</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
+                              </packing>
+                            </child>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -536,145 +594,6 @@
       <!-- column-name session -->
       <column type="gchararray"/>
       <!-- column-name sessionSortKey -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
-  <object class="GtkMessageDialog" id="mergeTracesDialog">
-    <property name="can_focus">False</property>
-    <property name="border_width">5</property>
-    <property name="modal">True</property>
-    <property name="destroy_with_parent">True</property>
-    <property name="type_hint">dialog</property>
-    <property name="skip_taskbar_hint">True</property>
-    <property name="text" translatable="yes">Name of the new traces?</property>
-    <property name="secondary_text" translatable="yes">Please choose a name for the new traces.</property>
-    <child internal-child="vbox">
-      <object class="GtkBox" id="messagedialog-vbox1">
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox" id="messagedialog-action_area1">
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
-            <child>
-              <object class="GtkButton" id="button1">
-                <property name="label">gtk-cancel</property>
-                <property name="use_action_appearance">False</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
-                <property name="use_stock">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="mergeDialogValidate">
-                <property name="label">gtk-ok</property>
-                <property name="use_action_appearance">False</property>
-                <property name="visible">True</property>
-                <property name="sensitive">False</property>
-                <property name="can_focus">True</property>
-                <property name="can_default">True</property>
-                <property name="has_default">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
-                <property name="use_stock">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="pack_type">end</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkBox" id="box7">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="spacing">12</property>
-            <child>
-              <object class="GtkLabel" id="label6">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">New Name:</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkEntry" id="mergeDialogNameEntry">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="invisible_char">●</property>
-                <property name="activates_default">True</property>
-                <signal name="changed" handler="mergeDialogNameEntry_changed_cb" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkCheckButton" id="mergeDialogCreateCopyCheckbox">
-            <property name="label" translatable="yes">Create a copy of the trace sets</property>
-            <property name="use_action_appearance">False</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="use_action_appearance">False</property>
-            <property name="xalign">0</property>
-            <property name="active">True</property>
-            <property name="draw_indicator">True</property>
-            <signal name="toggled" handler="mergeDialogCreateCopyCheckbox_toggled_cb" swapped="no"/>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">3</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-    <action-widgets>
-      <action-widget response="0">button1</action-widget>
-      <action-widget response="1">mergeDialogValidate</action-widget>
-    </action-widgets>
-  </object>
-  <object class="GtkTreeStore" id="traceTreestore">
-    <columns>
-      <!-- column-name id -->
-      <column type="gchararray"/>
-      <!-- column-name name -->
-      <column type="gchararray"/>
-      <!-- column-name messageCount -->
-      <column type="gchararray"/>
-      <!-- column-name date -->
-      <column type="gchararray"/>
-      <!-- column-name timestamp -->
       <column type="gchararray"/>
     </columns>
   </object>
@@ -820,5 +739,144 @@
       <action-widget response="0">button2</action-widget>
       <action-widget response="1">importInProjectDialogValidate</action-widget>
     </action-widgets>
+  </object>
+  <object class="GtkMessageDialog" id="mergeTracesDialog">
+    <property name="can_focus">False</property>
+    <property name="border_width">5</property>
+    <property name="modal">True</property>
+    <property name="destroy_with_parent">True</property>
+    <property name="type_hint">dialog</property>
+    <property name="skip_taskbar_hint">True</property>
+    <property name="text" translatable="yes">Name of the new traces?</property>
+    <property name="secondary_text" translatable="yes">Please choose a name for the new traces.</property>
+    <child internal-child="vbox">
+      <object class="GtkBox" id="messagedialog-vbox1">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="messagedialog-action_area1">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="button1">
+                <property name="label">gtk-cancel</property>
+                <property name="use_action_appearance">False</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="mergeDialogValidate">
+                <property name="label">gtk-ok</property>
+                <property name="use_action_appearance">False</property>
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can_focus">True</property>
+                <property name="can_default">True</property>
+                <property name="has_default">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="box7">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="spacing">12</property>
+            <child>
+              <object class="GtkLabel" id="label6">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">New Name:</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEntry" id="mergeDialogNameEntry">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="invisible_char">●</property>
+                <property name="activates_default">True</property>
+                <signal name="changed" handler="mergeDialogNameEntry_changed_cb" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkCheckButton" id="mergeDialogCreateCopyCheckbox">
+            <property name="label" translatable="yes">Create a copy of the trace sets</property>
+            <property name="use_action_appearance">False</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="use_action_appearance">False</property>
+            <property name="xalign">0</property>
+            <property name="active">True</property>
+            <property name="draw_indicator">True</property>
+            <signal name="toggled" handler="mergeDialogCreateCopyCheckbox_toggled_cb" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="0">button1</action-widget>
+      <action-widget response="1">mergeDialogValidate</action-widget>
+    </action-widgets>
+  </object>
+  <object class="GtkTreeStore" id="traceTreestore">
+    <columns>
+      <!-- column-name id -->
+      <column type="gchararray"/>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name messageCount -->
+      <column type="gchararray"/>
+      <!-- column-name date -->
+      <column type="gchararray"/>
+      <!-- column-name timestamp -->
+      <column type="gchararray"/>
+    </columns>
   </object>
 </interface>

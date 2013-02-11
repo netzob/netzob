@@ -240,8 +240,8 @@ class ContextualMenuOnFieldController(object):
         self.layer.createSymbolsWithFixedField(self.field)
 
         # Update UI
-        self.vocabularyController.view.updateSelectedMessageTable()
-        self.vocabularyController.view.updateLeftPanel()
+        self.vocabularyController.updateSelectedMessageTable()
+        self.vocabularyController.updateLeftPanel()
 
     def exportSelectedFields_cb(self, event):
         # If fields header are selected, we get it

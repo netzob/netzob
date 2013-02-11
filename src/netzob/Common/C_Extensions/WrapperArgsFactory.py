@@ -41,7 +41,7 @@ class WrapperArgsFactory(object):
     """
 
     def __init__(self, function):
-        self.typeList = {"_libScoreComputation.getHighestEquivalentGroup": self.getHighestEquivalentGroup}
+        self.typeList = {"_libScoreComputation.computeSimilarityMatrix": self.computeSimilarityMatrix}
         if(function in self.typeList.keys()):
             self.function = function
         else:
@@ -50,7 +50,7 @@ class WrapperArgsFactory(object):
     def __str__(self):
         return str(self.args)
 
-    def getHighestEquivalentGroup(self, symbols):
+    def computeSimilarityMatrix(self, symbols):
         self.args = []
         for s in symbols:
             self.args.append(WrapperMessage(s.getMessages()[0], s))

@@ -88,6 +88,9 @@ class SessionsDiff(object):
                 for iCar in range(len(refCells[iCell])):
                     isSimilar = True
                     for iSession in range(len(self.sessions[1:])):
+                        if iSession >= len(cellsPerSession):
+                            isSimilar = False
+                            break
                         if iCell >= len(cellsPerSession[iSession]):
                             isSimilar = False
                             commonCell += ""

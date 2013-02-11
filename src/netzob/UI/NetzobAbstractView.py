@@ -67,6 +67,11 @@ class NetzobAbstractView(object):
     def run(self):
         self.root.show_all()
 
+    def destroy(self):
+        """destroy:
+        Execute this method to stop the current view"""
+        self.root.destroy()
+
     def _findUiResource(self, resource):
         r = os.path.join(ResourcesConfiguration.getStaticResources(), "ui", resource)
         if os.path.isfile(r):
@@ -81,3 +86,8 @@ class NetzobAbstractView(object):
     def _getObjects(self, objectsList):
         for obj in objectsList:
             setattr(self, obj, self.builder.get_object(obj))
+
+    def getController(self):
+        """getController:
+        Returns the controller instance associated with the current view"""
+        return self.controller

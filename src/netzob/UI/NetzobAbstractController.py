@@ -55,3 +55,8 @@ class NetzobAbstractController(object):
 
     def run(self):
         self.view.run()
+
+    def destroy(self):
+        """destroy:
+        Execute this method to stop to the current MVC pattern (controller and view)"""
+        self.view.destroy()

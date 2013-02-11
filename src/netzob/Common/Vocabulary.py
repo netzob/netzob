@@ -240,6 +240,16 @@ class Vocabulary(object):
         for symbol in self.symbols:
             symbol.simplePartitioning(configuration, unitSize)
 
+    def getApplicativeData(self):
+        """getApplicativeData:
+        Computes and returns all the applicative data declared in the vocabulary
+        @return a list of L{netzob.Common.ApplicativeData}
+        """
+        result = []
+        for session in self.getSessions():
+            result.extend(session.getApplicativeData())
+        return result
+
     def save(self, root, namespace_project, namespace_common):
         xmlVocabulary = etree.SubElement(root, "{" + namespace_project + "}vocabulary")
         # Messages
