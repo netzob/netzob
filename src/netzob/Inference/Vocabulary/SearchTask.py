@@ -72,3 +72,6 @@ class SearchTask(object):
 
     def getDescription(self):
         return self.description
+
+    def setDescription(self, description):
+        self.description = description
