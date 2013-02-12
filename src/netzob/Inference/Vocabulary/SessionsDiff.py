@@ -133,7 +133,7 @@ class SessionsDiff(object):
 
                 # Compute the non matching segments, at the message level (i.e. we merge all the fields first)
                 data = "".join(resMsg)
-                nonMatchingSegments = [(m.start(), str(m.end())) for m in re.finditer("-+", data)]
+                nonMatchingSegments = [(m.start(), m.end()) for m in re.finditer("-+", data)]
 
                 # Add, as a result, a tupple containing the current message and the non-matching segments
                 if len(nonMatchingSegments) > 0:
