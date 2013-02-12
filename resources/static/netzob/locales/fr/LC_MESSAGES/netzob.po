@@ -8,26 +8,24 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-31 18:23+0100\n"
+"POT-Creation-Date: 2013-02-12 11:22+0100\n"
 "PO-Revision-Date: 2013-01-31 18:24+0200\n"
 "Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/master/fr/>\n"
-"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Weblate 1.4\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: src/netzob/NetzobMainController.py:309
+#: src/netzob/NetzobMainController.py:312
 msgid "A project with this name exists"
 msgstr "Un projet avec ce nom existe déjà"
 
-#: src/netzob/NetzobMainController.py:324
-#: src/netzob/NetzobMainController.py:342
-#: src/netzob/NetzobMainController.py:355
+#: src/netzob/NetzobMainController.py:327
+#: src/netzob/NetzobMainController.py:345
+#: src/netzob/NetzobMainController.py:358
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:141
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:176
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:201
@@ -57,16 +55,16 @@ msgstr "Un projet avec ce nom existe déjà"
 msgid "No project selected."
 msgstr "Aucun projet sélectionné."
 
-#: src/netzob/NetzobMainController.py:419
+#: src/netzob/NetzobMainController.py:422
 #: src/netzob/UI/Common/Controllers/ProjectExportController.py:110
 msgid "No directory selected"
 msgstr "Aucun répertoire sélectionné"
 
-#: src/netzob/NetzobMainController.py:433
+#: src/netzob/NetzobMainController.py:436
 msgid "An error occurred while loading workspace."
 msgstr "Une erreur est survenue pendant le chargement de l'espace de travail."
 
-#: src/netzob/NetzobMainController.py:443
+#: src/netzob/NetzobMainController.py:446
 msgid "An error occurred while creating workspace."
 msgstr "Une erreur est survenue durant la création de l'espace de travail."
 
@@ -113,6 +111,14 @@ msgstr ""
 msgid "Close _Without Saving"
 msgstr "Fermer sans sauvegarder"
 
+#: src/netzob/Common/ApplicativeData.py:134
+msgid "line {0} in CSV has not 3 columns, format must be : Name, Type, Value"
+msgstr ""
+
+#: src/netzob/Common/ApplicativeData.py:148
+msgid "line {0} in CSV, invalid format of data : {1}"
+msgstr ""
+
 #: src/netzob/Common/BugReporter.py:81
 msgid "Please verify your API key."
 msgstr "Merci de vérifier votre clé d'API."
@@ -131,7 +137,7 @@ msgstr "Une erreur s'est produite lors de l'association au rapport {0}/issues/{1
 msgid "The bug report has successfully been published on {0}/issues/{1}"
 msgstr "Le rapport a été publié avec succès sur {0}/issues/{1}"
 
-#: src/netzob/Common/Field.py:316 src/netzob/Common/Field.py:326
+#: src/netzob/Common/Field.py:396 src/netzob/Common/Field.py:406
 #: src/netzob/Import/ApiImport.py:120
 #: resources/static/netzob/ui/availablePluginsDialog.glade:112
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:52
@@ -144,6 +150,7 @@ msgstr "Le rapport a été publié avec succès sur {0}/issues/{1}"
 #: resources/static/netzob/ui/grammar/deleteTransitionDialog.glade:138
 #: resources/static/netzob/ui/simulator/createNetworkActor.glade:207
 #: resources/static/netzob/ui/simulator/simulatorView.glade:155
+#: resources/static/netzob/ui/traceManager/applicativeDataManagerDialog.glade:49
 #: resources/static/netzob/ui/vocabulary/environmentDependenciesSearcherView.glade:164
 #: resources/static/netzob/ui/vocabulary/variableTable.glade:74
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:255
@@ -154,15 +161,15 @@ msgstr "Le rapport a été publié avec succès sur {0}/issues/{1}"
 msgid "Name"
 msgstr "Nom"
 
-#: src/netzob/Common/Project.py:288
+#: src/netzob/Common/Project.py:297
 msgid "Unable to delete project: {0}"
 msgstr "Impossible de supprimer le projet : {0}"
 
-#: src/netzob/Common/Project.py:390
+#: src/netzob/Common/Project.py:399
 msgid "Copy of {0}"
 msgstr "Copie de {0}"
 
-#: src/netzob/Common/Project.py:400
+#: src/netzob/Common/Project.py:409
 msgid "Unable to import the project: {0}."
 msgstr "Impossible d'importer le projet : {0}."
 
@@ -232,20 +239,24 @@ msgstr "L'espace de travail indiqué n'est pas conforme aux définitions XSD."
 msgid "An unknown error prevented to open the workspace."
 msgstr "Une erreur inconnue a empêché l'ouverture de l'espace de travail."
 
-#: src/netzob/Common/MMSTD/Dictionary/Values/AbstractValue.py:57
+#: src/netzob/Common/MMSTD/Dictionary/Values/AbstractValue.py:56
 msgid "Import from File"
 msgstr "Importer depuis un fichier"
 
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:287
+#: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:299
 msgid "[Aggregate] {0} ({1})"
 msgstr "[Agrégat] {0} ({1})"
 
-#: src/netzob/Common/MMSTD/Dictionary/Variables/AlternateVariable.py:223
+#: src/netzob/Common/MMSTD/Dictionary/Variables/AlternateVariable.py:235
 msgid "[Alternate] {0} ({1})"
 msgstr "[Alternat] {0} ({1})"
 
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:200
-#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:205
+#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:195
+msgid "The variable points nowhere."
+msgstr ""
+
+#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:220
+#: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:225
 #: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:219
 #: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:224
 msgid "[{0}]"
@@ -299,7 +310,7 @@ msgstr "Paramètre"
 #: src/netzob/Import/ApiImport.py:196
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturerView.py:96
 #: resources/static/netzob/ui/simulator/simulatorView.glade:770
-#: resources/static/netzob/ui/traceManager/traceManagerView.glade:496
+#: resources/static/netzob/ui/traceManager/traceManagerView.glade:554
 msgid "Data"
 msgstr "Données"
 
@@ -345,12 +356,13 @@ msgstr "Sélectionner les fichier(s)"
 #: src/netzob/Import/XMLImport.py:133
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturerView.py:94
 #: src/netzob_plugins/Importers/XMLImporter/XMLImporter/XMLImporterView.py:82
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:198
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:305
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:200
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:309
 #: resources/static/netzob/ui/grammar/DeleteStateDialog.glade:152
 #: resources/static/netzob/ui/grammar/DeleteTransitionDialog.glade:152
 #: resources/static/netzob/ui/grammar/deleteTransitionDialog.glade:151
 #: resources/static/netzob/ui/simulator/createNetworkActor.glade:293
+#: resources/static/netzob/ui/traceManager/applicativeDataManagerDialog.glade:60
 #: resources/static/netzob/ui/vocabulary/variableTable.glade:107
 #: resources/static/netzob_plugins/IpcCapturer/ui/IpcCapturerConfigurationWidget.glade:191
 msgid "Type"
@@ -469,7 +481,6 @@ msgid "Creation of a variable"
 msgstr "Création d'une variable"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:101
-#: src/netzob/UI/Vocabulary/Views/VariableView.py:100
 msgid "Description of the variable"
 msgstr "Description de la variable"
 
@@ -478,22 +489,22 @@ msgid "Create"
 msgstr "Créer"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:171
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:292
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:296
 msgid "Word"
 msgstr "Mot"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:177
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:287
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:291
 msgid "Decimal Word"
 msgstr "Mot hexadécimal"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:183
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:290
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:294
 msgid "IPv4 Word"
 msgstr "Mot IPv4"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:189
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:291
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:295
 msgid "MAC Word"
 msgstr "MAC hexadécimal"
 
@@ -502,12 +513,12 @@ msgid "Hexadecimal Word"
 msgstr "Mot hexadécimal"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:201
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:286
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:290
 msgid "Binary"
 msgstr "Binaire"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:207
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:289
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:293
 msgid "Integer"
 msgstr "Entier"
 
@@ -525,12 +536,12 @@ msgid "Referenced Variable"
 msgstr "Variable référencée"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:231
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:158
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:161
 msgid "Repeat Variable"
 msgstr "Variable de répétition"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:236
-#: src/netzob/UI/Vocabulary/Controllers/VariableController.py:166
+#: src/netzob/UI/Vocabulary/Controllers/VariableController.py:201
 msgid "Add a sub-element"
 msgstr "Ajouter un sous-élément"
 
@@ -654,7 +665,7 @@ msgstr "Définition de la variable référencée"
 msgid "Referenced Variable:"
 msgstr "Variable référencée :"
 
-#: src/netzob/UI/NetzobAbstractView.py:79
+#: src/netzob/UI/NetzobAbstractView.py:84
 msgid "Requested file ({0}) was not found."
 msgstr "Le fichier demandé ({0}) n'a pas été trouvé."
 
@@ -994,35 +1005,48 @@ msgstr "Un serveur réseau nécessite un port réseau."
 msgid "Click yes to confirm the deletion of the selected actor"
 msgstr "Cliquez sur oui pour valider la suppression de l'acteur sélectionné"
 
-#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:645
+#: src/netzob/UI/TraceManager/Controllers/ApplicativeDataImportController.py:83
+msgid "{0} applicative data have been found."
+msgstr ""
+
+#: src/netzob/UI/TraceManager/Controllers/ApplicativeDataImportController.py:87
+msgid "Error : {0}"
+msgstr ""
+
+#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:79
+#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:413
+msgid "Select a session to manage its applicative data"
+msgstr ""
+
+#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:665
 msgid "New empty trace"
 msgstr "Nouvelle trace vide"
 
-#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:795
+#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:815
 msgid "Empty Session"
 msgstr "Session vide"
 
-#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:815
+#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:835
 msgid "No project is currently opened"
 msgstr "Aucun projet n'est ouvert actuellement"
 
-#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:816
+#: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:836
 msgid "A project has to be opened before importing a trace."
 msgstr "Un projet doit être ouvert avant d'y importer une trace."
 
-#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:117
+#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:119
 msgid "Are you sure you want to delete the selected traces?"
 msgstr "Êtes vous sûr de vouloir supprimer les traces sélectionnées ?"
 
-#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:118
+#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:120
 msgid "If you confirm, the selected traces will be permanently lost."
 msgstr "Si vous confirmez, les traces sélectionnées seront définitivement perdues."
 
-#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:121
+#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:123
 msgid "Delete Traces"
 msgstr "Supprimer les traces"
 
-#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:139
+#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:141
 msgid ""
 "Are you sure you want to delete selected sessions and all the messages it"
 " contains?"
@@ -1030,7 +1054,7 @@ msgstr ""
 "Êtes-vous sûr de que vouloir supprimer les sessions sélectionnées ainsi "
 "que tous les messages qu'elles contiennent ?"
 
-#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:143
+#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:145
 msgid ""
 "If you confirm, session {0} and associated messages will be permanently "
 "lost."
@@ -1038,29 +1062,44 @@ msgstr ""
 "Si vous confirmez, la session {0} et les messages associées seront "
 "définitivement perdus."
 
-#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:147
+#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:149
 msgid "Delete Session"
 msgstr "Supprimer la session"
 
-#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:163
+#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:165
 msgid "Are you sure you want to delete the selected messages?"
 msgstr "Êtes-vous sur de vouloir supprimer les messages sélectionnés ?"
 
-#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:164
+#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:166
 msgid "If you confirm, the selected messages will be permanently lost."
 msgstr "Si vous confirmez, les messages sélectionnés seront définitivement perdus."
 
-#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:167
+#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:169
 msgid "Delete Messages"
 msgstr "Supprimer les messages"
 
-#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:174
+#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:176
 msgid "You can't change the trace name to an empty one"
 msgstr "Vous ne pouvez pas définir un nom de trace vide"
 
-#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:175
+#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:177
 msgid "Please update the name of your trace set."
 msgstr "Merci de mettre à jour le nom de votre jeu de traces."
+
+#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:226
+#: resources/static/netzob/ui/traceManager/applicativeDataManagerDialog.glade:18
+#: resources/static/netzob/ui/traceManager/traceManagerView.glade:437
+msgid "Manage Applicative Data"
+msgstr ""
+
+#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:242
+#, fuzzy
+msgid "None found"
+msgstr "Aucune occurrence trouvée."
+
+#: src/netzob/UI/TraceManager/Views/TraceManagerView.py:244
+msgid "{0} registered"
+msgstr ""
 
 #: src/netzob/UI/Vocabulary/Controllers/FindSizeFieldsController.py:81
 msgid "Size Fields Identifications"
@@ -1102,33 +1141,43 @@ msgstr "{0}/{1}: {2}"
 msgid "Can't split field with empty cell(s)."
 msgstr "Ne peux pas découper un champs sans cellule."
 
-#: src/netzob/UI/Vocabulary/Controllers/VariableController.py:164
+#: src/netzob/UI/Vocabulary/Controllers/VariableController.py:99
+msgid "Configure definition domain for the field: {0}"
+msgstr ""
+
+#: src/netzob/UI/Vocabulary/Controllers/VariableController.py:183
+#: src/netzob/UI/Vocabulary/Controllers/VariableController.py:936
+msgid "The user clicks on no variable."
+msgstr ""
+
+#: src/netzob/UI/Vocabulary/Controllers/VariableController.py:199
 msgid "Edit the sub-element"
 msgstr "Éditer le sous-élément"
 
-#: src/netzob/UI/Vocabulary/Controllers/VariableController.py:172
+#: src/netzob/UI/Vocabulary/Controllers/VariableController.py:207
 msgid "Edit this element"
 msgstr "Éditer cet élément"
 
-#: src/netzob/UI/Vocabulary/Controllers/VariableController.py:179
+#: src/netzob/UI/Vocabulary/Controllers/VariableController.py:214
 msgid "Move this element"
 msgstr "Déplacer cet élément"
 
-#: src/netzob/UI/Vocabulary/Controllers/VariableController.py:185
+#: src/netzob/UI/Vocabulary/Controllers/VariableController.py:220
 msgid "Remove this element"
 msgstr "Supprimer cet élément"
 
-#: src/netzob/UI/Vocabulary/Controllers/VariableController.py:202
+#: src/netzob/UI/Vocabulary/Controllers/VariableController.py:237
 msgid "Click yes to confirm the removal of the variable {0}"
 msgstr "Cliquez sur oui pour confirmer la suppression de la variable {0}"
 
-#: src/netzob/UI/Vocabulary/Controllers/VariableController.py:228
+#: src/netzob/UI/Vocabulary/Controllers/VariableController.py:263
 msgid "Click yes to confirm the edition of the variable {0}"
 msgstr "Cliquez sur oui pour confirmer l'édition de la variable {0}"
 
-#: src/netzob/UI/Vocabulary/Controllers/VariableController.py:892
-msgid "Select this element"
-msgstr "Sélectionner cet élément"
+#: src/netzob/UI/Vocabulary/Controllers/VariableController.py:951
+#, fuzzy
+msgid "No variable selected."
+msgstr "Aucun fichier sélectionné"
 
 #: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:309
 msgid "No layer selected."
@@ -1217,6 +1266,10 @@ msgstr "Lisser le champ {0}"
 msgid "Smooth finished!"
 msgstr "Lissage terminé !"
 
+#: src/netzob/UI/Vocabulary/Views/VariableView.py:100
+msgid "Definition domain structure"
+msgstr ""
+
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:61
 msgid "Edit Field"
 msgstr "Éditer le champ"
@@ -1235,67 +1288,72 @@ msgstr "Créer une couche"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:87
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:52
-msgid "Edit Variable"
-msgstr "Éditer la variable"
+#, fuzzy
+msgid "Configure definition domain"
+msgstr "Aucune définition trouvée"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:93
 msgid "Field Analysis"
 msgstr "Analyse du champs"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:99
+msgid "Build symbols according to the field value"
+msgstr ""
+
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:105
 msgid "Extract Fields To A New Symbol"
 msgstr "Extraire les champs dans un nouveau symbole"
 
-#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:105
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:111
 msgid "Delete Message"
 msgstr "Supprimer le message"
 
-#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:112
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:118
 msgid "Copy To Clipboard"
 msgstr "Copier dans le presse papier"
 
-#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:155
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:161
 msgid "{0} ({1}…)"
 msgstr "{0} ({1}…)"
 
-#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:164
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:170
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:162
 #: resources/static/netzob/ui/vocabulary/environmentDependenciesSearcherView.glade:175
 msgid "Format"
 msgstr "Format"
 
-#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:185
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:191
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:182
 msgid "UnitSize"
 msgstr "Taille unitaire"
 
-#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:206
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:212
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:202
 msgid "Sign"
 msgstr "Signe"
 
-#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:225
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:231
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:222
 msgid "Endianess"
 msgstr "Boutisme"
 
-#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:238
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:244
 msgid "Raw Message"
 msgstr "Message brut"
 
-#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:242
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:248
 msgid "Aligned Raw Message"
 msgstr "Message brut aligné"
 
-#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:246
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:252
 msgid "Aligned Formatted Message"
 msgstr "Message brut aligné"
 
-#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:250
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:256
 msgid "Raw Field"
 msgstr "Champ brut"
 
-#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:254
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:260
 msgid "Formatted Field"
 msgstr "Champ formaté"
 
@@ -2031,7 +2089,7 @@ msgid "Workspace:"
 msgstr "Espace de travail : "
 
 #: resources/static/netzob/ui/workspaceSelectorDialog.glade:124
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:257
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:261
 msgid "Browse"
 msgstr "Parcourir"
 
@@ -2053,32 +2111,29 @@ msgstr "Mutable"
 msgid "Learnable"
 msgstr "Mémorisable"
 
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:139
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:140
 msgid "Variable Type"
 msgstr "Type de la variable"
 
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:155
-msgid "Data Variable"
-msgstr "Variable de données"
-
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:156
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:157
 msgid "Aggregate Variable"
 msgstr "Variable agrégat"
 
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:157
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:158
 msgid "Alternate Variable"
 msgstr "Variable alternat"
 
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:159
-msgid "Direct Relation Variable"
-msgstr "Variable de relation directe"
-
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:160
 msgid "Computed Relation Variable"
 msgstr "Variable de relation calculée"
 
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:173
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:160
+msgid "Data Variable"
+msgstr "Variable de données"
+
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:174
 #: resources/static/netzob/ui/simulator/simulatorView.glade:300
+#: resources/static/netzob/ui/traceManager/applicativeDataManagerDialog.glade:71
 #: resources/static/netzob/ui/vocabulary/environmentDependenciesSearcherView.glade:153
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:498
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:563
@@ -2086,33 +2141,61 @@ msgstr "Variable de relation calculée"
 msgid "Value"
 msgstr "Valeur"
 
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:214
-msgid "Size Relation"
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:216
+#, fuzzy
+msgid "Binary Size Relation"
 msgstr "Relation de taille"
 
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:228
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:217
+#, fuzzy
+msgid "Word Size Relation"
+msgstr "Relation de taille"
+
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:231
 msgid "Pointed ID"
 msgstr "ID pointé"
 
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:288
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:292
 msgid "Hex Word"
 msgstr "Mot hexadecimal"
 
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:317
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:321
 msgid "Maximum"
 msgstr "Maximum"
 
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:343
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:348
 msgid "Minimum"
 msgstr "Minimum"
 
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:370
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:376
 msgid "has a size"
 msgstr "possède une taille"
 
-#: resources/static/netzob/ui/Variables/VariableCreationView.glade:383
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:389
 msgid "Delimiter (hex)"
 msgstr "Délimiteur (hex)"
+
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:434
+#, fuzzy
+msgid "Factor"
+msgstr "Acteurs"
+
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:447
+msgid "Offset"
+msgstr ""
+
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:461
+#, fuzzy
+msgid "1"
+msgstr "10"
+
+#: resources/static/netzob/ui/Variables/VariableCreationView.glade:475
+#: resources/static/netzob/ui/capturer/abstractCapturerView.glade:293
+#: resources/static/netzob/ui/capturer/abstractCapturerView.glade:324
+#: resources/static/netzob/ui/import/abstractImporterView.glade:293
+#: resources/static/netzob/ui/import/abstractImporterView.glade:324
+msgid "0"
+msgstr "0"
 
 #: resources/static/netzob/ui/Variables/VariableMovingView.glade:53
 msgid "Choose the future position of this variable among this node."
@@ -2122,9 +2205,10 @@ msgstr "Sélectionnez la future position de cette variable au sein du nœud."
 msgid "Variable position"
 msgstr "Position de la variable"
 
-#: resources/static/netzob/ui/Variables/VariableTreeView.glade:19
-msgid "Create default variable"
-msgstr "Créer une variable par défaut"
+#: resources/static/netzob/ui/Variables/VariableTreeView.glade:21
+#, fuzzy
+msgid "Create default definition domain"
+msgstr "Aucune définition trouvée"
 
 #: resources/static/netzob/ui/capturer/abstractCapturerView.glade:9
 #: resources/static/netzob/ui/import/abstractImporterView.glade:9
@@ -2155,20 +2239,13 @@ msgstr "Inverser la sélection"
 msgid "Displayed Packets:"
 msgstr "Paquets affichés : "
 
-#: resources/static/netzob/ui/capturer/abstractCapturerView.glade:293
-#: resources/static/netzob/ui/capturer/abstractCapturerView.glade:324
-#: resources/static/netzob/ui/import/abstractImporterView.glade:293
-#: resources/static/netzob/ui/import/abstractImporterView.glade:324
-msgid "0"
-msgstr "0"
-
 #: resources/static/netzob/ui/capturer/abstractCapturerView.glade:307
 msgid "Selected Packets:"
 msgstr "Paquets sélectionnés : "
 
 #: resources/static/netzob/ui/capturer/confirmImportMessagesDialog.glade:117
 #: resources/static/netzob/ui/import/confirmImportMessagesDialog.glade:119
-#: resources/static/netzob/ui/traceManager/traceManagerView.glade:688
+#: resources/static/netzob/ui/traceManager/traceManagerView.glade:607
 msgid "Import messages in project"
 msgstr "Import de messages dans le projet"
 
@@ -2179,13 +2256,13 @@ msgstr "Nom du symbole crée"
 
 #: resources/static/netzob/ui/capturer/confirmImportMessagesDialog.glade:168
 #: resources/static/netzob/ui/import/confirmImportMessagesDialog.glade:170
-#: resources/static/netzob/ui/traceManager/traceManagerView.glade:783
+#: resources/static/netzob/ui/traceManager/traceManagerView.glade:702
 msgid "Remove duplicated messages (payload)"
 msgstr "Supprimer les messages en doublon"
 
 #: resources/static/netzob/ui/capturer/confirmImportMessagesDialog.glade:187
 #: resources/static/netzob/ui/import/confirmImportMessagesDialog.glade:189
-#: resources/static/netzob/ui/traceManager/traceManagerView.glade:801
+#: resources/static/netzob/ui/traceManager/traceManagerView.glade:720
 msgid "Keep properties of duplicated messages"
 msgstr "Conserver les propriétés des messages dupliqués"
 
@@ -2216,6 +2293,7 @@ msgstr "Confirmer la suppression de la transition"
 #: resources/static/netzob/ui/grammar/createOpenChannelTransition.glade:35
 #: resources/static/netzob/ui/grammar/createSemiStochasticTransitionDialogs.glade:36
 #: resources/static/netzob/ui/grammar/createStateDialog.glade:35
+#: resources/static/netzob/ui/traceManager/applicativeDataImportDialog.glade:135
 msgid "label"
 msgstr "label"
 
@@ -2490,6 +2568,29 @@ msgstr "OP"
 msgid "Variable"
 msgstr "Variable"
 
+#: resources/static/netzob/ui/traceManager/applicativeDataImportDialog.glade:7
+msgid "Import Application Data from CSV file"
+msgstr ""
+
+#: resources/static/netzob/ui/traceManager/applicativeDataImportDialog.glade:75
+msgid "CSV File:"
+msgstr ""
+
+#: resources/static/netzob/ui/traceManager/applicativeDataImportDialog.glade:90
+#, fuzzy
+msgid "Select a CSV file"
+msgstr "Sélectioner un répertoire"
+
+#: resources/static/netzob/ui/traceManager/applicativeDataManagerDialog.glade:106
+#, fuzzy
+msgid "Delete Selected"
+msgstr "Aucun fichier sélectionné"
+
+#: resources/static/netzob/ui/traceManager/applicativeDataManagerDialog.glade:122
+#, fuzzy
+msgid "Import from CSV"
+msgstr "Importer depuis un fichier"
+
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:7
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:9
 msgid "Remove Selected Trace"
@@ -2532,7 +2633,7 @@ msgid "Configure Session"
 msgstr "Configurer la session"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:63
-#: resources/static/netzob/ui/traceManager/traceManagerView.glade:466
+#: resources/static/netzob/ui/traceManager/traceManagerView.glade:524
 msgid "Session"
 msgstr "Session"
 
@@ -2572,39 +2673,47 @@ msgstr "Date d'import : "
 msgid "Type Of Data:"
 msgstr "Type de données : "
 
-#: resources/static/netzob/ui/traceManager/traceManagerView.glade:451
+#: resources/static/netzob/ui/traceManager/traceManagerView.glade:406
+msgid "Applicative Data:"
+msgstr ""
+
+#: resources/static/netzob/ui/traceManager/traceManagerView.glade:427
+msgid "Unknown"
+msgstr ""
+
+#: resources/static/netzob/ui/traceManager/traceManagerView.glade:509
 msgid "Data Type"
 msgstr "Type de donnée"
 
-#: resources/static/netzob/ui/traceManager/traceManagerView.glade:481
+#: resources/static/netzob/ui/traceManager/traceManagerView.glade:539
 msgid "Timestamp"
 msgstr "Horodatage"
 
-#: resources/static/netzob/ui/traceManager/traceManagerView.glade:549
-msgid "Name of the new traces?"
-msgstr "Nom de la nouvelle trace ?"
-
-#: resources/static/netzob/ui/traceManager/traceManagerView.glade:550
-msgid "Please choose a name for the new traces."
-msgstr "Merci de choisir un nom pour les nouvelles traces."
-
-#: resources/static/netzob/ui/traceManager/traceManagerView.glade:612
-msgid "New Name:"
-msgstr "Nouveau nom : "
-
-#: resources/static/netzob/ui/traceManager/traceManagerView.glade:643
-msgid "Create a copy of the trace sets"
-msgstr "Créer une copie du jeu de traces"
-
-#: resources/static/netzob/ui/traceManager/traceManagerView.glade:689
+#: resources/static/netzob/ui/traceManager/traceManagerView.glade:608
 msgid "Please choose a name for the new symbol to import in the current project"
 msgstr ""
 "Merci de choisir un nom pour le nouveau symbole a importer dans le projet"
 " courant"
 
-#: resources/static/netzob/ui/traceManager/traceManagerView.glade:751
+#: resources/static/netzob/ui/traceManager/traceManagerView.glade:670
 msgid "Name of the imported symbol:"
 msgstr "Nom du symbole importé : "
+
+#: resources/static/netzob/ui/traceManager/traceManagerView.glade:750
+msgid "Name of the new traces?"
+msgstr "Nom de la nouvelle trace ?"
+
+#: resources/static/netzob/ui/traceManager/traceManagerView.glade:751
+msgid "Please choose a name for the new traces."
+msgstr "Merci de choisir un nom pour les nouvelles traces."
+
+#: resources/static/netzob/ui/traceManager/traceManagerView.glade:813
+msgid "New Name:"
+msgstr "Nouveau nom : "
+
+#: resources/static/netzob/ui/traceManager/traceManagerView.glade:844
+msgid "Create a copy of the trace sets"
+msgstr "Créer une copie du jeu de traces"
 
 #: resources/static/netzob/ui/vocabulary/customTransformationFunctionDialog.glade:7
 msgid "Create a Custom Transformation Function"
@@ -2799,8 +2908,9 @@ msgid "Split selected field"
 msgstr "Fractionner les champs sélectionnés"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:53
-msgid "Edit the variable for selected field"
-msgstr "Modifier la variable du champs sélectionné"
+#, fuzzy
+msgid "Configure the definition domain for the selected field"
+msgstr "Cliquez sur oui pour confirmer la suppression du message sélectionné"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:60
 msgid "Move To Another Symbol"
@@ -3264,3 +3374,19 @@ msgstr "10"
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:228
 msgid "Time limit:"
 msgstr "Durée de capture : "
+
+#~ msgid "Select this element"
+#~ msgstr "Sélectionner cet élément"
+
+#~ msgid "Edit Variable"
+#~ msgstr "Éditer la variable"
+
+#~ msgid "Direct Relation Variable"
+#~ msgstr "Variable de relation directe"
+
+#~ msgid "Create default variable"
+#~ msgstr "Créer une variable par défaut"
+
+#~ msgid "Edit the variable for selected field"
+#~ msgstr "Modifier la variable du champs sélectionné"
+
