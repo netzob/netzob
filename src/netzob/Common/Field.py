@@ -124,7 +124,7 @@ class Field(object):
         # Copy subfields
         for field in self.getLocalFields():
             newLocalField = field.dupplicate(newSymbol)
-            newField.addField(newLocalField)
+            newField.addLocalField(newLocalField)
         return newField
 
     ## Functions
@@ -350,7 +350,7 @@ class Field(object):
             return
 
         project = self.symbol.project
-        fixedIndex = fixedField.getIndex()
+        fixedIndex = fixedField.getGlobalIndex()
 
         uniqueValues = fixedField.getUniqValuesByField()
         self.setName("Symbol-" + str(uniqueValues[0]))
@@ -359,7 +359,7 @@ class Field(object):
             newMessages = []
             for message in self.getMessages():
                 splittedMessage = message.applyAlignment(styled=False, encoded=False)
-                splittedMessage = splittedMessage[self.getExtendedFields()[0].getIndex():self.getExtendedFields()[-1].getIndex() + 1]
+                splittedMessage = splittedMessage[self.getExtendedFields()[0].getGlobalIndex():self.getExtendedFields()[-1].getGlobalIndex() + 1]
                 if fixedIndex < len(splittedMessage) and splittedMessage[fixedIndex] == uniqueValue:
                     newMessages.append(message)
 
@@ -396,7 +396,7 @@ class Field(object):
             field = Field(_("Name"), "(.{,})", self.getSymbol())
             field.setFormat(aFormat)
             field.setColor("blue")
-            self.addField(field)
+            self.addLocalField(field)
             return
 
         # Else, we add (maxNbSplit + maxNbSplit - 1) fields
@@ -406,12 +406,12 @@ class Field(object):
             field = Field(_("Name"), "((?:(?!" + rawDelimiter + ").)*)", self.getSymbol())
             field.setFormat(aFormat)
             field.setColor("blue")
-            self.addField(field)
+            self.addLocalField(field)
             iField += 1
             field = Field("__sep__", "(" + rawDelimiter + ")?", self.getSymbol())
             field.setFormat(aFormat)
             field.setColor("black")
-            self.addField(field)
+            self.addLocalField(field)
         self.popField()
 
         # Loop to detect fixed-sized dynamic fields
@@ -592,7 +592,7 @@ class Field(object):
             if field.getRegex()[-1] != ")" and field.getRegex()[-1] != "?":
                 field.setRegex(field.getRegex() + ")")
             # Add field to local fields of the current object
-            self.addField(field)
+            self.addLocalField(field)
 
         # Loop to detect fixed-sized dynamic fields
         for innerField in self.getLocalFields():
@@ -620,7 +620,7 @@ class Field(object):
 
         # Main smooth routine
         mergeDone = False
-        i = extendedFields[0].getIndex()  # Retrieve the index of the first field to consider
+        i = extendedFields[0].getGlobalIndex()  # Retrieve the index of the first field to consider
         i = i + 1  # We start at the second field
         nbFields = len(extendedFields)
         while i < nbFields - 1:
@@ -691,7 +691,7 @@ class Field(object):
         # Reset values
         self.removeLocalFields()
         field = self.createDefaultField(self.getSymbol())
-        self.addField(field)
+        self.addLocalField(field)
 
     #+----------------------------------------------
     #| computeFieldsLimits:
@@ -875,7 +875,7 @@ class Field(object):
             return False
 
         new_format = self.getFormat()
-        indexOldField = self.getIndex()
+        indexOldField = self.getLocalIndex()
         parentField = self.getParentField()
 
         # Create two new fields
@@ -886,12 +886,13 @@ class Field(object):
         field2.setFormat(new_format)
 
         if parentField is None:  # Parent is Symbol
-            self.addField(field1)
-            self.addField(field2)
+            self.addLocalField(field1)
+            self.addLocalField(field2)
             return True
         else:
-            index2 = parentField.addField(field2, indexOldField)
-            parentField.addField(field1, index2)
+            parentField.addLocalField(field2, indexOldField)
+            index2 = field2.getLocalIndex()
+            parentField.addLocalField(field1, index2)
             parentField.removeLocalField(self)
             return True
 
@@ -972,14 +973,11 @@ class Field(object):
             if self in field.getLocalFields():
                 return field
 
-    def addField(self, field, index=None):
+    def addLocalField(self, field, index=None):
         if index is None:
-            self.fields.append(field)
+            self.getLocalFields().append(field)
         else:
-            self.fields.insert(index, field)
-
-        realIndex = self.fields.index(field)
-        return realIndex
+            self.getLocalFields().insert(index, field)
 
     def removeLocalFields(self):
         while len(self.fields) != 0:
@@ -1113,7 +1111,7 @@ class Field(object):
             res = []
             for message in self.getMessages():
                 messageTable = message.applyAlignment()
-                messageElt = messageTable[self.getIndex()]
+                messageElt = messageTable[self.getGlobalIndex()]
                 res.append(messageElt)
             return res
 
@@ -1258,8 +1256,11 @@ class Field(object):
             return "blue"
         return self.color
 
-    def getIndex(self):
+    def getGlobalIndex(self):
         return self.getSymbol().getExtendedFields().index(self)
+
+    def getLocalIndex(self):
+        return self.getParentField().getLocalFields().index(self)
 
     def getBackgroundColor(self):
         if self.getVariable() is None:
@@ -1443,7 +1444,7 @@ class Field(object):
                 for xmlInnerField in xmlInnerFields.findall("{" + namespace + "}field"):
                     innerField = Field.loadFromXML(xmlInnerField, namespace, version, symbol)
                     if innerField is not None:
-                        field.addField(innerField)
+                        field.addLocalField(innerField)
 
             return field
 

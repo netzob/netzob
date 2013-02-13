@@ -33,7 +33,7 @@ import logging
 #+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
-import _libRelation
+from netzob import _libRelation
 
 #+----------------------------------------------
 #| RelationFinder:

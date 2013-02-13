@@ -91,7 +91,7 @@ class SymbolTableView(object):
         # Create columns
         if self.displayedObject is None or len(self.displayedObject.getExtendedFields()) < 1:
             return symbolTableTreeView
-        startOfColumns = 1 + self.displayedObject.getExtendedFields()[0].getIndex()
+        startOfColumns = 1 + self.displayedObject.getExtendedFields()[0].getGlobalIndex()
         numOfColumns = startOfColumns + min(self.MAX_DISPLAYED_FIELDS, len(self.displayedObject.getExtendedFields()))
 
         self.treeViewHeaderGroup.clear()
@@ -178,7 +178,7 @@ class SymbolTableView(object):
             try:
                 splitMessage = [str(message.getID())]
                 tmpSplitMessage = message.applyAlignment(styled=True, encoded=True)
-                tmpSplitMessage = tmpSplitMessage[self.displayedObject.getExtendedFields()[0].getIndex():self.displayedObject.getExtendedFields()[-1].getIndex() + 1]
+                tmpSplitMessage = tmpSplitMessage[self.displayedObject.getExtendedFields()[0].getGlobalIndex():self.displayedObject.getExtendedFields()[-1].getGlobalIndex() + 1]
                 splitMessage.extend(tmpSplitMessage)
             except NetzobException:
                 logging.warn("Impossible to display one of messages since it cannot be cut according to the computed regex.")
@@ -215,7 +215,7 @@ class SymbolTableView(object):
         if field is None:
             sortIndex = -2
         else:
-            sortIndex = field.getIndex()
+            sortIndex = field.getGlobalIndex()
         self.symbolTableListStore.set_sort_column_id(sortIndex, sortTypeMap[sortType])
         self.treeViewHeaderGroup.setAllColumnsSortIndicator(sortIndex, sortType)
 
@@ -570,7 +570,7 @@ class TreeViewHeaderWidgetGroup(object):
         this group. It can be used to reset the sort indicator of all columns
         to its unsorted base state"""
         for header in self.headerList:
-            if header.field.getIndex() != index:
+            if header.field.getGlobalIndex() != index:
                 header.setSortIndicator(header.SORT_NONE)
             else:
                 header.setSortIndicator(sortType)

@@ -96,7 +96,7 @@ class ContextualMenuOnFieldController(object):
         else:  # Just copy the selected field
             text = ""
             for message in self.messages:
-                text += str(message.applyAlignment(styled=False, encoded=encoded)[self.field.getIndex()]) + "\n"
+                text += str(message.applyAlignment(styled=False, encoded=encoded)[self.field.getGlobalIndex()]) + "\n"
             self.vocabularyController.netzob.clipboard.set_text(text, -1)
 
     #+----------------------------------------------
@@ -166,14 +166,14 @@ class ContextualMenuOnFieldController(object):
         firstField = selectedFields[0]
         lastField = selectedFields[0]
         for field in selectedFields:
-            if field.getIndex() < firstField.getIndex():
+            if field.getGlobalIndex() < firstField.getGlobalIndex():
                 firstField = field
-            if field.getIndex() > lastField.getIndex():
+            if field.getGlobalIndex() > lastField.getGlobalIndex():
                 lastField = field
         # Update selected fields to the entire range
         selectedFields = []
         for field in self.getSymbol().getExtendedFields():
-            if field.getIndex() >= firstField.getIndex() and field.getIndex() <= lastField.getIndex():
+            if field.getGlobalIndex() >= firstField.getGlobalIndex() and field.getGlobalIndex() <= lastField.getGlobalIndex():
                 selectedFields.append(field)
         # Verify that selected field range does not overlap existing layers (i.e. if the selected fields have the same parent)
         parent = selectedFields[0].getParentField()
@@ -209,10 +209,10 @@ class ContextualMenuOnFieldController(object):
             parentField = selectedField.getParentField()
             if parentField.getLocalFields().index(selectedField) < index_newField:
                 index_newField = parentField.getLocalFields().index(selectedField)  # Retrieve the lowest index of the new fields
-            fieldLayer.addField(selectedField)
+            fieldLayer.addLocalField(selectedField)
             parentField.getLocalFields().remove(selectedField)
         parentField.getLocalFields().insert(index_newField, fieldLayer)
-#        self.getSymbol().getField().addField(fieldLayer, index_newField)
+#        self.getSymbol().getField().addLocalField(fieldLayer, index_newField)
         self.vocabularyController.updateLeftPanel()
 
     def displayPopupToEditField_cb(self, event):
@@ -253,9 +253,9 @@ class ContextualMenuOnFieldController(object):
         firstField = fields[0]
         lastField = fields[0]
         for field in fields:
-            if field.getIndex() < firstField.getIndex():
+            if field.getGlobalIndex() < firstField.getGlobalIndex():
                 firstField = field
-            if field.getIndex() > lastField.getIndex():
+            if field.getGlobalIndex() > lastField.getGlobalIndex():
                 lastField = field
         # We initialize the correct number of new messages
         newMessages = []
@@ -263,7 +263,7 @@ class ContextualMenuOnFieldController(object):
             mUuid = str(uuid.uuid4())
             newMessages.append(RawMessage(mUuid, message.getTimestamp(), ""))
         # We concatenate between the first and last cells
-        for index in range(firstField.getIndex(), lastField.getIndex() + 1):
+        for index in range(firstField.getGlobalIndex(), lastField.getGlobalIndex() + 1):
             cells = self.getSymbol().getFieldByIndex(index).getCells()
             for i in range(len(cells)):
                 newMessages[i].setData(str(newMessages[i].getStringData()) + str(cells[i]))

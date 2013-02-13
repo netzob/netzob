@@ -610,9 +610,9 @@ class SymbolController(object):
         lastField = selectedFields[0]
 
         for selectedField in selectedFields:
-            if selectedField.getIndex() < firstField.getIndex():
+            if selectedField.getGlobalIndex() < firstField.getGlobalIndex():
                 firstField = selectedField
-            if selectedField.getIndex() > lastField.getIndex():
+            if selectedField.getGlobalIndex() > lastField.getGlobalIndex():
                 lastField = selectedField
 
         # We concat all the fields in the first one

@@ -223,7 +223,7 @@ class NeedlemanAndWunsch(object):
             if regexElt == "":
                 pass
             innerField = Field("Field " + str(iField), "(" + regexElt + ")", field.getSymbol())
-            field.addField(innerField)
+            field.addLocalField(innerField)
 
             # Use the default protocol type for representation
             field.setFormat(self.defaultFormat)
