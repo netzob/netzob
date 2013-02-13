@@ -53,6 +53,7 @@ relation_find(struct relation_datamodel** dm,
         DLOG("ALGO %s\n", algo_opers->data.name);
         for (i = 0; i < vlen; i++) {
             for (j = 0; j < hlen; j++) {
+	      printf("-- idx = %d\n", j);
                 matches = algo_opers->data.find(data, i, j, vlen, hlen);
                 if (matches != NULL)
                     append_algo_matches(dm, algo_opers, matches);

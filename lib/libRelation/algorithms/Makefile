@@ -1,6 +1,7 @@
-DEBUG=no
+DEBUG=yes
 SRC=rel_test.c 			\
-	  rel_equality.c
+	  rel_equality.c	\
+	  rel_size.c
 OBJ=$(SRC:.c=.o)
 SOBJ=$(OBJ:.o=.so)
 CFLAGS=-fPIC -I../../includes
