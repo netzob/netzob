@@ -590,7 +590,6 @@ class SymbolController(object):
         rel_ctrl = FindRelationsController(self.netzob)
         rel_ctrl.buildRelations(symbols)
 
-
     ## Actions on fields
     def concatField_activate_cb(self, action):
         # Sanity check

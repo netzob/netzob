@@ -197,7 +197,7 @@ class SymbolTableView(object):
         # Deactivate temporary the link between the treeview and the liststore
         self.symbolTableTreeView.freeze_child_notify()
         self.symbolTableTreeView.set_model(None)
-        
+
         # Fill listStore with split messages
         for splitMessage in splitMessagesMatrix:
             self.symbolTableListStore.append(splitMessage)

@@ -35,6 +35,7 @@ import logging
 #+----------------------------------------------
 from netzob import _libRelation
 
+
 #+----------------------------------------------
 #| RelationFinder:
 #|     Provides multiple algorithms to find relations between messages
@@ -54,8 +55,8 @@ class RelationFinder(object):
     #| @param symbol : if not None, the operation will be limited to provided symbol
     #+----------------------------------------------
     def execute(self, symbol):
-        cells = [field.getCells() \
-                 for field in symbol.getExtendedFields() \
+        cells = [field.getCells()
+                 for field in symbol.getExtendedFields()
                  #if not field.isStatic()
                  ]
         if cells:
