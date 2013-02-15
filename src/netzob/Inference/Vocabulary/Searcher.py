@@ -184,7 +184,6 @@ class Searcher(object):
         task = SearchTask(value, value, Format.HEX)
         task.registerVariation(value, "Hex repr of '{0}'({1}))".format(value, extraInfo))
         #        task.registerVariation(value[::-1], "Inverted representation of '{0}'".format(value[::-1]))
-        print task
         return [task]
 
     #+----------------------------------------------
