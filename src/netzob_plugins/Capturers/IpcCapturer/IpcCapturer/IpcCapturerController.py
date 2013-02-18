@@ -62,10 +62,9 @@ class IpcCapturerController(AbstractCapturerController):
                 @type netzob: netzob.NetzobGUI.NetzobGUI
                 @param netzob: the main netzob project.
         """
-        super(IpcCapturerController, self).__init__(netzob, plugin)
-        self.netzob = netzob
+        view = IpcCapturerView(plugin, self)
+        super(IpcCapturerController, self).__init__(netzob, plugin, view)
         self.model = IpcCapturer(netzob)
-        self.view = IpcCapturerView(plugin, self)
         self.updateProcessList_cb(None)
 
     def updateProcessList_cb(self, button):
