@@ -61,10 +61,9 @@ class NetworkCapturerController(AbstractCapturerController):
                 @type netzob: netzob.NetzobGUI.NetzobGUI
                 @param netzob: the main netzob project.
         """
-        super(NetworkCapturerController, self).__init__(netzob, plugin)
-        self.netzob = netzob
+        view = NetworkCapturerView(plugin, self)
+        super(NetworkCapturerController, self).__init__(netzob, plugin, view)
         self.model = NetworkCapturer(netzob)
-        self.view = NetworkCapturerView(plugin, self)
         for device in self.model.getNetworkDevices():
             self.view.deviceCombo.append_text(str(device))
 
