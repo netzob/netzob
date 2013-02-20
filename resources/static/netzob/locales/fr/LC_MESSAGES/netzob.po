@@ -9,14 +9,16 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-02-12 11:22+0100\n"
-"PO-Revision-Date: 2013-01-31 18:24+0200\n"
+"PO-Revision-Date: 2013-02-20 14:15+0200\n"
 "Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/master/fr/>\n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Weblate 1.4\n"
 "Generated-By: Babel 0.9.6\n"
 
 #: src/netzob/NetzobMainController.py:312
@@ -1011,7 +1013,7 @@ msgstr ""
 
 #: src/netzob/UI/TraceManager/Controllers/ApplicativeDataImportController.py:87
 msgid "Error : {0}"
-msgstr ""
+msgstr "Erreur : {0}"
 
 #: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:79
 #: src/netzob/UI/TraceManager/Controllers/TraceManagerController.py:413
@@ -3389,4 +3391,3 @@ msgstr "Durée de capture : "
 
 #~ msgid "Edit the variable for selected field"
 #~ msgstr "Modifier la variable du champs sélectionné"
-
