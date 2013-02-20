@@ -3,19 +3,21 @@
 # This file is distributed under the same license as the Netzob project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Netzob 0.4.2~git\n"
 "Report-Msgid-Bugs-To: i18n@netzob.org\n"
 "POT-Creation-Date: 2013-02-12 11:23+0100\n"
-"PO-Revision-Date: 2013-02-20 09:26+0100\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"PO-Revision-Date: 2013-02-20 14:15+0200\n"
+"Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
+"Language-Team: Chinese (China) "
+"<http://qa.netzob.org/weblate/projects/netzob/master/zh_CN/>\n"
+"Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 1.4\n"
 "Generated-By: Babel 0.9.6\n"
 
 #: src/netzob/NetzobMainController.py:311
@@ -71,7 +73,7 @@ msgstr ""
 
 #: src/netzob/NetzobMainController.py:435
 msgid "An error occurred while loading workspace."
-msgstr ""
+msgstr "走起，分析"
 
 #: src/netzob/NetzobMainController.py:445
 msgid "An error occurred while creating workspace."
@@ -3598,4 +3600,3 @@ msgstr ""
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:228
 msgid "Time limit:"
 msgstr ""
-
