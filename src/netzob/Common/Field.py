@@ -806,13 +806,19 @@ class Field(object):
         regex = ""
         optional = False
         if field1.isRegexOptional():
-            regex += field1.getRegex()[1:-2]
+            if field1.isStatic():
+                regex += ".{," + str(len(field1.getRegexData())) + "}"
+            else:
+                regex += field1.getRegex()[1:-2]
             optional = True
         else:
             regex += field1.getRegex()[1:-1]
 
         if field2.isRegexOptional():
-            regex += field2.getRegex()[1:-2]
+            if field2.isStatic():
+                regex += ".{," + str(len(field2.getRegexData())) + "}"
+            else:
+                regex += field2.getRegex()[1:-2]
             optional = True
         else:
             regex += field2.getRegex()[1:-1]

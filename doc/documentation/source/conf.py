@@ -218,3 +218,11 @@ man_pages = [
     ('index', 'netzob', u'Netzob Documentation',
      [u'Frédéric Guihéry, Georges Bossert'], 1)
 ]
+
+
+# -- Options for apidoc generation in rtfd.org----------------------------------
+
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+if on_rtd:
+  os.system("sphinx-apidoc -f -o ./developer_guide/API/ ../../../src/netzob")
+
