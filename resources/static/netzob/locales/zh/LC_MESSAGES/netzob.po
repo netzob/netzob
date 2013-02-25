@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Netzob 0.4.2~git\n"
 "Report-Msgid-Bugs-To: i18n@netzob.org\n"
 "POT-Creation-Date: 2013-02-12 11:23+0100\n"
-"PO-Revision-Date: 2013-02-20 14:15+0200\n"
-"Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
+"PO-Revision-Date: 2013-02-25 05:56+0200\n"
+"Last-Translator: ran cheng <flyroomnuaa@gmail.com>\n"
 "Language-Team: Chinese (China) "
 "<http://qa.netzob.org/weblate/projects/netzob/master/zh_CN/>\n"
 "Language: zh\n"
@@ -22,7 +22,7 @@ msgstr ""
 
 #: src/netzob/NetzobMainController.py:311
 msgid "A project with this name exists"
-msgstr ""
+msgstr "同名项目已存在"
 
 #: src/netzob/NetzobMainController.py:326
 #: src/netzob/NetzobMainController.py:344
@@ -64,85 +64,85 @@ msgstr ""
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExporterPlugin.py:124
 #: src/netzob_plugins/Exporters/WiresharkExporter/WiresharkExporter/WiresharkExporterController.py:156
 msgid "No project selected."
-msgstr ""
+msgstr "没有选择任何项目。"
 
 #: src/netzob/NetzobMainController.py:421
 #: src/netzob/UI/Common/Controllers/ProjectExportController.py:110
 msgid "No directory selected"
-msgstr ""
+msgstr "没有选择任何目录"
 
 #: src/netzob/NetzobMainController.py:435
 msgid "An error occurred while loading workspace."
-msgstr "走起，分析"
+msgstr "加载工作空间时发生错误。"
 
 #: src/netzob/NetzobMainController.py:445
 msgid "An error occurred while creating workspace."
-msgstr ""
+msgstr "建立工作空间时发生错误。"
 
 #: src/netzob/NetzobMainView.py:110
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:27
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:28
 msgid "Trace Manager"
-msgstr ""
+msgstr "踪迹管理器"
 
 #: src/netzob/NetzobMainView.py:113
 msgid "Vocabulary Inference"
-msgstr ""
+msgstr "词法推断"
 
 #: src/netzob/NetzobMainView.py:116
 #: resources/static/netzob/ui/grammar/grammarActions.glade:43
 msgid "Grammar Inference"
-msgstr ""
+msgstr "语法推断"
 
 #: src/netzob/NetzobMainView.py:119
 msgid "Simulator"
-msgstr ""
+msgstr "模拟器"
 
 #: src/netzob/NetzobMainView.py:293
 msgid "XML"
-msgstr ""
+msgstr "XML(可扩展标记语言)"
 
 #: src/netzob/NetzobMainView.py:298
 msgid "Human readable"
-msgstr ""
+msgstr "可读的"
 
 #: src/netzob/NetzobMainView.py:315
 msgid "Save the changes to the project \"{0}\" before closing?"
-msgstr ""
+msgstr "在关闭之前保存改变到项目 \"{0}\" 吗？"
 
 #: src/netzob/NetzobMainView.py:323
 msgid "If you don't save, changes will be permanently lost."
-msgstr ""
+msgstr "如果不保存，目前的更改会永久丢失。"
 
 #: src/netzob/NetzobMainView.py:325
 msgid "Close _Without Saving"
-msgstr ""
+msgstr "不保存直接关闭"
 
 #: src/netzob/Common/ApplicativeData.py:134
 msgid "line {0} in CSV has not 3 columns, format must be : Name, Type, Value"
-msgstr ""
+msgstr "CSV文件的第 {0} 行有3列，格式必须是：名称，类型，值"
 
 #: src/netzob/Common/ApplicativeData.py:148
 msgid "line {0} in CSV, invalid format of data : {1}"
-msgstr ""
+msgstr "CSV文件的第 {0} 行，该数据的格式无效：{1}"
 
 #: src/netzob/Common/BugReporter.py:81
 msgid "Please verify your API key."
-msgstr ""
+msgstr "请确认你的 API 密钥。"
 
 #: src/netzob/Common/BugReporter.py:95
 msgid "You've been associated to the bug report {0}/issues/{1}."
-msgstr ""
+msgstr "已经关联到的错误报告 {0}/卷/{1}。"
 
 #: src/netzob/Common/BugReporter.py:98
 msgid ""
 "An error occurred while you were associated with the bug report "
 "{0}/issues/{1}."
-msgstr ""
+msgstr "关联到如下错误报告时发生错误：{0}/卷/{1}。"
 
 #: src/netzob/Common/BugReporter.py:107
 msgid "The bug report has successfully been published on {0}/issues/{1}"
-msgstr ""
+msgstr "错误报告已成功发布 {0}/卷/{1}"
 
 #: src/netzob/Common/Field.py:396 src/netzob/Common/Field.py:406
 #: src/netzob/Import/ApiImport.py:120
@@ -170,193 +170,193 @@ msgstr ""
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:1275
 #: resources/static/netzob_plugins/IpcCapturer/ui/IpcCapturerConfigurationWidget.glade:202
 msgid "Name"
-msgstr ""
+msgstr "名称"
 
 #: src/netzob/Common/Project.py:297
 msgid "Unable to delete project: {0}"
-msgstr ""
+msgstr "无法删除项目：{0}"
 
 #: src/netzob/Common/Project.py:399
 msgid "Copy of {0}"
-msgstr ""
+msgstr "{0} 的拷贝"
 
 #: src/netzob/Common/Project.py:409
 msgid "Unable to import the project: {0}."
-msgstr ""
+msgstr "无法导入项目：{0}。"
 
 #: src/netzob/Common/ResourcesConfiguration.py:111
 msgid "New Workspace"
-msgstr ""
+msgstr "新项目"
 
 #: src/netzob/Common/ResourcesConfiguration.py:208
 msgid "Unable to find plugins static resources."
-msgstr ""
+msgstr "无法找到插件的静态资源。"
 
 #: src/netzob/Common/SplashScreen.py:54
 msgid "Netzob"
-msgstr ""
+msgstr "Netzob"
 
 #: src/netzob/Common/SplashScreen.py:78
 msgid "Current workspace: {0}"
-msgstr ""
+msgstr "当前工作空间：{0}"
 
 #: src/netzob/Common/SplashScreen.py:80
 msgid "Current workspace: NO WORKSPACE COMPUTED!"
-msgstr ""
+msgstr "当前工作空间：没有找到任何工作空间！"
 
 #: src/netzob/Common/Workspace.py:280
 msgid "Base64 Function"
-msgstr ""
+msgstr "Base64 函数"
 
 #: src/netzob/Common/Workspace.py:281
 msgid "GZip Function"
-msgstr ""
+msgstr "GZip 函数"
 
 #: src/netzob/Common/Workspace.py:282
 msgid "BZ2 Function"
-msgstr ""
+msgstr "BZ2 函数"
 
 #: src/netzob/Common/Workspace.py:451
 msgid "The workspace's path ({0}) is incorrect."
-msgstr ""
+msgstr "不正确的工作空间路径 ({0})。"
 
 #: src/netzob/Common/Workspace.py:456
 msgid ""
 "The workspace's configuration file can't be find (No workspace path "
 "given)."
-msgstr ""
+msgstr "无法找到工作空间的配置文件 （没有指定工作空间路径）。"
 
 #: src/netzob/Common/Workspace.py:459
 msgid ""
 "The specified workspace's configuration file ({0}) is not valid: its not "
 "a file."
-msgstr ""
+msgstr "指定了无效的工作空间配置文件（{0}）：不是一个文件。"
 
 #: src/netzob/Common/Workspace.py:462
 msgid "The specified workspace's configuration file ({0}) is not readable."
-msgstr ""
+msgstr "无法读取指定的工作空间配置文件 （{0}）。"
 
 #: src/netzob/Common/Workspace.py:470
 msgid "The specified workspace is not valid according to the XSD definitions."
-msgstr ""
+msgstr "依据XSD定义，指定的工作空间无效。"
 
 #: src/netzob/Common/Workspace.py:501
 msgid "An unknown error prevented to open the workspace."
-msgstr ""
+msgstr "未知原因导致无法打开工作空间。"
 
 #: src/netzob/Common/MMSTD/Dictionary/Values/AbstractValue.py:56
 msgid "Import from File"
-msgstr ""
+msgstr "从文件导入"
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/AggregateVariable.py:299
 msgid "[Aggregate] {0} ({1})"
-msgstr ""
+msgstr "[汇聚] {0} ({1})"
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/AlternateVariable.py:235
 msgid "[Alternate] {0} ({1})"
-msgstr ""
+msgstr "[替代] {0} ({1})"
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:195
 msgid "The variable points nowhere."
-msgstr ""
+msgstr "该变量不指向任何地方."
 
 #: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:220
 #: src/netzob/Common/MMSTD/Dictionary/Variables/ComputedRelationVariable.py:225
 #: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:219
 #: src/netzob/Common/MMSTD/Dictionary/Variables/_AbstractRelationVariable.py:224
 msgid "[{0}]"
-msgstr ""
+msgstr "[{0} ]"
 
 #: src/netzob/Common/Plugins/Capturers/AbstractCapturer.py:72
 #: src/netzob/Import/AbstractImporter.py:72
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturer.py:228
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:319
 msgid "Message ID: {0} not found in importer message list"
-msgstr ""
+msgstr "消息标识符 ID: {0} 无法在导入列表中找到"
 
 #: src/netzob/Import/ApiImport.py:100
 msgid "Update processes list"
-msgstr ""
+msgstr "更新进程列表"
 
 #: src/netzob/Import/ApiImport.py:125
 #: resources/static/netzob/ui/availablePluginsDialog.glade:123
 msgid "Version"
-msgstr ""
+msgstr "版本"
 
 #: src/netzob/Import/ApiImport.py:130
 msgid "Path"
-msgstr ""
+msgstr "路径"
 
 #: src/netzob/Import/ApiImport.py:156
 msgid "Create prototype"
-msgstr ""
+msgstr "创建原型"
 
 #: src/netzob/Import/ApiImport.py:161
 msgid "Delete prototype"
-msgstr ""
+msgstr "删除原型"
 
 #: src/netzob/Import/ApiImport.py:169
 #: resources/static/netzob_plugins/IpcCapturer/ui/IpcCapturerConfigurationWidget.glade:320
 msgid "Start capture"
-msgstr ""
+msgstr "开始流量捕获"
 
 #: src/netzob/Import/ApiImport.py:174
 msgid "Stop capture"
-msgstr ""
+msgstr "停止流量抓取"
 
 #: src/netzob/Import/ApiImport.py:186
 msgid "Function"
-msgstr ""
+msgstr "函数"
 
 #: src/netzob/Import/ApiImport.py:191
 msgid "Parameter"
-msgstr ""
+msgstr "参数"
 
 #: src/netzob/Import/ApiImport.py:196
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturerView.py:96
 #: resources/static/netzob/ui/simulator/simulatorView.glade:770
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:554
 msgid "Data"
-msgstr ""
+msgstr "数据"
 
 #: src/netzob/Import/ThirdPartyImport.py:98
 msgid "Import data from third parties"
-msgstr ""
+msgstr "从第三方导入数据"
 
 #: src/netzob/Import/ThirdPartyImport.py:116
 msgid "Select data source"
-msgstr ""
+msgstr "选择一个数据源"
 
 #: src/netzob/Import/ThirdPartyImport.py:134
 msgid "Select a third party"
-msgstr ""
+msgstr "选择一个第三方"
 
 #: src/netzob/Import/ThirdPartyImport.py:145
 msgid "Load"
-msgstr ""
+msgstr "加载"
 
 #: src/netzob/Import/ThirdPartyImport.py:175 src/netzob/Import/XMLImport.py:129
 msgid "Message ID"
-msgstr ""
+msgstr "消息标识符 ID"
 
 #: src/netzob/Import/ThirdPartyImport.py:187 src/netzob/Import/XMLImport.py:149
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:380
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:18
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:45
 msgid "Import"
-msgstr ""
+msgstr "导入"
 
 #: src/netzob/Import/ThirdPartyImport.py:270 src/netzob/Import/XMLImport.py:199
 msgid "Check if this trace is a session"
-msgstr ""
+msgstr "检查该流量踪迹是否为会话"
 
 #: src/netzob/Import/ThirdPartyImport.py:290 src/netzob/Import/XMLImport.py:219
 msgid "Select one or multiple file"
-msgstr ""
+msgstr "选择一个或多个文件"
 
 #: src/netzob/Import/XMLImport.py:109
 msgid "Select file(s)"
-msgstr ""
+msgstr "选择文件"
 
 #: src/netzob/Import/XMLImport.py:133
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturerView.py:94
@@ -371,188 +371,188 @@ msgstr ""
 #: resources/static/netzob/ui/vocabulary/variableTable.glade:107
 #: resources/static/netzob_plugins/IpcCapturer/ui/IpcCapturerConfigurationWidget.glade:191
 msgid "Type"
-msgstr ""
+msgstr "类型"
 
 #: src/netzob/Import/XMLImport.py:137
 #: src/netzob_plugins/Importers/XMLImporter/XMLImporter/XMLImporterView.py:83
 msgid "Content"
-msgstr ""
+msgstr "内容"
 
 #: src/netzob/Import/XMLImport.py:191
 msgid "Are you sure to import the {0} computed messages in project {1}?"
-msgstr ""
+msgstr "你确定要从项目 {1} 中导入 {0} 个计算得到的消息吗？"
 
 #: src/netzob/Import/TreeViews/TreeProcessesGenerator.py:79
 msgid "Processes"
-msgstr ""
+msgstr "进程"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarAbstractionView.py:64
 msgid "Automatic abstraction of the current grammar"
-msgstr ""
+msgstr "当前语法的自动抽象"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarAbstractionView.py:68
 msgid "Start the abstraction"
-msgstr ""
+msgstr "开始抽象"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:73
 msgid "Configuration of the automatic inference"
-msgstr ""
+msgstr "自动推断的配置"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:78
 msgid "Target:"
-msgstr ""
+msgstr "目标："
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:85
 #: src/netzob/UI/Simulator/Controllers/CreateNetworkActorController.py:121
 #: resources/static/netzob/ui/simulator/createNetworkActor.glade:310
 msgid "CLIENT"
-msgstr ""
+msgstr "客户机"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:86
 #: resources/static/netzob/ui/simulator/createNetworkActor.glade:309
 msgid "SERVER"
-msgstr ""
+msgstr "服务器"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:92
 msgid "IP:"
-msgstr ""
+msgstr "IP地址："
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:100
 msgid "Protocol:"
-msgstr ""
+msgstr "协议："
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:104
 #: resources/static/netzob/ui/simulator/createNetworkActor.glade:481
 msgid "TCP"
-msgstr ""
+msgstr "TCP"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:105
 #: resources/static/netzob/ui/simulator/createNetworkActor.glade:482
 msgid "UDP"
-msgstr ""
+msgstr "UDP"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:113
 msgid "Our port:"
-msgstr ""
+msgstr "本端口："
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:121
 msgid "Target Port:"
-msgstr ""
+msgstr "目标端口："
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:129
 msgid "Maximum number of states:"
-msgstr ""
+msgstr "最大状态数量："
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:137
 msgid "Reseting script:"
-msgstr ""
+msgstr "重置脚本："
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:145
 msgid "Start inference"
-msgstr ""
+msgstr "开始推断"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:154
 msgid "Execution of the inferring process"
-msgstr ""
+msgstr "推断进程的执行"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:173
 msgid "Membership queries"
-msgstr ""
+msgstr "成员资格查询"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:178
 msgid "Responses"
-msgstr ""
+msgstr "回应"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:196
 #: resources/static/netzob_plugins/IpcCapturer/ui/IpcCapturerConfigurationWidget.glade:336
 msgid "Stop"
-msgstr ""
+msgstr "停止"
 
 #: src/netzob/Inference/Grammar/AutomaticGrammarInferenceView.py:202
 msgid "Save as Grammar"
-msgstr ""
+msgstr "存储为语法"
 
 #: src/netzob/Inference/Vocabulary/SearchView.py:84
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:83
 msgid "Search"
-msgstr ""
+msgstr "搜索"
 
 #: src/netzob/Inference/Vocabulary/SearchView.py:168
 msgid "Search results"
-msgstr ""
+msgstr "搜索结果"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:85
 msgid "Creation of a variable"
-msgstr ""
+msgstr "变量的创建"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:101
 msgid "Description of the variable"
-msgstr ""
+msgstr "变量的描述"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:113
 msgid "Create"
-msgstr ""
+msgstr "创建"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:171
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:296
 msgid "Word"
-msgstr ""
+msgstr "字"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:177
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:291
 msgid "Decimal Word"
-msgstr ""
+msgstr "十进制字"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:183
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:294
 msgid "IPv4 Word"
-msgstr ""
+msgstr "IPV4 字"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:189
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:295
 msgid "MAC Word"
-msgstr ""
+msgstr "MAC 字"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:195
 msgid "Hexadecimal Word"
-msgstr ""
+msgstr "十六进制字"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:201
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:290
 msgid "Binary"
-msgstr ""
+msgstr "二进制"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:207
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:293
 msgid "Integer"
-msgstr ""
+msgstr "整数"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:213
 #: src/netzob/Inference/Vocabulary/_VariableView.py:522
 msgid "Aggregate"
-msgstr ""
+msgstr "聚集"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:219
 msgid "Alternative"
-msgstr ""
+msgstr "可替代的"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:225
 msgid "Referenced Variable"
-msgstr ""
+msgstr "被引用的变量"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:231
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:161
 msgid "Repeat Variable"
-msgstr ""
+msgstr "重复变量"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:236
 #: src/netzob/UI/Vocabulary/Controllers/VariableController.py:201
 msgid "Add a sub-element"
-msgstr ""
+msgstr "添加一个子元素"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:246
 msgid "Definition of the Binary Variable"
-msgstr ""
+msgstr "二进制变量的定义"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:254
 #: src/netzob/Inference/Vocabulary/_VariableView.py:339
@@ -563,7 +563,7 @@ msgstr ""
 #: src/netzob/Inference/Vocabulary/_VariableView.py:665
 #: src/netzob/Inference/Vocabulary/_VariableView.py:773
 msgid "Parent ID:"
-msgstr ""
+msgstr "父标识符 ID:"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:263
 #: src/netzob/Inference/Vocabulary/_VariableView.py:348
@@ -574,43 +574,43 @@ msgstr ""
 #: src/netzob/Inference/Vocabulary/_VariableView.py:674
 #: src/netzob/Inference/Vocabulary/_VariableView.py:782
 msgid "ID:"
-msgstr ""
+msgstr "标识符 ID :"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:272
 #: src/netzob/Inference/Vocabulary/_VariableView.py:357
 #: src/netzob/Inference/Vocabulary/_VariableView.py:683
 msgid "Original value:"
-msgstr ""
+msgstr "原变量："
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:280
 #: src/netzob/Inference/Vocabulary/_VariableView.py:365
 #: src/netzob/Inference/Vocabulary/_VariableView.py:691
 msgid "Constraints when parsing / generating"
-msgstr ""
+msgstr "在解析和和生成时的限制条件"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:285
 msgid "Minimum number of bits:"
-msgstr ""
+msgstr "最小位数："
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:293
 msgid "Maximum number of bits:"
-msgstr ""
+msgstr "最大位数："
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:331
 msgid "Definition of the Hexadecimal Variable"
-msgstr ""
+msgstr "十六进制变量的定义"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:370
 msgid "Minimum number of hex (0xf=1):"
-msgstr ""
+msgstr "最小的十六进制位数（0xf=1）："
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:378
 msgid "Maximum number of hex:"
-msgstr ""
+msgstr "十六进制位的最大数量："
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:416
 msgid "Definition of the Alternative"
-msgstr ""
+msgstr "替代性的定义"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:441
 #: src/netzob/Inference/Vocabulary/_VariableView.py:498
@@ -618,15 +618,15 @@ msgstr ""
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:190
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:287
 msgid "Name:"
-msgstr ""
+msgstr "名称："
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:465
 msgid "Alternate"
-msgstr ""
+msgstr "替代"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:473
 msgid "Definition of the Aggregate"
-msgstr ""
+msgstr "汇聚的定义"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:530
 msgid "Definition of the WORD"
