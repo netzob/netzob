@@ -28,10 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from bitarray import bitarray
-from gettext import gettext as _
 import logging
-from lxml.etree import ElementTree
 from lxml import etree
 
 import select
@@ -44,7 +41,6 @@ import socket
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.MMSTD.Actors.AbstractChannel import AbstractChannel
 
@@ -128,10 +124,14 @@ class NetworkClient(AbstractChannel):
         except:
             self.log.debug("Impossible to read from the network socket")
             return None
-        result = TypeConvertor.string2bin("".join(chars), "big")
-        self.log.debug("Read finished")
+
+        netzobRaw = TypeConvertor.pythonRawToNetzobRaw(''.join(chars))
+        result = TypeConvertor.netzobRawToBitArray(netzobRaw)
+
+        self.log.debug("Read finished: {0}".format(result))
         if (len(chars) == 0):
             return result
+
         self.log.debug("Received : {0}".format(TypeConvertor.bin2strhex(result)))
         return result
 
