@@ -157,10 +157,9 @@ class MMSTD(Automata):
         for i in range(0, len(symbols)):
             if state is not None:
                 state = state.executeAsClient(abstractionLayer)
-        outputMessages = abstractionLayer.getOutputMessages()
+
         generatedSymbols = []
-        for (sendingTime, strMessage, symbol) in outputMessages:
-            generatedSymbols.append(symbol)
+        generatedSymbols.extend(abstractionLayer.getGeneratedOutputSymbols())
 
         return (generatedSymbols, state)
 
