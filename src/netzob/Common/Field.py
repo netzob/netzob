@@ -353,8 +353,12 @@ class Field(object):
         fixedIndex = fixedField.getIndex()
 
         uniqueValues = fixedField.getUniqValuesByField()
-        self.setName("Symbol-" + str(uniqueValues[0]))
+        if len(uniqueValues) == 0:
+            return
+
+        self.setName("{0}_{1}".format(self.getSymbol().getName(), str(uniqueValues[0])))
         for uniqueValue in uniqueValues[1:]:
+
             # Extract new messages (that can be sub-parts of entire messages if the user work on a layer)
             newMessages = []
             for message in self.getMessages():
@@ -373,7 +377,8 @@ class Field(object):
             symbol.addMessages(newMessages)
             newField = self.dupplicate(symbol)
             symbol.setField(newField)
-            symbol.setName("Symbol-" + str(uniqueValue))
+            symbol.setName("{0}_{1}".format(self.getSymbol().getName(), str(uniqueValue)))
+
             project.getVocabulary().addSymbol(symbol)
 
     #+----------------------------------------------
@@ -726,12 +731,13 @@ class Field(object):
         """concatFields: concat all the next fields with the current one
         until the lastField is reached.
         @return: a tupple that indicates if the function has correctly been processed, and if not, the error message."""
-        logging.debug("Concat field from {0} to {1}".format(self.getName(), lastField.getName()))
 
         # If no last field is provided we stop here
         if lastField is None:
             msg = "Last field is not provided."
             return (False, msg)
+
+        logging.debug("Concat field from {0} to {1}".format(self.getName(), lastField.getName()))
 
         # Retrieve all the fields at the same level
         parentField = self.getParentField()
