@@ -395,6 +395,9 @@ class AbstractMessage(object):
     def setType(self, type):
         self.type = type
 
+    def setTimestamp(self, timestamp):
+        self.timestamp = timestamp
+
     def setData(self, data):
         self.data = data
 

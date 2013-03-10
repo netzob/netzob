@@ -437,6 +437,9 @@ class Angluin(LearningAlgorithm):
             self.inferedAutomata = MMSTD(startState, self.dictionary)
             for state in states:
                 self.inferedAutomata.addState(state)
+            self.log.info("----------------------------------------------")
+            self.log.info("Constructed Hypothetised Automata:")
+            self.log.info("----------------------------------------------")
             self.log.info(self.inferedAutomata.getDotCode())
 
     def addCounterExamples(self, counterExamples):

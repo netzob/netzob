@@ -30,7 +30,7 @@
 #+---------------------------------------------------------------------------+
 from collections import deque
 from gettext import gettext as _
-import bitarray
+from bitarray import bitarray
 import logging
 
 #+---------------------------------------------------------------------------+
@@ -75,7 +75,7 @@ class SimpleCommunicationLayer(AbstractChannel):
 
             # TODO: replace default values by clever values.
             writingToken = VariableWritingToken(False, self.vocabulary, self.memory, bitarray(''), ["random"])
-            self.symbol.write(writingToken)
+            symbol.write(writingToken)
             value = writingToken.getValue()
             self.inputMessages.append(value)
             return value

@@ -80,6 +80,7 @@ class LearningAlgorithm(object):
         return self.submitedQueries
 
     def submitQuery(self, query):
+        self.log.debug("Submit query : {0}".format(query))
         # Verify the request is not in the cache
         cachedValue = self.cache.getCachedResult(query)
         if cachedValue is not None:
@@ -100,7 +101,7 @@ class LearningAlgorithm(object):
         mmstd = query.toMMSTD(self.dictionary, isMaster)
 
         self.cb_hypotheticalAutomaton(mmstd)
-        time.sleep(10)
+        time.sleep(2)
         self.log.info("The current experimentation has generated the following MMSTD: {0}".format(self.log.debug(mmstd.getDotCode())))
 
         # create an oracle for this MMSTD
