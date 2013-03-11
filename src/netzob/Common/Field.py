@@ -1129,6 +1129,87 @@ class Field(object):
                 res.append(messageElt)
             return res
 
+    def getSemanticTagsByMessage(self):
+        # Not the same than getSemanticTags
+        # the returned position is global to the message and
+        # not local to the field
+        #result[i]=dict()   # dict[0...half-byte] = tag
+        result = dict()
+
+        # First we verify the field exists in the symbol
+        if not self in self.getSymbol().getAllFields():
+            logging.warn("The computing field is not part of the current symbol")
+            return result
+
+         # Retrieve all sub-cells
+        if self.isLayer():
+            logging.warn("OUPS, this is not yet supported, sorry for that !")
+            return result
+        else:  # A leaf field
+            for message in self.getMessages():
+                tmpResult = dict()
+                messageTable = message.applyAlignment()
+                semanticTags = message.getSemanticTags()
+                if len(semanticTags) > 0:
+                    globalIndex = 0
+                    startIndex = 0
+                    endIndex = 0
+                    # search message index of field start and end
+                    for iCol in range(0, len(messageTable)):
+                        if (iCol < self.getIndex()):
+                            globalIndex += len(messageTable[iCol])
+                        elif (iCol == self.getIndex()):
+                            startIndex = globalIndex
+                            endIndex = startIndex + len(messageTable[iCol])
+                            break
+                    if (endIndex > startIndex):
+                        for pos, tag in semanticTags.items():
+                            if pos >= startIndex and pos < endIndex:
+                                tmpResult[pos] = tag
+                result[message] = tmpResult
+            return result
+
+    def getSemanticTags(self):
+        """getSemanticTags:
+        Returns the semantic tags and their locations
+        for the specified field"""
+
+        #result[i]=dict()   # dict[0...half-byte] = tag
+        result = []
+
+        # First we verify the field exists in the symbol
+        if not self in self.getSymbol().getAllFields():
+            logging.warn("The computing field is not part of the current symbol")
+            return result
+
+         # Retrieve all sub-cells
+        if self.isLayer():
+            logging.warn("OUPS, this is not yet supported, sorry for that !")
+            return result
+        else:  # A leaf field
+            for message in self.getMessages():
+                tmpResult = dict()
+                messageTable = message.applyAlignment()
+                semanticTags = message.getSemanticTags()
+                if len(semanticTags) > 0:
+                    globalIndex = 0
+                    startIndex = 0
+                    endIndex = 0
+                    # search message index of field start and end
+                    for iCol in range(0, len(messageTable)):
+                        if (iCol < self.getIndex()):
+                            globalIndex += len(messageTable[iCol])
+                        elif (iCol == self.getIndex()):
+                            startIndex = globalIndex
+                            endIndex = startIndex + len(messageTable[iCol])
+                            break
+                    if (endIndex > startIndex):
+                        for pos, tag in semanticTags.items():
+                            if pos >= startIndex and pos < endIndex:
+                                tmpResult[pos - startIndex] = tag
+                result.append(tmpResult)
+            return result
+
     def getUniqValuesByField(self):
         res = []
         for cell in self.getCells():

@@ -60,34 +60,32 @@ PyMODINIT_FUNC init_libNeedleman(void) {
 //+---------------------------------------------------------------------------+
 PyObject* py_alignMessages(__attribute__((unused))PyObject* self, PyObject* args) {
 
-  // Parameters (in order)
-  unsigned int doInternalSlick = 0;
-  unsigned int nbMessages = 0;
-  char *format;
-  int sizeFormat;
-  unsigned char *serialMessages;
-  int sizeSerialMessages;
+  // parameters
+  PyObject* wrapperFactory;
+  t_message *messages;
   PyObject *temp_cb;
+  unsigned int doInternalSlick = 0;
   unsigned int debugMode = 0;
-  // local variables
-  unsigned int nbDeserializedMessage = 0;
-  t_message resMessage;
-  t_group group;
-  t_score score;
-  Bool bool_doInternalSlick;
-  Bool bool_debugMode;
 
+  // local variables
+  t_message * resMessage;
+  unsigned int nbMessages = 0;
+  Bool bool_debugMode;
+  Bool bool_doInternalSlick;
+  int parseRet;
+  t_score score;
 
   // Converts the arguments
-  if (!PyArg_ParseTuple(args, "hhs#s#Oh", &doInternalSlick, &nbMessages, &format, &sizeFormat, &serialMessages, &sizeSerialMessages, &temp_cb, &debugMode)) {
+  if (!PyArg_ParseTuple(args, "hOhO", &doInternalSlick, &temp_cb, &debugMode, &wrapperFactory)) {
     PyErr_SetString(PyExc_TypeError, "Error while parsing the arguments provided to py_alignMessages");
     return NULL;
   }
+
   //+------------------------------------------------------------------------+
-  // We verify the callback parameter
+  // Verify the callback parameter
   //+------------------------------------------------------------------------+
   if (!PyCallable_Check(temp_cb)) {
-    PyErr_SetString(PyExc_TypeError, "The provided 7th parameter should be callback");
+    PyErr_SetString(PyExc_TypeError, "The provided 2nd parameter should be a callback.");
     return NULL;
   }
   // Parse the callback
@@ -95,22 +93,17 @@ PyObject* py_alignMessages(__attribute__((unused))PyObject* self, PyObject* args
   Py_XDECREF(python_callback);  /* Dispose of previous callback */
   python_callback = temp_cb;    /* Remember new callback */
 
-  group.len = nbMessages;
-  group.messages = malloc(nbMessages*sizeof(t_message));
   //+------------------------------------------------------------------------+
   // Deserializes the provided arguments
   //+------------------------------------------------------------------------+
   if (debugMode == 1) {
     printf("py_alignSequences : Deserialization of the arguments (format, serialMessages).\n");
   }
-  nbDeserializedMessage = deserializeMessages(&group, format, serialMessages, nbMessages, debugMode);
 
-  if (nbDeserializedMessage != nbMessages) {
-    printf("Error : impossible to deserialize all the provided messages.\n");
+  parseRet = parseArgs(wrapperFactory,&nbMessages,&messages);
+  //Parsing error: PyErr allready set in parseArgs
+  if(parseRet){
     return NULL;
-  }
-  if (debugMode == 1) {
-    printf("A number of %d messages has been deserialized.\n", nbDeserializedMessage);
   }
 
   // Convert debugMode parameter in a BOOL
@@ -118,6 +111,10 @@ PyObject* py_alignMessages(__attribute__((unused))PyObject* self, PyObject* args
     bool_debugMode = TRUE;
   } else {
     bool_debugMode = FALSE;
+  }
+
+  if (debugMode == TRUE) {
+    printf("A number of %d messages have been deserialized.\n", nbMessages);
   }
 
   // Concert doInternalSlick parameter in a BOOL
@@ -128,27 +125,30 @@ PyObject* py_alignMessages(__attribute__((unused))PyObject* self, PyObject* args
   }
 
   // Fix the default values associated with resMessage
+  resMessage = (t_message *) malloc(sizeof(t_message));
   score.s1 = 0;
   score.s2 = 0;
   score.s3 = 0;
-  resMessage.score = &score;
-  resMessage.alignment = malloc(group.messages[0].len * sizeof(unsigned char));
-  memset(resMessage.alignment, '\0', group.messages[0].len);
+  resMessage->score = &score;
+  resMessage->alignment = malloc(messages[0].len * sizeof(unsigned char));
+  resMessage->semanticTags = malloc(messages[0].len * sizeof(t_semanticTag*));
+  for (unsigned int i=0; i<messages[0].len; i++) {
+    resMessage->semanticTags[i] = malloc(sizeof(t_semanticTag));
+  }
+  memset(resMessage->alignment, '\0', messages[0].len);
   //+------------------------------------------------------------------------+
   // Execute the alignment process
   //+------------------------------------------------------------------------+
   int t=clock();
-
-  alignMessages(&resMessage, bool_doInternalSlick, &group, bool_debugMode);
-
+  alignMessages(resMessage, bool_doInternalSlick, nbMessages, messages, bool_debugMode);
   int t1=clock();
 
   if (debugMode == 1) {
     printf ("It took %f operation to align messages.\n",(float)(t1-t)/CLOCKS_PER_SEC);
   }
-  
-  // Return the results
-  return Py_BuildValue("(fffs#s#)", resMessage.score->s1, resMessage.score->s2, resMessage.score->s3, resMessage.alignment, resMessage.len, resMessage.mask, resMessage.len);
+
+  // Return the serialization of the message
+  return serializeMessage(resMessage);
 }
 
 
@@ -267,6 +267,6 @@ PyObject* py_alignTwoMessages(__attribute__((unused))PyObject* self, PyObject* a
   free(message2.mask);
 
   // Return the result
-  return Py_BuildValue("(fffs#s#)", resMessage.score->s1, resMessage.score->s2, resMessage.score->s3, resMessage.alignment, resMessage.len, resMessage.mask, resMessage.len);
+  return serializeMessage(&resMessage);
 }
 

@@ -52,7 +52,7 @@ int callbackStatus(int stage, double percent, char* message, ...) {
   vsnprintf(buffer, sizeof(buffer), message, args);
   va_end(args);
   buffer[4095] = '\0';
-  
+
   printf("[%d, %f] %s\n", stage, percent, buffer);
   return 1;
 
@@ -229,4 +229,40 @@ void dumpMessage(t_message message) {
       printf("--");
   }
   printf("\n");
+}
+
+unsigned int serializeSemanticTags(char ** serializedTags, t_semanticTag ** tags, unsigned int nbSemanticTags) {
+  unsigned int sizeSerializedTags = 0;
+  unsigned int iTag = 0;
+  unsigned int sizeLocalTag = 0;
+  // serializedTags = "tag1;tag2;tag3;..."
+  // first we compute the size of the result:
+  // size(serializedTags) = sum(size(tags->name)+1)+1
+
+  for (iTag=0; iTag<nbSemanticTags; iTag++){
+    if(tags[iTag]->name != NULL) {
+      sizeSerializedTags += strlen(tags[iTag]->name);
+    }
+    sizeSerializedTags +=1;
+  }
+  sizeSerializedTags +=1; // for the NULL byte
+  *serializedTags = calloc(sizeSerializedTags, sizeof(char));
+  for (iTag=0; iTag<nbSemanticTags; iTag++) {
+    if (tags[iTag]->name != NULL) {
+      sizeLocalTag = strlen(tags[iTag]->name);
+      if(sizeLocalTag>0){
+	strncat(*serializedTags, tags[iTag]->name, sizeLocalTag);
+      }
+    }
+    strncat(*serializedTags, ";", 1);
+  }
+  return sizeSerializedTags;
+}
+
+PyObject * serializeMessage(t_message * message) {
+  char * semanticTags = NULL;
+  unsigned int lenSemanticTags = serializeSemanticTags(&semanticTags, message->semanticTags, message->len);
+  printf("len sem : %d\n", lenSemanticTags);
+  return Py_BuildValue("(fffs#s#s#)", message->score->s1, message->score->s2, message->score->s3, message->alignment, message->len, message->mask, message->len, semanticTags, lenSemanticTags);
+
 }

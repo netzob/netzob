@@ -49,11 +49,17 @@ typedef struct {
   float value;
 } t_score;
 
+// Definition of a semantic tag
+typedef struct {
+  char* name;
+} t_semanticTag;
+
 // Definition of a message :
 typedef struct {
   unsigned int len; // length of the message
   unsigned char *alignment; // a alignment/message
   unsigned char *mask; // its mask
+  t_semanticTag **semanticTags; // an array of pointer over semantic tags. One could be attached on each half-byte of the alignment.
   char* uid;
   t_score *score;
 } t_message;
@@ -79,6 +85,7 @@ typedef struct {
 
 // Cost definitions for the alignment
 static const short int MATCH = 10;
+static const short int SEMANTIC_MATCH = 30;
 static const short int MISMATCH = -10;
 static const short int GAP = 0;
 static const short int BLEN = 10;

@@ -47,6 +47,7 @@ from netzob.Common.Field import Field
 from netzob.Common.Symbol import Symbol
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.NetzobException import NetzobException
+from netzob.Common.C_Extensions.WrapperArgsFactory import WrapperArgsFactory
 
 #+---------------------------------------------------------------------------+
 #| C Imports
@@ -72,6 +73,7 @@ class NeedlemanAndWunsch(object):
         self.clusteringSolution = None
         self.doUpgma = doUpgma
         self.newSymbols = []
+        self.logger = logging.getLogger('netzob.Inference.Vocabulary.NeedlemanAndWunsch.py')
 
         # Then we retrieve all the parameters of the CLUSTERING / ALIGNMENT
         self.defaultFormat = self.project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
@@ -111,29 +113,29 @@ class NeedlemanAndWunsch(object):
         field.resetPartitioning()
         field.removeLocalFields()
         if messages is None or len(messages) == 0:
-            logging.debug("The field '" + field.getName() + "' is empty. No alignment needed")
+            self.logger.debug("The field '" + field.getName() + "' is empty. No alignment needed")
             field.setRegex("(.{,})")
         else:
             if self.isFinish():
                 return
 
             # We execute the alignment
-            (alignment, score) = self.alignData(field.getCells())
+            (alignment, semanticTags, score) = self.alignData(field.getCells(), field.getSemanticTags())
 
             if self.isFinish():
                 return
 
             field.setAlignment(alignment)
-            logging.debug("Alignment: {0}".format(alignment))
+            self.logger.debug("Alignment: {0}".format(alignment))
 
             # We update the regex based on the results
             try:
                 if self.isFinish():
                     return
-                self.buildRegexFromAlignment(field, alignment)
+                self.buildRegexFromAlignment(field, alignment, semanticTags)
 
             except NetzobException, e:
-                logging.warn("Partitionnement error: {0}".format(e))
+                self.logger.warn("Partitionnement error: {0}".format(e))
                 field.resetPartitioning()
 
             # Last loop to detect fixed-sized dynamic fields
@@ -146,20 +148,29 @@ class NeedlemanAndWunsch(object):
     #| @param messages a list of AbstractMessages
     #| @returns (alignment, score)
     #+-----------------------------------------------------------------------+
-    def alignData(self, data):
-        # First we serialize the two messages
-        (serialValues, format) = TypeConvertor.serializeValues(data, self.unitSize)
+    def alignData(self, data, semanticTokens):
+        toSend = []
+        for i in range(0, len(data)):
+            toSend.append((data[i], semanticTokens[i]))
+
+        wrapper = WrapperArgsFactory("_libNeedleman.alignMessages")
+        wrapper.typeList[wrapper.function](toSend)
 
         debug = False
-        (score1, score2, score3, regex, mask) = _libNeedleman.alignMessages(self.doInternalSlick, len(data), format, serialValues, self.cb_executionStatus, debug)
+        (score1, score2, score3, regex, mask, semanticTags) = _libNeedleman.alignMessages(self.doInternalSlick, self.cb_executionStatus, debug, wrapper)
         scores = (score1, score2, score3)
 
         if self.isFinish():
             return
 
         alignment = TypeConvertor.deserializeAlignment(regex, mask, self.unitSize)
+        semanticTags = TypeConvertor.deserializeSemanticTags(semanticTags, self.unitSize)
+
+        self.logger.debug("Computed Alignment = {0}".format(alignment))
+
         alignment = self.smoothAlignment(alignment)
-        return (alignment, scores)
+        self.logger.debug("Smoothed Alignment = {0}".format(alignment))
+        return (alignment, semanticTags, scores)
 
     #+-----------------------------------------------------------------------+
     #| smoothAlignment:
@@ -185,18 +196,25 @@ class NeedlemanAndWunsch(object):
     #| @param field the associated field
     #| @param align the given alignment
     #+-----------------------------------------------------------------------+
-    def buildRegexFromAlignment(self, field, align):
+    def buildRegexFromAlignment(self, field, align, semanticTags):
         # Build regex from alignment
         i = 0
         start = 0
         regex = []
         found = False
-        for i in range(len(align)):
+        currentTag = None
+
+        # STEP 1 : Create a field separation
+        # based on static and dynamic fields
+        for i, val in enumerate(align):
+            tag = semanticTags[i]
+            if currentTag is None:
+                currentTag = tag
 
             if self.isFinish():
                 return
 
-            if (align[i] == "-"):
+            if (val == "-"):
                 if (found is False):
                     start = i
                     found = True
@@ -205,24 +223,28 @@ class NeedlemanAndWunsch(object):
                     found = False
                     nbTiret = i - start
                     regex.append(".{," + str(nbTiret) + "}")
-                    regex.append(align[i])
+                    regex.append(val)
                 else:
                     if len(regex) == 0:
-                        regex.append(align[i])
+                        regex.append(val)
                     else:
-                        regex[-1] += align[i]
+                        regex[-1] += val
+
         if (found is True):
             nbTiret = i - start + 1
             regex.append(".{," + str(nbTiret) + "}")
 
+        # We have a computed the 'simple' regex,
+        # and represent it using the field representation
         iField = 0
-        logging.debug("REGEX " + str(regex))
+        step1Fields = []
         for regexElt in regex:
             if self.isFinish():
                 return
             if regexElt == "":
                 pass
             innerField = Field("Field " + str(iField), "(" + regexElt + ")", field.getSymbol())
+            step1Fields.append(innerField)
             field.addField(innerField)
 
             # Use the default protocol type for representation
@@ -231,8 +253,95 @@ class NeedlemanAndWunsch(object):
         if len(field.getSymbol().getExtendedFields()) >= 100:
             raise NetzobException("This Python version only supports 100 named groups in regex (found {0})".format(len(field.getSymbol().getExtendedFields())))
 
+        # STEP 2 : Split fields given the semantic tokens
+        totalIndex = 0
+
+        # Starts to consider semantic tags
+        step2Fields = dict()
+
+        startByteCurrentField = 0
+        for iField, step1Field in enumerate(step1Fields):
+            step2Fields[step1Field] = []
+
+            lengthField = 0
+            # Compute the size of the current field given its regex
+            if step1Field.isStatic():
+                lengthField = len(step1Field.getRegex()) - 2
+            else:
+                tmp = step1Field.getRegex().split(',')[1]
+                lengthField = int(tmp[:len(tmp) - 2])
+            # Split the current field if a modification of the semantic tag can be found
+            sizeCurrentField = 0
+            tagCurrentField = None
+            startLastSubField = 0
+            iSubField = 0
+            for currentByteInCurrentField in range(0, lengthField):
+                tagCurrentByte = semanticTags[startByteCurrentField + currentByteInCurrentField]
+
+                if tagCurrentField != tagCurrentByte:
+                    if sizeCurrentField > 0:
+                        sizeCurrentField += 1
+                        if not step1Field.isStatic():
+                            # create a sub field dynamic
+                            regex = "(.{," + str(sizeCurrentField) + "}):" + str(tagCurrentField)
+                        else:
+                            regex = "({0}):{1}".format(step1Field.getRegex()[1 + startLastSubField:sizeCurrentField], tagCurrentField)
+                        step2Fields[step1Field].append(Field("{0}_{1}".format(step1Field.getName(), iSubField), regex, step1Field.getSymbol()))
+                        sizeCurrentField = 0
+                        startLastSubField = startLastSubField + sizeCurrentField
+                    tagCurrentField = tagCurrentByte
+                else:
+                    sizeCurrentField += 1
+            if sizeCurrentField > 0:
+                if not step1Field.isStatic():
+                    # create a sub field dynamic
+                    sizeCurrentField += 1
+                    regex = "(.{," + str(sizeCurrentField) + "}):" + tagCurrentByte
+                else:
+                    regex = "({0}):{1}".format(step1Field.getRegex()[1 + startLastSubField:sizeCurrentField + 2], tagCurrentByte)
+                step2Fields[step1Field].append(Field("{0}_{1}".format(step1Field.getName(), iSubField), regex, step1Field.getSymbol()))
+            startByteCurrentField += lengthField
+
+        # STEP 3 : Apply semantic field partitionning computed in previous step
+        # and create a nice regex
+        steps3Fields = []
+        for f1 in step1Fields:
+            f2 = step2Fields[f1]
+            if len(f2) == 1:
+                steps3Fields.append(f1)
+            else:
+                for f in f2:
+                    tmpSplit = f.getRegex().split(':')
+                    tag = tmpSplit[1]
+                    if tag != "None":
+                        # get all the possible values in f1 of data under specified tag
+                        semanticTagsForField = f1.getSemanticTagsByMessage()
+                        possibleValues = []
+                        for message, semanticTagsInMessage in semanticTagsForField.items():
+                            currentValue = []
+                            for localPosition, tagValue in semanticTagsInMessage.items():
+                                if tagValue == tag:
+                                    currentValue.append(message.getStringData()[localPosition])
+                            possibleValues.append(''.join(currentValue))
+                        newRegex = '|'.join(possibleValues)
+                        newRegex = "({0})".format(newRegex)
+                        f.setRegex(newRegex)
+                    else:
+                        f.setRegex(tmpSplit[0])
+                    steps3Fields.append(f)
+
+        field.removeLocalFields()
+        for f in steps3Fields:
+            field.addField(f)
+
         # Clean created fields (remove fields that produce only empty cells)
         field.removeEmptyFields(self.cb_status)
+
+        # Rename the fields
+        iField = 0
+        for field in field.getSymbol().getExtendedFields():
+            field.setName("F{0}".format(iField))
+            iField += 1
 
     #+----------------------------------------------
     #| alignFields:
@@ -258,7 +367,7 @@ class NeedlemanAndWunsch(object):
                 if str(symbol.getID()) == str(field.getSymbol().getID()):
                     found = True
             if not found:
-                logging.debug("Symbol {0} [{1}] wont be aligned".format(str(symbol.getName()), str(symbol.getID())))
+                self.logger.debug("Symbol {0} [{1}] wont be aligned".format(str(symbol.getName()), str(symbol.getID())))
                 preResults.append(symbol)
 
         # Create a symbol for each message
@@ -286,7 +395,7 @@ class NeedlemanAndWunsch(object):
         t2 = time.time()
 
         self.newSymbols.extend(preResults)
-        logging.info("Time of clustering: {0}".format(str(t2 - t1)))
+        self.logger.info("Time of clustering: {0}".format(str(t2 - t1)))
 
     def isFinish(self):
         return self.flagStop
@@ -294,7 +403,7 @@ class NeedlemanAndWunsch(object):
     def stop(self):
         self.flagStop = True
         if self.clusteringSolution is not None:
-            logging.debug("Close the clustering solution")
+            self.logger.debug("Close the clustering solution")
             self.clusteringSolution.stop()
 
     def getNewSymbols(self):
