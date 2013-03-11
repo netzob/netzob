@@ -63,6 +63,14 @@ int parseArgs(PyObject* factobj, ...){
       */
       parseLibscoreComputation(factobj,args);
     }
+    else if(!strcmp(function,"_libNeedleman.alignMessages")){
+      /**
+	 Function : alignMessages
+	 Parse the wrapper given its format
+      */
+      parseLibNeedleman(factobj,args);
+    }
+
     else{
       PyErr_SetObject(PyExc_NameError, PyString_FromFormat("%s not yet implemented",function));
       return 1;
@@ -198,58 +206,70 @@ void parseMessage(PyObject * item, t_message * message) {
    Format:
    - List<Message> with Message: (alignment, mask, length, uid)
 */
-void parseLibscoreComputation(PyObject* factobj, va_list args){
-	long i;
-	PyObject* pysize = NULL;
-	long* nbmess = va_arg(args,long*);
-	t_message** messages = va_arg(args,t_message**);
-	char * tmp_alignment;
-	/**
-	   list : which is a list of messages
-	*/
-	PyObject* list = PyObject_GetAttr(factobj,PyString_FromString("args"));
-	/**
-	   Find the number of elements in the list.
-	   This number of elements = number of messages (nbmess)
-	*/
-	pysize = PyLong_FromSsize_t(PyList_Size(list));
-	*nbmess = PyLong_AsLong(pysize);
-	Py_XDECREF(pysize);
+void parseLibNeedleman(PyObject* factobj, va_list args){
+  printf("Parse lib needleman\n");
 
-	/**
-	   Reserves an array of [nbmess] t_messages
-	*/
-	*messages = (t_message*) malloc((*nbmess)*sizeof(t_message));
+  PyObject* pysize = NULL;
+  long* nbmess = va_arg(args,long*);
+  t_message** messages = va_arg(args,t_message**);
+  unsigned int debugMode = TRUE;
+  long i;
 
-	/**
-	   Parse each message and store them in the newly allocated array
-	*/
-	for(i=0;i<*nbmess;i++){
-		PyObject* item;
-		item = PyList_GetItem(list,(Py_ssize_t)i);
-		/**
-		   message.alignment contains the message.getReducedStringData() in python raw format. Its the content of the message. If its during orphan reduction, this content is reduced to the considered section (sliding window).
-		 */
-		tmp_alignment = getstringattr(item,"alignment");
-		(*messages)[i].alignment = (unsigned char*) tmp_alignment;
+  /**
+     list : which is a list of messages
+  */
+  PyObject* list = PyObject_GetAttr(factobj,PyString_FromString("args"));
 
-		/**
-		   message.mask will be allocated (no value in it yet) to contain at least ... ?
-		 */
-		(*messages)[i].mask = calloc(strlen(tmp_alignment)+1,sizeof(unsigned char*));
-		/**
-		   message.len contains the size of tmp_alignment
-		**/
-		(*messages)[i].len = (unsigned int) getUnsignedLongAttribute(item,"length");
-		/**
-		   message.uid contains the UID of the symbol which contains
-		   the message.
+  /**
+     Find the number of elements in the list.
+     This number of elements = number of messages (nbmess)
+  */
+  pysize = PyLong_FromSsize_t(PyList_Size(list));
+  *nbmess = PyLong_AsLong(pysize);
+  Py_XDECREF(pysize);
 
-		   Warning: I though it was message's UID, but its not !!
-		*/
-		(*messages)[i].uid = getstringattr(item,"uid");
+  /**
+     Reserves an array of [nbmess] t_messages
+  */
+  *messages = (t_message*) malloc((*nbmess)*sizeof(t_message));
+
+  /**
+     Parse each message and store them in the newly allocated array
+  */
+  for(i=0;i<*nbmess;i++){
+    PyObject* item;
+    item = PyList_GetItem(list,(Py_ssize_t)i);
+    parseMessage(item, &((*messages)[i]));
+  }
+
+  // [DEBUG] Display the content of the deserialized messages
+  if (debugMode == TRUE) {
+    unsigned int iMessage;
+    for(iMessage=0;iMessage<*nbmess;iMessage++) {
+      printf("Message : %d\n", iMessage);
+      printf("Data : ");
+      t_message message = (*messages)[iMessage];
+
+      for (i=0; i< message.len; i++) {
+	printf("%02x", (unsigned char) message.alignment[i]);
+      }
+      printf("\n");
+      printf("Tags : ");
+      for (i=0; i< message.len; i++) {
+	if (message.semanticTags != NULL && message.semanticTags[i] != NULL && message.semanticTags[i]->name != NULL && strcmp(message.semanticTags[i]->name, "None")!=0) {
+	  printf("!!");
+	} else {
+	  printf("..");
 	}
+      }
+      printf("\n");
+    }
+    // [DEBUG]
+  }
 
 }
+
+
+
 #undef getstringattr
 #undef tostring
