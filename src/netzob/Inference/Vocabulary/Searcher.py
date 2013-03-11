@@ -367,7 +367,7 @@ class Searcher(object):
         indice = messageData.find(data, 0)
         while indice >= 0:
             searchResult = SearchResult(message, "Natural search")
-            searchResult.addSegment(indice, len(data))
+            searchResult.addSegment(indice, indice + len(data))
             results.append(searchResult)
             indice = messageData.find(data, indice + 1)
 
