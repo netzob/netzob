@@ -25,11 +25,14 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
+import uuid
+
 from netzob import _libScoreComputation
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.C_Extensions.WrapperMessage import WrapperMessage
+from netzob.Common.Models.RawMessage import RawMessage
 from netzob.Common.NetzobException import NetzobException
 
 
@@ -41,7 +44,10 @@ class WrapperArgsFactory(object):
     """
 
     def __init__(self, function):
-        self.typeList = {"_libScoreComputation.computeSimilarityMatrix": self.computeSimilarityMatrix}
+        self.typeList = {
+            "_libScoreComputation.computeSimilarityMatrix": self.computeSimilarityMatrix,
+            "_libNeedleman.alignMessages": self.alignMessages}
+
         if(function in self.typeList.keys()):
             self.function = function
         else:
@@ -53,4 +59,12 @@ class WrapperArgsFactory(object):
     def computeSimilarityMatrix(self, symbols):
         self.args = []
         for s in symbols:
-            self.args.append(WrapperMessage(s.getMessages()[0], s))
+            self.args.append(WrapperMessage(s.getMessages()[0], s.getID()))
+
+    def alignMessages(self, values):
+        self.args = []
+        for (data, tags) in values:
+            message = RawMessage(uuid.uuid4(), 0, data)
+            for pos, tag in tags.items():
+                message.setSemanticTag(tag, pos)
+            self.args.append(WrapperMessage(message, "Virtual symbol"))

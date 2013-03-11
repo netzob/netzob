@@ -26,7 +26,7 @@
 //+---------------------------------------------------------------------------+
 
 #ifndef	Needleman_H
-#define Needleman_H 
+#define Needleman_H
 
 //+---------------------------------------------------------------------------+
 //| Imports
@@ -43,12 +43,19 @@
 //+---------------------------------------------------------------------------+
 //|  alignMessages : align a group of messages and get their common regex
 //+---------------------------------------------------------------------------+
-void alignMessages(t_message * resMessage, Bool doInternalSlick, t_group* messages, Bool debugMode);
+void alignMessages(t_message * resMessage, Bool doInternalSlick, unsigned int nbMessages, t_message * messages, Bool debugMode);
 
 //+---------------------------------------------------------------------------+
 //| alignTwoMessages : align 2 messages and get common regex
 //+---------------------------------------------------------------------------+
 char* alignTwoMessages(t_message * resMessage, Bool doInternalSlick, t_message * message1, t_message * message2, Bool debugMode);
+
+/*!
+ * @function getSimilarityScore
+ * @abstract Computes the similarity score of (message1[i], message2[j])
+ * @discussion This function replaces the old MATCH and MISMATCH score and returns a semantic score
+ */
+short int getSimilarityScore(t_message * message1, t_message * message2, unsigned int i, unsigned j);
 
 //+---------------------------------------------------------------------------+
 //| Scores : functions for their computations
@@ -56,5 +63,12 @@ char* alignTwoMessages(t_message * resMessage, Bool doInternalSlick, t_message *
 float getScoreRatio(t_message *);
 float getScoreDynSize(unsigned int, unsigned int);
 float computeDistance(t_score *);
+
+/*!
+ * @function displayMessage
+ * @abstract Display in the console the content of specified message (its data and attributes)
+ * @param the message to display
+ */
+void displayMessage(t_message *);
 
 #endif

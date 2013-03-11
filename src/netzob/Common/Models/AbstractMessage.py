@@ -72,6 +72,7 @@ class AbstractMessage(object):
         self.extraProperties = []
         self.visualizationFunctions = []
         self.transformationFunctions = []
+        self.semanticTags = dict()  # semanticTags[0...half-byte] = tag
 
         self.pattern = []
         if not pattern:
@@ -463,3 +464,32 @@ class AbstractMessage(object):
 
     def getTransformationFunctions(self):
         return self.transformationFunctions
+
+    def addSemanticTag(self, tag, start, end):
+        """addSemanticTag:
+        Register the provided tag over the bytes located between
+        start and end.
+        @tag: a string which represents the tag
+        @start: the index of the half-byte where the tag starts to apply
+        @end: the index of the hal-byte where the tag ends to apply
+        """
+        for i in range(start, end):
+            self.semanticTags[i] = tag
+
+    def setSemanticTag(self, tag, pos):
+        """setSemanticTag:
+        Set the pos half-byte to be tagged with provided token.
+        @tag: a string which represents a tag
+        @pos: the position of half-byte to be tagged"""
+        self.semanticTags[pos] = tag
+
+    def getSemanticTagAt(self, iHalfByte):
+        """getSemanticTagAt:
+        Return the tag nolcated at the iHalfByte"""
+        if not iHalfByte in self.semanticTags.keys():
+            return None
+        else:
+            return self.semanticTags[iHalfByte]
+
+    def getSemanticTags(self):
+        return self.semanticTags
