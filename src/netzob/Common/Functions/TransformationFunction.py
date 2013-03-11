@@ -52,6 +52,7 @@ class TransformationFunction(RenderingFunction):
         RenderingFunction.__init__(self, TransformationFunction.TYPE)
         self.type = type
         self.name = name
+        self.memory = None
 
     #+-----------------------------------------------------------------------+
     #| apply
@@ -98,8 +99,14 @@ class TransformationFunction(RenderingFunction):
     def getName(self):
         return self.name
 
+    def getMemory(self):
+        return self.memory
+
     def setType(self, type):
         self.type = type
 
     def setName(self, name):
         self.name = name
+
+    def setMemory(self, memory):
+        self.memory = memory

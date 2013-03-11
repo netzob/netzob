@@ -32,6 +32,7 @@ from gettext import gettext as _
 from bitarray import bitarray
 import datetime
 import logging
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -42,6 +43,7 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.Models.RawMessage import RawMessage
 from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken import \
     VariableReadingToken
 from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken import \
@@ -207,6 +209,16 @@ class AbstractionLayer():
         # we search in the vocabulary an entry which match the message
         for symbol in self.vocabulary.getSymbols():
             self.log.debug("Try to abstract message through : {0}.".format(symbol.getName()))
+
+            # Apply transformation functions of current symbol on received data
+            symbol.getField().getTransformationFunctions()
+            rawMsg = RawMessage(uuid.uuid4(), 1, TypeConvertor.bin2hexstring(message))
+            for fct in symbol.getField().getTransformationFunctions():
+                fct.setMemory(self.memory)
+                rawMsg.addTransformationFunction(fct)
+            message = TypeConvertor.hexstring2bin(rawMsg.getStringData())
+
+            # Create a token from the data
             readingToken = VariableReadingToken(False, self.vocabulary, self.memory, TypeConvertor.strBitarray2Bitarray(message), 0)
             symbol.getRoot().read(readingToken)
 
@@ -241,6 +253,13 @@ class AbstractionLayer():
         #TODO: Replace all default values with clever values.
         writingToken = VariableWritingToken(False, self.vocabulary, self.memory, bitarray(''), ["random"])
         result = symbol.write(writingToken)
+
+        # Apply transformation functions of current symbol on data to send
+        symbol.getField().getTransformationFunctions()
+        rawMsg = RawMessage(uuid.uuid4(), 1, TypeConvertor.bin2hexstring(result))
+        for fct in symbol.getField().getTransformationFunctions():
+            fct.setMemory(self.memory)
+            result = TypeConvertor.hexstring2bin(fct.reverse(rawMsg.getStringData()))
         return result
 
     def getMemory(self):

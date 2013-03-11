@@ -57,7 +57,7 @@ class TypeConvertor():
     @staticmethod
     def string2bin(aStr, endian='big'):
         result = bitarray(endian=endian)
-        result.fromstring(aStr)
+        result.frombytes(aStr)
         return result
 
     @staticmethod
@@ -97,7 +97,7 @@ class TypeConvertor():
     @staticmethod
     def hex2bin(hex):
         result = bitarray(endian='big')
-        result.fromstring(hex)
+        result.frombytes(hex)
         return result
 
     @staticmethod
@@ -341,7 +341,7 @@ class TypeConvertor():
         res = bitarray()
         for c in raw:
             tmp = bitarray()
-            tmp.fromstring(chr(int(c, 16)))
+            tmp.frombytes(chr(int(c, 16)))
             tmp = str(tmp)[10:len(str(tmp)) - 2][4:]
             res.extend(tmp)
         return res.to01()
@@ -354,7 +354,7 @@ class TypeConvertor():
         res = bitarray()
         for c in raw:
             tmp = bitarray()
-            tmp.fromstring(chr(int(c, 16)))
+            tmp.frombytes(chr(int(c, 16)))
             tmp = str(tmp)[10:len(str(tmp)) - 2][4:]
             res.extend(tmp)
         return res
@@ -512,13 +512,13 @@ class TypeConvertor():
             return bina
         else:
             bina = bitarray(endian=theEndian)
-            bina.fromstring(stri)
+            bina.frombytes(stri)
             return bina
 
     @staticmethod
     def binB2string(bina):
         if bina is not None:
-            return bina.tostring()
+            return bina.tobytes()
         else:
             return None
 

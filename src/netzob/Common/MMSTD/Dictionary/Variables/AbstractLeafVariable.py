@@ -181,12 +181,15 @@ class AbstractLeafVariable(AbstractVariable):
                     self.compareFormat(readingToken)
                     self.learn(readingToken)
                     self.memorize(readingToken)
-
+                    tmpSize = len(readingToken.getValue()[readingToken.getIndex():])
+                    readingToken.incrementIndex(tmpSize) 
                 else:
                     # mutable, learnable and not defined.
                     self.compareFormat(readingToken)
                     self.learn(readingToken)
                     self.memorize(readingToken)
+                    tmpSize = len(readingToken.getValue()[readingToken.getIndex():])
+                    readingToken.incrementIndex(tmpSize) 
 
             else:
                 if self.isDefined(readingToken):
