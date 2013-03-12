@@ -161,7 +161,6 @@ class PCAPImporter(AbstractImporter):
     def _packetHandler(self, header, payload):
         """Decode a packet"""
         mUuid = str(uuid.uuid4())
-
         (secs, usecs) = header.getts()
         epoch = secs + (usecs / 1000000.0)
 
@@ -274,9 +273,13 @@ class PCAPImporter(AbstractImporter):
             l3Proto = "IP"
             l3Decoder = Decoders.IPDecoder()
             layer3 = l3Decoder.decode(l2Payload)
+            paddingSize = len(l2Payload) - layer3.get_ip_len()
+
             l3SrcAddr = layer3.get_ip_src()
             l3DstAddr = layer3.get_ip_dst()
             l3Payload = l2Payload[layer3.get_header_size():]
+            if paddingSize > 0 and len(l3Payload) > paddingSize:
+                l3Payload = l3Payload[:len(l3Payload) - paddingSize]
             ipProtocolNum = layer3.get_ip_p()
             return (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum)
         else:
