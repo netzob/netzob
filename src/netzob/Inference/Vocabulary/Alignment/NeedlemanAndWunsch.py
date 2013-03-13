@@ -98,9 +98,7 @@ class NeedlemanAndWunsch(object):
             if self.statusRatioOffset is not None:
                 totalPercent = totalPercent + 100 / self.statusRatio * self.statusRatioOffset
 
-        if self.cb_status is None:
-            print "[Alignment status] " + str(totalPercent) + "% " + currentMessage
-        else:
+        if self.cb_status is not None:
             self.cb_status(stage, totalPercent, currentMessage)
 
     #+-----------------------------------------------------------------------+
@@ -270,6 +268,7 @@ class NeedlemanAndWunsch(object):
             else:
                 tmp = step1Field.getRegex().split(',')[1]
                 lengthField = int(tmp[:len(tmp) - 2])
+
             # Split the current field if a modification of the semantic tag can be found
             sizeCurrentField = 0
             tagCurrentField = None
@@ -285,13 +284,14 @@ class NeedlemanAndWunsch(object):
                             # create a sub field dynamic
                             regex = "(.{," + str(sizeCurrentField) + "}):" + str(tagCurrentField)
                         else:
-                            regex = "({0}):{1}".format(step1Field.getRegex()[1 + startLastSubField:sizeCurrentField], tagCurrentField)
+                            regex = "({0}):{1}".format(step1Field.getRegex()[1 + startLastSubField:1 + startLastSubField + sizeCurrentField], tagCurrentField)
                         step2Fields[step1Field].append(Field("{0}_{1}".format(step1Field.getName(), iSubField), regex, step1Field.getSymbol()))
-                        sizeCurrentField = 0
                         startLastSubField = startLastSubField + sizeCurrentField
+                        sizeCurrentField = 0
                     tagCurrentField = tagCurrentByte
                 else:
                     sizeCurrentField += 1
+
             if sizeCurrentField > 0:
                 if not step1Field.isStatic():
                     # create a sub field dynamic
@@ -319,7 +319,8 @@ class NeedlemanAndWunsch(object):
                         possibleValues = []
                         for message, semanticTagsInMessage in semanticTagsForField.items():
                             currentValue = []
-                            for localPosition, tagValue in semanticTagsInMessage.items():
+                            for localPosition in sorted(semanticTagsInMessage.iterkeys()):
+                                tagValue = semanticTagsInMessage[localPosition]
                                 if tagValue == tag:
                                     currentValue.append(message.getStringData()[localPosition])
                             possibleValues.append(''.join(currentValue))
