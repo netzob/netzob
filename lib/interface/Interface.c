@@ -262,7 +262,6 @@ unsigned int serializeSemanticTags(char ** serializedTags, t_semanticTag ** tags
 PyObject * serializeMessage(t_message * message) {
   char * semanticTags = NULL;
   unsigned int lenSemanticTags = serializeSemanticTags(&semanticTags, message->semanticTags, message->len);
-  printf("len sem : %d\n", lenSemanticTags);
   return Py_BuildValue("(fffs#s#s#)", message->score->s1, message->score->s2, message->score->s3, message->alignment, message->len, message->mask, message->len, semanticTags, lenSemanticTags);
 
 }

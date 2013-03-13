@@ -207,12 +207,11 @@ void parseMessage(PyObject * item, t_message * message) {
    - List<Message> with Message: (alignment, mask, length, uid)
 */
 void parseLibNeedleman(PyObject* factobj, va_list args){
-  printf("Parse lib needleman\n");
 
   PyObject* pysize = NULL;
   long* nbmess = va_arg(args,long*);
   t_message** messages = va_arg(args,t_message**);
-  unsigned int debugMode = TRUE;
+  unsigned int debugMode = FALSE;
   long i;
 
   /**
