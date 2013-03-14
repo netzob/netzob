@@ -44,6 +44,7 @@ from lxml import etree
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Models.RawMessage import RawMessage
+from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken import \
     VariableReadingToken
 from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken import \
@@ -255,11 +256,12 @@ class AbstractionLayer():
         result = symbol.write(writingToken)
 
         # Apply transformation functions of current symbol on data to send
-        symbol.getField().getTransformationFunctions()
-        rawMsg = RawMessage(uuid.uuid4(), 1, TypeConvertor.bin2hexstring(result))
-        for fct in symbol.getField().getTransformationFunctions():
-            fct.setMemory(self.memory)
-            result = TypeConvertor.hexstring2bin(fct.reverse(rawMsg.getStringData()))
+        if symbol.getType() == DictionarySymbol.TYPE:
+            symbol.getEntry().getField().getTransformationFunctions()
+            rawMsg = RawMessage(uuid.uuid4(), 1, TypeConvertor.bin2hexstring(result))
+            for fct in symbol.getEntry().getField().getTransformationFunctions():
+                fct.setMemory(self.memory)
+                result = TypeConvertor.hexstring2bin(fct.reverse(rawMsg.getStringData()))
         return result
 
     def getMemory(self):
