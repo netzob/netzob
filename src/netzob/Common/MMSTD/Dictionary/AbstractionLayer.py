@@ -209,7 +209,7 @@ class AbstractionLayer():
         self.log.debug("We abstract the received message : " + TypeConvertor.bin2strhex(message))
         # we search in the vocabulary an entry which match the message
         message_orig = message
-        self.memory.create_memory()
+        self.memory.persistMemory()  # Point of rollback for the memory
         for symbol in self.vocabulary.getSymbols():
             message = message_orig
             self.log.debug("Try to abstract message through : {0}.".format(symbol.getName()))
@@ -236,6 +236,7 @@ class AbstractionLayer():
                 return symbol
             else:
                 self.log.debug("The message doesn't match symbol {0}.".format(symbol.getName()))
+                self.memory.createMemory()  # Rollback to the saved memory
             # This is now managed in the variables modules.
             #===================================================================
             #    self.memory.createMemory()
