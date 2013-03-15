@@ -208,16 +208,21 @@ class AbstractionLayer():
         """
         self.log.debug("We abstract the received message : " + TypeConvertor.bin2strhex(message))
         # we search in the vocabulary an entry which match the message
+        message_orig = message
+        self.memory.create_memory()
         for symbol in self.vocabulary.getSymbols():
+            message = message_orig
             self.log.debug("Try to abstract message through : {0}.".format(symbol.getName()))
 
             # Apply transformation functions of current symbol on received data
             symbol.getField().getTransformationFunctions()
             rawMsg = RawMessage(uuid.uuid4(), 1, TypeConvertor.bin2hexstring(message))
+            messageHexstring = rawMsg.getStringData()
             for fct in symbol.getField().getTransformationFunctions():
                 fct.setMemory(self.memory)
-                rawMsg.addTransformationFunction(fct)
-            message = TypeConvertor.hexstring2bin(rawMsg.getStringData())
+                messageHexstring = fct.apply(rawMsg.getStringData())
+                rawMsg.setData(messageHexstring)
+            message = TypeConvertor.hexstring2bin(messageHexstring)
 
             # Create a token from the data
             readingToken = VariableReadingToken(False, self.vocabulary, self.memory, TypeConvertor.strBitarray2Bitarray(message), 0)
@@ -255,13 +260,20 @@ class AbstractionLayer():
         writingToken = VariableWritingToken(False, self.vocabulary, self.memory, bitarray(''), ["random"])
         result = symbol.write(writingToken)
 
-        # Apply transformation functions of current symbol on data to send
-        if symbol.getType() == DictionarySymbol.TYPE:
-            symbol.getEntry().getField().getTransformationFunctions()
+        if symbol.getType() == DictionarySymbol.TYPE:  # Get the concrete symbol
+            symbol = symbol.getEntry()
+        if symbol.getType() == UnknownSymbol.TYPE or symbol.getType() == EmptySymbol.TYPE:
+            pass
+        else:
+            # Apply transformation functions of current symbol on data to send
+            symbol.getField().getTransformationFunctions()
             rawMsg = RawMessage(uuid.uuid4(), 1, TypeConvertor.bin2hexstring(result))
-            for fct in symbol.getEntry().getField().getTransformationFunctions():
+            resultHexstring = rawMsg.getStringData()
+            for fct in symbol.getField().getTransformationFunctions():
                 fct.setMemory(self.memory)
-                result = TypeConvertor.hexstring2bin(fct.reverse(rawMsg.getStringData()))
+                resultHexstring = fct.reverse(rawMsg.getStringData())
+                rawMsg.setData(resultHexstring)
+            result = TypeConvertor.hexstring2bin(resultHexstring)
         return result
 
     def getMemory(self):
