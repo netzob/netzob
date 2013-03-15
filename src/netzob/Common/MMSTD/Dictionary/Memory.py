@@ -154,7 +154,7 @@ class Memory():
                 Remove a variable and its value from the temporary memory.
         """
         if self.hasMemorized(variable):
-            self.temporaryMemory.remove(variable.getID())
+            del self.temporaryMemory[variable.getID()]
             if self.memory_acces_cb is not None:
                 self.memory_acces_cb("D", variable, None)
 
