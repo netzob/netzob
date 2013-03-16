@@ -61,6 +61,7 @@ class CommandLine(object):
                                dest="workspace", help="Path to the workspace")
         self.parser.add_option("-b", "--bug-reporter", action="store_true", dest="bugReport", help="Activate the bug reporter")
         self.parser.add_option("-d", "--debugLevel", dest="debugLevel", help="Activate debug information ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL')")
+        self.parser.add_option("-i", "--interactive", action="store_true", dest="interactive", help="Starts an interactive Netzob session")
 
         # register the group of options for plugins
         groupPlugins = optparse.OptionGroup(self.parser, "Manage Netzob's plugins")
@@ -74,7 +75,7 @@ class CommandLine(object):
     def isStartGUIRequested(self):
         """Compute and return if the user requested (through the command line arguments and options)
         to start the GTK GUI"""
-        if not self.isManagePluginsRequested():
+        if not self.isManagePluginsRequested() and not self.isInteractiveConsoleRequested():
             return True
 
     def isManagePluginsRequested(self):
@@ -84,6 +85,14 @@ class CommandLine(object):
         if self.providedOptions is None:
             return False
         return self.providedOptions.plugin_list
+
+    def isInteractiveConsoleRequested(self):
+        """Compute and returns if the user has requested the initiation of an interactive session"""
+        if self.parser is None:
+            self.parse()
+        if self.providedOptions is None:
+            return False
+        return self.providedOptions.interactive
 
     def getOptions(self):
         return self.providedOptions
