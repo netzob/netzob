@@ -29,6 +29,9 @@
 ##    $ grep -hnir "^from netzob.Common" src/netzob |grep -v '\\' | awk -F ":" '{print $2}' | sort|uniq
 ##    $ grep -hnir "^from netzob.Inference" src/netzob |grep -v '\\' | awk -F ":" '{print $2}' | sort|uniq
 
+# Release
+from netzob import release
+
 # Common
 from netzob.Common.Automata import Automata
 from netzob.Common.ApplicativeData import ApplicativeData
@@ -42,8 +45,6 @@ from netzob.Common.EnvironmentalDependencies import EnvironmentalDependencies
 from netzob.Common.EnvironmentalDependency import EnvironmentalDependency
 from netzob.Common.ExecutionContext import ExecutionContext
 from netzob.Common.Field import Field
-from netzob.Common.Filters.Encoding.FormatFilter import FormatFilter
-from netzob.Common.Filters.Visualization.TextColorFilter import TextColorFilter
 from netzob.Common.Functions.Encoding.FormatFunction import FormatFunction
 from netzob.Common.Functions.EncodingFunction import EncodingFunction
 from netzob.Common.Functions.FunctionApplicationTable import FunctionApplicationTable
