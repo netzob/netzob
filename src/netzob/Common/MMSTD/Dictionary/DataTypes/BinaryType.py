@@ -62,34 +62,38 @@ class BinaryType(AbstractType):
     def mutateValue(self, generationStrategies, value, mutationRate=10, deletionRate=5, additionRate=5):
         for generationStrategy in generationStrategies:
             if generationStrategy == "random":
-                mutatedValue = self.bin2str(value)
+                arMutatedValue = []
+                for v in self.bin2str(value):
+                    arMutatedValue.append(v)
+
+                print arMutatedValue
                 # First pass : deleting characters.
-                lgth = len(mutatedValue)
+                lgth = len(arMutatedValue)
                 for i in range(lgth):
                     dice = random.randint(0, 100)
                     if dice < deletionRate:
-                        mutatedValue = mutatedValue[:i] + mutatedValue[i + 1:]
+                        arMutatedValue = arMutatedValue[:i] + arMutatedValue[i + 1:]
 
                 # Second pass : mutating characters.
-                for i in range(len(mutatedValue)):
+                for i in range(len(arMutatedValue)):
                     dice = random.randint(0, 100)
                     if dice < mutationRate:
-                        if mutatedValue[i] == '0':  # Bit flip.
-                            mutatedValue[i] = '1'
+                        if arMutatedValue[i] == '0':  # Bit flip.
+                            arMutatedValue[i] = '1'
                         else:
-                            mutatedValue[i] = '0'
+                            arMutatedValue[i] = '0'
 
                 # Third pass : adding characters.
-                lgth = len(mutatedValue)
+                lgth = len(arMutatedValue)
                 for i in range(lgth):
                     dice = random.randint(0, 100)
                     if dice < additionRate:
                         if random.randint(0, 1) == 1:
-                            addedBit = '1'
+                            addedBit = ['1']
                         else:
-                            addedBit = '0'
-                        mutatedValue = mutatedValue[:i] + addedBit + mutatedValue[i:]
-                return self.str2bin(mutatedValue)
+                            addedBit = ['0']
+                        arMutatedValue = arMutatedValue[:i] + addedBit + arMutatedValue[i:]
+                return self.str2bin(''.join(arMutatedValue))
         return value  # Default case : we do not mutate.
 
     def generateFixedSizeValue(self, generationStrategies, charSize):

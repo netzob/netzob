@@ -137,13 +137,25 @@ class LearningAlgorithm(object):
         self.log.info("---------------------------------------------")
         self.log.info("RESULT:")
         self.log.info("---------------------------------------------")
-        self.log.info("+ getResults: {0}".format(str(resultQuery)))
+        strResultQuery = []
+        for data in resultQuery:
+            strResultQuery.append(data.getName())
+        self.log.info("+ getResults: {0}".format(', '.join(strResultQuery)))
         self.log.info("---------------------------------------------")
-        self.log.info("+ getGeneratedInputSymbols: {0}".format(str(oracle.getGeneratedInputSymbols())))
+
+        strGeneratedInputSymbols = []
+        for data in oracle.getGeneratedInputSymbols():
+            strGeneratedInputSymbols.append(data.getName())
+
+        self.log.info("+ getGeneratedInputSymbols: {0}".format(', '.join(strGeneratedInputSymbols)))
         self.log.info("---------------------------------------------")
-        self.log.info("+ getGeneratedOutputSymbols: {0}".format(str(oracle.getGeneratedOutputSymbols())))
+
+        strGeneratedOutputSymbols = []
+        for data in oracle.getGeneratedOutputSymbols():
+            strGeneratedOutputSymbols.append(data.getName())
+
+        self.log.info("+ getGeneratedOutputSymbols: {0}".format(', '.join(strGeneratedOutputSymbols)))
         self.log.info("---------------------------------------------")
-        self.log.info("The following query has been computed: {0}".format(str(resultQuery)))
 
         # Register this query and the associated response
         self.submitedQueries.append([query, resultQuery])
