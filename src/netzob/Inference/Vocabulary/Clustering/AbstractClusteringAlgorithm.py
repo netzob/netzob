@@ -57,10 +57,6 @@ class AbstractClusteringAlgorithm(object):
         from netzob.Inference.Vocabulary.Clustering.UPGMA.UPGMAClustering import UPGMAClustering
         defaults.append(UPGMAClustering)
 
-        # Discoverer
-        from netzob.Inference.Vocabulary.Clustering.Discoverer.DiscovererClustering import DiscovererClustering
-        defaults.append(DiscovererClustering)
-
         # Add all the registered plugins
         from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
         from netzob.Common.Plugins.ClusteringPlugin import ClusteringPlugin
