@@ -58,13 +58,6 @@ class ClusteringProfile(object):
         originalProfile.addAlgorithm(UPGMAAlgorithm)
         defaults.append(originalProfile)
 
-        # Discoverer
-        discovererProfile = ClusteringProfile(_("Discoverer by W.Cui"), _("Cluster messages following their ASCII/Bin tokens as described in paper 'Discoverer: Automatic Protocol Reverse Engineering from Network Traces'"))
-        discovererProfile.setWritable(False)
-        DiscovererAlgorithm = DiscovererClustering()
-        discovererProfile.addAlgorithm(DiscovererAlgorithm)
-        defaults.append(discovererProfile)
-
         return defaults
 
     @staticmethod
