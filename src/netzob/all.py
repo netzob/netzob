@@ -173,7 +173,6 @@ from netzob.Inference.Vocabulary.Clustering.AbstractClusteringAlgorithm import A
 from netzob.Inference.Vocabulary.Clustering.AbstractDistanceAlgorithm import AbstractDistanceAlgorithm
 from netzob.Inference.Vocabulary.Clustering.AbstractSimilarityMeasure import AbstractSimilarityMeasure
 from netzob.Inference.Vocabulary.Clustering.ClusteringProfile import ClusteringProfile
-from netzob.Inference.Vocabulary.Clustering.Discoverer.DiscovererClustering import DiscovererClustering
 from netzob.Inference.Vocabulary.Clustering.UPGMA.UPGMAClustering import UPGMAClustering
 from netzob.Inference.Vocabulary.Searcher import Searcher
 from netzob.Inference.Vocabulary.SearchResult import SearchResult
