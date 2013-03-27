@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Netzob 0.4.2~git\n"
 "Report-Msgid-Bugs-To: i18n@netzob.org\n"
 "POT-Creation-Date: 2013-02-12 11:23+0100\n"
-"PO-Revision-Date: 2013-02-25 05:56+0200\n"
+"PO-Revision-Date: 2013-03-27 08:51+0200\n"
 "Last-Translator: ran cheng <flyroomnuaa@gmail.com>\n"
 "Language-Team: Chinese (China) "
 "<http://qa.netzob.org/weblate/projects/netzob/master/zh_CN/>\n"
@@ -630,71 +630,73 @@ msgstr "汇聚的定义"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:530
 msgid "Definition of the WORD"
-msgstr ""
+msgstr "WORD 的定义"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:563
 #: src/netzob/Inference/Vocabulary/_VariableView.py:624
 msgid "Value:"
-msgstr ""
+msgstr "值："
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:599
 msgid "Definition of the Decimal WORD"
-msgstr ""
+msgstr "十位数  WORD（字，两字节）的定义"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:657
 msgid "Definition of the IPv4 Variable"
-msgstr ""
+msgstr "IPv4 变量的定义"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:696
 msgid "Start:"
-msgstr ""
+msgstr "开始："
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:704
 msgid "End:"
-msgstr ""
+msgstr "结束："
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:712
 msgid "Representation"
-msgstr ""
+msgstr "表示"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:717
 #: resources/static/netzob/ui/vocabulary/partitioning/simplePartitioning.glade:24
 msgid "Format:"
-msgstr ""
+msgstr "格式："
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:766
 msgid "Definition of the ReferencedVariable"
-msgstr ""
+msgstr "被引用变量的定义"
 
 #: src/netzob/Inference/Vocabulary/_VariableView.py:791
 msgid "Referenced Variable:"
-msgstr ""
+msgstr "被应用的变量："
 
 #: src/netzob/Inference/Vocabulary/Clustering/ClusteringProfile.py:55
 msgid "Original Clustering"
-msgstr ""
+msgstr "原始聚类"
 
 #: src/netzob/Inference/Vocabulary/Clustering/ClusteringProfile.py:55
 msgid "Execute an UPGMA clustering using original similarity measure."
-msgstr ""
+msgstr "使用原始相似性指标执行UPGMA聚类。"
 
 #: src/netzob/Inference/Vocabulary/Clustering/ClusteringProfile.py:62
 msgid "Discoverer by W.Cui"
-msgstr ""
+msgstr "发现者(一款工具) 由 W.Cui 完成"
 
 #: src/netzob/Inference/Vocabulary/Clustering/ClusteringProfile.py:62
 msgid ""
 "Cluster messages following their ASCII/Bin tokens as described in paper "
 "'Discoverer: Automatic Protocol Reverse Engineering from Network Traces'"
 msgstr ""
+"按照这篇文章“Discoverer:Automatic Protocol Reverse Engineering from Network "
+"Traces（发现者：基于网络报文数据的自动协议逆向工程）' 的思路完成依赖 ASCII/Bin 符号完成消息聚类"
 
 #: src/netzob/Inference/Vocabulary/Clustering/UPGMA/UPGMAClustering.py:76
 msgid "Equivalence Threshold is not valid"
-msgstr ""
+msgstr "非法的等价性阈值"
 
 #: src/netzob/UI/NetzobAbstractView.py:84
 msgid "Requested file ({0}) was not found."
-msgstr ""
+msgstr "请求的文件 ({0}) 无法找到"
 
 #: src/netzob/UI/Common/AboutDialog.py:58
 msgid ""
@@ -702,102 +704,105 @@ msgid ""
 "\n"
 "{1}"
 msgstr ""
+"Netzob 按照如下协议条款发布 {0}.\n"
+"\n"
+"{1}"
 
 #: src/netzob/UI/Common/Controllers/BugReporterController.py:85
 msgid "Impossible to contact the remote server."
-msgstr ""
+msgstr "无法与远程服务器通信。"
 
 #: src/netzob/UI/Common/Controllers/BugReporterController.py:115
 msgid "Close"
-msgstr ""
+msgstr "关闭"
 
 #: src/netzob/UI/Common/Controllers/BugReporterController.py:174
 msgid "The server's certificate won't be verified."
-msgstr ""
+msgstr "无法验证该服务器的证书。"
 
 #: src/netzob/UI/Common/Controllers/CustomTransformationFunctionController.py:144
 msgid "Verify below the transformed messages"
-msgstr ""
+msgstr "在变换后的消息下面进行验证"
 
 #: src/netzob/UI/Common/Controllers/CustomTransformationFunctionController.py:179
 msgid "Specify the name and the source code of your Function"
-msgstr ""
+msgstr "指定该函数的名称和源代码"
 
 #: src/netzob/UI/Common/Controllers/ProjectExportController.py:112
 msgid "No filename provided"
-msgstr ""
+msgstr "没有指定文件名"
 
 #: src/netzob/UI/Common/Controllers/ProjectExportController.py:119
 msgid "A file named \"{0}\" already exists. Do you want to replace it?"
-msgstr ""
+msgstr "文件 \"{0}\" 已经存在。要替换吗？"
 
 #: src/netzob/UI/Common/Controllers/ProjectExportController.py:127
 msgid ""
 "The file already exists in \"{0}\". Replacing it will overwrite its "
 "contents."
-msgstr ""
+msgstr "该文件在 \"{0}\" 中已经存在。替换它会覆盖已存在文件内容。"
 
 #: src/netzob/UI/Common/Controllers/ProjectExportController.py:130
 msgid "Replace"
-msgstr ""
+msgstr "替换"
 
 #: src/netzob/UI/Common/Controllers/ProjectExportController.py:147
 msgid "An error occurred while exporting the project."
-msgstr ""
+msgstr "导出项目时发生错误。"
 
 #: src/netzob/UI/Common/Controllers/ProjectImportController.py:90
 msgid "No file selected"
-msgstr ""
+msgstr "没有选择任何文件"
 
 #: src/netzob/UI/Common/Controllers/ProjectImportController.py:94
 msgid "The file doesn't define a valid project."
-msgstr ""
+msgstr "该文件没有定义一个合法的项目。"
 
 #: src/netzob/UI/Common/Controllers/WorkspaceConfigurationController.py:133
 msgid "The specified key is invalid!"
-msgstr ""
+msgstr "指定的密钥非法！"
 
 #: src/netzob/UI/Common/Controllers/WorkspaceConfigurationController.py:257
 msgid "Are you sure to delete the project \"{0}\" from the current workspace?"
-msgstr ""
+msgstr "确定从当前工作空间中删除项目 \"{0}\" 吗？"
 
 #: src/netzob/UI/Common/Controllers/WorkspaceConfigurationController.py:265
 msgid "If delete the project, your project files will be permanently lost."
-msgstr ""
+msgstr "如果删除该项目，当前项目文件将无法恢复。"
 
 #: src/netzob/UI/Common/Controllers/WorkspaceSelectorController.py:112
 msgid "No workspace provided."
-msgstr ""
+msgstr "没有提供任何工作空间。"
 
 #: src/netzob/UI/Common/Views/WorkspaceSelectorView.py:85
 msgid "Select the workspace"
-msgstr ""
+msgstr "选择工作空间"
 
 #: src/netzob/UI/Export/Controllers/RawExportController.py:93
 msgid "Select a symbol to see its XML definition"
-msgstr ""
+msgstr "选择一个符号以查看其 XML 定义"
 
 #: src/netzob/UI/Export/Controllers/RawExportController.py:100
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:176
 msgid "No XML definition found"
-msgstr ""
+msgstr "没有发现任何 XML 定义"
 
 #: src/netzob/UI/Export/Controllers/ScapyExportController.py:93
 #: src/netzob/UI/Export/Controllers/TextExportController.py:92
 msgid "Select a symbol to see its text definition"
-msgstr ""
+msgstr "选择一个符号以查看其 文本 定义"
 
 #: src/netzob/UI/Export/Controllers/ScapyExportController.py:100
 msgid "No scapy definition found"
-msgstr ""
+msgstr "没有发现 scapy 定义"
 
 #: src/netzob/UI/Export/Controllers/TextExportController.py:99
 msgid "No text definition found"
-msgstr ""
+msgstr "没有发现任何 text(文本)定义"
 
 #: src/netzob/UI/Export/Views/RawExportView.py:50
 msgid "Export project as raw XML"
-msgstr ""
+msgstr "导出项目为原生XML格式的文件"
 
 #: src/netzob/UI/Export/Views/RawExportView.py:93
 #: src/netzob/UI/Export/Views/ScapyExportView.py:94
@@ -805,50 +810,50 @@ msgstr ""
 #: src/netzob_plugins/Exporters/WiresharkExporter/WiresharkExporter/WiresharkExporterView.py:86
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:488
 msgid "Symbols"
-msgstr ""
+msgstr "符号"
 
 #: src/netzob/UI/Export/Views/ScapyExportView.py:50
 #: src/netzob/UI/Export/Views/TextExportView.py:50
 msgid "Export project as text"
-msgstr ""
+msgstr "导出项目为文本文件"
 
 #: src/netzob/UI/Grammar/Controllers/CreateCloseChannelTransitionController.py:125
 #: src/netzob/UI/Grammar/Controllers/CreateOpenChannelTransitionController.py:126
 msgid "Give a name to the transition"
-msgstr ""
+msgstr "为该转换（transition）提供一个名称"
 
 #: src/netzob/UI/Grammar/Controllers/CreateCloseChannelTransitionController.py:136
 #: src/netzob/UI/Grammar/Controllers/CreateOpenChannelTransitionController.py:137
 msgid "Give a valid time (> 0ms)"
-msgstr ""
+msgstr "提供一个合法的时间（大于0毫秒）"
 
 #: src/netzob/UI/Grammar/Controllers/CreateCloseChannelTransitionController.py:144
 #: src/netzob/UI/Grammar/Controllers/CreateOpenChannelTransitionController.py:156
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:168
 msgid "Select a start state."
-msgstr ""
+msgstr "选择一个初始状态。"
 
 #: src/netzob/UI/Grammar/Controllers/CreateCloseChannelTransitionController.py:148
 #: src/netzob/UI/Grammar/Controllers/CreateOpenChannelTransitionController.py:160
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:172
 msgid "Select an end state"
-msgstr ""
+msgstr "选择一个结束状态"
 
 #: src/netzob/UI/Grammar/Controllers/CreateCloseChannelTransitionController.py:170
 #: src/netzob/UI/Grammar/Controllers/CreateOpenChannelTransitionController.py:181
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:188
 msgid "An error occurred and prevented to retrieve the provided start state."
-msgstr ""
+msgstr "有错误发生导致无法获取提供的初始状态。"
 
 #: src/netzob/UI/Grammar/Controllers/CreateCloseChannelTransitionController.py:174
 #: src/netzob/UI/Grammar/Controllers/CreateOpenChannelTransitionController.py:185
 #: src/netzob/UI/Grammar/Controllers/CreateSemiStochasticTransitionController.py:192
 msgid "An error occurred and prevented to retrieve the provided end state."
-msgstr ""
+msgstr "有错误发生导致无法获取提供的结束状态。"
 
 #: src/netzob/UI/Grammar/Controllers/CreateCloseChannelTransitionController.py:185
 msgid "Provided start state already has a close channel transition."
-msgstr ""
+msgstr "提供的初始状态已经有一个关闭的通道转换（close channel transition）。"
 
 #: src/netzob/UI/Grammar/Controllers/CreateOpenChannelTransitionController.py:148
 msgid "Give a valid maximum number of attempt (> 1)"
