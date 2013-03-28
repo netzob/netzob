@@ -1154,9 +1154,9 @@ class Field(object):
                     endIndex = 0
                     # search message index of field start and end
                     for iCol in range(0, len(messageTable)):
-                        if (iCol < self.getIndex()):
+                        if (iCol < self.getGlobalIndex()):
                             globalIndex += len(messageTable[iCol])
-                        elif (iCol == self.getIndex()):
+                        elif (iCol == self.getGlobalIndex()):
                             startIndex = globalIndex
                             endIndex = startIndex + len(messageTable[iCol])
                             break
@@ -1195,9 +1195,9 @@ class Field(object):
                     endIndex = 0
                     # search message index of field start and end
                     for iCol in range(0, len(messageTable)):
-                        if (iCol < self.getIndex()):
+                        if (iCol < self.getGlobalIndex()):
                             globalIndex += len(messageTable[iCol])
-                        elif (iCol == self.getIndex()):
+                        elif (iCol == self.getGlobalIndex()):
                             startIndex = globalIndex
                             endIndex = startIndex + len(messageTable[iCol])
                             break

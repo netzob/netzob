@@ -98,7 +98,7 @@ class RelationsMakerController(object):
         logging.debug("Create Fields")
         # Create the payload field becomes a layer
         layerField = Field("Payload", payloadField.getRegex(), payloadField.getSymbol())
-        layerField.addField(payloadField)
+        layerField.addLocalField(payloadField)
 
         parentField = payloadField.getParentField()
         indexField = parentField.getLocalFields().index(payloadField)

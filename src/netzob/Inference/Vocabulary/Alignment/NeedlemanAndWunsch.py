@@ -333,7 +333,7 @@ class NeedlemanAndWunsch(object):
 
         field.removeLocalFields()
         for f in steps3Fields:
-            field.addField(f)
+            field.addLocalField(f)
 
         # Clean created fields (remove fields that produce only empty cells)
         field.removeEmptyFields(self.cb_status)
