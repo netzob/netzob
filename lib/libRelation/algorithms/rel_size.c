@@ -47,7 +47,7 @@ get_match(const char* cell_ref, const char* cell_rel,
     unsigned long val_integer;
     char* tmp_cell_rel;
 
-    printf("    ref=%s, rel=%s, start=%d, len=%d\n", cell_ref, cell_rel, start, len);
+    DLOG("    ref=%s, rel=%s, start=%d, len=%d\n", cell_ref, cell_rel, start, len);
 
 #if defined(__DEBUG__) && false
     char* new_rel;
@@ -66,9 +66,9 @@ get_match(const char* cell_ref, const char* cell_rel,
     // printf("PANNNN: %ud\n\n", val_integer);
     free(tmp_cell_rel);
 
-    printf("strlen(cell_rel)=%d\n", strlen(cell_rel));
+    DLOG("strlen(cell_rel)=%d\n", strlen(cell_rel));
     if (val_integer != 0 && val_integer == (strlen(cell_rel) / 2)) {
-      printf("      OK!!\n");
+      DLOG("      OK!!\n");
       ret = 0;
     }
     else
@@ -153,7 +153,7 @@ relation_size_find(const char*** messages, int row, int idx,
 
     for (i = 0; i < hlen; i++) {
       if (idx == 5)
-	printf("   i = %d\n", i);
+	DLOG("   i = %d\n", i);
         rel = cells[i];
         rel_len = strlen(rel);
         if (i != idx && rel && ref_len >= MIN_SIZE) {
