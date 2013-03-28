@@ -73,11 +73,11 @@ struct relation_algorithm_operations_list* search_algorithms(void);
 void clean_algo(struct relation_algorithm_operations_list* algo);
 
 # ifdef __DEBUG__
-#  define DLOG(args...) {						\
+#  define DLOG(...) {						\
     fprintf(stderr, "[%s:%d] ", __FILE__, __LINE__);			\
-    DLOG2(args);							\
+    DLOG2(__VA_ARGS__);							\
   }
-#  define DLOG2(args...) fprintf(stderr, args)
+#  define DLOG2(...) fprintf(stderr, __VA_ARGS__)
 # else
 #  define DLOG(...)
 #  define DLOG2(...)
