@@ -14,6 +14,9 @@
         <menuitem action="partitioningSimple" />
         <menuitem action="partitioningSmooth" />
         <menuitem action="partitioningReset" />
+	<placeholder name="relationsIdentifierMenuAdditions">
+		<menu action="relationsIdentifier" />
+	</placeholder>
         <menuitem action="compareSessions" />
         <menuitem action="findRelationsInSymbols" />
         <menuitem action="findRelationsInSessions" />
