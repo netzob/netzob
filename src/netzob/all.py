@@ -30,8 +30,9 @@
 ##    $ grep -hnir "^from netzob.Inference" src/netzob |grep -v '\\' | awk -F ":" '{print $2}' | sort|uniq
 
 # Common
-from netzob.Common.Automata import Automata
 from netzob.Common.ApplicativeData import ApplicativeData
+from netzob.Common.ApplicativeData import ApplicativeData, ApplicativeDataException
+from netzob.Common.Automata import Automata
 from netzob.Common.BugReporter import BugReporter
 from netzob.Common.BugReporter import BugReporter, BugReporterException
 from netzob.Common.C_Extensions.WrapperArgsFactory import WrapperArgsFactory
@@ -56,7 +57,7 @@ from netzob.Common.Functions.VisualizationFunction import VisualizationFunction
 from netzob.Common.Functions.Visualization.TextColorFunction import TextColorFunction
 from netzob.Common.Grammar import Grammar
 from netzob.Common.ImportedTrace import ImportedTrace
-from netzob.Common.Project import Project
+from netzob.Common import Project
 from netzob.Common import SharedLib
 from netzob.Common.LoggingConfiguration import LoggingConfiguration
 from netzob.Common.MMSTD.Actors.AbstractChannel import AbstractChannel
@@ -122,6 +123,7 @@ from netzob.Common.Plugins.Extensions.CapturerMenuExtension import CapturerMenuE
 from netzob.Common.Plugins.Extensions.ExportMenuExtension import ExportMenuExtension
 from netzob.Common.Plugins.Extensions.GlobalMenuExtension import GlobalMenuExtension
 from netzob.Common.Plugins.Extensions.NetzobExtension import NetzobExtension
+from netzob.Common.Plugins.Extensions.RelationsIdentifierMenuExtension import RelationsIdentifierMenuExtension
 from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
 from netzob.Common.Plugins.Importers.AbstractImporterController import AbstractImporterController
 from netzob.Common.Plugins.Importers.AbstractImporterView import AbstractImporterView
@@ -174,6 +176,7 @@ from netzob.Inference.Vocabulary.Clustering.AbstractDistanceAlgorithm import Abs
 from netzob.Inference.Vocabulary.Clustering.AbstractSimilarityMeasure import AbstractSimilarityMeasure
 from netzob.Inference.Vocabulary.Clustering.ClusteringProfile import ClusteringProfile
 from netzob.Inference.Vocabulary.Clustering.UPGMA.UPGMAClustering import UPGMAClustering
+from netzob.Inference.Vocabulary.RelationFinder import RelationFinder
 from netzob.Inference.Vocabulary.Searcher import Searcher
 from netzob.Inference.Vocabulary.SearchResult import SearchResult
 from netzob.Inference.Vocabulary.SearchTask import SearchTask
