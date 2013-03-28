@@ -71,7 +71,7 @@ class CustomFunction(TransformationFunction):
         if compiledCode is not None:
             try:
                 # Initialize locals with the message
-                locals = {'message': message}
+                locals = {'message': message, 'memory': self.memory}
                 interpreter = InteractiveInterpreter(locals)
                 # Run the compiled code
                 interpreter.runcode(compiledCode)
@@ -93,7 +93,7 @@ class CustomFunction(TransformationFunction):
         if compiledCode is not None:
             try:
                 # Initialize locals with the message
-                locals = {'message': message}
+                locals = {'message': message, 'memory': self.memory}
                 interpreter = InteractiveInterpreter(locals)
                 # Run the compiled code
                 interpreter.runcode(compiledCode)
@@ -153,4 +153,4 @@ class CustomFunction(TransformationFunction):
         return self.sourceCode
 
     def getSourceCodeReverse(self):
-        return self.sourceCode
+        return self.sourceCodeReverse

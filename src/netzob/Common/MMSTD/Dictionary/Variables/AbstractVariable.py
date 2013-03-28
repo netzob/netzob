@@ -145,7 +145,6 @@ class AbstractVariable(object):
         """
         value = bitarray()
         for index in self.tokenChoppedIndexes:
-            self.log.debug("TokenChoppedIndex {0}".format(index))
             value.extend(processingToken.getLinkedValue()[index][1])
         return value
 
@@ -154,7 +153,6 @@ class AbstractVariable(object):
                 Add a pointer (choppedIndex) in the tokenChoppedIndexes of this variable and its fathers.
                 This pointer shows that this variable and its fathers are responsible for a given part of the final value.
         """
-        self.log.debug("Add TokenChoppedIndex {0} to {1}".format(choppedIndex, self.getName()))
         self.tokenChoppedIndexes.append(choppedIndex)
         # Each father gains this value too.
         for father in self.fathers:

@@ -25,46 +25,39 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-import uuid
+#+---------------------------------------------------------------------------+
+#| Standard library imports
+#+---------------------------------------------------------------------------+
+from gettext import gettext as _
 
-from netzob import _libScoreComputation
+#+---------------------------------------------------------------------------+
+#| Related third party imports
+#+---------------------------------------------------------------------------+
+
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.C_Extensions.WrapperMessage import WrapperMessage
-from netzob.Common.Models.RawMessage import RawMessage
-from netzob.Common.NetzobException import NetzobException
+from netzob.Common.Plugins.ClusteringPlugin import ClusteringPlugin
+from ApplicativeDataClustering import ApplicativeDataClustering
 
 
-class WrapperArgsFactory(object):
-    """Factory dedicated to the manipulation of arguments passed to C wrapper.
-    This object will be transfered to the C extensions with its attributes which are:
-    - self.typeList : a map between function name and function pointer
-    - self.function : the function for which the parameters will be wrapped.
-    """
+class ApplicativeDataClusteringPlugin(ClusteringPlugin):
+    """ApplicativeDataClusteringPlugin: This plugin cluster messages following
+    the applicative data they contains"""
 
-    def __init__(self, function):
-        self.typeList = {
-            "_libScoreComputation.computeSimilarityMatrix": self.computeSimilarityMatrix,
-            "_libNeedleman.alignMessages": self.alignMessages}
+    __plugin_name__ = "ApplicativeDataClusterign"
+    __plugin_version__ = "1.0.0"
+    __plugin_description__ = _("Cluster messages following their inner applicative data")
+    __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>"
+    __plugin_copyright__ = "Georges Bossert and Frédéric Guihéry"
+    __plugin_license__ = "GPLv3+"
 
-        if(function in self.typeList.keys()):
-            self.function = function
-        else:
-            raise NetzobException("Function " + str(function) + " not implemented")
+    def __init__(self, netzob):
+        super(ClusteringPlugin, self).__init__(netzob)
+        self.entryPoints = []
 
-    def __str__(self):
-        return str(self.args)
+    def getEntryPoints(self):
+        return self.entryPoints
 
-    def computeSimilarityMatrix(self, symbols):
-        self.args = []
-        for s in symbols:
-            self.args.append(WrapperMessage(s.getMessages()[0], s.getID()))
-
-    def alignMessages(self, values):
-        self.args = []
-        for (data, tags) in values:
-            message = RawMessage(uuid.uuid4(), 0, data)
-            for pos, tag in tags.items():
-                message.setSemanticTag(tag, pos)
-            self.args.append(WrapperMessage(message, "Virtual symbol"))
+    def getAlgorithmClass(self):
+        return ApplicativeDataClustering

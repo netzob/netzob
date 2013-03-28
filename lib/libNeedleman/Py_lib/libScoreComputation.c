@@ -61,6 +61,7 @@ PyObject* py_computeSimilarityMatrix(__attribute__((unused))PyObject* self, PyOb
   unsigned int doInternalSlick = 0;
   unsigned int debugMode = 0;
   int i = 0;
+  unsigned int j = 0;
   PyObject *temp_cb;
   PyObject *temp2_cb;
   Bool bool_debugMode;
@@ -69,7 +70,7 @@ PyObject* py_computeSimilarityMatrix(__attribute__((unused))PyObject* self, PyOb
   t_message *mesmessages;
   long nbmessage = 0;
 
-  
+
   // Converts the arguments
   if (!PyArg_ParseTuple(args, "hOOhO", &doInternalSlick, &temp_cb, &temp2_cb, &debugMode,&wrapperFactory)) {
     PyErr_SetString(PyExc_TypeError, "Error while parsing the arguments provided to py_getHighestEquivalentGroup");
@@ -100,23 +101,24 @@ PyObject* py_computeSimilarityMatrix(__attribute__((unused))PyObject* self, PyOb
   if(parseRet){
     return NULL;
   }
-  
+
   //init matrix
   scoreMatrix = (float**) malloc (nbmessage*sizeof(float*));
   for(i=0;i<nbmessage;i++)
   {
     scoreMatrix[i] = calloc (nbmessage,sizeof(float*));
-  } 
-  
+  }
+
   // Convert debugMode parameter in a BOOL
   if (debugMode) {
     bool_debugMode = TRUE;
+    printf("Compute Similarity Matrix for %ld messages\n", nbmessage);
   } else {
     bool_debugMode = FALSE;
   }
-  
+
   computeSimilarityMatrix(nbmessage, mesmessages, bool_debugMode, scoreMatrix);
-  
+
   //Compute the scores recorded in a python list://TODO Return Factory
   PyObject *recordedScores = PyList_New((nbmessage*(nbmessage-1))/2);
   if (!recordedScores)
@@ -126,7 +128,7 @@ PyObject* py_computeSimilarityMatrix(__attribute__((unused))PyObject* self, PyOb
   int current_index = 0;
   for (i_record = 0; i_record < nbmessage; i_record++) {
       for(j_record = i_record + 1; j_record < nbmessage; j_record++){
-        
+
         PyObject *s = PyFloat_FromDouble((double)scoreMatrix[i_record][j_record]);
         PyObject *i_p = PyString_FromString(mesmessages[i_record].uid);
         PyObject *j_p = PyString_FromString(mesmessages[j_record].uid);
@@ -142,12 +144,16 @@ PyObject* py_computeSimilarityMatrix(__attribute__((unused))PyObject* self, PyOb
         current_index++;
      }
   }
-  
+
   //Free all //TODO: do a freeFactory
-  for(i=0;i<nbmessage;i++)
-  {
-  	free(mesmessages[i].mask);
-  	free(scoreMatrix[i]);
+  for(i=0; i<nbmessage; i++) {
+    for (j=0; j<mesmessages[i].len; j++) {
+      free(mesmessages[i].semanticTags[j]);
+    }
+    free(mesmessages[i].semanticTags);
+
+    free(mesmessages[i].mask);
+    free(scoreMatrix[i]);
   }
   free(scoreMatrix);
   free(mesmessages);

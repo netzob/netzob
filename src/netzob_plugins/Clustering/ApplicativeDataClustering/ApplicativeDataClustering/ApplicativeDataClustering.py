@@ -30,74 +30,79 @@
 #+---------------------------------------------------------------------------+
 from locale import gettext as _
 import logging
-from abc import abstractproperty, abstractmethod
-
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
+from netzob.Inference.Vocabulary.Searcher import Searcher
+from netzob.Inference.Vocabulary.Clustering.AbstractClusteringAlgorithm import AbstractClusteringAlgorithm
+from netzob.Common.Symbol import Symbol
+
 
 #+---------------------------------------------------------------------------+
-#| AbstractClusteringAlgorithm:
+#| ASAPClustering
 #+---------------------------------------------------------------------------+
-class AbstractClusteringAlgorithm(object):
-    """This abstract class must be inherited from all the clustering algorithms."""
+class ApplicativeDataClustering(AbstractClusteringAlgorithm):
 
-    @staticmethod
-    def getClusteringAlgorithmClassByID(id):
-        for algo in AbstractClusteringAlgorithm.getAllClusteringAlgorithms():
-            if algo().getID() == id:
-                return algo
-        return None
+    __algorithm_name__ = "ApplicativeDataClustering"
+    __algorithm_description = """no description yet"""
 
-    @staticmethod
-    def getAllClusteringAlgorithms():
-        defaults = []
-        # UPGMA
-        from netzob.Inference.Vocabulary.Clustering.UPGMA.UPGMAClustering import UPGMAClustering
-        defaults.append(UPGMAClustering)
+    def __init__(self):
+        super(ApplicativeDataClustering, self).__init__("appDataClustering")
 
-        # Add all the registered plugins
-        from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
-        from netzob.Common.Plugins.ClusteringPlugin import ClusteringPlugin
-        clusteringPlugins = NetzobPlugin.getLoadedPlugins(ClusteringPlugin)
-        for clusteringPlugin in clusteringPlugins:
-            defaults.append(clusteringPlugin.getAlgorithmClass())
+    def execute(self, symbols):
+        """Execute the clustering"""
+        self.log = logging.getLogger(__name__)
 
-        return defaults
+        if symbols is None or len(symbols) < 1:
+            self.log.debug("No symbol provided")
+            return []
 
-    __algorithm_name__ = abstractproperty()
-    __algorithm_description = abstractproperty()
+        messages = []
+        for symbol in symbols:
+            messages.extend(symbol.getMessages())
 
-    def __init__(self, id):
-        self.logger = logging.getLogger(__name__)
-        self.id = id
+        project = symbols[0].getProject()
+        voca = project.getVocabulary()
 
-    def getID(self):
-        return self.id
+        searcher = Searcher(project)
+        groups = dict()
+        for message in messages:
+            founds = searcher.searchContextInMessage(message)
+            tokens = []
+            for f in founds:
+                token = None
+                for appData in voca.getApplicativeData():
+                    if appData.getValue() == f.getDescription():
+                        token = str(appData.getName())
+                        break
+                if token is None:
+                    token = f.getDescription()
 
-    def getName(self):
-        """Returns the name of the clustering algorithm"""
-        return self.__algorithm_name__
+                tokens.append(token)
 
-    def getDescription(self):
-        """Returns the description of clustering algorithm"""
-        return self.__algorithm_description
+            strToken = ";".join(tokens)
+            if strToken in groups.keys():
+                groups[strToken].append(message)
+            else:
+                groups[strToken] = [message]
 
-    @abstractmethod
-    def execute(self):
-        self.logger.warning("This method must be defined by the inherited class")
+        newSymbols = []
+        for groupSignature, groupMessages in groups.items():
+            if len(groupSignature) == 0:
+                groupSignature = "None"
+            sym = Symbol(uuid.uuid4(), groupSignature, project)
+            sym.addMessages(groupMessages)
+            newSymbols.append(sym)
+        return newSymbols
 
-    @abstractmethod
-    def getConfigurationController(self):
-        self.logger.warning("This method must be defined by the inherited class")
-
-    @abstractmethod
     def getConfigurationParameters(self):
-        """This method should be defined in every clustering algorithms. Its implementation
-        should return a dictionnary containing the id of the parameter and its string value."""
-        self.logger.warning("This method must be defined by the inherited class")
+        parameters = dict()
+        return parameters
 
-    @abstractmethod
     def setConfigurationParameters(self, parameters):
-        self.logger.warning("This method must be defined by the inherited class")
+        pass
+
+    def getConfigurationController(self):
+        return None

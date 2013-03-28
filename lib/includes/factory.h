@@ -35,6 +35,29 @@
 #include <stdarg.h>
 
 int parseArgs(PyObject* factobj, ...);
+
+/**
+   parseLibscoreComputation:
+
+   This function parses the arguments wrapper following a specific format.
+   The definition of this format can be found in the Python function:
+   netzob.Common.C_Extensions.WrapperArgsFactory:WrapperArgsFactory.computeSimilarityMatrix()
+   Once parsed, the wrapper reveal arguments which will be stored in the args parameter.
+   Format:
+   - List<Message> with Message: (alignment, mask, length, uid)
+*/
 void parseLibscoreComputation(PyObject* factobj, va_list args);
+
+void parseLibNeedleman(PyObject* factobj, va_list args);
+
+/**
+   parseMessage:
+
+   This function parses a python Netzob message to its C representation
+   @param item : the PyObject which host the python representation of the message
+   @param message : the message which should host the python extracted message's information
+   @return void
+*/
+void parseMessage(PyObject * item, t_message * message);
 
 #endif

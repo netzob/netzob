@@ -57,7 +57,7 @@ class TypeConvertor():
     @staticmethod
     def string2bin(aStr, endian='big'):
         result = bitarray(endian=endian)
-        result.fromstring(aStr)
+        result.frombytes(aStr)
         return result
 
     @staticmethod
@@ -97,7 +97,7 @@ class TypeConvertor():
     @staticmethod
     def hex2bin(hex):
         result = bitarray(endian='big')
-        result.fromstring(hex)
+        result.frombytes(hex)
         return result
 
     @staticmethod
@@ -341,7 +341,7 @@ class TypeConvertor():
         res = bitarray()
         for c in raw:
             tmp = bitarray()
-            tmp.fromstring(chr(int(c, 16)))
+            tmp.frombytes(chr(int(c, 16)))
             tmp = str(tmp)[10:len(str(tmp)) - 2][4:]
             res.extend(tmp)
         return res.to01()
@@ -354,7 +354,7 @@ class TypeConvertor():
         res = bitarray()
         for c in raw:
             tmp = bitarray()
-            tmp.fromstring(chr(int(c, 16)))
+            tmp.frombytes(chr(int(c, 16)))
             tmp = str(tmp)[10:len(str(tmp)) - 2][4:]
             res.extend(tmp)
         return res
@@ -401,20 +401,36 @@ class TypeConvertor():
     #|     create a serialization view of the values
     #| @returns (serialized, format)
     #+----------------------------------------------
-    def serializeValues(values, unitSize):
+    def serializeValues(values, semanticTags, unitSize):
+        logger = logging.getLogger('netzob.Common.Type.TypeConvertor')
+
+        # retrieve the number of value to serialize
+        nbValue = len(values)
+        if nbValue != len(semanticTags):
+            logger.error("That's a big error, values and semantic are not the same length")
+            return (None, None)
+
         serialMessages = ""
         format = ""
-        for value in values:
+
+        for iValue in range(0, nbValue):
+            value = values[iValue]
+            tags = semanticTags[iValue]
+
+            newTags = dict()
             if unitSize == 8:
                 data = value
+                newTags = tags
             elif unitSize == 4:
                 data = "".join(["0" + i for i in value])
+                logging.warn("We don't support semantic tags when the data are serialized over 4 bits")
             else:
                 logging.warn("Serializing at {0} unit size not yet implemented".format(unitSize))
                 return
 
             format += str(len(data) / 2) + "M"
             serialMessages += TypeConvertor.netzobRawToPythonRaw(data)
+
         return (serialMessages, format)
 
     @staticmethod
@@ -432,6 +448,19 @@ class TypeConvertor():
             size_message = int(str_size_message)
             result.append(TypeConvertor.pythonRawToNetzobRaw(serializedContents[total:total + size_message]))
             total += size_message
+        return result
+
+    @staticmethod
+    def deserializeSemanticTags(tags, unitSize):
+        result = dict()
+        arTags = tags.split(';')
+        j = 0
+        for iTag, tag in enumerate(arTags):
+            result[j] = tag
+            if unitSize == 8:
+                j = j + 1
+                result[j] = tag
+            j += 1
         return result
 
     @staticmethod
@@ -512,13 +541,13 @@ class TypeConvertor():
             return bina
         else:
             bina = bitarray(endian=theEndian)
-            bina.fromstring(stri)
+            bina.frombytes(stri)
             return bina
 
     @staticmethod
     def binB2string(bina):
         if bina is not None:
-            return bina.tostring()
+            return bina.tobytes()
         else:
             return None
 

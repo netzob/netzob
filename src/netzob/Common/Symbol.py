@@ -300,6 +300,15 @@ class Symbol(AbstractSymbol):
     def getPatternString(self):
         return str(self.pattern[0]) + ";" + str([str(i) for i in self.pattern[1]])
 
+    def getRegex(self):
+        """getRegex:
+        Concat regexes of symbol's fields (extendedFields) in a regex
+        which should represent the symbol"""
+        regex = []
+        for field in self.getExtendedFields():
+            regex.append(field.getRegex())
+        return "".join(regex)
+
     def getField(self):
         return self.field
 

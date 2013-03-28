@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -25,46 +26,36 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-import uuid
+#+----------------------------------------------------------------------------
+#| Imports
+#+----------------------------------------------------------------------------
+from setuptools import setup
+import sys
 
-from netzob import _libScoreComputation
-#+---------------------------------------------------------------------------+
-#| Local application imports
-#+---------------------------------------------------------------------------+
-from netzob.Common.C_Extensions.WrapperMessage import WrapperMessage
-from netzob.Common.Models.RawMessage import RawMessage
-from netzob.Common.NetzobException import NetzobException
+package = 'ApplicativeDataClustering'
+resourcesPath = "../../../../resources/"
 
+sys.path.append(resourcesPath)
+from sdist.utils import find_data_files, opj
+pluginsStaticResourcesPath = opj(resourcesPath, "static/netzob_plugins/", package)
 
-class WrapperArgsFactory(object):
-    """Factory dedicated to the manipulation of arguments passed to C wrapper.
-    This object will be transfered to the C extensions with its attributes which are:
-    - self.typeList : a map between function name and function pointer
-    - self.function : the function for which the parameters will be wrapped.
+dependencies = [
+    'Netzob >= 0.4.1-git'
+]
+
+setup(
+    name="Netzob-ApplicativeDataClustering",
+    version="0.1",
+    author="Georges Bossert",
+    author_email="contact@netzob.org",
+    packages=[package],
+    install_requires=dependencies,
+    data_files=find_data_files(opj("share", "netzob", "plugins", package),
+                               pluginsStaticResourcesPath,
+                               '*.glade',
+                               recursive=True),
+    entry_points="""
+    [netzob.plugins]
+    ApplicativeDataClustering=ApplicativeDataClustering.ApplicativeDataClusteringPlugin:ApplicativeDataClusteringPlugin
     """
-
-    def __init__(self, function):
-        self.typeList = {
-            "_libScoreComputation.computeSimilarityMatrix": self.computeSimilarityMatrix,
-            "_libNeedleman.alignMessages": self.alignMessages}
-
-        if(function in self.typeList.keys()):
-            self.function = function
-        else:
-            raise NetzobException("Function " + str(function) + " not implemented")
-
-    def __str__(self):
-        return str(self.args)
-
-    def computeSimilarityMatrix(self, symbols):
-        self.args = []
-        for s in symbols:
-            self.args.append(WrapperMessage(s.getMessages()[0], s.getID()))
-
-    def alignMessages(self, values):
-        self.args = []
-        for (data, tags) in values:
-            message = RawMessage(uuid.uuid4(), 0, data)
-            for pos, tag in tags.items():
-                message.setSemanticTag(tag, pos)
-            self.args.append(WrapperMessage(message, "Virtual symbol"))
+)

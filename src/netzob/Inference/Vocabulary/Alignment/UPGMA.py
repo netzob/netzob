@@ -91,7 +91,7 @@ class UPGMA(object):
         @param donePercent: a float between 0 and 100 included
         @param currentMessage: a str which represents the current alignment status"""
         if self.cb_status is None:
-            self.log.info("[UPGMA status]" + str(donePercent) + "% " + currentMessage)
+            self.log.info("[UPGMA status]" + str(donePercent) + "% " + str(currentMessage))
         else:
             self.cb_status(stage, donePercent, currentMessage)
 
@@ -106,23 +106,22 @@ class UPGMA(object):
 
         self.cb_executionStatus(0, 0, "Clustering into symbols...")
         self.processUPGMA()
-        self.cb_executionStatus(1, 100, None)
+        self.cb_executionStatus(1, 100, "Clustering into symbols finish")
         # Retrieve the alignment of each symbol and the build the associated regular expression
-        self.cb_executionStatus(2, 0, "Compute the definition for each cluster...")
 
         if self.isFinish():
             return None
 
+        self.cb_executionStatus(2, 0, "Align messages of each clusters...")
         self.currentAlignment = NeedlemanAndWunsch(self.unitSize, self.project, False, self.cb_status)
         self.currentAlignment.absoluteStage = 2
         self.currentAlignment.statusRatio = len(self.symbols)
         self.currentAlignment.statusRatioOffset = 0
 
         for symbol in self.symbols:
-
             if self.isFinish():
                 return None
-
+            self.log.info("Align messages from symbol {0}".format(symbol.getName()))
             self.currentAlignment.alignField(symbol.getField())
             self.currentAlignment.statusRatioOffset = self.currentAlignment.statusRatioOffset + 1
 

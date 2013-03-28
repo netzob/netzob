@@ -37,7 +37,6 @@ from lxml import etree
 #| Local Imports
 #+---------------------------------------------------------------------------+
 from netzob.Inference.Vocabulary.Clustering.UPGMA.UPGMAClustering import UPGMAClustering
-from netzob.Inference.Vocabulary.Clustering.Discoverer.DiscovererClustering import DiscovererClustering
 from netzob.Inference.Vocabulary.Clustering.AbstractClusteringAlgorithm import AbstractClusteringAlgorithm
 
 
@@ -57,13 +56,6 @@ class ClusteringProfile(object):
         UPGMAAlgorithm = UPGMAClustering()
         originalProfile.addAlgorithm(UPGMAAlgorithm)
         defaults.append(originalProfile)
-
-        # Discoverer
-        discovererProfile = ClusteringProfile(_("Discoverer by W.Cui"), _("Cluster messages following their ASCII/Bin tokens as described in paper 'Discoverer: Automatic Protocol Reverse Engineering from Network Traces'"))
-        discovererProfile.setWritable(False)
-        DiscovererAlgorithm = DiscovererClustering()
-        discovererProfile.addAlgorithm(DiscovererAlgorithm)
-        defaults.append(discovererProfile)
 
         return defaults
 

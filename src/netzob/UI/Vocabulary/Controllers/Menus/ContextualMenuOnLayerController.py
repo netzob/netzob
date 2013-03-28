@@ -118,34 +118,45 @@ class ContextualMenuOnLayerController(object):
     def applyTransformationFunction_cb(self, event, transformationFunction):
         """Add the selected transformation function"""
 
-        # Computes if the current included messages are already functioned
-        allTransformed = True
+        ## Apply transformation function on current symbol/layer
+        found = False
+        for function in self.layers[0].getTransformationFunctions():
+            if function.getName() == transformationFunction.getName():
+                found = True
+        if not found:
+            self.layers[0].addTransformationFunction(transformationFunction)
+            self.vocabularyController.updateLeftPanel()
+            self.vocabularyController.updateSelectedMessageTable()
 
-        for message in self.layers[0].getMessages():
-            found = False
-            for function in message.getTransformationFunctions():
-                if function.getName() == transformationFunction.getName():
-                    found = True
-            if not found:
-                allTransformed = False
-                break
+        # ## Apply transformation function on each message of the current group
+        # # Computes if the current included messages are already functioned
+        # allTransformed = True
 
-        if not allTransformed:
-            #Activate function
-            for message in self.layers[0].getMessages():
-                found = False
-                for function in message.getTransformationFunctions():
-                    if function.getName() == transformationFunction.getName():
-                        found = True
-                if not found:
-                    message.addTransformationFunction(transformationFunction)
-        else:
-            # Deactivate function
-            for message in self.layers[0].getMessages():
-                message.removeTransformationFunction(transformationFunction)
+        # for message in self.layers[0].getMessages():
+        #     found = False
+        #     for function in message.getTransformationFunctions():
+        #         if function.getName() == transformationFunction.getName():
+        #             found = True
+        #     if not found:
+        #         allTransformed = False
+        #         break
 
-        self.layers[0].resetPartitioning()
-        self.vocabularyController.updateSelectedMessageTable()
+        # if not allTransformed:
+        #     #Activate function
+        #     for message in self.layers[0].getMessages():
+        #         found = False
+        #         for function in message.getTransformationFunctions():
+        #             if function.getName() == transformationFunction.getName():
+        #                 found = True
+        #         if not found:
+        #             message.addTransformationFunction(transformationFunction)
+        # else:
+        #     # Deactivate function
+        #     for message in self.layers[0].getMessages():
+        #         message.removeTransformationFunction(transformationFunction)
+
+        # self.layers[0].resetPartitioning()
+        # self.vocabularyController.updateSelectedMessageTable()
 
     def createCustomFunction_cb(self, event):
         """Callback executed when the user

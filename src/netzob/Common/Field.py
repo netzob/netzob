@@ -353,8 +353,12 @@ class Field(object):
         fixedIndex = fixedField.getGlobalIndex()
 
         uniqueValues = fixedField.getUniqValuesByField()
-        self.setName("Symbol-" + str(uniqueValues[0]))
+        if len(uniqueValues) == 0:
+            return
+
+        self.setName("{0}_{1}".format(self.getSymbol().getName(), str(uniqueValues[0])))
         for uniqueValue in uniqueValues[1:]:
+
             # Extract new messages (that can be sub-parts of entire messages if the user work on a layer)
             newMessages = []
             for message in self.getMessages():
@@ -373,7 +377,8 @@ class Field(object):
             symbol.addMessages(newMessages)
             newField = self.dupplicate(symbol)
             symbol.setField(newField)
-            symbol.setName("Symbol-" + str(uniqueValue))
+            symbol.setName("{0}_{1}".format(self.getSymbol().getName(), str(uniqueValue)))
+
             project.getVocabulary().addSymbol(symbol)
 
     #+----------------------------------------------
@@ -726,12 +731,13 @@ class Field(object):
         """concatFields: concat all the next fields with the current one
         until the lastField is reached.
         @return: a tupple that indicates if the function has correctly been processed, and if not, the error message."""
-        logging.debug("Concat field from {0} to {1}".format(self.getName(), lastField.getName()))
 
         # If no last field is provided we stop here
         if lastField is None:
             msg = "Last field is not provided."
             return (False, msg)
+
+        logging.debug("Concat field from {0} to {1}".format(self.getName(), lastField.getName()))
 
         # Retrieve all the fields at the same level
         parentField = self.getParentField()
@@ -806,13 +812,19 @@ class Field(object):
         regex = ""
         optional = False
         if field1.isRegexOptional():
-            regex += field1.getRegex()[1:-2]
+            if field1.isStatic():
+                regex += ".{," + str(len(field1.getRegexData())) + "}"
+            else:
+                regex += field1.getRegex()[1:-2]
             optional = True
         else:
             regex += field1.getRegex()[1:-1]
 
         if field2.isRegexOptional():
-            regex += field2.getRegex()[1:-2]
+            if field2.isStatic():
+                regex += ".{," + str(len(field2.getRegexData())) + "}"
+            else:
+                regex += field2.getRegex()[1:-2]
             optional = True
         else:
             regex += field2.getRegex()[1:-1]
@@ -1114,6 +1126,87 @@ class Field(object):
                 messageElt = messageTable[self.getGlobalIndex()]
                 res.append(messageElt)
             return res
+
+    def getSemanticTagsByMessage(self):
+        # Not the same than getSemanticTags
+        # the returned position is global to the message and
+        # not local to the field
+        #result[i]=dict()   # dict[0...half-byte] = tag
+        result = dict()
+
+        # First we verify the field exists in the symbol
+        if not self in self.getSymbol().getAllFields():
+            logging.warn("The computing field is not part of the current symbol")
+            return result
+
+         # Retrieve all sub-cells
+        if self.isLayer():
+            logging.warn("OUPS, this is not yet supported, sorry for that !")
+            return result
+        else:  # A leaf field
+            for message in self.getMessages():
+                tmpResult = dict()
+                messageTable = message.applyAlignment()
+                semanticTags = message.getSemanticTags()
+                if len(semanticTags) > 0:
+                    globalIndex = 0
+                    startIndex = 0
+                    endIndex = 0
+                    # search message index of field start and end
+                    for iCol in range(0, len(messageTable)):
+                        if (iCol < self.getIndex()):
+                            globalIndex += len(messageTable[iCol])
+                        elif (iCol == self.getIndex()):
+                            startIndex = globalIndex
+                            endIndex = startIndex + len(messageTable[iCol])
+                            break
+                    if (endIndex > startIndex):
+                        for pos, tag in semanticTags.items():
+                            if pos >= startIndex and pos < endIndex:
+                                tmpResult[pos] = tag
+                result[message] = tmpResult
+            return result
+
+    def getSemanticTags(self):
+        """getSemanticTags:
+        Returns the semantic tags and their locations
+        for the specified field"""
+
+        #result[i]=dict()   # dict[0...half-byte] = tag
+        result = []
+
+        # First we verify the field exists in the symbol
+        if not self in self.getSymbol().getAllFields():
+            logging.warn("The computing field is not part of the current symbol")
+            return result
+
+         # Retrieve all sub-cells
+        if self.isLayer():
+            logging.warn("OUPS, this is not yet supported, sorry for that !")
+            return result
+        else:  # A leaf field
+            for message in self.getMessages():
+                tmpResult = dict()
+                messageTable = message.applyAlignment()
+                semanticTags = message.getSemanticTags()
+                if len(semanticTags) > 0:
+                    globalIndex = 0
+                    startIndex = 0
+                    endIndex = 0
+                    # search message index of field start and end
+                    for iCol in range(0, len(messageTable)):
+                        if (iCol < self.getIndex()):
+                            globalIndex += len(messageTable[iCol])
+                        elif (iCol == self.getIndex()):
+                            startIndex = globalIndex
+                            endIndex = startIndex + len(messageTable[iCol])
+                            break
+                    if (endIndex > startIndex):
+                        for pos, tag in semanticTags.items():
+                            if pos >= startIndex and pos < endIndex:
+                                tmpResult[pos - startIndex] = tag
+                result.append(tmpResult)
+            return result
 
     def getUniqValuesByField(self):
         res = []
