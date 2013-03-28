@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 
 #+---------------------------------------------------------------------------+
@@ -82,3 +82,9 @@ class L4NetworkMessage(L3NetworkMessage):
 
     def getL4DestinationPort(self):
         return self.l4DestinationPort
+
+    def getSource(self):
+        return str(self.getL3SourceAddress())  + ":" + str(self.getL4SourcePort())
+
+    def getDestination(self):
+        return str(self.getL3DestinationAddress())  + ":" + str(self.getL4DestinationPort())

@@ -18,6 +18,7 @@
     			minOccurs="0">
     		</element>
     		<element name="functions" type="netzob-ws:Functions" minOccurs="0" maxOccurs="1"></element>
+    		<element name="clusteringProfiles" type="netzob-ws:ClusteringProfiles" minOccurs="0" maxOccurs="1"></element>
     	</sequence>
     	<attribute name="creation_date" type="dateTime"
     		use="required">
@@ -73,8 +74,47 @@
             <element name="traces" type="string"></element>
             <element name="logging" type="string" minOccurs="0"></element>
 	    <element name="prototypes" type="string" minOccurs="0"></element>
+	    <element name="enable_bug_reporting" type="boolean" minOccurs="0"></element>
     	</sequence>
     </complexType>
+
+    <complexType name="ClusteringProfiles">
+      <sequence>
+	<element name="clusteringProfile" type="netzob-ws:ClusteringProfile" maxOccurs="unbounded" minOccurs="0"></element>
+      </sequence>
+    </complexType>
+
+    <complexType name="ClusteringProfile">
+      <sequence>
+	<element name="description" type="string" minOccurs="0" maxOccurs="1"></element>
+	<element name="clusteringAlgorithms" type="netzob-ws:ClusteringAlgorithms" minOccurs="0" maxOccurs="1"></element>
+      </sequence>      
+      <attribute name="name" type="string" use="required"></attribute>
+    </complexType>
+
+    <complexType name="ClusteringAlgorithms">
+      <sequence>
+	<element name="clusteringAlgorithm" type="netzob-ws:ClusteringAlgorithm" minOccurs="0" maxOccurs="unbounded"></element>
+      </sequence>      
+    </complexType>
+
+    <complexType name="ClusteringAlgorithm">
+      <sequence>
+	<element name="parameter" type="netzob-ws:ClusteringAlgorithmParameter" minOccurs="0" maxOccurs="unbounded"></element>
+      </sequence>
+      <attribute name="id" type="string" use="required"></attribute>
+    </complexType>
+
+    <complexType name="ClusteringAlgorithmParameter">
+      <simpleContent>
+        <extension base="string">
+	  <attribute name="name" type="string"></attribute>
+	</extension>
+      </simpleContent>
+    </complexType>
+
+
+
 
 	<complexType name="Functions">
 		<sequence>

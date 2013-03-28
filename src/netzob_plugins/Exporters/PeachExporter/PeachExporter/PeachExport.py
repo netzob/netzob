@@ -28,16 +28,34 @@
 #+---------------------------------------------------------------------------+
 #| Global Imports                                                            |
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
-import logging
+from gettext import gettext as _
 from lxml import etree
+from netzob.Common.MMSTD.Actors.MMSTDVisitor import MMSTDVisitor
+from netzob.Common.MMSTD.Actors.NetworkChannels.NetworkClient import \
+    NetworkClient
+from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import \
+    AggregateVariable
+from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import \
+    AlternateVariable
+from netzob.Common.MMSTD.Dictionary.Variables.ComputedRelationVariable import \
+    ComputedRelationVariable
+from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
+from netzob.Common.MMSTD.Dictionary.Variables.RepeatVariable import \
+    RepeatVariable
+from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
+from netzob.Common.MMSTD.Symbols.impl.UnknownSymbol import UnknownSymbol
+from netzob.Common.MMSTD.Transitions.impl.CloseChannelTransition import \
+    CloseChannelTransition
+from netzob.Common.MMSTD.Transitions.impl.OpenChannelTransition import \
+    OpenChannelTransition
+from netzob.Common.MMSTD.Transitions.impl.SemiStochasticTransition import \
+    SemiStochasticTransition
+import logging
 import string
-from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Local Imports                                                             |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Memory import Memory
 
 
 class PeachExport(object):
@@ -45,6 +63,8 @@ class PeachExport(object):
             Utility for exporting netzob information into Peach pit file.
             Simplify the construction of a fuzzer with Peach.
     """
+
+    UNKNOWNSYMBOL_MAX_SIZE = 1024
 
     def __init__(self, netzob):
         """Constructor of PeachExport:
@@ -55,30 +75,48 @@ class PeachExport(object):
         self.netzob = netzob
         self.variableOverRegex = True
         self.mutateStaticFields = True
+        self.dictSymbol = dict()  # Associate each symbol to a unique simple number.
+        self.normSymbols()
 
-    def getPeachDefinition(self, symbolID, entireProject):
+    def normSymbols(self):
+        """normSymbols:
+                Associate a simple number to each symbol of the project.
+        """
+        project = self.netzob.getCurrentProject()
+        vocabulary = project.getVocabulary()
+        dataModelid = 1  # 0 is for the initial state.
+        for symbol in vocabulary.getSymbols():
+            self.dictSymbol[str(symbol.getID())] = dataModelid
+            dataModelid += 1
+        # An empty symbol leads to the initial state.
+        self.dictSymbol["-1"] = dataModelid
+        dataModelid += 1
+        # An unknown symbol has its own data model.
+        self.dictSymbol["-2"] = dataModelid
+        dataModelid += 1
+
+    def getPeachDefinition(self, symbolID, level):
         """getXMLDefinition:
                 Returns the Peach pit file (XML format) made on the  netzob information.
 
                 @type symbolID: integer
                 @param symbolID: a number which identifies the symbol the xml definition of which we need.
-                @type entireProject: boolean
-                @param entireProject: true if we want to see the Peach definition of the whole project, false elsewhere.
+                @type level: integer
+                @param level:
+                    0: one-state fuzzer ;
+                    1: randomized state order fuzzer ;
+                    2: randomized transitions stateful fuzzer ;
+                    3: fully stateful fuzzer.
                 @rtype: string
                 @return: the string representation of the generated Peach xml pit file.
         """
         logging.debug("Targeted symbolID: {0}".format(str(symbolID)))
-        # TODO(stateful fuzzer): Make one state model for each state of the protocol.
         xmlRoot = etree.Element("Peach")
-        xmlInclude = etree.SubElement(xmlRoot, "Include", ns="default", src="file:defaults.xml")
+        etree.SubElement(xmlRoot, "Include", ns="default", src="file:defaults.xml")
         xmlImport = etree.SubElement(xmlRoot, "Import")
         xmlImport.attrib["import"] = "PeachzobAddons"
 
-        if entireProject:
-            self.makeAllDataModels(xmlRoot)
-            self.makeAllStateModels(xmlRoot)
-
-        else:
+        if level == 0:
             project = self.netzob.getCurrentProject()
             vocabulary = project.getVocabulary()
             symbols = vocabulary.getSymbols()
@@ -87,35 +125,46 @@ class PeachExport(object):
                 if str(symbol.getID()) == symbolID:
                     resSymbol = symbol
                     break
-            if resSymbol == None:
-                logging.warning("Impossible to retrieve the symbol having the id {0}".format(str(symbolID)))
+            if resSymbol is None:
+                logging.warning(_("Impossible to retrieve the symbol having the id {0}").format(str(symbolID)))
                 return None
             else:
-                self.makeADataModel(xmlRoot, symbol, 0)
-                self.makeAStateModel(xmlRoot)
+                self.makeDataModel(xmlRoot, symbol)
+                self.makeSingleStateModel(xmlRoot, symbol)
 
+        if level == 1:
+            self.makeAllDataModels(xmlRoot)
+            self.makeBasicStateModel(xmlRoot)
+
+        if level == 2:
+            self.makeAllDataModels(xmlRoot)
+            self.makeProbaStateModel(xmlRoot)
+
+        if level == 3:  # TODO: implement this.
+            self.makeAllDataModels(xmlRoot)
+            self.makeBasicStateModel(xmlRoot)
+
+        # Add the supplementary xml info.
         xmlAgent = etree.SubElement(xmlRoot, "Agent", name="DefaultAgent")
-        xmlCommentAgent = etree.Comment("TODO: Configure the Agents.")
+        xmlCommentAgent = etree.Comment("Todo: Configure the Agents.")
         xmlAgent.append(xmlCommentAgent)
 
         xmlTest = etree.SubElement(xmlRoot, "Test", name="DefaultTest")
-        xmlCommentTest1 = etree.Comment('TODO: Enable Agent <Agent ref="TheAgent"/> ')
-        xmlCommentTest2 = etree.Comment("TODO: Configure the test. The following lines are given in example.")
-        xmlTest.append(xmlCommentTest1)
-        xmlTest.append(xmlCommentTest2)
-        xmlTestStateModel = etree.SubElement(xmlTest, "StateModel", ref="SimpleStateModel")
-        xmlPublisher = etree.SubElement(xmlTest, "Publisher")
-        xmlPublisher.attrib["class"] = "udp.Udp"
-        xmlParamHost = etree.SubElement(xmlPublisher, "Param", name="host", value="0.0.0.0")
-        xmlParamPort = etree.SubElement(xmlPublisher, "Param", name="port", value="0000")
+        xmlCommentTest = etree.Comment('Todo: Enable Agent <Agent ref="TheAgent"/> ')
+
+        xmlTest.append(xmlCommentTest)
+        etree.SubElement(xmlTest, "StateModel", ref="stateModel")
+
+        # Create the publisher.
+        self.makePublisher(xmlTest)
 
         xmlRun = etree.SubElement(xmlRoot, "Run", name="DefaultRun")
-        xmlCommentRun = etree.Comment("TODO: Configure the run.")
+        xmlCommentRun = etree.Comment("Todo: Configure the run.")
         xmlRun.append(xmlCommentRun)
         xmlLogger = etree.SubElement(xmlRun, "Logger")
         xmlLogger.attrib["class"] = "logger.Filesystem"
-        xmlParamLogger = etree.SubElement(xmlLogger, "Param", name="path", value="logs")
-        xmlTestRed = etree.SubElement(xmlRun, "Test", ref="DefaultTest")
+        etree.SubElement(xmlLogger, "Param", name="path", value="logs")
+        etree.SubElement(xmlRun, "Test", ref="DefaultTest")
 
         tree = etree.ElementTree(xmlRoot)
         toStringedTree = etree.tostring(tree, pretty_print=True)
@@ -130,9 +179,55 @@ class PeachExport(object):
         result = result + toStringedTree
         return result
 
+    def makePublisher(self, xmlFather):
+        """makePublisher:
+                Retrieve information from Netzob simulator. These information as the communication protocol, the targeted IP and port are used to make the Peach publisher.
+
+                @type xmlFather: lxml.etree.element
+                @param xmlFather: the xml tree father of the current element
+        """
+        simulator = self.netzob.getCurrentProject().getSimulator()
+        mmstdVisitor = None
+        visitorCount = 0
+        for actor in simulator.getActors():
+            # We search a MMSTDVisitor. Actors might be of other types.
+            if actor.getType() == MMSTDVisitor.TYPE:
+                try:  # Informations might be false or the communication channel migth not be an AbstractChannel.
+                    mmstdVisitor = actor
+                    comChannel = mmstdVisitor.getAbstractionLayer().getCommunicationChannel()
+
+                    logging.debug("Communication layer : {0}".format(str(comChannel)))
+                    logging.debug("Protocol : {0}".format(str(comChannel.getProtocol())))
+                    if comChannel.getProtocol() == "TCP":
+                        xmlPublisher = etree.SubElement(xmlFather, "Publisher")
+                        xmlPublisher.attrib["class"] = "tcp.Tcp"
+                        etree.SubElement(xmlPublisher, "Param", name="host", value="{0}".format(comChannel.getTargetIP()))
+                        etree.SubElement(xmlPublisher, "Param", name="port", value="{0}".format(comChannel.getTargetPort()))
+                    if comChannel.getProtocol() == "UDP":
+                        xmlPublisher = etree.SubElement(xmlFather, "Publisher")
+                        xmlPublisher.attrib["class"] = "udp.Udp"
+                        etree.SubElement(xmlPublisher, "Param", name="host", value="{0}".format(comChannel.getTargetIP()))
+                        etree.SubElement(xmlPublisher, "Param", name="port", value="{0}".format(comChannel.getTargetPort()))
+                    visitorCount += 1
+                except:
+                    pass
+        if visitorCount == 0:
+                xmlCommentTest = etree.Comment("The Netzob project has no simulator actors, you must create one. Below is a simple example.")
+                xmlFather.append(xmlCommentTest)
+                xmlPublisher = etree.SubElement(xmlFather, "Publisher")
+                xmlPublisher.attrib["class"] = "tcp.Tcp"
+                etree.SubElement(xmlPublisher, "Param", name="host", value="0.0.0.0")
+                etree.SubElement(xmlPublisher, "Param", name="port", value="0")
+        if visitorCount > 1:
+                xmlCommentTest = etree.Comment("The Netzob project has several simulator actors, so this file have several publishers. Choose one of them and remove the others.")
+                xmlFather.append(xmlCommentTest)
+
+#+---------------------------------------------------------------------------+
+#| Data Models                                                               |
+#+---------------------------------------------------------------------------+
     def makeAllDataModels(self, xmlFather):
         """makeAllDataModels:
-                Transform every single netzob symbol into Peach data model.
+                Transform every netzob symbol into a Peach data model.
 
                 @type xmlFather: lxml.etree.element
                 @param xmlFather: the xml tree father of the current element
@@ -140,24 +235,22 @@ class PeachExport(object):
         project = self.netzob.getCurrentProject()
         vocabulary = project.getVocabulary()
 
-        dataModelid = 0
         for symbol in vocabulary.getSymbols():
             # Each symbol is translated in a Peach data model
-            self.makeADataModel(xmlFather, symbol, dataModelid)
-            dataModelid = dataModelid + 1
+            self.makeDataModel(xmlFather, symbol)
+        self.makeUnknownSymbolDataModel(xmlFather)
 
-    def makeADataModel(self, xmlFather, symbol, dataModelid):
-        """makeADataModel:
+    def makeDataModel(self, xmlFather, symbol):
+        """makeDataModel:
                 Dissect a netzob symbol in order to extract essential data for the making of Peach fields in its data Model
 
                 @type xmlFather: lxml.etree.element
                 @param xmlFather: the xml tree father of the current element.
                 @type symbol: netzob.common.Symbol.symbol
                 @param symbol: the given symbol that will be dissected.
-                @type dataModelid: integer
-                @param dataModelid: a number that identifies the data model.
         """
-        xmlDataModel = etree.SubElement(xmlFather, "DataModel", name=("dataModel{0}").format(str(dataModelid)))
+        dataModelid = self.dictSymbol[str(symbol.getID())]
+        xmlDataModel = etree.SubElement(xmlFather, "DataModel", name=("dataModel {0}").format(str(dataModelid)))
         for field in symbol.getExtendedFields():
             xmlField = None
 
@@ -165,21 +258,19 @@ class PeachExport(object):
             # Variable/Defaultvalue Management: #
             #-----------------------------------#
             if self.variableOverRegex:
-                logging.debug("The fuzzing is based on variables.")
+                logging.debug(_("The fuzzing is based on variables."))
                 variable = field.getVariable()
-                if variable is None:
-                    variable = field.getDefaultVariable(symbol)
 
                 # We retrieve the values of the variable in text format.
                 typedValueLists = self.getRecVariableTypedValueLists(variable)
-                logging.debug("The field {0} has the value {1}.".format(field.getName(), str(typedValueLists)))
+                logging.debug(_("The field {0} has the value {1}.").format(field.getName(), str(typedValueLists)))
 
                 # We count the subfields for the selected field. Aggregate variable can cause multiple subfields.
                 subLength = 0
                 for typedValueList in typedValueLists:
                     subLength = max(subLength, len(typedValueList))
 
-                logging.debug("Sublength: {0}.".format(str(subLength)))
+                logging.debug("Sublength : {0}.".format(str(subLength)))
                 # We create one Peach subfield for each netzob subfield.
                 xmlFields = []
                 # For each subfield.
@@ -189,6 +280,7 @@ class PeachExport(object):
                     xmlFields.append(etree.SubElement(xmlDataModel, peachType, valueType="hex", name=("{0}_{1}").format(field.getName(), i)))
                     # We write down all possible values the subfield can have.
                     paramValues = []
+                    logging.debug("TypedValueLists : {0}".format(str(typedValueLists)))
                     for typedValueList in typedValueLists:
                         # If we have such a field. (The double list typedValueLists is lacunar)
                         if len(typedValueList) > i:
@@ -203,7 +295,7 @@ class PeachExport(object):
                         for paramValue in paramValues:
                             formattedValue = ("{0}; {1}").format(formattedValue, paramValue)
                         formattedValue = formattedValue[2:]  # Remove the '; ' prefix.
-                        xmlOrFixupValueParam = etree.SubElement(xmlOrFixup, "Param", name="values", value=formattedValue)
+                        etree.SubElement(xmlOrFixup, "Param", name="values", value=formattedValue)
                     elif len(paramValues) == 1:
                         # We assume that fields that has only one value are "static".
                         formattedValue = (string.split(paramValues[0], ","))[1]
@@ -215,20 +307,21 @@ class PeachExport(object):
             # Regex management: #
             #-------------------#
             else:
-                logging.debug("The fuzzing is based on regexes.")
+                logging.debug(_("The fuzzing is based on regexes."))
                 peachType = self.getPeachFieldTypeFromNetzobFormat(field)
+                regex = field.getRegex()
                 if field.isStatic():
+                    regex = regex[1:len(regex) - 1]
                     if peachType == "Number":
-                        xmlField = etree.SubElement(xmlDataModel, peachType, name=field.getName(), value=str(self.hexstring2int(field.getRegex())))
+                        xmlField = etree.SubElement(xmlDataModel, peachType, name=field.getName(), value=str(self.hexstring2int(regex)))
                     else:
-                        xmlField = etree.SubElement(xmlDataModel, peachType, name=field.getName(), valueType="hex", value=field.getRegex())
+                        xmlField = etree.SubElement(xmlDataModel, peachType, name=field.getName(), valueType="hex", value=regex)
                     if not self.mutateStaticFields:
                         xmlField.attrib["mutable"] = "false"
                 else:
                     # Fields not declared static in netzob are assumed to be dynamic, have a random default value and are mutable.
-                    # We assume that the regex is composed of a random number of fixed and dynamic (.{n,p}, .{,n} and .{n}) subregexs. Each subregex will have its own peach subfield.
+                    # We assume that the regex is composed of a random number of fixed and dynamic ((.{n,p}), (.{,n}) and (.{n})) subregexs. Each subregex will have its own peach subfield.
                     # We will illustrate it with the following example "(abcd.{m,n}efg.{,o}.{p}hij)"
-                    regex = field.getRegex()
                     if (regex != "()"):
                         regex = regex[1:len(regex) - 1]  # regex = "abcd.{m,n}efg.{,o}.{p}hij"
 
@@ -236,15 +329,17 @@ class PeachExport(object):
                         for lterm in string.split(regex, ".{"):
                                 for rterm in string.split(lterm, "}"):
                                     splittedRegex.append(rterm)  # splittedRegex = ["abcd", "m,n", "efg", ",o", "", "p", "hij"]
-                                    logging.debug("The field {0} has the splitted Regex = {1}".format(field.getName(), str(splittedRegex)))
+                                    logging.debug(_("The field {0} has the splitted Regex = {1}").format(field.getName(), str(splittedRegex)))
 
                         for i in range(len(splittedRegex)):
                             # Dynamic subfield (splittedRegex will always contain dynamic subfields in even position).
                             if (i % 2) == 1:
-                                fieldLength = 0
                                 if splittedRegex[i].find(",") == -1:  # regex = {n}
                                     fieldMaxLength = int(splittedRegex[i])
                                     fieldMinLength = fieldMaxLength
+                                elif splittedRegex[i] == ",":  # regex = {,}
+                                    fieldMaxLength = 9999  # TODO: find a more precise max length
+                                    fieldMinLength = 0
                                 elif splittedRegex[i].find(",") == 0:  # regex = {,p}
                                     fieldMaxLength = int((splittedRegex[i])[1:len(splittedRegex[i])])
                                     fieldMinLength = 0
@@ -257,62 +352,45 @@ class PeachExport(object):
                                 xmlField = etree.SubElement(xmlDataModel, peachType, name=("{0}_{1}").format(field.getName(), i))
                                 xmlRanStringFixup = etree.SubElement(xmlField, "Fixup")
                                 xmlRanStringFixup.attrib["class"] = "PeachzobAddons.RandomField"
-                                xmlRSFParamMinlen = etree.SubElement(xmlRanStringFixup, "Param", name="minlen", value=str(fieldMinLength))
-                                xmlRSFParamMaxlen = etree.SubElement(xmlRanStringFixup, "Param", name="maxlen", value=str(fieldMaxLength))
-                                xmlRSFType = etree.SubElement(xmlRanStringFixup, "Param", name="type", value=peachType)
+                                etree.SubElement(xmlRanStringFixup, "Param", name="minlen", value=str(fieldMinLength))
+                                etree.SubElement(xmlRanStringFixup, "Param", name="maxlen", value=str(fieldMaxLength))
+                                etree.SubElement(xmlRanStringFixup, "Param", name="type", value=peachType)
                             else:
                                 # Static subfield.
                                 if splittedRegex[i] != "":
                                     xmlField = etree.SubElement(xmlDataModel, peachType, name=("{0}_{1}").format(field.getName(), i), valueType="hex", value=splittedRegex[i])
-                                    logging.debug("The field {0} has a static subfield of value {1}.".format(field.getName(), splittedRegex[i]))
+                                    logging.debug(_("The field {0} has a static subfield of value {1}.").format(field.getName(), splittedRegex[i]))
                                     if not self.mutateStaticFields:
                                         xmlField.attrib["mutable"] = "false"
                     else:
                         # If the field's regex is (), we add a null-length Peach field type.
                         xmlField = etree.SubElement(xmlDataModel, "Blob", name=field.getName(), length=0)
-                        logging.debug("The field {0} is empty.".format(field.getName()))
+                        logging.debug(_("The field {0} is empty.").format(field.getName()))
 
-    def bitarray2hex(self, abitarray):
-        """bitarray2hex:
-                Transform a bitarray in a pure hex string.
+    def makeUnknownSymbolDataModel(self, xmlFather):
+        """makeUnknownSymbolDataModel:
+                Make a data model for unknown symbols.
 
-                @type abitarray: bitarray.bitarray
-                @param abitarray: the given bitarray which is transformed.
-                @rtype: string
-                @return: the hex translation of the bitarray.
+                @type xmlFather: lxml.etree.element
+                @param xmlFather: the xml tree father of the current element
         """
-        return (abitarray.tobytes()).encode('hex')
-
-    def bitarray2str(self, abitarray):
-        """bitarray2str:
-                Transform a bitarray in a 'u string.
-
-                @type abitarray: bitarray.bitarray
-                @param abitarray: the given bitarray which is transformed.
-                @rtype: string
-                @return: the 'u string translation of the bitarray.
-        """
-        return (abitarray.tobytes())
-
-    def hexstring2int(self, hexstring):
-        """hexstring2int:
-            Transform a hexstring in an int. A hexstring is like "1234deadbeef"
-
-            @type hexstring: string
-            @param hextring: the given hexstring which is trasnformed in int.
-            @rtype: integer
-            @return: the integer extracted from the hex string 'hexstring'
-        """
-        return int('0x' + hexstring, 16)
+        dataModelid = self.dictSymbol["-2"]
+        xmlDataModel = etree.SubElement(xmlFather, "DataModel", name=("dataModel {0}").format(str(dataModelid)))
+        xmlField = etree.SubElement(xmlDataModel, "Blob", name="Field 0")
+        xmlRanStringFixup = etree.SubElement(xmlField, "Fixup")
+        xmlRanStringFixup.attrib["class"] = "PeachzobAddons.RandomField"
+        etree.SubElement(xmlRanStringFixup, "Param", name="minlen", value=str(0))
+        etree.SubElement(xmlRanStringFixup, "Param", name="maxlen", value=str(PeachExport.UNKNOWNSYMBOL_MAX_SIZE))
+        etree.SubElement(xmlRanStringFixup, "Param", name="type", value="Blob")
 
     def netzobTypeToPeachType(self, netzobType):
         """netzobTypeToPeachType:
-            Transform a netzob variable type (Word, IPv4Variable, Decimal Word ...) in a Peach field type (Number, String, Blob).
+                Transform a netzob variable type (Word, IPv4Variable, Decimal Word ...) in a Peach field type (Number, String, Blob).
 
-            @type netzobType: string
-            @param netzobType: a netzob type.
-            @rtype: string
-            @return: the associated peach type.
+                @type netzobType: string
+                @param netzobType: a netzob type.
+                @rtype: string
+                @return: the associated peach type.
         """
         peachType = ""
         if netzobType == "DecimalWord":
@@ -333,35 +411,42 @@ class PeachExport(object):
                 @return: the list, representing aggregations, of lists, representing alternations, of couple (type of a leaf variable, value (in bitarray) of leaf variable).
         """
         logging.debug("<[ variable  : {0}.".format(str(variable.getName())))
-        variableType = variable.getTypeVariable()
+        variableType = variable.getVariableType()
         typedValueLists = []  # List of list of couple type-value.
-        if variableType == "Aggregate":
+        if variableType == AggregateVariable.TYPE:
             for child in variable.getChildren():
                 # We concatenate the double lists at the lower level (inner list).
-                logging.debug("fatherValueLists: {0}.".format(str(typedValueLists)))
+                logging.debug("fatherValueLists : {0}.".format(str(typedValueLists)))
                 typedValueLists = self.concatVariableValues(typedValueLists, self.getRecVariableTypedValueLists(child))
 
-        elif variableType == "Alternate":
+        elif variableType == AlternateVariable.TYPE:
             for child in variable.getChildren():
                 # We simply concatenate the two double lists as simple list.
                 for value in self.getRecVariableTypedValueLists(child):
                     typedValueLists.append(value)
-        elif variableType == "ReferencedVariable":
-            # We retrieve the typedValueLists of the pointed variable. Referenced variable are variable pointing to another variable.
-            vocabulary = self.netzob.getCurrentProject().getVocabulary()
-            pointedVariable = variable.getPointedVariable(vocabulary)
-            typedValueLists = self.getRecVariableTypedValueLists(pointedVariable)
-        else:
+
+        elif variableType == ComputedRelationVariable.TYPE:
+#            TODO: Integrate Pointing Variable & Repeat Variable.
+#            # We retrieve the typedValueLists of the pointed variable. Referenced variable are variable pointing to another variable.
+#            vocabulary = self.netzob.getCurrentProject().getVocabulary()
+#            pointedVariable = variable.getPointedVariable(vocabulary)
+#            typedValueLists = self.getRecVariableTypedValueLists(pointedVariable)
+            pass
+
+        elif variableType == DataVariable.TYPE:
             # We add the variable type and its binary value as a singleton list in the higher list.
-            vocabulary = self.netzob.getCurrentProject().getVocabulary()
-            memory = Memory(vocabulary.getVariables())
-            value = variable.getValue(False, vocabulary, memory)
+            # We are only interested in current values.
+            value = variable.getCurrentValue()
             if value is not None:
-                typedValueLists.append([(variableType, value[0])])
+                typedValueLists.append([(variableType, value)])
+        elif variableType == RepeatVariable.TYPE:
+            # TODO : implement this.
+            pass
+
         # typedValueLists = [[("Word", "a")], [("Word", "b"), ("Word", "c"), ("Word", "e")], [("Word", "d"), ("Word", "e")]]
         # <=> variable = a + bce + de
-        logging.debug("typedValueLists  : {0}.".format(str(typedValueLists)))
-        logging.debug("variable  : {0}. ]>".format(str(variable.getName())))
+        logging.debug(_("typedValueLists  : {0}.").format(str(typedValueLists)))
+        logging.debug(_("variable  : {0}. ]>").format(str(variable.getName())))
         return typedValueLists
 
     def concatVariableValues(self, fatherValueLists, sonValueLists):
@@ -383,9 +468,9 @@ class PeachExport(object):
         for fvl in fatherValueLists:
             for svl in sonValueLists:
                 midvl = fvl + svl
-                logging.debug("concatVariableValues : midvl before: {0}.".format(str(midvl)))
+                logging.debug("concatVariableValues : midvl before : {0}.".format(str(midvl)))
                 finalValueLists.append(midvl)
-                logging.debug("concatVariableValues : midvl after: {0}.".format(str(finalValueLists)))
+                logging.debug("concatVariableValues : midvl after : {0}.".format(str(finalValueLists)))
 
         return finalValueLists
 
@@ -420,78 +505,270 @@ class PeachExport(object):
 
     def getPeachFieldTypeFromNetzobFormat(self, field):
         """getPeachFieldTypeFromNetzobFormat:
-            Get the peach type (Blob, String or Number) of the current field from the netzob visualization format (string, decimal, octal, hex or binary).
+                Get the peach type (Blob, String or Number) of the current field from the netzob visualization format (string, decimal, octal, hex or binary).
 
-            @type field: netzob.Common.Field.Field
-            @param field: the given field which peach type is being searched.
-            @rtype: string
-            @return: the peach field type.
+                @type field: netzob.Common.Field.Field
+                @param field: the given field which peach type is being searched.
+                @rtype: string
+                @return: the peach field type.
         """
         peachType = ""
-        format = field.getFormat()
-        logging.debug("Format of the field {0} is {1}.".format(field.getName(), format))
-        if format == "string":
+        formt = field.getFormat()
+        logging.debug("Format of the field {0} is {1}.".format(field.getName(), formt))
+        if formt == "string":
             peachType = "String"
-        elif format == "decimal":
+        elif formt == "decimal":
             peachType = "Number"
         else:
             peachType = "Blob"
         return peachType
 
-    def makeAllStateModels(self, xmlFather):
-        """makeAllStateModels:
-                Create a Peach state model. Create one state by data model and chain it to the previously created one.
+#+---------------------------------------------------------------------------+
+#| Sate Models                                                               |
+#+---------------------------------------------------------------------------+
+    def makeSingleStateModel(self, xmlFather, symbol):
+        """makeSingleStateModel:
+                Make just one state model that emits fuzzed data according to the given symbol.
 
                 @type xmlFather: lxml.etree.element
                 @param xmlFather: the xml tree father of the current element.
         """
-        xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="SimpleStateModel", initialState="state0")
-        # There is always at least one state, the first state which is naturally called state0 and is the initial state.
+        xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="stateModel", initialState="state 0")
+        xmlState = etree.SubElement(xmlStateModel, "State", name="state 0")
+        # We create one action which will output fuzzed data.
+        xmlAction = etree.SubElement(xmlState, "Action", type="output")
+        etree.SubElement(xmlAction, "DataModel", ref=("dataModel {0}").format(str(self.dictSymbol[symbol.getID()])))
+        etree.SubElement(xmlAction, "Data", name="data")
 
-        project = self.netzob.getCurrentProject()
-        vocabulary = project.getVocabulary()
-        stateid = 0
-        xmlState = None
+    def makeBasicStateModel(self, xmlFather):
+        """makeBasicStateModel:
+                Create a basic Peach state model. One state per sybmol, all these states are accessed randomly.
+
+                @type xmlFather: lxml.etree.element
+                @param xmlFather: the xml tree father of the current element.
+        """
+        xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="stateModel", initialState="state 0")
+        # There is always at least one state, the first state which is naturally called state0 and is the initial state.
+        xmlFirstState = etree.SubElement(xmlStateModel, "State", name="state 0")
+
+        # Count symbols in the current project.
+        vocabulary = self.netzob.getCurrentProject().getVocabulary()
+        nbSymbols = 1  # 1 for the unknown symbol, we do not care of the empty symbol which is useless in outputs.
+        for symbol in vocabulary.getSymbols():
+            nbSymbols += 1
+
         # We make one state by symbol. So, all symbols will be fuzz-tested sequentially and equally.
+        i = 0
         for symbol in vocabulary.getSymbols():
             # If the current state has a precursor, we link them from older to newer.
-            if xmlState is not None:
-                xmlAction = etree.SubElement(xmlState, "Action", type="changeState", ref=("state{0}").format(stateid))
-            xmlState = self.makeAState(xmlStateModel, stateid)
-            stateid = stateid + 1
+            xmlState = etree.SubElement(xmlStateModel, "State", name=("state {0}").format(str(self.dictSymbol[symbol.getID()])))
+            # We create one action which will output fuzzed data.
+            xmlAction = etree.SubElement(xmlState, "Action", type="output")
+            etree.SubElement(xmlAction, "DataModel", ref=("dataModel {0}").format(str(self.dictSymbol[symbol.getID()])))
+            etree.SubElement(xmlAction, "Data", name="data")
 
-    def makeAStateModel(self, xmlFather):
-        """makeAStateModel:
-                Create a Peach state model with only one state.
+            # Create a transition between the first state and this state.
+            etree.SubElement(xmlFirstState, "Action", type="changeState", ref="state {0}".format(str(self.dictSymbol[symbol.getID()])),
+                             when="random.randint(1,{0})==1".format(str(nbSymbols - i)))
+            i += 1
 
-                @type xmlFather: lxml.etree.element
-                @param xmlFather: the xml tree father of the current element.
-        """
-        xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="SimpleStateModel", initialState="state0")
-        project = self.netzob.getCurrentProject()
-        vocabulary = project.getVocabulary()
-        xmlState = self.makeAState(xmlStateModel, 0)
+            # Create a reverse transition between this state and the first state.
+            #etree.SubElement(xmlState, "Action", type="changeState", ref="state 0")
 
-    def makeAState(self, xmlFather, stateid):
-        """makeAState:
-                Create one state which will output data formatted according to a previously created data model.
-
-                @type xmlFather: lxml.etree.element
-                @param xmlFather: the xml tree father of the current element.
-                @type stateid: integer
-                @param stateid: a number that identifies the state in the state model and links to the proper data model.
-                @rtype: lxml.etree.element
-                @return: a Peach state in xml format.
-        """
-        # We create one state which will output fuzzed data.
-        xmlState = etree.SubElement(xmlFather, "State", name=("state{0}").format(str(stateid)))
+        # Unknown symbol.
+        xmlState = etree.SubElement(xmlStateModel, "State", name=("state {0}").format(str(self.dictSymbol["-2"])))
+        # We create one action which will output fuzzed data.
         xmlAction = etree.SubElement(xmlState, "Action", type="output")
+        etree.SubElement(xmlAction, "DataModel", ref=("dataModel {0}").format(str(self.dictSymbol["-2"])))
+        etree.SubElement(xmlAction, "Data", name="data")
+        # Last transition.
+        etree.SubElement(xmlFirstState, "Action", type="changeState", ref="state {0}".format(str(self.dictSymbol["-2"])))
+        #etree.SubElement(xmlState, "Action", type="changeState", ref="state 0")
 
-        # xml link to the previously made data model.
-        xmlDataModel = etree.SubElement(xmlAction, "DataModel", ref=("dataModel{0}").format(str(stateid)))
-        xmlData = etree.SubElement(xmlAction, "Data", name="data")
-        return xmlState
+    def makeProbaStateModel(self, xmlFather):
+        """makeProbaStateModel:
+                Return a state model based on the transitions and states inferred from Netzob. At each state, a transition is chosen according to a dice throw among all
+                transitions allowed by netzob. One symbol is created for every *different* symbols. So if a symbol is used in different states, it will create instant transition
+                bewteen these state. That is assumed and part of the state fuzzing of this model.
+                Inputs are not managed.
+                There is a structural difference between Peach and Netzob state models. Globally, states of the first are transitions of the second.
 
+                @type xmlFather: lxml.etree.element
+                @param xmlFather: the xml tree father of the current element.
+        """
+        mmstd = None
+        try:
+            # If mmstd is None, these few lines should raise an alert.
+            mmstd = self.netzob.getCurrentProject().getGrammar().getAutomata()
+            initialState = mmstd.getInitialState()
+            transitions = mmstd.getTransitions()
+            states = mmstd.getAllStates()
+        except:
+            logging.info("No state model defined in Netzob.")
+            etree.SubElement(xmlFather, "StateModel", name="No state model defined in Netzob.")
+            return
+
+        # A simple dictionary of all the xml states.
+        xmlStatesDict = dict()
+
+        # Associate the ID of a symbol to the sum of the probabilities of all the transitions that leads to the state it comes from.
+        probaDict = dict()
+
+        # List of transitions formed like [startStateID, endStateID, weighting (probability), isTheTransitionFinal]
+        transList = []
+
+        xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="stateModel", initialState="state 0")
+
+        # Create the initial state.
+        for transition in transitions:
+            # We search the very first transition.
+            if transition.getType() == OpenChannelTransition.TYPE:
+                if transition.getInputState() == initialState:
+                    xmlState = etree.SubElement(xmlStateModel, "State", name="state 0")
+                    xmlStatesDict[0] = xmlState
+                    # Determine the upper bound of probability.
+                    outputState = transition.getOutputState()
+                    probaDict[0] = 0
+                    for outTrans in mmstd.getTransitionsStartingFromState(outputState):
+                        if outTrans.getType() == SemiStochasticTransition.TYPE:
+                            for outSymbol in outTrans.getOutputSymbols():
+                                probaDict[0] += outSymbol[1]
+                    # Create probabilistic transitions.
+                    for outTrans in mmstd.getTransitionsStartingFromState(outputState):
+                        if outTrans.getType() == SemiStochasticTransition.TYPE:
+                            for outSymbol in outTrans.getOutputSymbols():
+                                    transList.append([0, self.getSymbolID(outSymbol[0]), outSymbol[1]])
+                    break
+
+        # Create all other states.
+        for transition in transitions:
+            if transition.getType() == SemiStochasticTransition.TYPE:
+                # Output Symbols : [[Symbol, Probability, Time], [Symbol, Probability, Time], ...]
+                outputSymbols = transition.getOutputSymbols()
+
+                # Create one Peach state per output symbol.
+                for symbol in outputSymbols:
+                    if not self.getSymbolID(symbol[0]) in xmlStatesDict.keys():
+                        if self.getSymbolID(symbol[0]) == "-1":  # Empty symbol.
+                            # We create an empty state with no actions.
+                            xmlState = etree.SubElement(xmlStateModel, "State", name=("state {0}").format(self.dictSymbol[self.getSymbolID(symbol[0])]))
+                            xmlStatesDict[self.getSymbolID(symbol[0])] = xmlState
+                        else:
+                            xmlState = etree.SubElement(xmlStateModel, "State", name=("state {0}").format(self.dictSymbol[self.getSymbolID(symbol[0])]))
+                            # We create one action which will output fuzzed data.
+                            xmlAction = etree.SubElement(xmlState, "Action", type="output")
+                            etree.SubElement(xmlAction, "DataModel", ref=("dataModel {0}").format(self.dictSymbol[self.getSymbolID(symbol[0])]))
+                            etree.SubElement(xmlAction, "Data", name="data")
+                            xmlStatesDict[self.getSymbolID(symbol[0])] = xmlState
+
+                    probaDict[self.getSymbolID(symbol[0])] = 0
+
+        # Determine the upper bound.
+        for state in states:
+            for inTrans in mmstd.getTransitionsLeadingToState(state):
+                if inTrans.getType() == SemiStochasticTransition.TYPE:
+                    for inSymbol in inTrans.getOutputSymbols():
+                        for outTrans in mmstd.getTransitionsStartingFromState(state):
+                            if outTrans.getType() == SemiStochasticTransition.TYPE:
+                                for outSymbol in outTrans.getOutputSymbols():
+                                    probaDict[self.getSymbolID(inSymbol[0])] += outSymbol[1]
+                            if outTrans.getType() == CloseChannelTransition.TYPE:
+                                    probaDict[self.getSymbolID(inSymbol[0])] += 100
+
+        # Create probabilistic transitions.
+        for state in states:
+            for inTrans in mmstd.getTransitionsLeadingToState(state):
+                if inTrans.getType() == SemiStochasticTransition.TYPE:
+                    for inSymbol in inTrans.getOutputSymbols():
+                        for outTrans in mmstd.getTransitionsStartingFromState(state):
+                            if outTrans.getType() == SemiStochasticTransition.TYPE:
+                                for outSymbol in outTrans.getOutputSymbols():
+                                    transList.append([self.getSymbolID(inSymbol[0]), self.getSymbolID(outSymbol[0]), outSymbol[1]])
+                            #if outTrans.getType() == CloseChannelTransition.TYPE:
+                                # Eventual transition to the end and the first state above.
+                                #transList.append([self.getSymbolID(inSymbol[0]), 0, 100])
+
+        # Normalize transitions: pack transitions which go from the same state and to the same state.
+        normTransList = []
+        for transition in transList:
+            found = False
+            for normTransition in normTransList:
+                if transition[0] == normTransition[0] and transition[1] == normTransition[1]:
+                    # Similar transitions, we sum their weightings.
+                    normTransition[2] += transition[2]
+                    found = True
+                    break
+            if not found:
+                # New transitions, we add it.
+                normTransList.append(transition)
+
+        # Add transitions to the xml file.
+        for normTransition in normTransList:
+            toStateName = ""
+            if normTransition[1] == 0:  # First state.
+                toStateName = "state 0"
+            else:
+                toStateName = ("state {0}").format(str(self.dictSymbol[normTransition[1]]))
+
+            if probaDict[normTransition[0]] == normTransition[2]:  # Last transition.
+                etree.SubElement(xmlStatesDict[normTransition[0]], "Action", type="changeState", ref=toStateName)
+            else:
+                etree.SubElement(xmlStatesDict[normTransition[0]], "Action", type="changeState", ref=toStateName,
+                                 when="random.randint(1,{0})<={1}".format(str(int(probaDict[normTransition[0]])), str(int(normTransition[2]))))
+                # Reduce probability. The tests will be successive, for instance: test1: 20%, test2: 30%, test3: 40% test4: 10% of a single dice is equivalent to:
+                # test1 20/100, test2 (if not test1) 30/80 (30/100 = 30/80*80/100), test3 (if neither test1 nor test2) 40/50 ...
+                probaDict[normTransition[0]] -= normTransition[2]
+
+#+---------------------------------------------------------------------------+
+#| Utils                                                                     |
+#+---------------------------------------------------------------------------+
+    def bitarray2hex(self, abitarray):
+        """bitarray2hex:
+                Transform a bitarray in a pure hex string.
+
+                @type abitarray: bitarray.bitarray
+                @param abitarray: the given bitarray which is transformed.
+                @rtype: string
+                @return: the hex translation of the bitarray.
+        """
+        return (abitarray.tobytes()).encode('hex')
+
+    def bitarray2str(self, abitarray):
+        """bitarray2str:
+                Transform a bitarray in a 'u string.
+
+                @type abitarray: bitarray.bitarray
+                @param abitarray: the given bitarray which is transformed.
+                @rtype: string
+                @return: the 'u string translation of the bitarray.
+        """
+        return (abitarray.tobytes())
+
+    def hexstring2int(self, hexstring):
+        """hexstring2int:
+            Transform a hexstring in an int. A hexstring is like "1234deadbeef"
+
+            @type hexstring: string
+            @param hextring: the given hexstring which is trasnformed in int.
+            @rtype: integer
+            @return: the integer extracted from the hex string 'hexstring'
+        """
+        return int('0x' + hexstring, 16)
+
+    def getSymbolID(self, symbol):
+        """getSymbolID:
+                Custom function to retrieve a symbol ID even if he does not have one. (this is the case for EmptySymbol and UnknownSymbol).
+        """
+        if symbol.getType() == EmptySymbol.TYPE:
+            return "-1"
+        elif symbol.getType() == UnknownSymbol.TYPE:
+            return "-2"
+        else:
+            return str(symbol.getID())
+
+#+---------------------------------------------------------------------------+
+#| Getters And Setters                                                       |
+#+---------------------------------------------------------------------------+
     def setVariableOverRegex(self, value):
         """setVariableOverRegex:
                 Setter for variableOverRegex.

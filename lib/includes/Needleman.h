@@ -26,36 +26,49 @@
 //+---------------------------------------------------------------------------+
 
 #ifndef	Needleman_H
-#define Needleman_H 
+#define Needleman_H
 
 //+---------------------------------------------------------------------------+
 //| Imports
 //+---------------------------------------------------------------------------+
-#include "commonLib.h"
-#include <math.h>
 //Check if have compile with -DCCALLFORDEBUG option (means we want to analyse the C program without python modules"
 #ifndef CCALLFORDEBUG
 #include "libInterface.h" //only needed for the callback status
 #else
 #include "Interface.h"
 #endif
+#include "commonLib.h"
+#include <math.h>
 
 //+---------------------------------------------------------------------------+
 //|  alignMessages : align a group of messages and get their common regex
 //+---------------------------------------------------------------------------+
-void alignMessages(t_message * resMessage, Bool doInternalSlick, t_group* messages, Bool debugMode);
-void alignMessages2(t_message *resMessage, Bool doInternalSlick, t_group* group, Bool debugMode);
+void alignMessages(t_message * resMessage, Bool doInternalSlick, unsigned int nbMessages, t_message * messages, Bool debugMode);
+
 //+---------------------------------------------------------------------------+
 //| alignTwoMessages : align 2 messages and get common regex
 //+---------------------------------------------------------------------------+
 char* alignTwoMessages(t_message * resMessage, Bool doInternalSlick, t_message * message1, t_message * message2, Bool debugMode);
+
+/*!
+ * @function getSimilarityScore
+ * @abstract Computes the similarity score of (message1[i], message2[j])
+ * @discussion This function replaces the old MATCH and MISMATCH score and returns a semantic score
+ */
+short int getSimilarityScore(t_message * message1, t_message * message2, unsigned int i, unsigned j);
 
 //+---------------------------------------------------------------------------+
 //| Scores : functions for their computations
 //+---------------------------------------------------------------------------+
 float getScoreRatio(t_message *);
 float getScoreDynSize(unsigned int, unsigned int);
-float getScoreRang(t_message *);
 float computeDistance(t_score *);
+
+/*!
+ * @function displayMessage
+ * @abstract Display in the console the content of specified message (its data and attributes)
+ * @param the message to display
+ */
+void displayMessage(t_message *);
 
 #endif

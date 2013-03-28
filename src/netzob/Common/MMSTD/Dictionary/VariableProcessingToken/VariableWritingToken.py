@@ -29,7 +29,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from bitarray import bitarray
-from locale import gettext as _
+from gettext import gettext as _
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -81,11 +81,12 @@ class VariableWritingToken(AbstractVariableProcessingToken):
                 Edit the previously inserted value for specified variable and replace it
                 with the provided value
         """
-        for linkedValue in self.getLinkedValue():
-            if linkedValue[0] == variable.getID():
-                linkedValue[1] = value
-                break
-
+        # we are interesting in the last value.
+        if self.getLinkedValue() is not None:
+            for linkedValue in reversed(self.getLinkedValue()):  # We iterate the list in reverse order.
+                if linkedValue[0] == variable.getID():
+                    linkedValue[1] = value
+                    break
         # refresh the computed value
         self.updateValue()
 

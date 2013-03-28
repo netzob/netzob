@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 import time
 import uuid
@@ -36,11 +36,9 @@ import uuid
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from gi.repository import Gtk, Gdk, GObject
+from gi.repository import Gtk, Gdk
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject
-from gi.repository import Pango
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -108,7 +106,7 @@ class ContextualMenuOnFieldController(object):
     #+----------------------------------------------
     def changeFormat_cb(self, event, aFormat):
         self.field.setFormat(aFormat)
-        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.updateSelectedMessageTable()
 
     #+----------------------------------------------
     #| rightClickToChangeUnitSize:
@@ -117,7 +115,7 @@ class ContextualMenuOnFieldController(object):
     #+----------------------------------------------
     def changeUnitSize_cb(self, event, unitSize):
         self.field.setUnitSize(unitSize)
-        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.updateSelectedMessageTable()
 
     #+----------------------------------------------
     #| rightClickToChangeSign:
@@ -126,7 +124,7 @@ class ContextualMenuOnFieldController(object):
     #+----------------------------------------------
     def changeSign_cb(self, event, sign):
         self.field.setSign(sign)
-        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.updateSelectedMessageTable()
 
     #+----------------------------------------------
     #| rightClickToChangeEndianess:
@@ -135,7 +133,7 @@ class ContextualMenuOnFieldController(object):
     #+----------------------------------------------
     def changeEndianess_cb(self, event, endianess):
         self.field.setEndianess(endianess)
-        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.updateSelectedMessageTable()
 
     #+----------------------------------------------
     #| rightClickDomainOfDefinition:
@@ -156,11 +154,11 @@ class ContextualMenuOnFieldController(object):
             self.field.removeTransformationFunction(function)
         else:
             self.field.addTransformationFunction(function)
-        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.updateSelectedMessageTable()
 
     def displayPopupToCreateLayer_cb(self, event):
         # If fields header are selected, we get it
-        selectedFields = self.vocabularyController.view.selectedMessageTable.treeViewHeaderGroup.getSelectedFields()
+        selectedFields = self.vocabularyController.selectedMessageTable.treeViewHeaderGroup.getSelectedFields()
         if selectedFields is None or len(selectedFields) == 0:
             # Either, we only consider the current field
             selectedFields = [self.field]
@@ -215,7 +213,7 @@ class ContextualMenuOnFieldController(object):
             parentField.getLocalFields().remove(selectedField)
         parentField.getLocalFields().insert(index_newField, fieldLayer)
 #        self.getSymbol().getField().addField(fieldLayer, index_newField)
-        self.vocabularyController.view.updateLeftPanel()
+        self.vocabularyController.updateLeftPanel()
 
     def displayPopupToEditField_cb(self, event):
         popup = PopupEditFieldController(self.vocabularyController, self.field)
@@ -227,14 +225,27 @@ class ContextualMenuOnFieldController(object):
     def deleteMessage_cb(self, event):
         """Callback executed when the user requests
         to delete the current message"""
+        currentProject = self.vocabularyController.netzob.getCurrentProject()
+        vocabulary = currentProject.getVocabulary()
         for message in self.messages:
-            self.getSymbol().removeMessage(message)
-        self.vocabularyController.view.updateSelectedMessageTable()
-        self.vocabularyController.view.updateLeftPanel()
+            vocabulary.removeMessage(message)
+        self.vocabularyController.updateSelectedMessageTable()
+        self.vocabularyController.updateLeftPanel()
+
+    def extractByFieldValue_cb(self, event):
+        if self.field is None or self.layer is None:
+            return
+
+        # Create new symbols according to a specific fixed field
+        self.layer.createSymbolsWithFixedField(self.field)
+
+        # Update UI
+        self.vocabularyController.updateSelectedMessageTable()
+        self.vocabularyController.updateLeftPanel()
 
     def exportSelectedFields_cb(self, event):
         # If fields header are selected, we get it
-        fields = self.vocabularyController.view.selectedMessageTable.treeViewHeaderGroup.getSelectedFields()
+        fields = self.vocabularyController.selectedMessageTable.treeViewHeaderGroup.getSelectedFields()
         if fields is None or len(fields) == 0:
             # Either, we only consider the current field
             fields = [self.field]
@@ -262,5 +273,5 @@ class ContextualMenuOnFieldController(object):
         confirmController = ConfirmImportMessagesController(currentWorkspace, currentProject, "RAW", newMessages)
         confirmController.run()
         # Update UI
-        self.vocabularyController.view.updateSelectedMessageTable()
-        self.vocabularyController.view.updateLeftPanel()
+        self.vocabularyController.updateSelectedMessageTable()
+        self.vocabularyController.updateLeftPanel()

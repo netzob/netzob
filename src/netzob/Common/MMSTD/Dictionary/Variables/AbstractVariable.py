@@ -29,8 +29,10 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from abc import abstractmethod
-from locale import gettext as _
+from gettext import gettext as _
+from bitarray import bitarray
 import logging
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -71,12 +73,39 @@ class AbstractVariable(object):
         self.boundedVariables = []  # A list containing all variables which value is bind to the value of this variable.
         self.tokenChoppedIndexes = []  # An integer list which contain the index of each segment this variable is responsible for (they have been created from its value)
         self.currentValue = None  # The value we see from the current variable if we flatten the subtree which starts here.
+        self.cloned = False  # Tells if the variable is a clone or not.
+        self.lastClone = None  # The last clone of this variable that has been made.
+
+    def cloneVariable(self):
+        """cloneVariable:
+                Return a clone of the given variable. The ID is the only thing that changed.
+        """
+        clone = AbstractVariable(uuid.uuid4(), self.getName(), self.isMutable(), self.isLearnable(), self.isNode())
+        clone.setCloned(True)
+        self.setLastClone(clone)
+        self.transferBoundedVariables(clone)
+        return clone
+
+    def transferBoundedVariables(self, variableToBind):
+        """transferBoundedVariables:
+                Transfer the variable bounded to this variable to the variableToBind.
+        """
+        # Transfer all variables that are bounded to this variable to the clone.
+        for boundedVariable in self.getBoundedVariables():
+            # Two possibilities:  either the boundedVariable is a cloned variable and so we do not touch it because clones catch their pointedVariable according to the cloned
+            # pointedVariable. Or it is a clone variable and we bind it to the clone of the current variable.
+            if boundedVariable.isCloned():
+                # We bind the clone relation variable to the variable to bind.
+                variableToBind.bindVariable(boundedVariable)
+                # And change its pointed ID. So we create a bilateral link between both clone boundedVariable and clone variableToBind.
+                boundedVariable.setPointedID(variableToBind.getID())
+        #self.resetBoundedVariable()
 
     def toString(self):
         """toString:
                 For debugging purpose.
         """
-        return "Variable {0} ({3}) (mutable: {1}, learnable: {2})".format(self.name, str(self.mutable), str(self.learnable), self.id)
+        return "Variable {0} (mutable: {1}, learnable: {2})".format(self.name, str(self.mutable), str(self.learnable))
 
     def getProgeny(self):
         """getProgeny:
@@ -109,6 +138,25 @@ class AbstractVariable(object):
         if access == "write":
             for bound in self.boundedVariables:
                 bound.notifiedWrite(processingToken)
+
+    def getTokenValue(self, processingToken):
+        """getTokenValue:
+                Return the value represented by the tokenChoppedIndexes as a bitarray.
+        """
+        value = bitarray()
+        for index in self.tokenChoppedIndexes:
+            value.extend(processingToken.getLinkedValue()[index][1])
+        return value
+
+    def addTokenChoppedIndex(self, choppedIndex):
+        """addTokenChoppedIndex:
+                Add a pointer (choppedIndex) in the tokenChoppedIndexes of this variable and its fathers.
+                This pointer shows that this variable and its fathers are responsible for a given part of the final value.
+        """
+        self.tokenChoppedIndexes.append(choppedIndex)
+        # Each father gains this value too.
+        for father in self.fathers:
+            father.addTokenChoppedIndex(choppedIndex)
 
 #+---------------------------------------------------------------------------+
 #| Abstract methods                                                          |
@@ -235,8 +283,17 @@ class AbstractVariable(object):
     def getBoundedVariables(self):
         return self.boundedVariables
 
+    def getTokenChoppedIndexes(self):
+        return self.tokenChoppedIndexes
+
     def getCurrentValue(self):
         return self.currentValue
+
+    def isCloned(self):
+        return self.cloned
+
+    def getLastClone(self):
+        return self.lastClone
 
     def setID(self, _id):
         self.id = _id
@@ -251,13 +308,27 @@ class AbstractVariable(object):
         self.node = node
 
     def addFather(self, father):
-        self.fathers.append(father)
+        if not father in self.fathers:
+            self.fathers.append(father)
 
     def removeFather(self, father):
         self.fathers.remove(father)
 
     def bindVariable(self, variable):
-        self.boundedVariables.append(variable)
+        if not variable in self.boundedVariables:
+            self.boundedVariables.append(variable)
+
+    def resetBoundedVariable(self):
+        self.boundedVariables = []
+
+    def resetTokenChoppedIndexes(self):
+        self.tokenChoppedIndexes = []
+
+    def setCloned(self, cloned):
+        self.cloned = cloned
+
+    def setLastClone(self, clone):
+        self.lastClone = clone
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |

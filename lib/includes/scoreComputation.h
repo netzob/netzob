@@ -31,17 +31,16 @@
 //+---------------------------------------------------------------------------+
 //| Imports
 //+---------------------------------------------------------------------------+
-#include "commonLib.h"
 //Check if have compile with -DCCALLFORDEBUG option (means we want to analyse the C program without python modules"
 #ifndef CCALLFORDEBUG
 #include "libInterface.h"
 #else
 #include "Interface.h"
 #endif
+#include "commonLib.h"
 
 #include "Needleman.h"
 
-void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick, int nbGroups, t_groups* groups, Bool debugMode);
-void getHighestEquivalentGroup2(t_equivalentGroup * result, Bool doInternalSlick, int nbMessage, t_message* messages, Bool debugMode, float** scoreMatrix);
+void computeSimilarityMatrix(int nbMessage, t_message* messages, Bool debugMode, float** scoreMatrix);
 
 #endif

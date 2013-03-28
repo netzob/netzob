@@ -30,7 +30,7 @@
 #+---------------------------------------------------------------------------+
 import logging
 import uuid
-from locale import gettext as _
+from gettext import gettext as _
 import time
 
 #+---------------------------------------------------------------------------+
@@ -52,8 +52,8 @@ class AbstractCapturerController(AbstractPluginController):
         Abstract controller for capturer plugins
     """
 
-    def __init__(self, netzob, plugin):
-        super(AbstractCapturerController, self).__init__(netzob, plugin)
+    def __init__(self, *args, **kwargs):
+        super(AbstractCapturerController, self).__init__(*args, **kwargs)
         self.log = logging.getLogger(__name__)
         self.selectedPacketCount = 0
 

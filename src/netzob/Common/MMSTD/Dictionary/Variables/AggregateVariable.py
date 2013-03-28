@@ -29,7 +29,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from bitarray import bitarray
-from locale import gettext as _
+from gettext import gettext as _
 from lxml import etree
 import logging
 import uuid
@@ -207,7 +207,7 @@ class AggregateVariable(AbstractNodeVariable):
         valueToBeRead = readingToken.getValue()[readingToken.getIndex():]
         for index in len(valueToBeRead):
             tmpValue = valueToBeRead[:index]
-            tmpChild = DataVariable(str(uuid.uuid4()), "Learned Inserted Variable", True, True, BinaryType(True, len(tmpValue), len(tmpValue)), tmpValue.to01())
+            tmpChild = DataVariable(str(uuid.uuid4()), "Learned Inserted Variable", True, True, BinaryType(True, len(tmpValue), len(tmpValue)), tmpValue)
             repeatVariable.add(tmpChild)
 
             # We read this new variable in a learning context.
@@ -273,6 +273,18 @@ class AggregateVariable(AbstractNodeVariable):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
+    def cloneVariable(self):
+        # Clone the variable.
+        clone = AggregateVariable(uuid.uuid4(), self.getName(), self.isMutable(), self.isLearnable(), None)
+        clone.setCloned(True)
+        # Clone its children and add them to the previously cloned variable.
+        for child in self.children:
+            clonedChild = child.cloneVariable()
+            clone.addChild(clonedChild)
+        self.setLastClone(clone)
+        self.transferBoundedVariables(clone)
+        return clone
+
     def getVariableType(self):
         """getVariableType:
         """
@@ -330,6 +342,7 @@ class AggregateVariable(AbstractNodeVariable):
                 If one of them fails, the whole operation is cancelled.
         """
         self.log.debug("[ {0} (Aggregate): write access:".format(AbstractVariable.toString(self)))
+        self.resetTokenChoppedIndexes()  # New write access => new final value and new reference to it.
         if self.getChildren() is not None:
             if self.isMutable():
                 # mutable.

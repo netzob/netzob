@@ -28,7 +28,7 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 import time
 from gi.repository import GObject
@@ -80,6 +80,7 @@ class LearningAlgorithm(object):
         return self.submitedQueries
 
     def submitQuery(self, query):
+        self.log.debug("Submit query : {0}".format(query))
         # Verify the request is not in the cache
         cachedValue = self.cache.getCachedResult(query)
         if cachedValue is not None:
@@ -100,7 +101,7 @@ class LearningAlgorithm(object):
         mmstd = query.toMMSTD(self.dictionary, isMaster)
 
         self.cb_hypotheticalAutomaton(mmstd)
-        time.sleep(10)
+        time.sleep(2)
         self.log.info("The current experimentation has generated the following MMSTD: {0}".format(self.log.debug(mmstd.getDotCode())))
 
         # create an oracle for this MMSTD
@@ -136,13 +137,25 @@ class LearningAlgorithm(object):
         self.log.info("---------------------------------------------")
         self.log.info("RESULT:")
         self.log.info("---------------------------------------------")
-        self.log.info("+ getResults: {0}".format(str(resultQuery)))
+        strResultQuery = []
+        for data in resultQuery:
+            strResultQuery.append(data.getName())
+        self.log.info("+ getResults: {0}".format(', '.join(strResultQuery)))
         self.log.info("---------------------------------------------")
-        self.log.info("+ getGeneratedInputSymbols: {0}".format(str(oracle.getGeneratedInputSymbols())))
+
+        strGeneratedInputSymbols = []
+        for data in oracle.getGeneratedInputSymbols():
+            strGeneratedInputSymbols.append(data.getName())
+
+        self.log.info("+ getGeneratedInputSymbols: {0}".format(', '.join(strGeneratedInputSymbols)))
         self.log.info("---------------------------------------------")
-        self.log.info("+ getGeneratedOutputSymbols: {0}".format(str(oracle.getGeneratedOutputSymbols())))
+
+        strGeneratedOutputSymbols = []
+        for data in oracle.getGeneratedOutputSymbols():
+            strGeneratedOutputSymbols.append(data.getName())
+
+        self.log.info("+ getGeneratedOutputSymbols: {0}".format(', '.join(strGeneratedOutputSymbols)))
         self.log.info("---------------------------------------------")
-        self.log.info("The following query has been computed: {0}".format(str(resultQuery)))
 
         # Register this query and the associated response
         self.submitedQueries.append([query, resultQuery])

@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import os
 
 #+---------------------------------------------------------------------------+
@@ -38,6 +38,7 @@ from gi.repository import Gtk, Gdk, Pango
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
+
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -123,11 +124,25 @@ def NetzobErrorMessage(text, parent=None):
     md.destroy()
 
 
+def NetzobWarningMessage(text, parent=None):
+    """Display a GTK warning message.
+
+    @param text: text to display in the warning dialog."""
+
+    md = Gtk.MessageDialog(parent,
+                           Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                           Gtk.MessageType.WARNING,
+                           Gtk.ButtonsType.CLOSE,
+                           text)
+    md.run()
+    md.destroy()
+
+
 #+---------------------------------------------------------------------------+
 #| NetzobInfoMessage:
 #+---------------------------------------------------------------------------+
-def NetzobInfoMessage(text):
-    md = Gtk.MessageDialog(None,
+def NetzobInfoMessage(text, parent=None):
+    md = Gtk.MessageDialog(parent,
                            Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
                            Gtk.MessageType.INFO,
                            Gtk.ButtonsType.CLOSE,
@@ -139,8 +154,13 @@ def NetzobInfoMessage(text):
 #+---------------------------------------------------------------------------+
 #| NetzobQuestionMessage:
 #+---------------------------------------------------------------------------+
-def NetzobQuestionMessage(text):
-    md = Gtk.MessageDialog(None,
+def NetzobQuestionMessage(text, parent=None):
+
+    """Create a new dialog to ask a question to the user. This user can answer YES or NO to
+    this question. The question can be customized through the text param.
+    @param text the question the user has to answer
+    @return L{Gtk.ResponseType.YES} if he answers yes, or L{Gtk.ResponseType.NO} if he answers no"""
+    md = Gtk.MessageDialog(parent,
                            Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
                            Gtk.MessageType.QUESTION,
                            Gtk.ButtonsType.YES_NO,
@@ -148,6 +168,47 @@ def NetzobQuestionMessage(text):
     result = md.run()
     md.destroy()
     return result
+
+
+def NetzobInputDialog(attachedWindow, inputTitle, inputLabel, valueMandatory=False):
+    """Create a new dialog which contains a label and an input entry. The user
+    can provide the requested value (through the inputLabel).
+    If valueMandatory is set to True, the apply button will be deactivated
+    when no value is provided by the user.
+    It returns either the provided value or None if the user canceled"""
+
+    builder = Gtk.Builder()
+    builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(), "ui", "dialogbox.glade"))
+    # Configure objects
+    dialog = builder.get_object("netzobInputDialog")
+    label = builder.get_object("netzobInputLabel")
+    entry = builder.get_object("netzobInputEntry")
+    applyButton = builder.get_object("netzobInputApplyButton")
+    if attachedWindow is not None:
+        dialog.set_transient_for(attachedWindow)
+        dialog.set_title(inputTitle)
+
+    label.set_label(inputLabel)
+    # Disable apply button if no text
+    if valueMandatory:
+        entry.connect("changed", NetzobInputDialog_disableButtonIfEmpty_cb, applyButton)
+
+    result = dialog.run()
+
+    if result == 0:
+        result = entry.get_text()
+    else:
+        result = None
+
+    dialog.destroy()
+    return result
+
+
+def NetzobInputDialog_disableButtonIfEmpty_cb(widget, button):
+    if(len(widget.get_text()) > 0):
+        button.set_sensitive(True)
+    else:
+        button.set_sensitive(False)
 
 
 def addNetzobIconsToDefaultFactory():
@@ -163,6 +224,7 @@ def addNetzobIconsToDefaultFactory():
         iconSource.set_size(Gtk.IconSize.LARGE_TOOLBAR)
         iconSet.add_source(iconSource)
         netzobIconFactory.add(iconStockID, iconSet)
+
     netzobIconFactory = Gtk.IconFactory()
     addIconToFactory("netzob-import-messages", "import-messages.png")
     addIconToFactory("netzob-capture-messages", "capture-messages.png")
@@ -187,8 +249,10 @@ def addNetzobIconsToDefaultFactory():
     addIconToFactory("netzob-unselect-all", "unselect-all.png")
     addIconToFactory("netzob-concat-symbol", "concat-symbol.png")
     addIconToFactory("netzob-rename", "rename.png")
+    addIconToFactory("netzob-new-window", "new-window.png")
     addIconToFactory("grammar-add-state", "grammar-add-state.png")
     addIconToFactory("grammar-add-open", "grammar-add-open.png")
     addIconToFactory("grammar-add-stochastic", "grammar-add-stochastic.png")
     addIconToFactory("grammar-add-close", "grammar-add-close.png")
+    addIconToFactory("merge-items", "merge-items.png")
     Gtk.IconFactory.add_default(netzobIconFactory)

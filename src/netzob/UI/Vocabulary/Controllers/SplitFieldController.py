@@ -28,18 +28,16 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from gi.repository import Gtk, Gdk, GObject
+from gi.repository import Gtk, Gdk, GObject, Pango
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject
-from gi.repository import Pango
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -57,13 +55,15 @@ class SplitFieldController(object):
         self._view = SplitFieldView(self)
         self.log = logging.getLogger(__name__)
         self.field = field
+        self.clickIn = None
 
     @property
     def view(self):
         return self._view
 
     def run(self):
-        if self.initBuffer() == False:
+        if not self.initBuffer():
+            self.log.warning("An error occured while initiating the split field controller.")
             return
         self._view.run()
 
@@ -93,13 +93,15 @@ class SplitFieldController(object):
         self.view.buffer.get_buffer().create_tag("redTag", weight=Pango.Weight.BOLD, foreground="red", family="Courier")
         self.view.buffer.get_buffer().create_tag("greenTag", weight=Pango.Weight.BOLD, foreground="#006400", family="Courier")
 
-        for m in cells:
-            self.view.buffer.get_buffer().insert_with_tags_by_name(self.view.buffer.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[:self.split_position], self.field.getFormat()) + "  ", "redTag")
-            self.view.buffer.get_buffer().insert_with_tags_by_name(self.view.buffer.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[self.split_position:], self.field.getFormat()) + "\n", "greenTag")
+        self.updateDisplayFollowingSplitPosition()
+
+        self.view.setMaxSizeOfSplitPositionAdjustment(self.split_min_len - 1)
+
+        return True
 
     def cancel_clicked_cb(self, widget):
         self.view.splitFieldDialog.destroy()
-        self.vocabularyController.view.updateSymbolList()
+        self.vocabularyController.symbolController.updateSymbolList()
 
     def doSplit_clicked_cb(self, widget):
         if self.split_max_len <= 1:
@@ -112,7 +114,16 @@ class SplitFieldController(object):
             split_index = self.split_position
         self.field.splitField(split_index, self.split_align)
         self.view.splitFieldDialog.destroy()
-        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.updateSelectedMessageTable()
+
+    def splitPositionAdjustment_value_changed_cb(self, widget):
+        if self.clickIn is not None:
+            elaspedTime = time.time() - self.clickIn
+            if elaspedTime < 0.5:
+                return
+
+        self.split_position = int(self.view.getSplitPosition())
+        self.updateDisplayFollowingSplitPosition()
 
     def adjustSplitLeft_clicked_cb(self, widget):
         self.adjustSplit_clicked("left")
@@ -120,10 +131,19 @@ class SplitFieldController(object):
     def adjustSplitRight_clicked_cb(self, widget):
         self.adjustSplit_clicked("right")
 
+    def scale1_button_release_event_cb(self, widget, param):
+        self.clickIn = None
+        tmp = int(self.view.getSplitPosition())
+        if tmp != self.split_position:
+            self.split_position = tmp
+            self.updateDisplayFollowingSplitPosition()
+
+    def scale1_button_press_event_cb(self, widget, param):
+        self.clickIn = time.time()
+
     def adjustSplit_clicked(self, direction):
         if self.split_max_len <= 1:
             return
-        messages = self.field.getCells()
 
         # Bounds checking
         if self.split_align == "left":
@@ -149,27 +169,39 @@ class SplitFieldController(object):
                 if self.split_position < 1:
                     self.split_position = 1
 
+        self.view.setSplitPosition(self.split_position)
+        self.updateDisplayFollowingSplitPosition()
+
+    def updateDisplayFollowingSplitPosition(self):
+        messages = self.field.getCells()
         # Colorize text according to position
         self.view.buffer.get_buffer().set_text("")
+
         for m in messages:
             # Crate padding in case of right alignment
             if self.split_align == "right":
-                padding = ""
-                messageLen = len(m)
-                for i in range(self.split_max_len - messageLen):
-                    padding += " "
+                padding = " " * (self.split_max_len - len(m))
                 self.view.buffer.get_buffer().insert_with_tags_by_name(self.view.buffer.get_buffer().get_end_iter(), padding, "greenTag")
                 split_index = -self.split_position
             else:
                 split_index = self.split_position
-            self.view.buffer.get_buffer().insert_with_tags_by_name(self.view.buffer.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[:split_index], self.field.getFormat()) + "  ", "redTag")
-            self.view.buffer.get_buffer().insert_with_tags_by_name(self.view.buffer.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[split_index:], self.field.getFormat()) + "\n", "greenTag")
+
+            leftContent = m[:split_index]
+            rightContent = m[split_index:]
+
+            self.view.buffer.get_buffer().insert_with_tags_by_name(self.view.buffer.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(leftContent, self.field.getFormat()) + "  ", "redTag")
+            self.view.buffer.get_buffer().insert_with_tags_by_name(self.view.buffer.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(rightContent, self.field.getFormat()) + "\n", "greenTag")
+
+        value = self.split_position * (self.view.getMaxSizeOfHBuffer() / self.split_max_len)
+        self.view.adjustHPositionOfBuffer(value)
 
     def changeAlignment_clicked_cb(self, widget):
         if self.split_align == "left":
             self.split_align = "right"
+            self.view.invertScale(True)
         else:
             self.split_align = "left"
+            self.view.invertScale(False)
 
         messages = self.field.getCells()
 
@@ -188,3 +220,6 @@ class SplitFieldController(object):
                 split_index = self.split_position
             self.view.buffer.get_buffer().insert_with_tags_by_name(self.view.buffer.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[:split_index], self.field.getFormat()) + "  ", "redTag")
             self.view.buffer.get_buffer().insert_with_tags_by_name(self.view.buffer.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[split_index:], self.field.getFormat()) + "\n", "greenTag")
+
+        value = self.split_position * (self.view.getMaxSizeOfHBuffer() / self.split_max_len)
+        self.view.adjustHPositionOfBuffer(value)

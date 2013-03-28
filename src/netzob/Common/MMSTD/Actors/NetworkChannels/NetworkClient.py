@@ -28,10 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from bitarray import bitarray
-from locale import gettext as _
 import logging
-from lxml.etree import ElementTree
 from lxml import etree
 
 import select
@@ -44,7 +41,6 @@ import socket
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.MMSTD.Actors.AbstractChannel import AbstractChannel
 
@@ -64,6 +60,8 @@ class NetworkClient(AbstractChannel):
         self.outputMessages = []
 
     def open(self):
+        targetIp = self.getTargetIP()
+        targetPort = self.getTargetPort()
         try:
             if (self.getProtocol() == "UDP"):
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -77,8 +75,6 @@ class NetworkClient(AbstractChannel):
 
             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 
-            targetIp = self.getTargetIP()
-            targetPort = self.getTargetPort()
             self.log.debug("Try to connect on {0}:{1}".format(targetIp, targetPort))
             self.socket.connect((targetIp, targetPort))
             self.socket.setblocking(True)
@@ -128,10 +124,14 @@ class NetworkClient(AbstractChannel):
         except:
             self.log.debug("Impossible to read from the network socket")
             return None
-        result = TypeConvertor.string2bin("".join(chars), "big")
-        self.log.debug("Read finished")
+
+        netzobRaw = TypeConvertor.pythonRawToNetzobRaw(''.join(chars))
+        result = TypeConvertor.netzobRawToBitArray(netzobRaw)
+
+        self.log.debug("Read finished: {0}".format(result))
         if (len(chars) == 0):
             return result
+
         self.log.debug("Received : {0}".format(TypeConvertor.bin2strhex(result)))
         return result
 
@@ -140,7 +140,7 @@ class NetworkClient(AbstractChannel):
         self.outputMessages.append(message)
 
         try:
-            self.outputFile.write(TypeConvertor.binB2string(message))
+            self.outputFile.write(TypeConvertor.bin2string(message))
             self.outputFile.flush()
         except:
             self.log.warn("An error occured while trying to write on the communication channel")

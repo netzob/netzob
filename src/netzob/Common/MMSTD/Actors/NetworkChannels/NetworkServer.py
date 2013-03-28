@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 import SocketServer
 SocketServer.TCPServer.allow_reuse_address = True
@@ -384,7 +384,7 @@ class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
 
         while (not finish):
             try:
-                ready = select.select([self.request], [], [], 1)
+                ready = select.select([self.request[1]], [], [], 1)
                 time.sleep(0.1)
                 finish = not self.subVisitor.isAlive()
             except:

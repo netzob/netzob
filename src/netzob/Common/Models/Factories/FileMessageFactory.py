@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import uuid
 
 #+---------------------------------------------------------------------------+
@@ -108,7 +108,7 @@ class FileMessageFactory():
         msg_lineNumber = int(rootElement.find("{" + namespace + "}lineNumber").text)
 
         # Retrieves the filename
-        msg_filename = rootElement.find("{" + namespace + "}filename").text
+        msg_filename = rootElement.find("{" + namespace + "}filename").text.encode("utf-8")
 
         # Retrieves the creation date
         msg_creationDate = TypeConvertor.xsdDatetime2PythonDatetime(rootElement.find("{" + namespace + "}creationDate").text)

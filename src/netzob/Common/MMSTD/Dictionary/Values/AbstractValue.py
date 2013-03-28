@@ -29,8 +29,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-import gtk
-from locale import gettext as _
+from gettext import gettext as _
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports

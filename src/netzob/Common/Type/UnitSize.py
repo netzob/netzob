@@ -26,6 +26,11 @@
 #+---------------------------------------------------------------------------+
 
 #+----------------------------------------------
+#| Global Imports
+#+----------------------------------------------
+import logging
+
+#+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.Type.Format import Format
@@ -122,7 +127,7 @@ class UnitSize():
                 res = 8
         elif unitSize == UnitSize.BITS64:
             if aType == Format.BINARY:
-                res =64
+                res = 64
             elif aType == Format.OCTAL:
                 res = 22
             elif aType == Format.DECIMAL:

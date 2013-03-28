@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 import gzip
 import os.path
@@ -45,11 +45,13 @@ from netzob.Common.Models.Factories.AbstractMessageFactory import AbstractMessag
 from netzob.Common.Session import Session
 
 
-#+---------------------------------------------------------------------------+
-#| ImportedTrace:
-#|     Class definition of an imported trace registered in a workspace
-#+---------------------------------------------------------------------------+
+class ImportedTraceException(Exception):
+    pass
+
+
 class ImportedTrace(object):
+    """Class definition of an imported trace registered in a
+    workspace"""
 
     #+-----------------------------------------------------------------------+
     #| Constructor
@@ -60,10 +62,17 @@ class ImportedTrace(object):
         self.type = type
         self.description = description
         self.name = name
-        self.messages = []
-        self.sessions = []
+        self.messages = {}
+        self.sessions = {}
 
-    def save(self, root, namespace_workspace, namespace_common, pathOfTraces):
+    def __str__(self):
+        return "[{0}: name={1}; messages={2}; sessions={3}; type={4}]".format(self.id,
+                                                                              self.name,
+                                                                              ",".join(self.messages),
+                                                                              ",".join(self.sessions),
+                                                                              self.type)
+
+    def save(self, root, namespace_workspace, namespace_common, pathOfTraces, override=False):
         xmlTrace = etree.SubElement(root, "{" + namespace_workspace + "}trace")
         xmlTrace.set("date", str(TypeConvertor.pythonDatetime2XSDDatetime(self.getDate())))
         xmlTrace.set("type", str(self.getType()))
@@ -89,13 +98,12 @@ class ImportedTrace(object):
         for session in self.getSessions():
             session.save(xmlSessions, namespace_workspace, namespace_common)
 
-        tree = ElementTree(root)
-        contentOfFile = str(etree.tostring(tree.getroot()))
+        contentOfFile = str(etree.tostring(root))
 
         # Creation of the XML File (in buffer)
         # Compress it using gzip and save the .gz
         tracesFile = os.path.join(pathOfTraces, str(self.getID()) + ".gz")
-        if not os.path.isfile(tracesFile):
+        if not os.path.isfile(tracesFile) or override:
             logging.debug("Save the trace " + str(self.getID()) + " in " + tracesFile)
             # Compress and write the file
             gzipFile = gzip.open(tracesFile, 'wb')
@@ -103,10 +111,25 @@ class ImportedTrace(object):
             gzipFile.close()
 
     def addSession(self, session):
-        self.sessions.append(session)
+        self.sessions.update({session.id: session})
 
     def addMessage(self, message):
-        self.messages.append(message)
+        self.messages.update({message.id: message})
+
+    def removeMessage(self, messageId):
+        """This functions allows to remove a message from the current
+        instance of ImportedTrace. It also removes the specified
+        message from all sessions."""
+
+        message = self.messages.pop(messageId)
+
+        for session in self.sessions.values():
+            try:
+                session.messages.remove(message)
+            except ValueError, e:
+                pass
+
+        return message
 
     def getID(self):
         return self.id
@@ -124,16 +147,29 @@ class ImportedTrace(object):
         return self.name
 
     def getSessions(self):
-        return self.sessions
+        return self.sessions.values()
+
+    def getSession(self, sessionId):
+        return self.sessions[sessionId]
 
     def getMessages(self):
-        return self.messages
+        return self.messages.values()
 
     def getMessageByID(self, id):
-        for message in self.messages:
-            if message.getID() == id:
-                return message
-        return None
+        return self.messages[id]
+
+    def removeSession(self, session):
+        """This functions allows to remove a session from the current
+        instance of ImportedTrace. It also removes all the specified
+        message included in the session."""
+
+        if session.id not in self.sessions.keys():
+            raise ImportedTraceException("The session is not part of the ImportedTrace, can't remove it.")
+
+        for message in session.getMessages():
+            self.messages.pop(message.id)
+
+        return self.sessions.pop(session.id)
 
     def setID(self, id):
         self.id = id
@@ -155,7 +191,6 @@ class ImportedTrace(object):
     #+----------------------------------------------
     @staticmethod
     def loadTrace(xmlRoot, namespace_workspace, namespace_common, version, pathOfTraces):
-
         if version == "0.1":
             date = TypeConvertor.xsdDatetime2PythonDatetime(str(xmlRoot.get("date")))
             type = xmlRoot.get("type")
@@ -164,9 +199,9 @@ class ImportedTrace(object):
             name = xmlRoot.get("name")
 
             importedTrace = ImportedTrace(id, date, type, description, name)
-            tracesFile = os.path.join(pathOfTraces, str(id) + ".gz")
+            tracesFile = os.path.join(pathOfTraces, "{0}.gz".format(id))
             if not os.path.isfile(tracesFile):
-                logging.warn("The trace file " + str(tracesFile) + " is referenced but doesn't exist.")
+                logging.warn("The trace file {0} is referenced but doesn't exist.".format(tracesFile))
             else:
                 gzipFile = gzip.open(tracesFile, 'rb')
                 xml_content = gzipFile.read()
@@ -176,8 +211,8 @@ class ImportedTrace(object):
                 xmlRoot = tree.getroot()
 
                 # We retrieve the pool of messages
-                if xmlRoot.find("{" + namespace_workspace + "}messages") is not None:
-                    xmlMessages = xmlRoot.find("{" + namespace_workspace + "}messages")
+                xmlMessages = xmlRoot.find("{" + namespace_workspace + "}messages")
+                if xmlMessages is not None:
                     for xmlMessage in xmlMessages.findall("{" + namespace_common + "}message"):
                         message = AbstractMessageFactory.loadFromXML(xmlMessage, namespace_common, version)
                         if message is not None:
@@ -187,8 +222,17 @@ class ImportedTrace(object):
                 if xmlRoot.find("{" + namespace_workspace + "}sessions") is not None:
                     xmlSessions = xmlRoot.find("{" + namespace_workspace + "}sessions")
                     for xmlSession in xmlSessions.findall("{" + namespace_common + "}session"):
-                        session = Session.loadFromXML(xmlSession, namespace_workspace, namespace_common, version, importedTrace)
+                        project = None
+                        session = Session.loadFromXML(xmlSession, namespace_workspace, namespace_common, version, project, importedTrace)
                         if session is not None:
                             importedTrace.addSession(session)
             return importedTrace
         return None
+
+    @staticmethod
+    def deleteTrace(trace, pathOfTraces):
+        path = os.path.join(pathOfTraces, "{0}.gz".format(trace.id))
+        try:
+            os.unlink(path)
+        except OSError, e:
+            logging.error("Unable to delete file '{0}' while deleting trace '{1}': {2}".format(path, trace.id, e))

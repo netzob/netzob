@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 import os
 
@@ -97,7 +97,7 @@ class VariableTreeView(AbstractView):
         self.showObjects()
 
         # Make the column
-        self.lvcolumn = Gtk.TreeViewColumn(_("Description of the variable"))
+        self.lvcolumn = Gtk.TreeViewColumn(_("Definition domain structure"))
         self.lvcolumn.set_sort_column_id(-1)
         cell = Gtk.CellRendererText()
         self.lvcolumn.pack_start(cell, True)
@@ -121,7 +121,9 @@ class VariableCreationView(AbstractView):
 
     def __init__(self, controller):
         AbstractView.__init__(self, controller, VariableCreationView.GLADE_FILENAME)
-        self.getObjects(["dialog", "applyButton", "nameEntry", "mutableCheck", "learnableCheck", "minLabel", "maxLabel", "minSpin", "maxSpin", "variableTypeCombo", "valueLabel", "valueEntry", "typeLabel", "typeCombo", "relationTypeLabel", "relationTypeCombo", "IDButton", "IDEntry", "IDLabel", "IDGrid", "sizedLabel", "sizedCheck", "delimiterLabel", "delimiterEntry"])
+        self.getObjects(["dialog", "applyButton", "nameEntry", "mutableCheck", "learnableCheck", "minLabel", "maxLabel", "minSpin", "maxSpin", "variableTypeCombo",
+                         "valueLabel", "valueEntry", "typeLabel", "typeCombo", "relationTypeLabel", "relationTypeCombo", "IDButton", "IDEntry", "IDLabel", "IDGrid",
+                         "sizedLabel", "sizedCheck", "delimiterLabel", "delimiterEntry", "factorLabel", "factorEntry", "offsetLabel", "offsetEntry"])
         self.showObjects()
 
 

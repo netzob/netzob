@@ -28,7 +28,7 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 import re
 
@@ -58,6 +58,88 @@ class Searcher(object):
         self.log = logging.getLogger('netzob.Inference.Vocabulary.Searcher.py')
         self.project = project
         self.status_cb = status_cb
+
+    def searchContextInMessage(self, message):
+        """searchContextInMessage:
+        Search for any context relative information
+        in provided message. It includes applicative data,
+        parameters and environmental data"""
+        if message is None:
+            self.log.warning("No message provided")
+            return []
+        results = []
+        results.extend(self.searchApplicativeDataInMessage(message))
+        results.extend(self.searchEnvironmentDataInMessage(message))
+
+        return results
+
+    def searchEnvironmentDataInMessage(self, message):
+        """searchEnvironmentDataInMessage:
+        Search on the provided message every environment data stored in
+        the message"""
+        tasks = []
+        for prop in message.getProperties():
+            if prop.getName() != "Data":
+                tasks.extend(self.createSearchTasksForData(str(prop.getCurrentValue()), prop.getFormat()))
+        if len(tasks) == 0:
+            self.log.warning("Nothing to search after")
+            return []
+        self.log.info("{0} search tasks will be executed.".format(len(tasks)))
+
+        newTasks = self.searchInMessage(tasks, message)
+
+        results = []
+        for task in newTasks:
+            if len(task.getResults()) > 0:
+                for r in task.getResults():
+                    r.setDescription(task.getDescription())
+                results.extend(task.getResults())
+        return results
+
+    def createSearchTasksForData(self, dataValue, dataType):
+        """createSearchTasksForData:
+        This methods creates search tasks given the value and its format.
+        @returns a list of L{netzob.Inference.Vocabulary.SearchTask}"""
+        tasks = []
+        if dataType == Format.STRING:
+            tasks.extend(self.getSearchedDataForString(dataValue))
+        elif dataType == Format.DECIMAL:
+            tasks.extend(self.getSearchedDataForDecimal(dataValue))
+        elif dataType == Format.IP:
+            tasks.extend(self.getSearchedDataForIP(dataValue))
+        elif dataType == Format.HEX:
+            tasks.extend(self.getSearchedDataForHexadecimal(dataValue))
+        else:
+            self.log.warning("Type data {0} cannot be used in a search.".format(dataType))
+        return tasks
+
+    def searchApplicativeDataInMessage(self, message):
+        """searchApplicativeDataInMessage:
+        Search for any applicative data attached to the current project
+        in the provided message.
+        """
+        if message is None:
+            self.log.warning("No message provided")
+            return []
+        applicativeData = self.project.getVocabulary().getApplicativeData()
+        # Create search tasks
+        tasks = []
+        for appData in applicativeData:
+            tasks.extend(self.createSearchTasksForData(appData.getValue(), appData.getType()))
+
+        if len(tasks) == 0:
+            self.log.warning("Nothing to search after")
+            return []
+        self.log.info("{0} search tasks will be executed.".format(len(tasks)))
+
+        newTasks = self.searchInMessage(tasks, message)
+        results = []
+        for task in newTasks:
+            if len(task.getResults()) > 0:
+                for r in task.getResults():
+                    r.setDescription(task.getDescription())
+                results.extend(task.getResults())
+        return results
 
     #+----------------------------------------------
     #| getSearchedDataForBinary:
@@ -101,7 +183,7 @@ class Searcher(object):
         # Creation of a SearchTask
         task = SearchTask(value, value, Format.HEX)
         task.registerVariation(value, "Hex repr of '{0}'({1}))".format(value, extraInfo))
-#        task.registerVariation(value[::-1], "Inverted representation of '{0}'".format(value[::-1]))
+        #        task.registerVariation(value[::-1], "Inverted representation of '{0}'".format(value[::-1]))
         return [task]
 
     #+----------------------------------------------
@@ -114,6 +196,7 @@ class Searcher(object):
         task = SearchTask(value, value, Format.STRING)
         task.registerVariation(TypeConvertor.stringToNetzobRaw(value), "String representation of '%s'" % value)
         task.registerVariation(TypeConvertor.stringToNetzobRaw(value[::-1]), "Inverted string representation of '%s'" % value[::-1])
+        task.registerVariation(TypeConvertor.stringToNetzobRaw(value.decode('utf-8')), "String representation of '%s' encoded in UTF-8" % value)
         return [task]
 
     #+----------------------------------------------
@@ -284,7 +367,7 @@ class Searcher(object):
         indice = messageData.find(data, 0)
         while indice >= 0:
             searchResult = SearchResult(message, "Natural search")
-            searchResult.addSegment(indice, len(data))
+            searchResult.addSegment(indice, indice + len(data))
             results.append(searchResult)
             indice = messageData.find(data, indice + 1)
 

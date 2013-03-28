@@ -28,10 +28,11 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 import uuid
 import re
+import copy
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -71,6 +72,7 @@ class AbstractMessage(object):
         self.extraProperties = []
         self.visualizationFunctions = []
         self.transformationFunctions = []
+        self.semanticTags = dict()  # semanticTags[0...half-byte] = tag
 
         self.pattern = []
         if not pattern:
@@ -80,6 +82,24 @@ class AbstractMessage(object):
             self.pattern = pattern
             # self.log.debug("not empty {0}".format(self.getPatternString()))
 
+    def copy(self):
+        """This function allows to copy an object an update the
+        message's unique id to avoid conflicts between traces and
+        sessions."""
+
+        message = copy.copy(self)
+        message.id = str(uuid.uuid4())
+        return message
+
+    def __str__(self):
+        if self.session is None:
+            sessionID = "None"
+        else:
+            sessionID = str(self.session.id)
+        return "[{0}: data={1}...; type={2}; session={3}]".format(self.id,
+                                                                  self.data[:15],
+                                                                  self.type, sessionID)
+
     #+-----------------------------------------------------------------------+
     #| getFactory
     #|     Abstract method to retrieve the associated factory
@@ -88,6 +108,20 @@ class AbstractMessage(object):
     def getFactory(self):
         self.log.error("The message class doesn't have an associated factory !")
         raise NotImplementedError("The message class doesn't have an associated factory !")
+
+    def getSource(self):
+        """
+        getSource: return the actor that sent the message, if it exists.
+        """
+        self.log.error("The message class doesn't have a source !")
+        raise NotImplementedError("The message class doesn't have a source !")
+
+    def getDestination(self):
+        """
+        getDestination: return the actor that received the message, if it exists.
+        """
+        self.log.error("The message class doesn't have a destination !")
+        raise NotImplementedError("The message class doesn't have a destination !")
 
     #+-----------------------------------------------------------------------+
     #| getProperties
@@ -362,6 +396,9 @@ class AbstractMessage(object):
     def setType(self, type):
         self.type = type
 
+    def setTimestamp(self, timestamp):
+        self.timestamp = timestamp
+
     def setData(self, data):
         self.data = data
 
@@ -427,3 +464,32 @@ class AbstractMessage(object):
 
     def getTransformationFunctions(self):
         return self.transformationFunctions
+
+    def addSemanticTag(self, tag, start, end):
+        """addSemanticTag:
+        Register the provided tag over the bytes located between
+        start and end.
+        @tag: a string which represents the tag
+        @start: the index of the half-byte where the tag starts to apply
+        @end: the index of the hal-byte where the tag ends to apply
+        """
+        for i in range(start, end):
+            self.semanticTags[i] = tag
+
+    def setSemanticTag(self, tag, pos):
+        """setSemanticTag:
+        Set the pos half-byte to be tagged with provided token.
+        @tag: a string which represents a tag
+        @pos: the position of half-byte to be tagged"""
+        self.semanticTags[pos] = tag
+
+    def getSemanticTagAt(self, iHalfByte):
+        """getSemanticTagAt:
+        Return the tag nolcated at the iHalfByte"""
+        if not iHalfByte in self.semanticTags.keys():
+            return None
+        else:
+            return self.semanticTags[iHalfByte]
+
+    def getSemanticTags(self):
+        return self.semanticTags

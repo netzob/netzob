@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 from lxml import etree
 import logging
 import uuid
@@ -128,7 +128,7 @@ class AlternateVariable(AbstractNodeVariable):
                 fakeFather.addChild(rightBrother)
         elif self.getFathers()[0].getType() == RepeatVariable.TYPE:
             (minIterations, maxIterations) = self.getFathers()[0].getNumberIterations()
-            # Some iterations of this treatment could have be made before. The fake father should not make more iterations than it remains for the real father.
+            # Some iterations of this treatment could have been made before. The fake father should not make more iterations than it remains for the real father.
             minIterations = max(0, minIterations - self.getFathers()[0].getCurrentIteration())
             maxIterations = max(0, maxIterations - self.getFathers()[0].getCurrentIteration())
             fakeFather = RepeatVariable(str(uuid.uuid4()), "Fake father", False, False, self, minIterations, maxIterations)
@@ -140,7 +140,7 @@ class AlternateVariable(AbstractNodeVariable):
         for index in len(valueToBeRead):
             # We search if, by shifting the position of actual variable, we could read the given value.
             tmpValue = valueToBeRead[:index]
-            tmpChild = DataVariable(str(uuid.uuid4()), "Learned Inserted Variable", True, True, BinaryType(True, len(tmpValue), len(tmpValue)), tmpValue.to01())
+            tmpChild = DataVariable(str(uuid.uuid4()), "Learned Inserted Variable", True, True, BinaryType(True, len(tmpValue), len(tmpValue)), tmpValue)
             # We add the new variable at the end, in order to minimize its impact.
             self.add(tmpChild)
 
@@ -209,6 +209,18 @@ class AlternateVariable(AbstractNodeVariable):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
+    def cloneVariable(self):
+        # Clone the variable.
+        clone = AlternateVariable(uuid.uuid4(), self.getName(), self.isMutable(), self.isLearnable(), None)
+        clone.setCloned(True)
+        # Clone its children and add them to the previously cloned variable.
+        for child in self.children:
+            clonedChild = child.cloneVariable()
+            clone.addChild(clonedChild)
+        self.setLastClone(clone)
+        self.transferBoundedVariables(clone)
+        return clone
+
     def getVariableType(self):
         """getVariableType:
         """
@@ -265,6 +277,7 @@ class AlternateVariable(AbstractNodeVariable):
                 If one of them fails, the whole operation is cancelled.
         """
         self.log.debug("[ {0} (Alternate): write access:".format(AbstractVariable.toString(self)))
+        self.resetTokenChoppedIndexes()  # New write access => new final value and new reference to it.
         if self.getChildren() is not None:
             if self.isMutable():
                 # mutable.

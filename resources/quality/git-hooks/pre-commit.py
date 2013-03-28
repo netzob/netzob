@@ -34,6 +34,7 @@ from git import *
 ignore_files = [
     "__init__.py",
     "src/netzob/ExternalLibs/xdot.py",
+    "test/src/common/xmlrunner.py",
     ".*\.txt", ".*\.rst",
     ".*\.png", ".*\.ico",
     ".*\.xsd", ".*\.xml",
@@ -43,6 +44,8 @@ ignore_files = [
     ".*\.po", ".*\.pot",
     "doc/netzob\.1",
     "\.git/*",
+    ".*/PKG-INFO",
+    ".*/.*\.so",
 ]
 
 def getFiles():
@@ -68,7 +71,7 @@ def getFiles():
 def checkPEP8(file):
     localResult = []
     try:
-        p = subprocess.Popen(['pep8', '--repeat', '--ignore=E501,E711,E712', file], stdout=subprocess.PIPE)
+        p = subprocess.Popen(['pep8', '--repeat', '--ignore=E501', file], stdout=subprocess.PIPE)
         out, err = p.communicate()
         for line in out.splitlines():
             localResult.append(line)
@@ -148,7 +151,7 @@ def checkHeader(file):
         data = f.read()
     if not header in data and not header2 in data and not header3 in data:
         if file.startswith(os.path.join("src", "netzob_plugins")):  # Plugin
-            headersPlugin = header.split("Georges Bossert and Frédéric Guihéry                   |")
+            headersPlugin = header.split("2011 Georges Bossert and Frédéric Guihéry                   |")
             if headersPlugin[0] in data and headersPlugin[1] in data:
                 return []
         return ["The header has not been found in file"]
@@ -186,21 +189,26 @@ def checkFile(file):
 
 def verifyResults(results):
     result = 0
-    for file in results.keys():
-        resultFile = results[file]
+    for f in results.keys():
+        resultFile = results[f]
         if len(resultFile) > 0:
-            print "[I] File %s:" % (file)
             ruleNames = resultFile.keys()
             localResult = 0
+
+            errorForCurrentFile = []
             for ruleName in ruleNames:
                 ruleErrors = resultFile[ruleName]
                 if ruleErrors is not None and len(ruleErrors) > 0:
                     for ruleError in ruleErrors:
-                        print "[E]\t %s : %s" % (ruleName, ruleError)
+                        errorForCurrentFile.append("[E]\t %s : %s" % (ruleName, ruleError))
                     result = 1
                     localResult = 1
-            if localResult == 0:
-                print "[I]\t no error found."
+
+            if len(errorForCurrentFile) > 0:
+                print "[I] File %s:" % (f)
+                for err in errorForCurrentFile:
+                    print err
+
     return result
 
 def analyze(providedFiles):
@@ -208,7 +216,13 @@ def analyze(providedFiles):
     if providedFiles is None:
         # Retrieve all the files to analyze
         print "[I] Retrieve all the files to analyze from the staged area."
-        files = getFiles()
+        tmp_files = getFiles()
+        files = []
+        # Filters directories which could appears in files due to submodules creation
+        # TODO : should be invastigated in details why this could happen
+        for f in tmp_files:
+            if os.path.isfile(f):
+                files.append(f)
     else:
         print "[I] Retrieve all the file to analyze from the command line arguments."
         filesToAnalyze = getFilesFromListOfPath(providedFiles)
@@ -223,10 +237,9 @@ def analyze(providedFiles):
                 except:
                     print "[E] File %s exists but is not readable." % fileToAnalyze
 
-#    print "[I] %d files will be analyzed." % (len(files))
     globalResults = dict()
-    for file in files:
-        globalResults[file] = checkFile(file)
+    for fileToAnalyze in files:
+        globalResults[fileToAnalyze] = checkFile(fileToAnalyze)
 
     # Compute the final result (0=sucess, 1=cannot commit)
     result = verifyResults(globalResults)

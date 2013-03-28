@@ -34,7 +34,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 from lxml import etree
 from lxml.etree import ElementTree
 from operator import attrgetter
@@ -88,7 +88,6 @@ class Symbol(AbstractSymbol):
         self.messages = []
         self.field = Field.createDefaultField(self)
         self.field.setName(name)
-        self.project = project
         self.pattern = None
 
     #+----------------------------------------------
@@ -102,9 +101,7 @@ class Symbol(AbstractSymbol):
                 # We add all variable that has the root variable of field as ancestor.
                 result.extend(field.getVariable().getProgeny())
             else:
-                self.log.debug("Field {0} has no variable, considering default one.".format(str(field.getName())))
-                result.extend(field.getDefaultVariable(self).getProgeny())
-
+                self.log.warn("Field {0} has no variable, this should not happen.".format(str(field.getName())))
         return result
 
     ### Messages ###
@@ -246,10 +243,7 @@ class Symbol(AbstractSymbol):
         # We create an aggregate of all the fields
         rootSymbol = AggregateVariable(self.getID(), self.getName(), False, False, None)
         for field in self.getExtendedFields():
-            if field.getVariable() is None:
-                variable = field.getDefaultVariable(self)
-            else:
-                variable = field.getVariable()
+            variable = field.getVariable()
             rootSymbol.addChild(variable)
         return rootSymbol
 
@@ -305,6 +299,15 @@ class Symbol(AbstractSymbol):
 
     def getPatternString(self):
         return str(self.pattern[0]) + ";" + str([str(i) for i in self.pattern[1]])
+
+    def getRegex(self):
+        """getRegex:
+        Concat regexes of symbol's fields (extendedFields) in a regex
+        which should represent the symbol"""
+        regex = []
+        for field in self.getExtendedFields():
+            regex.append(field.getRegex())
+        return "".join(regex)
 
     def getField(self):
         return self.field
@@ -362,9 +365,6 @@ class Symbol(AbstractSymbol):
     def __str__(self):
         return str(self.getName())
 
-    def __repr__(self):
-        return str(self.getName())
-
     def __cmp__(self, other):
         if other is None:
             return 1
@@ -400,7 +400,7 @@ class Symbol(AbstractSymbol):
             if xmlRoot.find("{" + namespace_project + "}field") is not None:
                 xmlField = xmlRoot.find("{" + namespace_project + "}field")
                 field = Field.loadFromXML(xmlField, namespace_project, version, symbol)
-                if field != None:
+                if field is not None:
                     symbol.setField(field)
 
             return symbol

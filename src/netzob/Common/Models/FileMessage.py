@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 
 #+---------------------------------------------------------------------------+
@@ -108,6 +108,12 @@ class FileMessage(AbstractMessage):
 
     def getSize(self):
         return self.size
+
+    def getSource(self):
+        return "-"
+
+    def getDestination(self):
+        return "-"
 
     #+----------------------------------------------
     #| SETTERS:

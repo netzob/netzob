@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 import binascii
 import random
@@ -148,7 +148,7 @@ class IPv4Variable(Variable):
             for t in range(min(len(currentContent), 15), 7, -1):
                 currentPossibleIP = currentContent[:t]
                 result = IPRegex.match(currentPossibleIP)
-                if result != None:
+                if result is not None:
                     hasMatched = True
                 elif hasMatched:
                     break

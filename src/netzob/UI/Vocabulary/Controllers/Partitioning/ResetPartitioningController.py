@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 import time
 
@@ -37,10 +37,9 @@ import time
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk, GObject
 import gi
+gi.require_version('Gtk', '3.0')
 from netzob.Common.Threads.Job import Job
 from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask, TaskError
-gi.require_version('Gtk', '3.0')
-from gi.repository import GObject
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -102,8 +101,8 @@ class ResetPartitioningController(object):
         self._view.resetDialog.destroy()
 
         # Update the UI
-        self.vocabularyController.view.updateLeftPanel()
-        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.updateLeftPanel()
+        self.vocabularyController.updateSelectedMessageTable()
 
     def reset(self):
         """Reset the provided fields"""

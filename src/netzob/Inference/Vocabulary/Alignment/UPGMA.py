@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Global Imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 import uuid
 import random
@@ -46,7 +46,6 @@ from netzob.Common.ProjectConfiguration import ProjectConfiguration
 #| C Imports
 #+---------------------------------------------------------------------------+
 from netzob import _libScoreComputation
-from netzob import _libInterface
 
 
 #+---------------------------------------------------------------------------+
@@ -56,7 +55,7 @@ from netzob import _libInterface
 class UPGMA(object):
     """This class provides the required methods to compute clustering
     between multiple symbols/messages using UPGMA algorithms (see U{http://en.wikipedia.org/wiki/UPGMA}).
-    When processing, the matrix of scores is computed by the C extensions (L{_libScoreComputation} and L{_libInterface})
+    When processing, the matrix of scores is computed by the C extensions (L{_libScoreComputation}
     and used to regroup messages and symbols into equivalent cluster."""
 
     def __init__(self, project, symbols, unitSize, cb_status=None, scores={}):
@@ -92,7 +91,7 @@ class UPGMA(object):
         @param donePercent: a float between 0 and 100 included
         @param currentMessage: a str which represents the current alignment status"""
         if self.cb_status is None:
-            self.log.info("[UPGMA status]" + str(donePercent) + "% " + currentMessage)
+            self.log.info("[UPGMA status]" + str(donePercent) + "% " + str(currentMessage))
         else:
             self.cb_status(stage, donePercent, currentMessage)
 
@@ -107,23 +106,22 @@ class UPGMA(object):
 
         self.cb_executionStatus(0, 0, "Clustering into symbols...")
         self.processUPGMA()
-        self.cb_executionStatus(1, 100, None)
+        self.cb_executionStatus(1, 100, "Clustering into symbols finish")
         # Retrieve the alignment of each symbol and the build the associated regular expression
-        self.cb_executionStatus(2, 0, "Compute the definition for each cluster...")
 
         if self.isFinish():
             return None
 
+        self.cb_executionStatus(2, 0, "Align messages of each clusters...")
         self.currentAlignment = NeedlemanAndWunsch(self.unitSize, self.project, False, self.cb_status)
         self.currentAlignment.absoluteStage = 2
         self.currentAlignment.statusRatio = len(self.symbols)
         self.currentAlignment.statusRatioOffset = 0
 
         for symbol in self.symbols:
-
             if self.isFinish():
                 return None
-
+            self.log.info("Align messages from symbol {0}".format(symbol.getName()))
             self.currentAlignment.alignField(symbol.getField())
             self.currentAlignment.statusRatioOffset = self.currentAlignment.statusRatioOffset + 1
 
@@ -136,14 +134,12 @@ class UPGMA(object):
 
         # Execute the Clustering part in C
         debug = False
-        wrapper = WrapperArgsFactory("_libScoreComputation.getHighestEquivalentGroup")
+        wrapper = WrapperArgsFactory("_libScoreComputation.computeSimilarityMatrix")
         wrapper.typeList[wrapper.function](self.symbols)
-        (i_max, j_max, maxScore, listScores) = _libScoreComputation.getHighestEquivalentGroup(self.doInternalSlick, self.cb_executionStatus, self.isFinish, debug, wrapper)
-
+        (listScores) = _libScoreComputation.computeSimilarityMatrix(self.doInternalSlick, self.cb_executionStatus, self.isFinish, debug, wrapper)
         # Retrieve the scores for each association of symbols
         self.scores = {}
         for (iuid, juid, score) in listScores:
-
             if self.isFinish():
                 return (None, None, None)
 
@@ -157,7 +153,6 @@ class UPGMA(object):
 
         # Reduce the UPGMA matrix (merge symbols by similarity)
         self.computePhylogenicTree()
-        return (i_max, j_max, maxScore)
 
     def computePhylogenicTree(self):
         """Compute the phylogenic tree
@@ -319,16 +314,6 @@ class UPGMA(object):
         for symbol in self.symbols:
             alignment.alignField(symbol.getField())
         return self.symbols
-
-    def deserializeGroups(self, symbols):
-        """Useless (functionally) function created for testing purposes
-        @param symbols a list of symbols
-        @returns number Of deserialized symbols"""
-        # First we serialize the messages
-        (serialSymbols, format) = TypeConvertor.serializeSymbols(symbols, self.unitSize, self.scores)
-
-        debug = False
-        return _libInterface.deserializeGroups(len(symbols), format, serialSymbols, debug)
 
     def getScores(self):
         """@return: the dictionnary of scores"""

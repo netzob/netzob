@@ -29,7 +29,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from abc import abstractmethod
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 
 #+---------------------------------------------------------------------------+
@@ -47,7 +47,7 @@ class AbstractRelationType():
             It defines the type of a relation variable.
     """
 
-    def __init__(self, sized, nbChars=0, delimiter=None):
+    def __init__(self, sized, minChars=0, maxChars=0, delimiter=None, factor=1, offset=0):
         """Constructor of AbstractRelationType:
 
                 @type sized: boolean
@@ -56,12 +56,18 @@ class AbstractRelationType():
                 @param nbChars: the number of elementary character the value of this variable can have.
                 @type delimiter: bitarray
                 @param delimiter: a set of bits that tells where the associated variable ends.
+                @type factor: float
+                @param factor: a factor that multiplies the computed value.
+                @type offset: float
+                @param offset: an offset that is added to the computed value.
         """
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.RelationTypes.AbstractRelationType.py')
-        self.associatedDataType = self.makeAssociatedDataType(sized, nbChars, nbChars, delimiter)
+        self.associatedDataType = self.makeAssociatedDataType(sized, minChars, maxChars, delimiter)
+        self.factor = factor
+        self.offset = offset
 
     def toString(self):
-        return "{0}, associatedDataType: {1}".format(self.getType(), self.associatedDataType.toString())
+        return "{0}, factor: {1}, offset: {2}, associatedDataType: {3}".format(self.getType(), self.factor, self.offset, self.associatedDataType.toString())
 
 #+---------------------------------------------------------------------------+
 #| Abstract methods                                                          |
@@ -115,6 +121,12 @@ class AbstractRelationType():
     def getNbBits(self):
         return self.associatedDataType.getMaxBits()
 
+    def getFactor(self):
+        return self.factor
+
+    def getOffset(self):
+        return self.offset
+
     def setAssociatedDataType(self, dataType):
         self.associatedDataType = dataType
 
@@ -122,11 +134,14 @@ class AbstractRelationType():
 #| Static methods                                                            |
 #+---------------------------------------------------------------------------+
     @staticmethod
-    def makeType(typeString, sized, minChars, maxChars, delimiter):
+    def makeType(typeString, sized, minChars, maxChars, delimiter, factor, offset):
         _type = None
-        from netzob.Common.MMSTD.Dictionary.RelationTypes.SizeRelationType import SizeRelationType
-        if typeString == SizeRelationType.TYPE:
-            _type = SizeRelationType(sized, minChars, maxChars, delimiter)
+        from netzob.Common.MMSTD.Dictionary.RelationTypes.WordSizeRelationType import WordSizeRelationType
+        from netzob.Common.MMSTD.Dictionary.RelationTypes.BinarySizeRelationType import BinarySizeRelationType
+        if typeString == WordSizeRelationType.TYPE:
+            _type = WordSizeRelationType(sized, minChars, maxChars, delimiter, factor, offset)
+        elif typeString == BinarySizeRelationType.TYPE:
+            _type = BinarySizeRelationType(sized, minChars, maxChars, delimiter, factor, offset)
         else:
             logging.error("Wrong type specified for this variable.")
         return _type

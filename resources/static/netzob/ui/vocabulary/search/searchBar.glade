@@ -110,10 +110,10 @@
             <property name="entry_text_column">0</property>
             <property name="id_column">1</property>
             <items>
-              <item translatable="yes">decimal</item>
-              <item translatable="yes">hexa</item>
-              <item translatable="yes">string</item>
-              <item translatable="yes">ipv4</item>
+              <item translatable="no">decimal</item>
+              <item translatable="no">hexa</item>
+              <item translatable="no">string</item>
+              <item translatable="no">ipv4</item>
             </items>
           </object>
           <packing>

@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import re
 import logging
 import threading
@@ -47,6 +47,7 @@ from netzob.Common.Models.Factories.IPCMessageFactory import IPCMessageFactory
 from netzob.Common.Plugins.Capturers.AbstractCapturer import AbstractCapturer
 from netzob.Common.EnvironmentalDependencies import EnvironmentalDependencies
 from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.NetzobException import NetzobImportException
 
 
 #+----------------------------------------------

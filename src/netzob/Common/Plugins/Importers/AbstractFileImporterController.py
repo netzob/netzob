@@ -30,7 +30,7 @@
 #+---------------------------------------------------------------------------+
 import logging
 import uuid
-from locale import gettext as _
+from gettext import gettext as _
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -44,9 +44,6 @@ from netzob.Common.Plugins.Importers.AbstractImporterController import AbstractI
 
 
 class AbstractFileImporterController(AbstractImporterController):
-
-    def __init__(self, netzob, plugin):
-        super(AbstractImporterController, self).__init__(netzob, plugin)
 
     def setSourceFiles(self, filePathList):
         self.view.setSourceFiles(filePathList)

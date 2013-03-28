@@ -25,19 +25,29 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
+import uuid
+
 from netzob import _libScoreComputation
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.C_Extensions.WrapperMessage import WrapperMessage
+from netzob.Common.Models.RawMessage import RawMessage
+from netzob.Common.NetzobException import NetzobException
 
 
 class WrapperArgsFactory(object):
-    """Factory dedicated to the manipulation of arguments passed to C wrapper"""
+    """Factory dedicated to the manipulation of arguments passed to C wrapper.
+    This object will be transfered to the C extensions with its attributes which are:
+    - self.typeList : a map between function name and function pointer
+    - self.function : the function for which the parameters will be wrapped.
+    """
 
     def __init__(self, function):
-        self.typeList = {"_libScoreComputation.getHighestEquivalentGroup": self.getHighestEquivalentGroup}
+        self.typeList = {
+            "_libScoreComputation.computeSimilarityMatrix": self.computeSimilarityMatrix,
+            "_libNeedleman.alignMessages": self.alignMessages}
+
         if(function in self.typeList.keys()):
             self.function = function
         else:
@@ -46,7 +56,15 @@ class WrapperArgsFactory(object):
     def __str__(self):
         return str(self.args)
 
-    def getHighestEquivalentGroup(self, symbols):
+    def computeSimilarityMatrix(self, symbols):
         self.args = []
         for s in symbols:
-            self.args.append(WrapperMessage(s.getMessages()[0], s))
+            self.args.append(WrapperMessage(s.getMessages()[0], s.getID()))
+
+    def alignMessages(self, values):
+        self.args = []
+        for (data, tags) in values:
+            message = RawMessage(uuid.uuid4(), 0, data)
+            for pos, tag in tags.items():
+                message.setSemanticTag(tag, pos)
+            self.args.append(WrapperMessage(message, "Virtual symbol"))

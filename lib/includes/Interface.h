@@ -27,10 +27,32 @@
 #ifndef Interface_H
 #define Interface_H 
 #include "commonLib.h"
+#include "commonPythonLib.h"
 
 
-unsigned int deserializeMessages(t_group *, unsigned char *, int, unsigned char *, int, int, Bool);
-unsigned int deserializeGroups(t_groups *, unsigned char *, int, unsigned char *, int, int, Bool);
+/**
+   serializeMessage:
+
+   This function transform the provided t_message into a Data Transfert Object
+   using PyObject.
+   @param message: the message to serialize
+   @return a PyObject * which represents the provided message
+*/
+PyObject * serializeMessage(t_message * message);
+
+/**
+   SerializeSemanticTags:
+
+   This function transforme the provided tags into a string
+   @param serializedTags: a pointer to a not yet allocated string for the result
+   @param tags: the semantic tags to parse and transform
+   @param nbSemanticTags: the number of semantic tags in tags
+   @return unsigned int: the number of tags in the result
+**/
+unsigned int serializeSemanticTags(char ** serializedTags, t_semanticTag ** tags, unsigned int nbSemanticTags);
+
+unsigned int deserializeMessages(t_group *, char *, unsigned char *, unsigned int, Bool);
+unsigned int deserializeGroups(t_groups *, char *, unsigned char *, int, Bool);
 
 //+---------------------------------------------------------------------------+
 //| hexdump : for debug purposes

@@ -73,3 +73,9 @@ class L2NetworkMessage(AbstractMessage):
         properties.append(Property('Data', Format.HEX, self.getStringData()))
         properties.extend(super(L2NetworkMessage, self).getProperties())
         return properties
+
+    def getSource(self):
+        return str(self.getL2SourceAddress())
+
+    def getDestination(self):
+        return str(self.getL2DestinationAddress())

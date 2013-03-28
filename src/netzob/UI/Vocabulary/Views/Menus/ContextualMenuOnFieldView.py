@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -83,8 +83,8 @@ class ContextualMenuOnFieldView(object):
         item.connect("activate", self.controller.displayPopupToCreateLayer_cb)
         self.menu.append(item)
 
-        # Add entry to edit variable
-        item = Gtk.MenuItem(_("Edit Variable"))
+        # Add entry to edit the configuration domain
+        item = Gtk.MenuItem(_("Configure definition domain"))
         item.show()
         item.connect("activate", self.controller.displayPopupToEditVariable_cb)
         self.menu.append(item)
@@ -93,6 +93,12 @@ class ContextualMenuOnFieldView(object):
         item = Gtk.MenuItem(_("Field Analysis"))
         item.show()
         item.connect("activate", self.controller.displayDomainOfDefinition_cb)
+        self.menu.append(item)
+
+        # Add entry to export fields
+        item = Gtk.MenuItem(_("Build symbols according to the field value"))
+        item.show()
+        item.connect("activate", self.controller.extractByFieldValue_cb)
         self.menu.append(item)
 
         # Add entry to export fields
@@ -149,9 +155,10 @@ class ContextualMenuOnFieldView(object):
             if field_content is not None:
                 # Get preview of field content
                 text_preview = TypeConvertor.encodeNetzobRawToGivenType(field_content, value)
-                if len(text_preview) > 10:
-                    text_preview = text_preview[:10] + "..."
-                label = value + " (" + text_preview + ")"
+                # TRANSLATORS: {0} is the value of the format (binary,
+                # hex, decimal, etc.) and {1} is the preview of the
+                # convertion.
+                label = _("{0} ({1}…)").format(value, text_preview[:10])
 
             # Create the check item
             item = Gtk.CheckMenuItem(label)

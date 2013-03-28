@@ -26,7 +26,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import unittest
@@ -38,12 +38,11 @@ from test_netzob.test_Common.test_Type import test_Endianess
 from test_netzob.test_Common.test_Type import test_TypeIdentifier
 from test_netzob.test_Common.test_Type import test_TypeConvertor
 
+
 def getSuite():
     typeSuite = unittest.TestSuite()
-    
+
     modulesOfTests = [test_Endianess, test_TypeIdentifier, test_TypeConvertor]
-    for module in modulesOfTests :
+    for module in modulesOfTests:
         typeSuite.addTests(unittest.TestLoader().loadTestsFromModule(module))
     return typeSuite
-    
-

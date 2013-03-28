@@ -108,7 +108,7 @@ class AbstractWordType(AbstractType):
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
     def str2bin(self, stri):
-        return TypeConvertor.stringB2bin(stri)
+        return TypeConvertor.string2bin(stri)
 
     def bin2str(self, bina):
         return TypeConvertor.binB2string(bina)

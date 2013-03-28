@@ -38,8 +38,18 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 class WrapperMessage(object):
     """Definition of a wrapped message ready to be sent to any C extension"""
 
-    def __init__(self, message, symbol):
+    def __init__(self, message, symbolID):
         data = message.getReducedStringData()
-        self.alignment = TypeConvertor.netzobRawToPythonRaw(data)
-        self.uid = symbol.getID()
+        rawData = TypeConvertor.netzobRawToPythonRaw(data)
+        self.alignment = rawData
+
+        self.semanticTags = []
+        for i in range(0, len(rawData)):
+            semanticTag = message.getSemanticTagAt(i * 2)
+            if semanticTag is None:
+                semanticTag = "None"
+
+            self.semanticTags.append(semanticTag)
+
+        self.uid = symbolID
         self.length = len(self.alignment)

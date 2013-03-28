@@ -28,10 +28,11 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 from bitarray import bitarray
 import datetime
 import logging
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -42,6 +43,8 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.Models.RawMessage import RawMessage
+from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken import \
     VariableReadingToken
 from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken import \
@@ -205,8 +208,23 @@ class AbstractionLayer():
         """
         self.log.debug("We abstract the received message : " + TypeConvertor.bin2strhex(message))
         # we search in the vocabulary an entry which match the message
+        message_orig = message
+        self.memory.persistMemory()  # Point of rollback for the memory
         for symbol in self.vocabulary.getSymbols():
+            message = message_orig
             self.log.debug("Try to abstract message through : {0}.".format(symbol.getName()))
+
+            # Apply transformation functions of current symbol on received data
+            symbol.getField().getTransformationFunctions()
+            rawMsg = RawMessage(uuid.uuid4(), 1, TypeConvertor.bin2hexstring(message))
+            messageHexstring = rawMsg.getStringData()
+            for fct in symbol.getField().getTransformationFunctions():
+                fct.setMemory(self.memory)
+                messageHexstring = fct.apply(rawMsg.getStringData())
+                rawMsg.setData(messageHexstring)
+            message = TypeConvertor.hexstring2bin(messageHexstring)
+
+            # Create a token from the data
             readingToken = VariableReadingToken(False, self.vocabulary, self.memory, TypeConvertor.strBitarray2Bitarray(message), 0)
             symbol.getRoot().read(readingToken)
 
@@ -218,6 +236,7 @@ class AbstractionLayer():
                 return symbol
             else:
                 self.log.debug("The message doesn't match symbol {0}.".format(symbol.getName()))
+                self.memory.createMemory()  # Rollback to the saved memory
             # This is now managed in the variables modules.
             #===================================================================
             #    self.memory.createMemory()
@@ -241,6 +260,21 @@ class AbstractionLayer():
         #TODO: Replace all default values with clever values.
         writingToken = VariableWritingToken(False, self.vocabulary, self.memory, bitarray(''), ["random"])
         result = symbol.write(writingToken)
+
+        if symbol.getType() == DictionarySymbol.TYPE:  # Get the concrete symbol
+            symbol = symbol.getEntry()
+        if symbol.getType() == UnknownSymbol.TYPE or symbol.getType() == EmptySymbol.TYPE:
+            pass
+        else:
+            # Apply transformation functions of current symbol on data to send
+            symbol.getField().getTransformationFunctions()
+            rawMsg = RawMessage(uuid.uuid4(), 1, TypeConvertor.bin2hexstring(result))
+            resultHexstring = rawMsg.getStringData()
+            for fct in symbol.getField().getTransformationFunctions():
+                fct.setMemory(self.memory)
+                resultHexstring = fct.reverse(rawMsg.getStringData())
+                rawMsg.setData(resultHexstring)
+            result = TypeConvertor.hexstring2bin(resultHexstring)
         return result
 
     def getMemory(self):

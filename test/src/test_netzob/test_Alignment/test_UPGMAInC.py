@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import uuid
@@ -36,9 +36,9 @@ import unittest
 import os
 import sys
 
-#insert in the path the directory where _libNeedleman.pyd is
+# insert in the path the directory where _libNeedleman.pyd is
 if os.name == 'nt':
-     sys.path.insert(0, 'lib/libNeedleman/')
+    sys.path.insert(0, 'lib/libNeedleman/')
 
 try:
     # Verify that libNeedleman is in the path
@@ -49,9 +49,6 @@ except:
     python_version = sys.version[:3]
     build_lib_path = "../../../../build/lib.linux-" + arch + "-" + python_version
     sys.path.append(build_lib_path)
-    
-
-
 
 from netzob.Common.ExecutionContext import ExecutionContext
 from netzob.Common.Models.RawMessage import RawMessage
@@ -65,20 +62,20 @@ from netzob.Inference.Vocabulary.Alignment.UPGMA import UPGMA
 
 
 class test_UPGMAInC(unittest.TestCase):
-    
+
     def generateRandomString(self, min_len, max_len):
         return ''.join((random.choice(string.letters + string.digits) for _ in xrange(random.randint(min_len, max_len))))
-    
-    def test_deserialisationGroups(self):        
+
+    def test_deserialisationGroups(self):
         print "start"
-        
+
         symbols = []
         nbSymbol = random.randint(2, 50)
-        
-        for iSymbol in range(0, nbSymbol) :        
+
+        for iSymbol in range(0, nbSymbol):
             # We create 6 messages of 2 group
-            originalSymbol = Symbol(str(uuid.uuid4()), "TestSymbol", None)        
-            # group1 
+            originalSymbol = Symbol(str(uuid.uuid4()), "TestSymbol", None)
+            # group1
             message1 = RawMessage(str(uuid.uuid4()), str(time.time()), TypeConvertor.stringToNetzobRaw("bonjour " + self.generateRandomString(20, 30) + " comment vas-tu ?"))
             message2 = RawMessage(str(uuid.uuid4()), str(time.time()), TypeConvertor.stringToNetzobRaw("bonjour " + self.generateRandomString(20, 30) + " comment vas-tu ?"))
             message3 = RawMessage(str(uuid.uuid4()), str(time.time()), TypeConvertor.stringToNetzobRaw("bonjour " + self.generateRandomString(20, 30) + " comment vas-tu ?"))
@@ -86,7 +83,7 @@ class test_UPGMAInC(unittest.TestCase):
             message4 = RawMessage(str(uuid.uuid4()), str(time.time()), TypeConvertor.stringToNetzobRaw("salut à toi " + self.generateRandomString(10, 15) + " what's up ?"))
             message5 = RawMessage(str(uuid.uuid4()), str(time.time()), TypeConvertor.stringToNetzobRaw("salut à toi " + self.generateRandomString(10, 15) + " what's up ?"))
             message6 = RawMessage(str(uuid.uuid4()), str(time.time()), TypeConvertor.stringToNetzobRaw("salut à toi " + self.generateRandomString(10, 15) + " what's up ?"))
-            
+
             originalSymbol.addMessage(message1)
             originalSymbol.addMessage(message2)
             originalSymbol.addMessage(message3)
@@ -94,11 +91,8 @@ class test_UPGMAInC(unittest.TestCase):
             originalSymbol.addMessage(message5)
             originalSymbol.addMessage(message6)
             symbols.append(originalSymbol)
-            
-        
+
         # Start the clustering
         clusteringSolution = UPGMA(None, [originalSymbol], True, 100, 90, True)
         result = clusteringSolution.deserializeGroups(symbols)
         self.assertEqual(result, len(symbols))
-        
-        

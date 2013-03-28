@@ -48,9 +48,11 @@ from netzob.UI.Vocabulary.Controllers.VocabularyController import VocabularyCont
 #+---------------------------------------------------------------------------+
 class AbstractPluginController(object):
 
-    def __init__(self, netzob, plugin):
+    def __init__(self, netzob, plugin, view):
+        super(AbstractPluginController, self).__init__()
         self.netzob = netzob
         self.plugin = plugin
+        self.view = view
 
     def getCurrentProject(self):
         """Computes the current project. It may returns None if no
@@ -66,3 +68,6 @@ class AbstractPluginController(object):
 
     def getPlugin(self):
         return self.plugin
+
+    def getView(self):
+        return self.view

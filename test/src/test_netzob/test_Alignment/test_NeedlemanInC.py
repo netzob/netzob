@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import uuid
@@ -37,7 +37,7 @@ import os
 import sys
 #insert in the path the directory where _libNeedleman.pyd is
 if os.name == 'nt':
-     sys.path.insert(0, 'lib/libNeedleman/')
+    sys.path.insert(0, 'lib/libNeedleman/')
 
 try:
     # Verify that libNeedleman is in the path
@@ -62,53 +62,53 @@ from netzob.Common.Models.RawMessage import RawMessage
 
 
 class test_NeedlemanInC(unittest.TestCase):
-    
+
     def generateRandomString(self, min_len, max_len):
         return ''.join((random.choice(string.letters + string.digits) for _ in xrange(random.randint(min_len, max_len))))
 
     def test_deserialisationMessages(self):
         nbTest = 10
         alignmentSolution = NeedlemanAndWunsch(8)
-        
-        for iTest in range(0, nbTest) :
+
+        for iTest in range(0, nbTest):
             messages = []
             # Generate a random number of message to serialize
             nbMessage = random.randint(2, 500)
-            for iMessage in range(0, nbMessage) :
+            for iMessage in range(0, nbMessage):
                 data = TypeConvertor.stringToNetzobRaw(self.generateRandomString(5, 500))
                 message = RawMessage(str(uuid.uuid4()), str(time.time()), data)
                 messages.append(message)
-            
+
             nbDeserializedTest = alignmentSolution.deserializeMessages(messages)
             self.assertEqual(nbMessage, nbDeserializedTest)
-        
-    def test_AlignementOfMessages(self):     
+
+    def test_AlignementOfMessages(self):
         alignmentSolution = NeedlemanAndWunsch(4)
         nbTest = 100
-        
-        for iTest in range(0, nbTest) :
+
+        for iTest in range(0, nbTest):
             messages = []
             # Generate a random number of message to serialize
             nbMessage = random.randint(2, 50)
-            for iMessage in range(0, nbMessage) :
+            for iMessage in range(0, nbMessage):
                 data = TypeConvertor.stringToNetzobRaw("bonjour" + self.generateRandomString(5, 30) + ", tout va bien ?")
                 message = RawMessage(str(uuid.uuid4()), str(time.time()), data)
                 messages.append(message)
-            
+
             (alignment, scores) = alignmentSolution.align(False, messages)
             (score1, score2, score3) = scores
             (alignmentBis, scoresBis) = alignmentSolution.align(True, messages)
             (scoreBis1, scoreBis2, scoreBis3) = scoresBis
             print alignment
             print alignmentBis
-            
+
             self.assertGreaterEqual(scoreBis1, score1)
-            self.assertGreaterEqual(scoreBis1, 90)            
-        
-    def test_alignmentOfEquivalentMessages(self):     
+            self.assertGreaterEqual(scoreBis1, 90)
+
+    def test_alignmentOfEquivalentMessages(self):
         alignmentSolution = NeedlemanAndWunsch(8)
         nbTest = 1000
-        for i_test in range(0, nbTest) :
+        for i_test in range(0, nbTest):
             common_pattern = self.generateRandomString(30, 40)
             # Generate the content of two messages
             data1 = TypeConvertor.stringToNetzobRaw(common_pattern)
@@ -116,23 +116,23 @@ class test_NeedlemanInC(unittest.TestCase):
             # Create the messages
             message1 = RawMessage(str(uuid.uuid4()), str(time.time()), data1)
             message2 = RawMessage(str(uuid.uuid4()), str(time.time()), data2)
-            
+
             (scores, alignment) = alignmentSolution.alignTwoMessages(False, message1, message2)
             (score1, score2, score3) = scores
             self.assertEqual(score1, 100.0)
             self.assertEqual(score2, 100.0)
             self.assertEqual(score3, 100.0)
-            
+
             (scores, alignment) = alignmentSolution.alignTwoMessages(True, message1, message2)
             (score1, score2, score3) = scores
             self.assertEqual(score1, 100.0)
             self.assertEqual(score2, 100.0)
             self.assertEqual(score3, 100.0)
-            
-    def test_alignmentOfAlmostEquivalentMessages(self):     
+
+    def test_alignmentOfAlmostEquivalentMessages(self):
         alignmentSolution = NeedlemanAndWunsch(8)
         nbTest = 1000
-        for i_test in range(0, nbTest) :
+        for i_test in range(0, nbTest):
             common_pattern_before = self.generateRandomString(30, 40)
             common_pattern_after = self.generateRandomString(30, 40)
             # Generate the content of two messages
@@ -141,11 +141,11 @@ class test_NeedlemanInC(unittest.TestCase):
             # Create the messages
             message1 = RawMessage(str(uuid.uuid4()), str(time.time()), data1)
             message2 = RawMessage(str(uuid.uuid4()), str(time.time()), data2)
-            
+
             (scores, alignment) = alignmentSolution.alignTwoMessages(False, message1, message2)
             (score1, score2, score3) = scores
             (scoresBis, alignment2) = alignmentSolution.alignTwoMessages(True, message1, message2)
             (scoreBis1, scoreBis2, scoreBis3) = scoresBis
-           
+
             self.assertGreater(scoreBis1, score1)
             self.assertGreater(scoreBis1, 95)

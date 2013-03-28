@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 import random
 import time
@@ -136,7 +136,7 @@ class SemiStochasticTransition(AbstractTransition):
             if oldSymbol == outputSymbol:
                 savedSymbols.append([oldSymbol, oldProba, newTime])
             else:
-                saved.symbols.append([oldSymbol, oldProba, oldTime])
+                savedSymbols.append([oldSymbol, oldProba, oldTime])
 
         self.outputSymbols = []
         self.outputSymbols.extend(savedSymbols)

@@ -28,15 +28,16 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 import os
 import datetime
 import re
 import uuid
-from lxml.etree import ElementTree
+from lxml.etree import ElementTree, DocumentInvalid
 from lxml import etree
 import types
+import shutil
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -52,6 +53,7 @@ from netzob.Common.Type.Sign import Sign
 from netzob.Common.Type.Endianess import Endianess
 from netzob.Common.XSDResolver import XSDResolver
 from netzob.Common.Property import Property
+from netzob.Common.PropertyList import PropertyList
 from netzob.Common.Simulator import Simulator
 
 
@@ -76,6 +78,9 @@ def loadProject_0_1(projectFile):
     projectCreationDate = TypeConvertor.xsdDatetime2PythonDatetime(xmlProject.get('creation_date'))
     projectPath = xmlProject.get('path')
     project = Project(projectID, projectName, projectCreationDate, projectPath)
+
+    description = xmlProject.get('description')
+    project.setDescription(description)
 
     # Parse the configuration
     if xmlProject.find("{" + PROJECT_NAMESPACE + "}configuration") is not None:
@@ -102,6 +107,10 @@ def loadProject_0_1(projectFile):
     return project
 
 
+class ProjectException(Exception):
+    pass
+
+
 class Project(object):
     """Class definition of a Project"""
 
@@ -126,6 +135,7 @@ class Project(object):
         self.grammar = Grammar()
         self.simulator = Simulator()
         self.configuration = ProjectConfiguration.loadDefaultProjectConfiguration()
+        self.description = None
 
     def generateXMLConfigFile(self):
         # Register the namespace
@@ -142,6 +152,10 @@ class Project(object):
         else:
             root.set("creation_date", TypeConvertor.pythonDatetime2XSDDatetime(self.getCreationDate()))
         root.set("name", str(self.getName()))
+
+        if self.description:
+            root.set("description", str(self.description))
+
         # Save the configuration in it
         self.getConfiguration().save(root, PROJECT_NAMESPACE)
 
@@ -171,7 +185,37 @@ class Project(object):
         # We generate the XML Config file
         root = self.generateXMLConfigFile()
         tree = ElementTree(root)
-        tree.write(projectFile)
+        tree.write(projectFile, pretty_print=True)
+
+    def cloneProjectTo(self, workspace, cloneName):
+        try:
+            # Original project files
+            origProjectPath = os.path.join(workspace.getPath(), self.path)
+
+            # Clone project
+            idProject = str(uuid.uuid4())
+            clonePath = os.path.join(workspace.getPath(), "projects", idProject)
+            cloneFile = os.path.join(clonePath, Project.CONFIGURATION_FILENAME)
+
+            logging.info("Clone project from '{0}' to '{0}'".format(origProjectPath,
+                                                                    clonePath))
+
+            # Clone project files
+            shutil.copytree(origProjectPath, clonePath)
+
+            # Create the new project
+            project = Project.loadProject(workspace, clonePath)
+            project.setID(idProject)
+            project.setName(cloneName)
+            project.setPath(clonePath)
+            project.saveConfigFile(workspace)
+
+            # Update workspace
+            workspace.referenceProject(project.getPath())
+            workspace.saveConfigFile()
+
+        except IOError, e:
+            raise ProjectException(str(e))
 
     def hasPendingModifications(self, workspace):
         result = True
@@ -209,7 +253,6 @@ class Project(object):
             for message in symbol.getMessages():
                 properties = message.getProperties()
                 for property in properties:
-
                     if not property.getName() in excludedProperties:
                         found = False
                         for prop in envDeps:
@@ -230,6 +273,28 @@ class Project(object):
             if not found:
                 envDeps.append(prop)
         return envDeps
+
+    def getApplicativeData(self):
+        """getApplicativeData:
+        Returns list which contains all the applicative data
+        used in the project"""
+        appData = []
+        if self.getVocabulary() is not None:
+            for session in self.getVocabulary().getSessions():
+                appData.extend(session.getApplicativeData())
+        return appData
+
+    def deleteProject(self, workspace):
+        try:
+            # Delete project files
+            projectFullPath = os.path.join(workspace.getPath(), self.path)
+            logging.debug("Deleting project files: {0}".format(projectFullPath))
+            shutil.rmtree(projectFullPath)
+
+            # Dereference project from Workspace
+            workspace.dereferenceProject(self.path)
+        except IOError, e:
+            raise ProjectException(_("Unable to delete project: {0}").format(e))
 
     @staticmethod
     def createProject(workspace, name):
@@ -290,11 +355,11 @@ class Project(object):
             return None
         # is the projectFile is a file
         if not os.path.isfile(projectFile):
-            logging.warn("The specified project's configuration file (" + str(projectFile) + ") is not valid: its not a file.")
+            logging.warn("The specified project's configuration file ({0}) is not valid: its not a file.".format(projectFile))
             return None
         # is it readable
         if not os.access(projectFile, os.R_OK):
-            logging.warn("The specified project's configuration file (" + str(projectFile) + ") is not readable.")
+            logging.warn("The specified project's configuration file ({0}) is not readable.".format(projectFile))
             return None
 
         # We validate the file given the schemas
@@ -305,11 +370,43 @@ class Project(object):
                 parsingFunc = Project.PROJECT_SCHEMAS[xmlSchemaFile]
                 project = parsingFunc(projectFile)
                 if project is not None:
-                    logging.info("Loading project '" + str(project.getName()) + "' from workspace.")
+                    logging.info("Loading project '{0}' from workspace.".format(project.getName()))
                     return project
             else:
-                logging.warn("The project declared in file (" + projectFile + ") is not valid")
+                logging.warn("The project declared in file ({0}) is not valid".format(projectFile))
         return None
+
+    @staticmethod
+    def importNewXMLProject(workspace, xmlProjectFile):
+        # Generate the Unique ID of the imported project
+        idProject = str(uuid.uuid4())
+
+        # First we verify and create if necessary the directory of the project
+        projectPath = "projects/{0}/".format(idProject)
+        destPath = os.path.join(workspace.getPath(), projectPath)
+
+        try:
+            if not os.path.exists(destPath):
+                logging.info("Creation of the directory {0}".format(destPath))
+                os.mkdir(destPath)
+
+                # Retrieving and storing of the config file
+                destFile = os.path.join(destPath, Project.CONFIGURATION_FILENAME)
+                shutil.copy(xmlProjectFile, destFile)
+
+                project = Project.loadProject(workspace, destPath)
+                project.setID(idProject)
+                project.setName(_("Copy of {0}").format(project.getName()))
+                project.setPath(projectPath)
+                project.saveConfigFile(workspace)
+                workspace.referenceProject(project.getPath())
+                workspace.saveConfigFile()
+
+                return project
+
+        except IOError, e:
+            logging.warn("Error when importing project: {0}".format(e))
+            raise ProjectException(_("Unable to import the project: {0}.").format(e))
 
     @staticmethod
     def loadProject(workspace, projectDirectory):
@@ -350,15 +447,16 @@ class Project(object):
             try:
                 schema.assertValid(xmlRoot)
                 return True
-            except:
+            except DocumentInvalid, err:
                 log = schema.error_log
                 error = log.last_error
-                logging.debug(error)
+                logging.error(error)
+                logging.error("XML Document in invalid: {0}".format(err))
                 return False
 
         except etree.XMLSyntaxError, e:
             log = e.error_log.filter_from_level(etree.ErrorLevels.FATAL)
-            logging.debug(log)
+            logging.error(log)
 
         return False
 
@@ -366,12 +464,17 @@ class Project(object):
     PROJECT_SCHEMAS = {"xsds/0.1/Project.xsd": loadProject_0_1}
 
     def getProperties(self):
-        properties = []
+        properties = PropertyList()
         configuration = self.getConfiguration()
         properties.append(Property('workspace', Format.STRING, self.getPath()))
         prop = Property('name', Format.STRING, self.getName())
         prop.setIsEditable(True)
         properties.append(prop)
+
+        prop = Property('description', Format.STRING, self.getDescription())
+        prop.setIsEditable(True)
+        properties.append(prop)
+
         properties.append(Property('date', Format.STRING, self.getCreationDate()))
         properties.append(Property('symbols', Format.DECIMAL, len(self.getVocabulary().getSymbols())))
         properties.append(Property('messages', Format.DECIMAL, len(self.getVocabulary().getMessages())))
@@ -407,6 +510,9 @@ class Project(object):
     def getName(self):
         return self.name
 
+    def getDescription(self):
+        return self.description
+
     def getCreationDate(self):
         return self.creationDate
 
@@ -430,6 +536,9 @@ class Project(object):
 
     def setName(self, name):
         self.name = name
+
+    def setDescription(self, description):
+        self.description = description
 
     def setPath(self, path):
         self.path = path

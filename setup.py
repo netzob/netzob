@@ -32,14 +32,14 @@
 import sys
 import os
 import uuid
-import subprocess
 sys.path.insert(0, 'src/')
 from setuptools import setup, Extension, find_packages
+
 from netzob import release
 from resources.sdist.manpage_command import manpage_command
 from resources.sdist.pybuild_command import pybuild_command
 from resources.sdist.test_command import test_command
-from resources.sdist.utils import find_data_files, opj
+from resources.sdist.utils import find_data_files, opj, getPluginPaths
 
 #+----------------------------------------------------------------------------
 #| Definition of variables
@@ -48,6 +48,56 @@ from resources.sdist.utils import find_data_files, opj
 staticResourcesPath = opj("resources", "static")
 netzobStaticResourcesPath = opj(staticResourcesPath, "netzob")
 pluginsStaticResourcesPath = opj(staticResourcesPath, "plugins")
+
+#+----------------------------------------------------------------------------
+#| Compute the compilation arguments given the current compilation profile
+#+----------------------------------------------------------------------------
+# compileProfile = "[no-verify] debug|release"
+#
+# Note :
+# if defined, the environment variable "NETZOB_COMPILE_PROFILE" sets
+# the compileProfile
+#
+# Available compilation profile
+#   - debug     : no optimization, include debugging symbols
+#   - release   : activate optimization and symbols are stripped (default mode)
+# Static analysis
+#   - no-verify : deactivate the source code static analysis while compiling
+#
+# TODO : an unoptimized profile with options like -mno-mmx, -mno-sse,
+#        -mno-sse2, -mno-3dnow, -fno-dwarf2-cfi-asm
+#
+
+compileProfile = "release"
+
+NETZOB_COMPILE_PROFILE_ENV = "NETZOB_COMPILE_PROFILE"
+# extract requested mode from the environment variable
+if NETZOB_COMPILE_PROFILE_ENV in os.environ.keys():
+    compileProfile = os.environ[NETZOB_COMPILE_PROFILE_ENV]
+
+# Default compile arguments
+extraCompileArgs = ["-std=c99"]
+if "no-verify" not in compileProfile:
+    extraCompileArgs.extend([
+        "-Wall",                # gcc says: "Enable most warning messages"
+        "-Wextra",              # gcc says: "Print extra (possibly unwanted) warnings"
+        "-Werror",              # gcc says: "Error out the compiler on warnings"
+        "-pedantic-errors",     # gcc says: Issue errors "needed for strict compliance to the standard"
+        "-Wunused",             # gcc says: "Enable all -Wunused- warnings"
+        "-Wsign-compare",       # gcc says: "Warn about signed-unsigned comparisons"
+        "-Wstrict-prototypes",  # gcc says: "Warn about unprototyped function declarations"
+        "-Wuninitialized",      # gcc says: "Warn about uninitialized automatic variables"
+        "-Wshadow",             # gcc says: "Warn when one local variable shadows another"
+        "-Wpointer-arith"])     # gcc says: "Warn about function pointer arithmetic"
+
+if "debug" in compileProfile:
+    extraCompileArgs.extend([
+        "-O0",                  # gcc says: "Optimization level 0"
+        "-g"])                  # gcc says: "Generate debug information in default format"
+
+elif "release" in compileProfile:
+    extraCompileArgs.extend([
+        "-O2"])                 # gcc says: "Optimization level 2"
 
 #+----------------------------------------------------------------------------
 #| Definition of the extensions
@@ -70,8 +120,8 @@ pyNeedlemanPath = opj(needlemanPath, "Py_lib")
 argsFactoriesPath = opj(libPath, "argsFactories")
 
 # Regex path
-regexPath = opj(libPath, "libRegex")
-pyRegexPath = opj(regexPath, "Py_lib")
+# regexPath = opj(libPath, "libRegex")
+# pyRegexPath = opj(regexPath, "Py_lib")
 
 # Tools path
 toolsPath = opj(libPath, "tools")
@@ -81,62 +131,47 @@ macros = [('BID', '"{0}"'.format(str(uuid.uuid4())))]
 
 # Module Needleman
 moduleLibNeedleman = Extension('netzob._libNeedleman',
-                               # extra_compile_args=["-fopenmp"],
-                               # extra_link_args=["-fopenmp"],
+                               extra_compile_args=extraCompileArgs,
                                sources=[opj(interfacePath, "Interface.c"),
                                         opj(pyInterfacePath, "libInterface.c"),
                                         opj(pyNeedlemanPath, "libNeedleman.c"),
                                         opj(needlemanPath, "Needleman.c"),
                                         opj(needlemanPath, "scoreComputation.c"),
                                         opj(argsFactoriesPath, "factory.c"),
-                                        opj(regexPath, "regex.c"),
-                                        opj(regexPath, "manipulate.c"),
                                         opj(toolsPath, "getBID.c")],
                                define_macros=macros,
                                include_dirs=includes)
 
 # Module ScoreComputation
 moduleLibScoreComputation = Extension('netzob._libScoreComputation',
-                                      # extra_compile_args=["-fopenmp"],
-                                      # extra_link_args=["-fopenmp"],
+                                      extra_compile_args=extraCompileArgs,
                                       sources=[opj(needlemanPath, "scoreComputation.c"),
                                                opj(pyNeedlemanPath, "libScoreComputation.c"),
                                                opj(needlemanPath, "Needleman.c"),
                                                opj(interfacePath, "Interface.c"),
                                                opj(pyInterfacePath, "libInterface.c"),
                                                opj(argsFactoriesPath, "factory.c"),
-                                               opj(regexPath, "regex.c"),
-                                               opj(regexPath, "manipulate.c"),
                                                opj(toolsPath, "getBID.c")],
                                       define_macros=macros,
                                       include_dirs=includes)
 
 # Module Interface
 moduleLibInterface = Extension('netzob._libInterface',
+                               extra_compile_args=extraCompileArgs,
                                sources=[opj(interfacePath, "Interface.c"),
                                         opj(pyInterfacePath, "libInterface.c"),
                                         opj(toolsPath, "getBID.c")],
                                define_macros=macros,
                                include_dirs=includes)
 
-# Module Regex
-moduleLibRegex = Extension('netzob._libRegex',
-                           sources=[opj(regexPath, "regex.c"),
-                                    opj(pyRegexPath, "libRegex.c"),
-                                    opj(regexPath, "manipulate.c"),
-                                    opj(toolsPath, "getBID.c")],
-                           define_macros=macros,
-                           include_dirs=includes)
-
-
 #+----------------------------------------------------------------------------
 #| Definition of the dependencies
 #+----------------------------------------------------------------------------
 dependencies = [
     'babel',
-    'bitarray',
+    'bitarray >= 0.4',
     'lxml',
-    'httplib2',
+    'httplib2'
 ]
 
 extra_dependencies = {
@@ -196,7 +231,7 @@ setup(
         "netzob": opj("src", "netzob"),
         "netzob_plugins": opj("src", "netzob_plugins"),
     },
-    ext_modules=[moduleLibNeedleman, moduleLibScoreComputation, moduleLibInterface, moduleLibRegex],
+    ext_modules=[moduleLibNeedleman, moduleLibScoreComputation, moduleLibInterface],
     data_files=data_files,
     scripts=["netzob"],
     install_requires=dependencies,
@@ -213,17 +248,18 @@ setup(
     keywords=release.keywords,
     classifiers=[
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2.6",
+        "Programming Language :: C",
         "Development Status :: 4 - Beta",
-        "Environment :: Other Environment",
+        "Environment :: X11 Applications :: GTK",
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
-        "Natural Language :: English",
         "Intended Audience :: System Administrators",
         "License :: OSI Approved :: GNU General Public License (GPL)",
         "Operating System :: OS Independent",
+        "Natural Language :: English",
+        "Natural Language :: French",
         "Topic :: Security",
-        "Topic :: System :: Networking",
+        "Topic :: System :: Networking"
     ],
     long_description=README + '\n' + NEWS,
     cmdclass=CMD_CLASS,
@@ -241,25 +277,25 @@ setup(
     },
 )
 
-if len(sys.argv) > 1:
-    command = sys.argv[1]
-else:
-    command = None
-if command in ["build", "develop", "install", "clean"]:
-    root_dir = os.getcwd()
-    main_plugin_dir = root_dir + os.sep + "src" + os.sep + "netzob_plugins" + os.sep
-    plugin_categories = ["Capturers", "Importers", "Exporters", "RelationsIdentifier"]
-    for plugin_category in plugin_categories:
-        plugin_dir = main_plugin_dir + plugin_category + os.sep
-        plugin_list = os.listdir(plugin_dir)
-        for plugin_name in plugin_list:
-            if plugin_name != "__init__.py" and plugin_name != "__init__.pyc":
-                plugin_fullpath = plugin_dir + plugin_name
-                print ""
-                print "------------------------------"
-                print "Handling plugin: " + plugin_name
-                print "Plugin path: " + plugin_fullpath
-                os.chdir(plugin_fullpath)
-                cmd = "{0} setup.py {1}".format(sys.executable, " ".join(sys.argv[1:]))
-                print "Using following command: " + cmd
-                os.system(cmd)
+#+----------------------------------------------------------------------------
+#| Automaticaly apply the command to attached plugins
+#+----------------------------------------------------------------------------
+# that's a fun one :)
+# this if block is executed if sys.argv[1] in ["build", ....]
+if (None, sys.argv[1])[len(sys.argv) > 1] in ["build", "develop", "install", "clean"]:
+    # find all the available plugins sources
+    pluginsPath = getPluginPaths()
+
+    for pluginName, pluginPath in pluginsPath.items():
+        print "------------------------------"
+        print "[I] Plugin Name:\t{0}".format(pluginName)
+        print "[ ] Path:\t\t{0}".format(pluginPath)
+        pluginSetupPath = opj(pluginPath, "setup.py")
+        # Verifies plugin contains a setup.py
+        if not os.path.exists(pluginSetupPath):
+            print "[E] Impossible to find the 'setup.py' file : {0}".format(pluginSetupPath)
+            continue
+        # Create the command to execute
+        os.chdir(pluginPath)
+        cmd = "{0} setup.py {1}".format(sys.executable, " ".join(sys.argv[1:]))
+        os.system(cmd)

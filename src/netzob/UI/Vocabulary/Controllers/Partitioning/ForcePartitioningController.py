@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 import time
 
@@ -109,9 +109,9 @@ class ForcePartitioningController(object):
         self._view.forceDialog.destroy()
 
         # Update the message table view
-        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.updateSelectedMessageTable()
         # Update the symbol properties view
-        self.vocabularyController.view.updateLeftPanel()
+        self.vocabularyController.updateLeftPanel()
 
     def forcePartitioning(self, encodedDelimiter, format):
         """Smooth the provided fields"""

@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -72,3 +72,9 @@ class RawMessage(AbstractMessage):
         properties.append(Property('Timestamp', Format.DECIMAL, self.getTimestamp()))
         properties.extend(super(RawMessage, self).getProperties())
         return properties
+
+    def getSource(self):
+        return "-"
+
+    def getDestination(self):
+        return "-"

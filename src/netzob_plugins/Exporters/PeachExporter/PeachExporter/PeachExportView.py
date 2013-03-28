@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -47,14 +47,18 @@ class PeachExportView(AbstractExporterView):
             GUI for exporting results in Peach pit XML.
     """
 
-    def __init__(self):
+    def __init__(self, plugin, controller):
         """Constructor of PeachExportView:
         """
+        super(PeachExportView, self).__init__(plugin, controller)
         self.buildPanel()
 
         self.dialog = Gtk.Dialog(title=_("Export project as Peach pit XML"), flags=0, buttons=None)
         self.dialog.vbox.pack_start(self.panel, True, True, 0)
-        self.dialog.set_size_request(600, 400)
+        self.dialog.set_size_request(800, 600)
+
+    def getDialog(self):
+        return self.dialog
 
     def buildPanel(self):
         """buildPanel:
@@ -74,7 +78,6 @@ class PeachExportView(AbstractExporterView):
         # Create the hbox content in order to display dissector data
         bottomFrame = Gtk.Frame()
         bottomFrame.show()
-        bottomFrame.set_size_request(550, -1)
         self.hpanel.add2(bottomFrame)
         sw = Gtk.ScrolledWindow()
         self.textarea = Gtk.TextView()
@@ -88,7 +91,8 @@ class PeachExportView(AbstractExporterView):
         self.buildOptionsView()
         self.panel.add1(self.hpanel)
         self.panel.pack2(self.optionsTable, resize=False)
-        self.panel.set_position(350)
+        self.panel.set_position(550)
+        self.hpanel.set_position(300)
 
     def buildSymbolTreeview(self):
         """builSymbolTreeView:
@@ -96,14 +100,13 @@ class PeachExportView(AbstractExporterView):
         """
         # Tree store contains:
         # str : text (symbol Name)
-        # str : text (score)
         # str : color foreground
         # str : color background
-        self.treestore = Gtk.TreeStore(str, str, str, str, str)
+        self.treestore = Gtk.TreeStore(str, str, str, str)
         self.symbolTreeview = Gtk.TreeView(self.treestore)
 
         renderer = Gtk.CellRendererText()
-        columnSymbols = Gtk.TreeViewColumn(_("Symbols"), renderer, text=1)
+        columnSymbols = Gtk.TreeViewColumn(_("Fuzzer type"), renderer, text=1)
         self.symbolTreeview.append_column(columnSymbols)
 
         # Symbol list

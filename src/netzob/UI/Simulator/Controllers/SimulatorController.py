@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 from gi.repository import Gtk
 
@@ -67,6 +67,9 @@ class SimulatorController(object):
     def activate(self):
         """Activate the perspective"""
         self.restart()
+
+    def deactivate(self):
+        pass
 
     def getCurrentProject(self):
         """Return the current project (can be None)"""

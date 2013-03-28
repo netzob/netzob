@@ -28,7 +28,7 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 
 
@@ -72,3 +72,6 @@ class SearchTask(object):
 
     def getDescription(self):
         return self.description
+
+    def setDescription(self, description):
+        self.description = description

@@ -1,0 +1,16 @@
+This folder contains an example file to show the preprocessing step
+with the sally toolkit (see http://www.mlsec.org/sally/). Before
+executing the examples please extract asap.tar.gz to find all data
+necessary to understand the processing chain from the raw data
+(asap.raw) to the sally file (asap.sally) and the optimized file
+(asap.fsally). The asap.sally file can be produced as follows:
+
+sally -c asap.cfg asap.raw asap.sally
+
+this call generates asap.sally from the raw data found in asap.raw. To
+speed up the loading of the data in R, one should apply the
+sallyPreprocessing.py python script as follows:
+
+python sallyPreprocessing.py asap.sally asap.fsally
+
+Now the data is ready to be efficiently loaded and processed in R.

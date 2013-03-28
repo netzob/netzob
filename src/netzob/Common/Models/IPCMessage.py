@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -96,6 +96,12 @@ class IPCMessage(AbstractMessage):
 
     def getDirection(self):
         return self.direction
+
+    def getSource(self):
+        return "-"
+
+    def getDestination(self):
+        return "-"
 
     #+----------------------------------------------
     #| SETTERS:

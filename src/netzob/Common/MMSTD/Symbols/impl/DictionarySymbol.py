@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 
 #+---------------------------------------------------------------------------+
@@ -93,9 +93,6 @@ class DictionarySymbol(AbstractSymbol):
         self.entry = entry
 
     def __str__(self):
-        return str(self.entry)
-
-    def __repr__(self):
         return str(self.entry)
 
     def __cmp__(self, other):

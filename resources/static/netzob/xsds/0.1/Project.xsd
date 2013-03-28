@@ -43,6 +43,13 @@
 				</restriction>
 			</simpleType>
 		</attribute>
+		<attribute name="description">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
 	</complexType>
 
 
@@ -657,6 +664,10 @@
 						maxOccurs="1"></element>
 					<element name="delimiter" type="string" minOccurs="0"
 						maxOccurs="1"></element>
+                    <element name="factor" type="string" minOccurs="0"
+                        maxOccurs="1"></element>
+                    <element name="offset" type="string" minOccurs="0"
+                        maxOccurs="1"></element>
 				</sequence>
 			</extension>
 		</complexContent>

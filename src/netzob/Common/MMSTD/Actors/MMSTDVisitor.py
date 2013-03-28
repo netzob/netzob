@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 import threading
 from lxml.etree import ElementTree
@@ -49,6 +49,8 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 #|     Definition of a visitor of an MMSTD automata
 #+---------------------------------------------------------------------------+
 class MMSTDVisitor(threading.Thread):
+
+    TYPE = "MMSTD Visitor"
 
     def __init__(self, id, name, mmstd, initiator, abstractionLayer):
         threading.Thread.__init__(self)
@@ -143,6 +145,9 @@ class MMSTDVisitor(threading.Thread):
 
     def getModel(self):
         return self.model
+
+    def getType(self):
+        return self.TYPE
 
     def isInitiator(self):
         return self.initiator

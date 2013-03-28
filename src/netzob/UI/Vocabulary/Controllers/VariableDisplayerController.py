@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 
 #+---------------------------------------------------------------------------+
@@ -61,7 +61,7 @@ class VariableDisplayerController(object):
 
     def maximize(self):
         if self.panel is not None:
-            self.vocabularyController.messageTableBox.pack_start(self.panel, True, True, 0)
+            self.vocabularyController.symbolTableBox.pack_start(self.panel, True, True, 0)
 
     def run(self, panel=None):
         # clean first the panel

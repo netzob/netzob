@@ -28,7 +28,7 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
-from locale import gettext as _
+from gettext import gettext as _
 from lxml import etree
 from lxml.etree import ElementTree
 import logging
@@ -107,6 +107,17 @@ class MMSTD(Automata):
 
         return transitions
 
+    def getTransitionsStartingFromState(self, state):
+        """getTransitionsStartingFromState:
+                Retreive all the transitions which starts from the provide state.
+                @return: a list of transition
+        """
+        transitions = []
+        for transition in self.getTransitions():
+            if transition.getInputState().getID() == state.getID():
+                transitions.append(transition)
+        return transitions
+
     def removeState(self, state):
         # First we remove the transitions
         transitionsToRemove = []
@@ -146,10 +157,9 @@ class MMSTD(Automata):
         for i in range(0, len(symbols)):
             if state is not None:
                 state = state.executeAsClient(abstractionLayer)
-        outputMessages = abstractionLayer.getOutputMessages()
+
         generatedSymbols = []
-        for (sendingTime, strMessage, symbol) in outputMessages:
-            generatedSymbols.append(symbol)
+        generatedSymbols.extend(abstractionLayer.getGeneratedOutputSymbols())
 
         return (generatedSymbols, state)
 

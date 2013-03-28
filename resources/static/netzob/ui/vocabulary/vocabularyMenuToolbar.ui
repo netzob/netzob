@@ -8,6 +8,7 @@
     </menu>
     <placeholder name="mainMenuBarAdditions">
       <menu action="automaticToolMenu">
+	<menuitem action="findSimilarMessages" />
         <menuitem action="sequenceAlignment" />
         <menuitem action="partitioningForce" />
         <menuitem action="partitioningSimple" />
@@ -16,6 +17,7 @@
 	<placeholder name="relationsIdentifierMenuAdditions">
 		<menu action="relationsIdentifier" />
 	</placeholder>
+        <menuitem action="compareSessions" />
       </menu>
       <menu action="manualToolMenu">
         <menuitem action="concatField" />

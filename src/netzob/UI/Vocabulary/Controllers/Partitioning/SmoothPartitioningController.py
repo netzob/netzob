@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 import time
 
@@ -40,7 +40,6 @@ import gi
 from netzob.Common.Threads.Job import Job
 from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask, TaskError
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -102,9 +101,9 @@ class SmoothPartitioningController(object):
         self._view.smoothDialog.destroy()
 
         # Update the message table view
-        self.vocabularyController.view.updateSelectedMessageTable()
+        self.vocabularyController.updateSelectedMessageTable()
         # Update the field properties view
-        self.vocabularyController.view.updateLeftPanel()
+        self.vocabularyController.updateLeftPanel()
 
     def smooth(self):
         """Smooth the provided fields"""

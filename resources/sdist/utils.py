@@ -62,3 +62,24 @@ def find_data_files(dstdir, srcdir, *wildcards, **kw):
         walk_helper((file_list,), srcdir,
                     [os.path.basename(f) for f in glob(opj(srcdir, '*'))])
     return file_list
+
+def getPluginPaths():
+    """getPluginPaths:
+    Computes and returns the path of all available plugins in the current repository.
+    @return a dictionary mapping the plugin name and with its root path"""
+
+    result = dict()  #{pluginName:pluginPath}
+
+    pluginsSourcePath = opj(os.getcwd(), "src", "netzob_plugins")
+
+    # Available Plugin categories
+    plugin_categories = ["Capturers", "Importers", "Exporters"]
+
+    # Find plugins in
+    for plugin_category in plugin_categories:
+        plugin_dir = opj(pluginsSourcePath, plugin_category)
+        plugin_list = os.listdir(plugin_dir)
+        for plugin_name in plugin_list:
+            if plugin_name != "__init__.py" and plugin_name != "__init__.pyc":
+                result[plugin_name] = opj(plugin_dir, plugin_name)
+    return result

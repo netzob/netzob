@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 import time
 from lxml.etree import ElementTree
@@ -87,7 +87,7 @@ class Vocabulary(object):
         return self.symbols
 
     def getTrashSymbol(self):
-        if self.trashSymbol == None:
+        if self.trashSymbol is None:
             self.trashSymbol = TrashSymbol(None)
         return self.trashSymbol
 
@@ -122,6 +122,12 @@ class Vocabulary(object):
         for symbol in self.symbols:
             if str(symbol.getID()) == str(symbolID):
                 return symbol
+        return None
+
+    def getSessionByID(self, sessionID):
+        for session in self.sessions:
+            if str(session.getID()) == str(sessionID):
+                return session
         return None
 
     def getFieldByID(self, fieldID):
@@ -165,13 +171,22 @@ class Vocabulary(object):
             logging.warn("The session cannot be added in the vocabulary since it's already declared in.")
 
     def removeSymbol(self, symbol):
-        self.symbols.remove(symbol)
+        if symbol in self.symbols:
+            self.symbols.remove(symbol)
 
     def removeSession(self, session):
-        self.sessions.remove(session)
+        if session in self.sessions:
+            self.sessions.remove(session)
 
     def removeMessage(self, message):
-        self.messages.remove(message)
+        if message in self.messages:
+            self.messages.remove(message)
+        for symbol in self.symbols:
+            if message in symbol.getMessages():
+                symbol.removeMessage(message)
+        for session in self.sessions:
+            if message in session.getMessages():
+                session.removeMessage(message)
 
     def getVariables(self):
         variables = []
@@ -225,6 +240,16 @@ class Vocabulary(object):
         for symbol in self.symbols:
             symbol.simplePartitioning(configuration, unitSize)
 
+    def getApplicativeData(self):
+        """getApplicativeData:
+        Computes and returns all the applicative data declared in the vocabulary
+        @return a list of L{netzob.Common.ApplicativeData}
+        """
+        result = []
+        for session in self.getSessions():
+            result.extend(session.getApplicativeData())
+        return result
+
     def save(self, root, namespace_project, namespace_common):
         xmlVocabulary = etree.SubElement(root, "{" + namespace_project + "}vocabulary")
         # Messages
@@ -257,7 +282,7 @@ class Vocabulary(object):
                     vocabulary.addSymbol(symbol)
             # Sessions
             for xmlSession in xmlRoot.findall("{" + namespace_project + "}sessions/{" + namespace_common + "}session"):
-                session = Session.loadFromXML(xmlSession, namespace_project, namespace_common, version, vocabulary)
+                session = Session.loadFromXML(xmlSession, namespace_project, namespace_common, version, project, vocabulary)
                 if session is not None:
                     vocabulary.addSession(session)
         return vocabulary

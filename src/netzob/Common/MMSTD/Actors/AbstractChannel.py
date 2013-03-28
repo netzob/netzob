@@ -28,19 +28,19 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
-from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
-from netzob.Common.MMSTD.Dictionary.DataTypes.WordType import WordType
-from netzob.Common.MMSTD.Dictionary.DataTypes.IPv4WordType import IPv4WordType
-from netzob.Common.MMSTD.Dictionary.DataTypes.IntegerType import IntegerType
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Property import Property
-from netzob.Common.Type.Format import Format
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
+from netzob.Common.MMSTD.Dictionary.DataTypes.WordType import WordType
+from netzob.Common.MMSTD.Dictionary.DataTypes.IPv4WordType import IPv4WordType
+from netzob.Common.MMSTD.Dictionary.DataTypes.DecimalWordType import DecimalWordType
+from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Property import Property
+from netzob.Common.Type.Format import Format
 
 
 #+---------------------------------------------------------------------------+
@@ -75,11 +75,11 @@ class AbstractChannel():
     def configureMemory(self):
         """Presets the meta-variables of the channel with specified values"""
 
-        self.varL4Protocol = DataVariable(AbstractChannel.varID_L4_PROTOCOL, AbstractChannel.varID_L4_PROTOCOL, True, True, WordType(True, 0, 5), self.originalProtocol)
-        self.varBindIP = DataVariable(AbstractChannel.varID_BIND_IP, AbstractChannel.varID_BIND_IP, True, True, IPv4WordType(True, 7, 15), self.originalBindIp)
-        self.varBindPort = DataVariable(AbstractChannel.varID_BIND_PORT, AbstractChannel.varID_BIND_PORT, True, True, IntegerType(True, 0, 5), self.originalBindPort)
-        self.varTargetIP = DataVariable(AbstractChannel.varID_TARGET_IP, AbstractChannel.varID_TARGET_IP, True, True, IPv4WordType(True), self.originalTargetIp)
-        self.varTargetPort = DataVariable(AbstractChannel.varID_TARGET_PORT, AbstractChannel.varID_TARGET_PORT, True, True, IntegerType(True, 0, 5), self.originalTargetPort)
+        self.varL4Protocol = DataVariable(AbstractChannel.varID_L4_PROTOCOL, AbstractChannel.varID_L4_PROTOCOL, True, True, WordType(True, 0, 5), TypeConvertor.stringB2bin(self.originalProtocol))
+        self.varBindIP = DataVariable(AbstractChannel.varID_BIND_IP, AbstractChannel.varID_BIND_IP, True, True, IPv4WordType(True, 7, 15), TypeConvertor.stringB2bin(self.originalBindIp))
+        self.varBindPort = DataVariable(AbstractChannel.varID_BIND_PORT, AbstractChannel.varID_BIND_PORT, True, True, DecimalWordType(True, 0, 5), TypeConvertor.stringB2bin(str(self.originalBindPort)))
+        self.varTargetIP = DataVariable(AbstractChannel.varID_TARGET_IP, AbstractChannel.varID_TARGET_IP, True, True, IPv4WordType(True), TypeConvertor.stringB2bin(self.originalTargetIp))
+        self.varTargetPort = DataVariable(AbstractChannel.varID_TARGET_PORT, AbstractChannel.varID_TARGET_PORT, True, True, DecimalWordType(True, 0, 5), TypeConvertor.stringB2bin(str(self.originalTargetPort)))
 
         self.memory.forget(self.varL4Protocol)
         self.memory.memorize(self.varL4Protocol)
@@ -117,42 +117,42 @@ class AbstractChannel():
     def getProtocol(self):
         """Return in string the value of the protocol retrieved from the current memory"""
         binProtocol = self.memory.recall(self.varL4Protocol)
-        if binProtocol == None:
+        if binProtocol is None:
             self.log.warn("Impossible to find the memorized value of the protocol")
             return None
-        return TypeConvertor.netzobRawToString(TypeConvertor.bin2hexstring(binProtocol))
+        return TypeConvertor.binB2string(binProtocol)
 
     def getBindIP(self):
         """Returns in string the value of the bind IP retrieved from memory"""
         binIP = self.memory.recall(self.varBindIP)
-        if binIP == None:
+        if binIP is None:
             self.log.warn("Impossible to find the memorized value of the Bind IP")
             return None
-        return TypeConvertor.netzobRawToString(TypeConvertor.bin2hexstring(binIP))
+        return TypeConvertor.binB2string(binIP)
 
     def getBindPort(self):
         """Returns in int the value of the bind Port retrieved from memory"""
         binPort = self.memory.recall(self.varBindPort)
-        if binPort == None:
+        if binPort is None:
             self.log.warn("Impossible to find the memorized value of the Bind Port")
             return None
-        return TypeConvertor.bin2int(binPort)
+        return int(TypeConvertor.binB2string(binPort))
 
     def getTargetIP(self):
         """Returns in string the value of the target IP retrieved from memory"""
         binIP = self.memory.recall(self.varTargetIP)
-        if binIP == None:
+        if binIP is None:
             self.log.warn("Impossible to find the memorized value of the Target IP")
             return None
-        return TypeConvertor.netzobRawToString(TypeConvertor.bin2hexstring(binIP))
+        return TypeConvertor.binB2string(binIP)
 
     def getTargetPort(self):
         """Returns in int the value of the bind Port retrieved from memory"""
         binPort = self.memory.recall(self.varTargetPort)
-        if binPort == None:
+        if binPort is None:
             self.log.warn("Impossible to find the memorized value of the Target Port")
             return None
-        return TypeConvertor.bin2int(binPort)
+        return int(TypeConvertor.binB2string(binPort))
 
     def getOriginalL4Protocol(self):
         return self.originalProtocol

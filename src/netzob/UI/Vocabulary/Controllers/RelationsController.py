@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import logging
 
 #+---------------------------------------------------------------------------+
@@ -182,13 +182,10 @@ class RelationsController(object):
                 self.drawFieldRelations(symbol, field)
 
     def drawFieldRelations(self, symbol, field):
+        # We retrieve all the relations declared in the variable
         variable = field.getVariable()
-        if variable is None:
-            variable = field.getDefaultVariable(symbol)
-        # we retrieve all the relations declared in the variable
-        relationVariables = self.getRelationsInVariable(variable)
-
-        print relationVariables
+        if variable is not None:
+            relationVariables = self.getRelationsInVariable(variable)
 
     def getRelationsInVariable(self, variable):
         logging.debug("Get relations for variable {0}".format(variable))

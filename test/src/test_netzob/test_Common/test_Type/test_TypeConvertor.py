@@ -34,7 +34,7 @@ import string
 import uuid
 import time
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.Type.TypeIdentifier import TypeIdentifier
@@ -45,62 +45,29 @@ from common.NetzobTestCase import NetzobTestCase
 
 
 class test_TypeConvertor(NetzobTestCase):
-    
+
     def generateRandomString(self, min_len, max_len):
         return ''.join((random.choice(string.letters + string.digits) for _ in xrange(random.randint(min_len, max_len))))
-    
-    def test_serializeMessages(self):
-        # Generate randoms messages and retrieve their 
-        # serializations
-        nb_test = 100
-        for i_test in range(0, nb_test) :       
-            messages = []
-                 
-            nb_messages = random.randint(5, 200)
-            for i_message in range(0, nb_messages) :
-                # Generate the content of two messages
-                data = TypeConvertor.stringToNetzobRaw(self.generateRandomString(5, 100))
-                # Create the messages
-                message = RawMessage(str(uuid.uuid4()), str(time.time()), data)
-                messages.append(message)
-            
-            # start the serialization process
-            (serializedMessages, format) = TypeConvertor.serializeMessages(messages, 8)
-            
-            # start the deserialisation process
-            deserializedContents = TypeConvertor.deserializeContent(serializedMessages, format)
-            
-            for i_message in range(0, len(messages)) :
-                message = messages[i_message]
-                self.assertEqual(message.getData(), deserializedContents[i_message])
-                
-    def test_serializeSymbol(self):
-        # Generate randoms symbols and retrieve their 
-        # serializations
 
-        workspace = self.getWorkspace()
-        currentProject = workspace.getProjects()[0]
+    def test_serializeValues(self):
+        # Generate randoms values and retrieve their
+        # serializations
         nb_test = 100
-        for i_test in range(0, nb_test) :                   
-            symbol = Symbol(str(uuid.uuid4()), "TestSymbol", currentProject)
-            nb_messages = random.randint(5, 50)
-            size_messages = []
-            for i_message in range(0, nb_messages) :
-                # Generate the content of two messages
-                size = self.generateRandomString(5, 100)
-                size_messages.append(str(len(size)))
-                data = TypeConvertor.stringToNetzobRaw(size)
-                # Create the message
-                message = RawMessage(str(uuid.uuid4()), str(time.time()), data)
-                # Register the message
-                symbol.addMessage(message)
-            
+        for i_test in range(0, nb_test):
+            values = []
+
+            nb_values = random.randint(5, 200)
+            for i_value in range(0, nb_values):
+                # Generate the content of a random value
+                value = TypeConvertor.stringToNetzobRaw(self.generateRandomString(5, 100))
+                values.append(value)
+
             # start the serialization process
-            (serializedSymbol, format) = TypeConvertor.serializeSymbol(symbol, 8)
-            
-            # We verify the format is good :
-            test_format = str(nb_messages) + "G" + ("M".join(size_messages)) + "M"
-            self.assertEqual(format, test_format)
-            
-            # We verify the content is good :
-            # TODO
+            (serializedValues, format) = TypeConvertor.serializeValues(values, 8)
+
+            # start the deserialisation process
+            deserializedValues = TypeConvertor.deserializeValues(serializedValues, format)
+
+            for i_value in range(0, len(values)):
+                value = values[i_value]
+                self.assertEqual(value, deserializedValues[i_value])

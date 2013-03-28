@@ -23,10 +23,10 @@
 #| @contact  : contact@netzob.org                                            |
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import unittest
@@ -40,12 +40,13 @@ from netzob.Common.Workspace import Workspace
 #| Local Imports
 #+---------------------------------------------------------------------------+
 
+
 class NetzobTestCase(unittest.TestCase):
-    
+
     def __init__(self, methodName='runTest'):
         unittest.TestCase.__init__(self, methodName)
         self.debug = False
-    
+
     def setUp(self):
         # We compute the static resources path
         resourcesPath = "resources/"
@@ -54,13 +55,13 @@ class NetzobTestCase(unittest.TestCase):
 
         # We compute the test (user) resources path
         resourcesPath = "test/resources/"
-        # We retrieve the full name of the child class (the caller) 
-        for m in self.__class__.__module__.split('.') :
+        # We retrieve the full name of the child class (the caller)
+        for m in self.__class__.__module__.split('.'):
             resourcesPath = os.path.join(resourcesPath, m)
         workspacePath = os.path.join(resourcesPath, ResourcesConfiguration.VAR_WORKSPACE_LOCALFILE)
         # Before setting workspace, we verify it exists
-        if os.path.isdir(workspacePath) :
+        if os.path.isdir(workspacePath):
             NetzobResources.WORKSPACE_DIR = workspacePath
-        
+
     def getWorkspace(self):
         return Workspace.loadWorkspace(NetzobResources.WORKSPACE_DIR)

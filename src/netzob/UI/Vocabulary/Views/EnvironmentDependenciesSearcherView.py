@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from locale import gettext as _
+from gettext import gettext as _
 import os
 
 #+---------------------------------------------------------------------------+
@@ -38,6 +38,7 @@ from gi.repository import Gtk, Gdk
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
+from netzob.Common.Property import Property
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -70,6 +71,11 @@ class EnvironmentDependenciesSearcherView(object):
         envDeps = []
         if currentProject is not None:
             envDeps.extend(currentProject.getEnvironmentDependencies())
+
+        # Search in the same time all the applicative data in the project
+        appData = currentProject.getApplicativeData()
+        for data in appData:
+            envDeps.append(Property(data.getName(), data.getType(), data.getValue()))
 
         for envDep in envDeps:
             i = self.envDependenciesListstore.append()

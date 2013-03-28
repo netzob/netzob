@@ -42,8 +42,8 @@ appname = name
 #|    Development version has version number increased and is
 #|    postfixed by ~git
 #+---------------------------------------------------------------------------+
-version = "0.4~git"
-versionName = "JumpingRhino"
+version = "0.4.2~git"
+versionName = "WaddlingPeccary"
 
 #+---------------------------------------------------------------------------+
 #| Copyright mentions
@@ -77,7 +77,8 @@ contributors = ["Georges Bossert <georges.bossert@supelec.fr>",
                 "Franck Roland <franck.l.roland@gmail.com>",
                 "Fabien André <fabien.andre@insa-rennes.fr>",
                 "Quentin Heyler <quentin.heyler@etudiant.univ-rennes1.fr>",
-                "Benjamin Dufour <benjamin.dufour@amossys.fr>"
+                "Benjamin Dufour <benjamin.dufour@amossys.fr>",
+                "Giuseppe Massaro <n3mes1s.oxoo@gmail.com>"
                 ]
 
 #+---------------------------------------------------------------------------+
