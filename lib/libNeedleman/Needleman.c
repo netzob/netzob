@@ -50,6 +50,9 @@ void alignMessages(t_message *resMessage, Bool doInternalSlick, unsigned int nbM
   t_score score;
   unsigned int i_message = 0;
 
+  // Regex returned by the function alignTwoMessages()
+  char * regex = NULL;
+
   score.s1 = 0;
   score.s2 = 0;
   score.s3 = 0;
@@ -106,7 +109,10 @@ void alignMessages(t_message *resMessage, Bool doInternalSlick, unsigned int nbM
     memset(new_message.mask, 0, messages[i_message].len);
 
     // Align current_message with new_message
-    alignTwoMessages(resMessage, doInternalSlick, &current_message, &new_message, debugMode);
+    regex = alignTwoMessages(resMessage, doInternalSlick, &current_message, &new_message, debugMode);
+    // regex is malloced by the function alignTwoMessages() and we don't need it here
+    if(regex)
+      free(regex);
 
     free(current_message.mask);
     free(new_message.mask);
@@ -479,7 +485,6 @@ char* alignTwoMessages(t_message * resMessage, Bool doInternalSlick, t_message *
   tmpMessage = calloc(message1->len + message2->len, sizeof(unsigned char));
   tmpMessageMask = malloc((message1->len + message2->len) * sizeof(unsigned char));
   memset(tmpMessageMask, END, (message1->len + message2->len) * sizeof(unsigned char));
-
   tmpMessageTags = malloc((message1->len + message2->len) * sizeof(t_semanticTag*));
   for (i=0; i<message1->len + message2->len; i++){
     tmpMessageTags[i] = malloc(sizeof(t_semanticTag));
@@ -599,7 +604,6 @@ char* alignTwoMessages(t_message * resMessage, Bool doInternalSlick, t_message *
   resMessage->semanticTags = malloc(resMessage->len * sizeof(t_semanticTag *));
   // default semantic tag is "None"
   for (j=0; j<resMessage->len; j++) {
-
     resMessage->semanticTags[j] = malloc(sizeof(t_semanticTag));
     if (tmpMessageTags[i+j] == NULL || strcmp(tmpMessageTags[i+j]->name, "None") == 0) {
       resMessage->semanticTags[j]->name = "None";
@@ -644,36 +648,49 @@ char* alignTwoMessages(t_message * resMessage, Bool doInternalSlick, t_message *
   }
 
 end:
-	if(matrix) {
-	  // Room service
-	  for (i = 0; i < (message1->len + 1); i++) {
-	    if(matrix[i]) {
-	      free(matrix[i]);
-	    }
-	  }
-	  free(matrix);
-	}
+  // Room service
+  if(matrix) {
+    for (i = 0; i < (message1->len + 1); i++) {
+      if(matrix[i]) {
+	free(matrix[i]);
+      }
+    }
+    free(matrix);
+  }
+  if(contentMessage1) {
+    free(contentMessage1);
+  }
+  if(contentMessage2) {
+    free(contentMessage2);
+  }
+  if(maskMessage1) {
+    free(maskMessage1);
+  }
+  if(maskMessage2) {
+    free(maskMessage2);
+  }
+  if(mapMessage1) {
+    free(mapMessage1);
+  }
+  if(mapMessage2) {
+    free(mapMessage2);
+  }
+  if(tmpMessage) {
+    free(tmpMessage);
+  }
+  if(tmpMessageMask) {
+    free(tmpMessageMask);
+  }
+  if(tmpMessageTags) {
+    for (i = 0; i < message1->len + message2->len; i++) {
+      if(tmpMessageTags[i]) {
+	free(tmpMessageTags[i]);
+      }
+    }
+    free(tmpMessageTags);
+  }
 
-	if(contentMessage1) {
-		free(contentMessage1);
-	}
-	if(contentMessage2) {
-		free(contentMessage2);
-	}
-	if(maskMessage1) {
-		free(maskMessage1);
-	}
-	if(maskMessage2) {
-		free(maskMessage2);
-	}
-	if(tmpMessage) {
-		free(tmpMessage);
-	}
-	if(tmpMessageMask) {
-		free(tmpMessageMask);
-	}
-
-	return regex;
+  return regex;
 }
 
 
