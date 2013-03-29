@@ -425,9 +425,9 @@ class VocabularyView(object):
         relationIdentifierMenu = self.netzob.view.uiManager.get_widget("/mainMenuBar/mainMenuBarAdditions/automaticToolMenu/relationsIdentifierMenuAdditions/relationsIdentifier")
         pluginMenu = relationIdentifierMenu.get_submenu()
 
-        # Update the list of exporters
-        for i in pluginMenu.get_children():
-            pluginMenu.remove(i)
+#        # Update the list of exporters
+#        for i in pluginMenu.get_children():
+#            pluginMenu.remove(i)
 
         # Hide or show relation menu depending of the availability of plugins
         if len(pluginsExtensions) == 0:
