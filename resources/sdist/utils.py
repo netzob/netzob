@@ -73,7 +73,7 @@ def getPluginPaths():
     pluginsSourcePath = opj(os.getcwd(), "src", "netzob_plugins")
 
     # Available Plugin categories
-    plugin_categories = ["Capturers", "Importers", "Exporters"]
+    plugin_categories = ["Capturers", "Importers", "Exporters", "RelationsIdentifier"]
 
     # Find plugins in
     for plugin_category in plugin_categories:
