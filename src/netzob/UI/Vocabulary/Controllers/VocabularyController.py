@@ -352,7 +352,7 @@ class VocabularyController(object):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        symbols = self.view.getCheckedSymbolList()
+        symbols = self.symbolController.getCheckedSymbolList()
         if symbols == []:
             NetzobErrorMessage(_("No symbol selected."))
             return
