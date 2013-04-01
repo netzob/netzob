@@ -64,24 +64,23 @@ class RelationsMakerView(object):
         self.builderConfWidget.connect_signals(self.controller)
 
         # Fullfill the relations liststore with computed relations
-        for symbolName in relations.keys():
-            rels = relations[symbolName]
-
-            for (type, startField, startTypeField, endField, endTypeField, score, idRelation) in rels:
+        for (symbolName, rels) in relations.items():
+            for rel in rels:
                 line = self.relationsListStore.append()
 
                 strStartType = "Value of"
-                if startTypeField == "s":
+                if rel['x_attribute'] == "s":
                     strStartType = "Size of"
 
                 strEndType = "Value of"
-                if endTypeField == "s":
+                if rel['y_attribute'] == "s":
                     strEndType = "Size of"
-                self.relationsListStore.set(line, 0, type)
-                self.relationsListStore.set(line, 1, strStartType + " " + startField.getName() + "@" + startField.getSymbol().getName())
-                self.relationsListStore.set(line, 2, strEndType + " " + endField.getName() + "@" + endField.getSymbol().getName())
-                self.relationsListStore.set(line, 3, float(score))
-                self.relationsListStore.set(line, 4, str(idRelation))
+                self.relationsListStore.set(line, 0, str(rel['id']))
+                self.relationsListStore.set(line, 1, rel['relation_type'])
+                self.relationsListStore.set(line, 2, strStartType + " " + rel['x_field'].getName() + "@" + rel['x_field'].getSymbol().getName())
+                self.relationsListStore.set(line, 3, strEndType + " " + rel['y_field'].getName() + "@" + rel['y_field'].getSymbol().getName())
+                self.relationsListStore.set(line, 4, float(rel['mic']))
+                self.relationsListStore.set(line, 5, float(rel['pearson']))
 
     def show(self):
         self.dialog.show()
@@ -97,18 +96,15 @@ class RelationsMakerView(object):
         model, iter = self.relationsTreeView.get_selection().get_selected()
         idRelation = None
         if iter is not None:
-            idRelation = model[iter][4]
+            idRelation = model[iter][0]
 
         if idRelation == None:
             logging.info("No relation selected")
             return None
 
-        for symbolName in self.relations.keys():
-            rels = self.relations[symbolName]
-            for (type, startField, startTypeField, endField, endTypeField, score, idRelationRel) in rels:
-                if str(idRelationRel) == str(idRelation):
-                    return (type, startField, startTypeField, endField, endTypeField, score, idRelationRel)
+        for (symbolName, rels) in self.relations.items():
+            for rel in rels:
+                if str(rel['id']) == str(idRelation):
+                    return rel
         logging.warning("Impossible to retrieve the requested relation")
         return None
-
-        return idRelation

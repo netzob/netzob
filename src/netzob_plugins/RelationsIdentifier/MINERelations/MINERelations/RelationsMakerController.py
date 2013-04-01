@@ -77,23 +77,21 @@ class RelationsMakerController(object):
         """applyButton_clicked_cb:
         Callback executed when the user applies the displayed relations"""
 
-        relation = self.view.getSelectedRelation()
-        if relation is None:
-            logging.info("No computed relations")
+        rel = self.view.getSelectedRelation()
+        if rel is None:
+            logging.info("No relation selected")
             return
 
-        (type, startField, startTypeField, endField, endTypeField, score, idRelationRel) = relation
-
-        if type != "SizeRelation":
+        if rel['relation_type'] != "SizeRelation":
             logging.warning("Only support Size Relation")
             return
 
-        if startTypeField == "s":
-            sizeField = endField
-            payloadField = startField
+        if rel['y_attribute'] == "s":
+            sizeField = rel['x_field']
+            payloadField = rel['y_field']
         else:
-            payloadField = endField
-            sizeField = startField
+            payloadField = rel['x_field']
+            sizeField = rel['y_field']
 
         logging.debug("Create Fields")
         # Create the payload field becomes a layer
@@ -106,7 +104,7 @@ class RelationsMakerController(object):
         parentField.getLocalFields().insert(indexField, layerField)
 
         logging.info("Creates variables")
-        symbol = startField.getSymbol()
+        symbol = rel['x_field'].getSymbol()
 
         # Create variables for start and end fields
         variablePayloadType = HexWordType(None, 4, 10, None)
