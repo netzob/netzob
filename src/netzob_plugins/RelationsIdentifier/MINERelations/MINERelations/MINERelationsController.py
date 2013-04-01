@@ -30,13 +30,8 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
-import os
 import zlib
-import subprocess
 import uuid
-import tempfile
-import shutil
-
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -46,30 +41,30 @@ from gi.repository import Gtk
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Plugins.Exporters.AbstractExporterController import AbstractExporterController
+from netzob.Common.Plugins.RelationsIdentifier.AbstractRelationsIdentifierController import AbstractRelationsIdentifierController
 from MINERelationsView import MINERelationsView
+from MINERelations import MINERelations
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from RelationsMakerController import RelationsMakerController
 
 
-class MINERelationsController(AbstractExporterController):
+class MINERelationsController(AbstractRelationsIdentifierController):
     """MINERelationsController:
             A controller liking the MINE exporter and its view in the netzob GUI.
     """
 
-    JAR_PATH = "/home/gbt/Developpements/GITRepositories/netzob-resources/documentations/features/size_field_detection/MINE/MINE.jar"
-    JAVA_PATH = "/usr/bin/java"
-
     def __init__(self, netzob, plugin):
-        """Constructor of PeachExportController:
+        """Constructor of MINERelationsController:
 
                 @type netzob: MINEExporterPlugin
                 @param netzob: the plugin instance
         """
-        super(MINERelationsController, self).__init__(netzob, plugin)
+        self.netzob = netzob
         self.plugin = plugin
-        self.selectedSymbols = self.getVocabularyController().view.getCheckedSymbolList()
+        self.selectedSymbols = self.getVocabularyController().symbolController.getCheckedSymbolList()
+        self.model = MINERelations(netzob)
         self.view = MINERelationsView(self, plugin, self.selectedSymbols)
+        super(MINERelationsController, self).__init__(netzob, plugin, self.view)
 
     def run(self):
         """run:
@@ -92,230 +87,12 @@ class MINERelationsController(AbstractExporterController):
         self.view.destroy()
 
     def startButton_clicked_cb(self, widget):
-        """exportButton_clicked_cb:
-            Callback executed when the user clicks on the export button"""
+        """startButton_clicked_cb:
+            Callback executed when the user clicks on the MINERelations button in main menu"""
 
-        # First we verify few things
-        # Can we find the java path
-        javaPath = self.view.getJavaPath()
-        if javaPath is None:
-            logging.warning("No provided Java path.")
-            self.view.showError("Please provide the path to the Java binary file")
-            return
-
-        # Can we find the MINE path
-        minePath = self.view.getMINEPath()
-        if minePath is None:
-            logging.warning("No provided MINE path.")
-            self.view.showError("Please provide the path to the MINE Jar file")
-            return
-
-        # We create a temporary directory for computation in the workspace
-        temporaryDirectory = tempfile.mkdtemp(suffix='_MINERelations', prefix='netzob_', dir=tempfile.gettempdir())
-
-        if temporaryDirectory is None:
-            logging.warning("Impossible to find the current temporary folder.")
-            return
-        else:
-            logging.debug("Temporary folder : {0}".format(temporaryDirectory))
-
-        try:
-            csvSymbol = self.generateCSVs()
-            # For each symbol, we write in a temp file the CSV
-            # execute the MINE relation finder and parse its results
-            results = dict()
-            for symbolName in csvSymbol.keys():
-                (symbol, csv) = csvSymbol[symbolName]
-                inputfilename = "MINE_{0}.csv".format(symbol.getName())
-                csvPath = os.path.join(temporaryDirectory, inputfilename)
-                f = open(csvPath, "w")
-                f.write(csv)
-                f.close()
-
-                # Execute the JAR
-                command = """{0} -jar {1} "{2}" -allPairs cv=0.7""".format(javaPath, minePath, csvPath)
-                logging.info("Executing command : {0}".format(command))
-                subprocess.call(command, shell=True)
-
-                # Parse results
-                outputFile = "{0},allpairs,cv=0.7,B=n^0.6,Results.csv".format(inputfilename)
-                pathOutputFile = os.path.join(temporaryDirectory, outputFile)
-                f = open(pathOutputFile)
-                contentOutputFile = f.read()
-                f.close()
-                tmpResults = self.parseResult(contentOutputFile, symbol)
-                results[symbol.getName()] = tmpResults
-        finally:
-            # Delete the temporary directory and all the sub files
-            shutil.rmtree(temporaryDirectory)
-
+        results = self.model.findCorrelationsInSymbols(self.selectedSymbols)
         self.view.destroy()
 
         # Start the relation maker controller
         controller = RelationsMakerController(self.getPlugin(), self, results)
         controller.run()
-
-    def parseResult(self, content, symbol):
-        results = []
-        lines = content.split('\n')
-
-        for i_line in range(1, len(lines)):
-            line = lines[i_line]
-            if len(line) > 0:
-                cols = line.split(',')
-                if len(cols) > 3:
-                    startRel = cols[0]
-                    endRel = cols[1]
-                    score = cols[2]
-
-                    (startField, startTypeField) = self.extractFieldFromRelation(startRel, symbol)
-                    (endField, endTypeField) = self.extractFieldFromRelation(endRel, symbol)
-
-                    typeRelation = "Unknown"
-                    if (startTypeField == "v" and endTypeField == "s") or (startTypeField == "s" and endTypeField == "v"):
-                        typeRelation = "SizeRelation"
-                    elif (startTypeField == endTypeField) and startTypeField == "v":
-                        typeRelation = "DataRelation"
-
-                    filter = False
-                    if typeRelation == "DataRelation":
-                        if startField.getID() == endField.getID():
-                            filter = True
-
-                    if float(score) < 0.75:
-                        filter = True
-
-                    if not filter:
-                        idRelation = uuid.uuid4()
-                        results.append((typeRelation, startField, startTypeField, endField, endTypeField, score, idRelation))
-        return results
-
-    def extractFieldFromRelation(self, strRel, symbol):
-        """extractFieldFromRelation:
-        Parse the format 'type:Field name' and returns the three
-        elements"""
-
-        field = None
-        t = None
-
-        tab = strRel.split(':')
-        t = tab[0]
-        fieldID = tab[1]
-
-        if t == "crc32":
-            field = symbol.getField()
-        else:
-            if '[' in fieldID:
-                indexOf = fieldID.index('[')
-                fieldID = fieldID[:indexOf]
-
-            field = symbol.getFieldByID(fieldID)
-
-        return (field, t)
-
-    def generateCSVs(self):
-        csvSymbol = dict()
-        for symbol in self.selectedSymbols:
-            csvSymbol[symbol.getName()] = (symbol, self.generateCSVForSymbol(symbol))
-        return csvSymbol
-
-    def generateCSVForSymbol(self, symbol):
-        # First we compute the possible list of payloads
-        mode = "short"
-
-        lines = []
-        line_header = []
-
-        # Compute the table of values
-        values = dict()
-        fields = symbol.getExtendedFields()
-        for field in fields:
-                values[field] = field.getCells()
-
-        # First we generate lines and header for fields values
-        (field_line_header, field_lines) = self.generateFieldValuesLines(values)
-        line_header.extend(field_line_header)
-        lines.extend(field_lines)
-
-        # Now we generate values for fields sizes
-        (multipleSize_Header, multipleSize_lines) = self.generateSizeFieldFromBeginingOfField(symbol)
-        line_header.extend(multipleSize_Header)
-        for i_line in range(0, len(lines)):
-            lines[i_line] = lines[i_line] + "," + multipleSize_lines[i_line]
-
-        # Now we generate values for fields sizes
-        (crc32Header, crc32Lines) = self.generateCRC32(symbol)
-        line_header.extend(crc32Header)
-        for i_line in range(0, len(lines)):
-            line = lines[i_line]
-            lines[i_line] = line + "," + crc32Lines[i_line]
-
-        result = []
-        result.append(','.join(line_header))
-        result.extend(lines)
-
-        return "\n".join(result)
-
-    def generateCRC32(self, symbol):
-        header = []
-        lines = []
-        header.append("crc32:")
-        messages = symbol.getMessages()
-        for message in messages:
-            line = []
-            data = message.getStringData()
-            rawContent = TypeConvertor.netzobRawToPythonRaw(data)
-            valCrc32 = zlib.crc32(rawContent) & 0xFFFFFFFFL
-            line.append(str(valCrc32))
-            lines.append(",".join(line))
-        return (header, lines)
-
-    def generateSizeFieldFromBeginingOfField(self, symbol):
-        header = []
-        lines = []
-        cells = dict()
-        fields = symbol.getExtendedFields()
-        for field in fields:
-            if not field.isStatic():
-                header.append("v:{0}[2]".format(field.getID()))
-                cells[field] = field.getCells()
-
-        for i_msg in range(0, len(symbol.getMessages())):
-            line = []
-            for field in cells.keys():
-                entry = cells[field][i_msg]
-                for k in range(2, 3, 2):
-                    if len(entry) > k:
-                        line.append(TypeConvertor.netzobRawToDecimal(entry[:k]))
-                    else:
-                        line.append(TypeConvertor.netzobRawToDecimal(entry))
-
-            lines.append(",".join(line))
-
-        print lines
-
-        return (header, lines)
-
-    def generateFieldValuesLines(self, cells):
-        header = []
-        lines = []
-
-        nbMessage = len(cells[cells.keys()[0]])
-
-        for field in cells.keys():
-            header.append("v:{0}".format(field.getID()))
-            header.append("s:{0}".format(field.getID()))
-
-        for i_msg in range(0, nbMessage):
-            line = []
-            for field in cells.keys():
-                entry = cells[field][i_msg]
-                line.extend(self.generateCSVForData(entry))
-            lines.append(",".join(line))
-        return (header, lines)
-
-    def generateCSVForData(self, data):
-        result = []
-        result.append(str(TypeConvertor.netzobRawToDecimal(data)))
-        result.append(str(len(data)))
-        return result
