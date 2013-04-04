@@ -40,7 +40,7 @@ from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
 import uuid
 from netzob.Common.MMSTD.Dictionary.DataTypes.HexWordType import HexWordType
 from netzob.Common.MMSTD.Dictionary.Variables.ComputedRelationVariable import ComputedRelationVariable
-from netzob.Common.MMSTD.Dictionary.RelationTypes.SizeRelationType import SizeRelationType
+from netzob.Common.MMSTD.Dictionary.RelationTypes.BinarySizeRelationType import BinarySizeRelationType
 from netzob.Common.Field import Field
 
 #+---------------------------------------------------------------------------+
@@ -110,7 +110,7 @@ class RelationsMakerController(object):
         variablePayloadType = HexWordType(None, 4, 10, None)
         variablePayload = DataVariable(uuid.uuid4(), "Payload", True, True, variablePayloadType, None)
 
-        variableSizeFieldType = SizeRelationType(2, None, None, None)
+        variableSizeFieldType = BinarySizeRelationType(2, 0, 16, None, 1, 0)
         variableSizeField = ComputedRelationVariable(uuid.uuid4(), "Size Field", True, True, variableSizeFieldType, variablePayload.getID(), symbol)
 
         sizeField.setVariable(variableSizeField)
