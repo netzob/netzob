@@ -243,7 +243,7 @@ class NeedlemanAndWunsch(object):
                 pass
             innerField = Field("Field " + str(iField), "(" + regexElt + ")", field.getSymbol())
             step1Fields.append(innerField)
-            field.addField(innerField)
+            field.addLocalField(innerField)
 
             # Use the default protocol type for representation
             field.setFormat(self.defaultFormat)
@@ -333,7 +333,7 @@ class NeedlemanAndWunsch(object):
 
         field.removeLocalFields()
         for f in steps3Fields:
-            field.addField(f)
+            field.addLocalField(f)
 
         # Clean created fields (remove fields that produce only empty cells)
         field.removeEmptyFields(self.cb_status)

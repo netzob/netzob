@@ -14,7 +14,13 @@
         <menuitem action="partitioningSimple" />
         <menuitem action="partitioningSmooth" />
         <menuitem action="partitioningReset" />
-        <menuitem action="compareSessions" />
+	<placeholder name="relationsIdentifierMenuAdditions">
+	  <menu action="relationsIdentifier">
+	    <menuitem action="findRelationsInSymbols" />
+            <menuitem action="findRelationsInSessions" />
+	  </menu>
+	</placeholder>
+	<menuitem action="compareSessions" />
       </menu>
       <menu action="manualToolMenu">
         <menuitem action="concatField" />

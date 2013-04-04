@@ -336,7 +336,7 @@ class TrashSymbol(AbstractSymbol):
                 for xmlField in xmlFields.findall("{" + namespace_project + "}field"):
                     field = Field.loadFromXML(xmlField, namespace_project, version)
                     if field is not None:
-                        symbol.addField(field)
+                        symbol.addLocalField(field)
 
             return symbol
         return None

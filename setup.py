@@ -123,6 +123,11 @@ argsFactoriesPath = opj(libPath, "argsFactories")
 # regexPath = opj(libPath, "libRegex")
 # pyRegexPath = opj(regexPath, "Py_lib")
 
+# Relation path
+relPath = os.path.join(libPath, "libRelation")
+pyRelPath = os.path.join(relPath, "Py_lib")
+relImplPath = os.path.join(relPath, "algorithms")
+
 # Tools path
 toolsPath = opj(libPath, "tools")
 
@@ -163,6 +168,15 @@ moduleLibInterface = Extension('netzob._libInterface',
                                         opj(toolsPath, "getBID.c")],
                                define_macros=macros,
                                include_dirs=includes)
+
+# Module Relation
+moduleLibRelation = Extension('netzob._libRelation',
+                              extra_compile_args=extraCompileArgs,
+                              sources=[os.path.join(relPath, "relation.c"),
+                                       os.path.join(pyRelPath, "libRelation.c")],
+                              define_macros=macros,
+                              include_dirs=includes,
+                              libraries=["dl"])
 
 #+----------------------------------------------------------------------------
 #| Definition of the dependencies
@@ -231,7 +245,7 @@ setup(
         "netzob": opj("src", "netzob"),
         "netzob_plugins": opj("src", "netzob_plugins"),
     },
-    ext_modules=[moduleLibNeedleman, moduleLibScoreComputation, moduleLibInterface],
+    ext_modules=[moduleLibNeedleman, moduleLibScoreComputation, moduleLibInterface, moduleLibRelation],
     data_files=data_files,
     scripts=["netzob"],
     install_requires=dependencies,

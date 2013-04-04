@@ -119,7 +119,7 @@ class AsciiAlign():
                 logging.warn("Partitionnement error: too much fields ( > 100) for the symbol '" + symbol.getName() + "' len=" + str(len(symbol.getExtendedFields())) + "len " + str(len(symbol.getPattern()[1])))
                 symbol.getField().removeLocalFields()
                 field = Field("Field 0", "(.{, })", symbol)
-                symbol.addField(field)
+                symbol.addLocalField(field)
                 # Use the default protocol type for representation
                 field.setFormat(self.defaultFormat)
 

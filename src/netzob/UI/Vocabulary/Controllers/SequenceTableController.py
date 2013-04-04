@@ -120,7 +120,7 @@ class SequenceTableController(object):
                     return
 
             # Retrieve the selected field number
-            iField = self.view.displayedObject.getExtendedFields()[0].getIndex()  # Starting displayed field
+            iField = self.view.displayedObject.getExtendedFields()[0].getGlobalIndex()  # Starting displayed field
             for col in treeview.get_columns():
                 if col == treeviewColumn:
                     break

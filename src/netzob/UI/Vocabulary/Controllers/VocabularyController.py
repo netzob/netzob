@@ -39,7 +39,6 @@ import logging
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk
 import gi
-from netzob.UI.Vocabulary.Controllers.Clustering.ClusteringProfilesController import ClusteringProfilesController
 gi.require_version('Gtk', '3.0')
 
 
@@ -70,6 +69,8 @@ from netzob.UI.Vocabulary.Controllers.SequenceController import SequenceControll
 from netzob.UI.Common.Controllers.MoveMessageController import MoveMessageController
 from netzob.UI.Import.ImportFileChooserDialog import ImportFileChooserDialog
 from netzob.UI.NetzobWidgets import NetzobQuestionMessage, NetzobErrorMessage, NetzobInfoMessage
+from netzob.Common.Plugins.Extensions.RelationsIdentifierMenuExtension import RelationsIdentifierMenuExtension
+from netzob.UI.Vocabulary.Controllers.Clustering.ClusteringProfilesController import ClusteringProfilesController
 
 
 #+----------------------------------------------
@@ -117,8 +118,9 @@ class VocabularyController(object):
 
     def activate(self):
         """Activate the perspective"""
-        # Refresh list of available exporter plugins
+        # Refresh list of available plugins
         self.updateListOfCapturerPlugins()
+        self.updateListOfRelationsIdentifierPlugins()
         self.updateLeftPanel()
 
     def deactivate(self):
@@ -192,6 +194,11 @@ class VocabularyController(object):
         them to its associated view"""
         pluginExtensions = NetzobPlugin.getLoadedPluginsExtension(CapturerMenuExtension)
         self.view.updateListCapturerPlugins(pluginExtensions)
+
+    def updateListOfRelationsIdentifierPlugins(self):
+        """fetch the list of availavable plugins for the identifications of relations"""
+        pluginExtensions = NetzobPlugin.getLoadedPluginsExtension(RelationsIdentifierMenuExtension)
+        self.view.updateListRelationsIdentifierPlugins(pluginExtensions)
 
     # Drag and drop of messages
     def drag_data_received_event(self, widget, drag_context, x, y, data, info, time):
@@ -345,7 +352,7 @@ class VocabularyController(object):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        symbols = self.view.getCheckedSymbolList()
+        symbols = self.symbolController.getCheckedSymbolList()
         if symbols == []:
             NetzobErrorMessage(_("No symbol selected."))
             return

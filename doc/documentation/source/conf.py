@@ -11,7 +11,8 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
+import sys
+import os
 
 sys.path.insert(0, os.path.abspath('../../../lib/'))
 sys.path.insert(0, os.path.abspath('../../../lib/libNeedleman/'))
@@ -225,4 +226,3 @@ man_pages = [
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 if on_rtd:
   os.system("sphinx-apidoc -f -o ./developer_guide/API/ ../../../src/netzob")
-

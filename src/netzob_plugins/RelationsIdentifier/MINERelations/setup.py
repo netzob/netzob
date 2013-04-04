@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -28,58 +29,26 @@
 #+----------------------------------------------------------------------------
 #| Global Imports
 #+----------------------------------------------------------------------------
-from glob import glob
-import os
-from fnmatch import fnmatch
+from setuptools import setup
 
-def opj(*args):
-    path = os.path.join(*args)
-    return os.path.normpath(path)
+dependencies = [
+    'Netzob >= 0.4',
+    'minepy',
+    'numpy'
+]
 
-def find_data_files(dstdir, srcdir, *wildcards, **kw):
-    """Build a mapping of merge path and local files to put in
-    data_files argument of setup() call"""
-
-    # get a list of all files under the srcdir matching wildcards,
-    # returned in a format to be used for install_data
-    def walk_helper(arg, dirname, files):
-        if '.git' in dirname:
-            return
-        names = []
-        (lst,) = arg
-        for wc in wildcards:
-            wc_name = opj(dirname, wc)
-            for f in files:
-                filename = opj(dirname, f)
-                if fnmatch(filename, wc_name) and not os.path.isdir(filename):
-                    names.append(filename)
-        lst.append((dirname.replace(srcdir, dstdir), names))
-
-    file_list = []
-    if kw.get('recursive', True):
-        os.path.walk(srcdir, walk_helper, (file_list,))
-    else:
-        walk_helper((file_list,), srcdir,
-                    [os.path.basename(f) for f in glob(opj(srcdir, '*'))])
-    return file_list
-
-def getPluginPaths():
-    """getPluginPaths:
-    Computes and returns the path of all available plugins in the current repository.
-    @return a dictionary mapping the plugin name and with its root path"""
-
-    result = dict()  #{pluginName:pluginPath}
-
-    pluginsSourcePath = opj(os.getcwd(), "src", "netzob_plugins")
-
-    # Available Plugin categories
-    plugin_categories = ["Clustering", "Capturers", "Importers", "Exporters", "RelationsIdentifier"]
-
-    # Find plugins in
-    for plugin_category in plugin_categories:
-        plugin_dir = opj(pluginsSourcePath, plugin_category)
-        plugin_list = os.listdir(plugin_dir)
-        for plugin_name in plugin_list:
-            if plugin_name != "__init__.py" and plugin_name != "__init__.pyc":
-                result[plugin_name] = opj(plugin_dir, plugin_name)
-    return result
+#+----------------------------------------------------------------------------
+#| Definition of Netzob for setup
+#+----------------------------------------------------------------------------
+setup(
+    name="Netzob-MINERelations",
+    version="1.0.0",
+    author="Georges Bossert, Frédéric Guihéry",
+    author_email="contact@netzob.org",
+    packages=['MINERelations'],
+    install_requires=dependencies,
+    entry_points="""
+    [netzob.plugins]
+    MINERelations=MINERelations.MINERelationsPlugin:MINERelationsPlugin
+    """
+)

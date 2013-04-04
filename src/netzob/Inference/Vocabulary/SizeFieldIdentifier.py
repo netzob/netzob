@@ -214,7 +214,7 @@ class SizeFieldIdentifier(object):
                             res = False
                             break
                     if res is True:
-                        self.results.append([aField.getIndex(), key * 2, start, -1, end - 1, -1, "Found potential size field (col " + str(aField.getIndex()) + "[:" + str(key * 2) + "]) for an aggregation of data field (col " + str(start) + " to col " + str(end - 1) + ")"])
+                        self.results.append([aField.getGlobalIndex(), key * 2, start, -1, end - 1, -1, "Found potential size field (col " + str(aField.getGlobalIndex()) + "[:" + str(key * 2) + "]) for an aggregation of data field (col " + str(start) + " to col " + str(end - 1) + ")"])
             start += 1
 
     def getResults(self):

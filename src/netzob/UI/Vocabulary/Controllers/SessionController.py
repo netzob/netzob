@@ -50,6 +50,7 @@ from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 from netzob.Common.SignalsManager import SignalsManager
 from netzob.UI.Common.Controllers.MoveMessageController import MoveMessageController
 from netzob.UI.Vocabulary.Controllers.Menus.ContextualMenuOnLayerController import ContextualMenuOnLayerController
+from netzob.UI.Vocabulary.Controllers.FindRelationsController import FindRelationsController
 from netzob.UI.NetzobWidgets import NetzobQuestionMessage, NetzobErrorMessage, NetzobInfoMessage
 from netzob.Inference.Vocabulary.SessionsDiff import SessionsDiff
 
@@ -433,7 +434,7 @@ class SessionController(object):
             self.focus = None
 
 
-    # Inference functions callbacks
+    ## Inference functions callbacks
 
     def compare_sessions_activate_cb(self, action):
         # Sanity checks
@@ -456,3 +457,21 @@ class SessionController(object):
         sd.colorizeResults()
 
         self.vocabularyController.updateMessageTableDisplayingObjects(sessions)
+
+    def find_relations_activate_cb(self, but):
+        """find_relations_activate_cb: Called when user wants to
+        detects relations between messages in sessions.
+        """
+        # Sanity checks
+        if self.netzob.getCurrentProject() is None:
+            NetzobErrorMessage(_("No project selected."))
+            return
+        sessions = self.getCheckedSessionList()
+        if sessions == []:
+            NetzobErrorMessage(_("No session selected."))
+            return
+
+        # Launch the controller
+        #rel_ctrl = FindRelationsController(self.netzob)
+        #rel_ctrl.buildRelations(sessions)
+        logging.warn("find_relations_sessions_activate_cb(): not implemented")

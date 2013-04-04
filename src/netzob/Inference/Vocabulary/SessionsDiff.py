@@ -38,6 +38,7 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Type.Format import Format
 from netzob.Common.Functions.Visualization.BackgroundColorFunction import BackgroundColorFunction
 
+
 class SessionsDiff(object):
     """
     SessionsDiff:
@@ -107,7 +108,6 @@ class SessionsDiff(object):
                         commonCell += refCells[iCell][iCar]
                 commonSplittedMessage.append(commonCell)
             commonSessionModel.append(commonSplittedMessage)
-
 
         # Colorize each session according to the common model
         for session in self.sessions:
