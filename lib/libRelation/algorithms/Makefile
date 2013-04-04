@@ -1,4 +1,4 @@
-DEBUG=yes
+DEBUG=no
 SRC=rel_test.c 			\
 	  rel_equality.c	\
 	  rel_size.c
