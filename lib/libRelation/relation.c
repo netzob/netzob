@@ -34,7 +34,7 @@
 #include <string.h>
 #include "relation.h"
 
-static const char* algorithm_path = "/home/fgy/travaux/netzob/git/netzob/lib/libRelation/algorithms";
+static const char* algorithm_path = "lib/libRelation/algorithms";
 
 /*
  * Build a native datamodel containing results.
