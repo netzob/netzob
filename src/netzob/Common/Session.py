@@ -75,10 +75,12 @@ class Session(object):
             self.endianess = None
 
     def addMessage(self, message):
+        message.setSession(self)
         self.messages.append(message)
 
     def addMessages(self, messages):
-        self.messages.extend(messages)
+        for message in messages:
+            self.addMessage(message)
 
     def getCouples(self):
         couples = []
