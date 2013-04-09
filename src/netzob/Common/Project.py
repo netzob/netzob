@@ -126,7 +126,16 @@ class Project(object):
     #| @param name : name of the project
     #| @param creationDate : date of creation
     #+-----------------------------------------------------------------------+
-    def __init__(self, id, name, creationDate, path):
+    def __init__(self, id=None, name=None, creationDate=None, path=None):
+
+        # Manage default arguments
+        if id is None:
+            id = uuid.uuid4()
+        if name is None:
+            name = str(id)
+        if creationDate is None:
+            creationDate = datetime.datetime.now()
+
         self.id = id
         self.name = name
         self.creationDate = creationDate
