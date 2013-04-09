@@ -42,7 +42,7 @@ from netzob.Common.Type.Format import Format
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.ApplicativeData import ApplicativeData
-
+from netzob.Inference.Vocabulary.Searcher import Searcher
 
 class SessionException(Exception):
     pass
@@ -98,6 +98,26 @@ class Session(object):
             return self.messages.remove(message)
         except ValueError, e:
             raise SessionException("The message was not found in the session: unable to remove it.")
+
+    def applySemanticTagsOnMessages(self):
+        """applySemanticTagsOnMessages:
+
+        For each message, searches the embedded contextual data
+        and tag implied half-bytes with the proper semantic.
+        """
+        searcher = Searcher(self.project)
+        for message in self.getMessages():
+            founds = searcher.searchContextInMessage(message)
+            for f in founds:
+                tag = None
+                for appData in self.getApplicativeData():
+                    if appData.getValue() == f.getDescription():
+                        tag = str(appData.getName())
+                        break
+                if tag is None:
+                    tag = f.getDescription()
+                for (start, end) in f.getSegments():
+                    message.addSemanticTag(tag, start, end)
 
     def getID(self):
         return self.id
