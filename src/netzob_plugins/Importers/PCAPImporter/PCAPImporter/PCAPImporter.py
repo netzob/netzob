@@ -101,8 +101,9 @@ class PCAPImporter(AbstractImporter):
         self.bpfFilter = bpfFilter
 
     def setImportLayer(self, importLayer):
-        if not importLayer in [1, 2, 3, 4]:
-            raise
+        availableLayers = [1, 2, 3, 4]
+        if not importLayer in availableLayers:
+            raise Exception("Only layers level {0} are available.".format(availableLayers))
         self.importLayer = importLayer
 
     def readMessages(self):
