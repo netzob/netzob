@@ -356,9 +356,7 @@ class Field(object):
         if len(uniqueValues) == 0:
             return
 
-        self.setName("{0}_{1}".format(self.getSymbol().getName(), str(uniqueValues[0])))
         for uniqueValue in uniqueValues[1:]:
-
             # Extract new messages (that can be sub-parts of entire messages if the user work on a layer)
             newMessages = []
             for message in self.getMessages():
@@ -373,13 +371,18 @@ class Field(object):
 
             # Build new symbols and dupplicate field structure each time
             from netzob.Common.Symbol import Symbol
-            symbol = Symbol(str(uuid.uuid4()), "Name", project)
+            newSymbolName = "{0}_{1}".format(self.getSymbol().getName(), str(uniqueValue))
+
+            symbol = Symbol(str(uuid.uuid4()), newSymbolName, project)
             symbol.addMessages(newMessages)
             newField = self.dupplicate(symbol)
+            newField.setName(newSymbolName)
             symbol.setField(newField)
-            symbol.setName("{0}_{1}".format(self.getSymbol().getName(), str(uniqueValue)))
 
             project.getVocabulary().addSymbol(symbol)
+        self.setName("{0}_{1}".format(self.getSymbol().getName(), str(uniqueValues[0])))
+
+
 
     #+----------------------------------------------
     #| forcePartitioning:
