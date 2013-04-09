@@ -121,7 +121,7 @@ class Searcher(object):
         if message is None:
             self.log.warning("No message provided")
             return []
-        applicativeData = self.project.getVocabulary().getApplicativeData()
+        applicativeData = message.getSession().getApplicativeData()
         # Create search tasks
         tasks = []
         for appData in applicativeData:
