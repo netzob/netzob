@@ -64,7 +64,6 @@ class ApplicativeDataClustering(AbstractClusteringAlgorithm):
             messages.extend(symbol.getMessages())
 
         project = symbols[0].getProject()
-        voca = project.getVocabulary()
 
         searcher = Searcher(project)
         groups = dict()
@@ -73,7 +72,7 @@ class ApplicativeDataClustering(AbstractClusteringAlgorithm):
             tokens = []
             for f in founds:
                 token = None
-                for appData in voca.getApplicativeData():
+                for appData in message.getSession().getApplicativeData():
                     if appData.getValue() == f.getDescription():
                         token = str(appData.getName())
                         break
