@@ -158,11 +158,19 @@ class Vocabulary(object):
         else:
             logging.warn("The message cannot be added in the vocabulary since it's already declared in.")
 
+    def addMessages(self, messages):
+        for message in messages:
+            self.addMessage(message)
+
     def addSymbol(self, symbol):
         if not symbol in self.symbols:
             self.symbols.append(symbol)
         else:
             logging.warn("The symbol cannot be added in the vocabulary since it's already declared in.")
+
+    def addSymbols(self, symbols):
+        for symbol in symbols:
+            self.addSymbol(symbol)
 
     def addSession(self, session):
         if not session in self.sessions:
