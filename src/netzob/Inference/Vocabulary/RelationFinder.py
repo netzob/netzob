@@ -89,14 +89,14 @@ class RelationFinder(object):
     #| executeOnCellsWithAttributes:
     #+----------------------------------------------
     def executeOnCellsWithAttributes(self, x_field, x_attr, y_field, y_attr):
+        results = []
         # Convert cells according to their interesting attribute (data, size or offset)
         if x_attr == "s" and y_attr == "s":  # Two size field are uncertain...
-            return
+            return results
         x_values = x_field.getCells()
         y_values = y_field.getCells()
 
         # Try to find a relation that matches each cell
-        results = []
         relation_fcts = {}
         relation_fcts["size"] = self.sizeRelation
         relation_fcts["equality"] = self.equalRelation
