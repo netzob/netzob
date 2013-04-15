@@ -74,7 +74,7 @@ class FilterMessagesController(object):
         # Sanity checks
         if self.vocabularyController.getCurrentProject() is None:
             return
-        symbol = self.vocabularyController.getDisplayedObjectInSelectedSMessageTable()
+        symbol = self.vocabularyController.getDisplayedObjectInSelectedMessageTable()
         if symbol is None:
             return
         toSearch = widget.get_text()
