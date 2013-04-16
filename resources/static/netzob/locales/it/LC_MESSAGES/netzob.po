@@ -7,17 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Netzob 0.4.2~git\n"
 "Report-Msgid-Bugs-To: i18n@netzob.org\n"
-"POT-Creation-Date: 2013-02-20 11:40+0100\n"
+"POT-Creation-Date: 2013-04-16 15:26+0200\n"
 "PO-Revision-Date: 2013-03-13 14:06+0200\n"
 "Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: Italian "
 "<http://qa.netzob.org/weblate/projects/netzob/master/it/>\n"
-"Language: it\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Weblate 1.4\n"
 "Generated-By: Babel 0.9.6\n"
 
 #: src/netzob/NetzobMainController.py:312
@@ -1074,14 +1072,6 @@ msgstr ""
 msgid "{0} registered"
 msgstr ""
 
-#: src/netzob/UI/Vocabulary/Controllers/EditLayerController.py:88
-msgid "Provide a name for the layer"
-msgstr ""
-
-#: src/netzob/UI/Vocabulary/Controllers/EditLayerController.py:93
-msgid "Provide a regex for the layer"
-msgstr ""
-
 #: src/netzob/UI/Vocabulary/Controllers/FindSizeFieldsController.py:81
 msgid "Size Fields Identifications"
 msgstr ""
@@ -1337,8 +1327,6 @@ msgid "Formatted Field"
 msgstr ""
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnLayerView.py:65
-#: resources/static/netzob/ui/vocabulary/editLayerDialog.glade:17
-#: resources/static/netzob/ui/vocabulary/editLayerDialog.glade:46
 msgid "Edit Layer"
 msgstr ""
 
@@ -2234,7 +2222,6 @@ msgstr ""
 #: resources/static/netzob/ui/grammar/createSemiStochasticTransitionDialogs.glade:36
 #: resources/static/netzob/ui/grammar/createStateDialog.glade:35
 #: resources/static/netzob/ui/traceManager/applicativeDataImportDialog.glade:135
-#: resources/static/netzob/ui/vocabulary/editLayerDialog.glade:365
 msgid "label"
 msgstr ""
 
@@ -2651,17 +2638,6 @@ msgstr ""
 msgid "Create a copy of the trace sets"
 msgstr ""
 
-#: resources/static/netzob/ui/vocabulary/NetzobTableView.glade:40
-msgid "Empty View"
-msgstr ""
-
-#: resources/static/netzob/ui/vocabulary/NetzobTableView.glade:57
-#: resources/static/netzob/ui/vocabulary/NetzobTableView.glade:58
-#: resources/static/netzob/ui/vocabulary/messageTable.glade:48
-#: resources/static/netzob/ui/vocabulary/messageTable.glade:49
-msgid "Close the view"
-msgstr ""
-
 #: resources/static/netzob/ui/vocabulary/customTransformationFunctionDialog.glade:7
 msgid "Create a Custom Transformation Function"
 msgstr ""
@@ -2700,34 +2676,6 @@ msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/editFieldDialog.glade:48
 msgid "Regex (be careful!)"
-msgstr ""
-
-#: resources/static/netzob/ui/vocabulary/editLayerDialog.glade:74
-msgid "Layer name"
-msgstr ""
-
-#: resources/static/netzob/ui/vocabulary/editLayerDialog.glade:87
-msgid "Regex (Be carefull)"
-msgstr ""
-
-#: resources/static/netzob/ui/vocabulary/editLayerDialog.glade:166
-msgid "Configure Repetition"
-msgstr ""
-
-#: resources/static/netzob/ui/vocabulary/editLayerDialog.glade:200
-msgid "Available Regex"
-msgstr ""
-
-#: resources/static/netzob/ui/vocabulary/editLayerDialog.glade:211
-msgid "Fields"
-msgstr ""
-
-#: resources/static/netzob/ui/vocabulary/editLayerDialog.glade:274
-msgid "Generate Regex"
-msgstr ""
-
-#: resources/static/netzob/ui/vocabulary/editLayerDialog.glade:315
-msgid "Selected Regex"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/environmentDependenciesSearcherView.glade:17
@@ -2770,20 +2718,17 @@ msgstr ""
 msgid "Filter:"
 msgstr ""
 
-#: resources/static/netzob/ui/vocabulary/loadingViewport.glade:44
-msgid "Loading"
-msgstr ""
-
-#: resources/static/netzob/ui/vocabulary/loadingWindow.glade:6
-msgid "Loading..."
-msgstr ""
-
 #: resources/static/netzob/ui/vocabulary/messageDistributionDialog.glade:7
 msgid "Distribution of bytes values"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/messageTable.glade:31
 msgid "Empty Message Table"
+msgstr ""
+
+#: resources/static/netzob/ui/vocabulary/messageTable.glade:48
+#: resources/static/netzob/ui/vocabulary/messageTable.glade:49
+msgid "Close the view"
 msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/moveMessageDialog.glade:7
@@ -3344,3 +3289,40 @@ msgstr ""
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:228
 msgid "Time limit:"
 msgstr ""
+
+#~ msgid "Provide a name for the layer"
+#~ msgstr ""
+
+#~ msgid "Provide a regex for the layer"
+#~ msgstr ""
+
+#~ msgid "Empty View"
+#~ msgstr ""
+
+#~ msgid "Layer name"
+#~ msgstr ""
+
+#~ msgid "Regex (Be carefull)"
+#~ msgstr ""
+
+#~ msgid "Configure Repetition"
+#~ msgstr ""
+
+#~ msgid "Available Regex"
+#~ msgstr ""
+
+#~ msgid "Fields"
+#~ msgstr ""
+
+#~ msgid "Generate Regex"
+#~ msgstr ""
+
+#~ msgid "Selected Regex"
+#~ msgstr ""
+
+#~ msgid "Loading"
+#~ msgstr ""
+
+#~ msgid "Loading..."
+#~ msgstr ""
+

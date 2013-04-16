@@ -8,17 +8,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-12 11:22+0100\n"
+"POT-Creation-Date: 2013-04-16 15:26+0200\n"
 "PO-Revision-Date: 2013-04-16 15:24+0200\n"
 "Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/master/fr/>\n"
-"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=n > 1\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 1.5\n"
 "Generated-By: Babel 0.9.6\n"
 
 #: src/netzob/NetzobMainController.py:312
@@ -1438,17 +1436,17 @@ msgstr ""
 "Ne peut importer ce paquet réseau car la couche 3 ({0}) n'est pas "
 "supportée (seul le protocole IP est pour l'instant supporté)"
 
-#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:100
+#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:99
 msgid "Incorrect device"
 msgstr "Interface incorrecte"
 
-#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:106
-#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:109
+#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:105
+#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:108
 msgid "Incorrect count"
 msgstr "Valeur du compteur incorrecte"
 
-#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:114
-#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:117
+#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:113
+#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:116
 msgid "Incorrect time"
 msgstr "Valeur du temporisateur incorrecte"
 
@@ -3370,17 +3368,3 @@ msgstr "10"
 msgid "Time limit:"
 msgstr "Durée de capture : "
 
-#~ msgid "Select this element"
-#~ msgstr "Sélectionner cet élément"
-
-#~ msgid "Edit Variable"
-#~ msgstr "Éditer la variable"
-
-#~ msgid "Direct Relation Variable"
-#~ msgstr "Variable de relation directe"
-
-#~ msgid "Create default variable"
-#~ msgstr "Créer une variable par défaut"
-
-#~ msgid "Edit the variable for selected field"
-#~ msgstr "Modifier la variable du champs sélectionné"
