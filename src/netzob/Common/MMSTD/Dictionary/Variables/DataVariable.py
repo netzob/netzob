@@ -300,7 +300,7 @@ class DataVariable(AbstractLeafVariable):
                 The current value is mutated according to the given generation strategy.
         """
         self.log.debug("- {0}: mutate.".format(self.toString()))
-        self.setCurrentValue(self.type.mutateValue(writingToken.getGenerationStrategy(), self.getValue()))
+        self.setCurrentValue(self.type.mutateValue(writingToken.getGenerationStrategy(), self.getValue(writingToken)))
 
     def generate(self, writingToken):
         """generate:

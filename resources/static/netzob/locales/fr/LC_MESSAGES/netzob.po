@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-12 11:22+0100\n"
-"PO-Revision-Date: 2013-04-16 15:24+0200\n"
+"POT-Creation-Date: 2013-04-16 15:27+0200\n"
+"PO-Revision-Date: 2013-01-31 18:24+0200\n"
 "Last-Translator: Olivier Tétard <olivier.tetard@miskin.fr>\n"
 "Language-Team: French "
 "<http://qa.netzob.org/weblate/projects/netzob/next/fr/>\n"
@@ -21,35 +21,47 @@ msgstr ""
 "X-Generator: Weblate 1.5\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: src/netzob/NetzobMainController.py:312
+#: src/netzob/NetzobMainController.py:311
 msgid "A project with this name exists"
 msgstr "Un projet avec ce nom existe déjà"
 
-#: src/netzob/NetzobMainController.py:327
-#: src/netzob/NetzobMainController.py:345
-#: src/netzob/NetzobMainController.py:358
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:141
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:176
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:201
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:217
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:305
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:316
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:327
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:338
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:351
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:363
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:395
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:413
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:433
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:468
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:493
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:506
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:519
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:531
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:542
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:549
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:589
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:606
+#: src/netzob/NetzobMainController.py:326
+#: src/netzob/NetzobMainController.py:344
+#: src/netzob/NetzobMainController.py:357
+#: src/netzob/UI/Vocabulary/Controllers/SequenceController.py:293
+#: src/netzob/UI/Vocabulary/Controllers/SequenceController.py:328
+#: src/netzob/UI/Vocabulary/Controllers/SequenceController.py:353
+#: src/netzob/UI/Vocabulary/Controllers/SequenceController.py:369
+#: src/netzob/UI/Vocabulary/Controllers/SessionController.py:275
+#: src/netzob/UI/Vocabulary/Controllers/SessionController.py:309
+#: src/netzob/UI/Vocabulary/Controllers/SessionController.py:334
+#: src/netzob/UI/Vocabulary/Controllers/SessionController.py:350
+#: src/netzob/UI/Vocabulary/Controllers/SessionController.py:442
+#: src/netzob/UI/Vocabulary/Controllers/SessionController.py:467
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:333
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:368
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:393
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:409
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:498
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:509
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:520
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:531
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:542
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:555
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:567
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:582
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:597
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:628
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:644
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:662
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:252
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:297
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:322
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:340
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:353
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:466
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:473
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:516
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturerPlugin.py:127
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerPlugin.py:127
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExporterPlugin.py:124
@@ -57,16 +69,16 @@ msgstr "Un projet avec ce nom existe déjà"
 msgid "No project selected."
 msgstr "Aucun projet sélectionné."
 
-#: src/netzob/NetzobMainController.py:422
+#: src/netzob/NetzobMainController.py:421
 #: src/netzob/UI/Common/Controllers/ProjectExportController.py:110
 msgid "No directory selected"
 msgstr "Aucun répertoire sélectionné"
 
-#: src/netzob/NetzobMainController.py:436
+#: src/netzob/NetzobMainController.py:435
 msgid "An error occurred while loading workspace."
 msgstr "Une erreur est survenue pendant le chargement de l'espace de travail."
 
-#: src/netzob/NetzobMainController.py:446
+#: src/netzob/NetzobMainController.py:445
 msgid "An error occurred while creating workspace."
 msgstr "Une erreur est survenue durant la création de l'espace de travail."
 
@@ -139,7 +151,7 @@ msgstr "Une erreur s'est produite lors de l'association au rapport {0}/issues/{1
 msgid "The bug report has successfully been published on {0}/issues/{1}"
 msgstr "Le rapport a été publié avec succès sur {0}/issues/{1}"
 
-#: src/netzob/Common/Field.py:396 src/netzob/Common/Field.py:406
+#: src/netzob/Common/Field.py:404 src/netzob/Common/Field.py:414
 #: src/netzob/Import/ApiImport.py:120
 #: resources/static/netzob/ui/availablePluginsDialog.glade:112
 #: resources/static/netzob/ui/Variables/VariableCreationView.glade:52
@@ -155,23 +167,27 @@ msgstr "Le rapport a été publié avec succès sur {0}/issues/{1}"
 #: resources/static/netzob/ui/traceManager/applicativeDataManagerDialog.glade:49
 #: resources/static/netzob/ui/vocabulary/environmentDependenciesSearcherView.glade:164
 #: resources/static/netzob/ui/vocabulary/variableTable.glade:74
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:255
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:487
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:552
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:641
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:302
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:537
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:761
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:997
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:1060
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:1149
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:1212
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:1275
 #: resources/static/netzob_plugins/IpcCapturer/ui/IpcCapturerConfigurationWidget.glade:202
 msgid "Name"
 msgstr "Nom"
 
-#: src/netzob/Common/Project.py:297
+#: src/netzob/Common/Project.py:306
 msgid "Unable to delete project: {0}"
 msgstr "Impossible de supprimer le projet : {0}"
 
-#: src/netzob/Common/Project.py:399
+#: src/netzob/Common/Project.py:408
 msgid "Copy of {0}"
 msgstr "Copie de {0}"
 
-#: src/netzob/Common/Project.py:409
+#: src/netzob/Common/Project.py:418
 msgid "Unable to import the project: {0}."
 msgstr "Impossible d'importer le projet : {0}."
 
@@ -195,23 +211,23 @@ msgstr "Espace de travail courant : {0}"
 msgid "Current workspace: NO WORKSPACE COMPUTED!"
 msgstr "Espace de travail courant : aucun espace de travail crée !"
 
-#: src/netzob/Common/Workspace.py:271
+#: src/netzob/Common/Workspace.py:280
 msgid "Base64 Function"
 msgstr "Fonction Base64"
 
-#: src/netzob/Common/Workspace.py:272
+#: src/netzob/Common/Workspace.py:281
 msgid "GZip Function"
 msgstr "Fonction GZip"
 
-#: src/netzob/Common/Workspace.py:273
+#: src/netzob/Common/Workspace.py:282
 msgid "BZ2 Function"
 msgstr "Fonction BZ2"
 
-#: src/netzob/Common/Workspace.py:411
+#: src/netzob/Common/Workspace.py:451
 msgid "The workspace's path ({0}) is incorrect."
 msgstr "L'emplacement de l'espace de travail ({0}) est incorrect."
 
-#: src/netzob/Common/Workspace.py:416
+#: src/netzob/Common/Workspace.py:456
 msgid ""
 "The workspace's configuration file can't be find (No workspace path "
 "given)."
@@ -219,7 +235,7 @@ msgstr ""
 "La configuration de l'espace de travail n'a pas été trouvée "
 "(l'emplacement de l'espace de travail n'a pas été fourni)."
 
-#: src/netzob/Common/Workspace.py:419
+#: src/netzob/Common/Workspace.py:459
 msgid ""
 "The specified workspace's configuration file ({0}) is not valid: its not "
 "a file."
@@ -227,17 +243,17 @@ msgstr ""
 "L'espace de travail spécifié dans le fichier de configuration ({0}) n'est"
 " pas valide : il ne s'agit pas d'un fichier."
 
-#: src/netzob/Common/Workspace.py:422
+#: src/netzob/Common/Workspace.py:462
 msgid "The specified workspace's configuration file ({0}) is not readable."
 msgstr ""
 "Le fichier de configuration de l'espace de travail indiqué ({0}) n'est "
 "pas lisible."
 
-#: src/netzob/Common/Workspace.py:430
+#: src/netzob/Common/Workspace.py:470
 msgid "The specified workspace is not valid according to the XSD definitions."
 msgstr "L'espace de travail indiqué n'est pas conforme aux définitions XSD."
 
-#: src/netzob/Common/Workspace.py:461
+#: src/netzob/Common/Workspace.py:501
 msgid "An unknown error prevented to open the workspace."
 msgstr "Une erreur inconnue a empêché l'ouverture de l'espace de travail."
 
@@ -267,7 +283,7 @@ msgstr "[{0}]"
 #: src/netzob/Common/Plugins/Capturers/AbstractCapturer.py:72
 #: src/netzob/Import/AbstractImporter.py:72
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturer.py:228
-#: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:319
+#: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:323
 msgid "Message ID: {0} not found in importer message list"
 msgstr "ID de message ({0}) non trouvé dans la liste d'import des messages"
 
@@ -339,7 +355,7 @@ msgstr "ID de message"
 #: src/netzob/Import/ThirdPartyImport.py:187 src/netzob/Import/XMLImport.py:149
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:380
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:18
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:115
+#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:45
 msgid "Import"
 msgstr "Importer"
 
@@ -367,6 +383,7 @@ msgstr "Sélectionner les fichier(s)"
 #: resources/static/netzob/ui/traceManager/applicativeDataManagerDialog.glade:60
 #: resources/static/netzob/ui/vocabulary/variableTable.glade:107
 #: resources/static/netzob_plugins/IpcCapturer/ui/IpcCapturerConfigurationWidget.glade:191
+#: resources/static/netzob_plugins/MINERelations/ui/RelationsMakerDialog.glade:143
 msgid "Type"
 msgstr "Type"
 
@@ -470,7 +487,7 @@ msgid "Save as Grammar"
 msgstr "Sauvegarder la grammaire"
 
 #: src/netzob/Inference/Vocabulary/SearchView.py:84
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:162
+#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:83
 msgid "Search"
 msgstr "Rechercher"
 
@@ -667,6 +684,19 @@ msgstr "Définition de la variable référencée"
 msgid "Referenced Variable:"
 msgstr "Variable référencée :"
 
+#: src/netzob/Inference/Vocabulary/Clustering/ClusteringProfile.py:54
+#, fuzzy
+msgid "Original Clustering"
+msgstr "Valeur initiale : "
+
+#: src/netzob/Inference/Vocabulary/Clustering/ClusteringProfile.py:54
+msgid "Execute an UPGMA clustering using original similarity measure."
+msgstr ""
+
+#: src/netzob/Inference/Vocabulary/Clustering/UPGMA/UPGMAClustering.py:76
+msgid "Equivalence Threshold is not valid"
+msgstr ""
+
 #: src/netzob/UI/NetzobAbstractView.py:84
 msgid "Requested file ({0}) was not found."
 msgstr "Le fichier demandé ({0}) n'a pas été trouvé."
@@ -785,7 +815,7 @@ msgstr "Exporter le projet au format XML brut"
 #: src/netzob/UI/Export/Views/ScapyExportView.py:94
 #: src/netzob/UI/Export/Views/TextExportView.py:94
 #: src/netzob_plugins/Exporters/WiresharkExporter/WiresharkExporter/WiresharkExporterView.py:86
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:97
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:488
 msgid "Symbols"
 msgstr "Symboles"
 
@@ -946,7 +976,9 @@ msgstr "Éditer"
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:363
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:836
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:34
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:385
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:429
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:653
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:877
 msgid "Delete"
 msgstr "Effacer"
 
@@ -1108,6 +1140,7 @@ msgid "Size Fields Identifications"
 msgstr "Identification des champs taille"
 
 #: src/netzob/UI/Vocabulary/Controllers/FindSizeFieldsController.py:90
+#: resources/static/netzob_plugins/MINERelations/ui/RelationsMakerDialog.glade:35
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -1139,9 +1172,49 @@ msgstr[1] "{0} occurrences trouvées."
 msgid "{0}/{1}: {2}"
 msgstr "{0}/{1}: {2}"
 
+#: src/netzob/UI/Vocabulary/Controllers/SessionController.py:447
+#: src/netzob/UI/Vocabulary/Controllers/SessionController.py:471
+#, fuzzy
+msgid "No session selected."
+msgstr "Aucun symbole sélectionné."
+
 #: src/netzob/UI/Vocabulary/Controllers/SplitFieldController.py:90
 msgid "Can't split field with empty cell(s)."
 msgstr "Ne peux pas découper un champs sans cellule."
+
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:502
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:524
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:535
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:546
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:559
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:571
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:586
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:633
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:357
+msgid "No symbol selected."
+msgstr "Aucun symbole sélectionné."
+
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:513
+msgid "No layer selected."
+msgstr "Aucune couche sélectionnée."
+
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:601
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:666
+msgid "No selected symbol."
+msgstr "Aucun symbole sélectionné."
+
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:605
+msgid "You need to select at least two fields."
+msgstr "Vous devez sélectionner au moins deux champs."
+
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:639
+msgid "Fields limits computed."
+msgstr "Limites des champs calculées."
+
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:657
+#: src/netzob/UI/Vocabulary/Controllers/SymbolController.py:670
+msgid "No selected field."
+msgstr "Aucun champs sélectionné."
 
 #: src/netzob/UI/Vocabulary/Controllers/VariableController.py:99
 msgid "Configure definition domain for the field: {0}"
@@ -1180,52 +1253,26 @@ msgstr "Cliquez sur oui pour confirmer l'édition de la variable {0}"
 msgid "No variable selected."
 msgstr "Aucune variable sélectionnée."
 
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:309
-msgid "No layer selected."
-msgstr "Aucune couche sélectionnée."
-
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:320
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:331
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:342
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:355
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:523
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:535
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:594
-msgid "No symbol selected."
-msgstr "Aucun symbole sélectionné."
-
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:367
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:417
-msgid "No selected symbol."
-msgstr "Aucun symbole sélectionné."
-
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:371
-msgid "You need to select at least two fields."
-msgstr "Vous devez sélectionner au moins deux champs."
-
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:408
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:421
-msgid "No selected field."
-msgstr "Aucun champs sélectionné."
-
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:437
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:472
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:256
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:301
 msgid "No selected message."
 msgstr "Aucun message sélectionné."
 
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:476
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:305
 msgid "Click yes to confirm the deletion of the selected message"
 msgid_plural "Click yes to confirm the deletion of the selected messages"
 msgstr[0] "Cliquez sur oui pour confirmer la suppression du message sélectionné"
 msgstr[1] "Cliquez sur oui pour confirmer la suppression des messages sélectionnés"
 
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:600
-msgid "Fields limits computed."
-msgstr "Limites des champs calculées."
-
-#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:611
+#: src/netzob/UI/Vocabulary/Controllers/VocabularyController.py:521
 msgid "No importer plugin available."
 msgstr "Aucun plugin d'import disponible."
+
+#: src/netzob/UI/Vocabulary/Controllers/Clustering/ClusteringProfilesController.py:122
+#: src/netzob/UI/Vocabulary/Controllers/Clustering/ClusteringProfilesController.py:196
+#, fuzzy
+msgid "A profile already exists with this name, please provide another one"
+msgstr "Ce nom d'état existe déjà. Choisissez un autre nom."
 
 #: src/netzob/UI/Vocabulary/Controllers/Menus/ContextualMenuOnFieldController.py:182
 msgid "Selected field range overlaps existing layer."
@@ -1235,7 +1282,7 @@ msgstr "La plage de champs sélectionnée chevauche une couche protocolaire."
 msgid "Layer creation"
 msgstr "Création d'une couche protocolaire"
 
-#: src/netzob/UI/Vocabulary/Controllers/Menus/ContextualMenuOnLayerController.py:164
+#: src/netzob/UI/Vocabulary/Controllers/Menus/ContextualMenuOnLayerController.py:175
 msgid "Rename the layer {0}"
 msgstr "Renommer la couche {0}"
 
@@ -1271,6 +1318,11 @@ msgstr "Lissage terminé !"
 msgid "Definition domain structure"
 msgstr ""
 
+#: src/netzob/UI/Vocabulary/Views/Clustering/ClusteringProfilesView.py:237
+#, fuzzy
+msgid "Do you confirm the deletion of the clustering profile {0}"
+msgstr "Cliquez sur oui pour confirmer l'édition de la variable {0}"
+
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:61
 msgid "Edit Field"
 msgstr "Éditer le champ"
@@ -1288,7 +1340,6 @@ msgid "Create Layer"
 msgstr "Créer une couche"
 
 #: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnFieldView.py:87
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:52
 #, fuzzy
 msgid "Configure definition domain"
 msgstr "Aucune définition trouvée"
@@ -1402,6 +1453,15 @@ msgstr "Partitionnement lissé"
 msgid "Reset Partitionment"
 msgstr "Annuler le partitionnement"
 
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnSessionMessageView.py:61
+#, fuzzy
+msgid "Colorize conversation"
+msgstr "Relation de taille"
+
+#: src/netzob/UI/Vocabulary/Views/Menus/ContextualMenuOnSessionMessageView.py:67
+msgid "Extract conversation to a new session"
+msgstr ""
+
 #: src/netzob_plugins/Capturers/IpcCapturer/IpcCapturer/IpcCapturerPlugin.py:55
 msgid "Provide the possibility to capture IPC traffic."
 msgstr "Offre la possibilité de capturer un trafic IPC."
@@ -1430,7 +1490,7 @@ msgstr ""
 " ({0})"
 
 #: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturer.py:240
-#: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:283
+#: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:287
 msgid ""
 "Cannot import one of the provided packets since its layer 3 is "
 "unsupported (Only IP is currently supported, packet ethernet type = {0})"
@@ -1438,17 +1498,17 @@ msgstr ""
 "Ne peut importer ce paquet réseau car la couche 3 ({0}) n'est pas "
 "supportée (seul le protocole IP est pour l'instant supporté)"
 
-#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:100
+#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:99
 msgid "Incorrect device"
 msgstr "Interface incorrecte"
 
-#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:106
-#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:109
+#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:105
+#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:108
 msgid "Incorrect count"
 msgstr "Valeur du compteur incorrecte"
 
-#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:114
-#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:117
+#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:113
+#: src/netzob_plugins/Capturers/NetworkCapturer/NetworkCapturer/NetworkCapturerController.py:116
 msgid "Incorrect time"
 msgstr "Valeur du temporisateur incorrecte"
 
@@ -1518,6 +1578,55 @@ msgstr "Port source"
 #: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporterView.py:138
 msgid "Destination Port"
 msgstr "Port destination"
+
+#: src/netzob_plugins/Clustering/ASAPClustering/ASAPClustering/ASAPClusteringPlugin.py:50
+msgid ""
+"Implements the clustering algorithm has described in the paper 'ASAP: "
+"Automatic Semantic-Aware Analysis of Network Payloads'"
+msgstr ""
+
+#: src/netzob_plugins/Clustering/ApplicativeDataClustering/ApplicativeDataClustering/ApplicativeDataClusteringPlugin.py:50
+msgid "Cluster messages following their inner applicative data"
+msgstr ""
+
+#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:129
+msgid "Impossible to retrieve the symbol having the id {0}"
+msgstr ""
+
+#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:261
+#, fuzzy
+msgid "The fuzzing is based on variables."
+msgstr "Fuzzing basé sur : "
+
+#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:266
+msgid "The field {0} has the value {1}."
+msgstr ""
+
+#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:310
+#, fuzzy
+msgid "The fuzzing is based on regexes."
+msgstr "Fuzzing basé sur : "
+
+#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:332
+msgid "The field {0} has the splitted Regex = {1}"
+msgstr ""
+
+#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:362
+msgid "The field {0} has a static subfield of value {1}."
+msgstr ""
+
+#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:368
+#, fuzzy
+msgid "The field {0} is empty."
+msgstr "Lisser le champ {0}"
+
+#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:448
+msgid "typedValueLists  : {0}."
+msgstr ""
+
+#: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExport.py:449
+msgid "variable  : {0}. ]>"
+msgstr ""
 
 #: src/netzob_plugins/Exporters/PeachExporter/PeachExporter/PeachExportController.py:89
 msgid "Randomized state order fuzzer"
@@ -1645,17 +1754,17 @@ msgstr ""
 "Une erreur est apparue lors de l'ouverture du fichier {0}, les "
 "permissions ne sont pas suffisantes."
 
-#: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:120
+#: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:121
 msgid "The provided filter is not valid (it should follow the BPF format)"
 msgstr "Le filtre proposé n'est pas valide (celui-ci doit être au format BPF)"
 
-#: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:153
+#: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:154
 msgid "This pcap cannot be imported since the layer 2 is not supported ({0})"
 msgstr ""
 "Ce PCAP ne peut être importé, car la couche protocole 2 n'est pas "
 "supportée ({0})"
 
-#: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:309
+#: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter/PCAPImporter.py:313
 msgid ""
 "Cannot import one of the provided packets since its layer 4 is "
 "unsupported (Only UDP and TCP are currently supported, packet IP protocol"
@@ -1681,6 +1790,15 @@ msgstr "Permet l'import de messages depuis des fichiers au format XML de Netzob"
 msgid "Import messages from XML file"
 msgstr "Importer des messages depuis un fichier XML"
 
+#: src/netzob_plugins/RelationsIdentifier/MINERelations/MINERelations/MINERelationsPlugin.py:51
+msgid "Identify relations between fields."
+msgstr ""
+
+#: src/netzob_plugins/RelationsIdentifier/MINERelations/MINERelations/MINERelationsView.py:77
+#, fuzzy
+msgid "No symbols have been selected"
+msgstr "Aucun symbole sélectionné."
+
 #: resources/static/netzob/ui/availablePluginsDialog.glade:73
 #: resources/static/netzob/ui/mainActions.glade:95
 msgid "Available Plugins"
@@ -1693,8 +1811,8 @@ msgid "Description"
 msgstr "Description"
 
 #: resources/static/netzob/ui/dialogbox.glade:63
-#: resources/static/netzob/ui/dialogbox.glade:666
-#: resources/static/netzob/ui/dialogbox.glade:914
+#: resources/static/netzob/ui/dialogbox.glade:869
+#: resources/static/netzob/ui/dialogbox.glade:1117
 #: resources/static/netzob/ui/capturer/abstractCapturerView.glade:116
 #: resources/static/netzob/ui/dialogs/exportProject.glade:40
 #: resources/static/netzob/ui/dialogs/importProject.glade:40
@@ -1761,35 +1879,50 @@ msgstr ""
 "vous faites)"
 
 #: resources/static/netzob/ui/dialogbox.glade:533
-msgid "Create a new symbol"
-msgstr "Créer un nouveau symbole"
+#, fuzzy
+msgid "Create a new session"
+msgstr "Créer une nouvelle session"
 
 #: resources/static/netzob/ui/dialogbox.glade:596
-#: resources/static/netzob/ui/dialogbox.glade:837
-msgid "Symbol's name:"
+#: resources/static/netzob/ui/dialogbox.glade:1040
+#, fuzzy
+msgid "Session's name:"
 msgstr "Nom du symbole :"
 
 #: resources/static/netzob/ui/dialogbox.glade:634
+#: resources/static/netzob/ui/dialogbox.glade:736
+msgid "Create a new symbol"
+msgstr "Créer un nouveau symbole"
+
+#: resources/static/netzob/ui/dialogbox.glade:697
+msgid "Symbol's name:"
+msgstr "Nom du symbole :"
+
+#: resources/static/netzob/ui/dialogbox.glade:799
+msgid "Default Label"
+msgstr ""
+
+#: resources/static/netzob/ui/dialogbox.glade:837
 msgid "New project"
 msgstr "Nouveau projet"
 
-#: resources/static/netzob/ui/dialogbox.glade:734
+#: resources/static/netzob/ui/dialogbox.glade:937
 msgid "Project's name:"
 msgstr "Nom du projet :"
 
-#: resources/static/netzob/ui/dialogbox.glade:773
+#: resources/static/netzob/ui/dialogbox.glade:976
 msgid "Rename the layer X"
 msgstr "Renommer la couche protocolaire"
 
-#: resources/static/netzob/ui/dialogbox.glade:882
+#: resources/static/netzob/ui/dialogbox.glade:1085
 msgid "Select the new workspace to switch on"
 msgstr "Sélectionnez le nouvel espace de travail sur lequel basculer"
 
-#: resources/static/netzob/ui/dialogbox.glade:979
+#: resources/static/netzob/ui/dialogbox.glade:1182
 msgid "Select a folder"
 msgstr "Sélectioner un répertoire"
 
-#: resources/static/netzob/ui/dialogbox.glade:993
+#: resources/static/netzob/ui/dialogbox.glade:1196
 #: resources/static/netzob/ui/dialogs/exportProject.glade:108
 #: resources/static/netzob/ui/dialogs/exportProject.glade:138
 msgid "Select a directory"
@@ -1883,7 +2016,7 @@ msgstr "Propriétés du projet"
 #: resources/static/netzob/ui/mainActions.glade:103
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:312
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:829
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:457
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:967
 msgid "Properties"
 msgstr "Propriétés"
 
@@ -2001,7 +2134,7 @@ msgid "Defined projects:"
 msgstr "Projets définis : "
 
 #: resources/static/netzob/ui/workspaceConfigurationDialog.glade:134
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:521
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:1029
 msgid "Project"
 msgstr "Projet"
 
@@ -2136,9 +2269,11 @@ msgstr "Variable de données"
 #: resources/static/netzob/ui/simulator/simulatorView.glade:300
 #: resources/static/netzob/ui/traceManager/applicativeDataManagerDialog.glade:71
 #: resources/static/netzob/ui/vocabulary/environmentDependenciesSearcherView.glade:153
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:498
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:563
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:652
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:1008
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:1071
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:1160
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:1223
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:1286
 msgid "Value"
 msgstr "Valeur"
 
@@ -2291,6 +2426,7 @@ msgstr "Confirmer la suppression de la transition"
 #: resources/static/netzob/ui/grammar/createSemiStochasticTransitionDialogs.glade:36
 #: resources/static/netzob/ui/grammar/createStateDialog.glade:35
 #: resources/static/netzob/ui/traceManager/applicativeDataImportDialog.glade:135
+#: resources/static/netzob_plugins/MINERelations/ui/MINERelationsDialog.glade:36
 msgid "label"
 msgstr "label"
 
@@ -2369,7 +2505,7 @@ msgstr "Ajouter un symbole de sortie"
 #: resources/static/netzob/ui/grammar/createSemiStochasticTransitionDialogs.glade:529
 #: resources/static/netzob/ui/simulator/simulatorView.glade:637
 #: resources/static/netzob/ui/vocabulary/variableTable.glade:85
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:614
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:1122
 msgid "Symbol"
 msgstr "Symbole"
 
@@ -2548,8 +2684,10 @@ msgid "Status :"
 msgstr "Statut : "
 
 #: resources/static/netzob/ui/simulator/simulatorView.glade:648
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:266
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:676
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:313
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:548
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:772
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:1310
 msgid "Message"
 msgstr "Message"
 
@@ -2629,6 +2767,7 @@ msgstr "Configurer la session"
 
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:63
 #: resources/static/netzob/ui/traceManager/traceManagerView.glade:524
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:1185
 msgid "Session"
 msgstr "Session"
 
@@ -2794,15 +2933,6 @@ msgstr "Filtre : "
 msgid "Distribution of bytes values"
 msgstr "Distribution des valeurs d'octets"
 
-#: resources/static/netzob/ui/vocabulary/messageTable.glade:31
-msgid "Empty Message Table"
-msgstr "Table de messages vide"
-
-#: resources/static/netzob/ui/vocabulary/messageTable.glade:48
-#: resources/static/netzob/ui/vocabulary/messageTable.glade:49
-msgid "Close the view"
-msgstr "Fermer la vue"
-
 #: resources/static/netzob/ui/vocabulary/moveMessageDialog.glade:7
 msgid "The message is not valid according to symbol target's regex"
 msgstr ""
@@ -2835,9 +2965,135 @@ msgid "Move selected message to trash"
 msgstr "Déplacer les messages sélectionnés vers la corbeille"
 
 #: resources/static/netzob/ui/vocabulary/relationsView.glade:53
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:145
+#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:75
 msgid "Relations"
 msgstr "Relations"
+
+#: resources/static/netzob/ui/vocabulary/sequenceActions.glade:7
+#: resources/static/netzob/ui/vocabulary/sequenceActions.glade:8
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:801
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:802
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:803
+#, fuzzy
+msgid "Select all sequences"
+msgstr "Désélectionner tous les symboles"
+
+#: resources/static/netzob/ui/vocabulary/sequenceActions.glade:16
+#: resources/static/netzob/ui/vocabulary/sequenceActions.glade:17
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:817
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:818
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:819
+#, fuzzy
+msgid "Unselect all sequences"
+msgstr "Désélectionner tous les symboles"
+
+#: resources/static/netzob/ui/vocabulary/sequenceActions.glade:25
+#: resources/static/netzob/ui/vocabulary/sequenceActions.glade:26
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:843
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:844
+#, fuzzy
+msgid "Add a new empty sequence"
+msgstr "Ajouter un nouveau symbole vide"
+
+#: resources/static/netzob/ui/vocabulary/sequenceActions.glade:34
+#: resources/static/netzob/ui/vocabulary/sequenceActions.glade:35
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:859
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:860
+#, fuzzy
+msgid "Concatenate selected sequences"
+msgstr "Concaténer les champs sélectionnés"
+
+#: resources/static/netzob/ui/vocabulary/sequenceActions.glade:43
+#: resources/static/netzob/ui/vocabulary/sequenceActions.glade:44
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:875
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:876
+#, fuzzy
+msgid "Delete selected sequence(s)"
+msgstr "Supprimer les messages sélectionnés"
+
+#: resources/static/netzob/ui/vocabulary/sequenceActions.glade:52
+#: resources/static/netzob/ui/vocabulary/sequenceActions.glade:53
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:901
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:902
+#, fuzzy
+msgid "New empty view for message of sequence"
+msgstr "Ajouter une nouvelle vue pour afficher des messages"
+
+#: resources/static/netzob/ui/vocabulary/sessionActions.glade:7
+#: resources/static/netzob/ui/vocabulary/sessionActions.glade:8
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:577
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:578
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:579
+#, fuzzy
+msgid "Select all sessions"
+msgstr "Désélectionner tous les symboles"
+
+#: resources/static/netzob/ui/vocabulary/sessionActions.glade:16
+#: resources/static/netzob/ui/vocabulary/sessionActions.glade:17
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:593
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:594
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:595
+#, fuzzy
+msgid "Unselect all sessions"
+msgstr "Désélectionner tous les symboles"
+
+#: resources/static/netzob/ui/vocabulary/sessionActions.glade:25
+#: resources/static/netzob/ui/vocabulary/sessionActions.glade:26
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:619
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:620
+#, fuzzy
+msgid "Add a new empty session"
+msgstr "Ajouter un nouveau symbole vide"
+
+#: resources/static/netzob/ui/vocabulary/sessionActions.glade:34
+#: resources/static/netzob/ui/vocabulary/sessionActions.glade:35
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:635
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:636
+#, fuzzy
+msgid "Concatenate selected sessions"
+msgstr "Concaténer les symboles sélectionnés"
+
+#: resources/static/netzob/ui/vocabulary/sessionActions.glade:43
+#: resources/static/netzob/ui/vocabulary/sessionActions.glade:44
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:651
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:652
+#, fuzzy
+msgid "Delete selected session(s)"
+msgstr "Supprimer les messages sélectionnés"
+
+#: resources/static/netzob/ui/vocabulary/sessionActions.glade:52
+#: resources/static/netzob/ui/vocabulary/sessionActions.glade:53
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:677
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:678
+#, fuzzy
+msgid "New empty view for message of session"
+msgstr "Ajouter une nouvelle vue pour afficher des messages"
+
+#: resources/static/netzob/ui/vocabulary/sessionActions.glade:61
+#: resources/static/netzob/ui/vocabulary/sessionActions.glade:62
+#, fuzzy
+msgid "Compare selected sessions"
+msgstr "Aucun message sélectionné."
+
+#: resources/static/netzob/ui/vocabulary/sessionActions.glade:69
+msgid "Find relations in sessions"
+msgstr ""
+
+#: resources/static/netzob/ui/vocabulary/sessionActions.glade:70
+msgid "Find relations sessions"
+msgstr ""
+
+#: resources/static/netzob/ui/vocabulary/sessionTable.glade:31
+#: resources/static/netzob/ui/vocabulary/symbolTable.glade:31
+msgid "Empty Message Table"
+msgstr "Table de messages vide"
+
+#: resources/static/netzob/ui/vocabulary/sessionTable.glade:48
+#: resources/static/netzob/ui/vocabulary/sessionTable.glade:49
+#: resources/static/netzob/ui/vocabulary/symbolTable.glade:48
+#: resources/static/netzob/ui/vocabulary/symbolTable.glade:49
+msgid "Close the view"
+msgstr "Fermer la vue"
 
 #: resources/static/netzob/ui/vocabulary/splitFieldDialog.glade:20
 msgid "Split field"
@@ -2846,6 +3102,161 @@ msgstr "Fractionner le champ"
 #: resources/static/netzob/ui/vocabulary/splitFieldDialog.glade:72
 msgid "Change alignment"
 msgstr "Changer l'alignement"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:7
+#: resources/static/netzob/ui/vocabulary/clustering/clusteringProfilesView.glade:16
+#, fuzzy
+msgid "Find Similar Messages"
+msgstr "Importer les messages"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:8
+msgid "Regroups similar messages in symbols"
+msgstr ""
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:15
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:194
+msgid "Simple Partitioning"
+msgstr "Partitionnement simple"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:16
+msgid "Use simple partioning on selected symbol"
+msgstr "Utiliser le partitionnement simple sur le symbole sélectionné"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:24
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:210
+msgid "Smooth Partitioning"
+msgstr "Partitionnement lissé"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:25
+msgid "Use smooth partioning on selected symbol"
+msgstr "Utilisez partitionnement lissé sur le symbole sélectionné"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:33
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:226
+msgid "Reset Partitioning"
+msgstr "Réinitialiser partitionnement"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:34
+msgid "Reset partitioning of selected symbol"
+msgstr "Réinitialiser le partitionnement du symbole sélectionné"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:42
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:252
+msgid "Messages Distribution"
+msgstr "Distribution des messages"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:43
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:250
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:251
+msgid "Display messages distributions for selected symbol(s)"
+msgstr "Afficher la répartition des messages pour les symboles sélectionnés"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:51
+#: resources/static/netzob/ui/vocabulary/partitioning/forcePartitioning.glade:7
+msgid "Force partitioning"
+msgstr "Forcer le partitionnement"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:52
+msgid "Use force partitioning on selected symbol"
+msgstr "Utiliser le partitionnement forcé sur le symbole sélectionné"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:60
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:162
+#: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:12
+msgid "Sequence alignment"
+msgstr "Alignement de séquence"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:61
+msgid "Use sequence alignment on selected symbol"
+msgstr "Appliquer l'alignement de séquence sur le symbole sélectionné"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:69
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:70
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:353
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:354
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:355
+msgid "Select all symbols"
+msgstr "Sélectionner tous les symboles"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:78
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:79
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:369
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:370
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:371
+msgid "Unselect all symbols"
+msgstr "Désélectionner tous les symboles"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:87
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:88
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:395
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:396
+msgid "Add a new empty symbol"
+msgstr "Ajouter un nouveau symbole vide"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:96
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:97
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:411
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:412
+msgid "Concatenate selected symbols"
+msgstr "Concaténer les symboles sélectionnés"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:105
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:106
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:427
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:428
+msgid "Delete selected symbol(s)"
+msgstr "Supprimer les symboles sélectionnés"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:114
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:115
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:453
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:454
+msgid "New empty view for message of symbol"
+msgstr "Ajouter une nouvelle vue pour afficher des messages"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:123
+msgid "Compute Field Limits"
+msgstr "Calculer les limites des champs"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:124
+msgid "Compute min and max size of selected symbol(s)"
+msgstr ""
+"Calculer les tailles minimum et maximum des champs pour les symboles "
+"sélectionnés"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:131
+msgid "Concatenate Fields"
+msgstr "Concaténer les champs"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:132
+msgid "Concatenate selected fields"
+msgstr "Concaténer les champs sélectionnés"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:140
+msgid "Split Field"
+msgstr "Fractionner le champ"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:141
+msgid "Split selected field"
+msgstr "Fractionner les champs sélectionnés"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:149
+#, fuzzy
+msgid "Edit Variable"
+msgstr "Variable de répétition"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:150
+#, fuzzy
+msgid "Edit the variable for selected field"
+msgstr "Aucun fichier sélectionné"
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:157
+msgid "Find relations in symbols"
+msgstr ""
+
+#: resources/static/netzob/ui/vocabulary/symbolActions.glade:158
+msgid "Find relations symbols"
+msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/variableTable.glade:21
 msgid "Variables table"
@@ -2860,241 +3271,211 @@ msgid "Additional information"
 msgstr "Informations additionnelles"
 
 #: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:7
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:147
-msgid "Simple Partitioning"
-msgstr "Partitionnement simple"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:8
-msgid "Use simple partioning on selected symbol"
-msgstr "Utiliser le partitionnement simple sur le symbole sélectionné"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:16
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:162
-msgid "Smooth Partitioning"
-msgstr "Partitionnement lissé"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:17
-msgid "Use smooth partioning on selected symbol"
-msgstr "Utilisez partitionnement lissé sur le symbole sélectionné"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:25
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:177
-msgid "Reset Partitioning"
-msgstr "Réinitialiser partitionnement"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:26
-msgid "Reset partitioning of selected symbol"
-msgstr "Réinitialiser le partitionnement du symbole sélectionné"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:34
-msgid "Concatenate Fields"
-msgstr "Concaténer les champs"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:35
-msgid "Concatenate selected fields"
-msgstr "Concaténer les champs sélectionnés"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:43
-msgid "Split Field"
-msgstr "Fractionner le champ"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:44
-msgid "Split selected field"
-msgstr "Fractionner les champs sélectionnés"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:53
-#, fuzzy
-msgid "Configure the definition domain for the selected field"
-msgstr "Cliquez sur oui pour confirmer la suppression du message sélectionné"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:60
 msgid "Move To Another Symbol"
 msgstr "Déplacer vers un autre symbole"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:61
+#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:8
 msgid "Move selected messages to another symbol"
 msgstr "Déplacer les messages sélectionnés vers un autre symbole"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:69
+#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:16
 msgid "Delete Message(s)"
 msgstr "Supprimer les messages"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:70
+#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:17
 msgid "Delete selected message(s)"
 msgstr "Supprimer les messages sélectionnés"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:78
+#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:25
 msgid "Environmental Dependencies"
 msgstr "Dépendances d'environnement"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:79
+#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:26
 msgid "Search for environmental dependencies for all messages"
 msgstr "Chercher les dépendances d'environnement pour tous les messages"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:87
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:202
-msgid "Messages Distribution"
-msgstr "Distribution des messages"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:88
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:200
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:201
-msgid "Display messages distributions for selected symbol(s)"
-msgstr "Afficher la répartition des messages pour les symboles sélectionnés"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:96
+#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:34
 msgid "Variable Table"
 msgstr "Table des variables"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:97
+#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:35
 msgid "Display variable table"
 msgstr "Afficher la table des variables"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:106
-msgid "Compute Field Limits"
-msgstr "Calculer les limites des champs"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:107
-msgid "Compute min and max size of selected symbol(s)"
-msgstr ""
-"Calculer les tailles minimum et maximum des champs pour les symboles "
-"sélectionnés"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:114
+#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:44
 msgid "Import Messages From File"
 msgstr "Importer des messages depuis un fichier"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:116
+#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:46
 msgid "Import messages from file"
 msgstr "Importer des messages depuis un fichier"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:125
+#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:55
 msgid "Capture Messages"
 msgstr "Capturer des messages"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:126
+#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:56
 msgid "Capture messages"
 msgstr "Capturer des messages"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:133
+#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:63
 msgid "Automatic Tools"
 msgstr "Outils automatiques"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:139
+#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:69
 msgid "Manual Tools"
 msgstr "Outils manuels"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:153
-#: resources/static/netzob/ui/vocabulary/partitioning/forcePartitioning.glade:7
-msgid "Force partitioning"
-msgstr "Forcer le partitionnement"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:154
-msgid "Use force partitioning on selected symbol"
-msgstr "Utiliser le partitionnement forcé sur le symbole sélectionné"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:168
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:117
-#: resources/static/netzob/ui/vocabulary/partitioning/sequenceAlignement.glade:12
-msgid "Sequence alignment"
-msgstr "Alignement de séquence"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:169
-msgid "Use sequence alignment on selected symbol"
-msgstr "Appliquer l'alignement de séquence sur le symbole sélectionné"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:177
+#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:89
 msgid "Search text"
 msgstr "Chercher un texte"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:178
+#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:90
 msgid "Search a string in all messages of the current symbol"
 msgstr "Rechercher un motif dans tous les messages du symbole courant"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:186
+#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:98
 msgid "Filter Displayed Messages"
 msgstr "Filtrer les messages affichés"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:187
+#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:99
 msgid "Filter displayed messages in all messages of current symbol"
 msgstr "Filtrer les messages du symbole courant"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:115
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:116
-msgid "Sequence alignment on selected symbol"
-msgstr "Alignement de séquence sur le symbole sélectionné"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:130
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:131
-msgid "Force Partitioning on selected symbol"
-msgstr "Partitionnement forcé sur le symbole sélectionné"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:132
-msgid "Force Partitioning"
-msgstr "Forcer le partitionnement"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:145
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:146
-msgid "Simple Partitioning on selected symbol"
-msgstr "Partitionnement simple sur le symbole sélectionné"
+#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:108
+#: resources/static/netzob/ui/vocabulary/vocabularyActions.glade:109
+msgid "Identify Relations"
+msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:160
 #: resources/static/netzob/ui/vocabulary/vocabularyView.glade:161
+msgid "Sequence alignment on selected symbol"
+msgstr "Alignement de séquence sur le symbole sélectionné"
+
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:176
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:177
+msgid "Force Partitioning on selected symbol"
+msgstr "Partitionnement forcé sur le symbole sélectionné"
+
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:178
+msgid "Force Partitioning"
+msgstr "Forcer le partitionnement"
+
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:192
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:193
+msgid "Simple Partitioning on selected symbol"
+msgstr "Partitionnement simple sur le symbole sélectionné"
+
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:208
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:209
 msgid "Smooth Partitioning on selected symbol"
 msgstr "Partitionnement lissé sur le symbole sélectionné"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:175
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:176
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:224
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:225
 msgid "Reset Partitioning on selected symbol"
 msgstr "Réinitialiser le partitionnement du symbole sélectionné"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:277
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:324
 msgid "Field"
 msgstr "Champ"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:305
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:306
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:307
-msgid "Select all symbols"
-msgstr "Sélectionner tous les symboles"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:322
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:323
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:324
-msgid "Unselect all symbols"
-msgstr "Désélectionner tous les symboles"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:349
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:350
-msgid "Add a new empty symbol"
-msgstr "Ajouter un nouveau symbole vide"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:351
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:397
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:621
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:845
 msgid "New"
 msgstr "Nouveau"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:366
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:367
-msgid "Concatenate selected symbols"
-msgstr "Concaténer les symboles sélectionnés"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:368
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:413
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:637
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:861
 msgid "Concatenate"
 msgstr "Concaténer"
 
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:383
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:384
-msgid "Delete selected symbol(s)"
-msgstr "Supprimer les symboles sélectionnés"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:410
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:411
-msgid "New empty view for message of symbol"
-msgstr "Ajouter une nouvelle vue pour afficher des messages"
-
-#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:412
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:455
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:679
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:903
 msgid "New MessageList"
 msgstr "Nouvelle liste de messages"
+
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:712
+#, fuzzy
+msgid "Sessions"
+msgstr "Session"
+
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:936
+msgid "Sequences"
+msgstr ""
+
+#: resources/static/netzob/ui/vocabulary/vocabularyView.glade:1248
+msgid "Sequence"
+msgstr ""
+
+#: resources/static/netzob/ui/vocabulary/clustering/DiscovererClusteringConfigurationView.glade:46
+msgid "Maximum message prefix (bytes)"
+msgstr ""
+
+#: resources/static/netzob/ui/vocabulary/clustering/DiscovererClusteringConfigurationView.glade:60
+msgid "Minimum length of text segments (letters)"
+msgstr ""
+
+#: resources/static/netzob/ui/vocabulary/clustering/DiscovererClusteringConfigurationView.glade:74
+msgid "Minimum cluster size (messages)"
+msgstr ""
+
+#: resources/static/netzob/ui/vocabulary/clustering/DiscovererClusteringConfigurationView.glade:88
+msgid "Maximum distinct values for FD"
+msgstr ""
+
+#: resources/static/netzob/ui/vocabulary/clustering/DiscovererClusteringConfigurationView.glade:102
+msgid "Alignment match score"
+msgstr ""
+
+#: resources/static/netzob/ui/vocabulary/clustering/DiscovererClusteringConfigurationView.glade:116
+msgid "Alignment mismatch score"
+msgstr ""
+
+#: resources/static/netzob/ui/vocabulary/clustering/DiscovererClusteringConfigurationView.glade:130
+msgid "Alignment gap score"
+msgstr ""
+
+#: resources/static/netzob/ui/vocabulary/clustering/DiscovererClusteringConfigurationView.glade:246
+msgid "Configuration Discoverer Clustering"
+msgstr ""
+
+#: resources/static/netzob/ui/vocabulary/clustering/UPGMAClusteringConfigurationView.glade:50
+msgid "Equivalence Threshold"
+msgstr ""
+
+#: resources/static/netzob/ui/vocabulary/clustering/UPGMAClusteringConfigurationView.glade:106
+msgid "Distance Formula"
+msgstr ""
+
+#: resources/static/netzob/ui/vocabulary/clustering/UPGMAClusteringConfigurationView.glade:174
+#, fuzzy
+msgid "Similary Coefficient"
+msgstr "Seuil de similarité :"
+
+#: resources/static/netzob/ui/vocabulary/clustering/UPGMAClusteringConfigurationView.glade:213
+msgid "Configure UPGMA Clustering Algorithm"
+msgstr ""
+
+#: resources/static/netzob/ui/vocabulary/clustering/clusteringProfilesView.glade:99
+msgid "Customize"
+msgstr ""
+
+#: resources/static/netzob/ui/vocabulary/clustering/clusteringProfilesView.glade:162
+msgid "Clustering Profiles"
+msgstr ""
+
+#: resources/static/netzob/ui/vocabulary/clustering/clusteringProfilesView.glade:191
+#, fuzzy
+msgid "Create Profile"
+msgstr "Créer un prototype"
+
+#: resources/static/netzob/ui/vocabulary/clustering/clusteringProfilesView.glade:327
+msgid "Algorithms"
+msgstr ""
 
 #: resources/static/netzob/ui/vocabulary/partitioning/forcePartitioning.glade:23
 msgid "Delimiter:"
@@ -3205,22 +3586,6 @@ msgstr "Résultat suivant"
 msgid "|  Format:"
 msgstr "| Format : "
 
-#: resources/static/netzob/ui/vocabulary/search/searchBar.glade:113
-msgid "decimal"
-msgstr "décimal"
-
-#: resources/static/netzob/ui/vocabulary/search/searchBar.glade:114
-msgid "hexa"
-msgstr "hexadécimal"
-
-#: resources/static/netzob/ui/vocabulary/search/searchBar.glade:115
-msgid "string"
-msgstr "chaine"
-
-#: resources/static/netzob/ui/vocabulary/search/searchBar.glade:116
-msgid "ipv4"
-msgstr "ipv4"
-
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:7
 msgid "Search properties"
 msgstr "Propriétés de la recherche"
@@ -3270,6 +3635,14 @@ msgstr "oui"
 #: resources/static/netzob/ui/vocabulary/search/searchPreferences.glade:331
 msgid "no"
 msgstr "non"
+
+#: resources/static/netzob_plugins/ASAPClustering/ui/ASAPClusteringConfigurationView.glade:45
+msgid "Clustering Threshold"
+msgstr ""
+
+#: resources/static/netzob_plugins/ASAPClustering/ui/ASAPClusteringConfigurationView.glade:78
+msgid "Configuration ASAP Clustering"
+msgstr ""
 
 #: resources/static/netzob_plugins/DelimiterSeparatedImporter/ui/FileImportConfigurationWidget.glade:17
 msgid "Separator:"
@@ -3323,6 +3696,49 @@ msgstr "Flux de type IPC"
 msgid "Selected flows"
 msgstr "Flux sélectionnés"
 
+#: resources/static/netzob_plugins/MINERelations/ui/MINERelationsDialog.glade:119
+#, fuzzy
+msgid "Search for relations"
+msgstr "Informations générales"
+
+#: resources/static/netzob_plugins/MINERelations/ui/MINERelationsDialog.glade:144
+msgid "Include inter-symbols relation minings"
+msgstr ""
+
+#: resources/static/netzob_plugins/MINERelations/ui/MINERelationsDialog.glade:187
+#, fuzzy
+msgid "Selected symbols"
+msgstr "Aucun symbole sélectionné."
+
+#: resources/static/netzob_plugins/MINERelations/ui/RelationsMakerDialog.glade:51
+#, fuzzy
+msgid "Apply Selected Relation"
+msgstr "Fractionner les champs sélectionnés"
+
+#: resources/static/netzob_plugins/MINERelations/ui/RelationsMakerDialog.glade:100
+#, fuzzy
+msgid "Computed relations"
+msgstr "Variable de relation calculée"
+
+#: resources/static/netzob_plugins/MINERelations/ui/RelationsMakerDialog.glade:154
+#, fuzzy
+msgid "First Field"
+msgstr "Éditer le champ"
+
+#: resources/static/netzob_plugins/MINERelations/ui/RelationsMakerDialog.glade:165
+#, fuzzy
+msgid "Second Field"
+msgstr "taille du champ"
+
+#: resources/static/netzob_plugins/MINERelations/ui/RelationsMakerDialog.glade:176
+msgid "MIC"
+msgstr ""
+
+#: resources/static/netzob_plugins/MINERelations/ui/RelationsMakerDialog.glade:190
+#, fuzzy
+msgid "Pearson"
+msgstr "Version"
+
 #: resources/static/netzob_plugins/NetworkCapturer/ui/NetworkCapturerConfigurationWidget.glade:16
 msgid "Device:"
 msgstr "Interface :"
@@ -3370,17 +3786,14 @@ msgstr "10"
 msgid "Time limit:"
 msgstr "Durée de capture : "
 
-#~ msgid "Select this element"
-#~ msgstr "Sélectionner cet élément"
+#~ msgid "Configure the definition domain for the selected field"
+#~ msgstr "Cliquez sur oui pour confirmer la suppression du message sélectionné"
 
-#~ msgid "Edit Variable"
-#~ msgstr "Éditer la variable"
+#~ msgid "decimal"
+#~ msgstr "décimal"
 
-#~ msgid "Direct Relation Variable"
-#~ msgstr "Variable de relation directe"
+#~ msgid "hexa"
+#~ msgstr "hexadécimal"
 
-#~ msgid "Create default variable"
-#~ msgstr "Créer une variable par défaut"
-
-#~ msgid "Edit the variable for selected field"
-#~ msgstr "Modifier la variable du champs sélectionné"
+#~ msgid "string"
+#~ msgstr "chaine"
