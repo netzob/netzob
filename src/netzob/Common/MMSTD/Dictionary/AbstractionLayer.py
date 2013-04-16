@@ -80,6 +80,7 @@ class AbstractionLayer():
         self.connected = False
         self.cb_inputSymbol = cb_inputSymbol
         self.cb_outputSymbol = cb_outputSymbol
+        self.transformationFunctions = []
 
     def isConnected(self):
         return self.connected
@@ -161,13 +162,13 @@ class AbstractionLayer():
             self.log.info("Received following message : " + TypeConvertor.bin2strhex(receivedData))
 
             # Now we abstract the message
-            symbol = self.abstract(receivedData)
+            (symbol, message) = self.abstract(receivedData)
 
             # We store the received messages its time and its abstract representation
             self.inputMessages.append([receptionTime, TypeConvertor.bin2strhex(receivedData), symbol.getName()])
             self.registerInputSymbol(receptionTime, TypeConvertor.bin2strhex(receivedData), symbol)
 
-            return (symbol, receivedData)
+            return (symbol, message)
         else:
             if len(self.manipulatedSymbols) > nbMaxAttempts:
                 if self.manipulatedSymbols[len(self.manipulatedSymbols) - 1].getType() == EmptySymbol.TYPE or self.manipulatedSymbols[len(self.manipulatedSymbols) - 1].getType() == UnknownSymbol.TYPE:
@@ -206,8 +207,22 @@ class AbstractionLayer():
                 @rtype: netzob.Common.Symbol
                 @return: the symbol which content matches the message.
         """
-        self.log.debug("We abstract the received message : " + TypeConvertor.bin2strhex(message))
-        # we search in the vocabulary an entry which match the message
+
+        self.log.debug("We first apply transformation functions specific to the channel on the receive message")
+        self.log.debug("Received message before channel's transformation functions: " + str(TypeConvertor.bin2hexstring(message)))
+
+        # Apply transformation functions of the channel on received data
+        rawMsg = RawMessage(uuid.uuid4(), 1, TypeConvertor.bin2hexstring(message))
+        messageHexstring = rawMsg.getStringData()
+        for fct in self.getTransformationFunctions():
+            fct.setMemory(self.memory)
+            messageHexstring = fct.apply(rawMsg.getStringData())
+            rawMsg.setData(messageHexstring)
+        message = TypeConvertor.hexstring2bin(messageHexstring)
+
+        self.log.debug("Received message after channel's transformation functions: " + str(TypeConvertor.bin2hexstring(message)))
+
+        # We search in the vocabulary an entry which match the message
         message_orig = message
         self.memory.persistMemory()  # Point of rollback for the memory
         for symbol in self.vocabulary.getSymbols():
@@ -215,7 +230,6 @@ class AbstractionLayer():
             self.log.debug("Try to abstract message through : {0}.".format(symbol.getName()))
 
             # Apply transformation functions of current symbol on received data
-            symbol.getField().getTransformationFunctions()
             rawMsg = RawMessage(uuid.uuid4(), 1, TypeConvertor.bin2hexstring(message))
             messageHexstring = rawMsg.getStringData()
             for fct in symbol.getField().getTransformationFunctions():
@@ -223,6 +237,8 @@ class AbstractionLayer():
                 messageHexstring = fct.apply(rawMsg.getStringData())
                 rawMsg.setData(messageHexstring)
             message = TypeConvertor.hexstring2bin(messageHexstring)
+
+            self.log.debug("Received message after symbol's transformation functions: " + str(TypeConvertor.bin2hexstring(message)))
 
             # Create a token from the data
             readingToken = VariableReadingToken(False, self.vocabulary, self.memory, TypeConvertor.strBitarray2Bitarray(message), 0)
@@ -233,7 +249,7 @@ class AbstractionLayer():
             if readingToken.isOk() and readingToken.getIndex() == len(readingToken.getValue()):
                 self.log.debug("The message matches symbol {0}.".format(symbol.getName()))
                 # It matches so we learn from it if it's possible
-                return symbol
+                return (symbol, message)
             else:
                 self.log.debug("The message doesn't match symbol {0}.".format(symbol.getName()))
                 self.memory.createMemory()  # Rollback to the saved memory
@@ -252,7 +268,7 @@ class AbstractionLayer():
             #    processingToken = AbstractVariableProcessingToken(False, self.vocabulary, self.memory)
             #    symbol.getRoot().restore(processingToken)
             #===================================================================
-        return UnknownSymbol()
+        return (UnknownSymbol(), message_orig)
 
     def specialize(self, symbol):
         self.log.info("Specializing the symbol {0}".format(symbol.getName()))
@@ -267,7 +283,7 @@ class AbstractionLayer():
             pass
         else:
             # Apply transformation functions of current symbol on data to send
-            symbol.getField().getTransformationFunctions()
+            self.log.debug("Sent message before symbol's transformation functions: " + str(TypeConvertor.bin2hexstring(result)))
             rawMsg = RawMessage(uuid.uuid4(), 1, TypeConvertor.bin2hexstring(result))
             resultHexstring = rawMsg.getStringData()
             for fct in symbol.getField().getTransformationFunctions():
@@ -275,6 +291,19 @@ class AbstractionLayer():
                 resultHexstring = fct.reverse(rawMsg.getStringData())
                 rawMsg.setData(resultHexstring)
             result = TypeConvertor.hexstring2bin(resultHexstring)
+            self.log.debug("Sent message after symbol's transformation functions: " + str(TypeConvertor.bin2hexstring(result)))
+
+        # Apply transformation functions of channel on data to send
+        if symbol.getType() != EmptySymbol.TYPE:
+            rawMsg = RawMessage(uuid.uuid4(), 1, TypeConvertor.bin2hexstring(result))
+            resultHexstring = rawMsg.getStringData()
+            for fct in self.getTransformationFunctions():
+                fct.setMemory(self.memory)
+                resultHexstring = fct.reverse(rawMsg.getStringData())
+                rawMsg.setData(resultHexstring)
+            result = TypeConvertor.hexstring2bin(resultHexstring)
+            self.log.debug("Sent message after channel's transformation functions: " + str(TypeConvertor.bin2hexstring(result)))
+
         return result
 
     def getMemory(self):
@@ -304,6 +333,33 @@ class AbstractionLayer():
         return properties
 
     #+-----------------------------------------------------------------------+
+    #| Transformation functions
+    #+-----------------------------------------------------------------------+
+    def removeTransformationFunction(self, function):
+        """removeTransformationFunction:
+                Remove a precised function.
+
+                @type function: netzob.Common.Functions
+                @param function: the function that is removed.
+        """
+        fToRemove = None
+        for mFunction in self.transformationFunctions:
+            if mFunction.getName() == function.getName():
+                fToRemove = mFunction
+                break
+        if fToRemove is not None:
+            self.transformationFunctions.remove(fToRemove)
+
+    def addTransformationFunction(self, function):
+        """addTransformationFunction:
+                Add a precised function.
+
+                @type function: netzob.Common.Functions
+                @param function: the function that is added.
+        """
+        self.transformationFunctions.append(function)
+
+    #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
     def getInputMessages(self):
@@ -323,6 +379,9 @@ class AbstractionLayer():
 
     def setOutputSymbolSending_cb(self, cb):
         self.cb_outputSymbol = cb
+
+    def getTransformationFunctions(self):
+        return self.transformationFunctions
 
     def save(self, root, namespace):
         """Save in the XML tree the abstraction Layer definition"""
