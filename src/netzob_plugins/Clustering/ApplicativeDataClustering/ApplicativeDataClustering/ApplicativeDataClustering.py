@@ -41,9 +41,12 @@ from netzob.Common.Symbol import Symbol
 
 
 #+---------------------------------------------------------------------------+
-#| ASAPClustering
+#| ApplicativeDataClustering
 #+---------------------------------------------------------------------------+
 class ApplicativeDataClustering(AbstractClusteringAlgorithm):
+    """ApplicativeDataClustering:
+    This class allows to cluster messages in symbols
+    following their embedded applicative data."""
 
     __algorithm_name__ = "ApplicativeDataClustering"
     __algorithm_description = """no description yet"""
@@ -69,7 +72,7 @@ class ApplicativeDataClustering(AbstractClusteringAlgorithm):
         groups = dict()
         for message in messages:
             founds = searcher.searchContextInMessage(message)
-            tokens = []
+            tokens = dict()
             for f in founds:
                 token = None
                 for appData in message.getSession().getApplicativeData():
@@ -79,9 +82,28 @@ class ApplicativeDataClustering(AbstractClusteringAlgorithm):
                 if token is None:
                     token = f.getDescription()
 
-                tokens.append(token)
+                found = False
+                tmp = []
+                for segment in f.getSegments():
+                    for i in range(segment[0], segment[1]):
+                        if i in tokens.keys():
+                            found = True
+                            break
+                        else:
+                            tmp.append(i)
+                    if found:
+                        break
+                if not found:
+                    for i in tmp:
+                        tokens[i] = token
+            result = []
+            previousI = -2
+            for i in sorted(tokens.keys()):
+                if i != previousI + 1:
+                    result.append(tokens[i])
+                previousI = i
 
-            strToken = ";".join(tokens)
+            strToken = ";".join(result)
             if strToken in groups.keys():
                 groups[strToken].append(message)
             else:
