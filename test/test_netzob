@@ -34,7 +34,7 @@ The prefered way is now through: python setup.py test
 
 import sys
 import logging.config
-import gobject
+
 import os
 import unittest
 

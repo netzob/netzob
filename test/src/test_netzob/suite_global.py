@@ -48,11 +48,11 @@ def getSuite():
     modulesOfTests = []
     modulesOfSuites = [suite_Common, suite_Alignment]
 
-    try:
-        from test_netzob import suite_UI
-        modulesOfSuites.append(suite_UI)
-    except ImportError, e:
-        print "As python-ldtp is not installed UI tests can't be done!"
+    # try:
+    #     from test_netzob import suite_UI
+    #     modulesOfSuites.append(suite_UI)
+    # except ImportError, e:
+    #     print "As python-ldtp is not installed UI tests can't be done!"
 
     # Add individual tests
     for module in modulesOfTests:

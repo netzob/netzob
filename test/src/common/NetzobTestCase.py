@@ -32,6 +32,10 @@
 import unittest
 import os.path
 import os
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
+
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob import NetzobResources
 from netzob.Common.Workspace import Workspace
@@ -45,7 +49,7 @@ class NetzobTestCase(unittest.TestCase):
 
     def __init__(self, methodName='runTest'):
         unittest.TestCase.__init__(self, methodName)
-        self.debug = False
+        self.debug = True
 
     def setUp(self):
         # We compute the static resources path
