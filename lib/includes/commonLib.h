@@ -84,9 +84,10 @@ typedef struct {
 } t_equivalentGroup;
 
 // Cost definitions for the alignment
-static const short int MATCH = 10;
+static const short int MATCH = 5;
 static const short int SEMANTIC_MATCH = 30;
-static const short int MISMATCH = -10;
+static const short int MISMATCH = -5;
+
 static const short int GAP = 0;
 static const short int BLEN = 10;
 // Consts for the definition of a mask
