@@ -63,6 +63,7 @@ class AbstractMessage(object):
             self.id = id
 
         self.timestamp = timestamp
+
         self.data = data
         self.type = type
         self.symbol = None
@@ -482,11 +483,18 @@ class AbstractMessage(object):
 
     def getSemanticTagAt(self, iHalfByte):
         """getSemanticTagAt:
-        Return the tag nolcated at the iHalfByte"""
+        Return the tag located at the iHalfByte"""
         if not iHalfByte in self.semanticTags.keys():
             return None
         else:
             return self.semanticTags[iHalfByte]
 
     def getSemanticTags(self):
-        return self.semanticTags
+        """getSemanticTags:
+        Computes and returns a list containing all the tags
+        attached for each half-bytes"""
+        semanticTags = dict()
+        for i in range(0, len(self.getStringData())):
+            tags = self.getSemanticTagAt(i)
+            semanticTags[i] = str(tags)
+        return semanticTags
