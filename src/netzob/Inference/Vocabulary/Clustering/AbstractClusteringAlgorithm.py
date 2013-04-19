@@ -84,20 +84,37 @@ class AbstractClusteringAlgorithm(object):
         """Returns the description of clustering algorithm"""
         return self.__algorithm_description
 
+    ## TO BE IMPLEMENTED BY CHILDREN ##
+
     @abstractmethod
-    def execute(self):
+    def execute(self, symbols):
+        """Execute the clustering algorithm on the provided symbols.
+        @param symbols : list of L{netzob.Common.Symbol} to cluster
+        @return a list of new L{netzob.Common.Symbol}"""
         self.logger.warning("This method must be defined by the inherited class")
+        return []
 
     @abstractmethod
     def getConfigurationController(self):
-        self.logger.warning("This method must be defined by the inherited class")
+        """This method will be executed to show the user some customization panels
+        of the algorithm.
+        @returns None or the controller of a configuration class"""
+
+        return None
 
     @abstractmethod
     def getConfigurationParameters(self):
-        """This method should be defined in every clustering algorithms. Its implementation
-        should return a dictionnary containing the id of the parameter and its string value."""
-        self.logger.warning("This method must be defined by the inherited class")
+        """This method allow to export to those who wants (e.g. the xml serialization and co.)
+        the current configuration of the algorithm.
+        @result a dictionnary which map the parameter id with its value in string format"""
+
+        return dict()
 
     @abstractmethod
     def setConfigurationParameters(self, parameters):
-        self.logger.warning("This method must be defined by the inherited class")
+        """This method is executed by external classes (e.g. the workspace loaded and co.)
+        which wants to provide parameters values to algorithm. The developper is responsible for
+        parsing the provided dictionnary and to save the parameters in its attributes.
+        @param parameters: a dictionnary which map the parameter if with their values represented in string format"""
+
+        pass
