@@ -33,7 +33,7 @@ from setuptools import setup
 
 dependencies = [
     'Netzob >= 0.4',
-    'minepy',
+    'minepy >= 1.0.0',
     'numpy'
 ]
 
