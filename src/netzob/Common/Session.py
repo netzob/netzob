@@ -182,7 +182,19 @@ class Session(object):
         return None
 
     def addApplicativeData(self, data):
-        self.applicativeData.append(data)
+        """addApplicativeData:
+        Register the provided applicative data in the
+        list of applicative data attached to the current session.
+        @param data the L{netzob.Common.ApplicativeData} to attach"""
+        found = False
+        for appData in self.applicativeData:
+            if appData.getValue() == data.getValue() and appData.getType() == data.getType():
+                found = True
+                break
+        if not found:
+            self.applicativeData.append(data)
+        else:
+            logging.info("Don't register the provided applicative data to avoid duplicate: ({0}:{1})".format(data.getName(), data.getValue()))
 
     def removeApplicativeData(self, data):
         try:
