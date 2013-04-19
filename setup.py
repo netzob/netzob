@@ -185,7 +185,8 @@ dependencies = [
     'babel',
     'bitarray >= 0.4',
     'lxml',
-    'httplib2'
+    'httplib2',
+    'regex'
 ]
 
 extra_dependencies = {

@@ -31,7 +31,7 @@
 from gettext import gettext as _
 import logging
 import uuid
-import re
+import regex as re
 import copy
 
 #+---------------------------------------------------------------------------+
@@ -319,32 +319,26 @@ class AbstractMessage(object):
         if len(fields) == 1:
             return [dataToSplit]
 
-        regex = []
-        aligned = None
-
         dynamicDatas = None
         # First we compute the global regex
-        for field in fields:
-            # C Version :
-            #regex.append("(" + field.getRegex() + ")")
-            regex.append(field.getRegex())
+        regex = [field.getRegex() for field in fields]
 
-        # Now we apply the regex over the message
         try:
+            # Now we apply the regex over the message
             compiledRegex = re.compile("".join(regex))
             dynamicDatas = compiledRegex.match(dataToSplit)
-
-        except AssertionError:
-            raise NetzobException("This Python version only supports 100 named groups in regex")
+        except AssertionError, e:
+            raise NetzobException(str(e))
 
         if dynamicDatas is None:
             self.log.warning("The regex of the group doesn't match one of its message")
-            self.log.warning("Regex: " + "".join(regex))
-            self.log.warning("Message: " + dataToSplit[:255] + "...")
+            self.log.warning("Regex: {0}".format("".join(regex)))
+            self.log.warning("Message: {0}...".format(dataToSplit[:255]))
             raise NetzobException("The regex of the group doesn't match one of its message")
+
+        # Retrieves values in columns following computed groups of regex
         result = []
         iCol = 1
-
         for field in fields:
             try:
                 start = dynamicDatas.start(iCol)
@@ -352,8 +346,11 @@ class AbstractMessage(object):
             except:
                 self.log.warning("Possible error.")
             result.append(dataToSplit[start:end])
-
             iCol += 1
+
+        # Memory optimization offered by regex module
+        dynamicDatas.detach_string()
+
         return result
 
     #+-----------------------------------------------------------------------+
