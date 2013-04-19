@@ -31,7 +31,7 @@
 from gettext import gettext as _
 import logging
 import re
-
+import string
 #+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
@@ -79,12 +79,11 @@ class Searcher(object):
         the message"""
         tasks = []
         for prop in message.getProperties():
-            if prop.getName() != "Data":
+            if prop.getName() != "Data" and prop.getFormat() != "decimal":
                 tasks.extend(self.createSearchTasksForData(str(prop.getCurrentValue()), prop.getFormat()))
         if len(tasks) == 0:
             self.log.warning("Nothing to search after")
             return []
-        self.log.info("{0} search tasks will be executed.".format(len(tasks)))
 
         newTasks = self.searchInMessage(tasks, message)
 
@@ -121,7 +120,7 @@ class Searcher(object):
         if message is None:
             self.log.warning("No message provided")
             return []
-        applicativeData = message.getSession().getApplicativeData()
+
         # Create search tasks
         tasks = []
         for appData in applicativeData:
@@ -130,7 +129,6 @@ class Searcher(object):
         if len(tasks) == 0:
             self.log.warning("Nothing to search after")
             return []
-        self.log.info("{0} search tasks will be executed.".format(len(tasks)))
 
         newTasks = self.searchInMessage(tasks, message)
         results = []
@@ -194,9 +192,19 @@ class Searcher(object):
     def getSearchedDataForString(self, value):
         # Creation of a SearchTask
         task = SearchTask(value, value, Format.STRING)
-        task.registerVariation(TypeConvertor.stringToNetzobRaw(value), "String representation of '%s'" % value)
-        task.registerVariation(TypeConvertor.stringToNetzobRaw(value[::-1]), "Inverted string representation of '%s'" % value[::-1])
-        task.registerVariation(TypeConvertor.stringToNetzobRaw(value.decode('utf-8')), "String representation of '%s' encoded in UTF-8" % value)
+
+        stringMutations = dict()
+        stringMutations["original string"] = value
+        stringMutations["Inverted string"] = value[::-1]
+        stringMutations["Upper Original string"] = string.upper(value)
+        stringMutations["Lower Original string"] = string.lower(value)
+
+        for mutationDescription, mutation in stringMutations.items():
+            task.registerVariation(TypeConvertor.stringToNetzobRaw(mutation), "{0} ({1})".format(mutationDescription, mutation))
+            task.registerVariation(TypeConvertor.stringToNetzobRaw(mutation.encode('utf-8')), "UTF-8 of '{0}' ({1})".format(mutationDescription, mutation))
+            task.registerVariation(TypeConvertor.stringToNetzobRaw(mutation.encode('utf-16le')), "UTF-16 LE '{0}' ({1})".format(mutationDescription, mutation))
+            task.registerVariation(TypeConvertor.stringToNetzobRaw(mutation.encode('utf-16be')), "UTF-16 BE '{0}' ({1})".format(mutationDescription, mutation))
+
         return [task]
 
     #+----------------------------------------------
@@ -360,7 +368,6 @@ class Searcher(object):
 
     def naturalSearch(self, data, message):
         results = []
-        self.log.debug("Natural search of {0} in {1}".format(data, message.getStringData()))
         # Search naturally all the possible places of data in message
         indice = 0
         messageData = message.getStringData()
