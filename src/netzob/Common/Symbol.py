@@ -344,6 +344,9 @@ class Symbol(AbstractSymbol):
     def getProject(self):
         return self.project
 
+    def getCells(self, encoded=False):
+        return self.getField().getCells(encoded)
+
 #+---------------------------------------------------------------------------+
 #| Setters                                                                   |
 #+---------------------------------------------------------------------------+

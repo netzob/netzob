@@ -65,6 +65,7 @@ from netzob.Common.Type.Format import Format
 from netzob.Common.Type.Sign import Sign
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Type.UnitSize import UnitSize
+from netzob.Common.MessageTable import MessageTable
 
 
 class Field(object):
@@ -783,6 +784,8 @@ class Field(object):
         Computes and returns the previous field declared
         on the same layer. It returns None if it doesn't exist"""
         parentField = self.getParentField()
+        if parentField is None:
+            return None
         localFields = parentField.getLocalFields()
         indexField1 = localFields.index(self)
         indexField2 = indexField1 - 1
@@ -987,6 +990,7 @@ class Field(object):
         for field in self.getSymbol().getAllFields():
             if self in field.getLocalFields():
                 return field
+        return None
 
     def addLocalField(self, field, index=None):
         if index is None:
@@ -1043,6 +1047,7 @@ class Field(object):
             if cells == "":
                 # Concatenate the current useless inner field with the next field
                 fieldsToRemove.append(innerField)
+
         for field in fieldsToRemove:
             # compute if the remaining fields aroung deleted one need to be merged
             doConcat = False
@@ -1055,7 +1060,8 @@ class Field(object):
                     # both static
                     if previousField.isStatic() == nextField.isStatic():
                         doConcat = True
-            field.getParentField().removeLocalField(field)
+            if field.getParentField() is not None:
+                field.getParentField().removeLocalField(field)
             if doConcat:
                 previousField.concatWithNextField()
 
@@ -1080,6 +1086,13 @@ class Field(object):
         finally:
             return field
 
+    def getIndex(self):
+        listOfFields = self.getSymbol().getField().getExtendedFields()
+        if self in listOfFields:
+            return self.getSymbol().getField().getExtendedFields().index(self)
+        else:
+            raise Exception("Current field not found in extended fields of its symbol, so it has no index")
+
     def getFieldLayers(self):
         layers = []
         for field in self.getLocalFields():
@@ -1099,7 +1112,7 @@ class Field(object):
                     return res
         return None
 
-    def getCells(self):
+    def getCells(self, encoded=False):
         """getCells:
         Return all the messages parts which are in
         the specified field
@@ -1109,32 +1122,29 @@ class Field(object):
             logging.warn("The computing field is not part of the current symbol")
             return []
 
-        # Retrieve all sub-cells
+        # fields to display
         if self.isLayer():
-            res = []
-            for subField in self.getExtendedFields():
-                res.append(subField.getCells())
-            # Concatenate sub-cells
-            finalRes = []
-            for i in range(len(self.getMessages())):
-                finalRes.append("")
-            for i in range(len(res)):
-                for j in range(len(res[i])):
-                    finalRes[j] += res[i][j]
-            return finalRes
-        else:  # A leaf field
-            res = []
-            for message in self.getMessages():
-                messageTable = message.applyAlignment()
-                messageElt = messageTable[self.getGlobalIndex()]
-                res.append(messageElt)
-            return res
+            indexOfFieldToDisplay = [subField.getGlobalIndex() for subField in self.getExtendedFields()]
+        else:
+            indexOfFieldToDisplay = [self.getGlobalIndex()]
+
+        table = MessageTable()
+        # Create rows of the matrix (1 row per message)
+        for message in self.getMessages():
+            row = []
+            messageTable = message.applyAlignment(encoded=encoded)
+            for indexOfField in sorted(indexOfFieldToDisplay):
+                row.append(messageTable[indexOfField])
+            table.append(row)
+
+        return table
 
     def getSemanticTagsByMessage(self):
         # Not the same than getSemanticTags
         # the returned position is global to the message and
         # not local to the field
         #result[i]=dict()   # dict[0...half-byte] = tag
+        logging.debug("Retrieve semantic tags for messages")
         result = dict()
 
         # First we verify the field exists in the symbol
@@ -1142,13 +1152,14 @@ class Field(object):
             logging.warn("The computing field is not part of the current symbol")
             return result
 
-         # Retrieve all sub-cells
+        # Retrieve all sub-cells
         if self.isLayer():
             logging.warn("OUPS, this is not yet supported, sorry for that !")
             return result
         else:  # A leaf field
             for message in self.getMessages():
                 tmpResult = dict()
+
                 messageTable = message.applyAlignment()
                 semanticTags = message.getSemanticTags()
                 if len(semanticTags) > 0:
