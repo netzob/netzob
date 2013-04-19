@@ -38,7 +38,6 @@ import logging
 import time
 from gettext import gettext as _
 import uuid
-
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
@@ -124,7 +123,6 @@ class NeedlemanAndWunsch(object):
                 return
 
             field.setAlignment(alignment)
-            self.logger.debug("Alignment: {0}".format(alignment))
 
             # We update the regex based on the results
             try:
@@ -136,10 +134,6 @@ class NeedlemanAndWunsch(object):
                 self.logger.warn("Partitionnement error: {0}".format(e))
                 field.resetPartitioning()
 
-            # Last loop to detect fixed-sized dynamic fields
-            for innerField in field.getLocalFields():
-                innerField.fixRegex()
-
     #+-----------------------------------------------------------------------+
     #| alignData
     #|     Default alignment of messages
@@ -148,8 +142,9 @@ class NeedlemanAndWunsch(object):
     #+-----------------------------------------------------------------------+
     def alignData(self, data, semanticTokens):
         toSend = []
+
         for i in range(0, len(data)):
-            toSend.append((data[i], semanticTokens[i]))
+            toSend.append((''.join(data[i]), semanticTokens[i]))
 
         wrapper = WrapperArgsFactory("_libNeedleman.alignMessages")
         wrapper.typeList[wrapper.function](toSend)
@@ -164,10 +159,7 @@ class NeedlemanAndWunsch(object):
         alignment = TypeConvertor.deserializeAlignment(regex, mask, self.unitSize)
         semanticTags = TypeConvertor.deserializeSemanticTags(semanticTags, self.unitSize)
 
-        self.logger.debug("Computed Alignment = {0}".format(alignment))
-
         alignment = self.smoothAlignment(alignment)
-        self.logger.debug("Smoothed Alignment = {0}".format(alignment))
         return (alignment, semanticTags, scores)
 
     #+-----------------------------------------------------------------------+
@@ -195,20 +187,197 @@ class NeedlemanAndWunsch(object):
     #| @param align the given alignment
     #+-----------------------------------------------------------------------+
     def buildRegexFromAlignment(self, field, align, semanticTags):
+        """buildRegexFromAlignment:
+        This methods creates a regex based on the computed alignment
+        by the Needleman&Wunsch algorithm and the attached semantic tags.
+        @param field : the field for which it creates the regex (and the sub fields)
+        @param align : the string representing the common alignment between messages of the symbol.
+        @param semanticTags : the list of tags attached to each half-bytes of the provided alignment."""
+
+        DEBUG_MODE = False
+
+        # First we clean the field
+        field.removeLocalFields()
+
+        # Create fields following the alignment
+        self.splitFieldFollowingAlignment(field, align)
+
+        if DEBUG_MODE:
+            # Verify the computed 'simple' alignment is valid regarding messages
+            logging.debug("\n {0}".format(field.getCells()))
+
+        self.createSubFieldsFollowingSemanticTags(field, align, semanticTags)
+
+        if DEBUG_MODE:
+            # Verify the computed 'simple' alignment is valid regarding messages
+            logging.debug("\n {0}".format(field.getCells()))
+
+    def createSubFieldsFollowingSemanticTags(self, rootField, align, semanticTags):
+        """createSubFieldsFollowingSemanticTags:
+        In this method, we search for subfields which would be created because of
+        semantic boundaries."""
+
+        originalFields = rootField.getExtendedFields()
+
+        if len(originalFields) == 1 and rootField == originalFields[0]:
+            # We are dealing with a specific field
+            logging.debug("Analyze sub fields for {0}".format(rootField.getRegex()))
+            if rootField.isStatic():
+                self.createSubFieldsForAStaticField(rootField, align, semanticTags)
+            else:
+                self.createSubFieldsForADynamicField(rootField, align, semanticTags)
+
+            for f in rootField.getLocalFields():
+                logging.debug("\t {0} : {1}".format(f.getName(), f.getRegex()))
+
+        else:
+            # We are dealing with multiple fields, lets split them
+            currentIndex = 0
+
+            for field in originalFields:
+                regexField = field.getRegex()
+
+                # Retrieve the size of the current field
+                if field.isStatic():
+                    lengthField = len(regexField) - 2
+                else:
+                    tmp = regexField.split(',')[1]
+                    lengthField = int(tmp[:len(tmp) - 2])
+
+                # Find semantic tags related to the current section
+                sectionSemanticTags = dict((k, semanticTags[k]) for k in xrange(currentIndex, currentIndex + lengthField))
+
+                # reccursive call
+                logging.debug("Working on field : {0}".format(field.getName()))
+                self.createSubFieldsFollowingSemanticTags(field, align[currentIndex:currentIndex + lengthField], sectionSemanticTags)
+
+                currentIndex += lengthField
+
+    def createSubFieldsForAStaticField(self, field, align, semanticTags):
+        """createSubFieldsForAStaticField:
+        Analyzes the static field provided and create sub fields following
+        the provided semantic tags."""
+        logging.debug("Create subfields for static field {0} : {1}".format(field.getName(), align))
+
+        if len(field.getLocalFields()) > 0:
+            logging.warning("Impossible to create sub fields for this field since its not cleaned")
+            return
+
+        subFields = []
+
+        currentTag = None
+        currentTagLength = 0
+
+        for index, tag in semanticTags.iteritems():
+            if tag != currentTag:
+                # Create a sub field
+                subFieldValue = align[index - currentTagLength:index]
+                if len(subFieldValue) > 0:
+                    subFields.append(subFieldValue)
+                currentTagLength = 0
+            currentTag = tag
+            currentTagLength += 1
+        if currentTagLength > 0:
+            subFieldValue = align[-currentTagLength:]
+            if len(subFieldValue) > 0:
+                subFields.append(subFieldValue)
+
+        if len(subFields) > 1:
+            for iSubField, subFieldValue in enumerate(subFields):
+                subField = Field("{0}_{1}".format(field.getName(), iSubField), "({0})".format(subFieldValue), field.getSymbol())
+                field.addLocalField(subField)
+
+    def createSubFieldsForADynamicField(self, field, align, semanticTags):
+        """createSubFieldsForADynamicField:
+        Analyzes the dynamic field provided and create sub fields following
+        the provided semantic tags."""
+
+        logging.debug("Create subfields for dynamic field {0} : {1}".format(field.getName(), field.getRegex()))
+
+        if len(field.getLocalFields()) > 0:
+            logging.warn("Impossible to create sub fields for this field since its not cleaned")
+            return
+
+        subFields = []
+
+        currentTag = None
+        currentTagLength = 0
+
+        semanticTagsForEachMessage = field.getSemanticTagsByMessage()
+
+        for index, tag in semanticTags.iteritems():
+            if tag != currentTag:
+                # Create a sub field
+                if currentTagLength > 0:
+                    values = self.getFieldValuesWithTag(field, semanticTagsForEachMessage, currentTag)
+                    subFields.append((currentTag, values))
+                currentTagLength = 0
+            currentTag = tag
+            currentTagLength += 1
+        if currentTagLength > 0:
+            values = self.getFieldValuesWithTag(field, semanticTagsForEachMessage, currentTag)
+            subFields.append((currentTag, values))
+
+        for iSubField, (tag, values) in enumerate(subFields):
+            if len(values) > 0:
+                if tag == "None":
+                    minValue = None
+                    maxValue = None
+                    for v in values:
+                        if minValue is None or len(v) < minValue:
+                            minValue = len(v)
+                        if maxValue is None or len(v) > maxValue:
+                            maxValue = len(v)
+                    subField = Field("{0}_{1}".format(field.getName(), iSubField), "(.{" + str(minValue) + "," + str(maxValue) + "})", field.getSymbol())
+
+                    field.addLocalField(subField)
+                else:
+                    # create regex based on unique values
+                    newRegex = '|'.join(list(set(values)))
+                    newRegex = "({0})".format(newRegex)
+                    subField = Field("{0}_{1}".format(field.getName(), iSubField), newRegex, field.getSymbol())
+                    field.addLocalField(subField)
+
+    def getFieldValuesWithTag(self, field, semanticTagsForEachMessage, tag):
+        values = []
+
+        # Retrieve value of each message in current field tagged with requested tag
+        for message, tagsInMessage in semanticTagsForEachMessage.iteritems():
+            initial = None
+            end = None
+
+            for tagIndex in sorted(tagsInMessage.keys()):
+                tagName = tagsInMessage[tagIndex]
+                if initial is None and tagName == tag:
+                    initial = tagIndex
+                elif initial is not None and tagName != tag:
+                    end = tagIndex
+                    break
+
+            if initial is not None and end is None:
+                end = sorted(tagsInMessage.keys())[-1] + 1
+            if initial is not None and end is not None:
+                values.append(message.getStringData()[initial:end])
+
+                for i in range(initial, end):
+                    del tagsInMessage[i]
+
+        if "" not in values and len(semanticTagsForEachMessage.keys()) > len(values):
+            values.append("")
+
+        return values
+
+    def splitFieldFollowingAlignment(self, field, align):
         # Build regex from alignment
         i = 0
         start = 0
         regex = []
         found = False
-        currentTag = None
 
         # STEP 1 : Create a field separation
         # based on static and dynamic fields
+        logging.debug("Step 1 : Create field separation based on static and dynamic data")
         for i, val in enumerate(align):
-            tag = semanticTags[i]
-            if currentTag is None:
-                currentTag = tag
-
             if self.isFinish():
                 return
 
@@ -227,10 +396,10 @@ class NeedlemanAndWunsch(object):
                         regex.append(val)
                     else:
                         regex[-1] += val
-
         if (found is True):
             nbTiret = i - start + 1
             regex.append(".{," + str(nbTiret) + "}")
+        logging.debug("Computed regex : {0}".format(regex))
 
         # We have a computed the 'simple' regex,
         # and represent it using the field representation
@@ -248,101 +417,6 @@ class NeedlemanAndWunsch(object):
             # Use the default protocol type for representation
             field.setFormat(self.defaultFormat)
             iField = iField + 1
-        if len(field.getSymbol().getExtendedFields()) >= 100:
-            raise NetzobException("This Python version only supports 100 named groups in regex (found {0})".format(len(field.getSymbol().getExtendedFields())))
-
-        # STEP 2 : Split fields given the semantic tokens
-        totalIndex = 0
-
-        # Starts to consider semantic tags
-        step2Fields = dict()
-
-        startByteCurrentField = 0
-        for iField, step1Field in enumerate(step1Fields):
-            step2Fields[step1Field] = []
-
-            lengthField = 0
-            # Compute the size of the current field given its regex
-            if step1Field.isStatic():
-                lengthField = len(step1Field.getRegex()) - 2
-            else:
-                tmp = step1Field.getRegex().split(',')[1]
-                lengthField = int(tmp[:len(tmp) - 2])
-
-            # Split the current field if a modification of the semantic tag can be found
-            sizeCurrentField = 0
-            tagCurrentField = None
-            startLastSubField = 0
-            iSubField = 0
-            for currentByteInCurrentField in range(0, lengthField):
-                tagCurrentByte = semanticTags[startByteCurrentField + currentByteInCurrentField]
-
-                if tagCurrentField != tagCurrentByte:
-                    if sizeCurrentField > 0:
-                        sizeCurrentField += 1
-                        if not step1Field.isStatic():
-                            # create a sub field dynamic
-                            regex = "(.{," + str(sizeCurrentField) + "}):" + str(tagCurrentField)
-                        else:
-                            regex = "({0}):{1}".format(step1Field.getRegex()[1 + startLastSubField:1 + startLastSubField + sizeCurrentField], tagCurrentField)
-                        step2Fields[step1Field].append(Field("{0}_{1}".format(step1Field.getName(), iSubField), regex, step1Field.getSymbol()))
-                        startLastSubField = startLastSubField + sizeCurrentField
-                        sizeCurrentField = 0
-                    tagCurrentField = tagCurrentByte
-                else:
-                    sizeCurrentField += 1
-
-            if sizeCurrentField > 0:
-                if not step1Field.isStatic():
-                    # create a sub field dynamic
-                    sizeCurrentField += 1
-                    regex = "(.{," + str(sizeCurrentField) + "}):" + tagCurrentByte
-                else:
-                    regex = "({0}):{1}".format(step1Field.getRegex()[1 + startLastSubField:sizeCurrentField + 2], tagCurrentByte)
-                step2Fields[step1Field].append(Field("{0}_{1}".format(step1Field.getName(), iSubField), regex, step1Field.getSymbol()))
-            startByteCurrentField += lengthField
-
-        # STEP 3 : Apply semantic field partitionning computed in previous step
-        # and create a nice regex
-        steps3Fields = []
-        for f1 in step1Fields:
-            f2 = step2Fields[f1]
-            if len(f2) == 1:
-                steps3Fields.append(f1)
-            else:
-                for f in f2:
-                    tmpSplit = f.getRegex().split(':')
-                    tag = tmpSplit[1]
-                    if tag != "None":
-                        # get all the possible values in f1 of data under specified tag
-                        semanticTagsForField = f1.getSemanticTagsByMessage()
-                        possibleValues = []
-                        for message, semanticTagsInMessage in semanticTagsForField.items():
-                            currentValue = []
-                            for localPosition in sorted(semanticTagsInMessage.iterkeys()):
-                                tagValue = semanticTagsInMessage[localPosition]
-                                if tagValue == tag:
-                                    currentValue.append(message.getStringData()[localPosition])
-                            possibleValues.append(''.join(currentValue))
-                        newRegex = '|'.join(possibleValues)
-                        newRegex = "({0})".format(newRegex)
-                        f.setRegex(newRegex)
-                    else:
-                        f.setRegex(tmpSplit[0])
-                    steps3Fields.append(f)
-
-        field.removeLocalFields()
-        for f in steps3Fields:
-            field.addLocalField(f)
-
-        # Clean created fields (remove fields that produce only empty cells)
-        field.removeEmptyFields(self.cb_status)
-
-        # Rename the fields
-        iField = 0
-        for field in field.getSymbol().getExtendedFields():
-            field.setName("F{0}".format(iField))
-            iField += 1
 
     #+----------------------------------------------
     #| alignFields:
