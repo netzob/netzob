@@ -95,7 +95,7 @@ class UPGMA(object):
         else:
             self.cb_status(stage, donePercent, currentMessage)
 
-    def executeClustering(self):
+    def executeClustering(self, recomputeMatrixThreshold=None):
         """Execute the clustering operation
         @return the new list of symbols"""
         self.log.debug("Re-Organize the symbols (nbIteration={0}, min_equivalence={1})".format(self.nbIteration, self.minEquivalence))
@@ -105,15 +105,15 @@ class UPGMA(object):
             return None
 
         self.cb_executionStatus(0, 0, "Clustering into symbols...")
-        self.processUPGMA()
-        self.cb_executionStatus(1, 100, "Clustering into symbols finish")
+        self.processUPGMA(recomputeMatrixThreshold)
+        self.cb_executionStatus(1, 100, "Clustering symbols : done")
         # Retrieve the alignment of each symbol and the build the associated regular expression
 
         if self.isFinish():
             return None
 
         self.cb_executionStatus(2, 0, "Align messages of each clusters...")
-        self.currentAlignment = NeedlemanAndWunsch(self.unitSize, self.project, False, self.cb_status)
+        self.currentAlignment = NeedlemanAndWunsch(self.unitSize, self.project, True, self.cb_status)
         self.currentAlignment.absoluteStage = 2
         self.currentAlignment.statusRatio = len(self.symbols)
         self.currentAlignment.statusRatioOffset = 0
@@ -127,34 +127,39 @@ class UPGMA(object):
 
         return self.symbols
 
-    def processUPGMA(self):
+    def processUPGMA(self, recomputeMatrixThreshold=None):
         """Computes the matrix of equivalences (in C) and reduce it
         iteratively."""
         self.log.debug("Computing the associated matrix")
 
+        # Compute initial similarity matrix
+        self.scores = self.computeSimilarityMatrix(self.symbols)
+
+        # Reduce the UPGMA matrix (merge symbols by similarity)
+        self.computePhylogenicTree(recomputeMatrixThreshold)
+
+    def computeSimilarityMatrix(self, symbols):
         # Execute the Clustering part in C
         debug = False
         wrapper = WrapperArgsFactory("_libScoreComputation.computeSimilarityMatrix")
-        wrapper.typeList[wrapper.function](self.symbols)
+        wrapper.typeList[wrapper.function](symbols)
         (listScores) = _libScoreComputation.computeSimilarityMatrix(self.doInternalSlick, self.cb_executionStatus, self.isFinish, debug, wrapper)
         # Retrieve the scores for each association of symbols
-        self.scores = {}
+        scores = {}
         for (iuid, juid, score) in listScores:
             if self.isFinish():
                 return (None, None, None)
 
-            if iuid not in self.scores.keys():
-                self.scores[iuid] = {}
-            if juid not in self.scores.keys():
-                self.scores[juid] = {}
-            self.scores[iuid][juid] = score
-            if iuid not in self.scores[juid].keys():
-                self.scores[juid][iuid] = score
+            if iuid not in scores.keys():
+                scores[iuid] = {}
+            if juid not in scores.keys():
+                scores[juid] = {}
+            scores[iuid][juid] = score
+            if iuid not in scores[juid].keys():
+                scores[juid][iuid] = score
+        return scores
 
-        # Reduce the UPGMA matrix (merge symbols by similarity)
-        self.computePhylogenicTree()
-
-    def computePhylogenicTree(self):
+    def computePhylogenicTree(self, recomputeMatrixThreshold):
         """Compute the phylogenic tree
         @var max_i: uid of i_maximum
         @var max_j: uid of j_maximum
@@ -162,6 +167,7 @@ class UPGMA(object):
         maxScore = 0
         status = 0
         step = (float(100) - float(self.minEquivalence)) / float(100)
+        self.lastScore = None
 
         if len(self.scores) > 1:
             max_i = max(self.scores, key=lambda x: self.scores[x][max(self.scores[x], key=lambda y: self.scores[x][y])])
@@ -182,30 +188,51 @@ class UPGMA(object):
             self.cb_executionStatus(1, status, infoMessage)
 
             newuid = self.mergeEffectiveRowCol(i_maximum, j_maximum)
-            self.updateScore(max_i, max_j, newuid, size_i, size_j)
+            self.updateScore(max_i, max_j, newuid, size_i, size_j, recomputeMatrixThreshold)
 #            self.log.debug("Score après: {0}".format(str(self.scores)))
             if len(self.scores) > 1:
                 max_i = max(self.scores, key=lambda x: self.scores[x][max(self.scores[x], key=lambda y: self.scores[x][y])])
                 max_j = max(self.scores[max_i], key=lambda y: self.scores[max_i][y])
                 maxScore = self.scores[max_i][max_j]
 
-    def updateScore(self, iuid, juid, newuid, size_i, size_j):
+    def updateScore(self, iuid, juid, newuid, size_i, size_j, recomputeMatrixThreshold=None):
         """Update the score of two merged clusters.
         @param iuid: id of the first cluster merged
         @param juid: id of the second cluster merged
         @param newuid: new id of the merged cluster
         @param size_i: size of the first cluster
         @param size_j: size of the second cluster"""
-        total_size = size_i + size_j
+
+        self.log.debug("Update score (recompte matrix : {0})".format(recomputeMatrixThreshold))
+
+        currentScore = self.scores[iuid][juid]
+
+        # Delete row and col
         del self.scores[iuid]
         del self.scores[juid]
+        # Create a new col
         self.scores[newuid] = {}
-        for k in self.scores.keys():
-            if k != newuid:
-                self.scores[k][newuid] = (size_i * self.scores[k][iuid] + size_j * self.scores[k][juid]) * 1.0 / total_size
-                del self.scores[k][iuid]
-                del self.scores[k][juid]
-                self.scores[newuid][k] = self.scores[k][newuid]
+
+        # Should we recompute
+        if self.lastScore is None:
+            self.lastScore = currentScore
+
+        if recomputeMatrixThreshold is None or abs(currentScore - self.lastScore) <= recomputeMatrixThreshold:
+            self.log.debug("Ok no need in recomputing the matrix")
+
+            total_size = size_i + size_j
+
+            for k in self.scores.keys():
+                if k != newuid:
+                    self.scores[k][newuid] = (size_i * self.scores[k][iuid] + size_j * self.scores[k][juid]) * 1.0 / total_size
+                    del self.scores[k][iuid]
+                    del self.scores[k][juid]
+                    self.scores[newuid][k] = self.scores[k][newuid]
+        else:
+            self.log.debug("Merge and recompute matrix similarity threshold")
+            self.scores = self.computeSimilarityMatrix(self.symbols)
+
+        self.lastScore = currentScore
 
     def computePathTree(self):
         """TODO ?"""
