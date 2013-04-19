@@ -141,10 +141,9 @@ class MembershipQuery(object):
         return result
 
     def isStrictlyEqual(self, other):
-        if (len(self.getSymbolsWhichAreNotEmpty()) == len(other.getSymbolsWhichAreNotEmpty())):
-            symbols = self.getSymbolsWhichAreNotEmpty()
-            symbols2 = other.getSymbolsWhichAreNotEmpty()
-
+        symbols = self.getSymbolsWhichAreNotEmpty()
+        symbols2 = other.getSymbolsWhichAreNotEmpty()
+        if len(symbols) == len(symbols2):
             nbSymbol = len(symbols)
 
             if (nbSymbol == 0):
