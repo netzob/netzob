@@ -44,11 +44,10 @@ class WrapperMessage(object):
         self.alignment = rawData
 
         self.semanticTags = []
-        for i in range(0, len(rawData)):
-            semanticTag = message.getSemanticTagAt(i * 2)
-            if semanticTag is None:
-                semanticTag = "None"
 
+        for i in range(0, len(rawData)):
+            # SemanticTag can be "None" (that's why the str method)
+            semanticTag = str(message.getSemanticTagAt(i * 2))
             self.semanticTags.append(semanticTag)
 
         self.uid = symbolID
