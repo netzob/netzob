@@ -69,19 +69,20 @@ from netzob.Common.MessageTable import MessageTable
 
 
 class Field(object):
-    """Field:
-            Class definition of a field.
+    """Class definition of a field.
     """
 
     def __init__(self, name, regex, symbol):
-        """Constructor of Field:
+        """Constructor of Field.
 
-                @type name: string
-                @param name: the name of the field
-                @type regex: string
-                @param regex: a regex that rules values of the field
-                @type symbol: string
-                @param symbol: the parent symbol
+            :type name: string
+            :param name: The name of the field
+
+            :type regex: string
+            :param regex: A regex that rules values of the field
+
+            :type symbol: string
+            :param symbol: The parent symbol
         """
         self.id = str(uuid.uuid4())
         self.name = name
@@ -113,8 +114,11 @@ class Field(object):
         return str(self.getName())
 
     def dupplicate(self, newSymbol):
-        """duplicate: dupplicate the current field hierarchy, but not
+        """Dupplicate the current field hierarchy, but not
         the underlying variables.
+
+            :param newSymbol: The name of the field
+            :type newSymbol: netzob.Common.Symbol
         """
         newField = Field(self.getName(), self.getRegex(), newSymbol)
         # Copy fields interpretation attributes
@@ -135,8 +139,18 @@ class Field(object):
     def cleanVisualizationFunctions(self):
         self.visualizationFunctions = []
 
-#    def getVisualizationFunctions(self):
-#        return self.visualizationFunctions
+    def getVisualizationFunctions(self):
+        """Get the visualization functions applied on this field.
+
+                :return: A list of all needed functions
+                :rtype: netzob.Common.Functions.VisualizationFunction
+        """
+        functions = []
+
+        # Dynamic fields are in Blue
+        if not self.isStatic():
+            functions.append(TextColorFunction("Dynamic Field", "blue"))
+        return functions
 
     def removeVisualizationFunction(self, function):
         self.visualizationFunctions.remove(function)
@@ -148,29 +162,8 @@ class Field(object):
         if function in self.encodingFunctions:
             self.encodingFunctions.remove(function)
 
-#    def getEncodingFunctions(self):
-#        functions = []
-#        for field in self.getExtendedFields():
-#            functions.extend(field.getEncodingFunctions())
-#        functions.extend(self.encodingFunctions)
-
-    def getVisualizationFunctions(self):
-        """getVisualizationFunctions:
-                Get the visualization functions applied on this field.
-
-                @rtype: netzob.Common.Functions List
-                @return: a list of all needed functions.
-        """
-        functions = []
-
-        # Dynamic fields are in Blue
-        if not self.isStatic():
-            functions.append(TextColorFunction("Dynamic Field", "blue"))
-        return functions
-
     def getEncodingFunctions(self):
-        """getEncodingFunctions:
-                Calls computeFormatEncodingFunction.
+        """Calls computeFormatEncodingFunction.
         """
         functions = []
         # Following functions must be considered :
@@ -178,11 +171,10 @@ class Field(object):
         return functions
 
     def removeTransformationFunction(self, function):
-        """removeTransformationFunction:
-                Remove a precised function.
+        """Remove a precised function.
 
-                @type function: netzob.Common.Functions
-                @param function: the function that is removed.
+                :param function: the function that is removed.
+                :type function: netzob.Common.Functions
         """
         fToRemove = None
         for mFunction in self.transformationFunctions:
@@ -193,46 +185,41 @@ class Field(object):
             self.transformationFunctions.remove(fToRemove)
 
     def addTransformationFunction(self, function):
-        """addTransformationFunction:
-                Add a precised function.
+        """Add a precised function.
 
-                @type function: netzob.Common.Functions
-                @param function: the function that is added.
+                :type function: netzob.Common.Functions
+                :param function: the function that is added.
         """
         self.transformationFunctions.append(function)
 
     def computeFormatEncodingFunction(self):
-        """computeFormatEncodingFunction:
-                Get the format function applied on this field. It tells how the data are displayed.
+        """Get the format function applied on this field. It tells how the data are displayed.
 
-                @rtype: netzob.Common.Functions.FormatFunction
-                @return: the computed format function.
+                :rtype: netzob.Common.Functions.FormatFunction
+                :return: the computed format function.
         """
         return FormatFunction("Field Format Encoding", self.format, self.unitSize, self.endianess, self.sign)
 
     def computeSignEncodingFunction(self):
-        """computeSignEncodingFunction:
-                Does nothing.
+        """Does nothing.
 
-                @return: None
+                :return: None
         """
         return None
 
     def computeEndianessEncodingFunction(self):
-        """computeEndianessEncodingFunction:
-                Does nothing.
+        """Does nothing.
 
-                @return: None
+                :return: None
         """
         return None
 
     ## Regex
     def getEncodedVersionOfTheRegex(self):
-        """getEncodedVersionOfTheRegex:
-                Encode the regex in a dedicated format (IPv4, Binary...).
+        """Encode the regex in a dedicated format (IPv4, Binary...).
 
-                @rtype: string
-                @return: the encoded version or the regex itself if it did not manage to encode.
+                :rtype: string
+                :return: the encoded version or the regex itself if it did not manage to encode.
         """
         if self.regex == "" or self.regex is None:
             return ""
@@ -242,11 +229,10 @@ class Field(object):
             return self.regex
 
     def isStatic(self):
-        """isStatic:
-                Tells if a regex is static (is of the form '(data)').
+        """Tells if a regex is static (is of the form '(data)').
 
-                @rtype: boolean
-                @return: True if the regex is static.
+                :rtype: boolean
+                :return: True if the regex is static.
         """
         if (re.match("\([0-9a-f]*\)\??", self.regex) is not None) and self.getName() != "__sep__":
             return True
@@ -254,11 +240,10 @@ class Field(object):
             return False
 
     def isRegexOnlyDynamic(self):
-        """isRegexOnlyDynamic:
-                Tells if a regex is only dynamic (does not contain a static subregex).
+        """Tells if a regex is only dynamic (does not contain a static subregex).
 
-                @rtype: boolean
-                @return: True if the regex is only dynamic.
+                :rtype: boolean
+                :return: True if the regex is only dynamic.
         """
         if re.match("\(\.\{\d?,?\d+\}\)", self.regex) is not None:
             return True
@@ -266,11 +251,10 @@ class Field(object):
             return False
 
     def isRegexOptional(self):
-        """isRegexOptional:
-                Tells if a regex is optional (i.e. has a '?' at the end).
+        """Tells if a regex is optional (i.e. has a '?' at the end).
 
-                @rtype: boolean
-                @return: True if the regex is optional.
+                :rtype: boolean
+                :return: True if the regex is optional.
         """
         if self.getRegex()[-1] == '?':
             return True
@@ -280,7 +264,8 @@ class Field(object):
     def isRegexValidForMessage(self, message):
         """Offers to verify if the provided message
         can be splitted in fields following their definition
-        in the current symbol"""
+        in the current symbol
+        """
         regex = []
         for field in self.getExtendedFields():
             regex.append(field.getRegex())
@@ -297,11 +282,10 @@ class Field(object):
         return True
 
     def hasRegexFixedSize(self):
-        """hasRegexFixedSize:
-                Tells if a regex (i.e. field) has a fixed size.
+        """Tells if a regex (i.e. field) has a fixed size.
 
-                @rtype: boolean
-                @return: True if the regex has a fixed size.
+                :rtype: boolean
+                :return: True if the regex has a fixed size.
         """
         if re.match("\(\.\{\d+\}\)", self.regex) is not None:
             return True
@@ -309,8 +293,9 @@ class Field(object):
             return False
 
     def fixRegex(self):
-        """fixRegex: for regex that only renders fixed-size cells,
-        directly fix the regex."""
+        """For regex that only renders fixed-size cells,
+        directly fix the regex.
+        """
         if not self.isRegexOnlyDynamic():
             return
         cells = self.getCells()
@@ -321,16 +306,18 @@ class Field(object):
         self.setRegex("(.{" + str(refSize) + "})")
 
     def getRegexFixedSize(self):
-        """getRegexFixedSize: return the size of the regex only if this one
-        has a fixed size."""
+        """Return the size of the regex only if this one
+        has a fixed size.
+        """
         if self.hasRegexFixedSize():
             return int(self.getRegex()[3:-2])  # Retrieve 'n' in '(.{n})'
         else:
             return None
 
     def getRegexMinMaxSize(self):
-        """getRegexMinSize: return the couple (minSize,maxSize) of the
-        regex."""
+        """Return the couple (minSize,maxSize) of the
+        regex.
+        """
         minSize = 0
         maxSize = 99999
         m = re.match(".*{(\d*),(\d*)}.*", self.getRegex())
@@ -344,7 +331,7 @@ class Field(object):
             return (minSize, maxSize)
 
     def createSymbolsWithFixedField(self, fixedField):
-        """createSymbolsWithFixedField: Create new symbols according to a
+        """Create new symbols according to a
         specific fixed field.
         """
         if fixedField is None:
@@ -383,13 +370,9 @@ class Field(object):
             project.getVocabulary().addSymbol(symbol)
         self.setName("{0}_{1}".format(self.getSymbol().getName(), str(uniqueValues[0])))
 
-
-
-    #+----------------------------------------------
-    #| forcePartitioning:
-    #|  Specify a delimiter for partitioning
-    #+----------------------------------------------
     def forcePartitioning(self, aFormat, rawDelimiter):
+        """Specify a delimiter for partitioning.
+        """
         self.resetPartitioning()
 
         minNbSplit = 999999
@@ -430,11 +413,9 @@ class Field(object):
         # Clean created fields (remove fields that produce only empty cells)
         self.removeEmptyFields()
 
-    #+----------------------------------------------
-    #| simplePartitioning:
-    #|  Do message partitioning according to column variation
-    #+----------------------------------------------
     def simplePartitioning(self, unitSize, status_cb=None, idStop_cb=None):
+        """Do message partitioning according to column variation.
+        """
         logging.debug("Compute the simple partitioning on current symbol")
         # Restore fields to the default situation
         self.resetPartitioning()
@@ -613,12 +594,10 @@ class Field(object):
                 self.removeLocalFields()
                 return
 
-    #+----------------------------------------------
-    #| slickRegex:
-    #|  try to make smooth the regex, by deleting tiny static
-    #|  sequences that are between big dynamic sequences
-    #+----------------------------------------------
     def slickRegex(self, project):
+        """Try to make smooth the regex, by deleting tiny static
+        sequences that are between big dynamic sequences
+        """
         # Verify that targeted fields are in the same layer
         extendedFields = self.getExtendedFields()
         parent = extendedFields[0].getParentField()
@@ -692,20 +671,13 @@ class Field(object):
             self.slickRegex(project)  # Try to loop until no more merges are done
             logging.debug("The regex has been slicked")
 
-    #+----------------------------------------------
-    #| resetPartitioning:
-    #|   Reset the current partitioning
-    #+----------------------------------------------
     def resetPartitioning(self):
-        # Reset values
+        """Reset the current partitioning.
+        """
         self.removeLocalFields()
         field = self.createDefaultField(self.getSymbol())
         self.addLocalField(field)
 
-    #+----------------------------------------------
-    #| computeFieldsLimits:
-    #|
-    #+----------------------------------------------
     def computeFieldsLimits(self):
         for field in self.getExtendedFields():
             tmpRegex = field.getRegex()
@@ -734,8 +706,8 @@ class Field(object):
     def concatFields(self, lastField):
         """concatFields: concat all the next fields with the current one
         until the lastField is reached.
-        @return: a tupple that indicates if the function has correctly been processed, and if not, the error message."""
-
+        
+                :return: a tupple that indicates if the function has correctly been processed, and if not, the error message."""
         # If no last field is provided we stop here
         if lastField is None:
             msg = "Last field is not provided."
@@ -767,9 +739,9 @@ class Field(object):
         return (True, "")
 
     def getNextFieldInCurrentLayer(self):
-        """getNextFieldInCurrentLayer:
-            Computes the next field from the same layer.
-            Returns None if it doesn't exist"""
+        """Computes the next field from the same layer.
+        Returns None if it doesn't exist.
+        """
         parentField = self.getParentField()
         localFields = parentField.getLocalFields()
         indexField1 = localFields.index(self)
@@ -782,7 +754,8 @@ class Field(object):
     def getPreviousFieldInCurrentLayer(self):
         """getPreviousFieldInCurrentLayer:
         Computes and returns the previous field declared
-        on the same layer. It returns None if it doesn't exist"""
+        on the same layer. It returns None if it doesn't exist.
+        """
         parentField = self.getParentField()
         if parentField is None:
             return None
@@ -794,11 +767,9 @@ class Field(object):
         except IndexError:
             return None
 
-    #+----------------------------------------------
-    #| concatWithNextField:
-    #|  Concatenate the current field with the next one at the same level
-    #+----------------------------------------------
     def concatWithNextField(self):
+        """Concatenate the current field with the next one at the same level.
+        """
         # Retrieve the 2 fields to concatenate
         parentField = self.getParentField()
         localFields = parentField.getLocalFields()
@@ -842,12 +813,11 @@ class Field(object):
         localFields.remove(field2)
         return 1
 
-    #+----------------------------------------------
-    #| splitField:
-    #|  Split a field in two fields
-    #|  return False if the split does not occure, else True
-    #+----------------------------------------------
+
     def splitField(self, split_position, split_align):
+        """Split a field in two fields return False if
+        the split does not occure, else True.
+        """
         if split_position == 0:
             return False
 
@@ -914,22 +884,17 @@ class Field(object):
             parentField.removeLocalField(self)
             return True
 
-    #+-----------------------------------------------------------------------+
-    #| getPossibleTypes:
-    #|     Retrieve all the possible types for the current field
-    #+-----------------------------------------------------------------------+
     def getPossibleTypes(self):
-        # Retrieve all the part of the messages which are in the given field
+        """Retrieve all the part of the messages which are in the given field.
+        """
         cells = self.getUniqValuesByField()
         typeIdentifier = TypeIdentifier()
         return typeIdentifier.getTypes("".join(cells))
 
-    #+-----------------------------------------------------------------------+
-    #| getStyledPossibleTypes:
-    #|     Retrieve all the possibles types for a field and we colorize
-    #|     the selected one we an HTML RED SPAN
-    #+-----------------------------------------------------------------------+
     def getStyledPossibleTypes(self):
+        """Retrieve all the possibles types for a field and we colorize
+        the selected one we an HTML RED SPAN.
+        """
         tmpTypes = self.getPossibleTypes()
         for i in range(len(tmpTypes)):
             if tmpTypes[i] == self.getFormat():
@@ -938,13 +903,12 @@ class Field(object):
 
     ## Variable
     def generateDefaultVariable(self, symbol):
-        """generateDefaultVariable:
-                generates the default variable and returns it
+        """Generates the default variable and returns it.
 
-                @type symbol: netzob.Common.Symbol
-                @param symbol: the parent symbol.
-                @rtype: netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable
-                @return: the generated variable
+                :type symbol: netzob.Common.Symbol
+                :param symbol: the parent symbol.
+                :rtype: netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable
+                :return: the generated variable
         """
         variable = None
         if self.isStatic():
@@ -975,8 +939,8 @@ class Field(object):
 
     ## Fields
     def getAllFields(self):
-        """getAllFields: return all the fields (both layers and
-        leafs) starting from the current object
+        """Return all the fields (both layers and
+        leafs) starting from the current object.
         """
         res = []
         res.extend(self.getLocalFields())
@@ -985,7 +949,7 @@ class Field(object):
         return res
 
     def getParentField(self):
-        """getParentField: return the parent field
+        """Return the parent field.
         """
         for field in self.getSymbol().getAllFields():
             if self in field.getLocalFields():
@@ -1003,7 +967,7 @@ class Field(object):
             self.fields.pop()
 
     def flattenLocalFields(self):
-        """flattenLocalFields: merge the local fields of the current
+        """Merge the local fields of the current
         layer at the layer level.
         """
         if not self.isLayer():
@@ -1029,8 +993,7 @@ class Field(object):
             self.fields.pop(index)
 
     def removeEmptyFields(self, cb_status=None):
-        """
-        removeEmptyFields: we look for useless fields (i.e. fields
+        """We look for useless fields (i.e. fields
         that produces only empty cells) and remove them.
         """
         fieldsToRemove = []
@@ -1066,8 +1029,8 @@ class Field(object):
                 previousField.concatWithNextField()
 
     def removeLocalField(self, field):
-        """removeLocalField:
-        Remove from the current field's children, the provided field"""
+        """Remove from the current field's children, the provided field.
+        """
         if field in self.fields:
             self.fields.remove(field)
         else:
@@ -1101,7 +1064,7 @@ class Field(object):
         return layers
 
     def getFieldByID(self, ID):
-        """getFieldByID: Return the field which ID is provided.
+        """Return the field which ID is provided.
         """
         for field in self.getLocalFields():
             if str(field.getID()) == str(ID):
@@ -1113,9 +1076,8 @@ class Field(object):
         return None
 
     def getCells(self, encoded=False):
-        """getCells:
-        Return all the messages parts which are in
-        the specified field
+        """Return all the messages parts which are in
+        the specified field.
         """
         # First we verify the field exists in the symbol
         if not self in self.getSymbol().getAllFields():
@@ -1182,9 +1144,9 @@ class Field(object):
             return result
 
     def getSemanticTags(self):
-        """getSemanticTags:
-        Returns the semantic tags and their locations
-        for the specified field"""
+        """Returns the semantic tags and their locations
+        for the specified field.
+        """
 
         #result[i]=dict()   # dict[0...half-byte] = tag
         result = []
@@ -1232,7 +1194,8 @@ class Field(object):
     ## Messages
     def getMessages(self):
         """Computes and returns messages
-        associated with the current field"""
+           associated with the current field.
+        """
         return self.getSymbol().getMessages()
 
     def getMessageByID(self, ID):
@@ -1285,8 +1248,7 @@ class Field(object):
         return properties
 
     def save(self, root, namespace):
-        """save:
-                Creates an xml tree from a given xml root, with all necessary elements for the reconstruction of this field.
+        """Creates an xml tree from a given xml root, with all necessary elements for the reconstruction of this field.
 
                 @type root: lxml.etree.Element
                 @param root: the root of this xml tree.
@@ -1477,30 +1439,29 @@ class Field(object):
 #+---------------------------------------------------------------------------+
     @staticmethod
     def createDefaultField(symbol):
-        """createDefaultField:
-                Creates and returns the default field.
+        """Creates and returns the default field.
 
-                @rtype: netzob.Commons.Field.Field
-                @return: the built field.
+                :rtype: netzob.Commons.Field.Field
+                :return: the built field.
         """
         return Field("Default", "(.{,})", symbol)
 
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version, symbol):
-        """loadFromXML:
-                Loads a field from an xml file. This file ought to be written with the previous toXML function.
-                This function is called by the symbol loadFromXML function.
+        """Loads a field from an xml file. This file ought to be written with
+           the previous toXML function.This function is called by the symbol
+           loadFromXML function.
 
-                @type xmlRoot: lxml.etree.Element
-                @param xmlRoot: the xml root of the file we will read.
-                @type namespace: string
-                @param namespace: a precision for the xml tree.
-                @type version: string
-                @param version: if not 0.1, the function will done nothing.
-                @type symbol: netzob.Commons.Symbol.Symbol
-                @param symbol: the symbol which loadFromXML function called this function.
-                @rtype: netzob.Commons.Field.Field
-                @return: the built field.
+                :param xmlRoot: the xml root of the file we will read.
+                :type xmlRoot: lxml.etree.Element
+                :param namespace: a precision for the xml tree.
+                :type namespace: string
+                :param version: if not 0.1, the function will done nothing.
+                :type version: string
+                :param symbol: the symbol which loadFromXML function called this function.
+                :type symbol: netzob.Commons.Symbol
+                :return: the built field.
+                :rtype: netzob.Commons.Field.
         """
         if version == "0.1":
             field_id = str(xmlRoot.get("id"))
