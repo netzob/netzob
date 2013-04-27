@@ -30,7 +30,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import unittest
-from test_netzob.test_Common import suite_Type, suite_Functions, test_ExecutionContext
+from test_netzob.test_Common import suite_Type, suite_Functions, test_Field, test_ExecutionContext
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -40,7 +40,7 @@ from test_netzob.test_Common import suite_Type, suite_Functions, test_ExecutionC
 def getSuite():
     commonSuite = unittest.TestSuite()
 
-    modulesOfTests = [test_ExecutionContext]
+    modulesOfTests = [test_ExecutionContext, test_Field]
     modulesOfSuites = [suite_Type, suite_Functions]
 
     # Add individual tests
