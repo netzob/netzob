@@ -85,9 +85,9 @@ int parseArgs(PyObject* factobj, ...){
 }
 
 void parseLibscoreComputation(PyObject* factobj, va_list args){
-  long i;
+  unsigned int i;
   PyObject* pysize = NULL;
-  long* nbmess = va_arg(args,long*);
+  unsigned int* nbmess = va_arg(args,unsigned int*);
   t_message** messages = va_arg(args,t_message**);
   unsigned int debugMode = FALSE;
 
@@ -100,8 +100,8 @@ void parseLibscoreComputation(PyObject* factobj, va_list args){
      Find the number of elements in the list.
      This number of elements = number of messages (nbmess)
   */
-  pysize = PyLong_FromSsize_t(PyList_Size(list));
-  *nbmess = PyLong_AsLong(pysize);
+  pysize = PyInt_FromSsize_t(PyList_Size(list));
+  *nbmess = (unsigned int) PyInt_AsLong(pysize);
   Py_XDECREF(pysize);
 
   /**
@@ -209,10 +209,10 @@ void parseMessage(PyObject * item, t_message * message) {
 void parseLibNeedleman(PyObject* factobj, va_list args){
 
   PyObject* pysize = NULL;
-  long* nbmess = va_arg(args,long*);
+  unsigned int* nbmess = va_arg(args,unsigned int*);
   t_message** messages = va_arg(args,t_message**);
   unsigned int debugMode = FALSE;
-  long i;
+  unsigned int i;
 
   /**
      list : which is a list of messages
@@ -223,8 +223,8 @@ void parseLibNeedleman(PyObject* factobj, va_list args){
      Find the number of elements in the list.
      This number of elements = number of messages (nbmess)
   */
-  pysize = PyLong_FromSsize_t(PyList_Size(list));
-  *nbmess = PyLong_AsLong(pysize);
+  pysize = PyInt_FromSsize_t(PyList_Size(list));
+  *nbmess = (unsigned int) PyInt_AsLong(pysize);
   Py_XDECREF(pysize);
 
   /**
