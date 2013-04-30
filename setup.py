@@ -52,14 +52,14 @@ pluginsStaticResourcesPath = opj(staticResourcesPath, "plugins")
 #+----------------------------------------------------------------------------
 #| Compute the compilation arguments given the current compilation profile
 #+----------------------------------------------------------------------------
-# compileProfile = "[no-verify] debug|release"
+# compileProfile = "[no-verify] devel|release"
 #
 # Note :
 # if defined, the environment variable "NETZOB_COMPILE_PROFILE" sets
 # the compileProfile
 #
 # Available compilation profile
-#   - debug     : no optimization, include debugging symbols
+#   - devel     : no optimization, include debugging symbols and stop on compilation warnings
 #   - release   : activate optimization and symbols are stripped (default mode)
 # Static analysis
 #   - no-verify : deactivate the source code static analysis while compiling
@@ -81,8 +81,6 @@ if "no-verify" not in compileProfile:
     extraCompileArgs.extend([
         "-Wall",                # gcc says: "Enable most warning messages"
         "-Wextra",              # gcc says: "Print extra (possibly unwanted) warnings"
-        "-Werror",              # gcc says: "Error out the compiler on warnings"
-        "-pedantic-errors",     # gcc says: Issue errors "needed for strict compliance to the standard"
         "-Wunused",             # gcc says: "Enable all -Wunused- warnings"
         "-Wsign-compare",       # gcc says: "Warn about signed-unsigned comparisons"
         "-Wstrict-prototypes",  # gcc says: "Warn about unprototyped function declarations"
@@ -90,9 +88,11 @@ if "no-verify" not in compileProfile:
         "-Wshadow",             # gcc says: "Warn when one local variable shadows another"
         "-Wpointer-arith"])     # gcc says: "Warn about function pointer arithmetic"
 
-if "debug" in compileProfile:
+if "devel" in compileProfile:
     extraCompileArgs.extend([
         "-O0",                  # gcc says: "Optimization level 0"
+        "-Werror",              # gcc says: "Error out the compiler on warnings"
+        "-pedantic-errors",     # gcc says: "Issue errors "needed for strict compliance to the standard"
         "-g"])                  # gcc says: "Generate debug information in default format"
 
 elif "release" in compileProfile:
