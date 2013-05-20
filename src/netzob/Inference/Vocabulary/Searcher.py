@@ -202,10 +202,22 @@ class Searcher(object):
         stringMutations["Lower Original string"] = string.lower(value)
 
         for mutationDescription, mutation in stringMutations.items():
-            task.registerVariation(TypeConvertor.stringToNetzobRaw(mutation), "{0} ({1})".format(mutationDescription, mutation))
-            task.registerVariation(TypeConvertor.stringToNetzobRaw(mutation.encode('utf-8')), "UTF-8 of '{0}' ({1})".format(mutationDescription, mutation))
-            task.registerVariation(TypeConvertor.stringToNetzobRaw(mutation.encode('utf-16le')), "UTF-16 LE '{0}' ({1})".format(mutationDescription, mutation))
-            task.registerVariation(TypeConvertor.stringToNetzobRaw(mutation.encode('utf-16be')), "UTF-16 BE '{0}' ({1})".format(mutationDescription, mutation))
+            try:
+                task.registerVariation(TypeConvertor.stringToNetzobRaw(mutation), "{0} ({1})".format(mutationDescription, mutation))
+            except:
+                pass
+            try:
+                task.registerVariation(TypeConvertor.stringToNetzobRaw(mutation.encode('utf-8')), "UTF-8 of '{0}' ({1})".format(mutationDescription, mutation))
+            except:
+                pass
+            try:
+                task.registerVariation(TypeConvertor.stringToNetzobRaw(mutation.encode('utf-16le')), "UTF-16 LE '{0}' ({1})".format(mutationDescription, mutation))
+            except:
+                pass
+            try:
+                task.registerVariation(TypeConvertor.stringToNetzobRaw(mutation.encode('utf-16be')), "UTF-16 BE '{0}' ({1})".format(mutationDescription, mutation))
+            except:
+                pass
 
         return [task]
 
