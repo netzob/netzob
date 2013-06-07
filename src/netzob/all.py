@@ -29,6 +29,9 @@
 ##    $ grep -hnir "^from netzob.Common" src/netzob |grep -v '\\' | awk -F ":" '{print $2}' | sort|uniq
 ##    $ grep -hnir "^from netzob.Inference" src/netzob |grep -v '\\' | awk -F ":" '{print $2}' | sort|uniq
 
+# Release
+from netzob import release
+
 # Common
 from netzob.Common.ApplicativeData import ApplicativeData
 from netzob.Common.ApplicativeData import ApplicativeData, ApplicativeDataException

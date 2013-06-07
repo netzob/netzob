@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -29,51 +28,46 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import sys
-import logging
-logging.basicConfig(level=logging.DEBUG)
-import os
-from gi.repository import GObject
+from gettext import gettext as _
+import code
 
 #+---------------------------------------------------------------------------+
-#| Local imports
+#| Related third party imports
 #+---------------------------------------------------------------------------+
-sys.path.insert(0, 'src/')
-from netzob.Common.CommandLine import CommandLine
+
+#+---------------------------------------------------------------------------+
+#| Local application imports
+#+---------------------------------------------------------------------------+
 from netzob import release
 
-if __name__ == "__main__":
 
-    # Parsing Command Line arguments
-    commandLineParser = CommandLine()
+class NetzobInteractiveSessionController(object):
+    """Execute Netzob in an Interactive Session"""
 
-    # Compute the requested execution following the provided arguments
-    commandLineParser.parse()
+    DEFAULT_INTERPRETOR = "python -i"
 
-    # Starting the dependency checker
-    from netzob.Common.DepCheck import DepCheck
-    if not DepCheck.checkRequiredDependency():
-        logging.fatal("Some required dependency are not available and prevent netzob from starting.")
-        sys.exit()
+    def __init__(self):
+        self.console = code.InteractiveConsole()
+        self.interpretor = NetzobInteractiveSessionController.DEFAULT_INTERPRETOR
 
-    # Insert in the path the directory where _libNeedleman.pyd is
-    # TODO here !
-    if os.name == 'nt':
-        sys.path.insert(0, 'lib/libNeedleman/')
+    def start(self):
+        if self.interpretor == NetzobInteractiveSessionController.DEFAULT_INTERPRETOR:
+            self.console.runsource("from netzob.all import *")
+            self.console.interact(banner=self.getBanner())
 
-    # Launch the GUI or the plugin manager
-    if commandLineParser.isStartGUIRequested():
-        GObject.threads_init()  # for handling concurrent GUI access from threads
-        from netzob.NetzobMainController import NetzobMainController
-        netzobController = NetzobMainController()
-        netzobController.run()
-    # Display the management of plugins
-    elif commandLineParser.isManagePluginsRequested():
-        from netzob.NetzobPluginManagement import NetzobPluginManagement
-        netzobPluginManagement = NetzobPluginManagement(commandLineParser)
-        netzobPluginManagement.start()
-    # Launch the interactive session
-    elif commandLineParser.isInteractiveConsoleRequested():
-        from netzob.NetzobInteractiveSessionController import NetzobInteractiveSessionController
-        interactiveSession = NetzobInteractiveSessionController()
-        interactiveSession.start()
+    def getBanner(self):
+        """getBanner:
+        Computes and returns a string which includes the
+        banner to display on the interpretor startup.
+        @return L{str}"""
+        return """
++-----------------------------------------------------
+| {0} {1} - {2}
++-----------------------------------------------------
+| See Copyright:\t release.copyright
+| See Contributors:\t release.contributors
+| See License:\t\t release.license
++-----------------------------------------------------
+| Reverse Deeper with Netzob ({3})
++-----------------------------------------------------
+""".format(release.appname, release.version, release.versionName, release.url)
