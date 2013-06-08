@@ -29,12 +29,9 @@
 #| Global Imports
 #+----------------------------------------------------------------------------
 from distutils.core import Command
-from unittest import TextTestRunner, TestLoader
-from glob import glob
-from os.path import splitext, basename, join as pjoin, walk
 import os
 import sys
-
+import unittest
 
 class test_command(Command):
     user_options = [('reportfile=', None, 'name of the generated XML report file (not required)') ]
@@ -74,24 +71,13 @@ class test_command(Command):
 
         # We retrieve the current test suite
         currentTestSuite = suite_global.getSuite()
-    
-        # We execute the test suite
-        File = open(self.reportfile, "w")
-        reporter = XMLTestRunner(File)
-        reporter.run(currentTestSuite)
-        File.close()
 
-
-        # runner = TextTestRunner()
-        # testResult = runner.run(currentTestSuite)
-
-        
-
-        # if (outputStdout == True) :
-        #     runner = TextTestRunner()
-        #     testResult = runner.run(currentTestSuite)
-        # else :
-        #     File = open(reportFile, "w")
-        #     reporter = XMLTestRunner(File)
-        #     reporter.run(currentTestSuite)
-        #     File.close()
+        if self.reportfile is None or len(self.reportfile) == 0:
+            runner = unittest.TextTestRunner()
+            testResult = runner.run(currentTestSuite)
+        else:
+            # We execute the test suite
+            File = open(self.reportfile, "w")
+            reporter = XMLTestRunner(File)
+            reporter.run(currentTestSuite)
+            File.close()
