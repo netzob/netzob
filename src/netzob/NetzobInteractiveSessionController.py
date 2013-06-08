@@ -52,7 +52,7 @@ class NetzobInteractiveSessionController(object):
 
     def start(self):
         if self.interpretor == NetzobInteractiveSessionController.DEFAULT_INTERPRETOR:
-            self.console.runsource("from netzob.all import *")
+            self.console.runsource("from netzob import *")
             self.console.interact(banner=self.getBanner())
 
     def getBanner(self):
@@ -61,13 +61,13 @@ class NetzobInteractiveSessionController(object):
         banner to display on the interpretor startup.
         @return L{str}"""
         return """
-+-----------------------------------------------------
++----------------------------------------------------+
 | {0} {1} - {2}
-+-----------------------------------------------------
-| See Copyright:\t release.copyright
-| See Contributors:\t release.contributors
-| See License:\t\t release.license
-+-----------------------------------------------------
++----------------------------------------------------+
+| Copyright:\t print release.copyright
+| Contributors:\t print release.contributors
+| License:\t print release.license
++----------------------------------------------------+
 | Reverse Deeper with Netzob ({3})
-+-----------------------------------------------------
++----------------------------------------------------+
 """.format(release.appname, release.version, release.versionName, release.url)
