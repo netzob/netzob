@@ -44,6 +44,7 @@
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
 
+
 class Protocol(object):
     """The model of a protocol.
 
