@@ -30,61 +30,22 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import unittest
-import sys
+import doctest
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from test_netzob import suite_Common
-from test_netzob import suite_Alignment
-from test_netzob import suite_Tutorials
-from test_netzob import suite_DocTests
-
-#from test_netzob import suite_Import
-from common.xmlrunner import XMLTestRunner
+from netzob import *
 
 
 def getSuite():
-    globalSuite = unittest.TestSuite()
-
-    modulesOfTests = []
-    modulesOfSuites = [
-        suite_DocTests,  # tests extracted from docstrings (doctests)
-        suite_Common,
-        suite_Alignment,
-        suite_Tutorials
+    # List of modules to include in the list of tests
+    modules = [
+        Protocol.__module__,
+        Field.__module__
     ]
-    # modulesOfTests = [test_NetzobGui]
 
-    # Add individual tests
-    for module in modulesOfTests:
-        globalSuite.addTests(unittest.TestLoader().loadTestsFromModule(module))
-
-    # Add suites
-    for module in modulesOfSuites:
-        globalSuite.addTests(module.getSuite())
-
-    return globalSuite
-
-
-if __name__ == "__main__":
-    # Output is given through argument.
-    # If no argument: output to stdout
-    outputStdout = True
-
-    if (len(sys.argv) == 2):
-        outputStdout = False
-        reportFile = sys.argv[1]
-
-    # We retrieve the current test suite
-    currentTestSuite = getSuite()
-
-    # We execute the test suite
-    if outputStdout:
-        runner = unittest.TextTestRunner()
-        testResult = runner.run(currentTestSuite)
-    else:
-        File = open(reportFile, "w")
-        reporter = XMLTestRunner(File)
-        reporter.run(currentTestSuite)
-        File.close()
+    suite = unittest.TestSuite()
+    for mod in modules:
+        suite.addTest(doctest.DocTestSuite(mod))
+    return suite
