@@ -45,7 +45,7 @@ from netzob.Common.Project import Project
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
 
-from netzob.all import *
+from netzob import *
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
