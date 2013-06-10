@@ -46,4 +46,29 @@ from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 
 
 class Symbol(AbstractField):
-    pass
+
+    def __init__(self, fields=None, name=None):
+        """
+        :keyword fields: the fields which participate in symbol definition
+        :type fields: a :class:`list` of :class:`netzob.Common.Models.Vocabulary.Field`
+        :keyword name: the name of the symbol
+        :type name: :class:`str`
+        """
+        super(Symbol, self).__init__(name, None, True)
+        self.children = fields
+
+    def generate(self, mutator=None):
+        """Generate an hexastring which content
+        follows the fields definitions attached to current element.
+
+        :keyword mutator: if set, the mutator will be used to mutate the fields definitions
+        :type mutator: :class:`netzob.Common.Models.Mutators.AbstractMutator`
+
+        :return: a generated content represented with an hexastring
+        :rtype: :class:`str``
+        :raises: :class:`netzob.Common.Models.Vocabulary.AbstractField.GenerationException` if an error occurs while generating a message
+        """
+        content = []
+        for child in self.children:
+            content.append(child.generate(mutator))
+        return ''.join(content)
