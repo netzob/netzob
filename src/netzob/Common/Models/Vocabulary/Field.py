@@ -35,18 +35,22 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 
+
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Types.Decimal import Decimal
-from netzob.Common.Models.Types.ASCII import ASCII
-from netzob.Common.Models.Types.AbstractType import AbstractType
+from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken import VariableWritingToken
+from netzob.Common.MMSTD.Dictionary.Memory import Memory
+from netzob.Common.Models.Vocabulary.AbstractField import InvalidVariableException
+from netzob.Common.Models.Vocabulary.Domain.DomainFactory import DomainFactory
+from netzob.Common.MMSTD.Dictionary.Variables.VariableFactory import VariableFactory
 
 
 class InvalidDomainException(Exception):
@@ -69,27 +73,45 @@ class Field(AbstractField):
     The value that can take the field is defined by its definition domain.
     It can be a simple static value such an ASCII or a decimal but also more complex such as including transformation or encoding filters and relations.
 
-    Here are few examples, of reccurent fields:
+    Here are few examples of 'simple' fields:
 
     a field containing the decimal value 100
 
-    >>> f = Field([100])
+    >>> from netzob import *
+    >>> f = Field(100)
 
-    a field representing two differents ASCII
+    a field containing a specific binary: '1000' = 8 in decimal
 
-    >>> f = Field([“netzob”, “zoby”])
+    >>> f = Field(0b1000)
+
+    a field containing a raw value of 8 bits (1 byte)
+
+    >>> f = Field(Raw(size=8))
 
     a field representing a random IPv4
 
-    >>> f = Field([ IPv4()])
+    >>> f = Field(IPv4())
 
     a field representing a random ASCII of 6 characters length
 
-    >>> f = Field([ASCII(size=6)])
+    >>> f = Field(ASCII(size=6))
 
     a field representing a random ASCII with between 5 and 20 characters
 
-    >>> payloadField = Field([ASCII(size=(5, 20))])
+    >>> payloadField = Field(ASCII(size=(5, 20)))
+
+
+
+    Here are few examples of 'alternative' fields:
+
+    a field representing two differents ASCII, "netzob" or "zoby"
+
+    >>> f = Field(["netzob", "zoby"])
+
+    a field representing a decimal (10) or an ASCII of 6 chars,
+
+    >>> f = Field([10, ASCII(size=10)])
+
 
     a field which value is the size of the payloadField
 
@@ -97,10 +119,10 @@ class Field(AbstractField):
 
     """
 
-    def __init__(self, domain=[Raw(None)], name=None, layer=False):
+    def __init__(self, domain=None, name=None, layer=False):
         """
         :keyword domain: the definition domain of the field (see domain property to get more information)
-        :type domain: a :class:`list` of :class:`object`
+        :type domain: a :class:`list` of :class:`object`, default is Raw(None)
         :keyword name: the name of the field
         :type name: :class:`str`
         :keyword layer: a flag indicating if field is a layer
@@ -108,8 +130,48 @@ class Field(AbstractField):
 
         """
         super(Field, self).__init__(name, None, layer)
-        self.__domain = [Raw(None)]
-        self.domain = domain
+        if domain is None:
+            domain = Raw(None)
+        self.__domain = domain
+
+    def generate(self, mutator=None):
+        """Generate an hexastring which content
+        follows the fields definitions attached to current element.
+
+        :keyword mutator: if set, the mutator will be used to mutate the fields definitions
+        :type mutator: :class:`netzob.Common.Models.Mutators.AbstractMutator`
+
+        :return: a generated content represented with an hexastring
+        :rtype: :class:`str``
+        :raises: :class:`netzob.Common.Models.Vocabulary.AbstractField.GenerationException` if an error occurs while generating a message
+        """
+        if self._variable is None:
+            raise InvalidVariableException("No variable defined")
+        writingToken = VariableWritingToken(negative=False, vocabulary=None, memory=Memory(), value=bitarray(), generationStrategy=["random"])
+        self._variable.write(writingToken)
+        return writingToken.getValue().tobytes()
+
+    def __syncVariable(self):
+        """Synchronizes the definition of the variable with the
+        current definition of the domain.
+
+        :raises: :class:`netzob.Common.Models.Vocabulary.AbstractField.InvalidVariableException` if an error occurs during the process
+        """
+        self._variable = VariableFactory.buildVariableForDomain(self.domain)
+
+    def __normalizeDomain(self, domain):
+        """Normalize the provided domain and verify its valid.
+
+        Analyzes the provided domain and build a normalized domain definition
+
+        :param domain: the domain to normalize
+        :type domain: :class:`object`
+
+        :return: a normalized domain object
+        :rtype: :class:`object`
+        :raises: :class:`netzob.Common.Models.Vocabulary.AbstractField.InvalidDomainException` if the domain is not valid
+        """
+        return DomainFactory.normalizeDomain(domain)
 
     @property
     def domain(self):
@@ -127,21 +189,5 @@ class Field(AbstractField):
 
     @domain.setter
     def domain(self, domain):
-        temporaryDomain = []
-        if not isinstance(domain, list):
-            temporaryDomain.append(domain)
-        else:
-            temporaryDomain = domain
-
-        self.__domain = []
-
-        # check provided domain is valid
-        for value in temporaryDomain:
-            if isinstance(value, int):
-                self.__domain.append(Decimal(value))
-            elif isinstance(value, str):
-                self.__domain.append(ASCII(value))
-            elif isinstance(value, AbstractType):
-                self.__domain.append(value)
-            else:
-                raise InvalidDomainException("Domain entry {0} is not valid.".format(value))
+        self.__domain = self.__normalizeDomain(domain)
+        self.__syncVariable()
