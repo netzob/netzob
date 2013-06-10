@@ -35,6 +35,8 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import uuid
+import abc
+import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -52,6 +54,14 @@ from netzob.Common.Models.Vocabulary.Functions.TransformationFunction import Tra
 from netzob.Common.Utils.TypedList import TypedList
 
 
+class InvalidVariableException(Exception):
+    """This exception is raised when the variable behing the definition
+    a field domain (and structure) is not valid. The variable definition
+    is upgraded everytime the domain is modified.
+    """
+    pass
+
+
 class AlignmentException(Exception):
     pass
 
@@ -63,7 +73,10 @@ class NoSymbolException(Exception):
 class AbstractField(AbstractMementoCreator):
     """Represents all the different classes which participates in fields definitions of a message format."""
 
+    __metaclass__ = abc.ABCMeta
+
     def __init__(self, name=None, regex=None, layer=False):
+        self.__logger = logging.getLogger(__name__)
         self.__id = uuid.uuid4()
         self.__name = name
         self.__regex = regex
@@ -76,6 +89,8 @@ class AbstractField(AbstractMementoCreator):
         self.__encodingFunctions = TypedList(EncodingFunction)
         self.__visualizationFunctions = TypedList(VisualizationFunction)
         self.__transformationFunctions = TypedList(TransformationFunction)
+
+        self._variable = None
 
     def getCells(self, encoded=False, styled=False, transposed=False):
         """Returns a matrix with a different line for each messages attached to the symbol of the current element.
@@ -115,6 +130,20 @@ class AbstractField(AbstractMementoCreator):
         :raises: :class:`netzob.Common.Models.Vocabulary.AbstractField.AlignmentException` if an error occurs while aligning messages
         """
         return []
+
+    @abc.abstractmethod
+    def generate(self, mutator=None):
+        """Generate a :class:`netzob.Common.Models.Vocabulary.Messages.RawMessage` which content
+        follows the fields definitions attached to current element.
+
+        :keyword mutator: if set, the mutator will be used to mutate the fields definitions
+        :type mutator: :class:`netzob.Common.Models.Mutators.AbstractMutator`
+
+        :return: a generated content represented with an hexastring
+        :rtype: :class:`str`
+        :raises: :class:`netzob.Common.Models.Vocabulary.AbstractField.GenerationException` if an error occurs while generating a message
+        """
+        return
 
     def getSymbol(self):
         """Computes the symbol to which this field is attached.
