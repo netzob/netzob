@@ -31,7 +31,6 @@
 from locale import gettext as _
 import logging
 from netzob.Inference.Vocabulary.Clustering.AbstractClusteringAlgorithm import AbstractClusteringAlgorithm
-from netzob.UI.Vocabulary.Controllers.Clustering.UPGMA.UPGMAClusteringConfigurationController import UPGMAClusteringConfigurationController
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -78,6 +77,7 @@ class UPGMAClustering(AbstractClusteringAlgorithm):
 
     def getConfigurationController(self):
         """Create the controller which allows the configuration of the algorithm"""
+        from netzob.UI.Vocabulary.Controllers.Clustering.UPGMA.UPGMAClusteringConfigurationController import UPGMAClusteringConfigurationController
         controller = UPGMAClusteringConfigurationController(self)
         return controller
 
