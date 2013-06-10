@@ -66,7 +66,6 @@ def getSuite():
 
     return globalSuite
 
-
 if __name__ == "__main__":
     # Output is given through argument.
     # If no argument: output to stdout

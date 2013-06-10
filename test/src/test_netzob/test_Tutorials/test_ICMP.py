@@ -42,11 +42,34 @@ class test_ICMP(NetzobTestCase):
     def test_generateICMP(self):
         """test_generateICMP:
         """
-        logging.debug("Test : generate ICMP.")
+        logging.debug("Test : generate some ICMP Echo Request.")
 
-        icmp = Protocol("ICMP")
-        pingHeader = [Field(8), Field(0), Field(0)]
-        pingPayload = Field(ASCII(size=50))
-        pingHeader[2] = Field(CRC16(pingHeader[0:2] + [pingPayload]))
-        ping = Symbol(pingHeader + [pingPayload])
-        print ping.generate()
+        # Build header : 3 fields
+        pingHeader = [
+            Field(name="Type"),
+            Field(name="Code"),
+            Field(name="Checksum")
+        ]
+
+        # Create a payload with a 1 single field
+        pingPayload = [
+            Field(name="Payload")
+        ]
+
+        # field 1 : type - 1 byte
+        pingHeader[0].domain = Raw(size=8)
+
+        # field 2 : code - 1 byte
+        pingHeader[1].domain = Raw(size=8)
+
+        # field 3 : checksum - 2 bytes
+        pingHeader[2].domain = Raw(size=16)
+        #pingHeader[2].domain = [Raw(CRC16(pingHeader + pingPayload), size=16)]
+
+        # field 4 : we put an ascii of 50 chars in the payload
+        pingPayload[0].domain = "hello"
+
+        ping = Symbol(pingHeader + pingPayload)
+        msg = ping.generate()
+
+        logging.debug("MSG = '{0}'".format(repr(msg)))

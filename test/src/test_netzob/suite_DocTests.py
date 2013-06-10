@@ -42,7 +42,12 @@ def getSuite():
     # List of modules to include in the list of tests
     modules = [
         Protocol.__module__,
-        Field.__module__
+        Field.__module__,
+        RawMessage.__module__,
+        VariableFactory.__module__,
+        DomainFactory.__module__,
+        Alt.__module__,
+        Agg.__module__,
     ]
 
     suite = unittest.TestSuite()
