@@ -30,4 +30,4 @@
 # see docs.python.org/2/tutorial/modules.html
 from Protocol import Protocol
 from Vocabulary import *
-
+from Types import *
