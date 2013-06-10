@@ -36,9 +36,9 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 
 
-from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+#from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob import NetzobResources
-from netzob.Common.Workspace import Workspace
+#from netzob.Common.Workspace import Workspace
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -52,20 +52,21 @@ class NetzobTestCase(unittest.TestCase):
         self.debug = True
 
     def setUp(self):
+        pass
         # We compute the static resources path
-        resourcesPath = "resources/"
-        staticPath = os.path.join(resourcesPath, "static/netzob/")
-        NetzobResources.STATIC_DIR = staticPath
+        # resourcesPath = "resources/"
+        # staticPath = os.path.join(resourcesPath, "static/netzob/")
+        # NetzobResources.STATIC_DIR = staticPath
 
-        # We compute the test (user) resources path
-        resourcesPath = "test/resources/"
-        # We retrieve the full name of the child class (the caller)
-        for m in self.__class__.__module__.split('.'):
-            resourcesPath = os.path.join(resourcesPath, m)
-        workspacePath = os.path.join(resourcesPath, ResourcesConfiguration.VAR_WORKSPACE_LOCALFILE)
-        # Before setting workspace, we verify it exists
-        if os.path.isdir(workspacePath):
-            NetzobResources.WORKSPACE_DIR = workspacePath
+        # # We compute the test (user) resources path
+        # resourcesPath = "test/resources/"
+        # # We retrieve the full name of the child class (the caller)
+        # for m in self.__class__.__module__.split('.'):
+        #     resourcesPath = os.path.join(resourcesPath, m)
+        # workspacePath = os.path.join(resourcesPath, ResourcesConfiguration.VAR_WORKSPACE_LOCALFILE)
+        # # Before setting workspace, we verify it exists
+        # if os.path.isdir(workspacePath):
+        #     NetzobResources.WORKSPACE_DIR = workspacePath
 
     def getWorkspace(self):
         return Workspace.loadWorkspace(NetzobResources.WORKSPACE_DIR)
