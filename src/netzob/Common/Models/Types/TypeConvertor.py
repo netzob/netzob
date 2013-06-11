@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -26,10 +25,31 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-# List subpackages to import with the current one
-# see docs.python.org/2/tutorial/modules.html
-from Raw import Raw
-from ASCII import ASCII
-from Decimal import Decimal
-from TypeConvertor import TypeConvertor
+#+---------------------------------------------------------------------------+
+#| Standard library imports                                                  |
+#+---------------------------------------------------------------------------+
 
+#+---------------------------------------------------------------------------+
+#| Related third party imports                                               |
+#+---------------------------------------------------------------------------+
+
+
+#+---------------------------------------------------------------------------+
+#| Local application imports                                                 |
+#+---------------------------------------------------------------------------+
+
+
+class TypeConvertor(object):
+    """A set of static methods to convert data
+    from a type to another one.
+
+    The various formats supported in Netzob:
+    - bitarray
+
+    >>> input = bitarray('0110101111010111')
+    >>> bin = TypeConvertor.bitarrayToBin(input)
+    >>> output = TypeConvertor.binToBitarray(bin)
+    >>> input == output
+
+    """
+    pass
