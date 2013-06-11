@@ -48,4 +48,4 @@ from netzob.Common.Models.Types.AbstractType import AbstractType
 class Raw(AbstractType):
 
     def __init__(self, value=None, size=None):
-        super(Raw, self).__init__(value, size)
+        super(Raw, self).__init__(self.__class__.__name__, value, size)
