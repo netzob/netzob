@@ -42,13 +42,30 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.Utils.Decorators import typeCheck
 
 
 class AbstractType(object):
 
-    def __init__(self, value=None, size=None):
+    def __init__(self, typeName, value=None, size=None):
+        self.__typeName = typeName
         self.__value = value
         self.__size = size
+
+    @property
+    def typeName(self):
+        """The name of the implemented type. We recommend
+        to set this value with the name of :  Type.__class__.__name__.
+
+        :type: `str`
+        :raises: :class: `TypeError` if typeName is not an str
+        """
+        return self.__typeName
+
+    @typeName.setter
+    @typeCheck(str)
+    def typeName(self, typeName):
+        self.__typeName = typeName
 
     @property
     def value(self):
