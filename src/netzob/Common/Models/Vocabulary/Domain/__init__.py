@@ -28,6 +28,5 @@
 
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
-from Alt import Alt
-from Agg import Agg
+from Variables import *
 from DomainFactory import DomainFactory
