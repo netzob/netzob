@@ -42,8 +42,8 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Models.Vocabulary.Domain.Alt import Alt
-from netzob.Common.Models.Vocabulary.Domain.Agg import Agg
+from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Alt import Alt
+from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Agg import Agg
 from netzob.Common.Models.Types.Decimal import Decimal
 from netzob.Common.Models.Types.ASCII import ASCII
 from netzob.Common.Models.Types.AbstractType import AbstractType
@@ -56,7 +56,7 @@ class DomainFactory(object):
 
     >>> from netzob import *
     >>> domain = DomainFactory.normalizeDomain([Raw(), 10])
-    >>> print domain.nodeType
+    >>> print domain.varType
     Alt
     >>> print domain.children[0].__class__.__name__
     Raw
@@ -64,9 +64,9 @@ class DomainFactory(object):
     Decimal
 
     >>> domain = DomainFactory.normalizeDomain(Agg([Alt(["toto", 20]), ASCII("!")]))
-    >>> print domain.nodeType
+    >>> print domain.varType
     Agg
-    >>> print domain.children[0].nodeType
+    >>> print domain.children[0].varType
     Alt
     >>> print domain.children[0].children[1].__class__.__name__
     Decimal
