@@ -34,23 +34,19 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-
+import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken import VariableWritingToken
-from netzob.Common.MMSTD.Dictionary.Memory import Memory
-from netzob.Common.Models.Vocabulary.AbstractField import InvalidVariableException
 from netzob.Common.Models.Vocabulary.Domain.DomainFactory import DomainFactory
-from netzob.Common.MMSTD.Dictionary.Variables.VariableFactory import VariableFactory
+from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken import VariableWritingToken
 
 
 class InvalidDomainException(Exception):
@@ -130,48 +126,43 @@ class Field(AbstractField):
 
         """
         super(Field, self).__init__(name, None, layer)
+        self.__logger = logging.getLogger(__name__)
         if domain is None:
             domain = Raw(None)
-        self.__domain = domain
+        self.domain = domain
 
-    def generate(self, mutator=None):
+    def generate(self, generationStrategy=None):
         """Generate an hexastring which content
         follows the fields definitions attached to current element.
 
-        :keyword mutator: if set, the mutator will be used to mutate the fields definitions
-        :type mutator: :class:`netzob.Common.Models.Mutators.AbstractMutator`
+        This method allows to generate some content following the field definition:
+
+        >>> from netzob import *
+        >>> f = Field("hello")
+        >>> print f.generate()
+        hello
+
+        This method also applies on multiple fields using a Symbol
+
+        >>> fHello = Field("hello")
+        >>> fName = Field(Alt(["zoby", "netzob"]))
+        >>> s = Symbol([fHello, fName])
+        >>> print s.generate()
+
+        :keyword generatorStrategy: if set, this generation strategy will be used to pilot this generation process
+        :type generatorStrategy: :class:`object`
 
         :return: a generated content represented with an hexastring
         :rtype: :class:`str``
         :raises: :class:`netzob.Common.Models.Vocabulary.AbstractField.GenerationException` if an error occurs while generating a message
         """
-        if self._variable is None:
-            raise InvalidVariableException("No variable defined")
-        writingToken = VariableWritingToken(negative=False, vocabulary=None, memory=Memory(), value=bitarray(), generationStrategy=["random"])
-        self._variable.write(writingToken)
+        if self.__domain is None:
+            raise InvalidDomainException("The domain is not defined.")
+
+        # Create a Variable Writing Token
+        writingToken = VariableWritingToken(generationStrategy=generationStrategy)
+        self.domain.write(writingToken)
         return writingToken.getValue().tobytes()
-
-    def __syncVariable(self):
-        """Synchronizes the definition of the variable with the
-        current definition of the domain.
-
-        :raises: :class:`netzob.Common.Models.Vocabulary.AbstractField.InvalidVariableException` if an error occurs during the process
-        """
-        self._variable = VariableFactory.buildVariableForDomain(self.domain)
-
-    def __normalizeDomain(self, domain):
-        """Normalize the provided domain and verify its valid.
-
-        Analyzes the provided domain and build a normalized domain definition
-
-        :param domain: the domain to normalize
-        :type domain: :class:`object`
-
-        :return: a normalized domain object
-        :rtype: :class:`object`
-        :raises: :class:`netzob.Common.Models.Vocabulary.AbstractField.InvalidDomainException` if the domain is not valid
-        """
-        return DomainFactory.normalizeDomain(domain)
 
     @property
     def domain(self):
@@ -182,12 +173,10 @@ class Field(AbstractField):
 
         :type: a :class:`list` of :class:`object` -- By object we refer to a primitive object (:class:`int`, :class:`str`, :class:`hex`, :class:`binary`) and netzob types objects inherited from :class:`netzob.Common.Models.Types.AbstractType.AbstractType`
         :raises: :class:`netzob.Common.Models.Vocabulary.Field.InvalidDomainException` if domain invalid.
-
         """
 
         return self.__domain
 
     @domain.setter
     def domain(self, domain):
-        self.__domain = self.__normalizeDomain(domain)
-        self.__syncVariable()
+        self.__domain = DomainFactory.normalizeDomain(domain)
