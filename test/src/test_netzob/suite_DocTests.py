@@ -44,10 +44,11 @@ def getSuite():
         Protocol.__module__,
         Field.__module__,
         RawMessage.__module__,
-        VariableFactory.__module__,
         DomainFactory.__module__,
         Alt.__module__,
         Agg.__module__,
+        Memory.__module__,
+        TypeConvertor.__module__,
     ]
 
     suite = unittest.TestSuite()
