@@ -43,48 +43,24 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
 
 
-class DomainNode(object):
-    """Represents a node in the domain definition which has some child
+class Alt(AbstractVariableNode):
+    """Represents an Alternative (OR) in the domain definition
 
-    Alternative (:class:`netzob.Common.Models.Vocabulary.Domain.Alt.Alt`)
-    and Aggregate (:class:`netzob.Common.Models.Vocabulary.Domain.Agg.Agg`) inherit
-    from this.
+    To create an alternative:
+
+    >>> from netzob import *
+    >>> domain = Alt([Raw(), ASCII()])
+    >>> print domain.varType
+    Alt
+    >>> print domain.children[0].__class__.__name__
+    Raw
+    >>> print domain.children[1].__class__.__name__
+    ASCII
     """
-    def __init__(self, nodeType, children=None):
+
+    def __init__(self, children=None):
+        super(Alt, self).__init__(self.__class__.__name__, children)
         self.__logger = logging.getLogger(__name__)
-        self.__nodeType = nodeType
-        self._children = []
-        if children is not None:
-            self.children = children
-
-    @property
-    def nodeType(self):
-        """The type of the domain node.
-
-        :type: `str`
-        :raises: :class:`TypeError` if node type is not an str.
-        """
-        return self.__nodeType
-
-    @nodeType.setter
-    @typeCheck(str)
-    def nodeType(self, nodeType):
-        self.__nodeType = nodeType
-
-    @property
-    def children(self):
-        """Sorted typed list of children attached to the domain node.
-        .. warning:: Setting this value with a list copies its members and not the list itself.
-
-        :type: a list of :class:`netzob.Common.Models.Vocabulary.Domain.DomainNode`
-
-        """
-        return self._children
-
-    @children.setter
-    def children(self, children):
-        for child in children:
-            self._children.append(child)

@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
@@ -26,15 +26,8 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| File contributors :                                                       |
-#|       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
-#|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
-#+---------------------------------------------------------------------------+
-
-#+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -43,22 +36,42 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Models.Vocabulary.Domain.DomainNode import DomainNode
+from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken import AbstractVariableProcessingToken
+from netzob.Common.Models.Types.TypeConvertor import TypeConvertor
+from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 
 
-class Alt(DomainNode):
-    """Represents an Alternative (OR) in the domain definition
+class VariableReadingToken(AbstractVariableProcessingToken):
+    """A communication token used by variable when they are read."""
 
-    To create an alternative:
+    def __init__(self, memory=None, value=None, index=0):
+        """Constructor of VariableReadingToken:
 
-    >>> from netzob import *
-    >>> domain = Alt([Raw(), ASCII()])
-    >>> print domain.children[0].__class__.__name__
-    Raw
-    >>> print domain.children[1].__class__.__name__
-    ASCII
-    """
+        :param index: the current reading index in the read value.
+        :type index: :class:`int`
+        :raise: :class:`ValueError` or :class:`TypeError` if parameters are not valid
+        """
+        super(VariableReadingToken, self).__init__(memory, value)
+        self.index = index
 
-    def __init__(self, children=None):
-        super(Alt, self).__init__(self.__class__.__name__, children)
-        self.__logger = logging.getLogger(__name__)
+    def toString(self):
+        """Used for debug purpose."""
+        return "ReadingToken: isOk: {0}, value left: {1}".format(self.isOk, TypeConvertor.bitarrayToBin(self.value[self.index:]))
+
+    @typeCheck(AbstractVariable, int)
+    def read(self, variable, increment):
+        """A variable reads a piece of the token value.
+
+        :param variable: store the index+increment section to the variable
+        :type variable: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
+        :param increment: the size of the section for which the variable matches >=0
+        :type increment: :class:`int`
+        :raise: :class:`ValueError` or :class:`TypeError` if parameters are not valid
+
+        """
+        if increment < 0:
+            raise ValueError("Increment must be >=0")
+
+        self.linkedValues.append((variable.id, self.value[self.index:self.index + increment]))
+        self.index += increment

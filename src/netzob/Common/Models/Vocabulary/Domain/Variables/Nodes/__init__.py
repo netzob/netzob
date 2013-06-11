@@ -1,4 +1,5 @@
-#-*- coding: utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
@@ -25,41 +26,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| File contributors :                                                       |
-#|       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
-#|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
-#+---------------------------------------------------------------------------+
-
-#+---------------------------------------------------------------------------+
-#| Standard library imports                                                  |
-#+---------------------------------------------------------------------------+
-import logging
-
-#+---------------------------------------------------------------------------+
-#| Related third party imports                                               |
-#+---------------------------------------------------------------------------+
-
-#+---------------------------------------------------------------------------+
-#| Local application imports                                                 |
-#+---------------------------------------------------------------------------+
-from netzob.Common.Models.Vocabulary.Domain.DomainNode import DomainNode
-
-
-class Agg(DomainNode):
-    """Represents an Aggregate (AND) in the domain definition
-
-    To create an aggregate:
-
-    >>> from netzob import *
-    >>> domain = Agg([Raw(), ASCII()])
-    >>> print domain.children[0].__class__.__name__
-    Raw
-    >>> print domain.children[1].__class__.__name__
-    ASCII
-
-    """
-
-    def __init__(self, children=None):
-        super(Agg, self).__init__(self.__class__.__name__, children)
-        self.__logger = logging.getLogger(__name__)
+# List subpackages to import with the current one
+# see docs.python.org/2/tutorial/modules.html
+from Alt import Alt
+from Agg import Agg
