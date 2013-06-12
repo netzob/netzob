@@ -34,6 +34,8 @@ import sys
 import unittest
 
 class test_command(Command):
+    description = "Test Netzob"
+
     user_options = [('reportfile=', None, 'name of the generated XML report file (not required)') ]
 
     def initialize_options(self):
