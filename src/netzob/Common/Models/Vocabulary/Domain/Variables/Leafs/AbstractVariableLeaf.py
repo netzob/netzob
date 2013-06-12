@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#-*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
@@ -26,7 +25,36 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-# List subpackages to import with the current one
-# see docs.python.org/2/tutorial/modules.html
+#+---------------------------------------------------------------------------+
+#| File contributors :                                                       |
+#|       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
+#|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
+#+---------------------------------------------------------------------------+
 
-from Data import Data
+#+---------------------------------------------------------------------------+
+#| Standard library imports                                                  |
+#+---------------------------------------------------------------------------+
+import logging
+
+#+---------------------------------------------------------------------------+
+#| Related third party imports                                               |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
+#| Local application imports                                                 |
+#+---------------------------------------------------------------------------+
+from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
+
+
+class AbstractVariableLeaf(AbstractVariable):
+    """Represents a leaf in the variable definition of a field.
+
+    A leaf is a variable with no children. Most of of leaf variables
+    are :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data.Data` variables and
+    :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Relations.AbstractRelation.AbstractRelation`.
+
+    """
+
+    def __init__(self, varType):
+        super(AbstractVariableLeaf, self).__init__(varType)
+        self.__logger = logging.getLogger(__name__)
