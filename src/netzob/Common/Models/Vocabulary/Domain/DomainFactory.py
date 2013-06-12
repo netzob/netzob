@@ -44,8 +44,7 @@
 #+---------------------------------------------------------------------------+
 from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Alt import Alt
 from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Agg import Agg
-from netzob.Common.Models.Types.Decimal import Decimal
-from netzob.Common.Models.Types.ASCII import ASCII
+from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Common.Models.Types.AbstractType import AbstractType
 
 
@@ -58,9 +57,9 @@ class DomainFactory(object):
     >>> domain = DomainFactory.normalizeDomain([Raw(), 10])
     >>> print domain.varType
     Alt
-    >>> print domain.children[0].__class__.__name__
+    >>> print domain.children[0].dataType.__name__
     Raw
-    >>> print domain.children[1].__class__.__name__
+    >>> print domain.children[1].dataType.__name__
     Decimal
 
     >>> domain = DomainFactory.normalizeDomain(Agg([Alt(["toto", 20]), ASCII("!")]))
@@ -68,9 +67,9 @@ class DomainFactory(object):
     Agg
     >>> print domain.children[0].varType
     Alt
-    >>> print domain.children[0].children[1].__class__.__name__
+    >>> print domain.children[0].children[1].dataType.__name__
     Decimal
-    >>> print domain.children[1].__class__.__name__
+    >>> print domain.children[1].dataType.__name__
     ASCII
 
     """
@@ -89,11 +88,21 @@ class DomainFactory(object):
     @staticmethod
     def __normalizeLeafDomain(domain):
         if isinstance(domain, int):
-            return Decimal(value=domain)
+            from netzob.Common.Models.Types.Decimal import Decimal
+            domain = Decimal(value=domain)
         elif isinstance(domain, str):
-            return ASCII(value=domain)
-        elif isinstance(domain, AbstractType):
+            from netzob.Common.Models.Types.ASCII import ASCII
+            domain = ASCII(value=domain)
+        if isinstance(domain, AbstractType):
+            return DomainFactory.__normalizeAbstractTypeDomain(domain)
+        elif isinstance(domain, Data):
             return domain
+        else:
+            raise TypeError("Not a valid domain")
+
+    @staticmethod
+    def __normalizeAbstractTypeDomain(domain):
+        return domain.buildDataRepresentation()
 
     @staticmethod
     def __normalizeAlternateDomain(domain):
