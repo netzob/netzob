@@ -43,9 +43,13 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Models.Types.AbstractType import AbstractType
+from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
 
 
 class Raw(AbstractType):
 
     def __init__(self, value=None, size=None):
         super(Raw, self).__init__(self.__class__.__name__, value, size)
+
+    def buildDataRepresentation(self):
+        return Data(dataType=Raw, value=self.value)
