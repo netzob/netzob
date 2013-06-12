@@ -47,6 +47,9 @@ def getSuite():
         DomainFactory.__module__,
         Alt.__module__,
         Agg.__module__,
+        Data.__module__,
+        ASCII.__module__,
+        AbstractType,
         Memory.__module__,
         TypeConvertor.__module__,
     ]
