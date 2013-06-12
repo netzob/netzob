@@ -43,9 +43,14 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Models.Types.AbstractType import AbstractType
+from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
 
 
 class ASCII(AbstractType):
 
-    def __init__(self, value=None, size=None):
-        super(ASCII, self).__init__(value, size)
+    def __init__(self, value=None, size=(None, None)):
+        super(ASCII, self).__init__(self.__class__.__name__, value, size)
+
+    def buildDataRepresentation(self):
+        """see :class:`netzob.Common.Models.Types.AbstractType.AbstractType`"""
+        return Data(dataType=ASCII, value=self.value)
