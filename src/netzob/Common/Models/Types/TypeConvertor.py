@@ -42,14 +42,20 @@
 class TypeConvertor(object):
     """A set of static methods to convert data
     from a type to another one.
-
-    The various formats supported in Netzob:
-    - bitarray
-
-    >>> input = bitarray('0110101111010111')
-    >>> bin = TypeConvertor.bitarrayToBin(input)
-    >>> output = TypeConvertor.binToBitarray(bin)
-    >>> input == output
-
     """
-    pass
+
+    def encode(data, sourceType, destinationType, unitSize=None, endianness=None):
+        """Encode data provided as a sourceType to a destinationType.
+
+        To convert a string IPv4 to its binary representation
+
+        >>> data = "192.168.0.10"
+        >>> rdata = TypeConvertor.encode(data, IPv4, Bin)
+        >>> print rdata
+        >>> 'c0 a8 00 0a'
+
+        """
+        pass
+
+    def show(data, sourceType):
+        pass
