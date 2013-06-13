@@ -39,6 +39,7 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
@@ -47,6 +48,8 @@ from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Common.Models.Types.AbstractType import AbstractType
 from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken import AbstractVariableProcessingToken
+from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken import VariableReadingToken
+from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken import VariableWritingToken
 
 
 class Data(AbstractVariableLeaf):
@@ -135,6 +138,225 @@ class Data(AbstractVariableLeaf):
             return self.currentValue
         else:
             return processingToken.memory.recall(self)
+
+    #+---------------------------------------------------------------------------+
+    #| Functions inherited from AbstractLeafVariable                             |
+    #+---------------------------------------------------------------------------+
+    @typeCheck(AbstractVariableProcessingToken)
+    def forget(self, processingToken):
+        """The variable forgets its value both locally and from the memory attached to the processingToken
+
+        >>> from netzob import *
+        >>> d = Data(Decimal, originalValue=10)
+        >>> rToken = VariableReadingToken()
+        >>> d.memorize(rToken)
+        >>> d.currentValue = 30
+        >>> d.currentValue
+        30
+        >>> d.recall(rToken)
+        >>> d.currentValue
+        10
+        >>> d.forget(rToken)
+        >>> print d.currentValue
+        None
+
+        :param processingToken: the processing token where the memory is
+        :type processingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken.AbstractVariableProcessingToken`
+        :raise: a TypeError if parameter is not valid
+        """
+        if processingToken is None:
+            raise TypeError("processingToken cannot be None")
+
+        self.__logger.debug("- {0}: value is forgotten.".format(self))
+        # We remove the memorized value.
+        processingToken.memory.forget(self)
+        # We remove the local value
+        self.currentValue = None
+
+    @typeCheck(AbstractVariableProcessingToken)
+    def recall(self, processingToken):
+        """The variable recall its memorized value.
+
+        >>> from netzob import *
+        >>> d = Data(ASCII, originalValue = "zoby")
+        >>> print d.currentValue
+        zoby
+        >>> rToken = VariableReadingToken()
+        >>> d.memorize(rToken)
+        >>> d.currentValue = "netzob"
+        >>> print d.currentValue
+        netzob
+        >>> d.recall(rToken)
+        >>> print d.currentValue
+        zoby
+
+        :param processingToken: the processing token where the memory is
+        :type processingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken.AbstractVariableProcessingToken`
+        :raise: a TypeError if parameter is not valid
+        """
+        if processingToken is None:
+            raise TypeError("processingToken cannot be None")
+
+        self.__logger.debug("- {0}: value is recalled.".format(self))
+        self.currentValue = processingToken.memory.recall(self)
+
+    @typeCheck(AbstractVariableProcessingToken)
+    def memorize(self, processingToken):
+        """The variable memorizes its value.
+
+
+        :param processingToken: the processing token where the memory is
+        :type processingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken.AbstractVariableProcessingToken`
+        :raise: a TypeError if parameter is not valid
+        """
+        if processingToken is None:
+            raise TypeError("processingToken cannot be None")
+
+        self.__logger.debug("- {0}: value is memorized.".format(self))
+        processingToken.memory.memorize(self)
+
+    @typeCheck(VariableReadingToken)
+    def compareFormat(self, readingToken):
+        """The variable checks if its format complies with the read value's format.
+
+
+        :param readingToken: the processing token where the memory is
+        :type readingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken.VariableReadingToken`
+        :raise: a TypeError if parameter is not valid
+        """
+        if readingToken is None:
+            raise TypeError("readingToken cannot be None")
+
+        self.__logger.debug("- [ {0}: compareFormat.".format(self))
+
+        self.varType.compareFormat(readingToken)
+
+        self.__logger.debug("Variable {0}: {1}. ] -".format(self.name, readingToken))
+
+    @typeCheck(VariableReadingToken)
+    def learn(self, readingToken):
+        """learn:
+
+        .. warning:: WIP, the delimitor case is not yet managed.
+
+        :param readingToken: the processing token where the memory is
+        :type readingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken.VariableReadingToken`
+        :raise: a TypeError if parameter is not valid
+        """
+        if readingToken is None:
+            raise TypeError("readingToken cannot be None")
+
+        self.__logger.debug("- [ {0}: learn.".format(self))
+        # A format comparison had been executed before, its result must be "OK".
+        if readingToken.Ok():
+            tmp = readingToken.value[readingToken.index():]
+
+            minSize, maxSize = self.size
+
+            # If the type has a definite size.
+            if maxSize is not None:
+                # Length comparison. (len(tmp) >= minBits is implicit as the readingToken is OK.)
+                if len(tmp) <= maxSize:
+                    self.currentValue = tmp
+                    readingToken.incrementIndex(len(tmp))
+
+                else:  # len(tmp) > self.maxBits
+                    # We learn as much as we can.
+                    self.currentValue = tmp[:maxSize]
+                    readingToken.incrementIndex(maxSize)
+
+            # TODO
+            # If the type is delimited from 0 to a delimiter.
+            else:
+                endi = 0
+                for i in range(len(tmp)):
+                    if self.type.endsHere(tmp[i:]):
+                        endi = i
+                        break
+                # We learn from the beginning to the delimiter.
+                self.currentValue = tmp[:endi + len(self.type.getDelimiter())]  # The delimiter token is a part of the variable.
+                readingToken.incrementIndex(endi + len(self.type.getDelimiter()))
+
+            self.__logger.info("Learning done.")
+        else:
+            self.__logger.info("Learning abort because the previous format comparison failed.")
+
+        self.log.debug("Variable {0}: {1}. ] -".format(self.name, readingToken))
+
+    @typeCheck(VariableReadingToken)
+    def compare(self, readingToken):
+        """The variable compares its value to the read value.
+
+
+        :param readingToken: the processing token where the memory is
+        :type readingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken.VariableReadingToken`
+        :raise: a TypeError if parameter is not valid
+        """
+        if readingToken is None:
+            raise TypeError("readingToken cannot be None")
+
+        self.__logger.debug("- [ {0}: compare.".format(self))
+        localValue = self.getValue(readingToken)
+        tmp = readingToken.value[readingToken.index:]
+
+        if len(tmp) >= len(localValue):
+            if tmp[:len(localValue)] == localValue:
+                self.log.debug("Comparison successful.")
+                readingToken.incrementIndex(len(localValue))
+                readingToken.Ok = True
+            else:
+                readingToken.Ok = False
+                self.log.debug("Comparison failed: wrong value.")
+        else:
+            readingToken.Ok = False
+            self.log.debug("Comparison failed: wrong size.")
+        self.log.debug("Variable {0}: {1}. ] -".format(self.name, readingToken))
+
+    @typeCheck(VariableWritingToken)
+    def mutate(self, writingToken):
+        """The current value is mutated according to the given generation strategy.
+
+
+        :param writingToken: the processing token where the memory is
+        :type writingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken.VariableWritingToken`
+        :raise: a TypeError if parameter is not valid
+        """
+        if writingToken is None:
+            raise TypeError("writingToken cannot be None")
+
+        self.__logger.debug("- {0}: mutate.".format(self))
+        self.currentValue = self.dataType.mutateValue(writingToken.getGenerationStrategy(), self.getValue(writingToken))
+
+    @typeCheck(VariableWritingToken)
+    def generate(self, writingToken):
+        """A new current value is generated according to the variable type and the given generation strategy.
+
+
+        :param writingToken: the processing token where the memory is
+        :type writingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken.VariableWritingToken`
+        :raise: a TypeError if parameter is not valid
+        """
+        if writingToken is None:
+            raise TypeError("writingToken cannot be None")
+
+        self.__logger.debug("- {0}: generate.".format(self))
+        self.currentValue = self.dataType.generateValue(writingToken.getGenerationStrategy())
+
+    def writeValue(self, writingToken):
+        """Write the variable value if it has one, else it returns the memorized value.
+                Write this value in the writingToken.
+        """
+        self.__logger.debug("- [ {0}: writeValue.".format(self))
+        value = bitarray()
+        value.extend(self.getValue(writingToken))
+        if self.size[1] is None:
+            # Do not forget to write the delimiter if the variable has one
+            value.extend(self.dataType.getDelimiter())
+        writingToken.write(self, value)
+        # We impact the value this variable has written on its tokenChoppedIndex list and its fathers token list.
+        self.__logger.debug("WritingToken linkedValue: {0}".format(writingToken.linkedValues))
+        self.addTokenChoppedIndex(len(writingToken.linkedValues) - 1)
+        self.__logger.debug("Variable {0}: {1}. ] -".format(self.name, writingToken))
 
     #+---------------------------------------------------------------------------+
     #| Properties                                                                |
