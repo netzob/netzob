@@ -56,13 +56,14 @@ class AbstractVariable(object):
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, varType, varId=None):
+    def __init__(self, varType, varId=None, name=None):
         """Constructor
 
         :param varType: the type of the variable. we highly recommend to use the __class_.__name__
         :type varType: :class:`str`
         :keywork varId: the id of the variable
         :type varId: :class:`uuid.UUID`
+        :keyword name: the optional name of the variable, if not set its the varId
         :raise: :class:`TypeError` if parameters type are not valid
 
         """
@@ -72,7 +73,28 @@ class AbstractVariable(object):
         else:
             self.id = varId
 
+        if name is not None:
+            self.name = name
+        else:
+            self.name = str(self.id)
+
         self.__varType = varType
+        self.learnable = False
+        self.mutable = False
+
+    #+---------------------------------------------------------------------------+
+    #| Generic methods for variables                                             |
+    #+---------------------------------------------------------------------------+
+    @abc.abstractmethod
+    def isDefined(self, processingToken):
+        """Tells if the variable is defined (i.e. has a value for a leaf, enough leaf have values for a node...)
+
+        :type processingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken.AbstractVariableProcessingToken
+        :param processingToken: a token which contains all critical information on this access.
+        :rtype: boolean
+        :return: True if the variable is defined.
+        """
+        raise NotImplementedError("The current variable does not implement 'isDefined'.")
 
     #+---------------------------------------------------------------------------+
     #| Visitor abstract method                                                   |
@@ -96,6 +118,16 @@ class AbstractVariable(object):
         """
         raise NotImplementedError("The current variable does not implement 'write'.")
 
+    #+---------------------------------------------------------------------------+
+    #| Special Functions                                                         |
+    #+---------------------------------------------------------------------------+
+    def __str__(self):
+        """The toString method, mostly for debugging purpose."""
+        return "Variable {0} (mutable: {1}, learnable: {2})".format(self.name, str(self.mutable), str(self.learnable))
+
+    #+---------------------------------------------------------------------------+
+    #| Properties                                                                |
+    #+---------------------------------------------------------------------------+
     @property
     def id(self):
         return self.__id
@@ -117,3 +149,87 @@ class AbstractVariable(object):
     @varType.setter
     def varType(self, varType):
         raise AttributeError("Not allowed to modify the variable type")
+
+    @property
+    def name(self):
+        """The name of the variable.
+
+        :type: :class:`object`
+        """
+        return self.__name
+
+    @name.setter
+    @typeCheck(str)
+    def name(self, name):
+        if name is None:
+            raise ValueError("name cannot be None")
+        name = name.strip()
+        if len(name) == 0:
+            raise ValueError("name must be defined even after being trimmed (len>0)")
+        self.__name = name
+
+    @property
+    def learnable(self):
+        """tells if the variable can learned a value, initialized itself or not.
+
+        >>> from netzob import *
+        >>> alt = Alt()
+        >>> alt.learnable
+        False
+        >>> alt.learnable = True
+        >>> alt.learnable
+        True
+        >>> alt.learnable = "dqsqdsq"
+        Traceback (most recent call last):
+        ...
+        TypeError: Invalid type for arguments, expecting: bool and received str
+        >>> alt.learnable = None
+        Traceback (most recent call last):
+        ...
+        TypeError: Learnable cannot be None
+        >>> alt.learnable
+        True
+
+        :type:bool
+        """
+        return self.__learnable
+
+    @learnable.setter
+    @typeCheck(bool)
+    def learnable(self, learnable):
+        if learnable is None:
+            raise TypeError("Learnable cannot be None")
+        self.__learnable = learnable
+
+    @property
+    def mutable(self):
+        """Tells if the variable can be modified or not.
+
+        >>> from netzob import *
+        >>> agg = Agg()
+        >>> agg.mutable
+        False
+        >>> agg.mutable = True
+        >>> agg.mutable
+        True
+        >>> agg.mutable = "dqsqdsq"
+        Traceback (most recent call last):
+        ...
+        TypeError: Invalid type for arguments, expecting: bool and received str
+        >>> agg.mutable = None
+        Traceback (most recent call last):
+        ...
+        TypeError: Mutable cannot be None
+        >>> agg.mutable
+        True
+
+        :type:bool
+        """
+        return self.__mutable
+
+    @mutable.setter
+    @typeCheck(bool)
+    def mutable(self, mutable):
+        if mutable is None:
+            raise TypeError("Mutable cannot be None")
+        self.__mutable = mutable
