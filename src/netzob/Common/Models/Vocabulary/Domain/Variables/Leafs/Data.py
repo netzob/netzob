@@ -72,8 +72,6 @@ class Data(AbstractVariableLeaf):
     Data
     >>> print f.domain.currentValue
     hello zoby
-
-
     """
 
     def __init__(self, dataType, originalValue=None, name=None, size=(None, None)):
@@ -103,10 +101,10 @@ class Data(AbstractVariableLeaf):
         """If the leaf has no values, it is not defined and returns False
 
         >>> from netzob import *
-        >>> data = Data(ASCII)
+        >>> data = Data(ASCII, originalValue="hello")
         >>> rToken = VariableReadingToken()
         >>> data.isDefined(rToken)
-        False
+        True
         >>> data.read(rToken)
         >>> data.isDefined(rToken)
         True
