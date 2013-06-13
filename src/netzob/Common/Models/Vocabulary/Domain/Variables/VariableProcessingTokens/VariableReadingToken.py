@@ -74,4 +74,27 @@ class VariableReadingToken(AbstractVariableProcessingToken):
             raise ValueError("Increment must be >=0")
 
         self.linkedValues.append((variable.id, self.value[self.index:self.index + increment]))
-        self.index += increment
+        self.incrementIndex(increment)
+
+    @typeCheck(int)
+    def incrementIndex(self, increment):
+        """Increment the current index by the value of provided increment parameter
+
+        >>> rToken = VariableReadingToken()
+        >>> print rToken.index
+        0
+        >>> rToken.incrementIndex(10)
+        >>> print rToken.index
+        10
+
+        :param increment: the index will be incremented by its valu
+        :type increment: :class:`int`
+        :raises: TypeError and ValueError if the parameter is not Valid
+        """
+        if increment is None:
+            raise TypeError("The increment cannot be None")
+
+        if increment < 0:
+            raise ValueError("The increment must be positive")
+
+        self.index = self.index + increment
