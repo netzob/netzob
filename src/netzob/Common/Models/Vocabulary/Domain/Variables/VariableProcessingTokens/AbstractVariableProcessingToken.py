@@ -123,7 +123,7 @@ class AbstractVariableProcessingToken(object):
 
     @index.setter
     def index(self, index):
-        if index > 0:
+        if index < 0:
             raise ValueError("Index must be >= 0")
         self.__index = index
 
