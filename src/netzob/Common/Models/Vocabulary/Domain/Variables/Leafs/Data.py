@@ -35,7 +35,6 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import logging
-import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -47,6 +46,7 @@ import uuid
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Common.Models.Types.AbstractType import AbstractType
 from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
+from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken import AbstractVariableProcessingToken
 
 
 class Data(AbstractVariableLeaf):
@@ -57,7 +57,7 @@ class Data(AbstractVariableLeaf):
 
     >>> from netzob import *
     >>> f = Field()
-    >>> f.domain = Data(dataType=ASCII, value="zoby", name="pseudo")
+    >>> f.domain = Data(dataType=ASCII, originalValue="zoby", name="pseudo")
     >>> print f.domain.varType
     Data
     >>> print f.domain.currentValue
@@ -76,13 +76,13 @@ class Data(AbstractVariableLeaf):
 
     """
 
-    def __init__(self, dataType, value=None, name=None, size=(None, None)):
+    def __init__(self, dataType, originalValue=None, name=None, size=(None, None)):
         """The constructor of a data variable
 
         :param dataType: the type of the data.
         :type dataType: :class:`netzob.Common.Models.Types.AbstractType.AbstractType`
-        :keyword value: the value of the data (can be None)
-        :type value: :class:`object`
+        :keyword originalValue: the value of the data (can be None)
+        :type originalValue: :class:`object`
         :keyword name: the name of the data, if None name will be generated
         :type name: :class:`str`
         :keyword size: the size of the data (minSize, maxSize) in bits, per default its (None, None)
@@ -91,16 +91,56 @@ class Data(AbstractVariableLeaf):
 
         """
 
-        super(Data, self).__init__(self.__class__.__name__)
+        super(Data, self).__init__(self.__class__.__name__, name=name)
         self.__logger = logging.getLogger(__name__)
 
         self.dataType = dataType
-        self.currentValue = value
-        if name is None:
-            name = str(uuid.uuid4())
-        self.name = name
+        self.currentValue = originalValue
         self.size = size
 
+    @typeCheck(AbstractVariableProcessingToken)
+    def isDefined(self, processingToken):
+        """If the leaf has no values, it is not defined and returns False
+
+        >>> from netzob import *
+        >>> data = Data(ASCII)
+        >>> rToken = VariableReadingToken()
+        >>> data.isDefined(rToken)
+        False
+        >>> data.read(rToken)
+        >>> data.isDefined(rToken)
+        True
+
+        :rtype: bool
+        :return: True if the data has a current value or has memorized its value in the processing token
+        :raises: TypeError if parameter is not Valid
+        """
+        if processingToken is None:
+            raise TypeError("ProcessingToken cannot be None")
+
+        return self.getValue(processingToken) is not None
+
+    @typeCheck(AbstractVariableProcessingToken)
+    def getValue(self, processingToken):
+        """Return the current or memorized value.
+
+        >>> from netzob import *
+        >>> data = Data(ASCII, originalValue='helloworld')
+        >>> rToken = VariableReadingToken()
+        >>> print data.getValue(rToken)
+        helloworld
+
+        :param processingToken: the token in which the memory is located
+        :type processingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken`
+        """
+        if self.currentValue is not None:
+            return self.currentValue
+        else:
+            return processingToken.memory.recall(self)
+
+    #+---------------------------------------------------------------------------+
+    #| Properties                                                                |
+    #+---------------------------------------------------------------------------+
     @property
     def dataType(self):
         """The type of the data.
@@ -133,24 +173,6 @@ class Data(AbstractVariableLeaf):
         self.__currentValue = currentValue
 
     @property
-    def name(self):
-        """The name of the data.
-
-        :type: :class:`object`
-        """
-        return self.__name
-
-    @name.setter
-    @typeCheck(str)
-    def name(self, name):
-        if name is None:
-            raise ValueError("name cannot be None")
-        name = name.strip()
-        if len(name) == 0:
-            raise ValueError("name must be defined even after being trimmed (len>0)")
-        self.__name = name
-
-    @property
     def size(self):
         """The size of the data.
         size = (sizeMin, sizeMax)
@@ -159,14 +181,14 @@ class Data(AbstractVariableLeaf):
 
 
         >>> from netzob import *
-        >>> data = Data(dataType=ASCII, value="zoby", name="pseudo", size=None)
+        >>> data = Data(dataType=ASCII, originalValue="zoby", name="pseudo", size=None)
 
-        >>> data = Data(dataType=ASCII, value="zoby", name="pseudo", size=(-1, None))
+        >>> data = Data(dataType=ASCII, originalValue="zoby", name="pseudo", size=(-1, None))
         Traceback (most recent call last):
         ...
         ValueError: Minimum size must be greater than 0
 
-        >>> data = Data(dataType=ASCII, value="zoby", name="pseudo", size=(5, 2))
+        >>> data = Data(dataType=ASCII, originalValue="zoby", name="pseudo", size=(5, 2))
         Traceback (most recent call last):
         ...
         ValueError: Maximum must be greater than the minimum
