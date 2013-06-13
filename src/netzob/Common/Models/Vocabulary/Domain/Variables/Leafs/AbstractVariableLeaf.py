@@ -130,14 +130,14 @@ class AbstractVariableLeaf(AbstractVariable):
 
                 else:
                     # not mutable, not learnable and not defined.
-                    self._logger.debug("Read abort: the variable is neither defined, nor mutable.")
+                    self.__logger.debug("Read abort: the variable is neither defined, nor mutable.")
                     readingToken.Ok = False
 
         # Variable notification
         if readingToken.Ok:
             self.notifyBoundedVariables("read", readingToken, self.getValue(readingToken))
 
-        self.__logger.debug("\t {1}. ]".format(readingToken))
+        self.__logger.debug("\t {0}. ]".format(readingToken))
 
     @typeCheck(VariableWritingToken)
     def write(self, writingToken):
@@ -161,7 +161,7 @@ class AbstractVariableLeaf(AbstractVariable):
         :type writingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingToken.VariableWritingToken.VariableWritingToken`
         """
         self.__logger.debug("[ {0} (leaf): write access:".format(self))
-        self.resetTokenChoppedIndexes()  # New write access => new final value and new reference to it.
+        self.tokenChoppedIndexes = []  # New write access => new final value and new reference to it.
         if self.mutable:
             if self.learnable:
                 if self.isDefined(writingToken):
