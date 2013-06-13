@@ -52,6 +52,8 @@ def getSuite():
         AbstractType,
         Memory.__module__,
         TypeConvertor.__module__,
+        AbstractVariable.__module__,
+        VariableReadingToken.__module__,
     ]
 
     suite = unittest.TestSuite()
