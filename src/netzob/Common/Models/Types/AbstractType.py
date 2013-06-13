@@ -67,12 +67,16 @@ class AbstractType(object):
     def size(self):
         """The size of the expected Type defined
          by a tuple (min, max).
+         Instead of a tuple, an int can be used to represent both min and max value.
+
          The value 'None' can be set for min and/or max to represent no limitations.
 
          For instance, to create an ASCII field of at least 10 chars:
 
          >>> from netzob import *
          >>> f = Field(ASCII(size=(10,None)))
+         >>> f.domain.size
+         (10, None)
 
          while to create a Raw field which content has no specific limit:
 
@@ -89,8 +93,11 @@ class AbstractType(object):
     def size(self, size):
 
         if size is None:
-            self.__size = (None, None)
-        elif isinstance(size, tuple):
+            size = (None, None)
+        if isinstance(size, int):
+            size = (size, size + 1)
+
+        if isinstance(size, tuple):
             minSize, maxSize = size
 
             if minSize is not None and not isinstance(minSize, int):
@@ -103,12 +110,12 @@ class AbstractType(object):
 
             if minSize < 0:
                 raise ValueError("Minimum size must be greater than 0")
-            if maxSize is not None and maxSize < minSize:
-                raise ValueError("Maximum must be greater or equals to the minimum")
+            if maxSize is not None and maxSize <= minSize:
+                raise ValueError("Maximum must be greater than the minimum")
 
             self.__size = (minSize, maxSize)
         else:
-            raise TypeError("Size must be defined by a tuple or with None")
+            raise TypeError("Size must be defined by a tuple an int or with None")
 
     @abc.abstractmethod
     def buildDataRepresentation(self):
