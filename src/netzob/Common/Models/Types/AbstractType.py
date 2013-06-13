@@ -76,7 +76,7 @@ class AbstractType(object):
          >>> from netzob import *
          >>> f = Field(ASCII(size=(10,None)))
          >>> f.domain.size
-         (10, None)
+         (80, None)
 
          while to create a Raw field which content has no specific limit:
 
