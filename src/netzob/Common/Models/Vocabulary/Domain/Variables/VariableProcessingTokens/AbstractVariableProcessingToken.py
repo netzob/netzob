@@ -94,6 +94,7 @@ class AbstractVariableProcessingToken(object):
         :type: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Memory.Memory`
         return self.__memory
         """
+        return self.__memory
 
     @memory.setter
     @typeCheck(Memory)
