@@ -67,11 +67,34 @@ class AbstractVariable(object):
 
         """
         self.__logger = logging.getLogger(__name__)
-        self.__varType = varType
         if varId is None:
             self.id = uuid.uuid4()
         else:
             self.id = varId
+
+        self.__varType = varType
+
+    #+---------------------------------------------------------------------------+
+    #| Visitor abstract method                                                   |
+    #+---------------------------------------------------------------------------+
+    @abc.abstractmethod
+    def read(self, readingToken):
+        """Grants a reading access to the variable. The value of readingToken is read bit by bit.
+
+        :param readingToken: a token which contains all critical information on this reading access.
+        :type readingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingToken.VariableReadingToken.VariableReadingToken`
+        """
+        raise NotImplementedError("The current variable does not implement 'read'.")
+
+    @abc.abstractmethod
+    def write(self, writingToken):
+        """Grants a writing access to the variable.
+        A value is written according to encountered node variable rules and is stored in the provided writingToken.
+
+        :param writingToken: a token which contains all critical information on this writing access.
+        :type writingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingToken.VariableWritingToken.VariableWritingToken`
+        """
+        raise NotImplementedError("The current variable does not implement 'write'.")
 
     @property
     def id(self):
