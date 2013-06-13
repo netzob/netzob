@@ -41,6 +41,7 @@ import uuid
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
@@ -81,6 +82,83 @@ class AbstractVariable(object):
         self.__varType = varType
         self.learnable = False
         self.mutable = False
+        # A list containing all variables which value is bind to the value of this variable.
+        self.__boundedVariables = []
+        # An integer list which contain the index of each segment this variable is responsible for (they have been created from its)
+        self.__tokenChoppedIndexes = []
+        # The variables just above the current variable in the tree representation.
+        self.__fathers = []
+
+    def getProgeny(self):
+        """Get this variable and all variable that descends from it. (i.e. son, grandson...).
+        Return EVERY child variable, especially for alternate variable.
+        Overwritten by AbstractNodeVariable.
+
+        :rtype: List of :class:`netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
+        :return: a list of the whole progeny plus this variable.
+        """
+        return [self]
+
+    def notifyBoundedVariables(self, access, processingToken, value=None):
+        """Notify every variable that are bounded to the current variable with a set of segment of the read value.
+        This set leads to no repetition in the final read value.
+
+        :param access: the type of access "read" or "write"
+        :type access: str
+        :param processingToken: a token which contains all critical information on this access.
+        :type processingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken.AbstractVariableProcessingToken`
+        :param value: the value of the notifying variable.
+        :type value: bitarray
+        :raise: TypeError or ValueError if parameters are not valid
+        """
+        if access is None or processingToken is None:
+            raise TypeError("access and processingToken cannot be None")
+
+        if access == "read":
+            for bound in self.boundedVariables:
+                bound.notifiedRead(processingToken, value)
+        elif access == "write":
+            for bound in self.boundedVariables:
+                bound.notifiedWrite(processingToken)
+        else:
+            raise ValueError("Invalid 'access' specified, only 'read' and 'write' are supported")
+
+    def getTokenValue(self, processingToken):
+        """Return the value represented by the tokenChoppedIndexes as a bitarray.
+
+        :param processingToken: a token which contains all critical information on this access.
+        :type processingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken.AbstractVariableProcessingToken`
+        :rtype: bitarray
+        :return: Return the value represented by the tokenChoppedIndexes as a bitarray.
+        :raise: TypeError if parameter is not Valid
+        """
+        if processingToken is None:
+            raise TypeError("processingToken cannot be None")
+
+        value = bitarray()
+        for index in self.tokenChoppedIndexes:
+            value.extend(processingToken.getLinkedValue()[index][1])
+        return value
+
+    @typeCheck(int)
+    def addTokenChoppedIndex(self, choppedIndex):
+        """Add a pointer (choppedIndex) in the tokenChoppedIndexes of this variable and its fathers.
+        This pointer shows that this variable and its fathers are responsible for a given part of the final value.
+
+        :param choppedIndex: the index to add
+        :type choppedIndex: int
+        :raise TypeError if parameter is not valid
+        """
+        if choppedIndex is None:
+            raise TypeError("choppedIndex cannot be None")
+
+        if choppedIndex < 0:
+            raise ValueError("Chopped index cannot be inferior to 0")
+
+        self.tokenChoppedIndexes.append(choppedIndex)
+        # Each father gains this value too.
+        for father in self.fathers:
+            father.addTokenChoppedIndex(choppedIndex)
 
     #+---------------------------------------------------------------------------+
     #| Generic methods for variables                                             |
@@ -233,3 +311,71 @@ class AbstractVariable(object):
         if mutable is None:
             raise TypeError("Mutable cannot be None")
         self.__mutable = mutable
+
+    @property
+    def boundedVariables(self):
+        """A list containing all variables which value is bind to the value of this variable.
+
+        >>> from netzob import *
+        >>> d1 = Data(ASCII)
+        >>> len(d1.boundedVariables)
+        0
+        >>> d2 = Data(Decimal)
+        >>> len(d2.boundedVariables)
+        0
+        >>> d3 = Data(Raw)
+        >>> len(d3.boundedVariables)
+        0
+        >>> d1.boundedVariables.append(d2)
+        >>> d1.boundedVariables.append(d3)
+        >>> len(d1.boundedVariables)
+        2
+
+        :type: list of :class:`netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
+        :raise: TypeError if parameter is not valid
+        """
+        return self.__boundedVariables
+
+    @boundedVariables.setter
+    def boundedVariables(self, boundedVariables):
+        for bound in boundedVariables:
+            if not isinstance(bound, AbstractVariable):
+                raise TypeError("BoundedVariables must be AbstractVariables")
+
+        self.__boundedVariables = []
+        for bound in boundedVariables:
+            self.__boundedVariables.append(bound)
+
+    @property
+    def tokenChoppedIndex(self):
+        """An integer list which contain the index of each segment
+        this variable is responsible for (they have been created from its)
+
+        .. warning:: use the method addTokenChoppedIndex() to add an index.
+
+        :type: list of int
+        """
+        return self.__tokenChoppedIndexes
+
+    @tokenChoppedIndex.setter
+    def tokenChoppedIndex(self, tokenChoppedIndex):
+        for index in tokenChoppedIndex:
+            if not isinstance(index, int):
+                raise TypeError("tokenChoppedIndex must be a list of int")
+        self.__tokenChoppedIndexes = []
+        for index in tokenChoppedIndex:
+            self.__tokenChoppedIndexes.append(index)
+
+    @property
+    def fathers(self):
+        """ The variables just above the current variable in the tree representation.
+
+        :type: list of :class:`netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariables
+        """
+        return self.__fathers
+
+    @fathers.setter
+    def fathers(self, fathers):
+        self.__fathers = []
+        for father in fathers:
+            self.__fathers.append(father)
