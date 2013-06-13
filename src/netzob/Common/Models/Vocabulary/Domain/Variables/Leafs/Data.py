@@ -76,7 +76,7 @@ class Data(AbstractVariableLeaf):
 
     """
 
-    def __init__(self, dataType, value=None, name=None):
+    def __init__(self, dataType, value=None, name=None, size=(None, None)):
         """The constructor of a data variable
 
         :param dataType: the type of the data.
@@ -85,6 +85,8 @@ class Data(AbstractVariableLeaf):
         :type value: :class:`object`
         :keyword name: the name of the data, if None name will be generated
         :type name: :class:`str`
+        :keyword size: the size of the data (minSize, maxSize) in bits, per default its (None, None)
+        :type size: a tupple of int
         :raises: :class:`TypeError` or :class:`ValueError` if parameters are not valid.
 
         """
@@ -97,6 +99,7 @@ class Data(AbstractVariableLeaf):
         if name is None:
             name = str(uuid.uuid4())
         self.name = name
+        self.size = size
 
     @property
     def dataType(self):
@@ -142,10 +145,57 @@ class Data(AbstractVariableLeaf):
     def name(self, name):
         if name is None:
             raise ValueError("name cannot be None")
-
         name = name.strip()
-
         if len(name) == 0:
             raise ValueError("name must be defined even after being trimmed (len>0)")
-
         self.__name = name
+
+    @property
+    def size(self):
+        """The size of the data.
+        size = (sizeMin, sizeMax)
+
+        :type: a tupple of int
+
+
+        >>> from netzob import *
+        >>> data = Data(dataType=ASCII, value="zoby", name="pseudo", size=None)
+
+        >>> data = Data(dataType=ASCII, value="zoby", name="pseudo", size=(-1, None))
+        Traceback (most recent call last):
+        ...
+        ValueError: Minimum size must be greater than 0
+
+        >>> data = Data(dataType=ASCII, value="zoby", name="pseudo", size=(5, 2))
+        Traceback (most recent call last):
+        ...
+        ValueError: Maximum must be greater than the minimum
+        """
+        return self.__size
+
+    @size.setter
+    def size(self, size):
+        if size is None:
+            size = (None, None)
+
+        if isinstance(size, tuple):
+            minSize, maxSize = size
+
+            if minSize is not None and not isinstance(minSize, int):
+                raise TypeError("Size must be defined with a tuple of int")
+            if maxSize is not None and not isinstance(maxSize, int):
+                raise TypeError("Size must be defined with a tuple of int")
+
+            if minSize is None:
+                minSize = 0
+
+            if minSize < 0:
+                raise ValueError("Minimum size must be greater than 0")
+            if maxSize is not None and maxSize <= minSize:
+                raise ValueError("Maximum must be greater than the minimum")
+
+            self.__size = (minSize, maxSize)
+        else:
+            raise TypeError("Size must be defined by a tuple an int or with None")
+
+        self.__size = size
