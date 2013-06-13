@@ -52,4 +52,4 @@ class Decimal(AbstractType):
         super(Decimal, self).__init__(self.__class__.__name__, value, size)
 
     def buildDataRepresentation(self):
-        return Data(dataType=Decimal, value=self.value)
+        return Data(dataType=Decimal, originalValue=self.value)

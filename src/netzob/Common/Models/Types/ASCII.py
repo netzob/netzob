@@ -60,4 +60,4 @@ class ASCII(AbstractType):
         if maxSize is not None:
             maxSize = maxSize * 8
         bitSize = (minSize, maxSize)
-        return Data(dataType=ASCII, value=self.value, size=bitSize)
+        return Data(dataType=ASCII, originalValue=self.value, size=bitSize)

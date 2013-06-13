@@ -52,4 +52,4 @@ class Raw(AbstractType):
         super(Raw, self).__init__(self.__class__.__name__, value, size)
 
     def buildDataRepresentation(self):
-        return Data(dataType=Raw, value=self.value)
+        return Data(dataType=Raw, originalValue=self.value)
