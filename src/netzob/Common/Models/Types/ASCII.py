@@ -53,4 +53,11 @@ class ASCII(AbstractType):
 
     def buildDataRepresentation(self):
         """see :class:`netzob.Common.Models.Types.AbstractType.AbstractType`"""
-        return Data(dataType=ASCII, value=self.value)
+
+        minSize, maxSize = self.size
+        if minSize is not None:
+            minSize = minSize * 8
+        if maxSize is not None:
+            maxSize = maxSize * 8
+        bitSize = (minSize, maxSize)
+        return Data(dataType=ASCII, value=self.value, size=bitSize)
