@@ -82,7 +82,7 @@ class Field(AbstractField):
 
     a field containing a raw value of 8 bits (1 byte)
 
-    >>> f = Field(Raw(size=(8, 8)))
+    >>> f = Field(Raw(size=(8, 9)))
 
     a field representing a random IPv4
 
@@ -90,7 +90,7 @@ class Field(AbstractField):
 
     a field representing a random ASCII of 6 characters length
 
-    >>> f = Field(ASCII(size=(6, 6)))
+    >>> f = Field(ASCII(size=(6, 7)))
 
     a field representing a random ASCII with between 5 and 20 characters
 
@@ -104,9 +104,9 @@ class Field(AbstractField):
 
     >>> f = Field(["netzob", "zoby"])
 
-    a field representing a decimal (10) or an ASCII of 6 chars,
+    a field representing a decimal (10) or an ASCII of 10 chars,
 
-    >>> f = Field([10, ASCII(size=(10, 10))])
+    >>> f = Field([10, ASCII(size=(10, 11))])
 
 
     a field which value is the size of the payloadField
