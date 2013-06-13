@@ -43,7 +43,11 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
+from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken import AbstractVariableProcessingToken
+from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken import VariableReadingToken
+from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken import VariableWritingToken
 
 
 class Agg(AbstractVariableNode):
@@ -71,3 +75,92 @@ class Agg(AbstractVariableNode):
     def __init__(self, children=None):
         super(Agg, self).__init__(self.__class__.__name__, children)
         self.__logger = logging.getLogger(__name__)
+
+    @typeCheck(AbstractVariableProcessingToken)
+    def isDefined(self, processingToken):
+        """If one child is not defined the node is not defined.
+
+        :param processingToken: a variable processing token fro mwhich we can have access to the memory
+        :type processingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken`
+        :raise: TypeError if parameter is not Valid
+        """
+
+        if processingToken is None:
+            raise TypeError("processingToken cannot be None")
+
+        if len(self.children) > 0:
+            for child in self.children:
+                if not child.isDefined(processingToken):
+                    return False
+            return True
+        else:
+            return False
+
+    @typeCheck(VariableReadingToken)
+    def read(self, readingToken):
+        """Grants a reading access to the variable.
+        Each child tries sequentially to read a part of the read value.
+        If one of them fails, the whole operation is cancelled.
+
+        :param readingToken: a token which contains all critical information on this reading access.
+        :type readingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingToken.VariableReadingToken.VariableReadingToken`
+        :raise: TypeError if parameter is not Valid
+        """
+        if readingToken is None:
+            raise TypeError("readingToken cannot be None")
+
+        self.__logger.debug("[ {0} (Aggregate): read access:".format(self))
+        if len(self.children) > 0:
+            if self.mutable:
+                # mutable.
+                self.sortChildrenToRead(readingToken)
+                self.readChildren(readingToken)
+            else:
+                # not mutable.
+                self.readChildren(readingToken)
+        else:
+            # no child.
+            self.__logger.debug("Write abort: the variable has no child.")
+            readingToken.Ok = False
+
+        # Variable notification
+        if readingToken.Ok:
+            self.notifyBoundedVariables("read", readingToken, self.currentValue)
+
+        self.log.debug("\t {0}. ]".format(readingToken))
+
+    @typeCheck(VariableWritingToken)
+    def write(self, writingToken):
+        """Each child tries sequentially to write its value.
+        one of them fails, the whole operation is cancelled.
+
+        :param readingToken: a token which contains all critical information on this reading access.
+        :type readingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingToken.VariableReadingToken.VariableReadingToken`
+        :raise: TypeError if parameter is not Valid
+        """
+
+        if writingToken is None:
+            raise TypeError("writingToken cannot be None")
+
+        self.__logger.debug("[ {0} (Aggregate): write access:".format(self))
+        self.resetTokenChoppedIndexes()  # New write access => new final value and new reference to it.
+        if len(self.children) > 0:
+            if self.isMutable():
+                # mutable.
+                self.shuffleChildren()
+                self.writeChildren(writingToken)
+
+            else:
+                # not mutable.
+                self.writeChildren(writingToken)
+
+        else:
+            # no child.
+            self.__logger.debug("Write abort: the variable has no child.")
+            writingToken.Ok = False
+
+        # Variable notification
+        if writingToken.Ok:
+            self.notifyBoundedVariables("write", writingToken)
+
+        self.log.debug("\t :{0}. ]".format(writingToken))
