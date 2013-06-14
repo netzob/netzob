@@ -107,7 +107,7 @@ class AbstractVariableProcessingToken(object):
 
         :type: :class:`bitarray`
         """
-        return self__value
+        return self.__value
 
     @value.setter
     @typeCheck(bitarray)

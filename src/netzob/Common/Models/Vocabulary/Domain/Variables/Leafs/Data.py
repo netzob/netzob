@@ -219,6 +219,11 @@ class Data(AbstractVariableLeaf):
     def compareFormat(self, readingToken):
         """The variable checks if its format complies with the read value's format.
 
+        >>> from netzob import *
+        >>> data = Data(ASCII)
+        >>> rToken = VariableReadingToken(value=TypeConvertor.encode(ASCII, bitarray, "helloworld"))
+        >>> print data.compareFormat(rToken)
+        True
 
         :param readingToken: the processing token where the memory is
         :type readingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken.VariableReadingToken`
@@ -281,7 +286,7 @@ class Data(AbstractVariableLeaf):
         else:
             self.__logger.info("Learning abort because the previous format comparison failed.")
 
-        self.log.debug("Variable {0}: {1}. ] -".format(self.name, readingToken))
+        self.__logger.debug("Variable {0}: {1}. ] -".format(self.name, readingToken))
 
     @typeCheck(VariableReadingToken)
     def compare(self, readingToken):
@@ -301,16 +306,16 @@ class Data(AbstractVariableLeaf):
 
         if len(tmp) >= len(localValue):
             if tmp[:len(localValue)] == localValue:
-                self.log.debug("Comparison successful.")
+                self.__logger.debug("Comparison successful.")
                 readingToken.incrementIndex(len(localValue))
                 readingToken.Ok = True
             else:
                 readingToken.Ok = False
-                self.log.debug("Comparison failed: wrong value.")
+                self.__logger.debug("Comparison failed: wrong value.")
         else:
             readingToken.Ok = False
-            self.log.debug("Comparison failed: wrong size.")
-        self.log.debug("Variable {0}: {1}. ] -".format(self.name, readingToken))
+            self.__logger.debug("Comparison failed: wrong size.")
+        self.__logger.debug("Variable {0}: {1}. ] -".format(self.name, readingToken))
 
     @typeCheck(VariableWritingToken)
     def mutate(self, writingToken):

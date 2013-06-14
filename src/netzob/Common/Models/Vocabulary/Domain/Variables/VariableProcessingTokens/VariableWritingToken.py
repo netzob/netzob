@@ -40,8 +40,9 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken import AbstractVariableProcessingToken
-from netzob.Common.Models.Types.TypeConvertor import TypeConvertor
+from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
+from netzob.Common.Models.Types.Raw import Raw
 
 
 class VariableWritingToken(AbstractVariableProcessingToken):
@@ -65,7 +66,7 @@ class VariableWritingToken(AbstractVariableProcessingToken):
     def toString(self):
         """Used for debug purpose.
         """
-        return "WritingToken: isOk: {0}, value: {1}".format(self.isOk, TypeConvertor.bitarrayToBin(self.value))
+        return "WritingToken: isOk: {0}, value: {1}".format(self.isOk, TypeConverter.convert(self.value, bitarray, Raw))
 
     def updateValue(self):
         """Re-make the value of the token by concatenating each segment of the chopped value.
