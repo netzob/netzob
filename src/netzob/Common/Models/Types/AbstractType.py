@@ -50,10 +50,89 @@ class AbstractType(object):
 
     __metaclass__ = abc.ABCMeta
 
+    # FEW KEY ELEMENTS
+    ENDIAN_BIG = 'big'
+    ENDIAN_LITTLE = 'little'
+    SIGN_SIGNED = 'signed'
+    SIGN_UNSIGNED = 'unsigned'
+    UNITSIZE_1 = '1'
+    UNITSIZE_4 = '4'
+    UNITSIZE_8 = '8'
+    UNITSIZE_16 = '16'
+    UNITSIZE_32 = '32'
+    UNITSIZE_64 = '64'
+
+    @staticmethod
+    def defaultUnitSize():
+        """Return the default unit size
+
+        :return: the default unit size
+        :rtype: str
+        """
+        return AbstractType.UNITSIZE_8
+
+    @staticmethod
+    def defaultEndianness():
+        """Return the default endianness
+
+        :return: the default endianness
+        :rtype: str
+        """
+        return AbstractType.ENDIAN_LITTLE
+
+    @staticmethod
+    def defaultSign():
+        """Return the default sign
+
+        :return: the default sign
+        :rtype: str
+        """
+        return AbstractType.SIGN_SIGNED
+
     def __init__(self, typeName, value, size=(None, None)):
         self.typeName = typeName
         self.value = value
         self.size = size
+
+    @staticmethod
+    @abc.abstractmethod
+    def decode(data, unitSize=None, endianness=None, sign=None):
+        """This method convert the specified data in python raw format.
+
+        :param data: the data encoded in current type which will be decoded in raw
+        :type data: the current type
+        :keyword unitSize: the unit size of the specified data
+        :type unitSize: :class:`netzob.Common.Models.Types.UnitSize.UnitSize`
+        :keyword endianness: the endianness of the specified data
+        :type endianness: :class:`netzob.Common.Models.Types.Endianness.Endianness`
+        :keyword sign: the sign of the specified data
+        :type sign: :class:`netzob.Common.Models.Types.Sign.Sign`
+
+        :return: data encoded in python raw
+        :rtype: python raw
+        :raise: TypeError if parameters are not valid.
+        """
+        raise NotImplementedError("Not implemented")
+
+    @staticmethod
+    @abc.abstractmethod
+    def encode(data, unitSize=None, endianness=None, sign=None):
+        """This method convert the python raw data to the current type.
+
+        :param data: the data encoded in python raw which will be encoded in current type
+        :type data: python raw
+        :keyword unitSize: the unit size of the specified data
+        :type unitSize: :class:`netzob.Common.Models.Types.UnitSize.UnitSize`
+        :keyword endianness: the endianness of the specified data
+        :type endianness: :class:`netzob.Common.Models.Types.Endianness.Endianness`
+        :keyword sign: the sign of the specified data
+        :type sign: :class:`netzob.Common.Models.Types.Sign.Sign`
+
+        :return: data encoded in python raw
+        :rtype: python raw
+        :raise: TypeError if parameters are not valid.
+        """
+        raise NotImplementedError("Not implemented")
 
     @property
     def value(self):
