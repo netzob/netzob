@@ -49,9 +49,11 @@ def getSuite():
         Agg.__module__,
         Data.__module__,
         ASCII.__module__,
-        AbstractType,
+        Decimal.__module__,
+        BitArray,
+        AbstractType.__module__,
         Memory.__module__,
-        TypeConvertor.__module__,
+        TypeConverter.__module__,
         AbstractVariable.__module__,
         VariableReadingToken.__module__,
     ]
