@@ -34,6 +34,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+import struct
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -43,7 +44,6 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Models.Types.AbstractType import AbstractType
-from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
 
 
 class ASCII(AbstractType):
@@ -52,7 +52,7 @@ class ASCII(AbstractType):
         super(ASCII, self).__init__(self.__class__.__name__, value, size)
 
     def buildDataRepresentation(self):
-        """see :class:`netzob.Common.Models.Types.AbstractType.AbstractType`"""
+        """Overwrite :class:`netzob.Common.Models.Types.AbstractType.AbstractType`"""
 
         minSize, maxSize = self.size
         if minSize is not None:
@@ -60,4 +60,65 @@ class ASCII(AbstractType):
         if maxSize is not None:
             maxSize = maxSize * 8
         bitSize = (minSize, maxSize)
+        from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
         return Data(dataType=ASCII, originalValue=self.value, size=bitSize)
+
+    @staticmethod
+    def decode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+        """This method convert the specified data in python raw format.
+
+        >>> from netzob import *
+        >>> ASCII.decode("hello")
+        'hello'
+        >>> ASCII.decode('\x5a\x6f\x62\x79\x20\x69\x73\x20\x64\x61\x20\x70\x6c\x61\x63\x65\x20\x21')
+        'Zoby is da place !'
+        >>> ASCII.decode(1021)
+        '1021'
+
+        :param data: the data encoded in ASCII which will be decoded in raw
+        :type data: the current type
+        :keyword unitSize: the unitsize to consider while encoding. Values must be one of AbstractType.UNITSIZE_*
+        :type unitSize: str
+        :keyword endianness: the endianness to consider while encoding. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE
+        :type endianness: str
+        :keyword sign: the sign to consider while encoding Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED
+        :type sign: str
+
+        :return: data encoded in python raw
+        :rtype: python raw
+        :raise: TypeError if parameters are not valid.
+        """
+        if data is None:
+            raise TypeError("data cannot be None")
+
+        data = str(data)
+        f = "{0}s".format(len(data))
+
+        return struct.pack(f, data)
+
+    @staticmethod
+    def encode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+        """This method convert the python raw data to the ASCII.
+
+        >>> from netzob import *
+        >>> raw = ASCII.decode("hello zoby!")
+        >>> print ASCII.encode(raw)
+        hello zoby!
+
+        :param data: the data encoded in python raw which will be encoded in current type
+        :type data: python raw
+        :keyword unitSize: the unitsize to consider while encoding. Values must be one of AbstractType.UNITSIZE_*
+        :type unitSize: str
+        :keyword endianness: the endianness to consider while encoding. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE
+        :type endianness: str
+        :keyword sign: the sign to consider while encoding Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED
+        :type sign: str
+
+        :return: data encoded in python raw
+        :rtype: python raw
+        :raise: TypeError if parameters are not valid.
+        """
+        if data is None:
+            raise TypeError("data cannot be None")
+
+        return str(data)
