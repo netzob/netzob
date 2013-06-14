@@ -34,6 +34,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+import struct
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -43,7 +44,6 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Models.Types.AbstractType import AbstractType
-from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
 
 
 class Decimal(AbstractType):
@@ -52,4 +52,118 @@ class Decimal(AbstractType):
         super(Decimal, self).__init__(self.__class__.__name__, value, size)
 
     def buildDataRepresentation(self):
+        from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
         return Data(dataType=Decimal, originalValue=self.value)
+
+    @staticmethod
+    def decode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+        """This method convert the specified data in python raw format.
+
+        >>> from netzob import *
+        >>> print Decimal.decode(23)
+        \x17
+
+        >>> print Decimal.decode(-1, sign=AbstractType.SIGN_UNSIGNED)
+        Traceback (most recent call last):
+        ...
+        error: ubyte format requires 0 <= number <= 255
+
+        >>> print Decimal.decode(-1, sign=AbstractType.SIGN_SIGNED)
+        \xff
+
+        >>> print Decimal.decode(2000000000000000)
+        Traceback (most recent call last):
+        ...
+        error: byte format requires -128 <= number <= 127
+
+        >>> print Decimal.decode(2000000000000000, unitSize=AbstractType.UNITSIZE_64)
+        \x00\x00\x8dI\xfd\x1a\x07\x00
+
+        >>> print Decimal.decode(25, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE)
+        \x19\x00
+        >>> print Decimal.decode(25, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG)
+        \x00\x19
+
+        :param data: the data encoded in Decimal which will be decoded in raw
+        :type data: the current type
+        :keyword unitSize: the unitsize to consider while encoding. Values must be one of AbstractType.UNITSIZE_*
+        :type unitSize: str
+        :keyword endianness: the endianness to consider while encoding. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE
+        :type endianness: str
+        :keyword sign: the sign to consider while encoding Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED
+        :type sign: str
+
+        :return: data encoded in python raw
+        :rtype: python raw
+        :raise: TypeError if parameters are not valid.
+        """
+        if data is None:
+            raise TypeError("data cannot be None")
+
+        f = Decimal.computeFormat(unitSize, endianness, sign)
+        return struct.pack(f, int(data))
+
+    @staticmethod
+    def encode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+        """This method convert the python raw data to the Decimal.
+
+        >>> from netzob import *
+        >>> raw = Decimal.decode(23)
+        >>> print Decimal.encode(raw)
+        23
+
+        >>> raw = Decimal.decode(1200, unitSize=AbstractType.UNITSIZE_16)
+        >>> print Decimal.encode(raw, unitSize=AbstractType.UNITSIZE_16)
+        1200
+
+        >>> raw = Decimal.decode(25, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE)
+        >>> print repr(Decimal.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG))
+        6400
+        >>> print repr(Decimal.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE))
+        25
+
+        :param data: the data encoded in python raw which will be encoded in current type
+        :type data: python raw
+        :keyword unitSize: the unitsize to consider while encoding. Values must be one of AbstractType.UNITSIZE_*
+        :type unitSize: str
+        :keyword endianness: the endianness to consider while encoding. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE
+        :type endianness: str
+        :keyword sign: the sign to consider while encoding Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED
+        :type sign: str
+
+        :return: data encoded in python raw
+        :rtype: python raw
+        :raise: TypeError if parameters are not valid.
+        """
+        if data is None:
+            raise TypeError("data cannot be None")
+
+        f = Decimal.computeFormat(unitSize, endianness, sign)
+        return struct.unpack(f, data)[0]
+
+    @staticmethod
+    def computeFormat(unitSize, endianness, sign):
+        # endian
+        if endianness == AbstractType.ENDIAN_BIG:
+            endianFormat = '>'
+        elif endianness == AbstractType.ENDIAN_LITTLE:
+            endianFormat = '<'
+        else:
+            raise ValueError("Invalid endianness value: {0}".format(endianness))
+
+        # unitSize
+        if unitSize == AbstractType.UNITSIZE_8:
+            unitFormat = 'b'
+        elif unitSize == AbstractType.UNITSIZE_16:
+            unitFormat = 'h'
+        elif unitSize == AbstractType.UNITSIZE_32:
+            unitFormat = 'i'
+        elif unitSize == AbstractType.UNITSIZE_64:
+            unitFormat = 'q'
+        else:
+            raise ValueError("Only 8, 16, 32 and 64 bits unitsize are available for decimals")
+        # sign
+        if sign == AbstractType.SIGN_UNSIGNED:
+            unitFormat = unitFormat.upper()
+
+        return endianFormat + unitFormat
