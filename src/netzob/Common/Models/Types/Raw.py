@@ -43,7 +43,6 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Models.Types.AbstractType import AbstractType
-from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
 
 
 class Raw(AbstractType):
@@ -52,4 +51,13 @@ class Raw(AbstractType):
         super(Raw, self).__init__(self.__class__.__name__, value, size)
 
     def buildDataRepresentation(self):
-        return Data(dataType=Raw, originalValue=self.value)
+        from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
+        return Data(dataType=Raw, originalValue=self.value, size=self.size)
+
+    @staticmethod
+    def decode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+        return data
+
+    @staticmethod
+    def encode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+        return data
