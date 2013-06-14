@@ -162,7 +162,7 @@ class Field(AbstractField):
         # Create a Variable Writing Token
         writingToken = VariableWritingToken(generationStrategy=generationStrategy)
         self.domain.write(writingToken)
-        return writingToken.getValue().tobytes()
+        return writingToken.value.tobytes()
 
     @property
     def domain(self):
