@@ -31,5 +31,5 @@
 from Raw import Raw
 from ASCII import ASCII
 from Decimal import Decimal
-from TypeConvertor import TypeConvertor
-
+from TypeConverter import TypeConverter
+from AbstractType import AbstractType
