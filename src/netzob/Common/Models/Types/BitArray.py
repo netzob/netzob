@@ -60,6 +60,30 @@ class BitArray(AbstractType):
         return Data(dataType=Raw, originalValue=self.value, size=self.size)
 
     @staticmethod
+    def canParse(data):
+        """For the moment its always true because we consider
+        the decimal type to be very similar to the raw type.
+
+        >>> from netzob import *
+        >>> BitArray.canParse(TypeConverter.convert("hello netzob", ASCII, Raw))
+        True
+
+        :param data: the data to check
+        :type data: python raw
+        :return: True if data can be parsed as a BitArray
+        :rtype: bool
+        :raise: TypeError if the data is None
+        """
+
+        if data is None:
+            raise TypeError("data cannot be None")
+
+        if len(data) == 0:
+            return False
+
+        return True
+
+    @staticmethod
     @typeCheck(bitarray)
     def decode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
         """This method convert the specified data in python raw format.
