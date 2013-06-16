@@ -395,6 +395,16 @@ class Data(AbstractVariableLeaf):
     def mutate(self, writingToken):
         """The current value is mutated according to the given generation strategy.
 
+        >>> from netzob import *
+        >>> d = Data(Decimal, 10)
+        >>> print d.currentValue
+        10
+        >>> # Create a writing token with the default generation strategy
+        >>> wToken = VariableWritingToken()
+        >>> # Start the mutation
+        >>> d.mutate(wToken)
+        >>> # Display the mutated value
+        >>> print d.currentValue
 
         :param writingToken: the processing token where the memory is
         :type writingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken.VariableWritingToken`
@@ -404,12 +414,29 @@ class Data(AbstractVariableLeaf):
             raise TypeError("writingToken cannot be None")
 
         self.__logger.debug("- {0}: mutate.".format(self))
-        self.currentValue = self.dataType.mutateValue(writingToken.getGenerationStrategy(), self.getValue(writingToken))
+
+        generationStrategy = writingToken.generationStrategy
+        if generationStrategy is None:
+            raise ValueError("The writing token has no generation strategy established, impossible to execute the mutation process.")
+
+        # Request the generation strategy
+        newValue = generationStrategy.mutateValue(self, writingToken)
+        self.currentValue = newValue
 
     @typeCheck(VariableWritingToken)
     def generate(self, writingToken):
         """A new current value is generated according to the variable type and the given generation strategy.
 
+        >>> from netzob import *
+        >>> d = Data(Decimal, 10)
+        >>> print d.currentValue
+        10
+        >>> # Create a writing token with the default generation strategy
+        >>> wToken = VariableWritingToken()
+        >>> # Start the mutation
+        >>> d.generate(wToken)
+        >>> # Display the generated value
+        >>> print d.currentValue
 
         :param writingToken: the processing token where the memory is
         :type writingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken.VariableWritingToken`
@@ -419,7 +446,14 @@ class Data(AbstractVariableLeaf):
             raise TypeError("writingToken cannot be None")
 
         self.__logger.debug("- {0}: generate.".format(self))
-        self.currentValue = self.dataType.generateValue(writingToken.getGenerationStrategy())
+
+        generationStrategy = writingToken.generationStrategy
+        if generationStrategy is None:
+            raise ValueError("The writing token has no generation strategy established, impossible to execute the generation process.")
+
+        # Request the generation strategy
+        newValue = generationStrategy.generateValue(self)
+        self.currentValue = newValue
 
     def writeValue(self, writingToken):
         """Write the variable value if it has one, else it returns the memorized value.
