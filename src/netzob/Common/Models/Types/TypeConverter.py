@@ -74,6 +74,7 @@ class TypeConverter(object):
 
         To convert an ASCII to its binary (bitarray) representation
 
+        >>> from netzob import *
         >>> data = "That's an helloworld!"
         >>> bin = TypeConverter.convert(data, ASCII, BitArray)
         >>> print bin
@@ -98,7 +99,6 @@ class TypeConverter(object):
         error: unpack requires a string argument of length 1
         >>> print TypeConverter.convert("zoby", ASCII, Decimal, dst_unitSize=AbstractType.UNITSIZE_32)
         2036494202
-
 
 
         :param sourceType: the data source type
