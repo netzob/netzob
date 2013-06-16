@@ -50,7 +50,7 @@ def getSuite():
         Data.__module__,
         ASCII.__module__,
         Decimal.__module__,
-        BitArray,
+        BitArray.__module__,
         AbstractType.__module__,
         Memory.__module__,
         TypeConverter.__module__,
