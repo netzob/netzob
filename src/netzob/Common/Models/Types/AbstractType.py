@@ -134,6 +134,19 @@ class AbstractType(object):
         """
         raise NotImplementedError("Not implemented")
 
+    @staticmethod
+    @abc.abstractmethod
+    def canParse(data):
+        """This method computes if the specified data can be parsed
+        with the current type.
+
+        :param data: the data encoded in python raw to check
+        :type data: python raw
+        :return: True if the data can be parsed will the curren type
+        :rtype: bool
+        """
+        raise NotImplementedError("Not implemented")
+
     @property
     def value(self):
         return self.__value
