@@ -50,6 +50,9 @@ from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken import AbstractVariableProcessingToken
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken import VariableReadingToken
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken import VariableWritingToken
+from netzob.Common.Models.Types.TypeConverter import TypeConverter
+from netzob.Common.Models.Types.BitArray import BitArray
+from netzob.Common.Models.Types.Raw import Raw
 
 
 class Data(AbstractVariableLeaf):
@@ -219,10 +222,34 @@ class Data(AbstractVariableLeaf):
     def compareFormat(self, readingToken):
         """The variable checks if its format complies with the read value's format.
 
+        For instance, we can use it to verify the content of the variable reading token
+        can be parsed with an ASCII data
         >>> from netzob import *
         >>> data = Data(ASCII)
-        >>> rToken = VariableReadingToken(value=TypeConvertor.encode(ASCII, bitarray, "helloworld"))
-        >>> print data.compareFormat(rToken)
+        >>> rToken = VariableReadingToken(value=TypeConverter.convert("helloworld", ASCII, BitArray))
+        >>> data.compareFormat(rToken)
+        >>> print rToken.Ok
+        True
+
+        In the following we check if the specified data can be parsed as a Decimal (which is always the case)
+        >>> data = Data(Decimal)
+        >>> rToken = VariableReadingToken(value=TypeConverter.convert("This is a Field", ASCII, BitArray))
+        >>> data.compareFormat(rToken)
+        >>> print rToken.Ok
+        True
+
+        It also checks the requested min and max size compliance of the reading token. Below the result
+        is negivative because the ASCII section in the binValue is only of 4 chars which is below
+        than the 5 mandatory requested chars (5 chars * 8 bits per char) in the Data.
+        >>> data = Data(ASCII, size=(5*8, 10*8))
+        >>> binValue = TypeConverter.convert("hey ", ASCII, BitArray)
+        >>> rToken = VariableReadingToken(value=binValue)
+        >>> data.compareFormat(rToken)
+        >>> print rToken.Ok
+        False
+        >>> rToken.value = TypeConverter.convert("hello", ASCII, BitArray)
+        >>> data.compareFormat(rToken)
+        >>> print rToken.Ok
         True
 
         :param readingToken: the processing token where the memory is
@@ -234,8 +261,25 @@ class Data(AbstractVariableLeaf):
 
         self.__logger.debug("- [ {0}: compareFormat.".format(self))
 
-        self.varType.compareFormat(readingToken)
+        # Retrieve the value to check
+        data = readingToken.value[readingToken.index:]
+        minSize, maxSize = self.size
+        if minSize is not None and len(data) < minSize:
+            # data is too small
+            result = False
+        else:
+            if minSize is None:
+                minSize = 0
+            if maxSize is None:
+                maxSize = len(data)
+            result = False
+            for length in xrange(minSize, min(maxSize, len(data)) + 1):
+                tmp = TypeConverter.convert(data[:length], BitArray, Raw)
+                if self.dataType.canParse(tmp):
+                    result = True
+                    break
 
+        readingToken.Ok = result
         self.__logger.debug("Variable {0}: {1}. ] -".format(self.name, readingToken))
 
     @typeCheck(VariableReadingToken)
