@@ -64,6 +64,39 @@ class ASCII(AbstractType):
         return Data(dataType=ASCII, originalValue=self.value, size=bitSize)
 
     @staticmethod
+    def canParse(data):
+        """This method returns True if data is an ASCII
+
+        >>> from netzob import *
+        >>> ASCII.canParse(TypeConverter.convert("hello netzob", ASCII, Raw))
+        True
+
+        The ascii table is defined from 0 to 127:
+        >>> ASCII.canParse(TypeConverter.convert(128, Decimal, Raw, src_sign=AbstractType.SIGN_UNSIGNED))
+        False
+
+        :param data: the data to check
+        :type data: python raw
+        :return: True if data is an ASCII
+        :rtype: bool
+        :raise: TypeError if the data is None
+        """
+
+        if data is None:
+            raise TypeError("data cannot be None")
+
+        if len(data) == 0:
+            return False
+
+        for byte in data:
+            # We naively try to decode in ascii the binary.
+            try:
+                byte.decode('ascii')
+            except:
+                return False
+        return True
+
+    @staticmethod
     def decode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
         """This method convert the specified data in python raw format.
 
