@@ -44,8 +44,7 @@ from netzob.Common.Models.Types.Decimal import Decimal
 
 
 class TypeConverter(object):
-    """A set of static methods to convert data
-    from a type to another one.
+    """A type converter class which provide the convert method.
     """
 
     @staticmethod
@@ -73,12 +72,34 @@ class TypeConverter(object):
                 dst_unitSize=AbstractType.defaultUnitSize(), dst_endianness=AbstractType.defaultEndianness(), dst_sign=AbstractType.defaultSign()):
         """Encode data provided as a sourceType to a destinationType.
 
-        To convert an ASCII to its raw representation
+        To convert an ASCII to its binary (bitarray) representation
 
         >>> data = "That's an helloworld!"
-        >>> rdata = TypeConverter.convert(data, ASCII, Raw)
-        >>> print rdata
-        >>> 'c0 a8 00 0a'
+        >>> bin = TypeConverter.convert(data, ASCII, BitArray)
+        >>> print bin
+        bitarray('001010100001011010000110001011101110010011001110000001001000011001110110000001000001011010100110001101100011011011110110111011101111011001001110001101100010011010000100')
+        >>> data == TypeConverter.convert(bin, BitArray, ASCII)
+        True
+
+        To convert a raw data to its decimal representation and then to its ASCII representation
+        >>> data = '\x23'
+        >>> decData = TypeConverter.convert(data, Raw, Decimal)
+        >>> print decData
+        35
+        >>> print TypeConverter.convert(decData, Decimal, ASCII)
+        #
+
+        You can also play with the unitSize to convert multiple ascii in a single high value decimal
+        >>> TypeConverter.convert("5", ASCII, Decimal)
+        53
+        >>> print TypeConverter.convert("zoby", ASCII, Decimal)
+        Traceback (most recent call last):
+        ...
+        error: unpack requires a string argument of length 1
+        >>> print TypeConverter.convert("zoby", ASCII, Decimal, dst_unitSize=AbstractType.UNITSIZE_32)
+        2036494202
+
+
 
         :param sourceType: the data source type
         :type sourceType: :class:`type`
@@ -101,10 +122,10 @@ class TypeConverter(object):
 
         """
         # is the two formats supported ?
-        if sourceType not in TypeConverter.__supportedTypes().keys():
-            raise TypeError("The source type is not supported")
-        if destinationType not in TypeConverter.__supportedTypes().keys():
-            raise TypeError("The destination type is not supported")
+        if sourceType not in TypeConverter.__supportedTypes():
+            raise TypeError("The source type ({0}) is not supported".format(sourceType.__name__))
+        if destinationType not in TypeConverter.__supportedTypes():
+            raise TypeError("The destination type ({0}) is not supported".format(destinationType.__name__))
         if data is None:
             raise TypeError("Data cannot be None")
 
