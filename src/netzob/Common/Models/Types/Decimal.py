@@ -56,6 +56,31 @@ class Decimal(AbstractType):
         return Data(dataType=Decimal, originalValue=self.value)
 
     @staticmethod
+    def canParse(data):
+        """This method returns True if data is a Decimal.
+        For the moment its always true because we consider
+        the decimal type to be very similar to the raw type.
+
+        >>> from netzob import *
+        >>> Decimal.canParse(TypeConverter.convert("hello netzob", ASCII, Raw))
+        True
+
+        :param data: the data to check
+        :type data: python raw
+        :return: True if data is can be parsed as a Decimal
+        :rtype: bool
+        :raise: TypeError if the data is None
+        """
+
+        if data is None:
+            raise TypeError("data cannot be None")
+
+        if len(data) == 0:
+            return False
+
+        return True
+
+    @staticmethod
     def decode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
         """This method convert the specified data in python raw format.
 
@@ -139,6 +164,7 @@ class Decimal(AbstractType):
             raise TypeError("data cannot be None")
 
         f = Decimal.computeFormat(unitSize, endianness, sign)
+
         return struct.unpack(f, data)[0]
 
     @staticmethod
