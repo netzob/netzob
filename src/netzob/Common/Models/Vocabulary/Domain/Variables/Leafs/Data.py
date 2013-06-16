@@ -224,6 +224,7 @@ class Data(AbstractVariableLeaf):
 
         For instance, we can use it to verify the content of the variable reading token
         can be parsed with an ASCII data
+
         >>> from netzob import *
         >>> data = Data(ASCII)
         >>> rToken = VariableReadingToken(value=TypeConverter.convert("helloworld", ASCII, BitArray))
@@ -232,6 +233,7 @@ class Data(AbstractVariableLeaf):
         True
 
         In the following we check if the specified data can be parsed as a Decimal (which is always the case)
+
         >>> data = Data(Decimal)
         >>> rToken = VariableReadingToken(value=TypeConverter.convert("This is a Field", ASCII, BitArray))
         >>> data.compareFormat(rToken)
@@ -241,6 +243,7 @@ class Data(AbstractVariableLeaf):
         It also checks the requested min and max size compliance of the reading token. Below the result
         is negivative because the ASCII section in the binValue is only of 4 chars which is below
         than the 5 mandatory requested chars (5 chars * 8 bits per char) in the Data.
+
         >>> data = Data(ASCII, size=(5*8, 10*8))
         >>> binValue = TypeConverter.convert("hey ", ASCII, BitArray)
         >>> rToken = VariableReadingToken(value=binValue)
@@ -284,7 +287,20 @@ class Data(AbstractVariableLeaf):
 
     @typeCheck(VariableReadingToken)
     def learn(self, readingToken):
-        """learn:
+        """This method is used to learn the value of a field
+        given the content of in the current readingToken.
+
+        >>> from netzob import *
+        >>> data = Data(ASCII, size=(None, 48))
+        >>> print data.currentValue
+        None
+        >>> binValue = TypeConverter.convert("netzob, is the name of a RE tool.", ASCII, BitArray)
+        >>> rToken = VariableReadingToken(value=binValue)
+        >>> data.learn(rToken)
+        >>> print TypeConverter.convert(data.currentValue, BitArray, ASCII)
+        netzob
+        >>> rToken.index
+        48
 
         .. warning:: WIP, the delimitor case is not yet managed.
 
@@ -297,8 +313,8 @@ class Data(AbstractVariableLeaf):
 
         self.__logger.debug("- [ {0}: learn.".format(self))
         # A format comparison had been executed before, its result must be "OK".
-        if readingToken.Ok():
-            tmp = readingToken.value[readingToken.index():]
+        if readingToken.Ok:
+            tmp = readingToken.value[readingToken.index:]
 
             minSize, maxSize = self.size
 
