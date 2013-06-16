@@ -59,7 +59,7 @@ class VariableReadingToken(AbstractVariableProcessingToken):
 
     def toString(self):
         """Used for debug purpose."""
-        return "ReadingToken: isOk: {0}, value left: {1}".format(self.isOk, TypeConverter.convert(self.value[self.index:], bitarray, Raw))
+        return "ReadingToken: isOk: {0}, value left: {1}".format(self.Ok, TypeConverter.convert(self.value[self.index:], bitarray, Raw))
 
     @typeCheck(AbstractVariable, int)
     def read(self, variable, increment):

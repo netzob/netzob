@@ -59,7 +59,7 @@ class AbstractVariableProcessingToken(object):
         """
         self.__memory = None
         self.__value = bitarray()
-        self.__isOk = True
+        self.__Ok = True
         self.__index = 0
         self.__logger = logging.getLogger(__name__)
 
@@ -74,18 +74,18 @@ class AbstractVariableProcessingToken(object):
         self.__linkedValues = []
 
     @property
-    def isOk(self):
+    def Ok(self):
         """Returns False if an error was encounter in the generation process.
 
         :type: :class:`bool`
         """
-        return self.__isOk
+        return self.__Ok
 
-    @isOk.setter
+    @Ok.setter
     @typeCheck(bool)
-    def isOk(self, isOk):
-        self.logger.debug("OK Flag is set to {0}".format(isOk))
-        self.__isOk = isOk
+    def Ok(self, Ok):
+        self.__logger.debug("OK Flag is set to {0}".format(Ok))
+        self.__Ok = Ok
 
     @property
     def memory(self):
