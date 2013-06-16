@@ -77,7 +77,7 @@ class ASCII(AbstractType):
 
         :param data: the data to check
         :type data: python raw
-        :return: True if data is an ASCII
+        :return: True if data can be parsed as an ASCII
         :rtype: bool
         :raise: TypeError if the data is None
         """
