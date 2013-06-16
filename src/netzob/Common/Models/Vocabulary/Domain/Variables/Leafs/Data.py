@@ -352,6 +352,20 @@ class Data(AbstractVariableLeaf):
     def compare(self, readingToken):
         """The variable compares its value to the read value.
 
+        >>> from netzob import *
+        >>> d = Data(ASCII, TypeConverter.convert("Zoby", ASCII, BitArray))
+        >>> bin = TypeConverter.convert("Zoby has a hat", ASCII, BitArray)
+        >>> rToken = VariableReadingToken(value=bin)
+        >>> d.compare(rToken)
+        >>> print rToken.Ok
+        True
+
+        >>> d = Data(ASCII, TypeConverter.convert("Zoby", ASCII, BitArray))
+        >>> bin = TypeConverter.convert("Visit netzob.org for more documentation", ASCII, BitArray)
+        >>> rToken = VariableReadingToken(value=bin)
+        >>> d.compare(rToken)
+        >>> print rToken.Ok
+        False
 
         :param readingToken: the processing token where the memory is
         :type readingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken.VariableReadingToken`
