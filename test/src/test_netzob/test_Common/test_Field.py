@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2013 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -26,6 +26,12 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
+#| File contributors :                                                       |
+#|       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
+#|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import unittest
@@ -33,12 +39,7 @@ import unittest
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Field import Field
-from netzob.Common.Type.Format import Format
-from netzob.Common.Type.UnitSize import UnitSize
-from netzob.Common.Type.Sign import Sign
-from netzob.Common.Type.Endianess import Endianess
-from netzob.Common.Functions.Visualization.TextColorFunction import TextColorFunction
+from netzob import *
 
 
 class test_Field(unittest.TestCase):
@@ -46,7 +47,7 @@ class test_Field(unittest.TestCase):
     def test_createField(self):
         f = Field()
         self.assertNotEqual(f, None)
-        self.assertEqual(f.name, "Default")
+        self.assertEqual(f.name, None)
         self.assertEqual(f.regex, "(.{,})")
 
         f = Field(name="Test")
@@ -128,5 +129,3 @@ class test_Field(unittest.TestCase):
         f.addTransformationFunction(func2)
         f.cleanTransformationFunctions()
         self.assertEqual(getTransformationFunctions(), [])
-
-
