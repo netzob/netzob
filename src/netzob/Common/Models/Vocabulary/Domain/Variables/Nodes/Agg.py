@@ -44,6 +44,7 @@ import logging
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.NetzobRegex import NetzobRegex
 from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken import AbstractVariableProcessingToken
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken import VariableReadingToken
@@ -164,3 +165,21 @@ class Agg(AbstractVariableNode):
             self.notifyBoundedVariables("write", writingToken)
 
         self.log.debug("\t :{0}. ]".format(writingToken))
+
+    def buildRegex(self):
+        """This method creates a regex based on the children of the Aggregate.
+
+        >>> from netzob import *
+        >>> d1 = Data(ASCII, "hello")
+        >>> d2 = Data(ASCII, size=(5, 10))
+        >>> d = Agg([d1, d2])
+        >>> r = d.buildRegex()
+        >>> print r
+        ((?:"hello")(?:.*{5,10}))
+
+        :return: a regex which can be used to identify the section in which the domain can be found
+        :rtype: :class:`netzob.Common.Utils.NetzobRegex.NetzobRegex`
+        """
+        regexes = [str(child.buildRegex()) for child in self.children]
+        regex = NetzobRegex("".join(regexes))
+        return regex
