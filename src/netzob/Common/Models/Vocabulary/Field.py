@@ -179,4 +179,6 @@ class Field(AbstractField):
 
     @domain.setter
     def domain(self, domain):
-        self.__domain = DomainFactory.normalizeDomain(domain)
+        normalizedDomain = DomainFactory.normalizeDomain(domain)
+        self.__regex = normalizedDomain.buildRegex()
+        self.__domain = normalizedDomain
