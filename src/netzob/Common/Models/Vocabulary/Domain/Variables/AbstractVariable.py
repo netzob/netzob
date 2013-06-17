@@ -47,6 +47,7 @@ from bitarray import bitarray
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.NetzobRegex import NetzobRegex
 
 
 class AbstractVariable(object):
@@ -173,6 +174,27 @@ class AbstractVariable(object):
         :return: True if the variable is defined.
         """
         raise NotImplementedError("The current variable does not implement 'isDefined'.")
+
+    @abc.abstractmethod
+    def buildRegex(self):
+        """This method creates a regex based on the size
+        established in the domain.
+
+        >>> from netzob import *
+        >>> d = Data(ASCII, "hello")
+        >>> r = d.buildRegex()
+        >>> print r
+        ("hello")
+
+        >>> d = Data(ASCII, size=(5, 10))
+        >>> r = d.buildRegex()
+        >>> print r
+        (.*){5,10}
+
+        :return: a regex which can be used to identify the section in which the domain can be found
+        :rtype: :class:`netzob.Common.Utils.NetzobRegex.NetzobRegex`
+        """
+        raise NotImplementedError("The current variable does not implement 'buildRegex'")
 
     #+---------------------------------------------------------------------------+
     #| Visitor abstract method                                                   |
