@@ -45,6 +45,7 @@ from bitarray import bitarray
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.NetzobRegex import NetzobRegex
 from netzob.Common.Models.Types.AbstractType import AbstractType
 from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken import AbstractVariableProcessingToken
@@ -457,19 +458,46 @@ class Data(AbstractVariableLeaf):
 
     def writeValue(self, writingToken):
         """Write the variable value if it has one, else it returns the memorized value.
-                Write this value in the writingToken.
+        Write this value in the writingToken.
+
+        >>> from netzob import *
+        >>> d1 = Data(ASCII, "Hello")
+        >>> wToken = VariableWritingToken()
+        >>> d1.writeValue(wToken)
+        >>> print repr(TypeConverter.convert(wToken.value, BitArray, ASCII))
+
+
         """
         self.__logger.debug("- [ {0}: writeValue.".format(self))
-        value = bitarray()
-        value.extend(self.getValue(writingToken))
-        if self.size[1] is None:
-            # Do not forget to write the delimiter if the variable has one
-            value.extend(self.dataType.getDelimiter())
+        binValue = self.getValue(writingToken)
+
+        value = TypeConverter.convert(binValue, Raw, BitArray)
+        tvalue = TypeConverter.convert(value, BitArray, Raw)
+        self.__logger.debug("Write {0}:{1}:{2}".format(binValue, value, tvalue))
+        # if self.size[1] is None:
+        #     # Do not forget to write the delimiter if the variable has one
+        #     value.extend(self.dataType.getDelimiter())
         writingToken.write(self, value)
         # We impact the value this variable has written on its tokenChoppedIndex list and its fathers token list.
         self.__logger.debug("WritingToken linkedValue: {0}".format(writingToken.linkedValues))
-        self.addTokenChoppedIndex(len(writingToken.linkedValues) - 1)
-        self.__logger.debug("Variable {0}: {1}. ] -".format(self.name, writingToken))
+        #self.addTokenChoppedIndex(len(writingToken.linkedValues) - 1)
+        r = writingToken.value
+        bValue = TypeConverter.convert(r, BitArray, Raw)
+        self.__logger.debug("Variable {0}: {1} ({2}). ] -".format(self.name, writingToken.value, bValue))
+
+    def buildRegex(self):
+        """This method creates a regex based on the children of the Data.
+
+        >>> from netzob import *
+        >>> d1 = Data(ASCII, "hello")
+        >>> r = d1.buildRegex()
+        >>> print r
+        "hello"
+
+        :return: a regex which can be used to identify the section in which the domain can be found
+        :rtype: :class:`netzob.Common.Utils.NetzobRegex.NetzobRegex`
+        """
+        return NetzobRegex()
 
     #+---------------------------------------------------------------------------+
     #| Properties                                                                |
