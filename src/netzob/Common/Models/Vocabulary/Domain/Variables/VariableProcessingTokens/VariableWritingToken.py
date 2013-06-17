@@ -28,12 +28,12 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from bitarray import bitarray
+import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
@@ -59,6 +59,7 @@ class VariableWritingToken(AbstractVariableProcessingToken):
 
         """
         super(VariableWritingToken, self).__init__(memory, value)
+        self.__logger = logging.getLogger(__name__)
         self.__generationStrategy = generationStrategy
         if value is not None:
             self.index = len(value)
@@ -109,6 +110,9 @@ class VariableWritingToken(AbstractVariableProcessingToken):
         """
         if variable is None:
             raise TypeError("a variable must be specified.")
+        if value is None:
+            raise TypeError("value cannot be None")
+
         self.linkedValues.append((variable.id, value))
         self.updateValue()
 
