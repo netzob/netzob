@@ -56,6 +56,11 @@ def getSuite():
         TypeConverter.__module__,
         AbstractVariable.__module__,
         VariableReadingToken.__module__,
+        #        RawMessage.__module__,
+        #        JSONSerializator.__module__,
+        #        Angluin.__module__,
+        State.__module__,
+        Transition.__module__,
     ]
 
     suite = unittest.TestSuite()
