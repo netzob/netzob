@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -37,21 +37,42 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.Common.Utils.Decorators import typeCheck
 
 
 class AbstractMessage(object):
     """Every message must inherits from this class"""
 
-    def __init__(self, data):
+    def __init__(self, data, _id=None):
         """
         :parameter data: the content of the message
         :type data: a :class:`object`
+        :parameter _id: the unique identifier of the message
+        :type _id: :class:`uuid.UUID`
         """
-        self.__data = data
+        self.data = data
+        if _id is None:
+            _id = uuid.uuid4()
+        self.id = _id
+
+    @property
+    def id(self):
+        """The unique identified of the message
+
+        :type: UUID
+        """
+        return self.__id
+
+    @id.setter
+    @typeCheck(uuid.UUID)
+    def id(self, _id):
+        if _id is None:
+            return TypeError("Id cannot be None")
+        self.__id = _id
 
     @property
     def data(self):
-        """The content of the messahe
+        """The content of the message
 
         :type: :class:`object`
         """
