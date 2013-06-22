@@ -340,7 +340,8 @@ class AbstractField(AbstractMementoCreator):
     @children.setter
     def children(self, children):
         self.clearChildren()
-        self.children.extend(children)
+        if children is not None:
+            self.children.extend(children)
 
     @property
     def parent(self):
