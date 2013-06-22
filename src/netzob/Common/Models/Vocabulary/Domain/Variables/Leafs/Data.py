@@ -473,7 +473,7 @@ class Data(AbstractVariableLeaf):
 
         value = TypeConverter.convert(binValue, Raw, BitArray)
         tvalue = TypeConverter.convert(value, BitArray, Raw)
-        self.__logger.debug("Write {0}:{1}:{2}".format(binValue, value, tvalue))
+        self.__logger.debug("Write {0}:{1}:{2}".format(binValue, value.to01(), tvalue))
         # if self.size[1] is None:
         #     # Do not forget to write the delimiter if the variable has one
         #     value.extend(self.dataType.getDelimiter())
@@ -481,8 +481,7 @@ class Data(AbstractVariableLeaf):
         # We impact the value this variable has written on its tokenChoppedIndex list and its fathers token list.
         self.__logger.debug("WritingToken linkedValue: {0}".format(writingToken.linkedValues))
         #self.addTokenChoppedIndex(len(writingToken.linkedValues) - 1)
-        r = writingToken.value
-        bValue = TypeConverter.convert(r, BitArray, Raw)
+        bValue = TypeConverter.convert(writingToken.value, BitArray, Raw)
         self.__logger.debug("Variable {0}: {1} ({2}). ] -".format(self.name, writingToken.value, bValue))
 
     def buildRegex(self):
