@@ -43,6 +43,7 @@ from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.A
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Common.Models.Types.Raw import Raw
+from netzob.Common.Models.Types.AbstractType import AbstractType
 
 
 class VariableWritingToken(AbstractVariableProcessingToken):
@@ -72,7 +73,7 @@ class VariableWritingToken(AbstractVariableProcessingToken):
     def updateValue(self):
         """Re-make the value of the token by concatenating each segment of the chopped value.
         """
-        self.value = bitarray()
+        self.value = bitarray(endian=AbstractType.defaultEndianness())
         self.index = 0
 
         for linkedValue in self.linkedValues:

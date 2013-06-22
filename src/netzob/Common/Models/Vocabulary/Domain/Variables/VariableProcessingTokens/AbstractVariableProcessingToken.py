@@ -40,6 +40,7 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
+from netzob.Common.Models.Types.AbstractType import AbstractType
 
 
 class AbstractVariableProcessingToken(object):
@@ -58,7 +59,7 @@ class AbstractVariableProcessingToken(object):
 
         """
         self.__memory = None
-        self.__value = bitarray()
+        self.__value = bitarray(endian=AbstractType.defaultEndianness())
         self.__Ok = True
         self.__index = 0
         self.__logger = logging.getLogger(__name__)
