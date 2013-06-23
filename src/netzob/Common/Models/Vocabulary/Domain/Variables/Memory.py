@@ -54,6 +54,7 @@ class Memory(object):
     >>> m = Memory()
     >>> m.memorize(f1.domain)
     >>> m.memorize(f2.domain)
+    >>> m.persistMemory()
     >>> print len(m.memory.keys())
     2
     >>> duplicatedMemory = m.duplicate()
@@ -73,6 +74,19 @@ class Memory(object):
 
     def duplicate(self):
         """Duplicates in a new memory
+
+        >>> from netzob import *
+        >>> f1 = Field("Protocol RE")
+        >>> f2 = Field(100)
+        >>> m = Memory()
+        >>> m.memorize(f1.domain)
+        >>> m.memorize(f2.domain)
+        >>> m.persistMemory()
+        >>> print len(m.memory.keys())
+        2
+        >>> n = m.duplicate()
+        >>> print len(n.memory.keys())
+        2
 
         :return: a new memory containing the same entries than current one
         :rtype: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Memory`
