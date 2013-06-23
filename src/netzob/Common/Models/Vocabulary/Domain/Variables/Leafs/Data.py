@@ -464,8 +464,8 @@ class Data(AbstractVariableLeaf):
         >>> d1 = Data(ASCII, "Hello")
         >>> wToken = VariableWritingToken()
         >>> d1.writeValue(wToken)
-        >>> print repr(TypeConverter.convert(wToken.value, BitArray, ASCII))
-
+        >>> print TypeConverter.convert(wToken.value, BitArray, ASCII)
+        Hello
 
         """
         self.__logger.debug("- [ {0}: writeValue.".format(self))
