@@ -36,6 +36,7 @@ import doctest
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob import *
+from netzob.Common.Utils import NetzobRegex
 
 
 def getSuite():
@@ -51,6 +52,7 @@ def getSuite():
         ASCII.__module__,
         Decimal.__module__,
         BitArray.__module__,
+        HexaString.__module__,
         AbstractType.__module__,
         Memory.__module__,
         TypeConverter.__module__,
@@ -58,9 +60,10 @@ def getSuite():
         VariableReadingToken.__module__,
         #        RawMessage.__module__,
         #        JSONSerializator.__module__,
-        #        Angluin.__module__,
+        # Angluin.__module__,
         State.__module__,
         Transition.__module__,
+        NetzobRegex,
     ]
 
     suite = unittest.TestSuite()
