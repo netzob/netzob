@@ -48,23 +48,17 @@ class test_Field(unittest.TestCase):
         f = Field()
         self.assertNotEqual(f, None)
         self.assertEqual(f.name, None)
-        self.assertEqual(f.regex, "(.{,})")
+        self.assertEqual(str(f.regex), "(.{0,})")
 
         f = Field(name="Test")
         self.assertNotEqual(f, None)
         self.assertEqual(f.name, "Test")
-        self.assertEqual(f.regex, "(.{,})")
+        self.assertEqual(str(f.regex), "(.{0,})")
 
-        f = Field(regex="(.{10, 300})")
+        f = Field(Raw(size=(5, 150)), name="Default")
         self.assertNotEqual(f, None)
         self.assertEqual(f.name, "Default")
-        self.assertEqual(f.regex, "(.{10, 300})")
-
-    def test_createDefaultField(self):
-        f = Field.createDefaultField()
-        self.assertNotEqual(f, None)
-        self.assertEqual(f.name, "Default")
-        self.assertEqual(f.regex, "(.{,})")
+        self.assertEqual(str(f.regex), "(.{10,300})")
 
     ## Encoding (format, unitsize, sign and endianess)
     def test_format(self):
