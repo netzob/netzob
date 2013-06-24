@@ -53,7 +53,9 @@ class Decimal(AbstractType):
 
     def buildDataRepresentation(self):
         from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
-        return Data(dataType=Decimal, originalValue=self.value)
+        from netzob.Common.Models.Types.TypeConverter import TypeConverter
+        from netzob.Common.Models.Types.Raw import Raw
+        return Data(dataType=Decimal, originalValue=TypeConverter.convert(self.value, Decimal, Raw))
 
     @staticmethod
     def canParse(data):
