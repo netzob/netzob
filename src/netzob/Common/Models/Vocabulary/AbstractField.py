@@ -77,11 +77,11 @@ class AbstractField(AbstractMementoCreator):
 
     def __init__(self, name=None, regex=None, layer=False):
         self.__logger = logging.getLogger(__name__)
-        self.__id = uuid.uuid4()
-        self.__name = name
-        self.__regex = regex
-        self.__layer = layer
-        self.__description = ""
+        self.id = uuid.uuid4()
+        self.name = name
+        self.regex = regex
+        self.layer = layer
+        self.description = ""
 
         self.__children = TypedList(AbstractField)
         self.__parent = None
