@@ -167,12 +167,12 @@ class Alt(AbstractVariableNode):
         >>> d2 = Data(ASCII, size=(5, 10))
         >>> d = Alt([d1, d2])
         >>> r = d.buildRegex()
-        >>> print r
+        >>> print r.regex
         ((?:"hello")|(?:.*{5,10}))
 
         :return: a regex which can be used to identify the section in which the domain can be found
         :rtype: :class:`netzob.Common.Utils.NetzobRegex.NetzobRegex`
         """
-        regexes = [str(child.buildRegex()) for child in self.children]
-        regex = NetzobRegex("|".join(regexes))
+        regexes = [child.buildRegex() for child in self.children]
+        regex = NetzobRegex.buildRegexForAlternativeRegexes(regexes)
         return regex
