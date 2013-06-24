@@ -41,6 +41,7 @@ from netzob.Common.Models.Types.ASCII import ASCII
 from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.Decimal import Decimal
+from netzob.Common.Models.Types.HexaString import HexaString
 
 
 class TypeConverter(object):
@@ -58,6 +59,8 @@ class TypeConverter(object):
             ASCII,
             # decimal
             Decimal,
+            # hexstring
+            HexaString,
         ]
 
     @staticmethod
@@ -123,9 +126,9 @@ class TypeConverter(object):
         """
         # is the two formats supported ?
         if sourceType not in TypeConverter.__supportedTypes():
-            raise TypeError("The source type ({0}) is not supported".format(sourceType.__name__))
+            raise TypeError("The source type is not supported")
         if destinationType not in TypeConverter.__supportedTypes():
-            raise TypeError("The destination type ({0}) is not supported".format(destinationType.__name__))
+            raise TypeError("The destination type is not supported")
         if data is None:
             raise TypeError("Data cannot be None")
 
