@@ -486,17 +486,35 @@ class Data(AbstractVariableLeaf):
 
     def buildRegex(self):
         """This method creates a regex based on the children of the Data.
+        The regex is encoded in HexaString
+
+        For instance, if the value is static :
 
         >>> from netzob import *
         >>> d1 = Data(ASCII, "hello")
-        >>> r = d1.buildRegex()
-        >>> print r
-        "hello"
+        >>> print d1.buildRegex()
+        (68656c6c6f)
+
+        >>> d2 = Data(Decimal, TypeConverter.convert(20, Decimal, Raw))
+        >>> print d2.buildRegex()
+        (14)
+
+        >>> d3 = Data(ASCII, size=(10, 80))
+        >>> print d3.buildRegex()
+        (*{10,80})
+
+        >>> d4 = Data(ASCII)
+        >>> print d4.buildRegex()
+        (*{0,})
 
         :return: a regex which can be used to identify the section in which the domain can be found
         :rtype: :class:`netzob.Common.Utils.NetzobRegex.NetzobRegex`
         """
-        return NetzobRegex()
+
+        if self.currentValue is not None:
+            return NetzobRegex.buildRegexForStaticValue(self.currentValue)
+        else:
+            return NetzobRegex.buildRegexForSizedValue(self.size)
 
     #+---------------------------------------------------------------------------+
     #| Properties                                                                |
