@@ -32,5 +32,6 @@ from Raw import Raw
 from ASCII import ASCII
 from Decimal import Decimal
 from BitArray import BitArray
+from HexaString import HexaString
 from TypeConverter import TypeConverter
 from AbstractType import AbstractType
