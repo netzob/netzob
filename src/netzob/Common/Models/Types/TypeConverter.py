@@ -86,6 +86,7 @@ class TypeConverter(object):
         True
 
         To convert a raw data to its decimal representation and then to its ASCII representation
+
         >>> data = '\x23'
         >>> decData = TypeConverter.convert(data, Raw, Decimal)
         >>> print decData
@@ -94,6 +95,7 @@ class TypeConverter(object):
         #
 
         You can also play with the unitSize to convert multiple ascii in a single high value decimal
+
         >>> TypeConverter.convert("5", ASCII, Decimal)
         53
         >>> print TypeConverter.convert("zoby", ASCII, Decimal)
