@@ -107,19 +107,19 @@ class NetzobSizedRegex(NetzobRegex):
     >>> from netzob.Common.Utils.NetzobRegex import NetzobRegex
     >>> regex = NetzobRegex.buildRegexForSizedValue((8, 80))
     >>> print regex
-    (*{8,80})
+    (.{16,160})
 
     >>> regex = NetzobRegex.buildRegexForSizedValue((None, None))
     >>> print regex
-    (*{0,})
+    (.{0,})
 
     >>> regex = NetzobRegex.buildRegexForSizedValue((10, None))
     >>> print regex
-    (*{10,})
+    (.{20,})
 
     >>> regex = NetzobRegex.buildRegexForSizedValue((None, 80))
     >>> print regex
-    (*{0,80})
+    (.{0,160})
 
     """
 
@@ -130,7 +130,7 @@ class NetzobSizedRegex(NetzobRegex):
         (minSize, maxSize) = self.size
         if maxSize is None:
             maxSize = ''
-        self.regex = "(*{" + str(minSize) + "," + str(maxSize) + "})"
+        self.regex = "(.{" + str(minSize) + "," + str(maxSize) + "})"
 
     @property
     def size(self):
@@ -142,10 +142,12 @@ class NetzobSizedRegex(NetzobRegex):
         if minSize is None:
             minSize = 0
         if maxSize is not None:
+            maxSize = maxSize * 2
             if minSize < 0 or maxSize < 0:
                 raise ValueError("The value min and max cannot be inferior to 0")
             if maxSize <= minSize:
                 raise ValueError("The max size must be superior to the min size")
+        minSize = minSize * 2
         self.__size = (minSize, maxSize)
         self.__updateRegex()
 

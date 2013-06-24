@@ -175,11 +175,11 @@ class Agg(AbstractVariableNode):
         >>> d = Agg([d1, d2])
         >>> r = d.buildRegex()
         >>> print r
-        ((?:"hello")(?:.*{5,10}))
+        ((68656c6c6f)(.{10,20}))
 
         :return: a regex which can be used to identify the section in which the domain can be found
         :rtype: :class:`netzob.Common.Utils.NetzobRegex.NetzobRegex`
         """
-        regexes = [str(child.buildRegex()) for child in self.children]
-        regex = NetzobRegex("".join(regexes))
+        regexes = [child.buildRegex() for child in self.children]
+        regex = NetzobRegex.buildRegexForAggregateRegexes(regexes)
         return regex

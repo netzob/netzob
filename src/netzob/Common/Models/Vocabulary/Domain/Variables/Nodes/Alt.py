@@ -168,7 +168,7 @@ class Alt(AbstractVariableNode):
         >>> d = Alt([d1, d2])
         >>> r = d.buildRegex()
         >>> print r.regex
-        ((?:"hello")|(?:.*{5,10}))
+        ((68656c6c6f)|(.{10,20}))
 
         :return: a regex which can be used to identify the section in which the domain can be found
         :rtype: :class:`netzob.Common.Utils.NetzobRegex.NetzobRegex`

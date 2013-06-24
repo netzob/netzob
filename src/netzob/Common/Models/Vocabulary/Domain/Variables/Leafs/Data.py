@@ -501,11 +501,11 @@ class Data(AbstractVariableLeaf):
 
         >>> d3 = Data(ASCII, size=(10, 80))
         >>> print d3.buildRegex()
-        (*{10,80})
+        (.{20,160})
 
         >>> d4 = Data(ASCII)
         >>> print d4.buildRegex()
-        (*{0,})
+        (.{0,})
 
         :return: a regex which can be used to identify the section in which the domain can be found
         :rtype: :class:`netzob.Common.Utils.NetzobRegex.NetzobRegex`

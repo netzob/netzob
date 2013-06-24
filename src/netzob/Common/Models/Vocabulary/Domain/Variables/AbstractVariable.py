@@ -184,12 +184,12 @@ class AbstractVariable(object):
         >>> d = Data(ASCII, "hello")
         >>> r = d.buildRegex()
         >>> print r
-        ("hello")
+        (68656c6c6f)
 
         >>> d = Data(ASCII, size=(5, 10))
         >>> r = d.buildRegex()
         >>> print r
-        (.*){5,10}
+        (.{10,20})
 
         :return: a regex which can be used to identify the section in which the domain can be found
         :rtype: :class:`netzob.Common.Utils.NetzobRegex.NetzobRegex`
