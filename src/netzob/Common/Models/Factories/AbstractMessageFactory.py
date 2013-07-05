@@ -47,6 +47,7 @@ from netzob.Common.Models.Factories.L4NetworkMessageFactory import L4NetworkMess
 from netzob.Common.Models.Factories.IPCMessageFactory import IPCMessageFactory
 from netzob.Common.Models.Factories.IRPMessageFactory import IRPMessageFactory
 from netzob.Common.Models.Factories.IRPDeviceIoControlMessageFactory import IRPDeviceIoControlMessageFactory
+from netzob.Common.Models.Factories.USBMessageFactory import USBMessageFactory
 from netzob.Common.Models.Factories.RawMessageFactory import RawMessageFactory
 
 
@@ -135,8 +136,12 @@ class AbstractMessageFactory(object):
         elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == IRPDeviceIoControlMessageFactory.XML_SCHEMA_TYPE:
             return IRPDeviceIoControlMessageFactory.loadFromXML(rootElement, namespace, version, id, timestamp, data)
 
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == USBMessageFactory.XML_SCHEMA_TYPE:
+            return USBMessageFactory.loadFromXML(rootElement, namespace, version, id, timestamp, data)
+
         elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == RawMessageFactory.XML_SCHEMA_TYPE:
             return RawMessageFactory.loadFromXML(rootElement, namespace, version, id, timestamp, data)
+
         else:
             raise NameError("The parsed xml doesn't represent a valid type message.")
             return None

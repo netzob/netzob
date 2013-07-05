@@ -175,6 +175,83 @@
 			</extension>
 		</complexContent>
 	</complexType>
+
+
+        <complexType name="USBMessage">
+        	<complexContent>
+	        	<extension base="netzob-common:Message">
+		        	<sequence>
+			        	<element name="endpoint">
+				        	<complexType>
+					        	<sequence>
+						        	<element name="configuration">
+							        	<simpleType>
+								        	<restriction base="int">
+									        	<minInclusive value="0"/>
+										        <maxInclusive value="255"/>
+        									</restriction>
+        								</simpleType>
+        							</element>
+        							<element name="interface">
+        								<simpleType>
+        									<restriction base="int">
+        										<minInclusive value="0"/>
+        										<maxInclusive value="255"/>
+        									</restriction>
+        								</simpleType>
+        							</element>
+        							<element name="type">
+        								<simpleType>
+        									<restriction base="string">
+        										<enumeration value="CONTROL"/>
+        										<enumeration value="INTERRUPT"/>
+        										<enumeration value="BULK"/>
+	        									<enumeration value="ISOCHRONOUS"/>
+		        							</restriction>
+			        					</simpleType>
+				        			</element>
+					        		<element name="dir">
+						        		<simpleType>
+							        		<restriction base="string">
+								        		<enumeration value="INPUT"/>
+									        	<enumeration value="OUTPUT"/>
+        									</restriction>
+	        							</simpleType>
+		        					</element>
+			        				<element name="number">
+				        				<simpleType>
+					        				<restriction base="int">
+						        				<minInclusive value="0"/>
+							        			<maxInclusive value="15"/>
+								        	</restriction>
+        								</simpleType>
+	        						</element>
+		        				</sequence>
+			        		</complexType>
+				        </element>
+        				<element name="direction">
+	        				<simpleType>
+		        				<restriction base="string">
+			        				<enumeration value="HOST_TO_DEVICE"/>
+				        			<enumeration value="DEVICE_TO_HOST"/>
+					        	</restriction>
+        					</simpleType>
+	        			</element>
+		        		<element name="status" type="int"></element>
+			        	<element name="buffer_length" type="int"></element>
+				        <element name="actual_length" type="int"></element>
+        				<element name="ctrl" minOccurs ="0">
+	        				<simpleType>
+		        				<restriction base="string">
+			        				<length value="16"/>
+				        		</restriction>
+        					</simpleType>
+        				</element>
+        			</sequence>
+	        	</extension>
+        	</complexContent>
+        </complexType>
+
 	
 	<complexType name="RawMessage">
 		<complexContent>
