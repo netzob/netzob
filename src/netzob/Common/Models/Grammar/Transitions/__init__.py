@@ -30,3 +30,5 @@
 # see docs.python.org/2/tutorial/modules.html
 
 from Transition import Transition
+from OpenChannelTransition import OpenChannelTransition
+from CloseChannelTransition import CloseChannelTransition

@@ -34,8 +34,8 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import logging
 import uuid
+import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -44,14 +44,28 @@ import uuid
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Common.Models.Grammar.States.AbstractState import AbstractState
+from netzob.Common.Models.Grammar.Transitions.AbstractTransition import AbstractTransition
 
 
-class AbstractTransition(object):
+class CloseChannelTransition(AbstractTransition):
+    """Represents a transition which when executed request to close
+   the current channel
+
+    >>> from netzob import *
+    >>> s0 = State()
+    >>> s1 = State()
+    >>> t = CloseChannelTransition(s0, s1)
+    >>> print t.name
+    None
+    >>> print s0 == t.startState
+    True
+    >>> print s1 == t.endState
+    True
+
+    """
 
     def __init__(self, startState, endState, _id=uuid.uuid4(), name=None):
-        """Constructor of a Transition.
+        """Constructor of a CloseChannelTransition.
 
         :param startState: initial state of the transition
         :type startState: :class:`netzob.Common.Models.Grammar.States.AbstractState.AbstractState`
@@ -63,72 +77,5 @@ class AbstractTransition(object):
         :param name: :class:`str`
 
         """
+        super(CloseChannelTransition, self).__init__(startState, endState, _id, name)
         self.__logger = logging.getLogger(__name__)
-
-        self.__startState = None
-        self.__endState = None
-
-        self.__startState = None
-        self.__endState = None
-
-        self.startState = startState
-        self.endState = endState
-        self.id = _id
-        self.name = name
-
-    @property
-    def startState(self):
-        """
-        The start state from which the transition allows to go to the end state.
-
-        When modifying the startState, it removes itself from previous start state
-
-        >>> from netzob import *
-        >>> s0 = State(name="S0")
-        >>> s1 = State(name="S1")
-        >>> s2 = State(name="S2")
-        >>> t = Transition(s0, s1, name="T0")
-        >>> print t.startState.name
-        S0
-        >>> print len(s0.transitions)
-        1
-        >>> t.startState = s2
-        >>> print len(s0.transitions)
-        0
-
-        :type: :class:`netzob.Common.Models.Grammar.State.AbstractState.AbstractState`
-        :raise: TypeError if type of param is not valid
-        """
-        return self.__startState
-
-    @startState.setter
-    @typeCheck(AbstractState)
-    def startState(self, startState):
-        if self.__startState is not None:
-            self.__startState.removeTransition(self)
-        if startState is not None:
-            startState.transitions.append(self)
-
-        self.__startState = startState
-
-    @property
-    def endState(self):
-        """
-        The end state from which the transition allows to go from the start state
-
-        >>> from netzob import *
-        >>> s0 = State(name="S0")
-        >>> s1 = State(name="S1")
-        >>> t = Transition(s0, s1, name="T0")
-        >>> print t.endState.name
-        S1
-
-        :type: :class:`netzob.Common.Models.Grammar.State.AbstractState.AbstractState`
-        :raise: TypeError if type of param is not valid
-        """
-        return self.__endState
-
-    @endState.setter
-    @typeCheck(AbstractState)
-    def endState(self, endState):
-        self.__endState = endState
