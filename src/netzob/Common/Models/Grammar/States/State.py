@@ -35,6 +35,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import uuid
+import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -44,6 +45,8 @@ import uuid
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Models.Simulator.AbstractionLayer import AbstractionLayer
+from netzob.Common.Models.Grammar.Transitions.Transition import Transition
 from netzob.Common.Models.Grammar.States.AbstractState import AbstractState
 from netzob.Common.Models.Grammar.Transitions.AbstractTransition import AbstractTransition
 
@@ -82,9 +85,138 @@ class State(AbstractState):
         :keyword name: the name of the state
         :type name: :class:`str`
         """
-        self.id = _id
-        self.name = name
+        super(State, self).__init__(_id=_id, name=name)
         self.__transitions = []
+
+    @typeCheck(AbstractionLayer)
+    def executeAsInitiator(self, abstractionLayer):
+        """This method pick the next available transition and execute it.
+        The abstraction layer that will be used is specified as a parameter.
+
+        :parameter abstractionLayer: the abstraction layer that will be used to access to the channel
+        :type abstractionLayer: :class:`netzob.Common.Models.Simulator.AbstractionLayer.AbstractionLayer`
+        :raise Exceptions if an error occurs somewhere (sorry this is be vague i known @todo)
+        """
+        if abstractionLayer is None:
+            raise TypeError("AbstractionLayer cannot be None")
+
+        self._logger.debug("Execute state {0} as an initiator".format(self.name))
+
+        self.active = True
+
+        # Pick the next transition
+        nextTransition = self.__pickNextTransition()
+
+        if nextTransition:
+            self.active = False
+            raise Exception("No transition to execute, we stop here.")
+
+        # Execute picked transition as an initiator
+        try:
+            nextState = nextTransition.executeAsInitiator(abstractionLayer)
+        except Exception, e:
+            self.active = False
+            raise e
+
+        if nextState is None:
+            self.active = False
+            raise Exception("The execution of transition {0} on state {1} did not return the next state.".format(nextTransition.name, self.name))
+
+        self.active = False
+        return nextState
+
+    @typeCheck(AbstractionLayer)
+    def executeAsNotInitiator(self, abstractionLayer):
+        """Execute the current state as not an initiator which means
+        it will wait for a maximum amount of time the reception of a symbol and will try
+        to select the appropriate transition which would be triggered by received symbol.
+        At the end if no exception occur, it returns the next state.
+
+        :param abstractionLayer: the abstraction layer from which it receives messages
+        :type abstractionLayer: :class:`netzob.Common.Models.Simulator.AbstractionLayer.AbstractionLayer`
+        :raise Exception if something goes bad (sorry for the lack of detail) @todo
+        """
+        if abstractionLayer is None:
+            raise TypeError("AbstractionLayer cannot be None")
+
+        self._logger.debug("Execute state {0} as a not initiator".format(self.name))
+
+        self.active = True
+
+        # if no transition exists we quit
+        if len(self.transitions) == 0:
+            self._logger.warn("The current state has no transitions available.")
+            self.active = False
+            raise Exception("No transition available for this state.")
+
+        nextTransition = None
+        nextState = None
+
+        # Execute the first special transition (priority equals 0)
+        for transition in self.transitions:
+            if transition.priority == 0:
+                nextTransition = transition
+
+        if nextTransition is not None:
+            nextState = nextTransition.executeAsNotInitiator(abstractionLayer)
+            if nextState is None:
+                self.active = False
+                raise Exception("The execution of transition {0} on state {1} did not return the next state.".format(nextTransition.name, self.name))
+
+        # Wait to receive a symbol
+        try:
+            (receivedSymbol, receivedMessage) = abstractionLayer.readSymbol()
+            if receivedSymbol is None:
+                raise Exception("The abstraction layer returned a None received symbol")
+
+            # Find the transition which accepts the received symbol as an input symbol
+            for transition in self.transitions:
+                if transition.type == Transition.TYPE and transition.inputSymbol.id == receivedSymbol.id:
+                    nextTransition = transition
+                    break
+
+            if nextTransition is None:
+                self._logger.debug("The received symbol did not match any of the registered transition, we stay in place.")
+                nextState = self
+            else:
+                nextState = nextTransition.executeAsNotInitiator(abstractionLayer)
+
+        except Exception, e:
+            self._logger.warning("An exception occured when receiving a symbol from the abstraction layer.")
+            self.active = False
+            raise e
+
+        self.active = False
+        return nextState
+
+    def __pickNextTransition(self):
+        """Returns the next transion by considering the priority
+        and a random choice.
+
+        It can return None.
+
+        :return: the next transition or None if no transition available
+        :rtype: :class:`netzob.Common.Models.Grammar.Transition.AbstractTransition.AbstractTransition`
+        """
+
+        if len(self.transitions) == 0:
+            return None
+
+        # create a dictionnary to host the possible transition
+        prioritizedTransitions = dict()
+        for transition in self.transitions:
+            if transition.priority in prioritizedTransitions.keys():
+                prioritizedTransitions[transition.priority].append(transition)
+            else:
+                prioritizedTransitions[transition.priority] = [transition]
+
+        possibleTransitions = prioritizedTransitions[sorted(prioritizedTransitions.keys())[0]]
+
+        if len(possibleTransitions) == 1:
+            return possibleTransitions[0]
+
+        idRandom = random.randint(0, len(possibleTransitions) - 1)
+        return possibleTransitions[idRandom]
 
     @typeCheck(AbstractTransition)
     def removeTransition(self, transition):
@@ -100,36 +232,6 @@ class State(AbstractState):
         if transition not in self.__transitions:
             raise ValueError("The transition is not associated to the current state so cannot be removed.")
         self.__transitions.remove(transition)
-
-    @property
-    def id(self):
-        """Unique identifier of the state
-
-        :type: :class:`uuid.UUID`
-        :raise: TypeError if not valid
-        """
-        return self.__id
-
-    @id.setter
-    @typeCheck(uuid.UUID)
-    def id(self, _id):
-        if _id is None:
-            raise TypeError("id cannot be None")
-        self.__id = _id
-
-    @property
-    def name(self):
-        """Optional Name of the state
-
-        :type: str
-        :raise: TypeError is not an str
-        """
-        return self.__name
-
-    @name.setter
-    @typeCheck(str)
-    def name(self, name):
-        self.__name = name
 
     @property
     def transitions(self):
