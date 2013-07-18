@@ -54,6 +54,38 @@ class AbstractMessage(object):
         if _id is None:
             _id = uuid.uuid4()
         self.id = _id
+        self.__metadata = dict()
+
+    @typeCheck(str, object)
+    def setMetadata(self, name, value):
+        """Modify the value of the current metadata which name
+        is specified with the provided value.
+
+        :parameter name: the name of the metadata to edit
+        :type name: :str
+        :parameter value: the new value of the specified metadata
+        :type value: object
+        :raise TypeError if parameters are not valid and ValueError if the
+        specified value is incompatible with the metadata.
+        """
+
+        if not self.isValueForMetadataValid(name, value):
+            raise ValueError("The value of metadata {0} is not valid.")
+        self.__metadata[name] = value
+
+    def isValueForMetadataValid(self, name, value):
+        """Computes if the specified value is compatible for the provided name of metadata
+        It should be redefined to support specifities of certain metadata
+
+        :parameter name: the name of the metadata
+        :type name: str
+        :parameter value: the value of the metadata to check
+        :type value: object
+        :raise TypeError if parameters are not valid"""
+        if name is None:
+            raise TypeError("name cannot be none")
+
+        return True
 
     @property
     def id(self):
@@ -82,3 +114,19 @@ class AbstractMessage(object):
     @data.setter
     def data(self, data):
         self.__data = data
+
+    @property
+    def metadata(self):
+        """The metadata or properties of the message.
+
+        :type: a dict<str, Object>
+        """
+        return self.__metadata
+
+    @metadata.setter
+    @typeCheck(dict)
+    def metadata(self, metadata):
+        if metadata is None:
+            return TypeError("Metadata cannot be None")
+        for k in metadata.keys():
+            self.setMetadata(k, metadata[k])

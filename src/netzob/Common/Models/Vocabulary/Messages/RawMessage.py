@@ -28,6 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
+import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -36,6 +37,7 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Common.Models.Vocabulary.Messages.AbstractMessage import AbstractMessage
 
 
@@ -43,13 +45,76 @@ class RawMessage(AbstractMessage):
     """Represents a raw Message which is a single message with some content and very few meta-data.
 
     >>> msg = RawMessage("That's a simple message")
-    >>> msg = RawMessage(0x123456789)
+    >>> print msg.data
+    That's a simple message
+
+    >>> msg = RawMessage("hello everyone", source="server", destination="client")
+    >>> print msg.source
+    server
+    >>> print msg.destination
+    client
+    >>> print msg.metadata
+    {}
+    >>> msg.metadata["metadata1"]="value"
+    >>> print msg.metadata
+    {'metadata1': 'value'}
+
 
     """
 
-    def __init__(self, data=None):
+    def __init__(self, data=None, date=None, source=None, destination=None):
         """
         :parameter data: the content of the message
         :type data: a :class:`object`
         """
         super(RawMessage, self).__init__(data)
+        if date is None:
+            date = time.mktime(time.gmtime())
+        self.date = date
+        self.source = source
+        self.destination = destination
+
+    @property
+    def date(self):
+        """The date when the message was captured.
+        The date must be encoded in the epoch format.
+
+        :type:float
+        :raise: a TypeError if date is not valid
+        """
+        return self.__date
+
+    @date.setter
+    @typeCheck(float)
+    def date(self, date):
+        if date is None:
+            raise TypeError("Date cannot be None")
+        self.__date = date
+
+    @property
+    def source(self):
+        """The name or type of the source which emitted
+        the current message
+
+        :type: str
+        """
+        return self.__source
+
+    @source.setter
+    @typeCheck(str)
+    def source(self, source):
+        self.__source = source
+
+    @property
+    def destination(self):
+        """The name or type of the destination which received
+        the current message
+
+        :type: str
+        """
+        return self.__destination
+
+    @destination.setter
+    @typeCheck(str)
+    def destination(self, destination):
+        self.__destination = destination
