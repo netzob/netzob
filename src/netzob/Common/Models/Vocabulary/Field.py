@@ -143,10 +143,11 @@ class Field(AbstractField):
 
         This method also applies on multiple fields using a Symbol
 
-        >>> fHello = Field("hello")
-        >>> fName = Field(Alt(["zoby", "netzob"]))
+        >>> fHello = Field("hello ")
+        >>> fName = Field("zoby")
         >>> s = Symbol([fHello, fName])
         >>> print s.generate()
+        hello zoby
 
         :keyword generatorStrategy: if set, this generation strategy will be used to pilot this generation process
         :type generatorStrategy: :class:`object`
@@ -161,7 +162,8 @@ class Field(AbstractField):
         # Create a Variable Writing Token
         writingToken = VariableWritingToken(generationStrategy=generationStrategy)
         self.domain.write(writingToken)
-        return writingToken.value.tobytes()
+        wroteData = writingToken.value
+        return wroteData.tobytes()
 
     @property
     def domain(self):
