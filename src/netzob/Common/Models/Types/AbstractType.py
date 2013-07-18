@@ -220,7 +220,7 @@ class AbstractType(object):
         >>> print ascii.typeName
         ASCII
         >>> data = ascii.buildDataRepresentation()
-        >>> print data.currentValue
+        >>> print TypeConverter.convert(data.currentValue, BitArray, ASCII)
         hello netzob !
         >>> print data.dataType.__name__
         ASCII
