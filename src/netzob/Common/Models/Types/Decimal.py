@@ -54,8 +54,18 @@ class Decimal(AbstractType):
     def buildDataRepresentation(self):
         from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
         from netzob.Common.Models.Types.TypeConverter import TypeConverter
-        from netzob.Common.Models.Types.Raw import Raw
-        return Data(dataType=Decimal, originalValue=TypeConverter.convert(self.value, Decimal, Raw))
+        from netzob.Common.Models.Types.BitArray import BitArray
+        (minSize, maxSize) = self.size
+        if minSize is not None:
+            minSize = minSize * 8
+        if maxSize is not None:
+            maxSize = maxSize * 8
+        if self.value is not None:
+            originalValue = TypeConverter.convert(self.value, Decimal, BitArray)
+        else:
+            originalValue = None
+
+        return Data(dataType=Decimal, originalValue=originalValue, size=(minSize, maxSize))
 
     @staticmethod
     def canParse(data):

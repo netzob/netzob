@@ -52,7 +52,12 @@ class Raw(AbstractType):
 
     def buildDataRepresentation(self):
         from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
-        return Data(dataType=Raw, originalValue=self.value, size=self.size)
+        (minSize, maxSize) = self.size
+        if minSize is not None:
+            minSize = minSize * 8
+        if maxSize is not None:
+            maxSize = maxSize * 8
+        return Data(dataType=Raw, originalValue=self.value, size=(minSize, maxSize))
 
     @staticmethod
     def decode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
