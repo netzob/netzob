@@ -35,7 +35,8 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import uuid
-import logging
+import time
+import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -44,12 +45,14 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Symbol import Symbol
+from netzob.Common.Models.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Common.Models.Grammar.Transitions.AbstractTransition import AbstractTransition
-from netzob.Common.Models.Grammar.States.AbstractState import AbstractState
+from netzob.Common.Models.Simulator.AbstractionLayer import AbstractionLayer
 
 
+@NetzobLogger
 class Transition(AbstractTransition):
     """Represents a transition between two states.
 
@@ -72,6 +75,8 @@ class Transition(AbstractTransition):
 
     """
 
+    TYPE = "Transition"
+
     def __init__(self, startState, endState, inputSymbol=None, outputSymbols=[], _id=uuid.uuid4(), name=None):
         """Constructor of a Transition.
 
@@ -89,11 +94,128 @@ class Transition(AbstractTransition):
         :param name: :class:`str`
 
         """
-        super(Transition, self).__init__(startState, endState, _id, name)
-        self.__logger = logging.getLogger(__name__)
+        super(Transition, self).__init__(Transition.TYPE, startState, endState, _id, name, priority=10)
 
         self.inputSymbol = inputSymbol
         self.outputSymbols = outputSymbols
+
+    @typeCheck(AbstractionLayer)
+    def executeAsInitiator(self, abstractionLayer):
+        """Execute the current transition as an initiator.
+        Being an initiator means it will send the input symbol attached to the transition
+        and wait for the reception of the output symbols.
+
+        If the received symbol is part of the expected symbols (included in the list of output symbols)
+        it returns the endState of the transition. On the contrary if the received symbol is not expected
+        it raises an exception.
+
+        :param abstractionLayer: the abstraction layer which allows to access to the channel
+        :type abstractionLayer: :class:`netzob.Common.Models.Simulator.AbstractionLayer.AbstractionLayer`
+        :return: the end state of the transition if not exception is raised
+        :rtype: :class:`netzob.Common.Models.Grammar.States.AbstractState.AbstractState`
+        :raise: TypeError if parameter are not valid and Exception if an error occurs whil executing the transition.
+        """
+        if abstractionLayer is None:
+            raise TypeError("Abstraction layer cannot be None")
+
+        self.active = True
+
+        try:
+            # Write the input symbol on the channel
+            abstractionLayer.writeSymbol(self.inputSymbol)
+
+            # Waits for the reception of a symbol
+            receivedSymbol = abstractionLayer.readSymbol()
+
+        except Exception, e:
+            self.active = False
+            self._logger.warning("An error occured while executing the transition {0} as an initiator".format(self.name))
+            raise e
+
+        # Computes the next state following the received symbol
+        # if its an expected one, it returns the endState of the transition
+        # if not it raises an exception
+        if receivedSymbol in self.outputSymbols:
+            self.active = False
+            return self.endState
+        else:
+            self.active = False
+            self._logger.warning("Received symbol was not excepted.")
+            raise Exception("Received symbol was not excepted.")
+
+    @typeCheck(AbstractionLayer)
+    def executeAsNotInitiator(self, abstractionLayer):
+        """Execute the current transition as a not initiator.
+        Being not an initiator means the startState has already received the input symbol which made it
+        choose this transition. We only have to pick an output symbol and emit it.
+
+        :param abstractionLayer: the abstraction layer which allows to access to the channel
+        :type abstractionLayer: :class:`netzob.Common.Models.Simulator.AbstractionLayer.AbstractionLayer`
+        :return: the end state of the transition if not exception is raised
+        :rtype: :class:`netzob.Common.Models.Grammar.States.AbstractState.AbstractState`
+        """
+        if abstractionLayer is None:
+            raise TypeError("Abstraction layer cannot be None")
+
+        self.active = True
+
+        # Pick the output symbol to emit
+        pickedSymbol = self.__pickOutputSymbol()
+        if pickedSymbol is None:
+            self._logger.debug("No output symbol to send, we pich an EmptySymbol as output symbol.")
+            pickedSymbol = EmptySymbol()
+
+        # Sleep before emiting the symbol (if equired)
+        if pickedSymbol in self.outputSymbolReactionTimes.keys():
+            time.sleep(self.outputSymbolReactionTimes[pickedSymbol])
+
+        # Emit the symbol
+        self.abstractionLayer.writeSymbol(pickedSymbol)
+
+        # Return the endState
+        self.active = False
+        return self.endState
+
+    def __pickOutputSymbol(self):
+        """Picks the output symbol to emit following their probability.
+
+        It computes the probability of symbols which don't explicitly have one by
+        spliting the remaining available probability given by others.
+
+        :return: the output symbol following their probability.
+        :rtype: :class:`netzob.Common.Models.Vocabulary.Symbol.Symbol`
+        """
+        outputSymbolsWithProbability = dict()
+        nbSymbolWithNoExplicitProbability = 0
+        totalProbability = 0
+        for outputSymbol in self.outputSymbols:
+            if outputSymbol not in self.outputSymbolProbabilities.keys():
+                probability = None
+                nbSymbolWithNoExplicitProbability += 1
+            else:
+                probability = self.outputSymbolProbabilities[outputSymbol]
+                totalProbability += probability
+            outputSymbolsWithProbability[outputSymbol] = probability
+
+        if totalProbability > 100.0:
+            raise ValueError("The sum of output symbol's probability if above 100%")
+
+        remainProbability = 100.0 - totalProbability
+
+        # Share the remaining probability
+        probabilityPerSymbolWithNoExplicitProbability = remainProbability / nbSymbolWithNoExplicitProbability
+
+        # Update the probability
+        for outputSymbol in self.outputSymbols:
+            if outputSymbolsWithProbability[outputSymbol] is None:
+                outputSymbolsWithProbability[outputSymbol] = probabilityPerSymbolWithNoExplicitProbability
+
+        # pick the good output symbol following the probability
+        distribution = [outputSymbol for inner in [[k] * v for k, v in outputSymbolsWithProbability.items()] for outputSymbolsWithNoProbability in inner]
+
+        return random.choice(distribution)
+
+    # Properties
 
     @property
     def inputSymbol(self):
@@ -108,6 +230,9 @@ class Transition(AbstractTransition):
     @inputSymbol.setter
     @typeCheck(Symbol)
     def inputSymbol(self, inputSymbol):
+        if inputSymbol is None:
+            inputSymbol = EmptySymbol()
+
         self.__inputSymbol = inputSymbol
 
     @property
