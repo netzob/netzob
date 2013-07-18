@@ -35,7 +35,6 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import uuid
-import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -44,9 +43,12 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Grammar.Transitions.AbstractTransition import AbstractTransition
+from netzob.Common.Models.Simulator.AbstractionLayer import AbstractionLayer
 
 
+@NetzobLogger
 class OpenChannelTransition(AbstractTransition):
     """Represents a transition which when executed request to open
    the current channel
@@ -64,6 +66,8 @@ class OpenChannelTransition(AbstractTransition):
 
     """
 
+    TYPE = "OpenChannelTransition"
+
     def __init__(self, startState, endState, _id=uuid.uuid4(), name=None):
         """Constructor of an OpenChannelTransition.
 
@@ -77,5 +81,55 @@ class OpenChannelTransition(AbstractTransition):
         :param name: :class:`str`
 
         """
-        super(OpenChannelTransition, self).__init__(startState, endState, _id, name)
-        self.__logger = logging.getLogger(__name__)
+        super(OpenChannelTransition, self).__init__(OpenChannelTransition.TYPE, startState, endState, _id, name, priority=0)
+
+    @typeCheck(AbstractionLayer)
+    def executeAsInitiator(self, abstractionLayer):
+        """Execute the current transition and open the communication channel. Being an initiator or not
+        changes nothing from the open channel transition point of view.
+
+        :param abstractionLayer: the abstraction layer which allows to access to the channel
+        :type abstractionLayer: :class:`netzob.Common.Models.Simulator.AbstractionLayer.AbstractionLayer`
+        :return: the end state of the transition if not exception is raised
+        :rtype: :class:`netzob.Common.Models.Grammar.States.AbstractState.AbstractState`
+        """
+        return self.__execute(abstractionLayer)
+
+    @typeCheck(AbstractionLayer)
+    def executeAsNotInitiator(self, abstractionLayer):
+        """Execute the current transition and open the communication channel. Being an initiator or not
+        changes nothing from the open channel transition point of view.
+
+        :param abstractionLayer: the abstraction layer which allows to access to the channel
+        :type abstractionLayer: :class:`netzob.Common.Models.Simulator.AbstractionLayer.AbstractionLayer`
+        :return: the end state of the transition if not exception is raised
+        :rtype: :class:`netzob.Common.Models.Grammar.States.AbstractState.AbstractState`
+        """
+        return self.__execute(abstractionLayer)
+
+    @typeCheck(AbstractionLayer)
+    def __execute(self, abstractionLayer):
+        """Execute the current transition and open the communication channel. Being an initiator or not
+        changes nothing from the open channel transition point of view.
+
+        :param abstractionLayer: the abstraction layer which allows to access to the channel
+        :type abstractionLayer: :class:`netzob.Common.Models.Simulator.AbstractionLayer.AbstractionLayer`
+        :return: the end state of the transition if not exception is raised
+        :rtype: :class:`netzob.Common.Models.Grammar.States.AbstractState.AbstractState`
+        """
+
+        if abstractionLayer is None:
+            raise TypeError("The abstraction layer cannot be None")
+
+        self.active = True
+
+        # open the channel throught the abstraction layer
+        try:
+            abstractionLayer.openChannel()
+        except Exception, e:
+            self._logger.warning("An error occured which prevented the good execution of the open channel transition")
+            self.active = False
+            raise e
+
+        self.active = False
+        return self.endState
