@@ -51,6 +51,10 @@ from netzob.Common.Models.Vocabulary.Functions.EncodingFunction import EncodingF
 from netzob.Common.Models.Vocabulary.Functions.VisualizationFunction import VisualizationFunction
 from netzob.Common.Models.Vocabulary.Functions.TransformationFunction import TransformationFunction
 from netzob.Common.Utils.TypedList import TypedList
+from netzob.Common.Utils.MatrixList import MatrixList
+from netzob.Common.Models.Types.TypeConverter import TypeConverter
+from netzob.Common.Models.Types.Raw import Raw
+from netzob.Common.Models.Types.HexaString import HexaString
 
 
 class InvalidVariableException(Exception):
@@ -78,6 +82,8 @@ class AbstractField(AbstractMementoCreator):
     def __init__(self, name=None, regex=None, layer=False):
         self.id = uuid.uuid4()
         self.name = name
+        if regex is None:
+            regex = NetzobRegex.buildDefaultRegex()
         self.regex = regex
         self.layer = layer
         self.description = ""
@@ -108,10 +114,16 @@ class AbstractField(AbstractMementoCreator):
         :type transposed: :class:`bool`
 
         :return: a matrix representing the aligned messages following fields definitions.
-        :rtype: a :class:`list` of :class:`list` of :class:`str`
+        :rtype: a :class:`netzob.Common.Utils.MatrixList.MatrixList`
         :raises: :class:`netzob.Common.Models.Vocabulary.AbstractField.AlignmentException` if an error occurs while aligning messages
         """
-        return [[]]
+
+        # Fetch all the data to align
+        data = [TypeConverter.convert(message.data, Raw, HexaString) for message in self.messages]
+
+        # Execute a parallel alignment
+        from netzob.Common.Utils.DataAlignment.ParallelDataAlignment import ParallelDataAlignment
+        return ParallelDataAlignment.align(data, self)
 
     def getValues(self, encoded=False, styled=False):
         """Returns all the values the current element can take following messages attached to the symbol of current element.
@@ -243,6 +255,9 @@ class AbstractField(AbstractMementoCreator):
     @regex.setter
     @typeCheck(NetzobRegex)
     def regex(self, regex):
+        if regex is None:
+            raise TypeError("Regex cannot be None")
+
         self.__regex = regex
 
     @property
@@ -340,7 +355,7 @@ class AbstractField(AbstractMementoCreator):
     def children(self, children):
         self.clearChildren()
         if children is not None:
-            self.children.extend(children)
+            self.__children.extend(children)
 
     @property
     def parent(self):
