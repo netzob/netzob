@@ -30,5 +30,6 @@
 # see docs.python.org/2/tutorial/modules.html
 from Field import Field
 from Symbol import Symbol
+from EmptySymbol import EmptySymbol
 from Messages import *
 from Domain import *

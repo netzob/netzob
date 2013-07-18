@@ -32,3 +32,4 @@ from Protocol import Protocol
 from Vocabulary import *
 from Grammar import *
 from Types import *
+from Simulator import *
