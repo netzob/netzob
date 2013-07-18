@@ -44,8 +44,10 @@ import struct
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Models.Types.AbstractType import AbstractType
+from netzob.Common.Utils.Decorators import NetzobLogger
 
 
+@NetzobLogger
 class ASCII(AbstractType):
 
     def __init__(self, value=None, size=(None, None)):

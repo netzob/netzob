@@ -28,7 +28,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -38,11 +37,12 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Common.Models.Types.AbstractType import AbstractType
 
 
+@NetzobLogger
 class AbstractVariableProcessingToken(object):
     """This token is used to share information regarding the current generation or reading process
     based on variable definition.
@@ -62,7 +62,6 @@ class AbstractVariableProcessingToken(object):
         self.__value = bitarray(endian=AbstractType.defaultEndianness())
         self.__Ok = True
         self.__index = 0
-        self.__logger = logging.getLogger(__name__)
 
         if memory is None:
             memory = Memory()
@@ -85,7 +84,7 @@ class AbstractVariableProcessingToken(object):
     @Ok.setter
     @typeCheck(bool)
     def Ok(self, Ok):
-        self.__logger.debug("OK Flag is set to {0}".format(Ok))
+        self._logger.debug("OK Flag is set to {0}".format(Ok))
         self.__Ok = Ok
 
     @property

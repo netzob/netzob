@@ -43,11 +43,12 @@ import uuid
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Grammar.States.AbstractState import AbstractState
 from netzob.Common.Models.Grammar.Transitions.AbstractTransition import AbstractTransition
 
 
+@NetzobLogger
 class State(AbstractState):
     """A state in the grammar of the protocol.
 

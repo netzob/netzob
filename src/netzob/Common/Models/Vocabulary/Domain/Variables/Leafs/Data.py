@@ -34,7 +34,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -44,7 +43,7 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Utils.NetzobRegex import NetzobRegex
 from netzob.Common.Models.Types.AbstractType import AbstractType
 from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
@@ -56,6 +55,7 @@ from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.Raw import Raw
 
 
+@NetzobLogger
 class Data(AbstractVariableLeaf):
     """Represents a data, meaning a portion of content in the final
     message.
@@ -97,7 +97,6 @@ class Data(AbstractVariableLeaf):
         """
 
         super(Data, self).__init__(self.__class__.__name__, name=name)
-        self.__logger = logging.getLogger(__name__)
 
         self.dataType = dataType
         self.currentValue = originalValue
@@ -171,7 +170,7 @@ class Data(AbstractVariableLeaf):
         if processingToken is None:
             raise TypeError("processingToken cannot be None")
 
-        self.__logger.debug("- {0}: value is forgotten.".format(self))
+        self._logger.debug("- {0}: value is forgotten.".format(self))
         # We remove the memorized value.
         processingToken.memory.forget(self)
         # We remove the local value
@@ -201,7 +200,7 @@ class Data(AbstractVariableLeaf):
         if processingToken is None:
             raise TypeError("processingToken cannot be None")
 
-        self.__logger.debug("- {0}: value is recalled.".format(self))
+        self._logger.debug("- {0}: value is recalled.".format(self))
         self.currentValue = processingToken.memory.recall(self)
 
     @typeCheck(AbstractVariableProcessingToken)
@@ -216,7 +215,7 @@ class Data(AbstractVariableLeaf):
         if processingToken is None:
             raise TypeError("processingToken cannot be None")
 
-        self.__logger.debug("- {0}: value is memorized.".format(self))
+        self._logger.debug("- {0}: value is memorized.".format(self))
         processingToken.memory.memorize(self)
 
     @typeCheck(VariableReadingToken)
@@ -263,7 +262,7 @@ class Data(AbstractVariableLeaf):
         if readingToken is None:
             raise TypeError("readingToken cannot be None")
 
-        self.__logger.debug("- [ {0}: compareFormat.".format(self))
+        self._logger.debug("- [ {0}: compareFormat.".format(self))
 
         # Retrieve the value to check
         data = readingToken.value[readingToken.index:]
@@ -284,7 +283,7 @@ class Data(AbstractVariableLeaf):
                     break
 
         readingToken.Ok = result
-        self.__logger.debug("Variable {0}: {1}. ] -".format(self.name, readingToken))
+        self._logger.debug("Variable {0}: {1}. ] -".format(self.name, readingToken))
 
     @typeCheck(VariableReadingToken)
     def learn(self, readingToken):
@@ -312,7 +311,7 @@ class Data(AbstractVariableLeaf):
         if readingToken is None:
             raise TypeError("readingToken cannot be None")
 
-        self.__logger.debug("- [ {0}: learn.".format(self))
+        self._logger.debug("- [ {0}: learn.".format(self))
         # A format comparison had been executed before, its result must be "OK".
         if readingToken.Ok:
             tmp = readingToken.value[readingToken.index:]
@@ -343,11 +342,11 @@ class Data(AbstractVariableLeaf):
                 self.currentValue = tmp[:endi + len(self.type.getDelimiter())]  # The delimiter token is a part of the variable.
                 readingToken.incrementIndex(endi + len(self.type.getDelimiter()))
 
-            self.__logger.info("Learning done.")
+            self._logger.debug("Learning done.")
         else:
-            self.__logger.info("Learning abort because the previous format comparison failed.")
+            self._logger.debug("Learning abort because the previous format comparison failed.")
 
-        self.__logger.debug("Variable {0}: {1}. ] -".format(self.name, readingToken))
+        self._logger.debug("Variable {0}: {1}. ] -".format(self.name, readingToken))
 
     @typeCheck(VariableReadingToken)
     def compare(self, readingToken):
@@ -414,7 +413,7 @@ class Data(AbstractVariableLeaf):
         if writingToken is None:
             raise TypeError("writingToken cannot be None")
 
-        self.__logger.debug("- {0}: mutate.".format(self))
+        self._logger.debug("- {0}: mutate.".format(self))
 
         generationStrategy = writingToken.generationStrategy
         if generationStrategy is None:
@@ -446,7 +445,7 @@ class Data(AbstractVariableLeaf):
         if writingToken is None:
             raise TypeError("writingToken cannot be None")
 
-        self.__logger.debug("- {0}: generate.".format(self))
+        self._logger.debug("- {0}: generate.".format(self))
 
         generationStrategy = writingToken.generationStrategy
         if generationStrategy is None:

@@ -35,7 +35,6 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import abc
-import logging
 import uuid
 
 #+---------------------------------------------------------------------------+
@@ -69,7 +68,6 @@ class AbstractVariable(object):
         :raise: :class:`TypeError` if parameters type are not valid
 
         """
-        self.__logger = logging.getLogger(__name__)
         if varId is None:
             self.id = uuid.uuid4()
         else:

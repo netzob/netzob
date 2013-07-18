@@ -34,7 +34,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import logging
+
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -126,7 +126,6 @@ class Field(AbstractField):
 
         """
         super(Field, self).__init__(name, None, layer)
-        self.__logger = logging.getLogger(__name__)
         if domain is None:
             domain = Raw(None)
         self.domain = domain

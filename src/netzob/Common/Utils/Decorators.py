@@ -34,6 +34,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -44,6 +45,38 @@ from functools import wraps
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 
+def NetzobLogger(klass):
+    """This class decorator add (if necessary) an instance
+    of the logger (self.__logger) to the attached class
+    and remove from the getState the logger.
+
+    """
+
+    # Verify if a logger already exists
+    found = False
+    for k, v in klass.__dict__.iteritems():
+        if isinstance(v, logging.Logger):
+            found = True
+            break
+    if not found:
+        klass._logger = logging.getLogger(klass.__name__)
+
+    # Exclude logger from __getstate__
+    def getState(self, **kwargs):
+        r = dict()
+        for k, v in self.__dict__.items():
+            if not isinstance(v, logging.Logger):
+                r[k]=v
+        return r
+
+    def setState(self, dict):
+        self.__dict__ = dict
+        self.__logger = logging.getLogger(klass.__name__)
+
+    klass.__getstate__ = getState
+    klass.__setState__ = setState
+
+    return klass
 
 def typeCheck(*types):
     """Decorator which reduces the amount of code to type-check attributes.

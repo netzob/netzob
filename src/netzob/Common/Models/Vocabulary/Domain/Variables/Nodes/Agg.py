@@ -34,7 +34,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -43,7 +42,7 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Utils.NetzobRegex import NetzobRegex
 from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken import AbstractVariableProcessingToken
@@ -51,6 +50,7 @@ from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.V
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken import VariableWritingToken
 
 
+@NetzobLogger
 class Agg(AbstractVariableNode):
     """Represents an Aggregate (AND) in the domain definition
 
@@ -75,7 +75,6 @@ class Agg(AbstractVariableNode):
 
     def __init__(self, children=None):
         super(Agg, self).__init__(self.__class__.__name__, children)
-        self.__logger = logging.getLogger(__name__)
 
     @typeCheck(AbstractVariableProcessingToken)
     def isDefined(self, processingToken):
@@ -110,7 +109,7 @@ class Agg(AbstractVariableNode):
         if readingToken is None:
             raise TypeError("readingToken cannot be None")
 
-        self.__logger.debug("[ {0} (Aggregate): read access:".format(self))
+        self._logger.debug("[ {0} (Aggregate): read access:".format(self))
         if len(self.children) > 0:
             if self.mutable:
                 # mutable.
@@ -121,7 +120,7 @@ class Agg(AbstractVariableNode):
                 self.readChildren(readingToken)
         else:
             # no child.
-            self.__logger.debug("Write abort: the variable has no child.")
+            self._logger.debug("Write abort: the variable has no child.")
             readingToken.Ok = False
 
         # Variable notification
@@ -143,7 +142,7 @@ class Agg(AbstractVariableNode):
         if writingToken is None:
             raise TypeError("writingToken cannot be None")
 
-        self.__logger.debug("[ {0} (Aggregate): write access:".format(self))
+        self._logger.debug("[ {0} (Aggregate): write access:".format(self))
         self.resetTokenChoppedIndexes()  # New write access => new final value and new reference to it.
         if len(self.children) > 0:
             if self.isMutable():
@@ -157,7 +156,7 @@ class Agg(AbstractVariableNode):
 
         else:
             # no child.
-            self.__logger.debug("Write abort: the variable has no child.")
+            self._logger.debug("Write abort: the variable has no child.")
             writingToken.Ok = False
 
         # Variable notification

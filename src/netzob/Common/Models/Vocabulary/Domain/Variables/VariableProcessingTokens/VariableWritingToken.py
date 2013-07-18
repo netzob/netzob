@@ -28,7 +28,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -60,7 +59,6 @@ class VariableWritingToken(AbstractVariableProcessingToken):
 
         """
         super(VariableWritingToken, self).__init__(memory, value)
-        self.__logger = logging.getLogger(__name__)
         self.__generationStrategy = generationStrategy
         if value is not None:
             self.index = len(value)

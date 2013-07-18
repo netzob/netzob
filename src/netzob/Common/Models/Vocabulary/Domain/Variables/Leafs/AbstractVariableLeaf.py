@@ -34,7 +34,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -43,12 +42,13 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken import VariableReadingToken
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken import VariableWritingToken
 
 
+@NetzobLogger
 class AbstractVariableLeaf(AbstractVariable):
     """Represents a leaf in the variable definition of a field.
 
@@ -60,7 +60,6 @@ class AbstractVariableLeaf(AbstractVariable):
 
     def __init__(self, varType, name=None):
         super(AbstractVariableLeaf, self).__init__(varType, name=name)
-        self.__logger = logging.getLogger(__name__)
 
     @typeCheck(VariableReadingToken)
     def read(self, readingToken):
@@ -83,7 +82,7 @@ class AbstractVariableLeaf(AbstractVariable):
         :param readingToken: a token which contains all critical information on this reading access.
         :type readingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingToken.VariableReadingToken.VariableReadingToken`
         """
-        self.__logger.debug("[ Read access on {0}:".format(self))
+        self._logger.debug("[ Read access on {0}:".format(self))
 
         if self.mutable:
             if self.learnable:
@@ -130,14 +129,14 @@ class AbstractVariableLeaf(AbstractVariable):
 
                 else:
                     # not mutable, not learnable and not defined.
-                    self.__logger.debug("Read abort: the variable is neither defined, nor mutable.")
+                    self._logger.debug("Read abort: the variable is neither defined, nor mutable.")
                     readingToken.Ok = False
 
         # Variable notification
         if readingToken.Ok:
             self.notifyBoundedVariables("read", readingToken, self.getValue(readingToken))
 
-        self.__logger.debug("\t {0}. ]".format(readingToken))
+        self._logger.debug("\t {0}. ]".format(readingToken))
 
     @typeCheck(VariableWritingToken)
     def write(self, writingToken):
@@ -160,7 +159,7 @@ class AbstractVariableLeaf(AbstractVariable):
         :param writingToken: a token which contains all critical information on this writing access.
         :type writingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingToken.VariableWritingToken.VariableWritingToken`
         """
-        self.__logger.debug("[ {0} (leaf): write access:".format(self))
+        self._logger.debug("[ {0} (leaf): write access:".format(self))
         self.tokenChoppedIndexes = []  # New write access => new final value and new reference to it.
         if self.mutable:
             if self.learnable:
@@ -204,11 +203,11 @@ class AbstractVariableLeaf(AbstractVariable):
 
                 else:
                     # not mutable, not learnable and not defined.
-                    self.__logger.debug("Write abort: the variable is neither defined, nor mutable.")
+                    self._logger.debug("Write abort: the variable is neither defined, nor mutable.")
                     writingToken.Ok = False
 
         # Variable notification
         if writingToken.Ok:
             self.notifyBoundedVariables("write", writingToken)
 
-        self.__logger.debug("\t: {0}. ]".format(writingToken))
+        self._logger.debug("\t: {0}. ]".format(writingToken))

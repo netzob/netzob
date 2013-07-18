@@ -34,7 +34,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -57,7 +56,6 @@ class AbstractVariableNode(AbstractVariable):
 
     def __init__(self, varType, children=None):
         super(AbstractVariableNode, self).__init__(varType)
-        self.__logger = logging.getLogger(__name__)
         self._children = []
         if children is not None:
             self._children = children

@@ -28,20 +28,19 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
 
-
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 
 
+@NetzobLogger
 class Memory(object):
     """Definition of a memory, used to store variable values in a persisting and independent way.
 
@@ -66,7 +65,6 @@ class Memory(object):
     def __init__(self):
         """Constructor of Memory"""
         # create logger with the given configuration
-        self.__logger = logging.getLogger(__name__)
 
         self.__memory = dict()
         self.__temporaryMemory = dict()
@@ -131,9 +129,9 @@ class Memory(object):
     def printMemory(self):
         """Debug functions which print all values in temporary memory.
         """
-        self.__logger.debug("Memory map:")
+        self._logger.debug("Memory map:")
         for _id, _val in self.__temporaryMemory.iteritems():
-            self.__logger.debug("> {0}  = {1}".format(_id, _val))
+            self._logger.debug("> {0}  = {1}".format(_id, _val))
 
 #+---------------------------------------------------------------------------+
 #| Functions on temporary memory elements                                    |

@@ -34,7 +34,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -43,7 +42,7 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Utils.NetzobRegex import NetzobRegex
 from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken import AbstractVariableProcessingToken
@@ -51,6 +50,7 @@ from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.V
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken import VariableWritingToken
 
 
+@NetzobLogger
 class Alt(AbstractVariableNode):
     """Represents an Alternative (OR) in the domain definition
 
@@ -68,7 +68,6 @@ class Alt(AbstractVariableNode):
 
     def __init__(self, children=None):
         super(Alt, self).__init__(self.__class__.__name__, children)
-        self.__logger = logging.getLogger(__name__)
 
     @typeCheck(AbstractVariableProcessingToken)
     def isDefined(self, processingToken):
@@ -101,7 +100,7 @@ class Alt(AbstractVariableNode):
         if readingToken is None:
             raise TypeError("readingToken cannot be None")
 
-        self.__logger.debug("[ {0} (Alternate): read access:".format(self))
+        self._logger.debug("[ {0} (Alternate): read access:".format(self))
         if len(self.children) > 0:
             if self.mutable:
                 # mutable.
@@ -114,14 +113,14 @@ class Alt(AbstractVariableNode):
 
         else:
             # no child.
-            self.__logger.debug("Write abort: the variable has no child.")
+            self._logger.debug("Write abort: the variable has no child.")
             readingToken.Ok(False)
 
         # Variable notification
         if readingToken.Ok:
             self.notifyBoundedVariables("read", readingToken, self.currentValue)
 
-        self.log.debug("{0}. ]".format(readingToken))
+        self._logger.debug("{0}. ]".format(readingToken))
 
     @typeCheck(VariableWritingToken)
     def write(self, writingToken):

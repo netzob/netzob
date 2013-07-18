@@ -36,7 +36,6 @@
 #+---------------------------------------------------------------------------+
 import uuid
 import abc
-import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -45,7 +44,7 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Utils.UndoRedo.AbstractMementoCreator import AbstractMementoCreator
 from netzob.Common.Utils.NetzobRegex import NetzobRegex
 from netzob.Common.Models.Vocabulary.Functions.EncodingFunction import EncodingFunction
@@ -70,13 +69,13 @@ class NoSymbolException(Exception):
     pass
 
 
+@NetzobLogger
 class AbstractField(AbstractMementoCreator):
     """Represents all the different classes which participates in fields definitions of a message format."""
 
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, name=None, regex=None, layer=False):
-        self.__logger = logging.getLogger(__name__)
         self.id = uuid.uuid4()
         self.name = name
         self.regex = regex
