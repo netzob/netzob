@@ -28,18 +28,8 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
-from gettext import gettext as _
 import logging
 
-from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery
-from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
-from netzob.Inference.Grammar.LearningAlgorithm import LearningAlgorithm
-from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
-from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
-from netzob.Common.MMSTD.States.impl.NormalState import NormalState
-from netzob.Common.MMSTD.Transitions.impl.SimpleTransition import SimpleTransition
-from netzob.Common.MMSTD.Transitions.impl.SemiStochasticTransition import SemiStochasticTransition
-from netzob.Common.MMSTD.MMSTD import MMSTD
 #+----------------------------------------------
 #| Related third party imports
 #+----------------------------------------------
@@ -47,13 +37,98 @@ from netzob.Common.MMSTD.MMSTD import MMSTD
 #+----------------------------------------------
 #| Local application imports
 #+----------------------------------------------
+from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery
+from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
+from netzob.Inference.Grammar.LearningAlgorithm import LearningAlgorithm
+from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
+from netzob.Common.MMSTD.States.impl.NormalState import NormalState
+from netzob.Common.MMSTD.Transitions.impl.SemiStochasticTransition import SemiStochasticTransition
+from netzob.Common.MMSTD.MMSTD import MMSTD
 
 
-#+----------------------------------------------
-#| Angluin:
-#|    Definition of the Angluin L*A algorithm to infer MEALY automatas
-#+----------------------------------------------
 class Angluin(LearningAlgorithm):
+    """This class is an implementation of the Angluin L* Algorithm
+    as detailled in "Learning regular sets from queries and counterexamples" [Ang87].
+
+    This active grammatical inference algorithm infers state machine. It communicates with a target
+    by sending membership queries which requires to have access to an implementation of the protocol.
+
+    To illustrate its usage, we will infer the grammar of a fake simple protocol.
+
+    >>> from netzob import *
+    >>> import time
+
+    We first create a fake server which requires a vocabulary of
+    input (I) and output (O) symbols:
+
+    >>> i0 = Symbol(name="a", fields=[Field("a")])
+    >>> i1 = Symbol(name="b", fields=[Field("b")])
+    >>> i2 = Symbol(name="c", fields=[Field("c")])
+    >>> i3 = Symbol(name="d", fields=[Field("d")])
+    >>> # List of Client > Server messages
+    >>> I = [i0, i1, i2, i3]
+
+    >>> o0 = Symbol(name="0", fields=[Field("0")])
+    >>> o1 = Symbol(name="1", fields=[Field("1")])
+    >>> o2 = Symbol(name="2", fields=[Field("2")])
+    >>> o3 = Symbol(name="3", fields=[Field("3")])
+    >>> # List of Server > Client messages
+    >>> O = [o0, o1, o2, o3]
+
+    Now we can create the grammar which includes 5 states
+
+    >>> s0 = State(name="S0")
+    >>> s1 = State(name="S1")
+    >>> s2 = State(name="S2")
+    >>> s3 = State(name="S3")
+    >>> s4 = State(name="S4")
+
+    and their transitions
+
+    >>> t0 = Transition(s0, s1, i0, [o0])
+    >>> t1 = Transition(s1, s1, i1, [o1])
+    >>> t2 = Transition(s1, s2, i2, [o2])
+    >>> t3 = Transition(s2, s1, i1, [o1])
+    >>> t4 = Transition(s2, s3, i0, [o0])
+    >>> t5 = Transition(s3, s1, i1, [o1])
+    >>> t6 = Transition(s3, s4, i2, [o2])
+    >>> t7 = Transition(s1, s4, i0, [o1])
+
+    we add an initial state and an ending state with open and close channel transitions
+
+    >>> initialState = State(name="Initial")
+    >>> endingState = State(name="End")
+    >>> openTransition = OpenChannelTransition(initialState, s0)
+    >>> closeTransition = CloseChannelTransition(s4, endingState)
+
+    now we create a server which communicate following the specified grammar
+
+    >>> serverActor = Actor(initialState = initialState, initiator = False, channel = TCPServer(listen_ip="127.0.0.1", listen_port=8888))
+    >>> serverActor.start()
+
+    we create a client channel that will be used to stimulate the server with angluin
+
+    >>> angluinChannel = TCPClient(connect_ip="127.0.0.1", connect_port=8888)
+
+    We finaly create an angluin-based grammar learner
+
+    >>> angluin = Angluin(vocabulary=I+O, submitedSymbols=I, channel=angluinChannel)
+    >>> angluin.start()
+
+    We wait for the results
+
+    >>> while (angluin.alive): time.sleep(5)
+    >>> print "Inference finish"
+    Inference finish
+
+    >>> print angluin.initialStateOfInferedGrammar
+    State
+
+
+    [Ang87]
+    @article{Ang87, author = {Angluin, Dana}, title = {Learning regular sets from queries and counterexamples},
+    journal = {Inf. Comput.}, year = {1987}, volume = {75}, pages = {87--106},  month = {November} }
+    """
 
     def __init__(self, dictionary, inputDictionary, communicationChannel, resetScript, cb_query, cb_hypotheticalAutomaton, cache):
         LearningAlgorithm.__init__(self, dictionary, inputDictionary, communicationChannel, resetScript, cb_query, cb_hypotheticalAutomaton, cache)
