@@ -43,18 +43,53 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
+from netzob.Common.Utils.TypedList import TypedList
+from netzob.Common.Models.Vocabulary.Messages.AbstractMessage import AbstractMessage
+from netzob.Common.Models.Vocabulary.Field import Field
 
 
 class Symbol(AbstractField):
+    """A symbol represents a common abstraction for all its messages.
 
-    def __init__(self, fields=None, name=None):
+    For example, we can create a symbol based on two raw messages
+
+    >>> from netzob import *
+    >>> m1 = RawMessage("hello world")
+    >>> m2 = RawMessage("hello earth")
+    >>> fields = [Field("hello "), Field(["world", "earth"])]
+
+    >>> symbol = Symbol(fields, messages=[m1, m2])
+    >>> print symbol
+    68656c6c6f20 | 776f726c64
+    68656c6c6f20 | 6561727468
+
+    Another example
+    >>> from netzob import *
+    >>> s = Symbol([Field("hello "), Field(ASCII(size=(0, 10)))])
+    >>> s.messages.append(RawMessage("hello toto"))
+    >>> print s
+    68656c6c6f20 | 746f746f
+
+
+    """
+
+    def __init__(self, fields=None, messages=None, name=None):
         """
         :keyword fields: the fields which participate in symbol definition
         :type fields: a :class:`list` of :class:`netzob.Common.Models.Vocabulary.Field`
+        :keyword messages: the message that represent the symbol
+        :type messages: a :class:`list` of :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage.AbstractMessage`
         :keyword name: the name of the symbol
         :type name: :class:`str`
         """
         super(Symbol, self).__init__(name, None, True)
+        self.__messages = TypedList(AbstractMessage)
+        if messages is None:
+            messages = []
+        self.messages = messages
+        if fields is None:
+            # create a default empty field
+            fields = [Field()]
         self.children = fields
 
     def generate(self, mutator=None):
@@ -72,3 +107,28 @@ class Symbol(AbstractField):
         for child in self.children:
             content.append(child.generate(mutator))
         return ''.join(content)
+
+    def clearMessages(self):
+        """Delete all the messages attached to the current symbol"""
+        while(len(self.__messages) > 0):
+            self.__messages.pop()
+
+    # Standard methods
+    def __str__(self):
+        return str(self.getCells())
+
+    # Properties
+
+    @property
+    def messages(self):
+        """A list containing all the messages that this symbol represent.
+
+        :type : a :class:`list` of :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+        """
+        return self.__messages
+
+    @messages.setter
+    def messages(self, messages):
+        self.clearMessages()
+        if messages is not None:
+            self.__messages.extend(messages)
