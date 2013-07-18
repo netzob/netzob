@@ -48,7 +48,7 @@ class AbstractVariableProcessingToken(object):
     based on variable definition.
     """
 
-    def __init__(self, memory=None, value=None):
+    def __init__(self, memory=None, value=None, vocabulary=None):
         """Constructor of AbstractVariableProcessingToken:
 
         :keyword memory: a memory which can contain a former value of the processed variable.
@@ -62,6 +62,7 @@ class AbstractVariableProcessingToken(object):
         self.__value = bitarray(endian=AbstractType.defaultEndianness())
         self.__Ok = True
         self.__index = 0
+        self.__vocabulary = None
 
         if memory is None:
             memory = Memory()
@@ -69,6 +70,8 @@ class AbstractVariableProcessingToken(object):
 
         if value is not None:
             self.value = value
+
+        self.vocabulary = vocabulary
 
         # A list of (id, value) that associates the contribution to the final value of every variable to its ID.
         self.__linkedValues = []
@@ -142,3 +145,14 @@ class AbstractVariableProcessingToken(object):
         self.__linkedValues = []
         for data in linkedValues:
             self.__linkedValues = data
+
+    @property
+    def vocabulary(self):
+        """Vocabulary attached to the processing token
+        """
+
+        return self.__vocabulary
+
+    @vocabulary.setter
+    def vocabulary(self, vocabulary):
+        self.__vocabulary = vocabulary
