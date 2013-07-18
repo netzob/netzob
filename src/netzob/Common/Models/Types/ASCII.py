@@ -63,7 +63,15 @@ class ASCII(AbstractType):
             maxSize = maxSize * 8
         bitSize = (minSize, maxSize)
         from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
-        return Data(dataType=ASCII, originalValue=self.value, size=bitSize)
+        from netzob.Common.Models.Types.TypeConverter import TypeConverter
+        from netzob.Common.Models.Types.Raw import Raw
+        from netzob.Common.Models.Types.BitArray import BitArray
+        if self.value is not None:
+            binValue = TypeConverter.convert(self.value, Raw, BitArray)
+        else:
+            binValue = None
+
+        return Data(dataType=ASCII, originalValue=binValue, size=bitSize)
 
     @staticmethod
     def canParse(data):
