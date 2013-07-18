@@ -34,6 +34,8 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+import uuid
+import abc
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -42,7 +44,79 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.Utils.Decorators import typeCheck
 
 
 class AbstractState(object):
-    pass
+    """Implementation of the abstract state. Every kind of state usable
+    in the grammar of a protocol should inherit from this abstract class.
+    """
+
+    __metaclass__ = abc.ABCMeta
+
+    def __init__(self, _id=uuid.uuid4(), name=None):
+        self.id = _id
+        self.name = name
+        self.active = False
+
+    # Execution abstract methods
+
+    @abc.abstractmethod
+    def executeAsInitiator(self, abstractionLayer):
+        pass
+
+    @abc.abstractmethod
+    def executeAsNotInitiator(self, abstractionLayer):
+        pass
+
+    # Properties
+
+    @property
+    def id(self):
+        """Unique identifier of the state
+
+        :type: :class:`uuid.UUID`
+        :raise: TypeError if not valid
+        """
+        return self.__id
+
+    @id.setter
+    @typeCheck(uuid.UUID)
+    def id(self, _id):
+        if _id is None:
+            raise TypeError("id cannot be None")
+        self.__id = _id
+
+    @property
+    def name(self):
+        """Optional Name of the state
+
+        :type: str
+        :raise: TypeError is not an str
+        """
+        return self.__name
+
+    @name.setter
+    @typeCheck(str)
+    def name(self, name):
+        if name is None:
+            name = "None"
+
+        self.__name = name
+
+    @property
+    def active(self):
+        """Represents the current execution status of the state.
+        If a state is active, it means none of its transitions has yet
+        been fully executed and that its the current state.
+
+        :type: :class:`bool`
+        """
+        return self.__active
+
+    @active.setter
+    @typeCheck(bool)
+    def active(self, active):
+        if active is None:
+            raise TypeError("The active info cannot be None")
+        self.__active = active
