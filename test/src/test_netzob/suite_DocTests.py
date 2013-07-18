@@ -37,6 +37,8 @@ import doctest
 #+---------------------------------------------------------------------------+
 from netzob import *
 from netzob.Common.Utils import NetzobRegex
+from netzob.Common.Utils.DataAlignment import ParallelDataAlignment
+from netzob.Common.Utils.DataAlignment import DataAlignment
 
 
 def getSuite():
@@ -44,6 +46,7 @@ def getSuite():
     modules = [
         Protocol.__module__,
         Field.__module__,
+        Symbol.__module__,
         RawMessage.__module__,
         DomainFactory.__module__,
         Alt.__module__,
@@ -58,12 +61,17 @@ def getSuite():
         TypeConverter.__module__,
         AbstractVariable.__module__,
         VariableReadingToken.__module__,
-        #        RawMessage.__module__,
-        #        JSONSerializator.__module__,
-        # Angluin.__module__,
+        # #        JSONSerializator.__module__,
+        TCPServer.__module__,
+        Actor.__module__,
+        Angluin.__module__,
         State.__module__,
         Transition.__module__,
         NetzobRegex,
+        RawMessage.__module__,
+        ParallelDataAlignment,
+        DataAlignment,
+
     ]
 
     suite = unittest.TestSuite()
