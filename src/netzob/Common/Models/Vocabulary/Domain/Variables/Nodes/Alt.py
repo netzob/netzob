@@ -60,9 +60,9 @@ class Alt(AbstractVariableNode):
     >>> domain = Alt([Raw(), ASCII()])
     >>> print domain.varType
     Alt
-    >>> print domain.children[0].__class__.__name__
+    >>> print domain.children[0].dataType.__name__
     Raw
-    >>> print domain.children[1].__class__.__name__
+    >>> print domain.children[1].dataType.__name__
     ASCII
     """
 
@@ -135,35 +135,123 @@ class Alt(AbstractVariableNode):
         if writingToken is None:
             raise TypeError("writingToken cannot be None")
 
-        self.__logger.debug("[ {0} (Alternate): write access:".format(self))
-        self.resetTokenChoppedIndexes()  # New write access => new final value and new reference to it.
+        self._logger.debug("[ {0} (Alternate): write access:".format(self))
+        self.tokenChoppedIndex = []  # New write access => new final value and new reference to it.
         if len(self.children) > 0:
             if self.mutable:
                 # mutable.
                 self.shuffleChildren()
                 self.writeChildren(writingToken)
-
             else:
                 # not mutable.
                 self.writeChildren(writingToken)
-
         else:
             # no child.
-            self.__logger.debug("Write abort: the variable has no child.")
+            self._logger.debug("Write abort: the variable has no child.")
             writingToken.Ok = False
 
         # Variable notification
         if writingToken.Ok:
             self.notifyBoundedVariables("write", writingToken)
 
-        self.log.debug("{0}. ]".format(writingToken))
+        self._logger.debug("{0}. ]".format(writingToken))
+
+    def readChildren(self, readingToken):
+        """Each child tries to read its value..
+        If it fails, it restore it value and the next child try.
+        It stops if one child successes.
+
+        >>> from netzob import *
+        >>> data = TypeConverter.convert("earth", ASCII, BitArray)
+        >>> alt = Alt([ASCII("world"), ASCII("earth")])
+        >>> rToken = VariableReadingToken(value=data)
+        >>> alt.readChildren(rToken)
+        >>> print rToken.Ok
+        True
+        >>> print rToken.index > 0
+        True
+
+        """
+        self._logger.debug("[ {0} (Alternate): readChildren:".format(self))
+        savedIndex = readingToken.index
+        for child in self.children:
+            # Memorized values for the child and its successors.
+            dictOfValues = dict()
+            dictOfValue = child.getDictOfValues(readingToken)
+            for key, val in dictOfValue.iteritems():
+                dictOfValues[key] = val
+
+            child.read(readingToken)
+            if readingToken.Ok:
+                break
+            else:
+                readingToken.index = savedIndex
+
+                # We restore values for the child and its successors.
+                child.restore(readingToken)
+                if readingToken.vocabulary is not None:
+                    vocabulary = readingToken.vocabulary
+                    for key, val in dictOfValues.iteritems():
+                        vocabulary.getVariableByID(key).setCurrentValue(val)
+
+        if readingToken.Ok:
+            # The value of the variable is simply the value we 'ate'.
+            self.currentValue = readingToken.value[savedIndex:readingToken.index]
+
+        if self.learnable and not readingToken.Ok and not self.learnable:
+            # If we dont not found a proper child but the node can learn, we learn the value.
+            self.learn(child, readingToken)
+
+        self._logger.debug("Variable {0}: {1}. ]".format(self.name, readingToken))
+
+    def writeChildren(self, writingToken):
+        """Each child tries to write its value..
+        If it fails, it restore it value and the next child try.
+        It stops if one child successes.
+
+        >>> from netzob import *
+        >>> data = Alt([ASCII("netzob"), ASCII("!")])
+        >>> wToken = VariableWritingToken()
+        >>> data.writeChildren(wToken)
+        >>> print TypeConverter.convert(wToken.value, BitArray, ASCII)
+        netzob
+
+        """
+        self._logger.debug("[ {0} (Alternate): writeChildren:".format(self))
+
+        savedValue = writingToken.value
+        savedIndex = writingToken.index
+        for child in self.children:
+            # Memorized values for the child and its successor.
+            dictOfValues = dict()
+            dictOfValue = child.getDictOfValues(writingToken)
+            for key, val in dictOfValue.iteritems():
+                dictOfValues[key] = val
+
+            child.write(writingToken)
+            if writingToken.Ok and writingToken.value is not None:
+                break
+            else:
+                writingToken.value = savedValue
+
+                # We restore values for the child and its successor.
+                child.restore(writingToken)
+                vocabulary = writingToken.getVocabulary()
+                for key, val in dictOfValues.iteritems():
+                    vocabulary.getVariableByID(key).setCurrentValue(val)
+
+        if writingToken.Ok:
+            # The value of the variable is simply the value we made.
+            self.currentValue = writingToken.value[savedIndex:writingToken.index]
+
+        self._logger.debug("Variable {0}: {1}. ]".format(self.name, writingToken))
 
     def buildRegex(self):
         """This method creates a regex based on the children of the Alternate.
 
         >>> from netzob import *
-        >>> d1 = Data(ASCII, "hello")
-        >>> d2 = Data(ASCII, size=(5, 10))
+        >>> d1 = ASCII("hello")
+        >>> d2 = ASCII(size=(5, 10))
         >>> d = Alt([d1, d2])
         >>> r = d.buildRegex()
         >>> print r.regex

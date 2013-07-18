@@ -64,10 +64,10 @@ class Data(AbstractVariableLeaf):
 
     >>> from netzob import *
     >>> f = Field()
-    >>> f.domain = Data(dataType=ASCII, originalValue="zoby", name="pseudo")
+    >>> f.domain = Data(dataType=ASCII, originalValue=TypeConverter.convert("zoby", Raw, BitArray), name="pseudo")
     >>> print f.domain.varType
     Data
-    >>> print f.domain.currentValue
+    >>> print TypeConverter.convert(f.domain.currentValue, BitArray, Raw)
     zoby
     >>> print f.domain.dataType.__name__
     ASCII
@@ -77,7 +77,7 @@ class Data(AbstractVariableLeaf):
     >>> f = Field(ASCII("hello zoby"))
     >>> print f.domain.varType
     Data
-    >>> print f.domain.currentValue
+    >>> print TypeConverter.convert(f.domain.currentValue, BitArray, Raw)
     hello zoby
     """
 
@@ -93,13 +93,15 @@ class Data(AbstractVariableLeaf):
         :keyword size: the size of the data (minSize, maxSize) in bits, per default its (None, None)
         :type size: a tupple of int
         :raises: :class:`TypeError` or :class:`ValueError` if parameters are not valid.
-
         """
 
         super(Data, self).__init__(self.__class__.__name__, name=name)
 
         self.dataType = dataType
         self.currentValue = originalValue
+        if self.currentValue is None:
+            self.learnable = True
+            self.mutable = True
         self.size = size
 
     @typeCheck(AbstractVariableProcessingToken)
@@ -107,7 +109,7 @@ class Data(AbstractVariableLeaf):
         """If the leaf has no values, it is not defined and returns False
 
         >>> from netzob import *
-        >>> data = Data(ASCII, originalValue="hello")
+        >>> data = Data(ASCII, originalValue=TypeConverter.convert("hello", ASCII, BitArray))
         >>> rToken = VariableReadingToken()
         >>> data.isDefined(rToken)
         True
@@ -129,10 +131,10 @@ class Data(AbstractVariableLeaf):
         """Return the current or memorized value.
 
         >>> from netzob import *
-        >>> data = Data(ASCII, originalValue='helloworld')
+        >>> data = Data(ASCII, originalValue=TypeConverter.convert("helloworld", ASCII, BitArray))
         >>> rToken = VariableReadingToken()
         >>> print data.getValue(rToken)
-        helloworld
+        bitarray('00010110101001100011011000110110111101101110111011110110010011100011011000100110')
 
         :param processingToken: the token in which the memory is located
         :type processingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken`
@@ -142,6 +144,16 @@ class Data(AbstractVariableLeaf):
         else:
             return processingToken.memory.recall(self)
 
+    @typeCheck(AbstractVariableProcessingToken)
+    def getDictOfValues(self, processingToken):
+        """ Simply return a dict that contains the value associated to the ID of the variable.
+        """
+        if processingToken is None:
+            raise TypeError("Processing token cannot be none")
+        dictOfValues = dict()
+        dictOfValues[self.id] = self.getValue(processingToken)
+        return dictOfValues
+
     #+---------------------------------------------------------------------------+
     #| Functions inherited from AbstractLeafVariable                             |
     #+---------------------------------------------------------------------------+
@@ -150,15 +162,15 @@ class Data(AbstractVariableLeaf):
         """The variable forgets its value both locally and from the memory attached to the processingToken
 
         >>> from netzob import *
-        >>> d = Data(Decimal, originalValue=10)
+        >>> d = Data(Decimal, originalValue=TypeConverter.convert(10, Decimal, BitArray))
         >>> rToken = VariableReadingToken()
         >>> d.memorize(rToken)
-        >>> d.currentValue = 30
+        >>> d.currentValue = TypeConverter.convert(30, Decimal, BitArray)
         >>> d.currentValue
-        30
+        bitarray('01111000')
         >>> d.recall(rToken)
         >>> d.currentValue
-        10
+        bitarray('01010000')
         >>> d.forget(rToken)
         >>> print d.currentValue
         None
@@ -181,16 +193,14 @@ class Data(AbstractVariableLeaf):
         """The variable recall its memorized value.
 
         >>> from netzob import *
-        >>> d = Data(ASCII, originalValue = "zoby")
-        >>> print d.currentValue
-        zoby
+        >>> d = Data(ASCII, originalValue = TypeConverter.convert("zoby", ASCII, BitArray))
         >>> rToken = VariableReadingToken()
         >>> d.memorize(rToken)
-        >>> d.currentValue = "netzob"
-        >>> print d.currentValue
+        >>> d.currentValue = TypeConverter.convert("netzob", ASCII, BitArray)
+        >>> print TypeConverter.convert(d.currentValue, BitArray, ASCII)
         netzob
         >>> d.recall(rToken)
-        >>> print d.currentValue
+        >>> print TypeConverter.convert(d.currentValue, BitArray, ASCII)
         zoby
 
         :param processingToken: the processing token where the memory is
@@ -374,30 +384,32 @@ class Data(AbstractVariableLeaf):
         if readingToken is None:
             raise TypeError("readingToken cannot be None")
 
-        self.__logger.debug("- [ {0}: compare.".format(self))
+        self._logger.debug("- [ {0}: compare.".format(self))
         localValue = self.getValue(readingToken)
         tmp = readingToken.value[readingToken.index:]
 
+        self._logger.debug("Compare {0} against {1}".format(localValue, tmp))
+
         if len(tmp) >= len(localValue):
             if tmp[:len(localValue)] == localValue:
-                self.__logger.debug("Comparison successful.")
+                self._logger.debug("Comparison successful.")
                 readingToken.incrementIndex(len(localValue))
                 readingToken.Ok = True
             else:
                 readingToken.Ok = False
-                self.__logger.debug("Comparison failed: wrong value.")
+                self._logger.debug("Comparison failed: wrong value.")
         else:
             readingToken.Ok = False
-            self.__logger.debug("Comparison failed: wrong size.")
-        self.__logger.debug("Variable {0}: {1}. ] -".format(self.name, readingToken))
+            self._logger.debug("Comparison failed: wrong size.")
+        self._logger.debug("Variable {0}: {1}. ] -".format(self.name, readingToken))
 
     @typeCheck(VariableWritingToken)
     def mutate(self, writingToken):
         """The current value is mutated according to the given generation strategy.
 
         >>> from netzob import *
-        >>> d = Data(Decimal, 10)
-        >>> print d.currentValue
+        >>> d = Data(Decimal, TypeConverter.convert(10, Decimal, BitArray))
+        >>> print TypeConverter.convert(d.currentValue, BitArray, Decimal)
         10
         >>> # Create a writing token with the default generation strategy
         >>> wToken = VariableWritingToken()
@@ -405,6 +417,7 @@ class Data(AbstractVariableLeaf):
         >>> d.mutate(wToken)
         >>> # Display the mutated value
         >>> print d.currentValue
+        bitarray('01010000')
 
         :param writingToken: the processing token where the memory is
         :type writingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken.VariableWritingToken`
@@ -428,8 +441,8 @@ class Data(AbstractVariableLeaf):
         """A new current value is generated according to the variable type and the given generation strategy.
 
         >>> from netzob import *
-        >>> d = Data(Decimal, 10)
-        >>> print d.currentValue
+        >>> d = Data(Decimal, TypeConverter.convert(10, Decimal, BitArray))
+        >>> print TypeConverter.convert(d.currentValue, BitArray, Decimal)
         10
         >>> # Create a writing token with the default generation strategy
         >>> wToken = VariableWritingToken()
@@ -437,6 +450,8 @@ class Data(AbstractVariableLeaf):
         >>> d.generate(wToken)
         >>> # Display the generated value
         >>> print d.currentValue
+        bitarray('01010000')
+
 
         :param writingToken: the processing token where the memory is
         :type writingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken.VariableWritingToken`
@@ -460,28 +475,40 @@ class Data(AbstractVariableLeaf):
         Write this value in the writingToken.
 
         >>> from netzob import *
-        >>> d1 = Data(ASCII, "Hello")
+        >>> d1 = Data(ASCII, TypeConverter.convert("Hello", ASCII, BitArray))
         >>> wToken = VariableWritingToken()
         >>> d1.writeValue(wToken)
         >>> print TypeConverter.convert(wToken.value, BitArray, ASCII)
         Hello
 
         """
-        self.__logger.debug("- [ {0}: writeValue.".format(self))
-        binValue = self.getValue(writingToken)
-
-        value = TypeConverter.convert(binValue, Raw, BitArray)
+        self._logger.debug("- [ {0}: writeValue.".format(self))
+        value = self.getValue(writingToken)
         tvalue = TypeConverter.convert(value, BitArray, Raw)
-        self.__logger.debug("Write {0}:{1}:{2}".format(binValue, value.to01(), tvalue))
+        self._logger.debug("Write {0}:{1}".format(value.to01(), tvalue))
         # if self.size[1] is None:
         #     # Do not forget to write the delimiter if the variable has one
         #     value.extend(self.dataType.getDelimiter())
         writingToken.write(self, value)
         # We impact the value this variable has written on its tokenChoppedIndex list and its fathers token list.
-        self.__logger.debug("WritingToken linkedValue: {0}".format(writingToken.linkedValues))
+        self._logger.debug("WritingToken linkedValue: {0}".format(writingToken.linkedValues))
         #self.addTokenChoppedIndex(len(writingToken.linkedValues) - 1)
         bValue = TypeConverter.convert(writingToken.value, BitArray, Raw)
-        self.__logger.debug("Variable {0}: {1} ({2}). ] -".format(self.name, writingToken.value, bValue))
+        self._logger.debug("Variable {0}: {1} ({2}). ] -".format(self.name, writingToken.value, bValue))
+
+    @typeCheck(AbstractVariableProcessingToken)
+    def restore(self, processingToken):
+        """restore
+
+        :param processingToken: the processingtoken fro mwhich it will restore the value
+        :type processingToken: :class:`netzob.Common.Models.Vocabulary.Domain.VariableProcessingTokens.AbstractVariableProcessingToken.AbstractVariableProcessingToken`
+        :raise Exception: if parameter is not valid
+        """
+        if processingToken is None:
+            raise Exception("ProcessingToken cannot be None")
+
+        self._logger.debug("- {0}: memorized value is restored.".format(self))
+        processingToken.memory.restore(self)
 
     def buildRegex(self):
         """This method creates a regex based on the children of the Data.
@@ -490,17 +517,17 @@ class Data(AbstractVariableLeaf):
         For instance, if the value is static :
 
         >>> from netzob import *
-        >>> d1 = Data(ASCII, "hello")
+        >>> d1 = Data(ASCII, TypeConverter.convert("hello", ASCII, BitArray))
         >>> print d1.buildRegex()
         (68656c6c6f)
 
-        >>> d2 = Data(Decimal, TypeConverter.convert(20, Decimal, Raw))
+        >>> d2 = Data(Decimal, TypeConverter.convert(20, Decimal, BitArray))
         >>> print d2.buildRegex()
         (14)
 
-        >>> d3 = Data(ASCII, size=(10, 80))
+        >>> d3 = Data(ASCII, size=(16, 80))
         >>> print d3.buildRegex()
-        (.{20,160})
+        (.{4,20})
 
         >>> d4 = Data(ASCII)
         >>> print d4.buildRegex()
@@ -541,11 +568,12 @@ class Data(AbstractVariableLeaf):
     def currentValue(self):
         """The current value of the data.
 
-        :type: :class:`object`
+        :type: :class:`bitarray`
         """
         return self.__currentValue
 
     @currentValue.setter
+    @typeCheck(bitarray)
     def currentValue(self, currentValue):
         self.__currentValue = currentValue
 
@@ -558,14 +586,14 @@ class Data(AbstractVariableLeaf):
 
 
         >>> from netzob import *
-        >>> data = Data(dataType=ASCII, originalValue="zoby", name="pseudo", size=None)
+        >>> data = Data(dataType=ASCII, originalValue=TypeConverter.convert("zoby", ASCII, BitArray), name="pseudo", size=None)
 
-        >>> data = Data(dataType=ASCII, originalValue="zoby", name="pseudo", size=(-1, None))
+        >>> data = Data(dataType=ASCII, originalValue=TypeConverter.convert("zoby", ASCII, BitArray), name="pseudo", size=(-1, None))
         Traceback (most recent call last):
         ...
         ValueError: Minimum size must be greater than 0
 
-        >>> data = Data(dataType=ASCII, originalValue="zoby", name="pseudo", size=(5, 2))
+        >>> data = Data(dataType=ASCII, originalValue=TypeConverter.convert("zoby", ASCII, BitArray), name="pseudo", size=(5, 2))
         Traceback (most recent call last):
         ...
         ValueError: Maximum must be greater than the minimum

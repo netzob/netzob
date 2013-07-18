@@ -46,7 +46,6 @@ from bitarray import bitarray
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Common.Utils.NetzobRegex import NetzobRegex
 
 
 class AbstractVariable(object):
@@ -179,15 +178,15 @@ class AbstractVariable(object):
         established in the domain.
 
         >>> from netzob import *
-        >>> d = Data(ASCII, "hello")
+        >>> d = Data(ASCII, TypeConverter.convert("hello", ASCII, BitArray))
         >>> r = d.buildRegex()
         >>> print r
         (68656c6c6f)
 
-        >>> d = Data(ASCII, size=(5, 10))
+        >>> d = Data(ASCII, size=(8, 16))
         >>> r = d.buildRegex()
         >>> print r
-        (.{10,20})
+        (.{2,4})
 
         :return: a regex which can be used to identify the section in which the domain can be found
         :rtype: :class:`netzob.Common.Utils.NetzobRegex.NetzobRegex`
@@ -215,6 +214,21 @@ class AbstractVariable(object):
         :type writingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingToken.VariableWritingToken.VariableWritingToken`
         """
         raise NotImplementedError("The current variable does not implement 'write'.")
+
+    #+---------------------------------------------------------------------------+
+    #| Abstract Methods                                                          |
+    #+---------------------------------------------------------------------------+
+    @abc.abstractmethod
+    def getDictOfValues(self, processingToken):
+        """Return a dictionary which contains the variable id as key and the value as value if the variable is a leaf
+        and a dictionary containing all couples variable id - value of the children if the variable is a node.
+
+        :type processingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables..VariableProcessingTokens.AbstractVariableProcessingToken.AbstractVariableProcessingToken`
+        :param processingToken: a token which contains all critical information on this access.
+        :rtype: String*bitarray dict
+        :return: a dictionary containing ids of variable and values in a bitarray format.
+        """
+        raise NotImplementedError("The current variable doesn't support 'getDictOfValues'.")
 
     #+---------------------------------------------------------------------------+
     #| Special Functions                                                         |

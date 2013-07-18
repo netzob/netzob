@@ -60,9 +60,9 @@ class Agg(AbstractVariableNode):
     >>> domain = Agg([Raw(), ASCII()])
     >>> print domain.varType
     Agg
-    >>> print domain.children[0].__class__.__name__
+    >>> print domain.children[0].dataType.__name__
     Raw
-    >>> print domain.children[1].__class__.__name__
+    >>> print domain.children[1].dataType.__name__
     ASCII
     >>> domain.children.append(Agg([10, 20, 30]))
     >>> print len(domain.children)
@@ -169,12 +169,12 @@ class Agg(AbstractVariableNode):
         """This method creates a regex based on the children of the Aggregate.
 
         >>> from netzob import *
-        >>> d1 = Data(ASCII, "hello")
-        >>> d2 = Data(ASCII, size=(5, 10))
+        >>> d1 = ASCII("hello")
+        >>> d2 = ASCII(size=(5, 10))
         >>> d = Agg([d1, d2])
         >>> r = d.buildRegex()
         >>> print r
-        ((68656c6c6f)(.{10,20}))
+        (68656c6c6f)(.{10,20})
 
         :return: a regex which can be used to identify the section in which the domain can be found
         :rtype: :class:`netzob.Common.Utils.NetzobRegex.NetzobRegex`

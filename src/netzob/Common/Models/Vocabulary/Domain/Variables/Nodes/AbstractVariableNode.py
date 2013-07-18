@@ -42,7 +42,9 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
+from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken import AbstractVariableProcessingToken
 
 
 class AbstractVariableNode(AbstractVariable):
@@ -58,7 +60,21 @@ class AbstractVariableNode(AbstractVariable):
         super(AbstractVariableNode, self).__init__(varType)
         self._children = []
         if children is not None:
-            self._children = children
+            self.children = children
+
+    @typeCheck(AbstractVariableProcessingToken)
+    def getDictOfValues(self, processingToken):
+        """We concatenate every dictOfValues of each child.
+        """
+        if processingToken is None:
+            raise TypeError("Processing token cannot be None")
+
+        dictOfValues = dict()
+        for child in self.children:
+            dictOfValue = child.getDictOfValues(processingToken)
+            for key, val in dictOfValue.iteritems():
+                dictOfValues[key] = val
+        return dictOfValues
 
     @property
     def children(self):
@@ -72,5 +88,7 @@ class AbstractVariableNode(AbstractVariable):
 
     @children.setter
     def children(self, children):
+        from netzob.Common.Models.Vocabulary.Domain.DomainFactory import DomainFactory
         for child in children:
-            self._children.append(child)
+            normalizedChild = DomainFactory.normalizeDomain(child)
+            self._children.append(normalizedChild)
