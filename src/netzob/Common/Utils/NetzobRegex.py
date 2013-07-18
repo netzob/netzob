@@ -69,9 +69,26 @@ class NetzobRegex(object):
         return str(self.regex)
 
     @staticmethod
+    def buildDefaultRegex():
+        """It creates the default regex which means
+        we have to knowledge over the format of the field.
+
+        >>> regex = NetzobRegex.buildDefaultRegex()
+        >>> print regex
+        (.*)
+
+        :return: a .* default NetzobRegex
+        :rtype: :class:`netzob.Common.Utils.NetzobRegex.NetzobRegex`
+        """
+        reg = '(.*)'
+        regex = NetzobRegex()
+        regex.regex = reg
+        return regex
+
+    @staticmethod
     def buildRegexForStaticValue(value):
         """It creates a NetzobRegex which represents
-        a regex with the specified static value.
+        a regex with the specified Raw static value.
 
         >>> nRegex = NetzobRegex.buildRegexForStaticValue("Hello netzob")
         >>> print nRegex
@@ -107,19 +124,19 @@ class NetzobSizedRegex(NetzobRegex):
     >>> from netzob.Common.Utils.NetzobRegex import NetzobRegex
     >>> regex = NetzobRegex.buildRegexForSizedValue((8, 80))
     >>> print regex
-    (.{16,160})
+    (.{2,20})
 
     >>> regex = NetzobRegex.buildRegexForSizedValue((None, None))
     >>> print regex
     (.{0,})
 
-    >>> regex = NetzobRegex.buildRegexForSizedValue((10, None))
+    >>> regex = NetzobRegex.buildRegexForSizedValue((16, None))
     >>> print regex
-    (.{20,})
+    (.{4,})
 
     >>> regex = NetzobRegex.buildRegexForSizedValue((None, 80))
     >>> print regex
-    (.{0,160})
+    (.{0,20})
 
     """
 
@@ -141,13 +158,13 @@ class NetzobSizedRegex(NetzobRegex):
         (minSize, maxSize) = size
         if minSize is None:
             minSize = 0
+        minSize = minSize / 4
         if maxSize is not None:
-            maxSize = maxSize * 2
+            maxSize = maxSize / 4
             if minSize < 0 or maxSize < 0:
                 raise ValueError("The value min and max cannot be inferior to 0")
             if maxSize <= minSize:
                 raise ValueError("The max size must be superior to the min size")
-        minSize = minSize * 2
         self.__size = (minSize, maxSize)
         self.__updateRegex()
 
@@ -160,7 +177,7 @@ class NetzobAggregateRegex(NetzobRegex):
     >>> regex2 = NetzobRegex.buildRegexForStaticValue("42")
     >>> regex = NetzobRegex.buildRegexForAggregateRegexes([regex1, regex2])
     >>> print regex
-    ((68656c6c6f206e65747a6f62)(3432))
+    (68656c6c6f206e65747a6f62)(3432)
 
     """
 
@@ -169,7 +186,7 @@ class NetzobAggregateRegex(NetzobRegex):
         self.children = children
 
     def __updateRegex(self):
-        self.regex = "({0})".format("".join([str(child) for child in self.children]))
+        self.regex = "{0}".format("".join([str(child) for child in self.children]))
 
     @property
     def children(self):
