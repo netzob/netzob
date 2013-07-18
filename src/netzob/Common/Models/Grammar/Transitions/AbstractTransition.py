@@ -34,8 +34,8 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import logging
 import uuid
+import abc
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -50,31 +50,67 @@ from netzob.Common.Models.Grammar.States.AbstractState import AbstractState
 
 class AbstractTransition(object):
 
-    def __init__(self, startState, endState, _id=uuid.uuid4(), name=None):
+    __metaclass__ = abc.ABCMeta
+
+    def __init__(self, _type, startState, endState, _id=uuid.uuid4(), name=None, priority=10):
         """Constructor of a Transition.
 
+        :param _type: the type of the transition
+        :type _type: :class:`str`
         :param startState: initial state of the transition
         :type startState: :class:`netzob.Common.Models.Grammar.States.AbstractState.AbstractState`
         :param endState: end state of the transition
         :type endState: :class:`netzob.Common.Models.Grammar.States.AbstractState.AbstractState`
         :keyword _id: the unique identifier of the transition
-        :param _id: :class:`uuid.UUID`
+        :type _id: :class:`uuid.UUID`
         :keyword name: the name of the transition
-        :param name: :class:`str`
+        :type name: :class:`str`
+        :keyword priority: the priority of the transition
+        :type priority: :class:`int`
 
         """
-        self.__logger = logging.getLogger(__name__)
-
         self.__startState = None
         self.__endState = None
 
         self.__startState = None
         self.__endState = None
 
+        self.type = _type
         self.startState = startState
         self.endState = endState
         self.id = _id
         self.name = name
+        self.priority = priority
+        self.active = False
+
+    # Execution abstract methods
+
+    @abc.abstractmethod
+    def executeAsInitiator(self, abstractionLayer):
+        pass
+
+    @abc.abstractmethod
+    def executeAsNotInitiator(self, abstractionLayer):
+        pass
+
+    # Priorities
+
+    @property
+    def type(self):
+        """The type of the transition
+
+        :type: :class:`str`
+        """
+        return self.__type
+
+    @type.setter
+    @typeCheck(str)
+    def type(self, _type):
+        if _type is None:
+            raise TypeError("Type cannot be None")
+        if len(_type) == 0:
+            raise ValueError("Type cannot be an empty string")
+        self.__type = _type
 
     @property
     def startState(self):
@@ -132,3 +168,53 @@ class AbstractTransition(object):
     @typeCheck(AbstractState)
     def endState(self, endState):
         self.__endState = endState
+
+    @property
+    def priority(self):
+        """The priority of the transition. The lower its its
+        the highest priority it gets.
+        For instance, an open and close channel transition are both declared
+        with a priority of 0 whereas per default a transition has a priority of 10.
+
+        >>> from netzob import *
+        >>> s0 = State(name="Start")
+        >>> s1 = State(name="End")
+        >>> openTransition = OpenChannelTransition(s0, s1)
+        >>> openTransition.priority
+        0
+        >>> transition = Transition(s1, s1, priority=1)
+        >>> transition.priority
+        1
+        >>> transition.priority = 50
+        >>> transition.priority
+        50
+
+        :type: :class:`int`
+        """
+        return self.__priority
+
+    @priority.setter
+    @typeCheck(int)
+    def priority(self, priority):
+        if priority is None:
+            raise TypeError("Priority cannot be None")
+        if priority < 0 or priority > 100:
+            raise TypeError("The priority must respect range : 0<=priority<100")
+
+        self.__priority = priority
+
+    @property
+    def active(self):
+        """Represents the current execution status of the transition.
+        If a transition is active, it means it did not yet finish to execute it
+
+        :type: :class:`bool`
+        """
+        return self.__active
+
+    @active.setter
+    @typeCheck(bool)
+    def active(self, active):
+        if active is None:
+            raise TypeError("The active info cannot be None")
+        self.__active = active
