@@ -31,6 +31,7 @@
 #+---------------------------------------------------------------------------+
 import unittest
 from test_netzob.test_Tutorials import test_ICMP
+from test_netzob.test_Tutorials import test_USBMouseProtocol
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -40,7 +41,7 @@ from test_netzob.test_Tutorials import test_ICMP
 def getSuite():
     tutorialsSuite = unittest.TestSuite()
 
-    modulesOfTests = [test_ICMP]
+    modulesOfTests = [test_ICMP, test_USBMouseProtocol]
     modulesOfSuites = []
 
     # Add individual tests
