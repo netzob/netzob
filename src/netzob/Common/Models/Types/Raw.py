@@ -66,3 +66,31 @@ class Raw(AbstractType):
     @staticmethod
     def encode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
         return data
+
+    @staticmethod
+    def canParse(data):
+        """Computes if specified data can be parsed as raw which is always the case if the data
+        is at leats 1 length.
+
+        >>> from netzob import *
+        >>> Raw.canParse(TypeConverter.convert("hello netzob", ASCII, Raw))
+        True
+
+        The ascii table is defined from 0 to 127:
+        >>> Raw.canParse(TypeConverter.convert(128, Decimal, Raw, src_sign=AbstractType.SIGN_UNSIGNED))
+        True
+
+        :param data: the data to check
+        :type data: python raw
+        :return: True if data can be parsed as a Raw which is always the case (if len(data)>0)
+        :rtype: bool
+        :raise: TypeError if the data is None
+        """
+
+        if data is None:
+            raise TypeError("data cannot be None")
+
+        if len(data) == 0:
+            return False
+
+        return True
