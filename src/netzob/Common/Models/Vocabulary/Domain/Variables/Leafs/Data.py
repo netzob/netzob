@@ -340,17 +340,22 @@ class Data(AbstractVariableLeaf):
                     self.currentValue = tmp[:maxSize]
                     readingToken.incrementIndex(maxSize)
 
+            else:
+                self.currentValue = tmp
+                readingToken.incrementIndex(len(tmp))
+
             # TODO
             # If the type is delimited from 0 to a delimiter.
-            else:
-                endi = 0
-                for i in range(len(tmp)):
-                    if self.type.endsHere(tmp[i:]):
-                        endi = i
-                        break
-                # We learn from the beginning to the delimiter.
-                self.currentValue = tmp[:endi + len(self.type.getDelimiter())]  # The delimiter token is a part of the variable.
-                readingToken.incrementIndex(endi + len(self.type.getDelimiter()))
+            # else:
+            #     endi = 0
+            #     for i in range(len(tmp)):
+            #         self._logger.debug("ends here : {0}".format(tmp[i:]))
+            #         if self.type.endsHere(tmp[i:]):
+            #             endi = i
+            #             break
+            #     # We learn from the beginning to the delimiter.
+            #     self.currentValue = tmp[:endi + len(self.type.getDelimiter())]  # The delimiter token is a part of the variable.
+            #     readingToken.incrementIndex(endi + len(self.type.getDelimiter()))
 
             self._logger.debug("Learning done.")
         else:
