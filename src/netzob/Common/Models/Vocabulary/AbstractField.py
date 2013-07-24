@@ -106,6 +106,106 @@ class AbstractField(AbstractMementoCreator):
         In addition, visualizationFunctions are also applied if parameter styled is set to True.
         If parameter Transposed is set to True, the matrix is built with rows for fields and columns for messages.
 
+        >>> from netzob import *
+        >>> messages = [RawMessage("hello {0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'zoby', 'lapy'] for city in ['Paris', 'Berlin', 'New-York']]
+        >>> fh1 = Field("hello ", name="hello")
+        >>> fh2 = Field(["netzob", "zoby", "lapy", "sygus"], name="pseudo")
+        >>> fheader = Field(name="header")
+        >>> fheader.children = [fh1, fh2]
+        >>> fb1 = Field(", what's up in ", name="whatsup")
+        >>> fb2 = Field(["Paris", "Berlin", "New-York"], name="city")
+        >>> fb3 = Field(" ?", name="end")
+        >>> fbody = Field(name="body")
+        >>> fbody.children = [fb1, fb2, fb3]
+        >>> symbol = Symbol([fheader, fbody], messages=messages)
+        >>> print symbol
+        68656c6c6f20 | 6e65747a6f62 | 2c2077686174277320757020696e20 |       5061726973 | 203f
+        68656c6c6f20 | 6e65747a6f62 | 2c2077686174277320757020696e20 |     4265726c696e | 203f
+        68656c6c6f20 | 6e65747a6f62 | 2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
+        68656c6c6f20 |     7a6f6279 | 2c2077686174277320757020696e20 |       5061726973 | 203f
+        68656c6c6f20 |     7a6f6279 | 2c2077686174277320757020696e20 |     4265726c696e | 203f
+        68656c6c6f20 |     7a6f6279 | 2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
+        68656c6c6f20 |     6c617079 | 2c2077686174277320757020696e20 |       5061726973 | 203f
+        68656c6c6f20 |     6c617079 | 2c2077686174277320757020696e20 |     4265726c696e | 203f
+        68656c6c6f20 |     6c617079 | 2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
+
+        >>> print fheader.getCells()
+        68656c6c6f20 | 6e65747a6f62
+        68656c6c6f20 | 6e65747a6f62
+        68656c6c6f20 | 6e65747a6f62
+        68656c6c6f20 |     7a6f6279
+        68656c6c6f20 |     7a6f6279
+        68656c6c6f20 |     7a6f6279
+        68656c6c6f20 |     6c617079
+        68656c6c6f20 |     6c617079
+        68656c6c6f20 |     6c617079
+
+        >>> print fh1.getCells()
+        68656c6c6f20
+        68656c6c6f20
+        68656c6c6f20
+        68656c6c6f20
+        68656c6c6f20
+        68656c6c6f20
+        68656c6c6f20
+        68656c6c6f20
+        68656c6c6f20
+
+        >>> print fh2.getCells()
+        6e65747a6f62
+        6e65747a6f62
+        6e65747a6f62
+            7a6f6279
+            7a6f6279
+            7a6f6279
+            6c617079
+            6c617079
+            6c617079
+
+        >>> print fbody.getCells()
+        2c2077686174277320757020696e20 |       5061726973 | 203f
+        2c2077686174277320757020696e20 |     4265726c696e | 203f
+        2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
+        2c2077686174277320757020696e20 |       5061726973 | 203f
+        2c2077686174277320757020696e20 |     4265726c696e | 203f
+        2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
+        2c2077686174277320757020696e20 |       5061726973 | 203f
+        2c2077686174277320757020696e20 |     4265726c696e | 203f
+        2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
+
+        >>> print fb1.getCells()
+        2c2077686174277320757020696e20
+        2c2077686174277320757020696e20
+        2c2077686174277320757020696e20
+        2c2077686174277320757020696e20
+        2c2077686174277320757020696e20
+        2c2077686174277320757020696e20
+        2c2077686174277320757020696e20
+        2c2077686174277320757020696e20
+        2c2077686174277320757020696e20
+
+        >>> print fb2.getCells()
+              5061726973
+            4265726c696e
+        4e65772d596f726b
+              5061726973
+            4265726c696e
+        4e65772d596f726b
+              5061726973
+            4265726c696e
+        4e65772d596f726b
+
+        >>> print fb3.getCells()
+        203f
+        203f
+        203f
+        203f
+        203f
+        203f
+        203f
+        203f
+        203f
+
         :keyword encoded: if set to True, encoding functions are applied on returned cells
         :type encoded: :class:`bool`
         :keyword styled: if set to True, visualization functions are applied on returned cells
@@ -131,6 +231,37 @@ class AbstractField(AbstractMementoCreator):
         Specific encodingFunctions can also be considered if parameter encoded is set to True.
         In addition, visualizationFunctions are also applied if parameter styled is set to True.
 
+        >>> from netzob import *
+        >>> messages = [RawMessage("hello {0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'zoby', 'lapy'] for city in ['Paris', 'Berlin', 'New-York']]
+        >>> f1 = Field("hello ", name="hello")
+        >>> f2 = Field(["netzob", "zoby", "lapy", "sygus"], name="pseudo")
+        >>> f3 = Field(", what's up in ", name="whatsup")
+        >>> f4 = Field(["Paris", "Berlin", "New-York"], name="city")
+        >>> f5 = Field(" ?", name="end")
+        >>> symbol = Symbol([f1, f2, f3, f4, f5], messages=messages)
+        >>> print symbol
+        68656c6c6f20 | 6e65747a6f62 | 2c2077686174277320757020696e20 |       5061726973 | 203f
+        68656c6c6f20 | 6e65747a6f62 | 2c2077686174277320757020696e20 |     4265726c696e | 203f
+        68656c6c6f20 | 6e65747a6f62 | 2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
+        68656c6c6f20 |     7a6f6279 | 2c2077686174277320757020696e20 |       5061726973 | 203f
+        68656c6c6f20 |     7a6f6279 | 2c2077686174277320757020696e20 |     4265726c696e | 203f
+        68656c6c6f20 |     7a6f6279 | 2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
+        68656c6c6f20 |     6c617079 | 2c2077686174277320757020696e20 |       5061726973 | 203f
+        68656c6c6f20 |     6c617079 | 2c2077686174277320757020696e20 |     4265726c696e | 203f
+        68656c6c6f20 |     6c617079 | 2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
+        >>> print symbol.getValues()
+        ['68656c6c6f206e65747a6f622c2077686174277320757020696e205061726973203f', '68656c6c6f206e65747a6f622c2077686174277320757020696e204265726c696e203f', '68656c6c6f206e65747a6f622c2077686174277320757020696e204e65772d596f726b203f', '68656c6c6f207a6f62792c2077686174277320757020696e205061726973203f', '68656c6c6f207a6f62792c2077686174277320757020696e204265726c696e203f', '68656c6c6f207a6f62792c2077686174277320757020696e204e65772d596f726b203f', '68656c6c6f206c6170792c2077686174277320757020696e205061726973203f', '68656c6c6f206c6170792c2077686174277320757020696e204265726c696e203f', '68656c6c6f206c6170792c2077686174277320757020696e204e65772d596f726b203f']
+        >>> print f1.getValues()
+        ['68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20']
+        >>> print f2.getValues()
+        ['6e65747a6f62', '6e65747a6f62', '6e65747a6f62', '7a6f6279', '7a6f6279', '7a6f6279', '6c617079', '6c617079', '6c617079']
+        >>> print f3.getValues()
+        ['2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20']
+        >>> print f4.getValues()
+        ['5061726973', '4265726c696e', '4e65772d596f726b', '5061726973', '4265726c696e', '4e65772d596f726b', '5061726973', '4265726c696e', '4e65772d596f726b']
+        >>> print f5.getValues()
+        ['203f', '203f', '203f', '203f', '203f', '203f', '203f', '203f', '203f']
+
         :keyword encoded: if set to True, encoding functions are applied on returned cells
         :type encoded: :class:`bool`
         :keyword styled: if set to True, visualization functions are applied on returned cells
@@ -140,7 +271,11 @@ class AbstractField(AbstractMementoCreator):
         :rtype: a :class:`list` of :class:`str`
         :raises: :class:`netzob.Common.Models.Vocabulary.AbstractField.AlignmentException` if an error occurs while aligning messages
         """
-        return []
+        cells = self.getCells()
+        values = []
+        for line in cells:
+            values.append(''.join(line))
+        return values
 
     @abc.abstractmethod
     def generate(self, mutator=None):
@@ -172,7 +307,7 @@ class AbstractField(AbstractMementoCreator):
         elif self.hasParent():
             return self.parent.getSymbol()
         else:
-            raise NoSymbolException()
+            raise NoSymbolException("Impossible to retrieve the symbol attached to this element")
 
     def hasParent(self):
         """Computes if the current element has a parent.
@@ -205,6 +340,10 @@ class AbstractField(AbstractMementoCreator):
 
         while(len(self.__transformationFunctions) > 0):
             self.__transformationFunctions.pop()
+
+    # Standard methods
+    def __str__(self):
+        return str(self.getCells())
 
     # PROPERTIES
 
@@ -353,9 +492,17 @@ class AbstractField(AbstractMementoCreator):
 
     @children.setter
     def children(self, children):
+        # First it checks the specified children are abstractfiled
+        if children is not None:
+            for c in children:
+                if not isinstance(c, AbstractField):
+                    raise TypeError("Cannot edit the children because at least one specified element is not an AbstractField its a {0}.".format(type(c)))
+
         self.clearChildren()
         if children is not None:
-            self.__children.extend(children)
+            for c in children:
+                c.parent = self
+                self.__children.append(c)
 
     @property
     def parent(self):
@@ -370,8 +517,9 @@ class AbstractField(AbstractMementoCreator):
         return self.__parent
 
     @parent.setter
-    @typeCheck("SELF")
     def parent(self, parent):
+        if not isinstance(parent, AbstractField):
+            raise TypeError("Specified parent must be an AbstractField and not an {0}".format(type(parent)))
         self.__parent = parent
 
     def storeInMemento(self):
