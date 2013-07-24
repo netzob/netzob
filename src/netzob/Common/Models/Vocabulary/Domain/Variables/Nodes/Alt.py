@@ -250,12 +250,23 @@ class Alt(AbstractVariableNode):
         """This method creates a regex based on the children of the Alternate.
 
         >>> from netzob import *
-        >>> d1 = ASCII("hello")
-        >>> d2 = ASCII(size=(5, 10))
+        >>> import regex as re
+        >>> import random
+
+        >>> d1 = ASCII("Hello!")
+        >>> d2 = ASCII(size=10)
         >>> d = Alt([d1, d2])
-        >>> r = d.buildRegex()
-        >>> print r.regex
-        ((68656c6c6f)|(.{10,20}))
+        >>> nRegex = d.buildRegex()
+
+        >>> possibleChoice = ["Hello!", "Vive Zoby!"]
+        >>> data = random.choice(possibleChoice)
+        >>> hexData = TypeConverter.convert(data, ASCII, HexaString)
+
+        >>> compiledRegex = re.compile(str(nRegex))
+        >>> dynamicDatas = compiledRegex.match(hexData)
+        >>> result = TypeConverter.convert(hexData[dynamicDatas.start(nRegex.id):dynamicDatas.end(nRegex.id)], HexaString, ASCII)
+        >>> result in possibleChoice
+        True
 
         :return: a regex which can be used to identify the section in which the domain can be found
         :rtype: :class:`netzob.Common.Utils.NetzobRegex.NetzobRegex`

@@ -523,20 +523,12 @@ class Data(AbstractVariableLeaf):
 
         >>> from netzob import *
         >>> d1 = Data(ASCII, TypeConverter.convert("hello", ASCII, BitArray))
-        >>> print d1.buildRegex()
-        (68656c6c6f)
 
         >>> d2 = Data(Decimal, TypeConverter.convert(20, Decimal, BitArray))
-        >>> print d2.buildRegex()
-        (14)
 
         >>> d3 = Data(ASCII, size=(16, 80))
-        >>> print d3.buildRegex()
-        (.{4,20})
 
         >>> d4 = Data(ASCII)
-        >>> print d4.buildRegex()
-        (.{0,})
 
         :return: a regex which can be used to identify the section in which the domain can be found
         :rtype: :class:`netzob.Common.Utils.NetzobRegex.NetzobRegex`

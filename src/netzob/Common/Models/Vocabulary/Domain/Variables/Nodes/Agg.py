@@ -169,12 +169,22 @@ class Agg(AbstractVariableNode):
         """This method creates a regex based on the children of the Aggregate.
 
         >>> from netzob import *
-        >>> d1 = ASCII("hello")
-        >>> d2 = ASCII(size=(5, 10))
-        >>> d = Agg([d1, d2])
-        >>> r = d.buildRegex()
-        >>> print r
-        (68656c6c6f)(.{10,20})
+        >>> import regex as re
+        >>> import random
+
+        >>> d1 = ASCII("Hello ")
+        >>> d2 = ASCII(size=4)
+        >>> d3 = ASCII(size=12)
+        >>> d = Agg([d1, d2, d3])
+        >>> nRegex = d.buildRegex()
+
+        >>> data = "Hello Zoby, are U ok ?"
+        >>> hexData = TypeConverter.convert(data, ASCII, HexaString)
+
+        >>> compiledRegex = re.compile(str(nRegex))
+        >>> dynamicDatas = compiledRegex.match(hexData)
+        >>> print TypeConverter.convert(hexData[dynamicDatas.start(nRegex.id):dynamicDatas.end(nRegex.id)], HexaString, ASCII)
+        Hello Zoby, are U ok ?
 
         :return: a regex which can be used to identify the section in which the domain can be found
         :rtype: :class:`netzob.Common.Utils.NetzobRegex.NetzobRegex`

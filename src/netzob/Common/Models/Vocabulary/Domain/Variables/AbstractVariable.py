@@ -178,15 +178,24 @@ class AbstractVariable(object):
         established in the domain.
 
         >>> from netzob import *
+        >>> import regex as re
+        >>> data = "hello"
+        >>> hexData = TypeConverter.convert(data, ASCII, HexaString)
         >>> d = Data(ASCII, TypeConverter.convert("hello", ASCII, BitArray))
-        >>> r = d.buildRegex()
-        >>> print r
-        (68656c6c6f)
+        >>> nRegex = d.buildRegex()
+        >>> compiledRegex = re.compile(str(nRegex))
+        >>> dynamicDatas = compiledRegex.match(hexData)
+        >>> print TypeConverter.convert(hexData[dynamicDatas.start(nRegex.id):dynamicDatas.end(nRegex.id)], HexaString, ASCII)
+        hello
 
+        >>> data = "hello everyone"
+        >>> hexData = TypeConverter.convert(data, ASCII, HexaString)
         >>> d = Data(ASCII, size=(8, 16))
-        >>> r = d.buildRegex()
-        >>> print r
-        (.{2,4})
+        >>> nRegex = d.buildRegex()
+        >>> compiledRegex = re.compile(str(nRegex))
+        >>> dynamicDatas = compiledRegex.match(hexData)
+        >>> print TypeConverter.convert(hexData[dynamicDatas.start(nRegex.id):dynamicDatas.end(nRegex.id)], HexaString, ASCII)
+        he
 
         :return: a regex which can be used to identify the section in which the domain can be found
         :rtype: :class:`netzob.Common.Utils.NetzobRegex.NetzobRegex`
