@@ -107,18 +107,23 @@ class DataAlignment(threading.Thread):
 
         result = MatrixList()
 
-        leafFields = self.__extractFieldsToConsider()
+        rootLeafFields = self.__extractSubFields(self.__root)
+        if self.__root != self.field:
+            targetedFieldLeafFields = self.__extractSubFields(self.field)
+        else:
+            targetedFieldLeafFields = rootLeafFields
+
         for d in self.data:
             try:
                 # split the message following the regex definition
-                splittedData = self.__splitDataWithRegex(d, leafFields)
+                splittedData = self.__splitDataWithRegex(d, rootLeafFields)
                 self._logger.debug("Splitted data = {0}".format(splittedData))
 
                 # apply the field definition on each slice
                 remainingData = ''
                 fieldsValue = []
-                for iField, field in enumerate(leafFields):
-                    (value, remainingData) = self.__applyFieldDefinition(remainingData + splittedData[iField], field)
+                for field in targetedFieldLeafFields:
+                    (value, remainingData) = self.__applyFieldDefinition(remainingData + splittedData[field.regex.id], field)
                     fieldsValue.append(value)
 
                 if len(remainingData) > 0:
@@ -199,7 +204,7 @@ class DataAlignment(threading.Thread):
             raise Exception("The regex of the group doesn't match one of its message")
 
         # Retrieves values in columns following computed groups of regex
-        result = []
+        result = dict()
         for field in fields:
             try:
                 start = dynamicDatas.start(field.regex.id)
@@ -207,21 +212,21 @@ class DataAlignment(threading.Thread):
             except Exception, e:
                 self._logger.warning("Possible error.")
                 raise e
-            result.append(data[start:end])
+            result[field.regex.id] = data[start:end]
 
         # Memory optimization offered by regex module
         dynamicDatas.detach_string()
 
         return result
 
-    def __extractFieldsToConsider(self, field=None, currentDepth=0):
+    def __extractSubFields(self, field, currentDepth=0):
 
         """Extract the leaf fields to consider regarding the specified depth
 
         >>> from netzob import *
         >>> field = Field("hello", name="F0")
         >>> da = DataAlignment(None, field, depth=None)
-        >>> print [f.name for f in da._DataAlignment__extractFieldsToConsider()]
+        >>> print [f.name for f in da._DataAlignment__extractSubFields(field)]
         ['F0']
 
         >>> field = Field(name="L0")
@@ -238,27 +243,24 @@ class DataAlignment(threading.Thread):
         >>> field.children = [headerField, payloadField, footerField]
 
         >>> da = DataAlignment(None, field, depth=None)
-        >>> print [f.name for f in da._DataAlignment__extractFieldsToConsider()]
+        >>> print [f.name for f in da._DataAlignment__extractSubFields(field)]
         ['L0_header', 'L1_header', 'L1_payload', 'L0_footer']
 
         >>> da = DataAlignment(None, field, depth=0)
-        >>> print [f.name for f in da._DataAlignment__extractFieldsToConsider()]
+        >>> print [f.name for f in da._DataAlignment__extractSubFields(field)]
         ['L0']
 
         >>> da = DataAlignment(None, field, depth=1)
-        >>> print [f.name for f in da._DataAlignment__extractFieldsToConsider()]
+        >>> print [f.name for f in da._DataAlignment__extractSubFields(field)]
         ['L0_header', 'L0_footer', 'L0_footer']
 
         >>> da = DataAlignment(None, field, depth=2)
-        >>> print [f.name for f in da._DataAlignment__extractFieldsToConsider()]
+        >>> print [f.name for f in da._DataAlignment__extractSubFields(field)]
         ['L0_header', 'L1', 'L0_footer']
 
         :return: the list of leaf fields
         :rtype: :class:`list` of :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`.
         """
-
-        if field is None:
-            field = self.field
 
         if field is None:
             raise Exception("No field seems available")
@@ -269,7 +271,7 @@ class DataAlignment(threading.Thread):
         fields = []
         for children in field.children:
             if children is not None:
-                fields.extend(self.__extractFieldsToConsider(children, currentDepth + 1))
+                fields.extend(self.__extractSubFields(children, currentDepth + 1))
         return fields
 
     # Static method
@@ -309,6 +311,11 @@ class DataAlignment(threading.Thread):
         if field is None:
             raise TypeError("Field cannot be None")
         self.__field = field
+        # update the root
+        root = self.__field
+        while root.hasParent():
+            root = root.parent
+        self.__root = root
 
     @property
     def depth(self):
