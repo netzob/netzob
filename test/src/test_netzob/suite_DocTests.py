@@ -39,6 +39,7 @@ from netzob import *
 from netzob.Common.Utils import NetzobRegex
 from netzob.Common.Utils.DataAlignment import ParallelDataAlignment
 from netzob.Common.Utils.DataAlignment import DataAlignment
+from netzob.Common.Models.Vocabulary import AbstractField
 
 
 def getSuite():
@@ -46,6 +47,7 @@ def getSuite():
     modules = [
         Protocol.__module__,
         Field.__module__,
+        AbstractField,
         Symbol.__module__,
         RawMessage.__module__,
         DomainFactory.__module__,
@@ -55,6 +57,7 @@ def getSuite():
         ASCII.__module__,
         Decimal.__module__,
         BitArray.__module__,
+        Raw.__module__,
         HexaString.__module__,
         AbstractType.__module__,
         Memory.__module__,
@@ -62,15 +65,16 @@ def getSuite():
         AbstractVariable.__module__,
         VariableReadingToken.__module__,
         # #        JSONSerializator.__module__,
-        TCPServer.__module__,
-        Actor.__module__,
-        Angluin.__module__,
+        # TCPServer.__module__,
+        # Actor.__module__,
+        # Angluin.__module__,
         State.__module__,
         Transition.__module__,
-        NetzobRegex,
+        NetzobRegex.__module__,
         RawMessage.__module__,
         ParallelDataAlignment,
         DataAlignment,
+        FormatEditor.__module__
 
     ]
 
