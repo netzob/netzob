@@ -112,7 +112,7 @@ class AbstractType(object):
         :rtype: python raw
         :raise: TypeError if parameters are not valid.
         """
-        raise NotImplementedError("Not implemented")
+        raise NotImplementedError("'decode' method not implemented")
 
     @staticmethod
     @abc.abstractmethod
@@ -132,7 +132,7 @@ class AbstractType(object):
         :rtype: python raw
         :raise: TypeError if parameters are not valid.
         """
-        raise NotImplementedError("Not implemented")
+        raise NotImplementedError("'encode' method not implemented")
 
     @staticmethod
     @abc.abstractmethod
@@ -145,7 +145,7 @@ class AbstractType(object):
         :return: True if the data can be parsed will the curren type
         :rtype: bool
         """
-        raise NotImplementedError("Not implemented")
+        raise NotImplementedError("'canParse' method not implemented")
 
     @property
     def value(self):
