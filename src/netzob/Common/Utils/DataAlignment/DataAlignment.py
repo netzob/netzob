@@ -184,7 +184,6 @@ class DataAlignment(threading.Thread):
         regex = NetzobAggregateRegex(regexes)
 
         dynamicDatas = None
-
         try:
             # Now we apply the regex over the message
             compiledRegex = re.compile(str(regex))
@@ -201,16 +200,14 @@ class DataAlignment(threading.Thread):
 
         # Retrieves values in columns following computed groups of regex
         result = []
-        iCol = 1
         for field in fields:
             try:
-                start = dynamicDatas.start(iCol)
-                end = dynamicDatas.end(iCol)
+                start = dynamicDatas.start(field.regex.id)
+                end = dynamicDatas.end(field.regex.id)
             except Exception, e:
                 self._logger.warning("Possible error.")
                 raise e
             result.append(data[start:end])
-            iCol += 1
 
         # Memory optimization offered by regex module
         dynamicDatas.detach_string()
