@@ -30,4 +30,4 @@
 # see docs.python.org/2/tutorial/modules.html
 
 from Serialization import *
-
+from NetzobRegex import NetzobRegex
