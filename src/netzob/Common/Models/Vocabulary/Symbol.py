@@ -113,10 +113,6 @@ class Symbol(AbstractField):
         while(len(self.__messages) > 0):
             self.__messages.pop()
 
-    # Standard methods
-    def __str__(self):
-        return str(self.getCells())
-
     # Properties
 
     @property
