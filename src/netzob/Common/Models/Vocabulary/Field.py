@@ -183,3 +183,18 @@ class Field(AbstractField):
         normalizedDomain = DomainFactory.normalizeDomain(domain)
         self.regex = normalizedDomain.buildRegex()
         self.__domain = normalizedDomain
+
+    @property
+    def messages(self):
+        """A list containing all the messages that the parents of this field have.
+        In reality, a field doesn't have messages, it just returns the messages of its symbol
+
+        :type : a :class:`list` of :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+        """
+        messages = []
+        try:
+            messages.extend(self.getSymbol().messages)
+        except Exception, e:
+            self._logger.warning("The field is attached to no symbol and so it has no messages: {0}".format(e))
+
+        return messages
