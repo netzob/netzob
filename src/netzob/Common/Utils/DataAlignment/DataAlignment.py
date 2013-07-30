@@ -123,7 +123,15 @@ class DataAlignment(threading.Thread):
                 remainingData = ''
                 fieldsValue = []
                 for field in targetedFieldLeafFields:
-                    (value, remainingData) = self.__applyFieldDefinition(remainingData + splittedData[field.regex.id], field)
+
+                    if field.regex.id not in splittedData.keys() or len(splittedData[field.regex.id]) == 0:
+                        raise Exception("Content of field {0} ({1}) has not been found on message, alignment failed.")
+
+                    if len(splittedData[field.regex.id]) > 1:
+                        raise Exception("Multiple values are available for the same field, this is not yet supported.")
+
+                    data = splittedData[field.regex.id][0]
+                    (value, remainingData) = self.__applyFieldDefinition(remainingData + data, field)
                     fieldsValue.append(value)
 
                 if len(remainingData) > 0:
@@ -203,16 +211,7 @@ class DataAlignment(threading.Thread):
             self._logger.warning("Message: {0}...".format(data[:255]))
             raise Exception("The regex of the group doesn't match one of its message")
 
-        # Retrieves values in columns following computed groups of regex
-        result = dict()
-        for field in fields:
-            try:
-                start = dynamicDatas.start(field.regex.id)
-                end = dynamicDatas.end(field.regex.id)
-            except Exception, e:
-                self._logger.warning("Possible error.")
-                raise e
-            result[field.regex.id] = data[start:end]
+        result = dynamicDatas.capturesdict()
 
         # Memory optimization offered by regex module
         dynamicDatas.detach_string()
