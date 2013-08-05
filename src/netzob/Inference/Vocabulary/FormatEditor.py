@@ -52,6 +52,7 @@ from netzob.Common.Models.Types.HexaString import HexaString
 from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Common.Models.Vocabulary.Domain.DomainFactory import DomainFactory
+from netzob.Common.Utils.NetzobRegex import NetzobRegex
 
 
 class FormatEditor(object):
@@ -105,12 +106,12 @@ class FormatEditor(object):
     @staticmethod
     @typeCheck(AbstractField, AbstractField)
     def clusterByKeyField(field, keyField):
-        """Create and return new symbols according to a
-        specific key field.
+        """Create and return new symbols according to a specific key
+        field.
 
         >>> import binascii
         >>> from netzob import *
-        >>> samples = ["00ff2f000000",	"000010000000",	"00fe1f000000",	"000020000000", "00ff1f000000",	"00ff1f000000",	"00ff2f000000",	"00fe1f000000"]
+        >>> samples = ["00ff2f000000",	"000020000000",	"00ff2f000000"]
         >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
         >>> f1 = Field(Raw(size=(1)))
         >>> f2 = Field(Raw(size=(2)))
@@ -125,14 +126,6 @@ class FormatEditor(object):
         00 | ff2f | 000000
         symbol_0020:
         00 | 0020 | 000000
-        symbol_ff1f:
-        00 | ff1f | 000000
-        00 | ff1f | 000000
-        symbol_fe1f:
-        00 | fe1f | 000000
-        00 | fe1f | 000000
-        symbol_0010:
-        00 | 0010 | 000000
 
         :param field: the field we want to split in new symbols
         :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
@@ -185,3 +178,41 @@ class FormatEditor(object):
             newSymbols.append(s)
 
         return newSymbols
+
+    @staticmethod
+    @typeCheck(AbstractField)
+    def resetFormat(field):
+        """Reset the format (field hierarchy and definition domain) of
+        a field.
+
+        >>> import binascii
+        >>> from netzob import *
+        >>> samples = ["00ff2f000000",	"000010000000",	"00fe1f000000"]
+        >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
+        >>> f1 = Field(Raw(size=(1)))
+        >>> f2 = Field(Raw(size=(2)))
+        >>> f3 = Field(Raw(size=(3)))
+        >>> symbol = Symbol([f1, f2, f3], messages=messages)
+        >>> print symbol
+        00 | ff2f | 000000
+        00 | 0010 | 000000
+        00 | fe1f | 000000
+        >>> FormatEditor.resetFormat(symbol)
+        >>> print symbol
+        00ff2f000000
+        000010000000
+        00fe1f000000
+
+        :param field: the field we want to reset
+        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :raise Exception if something bad happens
+        """
+
+        field.clearChildren()
+
+        if isinstance(field, Symbol):
+            field.children = [Field()]
+
+        if isinstance(field, Field):
+            field.domain = Raw(None)
+            field.regex = NetzobRegex.buildDefaultRegex()
