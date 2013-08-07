@@ -216,7 +216,7 @@ class NetzobSizedRegex(NetzobRegex):
             maxSize = maxSize / 4
             if minSize < 0 or maxSize < 0:
                 raise ValueError("The value min and max cannot be inferior to 0")
-            if maxSize <= minSize:
+            if maxSize < minSize:
                 raise ValueError("The max size must be superior to the min size")
         self.__size = (minSize, maxSize)
         self.__updateRegex()

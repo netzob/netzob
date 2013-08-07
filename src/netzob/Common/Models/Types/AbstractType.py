@@ -187,7 +187,7 @@ class AbstractType(object):
         if size is None:
             size = (None, None)
         if isinstance(size, int):
-            size = (size, size + 1)
+            size = (size, size)
 
         if isinstance(size, tuple):
             minSize, maxSize = size
@@ -202,8 +202,8 @@ class AbstractType(object):
 
             if minSize < 0:
                 raise ValueError("Minimum size must be greater than 0")
-            if maxSize is not None and maxSize <= minSize:
-                raise ValueError("Maximum must be greater than the minimum")
+            if maxSize is not None and maxSize < minSize:
+                raise ValueError("Maximum must be greater or equals to the minimum")
 
             self.__size = (minSize, maxSize)
         else:

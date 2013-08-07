@@ -593,7 +593,7 @@ class Data(AbstractVariableLeaf):
         >>> data = Data(dataType=ASCII, originalValue=TypeConverter.convert("zoby", ASCII, BitArray), name="pseudo", size=(5, 2))
         Traceback (most recent call last):
         ...
-        ValueError: Maximum must be greater than the minimum
+        ValueError: Maximum must be greater or equals to the minimum
         """
         return self.__size
 
@@ -615,8 +615,8 @@ class Data(AbstractVariableLeaf):
 
             if minSize < 0:
                 raise ValueError("Minimum size must be greater than 0")
-            if maxSize is not None and maxSize <= minSize:
-                raise ValueError("Maximum must be greater than the minimum")
+            if maxSize is not None and maxSize < minSize:
+                raise ValueError("Maximum must be greater or equals to the minimum")
 
             self.__size = (minSize, maxSize)
         else:
