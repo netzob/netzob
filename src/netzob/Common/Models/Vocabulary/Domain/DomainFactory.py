@@ -108,6 +108,8 @@ class DomainFactory(object):
     def __normalizeAlternateDomain(domain):
         result = Alt()
         if isinstance(domain, list):
+            if len(domain) == 1:
+                return DomainFactory.__normalizeLeafDomain(domain[0])
             for child in domain:
                 result.children.append(DomainFactory.normalizeDomain(child))
         elif isinstance(domain, Alt):
