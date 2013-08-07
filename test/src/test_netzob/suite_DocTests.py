@@ -41,6 +41,9 @@ from netzob.Common.Utils.DataAlignment import ParallelDataAlignment
 from netzob.Common.Utils.DataAlignment import DataAlignment
 from netzob.Common.Models.Vocabulary import AbstractField
 
+from netzob.Inference.Vocabulary.FormatEditorOperations import FieldReseter
+from netzob.Inference.Vocabulary.FormatEditorOperations.FieldSplitStatic import FieldSplitStatic
+
 
 def getSuite():
     # List of modules to include in the list of tests
@@ -74,7 +77,10 @@ def getSuite():
         RawMessage.__module__,
         ParallelDataAlignment,
         DataAlignment,
-        FormatEditor.__module__
+        FormatEditor.__module__,
+        FieldSplitStatic,
+        FormatIdentifier.__module__,
+        FieldReseter
 
     ]
 
