@@ -51,7 +51,6 @@ from netzob.Common.Models.Vocabulary.Functions.EncodingFunction import EncodingF
 from netzob.Common.Models.Vocabulary.Functions.VisualizationFunction import VisualizationFunction
 from netzob.Common.Models.Vocabulary.Functions.TransformationFunction import TransformationFunction
 from netzob.Common.Utils.TypedList import TypedList
-from netzob.Common.Utils.MatrixList import MatrixList
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Models.Types.HexaString import HexaString
