@@ -30,3 +30,4 @@
 # see docs.python.org/2/tutorial/modules.html
 
 from FormatEditor import FormatEditor
+from FormatIdentifier import FormatIdentifier
