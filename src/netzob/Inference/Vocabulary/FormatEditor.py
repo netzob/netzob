@@ -45,6 +45,7 @@
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Models.Types.AbstractType import AbstractType
+from netzob.Inference.Vocabulary.FieldSplitStatic.FieldSplitStatic import FieldSplitStatic
 
 
 class FormatEditor(object):
@@ -58,10 +59,10 @@ class FormatEditor(object):
     def splitStatic(field, unitSize=AbstractType.UNITSIZE_4):
         """Split the portion of the message matching the specified fields
         following their variations of each unitsize.
-        This method returns nothing, it dircetly upgrades the field structure
-        with the result the splitting.
+        This method returns nothing, it upgrades the field structure
+        with the result of the splitting process.
 
-        Its a wrapper for the :class:`netzob.Inference.Vocabulary.FieldSplitStatic.ParallelFieldSplitStatic.ParallelFieldSplitStatic`.
+        Its a wrapper for :class:`netzob.Inference.Vocabulary.FieldSplitStatic.ParallelFieldSplitStatic.ParallelFieldSplitStatic`.
 
 
         >>> import binascii
@@ -81,6 +82,7 @@ class FormatEditor(object):
         >>> FormatEditor.splitStatic(symbol)
         >>> print symbol
 
+
         :param field: the field for which we update the format
         :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
         :raise Exception if something bad happens
@@ -92,5 +94,4 @@ class FormatEditor(object):
         if unitSize is None:
             raise TypeError("Unitsize cannot be None")
 
-        pfield = ParallelFieldSplitStatic(field, unitSize)
-        pfield.execute()
+        FieldSplitStatic.split(field, unitSize)
