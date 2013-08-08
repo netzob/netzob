@@ -80,8 +80,8 @@ def getSuite():
         FormatEditor.__module__,
         FieldSplitStatic,
         FormatIdentifier.__module__,
-        FieldReseter
-
+        FieldReseter,
+        AbstractMessage,
     ]
 
     suite = unittest.TestSuite()
