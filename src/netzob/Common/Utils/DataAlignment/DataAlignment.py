@@ -51,6 +51,7 @@ from netzob.Common.Utils.NetzobRegex import NetzobAggregateRegex
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.HexaString import HexaString
 from netzob.Common.Models.Types.BitArray import BitArray
+from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken import VariableReadingToken
 
 
@@ -64,6 +65,7 @@ class DataAlignment(threading.Thread):
     traditionnaly
 
     >>> from netzob import *
+    >>> from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
     >>> import random
     >>> # Create 10 data which follows format : 'hello '+random number of [5-10] digits+' welcome'.
     >>> data = [TypeConverter.convert('hello {0}, welcome'.format(''.join([str(random.randint(0,9)) for y in range(0, random.randint(5,10))])), Raw, HexaString) for x in range(0, 10)]
@@ -199,7 +201,7 @@ class DataAlignment(threading.Thread):
         dynamicDatas = None
         try:
             # Now we apply the regex over the message
-            compiledRegex = re.compile(str(regex))
+            compiledRegex = re.compile(regex.finalRegex())
             dynamicDatas = compiledRegex.match(data)
         except Exception, e:
             self._logger.warning("An error occured in the alignment process")
@@ -207,7 +209,7 @@ class DataAlignment(threading.Thread):
 
         if dynamicDatas is None:
             self._logger.warning("The regex of the group doesn't match one of its message")
-            self._logger.warning("Regex: {0}".format(regex))
+            self._logger.warning("Regex: {0}".format(regex.finalRegex()))
             self._logger.warning("Message: {0}...".format(data[:255]))
             raise Exception("The regex of the group doesn't match one of its message")
 
@@ -223,6 +225,7 @@ class DataAlignment(threading.Thread):
         """Extract the leaf fields to consider regarding the specified depth
 
         >>> from netzob import *
+        >>> from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
         >>> field = Field("hello", name="F0")
         >>> da = DataAlignment(None, field, depth=None)
         >>> print [f.name for f in da._DataAlignment__extractSubFields(field)]
