@@ -97,6 +97,16 @@ class NetzobRegex(object):
     def __str__(self):
         return str(self.regex)
 
+    def finalRegex(self):
+        """This method returns the current regex with the starting and ending indicators
+        added. For this reason, the returned regex can't be merged with others regexes.
+
+        :return: a string with the final regex definition including start and end indicators
+        :rtype: :class:`str`.
+        """
+
+        return "^" + str(self) + "$"
+
     @staticmethod
     def buildDefaultRegex():
         """It creates the default regex which means
