@@ -37,9 +37,15 @@ import uuid
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
+from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
+from netzob.Common.Models.Types.TypeConverter import TypeConverter
+from netzob.Common.Models.Types.HexaString import HexaString
+from netzob.Common.Models.Types.Raw import Raw
 
 
+@NetzobLogger
 class AbstractMessage(object):
     """Every message must inherits from this class"""
 
@@ -55,6 +61,41 @@ class AbstractMessage(object):
             _id = uuid.uuid4()
         self.id = _id
         self.__metadata = dict()
+
+    @typeCheck(AbstractField)
+    def isValidForField(self, field):
+        """Checks if the specified field can be used
+        to parse the current message. It returns a boolean
+        that indicates this.
+
+        >>> from netzob import *
+        >>> f0 = Field(Raw(size=4))
+        >>> f1 = Field(", hello ", name="F1")
+        >>> f2 = Field(Raw(size=(2,5)), name="F2")
+        >>> symbol = Symbol([f0, f1, f2], name="Symbol")
+        >>> m2 = RawMessage("Toto, hello you", source="server", destination="client")
+        >>> m2.isValidForField(symbol)
+        True
+        >>> m1 = RawMessage("Tutu, hello", source="server", destination="client")
+        >>> m1.isValidForField(symbol)
+        False
+
+        :parameter field: the current message will be parsed with this field
+        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :return: a boolean indicating if the current message can be parsed with the specified field
+        :rtype: :class:`bool`
+
+        """
+        if field is None:
+            raise TypeError("Field cannot be None")
+
+        msgData = [TypeConverter.convert(self.data, Raw, HexaString)]
+        try:
+            DataAlignment.align(msgData, field)
+        except Exception, e:
+            self._logger.debug(e)
+            return False
+        return True
 
     @typeCheck(str, object)
     def setMetadata(self, name, value):
