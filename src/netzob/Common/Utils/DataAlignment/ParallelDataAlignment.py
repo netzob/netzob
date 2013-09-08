@@ -173,6 +173,7 @@ class ParallelDataAlignment(object):
 
         # create a Matrix List based on aligned data and requested data
         result = MatrixList()
+
         for d in data:
             if d not in self.asyncResult.keys():
                 raise Exception("A least one data ({0}) has not been successfully computed by the alignment".format(d))
@@ -182,7 +183,7 @@ class ParallelDataAlignment(object):
         if len(result) != len(data):
             raise Exception("There are not the same number of alignment ({0}) than the number of data ({1})".format(len(result), len(data)))
 
-        self._logger.info("Alignment of {0} data took {1}s with {2} threads.".format(len(data), end - start, self.nbThread))
+        self._logger.debug("Alignment of {0} data took {1}s with {2} threads.".format(len(data), end - start, self.nbThread))
         return result
 
     # Static method
