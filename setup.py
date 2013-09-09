@@ -186,7 +186,8 @@ dependencies = [
     'bitarray >= 0.4',
     'lxml',
     'httplib2',
-    'regex'
+    'regex',
+    'bintrees >= 2.0.0',
 ]
 
 extra_dependencies = {
