@@ -115,6 +115,11 @@ class SortedTypedList(object):
             l.append(x)
         return l
 
+    def clear(self):
+        """remove all items from the list.
+        It's a O(n) operation"""
+        self.__tree.clear()
+
     def _extend(self, elements):
         """Add all the elements in the current list.
 
