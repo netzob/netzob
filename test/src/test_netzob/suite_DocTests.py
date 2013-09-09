@@ -43,6 +43,8 @@ from netzob.Common.Models.Vocabulary import AbstractField
 
 from netzob.Inference.Vocabulary.FormatEditorOperations import FieldReseter
 from netzob.Inference.Vocabulary.FormatEditorOperations.FieldSplitStatic import FieldSplitStatic
+from netzob.Inference.Vocabulary.FormatIdentifierOperations import ClusterByKeyField
+from netzob.Common.Utils import SortedTypedList
 
 
 def getSuite():
@@ -82,6 +84,10 @@ def getSuite():
         FormatIdentifier.__module__,
         FieldReseter,
         AbstractMessage,
+        ClusterByKeyField,
+        Session.__module__,
+        SortedTypedList,
+        ApplicativeData.__module__
     ]
 
     suite = unittest.TestSuite()
