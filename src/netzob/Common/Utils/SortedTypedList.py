@@ -62,22 +62,15 @@ class SortedTypedList(object):
     >>> msg2 = RawMessage("msg2", date=2.0)
     >>> msg3 = RawMessage("msg3", date=1456487548.0)
     >>> l = SortedTypedList(RawMessage, [msg2, msg3, msg1])
-    >>> print l
-    2.0 None>>None msg2,
-    25.0 None>>None msg1,
-    1456487548.0 None>>None msg3
+    >>> print l.values()[0]
+    2.0 None>>None msg2
 
     >>> msg4 = RawMessage("msg4", date=145548.0)
     >>> l.add(msg4)
     >>> msg5 = RawMessage("msg5", date=14.0)
     >>> msg6 = RawMessage("msg6", date=1745645548.0)
     >>> l.addAll([msg5, msg6])
-    >>> print l
-    2.0 None>>None msg2,
-    14.0 None>>None msg5,
-    25.0 None>>None msg1,
-    145548.0 None>>None msg4,
-    1456487548.0 None>>None msg3,
+    >>> print l.values()[5]
     1745645548.0 None>>None msg6
 
     """
@@ -109,6 +102,18 @@ class SortedTypedList(object):
         if elements is None:
             raise TypeError("Element cannot be None")
         self._extend(elements)
+
+    def values(self):
+        """Return a list sorted with the values of the current SortedTypedList.
+        :warning: modifying this list has no effect on the SortedTypedList.
+
+        :rtype: :mod:list
+        """
+
+        l = []
+        for x in self.__tree.values():
+            l.append(x)
+        return l
 
     def _extend(self, elements):
         """Add all the elements in the current list.
