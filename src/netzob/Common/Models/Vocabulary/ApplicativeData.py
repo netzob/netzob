@@ -125,3 +125,12 @@ class ApplicativeData(object):
         if value is None:
             raise TypeError("Value cannot be None")
         self.__value = value
+
+    def __str__(self):
+        """Redefine the string representation of the current
+        applicative Data.
+
+        :return: the string representation of the applicative data
+        :rtype: str
+        """
+        return "Applicative Data: {0}={1} ({2})".format(self.name, self.value, self.type.__name__)
