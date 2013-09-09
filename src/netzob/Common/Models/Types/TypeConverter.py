@@ -49,7 +49,8 @@ class TypeConverter(object):
     """
 
     @staticmethod
-    def __supportedTypes():
+    def supportedTypes():
+        """Official list of supported types"""
         return [
             # an array of bits: [1,0,0,1,1,0..]
             BitArray,
@@ -127,9 +128,9 @@ class TypeConverter(object):
 
         """
         # is the two formats supported ?
-        if sourceType not in TypeConverter.__supportedTypes():
+        if sourceType not in TypeConverter.supportedTypes():
             raise TypeError("The source type is not supported")
-        if destinationType not in TypeConverter.__supportedTypes():
+        if destinationType not in TypeConverter.supportedTypes():
             raise TypeError("The destination type is not supported")
         if data is None:
             raise TypeError("Data cannot be None")
