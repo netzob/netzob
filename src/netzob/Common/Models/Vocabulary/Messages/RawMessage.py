@@ -74,6 +74,14 @@ class RawMessage(AbstractMessage):
         self.source = source
         self.destination = destination
 
+    def __str__(self):
+        """Returns a string that describes the message.
+
+        :warning: This string should only considered for debuging and/or fast visualization. Do not
+        rely on it since its format can often be modified.
+        """
+        return "{0} {1}>>{2} {3}".format(self.date, self.source, self.destination, self.data)
+
     @property
     def date(self):
         """The date when the message was captured.
