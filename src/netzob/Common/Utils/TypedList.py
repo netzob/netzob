@@ -93,7 +93,7 @@ class TypedList(collections.MutableSequence):
         self.list.insert(i, v)
 
     def __str__(self):
-        return str(self.list)
+        return str(',\n'.join([str(x) for x in self.list]))
 
     def __repr__(self):
         return repr(self.list)
