@@ -125,6 +125,14 @@ class Symbol(AbstractField):
 
     @messages.setter
     def messages(self, messages):
+        if messages is None:
+            messages = []
+
+        # First it checks the specified messages are all AbstractMessages
+        for msg in messages:
+            if not isinstance(msg, AbstractMessage):
+                raise TypeError("Cannot add messages of type {0} in the session, only AbstractMessages are allowed.".format(type(msg)))
+
         self.clearMessages()
-        if messages is not None:
-            self.__messages.extend(messages)
+        for msg in messages:
+            self.__messages.append(msg)
