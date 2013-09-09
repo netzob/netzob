@@ -43,6 +43,7 @@ from netzob.Common.Models.Vocabulary.Messages.AbstractMessage import AbstractMes
 
 class RawMessage(AbstractMessage):
     """Represents a raw Message which is a single message with some content and very few meta-data.
+    A RawMessage
 
     >>> msg = RawMessage("That's a simple message")
     >>> print msg.data
@@ -73,6 +74,14 @@ class RawMessage(AbstractMessage):
         self.date = date
         self.source = source
         self.destination = destination
+
+    def priority(self):
+        """Return the value that will be used to represent the current message when sorted
+        with the others.
+
+        :type: int
+        """
+        return int(self.date * 1000)
 
     def __str__(self):
         """Returns a string that describes the message.

@@ -39,6 +39,7 @@ import uuid
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
+from netzob.Common.Utils.SortableObject import SortableObject
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.HexaString import HexaString
@@ -46,7 +47,7 @@ from netzob.Common.Models.Types.Raw import Raw
 
 
 @NetzobLogger
-class AbstractMessage(object):
+class AbstractMessage(SortableObject):
     """Every message must inherits from this class"""
 
     def __init__(self, data, _id=None):
@@ -127,6 +128,14 @@ class AbstractMessage(object):
             raise TypeError("name cannot be none")
 
         return True
+
+    def priority(self):
+        """Return the value that will be used to represent the current message when sorted
+        with the others.
+
+        :type: int
+        """
+        return int(self.id)
 
     @property
     def id(self):
