@@ -32,10 +32,12 @@
 import sys
 import os
 import uuid
-sys.path.insert(0, 'src/')
+
 from setuptools import setup, Extension, find_packages
 
+sys.path.insert(0, 'src/')
 from netzob import release
+
 from resources.sdist.manpage_command import manpage_command
 from resources.sdist.pybuild_command import pybuild_command
 from resources.sdist.test_command import test_command
