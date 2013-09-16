@@ -42,8 +42,12 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.Models.Vocabulary.Functions.EncodingFunctions.DomainEncodingFunction import DomainEncodingFunction
 
 
 class EncodingFunction(object):
     """Represents a function which applies to modify the encoding of a data"""
-    pass
+
+    @staticmethod
+    def getDefaultEncodingFunction():
+        return DomainEncodingFunction()
