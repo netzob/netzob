@@ -87,7 +87,6 @@ class AbstractVariableProcessingToken(object):
     @Ok.setter
     @typeCheck(bool)
     def Ok(self, Ok):
-        self._logger.debug("OK Flag is set to {0}".format(Ok))
         self.__Ok = Ok
 
     @property
