@@ -31,5 +31,5 @@
 
 import release
 
-from netzob.Common import *
-from Inference import *
+from netzob.Common.all import *
+from netzob.Inference import *

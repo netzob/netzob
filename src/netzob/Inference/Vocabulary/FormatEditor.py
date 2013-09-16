@@ -68,7 +68,7 @@ class FormatEditor(object):
 
 
         >>> import binascii
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> samples = ["00ff2f000000",	"000010000000",	"00fe1f000000",	"000020000000", "00ff1f000000",	"00ff1f000000",	"00ff2f000000",	"00fe1f000000"]
         >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
         >>> symbol = Symbol(messages=messages)
@@ -118,7 +118,7 @@ class FormatEditor(object):
         the specified field.
 
         >>> import binascii
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> samples = ["00ff2f000000",	"000010000000",	"00fe1f000000"]
         >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
         >>> f1 = Field(Raw(size=(1)))

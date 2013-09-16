@@ -62,7 +62,7 @@ class Data(AbstractVariableLeaf):
 
     For instance:
 
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> f = Field()
     >>> f.domain = Data(dataType=ASCII, originalValue=TypeConverter.convert("zoby", Raw, BitArray), name="pseudo")
     >>> print f.domain.varType
@@ -108,7 +108,7 @@ class Data(AbstractVariableLeaf):
     def isDefined(self, processingToken):
         """If the leaf has no values, it is not defined and returns False
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> data = Data(ASCII, originalValue=TypeConverter.convert("hello", ASCII, BitArray))
         >>> rToken = VariableReadingToken()
         >>> data.isDefined(rToken)
@@ -130,7 +130,7 @@ class Data(AbstractVariableLeaf):
     def getValue(self, processingToken):
         """Return the current or memorized value.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> data = Data(ASCII, originalValue=TypeConverter.convert("helloworld", ASCII, BitArray))
         >>> rToken = VariableReadingToken()
         >>> print data.getValue(rToken)
@@ -161,7 +161,7 @@ class Data(AbstractVariableLeaf):
     def forget(self, processingToken):
         """The variable forgets its value both locally and from the memory attached to the processingToken
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> d = Data(Decimal, originalValue=TypeConverter.convert(10, Decimal, BitArray))
         >>> rToken = VariableReadingToken()
         >>> d.memorize(rToken)
@@ -192,7 +192,7 @@ class Data(AbstractVariableLeaf):
     def recall(self, processingToken):
         """The variable recall its memorized value.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> d = Data(ASCII, originalValue = TypeConverter.convert("zoby", ASCII, BitArray))
         >>> rToken = VariableReadingToken()
         >>> d.memorize(rToken)
@@ -235,7 +235,7 @@ class Data(AbstractVariableLeaf):
         For instance, we can use it to verify the content of the variable reading token
         can be parsed with an ASCII data
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> data = Data(ASCII)
         >>> rToken = VariableReadingToken(value=TypeConverter.convert("helloworld", ASCII, BitArray))
         >>> data.compareFormat(rToken)
@@ -300,7 +300,7 @@ class Data(AbstractVariableLeaf):
         """This method is used to learn the value of a field
         given the content of in the current readingToken.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> data = Data(ASCII, size=(None, 48))
         >>> print data.currentValue
         None
@@ -367,7 +367,7 @@ class Data(AbstractVariableLeaf):
     def compare(self, readingToken):
         """The variable compares its value to the read value.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> d = Data(ASCII, TypeConverter.convert("Zoby", ASCII, BitArray))
         >>> bin = TypeConverter.convert("Zoby has a hat", ASCII, BitArray)
         >>> rToken = VariableReadingToken(value=bin)
@@ -412,7 +412,7 @@ class Data(AbstractVariableLeaf):
     def mutate(self, writingToken):
         """The current value is mutated according to the given generation strategy.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> d = Data(Decimal, TypeConverter.convert(10, Decimal, BitArray))
         >>> print TypeConverter.convert(d.currentValue, BitArray, Decimal)
         10
@@ -445,7 +445,7 @@ class Data(AbstractVariableLeaf):
     def generate(self, writingToken):
         """A new current value is generated according to the variable type and the given generation strategy.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> d = Data(Decimal, TypeConverter.convert(10, Decimal, BitArray))
         >>> print TypeConverter.convert(d.currentValue, BitArray, Decimal)
         10
@@ -479,7 +479,7 @@ class Data(AbstractVariableLeaf):
         """Write the variable value if it has one, else it returns the memorized value.
         Write this value in the writingToken.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> d1 = Data(ASCII, TypeConverter.convert("Hello", ASCII, BitArray))
         >>> wToken = VariableWritingToken()
         >>> d1.writeValue(wToken)
@@ -521,7 +521,7 @@ class Data(AbstractVariableLeaf):
 
         For instance, if the value is static :
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> d1 = Data(ASCII, TypeConverter.convert("hello", ASCII, BitArray))
 
         >>> d2 = Data(Decimal, TypeConverter.convert(20, Decimal, BitArray))
@@ -582,7 +582,7 @@ class Data(AbstractVariableLeaf):
         :type: a tupple of int
 
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> data = Data(dataType=ASCII, originalValue=TypeConverter.convert("zoby", ASCII, BitArray), name="pseudo", size=None)
 
         >>> data = Data(dataType=ASCII, originalValue=TypeConverter.convert("zoby", ASCII, BitArray), name="pseudo", size=(-1, None))

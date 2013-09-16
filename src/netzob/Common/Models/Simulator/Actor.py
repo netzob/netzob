@@ -62,7 +62,7 @@ class Actor(threading.Thread):
 
     The communication happens over a TCP:8888 connection.
 
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> # First we create the symbols
     >>> aliceSymbol = Symbol(name="Alice-Hello", fields=[Field("alice>hello")])
     >>> bobSymbol = Symbol(name="Bob-Hello", fields=[Field("bob>hello")])
@@ -141,7 +141,7 @@ class Actor(threading.Thread):
         and stop it afterward
 
         >>> import time
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> aliceSymbol = Symbol(name="Alice-Hello", fields=[Field("alice>hello")])
 
         >>> # Create the grammar

@@ -57,7 +57,7 @@ class FieldReseter(object):
     as a raw field and delete its children.
 
     >>> import binascii
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> samples = ["00ff2f000000",	"000010000000",	"00fe1f000000"]
     >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
     >>> f1 = Field(Raw(size=(1)))

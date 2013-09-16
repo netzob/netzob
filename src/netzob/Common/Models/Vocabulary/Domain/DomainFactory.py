@@ -53,7 +53,7 @@ class DomainFactory(object):
 
     For instance, you can normalize domains provided by users
 
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> domain = DomainFactory.normalizeDomain([Raw(), 10])
     >>> print domain.varType
     Alt

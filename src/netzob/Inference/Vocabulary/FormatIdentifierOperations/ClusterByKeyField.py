@@ -65,7 +65,7 @@ class ClusterByKeyField(object):
         field.
 
         >>> import binascii
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> samples = ["00ff2f000000",	"000020000000",	"00ff2f000000"]
         >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
         >>> f1 = Field(Raw(size=(1)))

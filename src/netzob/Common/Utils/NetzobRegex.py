@@ -112,7 +112,7 @@ class NetzobRegex(object):
         """It creates the default regex which means
         we have to knowledge over the format of the field.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> import regex as re
         >>> data = "Hello netzob, a default regex grabs everything."
         >>> hexData = TypeConverter.convert(data, ASCII, HexaString)
@@ -134,7 +134,7 @@ class NetzobRegex(object):
         """It creates a NetzobRegex which represents
         a regex with the specified Raw static value.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> import regex as re
         >>> data = "Hello netzob"
         >>> hexData = TypeConverter.convert(data, ASCII, HexaString)
@@ -171,7 +171,7 @@ class NetzobSizedRegex(NetzobRegex):
 
     >>> from netzob.Common.Utils.NetzobRegex import NetzobRegex
 
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> import regex as re
     >>> data = "Hello netzob"
     >>> hexData = TypeConverter.convert(data, ASCII, HexaString)
@@ -237,7 +237,7 @@ class NetzobAggregateRegex(NetzobRegex):
 
     Below is an example of such aggregate regex with two aggregated regexes..
 
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> import regex as re
     >>> data = "Hello netzob, what's up ?"
     >>> hexData = TypeConverter.convert(data, ASCII, HexaString)
@@ -282,7 +282,7 @@ class NetzobAggregateRegex(NetzobRegex):
 class NetzobAlternativeRegex(NetzobRegex):
     """Represents an alternative regex.
 
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> import random
     >>> import regex as re
     >>> possibleData =["Netzob", "Zoby"]
@@ -328,7 +328,7 @@ class NetzobStaticRegex(NetzobRegex):
 
     Example of a static regex:
 
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> import regex as re
     >>> data = "Hello netzob !"
     >>> hexData = TypeConverter.convert(data, ASCII, HexaString)

@@ -64,7 +64,7 @@ class VariableFactory(object):
 
     For instance, it allows to create a simple variable for a Raw Field
 
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> variable = VariableFactory.buildVariableForDomain(["netzob"])
     >>> print variable.__class__.__name__
     AlternateVariable

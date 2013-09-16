@@ -28,8 +28,3 @@
 
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
-from Protocol import Protocol
-from Vocabulary import *
-from Grammar import *
-from Types import *
-from Simulator import *

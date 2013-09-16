@@ -35,11 +35,13 @@ import doctest
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob import *
+from netzob.all import *
 from netzob.Common.Utils import NetzobRegex
 from netzob.Common.Utils.DataAlignment import ParallelDataAlignment
 from netzob.Common.Utils.DataAlignment import DataAlignment
 from netzob.Common.Models.Vocabulary import AbstractField
+from netzob.Common.Models.Vocabulary.Domain.Variables import AbstractVariable
+from netzob.Common.Models.Vocabulary.Messages import AbstractMessage
 
 from netzob.Inference.Vocabulary.FormatEditorOperations import FieldReseter
 from netzob.Inference.Vocabulary.FormatEditorOperations.FieldSplitStatic import FieldSplitStatic
@@ -67,15 +69,15 @@ def getSuite():
         AbstractType.__module__,
         Memory.__module__,
         TypeConverter.__module__,
-        AbstractVariable.__module__,
+        AbstractVariable,
         VariableReadingToken.__module__,
-        # #        JSONSerializator.__module__,
-        # TCPServer.__module__,
-        # Actor.__module__,
-        # Angluin.__module__,
+        # # JSONSerializator.__module__,
+        # # TCPServer.__module__,
+        # # Actor.__module__,
+        # # Angluin.__module__,
         State.__module__,
         Transition.__module__,
-        NetzobRegex.__module__,
+        NetzobRegex,
         RawMessage.__module__,
         ParallelDataAlignment,
         DataAlignment,

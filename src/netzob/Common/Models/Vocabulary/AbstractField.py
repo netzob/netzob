@@ -105,7 +105,7 @@ class AbstractField(AbstractMementoCreator):
         In addition, visualizationFunctions are also applied if parameter styled is set to True.
         If parameter Transposed is set to True, the matrix is built with rows for fields and columns for messages.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> messages = [RawMessage("hello {0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'zoby', 'lapy'] for city in ['Paris', 'Berlin', 'New-York']]
         >>> fh1 = Field("hello ", name="hello")
         >>> fh2 = Field(["netzob", "zoby", "lapy", "sygus"], name="pseudo")
@@ -230,7 +230,7 @@ class AbstractField(AbstractMementoCreator):
         Specific encodingFunctions can also be considered if parameter encoded is set to True.
         In addition, visualizationFunctions are also applied if parameter styled is set to True.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> messages = [RawMessage("hello {0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'zoby', 'lapy'] for city in ['Paris', 'Berlin', 'New-York']]
         >>> f1 = Field("hello ", name="hello")
         >>> f2 = Field(["netzob", "zoby", "lapy", "sygus"], name="pseudo")

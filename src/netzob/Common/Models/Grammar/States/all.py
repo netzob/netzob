@@ -29,5 +29,4 @@
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
 
-
-
+from netzob.Common.Models.Grammar.States.State import State

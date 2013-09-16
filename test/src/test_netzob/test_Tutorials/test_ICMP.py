@@ -34,7 +34,7 @@ import logging
 #| Local Imports
 #+---------------------------------------------------------------------------+
 from common.NetzobTestCase import NetzobTestCase
-from netzob import *
+from netzob.all import *
 
 
 class test_ICMP(NetzobTestCase):

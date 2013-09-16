@@ -77,7 +77,7 @@ class ASCII(AbstractType):
     def canParse(data):
         """This method returns True if data is an ASCII
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> ASCII.canParse(TypeConverter.convert("hello netzob", ASCII, Raw))
         True
 
@@ -110,7 +110,7 @@ class ASCII(AbstractType):
     def decode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
         """This method convert the specified data in python raw format.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> ASCII.decode("hello")
         'hello'
         >>> ASCII.decode('\x5a\x6f\x62\x79\x20\x69\x73\x20\x64\x61\x20\x70\x6c\x61\x63\x65\x20\x21')
@@ -143,7 +143,7 @@ class ASCII(AbstractType):
     def encode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
         """This method convert the python raw data to the ASCII.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> raw = ASCII.decode("hello zoby!")
         >>> print ASCII.encode(raw)
         hello zoby!

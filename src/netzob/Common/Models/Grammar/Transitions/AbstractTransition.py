@@ -119,7 +119,7 @@ class AbstractTransition(object):
 
         When modifying the startState, it removes itself from previous start state
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> s0 = State(name="S0")
         >>> s1 = State(name="S1")
         >>> s2 = State(name="S2")
@@ -152,7 +152,7 @@ class AbstractTransition(object):
         """
         The end state from which the transition allows to go from the start state
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> s0 = State(name="S0")
         >>> s1 = State(name="S1")
         >>> t = Transition(s0, s1, name="T0")
@@ -176,7 +176,7 @@ class AbstractTransition(object):
         For instance, an open and close channel transition are both declared
         with a priority of 0 whereas per default a transition has a priority of 10.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> s0 = State(name="Start")
         >>> s1 = State(name="End")
         >>> openTransition = OpenChannelTransition(s0, s1)

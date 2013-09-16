@@ -47,7 +47,7 @@ class Memory(object):
     Example of usages:
 
 
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> f1 = Field("hello1")
     >>> f2 = Field(100)
     >>> m = Memory()
@@ -73,7 +73,7 @@ class Memory(object):
     def duplicate(self):
         """Duplicates in a new memory
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> f1 = Field("Protocol RE")
         >>> f2 = Field(100)
         >>> m = Memory()

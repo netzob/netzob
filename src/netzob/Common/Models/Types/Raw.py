@@ -72,7 +72,7 @@ class Raw(AbstractType):
         """Computes if specified data can be parsed as raw which is always the case if the data
         is at leats 1 length.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> Raw.canParse(TypeConverter.convert("hello netzob", ASCII, Raw))
         True
 

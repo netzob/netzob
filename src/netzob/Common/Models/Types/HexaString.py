@@ -64,7 +64,7 @@ class HexaString(AbstractType):
     def canParse(data):
         """It verifies the value is a string which only includes hexadecimal values.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> HexaString.canParse(TypeConverter.convert("0001020304050607080910", ASCII, Raw))
         True
         >>> HexaString.canParse(TypeConverter.convert("hello", ASCII, Raw))
@@ -117,7 +117,7 @@ class HexaString(AbstractType):
     def decode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
         """This method convert the specified data in python raw format.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> import os
         >>> # Generate 1024 random bytes
         >>> randomData = os.urandom(1024)
@@ -153,7 +153,7 @@ class HexaString(AbstractType):
     def encode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
         """This method convert the python raw data to an HexaString
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> import os
         >>> # Generate 4096 random bytes
         >>> randomData = os.urandom(4096)

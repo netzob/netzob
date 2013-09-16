@@ -28,10 +28,3 @@
 
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
-from Raw import Raw
-from ASCII import ASCII
-from Decimal import Decimal
-from BitArray import BitArray
-from HexaString import HexaString
-from TypeConverter import TypeConverter
-from AbstractType import AbstractType

@@ -59,7 +59,7 @@ class FieldSplitStatic(object):
     the static and dynamic portions of data.
 
     >>> import binascii
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> samples = ["00ff2f00000010",	"00001000000011",	"00fe1f00000012",	"00002000000013", "00ff1f00000014",	"00ff1f00000015",	"00ff2f00000016",	"00fe1f00000017"]
     >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
     >>> symbol = Symbol(messages=messages)

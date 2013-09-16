@@ -56,7 +56,7 @@ class Alt(AbstractVariableNode):
 
     To create an alternative:
 
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> domain = Alt([Raw(), ASCII()])
     >>> print domain.varType
     Alt
@@ -161,7 +161,7 @@ class Alt(AbstractVariableNode):
         If it fails, it restore it value and the next child try.
         It stops if one child successes.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> data = TypeConverter.convert("earth", ASCII, BitArray)
         >>> alt = Alt([ASCII("world"), ASCII("earth")])
         >>> rToken = VariableReadingToken(value=data)
@@ -209,7 +209,7 @@ class Alt(AbstractVariableNode):
         If it fails, it restore it value and the next child try.
         It stops if one child successes.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> data = Alt([ASCII("netzob"), ASCII("!")])
         >>> wToken = VariableWritingToken()
         >>> data.writeChildren(wToken)
@@ -249,7 +249,7 @@ class Alt(AbstractVariableNode):
     def buildRegex(self):
         """This method creates a regex based on the children of the Alternate.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> import regex as re
         >>> import random
 

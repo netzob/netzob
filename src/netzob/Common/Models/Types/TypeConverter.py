@@ -78,7 +78,7 @@ class TypeConverter(object):
 
         To convert an ASCII to its binary (bitarray) representation
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> data = "That's an helloworld!"
         >>> bin = TypeConverter.convert(data, ASCII, BitArray)
         >>> print bin

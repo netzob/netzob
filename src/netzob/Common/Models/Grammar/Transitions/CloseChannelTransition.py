@@ -53,7 +53,7 @@ class CloseChannelTransition(AbstractTransition):
     """Represents a transition which when executed request to close
    the current channel
 
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> s0 = State()
     >>> s1 = State()
     >>> t = CloseChannelTransition(s0, s1)

@@ -48,7 +48,7 @@ class ApplicativeData(object):
     if these informations are used somehow by the protocol.
 
     An applicative data can be created out of any information.
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> app = ApplicativeData("Username", ASCII, "toto")
     >>> print app.name
     Username

@@ -53,7 +53,7 @@ class OpenChannelTransition(AbstractTransition):
     """Represents a transition which when executed request to open
    the current channel
 
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> s0 = State()
     >>> s1 = State()
     >>> t = OpenChannelTransition(s0, s1)

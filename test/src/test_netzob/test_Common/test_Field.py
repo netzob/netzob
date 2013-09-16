@@ -39,7 +39,7 @@ import unittest
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
-from netzob import *
+from netzob.all import *
 
 
 class test_Field(unittest.TestCase):

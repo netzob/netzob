@@ -64,7 +64,7 @@ class BitArray(AbstractType):
         """For the moment its always true because we consider
         the decimal type to be very similar to the raw type.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> BitArray.canParse(TypeConverter.convert("hello netzob", ASCII, Raw))
         True
 
@@ -88,7 +88,7 @@ class BitArray(AbstractType):
     def decode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
         """This method convert the specified data in python raw format.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> from netzob.Common.Models.Types.BitArray import BitArray
         >>> d = ASCII.decode("hello netzob")
         >>> r = BitArray.encode(d)
@@ -120,7 +120,7 @@ class BitArray(AbstractType):
     def encode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
         """This method convert the python raw data to the BitArray.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> from netzob.Common.Models.Types.BitArray import BitArray
         >>> BitArray.encode(Decimal.decode(20))
         bitarray('00101000')

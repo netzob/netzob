@@ -53,7 +53,7 @@ class Symbol(AbstractField):
 
     For example, we can create a symbol based on two raw messages
 
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> m1 = RawMessage("hello world")
     >>> m2 = RawMessage("hello earth")
     >>> fields = [Field("hello "), Field(["world", "earth"])]
@@ -64,7 +64,7 @@ class Symbol(AbstractField):
     68656c6c6f20 | 6561727468
 
     Another example
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> s = Symbol([Field("hello "), Field(ASCII(size=(0, 10)))])
     >>> s.messages.append(RawMessage("hello toto"))
     >>> print s

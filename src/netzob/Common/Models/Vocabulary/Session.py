@@ -52,7 +52,7 @@ class Session(object):
 
 
     >>> import time
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> # we create 3 messages
     >>> msg1 = RawMessage("ACK", source="A", destination="B", date=time.mktime(time.strptime("9 Aug 13 10:45:05", "%d %b %y %H:%M:%S")))
     >>> msg2 = RawMessage("SYN", source="A", destination="B", date=time.mktime(time.strptime("9 Aug 13 10:45:01", "%d %b %y %H:%M:%S")))
@@ -133,7 +133,7 @@ class Session(object):
     def applicativeData(self):
         """Applicative data attached to the current session.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> appData = ApplicativeData("test", Decimal, 20)
         >>> session = Session(applicativeData=[appData])
         >>> print len(session.applicativeData)

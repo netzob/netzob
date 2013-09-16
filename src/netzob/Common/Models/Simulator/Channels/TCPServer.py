@@ -56,7 +56,7 @@ class TCPServer(AbstractChannel):
     on the tcp server which starts the server. The objective of the server is to wait for
     the client to connect.
 
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> server = TCPServer(listeningIP='127.0.0.1', listeningPort=9999)
     >>> server.open()
 

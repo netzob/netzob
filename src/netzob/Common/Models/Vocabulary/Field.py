@@ -73,7 +73,7 @@ class Field(AbstractField):
 
     a field containing the decimal value 100
 
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> f = Field(100)
 
     a field containing a specific binary: '1000' = 8 in decimal
@@ -136,7 +136,7 @@ class Field(AbstractField):
 
         This method allows to generate some content following the field definition:
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> f = Field("hello")
         >>> print f.generate()
         hello

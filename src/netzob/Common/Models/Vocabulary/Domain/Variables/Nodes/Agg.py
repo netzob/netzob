@@ -56,7 +56,7 @@ class Agg(AbstractVariableNode):
 
     To create an aggregate:
 
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> domain = Agg([Raw(), ASCII()])
     >>> print domain.varType
     Agg
@@ -168,7 +168,7 @@ class Agg(AbstractVariableNode):
     def buildRegex(self):
         """This method creates a regex based on the children of the Aggregate.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> import regex as re
         >>> import random
 

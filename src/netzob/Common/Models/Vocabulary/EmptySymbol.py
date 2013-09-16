@@ -50,7 +50,7 @@ class EmptySymbol(Symbol):
     """An empty symbol is a special type of symbol principaly used by the simulator.
     It represents the fact of having nothing received or to have nothing to send.
 
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> e = EmptySymbol()
 
     """

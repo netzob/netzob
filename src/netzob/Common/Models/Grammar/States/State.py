@@ -55,7 +55,7 @@ from netzob.Common.Models.Grammar.Transitions.AbstractTransition import Abstract
 class State(AbstractState):
     """A state in the grammar of the protocol.
 
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> s0 = State()
     >>> print s0.name
     None

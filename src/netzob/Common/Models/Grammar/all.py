@@ -29,5 +29,5 @@
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
 
-
-
+from netzob.Common.Models.Grammar.States.all import *
+from netzob.Common.Models.Grammar.Transitions.all import *

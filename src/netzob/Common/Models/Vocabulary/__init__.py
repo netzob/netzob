@@ -28,10 +28,3 @@
 
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
-from Field import Field
-from Symbol import Symbol
-from Session import Session
-from ApplicativeData import ApplicativeData
-from EmptySymbol import EmptySymbol
-from Messages import *
-from Domain import *

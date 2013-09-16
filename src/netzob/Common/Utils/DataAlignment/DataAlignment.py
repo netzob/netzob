@@ -64,7 +64,7 @@ class DataAlignment(threading.Thread):
     For instance, below is a very simple example of data alignment executed
     traditionnaly
 
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
     >>> import random
     >>> # Create 10 data which follows format : 'hello '+random number of [5-10] digits+' welcome'.
@@ -169,6 +169,7 @@ class DataAlignment(threading.Thread):
             raise Exception("Impossible to parse the specified data with the field specifications")
 
         consummedData = TypeConverter.convert(binValue[:rToken.index], BitArray, HexaString)
+
         remainingData = TypeConverter.convert(binValue[rToken.index:], BitArray, HexaString)
         self._logger.debug("Consummed : {0}, remainingData: {1}".format(consummedData, remainingData))
 
@@ -224,7 +225,7 @@ class DataAlignment(threading.Thread):
 
         """Extract the leaf fields to consider regarding the specified depth
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
         >>> field = Field("hello", name="F0")
         >>> da = DataAlignment(None, field, depth=None)

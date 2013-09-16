@@ -61,7 +61,7 @@ class ParallelDataAlignment(object):
     """Allows to align specified datas given a common field definition
     in parallel way.
 
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> import random
     >>> import time
     >>> import logging

@@ -56,7 +56,7 @@ class SortedTypedList(object):
     :TODO: The inner object __tree stores the given element using an AVLTree. Thus
     exposing new methods only requires the creation of a wrapper method in this class.
 
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> from netzob.Common.Utils.SortedTypedList import SortedTypedList
     >>> msg1 = RawMessage("msg1", date=25.0)
     >>> msg2 = RawMessage("msg2", date=2.0)

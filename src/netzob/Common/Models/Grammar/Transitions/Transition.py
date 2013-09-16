@@ -56,7 +56,7 @@ from netzob.Common.Models.Simulator.AbstractionLayer import AbstractionLayer
 class Transition(AbstractTransition):
     """Represents a transition between two states.
 
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> s0 = State()
     >>> s1 = State()
     >>> t = Transition(s0, s1)
@@ -240,7 +240,7 @@ class Transition(AbstractTransition):
         """Output symbols that can be generated when
         the current transition is executed.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> transition = Transition(State(), State())
         >>> transition.outputSymbols = None
         >>> len(transition.outputSymbols)

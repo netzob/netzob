@@ -69,7 +69,7 @@ class AbstractMessage(SortableObject):
         to parse the current message. It returns a boolean
         that indicates this.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> f0 = Field(Raw(size=4))
         >>> f1 = Field(", hello ", name="F1")
         >>> f2 = Field(Raw(size=(2,5)), name="F2")

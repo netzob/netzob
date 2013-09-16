@@ -55,7 +55,7 @@ class Angluin(LearningAlgorithm):
 
     To illustrate its usage, we will infer the grammar of a fake simple protocol.
 
-    >>> from netzob import *
+    >>> from netzob.all import *
     >>> import time
 
     We first create a fake server which requires a vocabulary of

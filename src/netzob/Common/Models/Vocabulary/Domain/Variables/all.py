@@ -28,6 +28,8 @@
 
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
+from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.all import *
+from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.all import *
+from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.all import *
 
-
-
+from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory

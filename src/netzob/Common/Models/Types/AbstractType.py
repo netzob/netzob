@@ -165,14 +165,14 @@ class AbstractType(object):
 
          For instance, to create an ASCII field of at least 10 chars:
 
-         >>> from netzob import *
+         >>> from netzob.all import *
          >>> f = Field(ASCII(size=(10,None)))
          >>> f.domain.size
          (80, None)
 
          while to create a Raw field which content has no specific limit:
 
-         >>> from netzob import *
+         >>> from netzob.all import *
          >>> f = Field(Raw())
 
          :type: tuple (int, int)
@@ -215,7 +215,7 @@ class AbstractType(object):
 
         for instance, user can specify a domain with its type which is much more simple than creating a Data with the type
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> ascii = ASCII("hello netzob !")
         >>> print ascii.typeName
         ASCII

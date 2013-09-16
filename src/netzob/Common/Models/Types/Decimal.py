@@ -73,7 +73,7 @@ class Decimal(AbstractType):
         For the moment its always true because we consider
         the decimal type to be very similar to the raw type.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> Decimal.canParse(TypeConverter.convert("hello netzob", ASCII, Raw))
         True
 
@@ -96,7 +96,7 @@ class Decimal(AbstractType):
     def decode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
         """This method convert the specified data in python raw format.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> print Decimal.decode(23)
         \x17
 
@@ -144,7 +144,7 @@ class Decimal(AbstractType):
     def encode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
         """This method convert the python raw data to the Decimal.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> raw = Decimal.decode(23)
         >>> print Decimal.encode(raw)
         23

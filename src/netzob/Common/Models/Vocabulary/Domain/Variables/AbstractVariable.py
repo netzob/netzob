@@ -177,7 +177,7 @@ class AbstractVariable(object):
         """This method creates a regex based on the size
         established in the domain.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> import regex as re
         >>> data = "hello"
         >>> hexData = TypeConverter.convert(data, ASCII, HexaString)
@@ -293,7 +293,7 @@ class AbstractVariable(object):
     def learnable(self):
         """tells if the variable can learned a value, initialized itself or not.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> alt = Alt()
         >>> alt.learnable
         False
@@ -326,7 +326,7 @@ class AbstractVariable(object):
     def mutable(self):
         """Tells if the variable can be modified or not.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> agg = Agg()
         >>> agg.mutable
         False
@@ -359,7 +359,7 @@ class AbstractVariable(object):
     def boundedVariables(self):
         """A list containing all variables which value is bind to the value of this variable.
 
-        >>> from netzob import *
+        >>> from netzob.all import *
         >>> d1 = Data(ASCII)
         >>> len(d1.boundedVariables)
         0

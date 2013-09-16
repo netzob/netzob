@@ -52,7 +52,7 @@ class NetzobInteractiveSessionController(object):
 
     def start(self):
         if self.interpretor == NetzobInteractiveSessionController.DEFAULT_INTERPRETOR:
-            self.console.runsource("from netzob import *")
+            self.console.runsource("from netzob.all import *")
             self.console.interact(banner=self.getBanner())
 
     def getBanner(self):
