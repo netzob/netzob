@@ -37,13 +37,14 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken import AbstractVariableProcessingToken
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Common.Models.Types.Raw import Raw
 
 
+@NetzobLogger
 class VariableReadingToken(AbstractVariableProcessingToken):
     """A communication token used by variable when they are read."""
 
@@ -56,6 +57,7 @@ class VariableReadingToken(AbstractVariableProcessingToken):
         """
         super(VariableReadingToken, self).__init__(memory, value)
         self.index = index
+        self.__readVariablesByIndex = dict()
 
     def toString(self):
         """Used for debug purpose."""
@@ -77,6 +79,20 @@ class VariableReadingToken(AbstractVariableProcessingToken):
 
         self.linkedValues.append((variable.id, self.value[self.index:self.index + increment]))
         self.incrementIndex(increment)
+        self.attachVariableToRange(variable, self.index, self.index + increment)
+
+    @typeCheck(AbstractVariable, int, int)
+    def attachVariableToRange(self, variable, startPos, endPos):
+        """Attach the specified variable to every bits between the start and the
+        ending position of the in current read value."""
+
+        if variable is None:
+            raise TypeError("The variable cannot be None")
+        if endPos <= startPos:
+            raise ValueError("startPos must be inferior to the endPos parameter.")
+
+        for pos in range(startPos, endPos):
+            self.__readVariablesByIndex[pos] = variable
 
     @typeCheck(int)
     def incrementIndex(self, increment):
@@ -100,3 +116,63 @@ class VariableReadingToken(AbstractVariableProcessingToken):
             raise ValueError("The increment must be positive")
 
         self.index = self.index + increment
+
+    @property
+    def readVariablesByIndex(self):
+        """Returns the variables that has been used to read each index
+        of the read data.
+
+        >>> from netzob.all import *
+        >>> data = TypeConverter.convert("helloworld.", Raw, HexaString)
+        >>> # Now we create a symbol with its field structure to represent this type of message
+        >>> field = Field("helloworld")
+        >>> binValue = TypeConverter.convert(data, HexaString, BitArray)
+        >>> rToken = VariableReadingToken(value=binValue)
+        >>> field.domain.name = "var1"
+        >>> field.domain.read(rToken)
+        >>> print rToken.Ok
+        True
+        >>> print rToken.index
+        80
+        >>> print ";".join([rToken.readVariablesByIndex[pos].name for pos in sorted(rToken.readVariablesByIndex.keys())])
+        var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1
+
+        >>> field = Field(100)
+        >>> field.domain.name = "var100"
+        >>> data = TypeConverter.convert(100, Decimal, HexaString)
+        >>> binValue = TypeConverter.convert(data, HexaString, BitArray)
+        >>> rToken = VariableReadingToken(value=binValue)
+        >>> field.domain.read(rToken)
+        >>> print rToken.Ok
+        True
+        >>> print ";".join([rToken.readVariablesByIndex[pos].name for pos in sorted(rToken.readVariablesByIndex.keys())])
+        var100;var100;var100;var100;var100;var100;var100;var100
+
+        >>> field = Field(Agg(["helloword", " welcome !"]))
+        >>> field.domain.children[0].name = "var0"
+        >>> field.domain.children[1].name = "var1"
+        >>> data =  TypeConverter.convert("helloword welcome !", Raw, HexaString)
+        >>> binValue = TypeConverter.convert(data, HexaString, BitArray)
+        >>> rToken = VariableReadingToken(value=binValue)
+        >>> field.domain.read(rToken)
+        >>> print rToken.Ok
+        True
+        >>> print ";".join([rToken.readVariablesByIndex[pos].name for pos in sorted(rToken.readVariablesByIndex.keys())])
+        var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1;var1
+
+        >>> field = Field(Agg(["There are ", 10, " tests."]))
+        >>> field.domain.children[0].name = "var0"
+        >>> field.domain.children[1].name = "var1"
+        >>> field.domain.children[2].name = "var2"
+        >>> data =  TypeConverter.convert("There are ", Raw, HexaString)+TypeConverter.convert(10, Decimal, HexaString)+TypeConverter.convert(" tests.", Raw, HexaString)
+        >>> binValue = TypeConverter.convert(data, HexaString, BitArray)
+        >>> rToken = VariableReadingToken(value=binValue)
+        >>> field.domain.read(rToken)
+        >>> print rToken.Ok
+        True
+        >>> print ";".join([rToken.readVariablesByIndex[pos].name for pos in sorted(rToken.readVariablesByIndex.keys())])
+        var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var0;var1;var1;var1;var1;var1;var1;var1;var1;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2;var2
+
+
+        """
+        return self.__readVariablesByIndex

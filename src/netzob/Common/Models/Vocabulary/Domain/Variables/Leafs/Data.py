@@ -333,15 +333,18 @@ class Data(AbstractVariableLeaf):
                 # Length comparison. (len(tmp) >= minBits is implicit as the readingToken is OK.)
                 if len(tmp) <= maxSize:
                     self.currentValue = tmp
+                    readingToken.attachVariableToRange(self, readingToken.index, len(tmp))
                     readingToken.incrementIndex(len(tmp))
 
                 else:  # len(tmp) > self.maxBits
                     # We learn as much as we can.
                     self.currentValue = tmp[:maxSize]
+                    readingToken.attachVariableToRange(self, readingToken.index, maxSize)
                     readingToken.incrementIndex(maxSize)
 
             else:
                 self.currentValue = tmp
+                readingToken.attachVariableToRange(self, readingToken.index, len(tmp))
                 readingToken.incrementIndex(len(tmp))
 
             # TODO
@@ -398,6 +401,7 @@ class Data(AbstractVariableLeaf):
         if len(tmp) >= len(localValue):
             if tmp[:len(localValue)] == localValue:
                 self._logger.debug("Comparison successful.")
+                readingToken.attachVariableToRange(self, readingToken.index, readingToken.index + len(localValue))
                 readingToken.incrementIndex(len(localValue))
                 readingToken.Ok = True
             else:
