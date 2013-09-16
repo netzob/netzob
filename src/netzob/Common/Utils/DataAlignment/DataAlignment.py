@@ -53,6 +53,7 @@ from netzob.Common.Models.Types.HexaString import HexaString
 from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken import VariableReadingToken
+from netzob.Common.Models.Vocabulary.Functions.EncodingFunction import EncodingFunction
 
 
 @NetzobLogger
@@ -68,17 +69,28 @@ class DataAlignment(threading.Thread):
     >>> from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
     >>> import random
     >>> # Create 10 data which follows format : 'hello '+random number of [5-10] digits+' welcome'.
-    >>> data = [TypeConverter.convert('hello {0}, welcome'.format(''.join([str(random.randint(0,9)) for y in range(0, random.randint(5,10))])), Raw, HexaString) for x in range(0, 10)]
+    >>> data = [TypeConverter.convert('hello {0}, welcome'.format(''.join([str(y) for y in range(0, 10)])), Raw, HexaString) for x in range(0, 10)]
     >>> # Now we create a symbol with its field structure to represent this type of message
     >>> fields = [Field('hello '), Field(Decimal(size=(5,10))), Field(', welcome')]
     >>> symbol = Symbol(fields=fields)
-    >>> alignedData = DataAlignment.align(data, symbol)
+    >>> alignedData = DataAlignment.align(data, symbol, encoded=True)
     >>> print len(alignedData)
     10
+    >>> print alignedData
+    hello  | 270211885617516653982000 | , welcome
+    hello  | 270211885617516653982000 | , welcome
+    hello  | 270211885617516653982000 | , welcome
+    hello  | 270211885617516653982000 | , welcome
+    hello  | 270211885617516653982000 | , welcome
+    hello  | 270211885617516653982000 | , welcome
+    hello  | 270211885617516653982000 | , welcome
+    hello  | 270211885617516653982000 | , welcome
+    hello  | 270211885617516653982000 | , welcome
+    hello  | 270211885617516653982000 | , welcome
 
     """
 
-    def __init__(self, data, field, depth=None, encoded=False, styled=False):
+    def __init__(self, data, field, depth=None, encoded=True, styled=False):
         """Constructor.
 
         :param data: the list of data that will be aligned, data must be encoded in HexaString
@@ -168,12 +180,24 @@ class DataAlignment(threading.Thread):
         if not rToken.Ok:
             raise Exception("Impossible to parse the specified data with the field specifications")
 
-        consummedData = TypeConverter.convert(binValue[:rToken.index], BitArray, HexaString)
+        readVariables = rToken.readVariablesByIndex
+        if readVariables is None or len(readVariables.keys()) == 0:
+            raise Exception("An error occured that prevented to retrieve the attached variables to each index of the consummed data.")
+
+        if self.encoded:
+            consummedData = self.__applyEncodingFunctionOnField(field, binValue[:rToken.index], readVariables)
+        else:
+            consummedData = TypeConverter.convert(binValue[:rToken.index], BitArray, HexaString)
 
         remainingData = TypeConverter.convert(binValue[rToken.index:], BitArray, HexaString)
         self._logger.debug("Consummed : {0}, remainingData: {1}".format(consummedData, remainingData))
 
         return (consummedData, remainingData)
+
+    def __applyEncodingFunctionOnField(self, field, data, readVariables):
+        encodingFunction = EncodingFunction.getDefaultEncodingFunction()
+
+        return str(encodingFunction.encode(field, data, readVariables))
 
     @typeCheck(str)
     def __splitDataWithRegex(self, data, fields):
@@ -280,7 +304,7 @@ class DataAlignment(threading.Thread):
     # Static method
     @staticmethod
     @typeCheck(str, AbstractField, int)
-    def align(data, field, depth=None):
+    def align(data, field, depth=None, encoded=False):
         """Execute an alignment of specified data with provided field.
         Data must be provided as a list of hexastring.
 
@@ -290,11 +314,13 @@ class DataAlignment(threading.Thread):
         :type: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
         :keyword depth: maximum field depth to consider (similar to layer depth)
         :type depth: :class:`int`.
+        :keyword encoded: set to True if you want the returned result to follow the encoding functions
+        :type encoded: :class:`boolean`
         :return: the aligned data
         :rtype: :class:`netzob.Common.Utils.MatrixList.MatrixList`
         """
 
-        dAlignment = DataAlignment(data, field, depth)
+        dAlignment = DataAlignment(data, field, depth, encoded=encoded)
         return dAlignment.execute()
 
     # Properties
