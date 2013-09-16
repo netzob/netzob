@@ -127,7 +127,7 @@ class Agg(AbstractVariableNode):
         if readingToken.Ok:
             self.notifyBoundedVariables("read", readingToken, self.currentValue)
 
-        self.log.debug("\t {0}. ]".format(readingToken))
+        self._logger.debug("\t {0}. ]".format(readingToken))
 
     @typeCheck(VariableWritingToken)
     def write(self, writingToken):
@@ -164,6 +164,69 @@ class Agg(AbstractVariableNode):
             self.notifyBoundedVariables("write", writingToken)
 
         self.log.debug("\t :{0}. ]".format(writingToken))
+
+    def readChildren(self, readingToken):
+        """Each child tries to read its value..
+        If one fails its all the aggregate that fails.
+
+        >>> from netzob.all import *
+        >>> data = TypeConverter.convert("Our world is earth", ASCII, BitArray)
+        >>> agg = Agg([ASCII("Our world is "), ASCII("earth")])
+        >>> rToken = VariableReadingToken(value=data)
+        >>> agg.readChildren(rToken)
+        >>> print rToken.Ok
+        True
+        >>> print rToken.index > 0
+        True
+
+        >>> data = TypeConverter.convert("Our world is earth", ASCII, BitArray)
+        >>> agg = Agg([ASCII("Our world is "), ASCII("not "), ASCII("earth")])
+        >>> rToken = VariableReadingToken(value=data)
+        >>> agg.readChildren(rToken)
+        >>> print rToken.Ok
+        False
+        >>> print rToken.index > 0
+        False
+
+        """
+        self._logger.debug("- [ {0}: readChildren.".format(str(self)))
+
+        # Computing memory, contains all values before the start of the computation. So, if an error occured, we can restore the former and correct values.
+        dictOfValues = dict()
+        savedIndex = readingToken.index
+        self.currentValue = ''
+
+        for child in self.children:
+            # Memorize each child susceptible to be restored. One by one.
+            dictOfValue = child.getDictOfValues(readingToken)
+            for key, val in dictOfValue.iteritems():
+                dictOfValues[key] = val
+
+            # Child execution.
+            child.read(readingToken)
+            if not readingToken.Ok:
+                break
+
+        # If it has failed we restore every executed children and the index.
+        if not readingToken.Ok:
+            # If something went wrong and we can adapt, we learn to adapt.
+            if self.learnable:
+                self.learn(child, readingToken)
+            # If it is still not OK.
+            if not readingToken.Ok:
+                readingToken.index = savedIndex
+                vocabulary = readingToken.vocabulary
+                # for key, val in dictOfValues.iteritems():
+                #     child = vocabulary.getVariableByID(key)
+                #     # We restore the current values.
+                #     child.currentValue = val
+                #     # We restore the cached values.
+                #     child.restore(readingToken)
+        else:
+            # The value of the variable is simply the value we 'ate'.
+            self.currentValue = readingToken.value[savedIndex:readingToken.index]
+
+        self._logger.debug("Variable {0} ] -".format(readingToken))
 
     def buildRegex(self):
         """This method creates a regex based on the children of the Aggregate.
