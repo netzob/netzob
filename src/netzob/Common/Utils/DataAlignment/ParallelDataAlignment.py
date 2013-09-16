@@ -62,6 +62,7 @@ class ParallelDataAlignment(object):
     in parallel way.
 
     >>> from netzob.all import *
+    >>> from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken import AbstractVariableProcessingToken
     >>> import random
     >>> import time
     >>> import logging
@@ -69,7 +70,7 @@ class ParallelDataAlignment(object):
     >>> # Temporary raise log level of certain impacting loggers on alignment process
     >>> logging.getLogger(Data.__name__).setLevel(logging.INFO)
     >>> logging.getLogger(DataAlignment.__name__).setLevel(logging.INFO)
-    >>> logging.getLogger(AbstractVariableProcessingToken.AbstractVariableProcessingToken.__name__).setLevel(logging.INFO)
+    >>> logging.getLogger(AbstractVariableProcessingToken.__name__).setLevel(logging.INFO)
 
     >>> # Create 1000 data which follows format : 'hello '+random number of 5 to 10 digits+', welcome'.
     >>> # Compare the duration of their alignment with 1 and automatic threads computation
@@ -98,7 +99,7 @@ class ParallelDataAlignment(object):
     >>> # Reset log level of certain impacting loggers on alignment process
     >>> logging.getLogger(Data.__name__).setLevel(logging.DEBUG)
     >>> logging.getLogger(DataAlignment.__name__).setLevel(logging.DEBUG)
-    >>> logging.getLogger(AbstractVariableProcessingToken.AbstractVariableProcessingToken.__name__).setLevel(logging.DEBUG)
+    >>> logging.getLogger(AbstractVariableProcessingToken.__name__).setLevel(logging.DEBUG)
 
 
     """
