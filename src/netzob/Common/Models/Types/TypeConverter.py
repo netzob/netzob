@@ -100,9 +100,7 @@ class TypeConverter(object):
         >>> TypeConverter.convert("5", ASCII, Decimal)
         53
         >>> print TypeConverter.convert("zoby", ASCII, Decimal)
-        Traceback (most recent call last):
-        ...
-        error: unpack requires a string argument of length 1
+        2036494202
         >>> print TypeConverter.convert("zoby", ASCII, Decimal, dst_unitSize=AbstractType.UNITSIZE_32)
         2036494202
 

@@ -35,6 +35,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import struct
+import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -145,6 +146,7 @@ class Decimal(AbstractType):
         """This method convert the python raw data to the Decimal.
 
         >>> from netzob.all import *
+
         >>> raw = Decimal.decode(23)
         >>> print Decimal.encode(raw)
         23
@@ -158,6 +160,9 @@ class Decimal(AbstractType):
         6400
         >>> print repr(Decimal.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE))
         25
+
+        >>> print Decimal.encode('\xcc\xac\x9c\x0c\x1c\xacL\x1c,\xac', unitSize=AbstractType.UNITSIZE_8)
+        -395865088909314208584756
 
         :param data: the data encoded in python raw which will be encoded in current type
         :type data: python raw
@@ -175,9 +180,24 @@ class Decimal(AbstractType):
         if data is None:
             raise TypeError("data cannot be None")
 
-        f = Decimal.computeFormat(unitSize, endianness, sign)
+        perWordFormat = Decimal.computeFormat(unitSize, endianness, sign)
 
-        return struct.unpack(f, data)[0]
+        nbWords = (len(data) * 8 / int(unitSize))
+
+        finalValue = 0
+
+        for iWord in range(0, nbWords):
+            # Extract the portion that represents the current word
+            startPos = iWord * int(unitSize) / 8
+            endPos = iWord * int(unitSize) / 8 + int(unitSize) / 8
+
+            wordData = data[startPos:endPos]
+            unpackedWord = struct.unpack(perWordFormat, wordData)[0]
+
+            unpackedWord = unpackedWord << int(unitSize) * iWord
+            finalValue = finalValue + unpackedWord
+
+        return finalValue
 
     @staticmethod
     def computeFormat(unitSize, endianness, sign):
