@@ -37,6 +37,8 @@
 import threading
 import regex as re
 from bitarray import bitarray
+import traceback
+
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
@@ -137,7 +139,7 @@ class DataAlignment(threading.Thread):
                 remainingData = ''
                 fieldsValue = []
                 for field in targetedFieldLeafFields:
-
+                    self._logger.debug("Target leaf field : {0}".format(field.__class__))
                     if field.regex.id not in splittedData.keys() or len(splittedData[field.regex.id]) == 0:
                         raise Exception("Content of field {0} ({1}) has not been found on message, alignment failed.")
 
@@ -152,7 +154,9 @@ class DataAlignment(threading.Thread):
                     raise Exception("The data has not be fully consummed by the field definition.")
                 result.append(fieldsValue)
             except Exception, e:
+                tb = traceback.format_exc()
                 self._logger.warning("An exception occurred while aligning a data : {0}".format(e))
+                self._logger.warning(tb)
                 raise e
 
         return result
@@ -217,14 +221,20 @@ class DataAlignment(threading.Thread):
         if data is None:
             raise TypeError("The data cannot be None.")
 
-        encodingFunctions = field.encodingFunctions
+        currentField = field
+        encodingFunctions = None
+        while encodingFunctions is None or len(encodingFunctions) == 0:
+            encodingFunctions = currentField.encodingFunctions
+            if currentField.parent is None:
+                break
+            currentField = currentField.parent
 
         encodedValue = data
         if encodingFunctions is None or len(encodingFunctions) == 0:
             encodingFunction = EncodingFunction.getDefaultEncodingFunction()
             encodedValue = encodingFunction.encode(field, encodedValue, readVariables)
         else:
-            for encodingFunction in encodingFunctions:
+            for encodingFunction in encodingFunctions.values():
                 encodedValue = encodingFunction.encode(field, encodedValue, readVariables)
 
         return str(encodedValue)
@@ -329,6 +339,7 @@ class DataAlignment(threading.Thread):
         for children in field.children:
             if children is not None:
                 fields.extend(self.__extractSubFields(children, currentDepth + 1))
+
         return fields
 
     # Static method
