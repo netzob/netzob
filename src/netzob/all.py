@@ -32,4 +32,4 @@
 import release
 
 from netzob.Common.all import *
-from netzob.Inference import *
+from netzob.Inference.all import *
