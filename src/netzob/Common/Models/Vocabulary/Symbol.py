@@ -60,16 +60,15 @@ class Symbol(AbstractField):
 
     >>> symbol = Symbol(fields, messages=[m1, m2])
     >>> print symbol
-    68656c6c6f20 | 776f726c64
-    68656c6c6f20 | 6561727468
+    hello  | world
+    hello  | earth
 
     Another example
     >>> from netzob.all import *
     >>> s = Symbol([Field("hello "), Field(ASCII(size=(0, 10)))])
     >>> s.messages.append(RawMessage("hello toto"))
     >>> print s
-    68656c6c6f20 | 746f746f
-
+    hello  | toto
 
     """
 
