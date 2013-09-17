@@ -119,15 +119,28 @@ class AbstractField(AbstractMementoCreator):
         >>> fbody.children = [fb1, fb2, fb3]
         >>> symbol = Symbol([fheader, fbody], messages=messages)
         >>> print symbol
-        68656c6c6f20 | 6e65747a6f62 | 2c2077686174277320757020696e20 |       5061726973 | 203f
-        68656c6c6f20 | 6e65747a6f62 | 2c2077686174277320757020696e20 |     4265726c696e | 203f
-        68656c6c6f20 | 6e65747a6f62 | 2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
-        68656c6c6f20 |     7a6f6279 | 2c2077686174277320757020696e20 |       5061726973 | 203f
-        68656c6c6f20 |     7a6f6279 | 2c2077686174277320757020696e20 |     4265726c696e | 203f
-        68656c6c6f20 |     7a6f6279 | 2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
-        68656c6c6f20 |     6c617079 | 2c2077686174277320757020696e20 |       5061726973 | 203f
-        68656c6c6f20 |     6c617079 | 2c2077686174277320757020696e20 |     4265726c696e | 203f
-        68656c6c6f20 |     6c617079 | 2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
+        hello  | netzob | , what's up in  |    Paris |  ?
+        hello  | netzob | , what's up in  |   Berlin |  ?
+        hello  | netzob | , what's up in  | New-York |  ?
+        hello  |   zoby | , what's up in  |    Paris |  ?
+        hello  |   zoby | , what's up in  |   Berlin |  ?
+        hello  |   zoby | , what's up in  | New-York |  ?
+        hello  |   lapy | , what's up in  |    Paris |  ?
+        hello  |   lapy | , what's up in  |   Berlin |  ?
+        hello  |   lapy | , what's up in  | New-York |  ?
+
+        >>> fh1.addEncodingFunction(TypeEncodingFunction(HexaString))
+        >>> fb2.addEncodingFunction(TypeEncodingFunction(HexaString))
+        >>> print symbol
+        68656c6c6f20 | netzob | , what's up in  |       5061726973 |  ?
+        68656c6c6f20 | netzob | , what's up in  |     4265726c696e |  ?
+        68656c6c6f20 | netzob | , what's up in  | 4e65772d596f726b |  ?
+        68656c6c6f20 |   zoby | , what's up in  |       5061726973 |  ?
+        68656c6c6f20 |   zoby | , what's up in  |     4265726c696e |  ?
+        68656c6c6f20 |   zoby | , what's up in  | 4e65772d596f726b |  ?
+        68656c6c6f20 |   lapy | , what's up in  |       5061726973 |  ?
+        68656c6c6f20 |   lapy | , what's up in  |     4265726c696e |  ?
+        68656c6c6f20 |   lapy | , what's up in  | 4e65772d596f726b |  ?
 
         >>> print fheader.getCells()
         68656c6c6f20 | 6e65747a6f62
@@ -223,7 +236,7 @@ class AbstractField(AbstractMementoCreator):
 
         # Execute a parallel alignment
         from netzob.Common.Utils.DataAlignment.ParallelDataAlignment import ParallelDataAlignment
-        return ParallelDataAlignment.align(data, self)
+        return ParallelDataAlignment.align(data, self, encoded=encoded)
 
     def getValues(self, encoded=False, styled=False):
         """Returns all the values the current element can take following messages attached to the symbol of current element.
@@ -239,6 +252,17 @@ class AbstractField(AbstractMementoCreator):
         >>> f4 = Field(["Paris", "Berlin", "New-York"], name="city")
         >>> f5 = Field(" ?", name="end")
         >>> symbol = Symbol([f1, f2, f3, f4, f5], messages=messages)
+        >>> print symbol
+        hello  | netzob | , what's up in  |    Paris |  ?
+        hello  | netzob | , what's up in  |   Berlin |  ?
+        hello  | netzob | , what's up in  | New-York |  ?
+        hello  |   zoby | , what's up in  |    Paris |  ?
+        hello  |   zoby | , what's up in  |   Berlin |  ?
+        hello  |   zoby | , what's up in  | New-York |  ?
+        hello  |   lapy | , what's up in  |    Paris |  ?
+        hello  |   lapy | , what's up in  |   Berlin |  ?
+        hello  |   lapy | , what's up in  | New-York |  ?
+        >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
         >>> print symbol
         68656c6c6f20 | 6e65747a6f62 | 2c2077686174277320757020696e20 |       5061726973 | 203f
         68656c6c6f20 | 6e65747a6f62 | 2c2077686174277320757020696e20 |     4265726c696e | 203f
@@ -326,6 +350,8 @@ class AbstractField(AbstractMementoCreator):
     def clearEncodingFunctions(self):
         """Remove all the encoding functions attached to the current element"""
         self.__encodingFunctions.clear()
+        for child in self.children:
+            child.clearEncodingFunctions()
 
     def clearVisualizationFunctions(self):
         """Remove all the visualization functions attached to the current element"""
@@ -440,13 +466,18 @@ class AbstractField(AbstractMementoCreator):
 
         .. warning:: Setting this value with a list copies its members and not the list itself.
         """
-
         return self.__encodingFunctions
 
     @encodingFunctions.setter
     def encodingFunctions(self, encodingFunctions):
         self.clearEncodingFunctions()
-        self.encodingFunctions.addAll(encodingFunctions)
+        for encodingFunction in encodingFunctions:
+            self.addEncodingFunction(encodingFunction)
+
+    def addEncodingFunction(self, encodingFunction):
+        self.encodingFunctions.add(encodingFunction)
+        for child in self.children:
+            child.addEncodingFunction(encodingFunction)
 
     @property
     def visualizationFunctions(self):
