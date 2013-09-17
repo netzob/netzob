@@ -72,6 +72,8 @@ class SortedTypedList(object):
     >>> l.addAll([msg5, msg6])
     >>> print l.values()[5]
     1745645548.0 None>>None msg6
+    >>> print len(l)
+    6
 
     """
 
@@ -139,6 +141,11 @@ class SortedTypedList(object):
             raise TypeError("Invalid type for argument, expecting: {0}, received : {1}".format(self.membersTypes, v.__class__.__name__))
         if not isinstance(v, SortableObject):
             raise TypeError("Objects inserted in a SortedTypedList must inherits from SortableObject class")
+
+    def __len__(self):
+        """Returns the number of elements in the sorted list which takes
+        O(1) operation :)"""
+        return len(self.__tree)
 
     def __str__(self):
         return ', \n'.join([str(v) for k, v in self.__tree.items()])
