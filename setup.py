@@ -188,7 +188,7 @@ dependencies = [
     'bitarray >= 0.4',
     'lxml',
     'httplib2',
-    'regex',
+    'regex == 2013-03-11',
     'bintrees >= 2.0.0',
 ]
 
