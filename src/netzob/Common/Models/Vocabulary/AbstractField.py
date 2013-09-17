@@ -51,6 +51,7 @@ from netzob.Common.Models.Vocabulary.Functions.EncodingFunction import EncodingF
 from netzob.Common.Models.Vocabulary.Functions.VisualizationFunction import VisualizationFunction
 from netzob.Common.Models.Vocabulary.Functions.TransformationFunction import TransformationFunction
 from netzob.Common.Utils.TypedList import TypedList
+from netzob.Common.Utils.SortedTypedList import SortedTypedList
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Models.Types.HexaString import HexaString
@@ -90,7 +91,7 @@ class AbstractField(AbstractMementoCreator):
         self.__children = TypedList(AbstractField)
         self.__parent = None
 
-        self.__encodingFunctions = TypedList(EncodingFunction)
+        self.__encodingFunctions = SortedTypedList(EncodingFunction)
         self.__visualizationFunctions = TypedList(VisualizationFunction)
         self.__transformationFunctions = TypedList(TransformationFunction)
 
@@ -324,9 +325,7 @@ class AbstractField(AbstractMementoCreator):
 
     def clearEncodingFunctions(self):
         """Remove all the encoding functions attached to the current element"""
-
-        while(len(self.__encodingFunctions) > 0):
-            self.__encodingFunctions.pop()
+        self.__encodingFunctions.clear()
 
     def clearVisualizationFunctions(self):
         """Remove all the visualization functions attached to the current element"""
@@ -447,7 +446,7 @@ class AbstractField(AbstractMementoCreator):
     @encodingFunctions.setter
     def encodingFunctions(self, encodingFunctions):
         self.clearEncodingFunctions()
-        self.encodingFunctions.extend(encodingFunctions)
+        self.encodingFunctions.addAll(encodingFunctions)
 
     @property
     def visualizationFunctions(self):

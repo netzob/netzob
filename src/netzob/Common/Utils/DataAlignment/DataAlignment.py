@@ -36,7 +36,7 @@
 #+---------------------------------------------------------------------------+
 import threading
 import regex as re
-
+from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
@@ -185,7 +185,7 @@ class DataAlignment(threading.Thread):
             raise Exception("An error occured that prevented to retrieve the attached variables to each index of the consummed data.")
 
         if self.encoded:
-            consummedData = self.__applyEncodingFunctionOnField(field, binValue[:rToken.index], readVariables)
+            consummedData = self.__applyEncodingFunctionsOnField(binValue[:rToken.index], field, readVariables)
         else:
             consummedData = TypeConverter.convert(binValue[:rToken.index], BitArray, HexaString)
 
@@ -194,10 +194,40 @@ class DataAlignment(threading.Thread):
 
         return (consummedData, remainingData)
 
-    def __applyEncodingFunctionOnField(self, field, data, readVariables):
-        encodingFunction = EncodingFunction.getDefaultEncodingFunction()
+    @typeCheck(bitarray, AbstractField, dict)
+    def __applyEncodingFunctionsOnField(self, data, field, readVariables):
+        """Encodes the aligned data using the definition of the field
+        and of its variables.
+        The expected behavior is to encode the data with the default
+        encoding filter which is the DomainEncodingFunction that encode
+        data following the domain of the used variables to parse.
 
-        return str(encodingFunction.encode(field, data, readVariables))
+        :parameter data: the data to encode
+        :type data: :class:`bitarray`
+        :parameter field: the field from which the data belongs
+        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :parameter readVariables: a dict that associates to each bit of the data the variable used to parse it.
+        :type readVariables: a dict [int]=:class:`netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
+        :return: the encoded data
+        :rtype: :class:`str`
+        """
+
+        if field is None:
+            raise TypeError("The field cannot be None.")
+        if data is None:
+            raise TypeError("The data cannot be None.")
+
+        encodingFunctions = field.encodingFunctions
+
+        encodedValue = data
+        if encodingFunctions is None or len(encodingFunctions) == 0:
+            encodingFunction = EncodingFunction.getDefaultEncodingFunction()
+            encodedValue = encodingFunction.encode(field, encodedValue, readVariables)
+        else:
+            for encodingFunction in encodingFunctions:
+                encodedValue = encodingFunction.encode(field, encodedValue, readVariables)
+
+        return str(encodedValue)
 
     @typeCheck(str)
     def __splitDataWithRegex(self, data, fields):

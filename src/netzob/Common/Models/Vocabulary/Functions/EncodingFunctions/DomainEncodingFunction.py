@@ -34,7 +34,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import abc
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -43,24 +42,26 @@ import abc
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.SortableObject import SortableObject
+from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Models.Types.TypeConverter import TypeConverter
+from netzob.Common.Models.Types.BitArray import BitArray
+from netzob.Common.Models.Vocabulary.Functions.EncodingFunction import EncodingFunction
 
 
-class EncodingFunction(SortableObject):
-    """Represents a function which applies to modify the encoding of a data.
+@NetzobLogger
+class DomainEncodingFunction(EncodingFunction):
+    """This encoding function applies the definition of the domain
+    attached to each variable that has parsed the data to compute
+    its encoding"""
 
-    The application of these functions is priorized using a SortedTypedList, hence every filter
-    needs to set their application priority.
-    """
+    def encode(self, field, data, variablesByPos):
+        # Single variable for the entire field ?
+        if len(set(variablesByPos.values())) == 1:
+            domain = variablesByPos[0].dataType
+            return TypeConverter.convert(data, BitArray, domain)
+        else:
+            return data
 
-    @staticmethod
-    def getDefaultEncodingFunction():
-        """Default encoding function applied when the raw data needs to be encoded
-        and when no specific filter is specified by the user."""
-        from netzob.Common.Models.Vocabulary.Functions.EncodingFunctions.DomainEncodingFunction import DomainEncodingFunction
-        return DomainEncodingFunction()
-
-    @abc.abstractmethod
     def priority(self):
         """Returns the priority of the current encoding filter."""
-        raise NotImplementedError("The object doesn't implement the method priority.")
+        return 100
