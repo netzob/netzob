@@ -89,7 +89,9 @@ def getSuite():
         ClusterByKeyField,
         Session.__module__,
         SortedTypedList,
-        ApplicativeData.__module__
+        ApplicativeData.__module__,
+        DomainEncodingFunction.__module__,
+        TypeEncodingFunction.__module__
     ]
 
     suite = unittest.TestSuite()
