@@ -28,12 +28,5 @@
 
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
-from netzob.Common.Models.Vocabulary.Messages.all import *
-from netzob.Common.Models.Vocabulary.Domain.all import *
-from netzob.Common.Models.Vocabulary.Functions.all import *
-
-from netzob.Common.Models.Vocabulary.Field import Field
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
-from netzob.Common.Models.Vocabulary.Session import Session
-from netzob.Common.Models.Vocabulary.ApplicativeData import ApplicativeData
-from netzob.Common.Models.Vocabulary.EmptySymbol import EmptySymbol
+from netzob.Common.Models.Vocabulary.Functions.EncodingFunctions.DomainEncodingFunction import DomainEncodingFunction
+from netzob.Common.Models.Vocabulary.Functions.EncodingFunctions.TypeEncodingFunction import TypeEncodingFunction
