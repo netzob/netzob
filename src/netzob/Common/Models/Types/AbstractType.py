@@ -63,6 +63,56 @@ class AbstractType(object):
     UNITSIZE_64 = '64'
 
     @staticmethod
+    def supportedTypes():
+        """Official list of supported types"""
+        from netzob.Common.Models.Types.ASCII import ASCII
+        from netzob.Common.Models.Types.Raw import Raw
+        from netzob.Common.Models.Types.BitArray import BitArray
+        from netzob.Common.Models.Types.Decimal import Decimal
+        from netzob.Common.Models.Types.HexaString import HexaString
+
+        return [
+            # an array of bits: [1,0,0,1,1,0..]
+            BitArray,
+            # original python way of encoding data, raw data
+            Raw,
+            # string data
+            ASCII,
+            # decimal
+            Decimal,
+            # hexstring
+            HexaString,
+        ]
+
+    @staticmethod
+    def supportedUnitSizes():
+        """Official unit sizes"""
+        return [
+            AbstractType.UNITSIZE_1,
+            AbstractType.UNITSIZE_4,
+            AbstractType.UNITSIZE_8,
+            AbstractType.UNITSIZE_16,
+            AbstractType.UNITSIZE_32,
+            AbstractType.UNITSIZE_64
+        ]
+
+    @staticmethod
+    def supportedEndianness():
+        """Official endianness supported"""
+        return [
+            AbstractType.ENDIAN_BIG,
+            AbstractType.ENDIAN_LITTLE
+        ]
+
+    @staticmethod
+    def supportedSign():
+        """Official sign supported"""
+        return [
+            AbstractType.SIGN_SIGNED,
+            AbstractType.SIGN_UNSIGNED
+        ]
+
+    @staticmethod
     def defaultUnitSize():
         """Return the default unit size
 
