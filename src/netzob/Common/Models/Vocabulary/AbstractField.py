@@ -367,7 +367,7 @@ class AbstractField(AbstractMementoCreator):
 
     # Standard methods
     def __str__(self):
-        return str(self.getCells())
+        return str(self.getCells(encoded=True))
 
     # PROPERTIES
 
