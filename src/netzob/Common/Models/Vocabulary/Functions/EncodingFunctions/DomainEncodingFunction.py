@@ -52,7 +52,19 @@ from netzob.Common.Models.Vocabulary.Functions.EncodingFunction import EncodingF
 class DomainEncodingFunction(EncodingFunction):
     """This encoding function applies the definition of the domain
     attached to each variable that has parsed the data to compute
-    its encoding"""
+    its encoding.
+
+    Lets take a typical example of domain encoding, a field
+    which domains is based on the aggregation of two other variables.
+
+    >>> from netzob.all import *
+    >>> f = Field(name="f0", domain=Agg(["There are ", Decimal(10), " solutions."]))
+    >>> m = RawMessage("There are " + TypeConverter.convert(10, Decimal, Raw) + " solutions.")
+    >>> s = Symbol(fields=[f], messages=[m], name="Symbol")
+    >>> print s
+    There are 10 solutions.
+
+    """
 
     def encode(self, field, data, variablesByPos):
         # Single variable for the entire field ?
@@ -60,7 +72,28 @@ class DomainEncodingFunction(EncodingFunction):
             domain = variablesByPos[0].dataType
             return TypeConverter.convert(data, BitArray, domain)
         else:
-            return data
+            # First we compute ranges of variables
+            ranges = []  # a list of (start, end, variable)
+            lastVariable = None
+            startPos = 0
+            for pos in sorted(variablesByPos.keys()):
+                currentVariable = variablesByPos[pos]
+                if currentVariable != lastVariable:
+                    endPos = pos
+                    if endPos > startPos:
+                        ranges.append((startPos, endPos, lastVariable))
+                    startPos = pos
+                lastVariable = currentVariable
+            ranges.append((startPos, pos, lastVariable))
+
+            # For each computed range, we convert the data following the type
+            # of the variable used to parse them.
+            result = []
+            for (startPos, endPos, variable) in ranges:
+                domain = variable.dataType
+                result.append(str(TypeConverter.convert(data[startPos:endPos], BitArray, domain)))
+
+            return ''.join(result)
 
     def priority(self):
         """Returns the priority of the current encoding filter."""
