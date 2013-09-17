@@ -186,7 +186,16 @@ class Decimal(AbstractType):
 
         finalValue = 0
 
-        for iWord in range(0, nbWords):
+        iWord = 0
+        start = 0
+        end = nbWords
+        inc = 1
+        if endianness == AbstractType.ENDIAN_BIG:
+            end = 0
+            start = nbWords
+            inc = -1
+
+        for i in range(start, end, inc):
             # Extract the portion that represents the current word
             startPos = iWord * int(unitSize) / 8
             endPos = iWord * int(unitSize) / 8 + int(unitSize) / 8
@@ -196,6 +205,8 @@ class Decimal(AbstractType):
 
             unpackedWord = unpackedWord << int(unitSize) * iWord
             finalValue = finalValue + unpackedWord
+
+            iWord += 1
 
         return finalValue
 
