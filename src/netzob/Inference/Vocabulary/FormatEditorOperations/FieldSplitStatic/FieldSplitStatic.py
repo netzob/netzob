@@ -63,6 +63,7 @@ class FieldSplitStatic(object):
     >>> samples = ["00ff2f00000010",	"00001000000011",	"00fe1f00000012",	"00002000000013", "00ff1f00000014",	"00ff1f00000015",	"00ff2f00000016",	"00fe1f00000017"]
     >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
     >>> symbol = Symbol(messages=messages)
+    >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> print symbol
     00ff2f00000010
     00001000000011
@@ -83,6 +84,7 @@ class FieldSplitStatic(object):
     00 | ff1f | 000000 | 15
     00 | ff2f | 000000 | 16
     00 | fe1f | 000000 | 17
+
     >>> fs = FieldSplitStatic(mergeAdjacentStaticFields=False, mergeAdjacentDynamicFields=False)
     >>> fs.execute(symbol)
     >>> print symbol
@@ -116,6 +118,7 @@ class FieldSplitStatic(object):
     00 | ff1f | 00 | 00 | 00 | 15
     00 | ff2f | 00 | 00 | 00 | 16
     00 | fe1f | 00 | 00 | 00 | 17
+
 
     We can also plays with the unitsize:
     >>> fs = FieldSplitStatic(AbstractType.UNITSIZE_8, mergeAdjacentDynamicFields=False)

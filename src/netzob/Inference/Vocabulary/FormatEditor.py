@@ -72,6 +72,7 @@ class FormatEditor(object):
         >>> samples = ["00ff2f000000",	"000010000000",	"00fe1f000000",	"000020000000", "00ff1f000000",	"00ff1f000000",	"00ff2f000000",	"00fe1f000000"]
         >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
         >>> symbol = Symbol(messages=messages)
+        >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
         >>> print symbol
         00ff2f000000
         000010000000
@@ -125,6 +126,7 @@ class FormatEditor(object):
         >>> f2 = Field(Raw(size=(2)))
         >>> f3 = Field(Raw(size=(3)))
         >>> symbol = Symbol([f1, f2, f3], messages=messages)
+        >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
         >>> print symbol
         00 | ff2f | 000000
         00 | 0010 | 000000

@@ -67,6 +67,7 @@ class FieldReseter(object):
     >>> f2.children = [f21, f22]
     >>> f3 = Field(Raw(size=(None)))
     >>> symbol = Symbol([f1, f2, f3], messages=messages)
+    >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> print symbol
     00 | ff | 2f | 000000
     00 | 00 | 10 | 000000
