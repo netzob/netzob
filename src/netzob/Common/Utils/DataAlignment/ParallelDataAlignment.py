@@ -52,7 +52,8 @@ def _executeDataAlignment(arg, **kwargs):
     """
     data = arg[0]
     field = arg[1]
-    alignedData = DataAlignment.align([data], field)
+    encoded = arg[2]
+    alignedData = DataAlignment.align([data], field, encoded=encoded)
     return (data, alignedData)
 
 
@@ -67,7 +68,7 @@ class ParallelDataAlignment(object):
     >>> import time
     >>> import logging
 
-    >>> # Temporary raise log level of certain impacting loggers on alignment process
+    >>> #Temporary raise log level of certain impacting loggers on alignment process
     >>> logging.getLogger(Data.__name__).setLevel(logging.INFO)
     >>> logging.getLogger(DataAlignment.__name__).setLevel(logging.INFO)
     >>> logging.getLogger(AbstractVariableProcessingToken.__name__).setLevel(logging.INFO)
@@ -104,7 +105,7 @@ class ParallelDataAlignment(object):
 
     """
 
-    def __init__(self, field, depth=None, nbThread=None):
+    def __init__(self, field, depth=None, nbThread=None, encoded=False, styled=False):
         """Constructor.
 
         :param field: the format definition that will be user
@@ -113,12 +114,19 @@ class ParallelDataAlignment(object):
         :type depth: :class:`int`
         :keyword nbThread: the maximum number of thread that will be used.
         :type nbThread: :class:`int`
+        :keyword encoded: indicates if the result should be encoded following field definition
+        :type encoded: :class:`bool`
+        :keyword styled: indicated if the result visualization filter should be applied
+        :type styled: :class:`bool`
+
         """
 
         self.field = field
 
         self.depth = depth
         self.nbThread = nbThread
+        self.encoded = encoded
+        self.styled = styled
 
     def __collectResults_cb(self, tupple_result):
         """This callback is executed by each thread when it finishes
@@ -163,7 +171,7 @@ class ParallelDataAlignment(object):
         pool = multiprocessing.Pool(self.nbThread)
 
         # Execute Data Alignment
-        pool.map_async(_executeDataAlignment, zip(noDuplicateData, [self.field] * len(noDuplicateData)), callback=self.__collectResults_cb)
+        pool.map_async(_executeDataAlignment, zip(noDuplicateData, [self.field] * len(noDuplicateData), [self.encoded] * len(noDuplicateData), [self.styled] * len(noDuplicateData)), callback=self.__collectResults_cb)
 
         # Waits all alignment tasks finish
         pool.close()
@@ -189,7 +197,7 @@ class ParallelDataAlignment(object):
 
     # Static method
     @staticmethod
-    def align(data, field, depth=None, nbThread=None):
+    def align(data, field, depth=None, nbThread=None, encoded=False, styled=False):
         """Execute an alignment of specified data with provided field.
         The alignment will be perfomed in parallel
         Data must be provided as a list of hexastring.
@@ -202,10 +210,15 @@ class ParallelDataAlignment(object):
         :type depth: :class:`int`.
         :keyword nbThread: the number of thread to use when parallelizing
         :type nbThread: :class:`int`.
+        :keyword encoded: indicates if the result should be encoded following field definition
+        :type encoded: :class:`bool`
+        :keyword styled: indicated if the result visualization filter should be applied
+        :type styled: :class:`bool`
+
         :return: the aligned data
         :rtype: :class:`netzob.Common.Utils.MatrixList.MatrixList`
         """
-        pAlignment = ParallelDataAlignment(field, depth, nbThread)
+        pAlignment = ParallelDataAlignment(field, depth, nbThread, encoded, styled)
         return pAlignment.execute(data)
 
     # Properties
@@ -267,3 +280,35 @@ class ParallelDataAlignment(object):
             raise ValueError("NbThread cannot be <0, use None to specify you don't know.")
 
         self.__nbThread = nbThread
+
+    @property
+    def encoded(self):
+        """The encoded defines if it applies the encoding filters on aligned data
+
+        :type: :class:`bool`
+        """
+        return self.__encoded
+
+    @encoded.setter
+    @typeCheck(bool)
+    def encoded(self, encoded):
+        if encoded is None:
+            raise ValueError("Encoded cannot be None")
+
+        self.__encoded = encoded
+
+    @property
+    def styled(self):
+        """The styled defines if it applies the visu filters on aligned data
+
+        :type: :class:`bool`
+        """
+        return self.__styled
+
+    @styled.setter
+    @typeCheck(bool)
+    def styled(self, styled):
+        if styled is None:
+            raise ValueError("Styled cannot be None")
+
+        self.__styled = styled
