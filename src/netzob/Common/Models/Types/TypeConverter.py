@@ -41,7 +41,6 @@ from netzob.Common.Models.Types.ASCII import ASCII
 from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.Decimal import Decimal
-from netzob.Common.Models.Types.HexaString import HexaString
 
 
 class TypeConverter(object):
@@ -50,19 +49,11 @@ class TypeConverter(object):
 
     @staticmethod
     def supportedTypes():
-        """Official list of supported types"""
-        return [
-            # an array of bits: [1,0,0,1,1,0..]
-            BitArray,
-            # original python way of encoding data, raw data
-            Raw,
-            # string data
-            ASCII,
-            # decimal
-            Decimal,
-            # hexstring
-            HexaString,
-        ]
+        """Official list of supported types
+
+        @deprecated: please use directly the AbstractType.supportedTypes() method instead of this wrapper.
+        """
+        return AbstractType.supportedTypes()
 
     @staticmethod
     def __directEncoding():
