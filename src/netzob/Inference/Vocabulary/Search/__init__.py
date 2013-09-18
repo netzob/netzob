@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -25,53 +26,5 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+----------------------------------------------
-#| Global Imports
-#+----------------------------------------------
-from gettext import gettext as _
-import logging
-
-
-#+----------------------------------------------
-#| Local Imports
-#+----------------------------------------------
-
-#+----------------------------------------------
-#| SearchTask:
-#|     Describes a search operation
-#+----------------------------------------------
-class SearchTask(object):
-
-    #+----------------------------------------------
-    #| Constructor:
-    #| @param data: the searched data
-    #| @param type: the type of the searched data
-    #+----------------------------------------------
-    def __init__(self, description, data, type):
-        # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Inference.Vocabulary.SearchTask.py')
-        self.description = description
-        self.data = data
-        self.type = type
-        self.searchedDatas = dict()
-        self.results = []
-
-    def registerResults(self, r, v):
-        for result in r:
-            result.setVariationDescription(v)
-            self.results.append(result)
-
-    def getResults(self):
-        return self.results
-
-    def registerVariation(self, data, description):
-        self.searchedDatas[data] = description
-
-    def getVariations(self):
-        return self.searchedDatas
-
-    def getDescription(self):
-        return self.description
-
-    def setDescription(self, description):
-        self.description = description
+# List subpackages to import with the current one
+# see docs.python.org/2/tutorial/modules.html
