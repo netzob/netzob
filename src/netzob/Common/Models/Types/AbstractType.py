@@ -259,6 +259,38 @@ class AbstractType(object):
         else:
             raise TypeError("Size must be defined by a tuple an int or with None")
 
+    @staticmethod
+    def normalize(data):
+        """Given the specified data, this static methods normalize its representation
+        using Netzob types.
+
+        :parameter data: the data to normalize
+        :type data: :class:`object`
+        :return: an abstractType which value is data
+        :rtype: :class:`netzob.Common.Models.Types.AbstractType.AbstractType`
+
+        >>> from netzob.all import *
+        >>> normalizedData = AbstractType.normalize("netzob")
+        >>> print normalizedData.__class__
+        <class 'netzob.Common.Models.Types.ASCII.ASCII'>
+        >>> print normalizedData.value
+        netzob
+        """
+
+        if data is None:
+            raise TypeError("Cannot normalize None data")
+
+        if isinstance(data, int):
+            from netzob.Common.Models.Types.Decimal import Decimal
+            data = Decimal(value=data)
+        elif isinstance(data, str):
+            from netzob.Common.Models.Types.ASCII import ASCII
+            data = ASCII(value=data)
+        if isinstance(data, AbstractType):
+            return data
+        else:
+            raise TypeError("Not a valid data")
+
     @abc.abstractmethod
     def buildDataRepresentation(self):
         """It creates a :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data.Data` following the specified type.

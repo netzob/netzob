@@ -87,22 +87,10 @@ class DomainFactory(object):
 
     @staticmethod
     def __normalizeLeafDomain(domain):
-        if isinstance(domain, int):
-            from netzob.Common.Models.Types.Decimal import Decimal
-            domain = Decimal(value=domain)
-        elif isinstance(domain, str):
-            from netzob.Common.Models.Types.ASCII import ASCII
-            domain = ASCII(value=domain)
-        if isinstance(domain, AbstractType):
-            return DomainFactory.__normalizeAbstractTypeDomain(domain)
-        elif isinstance(domain, Data):
+        if isinstance(domain, Data):
             return domain
         else:
-            raise TypeError("Not a valid domain")
-
-    @staticmethod
-    def __normalizeAbstractTypeDomain(domain):
-        return domain.buildDataRepresentation()
+            return AbstractType.normalize(domain).buildDataRepresentation()
 
     @staticmethod
     def __normalizeAlternateDomain(domain):
