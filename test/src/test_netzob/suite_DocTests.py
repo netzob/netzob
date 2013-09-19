@@ -48,6 +48,9 @@ from netzob.Inference.Vocabulary.FormatEditorOperations.FieldSplitStatic import 
 from netzob.Inference.Vocabulary.FormatIdentifierOperations import ClusterByKeyField
 from netzob.Common.Utils import SortedTypedList
 
+from netzob.Inference.Vocabulary.Search import SearchTask
+from netzob.Inference.Vocabulary.Search import SearchResult
+
 
 def getSuite():
     # List of modules to include in the list of tests
@@ -91,7 +94,11 @@ def getSuite():
         SortedTypedList,
         ApplicativeData.__module__,
         DomainEncodingFunction.__module__,
-        TypeEncodingFunction.__module__
+        TypeEncodingFunction.__module__,
+        SearchEngine.__module__,
+        SearchTask,
+        SearchResult,
+        
     ]
 
     suite = unittest.TestSuite()

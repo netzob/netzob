@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -48,23 +49,20 @@ class test_Field(unittest.TestCase):
         f = Field()
         self.assertNotEqual(f, None)
         self.assertEqual(f.name, None)
-        self.assertEqual(str(f.regex), "(.{0,})")
 
         f = Field(name="Test")
         self.assertNotEqual(f, None)
-        self.assertEqual(f.name, "Test")
-        self.assertEqual(str(f.regex), "(.{0,})")
 
         f = Field(Raw(size=(5, 150)), name="Default")
         self.assertNotEqual(f, None)
         self.assertEqual(f.name, "Default")
-        self.assertEqual(str(f.regex), "(.{10,300})")
+
 
     ## Encoding (format, unitsize, sign and endianess)
     def test_format(self):
         f = Field()
-        f.setFormat(Format.STRING)
-        self.assertEqual(f.getformat(), Format.STRING)
+        f.encodingFunctions.add(TypeEncodingFunction(ASCII))
+        self.assertEqual(len(f.encodingFunctions), 1)
 
     def test_unitSize(self):
         f = Field()

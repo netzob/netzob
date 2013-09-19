@@ -31,6 +31,7 @@
 #+---------------------------------------------------------------------------+
 import unittest
 import sys
+import os
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -50,8 +51,8 @@ def getSuite():
     modulesOfTests = []
     modulesOfSuites = [
         suite_DocTests,  # tests extracted from docstrings (doctests)
-        suite_Common,
-        suite_Alignment,
+        #suite_Common,
+        #suite_Alignment,
         suite_Tutorials
     ]
     # modulesOfTests = [test_NetzobGui]
