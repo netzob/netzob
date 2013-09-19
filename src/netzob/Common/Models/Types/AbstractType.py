@@ -35,6 +35,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import abc
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -43,9 +44,10 @@ import abc
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 
 
+@NetzobLogger
 class AbstractType(object):
 
     __metaclass__ = abc.ABCMeta
@@ -143,6 +145,57 @@ class AbstractType(object):
         self.typeName = typeName
         self.value = value
         self.size = size
+
+    @typeCheck(str)
+    def mutate(self, prefixDescription=None):
+        """Generate various mutations of the current types.
+
+        This specific method allows to generate mutations on the bit level.
+        If any type accepts bit level mutations, it should call this method. This method
+        introduce the following mutations:
+
+        * Original Version in little endian
+        * Original Version in big endian
+        * Inversed bytes in little endian
+        * Inversed bytes in big endian
+
+        >>> from netzob.all import *
+        >>> t = ASCII("helloworld")
+        >>> print t.mutate()
+        {'byteInversed-bigEndian': bitarray('01100100011011000111001001101111011101110110111101101100011011000110010101101000'), 'original-littleEndian': bitarray('00010110101001100011011000110110111101101110111011110110010011100011011000100110'), 'original-bigEndian': bitarray('01101000011001010110110001101100011011110111011101101111011100100110110001100100'), 'byteInversed-littleEndian': bitarray('00100110001101100100111011110110111011101111011000110110001101101010011000010110')}
+
+        >>> t = Decimal(100)
+        >>> print t.mutate()
+        {'byteInversed-bigEndian': bitarray('00000001'), 'original-littleEndian': bitarray('00100110'), 'original-bigEndian': bitarray('01100100'), 'byteInversed-littleEndian': bitarray('10000000')}
+
+        :keyword prefixDescription: prefix to attach to the description of the generated mutation.
+        :type prefixDescription: :class:`str`
+        :return: a dict of computed mutations having the same types than the initial one.
+        :rtype: :class:`dict`<str>=:class:`netzob.Common.Models.Types.AbstractType.AbstractType`
+        """
+        if prefixDescription is None:
+            prefixDescription = ""
+        else:
+            prefixDescription += "-"
+
+        mutations = dict()
+
+        from netzob.Common.Models.Types.TypeConverter import TypeConverter
+        from netzob.Common.Models.Types.BitArray import BitArray
+
+        binValue = TypeConverter.convert(self.value, type(self), BitArray)
+        mutations["{0}original-littleEndian".format(prefixDescription)] = binValue
+
+        binValueBigEnd = TypeConverter.convert(self.value, type(self), BitArray, dst_endianness=AbstractType.ENDIAN_BIG)
+        mutations["{0}original-bigEndian".format(prefixDescription)] = binValueBigEnd
+
+        binInversedValue = TypeConverter.convert(str(self.value)[::-1], type(self), BitArray)
+        mutations["{0}byteInversed-littleEndian".format(prefixDescription)] = binInversedValue
+
+        binInversedValueBigEnd = TypeConverter.convert(str(self.value)[::-1], type(self), BitArray, dst_endianness=AbstractType.ENDIAN_BIG)
+        mutations["{0}byteInversed-bigEndian".format(prefixDescription)] = binInversedValueBigEnd
+
+        return mutations
 
     @staticmethod
     @abc.abstractmethod
@@ -289,7 +342,7 @@ class AbstractType(object):
         if isinstance(data, AbstractType):
             return data
         else:
-            raise TypeError("Not a valid data")
+            raise TypeError("Not a valid data, impossible to normalize it.")
 
     @abc.abstractmethod
     def buildDataRepresentation(self):
