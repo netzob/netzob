@@ -28,7 +28,5 @@
 
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
-from netzob.Inference.Vocabulary.Search.all import *
 
-from netzob.Inference.Vocabulary.FormatEditor import FormatEditor
-from netzob.Inference.Vocabulary.FormatIdentifier import FormatIdentifier
+from netzob.Inference.Vocabulary.Search.SearchEngine import SearchEngine
