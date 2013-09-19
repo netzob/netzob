@@ -97,6 +97,7 @@ class AbstractField(AbstractMementoCreator):
 
         self._variable = None
 
+    @typeCheck(bool, bool, bool)
     def getCells(self, encoded=False, styled=False, transposed=False):
         """Returns a matrix with a different line for each messages attached to the symbol of the current element.
 
@@ -238,6 +239,7 @@ class AbstractField(AbstractMementoCreator):
         from netzob.Common.Utils.DataAlignment.ParallelDataAlignment import ParallelDataAlignment
         return ParallelDataAlignment.align(data, self, encoded=encoded)
 
+    @typeCheck(bool, bool)
     def getValues(self, encoded=False, styled=False):
         """Returns all the values the current element can take following messages attached to the symbol of current element.
 
