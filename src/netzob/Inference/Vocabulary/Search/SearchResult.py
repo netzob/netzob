@@ -43,10 +43,17 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Inference.Vocabulary.Search.SearchTask import SearchTask
 
 
+class SearchResults(list):
+
+    def __str__(self):
+        return "{0} occurence(s) found.".format(len(self))
+
+
+@NetzobLogger
 class SearchResult(object):
     """A Search result describes a found match between a specific SearchTask
     and a target. It describes at which position and why the search task matches
@@ -105,6 +112,6 @@ class SearchResult(object):
             raise TypeError("Ranges cannot be None")
 
         for (start, end) in ranges:
-            if not isinstance(start, int) or not isinstance(end, int) or end <= start:
-                raise TypeError("Start and end range must integers and end <= start")
+            if not isinstance(start, (int, long)) or not isinstance(end, (int, long)) or end <= start:
+                raise TypeError("Start and end range must be integers and end > start (start={0}, end={1})".format(start, end))
         self.__ranges = ranges
