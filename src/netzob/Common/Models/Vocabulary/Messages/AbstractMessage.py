@@ -40,10 +40,12 @@ import uuid
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
 from netzob.Common.Utils.SortableObject import SortableObject
+from netzob.Common.Utils.TypedList import TypedList
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.HexaString import HexaString
 from netzob.Common.Models.Types.Raw import Raw
+from netzob.Common.Models.Vocabulary.Functions.VisualizationFunction import VisualizationFunction
 
 
 @NetzobLogger
@@ -61,6 +63,7 @@ class AbstractMessage(SortableObject):
         if _id is None:
             _id = uuid.uuid4()
         self.id = _id
+        self.__visualizationFunctions = TypedList(VisualizationFunction)
         self.__metadata = dict()
 
     @typeCheck(AbstractField)
@@ -129,6 +132,12 @@ class AbstractMessage(SortableObject):
 
         return True
 
+    def clearVisualizationFunctions(self):
+        """Remove all the visualization functions attached to the current element"""
+
+        while(len(self.__visualizationFunctions) > 0):
+            self.__visualizationFunctions.pop()
+
     def priority(self):
         """Return the value that will be used to represent the current message when sorted
         with the others.
@@ -180,3 +189,20 @@ class AbstractMessage(SortableObject):
             return TypeError("Metadata cannot be None")
         for k in metadata.keys():
             self.setMetadata(k, metadata[k])
+
+    @property
+    def visualizationFunctions(self):
+        """Sorted list of visualization function to attach on message.
+
+        :type: a list of :class:`netzob.Common.Models.Vocabulary.Functions.VisualizationFunction`
+        :raises: :class:`TypeError`
+
+        .. warning:: Setting this value with a list copies its members and not the list itself.
+        """
+
+        return self.__visualizationFunctions
+
+    @visualizationFunctions.setter
+    def visualizationFunctions(self, visualizationFunctions):
+        self.clearVisualizationFunctions()
+        self.visualizationFunctions.extend(visualizationFunctions)
