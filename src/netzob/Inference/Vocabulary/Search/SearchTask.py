@@ -51,7 +51,6 @@ class SearchTask(object):
     when executing. Each search task describes a different mutations to search after.
     The data used must be specified as a bitarray.
 
-
     >>> from netzob.all import *
     >>> data = TypeConverter.convert("netzob", ASCII, BitArray)
     >>> searchTask = SearchTask(data, "original version")
