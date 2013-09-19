@@ -46,4 +46,7 @@
 
 class VisualizationFunction(object):
     """Represents a function which applies to modify the visualiation attributes of a data"""
-    pass
+
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
