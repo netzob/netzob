@@ -45,31 +45,37 @@ class test_ICMP(NetzobTestCase):
         logging.debug("Test : generate some ICMP Echo Request.")
 
         # Build header : 3 fields
-        pingHeader = [
+        pingHeader = Field(name="Header")
+
+        pingHeaders = [
             Field(name="Type"),
             Field(name="Code"),
             Field(name="Checksum")
         ]
+        pingHeader.children=pingHeaders
+        pingHeader.domain.learnable = False
 
         # Create a payload with a 1 single field
-        pingPayload = [
-            Field(name="Payload")
-        ]
+        pingPayload = Field(name="Payload")
 
         # field 1 : type - 1 byte
-        pingHeader[0].domain = Raw(size=8)
+        pingHeaders[0].domain = Raw(size=1)
+        pingHeaders[0].domain.learnable = False
 
         # field 2 : code - 1 byte
-        pingHeader[1].domain = Raw(size=8)
+        pingHeaders[1].domain = Raw(size=1)
+        pingHeaders[1].domain.learnable = False
 
         # field 3 : checksum - 2 bytes
-        pingHeader[2].domain = Raw(size=16)
+        pingHeaders[2].domain = Raw(size=2)
+        pingHeaders[2].domain.learnable = False
         #pingHeader[2].domain = [Raw(CRC16(pingHeader + pingPayload), size=16)]
 
         # field 4 : we put an ascii of 50 chars in the payload
-        pingPayload[0].domain = "hello"
+        pingPayload.domain = ASCII(size=50)
+        pingPayload.domain.learnable = False
 
-        ping = Symbol(pingHeader + pingPayload)
-        msg = ping.generate()
+        ping = Symbol([pingHeader, pingPayload])
 
-        logging.debug("MSG = '{0}'".format(repr(msg)))
+        ping.messages = [RawMessage(ping.generate()) for i in range(0, 20)]
+        logging.debug(ping)
