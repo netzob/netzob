@@ -35,6 +35,8 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import struct
+import random
+import string
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -72,6 +74,20 @@ class ASCII(AbstractType):
             binValue = None
 
         return Data(dataType=ASCII, originalValue=binValue, size=bitSize)
+
+    def generate(self, generationStrategy=None):
+        """Generates a random ASCII that respects the requested size
+        """
+        from netzob.Common.Models.Types.TypeConverter import TypeConverter
+        from netzob.Common.Models.Types.BitArray import BitArray
+
+        minSize, maxSize = self.size
+        if maxSize is None:
+            maxSize = AbstractType.MAXIMUM_GENERATED_DATA_SIZE
+
+        generatedSize = random.randint(minSize / 8, maxSize / 8)
+        randomContent = ''.join([random.choice(string.letters + string.digits) for i in xrange(generatedSize)])
+        return TypeConverter.convert(randomContent, ASCII, BitArray)
 
     @staticmethod
     def canParse(data):
