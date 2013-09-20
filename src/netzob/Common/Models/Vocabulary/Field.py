@@ -159,11 +159,14 @@ class Field(AbstractField):
         if self.__domain is None:
             raise InvalidDomainException("The domain is not defined.")
 
-        # Create a Variable Writing Token
-        writingToken = VariableWritingToken(generationStrategy=generationStrategy)
-        self.domain.write(writingToken)
-        wroteData = writingToken.value
-        return wroteData.tobytes()
+        if len(self.children) > 0:
+            return ''.join(child.generate() for child in self.children)
+        else:
+            # Create a Variable Writing Token
+            writingToken = VariableWritingToken(generationStrategy=generationStrategy)
+            self.domain.write(writingToken)
+            wroteData = writingToken.value
+            return wroteData.tobytes()
 
     @property
     def domain(self):
