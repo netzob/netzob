@@ -456,17 +456,16 @@ class Data(AbstractVariableLeaf):
         """A new current value is generated according to the variable type and the given generation strategy.
 
         >>> from netzob.all import *
-        >>> d = Data(Decimal, TypeConverter.convert(10, Decimal, BitArray))
-        >>> print TypeConverter.convert(d.currentValue, BitArray, Decimal)
-        10
+        >>> minSize = 5*8
+        >>> maxSize = 10*8
+        >>> d = Data(ASCII, size=(minSize, maxSize))
         >>> # Create a writing token with the default generation strategy
         >>> wToken = VariableWritingToken()
         >>> # Start the mutation
         >>> d.generate(wToken)
         >>> # Display the generated value
-        >>> print d.currentValue
-        bitarray('01010000')
-
+        >>> print minSize<=len(d.currentValue)<maxSize
+        True
 
         :param writingToken: the processing token where the memory is
         :type writingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken.VariableWritingToken`
