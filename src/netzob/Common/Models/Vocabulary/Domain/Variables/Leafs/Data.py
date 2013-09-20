@@ -339,18 +339,18 @@ class Data(AbstractVariableLeaf):
                 # Length comparison. (len(tmp) >= minBits is implicit as the readingToken is OK.)
                 if len(tmp) <= maxSize:
                     self.currentValue = tmp
-                    readingToken.attachVariableToRange(self, readingToken.index, len(tmp))
+                    readingToken.attachVariableToRange(self, readingToken.index, readingToken.index + len(tmp))
                     readingToken.incrementIndex(len(tmp))
 
                 else:  # len(tmp) > self.maxBits
                     # We learn as much as we can.
                     self.currentValue = tmp[:maxSize]
-                    readingToken.attachVariableToRange(self, readingToken.index, maxSize)
+                    readingToken.attachVariableToRange(self, readingToken.index, readingToken.index + maxSize)
                     readingToken.incrementIndex(maxSize)
 
             else:
                 self.currentValue = tmp
-                readingToken.attachVariableToRange(self, readingToken.index, len(tmp))
+                readingToken.attachVariableToRange(self, readingToken.index, readingToken.index + len(tmp))
                 readingToken.incrementIndex(len(tmp))
 
             # TODO
@@ -608,6 +608,9 @@ class Data(AbstractVariableLeaf):
     def size(self, size):
         if size is None:
             size = (None, None)
+
+        if isinstance(size, int):
+            size = (size, size)
 
         if isinstance(size, tuple):
             minSize, maxSize = size
