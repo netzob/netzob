@@ -36,6 +36,7 @@
 #+---------------------------------------------------------------------------+
 import abc
 from bitarray import bitarray
+import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -63,6 +64,11 @@ class AbstractType(object):
     UNITSIZE_16 = '16'
     UNITSIZE_32 = '32'
     UNITSIZE_64 = '64'
+
+    # This value will be used if generate() method is called
+    # without any upper size limit
+    # 8192 is completly arbitrary and equals 1k of data (1024 bytes)
+    MAXIMUM_GENERATED_DATA_SIZE = 8192
 
     @staticmethod
     def supportedTypes():
@@ -145,6 +151,21 @@ class AbstractType(object):
         self.typeName = typeName
         self.value = value
         self.size = size
+
+    def __str__(self):
+        return "{0}={1} ({2})".format(self.typeName, self.value, self.size)
+
+    def generate(self, generationStrategy=None):
+        """Generates a random data that respects the current data type.
+        """
+
+        minSize, maxSize = self.size
+        if maxSize is None:
+            maxSize = AbstractType.MAXIMUM_GENERATED_DATA_SIZE
+
+        generatedSize = random.randint(minSize, maxSize)
+        randomContent = [random.randint(0, 2) for i in range(0, generatedSize)]
+        return bitarray(randomContent)
 
     @typeCheck(str)
     def mutate(self, prefixDescription=None):
@@ -307,6 +328,8 @@ class AbstractType(object):
                 raise ValueError("Minimum size must be greater than 0")
             if maxSize is not None and maxSize < minSize:
                 raise ValueError("Maximum must be greater or equals to the minimum")
+            if maxSize is not None and maxSize > AbstractType.MAXIMUM_GENERATED_DATA_SIZE:
+                raise ValueError("Maximum size supported for a variable is {0}.".format(AbstractType.MAXIMUM_GENERATED_DATA_SIZE))
 
             self.__size = (minSize, maxSize)
         else:
