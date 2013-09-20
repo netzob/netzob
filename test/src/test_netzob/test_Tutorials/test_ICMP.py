@@ -52,7 +52,7 @@ class test_ICMP(NetzobTestCase):
             Field(name="Code"),
             Field(name="Checksum")
         ]
-        pingHeader.children=pingHeaders
+        pingHeader.children = pingHeaders
         pingHeader.domain.learnable = False
 
         # Create a payload with a 1 single field
