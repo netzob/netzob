@@ -88,7 +88,7 @@ class VariableReadingToken(AbstractVariableProcessingToken):
 
         if variable is None:
             raise TypeError("The variable cannot be None")
-        if endPos <= startPos:
+        if endPos < startPos:
             raise ValueError("startPos must be inferior to the endPos parameter.")
 
         for pos in range(startPos, endPos):
