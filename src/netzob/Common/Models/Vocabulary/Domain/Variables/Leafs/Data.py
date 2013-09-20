@@ -277,6 +277,7 @@ class Data(AbstractVariableLeaf):
         # Retrieve the value to check
         data = readingToken.value[readingToken.index:]
         minSize, maxSize = self.size
+        parsedLength = None
         if minSize is not None and len(data) < minSize:
             # data is too small
             result = False
@@ -289,10 +290,15 @@ class Data(AbstractVariableLeaf):
             for length in xrange(minSize, min(maxSize, len(data)) + 1):
                 tmp = TypeConverter.convert(data[:length], BitArray, Raw)
                 if self.dataType.canParse(tmp):
+                    parsedLength = length
                     result = True
                     break
 
         readingToken.Ok = result
+        if readingToken.Ok:
+            readingToken.attachVariableToRange(self, readingToken.index, readingToken.index + parsedLength)
+            readingToken.incrementIndex(parsedLength)
+
         self._logger.debug("Variable {0}: {1}. ] -".format(self.name, readingToken))
 
     @typeCheck(VariableReadingToken)
@@ -471,13 +477,8 @@ class Data(AbstractVariableLeaf):
 
         self._logger.debug("- {0}: generate.".format(self))
 
-        generationStrategy = writingToken.generationStrategy
-        if generationStrategy is None:
-            raise ValueError("The writing token has no generation strategy established, impossible to execute the generation process.")
-
-        # Request the generation strategy
-        newValue = generationStrategy.generateValue(self)
-        self.currentValue = newValue
+        newDomainType = self.dataType(self.currentValue, self.size)
+        self.currentValue = newDomainType.generate(writingToken.generationStrategy)
 
     def writeValue(self, writingToken):
         """Write the variable value if it has one, else it returns the memorized value.
@@ -509,7 +510,7 @@ class Data(AbstractVariableLeaf):
     def restore(self, processingToken):
         """restore
 
-        :param processingToken: the processingtoken fro mwhich it will restore the value
+        :param processingToken: the processingtoken from which it will restore the value
         :type processingToken: :class:`netzob.Common.Models.Vocabulary.Domain.VariableProcessingTokens.AbstractVariableProcessingToken.AbstractVariableProcessingToken`
         :raise Exception: if parameter is not valid
         """
@@ -542,6 +543,9 @@ class Data(AbstractVariableLeaf):
             return NetzobRegex.buildRegexForStaticValue(self.currentValue)
         else:
             return NetzobRegex.buildRegexForSizedValue(self.size)
+
+    def __str__(self):
+        return "{0}={1} (size={2}/{3}, learnable={4}, mutable={5})".format(self.dataType.__name__, self.currentValue, self.size[0], self.size[1], self.learnable, self.mutable)
 
     #+---------------------------------------------------------------------------+
     #| Properties                                                                |
