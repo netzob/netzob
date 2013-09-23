@@ -78,6 +78,7 @@ class AbstractType(object):
         from netzob.Common.Models.Types.BitArray import BitArray
         from netzob.Common.Models.Types.Decimal import Decimal
         from netzob.Common.Models.Types.HexaString import HexaString
+        from netzob.Common.Models.Types.IPv4 import IPv4
 
         return [
             # an array of bits: [1,0,0,1,1,0..]
@@ -90,6 +91,8 @@ class AbstractType(object):
             Decimal,
             # hexstring
             HexaString,
+            # IPv4
+            IPv4,
         ]
 
     @staticmethod
