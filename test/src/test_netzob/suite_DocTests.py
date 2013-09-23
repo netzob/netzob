@@ -98,7 +98,7 @@ def getSuite():
         SearchEngine.__module__,
         SearchTask,
         SearchResult,
-        
+        IPv4.__module__,
     ]
 
     suite = unittest.TestSuite()
