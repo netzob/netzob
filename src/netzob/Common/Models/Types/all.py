@@ -35,3 +35,4 @@ from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.HexaString import HexaString
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.AbstractType import AbstractType
+from netzob.Common.Models.Types.IPv4 import IPv4
