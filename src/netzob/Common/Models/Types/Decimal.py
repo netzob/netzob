@@ -35,7 +35,6 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import struct
-import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -121,6 +120,13 @@ class Decimal(AbstractType):
         \x19\x00
         >>> print Decimal.decode(25, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG)
         \x00\x19
+
+        >>> val = 167749568
+        >>> a = Decimal.decode(val, unitSize=AbstractType.UNITSIZE_32)
+        >>> b = Decimal.encode(a, unitSize=AbstractType.UNITSIZE_32)
+        >>> b == val
+        True
+
 
         :param data: the data encoded in Decimal which will be decoded in raw
         :type data: the current type
