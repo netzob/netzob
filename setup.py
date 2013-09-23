@@ -190,6 +190,7 @@ dependencies = [
     'httplib2',
     'regex == 2013-03-11',
     'bintrees >= 2.0.0',
+    'netaddr >= 0.7',
 ]
 
 extra_dependencies = {
