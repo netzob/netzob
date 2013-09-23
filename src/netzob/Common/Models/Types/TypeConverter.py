@@ -41,6 +41,7 @@ from netzob.Common.Models.Types.ASCII import ASCII
 from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.Decimal import Decimal
+from netzob.Common.Models.Types.IPv4 import IPv4
 
 
 class TypeConverter(object):
@@ -95,6 +96,14 @@ class TypeConverter(object):
         >>> print TypeConverter.convert("zoby", ASCII, Decimal, dst_unitSize=AbstractType.UNITSIZE_32)
         2036494202
 
+        It also works for 'semantic' data like IPv4s
+
+        >>> TypeConverter.convert("192.168.0.10", IPv4, Decimal, dst_sign=AbstractType.SIGN_UNSIGNED)
+        167815360
+        >>> TypeConverter.convert("127.0.0.1", IPv4, BitArray)
+        bitarray('11111110000000000000000010000000')
+        >>> TypeConverter.convert(167815360, Decimal, IPv4, src_unitSize=AbstractType.UNITSIZE_32, src_sign=AbstractType.SIGN_UNSIGNED)
+        IPAddress('192.168.0.10')
 
         :param sourceType: the data source type
         :type sourceType: :class:`type`
@@ -131,13 +140,13 @@ class TypeConverter(object):
         else:
             # Convert from source to raw
             if sourceType is not Raw:
-                binData = sourceType.decode(data, src_unitSize, src_endianness, src_sign)
+                binData = sourceType.decode(data, unitSize=src_unitSize, endianness=src_endianness, sign=src_sign)
             else:
                 binData = data
 
             # Convert from raw to Destination
             if destinationType is not Raw:
-                outputData = destinationType.encode(binData, dst_unitSize, dst_endianness, dst_sign)
+                outputData = destinationType.encode(binData, unitSize=dst_unitSize, endianness=dst_endianness, sign=dst_sign)
             else:
                 outputData = binData
 
