@@ -379,4 +379,6 @@ class test_USBMouseProtocol(NetzobTestCase):
         # Split following the value
         FormatEditor.splitStatic(initialSymbol, mergeAdjacentDynamicFields=False)
 
+        initialSymbol.addEncodingFunction(TypeEncodingFunction(HexaString))
+
         print initialSymbol
