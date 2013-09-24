@@ -37,7 +37,7 @@
 import struct
 import random
 import string
-
+from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
@@ -51,32 +51,75 @@ from netzob.Common.Utils.Decorators import NetzobLogger
 
 @NetzobLogger
 class ASCII(AbstractType):
+    """The netzob type ASCII, a wrapper for the "string" object.
 
-    def __init__(self, value=None, size=(None, None)):
-        super(ASCII, self).__init__(self.__class__.__name__, value, size)
+    >>> from netzob.all import *
+    >>> cAscii = ASCII("constante value")
+    >>> print repr(cAscii)
+    constante value
+    >>> print cAscii.typeName
+    ASCII
+    >>> print cAscii.value
+    bitarray('110001101111011001110110110011100010111010000110011101100010111010100110000001000110111010000110001101101010111010100110')
 
-    def buildDataRepresentation(self):
-        """Overwrite :class:`netzob.Common.Models.Types.AbstractType.AbstractType`"""
+    Use the convert function to convert the current type to any other netzob type
+    >>> raw = cAscii.convertValue(Raw)
+    >>> print repr(raw)
+    constante value
+    >>> ip = cAscii.convertValue(IPv4)
+    Traceback (most recent call last):
+    ...
+    TypeError: Impossible encode constante value into an IPv4 data (unpack requires a string argument of length 4)
 
-        minSize, maxSize = self.size
-        if minSize is not None:
-            minSize = minSize * 8
-        if maxSize is not None:
-            maxSize = maxSize * 8
-        bitSize = (minSize, maxSize)
-        from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
-        from netzob.Common.Models.Types.TypeConverter import TypeConverter
-        from netzob.Common.Models.Types.Raw import Raw
-        from netzob.Common.Models.Types.BitArray import BitArray
-        if self.value is not None:
-            binValue = TypeConverter.convert(self.value, Raw, BitArray)
+    The type can be used to specify constraints over the domain
+    >>> a = ASCII(nbChars=10)
+    >>> print a.value
+    None
+
+    Its not possible to convert if the object has not value
+    >>> a.convertValue(Raw)
+    Traceback (most recent call last):
+    ...
+    TypeError: Data cannot be None
+
+    """
+
+    def __init__(self, value=None, nbChars=(None, None)):
+        if value is not None and not isinstance(value, bitarray):
+            from netzob.Common.Models.Types.TypeConverter import TypeConverter
+            from netzob.Common.Models.Types.BitArray import BitArray
+            value = TypeConverter.convert(value, ASCII, BitArray)
         else:
-            binValue = None
+            value = None
 
-        return Data(dataType=ASCII, originalValue=binValue, size=bitSize)
+        nbMinBit = None
+        nbMaxBit = None
+        if nbChars is not None:
+            if isinstance(nbChars, int):
+                nbMinBit = nbChars * 8
+                nbMaxBit = nbMinBit
+            else:
+                if nbChars[0] is not None:
+                    nbMinBit = nbChars[0] * 8
+                if nbChars[1] is not None:
+                    nbMaxBit = nbChars[1] * 8
+
+        super(ASCII, self).__init__(self.__class__.__name__, value, (nbMinBit, nbMaxBit))
 
     def generate(self, generationStrategy=None):
-        """Generates a random ASCII that respects the requested size
+        """Generates a random ASCII that respects the requested size.
+
+        >>> from netzob.all import *
+        >>> a = ASCII(nbChars=10)
+        >>> gen = a.generate()
+        >>> len(gen)/8
+        10
+
+        >>> b = ASCII("netzob")
+        >>> gen = b.generate()
+        >>> print len(gen)>0
+        True
+
         """
         from netzob.Common.Models.Types.TypeConverter import TypeConverter
         from netzob.Common.Models.Types.BitArray import BitArray
@@ -150,10 +193,7 @@ class ASCII(AbstractType):
         if data is None:
             raise TypeError("data cannot be None")
 
-        data = str(data)
-        f = "{0}s".format(len(data))
-
-        return struct.pack(f, data)
+        return str(data).encode('utf-8')
 
     @staticmethod
     def encode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
