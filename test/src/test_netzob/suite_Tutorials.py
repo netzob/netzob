@@ -41,7 +41,10 @@ from test_netzob.test_Tutorials import test_USBMouseProtocol
 def getSuite():
     tutorialsSuite = unittest.TestSuite()
 
-    modulesOfTests = [test_ICMP, test_USBMouseProtocol]
+    modulesOfTests = [
+        test_ICMP,
+        test_USBMouseProtocol,
+    ]
     modulesOfSuites = []
 
     # Add individual tests
