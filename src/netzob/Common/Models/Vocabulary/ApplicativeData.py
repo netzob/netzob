@@ -49,18 +49,18 @@ class ApplicativeData(object):
 
     An applicative data can be created out of any information.
     >>> from netzob.all import *
-    >>> app = ApplicativeData("Username", ASCII, "toto")
+    >>> app = ApplicativeData("Username", ASCII("toto"))
     >>> print app.name
     Username
 
-    >>> app1 = ApplicativeData("Email", ASCII, "contact@netzob.org")
+    >>> app1 = ApplicativeData("Email", ASCII("contact@netzob.org"))
     >>> print app1.value
-    contact@netzob.org
+    ASCII=bitarray('110001101111011001110110001011101000011011000110001011100000001001110110101001100010111001011110111101100100011001110100111101100100111011100110') ((0, None))
+
     """
 
-    def __init__(self, name, _type, value, _id=None):
+    def __init__(self, name, value, _id=None):
         self.name = name
-        self.type = _type
         self.value = value
         if _id is None:
             _id = uuid.uuid4()
@@ -97,22 +97,6 @@ class ApplicativeData(object):
         self.__id = _id
 
     @property
-    def type(self):
-        """The type of the applicative data.
-
-        :type: :class:`netzob.Common.Models.Types.AbstractType.AbstractType`
-        """
-        return self.__type
-
-    @type.setter
-    def type(self, _type):
-        if _type is None:
-            raise TypeError("Type cannot be None")
-        if _type not in TypeConverter.supportedTypes():
-            raise TypeError("The type is not supported")
-        self.__type = _type
-
-    @property
     def value(self):
         """The value of the applicative data.
 
@@ -133,4 +117,4 @@ class ApplicativeData(object):
         :return: the string representation of the applicative data
         :rtype: str
         """
-        return "Applicative Data: {0}={1} ({2})".format(self.name, self.value, self.type.__name__)
+        return "Applicative Data: {0}={1})".format(self.name, self.value)
