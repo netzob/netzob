@@ -54,20 +54,13 @@ class HexaString(AbstractType):
     def __init__(self, value=None, size=(None, None)):
         super(HexaString, self).__init__(self.__class__.__name__, value, size)
 
-    def buildDataRepresentation(self):
-        """Overwrite :class:`netzob.Common.Models.Types.AbstractType.AbstractType`"""
-
-        from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
-        return Data(dataType=Raw, originalValue=self.value, size=self.size)
-
-    @staticmethod
-    def canParse(data):
+    def canParse(self, data):
         """It verifies the value is a string which only includes hexadecimal values.
 
         >>> from netzob.all import *
-        >>> HexaString.canParse(TypeConverter.convert("0001020304050607080910", ASCII, Raw))
+        >>> HexaString().canParse(TypeConverter.convert("0001020304050607080910", ASCII, Raw))
         True
-        >>> HexaString.canParse(TypeConverter.convert("hello", ASCII, Raw))
+        >>> HexaString().canParse(TypeConverter.convert("hello", ASCII, Raw))
         False
 
         Let's generate random binary raw data, convert it to HexaString
@@ -79,7 +72,7 @@ class HexaString(AbstractType):
         >>> hex = TypeConverter.convert(randomData, Raw, HexaString)
         >>> len(hex)
         16
-        >>> print HexaString.canParse(hex)
+        >>> print HexaString().canParse(hex)
         True
 
         :param data: the data to check
@@ -95,7 +88,7 @@ class HexaString(AbstractType):
         if len(data) == 0:
             return False
 
-        if not ASCII.canParse(data):
+        if not ASCII().canParse(data):
             return False
 
         try:
