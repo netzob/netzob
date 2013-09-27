@@ -50,6 +50,20 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 
 @NetzobLogger
 class AbstractType(object):
+    """AbstractType is the abstract class of all the classes that represents netzob types.
+    In Netzob, a type defines a definition domain as a unique value or specified with specific rules.
+    For instance, an integer under a specific interval, a string with a number of chars and an IPv4 of a specific
+    netmask.
+
+    Every types store their current value (if they have one) as a :class:`bitarray.bitarray`.
+
+    >>> from netzob.all import *
+    >>> t = ASCII("netzob")
+    >>> t.value
+    bitarray('011101101010011000101110010111101111011001000110')
+    >>> print t.endianness
+    little
+    """
 
     __metaclass__ = abc.ABCMeta
 
@@ -150,16 +164,93 @@ class AbstractType(object):
         """
         return AbstractType.SIGN_SIGNED
 
-    def __init__(self, typeName, value, size=(None, None)):
+    def __init__(self, typeName, value, size=(None, None), unitSize=None, endianness=None, sign=None):
+        """Constructor for an AbstractType, an abstract class.
+        This constructor must only be called by inheriting classes.
+
+        :parameter typeName: the name of the type (highly recommand the use of __class__.__name__.
+        :type typeName: :class:`str`
+        :parameter value: the current value of the instance (specified in bitarray)
+        :type value: :class:`bitarray.bitarray`
+        :parameter size: the size in bits that this value takes (to build the appropriate regex)
+        :type size: a tupple with the min and the max size specified as integers
+        :keyword unitSize: the unitsize of the current value. Values must be one of AbstractType.UNITSIZE_*. if None, the value is the default one.
+        :type unitSize: str
+        :keyword endianness: the endianness of the current value. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE. if None, the value is the default one.
+        :type endianness: str
+        :keyword sign: the sign pf tje current value. Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED. if None, the value is the default one.
+        :type sign: str
+        """
+
         self.typeName = typeName
         self.value = value
         self.size = size
+        if unitSize is None:
+            unitSize = AbstractType.defaultUnitSize()
+        self.unitSize = unitSize
+        if endianness is None:
+            endianness = AbstractType.defaultEndianness()
+        self.endianness = endianness
+        if sign is None:
+            sign = AbstractType.defaultSign()
+        self.sign = sign
 
     def __str__(self):
         return "{0}={1} ({2})".format(self.typeName, self.value, self.size)
 
+    def __repr__(self):
+        from netzob.Common.Models.Types.TypeConverter import TypeConverter
+        from netzob.Common.Models.Types.BitArray import BitArray
+        return str(TypeConverter.convert(self.value, BitArray, self.__class__))
+
+    @typeCheck(type)
+    def convertValue(self, typeClass, dst_unitSize=None, dst_endianness=None, dst_sign=None):
+        """Convert the current data in the netzob type
+        specified in parameter.
+
+        :parameter typeClass: the netzob class to which the current data must be converted
+        :type typeClass: type
+        :keyword dst_unitSize: the unitsize of the destination value. Values must be one of AbstractType.UNITSIZE_*. if None, the value is the default one.
+        :type dst_unitSize: str
+        :keyword dst_endianness: the endianness of the destination value. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE. if None, the value is the default one.
+        :type dst_endianness: str
+        :keyword dst_sign: the sign of the destination. Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED. if None, the value is the default one.
+        :type dst_sign: str
+        :return: the converted current value in the specified netzob type
+        :rtype: :class:`netzob.Common.Models.AbstractType.AbstractType`
+        """
+        if typeClass is None:
+            raise TypeError("TypeClass cannot be None")
+        if typeClass not in AbstractType.supportedTypes():
+            raise TypeError("Requested typeClass ({0}) is not supported.".format(typeClass))
+
+        if dst_unitSize is None:
+            dst_unitSize = AbstractType.defaultUnitSize()
+        if dst_endianness is None:
+            dst_endianness = AbstractType.defaultEndianness()
+        if dst_sign is None:
+            dst_sign = AbstractType.defaultSign()
+
+        if dst_unitSize not in AbstractType.supportedUnitSizes():
+            raise TypeError("Dst_unitsize is not supported.")
+        if dst_endianness not in AbstractType.supportedEndianness():
+            raise TypeError("Dst_endianness is not supported.")
+        if dst_sign not in AbstractType.supportedSign():
+            raise TypeError("Sign is not supported.")
+
+        from netzob.Common.Models.Types.TypeConverter import TypeConverter
+        from netzob.Common.Models.Types.BitArray import BitArray
+        return typeClass(TypeConverter.convert(self.value, BitArray, typeClass, src_unitSize=self.unitSize, src_endianness=self.endianness, src_sign=self.sign, dst_unitSize=dst_unitSize, dst_endianness=dst_endianness, dst_sign=dst_sign), unitSize=dst_unitSize, endianness=dst_endianness, sign=dst_sign)
+
     def generate(self, generationStrategy=None):
         """Generates a random data that respects the current data type.
+        This is the minimal generation strategy, some types extends this.
+
+        >>> from netzob.all import *
+        >>> a = ASCII(nbChars=20)
+        >>> l = a.generate()
+        >>> print len(l)
+        160
         """
 
         minSize, maxSize = self.size
@@ -167,8 +258,8 @@ class AbstractType(object):
             maxSize = AbstractType.MAXIMUM_GENERATED_DATA_SIZE
 
         generatedSize = random.randint(minSize, maxSize)
-        randomContent = [random.randint(0, 2) for i in range(0, generatedSize)]
-        return bitarray(randomContent)
+        randomContent = [random.randint(0, 1) for i in range(0, generatedSize)]
+        return bitarray(randomContent, endian=self.endianness)
 
     @typeCheck(str)
     def mutate(self, prefixDescription=None):
@@ -186,11 +277,11 @@ class AbstractType(object):
         >>> from netzob.all import *
         >>> t = ASCII("helloworld")
         >>> print t.mutate()
-        {'byteInversed-bigEndian': bitarray('01100100011011000111001001101111011101110110111101101100011011000110010101101000'), 'original-littleEndian': bitarray('00010110101001100011011000110110111101101110111011110110010011100011011000100110'), 'original-bigEndian': bitarray('01101000011001010110110001101100011011110111011101101111011100100110110001100100'), 'byteInversed-littleEndian': bitarray('00100110001101100100111011110110111011101111011000110110001101101010011000010110')}
+        {'original-littleEndian': bitarray('00010110101001100011011000110110111101101110111011110110010011100011011000100110'), 'original-bigEndian': bitarray('01101000011001010110110001101100011011110111011101101111011100100110110001100100')}
 
         >>> t = Decimal(100)
         >>> print t.mutate()
-        {'byteInversed-bigEndian': bitarray('00000001'), 'original-littleEndian': bitarray('00100110'), 'original-bigEndian': bitarray('01100100'), 'byteInversed-littleEndian': bitarray('10000000')}
+        {'original-littleEndian': bitarray('00100110'), 'original-bigEndian': bitarray('01100100')}
 
         :keyword prefixDescription: prefix to attach to the description of the generated mutation.
         :type prefixDescription: :class:`str`
@@ -204,20 +295,14 @@ class AbstractType(object):
 
         mutations = dict()
 
-        from netzob.Common.Models.Types.TypeConverter import TypeConverter
-        from netzob.Common.Models.Types.BitArray import BitArray
-
-        binValue = TypeConverter.convert(self.value, type(self), BitArray)
-        mutations["{0}original-littleEndian".format(prefixDescription)] = binValue
-
-        binValueBigEnd = TypeConverter.convert(self.value, type(self), BitArray, dst_endianness=AbstractType.ENDIAN_BIG)
-        mutations["{0}original-bigEndian".format(prefixDescription)] = binValueBigEnd
-
-        binInversedValue = TypeConverter.convert(str(self.value)[::-1], type(self), BitArray)
-        mutations["{0}byteInversed-littleEndian".format(prefixDescription)] = binInversedValue
-
-        binInversedValueBigEnd = TypeConverter.convert(str(self.value)[::-1], type(self), BitArray, dst_endianness=AbstractType.ENDIAN_BIG)
-        mutations["{0}byteInversed-bigEndian".format(prefixDescription)] = binInversedValueBigEnd
+        if self.endianness == AbstractType.ENDIAN_LITTLE:
+            mutations["{0}original-littleEndian".format(prefixDescription)] = self.value
+            bigEndianValue = bitarray(self.value, endian=AbstractType.ENDIAN_BIG)
+            mutations["{0}original-bigEndian".format(prefixDescription)] = bigEndianValue
+        else:
+            mutations["{0}original-bigEndian".format(prefixDescription)] = self.value
+            littleEndianValue = bitarray(self.value, endian=AbstractType.ENDIAN_LITTLE)
+            mutations["{0}original-littleEndian".format(prefixDescription)] = littleEndianValue
 
         return mutations
 
@@ -239,7 +324,7 @@ class AbstractType(object):
         :rtype: python raw
         :raise: TypeError if parameters are not valid.
         """
-        raise NotImplementedError("'decode' method not implemented")
+        raise NotImplementedError("Internal Error: 'decode' method not implemented")
 
     @staticmethod
     @abc.abstractmethod
@@ -259,26 +344,32 @@ class AbstractType(object):
         :rtype: python raw
         :raise: TypeError if parameters are not valid.
         """
-        raise NotImplementedError("'encode' method not implemented")
+        raise NotImplementedError("Internal Error: 'encode' method not implemented")
 
-    @staticmethod
     @abc.abstractmethod
-    def canParse(data):
+    def canParse(self, data):
         """This method computes if the specified data can be parsed
-        with the current type.
+        with the current type and its contraints
 
         :param data: the data encoded in python raw to check
         :type data: python raw
         :return: True if the data can be parsed will the curren type
         :rtype: bool
         """
-        raise NotImplementedError("'canParse' method not implemented")
+        raise NotImplementedError("Internal Error: 'canParse' method not implemented")
 
     @property
     def value(self):
+        """The current value of the instance. This value is represented
+        under BitArray format
+
+        :type: :class:`netzob.Common.Models.Types.BitArray.BitArray`
+        """
+
         return self.__value
 
     @value.setter
+    @typeCheck(bitarray)
     def value(self, value):
         self.__value = value
 
@@ -293,11 +384,11 @@ class AbstractType(object):
          For instance, to create an ASCII field of at least 10 chars:
 
          >>> from netzob.all import *
-         >>> f = Field(ASCII(size=(10,None)))
-         >>> f.domain.size
+         >>> f = Field(ASCII(nbChars=(10,None)))
+         >>> f.domain.dataType.size
          (80, None)
 
-         while to create a Raw field which content has no specific limit:
+         while to create a Raw field which content has no specific limits:
 
          >>> from netzob.all import *
          >>> f = Field(Raw())
@@ -353,24 +444,23 @@ class AbstractType(object):
         >>> print normalizedData.__class__
         <class 'netzob.Common.Models.Types.ASCII.ASCII'>
         >>> print normalizedData.value
-        netzob
+        bitarray('011101101010011000101110010111101111011001000110')
         """
 
         if data is None:
             raise TypeError("Cannot normalize None data")
 
-        if isinstance(data, int):
-            from netzob.Common.Models.Types.Decimal import Decimal
-            data = Decimal(value=data)
-        elif isinstance(data, str):
-            from netzob.Common.Models.Types.ASCII import ASCII
-            data = ASCII(value=data)
         if isinstance(data, AbstractType):
             return data
-        else:
-            raise TypeError("Not a valid data, impossible to normalize it.")
+        if isinstance(data, int):
+            from netzob.Common.Models.Types.Decimal import Decimal
+            return Decimal(value=data)
+        if isinstance(data, str):
+            from netzob.Common.Models.Types.ASCII import ASCII
+            return ASCII(value=data)
 
-    @abc.abstractmethod
+        raise TypeError("Not a valid data, impossible to normalize it.")
+
     def buildDataRepresentation(self):
         """It creates a :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data.Data` following the specified type.
 
@@ -383,14 +473,23 @@ class AbstractType(object):
         >>> data = ascii.buildDataRepresentation()
         >>> print TypeConverter.convert(data.currentValue, BitArray, ASCII)
         hello netzob !
-        >>> print data.dataType.__name__
-        ASCII
+        >>> print data.dataType
+        ASCII=bitarray('0001011010100110001101100011011011110110000001000111011010100110001011100101111011110110010001100000010010000100') ((0, None))
 
         :return: a Data of the current type
         :rtype: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Leads.Data.Data`
 
         """
-        return
+        from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
+
+        if self.value is None:
+            mutable = True
+            learnable = True
+        else:
+            mutable = False
+            learnable = False
+
+        return Data(dataType=self, originalValue=self.value, learnable=learnable, mutable=mutable)
 
     @property
     def typeName(self):
@@ -408,3 +507,65 @@ class AbstractType(object):
         if typeName is None:
             raise TypeError("typeName cannot be None")
         self.__typeName = typeName
+
+    @property
+    def unitSize(self):
+        """The unitSize of the current value.
+
+        :type: `str`
+        :raises: :class: `TypeError` if unitSize is not an str and not a supported value.
+
+        """
+        return self.__unitSize
+
+    @unitSize.setter
+    @typeCheck(str)
+    def unitSize(self, unitSize):
+        if unitSize is None:
+            raise TypeError("UnitSize cannot be None")
+        if not unitSize in AbstractType.supportedUnitSizes():
+            raise TypeError("Specified UnitSize is not supported, please refer to the list in AbstractType.supportedUnitSize().")
+        self.__unitSize = unitSize
+
+    @property
+    def endianness(self):
+        """The endianness of the current value.
+        The endianness definition is synchronized with the bitarray value.
+
+        :type: `str`
+        :raises: :class: `TypeError` if endianness is not an str and not a supported value.
+
+        """
+        return self.__endianness
+
+    @endianness.setter
+    @typeCheck(str)
+    def endianness(self, endianness):
+        if endianness is None:
+            raise TypeError("Endianness cannot be None")
+        if not endianness in AbstractType.supportedEndianness():
+            raise TypeError("Specified Endianness is not supported, please refer to the list in AbstractType.supportedEndianness().")
+
+        self.__endianness = endianness
+
+        if self.value is not None and self.value.endian() != self.__endianness:
+            self.value = bitarray(self.value, endian=self.__endianness)
+
+    @property
+    def sign(self):
+        """The sign of the current value.
+
+        :type: `str`
+        :raises: :class: `TypeError` if sign is not an str and not a supported value.
+
+        """
+        return self.__sign
+
+    @sign.setter
+    @typeCheck(str)
+    def sign(self, sign):
+        if sign is None:
+            raise TypeError("Sign cannot be None")
+        if not sign in AbstractType.supportedSign():
+            raise TypeError("Specified Sign is not supported, please refer to the list in AbstractType.supportedSign().")
+        self.__sign = sign
