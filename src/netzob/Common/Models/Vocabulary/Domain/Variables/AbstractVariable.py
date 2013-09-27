@@ -181,7 +181,7 @@ class AbstractVariable(object):
         >>> import regex as re
         >>> data = "hello"
         >>> hexData = TypeConverter.convert(data, ASCII, HexaString)
-        >>> d = Data(ASCII, TypeConverter.convert("hello", ASCII, BitArray))
+        >>> d = Data(ASCII(), TypeConverter.convert("hello", ASCII, BitArray))
         >>> nRegex = d.buildRegex()
         >>> compiledRegex = re.compile(str(nRegex))
         >>> dynamicDatas = compiledRegex.match(hexData)
@@ -190,7 +190,7 @@ class AbstractVariable(object):
 
         >>> data = "hello everyone"
         >>> hexData = TypeConverter.convert(data, ASCII, HexaString)
-        >>> d = Data(ASCII, size=(8, 16))
+        >>> d = Data(ASCII(nbChars=(1,2)))
         >>> nRegex = d.buildRegex()
         >>> compiledRegex = re.compile(str(nRegex))
         >>> dynamicDatas = compiledRegex.match(hexData)
@@ -360,13 +360,13 @@ class AbstractVariable(object):
         """A list containing all variables which value is bind to the value of this variable.
 
         >>> from netzob.all import *
-        >>> d1 = Data(ASCII)
+        >>> d1 = Data(ASCII())
         >>> len(d1.boundedVariables)
         0
-        >>> d2 = Data(Decimal)
+        >>> d2 = Data(Decimal())
         >>> len(d2.boundedVariables)
         0
-        >>> d3 = Data(Raw)
+        >>> d3 = Data(Raw())
         >>> len(d3.boundedVariables)
         0
         >>> d1.boundedVariables.append(d2)
