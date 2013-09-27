@@ -69,7 +69,7 @@ class DomainEncodingFunction(EncodingFunction):
     def encode(self, field, data, variablesByPos):
         # Single variable for the entire field ?
         if len(set(variablesByPos.values())) == 1:
-            domain = variablesByPos[0].dataType
+            domain = variablesByPos[0].dataType.__class__
             return TypeConverter.convert(data, BitArray, domain)
         else:
             # First we compute ranges of variables
@@ -90,7 +90,7 @@ class DomainEncodingFunction(EncodingFunction):
             # of the variable used to parse them.
             result = []
             for (startPos, endPos, variable) in ranges:
-                domain = variable.dataType
+                domain = variable.dataType.__class__
                 result.append(str(TypeConverter.convert(data[startPos:endPos], BitArray, domain)))
 
             return ''.join(result)
