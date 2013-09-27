@@ -35,6 +35,8 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import struct
+import math
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -47,34 +49,95 @@ from netzob.Common.Models.Types.AbstractType import AbstractType
 
 
 class Decimal(AbstractType):
+    """The netzob type Decimal, a wrapper for the "int" object (with unitSize).
+    Some constraints can be defined and they participate in the definition of the size
+    used in the generated regex. The following constraints can be defined:
+    - a static decimal value (for instance 20) with a specific unitSize and with a sign definition
+    - an interval of decimal value (positive and/or negative), this way the size is automaticaly computed in terms of
+    number of unitSize required given the sign
+    - a number of unitSize
 
-    def __init__(self, value=None, size=None):
-        super(Decimal, self).__init__(self.__class__.__name__, value, size)
+    >>> from netzob.all import *
+    >>> cDec = Decimal(20)
+    >>> print repr(cDec)
+    20
+    >>> print cDec.typeName
+    Decimal
+    >>> print cDec.value
+    bitarray('00101000')
 
-    def buildDataRepresentation(self):
-        from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
-        from netzob.Common.Models.Types.TypeConverter import TypeConverter
-        from netzob.Common.Models.Types.BitArray import BitArray
-        (minSize, maxSize) = self.size
-        if minSize is not None:
-            minSize = minSize * 8
-        if maxSize is not None:
-            maxSize = maxSize * 8
-        if self.value is not None:
-            originalValue = TypeConverter.convert(self.value, Decimal, BitArray)
+    The required size in bits is automaticaly computed following the specifications:
+    >>> dec = Decimal(10)
+    >>> print dec.size
+    (8, 8)
+
+    >>> dec = Decimal(interval=(-120, 10))
+    >>> print dec.size
+    (16, 16)
+
+    Use the convert function to convert the current type to any other netzob type
+    >>> dec = Decimal(10)
+    >>> raw = dec.convertValue(Raw, dst_endianness=AbstractType.ENDIAN_BIG)
+    >>> print raw
+    Raw=bitarray('00001010') ((0, None))
+
+    Its not possible to convert if the object has not value
+    >>> a = Decimal(nbUnits=3)
+    >>> a.convertValue(Raw)
+    Traceback (most recent call last):
+    ...
+    TypeError: Data cannot be None
+
+    """
+
+    def __init__(self, value=None, interval=None, nbUnits=None, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+        if value is not None and not isinstance(value, bitarray):
+            from netzob.Common.Models.Types.TypeConverter import TypeConverter
+            from netzob.Common.Models.Types.BitArray import BitArray
+            interval = value
+            value = TypeConverter.convert(value, Decimal, BitArray, src_unitSize=unitSize, src_endianness=endianness, src_sign=sign, dst_unitSize=unitSize, dst_endianness=endianness, dst_sign=sign)
         else:
-            originalValue = None
+            value = None
 
-        return Data(dataType=Decimal, originalValue=originalValue, size=(minSize, maxSize))
+        if interval is not None:
+            nbBits = int(self._computeNbUnitSizeForInterval(interval, unitSize, sign)) * int(unitSize)
+        elif nbUnits is not None:
+            nbBits = nbUnits * int(unitSize)
+        else:
+            nbBits = int(unitSize)
 
-    @staticmethod
-    def canParse(data):
+        super(Decimal, self).__init__(self.__class__.__name__, value, nbBits, unitSize=unitSize, endianness=endianness, sign=sign)
+
+    def _computeNbUnitSizeForInterval(self, interval, unitSize, sign):
+        if isinstance(interval, int):
+            # the interval is a single value
+            # bspec = ⌊log2(n)⌋ + 1 (+1 for signed)
+            return self._computeNbUnitSizeForVal(interval, unitSize, sign)
+        elif len(interval) == 2:
+            minVal = min(interval[0], interval[1])
+            maxVal = max(interval[0], interval[1])
+
+            minNbUnit = self._computeNbUnitSizeForVal(minVal, unitSize, sign)
+            maxNbUnit = self._computeNbUnitSizeForVal(maxVal, unitSize, sign)
+
+            return max(minNbUnit, maxNbUnit)
+
+    def _computeNbUnitSizeForVal(self, val, unitSize, sign):
+        # the interval is a single value
+        # bspec = ⌊log2(n)⌋ + 1 (+1 for signed)
+        val = abs(val)
+        if sign == AbstractType.SIGN_UNSIGNED:
+            return math.floor((math.floor(math.log(val, 2)) + 1) / int(unitSize)) + 1
+        else:
+            return math.floor((math.floor(math.log(val, 2)) + 2) / int(unitSize)) + 1
+
+    def canParse(self, data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
         """This method returns True if data is a Decimal.
         For the moment its always true because we consider
         the decimal type to be very similar to the raw type.
 
         >>> from netzob.all import *
-        >>> Decimal.canParse(TypeConverter.convert("hello netzob", ASCII, Raw))
+        >>> Decimal().canParse(TypeConverter.convert("hello netzob", ASCII, Raw))
         True
 
         :param data: the data to check
