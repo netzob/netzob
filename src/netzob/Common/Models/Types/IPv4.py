@@ -36,26 +36,36 @@
 #+---------------------------------------------------------------------------+
 import struct
 import string
-from random import randrange
+import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-from netaddr import IPAddress
+from netaddr import IPAddress, IPNetwork
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.Utils.Decorators import NetzobLogger
 from netzob.Common.Models.Types.AbstractType import AbstractType
 
 
+@NetzobLogger
 class IPv4(AbstractType):
     """This class supports the definition of type IPv4 in Netzob.
     it defines how to encode a python raw in an IPv4 representation or in the other way, to
     decode an IPv4 into a Raw.
 
+    This type can be used to define which IPv4 is expected as a domain:
 
     >>> from netzob.all import *
+    >>> ip = IPv4("192.168.0.10")
+    >>> ip.size
+    (32, 32)
+    >>> ip.value
+    bitarray('00000011000101010000000001010000')
+
     >>> f1 = Field("IP=")
     >>> f2 = Field(IPv4())
 
@@ -67,41 +77,172 @@ class IPv4(AbstractType):
     >>> print len(str(s).split('\\n'))
     10
 
-
     """
-    def __init__(self, value=None, size=None):
-        super(IPv4, self).__init__(self.__class__.__name__, value, None)
+    def __init__(self, value=None, network=None, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+        """Builds an IPv4 domain with optional constraints.
 
-    def buildDataRepresentation(self):
-        from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
-        from netzob.Common.Models.Types.TypeConverter import TypeConverter
-        from netzob.Common.Models.Types.Raw import Raw
-        from netzob.Common.Models.Types.BitArray import BitArray
-        (minSize, maxSize) = (32, 32)
+        :parameter value: specify a constraints over the expected value.
+        :type value: an str, an IPAddress or an int which can be parsed as an IPv4 (ex. "192.168.0.10")
+        :parameter network: if no value is specified (None), a constraints over the network the parsed IP belongs can be specified with this parameter (ex. "192.168.0.0/24")1
+        :type network: an str or an IPAddress which can be parsed as a network IPv4
+        """
 
-        if self.value is not None:
-            binValue = TypeConverter.convert(self.value, Raw, BitArray)
-        else:
-            binValue = None
-        return Data(dataType=IPv4, originalValue=binValue, size=(minSize, maxSize))
+        if value is not None and not isinstance(value, bitarray):
+            from netzob.Common.Models.Types.TypeConverter import TypeConverter
+            from netzob.Common.Models.Types.BitArray import BitArray
+            value = TypeConverter.convert(value, IPv4, BitArray, src_unitSize=unitSize, src_endianness=endianness, src_sign=sign, dst_unitSize=unitSize, dst_endianness=endianness, dst_sign=sign)
+
+        self.network = network
+
+        super(IPv4, self).__init__(self.__class__.__name__, value, 32, unitSize=unitSize, endianness=endianness, sign=sign)
 
     def generate(self, generationStrategy=None):
-        """Generates a random IPv4
+        """Generates a random IPv4 which follows the constraints.
+
+        >>> from netzob.all import *
+        >>> f = Field(IPv4())
+        >>> len(f.generate())
+        4
+
+        >>> f = Field(IPv4("192.168.0.10"))
+        >>> TypeConverter.convert(f.generate(), Raw, IPv4)
+        IPAddress('192.168.0.10')
+
+        >>> f = Field(IPv4(network="10.10.10.0/24"))
+        >>> TypeConverter.convert(f.generate(), Raw, IPv4) in IPNetwork("10.10.10.0/24")
+        True
+
         """
         from netzob.Common.Models.Types.BitArray import BitArray
         from netzob.Common.Models.Types.TypeConverter import TypeConverter
         from netzob.Common.Models.Types.Raw import Raw
 
-        not_valid = [10, 127, 169, 172, 192]
+        if self.value is not None:
+            return self.value
+        elif self.network is not None:
+            ip = random.choice(self.network)
+            return TypeConverter.convert(ip.packed, Raw, BitArray, src_unitSize=self.unitSize, src_endianness=self.endianness, src_sign=self.sign, dst_unitSize=self.unitSize, dst_endianness=self.endianness, dst_sign=self.sign)
+        else:
+            not_valid = [10, 127, 169, 172, 192]
 
-        first = randrange(1, 256)
-        while first in not_valid:
-            first = randrange(1, 256)
+            first = random.randrange(1, 256)
+            while first in not_valid:
+                first = random.randrange(1, 256)
 
-        strip = ".".join([str(first), str(randrange(1, 256)), str(randrange(1, 256)), str(randrange(1, 256))])
+            strip = ".".join([str(first), str(random.randrange(1, 256)), str(random.randrange(1, 256)), str(random.randrange(1, 256))])
 
-        ip = IPv4.encode(strip)
-        return TypeConverter.convert(ip.packed, Raw, BitArray)
+            ip = IPv4.encode(strip)
+            return TypeConverter.convert(ip.packed, Raw, BitArray, src_unitSize=self.unitSize, src_endianness=self.endianness, src_sign=self.sign, dst_unitSize=self.unitSize, dst_endianness=self.endianness, dst_sign=self.sign)
+
+    def canParse(self, data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+        """Computes if specified data can be parsed as an IPv4 with the predefined constraints.
+
+        >>> from netzob.all import *
+        >>> ip = IPv4()
+        >>> ip.canParse("192.168.0.10")
+        True
+        >>> ip.canParse("198.128.0.100")
+        True
+        >>> ip.canParse("256.0.0.1")
+        False
+        >>> ip.canParse("127.0.0.1")
+        True
+        >>> ip.canParse("127.0.0.-1")
+        False
+        >>> ip.canParse("::")
+        False
+        >>> ip.canParse("0.0.0.0")
+        False
+
+
+        And with some constraints over the expected IPv4:
+
+
+        >>> ip = IPv4("192.168.0.10")
+        >>> ip.canParse("192.168.0.10")
+        True
+        >>> ip.canParse("192.168.1.10")
+        False
+        >>> ip.canParse(3232235530)
+        True
+        >>> ip = IPv4("167.20.14.20")
+        >>> ip.canParse(3232235530)
+        False
+        >>> ip.canParse(3232235530)
+        False
+
+
+        or with contraints over the expected network the ipv4 belongs to:
+
+
+        >>> ip = IPv4(network="192.168.0.0/24")
+        >>> ip.canParse("192.168.0.10")
+        True
+        >>> ip.canParse("192.168.1.10")
+        False
+
+        :param data: the data to check
+        :type data: python raw
+        :return: True if data can be parsed as a Raw which is always the case (if len(data)>0)
+        :rtype: bool
+        :raise: TypeError if the data is None
+        """
+
+        if data is None:
+            raise TypeError("data cannot be None")
+
+        try:
+            ip = IPv4.encode(data, unitSize=unitSize, endianness=endianness, sign=sign)
+            if ip is None or ip.version != 4 or ip.is_netmask():
+                return False
+        except:
+            return False
+        try:
+            if self.value is not None:
+                from netzob.Common.Models.Types.TypeConverter import TypeConverter
+                from netzob.Common.Models.Types.BitArray import BitArray
+                return self.value == TypeConverter.convert(data, IPv4, BitArray, src_unitSize=unitSize, src_endianness=endianness, src_sign=sign, dst_unitSize=self.unitSize, dst_endianness=self.endianness, dst_sign=self.sign)
+            elif self.network is not None:
+                return ip in self.network
+        except:
+            return False
+
+        return True
+
+    def _isValidIPv4Network(self, network):
+        """Computes if the specified network is a valid IPv4 network.
+
+        >>> from netzob.all import *
+        >>> ip = IPv4()
+        >>> ip._isValidIPv4Network("192.168.0.10")
+        True
+        >>> ip._isValidIPv4Network("-1.168.0.10")
+        False
+
+        """
+        if network is None:
+            raise TypeError("None is not valid IPv4 network")
+        try:
+            net = IPNetwork(network)
+            if net is not None and net.version == 4:
+                return True
+        except:
+            return False
+        return False
+
+    @property
+    def network(self):
+        """A constraint over the network the parsed data belongs to this network or not."""
+        return self.__network
+
+    @network.setter
+    def network(self, network):
+        if network is not None:
+            if not self._isValidIPv4Network(network):
+                raise TypeError("Specified network constraints is not valid IPv4 Network.")
+            self.__network = IPNetwork(network)
+        else:
+            self.__network = None
 
     @staticmethod
     def decode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
@@ -115,7 +256,8 @@ class IPv4(AbstractType):
 
         if data is None:
             raise TypeError("Data cannot be None")
-        if not IPv4.canParse(data):
+        ip = IPv4()
+        if not ip.canParse(data):
             raise TypeError("Data is not a valid IPv4, cannot decode it.")
         ip = IPAddress(data)
         return ip.packed
@@ -128,7 +270,7 @@ class IPv4(AbstractType):
         :type data: str or raw bytes (BBBB)
         :return: the encoded IPAddress
         """
-        if isinstance(data, str):
+        if isinstance(data, (str, int)):
             try:
                 ip = IPAddress(data)
                 if ip is not None and ip.version == 4 and not ip.is_netmask():
@@ -153,43 +295,3 @@ class IPv4(AbstractType):
                 return ip
         except Exception, e:
             raise TypeError("Impossible encode {0} into an IPv4 data ({1})".format(data, e))
-
-    @staticmethod
-    def canParse(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
-        r"""Computes if specified data can be parsed as an IPv4.
-
-        >>> from netzob.all import *
-        >>> IPv4.canParse("192.168.0.10")
-        True
-        >>> IPv4.canParse("198.128.0.100")
-        True
-        >>> IPv4.canParse("256.0.0.1")
-        False
-        >>> IPv4.canParse("127.0.0.1")
-        True
-        >>> IPv4.canParse("127.0.0.-1")
-        False
-
-        >>> IPv4.canParse("::")
-        False
-        >>> IPv4.canParse("0.0.0.0")
-        False
-
-        :param data: the data to check
-        :type data: python raw
-        :return: True if data can be parsed as a Raw which is always the case (if len(data)>0)
-        :rtype: bool
-        :raise: TypeError if the data is None
-        """
-
-        if data is None:
-            raise TypeError("data cannot be None")
-
-        try:
-            ip = IPv4.encode(data, unitSize=unitSize, endianness=endianness, sign=sign)
-            if ip is None or ip.version != 4 or ip.is_netmask():
-                return False
-        except:
-            return False
-
-        return True
