@@ -34,6 +34,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -43,30 +44,67 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Types.AbstractType import AbstractType
 from netzob.Common.Models.Types.Raw import Raw
 
 
+@NetzobLogger
 class BitArray(AbstractType):
+    """A bitarray netzob type.
 
-    def __init__(self, value=None, size=(None, None)):
-        super(BitArray, self).__init__(self.__class__.__name__, value, size)
+    It represents a set of bits with possible constraints.
 
-    def buildDataRepresentation(self):
-        """Overwrite :class:`netzob.Common.Models.Types.AbstractType.AbstractType`"""
+    >>> from netzob.all import *
+    >>> f = Field(BitArray())
+    >>> vr = VariableReadingToken(value=bitarray('11010010101111010101', endian=AbstractType.defaultEndianness()))
+    >>> f.domain.read(vr)
+    >>> print vr.Ok
+    True
 
-        from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
-        return Data(dataType=Raw, originalValue=self.value, size=self.size)
+    >>> f = Field(BitArray(nbBits=50))
+    >>> f.domain.learnable = False
+    >>> len(TypeConverter.convert(f.generate(), Raw, BitArray))
+    56
+    >>> vr = VariableReadingToken(value=bitarray('11010010101111010101', endian=AbstractType.defaultEndianness()))
+    >>> f.domain.read(vr)
+    >>> print vr.Ok
+    False
 
-    @staticmethod
-    def canParse(data):
+    >>> f = Field(BitArray(nbBits=(8,20)))
+    >>> vr = VariableReadingToken(value=bitarray('1101101011011', endian=AbstractType.defaultEndianness()))
+    >>> f.domain.read(vr)
+    >>> print vr.Ok
+    True
+
+    >>> f = Field(BitArray(value=bitarray('11011000101011', endian=AbstractType.defaultEndianness())))
+    >>> vr = VariableReadingToken(value=bitarray('11011000101011', endian=AbstractType.defaultEndianness()))
+    >>> f.domain.read(vr)
+    >>> print vr.Ok
+    True
+
+    """
+
+    def __init__(self, value=None, nbBits=(None, None)):
+        super(BitArray, self).__init__(self.__class__.__name__, value, nbBits)
+
+    @typeCheck(bitarray, str, str, str)
+    def canParse(self, data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
         """For the moment its always true because we consider
         the decimal type to be very similar to the raw type.
 
         >>> from netzob.all import *
-        >>> BitArray.canParse(TypeConverter.convert("hello netzob", ASCII, Raw))
+        >>> BitArray().canParse(TypeConverter.convert("hello netzob", ASCII, Raw))
         True
+
+        >>> import logging
+        >>> logging.debug("===========================================")
+        >>> b = BitArray(nbBits=8)
+        >>> b.canParse(TypeConverter.convert(bitarray('01010101'), BitArray, Raw))
+        True
+
+        >>> b.canParse(TypeConverter.convert(bitarray('010101011'), BitArray, Raw))
+        False
 
         :param data: the data to check
         :type data: python raw
@@ -81,7 +119,32 @@ class BitArray(AbstractType):
         if len(data) == 0:
             return False
 
+        data = BitArray.encode(data, unitSize=unitSize, endianness=endianness, sign=sign)
+
+        (nbMinBits, nbMaxBits) = self.size
+
+        nbBitsData = len(data)
+        if nbMinBits is not None and nbMinBits > nbBitsData:
+            return False
+        if nbMaxBits is not None and nbMaxBits < nbBitsData:
+            return False
+
         return True
+
+    def generate(self, generationStrategy=None):
+        """Generates a random bitarray that respects the constraints.
+        """
+
+        if self.value is not None:
+            return self.value
+
+        minSize, maxSize = self.size
+        if maxSize is None:
+            maxSize = AbstractType.MAXIMUM_GENERATED_DATA_SIZE
+
+        generatedSize = random.randint(minSize, maxSize)
+        randomContent = [random.randint(0, 1) for i in range(0, generatedSize)]
+        return bitarray(randomContent, endian=self.endianness)
 
     @staticmethod
     @typeCheck(bitarray)
@@ -134,8 +197,8 @@ class BitArray(AbstractType):
         :keyword sign: the sign to consider while encoding Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED
         :type sign: str
 
-        :return: data encoded in python raw
-        :rtype: python raw
+        :return: data encoded in BitArray
+        :rtype: :class:`netzob.Common.Models.Types.BitArray.BitArray`
         :raise: TypeError if parameters are not valid.
         """
         if data is None:
