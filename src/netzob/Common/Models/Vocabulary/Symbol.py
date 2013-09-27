@@ -65,7 +65,7 @@ class Symbol(AbstractField):
 
     Another example
     >>> from netzob.all import *
-    >>> s = Symbol([Field("hello "), Field(ASCII(size=(0, 10)))])
+    >>> s = Symbol([Field("hello "), Field(ASCII(nbChars=(0, 10)))])
     >>> s.messages.append(RawMessage("hello toto"))
     >>> print s
     hello  | toto

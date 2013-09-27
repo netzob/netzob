@@ -96,6 +96,7 @@ class FieldSplitStatic(object):
     00 | ff | 1f | 00 | 00 | 00 | 15
     00 | ff | 2f | 00 | 00 | 00 | 16
     00 | fe | 1f | 00 | 00 | 00 | 17
+
     >>> fs = FieldSplitStatic(mergeAdjacentStaticFields=True, mergeAdjacentDynamicFields=False)
     >>> fs.execute(symbol)
     >>> print symbol
@@ -107,6 +108,7 @@ class FieldSplitStatic(object):
     00 | ff | 1f | 000000 | 15
     00 | ff | 2f | 000000 | 16
     00 | fe | 1f | 000000 | 17
+
     >>> fs = FieldSplitStatic(mergeAdjacentStaticFields=False, mergeAdjacentDynamicFields=True)
     >>> fs.execute(symbol)
     >>> print symbol
@@ -132,6 +134,7 @@ class FieldSplitStatic(object):
     00 | ff | 1f | 000000 | 15
     00 | ff | 2f | 000000 | 16
     00 | fe | 1f | 000000 | 17
+
     >>> fs = FieldSplitStatic(AbstractType.UNITSIZE_16, mergeAdjacentDynamicFields=False)
     >>> fs.execute(symbol)
     >>> print symbol
@@ -143,6 +146,7 @@ class FieldSplitStatic(object):
     00ff | 1f00 | 0000 | 15
     00ff | 2f00 | 0000 | 16
     00fe | 1f00 | 0000 | 17
+
     >>> fs = FieldSplitStatic(AbstractType.UNITSIZE_32, mergeAdjacentDynamicFields=False)
     >>> fs.execute(symbol)
     >>> print symbol
@@ -154,6 +158,7 @@ class FieldSplitStatic(object):
     00ff1f00 | 000015
     00ff2f00 | 000016
     00fe1f00 | 000017
+
     >>> fs = FieldSplitStatic(AbstractType.UNITSIZE_64, mergeAdjacentDynamicFields=False)
     >>> fs.execute(symbol)
     >>> print symbol

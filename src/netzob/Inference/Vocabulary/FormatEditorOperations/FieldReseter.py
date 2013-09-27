@@ -60,12 +60,12 @@ class FieldReseter(object):
     >>> from netzob.all import *
     >>> samples = ["00ff2f000000",	"000010000000",	"00fe1f000000"]
     >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
-    >>> f1 = Field(Raw(size=(1)))
-    >>> f21 = Field(Raw(size=(1)))
-    >>> f22 = Field(Raw(size=(1)))
+    >>> f1 = Field(Raw(nbBytes=1))
+    >>> f21 = Field(Raw(nbBytes=1))
+    >>> f22 = Field(Raw(nbBytes=1))
     >>> f2 = Field()
     >>> f2.children = [f21, f22]
-    >>> f3 = Field(Raw(size=(None)))
+    >>> f3 = Field(Raw())
     >>> symbol = Symbol([f1, f2, f3], messages=messages)
     >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> print symbol

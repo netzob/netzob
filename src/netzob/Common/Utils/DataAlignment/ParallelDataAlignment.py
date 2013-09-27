@@ -77,7 +77,7 @@ class ParallelDataAlignment(object):
     >>> # Compare the duration of their alignment with 1 and automatic threads computation
     >>> data = [TypeConverter.convert('hello {0}, welcome to {1}'.format(''.join([str(random.randint(0,9)) for y in range(0, random.randint(5,10))]),''.join([str(random.randint(0,9)) for y in range(0, random.randint(10,20))])), Raw, HexaString) for x in range(0, 1000)]
     >>> # Now we create a symbol with its field structure to represent this type of message
-    >>> fields = [Field('hello '), Field(Decimal(size=(5,10))), Field(', welcome to '), Field(Decimal(size=(10,20)))]
+    >>> fields = [Field('hello '), Field(ASCII(nbChars=(5,10))), Field(', welcome to '), Field(ASCII(nbChars=(10,20)))]
     >>> symbol = Symbol(fields=fields)
     >>> # apply the symbol on the data using the ParallelDataAligment (single thread)
     >>> pAlignment = ParallelDataAlignment(field=symbol, depth=None, nbThread=1)

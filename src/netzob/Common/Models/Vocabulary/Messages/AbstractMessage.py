@@ -73,9 +73,9 @@ class AbstractMessage(SortableObject):
         that indicates this.
 
         >>> from netzob.all import *
-        >>> f0 = Field(Raw(size=4))
+        >>> f0 = Field(Raw(nbBytes=4))
         >>> f1 = Field(", hello ", name="F1")
-        >>> f2 = Field(Raw(size=(2,5)), name="F2")
+        >>> f2 = Field(Raw(nbBytes=(2,5)), name="F2")
         >>> symbol = Symbol([f0, f1, f2], name="Symbol")
         >>> m2 = RawMessage("Toto, hello you", source="server", destination="client")
         >>> m2.isValidForField(symbol)

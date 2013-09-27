@@ -73,22 +73,22 @@ class DataAlignment(threading.Thread):
     >>> # Create 10 data which follows format : 'hello '+random number of [5-10] digits+' welcome'.
     >>> data = [TypeConverter.convert('hello {0}, welcome'.format(''.join([str(y) for y in range(0, 10)])), Raw, HexaString) for x in range(0, 10)]
     >>> # Now we create a symbol with its field structure to represent this type of message
-    >>> fields = [Field('hello '), Field(Decimal(size=(5,10))), Field(', welcome')]
+    >>> fields = [Field('hello '), Field(ASCII(nbChars=(5,10))), Field(', welcome')]
     >>> symbol = Symbol(fields=fields)
     >>> alignedData = DataAlignment.align(data, symbol, encoded=True)
     >>> print len(alignedData)
     10
     >>> print alignedData
-    hello  | 270211885617516653982000 | , welcome
-    hello  | 270211885617516653982000 | , welcome
-    hello  | 270211885617516653982000 | , welcome
-    hello  | 270211885617516653982000 | , welcome
-    hello  | 270211885617516653982000 | , welcome
-    hello  | 270211885617516653982000 | , welcome
-    hello  | 270211885617516653982000 | , welcome
-    hello  | 270211885617516653982000 | , welcome
-    hello  | 270211885617516653982000 | , welcome
-    hello  | 270211885617516653982000 | , welcome
+    hello  | 0123456789 | , welcome
+    hello  | 0123456789 | , welcome
+    hello  | 0123456789 | , welcome
+    hello  | 0123456789 | , welcome
+    hello  | 0123456789 | , welcome
+    hello  | 0123456789 | , welcome
+    hello  | 0123456789 | , welcome
+    hello  | 0123456789 | , welcome
+    hello  | 0123456789 | , welcome
+    hello  | 0123456789 | , welcome
 
     """
 
@@ -275,7 +275,10 @@ class DataAlignment(threading.Thread):
         if dynamicDatas is None:
             self._logger.warning("The regex of the group doesn't match one of its message")
             self._logger.warning("Regex: {0}".format(regex.finalRegex()))
-            self._logger.warning("Message: {0}...".format(data[:255]))
+            if len(data) > 255:
+                self._logger.warning("Message: {0}...".format(data[:255]))
+            else:
+                self._logger.warning("Message: {0}".format(data))
             raise Exception("The regex of the group doesn't match one of its message")
 
         result = dynamicDatas.capturesdict()
