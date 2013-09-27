@@ -57,20 +57,20 @@ class DomainFactory(object):
     >>> domain = DomainFactory.normalizeDomain([Raw(), 10])
     >>> print domain.varType
     Alt
-    >>> print domain.children[0].dataType.__name__
-    Raw
-    >>> print domain.children[1].dataType.__name__
-    Decimal
+    >>> print domain.children[0].dataType
+    Raw=None ((0, None))
+    >>> print domain.children[1].dataType
+    Decimal=bitarray('01010000') ((8, 8))
 
     >>> domain = DomainFactory.normalizeDomain(Agg([Alt(["toto", 20]), ASCII("!")]))
     >>> print domain.varType
     Agg
     >>> print domain.children[0].varType
     Alt
-    >>> print domain.children[0].children[1].dataType.__name__
-    Decimal
-    >>> print domain.children[1].dataType.__name__
-    ASCII
+    >>> print domain.children[0].children[1].dataType
+    Decimal=bitarray('00101000') ((8, 8))
+    >>> print domain.children[1].dataType
+    ASCII=bitarray('10000100') ((0, None))
 
     """
 

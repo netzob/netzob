@@ -60,10 +60,10 @@ class Alt(AbstractVariableNode):
     >>> domain = Alt([Raw(), ASCII()])
     >>> print domain.varType
     Alt
-    >>> print domain.children[0].dataType.__name__
-    Raw
-    >>> print domain.children[1].dataType.__name__
-    ASCII
+    >>> print domain.children[0].dataType
+    Raw=None ((0, None))
+    >>> print domain.children[1].dataType
+    ASCII=None ((0, None))
     """
 
     def __init__(self, children=None):
@@ -254,7 +254,7 @@ class Alt(AbstractVariableNode):
         >>> import random
 
         >>> d1 = ASCII("Hello!")
-        >>> d2 = ASCII(size=10)
+        >>> d2 = ASCII(nbChars=10)
         >>> d = Alt([d1, d2])
         >>> nRegex = d.buildRegex()
 

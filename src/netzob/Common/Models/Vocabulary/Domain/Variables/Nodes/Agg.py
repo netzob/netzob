@@ -60,10 +60,10 @@ class Agg(AbstractVariableNode):
     >>> domain = Agg([Raw(), ASCII()])
     >>> print domain.varType
     Agg
-    >>> print domain.children[0].dataType.__name__
-    Raw
-    >>> print domain.children[1].dataType.__name__
-    ASCII
+    >>> print domain.children[0].dataType
+    Raw=None ((0, None))
+    >>> print domain.children[1].dataType
+    ASCII=None ((0, None))
     >>> domain.children.append(Agg([10, 20, 30]))
     >>> print len(domain.children)
     3
@@ -236,8 +236,8 @@ class Agg(AbstractVariableNode):
         >>> import random
 
         >>> d1 = ASCII("Hello ")
-        >>> d2 = ASCII(size=4)
-        >>> d3 = ASCII(size=12)
+        >>> d2 = ASCII(nbChars=4)
+        >>> d3 = ASCII(nbChars=12)
         >>> d = Agg([d1, d2, d3])
         >>> nRegex = d.buildRegex()
 
