@@ -51,7 +51,7 @@ from netzob.Common.Utils.Decorators import NetzobLogger
 
 @NetzobLogger
 class ASCII(AbstractType):
-    """The netzob type ASCII, a wrapper for the "string" object.
+    """The netzob type ASCII, a wrapper for the "string" object (encoded in utf-8)
 
     >>> from netzob.all import *
     >>> cAscii = ASCII("constante value")
@@ -84,14 +84,20 @@ class ASCII(AbstractType):
 
     """
 
-    def __init__(self, value=None, nbChars=(None, None)):
+    def __init__(self, value=None, nbChars=(None, None), unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
         if value is not None and not isinstance(value, bitarray):
             from netzob.Common.Models.Types.TypeConverter import TypeConverter
             from netzob.Common.Models.Types.BitArray import BitArray
-            value = TypeConverter.convert(value, ASCII, BitArray)
+            value = TypeConverter.convert(value, ASCII, BitArray, src_unitSize=unitSize, src_endianness=endianness, src_sign=sign, dst_unitSize=unitSize, dst_endianness=endianness, dst_sign=sign)
         else:
             value = None
 
+        self.nbChars = nbChars
+        nbBits = self._convertNbCharsInNbBits(self.nbChars)
+
+        super(ASCII, self).__init__(self.__class__.__name__, value, nbBits, unitSize=unitSize, endianness=endianness, sign=sign)
+
+    def _convertNbCharsInNbBits(self, nbChars):
         nbMinBit = None
         nbMaxBit = None
         if nbChars is not None:
@@ -103,8 +109,7 @@ class ASCII(AbstractType):
                     nbMinBit = nbChars[0] * 8
                 if nbChars[1] is not None:
                     nbMaxBit = nbChars[1] * 8
-
-        super(ASCII, self).__init__(self.__class__.__name__, value, (nbMinBit, nbMaxBit))
+        return (nbMinBit, nbMaxBit)
 
     def generate(self, generationStrategy=None):
         """Generates a random ASCII that respects the requested size.
@@ -124,24 +129,37 @@ class ASCII(AbstractType):
         from netzob.Common.Models.Types.TypeConverter import TypeConverter
         from netzob.Common.Models.Types.BitArray import BitArray
 
-        minSize, maxSize = self.size
+        minSize, maxSize = self.nbChars
         if maxSize is None:
             maxSize = AbstractType.MAXIMUM_GENERATED_DATA_SIZE
+        if minSize is None:
+            minSize = 0
 
-        generatedSize = random.randint(minSize / 8, maxSize / 8)
+        generatedSize = random.randint(minSize, maxSize)
         randomContent = ''.join([random.choice(string.letters + string.digits) for i in xrange(generatedSize)])
         return TypeConverter.convert(randomContent, ASCII, BitArray)
 
-    @staticmethod
-    def canParse(data):
-        """This method returns True if data is an ASCII
+    def canParse(self, data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+        """This method returns True if data is an ASCII (utf-8)
 
         >>> from netzob.all import *
-        >>> ASCII.canParse(TypeConverter.convert("hello netzob", ASCII, Raw))
+        >>> ASCII().canParse(TypeConverter.convert("hello netzob", ASCII, Raw))
         True
 
         The ascii table is defined from 0 to 127:
-        >>> ASCII.canParse(TypeConverter.convert(128, Decimal, Raw, src_sign=AbstractType.SIGN_UNSIGNED))
+        >>> ASCII().canParse(TypeConverter.convert(128, Decimal, Raw, src_sign=AbstractType.SIGN_UNSIGNED))
+        False
+
+        >>> a = ASCII(nbChars=10)
+        >>> a.canParse("hellohello")
+        True
+        >>> a.canParse("hello hello")
+        False
+
+        >>> a = ASCII(nbChars=(2,20))
+        >>> a.canParse("Netzob")
+        True
+        >>> a.canParse("Hello netzob, what's up ?")
         False
 
         :param data: the data to check
@@ -154,16 +172,51 @@ class ASCII(AbstractType):
         if data is None:
             raise TypeError("data cannot be None")
 
+        data = ASCII.encode(data, unitSize=unitSize, endianness=endianness, sign=sign)
+
         if len(data) == 0:
             return False
 
         for byte in data:
-            # We naively try to decode in ascii the binary.
+            # We naively try to decode in utf-8 the binary.
             try:
-                byte.decode('ascii')
+                byte.decode('utf-8')
             except:
                 return False
+
+        (minChar, maxChar) = self.nbChars
+        if minChar is not None:
+            if len(data) < minChar:
+                return False
+        if maxChar is not None:
+            if len(data) > maxChar:
+                return False
+
         return True
+
+    @property
+    def nbChars(self):
+        return self.__nbChars
+
+    @nbChars.setter
+    def nbChars(self, nbChars):
+        nbMinChar = None
+        nbMaxChar = None
+        if nbChars is not None:
+            if isinstance(nbChars, int):
+                nbMinChar = nbChars
+                nbMaxChar = nbMinChar
+            else:
+                if nbChars[0] is not None:
+                    if not isinstance(nbChars[0], int):
+                        raise TypeError("First element of the tupple of the nbChars must be an int if defined.")
+                    nbMinChar = nbChars[0]
+                if nbChars[1] is not None:
+                    if not isinstance(nbChars[1], int):
+                        raise TypeError("Second element of the tupple of the nbChars must be an int if defined.")
+                    nbMaxChar = nbChars[1]
+
+        self.__nbChars = (nbMinChar, nbMaxChar)
 
     @staticmethod
     def decode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
