@@ -54,7 +54,7 @@ class InvalidDomainException(Exception):
 
 
 class Field(AbstractField):
-    """A symbol structure follows a format that specifies a sequence of expected fields:
+    r"""A symbol structure follows a format that specifies a sequence of expected fields:
     e.g. TCP segments contains expected fields as sequence number and checksum.
 
     Fields have either a fixed or variable size.
@@ -82,7 +82,11 @@ class Field(AbstractField):
 
     a field containing a raw value of 8 bits (1 byte)
 
-    >>> f = Field(Raw(size=(8, 9)))
+    >>> f = Field(Raw(nbBytes=(8, 9)))
+
+    a field with a specific raw value
+
+    >>> f = Field(Raw('\x00\x01\x02\x03'))
 
     a field representing a random IPv4
 
@@ -90,11 +94,11 @@ class Field(AbstractField):
 
     a field representing a random ASCII of 6 characters length
 
-    >>> f = Field(ASCII(size=(6, 7)))
+    >>> f = Field(ASCII(nbChars=(6, 7)))
 
     a field representing a random ASCII with between 5 and 20 characters
 
-    >>> payloadField = Field(ASCII(size=(5, 20)))
+    >>> payloadField = Field(ASCII(nbChars=(5, 20)))
 
 
 
@@ -106,8 +110,7 @@ class Field(AbstractField):
 
     a field representing a decimal (10) or an ASCII of 10 chars,
 
-    >>> f = Field([10, ASCII(size=(10, 11))])
-
+    >>> f = Field([10, ASCII(nbChars=(10, 11))])
 
     a field which value is the size of the payloadField
 
