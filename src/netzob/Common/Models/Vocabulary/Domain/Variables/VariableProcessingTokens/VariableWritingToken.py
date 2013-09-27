@@ -42,6 +42,7 @@ from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.A
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Common.Models.Types.Raw import Raw
+from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.AbstractType import AbstractType
 
 
@@ -63,10 +64,10 @@ class VariableWritingToken(AbstractVariableProcessingToken):
         if value is not None:
             self.index = len(value)
 
-    def toString(self):
+    def __str__(self):
         """Used for debug purpose.
         """
-        return "WritingToken: isOk: {0}, value: {1}".format(self.isOk, TypeConverter.convert(self.value, bitarray, Raw))
+        return "WritingToken: isOk: {0}, value: {1}".format(self.Ok, TypeConverter.convert(self.value, BitArray, Raw))
 
     def updateValue(self):
         """Re-make the value of the token by concatenating each segment of the chopped value.

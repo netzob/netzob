@@ -28,7 +28,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -42,6 +41,7 @@ from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.A
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Common.Models.Types.Raw import Raw
+from netzob.Common.Models.Types.BitArray import BitArray
 
 
 @NetzobLogger
@@ -59,9 +59,9 @@ class VariableReadingToken(AbstractVariableProcessingToken):
         self.index = index
         self.__readVariablesByIndex = dict()
 
-    def toString(self):
+    def __str__(self):
         """Used for debug purpose."""
-        return "ReadingToken: isOk: {0}, value left: {1}".format(self.Ok, TypeConverter.convert(self.value[self.index:], bitarray, Raw))
+        return "ReadingToken: isOk: {0}, value left: {1}".format(self.Ok, repr(TypeConverter.convert(self.value[self.index:], BitArray, Raw)))
 
     @typeCheck(AbstractVariable, int)
     def read(self, variable, increment):
