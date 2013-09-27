@@ -127,9 +127,9 @@ class TypeConverter(object):
         """
         # is the two formats supported ?
         if sourceType not in TypeConverter.supportedTypes():
-            raise TypeError("The source type is not supported")
+            raise TypeError("The source type ({0}) is not supported".format(sourceType))
         if destinationType not in TypeConverter.supportedTypes():
-            raise TypeError("The destination type is not supported")
+            raise TypeError("The destination type ({0}) is not supported".format(destinationType))
         if data is None:
             raise TypeError("Data cannot be None")
 
