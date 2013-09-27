@@ -34,6 +34,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -58,40 +59,44 @@ from netzob.Common.Models.Types.Raw import Raw
 @NetzobLogger
 class Data(AbstractVariableLeaf):
     """Represents a data, meaning a portion of content in the final
-    message.
+    message. This representation is achieved using a definition domain.
+    So the Data stores at least two things: 1) the definition domain and constraints over it and 2) its current value
 
     For instance:
 
     >>> from netzob.all import *
     >>> f = Field()
-    >>> f.domain = Data(dataType=ASCII, originalValue=TypeConverter.convert("zoby", Raw, BitArray), name="pseudo")
+    >>> f.domain = Data(dataType=ASCII(), originalValue=TypeConverter.convert("zoby", ASCII, BitArray), name="pseudo")
     >>> print f.domain.varType
     Data
     >>> print TypeConverter.convert(f.domain.currentValue, BitArray, Raw)
     zoby
-    >>> print f.domain.dataType.__name__
-    ASCII
+    >>> print f.domain.dataType
+    ASCII=None ((0, None))
     >>> print f.domain.name
     pseudo
 
     >>> f = Field(ASCII("hello zoby"))
     >>> print f.domain.varType
     Data
-    >>> print TypeConverter.convert(f.domain.currentValue, BitArray, Raw)
+    >>> print TypeConverter.convert(f.domain.currentValue, BitArray, ASCII)
     hello zoby
     """
 
-    def __init__(self, dataType, originalValue=None, name=None, size=(None, None)):
+    def __init__(self, dataType, originalValue=None, name=None, learnable=False, mutable=False):
         """The constructor of a data variable
 
-        :param dataType: the type of the data.
+        :param dataType: the definition domain of the data.
         :type dataType: :class:`netzob.Common.Models.Types.AbstractType.AbstractType`
         :keyword originalValue: the value of the data (can be None)
         :type originalValue: :class:`object`
         :keyword name: the name of the data, if None name will be generated
         :type name: :class:`str`
-        :keyword size: the size of the data (minSize, maxSize) in bits, per default its (None, None)
-        :type size: a tupple of int
+        :keyword learnable: a flag stating if the current value of the data can be overwritten following with parsed data
+        :type learnable: :class:`bool`
+        :keyword mutable: a flag stating if the current value can changes with the parsing process
+        :type mutable: :class:`bool`
+
         :raises: :class:`TypeError` or :class:`ValueError` if parameters are not valid.
         """
 
@@ -99,23 +104,26 @@ class Data(AbstractVariableLeaf):
 
         self.dataType = dataType
         self.currentValue = originalValue
-        if self.currentValue is None:
-            self.learnable = True
-            self.mutable = True
-        self.size = size
+
+        self.learnable = learnable
+        self.mutable = mutable
 
     @typeCheck(AbstractVariableProcessingToken)
     def isDefined(self, processingToken):
         """If the leaf has no values, it is not defined and returns False
 
         >>> from netzob.all import *
-        >>> data = Data(ASCII, originalValue=TypeConverter.convert("hello", ASCII, BitArray))
-        >>> rToken = VariableReadingToken()
+        >>> import logging
+        >>> data = Data(ASCII(), learnable=True, mutable=True)
+
+        >>> rToken = VariableReadingToken(value=TypeConverter.convert("hello", ASCII, BitArray))
         >>> data.isDefined(rToken)
-        True
+        False
         >>> data.read(rToken)
         >>> data.isDefined(rToken)
         True
+        >>> data.currentValue
+        bitarray('001011010100110001101100011011011110110')
 
         :rtype: bool
         :return: True if the data has a current value or has memorized its value in the processing token
@@ -123,15 +131,15 @@ class Data(AbstractVariableLeaf):
         """
         if processingToken is None:
             raise TypeError("ProcessingToken cannot be None")
-
-        return self.getValue(processingToken) is not None
+        result = self.getValue(processingToken) is not None
+        return result
 
     @typeCheck(AbstractVariableProcessingToken)
     def getValue(self, processingToken):
         """Return the current or memorized value.
 
         >>> from netzob.all import *
-        >>> data = Data(ASCII, originalValue=TypeConverter.convert("helloworld", ASCII, BitArray))
+        >>> data = Data(ASCII(), originalValue=TypeConverter.convert("helloworld", ASCII, BitArray))
         >>> rToken = VariableReadingToken()
         >>> print data.getValue(rToken)
         bitarray('00010110101001100011011000110110111101101110111011110110010011100011011000100110')
@@ -139,6 +147,9 @@ class Data(AbstractVariableLeaf):
         :param processingToken: the token in which the memory is located
         :type processingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken`
         """
+        if processingToken is None:
+            raise TypeError("ProcessingToken cannot be None")
+
         if self.currentValue is not None:
             return self.currentValue
         else:
@@ -162,7 +173,7 @@ class Data(AbstractVariableLeaf):
         """The variable forgets its value both locally and from the memory attached to the processingToken
 
         >>> from netzob.all import *
-        >>> d = Data(Decimal, originalValue=TypeConverter.convert(10, Decimal, BitArray))
+        >>> d = Data(Decimal(), originalValue=TypeConverter.convert(10, Decimal, BitArray))
         >>> rToken = VariableReadingToken()
         >>> d.memorize(rToken)
         >>> d.currentValue = TypeConverter.convert(30, Decimal, BitArray)
@@ -193,7 +204,7 @@ class Data(AbstractVariableLeaf):
         """The variable recall its memorized value.
 
         >>> from netzob.all import *
-        >>> d = Data(ASCII, originalValue = TypeConverter.convert("zoby", ASCII, BitArray))
+        >>> d = Data(ASCII(), originalValue = TypeConverter.convert("zoby", ASCII, BitArray))
         >>> rToken = VariableReadingToken()
         >>> d.memorize(rToken)
         >>> d.currentValue = TypeConverter.convert("netzob", ASCII, BitArray)
@@ -236,7 +247,7 @@ class Data(AbstractVariableLeaf):
         can be parsed with an ASCII data
 
         >>> from netzob.all import *
-        >>> data = Data(ASCII)
+        >>> data = Data(ASCII())
         >>> rToken = VariableReadingToken(value=TypeConverter.convert("helloworld", ASCII, BitArray))
         >>> data.compareFormat(rToken)
         >>> print rToken.Ok
@@ -244,7 +255,7 @@ class Data(AbstractVariableLeaf):
 
         In the following we check if the specified data can be parsed as a Decimal (which is always the case)
 
-        >>> data = Data(Decimal)
+        >>> data = Data(Decimal())
         >>> rToken = VariableReadingToken(value=TypeConverter.convert("This is a Field", ASCII, BitArray))
         >>> data.compareFormat(rToken)
         >>> print rToken.Ok
@@ -254,7 +265,7 @@ class Data(AbstractVariableLeaf):
         is negivative because the ASCII section in the binValue is only of 4 chars which is below
         than the 5 mandatory requested chars (5 chars * 8 bits per char) in the Data.
 
-        >>> data = Data(ASCII, size=(5*8, 10*8))
+        >>> data = Data(ASCII(nbChars=(5,10)))
         >>> binValue = TypeConverter.convert("hey ", ASCII, BitArray)
         >>> rToken = VariableReadingToken(value=binValue)
         >>> data.compareFormat(rToken)
@@ -276,7 +287,8 @@ class Data(AbstractVariableLeaf):
 
         # Retrieve the value to check
         data = readingToken.value[readingToken.index:]
-        minSize, maxSize = self.size
+        minSize, maxSize = self.dataType.size
+        self._logger.debug("Compare size: request={0}, data size={1}".format(self.dataType.size, len(data)))
         parsedLength = None
         if minSize is not None and len(data) < minSize:
             # data is too small
@@ -307,7 +319,7 @@ class Data(AbstractVariableLeaf):
         given the content of in the current readingToken.
 
         >>> from netzob.all import *
-        >>> data = Data(ASCII, size=(None, 48))
+        >>> data = Data(ASCII(nbChars=(0, 6)))
         >>> print data.currentValue
         None
         >>> binValue = TypeConverter.convert("netzob, is the name of a RE tool.", ASCII, BitArray)
@@ -332,7 +344,7 @@ class Data(AbstractVariableLeaf):
         if readingToken.Ok:
             tmp = readingToken.value[readingToken.index:]
 
-            minSize, maxSize = self.size
+            minSize, maxSize = self.dataType.size
 
             # If the type has a definite size.
             if maxSize is not None:
@@ -377,14 +389,14 @@ class Data(AbstractVariableLeaf):
         """The variable compares its value to the read value.
 
         >>> from netzob.all import *
-        >>> d = Data(ASCII, TypeConverter.convert("Zoby", ASCII, BitArray))
+        >>> d = Data(ASCII(), TypeConverter.convert("Zoby", ASCII, BitArray))
         >>> bin = TypeConverter.convert("Zoby has a hat", ASCII, BitArray)
         >>> rToken = VariableReadingToken(value=bin)
         >>> d.compare(rToken)
         >>> print rToken.Ok
         True
 
-        >>> d = Data(ASCII, TypeConverter.convert("Zoby", ASCII, BitArray))
+        >>> d = Data(ASCII(), TypeConverter.convert("Zoby", ASCII, BitArray))
         >>> bin = TypeConverter.convert("Visit netzob.org for more documentation", ASCII, BitArray)
         >>> rToken = VariableReadingToken(value=bin)
         >>> d.compare(rToken)
@@ -423,7 +435,7 @@ class Data(AbstractVariableLeaf):
         """The current value is mutated according to the given generation strategy.
 
         >>> from netzob.all import *
-        >>> d = Data(Decimal, TypeConverter.convert(10, Decimal, BitArray))
+        >>> d = Data(Decimal(), TypeConverter.convert(10, Decimal, BitArray))
         >>> print TypeConverter.convert(d.currentValue, BitArray, Decimal)
         10
         >>> # Create a writing token with the default generation strategy
@@ -443,28 +455,27 @@ class Data(AbstractVariableLeaf):
 
         self._logger.debug("- {0}: mutate.".format(self))
 
-        generationStrategy = writingToken.generationStrategy
-        if generationStrategy is None:
-            raise ValueError("The writing token has no generation strategy established, impossible to execute the mutation process.")
-
-        # Request the generation strategy
-        newValue = generationStrategy.mutateValue(self, writingToken)
-        self.currentValue = newValue
+        mutations = self.dataType.mutate(writingToken.generationStrategy)
+        if mutations is None or len(mutations.keys()) == 0:
+            raise ValueError("No mutations computed, an error occured.")
+        randomKey = random.choice(mutations.keys())
+        self._logger.debug("Randomly selected mutation {0} among all the possibilities: {1}.".format(randomKey, mutations))
+        self.currentValue = mutations[randomKey]
 
     @typeCheck(VariableWritingToken)
     def generate(self, writingToken):
         """A new current value is generated according to the variable type and the given generation strategy.
 
         >>> from netzob.all import *
-        >>> minSize = 5*8
-        >>> maxSize = 10*8
-        >>> d = Data(ASCII, size=(minSize, maxSize))
+        >>> minChar = 5
+        >>> maxChar = 10
+        >>> d = Data(ASCII(nbChars=(minChar,maxChar)))
         >>> # Create a writing token with the default generation strategy
         >>> wToken = VariableWritingToken()
         >>> # Start the mutation
         >>> d.generate(wToken)
         >>> # Display the generated value
-        >>> print minSize<=len(d.currentValue)<maxSize
+        >>> print minChar * 8 <= len(d.currentValue) <= maxChar * 8
         True
 
         :param writingToken: the processing token where the memory is
@@ -476,15 +487,14 @@ class Data(AbstractVariableLeaf):
 
         self._logger.debug("- {0}: generate.".format(self))
 
-        newDomainType = self.dataType(self.currentValue, self.size)
-        self.currentValue = newDomainType.generate(writingToken.generationStrategy)
+        self.currentValue = self.dataType.generate(writingToken.generationStrategy)
 
     def writeValue(self, writingToken):
         """Write the variable value if it has one, else it returns the memorized value.
         Write this value in the writingToken.
 
         >>> from netzob.all import *
-        >>> d1 = Data(ASCII, TypeConverter.convert("Hello", ASCII, BitArray))
+        >>> d1 = Data(ASCII(), TypeConverter.convert("Hello", ASCII, BitArray))
         >>> wToken = VariableWritingToken()
         >>> d1.writeValue(wToken)
         >>> print TypeConverter.convert(wToken.value, BitArray, ASCII)
@@ -526,13 +536,13 @@ class Data(AbstractVariableLeaf):
         For instance, if the value is static :
 
         >>> from netzob.all import *
-        >>> d1 = Data(ASCII, TypeConverter.convert("hello", ASCII, BitArray))
+        >>> d1 = Data(ASCII(), TypeConverter.convert("hello", ASCII, BitArray))
 
-        >>> d2 = Data(Decimal, TypeConverter.convert(20, Decimal, BitArray))
+        >>> d2 = Data(Decimal(), TypeConverter.convert(20, Decimal, BitArray))
 
-        >>> d3 = Data(ASCII, size=(16, 80))
+        >>> d3 = Data(ASCII(nbChars=(2, 10)))
 
-        >>> d4 = Data(ASCII)
+        >>> d4 = Data(ASCII())
 
         :return: a regex which can be used to identify the section in which the domain can be found
         :rtype: :class:`netzob.Common.Utils.NetzobRegex.NetzobRegex`
@@ -541,10 +551,10 @@ class Data(AbstractVariableLeaf):
         if self.currentValue is not None:
             return NetzobRegex.buildRegexForStaticValue(self.currentValue)
         else:
-            return NetzobRegex.buildRegexForSizedValue(self.size)
+            return NetzobRegex.buildRegexForSizedValue(self.dataType.size)
 
     def __str__(self):
-        return "{0}={1} (size={2}/{3}, learnable={4}, mutable={5})".format(self.dataType.__name__, self.currentValue, self.size[0], self.size[1], self.learnable, self.mutable)
+        return "{0}={1} (size={2}/{3}, learnable={4}, mutable={5})".format(self.dataType, self.currentValue, self.dataType.size[0], self.dataType.size[1], self.learnable, self.mutable)
 
     #+---------------------------------------------------------------------------+
     #| Properties                                                                |
@@ -559,13 +569,10 @@ class Data(AbstractVariableLeaf):
         return self.__dataType
 
     @dataType.setter
-    @typeCheck(type)
+    @typeCheck(AbstractType)
     def dataType(self, dataType):
         if dataType is None:
             raise ValueError("dataType cannot be None")
-        if not AbstractType.__subclasscheck__(dataType):
-            raise ValueError("The specified type must inherit from the AbstractType class.")
-
         self.__dataType = dataType
 
     @property
@@ -580,56 +587,3 @@ class Data(AbstractVariableLeaf):
     @typeCheck(bitarray)
     def currentValue(self, currentValue):
         self.__currentValue = currentValue
-
-    @property
-    def size(self):
-        """The size of the data.
-        size = (sizeMin, sizeMax)
-
-        :type: a tupple of int
-
-
-        >>> from netzob.all import *
-        >>> data = Data(dataType=ASCII, originalValue=TypeConverter.convert("zoby", ASCII, BitArray), name="pseudo", size=None)
-
-        >>> data = Data(dataType=ASCII, originalValue=TypeConverter.convert("zoby", ASCII, BitArray), name="pseudo", size=(-1, None))
-        Traceback (most recent call last):
-        ...
-        ValueError: Minimum size must be greater than 0
-
-        >>> data = Data(dataType=ASCII, originalValue=TypeConverter.convert("zoby", ASCII, BitArray), name="pseudo", size=(5, 2))
-        Traceback (most recent call last):
-        ...
-        ValueError: Maximum must be greater or equals to the minimum
-        """
-        return self.__size
-
-    @size.setter
-    def size(self, size):
-        if size is None:
-            size = (None, None)
-
-        if isinstance(size, int):
-            size = (size, size)
-
-        if isinstance(size, tuple):
-            minSize, maxSize = size
-
-            if minSize is not None and not isinstance(minSize, int):
-                raise TypeError("Size must be defined with a tuple of int")
-            if maxSize is not None and not isinstance(maxSize, int):
-                raise TypeError("Size must be defined with a tuple of int")
-
-            if minSize is None:
-                minSize = 0
-
-            if minSize < 0:
-                raise ValueError("Minimum size must be greater than 0")
-            if maxSize is not None and maxSize < minSize:
-                raise ValueError("Maximum must be greater or equals to the minimum")
-
-            self.__size = (minSize, maxSize)
-        else:
-            raise TypeError("Size must be defined by a tuple an int or with None")
-
-        self.__size = size
