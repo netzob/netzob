@@ -34,6 +34,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -46,18 +47,48 @@ from netzob.Common.Models.Types.AbstractType import AbstractType
 
 
 class Raw(AbstractType):
+    """Raw netzob data type expressed in bytes.
 
-    def __init__(self, value=None, size=None):
-        super(Raw, self).__init__(self.__class__.__name__, value, size)
+    For instance, we can use this type to parse any raw field of 2 bytes:
 
-    def buildDataRepresentation(self):
-        from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
-        (minSize, maxSize) = self.size
-        if minSize is not None:
-            minSize = minSize * 8
-        if maxSize is not None:
-            maxSize = maxSize * 8
-        return Data(dataType=Raw, originalValue=self.value, size=(minSize, maxSize))
+    >>> from netzob.all import *
+    >>> f = Field(Raw(nbBytes=2))
+
+    or with a specific value (default is little endianness)
+
+    >>> f = Field(Raw('\x01\x02\x03'))
+    >>> print f.domain.dataType
+    Raw=bitarray('100000000100000011000000') ((0, None))
+
+    >>> f.domain.dataType.endianness = AbstractType.ENDIAN_BIG
+    >>> print f.domain.dataType
+    Raw=bitarray('000000010000001000000011') ((0, None))
+
+    """
+
+    def __init__(self, value=None, nbBytes=None, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+        if value is not None and not isinstance(value, bitarray):
+            from netzob.Common.Models.Types.TypeConverter import TypeConverter
+            from netzob.Common.Models.Types.BitArray import BitArray
+            value = TypeConverter.convert(value, Raw, BitArray)
+
+        nbBits = self._convertNbBytesinNbBits(nbBytes)
+
+        super(Raw, self).__init__(self.__class__.__name__, value, nbBits, unitSize=unitSize, endianness=endianness, sign=sign)
+
+    def _convertNbBytesinNbBits(self, nbBytes):
+        nbMinBit = None
+        nbMaxBit = None
+        if nbBytes is not None:
+            if isinstance(nbBytes, int):
+                nbMinBit = nbBytes * 8
+                nbMaxBit = nbMinBit
+            else:
+                if nbBytes[0] is not None:
+                    nbMinBit = nbBytes[0] * 8
+                if nbBytes[1] is not None:
+                    nbMaxBit = nbBytes[1] * 8
+        return (nbMinBit, nbMaxBit)
 
     @staticmethod
     def decode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
