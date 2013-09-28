@@ -46,6 +46,7 @@ from netzob.Common.Models.Vocabulary.Messages import AbstractMessage
 from netzob.Inference.Vocabulary.FormatEditorOperations import FieldReseter
 from netzob.Inference.Vocabulary.FormatEditorOperations.FieldSplitStatic import FieldSplitStatic
 from netzob.Inference.Vocabulary.FormatIdentifierOperations import ClusterByKeyField
+from netzob.Inference.Vocabulary.FormatIdentifierOperations import ClusterByApplicativeData
 from netzob.Common.Utils import SortedTypedList
 
 from netzob.Inference.Vocabulary.Search import SearchTask
@@ -97,8 +98,9 @@ def getSuite():
         TypeEncodingFunction.__module__,
         SearchEngine.__module__,
         SearchTask,
-        SearchResult,
+         SearchResult,
         IPv4.__module__,
+        ClusterByApplicativeData,
     ]
 
     suite = unittest.TestSuite()
