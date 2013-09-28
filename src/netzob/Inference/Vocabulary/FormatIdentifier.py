@@ -44,7 +44,9 @@
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
+from netzob.Common.Models.Vocabulary.Symbol import Symbol
 from netzob.Inference.Vocabulary.FormatIdentifierOperations.ClusterByKeyField import ClusterByKeyField
+from netzob.Inference.Vocabulary.FormatIdentifierOperations.ClusterByApplicativeData import ClusterByApplicativeData
 
 
 class FormatIdentifier(object):
@@ -52,6 +54,24 @@ class FormatIdentifier(object):
     which allow to infer the different message formats contained in one or multiple symbols.
 
     """
+
+    @staticmethod
+    @typeCheck(Symbol)
+    def clusterByApplicativeData(symbol):
+        """Regroup messages in the specified symbol having the
+        same applicative data in their content.
+
+        :param symbol: the symbol from which messages will be clustered.
+        :type symbol: :class:`netzob.Common.Models.Vocabulary.Symbol.Symbol`
+        :return: a list of symbol representing all the computed clusters
+        :rtype: a list of :class:`netzob.Common.Models.Vocabulary.Symbol.Symbol`
+        :raises: a TypeError if symbol is not valid.
+        """
+        if (symbol is None):
+            raise TypeError("Symbol cannot be None")
+
+        cluster = ClusterByApplicativeData()
+        return cluster.cluster(symbol)
 
     @staticmethod
     @typeCheck(AbstractField, AbstractField)
@@ -67,7 +87,6 @@ class FormatIdentifier(object):
         :raise Exception if something bad happens
 
         """
-
         # Safe checks
         if field is None:
             raise TypeError("'field' should not be None")
