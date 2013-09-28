@@ -66,7 +66,7 @@ class SearchEngine(object):
 
     >>> from netzob.all import *
     >>> m = RawMessage("Netzob is a tool that helps experts in their reverse engineering processes.")
-    >>> searchResults = SearchEngine.searchInMessage("expert", m)
+    >>> searchResults = SearchEngine.searchInMessage(["expert"], m)
     >>> print searchResults
     1 occurence(s) found.
     >>> print m
