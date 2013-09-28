@@ -68,9 +68,9 @@ class ClusterByKeyField(object):
         >>> from netzob.all import *
         >>> samples = ["00ff2f000000",	"000020000000",	"00ff2f000000"]
         >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
-        >>> f1 = Field(Raw(size=(1)))
-        >>> f2 = Field(Raw(size=(2)))
-        >>> f3 = Field(Raw(size=(3)))
+        >>> f1 = Field(Raw(nbBytes=1))
+        >>> f2 = Field(Raw(nbBytes=2))
+        >>> f3 = Field(Raw(nbBytes=3))
         >>> symbol = Symbol([f1, f2, f3], messages=messages)
         >>> newSymbols = FormatIdentifier.clusterByKeyField(symbol, f2)
         >>> for sym in newSymbols:
