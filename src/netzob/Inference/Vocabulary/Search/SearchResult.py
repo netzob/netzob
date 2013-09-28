@@ -79,6 +79,9 @@ class SearchResult(object):
         self.searchTask = searchTask
         self.ranges = ranges
 
+    def __str__(self):
+        return "Found {0} at {1} of {2}".format(self.searchTask.description, self.ranges, self.target)
+
     @property
     def target(self):
         return self.__target

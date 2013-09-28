@@ -35,11 +35,13 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import itertools
-from bitarray import bitarray
+import multiprocessing
+import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
@@ -79,12 +81,13 @@ class SearchEngine(object):
         pass
 
     @staticmethod
+    @typeCheck(AbstractType, AbstractMessage, bool)
     def searchInMessage(data, message, addTags=True):
         """Search in the specified data the given data. This data will be searched as
         it but also under various format.
 
         :parameter data: the data to search after. This data must be provided with its netzob type.
-        :type data: an :class:`object`.
+        :type data: an :class:`netzob.Common.Models.Types.AbstractType.AbstractType`.
         :parameter message: the message in which the search will take place
         :type message: :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage`
         :keyword addTags: if set to True, visualization functions are added to the message to highlights found results.
@@ -94,16 +97,70 @@ class SearchEngine(object):
         :rtype: :class:`netzob.Inference.Vocabulary.SearchEngine.SearchResults.SearchResults`
 
         """
+        if data is None:
+            raise TypeError("Data cannot be None")
+        if message is None:
+            raise TypeError("Message cannot be None")
+
         searchEngine = SearchEngine()
         return searchEngine.searchDataInMessage(data, message, addTags)
 
-    @typeCheck(object, AbstractMessage, bool, bool)
-    def searchDataInMessage(self, data, message, addTags):
-        """Search in the specified data the given data. This data will be searched as
+    @typeCheck(list, list, bool, bool)
+    def searchDataInMessages(self, datas, messages, addTags=True, inParallel=True):
+        """Search all the data specified in the given messages. Per default, this operation is executed in parallel.
+
+        :parameter data: a list of data to search after. Each data must be provided with its netzob type.
+        :type data: a list of :class:`netzob.Common.Models.Types.AbstractType.AbstractType`.
+        :parameter messages: the messages in which the search will take place
+        :type message: a list of :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage`
+        :keyword addTags: if set to True, visualization functions are added to the message to highlights found results.
+        :type addTags: :class:`bool`
+        :keyword inParallel: if set to True, the search will be executed in parallel.
+        :type addTags: :class:`bool`
+
+        :return: a list of search results detailling where and how occurrences where found. Occurences are also
+        identified in the message through dedicated visualization functions automaticaly added to the message.
+        :rtype: a list of :class:`netzob.Inference.Vocabulary.SearchEngine.SearchResults.SearchResults`
+
+        """
+
+        if datas is None or len(datas) == 0:
+            raise TypeError("There should be at least one data to search after.")
+        for data in datas:
+            if not isinstance(data, AbstractType):
+                raise TypeError("At least one specified data is not an AbstractType.")
+        for message in messages:
+            if not isinstance(message, AbstractMessage):
+                raise TypeError("At least one specified message is not An AbstractMessage.")
+
+        # Remove any duplicate data
+        noDuplicateDatas = list(set(datas))
+
+        results = []
+        if not inParallel:
+            for message in messages:
+                results.extend(self.searchDataInMessage(noDuplicateDatas, message, addTags))
+        else:
+            # Async result host just aligned data under form [(data, alignedData)]
+            self.asyncResult = dict()
+
+            # Measure start time
+            start = time.time()
+
+            nbThread = multiprocessing.cpu_count()
+
+            # Create a pool of 'nbThead' threads (process)
+            pool = multiprocessing.Pool(nbThread)
+
+        return results
+
+    @typeCheck(list, AbstractMessage, bool)
+    def searchDataInMessage(self, data, message, addTags=True):
+        """Search in the specified message any of the given data. These data will be searched as
         it but also under various format.
 
-        :parameter data: the data to search after. This data must be provided with its netzob type.
-        :type data: an :class:`object`.
+        :parameter data: the data to search after. Data must be provided with their netzob type.
+        :type data: a a list of :class:`netzob.Common.Models.Types.AbstractType.AbstractType`.
         :parameter message: the message in which the search will take place
         :type message: :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage`
         :keyword addTags: if set to True, visualization functions are added to the message to highlights found results.
@@ -114,17 +171,23 @@ class SearchEngine(object):
 
         """
 
-        if data is None:
-            raise TypeError("Data cannot be None")
+        if data is None or len(data) == 0:
+            raise TypeError("At least one data should be specified.")
 
         if message is None:
             raise TypeError("Message cannot be None")
 
-        # normalize the given data
-        normedData = AbstractType.normalize(data)
+        searchTasks = []
+        for d in data:
+            # normalize the given data
+            normedData = AbstractType.normalize(d)
 
-        # build search tasks
-        searchTasks = self.buildSearchTasks(normedData)
+            # build search tasks
+            props = dict()
+            props['message'] = message
+            props['data'] = d
+
+            searchTasks.extend(self.__buildSearchTasks(normedData, props))
 
         # fetch the content of the message and convert it to bitarray
         target = TypeConverter.convert(message.data, Raw, BitArray)
@@ -168,20 +231,22 @@ class SearchEngine(object):
 
         return results
 
-    @typeCheck(AbstractType)
-    def buildSearchTasks(self, data):
+    @typeCheck(AbstractType, dict)
+    def __buildSearchTasks(self, data, properties=None):
         """Builds a search tasks for each possible encoding mutations of the
         specified data.
 
         :parameter data: the data from wich it must create search tasks
         :type data: :class:`netzob.Common.Models.Types.AbstractType.AbstractType`
+        :keyword properties: a dict of properties {name, value} to attach to each built searchTask
+        :type properties: a dict
         :return: a list of search tasks
         :rtype: a :class:`list` of :class:`netzob.Inference.Vocabulary.SearchEngine.SearchTask.SearchTask`
         """
         if data is None:
             raise TypeError("The data cannot be None")
 
-        return [SearchTask(mutation, mutationType) for mutationType, mutation in data.mutate().iteritems()]
+        return [SearchTask(mutation, mutationType, properties=properties) for mutationType, mutation in data.mutate().iteritems()]
 
 
 

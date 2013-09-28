@@ -50,6 +50,8 @@ class SearchTask(object):
     """A Search Task is the unitary element used by the search engine
     when executing. Each search task describes a different mutations to search after.
     The data used must be specified as a bitarray.
+    A search task have optional properties to identify the reason of its creation.
+
 
     >>> from netzob.all import *
     >>> data = TypeConverter.convert("netzob", ASCII, BitArray)
@@ -61,16 +63,21 @@ class SearchTask(object):
 
     """
 
-    def __init__(self, data, description=None):
+    def __init__(self, data, description=None, properties=None):
         """Create a search task to search for the specified data.
 
         :parameter data: the data to search after specified in bitarray
         :type data::class:`bitarray.bitarray`
+        :keyword description: the optional description
+        :type description: :class:`str`
+        :keyword properties: the optional properties that describes the search task {name=value}
+        :type properties: :class:`dict`
 
         """
-
+        self.__properties = dict()
         self.data = data
         self.description = description
+        self.properties = properties
 
     @property
     def data(self):
@@ -103,3 +110,17 @@ class SearchTask(object):
         if description is None:
             description = "Unknown"
         self.__description = description
+
+    @property
+    def properties(self):
+        """The properties of the search task
+
+        :type: :class:`dict`
+        """
+        return self.__properties
+
+    @properties.setter
+    @typeCheck(dict)
+    def properties(self, properties):
+        if properties is not None:
+            self.__properties.update(properties)
