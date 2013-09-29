@@ -296,13 +296,13 @@ class AbstractType(object):
         mutations = dict()
 
         if self.endianness == AbstractType.ENDIAN_LITTLE:
-            mutations["{0}original-littleEndian".format(prefixDescription)] = self.value
+            mutations["{0}bits(littleEndian)".format(prefixDescription)] = self.value
             bigEndianValue = bitarray(self.value, endian=AbstractType.ENDIAN_BIG)
-            mutations["{0}original-bigEndian".format(prefixDescription)] = bigEndianValue
+            mutations["{0}bits(bigEndian)".format(prefixDescription)] = bigEndianValue
         else:
-            mutations["{0}original-bigEndian".format(prefixDescription)] = self.value
+            mutations["{0}bits(bigEndian)".format(prefixDescription)] = self.value
             littleEndianValue = bitarray(self.value, endian=AbstractType.ENDIAN_LITTLE)
-            mutations["{0}original-littleEndian".format(prefixDescription)] = littleEndianValue
+            mutations["{0}bits(littleEndian)".format(prefixDescription)] = littleEndianValue
 
         return mutations
 
