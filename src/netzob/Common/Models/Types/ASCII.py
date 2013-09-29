@@ -34,19 +34,19 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import struct
 import random
 import string
-from bitarray import bitarray
+
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Models.Types.AbstractType import AbstractType
-from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Utils.Decorators import NetzobLogger, typeCheck
 
 
 @NetzobLogger
@@ -138,6 +138,55 @@ class ASCII(AbstractType):
         generatedSize = random.randint(minSize, maxSize)
         randomContent = ''.join([random.choice(string.letters + string.digits) for i in xrange(generatedSize)])
         return TypeConverter.convert(randomContent, ASCII, BitArray)
+
+    @typeCheck(str)
+    def mutate(self, prefixDescription=None):
+        """Generate various mutations of the current ASCII value.
+
+        Mutations are first applied on the ASCII value than, each obtained mutations generates
+        new bitarray mutations.
+        ASCII mutations are:
+
+        * Original Version
+        * Original Version in Upper case
+        * Original Version in Lower case
+
+        >>> from netzob.all import *
+        >>> t = ASCII("helloworld")
+        >>> print t.mutate()
+
+        :keyword prefixDescription: prefix to attach to the description of the generated mutation.
+        :type prefixDescription: :class:`str`
+        :return: a dict of computed mutations having the same types than the initial one.
+        :rtype: :class:`dict`<str>=:class:`netzob.Common.Models.Types.AbstractType.AbstractType`
+        """
+        if prefixDescription is None:
+            prefixDescription = ""
+        else:
+            prefixDescription += "-"
+
+        from netzob.Common.Models.Types.TypeConverter import TypeConverter
+        from netzob.Common.Models.Types.BitArray import BitArray
+
+        strValue = TypeConverter.convert(self.value, BitArray, ASCII)
+
+        mutations = dict()
+
+        mutations["{0}ascii".format(prefixDescription)] = strValue
+        mutations["{0}ascii(inversed)".format(prefixDescription)] = strValue[::-1]
+        if strValue != strValue.upper():
+            mutations["{0}ascii(upper)".format(prefixDescription)] = strValue.upper()
+            mutations["{0}ascii(inversed-upper)".format(prefixDescription)] = strValue[::-1].upper()
+        if strValue != strValue.lower():
+            mutations["{0}ascii(lower)".format(prefixDescription)] = strValue.lower()
+            mutations["{0}ascii(inversed-lower)".format(prefixDescription)] = strValue[::-1].lower()
+
+        results = dict()
+        for mutationName, mutationValue in mutations.iteritems():
+            ba = BitArray(TypeConverter.convert(mutationValue, ASCII, BitArray))
+            results.update(ba.mutate(mutationName))
+
+        return results
 
     def canParse(self, data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
         """This method returns True if data is an ASCII (utf-8)
