@@ -136,6 +136,8 @@ class ClusterByApplicativeData(object):
         clusters = dict()
         for message, labelsInMessage in messagesPerAppData.iteritems():
             strAppDatas = ';'.join(sorted(labelsInMessage))
+            if len(strAppDatas) == 0:
+                strAppDatas = None
             if strAppDatas in clusters.keys():
                 clusters[strAppDatas].append(message)
             else:
