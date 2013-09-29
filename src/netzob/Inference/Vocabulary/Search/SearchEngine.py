@@ -57,6 +57,20 @@ from netzob.Inference.Vocabulary.Search.SearchResult import SearchResult, Search
 from netzob.Common.Models.Vocabulary.Functions.VisualizationFunctions.HighlightFunction import HighlightFunction
 
 
+def _executeSearch(arg, **kwargs):
+    """Wrapper used to parallelize the search engine using
+    a pool of threads.
+    """
+
+    data = arg[0]
+    message = arg[1]
+    addTags = arg[2]
+
+    se = SearchEngine()
+    c = se.searchDataInMessage(data, message, addTags)
+    return c
+
+
 @NetzobLogger
 class SearchEngine(object):
     """This search engine is the entry point for the API of all
@@ -105,27 +119,50 @@ class SearchEngine(object):
         searchEngine = SearchEngine()
         return searchEngine.searchDataInMessage(data, message, addTags)
 
+    def __collectResults_cb(self, results):
+        """This callback is executed by each thread when it finishes
+        to search data. Every thread submit its results using these callback.
+        :param results: the result of the search op
+        :type results: :class:`list`
+        :raise Exception: if the parameter is not valid
+        """
+        if results is None:
+            raise TypeError("Internal Error: Collected None during a parallel search operation.")
+        for result in results:
+            self.asyncResult.extend(result)
+
     @typeCheck(list, list, bool, bool)
     def searchDataInMessages(self, datas, messages, addTags=True, inParallel=True):
         """Search all the data specified in the given messages. Per default, this operation is executed in parallel.
 
+        Example of a search operation executed in sequential
+
+
         >>> from netzob.all import *
-        >>> msg1 = RawMessage("Reversing protocols with Netzob")
-        >>> msg2 = RawMessage("Communications protocols reversed with Netzob")
+        >>> stuff = ["protocols", "communication", "games", "tools", "crypto", "people :)"]
+        >>> tools = ["Netzob", "zoby", "toto", "your hand", "a knive"]
+        >>> places = ["my office", "school", "your bedroom", "your car", "hell"]
+        >>> msgs = [ RawMessage("Reversing {0} with {1} in {2} !".format(s, w, p)) for s in stuff for w in tools for p in places]
         >>> sData = [ ASCII("protocol"), ASCII("Reversed"), Decimal(10)]
         >>> se = SearchEngine()
-        >>> results = se.searchDataInMessages(sData, [msg1, msg2], inParallel=False)
+        >>> results = se.searchDataInMessages(sData, msgs, inParallel=False)
         >>> print results
-        3 occurence(s) found.
-        >>> for result in results:
-        ...    print result
-        ...    print repr(result.searchTask.properties["data"])
-        Found ascii-bits(littleEndian) at [(80L, 144L)] of bitarray('01001010101001100110111010100110010011101100111010010110011101101110011000000100000011100100111011110110001011101111011011000110111101100011011011001110000001001110111010010110001011100001011000000100011100101010011000101110010111101111011001000110')
-        protocol
-        Found ascii-bits(littleEndian) at [(120L, 184L)] of bitarray('110000101111011010110110101101101010111001110110100101101100011010000110001011101001011011110110011101101100111000000100000011100100111011110110001011101111011011000110111101100011011011001110000001000100111010100110011011101010011001001110110011101010011000100110000001001110111010010110001011100001011000000100011100101010011000101110010111101111011001000110')
-        protocol
-        Found ascii(lower)-bits(littleEndian) at [(200L, 264L)] of bitarray('110000101111011010110110101101101010111001110110100101101100011010000110001011101001011011110110011101101100111000000100000011100100111011110110001011101111011011000110111101100011011011001110000001000100111010100110011011101010011001001110110011101010011000100110000001001110111010010110001011100001011000000100011100101010011000101110010111101111011001000110')
-        Reversed
+        50 occurence(s) found.
+
+        Example of a search operation executed in parallel
+
+        >>> from netzob.all import *
+        >>> stuff = ["protocols", "communication", "games", "tools", "crypto", "people :)"]
+        >>> tools = ["Netzob", "zoby", "toto", "your hand", "a knive"]
+        >>> places = ["my office", "school", "your bedroom", "your car", "hell"]
+        >>> msgs = [ RawMessage("Reversing {0} with {1} in {2}!".format(s, w, p)) for s in stuff for w in tools for p in places]
+        >>> print len(msgs)
+        150
+        >>> sData = [ASCII("protocol"), ASCII("Reversed"), Decimal(10)]
+        >>> se = SearchEngine()
+        >>> results = se.searchDataInMessages(sData, msgs, inParallel=True)
+        >>> print results
+        50 occurence(s) found.
 
         :parameter data: a list of data to search after. Each data must be provided with its netzob type.
         :type data: a list of :class:`netzob.Common.Models.Types.AbstractType.AbstractType`.
@@ -156,19 +193,37 @@ class SearchEngine(object):
 
         results = SearchResults()
         if not inParallel:
+            # Measure start time
+            # start = time.time()
+
             for message in messages:
                 results.extend(self.searchDataInMessage(noDuplicateDatas, message, addTags))
+            # Measure end time
+            # end = time.time()
+
         else:
-            # Async result host just aligned data under form [(data, alignedData)]
-            self.asyncResult = dict()
+            # Async result hosting search results
+            self.asyncResult = []
 
             # Measure start time
-            start = time.time()
+            # start = time.time()
 
             nbThread = multiprocessing.cpu_count()
 
             # Create a pool of 'nbThead' threads (process)
             pool = multiprocessing.Pool(nbThread)
+
+            # Execute search operations
+            pool.map_async(_executeSearch, zip([noDuplicateDatas] * len(messages), messages, [addTags] * len(messages)), callback=self.__collectResults_cb)
+
+            # Waits all alignment tasks finish
+            pool.close()
+            pool.join()
+
+            # Measure end time
+            # end = time.time()
+
+            results.extend(self.asyncResult)
 
         return results
 
