@@ -109,6 +109,24 @@ class SearchEngine(object):
     def searchDataInMessages(self, datas, messages, addTags=True, inParallel=True):
         """Search all the data specified in the given messages. Per default, this operation is executed in parallel.
 
+        >>> from netzob.all import *
+        >>> msg1 = RawMessage("Reversing protocols with Netzob")
+        >>> msg2 = RawMessage("Communications protocols reversed with Netzob")
+        >>> sData = [ ASCII("protocol"), ASCII("Reversed"), Decimal(10)]
+        >>> se = SearchEngine()
+        >>> results = se.searchDataInMessages(sData, [msg1, msg2], inParallel=False)
+        >>> print results
+        3 occurence(s) found.
+        >>> for result in results:
+        ...    print result
+        ...    print repr(result.searchTask.properties["data"])
+        Found ascii-bits(littleEndian) at [(80L, 144L)] of bitarray('01001010101001100110111010100110010011101100111010010110011101101110011000000100000011100100111011110110001011101111011011000110111101100011011011001110000001001110111010010110001011100001011000000100011100101010011000101110010111101111011001000110')
+        protocol
+        Found ascii-bits(littleEndian) at [(120L, 184L)] of bitarray('110000101111011010110110101101101010111001110110100101101100011010000110001011101001011011110110011101101100111000000100000011100100111011110110001011101111011011000110111101100011011011001110000001000100111010100110011011101010011001001110110011101010011000100110000001001110111010010110001011100001011000000100011100101010011000101110010111101111011001000110')
+        protocol
+        Found ascii(lower)-bits(littleEndian) at [(200L, 264L)] of bitarray('110000101111011010110110101101101010111001110110100101101100011010000110001011101001011011110110011101101100111000000100000011100100111011110110001011101111011011000110111101100011011011001110000001000100111010100110011011101010011001001110110011101010011000100110000001001110111010010110001011100001011000000100011100101010011000101110010111101111011001000110')
+        Reversed
+
         :parameter data: a list of data to search after. Each data must be provided with its netzob type.
         :type data: a list of :class:`netzob.Common.Models.Types.AbstractType.AbstractType`.
         :parameter messages: the messages in which the search will take place
@@ -136,7 +154,7 @@ class SearchEngine(object):
         # Remove any duplicate data
         noDuplicateDatas = list(set(datas))
 
-        results = []
+        results = SearchResults()
         if not inParallel:
             for message in messages:
                 results.extend(self.searchDataInMessage(noDuplicateDatas, message, addTags))
@@ -159,8 +177,22 @@ class SearchEngine(object):
         """Search in the specified message any of the given data. These data will be searched as
         it but also under various format.
 
+        >>> from netzob.all import *
+        >>> message = RawMessage("Reversing protocols with Netzob")
+        >>> sData = [ASCII("protocol")]
+        >>> se = SearchEngine()
+        >>> results = se.searchDataInMessage(sData, message)
+        >>> print results
+        1 occurence(s) found.
+        >>> for result in results:
+        ...    print result
+        ...    print repr(result.searchTask.properties["data"])
+        Found ascii-bits(littleEndian) at [(80L, 144L)] of bitarray('01001010101001100110111010100110010011101100111010010110011101101110011000000100000011100100111011110110001011101111011011000110111101100011011011001110000001001110111010010110001011100001011000000100011100101010011000101110010111101111011001000110')
+        protocol
+
+
         :parameter data: the data to search after. Data must be provided with their netzob type.
-        :type data: a a list of :class:`netzob.Common.Models.Types.AbstractType.AbstractType`.
+        :type data: a list of :class:`netzob.Common.Models.Types.AbstractType.AbstractType`.
         :parameter message: the message in which the search will take place
         :type message: :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage`
         :keyword addTags: if set to True, visualization functions are added to the message to highlights found results.
