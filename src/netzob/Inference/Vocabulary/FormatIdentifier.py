@@ -56,22 +56,58 @@ class FormatIdentifier(object):
     """
 
     @staticmethod
-    @typeCheck(Symbol)
-    def clusterByApplicativeData(symbol):
-        """Regroup messages in the specified symbol having the
-        same applicative data in their content.
+    @typeCheck(list)
+    def clusterByApplicativeData(messages):
+        """Regroup messages having the same applicative data in their content.
 
-        :param symbol: the symbol from which messages will be clustered.
-        :type symbol: :class:`netzob.Common.Models.Vocabulary.Symbol.Symbol`
+        >>> import time
+        >>> import random
+        >>> import operator
+        >>> from netzob.all import *
+        >>> # we create 3 types of messages:
+
+        >>> messages = []
+        >>> for x in range(5):
+        ...     messages.append(RawMessage("ACK {0}".format(random.randint(0, 50)), source="A", destination="B", date=time.mktime(time.strptime("9 Aug 13 10:{0}:01".format(x), "%d %b %y %H:%M:%S"))))
+        ...     messages.append(RawMessage("SYN {0}".format(random.randint(0, 50)), source="A", destination="B", date=time.mktime(time.strptime("9 Aug 13 10:{0}:02".format(x), "%d %b %y %H:%M:%S"))))
+        ...     messages.append(RawMessage("SYN/ACK {0}".format(random.randint(0, 50)), source="B", destination="A", date=time.mktime(time.strptime("9 Aug 13 10:{0}:03".format(x), "%d %b %y %H:%M:%S"))))
+        ...     time.sleep(0.2)
+        >>> session = Session(messages=messages)
+        >>> appDatas = []
+        >>> appDatas.append(ApplicativeData("ACK", ASCII("ack")))
+        >>> appDatas.append(ApplicativeData("SYN", ASCII("syn")))
+        >>> session.applicativeData = appDatas
+        >>> symbols = FormatIdentifier.clusterByApplicativeData(messages)
+        >>> for symbol in sorted(symbols, key=operator.attrgetter("name")):
+        ...     print "Symbol : {0} = {1} messages.".format(symbol.name, len(symbol.messages))
+        Symbol : ACK = 5 messages.
+        Symbol : ACK;SYN = 5 messages.
+        Symbol : SYN = 5 messages.
+
+        :param messages: the messages to cluster.
+        :type messages: a list of :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage.AbstractMessage`
         :return: a list of symbol representing all the computed clusters
         :rtype: a list of :class:`netzob.Common.Models.Vocabulary.Symbol.Symbol`
         :raises: a TypeError if symbol is not valid.
         """
-        if (symbol is None):
-            raise TypeError("Symbol cannot be None")
+        if (messages is None or len(messages) == 0):
+            raise TypeError("At least one message should be specified.")
+
+        # We retrieve all the applicative data
+        appDatas = []
+        sessions = []
+        for message in messages:
+            if message.session is not None and message.session not in sessions:
+                sessions.append(message.session)
+
+        for session in sessions:
+            appDatas.extend(session.applicativeData)
+
+        if len(appDatas) == 0:
+            raise ValueError("There are no applicative data attached to the session from which the specified messages come from.")
 
         cluster = ClusterByApplicativeData()
-        return cluster.cluster(symbol)
+        return cluster.cluster(messages, appDatas)
 
     @staticmethod
     @typeCheck(AbstractField, AbstractField)
