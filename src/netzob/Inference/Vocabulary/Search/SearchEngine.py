@@ -65,9 +65,10 @@ def _executeSearch(arg, **kwargs):
     data = arg[0]
     message = arg[1]
     addTags = arg[2]
+    dataLabels = arg[3]
 
     se = SearchEngine()
-    c = se.searchDataInMessage(data, message, addTags)
+    c = se.searchDataInMessage(data, message, addTags=addTags, dataLabels=dataLabels)
     return c
 
 
@@ -132,7 +133,7 @@ class SearchEngine(object):
             self.asyncResult.extend(result)
 
     @typeCheck(list, list, bool, bool)
-    def searchDataInMessages(self, datas, messages, addTags=True, inParallel=True):
+    def searchDataInMessages(self, datas, messages, addTags=True, inParallel=True, dataLabels=None):
         """Search all the data specified in the given messages. Per default, this operation is executed in parallel.
 
         Example of a search operation executed in sequential
@@ -172,6 +173,8 @@ class SearchEngine(object):
         :type addTags: :class:`bool`
         :keyword inParallel: if set to True, the search will be executed in parallel.
         :type addTags: :class:`bool`
+        :keyword dataLabels: an optionnal dict to attach to each data a label to simplify search results identification
+        :type dataLabels: dict
 
         :return: a list of search results detailling where and how occurrences where found. Occurences are also
         identified in the message through dedicated visualization functions automaticaly added to the message.
@@ -197,7 +200,7 @@ class SearchEngine(object):
             # start = time.time()
 
             for message in messages:
-                results.extend(self.searchDataInMessage(noDuplicateDatas, message, addTags))
+                results.extend(self.searchDataInMessage(noDuplicateDatas, message, addTags, dataLabels))
             # Measure end time
             # end = time.time()
 
@@ -214,7 +217,7 @@ class SearchEngine(object):
             pool = multiprocessing.Pool(nbThread)
 
             # Execute search operations
-            pool.map_async(_executeSearch, zip([noDuplicateDatas] * len(messages), messages, [addTags] * len(messages)), callback=self.__collectResults_cb)
+            pool.map_async(_executeSearch, zip([noDuplicateDatas] * len(messages), messages, [addTags] * len(messages), [dataLabels] * len(messages)), callback=self.__collectResults_cb)
 
             # Waits all alignment tasks finish
             pool.close()
@@ -228,7 +231,7 @@ class SearchEngine(object):
         return results
 
     @typeCheck(list, AbstractMessage, bool)
-    def searchDataInMessage(self, data, message, addTags=True):
+    def searchDataInMessage(self, data, message, addTags=True, dataLabels=None):
         """Search in the specified message any of the given data. These data will be searched as
         it but also under various format.
 
@@ -252,6 +255,9 @@ class SearchEngine(object):
         :type message: :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage`
         :keyword addTags: if set to True, visualization functions are added to the message to highlights found results.
         :type addTags: :class:`bool`
+        :keyword dataLabels: an optionnal dict to attach to each data a label to simplify search results identification
+        :type dataLabels: dict
+
         :return: a search results detailling where and how occurrences where found. Occurences are also
         identified in the message through dedicated visualization functions automaticaly added to the message.
         :rtype: :class:`netzob.Inference.Vocabulary.SearchEngine.SearchResults.SearchResults`
@@ -273,6 +279,8 @@ class SearchEngine(object):
             props = dict()
             props['message'] = message
             props['data'] = d
+            if dataLabels is not None and d in dataLabels.keys():
+                props['label'] = dataLabels[d]
 
             searchTasks.extend(self.__buildSearchTasks(normedData, props))
 

@@ -107,30 +107,35 @@ class ClusterByApplicativeData(object):
             if not isinstance(appData, ApplicativeData):
                 raise TypeError("At least one applicative data ({0}) is not an instance of ApplicativeData.".format(str(appData)))
 
-        tmpData = dict()
+        labels = dict()
         for appData in appDatas:
-            tmpData[appData.value] = appData
+            labels[appData.value] = appData.name
+
+        idMessages = dict()
+        for message in messages:
+            idMessages[message.id] = message
 
         messagesPerAppData = dict()
         for message in messages:
             messagesPerAppData[message] = set()
 
         searchEngine = SearchEngine()
-        searchResults = searchEngine.searchDataInMessages([appData.value for appData in appDatas], messages, inParallel=False)
+
+        searchResults = searchEngine.searchDataInMessages([appData.value for appData in appDatas], messages, inParallel=True, dataLabels=labels)
         for result in searchResults:
             searchTask = result.searchTask
             message = searchTask.properties['message']
-            data = searchTask.properties['data']
-            if data not in tmpData.keys():
-                raise ValueError("Found data in a result cannot be identified in the original list of searched data.")
-            if message not in messagesPerAppData.keys():
-                raise ValueError("Found message cannot be identified in the original list of searched messages.")
-            messagesPerAppData[message].add(tmpData[data])
+            label = searchTask.properties['label']
+            if label not in labels.values():
+                raise ValueError("Found label ({0}) in a result cannot be identified in the original list of searched labels.".format(label))
+            if message.id not in idMessages.keys():
+                raise ValueError("Found message ({0}) cannot be identified in the original list of searched messages.".format(message.id))
+            messagesPerAppData[idMessages[message.id]].add(label)
 
         # Build clusters
         clusters = dict()
-        for message, appDatas in messagesPerAppData.iteritems():
-            strAppDatas = ';'.join([appData.name for appData in sorted(appDatas, key=operator.attrgetter('name'))])
+        for message, labelsInMessage in messagesPerAppData.iteritems():
+            strAppDatas = ';'.join(sorted(labelsInMessage))
             if strAppDatas in clusters.keys():
                 clusters[strAppDatas].append(message)
             else:
