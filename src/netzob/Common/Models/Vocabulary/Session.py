@@ -114,6 +114,9 @@ class Session(object):
 
     def clearMessages(self):
         """Delete all the messages attached to the current session"""
+        for msg in self.__messages.values():
+            msg.session = None
+
         self.__messages.clear()
 
     @messages.setter
@@ -128,6 +131,8 @@ class Session(object):
 
         self.clearMessages()
         self.__messages.addAll(messages)
+        for msg in self.__messages.values():
+            msg.session = self
 
     @property
     def applicativeData(self):
