@@ -52,14 +52,17 @@ from netzob.Common.Models.Vocabulary.Functions.VisualizationFunction import Visu
 class AbstractMessage(SortableObject):
     """Every message must inherits from this class"""
 
-    def __init__(self, data, _id=None):
+    def __init__(self, data, _id=None, session=None):
         """
         :parameter data: the content of the message
         :type data: a :class:`object`
         :parameter _id: the unique identifier of the message
         :type _id: :class:`uuid.UUID`
+        :keyword session: the session in which the message was captures
+        :type session: :class:`netzob.Common.Models.Vocabulary.Session.Session`
         """
         self.data = data
+        self.session = session
         if _id is None:
             _id = uuid.uuid4()
         self.id = _id
@@ -206,3 +209,16 @@ class AbstractMessage(SortableObject):
     def visualizationFunctions(self, visualizationFunctions):
         self.clearVisualizationFunctions()
         self.visualizationFunctions.extend(visualizationFunctions)
+
+    @property
+    def session(self):
+        """The session from which message comes from.
+
+        :type: :class:`netzob.Common.Models.Vocabulary.Session.Session`
+        """
+
+        return self.__session
+
+    @session.setter
+    def session(self, session):
+        self.__session = session
