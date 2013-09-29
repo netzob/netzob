@@ -34,6 +34,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+import operator
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -129,7 +130,7 @@ class ClusterByApplicativeData(object):
         # Build clusters
         clusters = dict()
         for message, appDatas in messagesPerAppData.iteritems():
-            strAppDatas = ';'.join([appData.name for appData in sorted(appDatas)])
+            strAppDatas = ';'.join([appData.name for appData in sorted(appDatas, key=operator.attrgetter('name'))])
             if strAppDatas in clusters.keys():
                 clusters[strAppDatas].append(message)
             else:
