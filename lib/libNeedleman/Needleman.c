@@ -527,6 +527,11 @@ char* alignTwoMessages(t_message * resMessage, Bool doInternalSlick, t_message *
     }
     tmpMessageTags[i]->name = tagNewMessage;
 
+    printf("i=%i : %s\n", i, tmpMessageTags[i]->name);
+    printf("Mask 1 = %i\n", maskMessage1[i]);
+    printf("Mask 2 = %i\n", maskMessage2[i]);
+
+
     if ((maskMessage1[i] == END) || (maskMessage2[i] == END)) {
       if(regind==0){
 	regex[0] ='.';
@@ -565,6 +570,8 @@ char* alignTwoMessages(t_message * resMessage, Bool doInternalSlick, t_message *
 	nbDynCommon += 1;
       }
     }
+    printf("tmpMessage = %i\n", tmpMessage[i]);
+    printf("tmpMessageMask = %i\n", tmpMessageMask[i]);
     i++;
   }
   //printf("%f\n",levcop);

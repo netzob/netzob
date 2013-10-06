@@ -138,6 +138,7 @@ class DataAlignment(threading.Thread):
                 # apply the field definition on each slice
                 remainingData = ''
                 fieldsValue = []
+                rToken = VariableReadingToken()
                 for field in targetedFieldLeafFields:
                     self._logger.debug("Target leaf field : {0}".format(field.__class__))
                     if field.regex.id not in splittedData.keys() or len(splittedData[field.regex.id]) == 0:
@@ -147,7 +148,7 @@ class DataAlignment(threading.Thread):
                         raise Exception("Multiple values are available for the same field, this is not yet supported.")
 
                     data = splittedData[field.regex.id][0]
-                    (value, remainingData) = self.__applyFieldDefinition(remainingData + data, field)
+                    (value, remainingData) = self.__applyFieldDefinition(remainingData + data, field, rToken)
                     fieldsValue.append(value)
 
                 if len(remainingData) > 0:
@@ -162,7 +163,7 @@ class DataAlignment(threading.Thread):
         return result
 
     @typeCheck(str, AbstractField)
-    def __applyFieldDefinition(self, data, field):
+    def __applyFieldDefinition(self, data, field, rToken):
         """This method applies the domain parser associated with the specified field on the
         provided data. It returns a tupple which indicates the consummed data and the remainning data
         after the application of the field domain on the data.
@@ -178,7 +179,7 @@ class DataAlignment(threading.Thread):
         """
         self._logger.debug("Apply field {0} on {1}".format(field.name, data))
         binValue = TypeConverter.convert(data, HexaString, BitArray)
-        rToken = VariableReadingToken(value=binValue)
+        rToken.value=binValue
         field.domain.read(rToken)
 
         if not rToken.Ok:
