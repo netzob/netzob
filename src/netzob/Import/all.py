@@ -29,8 +29,4 @@
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
 
-import release
-
-from netzob.Common.all import *
-from netzob.Inference.all import *
-from netzob.Import.all import *
+from netzob.Import.PCAPImporter.all import *
