@@ -29,3 +29,6 @@
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
+from netzob.Common.Models.Vocabulary.Messages.L2NetworkMessage import L2NetworkMessage
+from netzob.Common.Models.Vocabulary.Messages.L3NetworkMessage import L3NetworkMessage
+from netzob.Common.Models.Vocabulary.Messages.L4NetworkMessage import L4NetworkMessage

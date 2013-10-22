@@ -31,81 +31,74 @@
 import time
 
 #+---------------------------------------------------------------------------+
-#| Related third party imports
-#+---------------------------------------------------------------------------+
-
-#+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Common.Models.Vocabulary.Messages.AbstractMessage import AbstractMessage
+from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 
 
-class RawMessage(AbstractMessage):
-    """Represents a raw Message which is a single message with some content and very few meta-data.
-    A RawMessage
+class L2NetworkMessage(RawMessage):
+    """Definition of a layer 2 network message.
 
-    >>> msg = RawMessage("That's a simple message")
+    >>> msg = L2NetworkMessage("090002300202f000")
     >>> print msg.data
-    That's a simple message
+    090002300202f000
 
-    >>> msg = RawMessage("hello everyone", source="server", destination="client")
+    >>> msg = L2NetworkMessage("090002300202f000", date=1352293417.28, l2SourceAddress="00:02:7b:00:bf:33", l2DestinationAddress="00:02:3f:a8:bf:21")
     >>> print msg.source
-    server
+    00:02:7b:00:bf:33
     >>> print msg.destination
-    client
-    >>> print msg.metadata
-    {}
-    >>> msg.metadata["metadata1"]="value"
-    >>> print msg.metadata
-    {'metadata1': 'value'}
+    00:02:3f:a8:bf:21
+    >>> print msg
+    [1352293417.28 00:02:7b:00:bf:33->00:02:3f:a8:bf:21] 090002300202f000
 
     """
 
-    def __init__(self, data=None, date=None, source=None, destination=None):
-        """
-        :parameter data: the content of the message
-        :type data: a :class:`object`
-        """
-        super(RawMessage, self).__init__(data)
-        if date is None:
-            date = time.mktime(time.gmtime())
-        self.date = date
-        self.__source = source
-        self.__destination = destination
-
-    def priority(self):
-        """Return the value that will be used to represent the current message when sorted
-        with the others.
-
-        :type: int
-        """
-        return int(self.date * 1000)
-
-    def __str__(self):
-        """Returns a string that describes the message.
-
-        :warning: This string should only considered for debuging and/or fast visualization. Do not
-        rely on it since its format can often be modified.
-        """
-        return "[{0} {1}->{2}] {3}".format(self.date, self.source, self.destination, self.data)
+    def __init__(self, data, date=None, l2Protocol=None, l2SourceAddress=None,
+                 l2DestinationAddress=None):
+        super(L2NetworkMessage, self).__init__(data, date, l2SourceAddress, l2DestinationAddress)
+        self.l2Protocol = str(l2Protocol)
+        self.l2SourceAddress = str(l2SourceAddress)
+        self.l2DestinationAddress = str(l2DestinationAddress)
 
     @property
-    def date(self):
-        """The date when the message was captured.
-        The date must be encoded in the epoch format.
+    def l2Protocol(self):
+        """The protocol of the second layer
 
-        :type:float
-        :raise: a TypeError if date is not valid
+        :type: str
         """
-        return self.__date
+        return self.__l2Protocol
 
-    @date.setter
-    @typeCheck(float)
-    def date(self, date):
-        if date is None:
-            raise TypeError("Date cannot be None")
-        self.__date = date
+    @l2Protocol.setter
+    @typeCheck(str)
+    def l2Protocol(self, l2Protocol):
+        self.__l2Protocol = l2Protocol
+
+    @property
+    def l2SourceAddress(self):
+        """The source address of the second layer
+
+        :type: str
+        """
+        return self.__l2SourceAddress
+
+    @l2SourceAddress.setter
+    @typeCheck(str)
+    def l2SourceAddress(self, l2SourceAddress):
+        self.__l2SourceAddress = l2SourceAddress
+
+    @property
+    def l2DestinationAddress(self):
+        """The destination address of the second layer
+
+        :type: str
+        """
+        return self.__l2DestinationAddress
+
+    @l2DestinationAddress.setter
+    @typeCheck(str)
+    def l2DestinationAddress(self, l2DestinationAddress):
+        self.__l2DestinationAddress = l2DestinationAddress
 
     @property
     def source(self):
@@ -114,12 +107,7 @@ class RawMessage(AbstractMessage):
 
         :type: str
         """
-        return self.__source
-
-    @source.setter
-    @typeCheck(str)
-    def source(self, source):
-        self.__source = source
+        return self.__l2SourceAddress
 
     @property
     def destination(self):
@@ -128,9 +116,7 @@ class RawMessage(AbstractMessage):
 
         :type: str
         """
-        return self.__destination
+        return self.__l2DestinationAddress
 
-    @destination.setter
-    @typeCheck(str)
-    def destination(self, destination):
-        self.__destination = destination
+    def __str__(self):
+        return "[{0} {1}->{2}] {3}".format(str(self.date), str(self.source), str(self.destination), str(self.data))

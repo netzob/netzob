@@ -61,7 +61,6 @@ def getSuite():
         Field.__module__,
         AbstractField,
         Symbol.__module__,
-        RawMessage.__module__,
         DomainFactory.__module__,
         Alt.__module__,
         Agg.__module__,
@@ -83,7 +82,6 @@ def getSuite():
         State.__module__,
         Transition.__module__,
         NetzobRegex,
-        RawMessage.__module__,
         ParallelDataAlignment,
         DataAlignment,
         FormatEditor.__module__,
@@ -105,6 +103,10 @@ def getSuite():
 
         FieldSplitAligned,
         # Size.__module__,
+        RawMessage.__module__,
+        L2NetworkMessage.__module__,
+        L3NetworkMessage.__module__,
+        L4NetworkMessage.__module__
     ]
 
     suite = unittest.TestSuite()

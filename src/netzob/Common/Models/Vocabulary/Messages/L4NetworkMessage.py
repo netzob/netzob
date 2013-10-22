@@ -38,74 +38,74 @@ import time
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Common.Models.Vocabulary.Messages.AbstractMessage import AbstractMessage
+from netzob.Common.Models.Vocabulary.Messages.L3NetworkMessage import L3NetworkMessage
 
 
-class RawMessage(AbstractMessage):
-    """Represents a raw Message which is a single message with some content and very few meta-data.
-    A RawMessage
+class L4NetworkMessage(L3NetworkMessage):
+    """Definition of a layer 4 network message
 
-    >>> msg = RawMessage("That's a simple message")
+    >>> msg = L4NetworkMessage("090002300202f000")
     >>> print msg.data
-    That's a simple message
+    090002300202f000
 
-    >>> msg = RawMessage("hello everyone", source="server", destination="client")
+    >>> msg = L4NetworkMessage("090002300202f000", date=1352293417.28, l3SourceAddress="192.168.10.100", l3DestinationAddress="192.168.10.245", l4SourceAddress=2049, l4DestinationAddress=80)
     >>> print msg.source
-    server
+    192.168.10.100:2049
     >>> print msg.destination
-    client
-    >>> print msg.metadata
-    {}
-    >>> msg.metadata["metadata1"]="value"
-    >>> print msg.metadata
-    {'metadata1': 'value'}
+    192.168.10.245:80
+    >>> print msg
+    [1352293417.28 192.168.10.100:2049->192.168.10.245:80] 090002300202f000
 
     """
 
-    def __init__(self, data=None, date=None, source=None, destination=None):
-        """
-        :parameter data: the content of the message
-        :type data: a :class:`object`
-        """
-        super(RawMessage, self).__init__(data)
-        if date is None:
-            date = time.mktime(time.gmtime())
-        self.date = date
-        self.__source = source
-        self.__destination = destination
+    def __init__(self, data, date=None, l2Protocol=None, l2SourceAddress=None,
+                 l2DestinationAddress=None, l3Protocol=None, l3SourceAddress=None,
+                 l3DestinationAddress=None, l4Protocol=None, l4SourceAddress=None, l4DestinationAddress=None):
+        super(L4NetworkMessage, self).__init__(data, date, l2Protocol, l2SourceAddress,
+                                               l2DestinationAddress, l3Protocol, l3SourceAddress,
+                                               l3DestinationAddress)
+        self.l4Protocol = str(l4Protocol)
+        self.l4SourceAddress = l4SourceAddress
+        self.l4DestinationAddress = l4DestinationAddress
 
-    def priority(self):
-        """Return the value that will be used to represent the current message when sorted
-        with the others.
+    @property
+    def l4Protocol(self):
+        """The protocol of the fourth layer
+
+        :type: str
+        """
+        return self.__l4Protocol
+
+    @l4Protocol.setter
+    @typeCheck(str)
+    def l4Protocol(self, l4Protocol):
+        self.__l4Protocol = l4Protocol
+
+    @property
+    def l4SourceAddress(self):
+        """The source address of the fourth layer
 
         :type: int
         """
-        return int(self.date * 1000)
+        return self.__l4SourceAddress
 
-    def __str__(self):
-        """Returns a string that describes the message.
-
-        :warning: This string should only considered for debuging and/or fast visualization. Do not
-        rely on it since its format can often be modified.
-        """
-        return "[{0} {1}->{2}] {3}".format(self.date, self.source, self.destination, self.data)
+    @l4SourceAddress.setter
+    @typeCheck(int)
+    def l4SourceAddress(self, l4SourceAddress):
+        self.__l4SourceAddress = l4SourceAddress
 
     @property
-    def date(self):
-        """The date when the message was captured.
-        The date must be encoded in the epoch format.
+    def l4DestinationAddress(self):
+        """The destination address of the fourth layer
 
-        :type:float
-        :raise: a TypeError if date is not valid
+        :type: int
         """
-        return self.__date
+        return self.__l4DestinationAddress
 
-    @date.setter
-    @typeCheck(float)
-    def date(self, date):
-        if date is None:
-            raise TypeError("Date cannot be None")
-        self.__date = date
+    @l4DestinationAddress.setter
+    @typeCheck(int)
+    def l4DestinationAddress(self, l4DestinationAddress):
+        self.__l4DestinationAddress = l4DestinationAddress
 
     @property
     def source(self):
@@ -114,12 +114,7 @@ class RawMessage(AbstractMessage):
 
         :type: str
         """
-        return self.__source
-
-    @source.setter
-    @typeCheck(str)
-    def source(self, source):
-        self.__source = source
+        return "{0}:{1}".format(str(self.l3SourceAddress), str(self.l4SourceAddress))
 
     @property
     def destination(self):
@@ -128,9 +123,7 @@ class RawMessage(AbstractMessage):
 
         :type: str
         """
-        return self.__destination
+        return "{0}:{1}".format(str(self.l3DestinationAddress), str(self.l4DestinationAddress))
 
-    @destination.setter
-    @typeCheck(str)
-    def destination(self, destination):
-        self.__destination = destination
+    def __str__(self):
+        return "[{0} {1}->{2}] {3}".format(str(self.date), str(self.source), str(self.destination), str(self.data))
