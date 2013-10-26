@@ -43,6 +43,7 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Models.Vocabulary.Domain.DomainFactory import DomainFactory
@@ -100,6 +101,9 @@ class Field(AbstractField):
 
     >>> payloadField = Field(ASCII(nbChars=(5, 20)))
 
+    a field which value is the size of the payloadField
+
+    >>> f = Field([Size(payloadField)])
 
 
     Here are few examples of 'alternative' fields:
@@ -111,10 +115,6 @@ class Field(AbstractField):
     a field representing a decimal (10) or an ASCII of 10 chars,
 
     >>> f = Field([10, ASCII(nbChars=(10, 11))])
-
-    a field which value is the size of the payloadField
-
-    >>> f = Field([Raw(Size(payloadField))])
 
     """
 
@@ -133,7 +133,8 @@ class Field(AbstractField):
             domain = Raw(None)
         self.domain = domain
 
-    def generate(self, generationStrategy=None):
+    @typeCheck(VariableWritingToken, object)
+    def generate(self, writingToken=None, generationStrategy=None):
         """Generate an hexastring which content
         follows the fields definitions attached to current element.
 
@@ -152,6 +153,8 @@ class Field(AbstractField):
         >>> print s.generate()
         hello zoby
 
+        :keyword writingToken: internal buffer of generated content to ensure relations between fields
+        :type writingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken.VariableWritingToken`
         :keyword generatorStrategy: if set, this generation strategy will be used to pilot this generation process
         :type generatorStrategy: :class:`object`
 
@@ -162,11 +165,13 @@ class Field(AbstractField):
         if self.__domain is None:
             raise InvalidDomainException("The domain is not defined.")
 
-        if len(self.children) > 0:
-            return ''.join(child.generate() for child in self.children)
-        else:
+        if writingToken is None:
             # Create a Variable Writing Token
             writingToken = VariableWritingToken(generationStrategy=generationStrategy)
+
+        if len(self.children) > 0:
+            return ''.join(child.generate(writingToken) for child in self.children)
+        else:
             self.domain.write(writingToken)
             wroteData = writingToken.value
             return wroteData.tobytes()
