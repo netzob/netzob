@@ -32,6 +32,7 @@
 import unittest
 from test_netzob.test_Tutorials import test_ICMP
 from test_netzob.test_Tutorials import test_USBMouseProtocol
+from test_netzob.test_Tutorials import test_ImportPCAP
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -44,6 +45,7 @@ def getSuite():
     modulesOfTests = [
         test_ICMP,
         test_USBMouseProtocol,
+        test_ImportPCAP,
     ]
     modulesOfSuites = []
 
