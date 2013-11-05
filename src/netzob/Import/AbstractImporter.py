@@ -26,28 +26,25 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
+#| Standard library imports
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
 #| Global Imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
-import uuid
-from datetime import datetime
-import logging
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Field import Field
-from netzob.Common.ProjectConfiguration import ProjectConfiguration
-from netzob.Common.ImportedTrace import ImportedTrace
-from netzob.Common.Symbol import Symbol
-from netzob.Common.Session import Session
+from netzob.Common.Utils.Decorators import NetzobLogger
 from netzob.Common.NetzobException import NetzobImportException
-from netzob.UI.ModelReturnCodes import ERROR
 from netzob.UI.Import.Controllers.ConfirmImportMessagesController import ConfirmImportMessagesController
 
 
+@NetzobLogger
 class AbstractImporter(object):
-    """Abstract class which provides common methods too any kind of importers"""
+    """Abstract class which provides common methods too any kind of importers.
+    Importers should inherit from it."""
 
     def __init__(self, type, netzob):
         self.type = type
