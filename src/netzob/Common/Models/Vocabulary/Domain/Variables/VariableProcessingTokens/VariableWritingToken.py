@@ -37,13 +37,10 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken import AbstractVariableProcessingToken
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
-from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Models.Types.BitArray import BitArray
-from netzob.Common.Models.Types.AbstractType import AbstractType
 
 
 class VariableWritingToken(AbstractVariableProcessingToken):
@@ -68,65 +65,6 @@ class VariableWritingToken(AbstractVariableProcessingToken):
         """Used for debug purpose.
         """
         return "WritingToken: isOk: {0}, value: {1}".format(self.Ok, TypeConverter.convert(self.value, BitArray, Raw))
-
-    def updateValue(self):
-        """Re-make the value of the token by concatenating each segment of the chopped value.
-        """
-        self.value = bitarray(endian=AbstractType.defaultEndianness())
-        self.index = 0
-
-        for linkedValue in self.linkedValues:
-            self.__appendValue(linkedValue[1])
-
-    @typeCheck(AbstractVariable, bitarray)
-    def setValueForVariable(self, variable, value):
-        """Edit the previously inserted value for specified variable
-        and replace with the provided value.
-
-        :param variable: the variable for which we modify its value
-        :type variable: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
-        :raises :class:`TypeError ` if parameters are not valid.
-
-        """
-        if variable is None:
-            raise TypeError("a variable must be specified")
-
-        # we are interesting in the last value.
-        if self.linkedValues is not None:
-            for linkedValue in reversed(self.linkedValues):  # We iterate the list in reverse order.
-                if linkedValue[0] == variable.id:
-                    linkedValue[1] = value
-                    break
-        # refresh the computed value
-        self.updateValue()
-
-    @typeCheck(AbstractVariable, bitarray)
-    def write(self, variable, value):
-        """A variable writes a value in the token.
-
-        :param variable: the variable for which the value must be modified.
-        :type variable: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariables.AbstractVariable
-        :raises: :class:`TypeError ` if parameters are not valid.
-        """
-        if variable is None:
-            raise TypeError("a variable must be specified.")
-        if value is None:
-            raise TypeError("value cannot be None")
-
-        self.linkedValues.append((variable.id, value))
-        self.updateValue()
-
-    @typeCheck(bitarray)
-    def __appendValue(self, value):
-        """Append in the current value the specified value.
-
-        :param value: the value to append
-        :type value: :class:`bitarray`.
-        :raises: :class:`TypeError` if parameter is not valid
-        """
-        if value is not None:
-            self.index += len(value)
-            self.value += value
 
     @property
     def generationStrategy(self):
