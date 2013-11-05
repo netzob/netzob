@@ -113,17 +113,18 @@ class Data(AbstractVariableLeaf):
         """If the leaf has no values, it is not defined and returns False
 
         >>> from netzob.all import *
-        >>> import logging
         >>> data = Data(ASCII(), learnable=True, mutable=True)
-
+        >>> print data.currentValue
+        None
         >>> rToken = VariableReadingToken(value=TypeConverter.convert("hello", ASCII, BitArray))
+        >>> rToken.setValueForVariable(data, rToken.value)
         >>> data.isDefined(rToken)
         False
         >>> data.read(rToken)
         >>> data.isDefined(rToken)
         True
-        >>> data.currentValue
-        bitarray('001011010100110001101100011011011110110')
+        >>> print data.currentValue
+        bitarray('0001011010100110001101100011011011110110')
 
         :rtype: bool
         :return: True if the data has a current value or has memorized its value in the processing token
@@ -222,6 +223,7 @@ class Data(AbstractVariableLeaf):
             raise TypeError("processingToken cannot be None")
 
         self._logger.debug("- {0}: value is recalled.".format(self))
+
         self.currentValue = processingToken.memory.recall(self)
 
     @typeCheck(AbstractVariableProcessingToken)
@@ -249,6 +251,7 @@ class Data(AbstractVariableLeaf):
         >>> from netzob.all import *
         >>> data = Data(ASCII())
         >>> rToken = VariableReadingToken(value=TypeConverter.convert("helloworld", ASCII, BitArray))
+        >>> rToken.setValueForVariable(data, rToken.value)
         >>> data.compareFormat(rToken)
         >>> print rToken.Ok
         True
@@ -257,6 +260,7 @@ class Data(AbstractVariableLeaf):
 
         >>> data = Data(Decimal())
         >>> rToken = VariableReadingToken(value=TypeConverter.convert("This is a Field", ASCII, BitArray))
+        >>> rToken.setValueForVariable(data, rToken.value)
         >>> data.compareFormat(rToken)
         >>> print rToken.Ok
         True
@@ -268,10 +272,12 @@ class Data(AbstractVariableLeaf):
         >>> data = Data(ASCII(nbChars=(5,10)))
         >>> binValue = TypeConverter.convert("hey ", ASCII, BitArray)
         >>> rToken = VariableReadingToken(value=binValue)
+        >>> rToken.setValueForVariable(data, rToken.value)
         >>> data.compareFormat(rToken)
         >>> print rToken.Ok
         False
         >>> rToken.value = TypeConverter.convert("hello", ASCII, BitArray)
+        >>> rToken.setValueForVariable(data, rToken.value)
         >>> data.compareFormat(rToken)
         >>> print rToken.Ok
         True
@@ -283,12 +289,15 @@ class Data(AbstractVariableLeaf):
         if readingToken is None:
             raise TypeError("readingToken cannot be None")
 
-        self._logger.debug("- [ {0}: compareFormat.".format(self))
+        self._logger.debug("- [ {0}: compareFormat".format(self))
 
         # Retrieve the value to check
-        data = readingToken.value[readingToken.index:]
+        if not readingToken.isValueForVariableAvailable(self):
+            raise Exception("Cannot compareFormat because not value is linked with the current data")
+
+        data = readingToken.getValueForVariable(self)
         minSize, maxSize = self.dataType.size
-        self._logger.debug("Compare size: request={0}, data size={1}".format(self.dataType.size, len(data)))
+        self._logger.debug("Compare size: request={0}, data size={1}, data={2}".format(self.dataType.size, len(data), data))
         parsedLength = None
         if minSize is not None and len(data) < minSize:
             # data is too small
@@ -299,7 +308,7 @@ class Data(AbstractVariableLeaf):
             if maxSize is None:
                 maxSize = len(data)
             result = False
-            for length in xrange(minSize, min(maxSize, len(data)) + 1):
+            for length in xrange(min(maxSize, len(data)) + 1, minSize, -1):
                 tmp = TypeConverter.convert(data[:length], BitArray, Raw)
                 if self.dataType.canParse(tmp):
                     parsedLength = length
@@ -324,11 +333,10 @@ class Data(AbstractVariableLeaf):
         None
         >>> binValue = TypeConverter.convert("netzob, is the name of a RE tool.", ASCII, BitArray)
         >>> rToken = VariableReadingToken(value=binValue)
+        >>> rToken.setValueForVariable(data, rToken.value)
         >>> data.learn(rToken)
         >>> print TypeConverter.convert(data.currentValue, BitArray, ASCII)
         netzob
-        >>> rToken.index
-        48
 
         .. warning:: WIP, the delimitor case is not yet managed.
 
@@ -342,8 +350,13 @@ class Data(AbstractVariableLeaf):
         self._logger.debug("- [ {0}: learn.".format(self))
         # A format comparison had been executed before, its result must be "OK".
         if readingToken.Ok:
-            tmp = readingToken.value[readingToken.index:]
+            # Retrieve the value to check
+            if not readingToken.isValueForVariableAvailable(self):
+                raise Exception("Cannot learn because not value is linked with the current data")
 
+            tmp = readingToken.getValueForVariable(self)
+
+            self._logger.debug("Learning : {0}".format(tmp))
             minSize, maxSize = self.dataType.size
 
             # If the type has a definite size.
@@ -392,6 +405,7 @@ class Data(AbstractVariableLeaf):
         >>> d = Data(ASCII(), TypeConverter.convert("Zoby", ASCII, BitArray))
         >>> bin = TypeConverter.convert("Zoby has a hat", ASCII, BitArray)
         >>> rToken = VariableReadingToken(value=bin)
+        >>> rToken.setValueForVariable(d, rToken.value)
         >>> d.compare(rToken)
         >>> print rToken.Ok
         True
@@ -399,6 +413,7 @@ class Data(AbstractVariableLeaf):
         >>> d = Data(ASCII(), TypeConverter.convert("Zoby", ASCII, BitArray))
         >>> bin = TypeConverter.convert("Visit netzob.org for more documentation", ASCII, BitArray)
         >>> rToken = VariableReadingToken(value=bin)
+        >>> rToken.setValueForVariable(d,rToken.value)
         >>> d.compare(rToken)
         >>> print rToken.Ok
         False
@@ -412,20 +427,28 @@ class Data(AbstractVariableLeaf):
 
         self._logger.debug("- [ {0}: compare.".format(self))
         localValue = self.getValue(readingToken)
-        tmp = readingToken.value[readingToken.index:]
+
+        if not readingToken.isValueForVariableAvailable(self):
+            raise Exception("Cannot compare because the reading token has no value associated with current variable.")
+
+        tmp = readingToken.getValueForVariable(self)
+        #tmp = readingToken.value#[readingToken.index:]
 
         self._logger.debug("Compare {0} against {1}".format(localValue, tmp))
 
         if len(tmp) >= len(localValue):
             if tmp[:len(localValue)] == localValue:
                 self._logger.debug("Comparison successful.")
-                readingToken.attachVariableToRange(self, readingToken.index, readingToken.index + len(localValue))
-                readingToken.incrementIndex(len(localValue))
+                readingToken.setValueForVariable(self, tmp[:len(localValue)])
+                #readingToken.attachVariableToRange(self, readingToken.index, readingToken.index + len(localValue))
+                #readingToken.incrementIndex(len(localValue))
                 readingToken.Ok = True
             else:
+                readingToken.removeValueForVariable(self)
                 readingToken.Ok = False
                 self._logger.debug("Comparison failed: wrong value.")
         else:
+            readingToken.removeValueForVariable(self)
             readingToken.Ok = False
             self._logger.debug("Comparison failed: wrong size.")
         self._logger.debug("Variable {0}: {1}. ] -".format(self.name, readingToken))
@@ -443,8 +466,8 @@ class Data(AbstractVariableLeaf):
         >>> # Start the mutation
         >>> d.mutate(wToken)
         >>> # Display the mutated value
-        >>> print d.currentValue
-        bitarray('01010000')
+        >>> print len(d.currentValue)
+        8
 
         :param writingToken: the processing token where the memory is
         :type writingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken.VariableWritingToken`
@@ -497,23 +520,19 @@ class Data(AbstractVariableLeaf):
         >>> d1 = Data(ASCII(), TypeConverter.convert("Hello", ASCII, BitArray))
         >>> wToken = VariableWritingToken()
         >>> d1.writeValue(wToken)
-        >>> print TypeConverter.convert(wToken.value, BitArray, ASCII)
+        >>> print TypeConverter.convert(wToken.getValueForVariable(d1), BitArray, ASCII)
         Hello
 
         """
         self._logger.debug("- [ {0}: writeValue.".format(self))
+
+        # Retrieve the value of the data
         value = self.getValue(writingToken)
-        tvalue = TypeConverter.convert(value, BitArray, Raw)
-        self._logger.debug("Write {0}:{1}".format(value.to01(), tvalue))
-        # if self.size[1] is None:
-        #     # Do not forget to write the delimiter if the variable has one
-        #     value.extend(self.dataType.getDelimiter())
-        writingToken.write(self, value)
-        # We impact the value this variable has written on its tokenChoppedIndex list and its fathers token list.
-        self._logger.debug("WritingToken linkedValue: {0}".format(writingToken.linkedValues))
-        #self.addTokenChoppedIndex(len(writingToken.linkedValues) - 1)
-        bValue = TypeConverter.convert(writingToken.value, BitArray, Raw)
-        self._logger.debug("Variable {0}: {1} ({2}). ] -".format(self.name, writingToken.value, bValue))
+        tValue = TypeConverter.convert(value, BitArray, Raw)
+
+        writingToken.setValueForVariable(self, value)
+
+        self._logger.debug("Variable {0}: {1} ({2}). ] -".format(self.name, writingToken.value, tValue))
 
     @typeCheck(AbstractVariableProcessingToken)
     def restore(self, processingToken):
@@ -581,9 +600,16 @@ class Data(AbstractVariableLeaf):
 
         :type: :class:`bitarray`
         """
-        return self.__currentValue
+        if self.__currentValue is not None:
+            return self.__currentValue.copy()
+        else:
+            return None
 
     @currentValue.setter
     @typeCheck(bitarray)
     def currentValue(self, currentValue):
-        self.__currentValue = currentValue
+        if currentValue is not None:
+            cv = currentValue.copy()
+        else:
+            cv = currentValue
+        self.__currentValue = cv
