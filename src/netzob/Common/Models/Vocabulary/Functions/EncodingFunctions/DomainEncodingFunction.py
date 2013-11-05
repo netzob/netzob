@@ -46,6 +46,7 @@ from netzob.Common.Utils.Decorators import NetzobLogger
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Vocabulary.Functions.EncodingFunction import EncodingFunction
+from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Agg import Agg
 
 
 @NetzobLogger
@@ -66,33 +67,31 @@ class DomainEncodingFunction(EncodingFunction):
 
     """
 
-    def encode(self, field, data, variablesByPos):
-        # Single variable for the entire field ?
-        if len(set(variablesByPos.values())) == 1:
-            domain = variablesByPos[0].dataType.__class__
-            return TypeConverter.convert(data, BitArray, domain)
+    def encode(self, field, readingToken):
+        if not readingToken.getValueForVariable(field.domain):
+            raise Exception("No value associated with field")
+
+        return self.encodeChild(field.domain, readingToken)
+
+    def encodeChild(self, variable, readingToken):
+        result = []
+
+        if not readingToken.isValueForVariableAvailable(variable):
+            return result
+
+        if variable.varType == "Data":
+            val = readingToken.getValueForVariable(variable)
+            encodedVal = TypeConverter.convert(val, BitArray, variable.dataType.__class__)
+            result.append(str(encodedVal))
+        elif variable.varType == "Agg" or variable.varType == "Alt":
+            for child in variable.children:
+                result.extend(self.encodeChild(child, readingToken))
         else:
-            # First we compute ranges of variables
-            ranges = []  # a list of (start, end, variable)
-            lastVariable = None
-            startPos = 0
-            for pos in sorted(variablesByPos.keys()):
-                currentVariable = variablesByPos[pos]
-                if currentVariable != lastVariable:
-                    endPos = pos
-                    if endPos > startPos:
-                        ranges.append((startPos, endPos, lastVariable))
-                    startPos = pos
-                lastVariable = currentVariable
-            ranges.append((startPos, pos, lastVariable))
+            raise Exception("Unknown type of variable: {0}.x".format(variable.varType))
 
-            # For each computed range, we convert the data following the type
-            # of the variable used to parse them.
-            result = []
-            for (startPos, endPos, variable) in ranges:
-                domain = variable.dataType.__class__
-                result.append(str(TypeConverter.convert(data[startPos:endPos], BitArray, domain)))
-
+        if len(result) == 0:
+            return ''
+        else:
             return ''.join(result)
 
     def priority(self):

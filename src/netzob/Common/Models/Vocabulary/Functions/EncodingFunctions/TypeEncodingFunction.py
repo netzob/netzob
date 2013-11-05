@@ -72,7 +72,7 @@ class TypeEncodingFunction(EncodingFunction):
 
     >>> s.encodingFunctions = [TypeEncodingFunction(Raw)]
     >>> print s
-    There are 
+    There are
      solutions.
     """
 
@@ -103,7 +103,10 @@ class TypeEncodingFunction(EncodingFunction):
             sign = AbstractType.defaultSign()
         self.sign = sign
 
-    def encode(self, field, data, variablesByPos):
+    def encode(self, field, readingToken):
+        if not readingToken.getValueForVariable(field.domain):
+            raise Exception("No value associated with field")
+        data = readingToken.getValueForVariable(field.domain)
         return TypeConverter.convert(data, BitArray, self.type, src_unitSize=self.unitSize, src_endianness=self.endianness, src_sign=self.sign)
 
     def priority(self):
