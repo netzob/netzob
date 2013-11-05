@@ -87,6 +87,7 @@ class AbstractVariableLeaf(AbstractVariable):
         if self.mutable:
             if self.learnable:
                 if self.isDefined(readingToken):
+                    self._logger.debug("\t mutable, learnable, defined")
                     # mutable, learnable and defined.
                     self.compareFormat(readingToken)
                     if readingToken.Ok:
@@ -96,6 +97,7 @@ class AbstractVariableLeaf(AbstractVariable):
                         tmpSize = len(readingToken.value[readingToken.index:])
                         readingToken.incrementIndex(tmpSize)
                 else:
+                    self._logger.debug("\t mutable, learnable, !defined")
                     # mutable, learnable and not defined.
                     self.compareFormat(readingToken)
                     self.learn(readingToken)
@@ -105,19 +107,22 @@ class AbstractVariableLeaf(AbstractVariable):
 
             else:
                 if self.isDefined(readingToken):
+                    self._logger.debug("\t mutable, !learnable, defined")
                     # mutable, not learnable and defined.
                     self.compareFormat(readingToken)
-
                 else:
+                    self._logger.debug("\t mutable, !learnable, !defined")
                     # mutable, learnable and not defined.
                     self.compareFormat(readingToken)
         else:
             if self.learnable:
                 if self.isDefined(readingToken):
+                    self._logger.debug("\t !mutable, learnable, defined")
                     # not mutable, learnable and defined.
                     self.compare(readingToken)
 
                 else:
+                    self._logger.debug("\t !mutable, learnable, defined")
                     # not mutable, learnable and not defined.
                     self.compareFormat(readingToken)
                     self.learn(readingToken)
@@ -125,10 +130,12 @@ class AbstractVariableLeaf(AbstractVariable):
 
             else:
                 if self.isDefined(readingToken):
+                    self._logger.debug("\t !mutable, !learnable, defined")
                     # not mutable, not learnable and defined.
                     self.compare(readingToken)
 
                 else:
+                    self._logger.debug("\t !mutable, !learnable, !defined")
                     # not mutable, not learnable and not defined.
                     self._logger.debug("Read abort: the variable is neither defined, nor mutable.")
                     readingToken.Ok = False
@@ -208,7 +215,7 @@ class AbstractVariableLeaf(AbstractVariable):
                     writingToken.Ok = False
 
         # Variable notification
-        if writingToken.Ok:
-            self.notifyBoundedVariables("write", writingToken)
+        #if writingToken.Ok:
+        #    self.notifyBoundedVariables("write", writingToken)
 
         self._logger.debug("\t: {0}. ]".format(writingToken))
