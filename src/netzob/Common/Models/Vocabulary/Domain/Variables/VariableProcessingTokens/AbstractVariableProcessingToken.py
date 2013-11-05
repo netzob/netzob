@@ -40,6 +40,7 @@ from bitarray import bitarray
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Common.Models.Types.AbstractType import AbstractType
+from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 
 
 @NetzobLogger
@@ -73,8 +74,35 @@ class AbstractVariableProcessingToken(object):
 
         self.vocabulary = vocabulary
 
+        # A dict that associated each variable with the related portion of data
+        self.__linkedValues = dict()
+
         # A list of (id, value) that associates the contribution to the final value of every variable to its ID.
-        self.__linkedValues = []
+        #self.__linkedValues = []
+
+    @typeCheck(AbstractVariable, bitarray)
+    def setValueForVariable(self, variable, value):
+        if variable is None:
+            raise TypeError("Variable cannot be None")
+        self.__linkedValues[variable.id] = value
+
+    @typeCheck(AbstractVariable)
+    def getValueForVariable(self, variable):
+        if variable is None:
+            raise TypeError("Variable cannot be None")
+        return self.__linkedValues[variable.id]
+
+    @typeCheck(AbstractVariable)
+    def isValueForVariableAvailable(self, variable):
+        if variable is None:
+            raise TypeError("Variable cannot be None")
+        return variable.id in self.__linkedValues.keys()
+
+    @typeCheck(AbstractVariable)
+    def removeValueForVariable(self, variable):
+        if variable is None:
+            raise TypeError("Variable cannot be None")
+        del self.__linkedValues[variable.id]
 
     @property
     def Ok(self):
@@ -130,20 +158,20 @@ class AbstractVariableProcessingToken(object):
             raise ValueError("Index must be >= 0")
         self.__index = index
 
-    @property
-    def linkedValues(self):
-        """Store the ID of the variable and its value.
+    # @property
+    # def linkedValues(self):
+    #     """Store the ID of the variable and its value.
 
-        :type: a :class:`list` of tuples made of keys :class:`str` and values :class:`object`.
-        """
+    #     :type: a :class:`dict` made of keys :class:`str` and values :class:`object`.
+    #     """
 
-        return self.__linkedValues
+    #     return self.__linkedValues
 
-    @linkedValues.setter
-    def linkedValues(self, linkedValues):
-        self.__linkedValues = []
-        for data in linkedValues:
-            self.__linkedValues = data
+    # @linkedValues.setter
+    # def linkedValues(self, linkedValues):
+    #     self.__linkedValues = dict
+    #     for key, val in linkedValues.iteritems():
+    #         self.__linkedValues[key] = val
 
     @property
     def vocabulary(self):
