@@ -69,7 +69,6 @@ class DataAlignment(threading.Thread):
 
     >>> from netzob.all import *
     >>> from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
-    >>> import random
     >>> # Create 10 data which follows format : 'hello '+random number of [5-10] digits+' welcome'.
     >>> data = [TypeConverter.convert('hello {0}, welcome'.format(''.join([str(y) for y in range(0, 10)])), Raw, HexaString) for x in range(0, 10)]
     >>> # Now we create a symbol with its field structure to represent this type of message
@@ -130,6 +129,7 @@ class DataAlignment(threading.Thread):
             targetedFieldLeafFields = rootLeafFields
 
         for d in self.data:
+            self._logger.debug("Data to align: {0}".format(d))
             try:
                 # split the message following the regex definition
                 splittedData = self.__splitDataWithRegex(d, rootLeafFields)
@@ -139,8 +139,9 @@ class DataAlignment(threading.Thread):
                 remainingData = ''
                 fieldsValue = []
                 rToken = VariableReadingToken()
+
                 for field in targetedFieldLeafFields:
-                    self._logger.debug("Target leaf field : {0}".format(field.__class__))
+                    self._logger.debug("Target leaf field : {0}({1})".format(field.name, field.__class__))
                     if field.regex.id not in splittedData.keys() or len(splittedData[field.regex.id]) == 0:
                         raise Exception("Content of field {0} ({1}) has not been found on message, alignment failed.")
 
@@ -148,7 +149,12 @@ class DataAlignment(threading.Thread):
                         raise Exception("Multiple values are available for the same field, this is not yet supported.")
 
                     data = splittedData[field.regex.id][0]
-                    (value, remainingData) = self.__applyFieldDefinition(remainingData + data, field, rToken)
+                    fieldData = remainingData + data
+                    rToken.setValueForVariable(field.domain, TypeConverter.convert(fieldData, HexaString, BitArray))
+
+                    (value, remainingData) = self.__applyFieldDefinition(field, rToken)
+                    rToken.setValueForVariable(field.domain, TypeConverter.convert(fieldData, HexaString, BitArray))
+
                     fieldsValue.append(value)
 
                 if len(remainingData) > 0:
@@ -162,8 +168,8 @@ class DataAlignment(threading.Thread):
 
         return result
 
-    @typeCheck(str, AbstractField)
-    def __applyFieldDefinition(self, data, field, rToken):
+    @typeCheck(AbstractField)
+    def __applyFieldDefinition(self, field, rToken):
         """This method applies the domain parser associated with the specified field on the
         provided data. It returns a tupple which indicates the consummed data and the remainning data
         after the application of the field domain on the data.
@@ -177,30 +183,28 @@ class DataAlignment(threading.Thread):
         :raise Exception if something failed while parsing the data with the field domain.
 
         """
-        self._logger.debug("Apply field {0} on {1}".format(field.name, data))
-        binValue = TypeConverter.convert(data, HexaString, BitArray)
-        rToken.value=binValue
+        originalValue = rToken.getValueForVariable(field.domain)
+
+        self._logger.debug("Apply Field {0} ({1})".format(field.name, field.domain))
         field.domain.read(rToken)
 
         if not rToken.Ok:
-            raise Exception("Impossible to parse the specified data with the field specifications")
+            raise Exception("The field specification does not allow to parse data.")
 
-        readVariables = rToken.readVariablesByIndex
-        if readVariables is None or len(readVariables.keys()) == 0:
-            raise Exception("An error occured that prevented to retrieve the attached variables to each index of the consummed data.")
+        readValue = rToken.getValueForVariable(field.domain)
 
         if self.encoded:
-            consummedData = self.__applyEncodingFunctionsOnField(binValue[:rToken.index], field, readVariables)
+            consummedData = self.__applyEncodingFunctionsOnField(readValue, field, rToken)
         else:
-            consummedData = TypeConverter.convert(binValue[:rToken.index], BitArray, HexaString)
+            consummedData = TypeConverter.convert(readValue, BitArray, HexaString)
 
-        remainingData = TypeConverter.convert(binValue[rToken.index:], BitArray, HexaString)
-        self._logger.debug("Consummed : {0}, remainingData: {1}".format(consummedData, remainingData))
+        remainingData = TypeConverter.convert(originalValue[len(readValue):], BitArray, HexaString)
+        self._logger.debug("Sucessfuly parsed data, Consummed : {0}, remainingData: {1}".format(consummedData, remainingData))
 
         return (consummedData, remainingData)
 
-    @typeCheck(bitarray, AbstractField, dict)
-    def __applyEncodingFunctionsOnField(self, data, field, readVariables):
+    @typeCheck(bitarray, AbstractField, VariableReadingToken)
+    def __applyEncodingFunctionsOnField(self, data, field, readingToken):
         """Encodes the aligned data using the definition of the field
         and of its variables.
         The expected behavior is to encode the data with the default
@@ -211,8 +215,8 @@ class DataAlignment(threading.Thread):
         :type data: :class:`bitarray`
         :parameter field: the field from which the data belongs
         :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
-        :parameter readVariables: a dict that associates to each bit of the data the variable used to parse it.
-        :type readVariables: a dict [int]=:class:`netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
+        :parameter readingToken: the reading token used to parse provided data
+        :type readingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken.VariableReadingToken`
         :return: the encoded data
         :rtype: :class:`str`
         """
@@ -222,6 +226,9 @@ class DataAlignment(threading.Thread):
         if data is None:
             raise TypeError("The data cannot be None.")
 
+        if not readingToken.isValueForVariableAvailable(field.domain):
+            raise Exception("There are no value associated with the field, impossible to encode it.")
+
         currentField = field
         encodingFunctions = None
         while encodingFunctions is None or len(encodingFunctions) == 0:
@@ -230,13 +237,12 @@ class DataAlignment(threading.Thread):
                 break
             currentField = currentField.parent
 
-        encodedValue = data
         if encodingFunctions is None or len(encodingFunctions) == 0:
             encodingFunction = EncodingFunction.getDefaultEncodingFunction()
-            encodedValue = encodingFunction.encode(field, encodedValue, readVariables)
+            encodedValue = encodingFunction.encode(field, readingToken)
         else:
             for encodingFunction in encodingFunctions.values():
-                encodedValue = encodingFunction.encode(field, encodedValue, readVariables)
+                encodedValue = encodingFunction.encode(field, readingToken)
 
         return str(encodedValue)
 
