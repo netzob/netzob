@@ -56,7 +56,7 @@ class AbstractVariable(object):
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, varType, varId=None, name=None):
+    def __init__(self, varType, varId=None, name=None, learnable=False, mutable=False):
         """Constructor
 
         :param varType: the type of the variable. we highly recommend to use the __class_.__name__
@@ -78,8 +78,8 @@ class AbstractVariable(object):
             self.name = str(self.id)
 
         self.__varType = varType
-        self.learnable = False
-        self.mutable = False
+        self.learnable = learnable
+        self.mutable = mutable
         # A list containing all variables which value is bind to the value of this variable.
         self.__boundedVariables = []
         # An integer list which contain the index of each segment this variable is responsible for (they have been created from its)
