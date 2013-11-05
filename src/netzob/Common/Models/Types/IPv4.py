@@ -71,7 +71,7 @@ class IPv4(AbstractType):
 
     >>> f2.domain.learnable = False
     >>> s = Symbol(fields=[f1,f2])
-    >>> msgs = [RawMessage(s.generate()) for x in xrange(10)]
+    >>> msgs = [RawMessage(s.specialize()) for x in xrange(10)]
     >>> s.messages = msgs
     >>> # Display the number of lines in the getcells()
     >>> print len(str(s).split('\\n'))
@@ -101,15 +101,15 @@ class IPv4(AbstractType):
 
         >>> from netzob.all import *
         >>> f = Field(IPv4())
-        >>> len(f.generate())
+        >>> len(f.specialize())
         4
 
         >>> f = Field(IPv4("192.168.0.10"))
-        >>> TypeConverter.convert(f.generate(), Raw, IPv4)
+        >>> TypeConverter.convert(f.specialize(), Raw, IPv4)
         IPAddress('192.168.0.10')
 
         >>> f = Field(IPv4(network="10.10.10.0/24"))
-        >>> TypeConverter.convert(f.generate(), Raw, IPv4) in IPNetwork("10.10.10.0/24")
+        >>> TypeConverter.convert(f.specialize(), Raw, IPv4) in IPNetwork("10.10.10.0/24")
         True
 
         """

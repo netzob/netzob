@@ -57,28 +57,32 @@ class BitArray(AbstractType):
 
     >>> from netzob.all import *
     >>> f = Field(BitArray())
-    >>> vr = VariableReadingToken(value=bitarray('11010010101111010101', endian=AbstractType.defaultEndianness()))
+    >>> vr = VariableReadingToken()
+    >>> vr.setValueForVariable(f.domain, bitarray('11010010101111010101', endian=AbstractType.defaultEndianness()))
     >>> f.domain.read(vr)
     >>> print vr.Ok
     True
 
     >>> f = Field(BitArray(nbBits=50))
     >>> f.domain.learnable = False
-    >>> len(TypeConverter.convert(f.generate(), Raw, BitArray))
+    >>> len(TypeConverter.convert(f.specialize(), Raw, BitArray))
     56
-    >>> vr = VariableReadingToken(value=bitarray('11010010101111010101', endian=AbstractType.defaultEndianness()))
+    >>> vr = VariableReadingToken()
+    >>> vr.setValueForVariable(f.domain, bitarray('11010010101111010101', endian=AbstractType.defaultEndianness()))
     >>> f.domain.read(vr)
     >>> print vr.Ok
     False
 
     >>> f = Field(BitArray(nbBits=(8,20)))
-    >>> vr = VariableReadingToken(value=bitarray('1101101011011', endian=AbstractType.defaultEndianness()))
+    >>> vr = VariableReadingToken()
+    >>> vr.setValueForVariable(f.domain, bitarray('1101101011011', endian=AbstractType.defaultEndianness()))
     >>> f.domain.read(vr)
     >>> print vr.Ok
     True
 
     >>> f = Field(BitArray(value=bitarray('11011000101011', endian=AbstractType.defaultEndianness())))
-    >>> vr = VariableReadingToken(value=bitarray('11011000101011', endian=AbstractType.defaultEndianness()))
+    >>> vr = VariableReadingToken()
+    >>> vr.setValueForVariable(f.domain, bitarray('11011000101011', endian=AbstractType.defaultEndianness()))
     >>> f.domain.read(vr)
     >>> print vr.Ok
     True
