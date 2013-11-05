@@ -59,23 +59,24 @@ class test_ICMP(NetzobTestCase):
         pingPayload = Field(name="Payload")
 
         # field 1 : type - 1 byte
-        pingHeaders[0].domain = Raw(size=1)
+        pingHeaders[0].domain = Raw(nbBytes=1)
         pingHeaders[0].domain.learnable = False
 
         # field 2 : code - 1 byte
-        pingHeaders[1].domain = Raw(size=1)
+        pingHeaders[1].domain = Raw(nbBytes=1)
         pingHeaders[1].domain.learnable = False
 
         # field 3 : checksum - 2 bytes
-        pingHeaders[2].domain = Raw(size=2)
+        pingHeaders[2].domain = Raw(nbBytes=2)
         pingHeaders[2].domain.learnable = False
         #pingHeader[2].domain = [Raw(CRC16(pingHeader + pingPayload), size=16)]
 
         # field 4 : we put an ascii of 50 chars in the payload
-        pingPayload.domain = ASCII(size=50)
+        pingPayload.domain = ASCII(nbChars=50)
         pingPayload.domain.learnable = False
 
         ping = Symbol([pingHeader, pingPayload])
 
-        ping.messages = [RawMessage(ping.generate()) for i in range(0, 20)]
+        ping.messages = [RawMessage(ping.specialize()) for i in range(0, 20)]
         cells = ping.getCells()
+        print cells
