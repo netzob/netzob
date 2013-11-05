@@ -46,6 +46,7 @@ from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Alt import Alt
 from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Agg import Agg
 from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Common.Models.Types.AbstractType import AbstractType
+from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
 
 
 class DomainFactory(object):
@@ -87,7 +88,7 @@ class DomainFactory(object):
 
     @staticmethod
     def __normalizeLeafDomain(domain):
-        if isinstance(domain, Data):
+        if isinstance(domain, (Data, AbstractRelationVariableLeaf)):
             return domain
         else:
             return AbstractType.normalize(domain).buildDataRepresentation()
