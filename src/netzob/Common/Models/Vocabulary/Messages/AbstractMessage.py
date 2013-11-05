@@ -99,8 +99,7 @@ class AbstractMessage(SortableObject):
         msgData = [TypeConverter.convert(self.data, Raw, HexaString)]
         try:
             DataAlignment.align(msgData, field)
-        except Exception, e:
-            self._logger.debug(e)
+        except Exception:
             return False
         return True
 
