@@ -34,6 +34,8 @@
 from common.NetzobTestCase import NetzobTestCase
 import binascii
 from netzob.all import *
+import logging
+
 
 class test_USBMouseProtocol(NetzobTestCase):
 
@@ -381,4 +383,4 @@ class test_USBMouseProtocol(NetzobTestCase):
 
         initialSymbol.addEncodingFunction(TypeEncodingFunction(HexaString))
 
-        print initialSymbol
+        logging.debug(initialSymbol)
