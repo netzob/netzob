@@ -304,8 +304,8 @@ class AbstractField(AbstractMementoCreator):
         return values
 
     @abc.abstractmethod
-    def generate(self, mutator=None):
-        """Generate a :class:`netzob.Common.Models.Vocabulary.Messages.RawMessage` which content
+    def specialize(self, mutator=None):
+        """Specialize and generate a :class:`netzob.Common.Models.Vocabulary.Messages.RawMessage` which content
         follows the fields definitions attached to current element.
 
         :keyword mutator: if set, the mutator will be used to mutate the fields definitions
