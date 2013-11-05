@@ -34,6 +34,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -102,23 +103,15 @@ class Alt(AbstractVariableNode):
 
         self._logger.debug("[ {0} (Alternate): read access:".format(self))
         if len(self.children) > 0:
-            if self.mutable:
-                # mutable.
-                self.shuffleChildren()
-                self.readChildren(readingToken)
-
-            else:
-                # not mutable.
-                self.readChildren(readingToken)
-
+            self.readChildren(readingToken, self.mutable)
         else:
             # no child.
             self._logger.debug("Write abort: the variable has no child.")
             readingToken.Ok(False)
 
         # Variable notification
-        if readingToken.Ok:
-            self.notifyBoundedVariables("read", readingToken, self.currentValue)
+        #if readingToken.Ok:
+        #    self.notifyBoundedVariables("read", readingToken, self.currentValue)
 
         self._logger.debug("{0}. ]".format(readingToken))
 
@@ -126,6 +119,17 @@ class Alt(AbstractVariableNode):
     def write(self, writingToken):
         """Each child tries sequentially to write its value.
         one of them fails, the whole operation is cancelled.
+
+        >>> from netzob.all import *
+        >>> fHello = Field(Agg(["hello", " "]))
+        >>> fName = Field(Alt(["zoby", "netzob"]))
+        >>> fName.domain.mutable = True
+        >>> s = Symbol([fHello, fName])
+        >>> result = [s.specialize() for x in range(300)]
+        >>> print "hello netzob" in result
+        True
+        >>> print "hello zoby" in result
+        True
 
         :param readingToken: a token which contains all critical information on this reading access.
         :type readingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingToken.VariableReadingToken.VariableReadingToken`
@@ -138,13 +142,14 @@ class Alt(AbstractVariableNode):
         self._logger.debug("[ {0} (Alternate): write access:".format(self))
         self.tokenChoppedIndex = []  # New write access => new final value and new reference to it.
         if len(self.children) > 0:
-            if self.mutable:
-                # mutable.
-                self.shuffleChildren()
-                self.writeChildren(writingToken)
-            else:
-                # not mutable.
-                self.writeChildren(writingToken)
+            self.writeChildren(writingToken, self.mutable)
+            # if self.mutable:
+            #     # mutable.
+            #     self.shuffleChildren()
+            #     self.writeChildren(writingToken)
+            # else:
+            #     # not mutable.
+            #     self.writeChildren(writingToken)
         else:
             # no child.
             self._logger.debug("Write abort: the variable has no child.")
@@ -156,7 +161,7 @@ class Alt(AbstractVariableNode):
 
         self._logger.debug("{0}. ]".format(writingToken))
 
-    def readChildren(self, readingToken):
+    def readChildren(self, readingToken, shuffleChildren=False):
         """Each child tries to read its value..
         If it fails, it restore it value and the next child try.
         It stops if one child successes.
@@ -164,39 +169,73 @@ class Alt(AbstractVariableNode):
         >>> from netzob.all import *
         >>> data = TypeConverter.convert("earth", ASCII, BitArray)
         >>> alt = Alt([ASCII("world"), ASCII("earth")])
-        >>> rToken = VariableReadingToken(value=data)
+        >>> rToken = VariableReadingToken()
+        >>> rToken.setValueForVariable(alt, data)
         >>> alt.readChildren(rToken)
         >>> print rToken.Ok
         True
-        >>> print rToken.index > 0
-        True
+
+        >>> data = TypeConverter.convert("no-earth", ASCII, BitArray)
+        >>> alt = Alt([ASCII("world"), ASCII("earth")])
+        >>> rToken = VariableReadingToken(value=data)
+        >>> rToken.setValueForVariable(alt, data)
+        >>> alt.readChildren(rToken)
+        >>> print rToken.Ok
+        False
+
 
         """
+
+        # Check we have something to read
+        if not readingToken.isValueForVariableAvailable(self):
+            raise Exception("No value to read/parse assigned in the provided reading token to the current Alt.")
+
+        valueToParse = readingToken.getValueForVariable(self)
+
+        listOfChildren = self.children
+        if shuffleChildren:
+            listOfChildren = sorted(listOfChildren, key=lambda *args: random.random())
+
         self._logger.debug("[ {0} (Alternate): readChildren:".format(self))
-        savedIndex = readingToken.index
+
+        result = None
+        errorFlag = True
         for child in self.children:
-            # Memorized values for the child and its successors.
-            dictOfValues = dict()
-            dictOfValue = child.getDictOfValues(readingToken)
-            for key, val in dictOfValue.iteritems():
-                dictOfValues[key] = val
-
+            readingToken.setValueForVariable(child, valueToParse)
             child.read(readingToken)
-            if readingToken.Ok:
+
+            if readingToken.Ok and readingToken.isValueForVariableAvailable(child):
+                errorFlag = False
+                result = readingToken.getValueForVariable(child)
                 break
-            else:
-                readingToken.index = savedIndex
 
-                # We restore values for the child and its successors.
-                child.restore(readingToken)
-                if readingToken.vocabulary is not None:
-                    vocabulary = readingToken.vocabulary
-                    for key, val in dictOfValues.iteritems():
-                        vocabulary.getVariableByID(key).setCurrentValue(val)
+        if not errorFlag:
+            readingToken.setValueForVariable(self, result)
+        else:
+            readingToken.removeValueForVariable(self)
 
-        if readingToken.Ok:
-            # The value of the variable is simply the value we 'ate'.
-            self.currentValue = readingToken.value[savedIndex:readingToken.index]
+        #     # Memorized values for the child and its successors.
+        #     dictOfValues = dict()
+        #     dictOfValue = child.getDictOfValues(readingToken)
+        #     for key, val in dictOfValue.iteritems():
+        #         dictOfValues[key] = val
+
+        #     child.read(readingToken)
+        #     if readingToken.Ok:
+        #         break
+        #     else:
+        #         readingToken.index = savedIndex
+
+        #         # We restore values for the child and its successors.
+        #         child.restore(readingToken)
+        #         if readingToken.vocabulary is not None:
+        #             vocabulary = readingToken.vocabulary
+        #             for key, val in dictOfValues.iteritems():
+        #                 vocabulary.getVariableByID(key).setCurrentValue(val)
+
+        # if readingToken.Ok:
+        #     # The value of the variable is simply the value we 'ate'.
+        #     self.currentValue = readingToken.value[savedIndex:readingToken.index]
 
         if self.learnable and not readingToken.Ok and not self.learnable:
             # If we dont not found a proper child but the node can learn, we learn the value.
@@ -204,7 +243,7 @@ class Alt(AbstractVariableNode):
 
         self._logger.debug("Variable {0}: {1}. ]".format(self.name, readingToken))
 
-    def writeChildren(self, writingToken):
+    def writeChildren(self, writingToken, shuffleChildren=False):
         """Each child tries to write its value..
         If it fails, it restore it value and the next child try.
         It stops if one child successes.
@@ -213,38 +252,55 @@ class Alt(AbstractVariableNode):
         >>> data = Alt([ASCII("netzob"), ASCII("!")])
         >>> wToken = VariableWritingToken()
         >>> data.writeChildren(wToken)
-        >>> print TypeConverter.convert(wToken.value, BitArray, ASCII)
+        >>> print TypeConverter.convert(wToken.getValueForVariable(data), BitArray, ASCII)
         netzob
 
         """
         self._logger.debug("[ {0} (Alternate): writeChildren:".format(self))
 
-        savedValue = writingToken.value
-        savedIndex = writingToken.index
-        for child in self.children:
-            # Memorized values for the child and its successor.
-            dictOfValues = dict()
-            dictOfValue = child.getDictOfValues(writingToken)
-            for key, val in dictOfValue.iteritems():
-                dictOfValues[key] = val
+        errorFlag = True
+        result = None
 
+        listOfChildren = self.children
+        if shuffleChildren:
+            listOfChildren = sorted(listOfChildren, key=lambda *args: random.random())
+
+        for child in listOfChildren:
             child.write(writingToken)
-            if writingToken.Ok and writingToken.value is not None:
+            if writingToken.Ok and writingToken.isValueForVariableAvailable(child):
+                errorFlag = False
+                result = writingToken.getValueForVariable(child)
                 break
-            else:
-                writingToken.value = savedValue
 
-                # We restore values for the child and its successor.
-                child.restore(writingToken)
-                vocabulary = writingToken.getVocabulary()
-                for key, val in dictOfValues.iteritems():
-                    vocabulary.getVariableByID(key).setCurrentValue(val)
+        if not errorFlag:
+            writingToken.setValueForVariable(self, result)
 
-        if writingToken.Ok:
-            # The value of the variable is simply the value we made.
-            self.currentValue = writingToken.value[savedIndex:writingToken.index]
+        # savedValue = writingToken.value
+        # savedIndex = writingToken.index
+        # for child in self.children:
+        #     # Memorized values for the child and its successor.
+        #     dictOfValues = dict()
+        #     dictOfValue = child.getDictOfValues(writingToken)
+        #     for key, val in dictOfValue.iteritems():
+        #         dictOfValues[key] = val
 
-        self._logger.debug("Variable {0}: {1}. ]".format(self.name, writingToken))
+        #     child.write(writingToken)
+        #     if writingToken.Ok and writingToken.value is not None:
+        #         break
+        #     else:
+        #         writingToken.value = savedValue
+
+        #         # We restore values for the child and its successor.
+        #         child.restore(writingToken)
+        #         vocabulary = writingToken.getVocabulary()
+        #         for key, val in dictOfValues.iteritems():
+        #             vocabulary.getVariableByID(key).setCurrentValue(val)
+
+        # if writingToken.Ok:
+        #     # The value of the variable is simply the value we made.
+        #     self.currentValue = writingToken.value[savedIndex:writingToken.index]
+
+        # self._logger.debug("Variable {0}: {1}. ]".format(self.name, writingToken))
 
     def buildRegex(self):
         """This method creates a regex based on the children of the Alternate.

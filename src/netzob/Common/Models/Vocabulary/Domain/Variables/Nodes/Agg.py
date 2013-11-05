@@ -76,26 +76,6 @@ class Agg(AbstractVariableNode):
     def __init__(self, children=None):
         super(Agg, self).__init__(self.__class__.__name__, children)
 
-    @typeCheck(AbstractVariableProcessingToken)
-    def isDefined(self, processingToken):
-        """If one child is not defined the node is not defined.
-
-        :param processingToken: a variable processing token fro mwhich we can have access to the memory
-        :type processingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken`
-        :raise: TypeError if parameter is not Valid
-        """
-
-        if processingToken is None:
-            raise TypeError("processingToken cannot be None")
-
-        if len(self.children) > 0:
-            for child in self.children:
-                if not child.isDefined(processingToken):
-                    return False
-            return True
-        else:
-            return False
-
     @typeCheck(VariableReadingToken)
     def read(self, readingToken):
         """Grants a reading access to the variable.
@@ -134,6 +114,17 @@ class Agg(AbstractVariableNode):
         """Each child tries sequentially to write its value.
         one of them fails, the whole operation is cancelled.
 
+        >>> from netzob.all import *
+        >>> fHello = Field(Agg(["hello", "+"]))
+        >>> fName = Field(Agg(["zoby"]))
+        >>> s = Symbol([fHello, fName])
+        >>> print "\\n".join([s.specialize() for x in range(5)])
+        hello+zoby
+        hello+zoby
+        hello+zoby
+        hello+zoby
+        hello+zoby
+
         :param readingToken: a token which contains all critical information on this reading access.
         :type readingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingToken.VariableReadingToken.VariableReadingToken`
         :raise: TypeError if parameter is not Valid
@@ -143,9 +134,9 @@ class Agg(AbstractVariableNode):
             raise TypeError("writingToken cannot be None")
 
         self._logger.debug("[ {0} (Aggregate): write access:".format(self))
-        self.resetTokenChoppedIndexes()  # New write access => new final value and new reference to it.
+        #self.resetTokenChoppedIndexes()  # New write access => new final value and new reference to it.
         if len(self.children) > 0:
-            if self.isMutable():
+            if self.mutable:
                 # mutable.
                 self.shuffleChildren()
                 self.writeChildren(writingToken)
@@ -153,17 +144,46 @@ class Agg(AbstractVariableNode):
             else:
                 # not mutable.
                 self.writeChildren(writingToken)
-
         else:
             # no child.
             self._logger.debug("Write abort: the variable has no child.")
             writingToken.Ok = False
 
         # Variable notification
-        if writingToken.Ok:
-            self.notifyBoundedVariables("write", writingToken)
+        # if writingToken.Ok:
+        #    self.notifyBoundedVariables("write", writingToken)
 
-        self.log.debug("\t :{0}. ]".format(writingToken))
+        self._logger.debug("\t :{0}. ]".format(writingToken))
+
+    def writeChildren(self, writingToken):
+        """Executes a write access sequentially on each child of the variable.
+        If all child successes, then it returns OK, else it returns NOK and restores the former value for each child.
+
+        :type writingToken: :class:`netzob.Common.Models.Vocabulary.Domain.VariableProcessingTokens.VariableWritingToken.VariableWritingToken`
+        :param writingToken: a token which contains all critical information on this access.
+        """
+        self._logger.debug("- [ {0}: writeChildren.".format(self))
+
+        result = None
+        errorFlag = False
+        for child in self.children:
+            child.write(writingToken)
+            if writingToken.Ok and writingToken.isValueForVariableAvailable(child):
+                if result is None:
+                    result = writingToken.getValueForVariable(child)
+                else:
+                    result += writingToken.getValueForVariable(child)
+            else:
+                errorFlag = True
+                break
+
+        if not errorFlag:
+            writingToken.setValueForVariable(self, result)
+        else:
+            # Remove any computed value from the writing token
+            writingToken.removeValueForVariable(self)
+            for child in self.children:
+                writingToken.removeValueForVariable(child)
 
     def readChildren(self, readingToken):
         """Each child tries to read its value..
@@ -173,19 +193,17 @@ class Agg(AbstractVariableNode):
         >>> data = TypeConverter.convert("Our world is earth", ASCII, BitArray)
         >>> agg = Agg([ASCII("Our world is "), ASCII("earth")])
         >>> rToken = VariableReadingToken(value=data)
+        >>> rToken.setValueForVariable(agg, data)
         >>> agg.readChildren(rToken)
         >>> print rToken.Ok
-        True
-        >>> print rToken.index > 0
         True
 
         >>> data = TypeConverter.convert("Our world is earth", ASCII, BitArray)
         >>> agg = Agg([ASCII("Our world is "), ASCII("not "), ASCII("earth")])
         >>> rToken = VariableReadingToken(value=data)
+        >>> rToken.setValueForVariable(agg, data)
         >>> agg.readChildren(rToken)
         >>> print rToken.Ok
-        False
-        >>> print rToken.index > 0
         False
 
         """
@@ -196,6 +214,11 @@ class Agg(AbstractVariableNode):
         savedIndex = readingToken.index
         self.currentValue = ''
 
+        if not readingToken.isValueForVariableAvailable(self):
+            raise Exception("Nothing to read because no data is assigned to the current Agg.")
+
+        valueToParse = readingToken.getValueForVariable(self)
+
         for child in self.children:
             # Memorize each child susceptible to be restored. One by one.
             dictOfValue = child.getDictOfValues(readingToken)
@@ -203,9 +226,13 @@ class Agg(AbstractVariableNode):
                 dictOfValues[key] = val
 
             # Child execution.
+            readingToken.setValueForVariable(child, valueToParse)
             child.read(readingToken)
             if not readingToken.Ok:
                 break
+            else:
+                childValue = readingToken.getValueForVariable(child)
+                valueToParse = valueToParse[len(childValue):]
 
         # If it has failed we restore every executed children and the index.
         if not readingToken.Ok:
@@ -227,6 +254,26 @@ class Agg(AbstractVariableNode):
             self.currentValue = readingToken.value[savedIndex:readingToken.index]
 
         self._logger.debug("Variable {0} ] -".format(readingToken))
+
+    @typeCheck(AbstractVariableProcessingToken)
+    def isDefined(self, processingToken):
+        """If one child is not defined the node is not defined.
+
+        :param processingToken: a variable processing token fro mwhich we can have access to the memory
+        :type processingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken`
+        :raise: TypeError if parameter is not Valid
+        """
+
+        if processingToken is None:
+            raise TypeError("processingToken cannot be None")
+
+        if len(self.children) > 0:
+            for child in self.children:
+                if not child.isDefined(processingToken):
+                    return False
+            return True
+        else:
+            return False
 
     def buildRegex(self):
         """This method creates a regex based on the children of the Aggregate.
