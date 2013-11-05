@@ -51,14 +51,15 @@ from netzob.Common.Utils import SortedTypedList
 
 from netzob.Inference.Vocabulary.Search import SearchTask
 from netzob.Inference.Vocabulary.Search import SearchResult
-
 from netzob.Inference.Vocabulary.FormatEditorOperations.FieldSplitAligned import FieldSplitAligned
+
 
 def getSuite():
     # List of modules to include in the list of tests
     modules = [
         Protocol.__module__,
         Field.__module__,
+        DataAlignment,
         AbstractField,
         Symbol.__module__,
         DomainFactory.__module__,
@@ -83,7 +84,7 @@ def getSuite():
         Transition.__module__,
         NetzobRegex,
         ParallelDataAlignment,
-        DataAlignment,
+
         FormatEditor.__module__,
         FieldSplitStatic,
         FormatIdentifier.__module__,
