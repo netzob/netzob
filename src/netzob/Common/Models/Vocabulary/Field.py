@@ -46,6 +46,8 @@
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Models.Types.Raw import Raw
+from netzob.Common.Models.Types.BitArray import BitArray
+from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Vocabulary.Domain.DomainFactory import DomainFactory
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken import VariableWritingToken
 
@@ -134,15 +136,17 @@ class Field(AbstractField):
         self.domain = domain
 
     @typeCheck(VariableWritingToken, object)
-    def generate(self, writingToken=None, generationStrategy=None):
-        """Generate an hexastring which content
+    def specialize(self, writingToken=None, generationStrategy=None):
+        """Specialize the current field to build a raw data that
         follows the fields definitions attached to current element.
 
         This method allows to generate some content following the field definition:
 
         >>> from netzob.all import *
         >>> f = Field("hello")
-        >>> print f.generate()
+        >>> print '\\n'.join([f.specialize() for x in range(3)])
+        hello
+        hello
         hello
 
         This method also applies on multiple fields using a Symbol
@@ -150,7 +154,9 @@ class Field(AbstractField):
         >>> fHello = Field("hello ")
         >>> fName = Field("zoby")
         >>> s = Symbol([fHello, fName])
-        >>> print s.generate()
+        >>> print '\\n'.join([s.specialize() for x in range(3)])
+        hello zoby
+        hello zoby
         hello zoby
 
         :keyword writingToken: internal buffer of generated content to ensure relations between fields
@@ -170,11 +176,14 @@ class Field(AbstractField):
             writingToken = VariableWritingToken(generationStrategy=generationStrategy)
 
         if len(self.children) > 0:
-            return ''.join(child.generate(writingToken) for child in self.children)
+            return ''.join([child.specialize(writingToken) for child in self.children])
         else:
             self.domain.write(writingToken)
-            wroteData = writingToken.value
-            return wroteData.tobytes()
+
+            if writingToken.isValueForVariableAvailable(self.domain):
+                return TypeConverter.convert(writingToken.getValueForVariable(self.domain), BitArray, Raw)
+            else:
+                raise Exception("The definition of the field does not support its specialization.")
 
     @property
     def domain(self):
