@@ -46,6 +46,10 @@ from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Utils.TypedList import TypedList
 from netzob.Common.Models.Vocabulary.Messages.AbstractMessage import AbstractMessage
 from netzob.Common.Models.Vocabulary.Field import Field
+from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken import VariableWritingToken
+from netzob.Common.Models.Types.Raw import Raw
+from netzob.Common.Models.Types.BitArray import BitArray
+from netzob.Common.Models.Types.TypeConverter import TypeConverter
 
 
 class Symbol(AbstractField):
@@ -91,21 +95,22 @@ class Symbol(AbstractField):
             fields = [Field()]
         self.children = fields
 
-    def generate(self, mutator=None):
-        """Generate an hexastring which content
+    def specialize(self, writingToken=None, generationStrategy=None):
+        """Specialize and generate an hexastring which content
         follows the fields definitions attached to current element.
 
-        :keyword mutator: if set, the mutator will be used to mutate the fields definitions
-        :type mutator: :class:`netzob.Common.Models.Mutators.AbstractMutator`
+        :keyword generationStrategy: if set, the strategy will be used to generate the fields definitions
+        :type generaionrStrategy: :class:``
 
         :return: a generated content represented with an hexastring
         :rtype: :class:`str``
         :raises: :class:`netzob.Common.Models.Vocabulary.AbstractField.GenerationException` if an error occurs while generating a message
         """
-        content = []
-        for child in self.children:
-            content.append(child.generate(mutator))
-        return ''.join(content)
+        if writingToken is None:
+            writingToken = VariableWritingToken(generationStrategy=generationStrategy)
+        result = [child.specialize(writingToken) for child in self.children]
+
+        return ''.join(result)
 
     def clearMessages(self):
         """Delete all the messages attached to the current symbol"""
