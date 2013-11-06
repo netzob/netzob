@@ -145,7 +145,7 @@ class PCAPImporter(object):
                 return
 
             # Build the L2NetworkMessage
-            l2Message = L2NetworkMessage(payload.encode("hex"), epoch, l2Proto, l2SrcAddr, l2DstAddr)
+            l2Message = L2NetworkMessage(payload, epoch, l2Proto, l2SrcAddr, l2DstAddr)
 
             self.messages.add(l2Message)
 
@@ -153,7 +153,7 @@ class PCAPImporter(object):
             try:
                 (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = self.__decodeLayer2(header, payload)
                 (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum) = self.__decodeLayer3(etherType, l2Payload)
-            except NetzobImportException:
+            except NetzobImportException, e:
                 self._logger.warn("An error occured while decoding layer2 and layer3 of a packet: {0}".format(e))
                 return
 
@@ -161,7 +161,7 @@ class PCAPImporter(object):
                 return
 
             # Build the L3NetworkMessage
-            l3Message = L3NetworkMessage(l2Payload.encode("hex"), epoch, l2Proto, l2SrcAddr, l2DstAddr, l3Proto, l3SrcAddr, l3DstAddr)
+            l3Message = L3NetworkMessage(l2Payload, epoch, l2Proto, l2SrcAddr, l2DstAddr, l3Proto, l3SrcAddr, l3DstAddr)
             self.messages.add(l3Message)
 
         elif self.importLayer == 4:
@@ -169,14 +169,14 @@ class PCAPImporter(object):
                 (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = self.__decodeLayer2(header, payload)
                 (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum) = self.__decodeLayer3(etherType, l2Payload)
                 (l4Proto, l4SrcPort, l4DstPort, l4Payload) = self.__decodeLayer4(ipProtocolNum, l3Payload)
-            except NetzobImportException:
+            except NetzobImportException, e:
                 self._logger.warn("An error occured while decoding layer2, layer3 or layer4 of a packet: {0}".format(e))
                 return
             if len(l4Payload) == 0:
                 return
 
             # Build the L4NetworkMessage
-            l4Message = L4NetworkMessage(l3Payload.encode("hex"), epoch, l2Proto, l2SrcAddr, l2DstAddr,
+            l4Message = L4NetworkMessage(l3Payload, epoch, l2Proto, l2SrcAddr, l2DstAddr,
                                          l3Proto, l3SrcAddr, l3DstAddr, l4Proto, l4SrcPort, l4DstPort)
 
             self.messages.add(l4Message)
@@ -186,13 +186,13 @@ class PCAPImporter(object):
                 (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = self.__decodeLayer2(header, payload)
                 (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum) = self.__decodeLayer3(etherType, l2Payload)
                 (l4Proto, l4SrcPort, l4DstPort, l4Payload) = self.__decodeLayer4(ipProtocolNum, l3Payload)
-            except NetzobImportException:
+            except NetzobImportException, e:
                 self._logger.warn("An error occured while decoding layer2, layer3, layer4 or layer5 of a packet: {0}".format(e))
                 return
             if len(l4Payload) == 0:
                 return
 
-            l5Message = L4NetworkMessage(l4Payload.encode("hex"), epoch, l2Proto, l2SrcAddr, l2DstAddr,
+            l5Message = L4NetworkMessage(l4Payload, epoch, l2Proto, l2SrcAddr, l2DstAddr,
                                          l3Proto, l3SrcAddr, l3DstAddr, l4Proto, l4SrcPort, l4DstPort)
 
             self.messages.add(l5Message)
