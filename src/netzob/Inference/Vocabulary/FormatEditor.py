@@ -66,7 +66,6 @@ class FormatEditor(object):
 
         Its a wrapper for :class:`netzob.Inference.Vocabulary.FieldSplitStatic.ParallelFieldSplitStatic.ParallelFieldSplitStatic`.
 
-
         >>> import binascii
         >>> from netzob.all import *
         >>> samples = ["00ff2f000000",	"000010000000",	"00fe1f000000",	"000020000000", "00ff1f000000",	"00ff1f000000",	"00ff2f000000",	"00fe1f000000"]
@@ -92,6 +91,19 @@ class FormatEditor(object):
         00 | ff1f | 000000
         00 | ff2f | 000000
         00 | fe1f | 000000
+
+
+        >>> from netzob.all import *
+        >>> samples = ["0300002502f080320100003a00000e00060501120a10020002006e840000400004001001ab", "0300001602f080320300003a000002000100000501ff", "0300000702f000"]
+        >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
+        >>> symbol = Symbol(messages=messages)
+        >>> symbol.encodingFunctions.add(TypeEncodingFunction(HexaString))
+        >>> FormatEditor.splitStatic(symbol)
+        >>> print symbol
+        030000 | 25 | 02f0 | 80320100003a00000e00060501120a10020002006e840000400004001001ab
+        030000 | 16 | 02f0 |                               80320300003a000002000100000501ff
+        030000 | 07 | 02f0 |                                                             00
+
 
         :param field: the field for which we update the format
         :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`

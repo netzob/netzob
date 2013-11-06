@@ -220,6 +220,8 @@ class FieldSplitStatic(object):
             for fieldValue in fieldValues:
                 if i < len(fieldValue):
                     currentIndexValue.append(fieldValue[i:min(len(fieldValue), i + stepUnitsize)])
+                else:
+                    currentIndexValue.append('')
             indexedValues.append(currentIndexValue)
 
         # If requested, merges the adjacent static fields
@@ -240,7 +242,7 @@ class FieldSplitStatic(object):
                 result.append([''.join(staticSequences)])
             indexedValues = result
 
-         # If requested, merges the adjacent dynamic fields
+        # If requested, merges the adjacent dynamic fields
         if self.mergeAdjacentDynamicFields:
             result = []
             dynamicSequences = []
