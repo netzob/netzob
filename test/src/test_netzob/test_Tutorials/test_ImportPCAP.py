@@ -40,6 +40,14 @@ from netzob.all import *
 
 class test_ImportPCAP(NetzobTestCase):
 
+    def test_createSymbolWithPCAPMessages(self):
+        """Tests (and illustrates) how to import messages
+        from a PCAP and store them in a dedicated symbol"""
+
+        pcapFile = os.path.join("test", "resources", "pcaps", "botnet_irc_bot.pcap")
+        symbol = Symbol(messages=PCAPImporter.readFile(pcapFile))
+        self.assertTrue(len(symbol.messages) == 17)
+
     def test_importPCAPApplicativeLayer(self):
         """Test (and illustrates) how to import messages
         out of a pcap. In this test, we only consider the payload
