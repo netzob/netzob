@@ -297,11 +297,61 @@ class AbstractField(AbstractMementoCreator):
         :rtype: a :class:`list` of :class:`str`
         :raises: :class:`netzob.Common.Models.Vocabulary.AbstractField.AlignmentException` if an error occurs while aligning messages
         """
-        cells = self.getCells()
+        cells = self.getCells(encoded=encoded, styled=styled)
         values = []
         for line in cells:
             values.append(''.join(line))
         return values
+
+    def getMessagesWithValue(self, value):
+        """Computes and returns the messages that have a specified value
+        in the current field.
+
+        >>> from netzob.all import *
+        >>> messages = [RawMessage("hello {0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'zoby', 'lapy'] for city in ['Paris', 'Berlin', 'New-York']]
+        >>> f1 = Field("hello ", name="hello")
+        >>> f2 = Field(["netzob", "zoby", "lapy", "sygus"], name="pseudo")
+        >>> f3 = Field(", what's up in ", name="whatsup")
+        >>> f4 = Field(["Paris", "Berlin", "New-York"], name="city")
+        >>> f5 = Field(" ?", name="end")
+        >>> symbol = Symbol([f1, f2, f3, f4, f5], messages=messages)
+        >>> print symbol
+        hello  | netzob | , what's up in  |    Paris |  ?
+        hello  | netzob | , what's up in  |   Berlin |  ?
+        hello  | netzob | , what's up in  | New-York |  ?
+        hello  |   zoby | , what's up in  |    Paris |  ?
+        hello  |   zoby | , what's up in  |   Berlin |  ?
+        hello  |   zoby | , what's up in  | New-York |  ?
+        hello  |   lapy | , what's up in  |    Paris |  ?
+        hello  |   lapy | , what's up in  |   Berlin |  ?
+        hello  |   lapy | , what's up in  | New-York |  ?
+        >>> lapySymbol = Symbol(messages=symbol.children[1].getMessagesWithValue("lapy"))
+        >>> print lapySymbol
+           hello lapy, what's up in Paris ?
+          hello lapy, what's up in Berlin ?
+        hello lapy, what's up in New-York ?
+        >>> FormatEditor.splitStatic(lapySymbol)
+        >>> lapySymbol.encodingFunctions.add(TypeEncodingFunction(HexaString))
+        >>> print lapySymbol
+        68656c6c6f206c6170792c2077686174277320757020696e20 |       5061726973203f
+        68656c6c6f206c6170792c2077686174277320757020696e20 |     4265726c696e203f
+        68656c6c6f206c6170792c2077686174277320757020696e20 | 4e65772d596f726b203f
+
+        :parameter value: a Raw value
+        :type value: :class:`object`
+        :return: a list of messages
+        :rtype: a list of :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+        """
+
+        if value is None:
+            raise TypeError("Value cannot be None")
+
+        fieldValues = self.getValues(encoded=False, styled=False)
+        result = []
+        for i_message, message in enumerate(self.messages):
+            if fieldValues[i_message] == value:
+                result.append(message)
+        return result
 
     @abc.abstractmethod
     def specialize(self, mutator=None):
