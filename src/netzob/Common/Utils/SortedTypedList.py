@@ -152,3 +152,7 @@ class SortedTypedList(object):
 
     def __repr__(self):
         return repr(self.__tree)
+
+    def __iter__(self):
+        """SortedTypedList is an iterable over its values (and not its keys)."""
+        return self.__tree.values().__iter__()
