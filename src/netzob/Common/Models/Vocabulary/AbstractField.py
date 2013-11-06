@@ -98,7 +98,7 @@ class AbstractField(AbstractMementoCreator):
         self._variable = None
 
     @typeCheck(bool, bool, bool)
-    def getCells(self, encoded=False, styled=False, transposed=False):
+    def getCells(self, encoded=True, styled=True, transposed=False):
         """Returns a matrix with a different line for each messages attached to the symbol of the current element.
 
         The matrix includes a different column for each leaf children of the current element.
@@ -144,15 +144,15 @@ class AbstractField(AbstractMementoCreator):
         68656c6c6f20 |   lapy | , what's up in  | 4e65772d596f726b |  ?
 
         >>> print fheader.getCells()
-        68656c6c6f20 | 6e65747a6f62
-        68656c6c6f20 | 6e65747a6f62
-        68656c6c6f20 | 6e65747a6f62
-        68656c6c6f20 |     7a6f6279
-        68656c6c6f20 |     7a6f6279
-        68656c6c6f20 |     7a6f6279
-        68656c6c6f20 |     6c617079
-        68656c6c6f20 |     6c617079
-        68656c6c6f20 |     6c617079
+        68656c6c6f20 | netzob
+        68656c6c6f20 | netzob
+        68656c6c6f20 | netzob
+        68656c6c6f20 |   zoby
+        68656c6c6f20 |   zoby
+        68656c6c6f20 |   zoby
+        68656c6c6f20 |   lapy
+        68656c6c6f20 |   lapy
+        68656c6c6f20 |   lapy
 
         >>> print fh1.getCells()
         68656c6c6f20
@@ -166,37 +166,37 @@ class AbstractField(AbstractMementoCreator):
         68656c6c6f20
 
         >>> print fh2.getCells()
-        6e65747a6f62
-        6e65747a6f62
-        6e65747a6f62
-            7a6f6279
-            7a6f6279
-            7a6f6279
-            6c617079
-            6c617079
-            6c617079
+        netzob
+        netzob
+        netzob
+          zoby
+          zoby
+          zoby
+          lapy
+          lapy
+          lapy
 
         >>> print fbody.getCells()
-        2c2077686174277320757020696e20 |       5061726973 | 203f
-        2c2077686174277320757020696e20 |     4265726c696e | 203f
-        2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
-        2c2077686174277320757020696e20 |       5061726973 | 203f
-        2c2077686174277320757020696e20 |     4265726c696e | 203f
-        2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
-        2c2077686174277320757020696e20 |       5061726973 | 203f
-        2c2077686174277320757020696e20 |     4265726c696e | 203f
-        2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
+        , what's up in  |       5061726973 |  ?
+        , what's up in  |     4265726c696e |  ?
+        , what's up in  | 4e65772d596f726b |  ?
+        , what's up in  |       5061726973 |  ?
+        , what's up in  |     4265726c696e |  ?
+        , what's up in  | 4e65772d596f726b |  ?
+        , what's up in  |       5061726973 |  ?
+        , what's up in  |     4265726c696e |  ?
+        , what's up in  | 4e65772d596f726b |  ?
 
         >>> print fb1.getCells()
-        2c2077686174277320757020696e20
-        2c2077686174277320757020696e20
-        2c2077686174277320757020696e20
-        2c2077686174277320757020696e20
-        2c2077686174277320757020696e20
-        2c2077686174277320757020696e20
-        2c2077686174277320757020696e20
-        2c2077686174277320757020696e20
-        2c2077686174277320757020696e20
+        , what's up in
+        , what's up in
+        , what's up in
+        , what's up in
+        , what's up in
+        , what's up in
+        , what's up in
+        , what's up in
+        , what's up in
 
         >>> print fb2.getCells()
               5061726973
@@ -210,15 +210,15 @@ class AbstractField(AbstractMementoCreator):
         4e65772d596f726b
 
         >>> print fb3.getCells()
-        203f
-        203f
-        203f
-        203f
-        203f
-        203f
-        203f
-        203f
-        203f
+         ?
+         ?
+         ?
+         ?
+         ?
+         ?
+         ?
+         ?
+         ?
 
         :keyword encoded: if set to True, encoding functions are applied on returned cells
         :type encoded: :class:`bool`
@@ -240,7 +240,7 @@ class AbstractField(AbstractMementoCreator):
         return ParallelDataAlignment.align(data, self, encoded=encoded)
 
     @typeCheck(bool, bool)
-    def getValues(self, encoded=False, styled=False):
+    def getValues(self, encoded=True, styled=True):
         """Returns all the values the current element can take following messages attached to the symbol of current element.
 
         Specific encodingFunctions can also be considered if parameter encoded is set to True.

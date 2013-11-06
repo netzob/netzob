@@ -203,7 +203,7 @@ class FieldSplitStatic(object):
         if field is None:
             raise TypeError("The field cannot be None")
 
-        fieldValues = field.getValues()
+        fieldValues = [TypeConverter.convert(data, Raw, HexaString) for data in field.getValues(encoded=False)]
         if len(fieldValues) == 0:
             raise Exception("No value found in the field.")
 
