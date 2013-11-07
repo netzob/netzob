@@ -79,7 +79,7 @@ class DomainEncodingFunction(EncodingFunction):
         if not readingToken.isValueForVariableAvailable(variable):
             return result
 
-        if variable.varType == "Data":
+        if variable.varType == "Data" or variable.varType == "Size":
             val = readingToken.getValueForVariable(variable)
             encodedVal = TypeConverter.convert(val, BitArray, variable.dataType.__class__)
             result.append(str(encodedVal))
@@ -87,7 +87,7 @@ class DomainEncodingFunction(EncodingFunction):
             for child in variable.children:
                 result.extend(self.encodeChild(child, readingToken))
         else:
-            raise Exception("Unknown type of variable: {0}.x".format(variable.varType))
+            raise Exception("Unknown type of variable: {0}".format(variable.varType))
 
         if len(result) == 0:
             return ''
