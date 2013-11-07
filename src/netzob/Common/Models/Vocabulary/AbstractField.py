@@ -188,15 +188,15 @@ class AbstractField(AbstractMementoCreator):
         , what's up in  | 4e65772d596f726b |  ?
 
         >>> print fb1.getCells()
-        , what's up in
-        , what's up in
-        , what's up in
-        , what's up in
-        , what's up in
-        , what's up in
-        , what's up in
-        , what's up in
-        , what's up in
+        , what's up in 
+        , what's up in 
+        , what's up in 
+        , what's up in 
+        , what's up in 
+        , what's up in 
+        , what's up in 
+        , what's up in 
+        , what's up in 
 
         >>> print fb2.getCells()
               5061726973
