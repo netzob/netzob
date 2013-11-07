@@ -196,7 +196,7 @@ class DataAlignment(threading.Thread):
         if self.encoded:
             consummedData = self.__applyEncodingFunctionsOnField(readValue, field, rToken)
         else:
-            consummedData = TypeConverter.convert(readValue, BitArray, HexaString)
+            consummedData = TypeConverter.convert(readValue, BitArray, Raw)
 
         remainingData = TypeConverter.convert(originalValue[len(readValue):], BitArray, HexaString)
         self._logger.debug("Sucessfuly parsed data, Consummed : {0}, remainingData: {1}".format(consummedData, remainingData))
