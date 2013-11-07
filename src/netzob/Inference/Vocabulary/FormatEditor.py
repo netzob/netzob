@@ -104,6 +104,18 @@ class FormatEditor(object):
         030000 | 16 | 02f0 |                               80320300003a000002000100000501ff
         030000 | 07 | 02f0 |                                                             00
 
+        >>> contents = ["hello lapy, what's up in Paris ?", "hello lapy, what's up in Berlin ?", "hello lapy, what's up in New-York ?"]
+        >>> messages = [RawMessage(data=m) for m in contents]
+        >>> s = Symbol(messages=messages)
+        >>> print s
+           hello lapy, what's up in Paris ?
+          hello lapy, what's up in Berlin ?
+        hello lapy, what's up in New-York ?
+        >>> FormatEditor.splitStatic(s)
+        >>> print s
+        hello lapy, what's up in  |    Paris ?
+        hello lapy, what's up in  |   Berlin ?
+        hello lapy, what's up in  | New-York ?
 
         :param field: the field for which we update the format
         :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
