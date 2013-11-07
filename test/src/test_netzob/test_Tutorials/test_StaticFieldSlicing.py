@@ -37,7 +37,7 @@ from netzob.all import *
 import binascii
 
 
-class test_S7Protocol(NetzobTestCase):
+class test_StaticFieldSlicing(NetzobTestCase):
 
     def test_analyze(self):
         logging.info("Test : static slicing of a field")
