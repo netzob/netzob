@@ -92,3 +92,15 @@ class AbstractVariableNode(AbstractVariable):
         for child in children:
             normalizedChild = DomainFactory.normalizeDomain(child)
             self._children.append(normalizedChild)
+
+    def _str_debug(self, deepness=0):
+        """Returns a string which denotes
+        the current field definition using a tree display"""
+
+        tab = ["     " for x in xrange(deepness - 1)]
+        tab.append("|--   ")
+        tab.append("{0}".format(self))
+        lines = [''.join(tab)]
+        for f in self.children:
+            lines.append(" " + f._str_debug(deepness + 1))
+        return '\n'.join(lines)
