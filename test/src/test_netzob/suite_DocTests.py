@@ -53,6 +53,8 @@ from netzob.Inference.Vocabulary.Search import SearchTask
 from netzob.Inference.Vocabulary.Search import SearchResult
 from netzob.Inference.Vocabulary.FormatEditorOperations.FieldSplitAligned import FieldSplitAligned
 
+from netzob.Inference.Vocabulary.FormatEditorOperations import FieldOperations
+
 
 def getSuite():
     # List of modules to include in the list of tests
@@ -107,7 +109,9 @@ def getSuite():
         RawMessage.__module__,
         L2NetworkMessage.__module__,
         L3NetworkMessage.__module__,
-        L4NetworkMessage.__module__
+        L4NetworkMessage.__module__,
+
+        FieldOperations
     ]
 
     suite = unittest.TestSuite()
