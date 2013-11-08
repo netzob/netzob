@@ -34,6 +34,7 @@ from test_netzob.test_Tutorials import test_ICMP
 from test_netzob.test_Tutorials import test_USBMouseProtocol
 from test_netzob.test_Tutorials import test_ImportPCAP
 from test_netzob.test_Tutorials import test_StaticFieldSlicing
+from test_netzob.test_Tutorials import test_ManualFieldStatic
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -48,6 +49,7 @@ def getSuite():
         test_USBMouseProtocol,
         test_ImportPCAP,
         test_StaticFieldSlicing,
+        test_ManualFieldStatic
     ]
     modulesOfSuites = []
 
