@@ -55,6 +55,6 @@ class MatrixList(list):
     def __repr__(self):
         cs = zip(*self)
         c_ws = [max(len(value) for value in c) for c in cs]
-        format = ' | '.join(['%%%ds' % w for w in c_ws])
+        format = ' | '.join(['%%-%ds' % w for w in c_ws])
         result = [(format % tuple(r)) for r in self]
         return '\n'.join(result)

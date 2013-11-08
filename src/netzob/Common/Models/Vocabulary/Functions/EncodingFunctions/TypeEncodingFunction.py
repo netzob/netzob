@@ -72,7 +72,7 @@ class TypeEncodingFunction(EncodingFunction):
 
     >>> s.encodingFunctions = [TypeEncodingFunction(Raw)]
     >>> print s
-    There are
+    There are  
      solutions.
     """
 

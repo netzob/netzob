@@ -79,15 +79,15 @@ class SearchEngine(object):
 
 
     >>> from netzob.all import *
-    >>> m = RawMessage("Netzob is a tool that helps experts in their reverse engineering processes.")
+    >>> m = RawMessage("Netzob is a tool that helps experts in their reverse engineering processes.", date=1383948883.0)
     >>> searchResults = SearchEngine.searchInMessage(["expert"], m)
     >>> print searchResults
     1 occurence(s) found.
     >>> print m
-    %2dNetzob%2d is a tool that helps experts in their reverse engineering processes.
+    [1383948883.0 None->None] %2dNetzob%2d is a tool that helps experts in their reverse engineering processes.
     >>> m.clearSearchResults()
     >>> print m
-    Netzob is a tool that helps experts in their reverse engineering processes.
+    [1383948883.0 None->None] Netzob is a tool that helps experts in their reverse engineering processes.
 
     """
 

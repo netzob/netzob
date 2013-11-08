@@ -118,7 +118,7 @@ class ClusterByKeyField(object):
                     for idx_msg in range(len(fieldsCells)):
                         if fieldsCells[idx_msg][idx_field] == keyFieldValue:
                             newData = "".join(fieldsCells[idx_msg])
-                            newData = RawMessage(TypeConverter.convert(newData, HexaString, Raw))
+                            newData = RawMessage(newData)
                             newDatas[keyFieldValue].append(newData)
                 break
 

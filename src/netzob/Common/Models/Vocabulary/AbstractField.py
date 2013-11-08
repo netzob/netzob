@@ -120,39 +120,39 @@ class AbstractField(AbstractMementoCreator):
         >>> fbody.children = [fb1, fb2, fb3]
         >>> symbol = Symbol([fheader, fbody], messages=messages)
         >>> print symbol
-        hello  | netzob | , what's up in  |    Paris |  ?
-        hello  | netzob | , what's up in  |   Berlin |  ?
+        hello  | netzob | , what's up in  | Paris    |  ?
+        hello  | netzob | , what's up in  | Berlin   |  ?
         hello  | netzob | , what's up in  | New-York |  ?
-        hello  |   zoby | , what's up in  |    Paris |  ?
-        hello  |   zoby | , what's up in  |   Berlin |  ?
-        hello  |   zoby | , what's up in  | New-York |  ?
-        hello  |   lapy | , what's up in  |    Paris |  ?
-        hello  |   lapy | , what's up in  |   Berlin |  ?
-        hello  |   lapy | , what's up in  | New-York |  ?
+        hello  | zoby   | , what's up in  | Paris    |  ?
+        hello  | zoby   | , what's up in  | Berlin   |  ?
+        hello  | zoby   | , what's up in  | New-York |  ?
+        hello  | lapy   | , what's up in  | Paris    |  ?
+        hello  | lapy   | , what's up in  | Berlin   |  ?
+        hello  | lapy   | , what's up in  | New-York |  ?
 
         >>> fh1.addEncodingFunction(TypeEncodingFunction(HexaString))
         >>> fb2.addEncodingFunction(TypeEncodingFunction(HexaString))
         >>> print symbol
-        68656c6c6f20 | netzob | , what's up in  |       5061726973 |  ?
-        68656c6c6f20 | netzob | , what's up in  |     4265726c696e |  ?
+        68656c6c6f20 | netzob | , what's up in  | 5061726973       |  ?
+        68656c6c6f20 | netzob | , what's up in  | 4265726c696e     |  ?
         68656c6c6f20 | netzob | , what's up in  | 4e65772d596f726b |  ?
-        68656c6c6f20 |   zoby | , what's up in  |       5061726973 |  ?
-        68656c6c6f20 |   zoby | , what's up in  |     4265726c696e |  ?
-        68656c6c6f20 |   zoby | , what's up in  | 4e65772d596f726b |  ?
-        68656c6c6f20 |   lapy | , what's up in  |       5061726973 |  ?
-        68656c6c6f20 |   lapy | , what's up in  |     4265726c696e |  ?
-        68656c6c6f20 |   lapy | , what's up in  | 4e65772d596f726b |  ?
+        68656c6c6f20 | zoby   | , what's up in  | 5061726973       |  ?
+        68656c6c6f20 | zoby   | , what's up in  | 4265726c696e     |  ?
+        68656c6c6f20 | zoby   | , what's up in  | 4e65772d596f726b |  ?
+        68656c6c6f20 | lapy   | , what's up in  | 5061726973       |  ?
+        68656c6c6f20 | lapy   | , what's up in  | 4265726c696e     |  ?
+        68656c6c6f20 | lapy   | , what's up in  | 4e65772d596f726b |  ?
 
         >>> print fheader.getCells()
         68656c6c6f20 | netzob
         68656c6c6f20 | netzob
         68656c6c6f20 | netzob
-        68656c6c6f20 |   zoby
-        68656c6c6f20 |   zoby
-        68656c6c6f20 |   zoby
-        68656c6c6f20 |   lapy
-        68656c6c6f20 |   lapy
-        68656c6c6f20 |   lapy
+        68656c6c6f20 | zoby  
+        68656c6c6f20 | zoby  
+        68656c6c6f20 | zoby  
+        68656c6c6f20 | lapy  
+        68656c6c6f20 | lapy  
+        68656c6c6f20 | lapy  
 
         >>> print fh1.getCells()
         68656c6c6f20
@@ -169,22 +169,22 @@ class AbstractField(AbstractMementoCreator):
         netzob
         netzob
         netzob
-          zoby
-          zoby
-          zoby
-          lapy
-          lapy
-          lapy
+        zoby  
+        zoby  
+        zoby  
+        lapy  
+        lapy  
+        lapy  
 
         >>> print fbody.getCells()
-        , what's up in  |       5061726973 |  ?
-        , what's up in  |     4265726c696e |  ?
+        , what's up in  | 5061726973       |  ?
+        , what's up in  | 4265726c696e     |  ?
         , what's up in  | 4e65772d596f726b |  ?
-        , what's up in  |       5061726973 |  ?
-        , what's up in  |     4265726c696e |  ?
+        , what's up in  | 5061726973       |  ?
+        , what's up in  | 4265726c696e     |  ?
         , what's up in  | 4e65772d596f726b |  ?
-        , what's up in  |       5061726973 |  ?
-        , what's up in  |     4265726c696e |  ?
+        , what's up in  | 5061726973       |  ?
+        , what's up in  | 4265726c696e     |  ?
         , what's up in  | 4e65772d596f726b |  ?
 
         >>> print fb1.getCells()
@@ -199,14 +199,14 @@ class AbstractField(AbstractMementoCreator):
         , what's up in 
 
         >>> print fb2.getCells()
-              5061726973
-            4265726c696e
+        5061726973      
+        4265726c696e    
         4e65772d596f726b
-              5061726973
-            4265726c696e
+        5061726973      
+        4265726c696e    
         4e65772d596f726b
-              5061726973
-            4265726c696e
+        5061726973      
+        4265726c696e    
         4e65772d596f726b
 
         >>> print fb3.getCells()
@@ -255,26 +255,26 @@ class AbstractField(AbstractMementoCreator):
         >>> f5 = Field(" ?", name="end")
         >>> symbol = Symbol([f1, f2, f3, f4, f5], messages=messages)
         >>> print symbol
-        hello  | netzob | , what's up in  |    Paris |  ?
-        hello  | netzob | , what's up in  |   Berlin |  ?
+        hello  | netzob | , what's up in  | Paris    |  ?
+        hello  | netzob | , what's up in  | Berlin   |  ?
         hello  | netzob | , what's up in  | New-York |  ?
-        hello  |   zoby | , what's up in  |    Paris |  ?
-        hello  |   zoby | , what's up in  |   Berlin |  ?
-        hello  |   zoby | , what's up in  | New-York |  ?
-        hello  |   lapy | , what's up in  |    Paris |  ?
-        hello  |   lapy | , what's up in  |   Berlin |  ?
-        hello  |   lapy | , what's up in  | New-York |  ?
+        hello  | zoby   | , what's up in  | Paris    |  ?
+        hello  | zoby   | , what's up in  | Berlin   |  ?
+        hello  | zoby   | , what's up in  | New-York |  ?
+        hello  | lapy   | , what's up in  | Paris    |  ?
+        hello  | lapy   | , what's up in  | Berlin   |  ?
+        hello  | lapy   | , what's up in  | New-York |  ?
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
         >>> print symbol
-        68656c6c6f20 | 6e65747a6f62 | 2c2077686174277320757020696e20 |       5061726973 | 203f
-        68656c6c6f20 | 6e65747a6f62 | 2c2077686174277320757020696e20 |     4265726c696e | 203f
+        68656c6c6f20 | 6e65747a6f62 | 2c2077686174277320757020696e20 | 5061726973       | 203f
+        68656c6c6f20 | 6e65747a6f62 | 2c2077686174277320757020696e20 | 4265726c696e     | 203f
         68656c6c6f20 | 6e65747a6f62 | 2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
-        68656c6c6f20 |     7a6f6279 | 2c2077686174277320757020696e20 |       5061726973 | 203f
-        68656c6c6f20 |     7a6f6279 | 2c2077686174277320757020696e20 |     4265726c696e | 203f
-        68656c6c6f20 |     7a6f6279 | 2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
-        68656c6c6f20 |     6c617079 | 2c2077686174277320757020696e20 |       5061726973 | 203f
-        68656c6c6f20 |     6c617079 | 2c2077686174277320757020696e20 |     4265726c696e | 203f
-        68656c6c6f20 |     6c617079 | 2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
+        68656c6c6f20 | 7a6f6279     | 2c2077686174277320757020696e20 | 5061726973       | 203f
+        68656c6c6f20 | 7a6f6279     | 2c2077686174277320757020696e20 | 4265726c696e     | 203f
+        68656c6c6f20 | 7a6f6279     | 2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
+        68656c6c6f20 | 6c617079     | 2c2077686174277320757020696e20 | 5061726973       | 203f
+        68656c6c6f20 | 6c617079     | 2c2077686174277320757020696e20 | 4265726c696e     | 203f
+        68656c6c6f20 | 6c617079     | 2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
         >>> print symbol.getValues()
         ['68656c6c6f206e65747a6f622c2077686174277320757020696e205061726973203f', '68656c6c6f206e65747a6f622c2077686174277320757020696e204265726c696e203f', '68656c6c6f206e65747a6f622c2077686174277320757020696e204e65772d596f726b203f', '68656c6c6f207a6f62792c2077686174277320757020696e205061726973203f', '68656c6c6f207a6f62792c2077686174277320757020696e204265726c696e203f', '68656c6c6f207a6f62792c2077686174277320757020696e204e65772d596f726b203f', '68656c6c6f206c6170792c2077686174277320757020696e205061726973203f', '68656c6c6f206c6170792c2077686174277320757020696e204265726c696e203f', '68656c6c6f206c6170792c2077686174277320757020696e204e65772d596f726b203f']
         >>> print f1.getValues()
@@ -316,25 +316,25 @@ class AbstractField(AbstractMementoCreator):
         >>> f5 = Field(" ?", name="end")
         >>> symbol = Symbol([f1, f2, f3, f4, f5], messages=messages)
         >>> print symbol
-        hello  | netzob | , what's up in  |    Paris |  ?
-        hello  | netzob | , what's up in  |   Berlin |  ?
+        hello  | netzob | , what's up in  | Paris    |  ?
+        hello  | netzob | , what's up in  | Berlin   |  ?
         hello  | netzob | , what's up in  | New-York |  ?
-        hello  |   zoby | , what's up in  |    Paris |  ?
-        hello  |   zoby | , what's up in  |   Berlin |  ?
-        hello  |   zoby | , what's up in  | New-York |  ?
-        hello  |   lapy | , what's up in  |    Paris |  ?
-        hello  |   lapy | , what's up in  |   Berlin |  ?
-        hello  |   lapy | , what's up in  | New-York |  ?
+        hello  | zoby   | , what's up in  | Paris    |  ?
+        hello  | zoby   | , what's up in  | Berlin   |  ?
+        hello  | zoby   | , what's up in  | New-York |  ?
+        hello  | lapy   | , what's up in  | Paris    |  ?
+        hello  | lapy   | , what's up in  | Berlin   |  ?
+        hello  | lapy   | , what's up in  | New-York |  ?
         >>> lapySymbol = Symbol(messages=symbol.children[1].getMessagesWithValue("lapy"))
         >>> print lapySymbol
-           hello lapy, what's up in Paris ?
-          hello lapy, what's up in Berlin ?
+        hello lapy, what's up in Paris ?   
+        hello lapy, what's up in Berlin ?  
         hello lapy, what's up in New-York ?
         >>> FormatEditor.splitStatic(lapySymbol)
         >>> lapySymbol.encodingFunctions.add(TypeEncodingFunction(HexaString))
         >>> print lapySymbol
-        68656c6c6f206c6170792c2077686174277320757020696e20 |       5061726973203f
-        68656c6c6f206c6170792c2077686174277320757020696e20 |     4265726c696e203f
+        68656c6c6f206c6170792c2077686174277320757020696e20 | 5061726973203f      
+        68656c6c6f206c6170792c2077686174277320757020696e20 | 4265726c696e203f    
         68656c6c6f206c6170792c2077686174277320757020696e20 | 4e65772d596f726b203f
 
         :parameter value: a Raw value
