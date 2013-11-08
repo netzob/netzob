@@ -74,7 +74,27 @@ class FieldSplitAligned(object):
     06ff000000000000ff
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol)
-    >>> #print symbol
+    >>> print symbol
+      01 | ff00 |            | ff
+    0222 | ff00 |         00 | ff
+      03 | ff00 |       0000 | ff
+    0444 | ff00 |     000000 | ff
+      05 | ff00 |   00000000 | ff
+      06 | ff00 | 0000000000 | ff
+
+    >>> samples = ["hello toto, what's up in France ?", "hello netzob, what's up in UK ?", "hello sygus, what's up in Germany ?"]
+    >>> messages = [RawMessage(data=sample) for sample in samples]
+    >>> symbol = Symbol(messages=messages)
+    >>> print symbol
+      hello toto, what's up in France ?
+        hello netzob, what's up in UK ?
+    hello sygus, what's up in Germany ?
+    >>> fs = FieldSplitAligned()
+    >>> fs.execute(symbol)
+    >>> print symbol
+    hello  |   toto | , what's up in  |  France |  ?
+    hello  | netzob | , what's up in  |      UK |  ?
+    hello  |  sygus | , what's up in  | Germany |  ?
 
 
     """
@@ -133,7 +153,6 @@ class FieldSplitAligned(object):
 
         # Create fields following the alignment
         self._splitFieldFollowingAlignment(field, alignment)
-        self._logger.debug(field)
 
     def _splitFieldFollowingAlignment(self, field, align):
         """Update the field definition with new fields following the
@@ -143,15 +162,15 @@ class FieldSplitAligned(object):
         leftAlign, rightAlign = self._splitAlignment(align)
         splited = self._mergeAlign(leftAlign, rightAlign)
         step1Fields = []
+
         for (entryVal, entryDyn) in splited:
             if entryDyn:
                 newField = Field(Raw(nbBytes=(0, len(entryVal) / 2)))
             else:
                 newField = Field(Raw(TypeConverter.convert(entryVal, HexaString, Raw)))
             step1Fields.append(newField)
-            field.children.append(newField)
 
-        self._logger.debug(splited)
+        field.children = step1Fields
 
     def _splitAlignment(self, align):
         """Splits the specified alignment which is composed of hexastring and of dynamic sections ("-")
@@ -212,41 +231,41 @@ class FieldSplitAligned(object):
             align = leftAlign + rightAlign
         return align
 
-    def _temp(self, align):
-        self._logger.debug("Align = {0}".format(align))
-        for i, val in enumerate(align):
+    # def _temp(self, align):
+    #     self._logger.debug("Align = {0}".format(align))
+    #     for i, val in enumerate(align):
 
-            if (val == "-"):
-                if (found is False):
-                    start = i
-                    found = True
-            else:
-                if (found is True):
-                    found = False
-                    nbTiret = i - start
-                    self._logger.debug("Add dyn raw : {0}".format(nbTiret / 2))
-                    domains.append(Raw(nbBytes=(0, nbTiret / 2)))
-                    self._logger.debug("Converting : {0}".format(val))
-                    domains.append(Raw(TypeConverter.convert(val, HexaString, Raw)))
-                else:
-                    if len(domains) == 0:
-                        domains.append(Raw(TypeConverter.convert(val, HexaString, Raw)))
-                    else:
-                        prevVal = TypeConverter.convert(domains[-1].value, BitArray, Raw)
-                        domains[-1] += Raw(prevVal + TypeConverter.convert(val, HexaString, Raw))
-        if (found is True):
-            nbTiret = i - start + 1
-            domains.append(Raw(nbBytes=(0, nbTiret)))
+    #         if (val == "-"):
+    #             if (found is False):
+    #                 start = i
+    #                 found = True
+    #         else:
+    #             if (found is True):
+    #                 found = False
+    #                 nbTiret = i - start
+    #                 self._logger.debug("Add dyn raw : {0}".format(nbTiret / 2))
+    #                 domains.append(Raw(nbBytes=(0, nbTiret / 2)))
+    #                 self._logger.debug("Converting : {0}".format(val))
+    #                 domains.append(Raw(TypeConverter.convert(val, HexaString, Raw)))
+    #             else:
+    #                 if len(domains) == 0:
+    #                     domains.append(Raw(TypeConverter.convert(val, HexaString, Raw)))
+    #                 else:
+    #                     prevVal = TypeConverter.convert(domains[-1].value, BitArray, Raw)
+    #                     domains[-1] += Raw(prevVal + TypeConverter.convert(val, HexaString, Raw))
+    #     if (found is True):
+    #         nbTiret = i - start + 1
+    #         domains.append(Raw(nbBytes=(0, nbTiret)))
 
-        # We have a computed the 'simple' regex,
-        # and represent it using the field representation
-        step1Fields = []
-        for domainElt in domains:
-            if domainElt is None:
-                pass
-            innerField = Field(domain=domainElt)
-            step1Fields.append(innerField)
-            field.children.append(innerField)
+    #     # We have a computed the 'simple' regex,
+    #     # and represent it using the field representation
+    #     step1Fields = []
+    #     for domainElt in domains:
+    #         if domainElt is None:
+    #             pass
+    #         innerField = Field(domain=domainElt)
+    #         step1Fields.append(innerField)
+    #         field.children.append(innerField)
 
     @typeCheck(list, list)
     def _alignData(self, values, semanticTags=None):
