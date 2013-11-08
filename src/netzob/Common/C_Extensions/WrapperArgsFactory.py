@@ -32,7 +32,7 @@ from netzob import _libScoreComputation
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.C_Extensions.WrapperMessage import WrapperMessage
-from netzob.Common.Models.RawMessage import RawMessage
+from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Common.NetzobException import NetzobException
 
 
@@ -59,12 +59,12 @@ class WrapperArgsFactory(object):
     def computeSimilarityMatrix(self, symbols):
         self.args = []
         for s in symbols:
-            self.args.append(WrapperMessage(s.getMessages()[0], s.getID()))
+            self.args.append(WrapperMessage(s.messages[0], s.id))
 
     def alignMessages(self, values):
         self.args = []
         for (data, tags) in values:
-            message = RawMessage(uuid.uuid4(), 0, data)
+            message = RawMessage(data=data)
             for pos, tag in tags.items():
-                message.setSemanticTag(tag, pos)
+                message.addSemanticTag(pos, tag)
             self.args.append(WrapperMessage(message, "Virtual symbol"))
