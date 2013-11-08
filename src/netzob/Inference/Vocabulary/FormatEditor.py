@@ -47,6 +47,7 @@ from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Models.Types.AbstractType import AbstractType
 from netzob.Inference.Vocabulary.FormatEditorOperations.FieldSplitStatic.FieldSplitStatic import FieldSplitStatic
 from netzob.Inference.Vocabulary.FormatEditorOperations.FieldReseter import FieldReseter
+from netzob.Inference.Vocabulary.FormatEditorOperations.FieldOperations import FieldOperations
 from netzob.Common.Models.Vocabulary.Symbol import Symbol
 
 
@@ -170,3 +171,45 @@ class FormatEditor(object):
 
         fr = FieldReseter()
         fr.reset(field)
+
+    @staticmethod
+    @typeCheck(AbstractField, AbstractField)
+    def mergeFields(field1, field2):
+        """Merge provided fields and their definitions
+
+        >>> import binascii
+        >>> from netzob.all import *
+        >>> samples = ["00ff2f000000", "000010000000",	"00fe1f000000"]
+        >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
+        >>> f1 = Field(Raw(nbBytes=1), name="f1")
+        >>> f2 = Field(Raw(nbBytes=2), name="f2")
+        >>> f3 = Field(Raw(nbBytes=2), name="f3")
+        >>> f4 = Field(Raw(nbBytes=1), name="f4")
+        >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
+        >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
+        >>> print symbol
+        00 | ff2f | 0000 | 00
+        00 | 0010 | 0000 | 00
+        00 | fe1f | 0000 | 00
+        >>> FormatEditor.mergeFields(f2, f3)
+        >>> print symbol
+        00 | ff2f0000 | 00
+        00 | 00100000 | 00
+        00 | fe1f0000 | 00
+        >>> FormatEditor.mergeFields(symbol.children[0], symbol.children[1])
+        >>> print symbol
+        00ff2f0000 | 00
+        0000100000 | 00
+        00fe1f0000 | 00
+        >>> FormatEditor.mergeFields(symbol.children[0], symbol.children[1])
+        >>> print symbol
+
+        :param field: the field we want to reset
+        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :raise Exception if something bad happens
+        """
+        if field1 is None or field2 is None:
+            raise TypeError("Fields cannot be None")
+
+        fr = FieldOperations()
+        fr.mergeFields(field1, field2)
