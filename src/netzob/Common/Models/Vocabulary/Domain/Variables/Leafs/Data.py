@@ -318,6 +318,9 @@ class Data(AbstractVariableLeaf):
                     parsedLength = length
                     result = True
                     break
+            if minSize == 0 and not result:
+                parsedLength = 0
+                result = True
 
         readingToken.Ok = result
         if readingToken.Ok:
