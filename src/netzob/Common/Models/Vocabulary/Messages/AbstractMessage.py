@@ -68,6 +68,7 @@ class AbstractMessage(SortableObject):
         self.id = _id
         self.__visualizationFunctions = TypedList(VisualizationFunction)
         self.__metadata = dict()
+        self.__semanticTags = dict()
 
     @typeCheck(AbstractField)
     def isValidForField(self, field):
@@ -221,3 +222,52 @@ class AbstractMessage(SortableObject):
     @session.setter
     def session(self, session):
         self.__session = session
+
+    @typeCheck(int, str)
+    def addSemanticTag(self, position, tag):
+        """Attach the specific semantic tag the specified position
+        of the data.
+
+        :parameter position: the position on which the semantic tag is attached
+        :type position: :class:`int`
+        :parameter tag: the name of the tag
+        :type tag: :class:`str`
+        """
+        if position is None:
+            raise TypeError("Position cannot be none")
+        if tag is None:
+            raise TypeError("Tag cannot be None")
+
+        if position in self.semanticTags.keys():
+            tags = self.semanticTags[position]
+        else:
+            tags = []
+
+        tags.append(tag)
+        self.semanticTags[position] = tags
+
+    @property
+    def semanticTags(self):
+        """Position of identified semantic tags found in the current data.
+
+        :type: :class:`dict` with keys is int (position) and values is a list of str
+        """
+        return self.__semanticTags
+
+    @semanticTags.setter
+    @typeCheck(dict)
+    def semanticTags(self, semanticTags):
+        if semanticTags is None:
+            self.__semanticTags = dict()
+
+        # check
+        for key, value in semanticTags.iteritems():
+            if not isinstance(key, int):
+                raise TypeError("At least one key is not a valid int position")
+            if not isinstance(value, list):
+                raise TypeError("At least one value of the provided dict is not a list of string")
+            for x in value:
+                if not isinstance(x, str):
+                    raise TypeError("At least one value of the provided dict is not a list of string")
+
+        self.__semanticTags = semanticTags
