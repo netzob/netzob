@@ -421,6 +421,21 @@ class AbstractField(AbstractMementoCreator):
     def __str__(self):
         return str(self.getCells(encoded=True))
 
+    @typeCheck(int)
+    def _str_debug(self, deepness=0):
+        """Returns a string which denotes
+        the current field definition using a tree display"""
+
+        tab = ["|--  " for x in xrange(deepness)]
+        tab.append(str(self.name))
+        lines = [''.join(tab)]
+        from netzob.Common.Models.Vocabulary.Field import Field
+        if isinstance(self, Field):
+            lines.append(self.domain._str_debug(deepness+1))
+        for f in self.children:
+            lines.append(f._str_debug(deepness+1))
+        return '\n'.join(lines)
+
     # PROPERTIES
 
     @property
