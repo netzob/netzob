@@ -54,6 +54,7 @@ from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.V
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.Raw import Raw
+from netzob.Common.Models.Types.HexaString import HexaString
 
 
 @NetzobLogger
@@ -297,7 +298,7 @@ class Data(AbstractVariableLeaf):
 
         data = readingToken.getValueForVariable(self)
         minSize, maxSize = self.dataType.size
-        self._logger.debug("Compare size: request={0}, data size={1}, data={2}".format(self.dataType.size, len(data), data))
+        self._logger.debug("Compare size: request={0}, data size={1}, data={2} ({3})".format(self.dataType.size, len(data), data, TypeConverter.convert(data, BitArray, HexaString)))
         parsedLength = None
         if minSize is not None and len(data) < minSize:
             # data is too small
@@ -307,8 +308,11 @@ class Data(AbstractVariableLeaf):
                 minSize = 0
             if maxSize is None:
                 maxSize = len(data)
+
+            maxCheck = min(maxSize, len(data))
             result = False
-            for length in xrange(min(maxSize, len(data)) + 1, minSize, -1):
+
+            for length in xrange(maxCheck, minSize - 1, -1):
                 tmp = TypeConverter.convert(data[:length], BitArray, Raw)
                 if self.dataType.canParse(tmp):
                     parsedLength = length
@@ -317,8 +321,8 @@ class Data(AbstractVariableLeaf):
 
         readingToken.Ok = result
         if readingToken.Ok:
-            readingToken.attachVariableToRange(self, readingToken.index, readingToken.index + parsedLength)
-            readingToken.incrementIndex(parsedLength)
+            self._logger.debug("Set value : {0} {1} {2}".format(parsedLength, data[:parsedLength], data[parsedLength:]))
+            readingToken.setValueForVariable(self, data[:parsedLength])
 
         self._logger.debug("Variable {0}: {1}. ] -".format(self.name, readingToken))
 
@@ -364,19 +368,13 @@ class Data(AbstractVariableLeaf):
                 # Length comparison. (len(tmp) >= minBits is implicit as the readingToken is OK.)
                 if len(tmp) <= maxSize:
                     self.currentValue = tmp
-                    readingToken.attachVariableToRange(self, readingToken.index, readingToken.index + len(tmp))
-                    readingToken.incrementIndex(len(tmp))
-
                 else:  # len(tmp) > self.maxBits
                     # We learn as much as we can.
                     self.currentValue = tmp[:maxSize]
-                    readingToken.attachVariableToRange(self, readingToken.index, readingToken.index + maxSize)
-                    readingToken.incrementIndex(maxSize)
-
             else:
                 self.currentValue = tmp
-                readingToken.attachVariableToRange(self, readingToken.index, readingToken.index + len(tmp))
-                readingToken.incrementIndex(len(tmp))
+
+            readingToken.setValueForVariable(self, self.currentValue)
 
             # TODO
             # If the type is delimited from 0 to a delimiter.
@@ -573,7 +571,8 @@ class Data(AbstractVariableLeaf):
             return NetzobRegex.buildRegexForSizedValue(self.dataType.size)
 
     def __str__(self):
-        return "{0}={1} (size={2}/{3}, learnable={4}, mutable={5})".format(self.dataType, self.currentValue, self.dataType.size[0], self.dataType.size[1], self.learnable, self.mutable)
+        """The str method, mostly for debugging purpose."""
+        return "{0} (currentValue={1}, L={2}, M={3})".format(self.dataType, self.currentValue, self.learnable, self.mutable)
 
     #+---------------------------------------------------------------------------+
     #| Properties                                                                |
