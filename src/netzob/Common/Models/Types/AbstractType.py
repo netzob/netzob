@@ -495,7 +495,7 @@ class AbstractType(object):
 
         if self.value is None:
             mutable = True
-            learnable = True
+            learnable = False
         else:
             mutable = False
             learnable = False
