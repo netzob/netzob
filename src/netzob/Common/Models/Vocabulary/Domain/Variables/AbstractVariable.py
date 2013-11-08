@@ -227,7 +227,6 @@ class AbstractVariable(object):
     #+---------------------------------------------------------------------------+
     #| Abstract Methods                                                          |
     #+---------------------------------------------------------------------------+
-    @abc.abstractmethod
     def getDictOfValues(self, processingToken):
         """Return a dictionary which contains the variable id as key and the value as value if the variable is a leaf
         and a dictionary containing all couples variable id - value of the children if the variable is a node.
@@ -243,8 +242,13 @@ class AbstractVariable(object):
     #| Special Functions                                                         |
     #+---------------------------------------------------------------------------+
     def __str__(self):
-        """The toString method, mostly for debugging purpose."""
-        return "Variable {0} (mutable: {1}, learnable: {2})".format(self.name, str(self.mutable), str(self.learnable))
+        """The str method, mostly for debugging purpose."""
+        return "{0} (L={1}, M={2})".format(self.varType, self.learnable, self.mutable)
+
+    @abc.abstractmethod
+    def _str_debug(self, deepness=0):
+        """Returns a string which denotes
+        the current domain definition using a tree display"""
 
     #+---------------------------------------------------------------------------+
     #| Properties                                                                |

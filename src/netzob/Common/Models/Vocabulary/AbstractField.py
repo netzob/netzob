@@ -431,9 +431,9 @@ class AbstractField(AbstractMementoCreator):
         lines = [''.join(tab)]
         from netzob.Common.Models.Vocabulary.Field import Field
         if isinstance(self, Field):
-            lines.append(self.domain._str_debug(deepness+1))
+            lines.append(self.domain._str_debug(deepness + 1))
         for f in self.children:
-            lines.append(f._str_debug(deepness+1))
+            lines.append(f._str_debug(deepness + 1))
         return '\n'.join(lines)
 
     # PROPERTIES

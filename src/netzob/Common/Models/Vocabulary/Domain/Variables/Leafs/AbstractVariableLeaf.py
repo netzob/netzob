@@ -58,8 +58,8 @@ class AbstractVariableLeaf(AbstractVariable):
 
     """
 
-    def __init__(self, varType, name=None):
-        super(AbstractVariableLeaf, self).__init__(varType, name=name)
+    def __init__(self, varType, name=None, learnable=False, mutable=False):
+        super(AbstractVariableLeaf, self).__init__(varType, name=name, learnable=learnable, mutable=mutable)
 
     @typeCheck(VariableReadingToken)
     def read(self, readingToken):
@@ -141,8 +141,8 @@ class AbstractVariableLeaf(AbstractVariable):
                     readingToken.Ok = False
 
         # Variable notification
-        if readingToken.Ok:
-            self.notifyBoundedVariables("read", readingToken, self.getValue(readingToken))
+        #if readingToken.Ok:
+        #    self.notifyBoundedVariables("read", readingToken, self.getValue(readingToken))
 
         self._logger.debug("\t {0}. ]".format(readingToken))
 
@@ -219,3 +219,12 @@ class AbstractVariableLeaf(AbstractVariable):
         #    self.notifyBoundedVariables("write", writingToken)
 
         self._logger.debug("\t: {0}. ]".format(writingToken))
+
+    def _str_debug(self, deepness=0):
+        """Returns a string which denotes
+        the current field definition using a tree display"""
+
+        tab = ["     " for x in xrange(deepness - 1)]
+        tab.append("|--   ")
+        tab.append("{0}".format(self))
+        return ''.join(tab)
