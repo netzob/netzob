@@ -105,7 +105,7 @@ class TypeEncodingFunction(EncodingFunction):
 
     def encode(self, field, readingToken):
         if not readingToken.getValueForVariable(field.domain):
-            raise Exception("No value associated with field")
+            return ''
         data = readingToken.getValueForVariable(field.domain)
         return TypeConverter.convert(data, BitArray, self.type, src_unitSize=self.unitSize, src_endianness=self.endianness, src_sign=self.sign)
 
