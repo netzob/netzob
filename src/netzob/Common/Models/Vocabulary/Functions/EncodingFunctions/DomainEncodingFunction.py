@@ -69,7 +69,7 @@ class DomainEncodingFunction(EncodingFunction):
 
     def encode(self, field, readingToken):
         if not readingToken.getValueForVariable(field.domain):
-            raise Exception("No value associated with field")
+            return ''
 
         return self.encodeChild(field.domain, readingToken)
 
