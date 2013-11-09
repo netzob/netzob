@@ -102,20 +102,20 @@ class FormatEditor(object):
         >>> FormatEditor.splitStatic(symbol)
         >>> print symbol
         030000 | 25 | 02f0 | 80320100003a00000e00060501120a10020002006e840000400004001001ab
-        030000 | 16 | 02f0 |                               80320300003a000002000100000501ff
-        030000 | 07 | 02f0 |                                                             00
+        030000 | 16 | 02f0 | 80320300003a000002000100000501ff                              
+        030000 | 07 | 02f0 | 00                                                            
 
         >>> contents = ["hello lapy, what's up in Paris ?", "hello lapy, what's up in Berlin ?", "hello lapy, what's up in New-York ?"]
         >>> messages = [RawMessage(data=m) for m in contents]
         >>> s = Symbol(messages=messages)
         >>> print s
-           hello lapy, what's up in Paris ?
-          hello lapy, what's up in Berlin ?
+        hello lapy, what's up in Paris ?   
+        hello lapy, what's up in Berlin ?  
         hello lapy, what's up in New-York ?
         >>> FormatEditor.splitStatic(s)
         >>> print s
-        hello lapy, what's up in  |    Paris ?
-        hello lapy, what's up in  |   Berlin ?
+        hello lapy, what's up in  | Paris ?   
+        hello lapy, what's up in  | Berlin ?  
         hello lapy, what's up in  | New-York ?
 
         :param field: the field for which we update the format

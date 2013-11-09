@@ -46,17 +46,16 @@ class RelationFinder(object):
     #| Constructor:
     #| @param project : the project where the search will be executed
     #+----------------------------------------------
-    def __init__(self, project):
+    def __init__(self):
         # create logger with the given configuration
         self.log = logging.getLogger(__name__ + '.py')
-        self.project = project
 
     #+----------------------------------------------
     #| execute:
     #| @param symbol : if not None, the operation will be limited to provided symbol
     #+----------------------------------------------
     def execute(self, symbol):
-        cells = [field.getCells()
+        cells = [field.getValues()
                  for field in symbol.getExtendedFields()
                  #if not field.isStatic()
                  ]
@@ -93,8 +92,8 @@ class RelationFinder(object):
         # Convert cells according to their interesting attribute (data, size or offset)
         if x_attr == "s" and y_attr == "s":  # Two size field are uncertain...
             return results
-        x_values = x_field.getCells()
-        y_values = y_field.getCells()
+        x_values = x_field.getValues()
+        y_values = y_field.getValues()
 
         # Try to find a relation that matches each cell
         relation_fcts = {}
@@ -108,7 +107,7 @@ class RelationFinder(object):
                     isRelation = False
                     break
             if isRelation:
-                logging.info("Relation found between '" + x_attr + ":" + x_field.getName() + "' and '" + y_attr + ":" + y_field.getName() + "'")
+                logging.info("Relation found between '" + x_attr + ":" + str(x_field.name) + "' and '" + y_attr + ":" + str(y_field.name) + "'")
                 logging.info("  Relation: " + relation_name)
                 id_relation = str(uuid.uuid4())
                 results.append({'id': id_relation,

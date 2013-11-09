@@ -66,11 +66,11 @@ class FieldSplitAligned(object):
     >>> symbol = Symbol(messages=messages)
     >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> print symbol
-              01ff00ff
-          0222ff0000ff
-          03ff000000ff
-      0444ff00000000ff
-      05ff0000000000ff
+    01ff00ff          
+    0222ff0000ff      
+    03ff000000ff      
+    0444ff00000000ff  
+    05ff0000000000ff  
     06ff000000000000ff
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol)
