@@ -74,6 +74,15 @@ class DomainFactory(object):
     >>> print domain.children[1].dataType
     ASCII=bitarray('10000100') ((0, None))
 
+    >>> f = Field(domain=[Alt(["bb", ASCII("aa", nbChars=2), ASCII("aa", nbChars=2)]), ["aaaa", "aaaa"]])
+    >>> print f._str_debug()
+    None
+    |--   Alt (L=False, M=False)
+          |--   Alt (L=False, M=False)
+               |--   ASCII=bitarray('0100011001000110') ((0, None)) (currentValue=bitarray('0100011001000110'), L=False, M=False)
+               |--   ASCII=bitarray('1000011010000110') ((16, 16)) (currentValue=bitarray('1000011010000110'), L=False, M=False)
+          |--   ASCII=bitarray('10000110100001101000011010000110') ((0, None)) (currentValue=bitarray('10000110100001101000011010000110'), L=False, M=False)
+
     """
 
     @staticmethod
