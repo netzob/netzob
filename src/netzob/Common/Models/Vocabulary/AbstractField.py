@@ -199,14 +199,14 @@ class AbstractField(AbstractMementoCreator):
         , what's up in 
 
         >>> print fb2.getCells()
-        5061726973
-        4265726c696e
+        5061726973      
+        4265726c696e    
         4e65772d596f726b
-        5061726973
-        4265726c696e
+        5061726973      
+        4265726c696e    
         4e65772d596f726b
-        5061726973
-        4265726c696e
+        5061726973      
+        4265726c696e    
         4e65772d596f726b
 
         >>> print fb3.getCells()
@@ -334,7 +334,7 @@ class AbstractField(AbstractMementoCreator):
         :type encoded: :class:`bool`
         :keyword styled: if set to true, values are styled
         :type styled: :class:`bool`
-        :return: a dict indexed by messages that denotes their values
+        :return: a dict indexed by messages that denotes their cells
         :rtype: a :class:`dict`
 
         """
@@ -348,6 +348,54 @@ class AbstractField(AbstractMementoCreator):
 
         for iMessage, message in enumerate(self.messages):
             result[message] = fieldCells[iMessage]
+
+        return result
+
+    @typeCheck(bool, bool)
+    def getMessageValues(self, encoded=False, styled=False):
+        """Computes and returns the alignment of each message belonging to
+        the current field as proposed by getValues() method but indexed
+        per message.
+
+        >>> from netzob.all import *
+        >>> messages = [RawMessage("{0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'zoby'] for city in ['Paris', 'Berlin']]
+        >>> f1 = Field(["netzob", "zoby", "lapy", "sygus"], name="pseudo")
+        >>> f2 = Field(", what's up in ", name="whatsup")
+        >>> f3 = Field(["Paris", "Berlin", "New-York"], name="city")
+        >>> f4 = Field(" ?", name="end")
+        >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
+        >>> print symbol
+        netzob | , what's up in  | Paris  |  ?
+        netzob | , what's up in  | Berlin |  ?
+        zoby   | , what's up in  | Paris  |  ?
+        zoby   | , what's up in  | Berlin |  ?
+
+        >>> messageValues = f3.getMessageValues()
+        >>> for message in symbol.messages:
+        ...    print message.data, messageValues[message]
+        netzob, what's up in Paris ? Paris
+        netzob, what's up in Berlin ? Berlin
+        zoby, what's up in Paris ? Paris
+        zoby, what's up in Berlin ? Berlin
+
+        :keyword encoded: if set to true, values are encoded
+        :type encoded: :class:`bool`
+        :keyword styled: if set to true, values are styled
+        :type styled: :class:`bool`
+        :return: a dict indexed by messages that denotes their values
+        :rtype: a :class:`dict`
+
+        """
+        if encoded is None:
+            raise TypeError("Encoded cannot be None")
+        if styled is None:
+            raise TypeError("Styled cannot be None")
+
+        result = dict()
+        fieldValues = self.getValues(encoded=encoded, styled=styled)
+
+        for iMessage, message in enumerate(self.messages):
+            result[message] = fieldValues[iMessage]
 
         return result
 
@@ -375,14 +423,14 @@ class AbstractField(AbstractMementoCreator):
         hello  | lapy   | , what's up in  | New-York |  ?
         >>> lapySymbol = Symbol(messages=symbol.children[1].getMessagesWithValue("lapy"))
         >>> print lapySymbol
-        hello lapy, what's up in Paris ?
-        hello lapy, what's up in Berlin ?
+        hello lapy, what's up in Paris ?   
+        hello lapy, what's up in Berlin ?  
         hello lapy, what's up in New-York ?
         >>> FormatEditor.splitStatic(lapySymbol)
         >>> lapySymbol.encodingFunctions.add(TypeEncodingFunction(HexaString))
         >>> print lapySymbol
-        68656c6c6f206c6170792c2077686174277320757020696e20 | 5061726973203f
-        68656c6c6f206c6170792c2077686174277320757020696e20 | 4265726c696e203f
+        68656c6c6f206c6170792c2077686174277320757020696e20 | 5061726973203f      
+        68656c6c6f206c6170792c2077686174277320757020696e20 | 4265726c696e203f    
         68656c6c6f206c6170792c2077686174277320757020696e20 | 4e65772d596f726b203f
 
         :parameter value: a Raw value
