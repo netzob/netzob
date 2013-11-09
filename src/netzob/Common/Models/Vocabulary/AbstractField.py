@@ -481,6 +481,55 @@ class AbstractField(AbstractMementoCreator):
         else:
             raise NoSymbolException("Impossible to retrieve the symbol attached to this element")
 
+    def _getLeafFields(self, depth=None, currentDepth=0):
+        """Extract the leaf fields to consider regarding the specified depth
+
+        >>> from netzob.all import *
+        >>> field = Field("hello", name="F0")
+        >>> print [f.name for f in field._getLeafFields()]
+        ['F0']
+
+        >>> field = Field(name="L0")
+        >>> headerField = Field(name="L0_header")
+        >>> payloadField = Field(name="L0_footer")
+        >>> footerField = Field(name="L0_footer")
+
+        >>> fieldL1 = Field(name="L1")
+        >>> fieldL1_header = Field(name="L1_header")
+        >>> fieldL1_payload = Field(name="L1_payload")
+        >>> fieldL1.children = [fieldL1_header, fieldL1_payload]
+
+        >>> payloadField.children = [fieldL1]
+        >>> field.children = [headerField, payloadField, footerField]
+
+        >>> print [f.name for f in field._getLeafFields(depth=None)]
+        ['L0_header', 'L1_header', 'L1_payload', 'L0_footer']
+
+        >>> print [f.name for f in field._getLeafFields(depth=0)]
+        ['L0']
+
+        >>> print [f.name for f in field._getLeafFields(depth=1)]
+        ['L0_header', 'L0_footer', 'L0_footer']
+
+        >>> print [f.name for f in field._getLeafFields(depth=2)]
+        ['L0_header', 'L1', 'L0_footer']
+
+        :return: the list of leaf fields
+        :rtype: :class:`list` of :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`.
+        """
+        if currentDepth is None:
+            currentDepth = 0
+
+        if len(self.children) == 0 or currentDepth == depth:
+            return [self]
+
+        leafFields = []
+        for children in self.children:
+            if children is not None:
+                leafFields.extend(children._getLeafFields(depth, currentDepth + 1))
+
+        return leafFields
+
     def hasParent(self):
         """Computes if the current element has a parent.
 

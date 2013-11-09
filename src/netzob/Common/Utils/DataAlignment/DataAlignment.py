@@ -122,9 +122,9 @@ class DataAlignment(threading.Thread):
 
         result = MatrixList()
 
-        rootLeafFields = self.__extractSubFields(self.__root)
+        rootLeafFields = self.__root._getLeafFields(depth=self.depth)
         if self.__root != self.field:
-            targetedFieldLeafFields = self.__extractSubFields(self.field)
+            targetedFieldLeafFields = self.field._getLeafFields(depth=self.depth)
         else:
             targetedFieldLeafFields = rootLeafFields
 
@@ -294,63 +294,6 @@ class DataAlignment(threading.Thread):
         dynamicDatas.detach_string()
 
         return result
-
-    def __extractSubFields(self, field, currentDepth=0):
-
-        """Extract the leaf fields to consider regarding the specified depth
-
-        >>> from netzob.all import *
-        >>> from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
-        >>> field = Field("hello", name="F0")
-        >>> da = DataAlignment(None, field, depth=None)
-        >>> print [f.name for f in da._DataAlignment__extractSubFields(field)]
-        ['F0']
-
-        >>> field = Field(name="L0")
-        >>> headerField = Field(name="L0_header")
-        >>> payloadField = Field(name="L0_footer")
-        >>> footerField = Field(name="L0_footer")
-
-        >>> fieldL1 = Field(name="L1")
-        >>> fieldL1_header = Field(name="L1_header")
-        >>> fieldL1_payload = Field(name="L1_payload")
-        >>> fieldL1.children = [fieldL1_header, fieldL1_payload]
-
-        >>> payloadField.children = [fieldL1]
-        >>> field.children = [headerField, payloadField, footerField]
-
-        >>> da = DataAlignment(None, field, depth=None)
-        >>> print [f.name for f in da._DataAlignment__extractSubFields(field)]
-        ['L0_header', 'L1_header', 'L1_payload', 'L0_footer']
-
-        >>> da = DataAlignment(None, field, depth=0)
-        >>> print [f.name for f in da._DataAlignment__extractSubFields(field)]
-        ['L0']
-
-        >>> da = DataAlignment(None, field, depth=1)
-        >>> print [f.name for f in da._DataAlignment__extractSubFields(field)]
-        ['L0_header', 'L0_footer', 'L0_footer']
-
-        >>> da = DataAlignment(None, field, depth=2)
-        >>> print [f.name for f in da._DataAlignment__extractSubFields(field)]
-        ['L0_header', 'L1', 'L0_footer']
-
-        :return: the list of leaf fields
-        :rtype: :class:`list` of :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`.
-        """
-
-        if field is None:
-            raise Exception("No field seems available")
-
-        if len(field.children) == 0 or currentDepth == self.depth:
-            return [field]
-
-        fields = []
-        for children in field.children:
-            if children is not None:
-                fields.extend(self.__extractSubFields(children, currentDepth + 1))
-
-        return fields
 
     # Static method
     @staticmethod
