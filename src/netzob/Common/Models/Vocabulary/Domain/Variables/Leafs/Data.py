@@ -109,6 +109,15 @@ class Data(AbstractVariableLeaf):
         self.learnable = learnable
         self.mutable = mutable
 
+    def __key(self):
+        return (self.dataType, self.currentValue, self.learnable, self.mutable)
+
+    def __eq__(x, y):
+        return x.__key() == y.__key()
+
+    def __hash__(self):
+        return hash(self.__key())
+
     @typeCheck(AbstractVariableProcessingToken)
     def isDefined(self, processingToken):
         """If the leaf has no values, it is not defined and returns False

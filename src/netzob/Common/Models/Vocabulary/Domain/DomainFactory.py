@@ -47,6 +47,7 @@ from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Agg import Agg
 from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Common.Models.Types.AbstractType import AbstractType
 from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
+from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
 
 
 class DomainFactory(object):
@@ -99,11 +100,32 @@ class DomainFactory(object):
         if isinstance(domain, list):
             if len(domain) == 1:
                 return DomainFactory.__normalizeLeafDomain(domain[0])
-            for child in domain:
-                result.children.append(DomainFactory.normalizeDomain(child))
-        elif isinstance(domain, Alt):
-            for child in domain.children:
-                result.children.append(DomainFactory.normalizeDomain(child))
+        if isinstance(domain, (list, Alt)):
+            # Eliminate duplicate elements
+            tmpResult = []
+            if isinstance(domain, list):
+                for child in domain:
+                    tmpResult.append(DomainFactory.normalizeDomain(child))
+            else:
+                for child in domain.children:
+                    tmpResult.append(DomainFactory.normalizeDomain(child))
+            uniqResult = []    
+            for elt in tmpResult:
+                if isinstance(elt, AbstractVariableNode):
+                    uniqResult.append(elt)
+                else:
+                    found = False
+                    for uElt in uniqResult:
+                        if uElt == elt:
+                            found = True
+                            break
+                    if found == False:
+                        uniqResult.append(elt)
+            if len(uniqResult) == 1:
+                return uniqResult[0]
+            else:
+                for elt in uniqResult:
+                    result.children.append(elt)
         else:
             raise TypeError("Impossible to normalize the provided domain as an alternate.")
         return result
