@@ -124,4 +124,7 @@ class L4NetworkMessage(L3NetworkMessage):
         return "{0}:{1}".format(str(self.l3DestinationAddress), str(self.l4DestinationAddress))
 
     def __str__(self):
-        return "[{0} {1}->{2}] {3}".format(str(self.date), str(self.source), str(self.destination), str(binascii.b2a_hex(self.data)))
+        HLS = "\033[1;32m"
+        HLE = "\033[1;m"
+        data = super(L4NetworkMessage, self).__str__()
+        return HLS + "[{0} {1}->{2}]".format(self.date, self.source, self.destination) + HLE + " {0}".format(str(binascii.b2a_hex(self.data)))

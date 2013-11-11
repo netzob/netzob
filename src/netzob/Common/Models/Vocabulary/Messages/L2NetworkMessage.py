@@ -29,6 +29,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import time
+import binascii
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -119,4 +120,7 @@ class L2NetworkMessage(RawMessage):
         return self.__l2DestinationAddress
 
     def __str__(self):
-        return "[{0} {1}->{2}] {3}".format(str(self.date), str(self.source), str(self.destination), str(self.data))
+        HLS = "\033[1;32m"
+        HLE = "\033[1;m"
+        data = super(L2NetworkMessage, self).__str__()
+        return HLS + "[{0} {1}->{2}]".format(self.date, self.source, self.destination) + HLE + " {0}".format(str(binascii.b2a_hex(self.data)))
