@@ -587,7 +587,10 @@ class Data(AbstractVariableLeaf):
         if self.currentValue is None:
             return "{0} (currentValue={1}, L={2}, M={3})".format(self.dataType, str(self.currentValue), self.learnable, self.mutable)
         else:
-            return "{0} (currentValue={1}, L={2}, M={3})".format(self.dataType, TypeConverter.convert(self.currentValue, BitArray, self.dataType.__class__), self.learnable, self.mutable)
+            aType = self.dataType.__class__
+            if aType == Raw:
+                aType = HexaString
+            return "{0} (currentValue={1}, L={2}, M={3})".format(self.dataType, TypeConverter.convert(self.currentValue, BitArray, aType), self.learnable, self.mutable)
 
     #+---------------------------------------------------------------------------+
     #| Properties                                                                |
