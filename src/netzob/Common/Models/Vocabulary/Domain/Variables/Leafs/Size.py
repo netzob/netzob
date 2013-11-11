@@ -50,85 +50,100 @@ from netzob.Common.Models.Types.AbstractType import AbstractType
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.Raw import Raw
+from netzob.Common.Models.Types.Decimal import Decimal
 from netzob.Common.Utils.NetzobRegex import NetzobRegex
+from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken import VariableReadingToken
 
 
 @NetzobLogger
 class Size(AbstractRelationVariableLeaf):
-    """A size relation between one variable and
+    """A size relation between one variable and a the value of a field
+
+    In the following example, a size field is declared after its field.
 
     >>> from netzob.all import *
-    >>> f1 = Field(ASCII(nbChars=(5,10)), name="payload")
-    >>> f1.domain.learnable = False
-    >>> f2 = Field(Size(f1), name="size")
-    >>> f2.domain.learnable = False
-    >>> s = Symbol(fields=[f2, f1])
-    >>> msgs = [RawMessage(s.generate()) for i in xrange(5)]
-    >>> for msg in msgs:
-    ...     print msg
 
-    >>> s.messages = msgs
-    >>> print s
+
+    # >>> import random
+    # >>> f1 = Field(ASCII(nbChars=(5,10)))
+    # >>> f2 = Field(";")
+    # >>> f3 = Field(Size(f1))
+    # >>> s = Symbol(fields=[f1, f2, f3])
+    # >>> msgs = [RawMessage(s.specialize()) for i in xrange(10)]
+    # >>> s.messages = msgs
+    # >>> values = random.choice(s.getCells())
+    # >>> len(values[0])*4 == int(TypeConverter.convert(values[2], HexaString, Raw))
+    # True
+
+    While next demo, illustrates a size field declared before its target field
+
+    >>> f2 = Field(ASCII(nbChars=(5, 10)), name="payload")
+    >>> f1 = Field(Size(f2, dataType=ASCII(nbChars=1), factor=1/8.0, offset=1), name="size")
+    >>> s = Symbol([f1, f2])
+    >>> s.specialize()
 
     """
 
-    def __init__(self, fields, dataType=None, name=None):
-        super(Size, self).__init__(Size.__class__.__name__, name)
-
+    def __init__(self, fields, dataType=None, factor=1.0, offset=0, name=None):
         if isinstance(fields, AbstractField):
             fields = [fields]
-        self.fields = fields
-        if dataType is None:
-            dataType = ASCII()
-        self.dataType = dataType
-
-    def __str__(self):
-        """The str method."""
-        return "Size({0}) - Type:{1} (L={2}, M={3})".format(str([f.name for f in self.fields]), self.dataType, self.learnable, self.mutable)
-
-    def isDefined(self, processingToken):
-        """Tells if the variable is defined (i.e. has a value for a leaf, enough leaf have values for a node...)
-
-        :type processingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken.AbstractVariableProcessingToken
-        :param processingToken: a token which contains all critical information on this access.
-        :rtype: boolean
-        :return: True if the variable is defined.
-        """
-        return True
+            super(Size, self).__init__("Size", fieldDependencies=fields, name=name)
+            self.fields = fields
+            if dataType is None:
+                dataType = Raw(nbBytes=1)
+                self.dataType = dataType
+                self.factor = factor
+                self.offset = offset
 
     def buildRegex(self):
         """This method creates a regex based on the size
         established in the domain."""
         return NetzobRegex.buildRegexForSizedValue(self.dataType.size)
 
+    @typeCheck(VariableReadingToken)
+    def compareFormat(self, readingToken):
+        if readingToken is None:
+            raise TypeError("readingToken cannot be None")
+
+        self._logger.debug("- [ {0}: compareFormat".format(self))
+
+        # Retrieve the value to check
+        if not readingToken.isValueForVariableAvailable(self):
+            raise Exception("Cannot compareFormat because not value is linked with the current data")
+
+        data = readingToken.getValueForVariable(self)
+
+        if len(data) > minSize:
+            readingToken.Ok = True
+
     def getValue(self, processingToken):
         """Return the current value of targeted field.
-
         """
-
         # first checks the pointed fields all have a value
         hasValue = True
         for field in self.fields:
-            if field.domain.getValue(processingToken) is None:
+            if field.domain != self and field.domain.isDefined(processingToken) is False:
                 hasValue = False
-
         if not hasValue:
-            return self.guessValue()
+            raise Exception("Impossible to compute the value (getValue) of the current Size field since some of its dependencies have no value")
         else:
             size = 0
             for field in self.fields:
-                fieldValue = field.domain.getValue(processingToken)
-
+                if field.domain is self:
+                    fieldValue = self.dataType.generate()
+                else:
+                    fieldValue = processingToken.getValueForVariable(field.domain)
                 if fieldValue is None:
                     break
                 else:
                     size += len(fieldValue)
+            size = size * self.factor + self.offset
 
-            return TypeConverter.convert(size, self.dataType.__class__, BitArray)
+            return TypeConverter.convert(size, Decimal, BitArray)
 
-    def guessValue(self):
-        self._logger.debug("Guessing the value...")
-        return TypeConverter.convert("TEMPORARY VALUE", Raw, BitArray)
+    def __str__(self):
+        """The str method."""
+        return "Size({0}) - Type:{1} (L={2}, M={3})".format(str([f.name for f in self.fields]), self.dataType, self.learnable, self.mutable)
 
     @property
     def dataType(self):
@@ -144,6 +159,9 @@ class Size(AbstractRelationVariableLeaf):
     def dataType(self, dataType):
         if dataType is None:
             raise TypeError("Datatype cannot be None")
+        (minSize, maxSize) = dataType.size
+        if maxSize is None:
+            raise ValueError("The datatype of a size field must declare its length")
         self.__dataType = dataType
 
     @property
@@ -165,4 +183,28 @@ class Size(AbstractRelationVariableLeaf):
         self.__fields = []
         for f in fields:
             self.__fields.append(f)
-            f.domain.boundedVariables.append(self)
+
+    @property
+    def factor(self):
+        """Defines the multiplication factor to apply on the targeted length (in bits)"""
+        return self.__factor
+
+    @factor.setter
+    @typeCheck(float)
+    def factor(self, factor):
+        if factor is None:
+            raise TypeError("Factor cannot be None, use 1.0 for the identity.")
+        self.__factor = factor
+
+    @property
+    def offset(self):
+        """Defines the offset to apply on the computed length
+        computed size = (factor*size(targetField)+offset)"""
+        return self.__offset
+
+    @offset.setter
+    @typeCheck(int)
+    def offset(self, offset):
+        if offset is None:
+            raise TypeError("Offset cannot be None, use 0 if no offset should be applied.")
+        self.__offset = offset

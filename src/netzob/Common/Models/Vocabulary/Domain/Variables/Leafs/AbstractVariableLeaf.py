@@ -191,7 +191,6 @@ class AbstractVariableLeaf(AbstractVariable):
                     # mutable, not learnable, not defined.
                     self.generate(writingToken)
                     self.writeValue(writingToken)
-
         else:
             if self.learnable:
                 if self.isDefined(writingToken):
