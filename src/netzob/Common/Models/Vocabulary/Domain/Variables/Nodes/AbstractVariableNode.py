@@ -56,8 +56,8 @@ class AbstractVariableNode(AbstractVariable):
 
     """
 
-    def __init__(self, varType, children=None):
-        super(AbstractVariableNode, self).__init__(varType)
+    def __init__(self, varType, children=None, learnable=False, mutable=False):
+        super(AbstractVariableNode, self).__init__(varType, learnable=learnable, mutable=mutable)
         self._children = []
         if children is not None:
             self.children = children
