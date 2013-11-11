@@ -87,13 +87,13 @@ class Size(AbstractRelationVariableLeaf):
     def __init__(self, fields, dataType=None, factor=1.0, offset=0, name=None):
         if isinstance(fields, AbstractField):
             fields = [fields]
-            super(Size, self).__init__("Size", fieldDependencies=fields, name=name)
-            self.fields = fields
-            if dataType is None:
-                dataType = Raw(nbBytes=1)
-                self.dataType = dataType
-                self.factor = factor
-                self.offset = offset
+        super(Size, self).__init__("Size", fieldDependencies=fields, name=name)
+        self.fields = fields
+        if dataType is None:
+            dataType = Raw(nbBytes=1)
+        self.dataType = dataType
+        self.factor = factor
+        self.offset = offset
 
     def buildRegex(self):
         """This method creates a regex based on the size
@@ -104,7 +104,6 @@ class Size(AbstractRelationVariableLeaf):
     def compareFormat(self, readingToken):
         if readingToken is None:
             raise TypeError("readingToken cannot be None")
-
         self._logger.debug("- [ {0}: compareFormat".format(self))
 
         # Retrieve the value to check
@@ -113,8 +112,30 @@ class Size(AbstractRelationVariableLeaf):
 
         data = readingToken.getValueForVariable(self)
 
-        if len(data) > minSize:
-            readingToken.Ok = True
+        if len(data) < self.dataType.size[0]:
+            readingToken.Ok = False
+
+        minSize, maxSize = self.dataType.size
+        if minSize != maxSize:
+            raise Exception("Impossible to abstract messages if a size field has a dynamic size")
+
+        value = data[:maxSize]
+        if not self.isDefined(readingToken):
+            for field in self.fieldDependencies:
+                if not readingToken.isValueForVariableAvailable(field.domain):
+                    readingToken.addRelationCallback(field.domain, self.compareFormat)
+        else:
+            if value == self.getValue(readingToken):
+                self._logger.debug("Parsed value respects size constraints.")
+                readingToken.Ok = True
+            else:
+                self._logger.debug("Parsed value doesn't respect size constraints")
+                readingToken.Ok = False
+
+        if readingToken.Ok:
+            readingToken.setValueForVariable(self, data[:maxSize])
+        else:
+            readingToken.removeValueForVariable(self)
 
     def getValue(self, processingToken):
         """Return the current value of targeted field.
