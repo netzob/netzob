@@ -123,7 +123,7 @@ class Size(AbstractRelationVariableLeaf):
         if not self.isDefined(readingToken):
             for field in self.fieldDependencies:
                 if not readingToken.isValueForVariableAvailable(field.domain):
-                    readingToken.addRelationCallback(field.domain, self.compareFormat)
+                    readingToken.addRelationCallback(field.domain, self, self.compareFormat)
         else:
             if value == self.getValue(readingToken):
                 self._logger.debug("Parsed value respects size constraints.")
@@ -143,8 +143,9 @@ class Size(AbstractRelationVariableLeaf):
         # first checks the pointed fields all have a value
         hasValue = True
         for field in self.fields:
-            if field.domain != self and field.domain.isDefined(processingToken) is False:
+            if field.domain != self and not processingToken.isValueForVariableAvailable(field.domain):
                 hasValue = False
+
         if not hasValue:
             raise Exception("Impossible to compute the value (getValue) of the current Size field since some of its dependencies have no value")
         else:

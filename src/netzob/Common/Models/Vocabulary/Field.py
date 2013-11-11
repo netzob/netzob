@@ -176,7 +176,19 @@ class Field(AbstractField):
             writingToken = VariableWritingToken(generationStrategy=generationStrategy)
 
         if len(self.children) > 0:
-            return ''.join([child.specialize(writingToken) for child in self.children])
+            for child in self.children:
+                child.specialize(writingToken)
+
+            result = None
+            for child in self.children:
+                if not writingToken.isValueForVariableAvailable(child.domain):
+                    raise Exception("Impossible to specialize field {0}".format(child.name))
+                if result is None:
+                    result = writingToken.getValueForVariable(child.domain)
+                else:
+                    result += writingToken.getValueForVariable(child.domain)
+
+            writingToken.setValueForVariable(self.domain, result)
         else:
             self.domain.write(writingToken)
 

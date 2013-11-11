@@ -75,8 +75,11 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         ready = True
         for dep in self.fieldDependencies:
             if not processingToken.isValueForVariableAvailable(dep.domain):
+                self._logger.debug("Relation dependencies {0} not ready!".format(dep.domain))
                 ready = False
                 break
+            else:
+                self._logger.debug("Relation dependencies {0} ready!".format(dep.domain))
         return ready
 
     @abc.abstractmethod
@@ -86,6 +89,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
     def writeValue(self, writingToken):
         self._logger.debug("- [ {0}: writeValue.".format(self))
         if not self.isDefined(writingToken):
+            self._logger.debug("Relation field is not defined, more dependencies required")
             self.toBeComputed(writingToken)
         else:
             self._logger.debug("writing the value ({0}) in the writingToken for var {1}".format(self.getValue(writingToken), self))
@@ -101,7 +105,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         self._logger.debug("A relation cannot yet be computed, mark its dependencies...")
         for field in self.fieldDependencies:
             if not processingToken.isValueForVariableAvailable(field.domain):
-                processingToken.addRelationCallback(field.domain, self.writeValue)
+                processingToken.addRelationCallback(field.domain, self, self.writeValue)
 
         #add temporary marker
         processingToken.setValueForVariable(self, TypeConverter.convert("TEMPORARY", ASCII, BitArray))

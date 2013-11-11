@@ -96,11 +96,16 @@ class AbstractVariableProcessingToken(object):
             self._logger.debug("A relation might be completed now...")
             toCall = self.__relationCallbacks[variable.id]
 
-            for call in toCall:
-                self.__relationCallbacks[variable.id].remove(call)
-                call(self)
-                if not self.Ok:
-                    raise Exception("A relation has failed.")
+            for cb in toCall:
+                (domain, call) = cb
+                self.__relationCallbacks[variable.id].remove(cb)
+                if domain.isDefined(self):
+                    self._logger.debug("relation defined.")
+                    call(self)
+                    if not self.Ok:
+                        raise Exception("A relation has failed.")
+                else:
+                    self._logger.debug("Relation cannot yet be computed, more dependencies required.")
 
     @typeCheck(AbstractVariable)
     def getValueForVariable(self, variable):
@@ -120,7 +125,8 @@ class AbstractVariableProcessingToken(object):
             raise TypeError("Variable cannot be None")
         del self.__linkedValues[variable.id]
 
-    def addRelationCallback(self, triggerVariable, callbackVariable):
+    def addRelationCallback(self, triggerVariable, callbackVar, callbackMethod):
+        callbackVariable = (callbackVar, callbackMethod)
         if triggerVariable.id in self.__relationCallbacks.keys():
             if not callbackVariable in self.__relationCallbacks[triggerVariable.id]:
                 self.__relationCallbacks[triggerVariable.id].add(callbackVariable)
