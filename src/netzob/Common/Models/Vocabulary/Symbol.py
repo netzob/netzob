@@ -108,7 +108,11 @@ class Symbol(AbstractField):
         """
         if writingToken is None:
             writingToken = VariableWritingToken(generationStrategy=generationStrategy)
-        result = [child.specialize(writingToken) for child in self.children]
+
+        for child in self.children:
+            child.specialize(writingToken)
+
+        result = [TypeConverter.convert(writingToken.getValueForVariable(child.domain), BitArray, Raw) for child in self.children]
 
         return ''.join(result)
 

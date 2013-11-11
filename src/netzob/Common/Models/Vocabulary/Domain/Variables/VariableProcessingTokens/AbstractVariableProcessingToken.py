@@ -40,6 +40,10 @@ from bitarray import bitarray
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Common.Models.Types.AbstractType import AbstractType
+from netzob.Common.Models.Types.TypeConverter import TypeConverter
+from netzob.Common.Models.Types.ASCII import ASCII
+from netzob.Common.Models.Types.BitArray import BitArray
+
 from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 
 
@@ -77,6 +81,9 @@ class AbstractVariableProcessingToken(object):
         # A dict that associated each variable with the related portion of data
         self.__linkedValues = dict()
 
+        # A dist that describes callbacks for relations
+        self.__relationCallbacks = dict()
+
         # A list of (id, value) that associates the contribution to the final value of every variable to its ID.
         #self.__linkedValues = []
 
@@ -85,6 +92,13 @@ class AbstractVariableProcessingToken(object):
         if variable is None:
             raise TypeError("Variable cannot be None")
         self.__linkedValues[variable.id] = value
+        if variable.id in self.__relationCallbacks.keys():
+            self._logger.debug("A relation might be completed now...")
+            toCall = self.__relationCallbacks[variable.id]
+
+            for call in toCall:
+                self.__relationCallbacks[variable.id].remove(call)
+                call.writeValue(self)
 
     @typeCheck(AbstractVariable)
     def getValueForVariable(self, variable):
@@ -103,6 +117,13 @@ class AbstractVariableProcessingToken(object):
         if variable is None:
             raise TypeError("Variable cannot be None")
         del self.__linkedValues[variable.id]
+
+    def addRelationCallback(self, triggerVariable, callbackVariable):
+        if triggerVariable.id in self.__relationCallbacks.keys():
+            if not callbackVariable in self.__relationCallbacks[triggerVariable.id]:
+                self.__relationCallbacks[triggerVariable.id].add(callbackVariable)
+        else:
+            self.__relationCallbacks[triggerVariable.id] = [callbackVariable]
 
     @property
     def Ok(self):
