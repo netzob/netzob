@@ -44,7 +44,7 @@
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
+from netzob.Inference.Vocabulary.FormatIdentifierOperations.ClusterByAlignment import ClusterByAlignment
 from netzob.Inference.Vocabulary.FormatIdentifierOperations.ClusterByKeyField import ClusterByKeyField
 from netzob.Inference.Vocabulary.FormatIdentifierOperations.ClusterByApplicativeData import ClusterByApplicativeData
 
@@ -54,6 +54,18 @@ class FormatIdentifier(object):
     which allow to infer the different message formats contained in one or multiple symbols.
 
     """
+
+    @staticmethod
+    @typecheck(list)
+    def clusterByAlignment(messages, minEquivalence=50, internalSlick=True):
+        """This clustering process regroups messages in groups that maximes
+        their alignement. It provides the required methods to compute clustering
+        between multiple symbols/messages using UPGMA algorithms (see U{http://en.wikipedia.org/wiki/UPGMA}).
+        When processing, the matrix of scores is computed by the C extensions (L{_libScoreComputation}
+        and used to regroup messages and symbols into equivalent cluster.
+        """
+        clustering = ClusterByAlignment(minEquivalence=minEquivalence, internalSlick=internalSlick)
+        return clustering.cluster(messages)
 
     @staticmethod
     @typeCheck(list)
