@@ -140,7 +140,9 @@ class RelationFinder(object):
         results = []
 
         for i, x_values in enumerate(attributeValues[:-1]):
-            for j, y_values in enumerate(attributeValues[i+1:]):
+            for j, y_values in enumerate(attributeValues[:]):
+                if j <= i:
+                    continue
                 isRelation = True
                 for k in range(len(x_values)):
                     if not (x_values[k] == y_values[k]):

@@ -48,5 +48,12 @@ from netzob.Common.Models.Vocabulary.Functions.VisualizationFunction import Visu
 class HighlightFunction(VisualizationFunction):
     """Represents a function which applies to modify the visualiation attributes of a data"""
 
+    TYPE = "HighlightFunction"
+    TAG_START = "\033[1;41m"
+    TAG_END   = "\033[1;m"
+
     def __init__(self, start, end):
         super(HighlightFunction, self).__init__(start, end)
+
+    def getTags(self):
+        return (self.TAG_START, self.TAG_END)

@@ -88,7 +88,11 @@ class RawMessage(AbstractMessage):
         :warning: This string should only considered for debuging and/or fast visualization. Do not
         rely on it since its format can often be modified.
         """
-        return "[{0} {1}->{2}] {3}".format(self.date, self.source, self.destination, self.data)
+
+        HLS = "\033[1;32m"
+        HLE = "\033[1;m"
+        data = super(RawMessage, self).__str__()
+        return HLS + "[{0} {1}->{2}]".format(self.date, self.source, self.destination) + HLE + " {0}".format(data)
 
     @property
     def date(self):
