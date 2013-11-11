@@ -67,8 +67,8 @@ class Alt(AbstractVariableNode):
     ASCII=None ((0, None))
     """
 
-    def __init__(self, children=None):
-        super(Alt, self).__init__(self.__class__.__name__, children)
+    def __init__(self, children=None, learnable=False, mutable=True):
+        super(Alt, self).__init__(self.__class__.__name__, children, learnable=learnable, mutable=mutable)
 
     @typeCheck(AbstractVariableProcessingToken)
     def isDefined(self, processingToken):

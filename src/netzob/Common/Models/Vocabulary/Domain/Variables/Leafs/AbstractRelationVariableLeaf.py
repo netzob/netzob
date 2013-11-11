@@ -101,7 +101,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         self._logger.debug("A relation cannot yet be computed, mark its dependencies...")
         for field in self.fieldDependencies:
             if not processingToken.isValueForVariableAvailable(field.domain):
-                processingToken.addRelationCallback(field.domain, self)
+                processingToken.addRelationCallback(field.domain, self.writeValue)
 
         #add temporary marker
         processingToken.setValueForVariable(self, TypeConverter.convert("TEMPORARY", ASCII, BitArray))
