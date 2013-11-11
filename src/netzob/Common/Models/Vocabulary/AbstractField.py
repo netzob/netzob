@@ -733,10 +733,11 @@ class AbstractField(AbstractMementoCreator):
 
     @children.setter
     def children(self, children):
+        from netzob.Common.Models.Vocabulary.Field import Field
         # First it checks the specified children are abstractfiled
         if children is not None:
             for c in children:
-                if not isinstance(c, AbstractField):
+                if not isinstance(c, Field):
                     raise TypeError("Cannot edit the children because at least one specified element is not an AbstractField its a {0}.".format(type(c)))
 
         self.clearChildren()
