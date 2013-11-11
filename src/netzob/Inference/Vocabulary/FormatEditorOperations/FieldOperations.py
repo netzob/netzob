@@ -68,7 +68,7 @@ class FieldOperations(object):
         >>> symbol = Symbol([f1, f2, f3], messages=messages)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
         >>> print symbol._str_debug()
-        None
+        Symbol
         |--  f1
              |--   Raw=None ((8, 8)) (currentValue=None, L=False, M=True)
         |--  f2
@@ -77,7 +77,7 @@ class FieldOperations(object):
              |--   Raw=None ((24, 24)) (currentValue=None, L=False, M=True)
         >>> FormatEditor.mergeFields(f2, f3)
         >>> print symbol._str_debug()
-        None
+        Symbol
         |--  f1
              |--   Raw=None ((8, 8)) (currentValue=None, L=False, M=True)
         |--  Merge
@@ -90,7 +90,7 @@ class FieldOperations(object):
         00 | fe1f000000
         >>> FormatEditor.mergeFields(symbol.children[0], symbol.children[1])
         >>> print symbol._str_debug()
-        None
+        Symbol
         |--  Merge
              |--   Agg (L=False, M=False)
                    |--   Raw=None ((8, 8)) (currentValue=None, L=False, M=True)

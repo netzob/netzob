@@ -47,6 +47,7 @@ from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Agg import Agg
 from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Common.Models.Types.AbstractType import AbstractType
 from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
+from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
 
 
 class DomainFactory(object):
@@ -61,7 +62,7 @@ class DomainFactory(object):
     >>> print domain.children[0].dataType
     Raw=None ((0, None))
     >>> print domain.children[1].dataType
-    Decimal=bitarray('01010000') ((8, 8))
+    Decimal=10 ((8, 8))
 
     >>> domain = DomainFactory.normalizeDomain(Agg([Alt(["toto", 20]), ASCII("!")]))
     >>> print domain.varType
@@ -69,9 +70,18 @@ class DomainFactory(object):
     >>> print domain.children[0].varType
     Alt
     >>> print domain.children[0].children[1].dataType
-    Decimal=bitarray('00101000') ((8, 8))
+    Decimal=20 ((8, 8))
     >>> print domain.children[1].dataType
-    ASCII=bitarray('10000100') ((0, None))
+    ASCII=! ((0, None))
+
+    >>> f = Field(domain=[Alt(["bb", ASCII("aa", nbChars=2), ASCII("aa", nbChars=2)]), ["aaaa", "aaaa"]])
+    >>> print f._str_debug()
+    Field
+    |--   Alt (L=False, M=False)
+          |--   Alt (L=False, M=False)
+               |--   ASCII=bb ((0, None)) (currentValue=bb, L=False, M=False)
+               |--   ASCII=aa ((16, 16)) (currentValue=aa, L=False, M=False)
+          |--   ASCII=aaaa ((0, None)) (currentValue=aaaa, L=False, M=False)
 
     """
 
@@ -99,11 +109,32 @@ class DomainFactory(object):
         if isinstance(domain, list):
             if len(domain) == 1:
                 return DomainFactory.__normalizeLeafDomain(domain[0])
-            for child in domain:
-                result.children.append(DomainFactory.normalizeDomain(child))
-        elif isinstance(domain, Alt):
-            for child in domain.children:
-                result.children.append(DomainFactory.normalizeDomain(child))
+        if isinstance(domain, (list, Alt)):
+            # Eliminate duplicate elements
+            tmpResult = []
+            if isinstance(domain, list):
+                for child in domain:
+                    tmpResult.append(DomainFactory.normalizeDomain(child))
+            else:
+                for child in domain.children:
+                    tmpResult.append(DomainFactory.normalizeDomain(child))
+            uniqResult = []    
+            for elt in tmpResult:
+                if isinstance(elt, AbstractVariableNode):
+                    uniqResult.append(elt)
+                else:
+                    found = False
+                    for uElt in uniqResult:
+                        if uElt == elt:
+                            found = True
+                            break
+                    if found == False:
+                        uniqResult.append(elt)
+            if len(uniqResult) == 1:
+                return uniqResult[0]
+            else:
+                for elt in uniqResult:
+                    result.children.append(elt)
         else:
             raise TypeError("Impossible to normalize the provided domain as an alternate.")
         return result

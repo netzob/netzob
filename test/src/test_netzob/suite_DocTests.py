@@ -111,7 +111,9 @@ def getSuite():
         L3NetworkMessage.__module__,
         L4NetworkMessage.__module__,
 
-        FieldOperations
+        FieldOperations,
+        CorrelationFinder.__module__,
+        RelationFinder.__module__,
     ]
 
     suite = unittest.TestSuite()

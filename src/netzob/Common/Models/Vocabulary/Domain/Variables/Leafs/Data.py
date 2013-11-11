@@ -109,6 +109,15 @@ class Data(AbstractVariableLeaf):
         self.learnable = learnable
         self.mutable = mutable
 
+    def __key(self):
+        return (self.dataType, self.currentValue, self.learnable, self.mutable)
+
+    def __eq__(x, y):
+        return x.__key() == y.__key()
+
+    def __hash__(self):
+        return hash(self.__key())
+
     @typeCheck(AbstractVariableProcessingToken)
     def isDefined(self, processingToken):
         """If the leaf has no values, it is not defined and returns False
@@ -575,7 +584,13 @@ class Data(AbstractVariableLeaf):
 
     def __str__(self):
         """The str method, mostly for debugging purpose."""
-        return "{0} (currentValue={1}, L={2}, M={3})".format(self.dataType, self.currentValue, self.learnable, self.mutable)
+        if self.currentValue is None:
+            return "{0} (currentValue={1}, L={2}, M={3})".format(self.dataType, str(self.currentValue), self.learnable, self.mutable)
+        else:
+            aType = self.dataType.__class__
+            if aType == Raw:
+                aType = HexaString
+            return "{0} (currentValue={1}, L={2}, M={3})".format(self.dataType, TypeConverter.convert(self.currentValue, BitArray, aType), self.learnable, self.mutable)
 
     #+---------------------------------------------------------------------------+
     #| Properties                                                                |

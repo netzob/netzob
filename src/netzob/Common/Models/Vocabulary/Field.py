@@ -120,7 +120,7 @@ class Field(AbstractField):
 
     """
 
-    def __init__(self, domain=None, name=None, layer=False):
+    def __init__(self, domain=None, name="Field", layer=False):
         """
         :keyword domain: the definition domain of the field (see domain property to get more information)
         :type domain: a :class:`list` of :class:`object`, default is Raw(None)

@@ -196,12 +196,26 @@ class AbstractType(object):
         self.sign = sign
 
     def __str__(self):
-        return "{0}={1} ({2})".format(self.typeName, self.value, self.size)
+        from netzob.Common.Models.Types.TypeConverter import TypeConverter
+        from netzob.Common.Models.Types.BitArray import BitArray
+        if self.value != None:
+            return "{0}={1} ({2})".format(self.typeName, TypeConverter.convert(self.value, BitArray, self.__class__), self.size)
+        else:
+            return "{0}={1} ({2})".format(self.typeName, self.value, self.size)
 
     def __repr__(self):
         from netzob.Common.Models.Types.TypeConverter import TypeConverter
         from netzob.Common.Models.Types.BitArray import BitArray
         return str(TypeConverter.convert(self.value, BitArray, self.__class__))
+
+    def __key(self):
+        return (self.typeName, self.value, self.size, self.unitSize, self.endianness, self.sign)
+
+    def __eq__(x, y):
+        return x.__key() == y.__key()
+
+    def __hash__(self):
+        return hash(self.__key())
 
     @typeCheck(type)
     def convertValue(self, typeClass, dst_unitSize=None, dst_endianness=None, dst_sign=None):
@@ -485,7 +499,7 @@ class AbstractType(object):
         >>> print TypeConverter.convert(data.currentValue, BitArray, ASCII)
         hello netzob !
         >>> print data.dataType
-        ASCII=bitarray('0001011010100110001101100011011011110110000001000111011010100110001011100101111011110110010001100000010010000100') ((0, None))
+        ASCII=hello netzob ! ((0, None))
 
         :return: a Data of the current type
         :rtype: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Leads.Data.Data`

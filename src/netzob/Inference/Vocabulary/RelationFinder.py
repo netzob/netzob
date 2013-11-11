@@ -28,117 +28,222 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
-import logging
 import uuid
 
 #+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
 from netzob import _libRelation
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Models.Types.TypeConverter import TypeConverter
+from netzob.Common.Models.Types.Raw import Raw
+from netzob.Common.Models.Types.Decimal import Decimal
+from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 
 
-#+----------------------------------------------
-#| RelationFinder:
-#|     Provides multiple algorithms to find relations between messages
-#+----------------------------------------------
+@NetzobLogger
 class RelationFinder(object):
-    #+----------------------------------------------
-    #| Constructor:
-    #| @param project : the project where the search will be executed
-    #+----------------------------------------------
+    """Provides multiple algorithms to find relations between messages.
+
+    >>> import binascii
+    >>> from netzob.all import *
+    >>> samples = ["0007ff2f000000000000", "0011ffaaaaaaaaaaaaaabbcc0010000000000000", "0012ffddddddddddddddddddddfe1f000000000000"]
+    >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
+    >>> symbol = Symbol(messages=messages)
+    >>> FormatEditor.splitStatic(symbol)
+    >>> rels = RelationFinder.findOnFields(symbol.children[1], symbol.children[3])
+    >>> print len(rels)
+    1
+    >>> for rel in rels:
+    ...     print rel["relation_type"] + " between " + rel["x_field"].name + ":" + rel["x_attribute"] + \
+            " and " + rel["y_field"].name + ":" + rel["y_attribute"]
+    SizeRelation between Field:value and Field:size
+
+    """
+
+    # Field's attributes
+    ATTR_VALUE = "value"
+    ATTR_SIZE = "size"
+    AVAILABLE_ATTRIBUTES = [ATTR_VALUE, ATTR_SIZE]
+
+    # Relation types
+    REL_SIZE = "SizeRelation"
+    REL_DATA = "DataRelation"
+    REL_EQUALITY = "EqualityRelation"
+
     def __init__(self):
-        # create logger with the given configuration
-        self.log = logging.getLogger(__name__ + '.py')
+        pass
 
-    #+----------------------------------------------
-    #| execute:
-    #| @param symbol : if not None, the operation will be limited to provided symbol
-    #+----------------------------------------------
-    def execute(self, symbol):
-        cells = [field.getValues()
-                 for field in symbol.getExtendedFields()
-                 #if not field.isStatic()
-                 ]
-        if cells:
-            # Invert array dimensions liks this:
-            # < [[m0f0, m1f0, ...], [m0f1, m1f1, ...]]
-            # > [(m0f0, m0f1, ...), (m1f0, m1f1, ...)]
-            for algo, refs in _libRelation.find(zip(*cells)).items():
-                for ref_idx, ref_off, ref_size, rels in refs:
-                    print "Relations(%s) with F%d:" % (algo, ref_idx)
-                    for rel_id, rel_conf in enumerate(rels):
-                        print "  %d. F[%d][%d:%d]" % ((rel_id,) + rel_conf)
+    @staticmethod
+    @typeCheck(AbstractField)
+    def findOnSymbol(symbol):
+        """Find exact relations between fields in the provided
+        symbol/field.
 
-    #+----------------------------------------------
-    #| executeOnCells:
-    #| @param cellsTable : a table of cells
-    #+----------------------------------------------
-    def executeOnCells(self, cellsTable):
-        if cellsTable:
-            # Invert array dimensions liks this:
-            # < [[m0f0, m1f0, ...], [m0f1, m1f1, ...]]
-            # > [(m0f0, m0f1, ...), (m1f0, m1f1, ...)]
-            for algo, refs in _libRelation.find(zip(*cellsTable)).items():
-                for ref_idx, ref_off, ref_size, rels in refs:
-                    print "Relations(%s) with F%d:" % (algo, ref_idx)
-                    for rel_id, rel_conf in enumerate(rels):
-                        print "  %d. F[%d][%d:%d]" % ((rel_id,) + rel_conf)
+        :param symbol: the symbol in which we are looking for relations
+        :type symbol: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        """
 
-    #+----------------------------------------------
-    #| executeOnCellsWithAttributes:
-    #+----------------------------------------------
-    def executeOnCellsWithAttributes(self, x_field, x_attr, y_field, y_attr):
+        rf = RelationFinder()
+        return rf.executeOnSymbol(symbol)
+
+    @staticmethod
+    @typeCheck(AbstractField, AbstractField, str, str)
+    def findOnFields(x_field, y_field, x_attribute=None, y_attribute=None):
+        """Find exact relations between the provided fields, according
+        to their optional specified attributes.
+
+        """
+
+        rf = RelationFinder()
+        return rf.executeOnFields(x_field, y_field, x_attribute, y_attribute)
+
+    # @typeCheck(AbstractField)
+    # def executeOnSymbol(self, symbol):
+    #     """
+    #     :param symbol: the symbol in which we are looking for relations
+    #     :type symbol: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+    #     """
+
+    #     cells = [field.getValues(encoded=False, styled=False)
+    #              for field in symbol.getExtendedFields()
+    #              #if not field.isStatic()
+    #              ]
+    #     if cells:
+    #         # Invert array dimensions liks this:
+    #         # < [[m0f0, m1f0, ...], [m0f1, m1f1, ...]]
+    #         # > [(m0f0, m0f1, ...), (m1f0, m1f1, ...)]
+    #         for algo, refs in _libRelation.find(zip(*cells)).items():
+    #             for ref_idx, ref_off, ref_size, rels in refs:
+    #                 print "Relations(%s) with F%d:" % (algo, ref_idx)
+    #                 for rel_id, rel_conf in enumerate(rels):
+    #                     print "  %d. F[%d][%d:%d]" % ((rel_id,) + rel_conf)
+
+
+    # def executeOnCells(self, cellsTable):
+    #     if cellsTable:
+    #         # Invert array dimensions liks this:
+    #         # < [[m0f0, m1f0, ...], [m0f1, m1f1, ...]]
+    #         # > [(m0f0, m0f1, ...), (m1f0, m1f1, ...)]
+    #         for algo, refs in _libRelation.find(zip(*cellsTable)).items():
+    #             for ref_idx, ref_off, ref_size, rels in refs:
+    #                 print "Relations(%s) with F%d:" % (algo, ref_idx)
+    #                 for rel_id, rel_conf in enumerate(rels):
+    #                     print "  %d. F[%d][%d:%d]" % ((rel_id,) + rel_conf)
+
+    @typeCheck(AbstractField)
+    def executeOnSymbol(self, symbol):
+        """Find exact relations between fields of the provided symbol.
+        """
+
+        (attributeValues_headers, attributeValues) = self._generateAttributeValuesForSymbol(symbol)
+        results = []
+
+        for i, x_values in enumerate(attributeValues[:-1]):
+            for j, y_values in enumerate(attributeValues[i+1:]):
+                isRelation = True
+                for k in range(len(x_values)):
+                    if not (x_values[k] == y_values[k]):
+                        isRelation = False
+                        break
+                if isRelation:
+                    # Do no keep relations where a field's values does not change
+                    if len(set(x_values)) == 1 or len(set(y_values)) == 1:
+                        continue
+                    (x_fields, x_attribute) = attributeValues_headers[i]
+                    (y_fields, y_attribute) = attributeValues_headers[j]
+                    # The relation should not apply on the same field
+                    if len(x_fields) == 1 and len(y_fields) == 1 and x_fields[0].id == y_fields[0].id:
+                        continue
+                    relation_type = self._findRelationType(x_attribute, y_attribute)
+                    self._logger.debug("Correlation found between '" + str(x_fields) + ":" + x_attribute + "' and '" + str(y_fields) + ":" + y_attribute + "'")
+                    id_relation = str(uuid.uuid4())
+                    results.append({'id': id_relation,
+                                    "relation_type": relation_type,
+                                    'x_fields': x_fields,
+                                    'x_attribute': x_attribute,
+                                    'y_fields': y_fields,
+                                    'y_attribute': y_attribute})
+        return results
+
+    @typeCheck(AbstractField, AbstractField, str, str)
+    def executeOnFields(self, x_field, y_field, x_attribute=None, y_attribute=None):
+        """Find exact relations between fields according to their
+        optional selected attributes.
+        """
+
         results = []
         # Convert cells according to their interesting attribute (data, size or offset)
-        if x_attr == "s" and y_attr == "s":  # Two size field are uncertain...
+        if x_attribute == self.ATTR_SIZE and y_attribute == self.ATTR_SIZE:  # A relation between two size field is uncertain...
             return results
-        x_values = x_field.getValues()
-        y_values = y_field.getValues()
+        x_values = x_field.getValues(encoded=False, styled=False)
+        y_values = y_field.getValues(encoded=False, styled=False)
+
+        # Select attributes for fields comparison
+        if x_attribute is None:
+            x_attributes = self.AVAILABLE_ATTRIBUTES
+        else:
+            x_attributes = [x_attribute]
+
+        if y_attribute is None:
+            y_attributes = self.AVAILABLE_ATTRIBUTES
+        else:
+            y_attributes = [y_attribute]
 
         # Try to find a relation that matches each cell
         relation_fcts = {}
-        relation_fcts["size"] = self.sizeRelation
-        relation_fcts["equality"] = self.equalRelation
+        relation_fcts[self.REL_SIZE] = self._sizeRelation
+        relation_fcts[self.REL_EQUALITY] = self._equalRelation
 
-        for (relation_name, relation_fct) in relation_fcts.items():
-            isRelation = True
-            for i in range(len(x_values)):
-                if not relation_fct(x_values[i], x_attr, y_values[i], y_attr):
-                    isRelation = False
-                    break
-            if isRelation:
-                logging.info("Relation found between '" + x_attr + ":" + str(x_field.name) + "' and '" + y_attr + ":" + str(y_field.name) + "'")
-                logging.info("  Relation: " + relation_name)
-                id_relation = str(uuid.uuid4())
-                results.append({'id': id_relation,
-                                "relation_type": relation_name,
-                                'x_field': x_field,
-                                'x_attribute': x_attr,
-                                'y_field': y_field,
-                                'y_attribute': y_attr})
+        for x_attribute in x_attributes:
+            for y_attribute in y_attributes:
+                for (relation_name, relation_fct) in relation_fcts.items():
+                    isRelation = True
+                    for i in range(len(x_values)):
+                        if not relation_fct(x_values[i], x_attribute, y_values[i], y_attribute):
+                            isRelation = False
+                            break
+                    if isRelation:
+                        self._logger.debug("Relation found between '" + x_attribute + ":" + str(x_field.name) + "' and '" + y_attribute + ":" + str(y_field.name) + "'")
+                        self._logger.debug("  Relation: " + relation_name)
+                        id_relation = str(uuid.uuid4())
+                        results.append({'id': id_relation,
+                                        "relation_type": relation_name,
+                                        'x_field': x_field,
+                                        'x_attribute': x_attribute,
+                                        'y_field': y_field,
+                                        'y_attribute': y_attribute})
         return results
 
-    def equalRelation(self, x, x_attr, y, y_attr):
+    def _findRelationType(self, x_attribute, y_attribute):
+        typeRelation = "Unknown"
+        if (x_attribute == self.ATTR_VALUE and y_attribute == self.ATTR_SIZE) or (x_attribute == self.ATTR_SIZE and y_attribute == self.ATTR_VALUE):
+            typeRelation = self.REL_SIZE
+        elif (x_attribute == x_attribute) and x_attribute == self.ATTR_VALUE:
+            typeRelation = self.REL_DATA
+        return typeRelation
+
+    def _equalRelation(self, x, x_attribute, y, y_attribute):
         if x == y:
             return True
         else:
             return False
 
-    def sizeRelation(self, x, x_attr, y, y_attr):
-        if x_attr == "s":
+    def _sizeRelation(self, x, x_attribute, y, y_attribute):
+        if x_attribute == self.ATTR_SIZE:
             if len(x) > 0:
-                x = len(x) / 2
+                x = len(x)
         else:
             if len(x) > 0:
-                x = int(x, 16)
+                x = TypeConverter.convert(x[:8], Raw, Decimal)
             else:
                 x = 0
-        if y_attr == "s":
+        if y_attribute == self.ATTR_SIZE:
             if len(y) > 0:
-                y = len(y) / 2
+                y = len(y)
         else:
             if len(y) > 0:
-                y = int(y, 16)
+                y = TypeConverter.convert(y[:8], Raw, Decimal)
             else:
                 y = 0
 
@@ -146,3 +251,77 @@ class RelationFinder(object):
             return True
         else:
             return False
+
+    def _generateAttributeValuesForSymbol(self, symbol):
+        # First we compute the possible list of payloads
+        lines_data = []
+        line_header = []
+
+        # Compute the table of values
+        valuesTable = []
+        fields = symbol.children
+        for field in fields:
+            valuesTable.append(field.getValues(encoded=False, styled=False))
+
+        # Compute the table of concatenation of values
+        for i in range(len(fields[:])):
+            for j in range(i+1, len(fields)+1):
+                # We generate the data
+                concatCellsData = self._generateConcatData(valuesTable[i:j])
+
+                # We generate lines and header for fields values
+                line_header.append((fields[i:j], self.ATTR_VALUE))
+                lines_data.append(self._generateDataValues(concatCellsData))
+
+                # We generate lines and header for fields values
+                line_header.append((fields[i:j], self.ATTR_SIZE))
+                lines_data.append(self._generateSizeValues(concatCellsData))
+
+        # # # Now we generate values for fields sizes
+        # # (multipleSize_Header, multipleSize_lines) = self._generateSizeFieldFromBeginingOfField(symbol)
+        # # line_header.extend(multipleSize_Header)
+        # # for i_line in range(0, len(lines)):
+        # #     lines[i_line] = lines[i_line] + "," + multipleSize_lines[i_line]
+
+        # # # Now we generate values for CRC32
+        # # (crc32Header, crc32Lines) = self._generateCRC32(symbol)
+        # # line_header.extend(crc32Header)
+        # # for i_line in range(0, len(lines)):
+        # #     line = lines[i_line]
+        # #     lines[i_line] = line + "," + crc32Lines[i_line]
+
+        return (line_header, lines_data)
+
+    def _generateConcatData(self, cellsDataList):
+        """Generates the concatenation of each cell of each field.
+        Example:
+          cellsData_1 = ["a", "aa", "aaa"]
+          cellsData_2 = ["b", "bb", "bbb"]
+          res = ["ab", "aabb", "aaabbb"]
+        """
+
+        if len(cellsDataList) < 1:
+            return []
+        result = ["" for cell in cellsDataList[0]]
+        for cellsData in cellsDataList:
+            for i, data in enumerate(cellsData):
+                result[i] += data
+        return result
+
+    def _generateDataValues(self, cellsData):
+        result = []
+        for data in cellsData:
+            if len(data) > 0:
+                result.append(TypeConverter.convert(data[:8], Raw, Decimal))  # We take only the first 8 octets
+            else:
+                result.append(0)
+        return result
+
+    def _generateSizeValues(self, cellsData):
+        result = []
+        for data in cellsData:
+            if len(data) > 0:
+                result.append(len(data))  # Size in octets
+            else:
+                result.append(0)
+        return result

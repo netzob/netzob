@@ -87,6 +87,15 @@ class AbstractVariable(object):
         # The variables just above the current variable in the tree representation.
         self.__fathers = []
 
+    def __key(self):
+        return (self.id)
+
+    def __eq__(x, y):
+        return x.__key() == y.__key()
+
+    def __hash__(self):
+        return hash(self.__key())
+
     def getProgeny(self):
         """Get this variable and all variable that descends from it. (i.e. son, grandson...).
         Return EVERY child variable, especially for alternate variable.

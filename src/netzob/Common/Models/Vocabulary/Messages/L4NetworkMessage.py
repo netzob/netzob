@@ -29,6 +29,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import time
+import binascii
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -44,11 +45,8 @@ from netzob.Common.Models.Vocabulary.Messages.L3NetworkMessage import L3NetworkM
 class L4NetworkMessage(L3NetworkMessage):
     """Definition of a layer 4 network message
 
-    >>> msg = L4NetworkMessage("090002300202f000")
-    >>> print msg.data
-    090002300202f000
-
-    >>> msg = L4NetworkMessage("090002300202f000", date=1352293417.28, l3SourceAddress="192.168.10.100", l3DestinationAddress="192.168.10.245", l4SourceAddress=2049, l4DestinationAddress=80)
+    >>> import binascii
+    >>> msg = L4NetworkMessage(binascii.unhexlify("090002300202f000"), date=1352293417.28, l3SourceAddress="192.168.10.100", l3DestinationAddress="192.168.10.245", l4SourceAddress=2049, l4DestinationAddress=80)
     >>> print msg.source
     192.168.10.100:2049
     >>> print msg.destination
@@ -126,4 +124,4 @@ class L4NetworkMessage(L3NetworkMessage):
         return "{0}:{1}".format(str(self.l3DestinationAddress), str(self.l4DestinationAddress))
 
     def __str__(self):
-        return "[{0} {1}->{2}] {3}".format(str(self.date), str(self.source), str(self.destination), str(self.data))
+        return "[{0} {1}->{2}] {3}".format(str(self.date), str(self.source), str(self.destination), str(binascii.b2a_hex(self.data)))
