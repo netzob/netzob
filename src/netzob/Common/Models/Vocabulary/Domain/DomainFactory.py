@@ -62,7 +62,7 @@ class DomainFactory(object):
     >>> print domain.children[0].dataType
     Raw=None ((0, None))
     >>> print domain.children[1].dataType
-    Decimal=bitarray('01010000') ((8, 8))
+    Decimal=10 ((8, 8))
 
     >>> domain = DomainFactory.normalizeDomain(Agg([Alt(["toto", 20]), ASCII("!")]))
     >>> print domain.varType
@@ -70,18 +70,18 @@ class DomainFactory(object):
     >>> print domain.children[0].varType
     Alt
     >>> print domain.children[0].children[1].dataType
-    Decimal=bitarray('00101000') ((8, 8))
+    Decimal=20 ((8, 8))
     >>> print domain.children[1].dataType
-    ASCII=bitarray('10000100') ((0, None))
+    ASCII=! ((0, None))
 
     >>> f = Field(domain=[Alt(["bb", ASCII("aa", nbChars=2), ASCII("aa", nbChars=2)]), ["aaaa", "aaaa"]])
     >>> print f._str_debug()
-    None
+    Field
     |--   Alt (L=False, M=False)
           |--   Alt (L=False, M=False)
-               |--   ASCII=bitarray('0100011001000110') ((0, None)) (currentValue=bitarray('0100011001000110'), L=False, M=False)
-               |--   ASCII=bitarray('1000011010000110') ((16, 16)) (currentValue=bitarray('1000011010000110'), L=False, M=False)
-          |--   ASCII=bitarray('10000110100001101000011010000110') ((0, None)) (currentValue=bitarray('10000110100001101000011010000110'), L=False, M=False)
+               |--   ASCII=bb ((0, None)) (currentValue=bb, L=False, M=False)
+               |--   ASCII=aa ((16, 16)) (currentValue=aa, L=False, M=False)
+          |--   ASCII=aaaa ((0, None)) (currentValue=aaaa, L=False, M=False)
 
     """
 

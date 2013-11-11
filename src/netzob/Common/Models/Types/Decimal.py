@@ -79,7 +79,7 @@ class Decimal(AbstractType):
     >>> dec = Decimal(10)
     >>> raw = dec.convertValue(Raw, dst_endianness=AbstractType.ENDIAN_BIG)
     >>> print raw
-    Raw=bitarray('00001010') ((0, None))
+    Raw=0a ((0, None))
 
     Its not possible to convert if the object has not value
     >>> a = Decimal(nbUnits=3)

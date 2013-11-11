@@ -54,7 +54,7 @@ class ApplicativeData(object):
 
     >>> app1 = ApplicativeData("Email", ASCII("contact@netzob.org"))
     >>> print app1.value
-    ASCII=bitarray('110001101111011001110110001011101000011011000110001011100000001001110110101001100010111001011110111101100100011001110100111101100100111011100110') ((0, None))
+    ASCII=contact@netzob.org ((0, None))
 
     """
 

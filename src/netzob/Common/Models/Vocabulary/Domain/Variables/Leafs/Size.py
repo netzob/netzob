@@ -82,6 +82,10 @@ class Size(AbstractRelationVariableLeaf):
             dataType = ASCII()
         self.dataType = dataType
 
+    def __str__(self):
+        """The str method."""
+        return "Size({0}) - Type:{1} (L={2}, M={3})".format(str([f.name for f in self.fields]), self.dataType, self.learnable, self.mutable)
+
     def isDefined(self, processingToken):
         """Tells if the variable is defined (i.e. has a value for a leaf, enough leaf have values for a node...)
 

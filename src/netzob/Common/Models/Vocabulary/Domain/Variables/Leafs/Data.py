@@ -584,7 +584,10 @@ class Data(AbstractVariableLeaf):
 
     def __str__(self):
         """The str method, mostly for debugging purpose."""
-        return "{0} (currentValue={1}, L={2}, M={3})".format(self.dataType, self.currentValue, self.learnable, self.mutable)
+        if self.currentValue is None:
+            return "{0} (currentValue={1}, L={2}, M={3})".format(self.dataType, str(self.currentValue), self.learnable, self.mutable)
+        else:
+            return "{0} (currentValue={1}, L={2}, M={3})".format(self.dataType, TypeConverter.convert(self.currentValue, BitArray, self.dataType.__class__), self.learnable, self.mutable)
 
     #+---------------------------------------------------------------------------+
     #| Properties                                                                |

@@ -76,7 +76,7 @@ class Symbol(AbstractField):
 
     """
 
-    def __init__(self, fields=None, messages=None, name=None):
+    def __init__(self, fields=None, messages=None, name="Symbol"):
         """
         :keyword fields: the fields which participate in symbol definition
         :type fields: a :class:`list` of :class:`netzob.Common.Models.Vocabulary.Field`

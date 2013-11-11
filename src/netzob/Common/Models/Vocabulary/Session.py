@@ -148,10 +148,9 @@ class Session(object):
         >>> print len(session.applicativeData)
         2
         >>> print session.applicativeData[0]
-        Applicative Data: test=Decimal=bitarray('00101000') ((8, 8)))
+        Applicative Data: test=Decimal=20 ((8, 8)))
         >>> print session.applicativeData[1]
-        Applicative Data: test2=ASCII=bitarray('00010110101001100011011000110110111101101110111011110110010011100011011000100110') ((0, None)))
-
+        Applicative Data: test2=ASCII=helloworld ((0, None)))
 
         :type: a list of :class:`netzob.Common.Models.Vocabulary.ApplicativeData.ApplicativeData`.
         """

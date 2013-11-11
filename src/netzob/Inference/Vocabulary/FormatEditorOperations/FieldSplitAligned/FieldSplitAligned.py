@@ -75,27 +75,26 @@ class FieldSplitAligned(object):
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol)
     >>> print symbol
-      01 | ff00 |            | ff
-    0222 | ff00 |         00 | ff
-      03 | ff00 |       0000 | ff
-    0444 | ff00 |     000000 | ff
-      05 | ff00 |   00000000 | ff
-      06 | ff00 | 0000000000 | ff
+    01   | ff00 |            | ff
+    0222 | ff00 | 00         | ff
+    03   | ff00 | 0000       | ff
+    0444 | ff00 | 000000     | ff
+    05   | ff00 | 00000000   | ff
+    06   | ff00 | 0000000000 | ff
 
     >>> samples = ["hello toto, what's up in France ?", "hello netzob, what's up in UK ?", "hello sygus, what's up in Germany ?"]
     >>> messages = [RawMessage(data=sample) for sample in samples]
     >>> symbol = Symbol(messages=messages)
     >>> print symbol
-      hello toto, what's up in France ?
-        hello netzob, what's up in UK ?
+    hello toto, what's up in France ?  
+    hello netzob, what's up in UK ?    
     hello sygus, what's up in Germany ?
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol)
     >>> print symbol
-    hello  |   toto | , what's up in  |  France |  ?
-    hello  | netzob | , what's up in  |      UK |  ?
-    hello  |  sygus | , what's up in  | Germany |  ?
-
+    hello  | toto   | , what's up in  | France  |  ?
+    hello  | netzob | , what's up in  | UK      |  ?
+    hello  | sygus  | , what's up in  | Germany |  ?
 
     """
 
