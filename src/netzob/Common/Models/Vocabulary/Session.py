@@ -130,9 +130,9 @@ class Session(object):
                 raise TypeError("Cannot add messages of type {0} in the session, only AbstractMessages are allowed.".format(type(msg)))
 
         self.clearMessages()
-        self.__messages.addAll(messages)
-        for msg in self.__messages.values():
-            msg.session = self
+        for message in messages:
+            self.__messages.add(message)
+            message.session = self
 
     @property
     def applicativeData(self):
