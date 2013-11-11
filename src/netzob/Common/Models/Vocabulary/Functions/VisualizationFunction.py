@@ -34,6 +34,8 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+import abc
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -47,6 +49,14 @@
 class VisualizationFunction(object):
     """Represents a function which applies to modify the visualiation attributes of a data"""
 
+    TYPE = "VisualizationFunction"
+
     def __init__(self, start, end):
         self.start = start
         self.end = end
+        self.id = uuid.uuid4()
+
+    @abc.abstractmethod
+    def getTags(self):
+        self.log.error("The function class (" + self.getType() + ") doesn't define 'getTags' !")
+        raise NotImplementedError("The function class (" + self.getType() + ") doesn't define 'getTags' !")

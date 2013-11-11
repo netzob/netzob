@@ -45,6 +45,7 @@ from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.HexaString import HexaString
 from netzob.Common.Models.Types.Raw import Raw
+from netzob.Common.Models.Vocabulary.Functions.FunctionApplicationTable import FunctionApplicationTable
 from netzob.Common.Models.Vocabulary.Functions.VisualizationFunction import VisualizationFunction
 
 
@@ -148,6 +149,29 @@ class AbstractMessage(SortableObject):
         :type: int
         """
         return int(self.id)
+
+    def __str__(self):
+        """Returns a string that describes the message.
+
+        :warning: This string should only considered for debuging and/or fast visualization. Do not
+        rely on it since its format can often be modified.
+        """
+
+        functionTable = FunctionApplicationTable([self.data])        
+        for function in self.visualizationFunctions:
+            start = function.start / 8
+            end = (function.end / 8)
+            #tmpData = tmpData[:start] + HLS + tmpData[start:end] + HLE + tmpData[end:]
+            functionTable.applyFunction(function, start, end)
+            #functionTable.applyFunction(function, i_data, i_data + len(dataField))
+        return "".join(functionTable.getResult())
+        # tmpData = self.data
+        # for function in self.visualizationFunctions:
+        #     start = function.start / 8
+        #     end = function.end / 8
+        #     tmpData = tmpData[:start] + HLS + tmpData[start:end] + HLE + tmpData[end:]
+        #     #functionTable.applyFunction(function, i_data, i_data + len(dataField))
+        # return tmpData
 
     @property
     def id(self):
