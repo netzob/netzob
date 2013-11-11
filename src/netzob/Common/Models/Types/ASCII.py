@@ -231,17 +231,13 @@ class ASCII(AbstractType):
         if data is None:
             raise TypeError("data cannot be None")
 
-        data = ASCII.encode(data, unitSize=unitSize, endianness=endianness, sign=sign)
-
         if len(data) == 0:
             return False
 
-        for byte in data:
-            # We naively try to decode in utf-8 the binary.
-            try:
-                byte.decode('utf-8')
-            except:
-                return False
+        try:
+            data.encode('utf-8')
+        except:
+            return False
 
         (minChar, maxChar) = self.nbChars
         if minChar is not None:
@@ -332,4 +328,12 @@ class ASCII(AbstractType):
         if data is None:
             raise TypeError("data cannot be None")
 
-        return str(data)
+        res = ""
+        for elt in data:
+            ordElt = ord(elt)
+            if ordElt >= 0x20 and ordElt <= 0x7e:  # means between ' ' and '~'
+                res += elt
+            else:
+                res += "."
+
+        return res

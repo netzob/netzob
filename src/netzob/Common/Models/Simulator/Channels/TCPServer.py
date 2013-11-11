@@ -102,6 +102,8 @@ class TCPServer(AbstractChannel):
         # TODO: handle timeout
         if self.__clientSocket is not None:
             return self.__clientSocket.recv(1024)
+        else:
+            raise Exception("socket is not available")
 
     def write(self, data):
         """Write on the communication channel the specified data
@@ -111,6 +113,8 @@ class TCPServer(AbstractChannel):
         """
         if self.__clientSocket is not None:
             self.__clientSocket.sendall(data)
+        else:
+            raise Exception("socket is not available")
 
     # Management methods
 

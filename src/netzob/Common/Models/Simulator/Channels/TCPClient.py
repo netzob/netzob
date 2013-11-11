@@ -95,7 +95,10 @@ class TCPClient(AbstractChannel):
         @type timeout: :class:`int`
         """
         # TODO: handle timeout
-        return self.__socket.recv(1024)
+        if self.__socket is not None:
+            return self.__socket.recv(1024)
+        else:
+            raise Exception("socket is not available")
 
     def write(self, data):
         """Write on the communication channel the specified data
@@ -103,7 +106,10 @@ class TCPClient(AbstractChannel):
         :parameter data: the data to write on the channel
         :type data: binary object
         """
-        self.__socket.sendall(data)
+        if self.__socket is not None:
+            self.__socket.sendall(data)
+        else:
+            raise Exception("socket is not available")
 
     # Management methods
 
