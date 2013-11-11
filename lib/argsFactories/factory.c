@@ -122,10 +122,9 @@ void parseLibscoreComputation(PyObject* factobj, va_list args){
   if (debugMode == TRUE) {
     unsigned int iMessage;
     for(iMessage=0;iMessage<*nbmess;iMessage++) {
-      printf("Message : %d\n", iMessage);
-      printf("Data : ");
       t_message message = (*messages)[iMessage];
-
+      printf("Message : %d (UID Symbol=%s)\n", iMessage, message.uid);
+      printf("Data : ");
       for (i=0; i< message.len; i++) {
 	printf("%02x", (unsigned char) message.alignment[i]);
       }

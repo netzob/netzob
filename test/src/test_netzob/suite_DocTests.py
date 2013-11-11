@@ -47,6 +47,7 @@ from netzob.Inference.Vocabulary.FormatEditorOperations import FieldReseter
 from netzob.Inference.Vocabulary.FormatEditorOperations.FieldSplitStatic import FieldSplitStatic
 from netzob.Inference.Vocabulary.FormatIdentifierOperations import ClusterByKeyField
 from netzob.Inference.Vocabulary.FormatIdentifierOperations import ClusterByApplicativeData
+from netzob.Inference.Vocabulary.FormatIdentifierOperations import ClusterByAlignment
 from netzob.Common.Utils import SortedTypedList
 
 from netzob.Inference.Vocabulary.Search import SearchTask
@@ -89,6 +90,7 @@ def getSuite():
 
         FormatEditor.__module__,
         FieldSplitStatic,
+        FieldSplitAligned,
         FormatIdentifier.__module__,
         FieldReseter,
         AbstractMessage,
@@ -103,8 +105,9 @@ def getSuite():
         SearchResult,
         IPv4.__module__,
         ClusterByApplicativeData,
+        ClusterByAlignment,
 
-        FieldSplitAligned,
+        
         # Size.__module__,
         RawMessage.__module__,
         L2NetworkMessage.__module__,
