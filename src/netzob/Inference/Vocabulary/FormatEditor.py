@@ -48,6 +48,8 @@ from netzob.Common.Models.Types.AbstractType import AbstractType
 from netzob.Inference.Vocabulary.FormatEditorOperations.FieldSplitStatic.FieldSplitStatic import FieldSplitStatic
 from netzob.Inference.Vocabulary.FormatEditorOperations.FieldReseter import FieldReseter
 from netzob.Inference.Vocabulary.FormatEditorOperations.FieldOperations import FieldOperations
+from netzob.Inference.Vocabulary.FormatEditorOperations.FieldSplitAligned.FieldSplitAligned import FieldSplitAligned
+
 from netzob.Common.Models.Vocabulary.Symbol import Symbol
 
 
@@ -56,6 +58,15 @@ class FormatEditor(object):
     which allow to edit the format of a field.
 
     """
+
+    @staticmethod
+    @typeCheck(AbstractField)
+    def splitAligned(field, useSemantic=True):
+        if field is None:
+            raise TypeError("Field cannot be None")
+
+        fs = FieldSplitAligned()
+        fs.execute(field, useSemantic)
 
     @staticmethod
     @typeCheck(AbstractField, str)
