@@ -41,14 +41,14 @@
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Inference.Vocabulary.FormatEditor import FormatEditor
 from netzob.Common.C_Extensions.WrapperArgsFactory import WrapperArgsFactory
 from netzob.Common.Models.Types.AbstractType import AbstractType
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.HexaString import HexaString
 from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Vocabulary.Field import Field
+from netzob.Common.Models.Vocabulary.Messages.AbstractMessage import AbstractMessage
+from netzob.Inference.Vocabulary.Search.SearchEngine import SearchEngine
 from netzob import _libNeedleman
 
 
@@ -66,11 +66,11 @@ class FieldSplitAligned(object):
     >>> symbol = Symbol(messages=messages)
     >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> print symbol
-    01ff00ff          
-    0222ff0000ff      
-    03ff000000ff      
-    0444ff00000000ff  
-    05ff0000000000ff  
+    01ff00ff
+    0222ff0000ff
+    03ff000000ff
+    0444ff00000000ff
+    05ff0000000000ff
     06ff000000000000ff
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol)
@@ -86,15 +86,54 @@ class FieldSplitAligned(object):
     >>> messages = [RawMessage(data=sample) for sample in samples]
     >>> symbol = Symbol(messages=messages)
     >>> print symbol
-    hello toto, what's up in France ?  
-    hello netzob, what's up in UK ?    
+    hello toto, what's up in France ?
+    hello netzob, what's up in UK ?
     hello sygus, what's up in Germany ?
+
     >>> fs = FieldSplitAligned()
-    >>> fs.execute(symbol)
+    >>> fs.execute(symbol, useSemantic = False)
     >>> print symbol
     hello  | toto   | , what's up in  | France  |  ?
     hello  | netzob | , what's up in  | UK      |  ?
     hello  | sygus  | , what's up in  | Germany |  ?
+
+    Let's illustrate the use of semantic constrained sequence alignment with a simple example
+
+    >>> samples = ["John-0108030405--john.doe@gmail.com", "Mathieu-0908070605-31 rue de Paris, 75000 Paris, France-mat@yahoo.fr", "Olivia-0348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hotmail.fr"]
+    >>> messages = [RawMessage(data=sample) for sample in samples]
+    >>> symbol = Symbol(messages=messages)
+    >>> print symbol
+    John-0108030405--john.doe@gmail.com
+    Mathieu-0908070605-31 rue de Paris, 75000 Paris, France-mat@yahoo.fr
+    Olivia-0348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hotmail.fr
+
+    >>> fs = FieldSplitAligned()
+    >>> fs.execute(symbol, useSemantic = False)
+    >>> print symbol
+    John    | -0 | 10 | 8 | 03040 | 5 | - | - | john.    | d | o | e | @gm                  | a |     | i | l.        | c |           | o | m
+    Mathieu | -0 | 90 | 8 | 07060 | 5 |   | - | 31 rue   | d |   | e |  Paris, 75000 P      | a | r   | i | s, Fran   | c | e-mat@yah | o | o.fr
+    Olivia  | -0 | 34 | 8 | 2345  | 5 | 6 | - | 7 allee  | d |   | e | s peupliers, 13000 M | a | rse | i | lle, Fran | c | e-        | o | livia.tortue@hotmail.fr
+
+    >>> applicativeDatas = []
+    >>> applicativeDatas.append(ApplicativeData("Firstname", ASCII("John")))
+    >>> applicativeDatas.append(ApplicativeData("Firstname", ASCII("Mathieu")))
+    >>> applicativeDatas.append(ApplicativeData("Firstname", ASCII("Olivia")))
+    >>> applicativeDatas.append(ApplicativeData("PhoneNumber", ASCII("0108030405")))
+    >>> applicativeDatas.append(ApplicativeData("PhoneNumber", ASCII("0348234556")))
+    >>> applicativeDatas.append(ApplicativeData("PhoneNumber", ASCII("0908070605")))
+    >>> applicativeDatas.append(ApplicativeData("StreetAddress", ASCII("31 rue de Paris")))
+    >>> applicativeDatas.append(ApplicativeData("StreetAddress", ASCII("7 allee des peupliers")))
+    >>> applicativeDatas.append(ApplicativeData("CityAddress", ASCII("Paris")))
+    >>> applicativeDatas.append(ApplicativeData("CityAddress", ASCII("marseille")))
+    >>> applicativeDatas.append(ApplicativeData("Email", ASCII("john.doe@gmail.com")))
+    >>> applicativeDatas.append(ApplicativeData("Email", ASCII("mat@yahoo.fr")))
+    >>> applicativeDatas.append(ApplicativeData("Email", ASCII("olivia.tortue@hotmail.fr")))
+    >>> session = Session(messages, applicativeData=applicativeDatas)
+    >>> symbol = Symbol(messages=messages)
+
+    >>> fs = FieldSplitAligned()
+    >>> fs.execute(symbol, useSemantic=True)
+    >>> print symbol
 
     """
 
@@ -105,8 +144,8 @@ class FieldSplitAligned(object):
         self.doInternalSlick = doInternalSlick
         self.unitSize = unitSize
 
-    @typeCheck(AbstractField)
-    def execute(self, field):
+    @typeCheck(AbstractField, bool)
+    def execute(self, field, useSemantic=True):
         """Execute the alignement on the specified field.
 
         :parameter field: the field that will be aligned
@@ -115,17 +154,26 @@ class FieldSplitAligned(object):
         if field is None:
             raise TypeError("Field cannot be None")
 
+        if useSemantic is None:
+            raise TypeError("useSemantic cannot be None")
+
         # First step: we clean and reset the field
+        from netzob.Inference.Vocabulary.FormatEditor import FormatEditor
         FormatEditor.resetFormat(field)
 
         # Retrieve all the segment of messages to align
-        values = field.getValues(encoded=False, styled=False)
+        messageValues = field.getMessageValues(encoded=False, styled=False)
 
-        if len(values) == 0:
+        # Semantic tags (a.k.a applicative data)
+        semanticTags = None
+        if useSemantic:
+            semanticTags = [self.__searchApplicativeDataInMessage(message) for message, values in messageValues.iteritems()]
+
+        if len(messageValues.values()) == 0:
             return
 
         # Execute the alignement
-        (alignment, semanticTags, score) = self._alignData(values)
+        (alignment, semanticTags, score) = self._alignData(messageValues.values(), semanticTags)
 
         # Check the results
         if alignment is None:
@@ -133,6 +181,9 @@ class FieldSplitAligned(object):
 
         # Build Fields based on computed alignement and semantic tags
         self._updateFieldsFromAlignment(field, alignment, semanticTags)
+
+        # if useSemantic:
+        #     self._createSubFieldsFollowingSemanticTags(field, alignment, semanticTags)
 
     @typeCheck(AbstractField, str, dict)
     def _updateFieldsFromAlignment(self, field, alignment, semanticTags):
@@ -149,6 +200,10 @@ class FieldSplitAligned(object):
             raise TypeError("Alignment cannot be None")
         if semanticTags is None:
             raise TypeError("SemanticTags cannot be None")
+
+
+        self._logger.debug("Semantic Tags : {0}".format(semanticTags))
+        self._logger.debug("Alignment: {0}".format(alignment))
 
         # Create fields following the alignment
         self._splitFieldFollowingAlignment(field, alignment)
@@ -274,7 +329,7 @@ class FieldSplitAligned(object):
         :parameter values: values to align
         :type values: a list of hexastring.
         :keyword semanticTags: semantic tags to consider when aligning
-        :type semanticTags: a list of :class:`netzob.Common.Models.Vocabulary.SemanticTag.SemanticTag`
+        :type semanticTags: a dict of :class:`netzob.Common.Models.Vocabulary.SemanticTag.SemanticTag`
         :return: the alignment, its score and the semantic tags
         :rtype: a tupple (alignement, semanticTags, score)
         """
@@ -286,7 +341,6 @@ class FieldSplitAligned(object):
                 raise TypeError("At least one value is None or not an str which is not authorized.")
 
         if semanticTags is None:
-            semanticTags = []
             semanticTags = [dict() for v in values]
 
         if len(semanticTags) != len(values):
@@ -308,6 +362,214 @@ class FieldSplitAligned(object):
 
         return (alignment, semanticTags, scores)
 
+    @typeCheck(AbstractMessage)
+    def __searchApplicativeDataInMessage(self, message):
+        """This internal method search any applicative data that could be identified
+        in the specified message and returns results in a dict that shows the position
+        of the applicative data identified.
+
+        :parameter message: the message in which we search any applicative data
+        :type message: :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+        :return: a dict that describes the position of identified applicative data
+        :rtype: :class:`dict`
+        """
+        if message is None:
+            raise TypeError("Message cannot be None")
+
+        self._logger.debug("Search app data in {0}".format(message.data))
+
+        results = dict()
+
+        appValues = dict()
+        if message.session is not None:
+            for applicativeD in message.session.applicativeData:
+                appValues[applicativeD.value] = applicativeD.name
+        else:
+            self._logger.info("Message is not attached to a session, so no applicative data will be considered while computing the alignment.")
+
+        if len(appValues) > 0:
+            searchResults = SearchEngine.searchInMessage(appValues.keys(), message, addTags=False)
+            for searchResult in searchResults:
+                for (startResultRange, endResultRange) in searchResult.ranges:
+                    appDataName = appValues[searchResult.searchTask.properties["data"]]
+                    for pos in range(startResultRange/4, endResultRange/4):
+                        results[pos] = appDataName
+
+        return results
+
+    @typeCheck(AbstractField, str, dict)
+    def _createSubFieldsFollowingSemanticTags(self, rootField, align, semanticTags):
+        """Searches for subfields which should be created because of identified semantic boundaries.
+        """
+        if rootField is None:
+            raise TypeError("RootField cannot be None")
+        if align is None:
+            raise TypeError("Align cannot be None")
+        if semanticTags is None:
+            raise TypeError("SemanticTags cannot be None")
+
+        self._logger.debug("original semantic tags: ")
+        self._logger.debug(semanticTags)
+
+        originalFields = rootField._getLeafFields()
+
+        if len(originalFields) == 1 and rootField == originalFields[0]:
+            # We are dealing with a specific field
+            self._logger.debug("Analyze sub fields for {0}".format(rootField.regex))
+
+            if len(set(rootField.getValues())) == 1:
+                self._createSubFieldsForAStaticField(rootField, align, semanticTags)
+            else:
+                self._createSubFieldsForADynamicField(rootField, align, semanticTags)
+
+            for f in rootField.children:
+                self._logger.debug("\t {0} : {1}".format(f.name, f.regex))
+        else:
+            # We are dealing with multiple fields, lets split them
+            currentIndex = 0
+
+            for field in originalFields:
+                self._logger.debug("field regex = {0} (maxSize={1})".format(field.regex, field.domain.maxSize()))
+
+                # Retrieve the size of the current field
+                lengthField = ( field.domain.maxSize() / 4)
+
+                # Find semantic tags related to the current section
+                sectionSemanticTags = dict((k, semanticTags[k]) for k in xrange(currentIndex, currentIndex + lengthField))
+
+                # reccursive call
+                self._logger.debug("Working on field : {0}".format(field.name))
+                self._createSubFieldsFollowingSemanticTags(field, align[currentIndex:currentIndex + lengthField], sectionSemanticTags)
+
+                currentIndex += lengthField
+
+    def createSubFieldsForAStaticField(self, field, align, semanticTags):
+        """createSubFieldsForAStaticField:
+        Analyzes the static field provided and create sub fields following
+        the provided semantic tags."""
+        logging.debug("Create subfields for static field {0} : {1}".format(field.getName(), align))
+
+        if len(field.getLocalFields()) > 0:
+            logging.warning("Impossible to create sub fields for this field since its not cleaned")
+            return
+
+        subFields = []
+
+        currentTag = None
+        currentTagLength = 0
+
+        for index, tag in semanticTags.iteritems():
+            if tag != currentTag:
+                # Create a sub field
+                subFieldValue = align[index - currentTagLength:index]
+                if len(subFieldValue) > 0:
+                    subFields.append(subFieldValue)
+                currentTagLength = 0
+            currentTag = tag
+            currentTagLength += 1
+        if currentTagLength > 0:
+            subFieldValue = align[-currentTagLength:]
+            if len(subFieldValue) > 0:
+                subFields.append(subFieldValue)
+
+        if len(subFields) > 1:
+            for iSubField, subFieldValue in enumerate(subFields):
+                subField = Field("{0}_{1}".format(field.getName(), iSubField), "({0})".format(subFieldValue), field.getSymbol())
+                field.addLocalField(subField)
+
+    def _createSubFieldsForADynamicField(self, field, align, semanticTags):
+        """Analyzes the dynamic field provided and create sub fields following
+        the provided semantic tags."""
+
+        if field is None:
+            raise TypeError("Field cannot be None")
+        if align is None:
+            raise TypeError("Align cannot be None")
+        if semanticTags is None:
+            raise TypeError("SemanticTags cannot be None")
+
+        self._logger.debug("Create subfields for dynamic field {0} : {1}".format(field.name, field.regex))
+
+        subFields = []
+
+        currentTag = None
+        currentTagLength = 0
+
+        semanticTagsForEachMessage = field.getSemanticTagsByMessage()
+
+        for index, tag in semanticTags.iteritems():
+            if tag != currentTag:
+                # Create a sub field
+                if currentTagLength > 0:
+                    values = self._getFieldValuesWithTag(field, semanticTagsForEachMessage, currentTag)
+                    subFields.append((currentTag, values))
+                currentTagLength = 0
+            currentTag = tag
+            currentTagLength += 1
+        if currentTagLength > 0:
+            values = self._getFieldValuesWithTag(field, semanticTagsForEachMessage, currentTag)
+            subFields.append((currentTag, values))
+
+        self._logger.debug("Identified subFields : {0}".format(subFields))
+
+        for iSubField, (tag, values) in enumerate(subFields):
+            if len(values) > 0:
+                if tag == "None":
+                    minValue = None
+                    maxValue = None
+                    for v in values:
+                        if minValue is None or len(v) < minValue:
+                            minValue = len(v)
+                        if maxValue is None or len(v) > maxValue:
+                            maxValue = len(v)
+                    subField = Field("{0}_{1}".format(field.getName(), iSubField), "(.{" + str(minValue) + "," + str(maxValue) + "})", field.getSymbol())
+
+                    field.addLocalField(subField)
+                else:
+                    # create regex based on unique values
+                    newRegex = '|'.join(list(set(values)))
+                    newRegex = "({0})".format(newRegex)
+                    subField = Field("{0}_{1}".format(field.getName(), iSubField), newRegex, field.getSymbol())
+                    field.addLocalField(subField)
+
+    @typeCheck(AbstractField, dict, str)
+    def _getFieldValuesWithTag(self, field, semanticTagsForEachMessage, tag):
+        if field is None:
+            raise TypeError("Field cannot be None")
+        if semanticTagsForEachMessage is None:
+            raise TypeError("SemanticTagsForEachMessage cannot be None")
+        if tag is None:
+            raise TypeError("Tag cannot be None")
+
+        values = []
+
+        # Retrieve value of each message in current field tagged with requested tag
+        for message, tagsInMessage in semanticTagsForEachMessage.iteritems():
+            initial = None
+            end = None
+
+            for tagIndex in sorted(tagsInMessage.keys()):
+                tagName = tagsInMessage[tagIndex]
+                if initial is None and tagName == tag:
+                    initial = tagIndex
+                elif initial is not None and tagName != tag:
+                    end = tagIndex
+                    break
+
+            if initial is not None and end is None:
+                end = sorted(tagsInMessage.keys())[-1] + 1
+            if initial is not None and end is not None:
+                values.append(message.getStringData()[initial:end])
+
+                for i in range(initial, end):
+                    del tagsInMessage[i]
+
+        if "" not in values and len(semanticTagsForEachMessage.keys()) > len(values):
+            values.append("")
+
+        return values
+
+
     def _cb_executionStatus(self, stage, donePercent, currentMessage):
         """Callback function called by the C extension to provide
         info on the current status.
@@ -322,13 +584,19 @@ class FieldSplitAligned(object):
         arTags = tags.split(';')
         j = 0
         for iTag, tag in enumerate(arTags):
-            result[j] = tag
+            if tag != "None":
+                result[j]=tag[2:-2]
+            else:
+                result[j]=tag
+
             if unitSize == AbstractType.UNITSIZE_8:
                 j = j + 1
-                result[j] = tag
+                result[j] = result[j-1]
             else:
                 raise ValueError("Unsupported unitsize.")
+
             j += 1
+
         return result
 
     def _deserializeAlignment(self, regex, mask, unitSize=AbstractType.UNITSIZE_8):
