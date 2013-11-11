@@ -45,8 +45,11 @@ import abc
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
-from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken import AbstractVariableProcessingToken
+from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken import VariableReadingToken
+from netzob.Common.Models.Types.TypeConverter import TypeConverter
+from netzob.Common.Models.Types.ASCII import ASCII
+from netzob.Common.Models.Types.BitArray import BitArray
 
 
 @NetzobLogger
@@ -55,18 +58,26 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
 
     """
 
-    def __init__(self, varType, name=None):
-        super(AbstractRelationVariableLeaf, self).__init__(varType, name)
+    def __init__(self, varType, fieldDependencies=None, name=None):
+        super(AbstractRelationVariableLeaf, self).__init__(varType, name, learnable=False, mutable=True)
+        if fieldDependencies is None:
+            fieldDependencies = []
+        self.fieldDependencies = fieldDependencies
 
-    @typeCheck(AbstractVariableProcessingToken)
-    def getDictOfValues(self, processingToken):
-        """ Simply return a dict that contains the value associated to the ID of the variable.
+    def isDefined(self, processingToken):
+        """Tells if the variable is defined (i.e. has a value for a leaf, enough leaf have values for a node...)
+
+        :type processingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken.AbstractVariableProcessingToken
+        :param processingToken: a token which contains all critical information on this access.
+        :rtype: boolean
+        :return: True if the variable is defined.
         """
-        if processingToken is None:
-            raise TypeError("Processing token cannot be none")
-        dictOfValues = dict()
-        dictOfValues[self.id] = self.getValue(processingToken)
-        return dictOfValues
+        ready = True
+        for dep in self.fieldDependencies:
+            if not processingToken.isValueForVariableAvailable(dep.domain):
+                ready = False
+                break
+        return ready
 
     @abc.abstractmethod
     def getValue(processingToken):
@@ -74,9 +85,26 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
 
     def writeValue(self, writingToken):
         self._logger.debug("- [ {0}: writeValue.".format(self))
-        writingToken.write(self, self.getValue(writingToken))
+        if not self.isDefined(writingToken):
+            self.toBeComputed(writingToken)
+        else:
+            self._logger.debug("writing the value ({0}) in the writingToken for var {1}".format(self.getValue(writingToken), self))
+            writingToken.setValueForVariable(self, self.getValue(writingToken))
 
-        self._logger.debug("WritingToken linkedValue: {0}".format(writingToken.linkedValues))
+    def generate(self, writingToken):
+        if not self.isDefined(writingToken):
+            self.toBeComputed(writingToken)
+        else:
+            self.currentValue = self.getValue(writingToken)
+
+    def toBeComputed(self, processingToken):
+        self._logger.debug("A relation cannot yet be computed, mark its dependencies...")
+        for field in self.fieldDependencies:
+            if not processingToken.isValueForVariableAvailable(field.domain):
+                processingToken.addRelationCallback(field.domain, self)
+
+        #add temporary marker
+        processingToken.setValueForVariable(self, TypeConverter.convert("TEMPORARY", ASCII, BitArray))
 
     @typeCheck(VariableReadingToken)
     def compare(self, readingToken):
@@ -86,16 +114,21 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             raise TypeError("readingToken cannot be None")
 
         self._logger.debug("- [ {0}: compare.".format(self))
-        localValue = self.getValue(readingToken)
-        tmp = readingToken.value[readingToken.index:]
 
-        self._logger.debug("Compare {0} against {1}".format(localValue, tmp))
+        if not readingToken.isValueForVariableAvailable(self):
+            raise Exception("No value to read seems attached to this relation variable.")
 
-        if len(tmp) >= len(localValue):
-            if tmp[:len(localValue)] == localValue:
+        # retrieve the value to parse
+        valueToParse = readingToken.getValueForVariable(self)
+
+        # retrieve the expected value
+        valueExpected = self.getValue(readingToken)
+
+        self._logger.debug("Compare read value {0} against expected one {1}".format(valueToParse, valueExpected))
+
+        if len(valueToParse) >= len(valueExpected):
+            if valueToParse[:len(valueExpected)] == valueExpected:
                 self._logger.debug("Comparison successful.")
-                readingToken.attachVariableToRange(self, readingToken.index, readingToken.index + len(localValue))
-                readingToken.incrementIndex(len(localValue))
                 readingToken.Ok = True
             else:
                 readingToken.Ok = False
@@ -103,6 +136,9 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         else:
             readingToken.Ok = False
             self._logger.debug("Comparison failed: wrong size.")
+
+        if readingToken.Ok:
+            readingToken.setValueForVariable(self, valueExpected)
         self._logger.debug("Variable {0}: {1}. ] -".format(self.name, readingToken))
 
     def notifiedWrite(self, writingToken):
@@ -133,3 +169,23 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             self.notifyBoundedVariables("write", writingToken)
 
         self._logger.debug("Variable {0}: {1}. ]".format(self.name, writingToken))
+
+    @property
+    def fieldDependencies(self):
+        """A list of fields that are required before computing the value of this relation
+
+        :type: a list of :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        """
+        return self.__fieldDependencies
+
+    @fieldDependencies.setter
+    @typeCheck(list)
+    def fieldDependencies(self, fields):
+        if fields is None:
+            fields = []
+        for field in fields:
+            if not isinstance(field, AbstractField):
+                raise TypeError("At least one specified field is not a Field.")
+        self.__fieldDependencies = []
+        for f in fields:
+            self.__fieldDependencies.append(f)
