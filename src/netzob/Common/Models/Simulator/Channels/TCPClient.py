@@ -48,48 +48,43 @@ from netzob.Common.Models.Simulator.Channels.AbstractChannel import AbstractChan
 
 
 @NetzobLogger
-class TCPServer(AbstractChannel):
-    """A TCPServer is a communication channel. It allows to create server listening
-    on a specified IP:Port over a TCP socket.
+class TCPClient(AbstractChannel):
+    """A TCPClient is a communication channel. It allows to create client connecting
+    to a specific IP:Port server over a TCP socket.
 
-    When the actor execute an OpenChannelTransition, it calls the open method
-    on the tcp server which starts the server. The objective of the server is to wait for
-    the client to connect.
+    When the actor execute an OpenChannelTransition, it calls the open
+    method on the tcp client which connects to the server.
 
     >>> from netzob.all import *
-    >>> server = TCPServer(listeningIP='127.0.0.1', listeningPort=9999)
-    >>> server.open()
+    >>> client = TCPClient(destIP='127.0.0.1', destPort=9999)
+    >>> client.open()
 
 
     """
 
-    def __init__(self, listeningIP, listeningPort):
-        super(TCPServer, self).__init__(isServer=True)
-        self.listeningIP = listeningIP
-        self.listeningPort = listeningPort
+    def __init__(self, destIP, destPort):
+        super(TCPClient, self).__init__(isServer=False)
+        self.destIP = destIP
+        self.destPort = destPort
         self.__isOpen = False
         self.__socket = None
-        self.__clientSocket = None
 
     def open(self, timeout=None):
-        """Open the communication channel. If the channel is a server, it starts to listen
-        and will create an instance for each different client"""
+        """Open the communication channel. If the channel is a client, it starts to connect
+        to the specified server.
+        """
+
         if self.isOpen:
             raise RuntimeError("The channel is already open, cannot open it again")
 
         self.__socket = socket.socket()
         # Reuse the connection
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self._logger.debug("Bind the TCP server to {0}:{1}".format(self.listeningIP, self.listeningPort))
-        self.__socket.bind((self.listeningIP, self.listeningPort))
-        self.__socket.listen(1)
-        self.__clientSocket, addr = self.__socket.accept()
-        self.isOpen = True
+        self._logger.debug("Connect to the TCP server to {0}:{1}".format(self.destIP, self.destPort))
+        self.__socket.connect((self.destIP, self.destPort))
 
     def close(self):
         """Close the communication channel."""
-        if self.__clientSocket is not None:
-            self.__clientSocket.close()
         if self.__socket is not None:
             self.__socket.close()
 
@@ -100,8 +95,7 @@ class TCPServer(AbstractChannel):
         @type timeout: :class:`int`
         """
         # TODO: handle timeout
-        if self.__clientSocket is not None:
-            return self.__clientSocket.recv(1024)
+        return self.__socket.recv(1024)
 
     def write(self, data):
         """Write on the communication channel the specified data
@@ -109,8 +103,7 @@ class TCPServer(AbstractChannel):
         :parameter data: the data to write on the channel
         :type data: binary object
         """
-        if self.__clientSocket is not None:
-            self.__clientSocket.sendall(data)
+        self.__socket.sendall(data)
 
     # Management methods
 

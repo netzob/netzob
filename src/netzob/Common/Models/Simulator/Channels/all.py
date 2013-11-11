@@ -30,3 +30,4 @@
 # see docs.python.org/2/tutorial/modules.html
 
 from netzob.Common.Models.Simulator.Channels.TCPServer import TCPServer
+from netzob.Common.Models.Simulator.Channels.TCPClient import TCPClient
