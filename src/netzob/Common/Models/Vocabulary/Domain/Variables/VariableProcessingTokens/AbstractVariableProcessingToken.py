@@ -98,7 +98,9 @@ class AbstractVariableProcessingToken(object):
 
             for call in toCall:
                 self.__relationCallbacks[variable.id].remove(call)
-                call.writeValue(self)
+                call(self)
+                if not self.Ok:
+                    raise Exception("A relation has failed.")
 
     @typeCheck(AbstractVariable)
     def getValueForVariable(self, variable):
