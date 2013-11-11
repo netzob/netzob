@@ -129,5 +129,5 @@ class L4NetworkMessage(L3NetworkMessage):
 
         HLS2 = "\033[1;32m"
         HLE2 = "\033[1;m"
-        data = super(L4NetworkMessage, self).__str__()
+        super(L4NetworkMessage, self).__str__()
         return HLS1 + "[{0} {1}{2}{3}->{4}{5}{6}]".format(self.date, HLE1 + HLS2, self.source, HLE2 + HLS1, HLE1 + HLS2, self.destination, HLE2 + HLS1) + HLE1 + " {0}".format(str(binascii.b2a_hex(self.data)))
