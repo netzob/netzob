@@ -140,6 +140,9 @@ class HexaString(AbstractType):
         if data is None:
             raise TypeError("data cannot be None")
 
+        if len(data) % 2 == 1:
+            data = '0' + data
+
         return binascii.unhexlify(data)
 
     @staticmethod
