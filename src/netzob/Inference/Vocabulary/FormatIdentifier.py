@@ -56,7 +56,7 @@ class FormatIdentifier(object):
     """
 
     @staticmethod
-    @typecheck(list)
+    @typeCheck(list)
     def clusterByAlignment(messages, minEquivalence=50, internalSlick=True):
         """This clustering process regroups messages in groups that maximes
         their alignement. It provides the required methods to compute clustering
