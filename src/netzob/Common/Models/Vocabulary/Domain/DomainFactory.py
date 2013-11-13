@@ -77,8 +77,8 @@ class DomainFactory(object):
     >>> f = Field(domain=[Alt(["bb", ASCII("aa", nbChars=2), ASCII("aa", nbChars=2)]), ["aaaa", "aaaa"]])
     >>> print f._str_debug()
     Field
-    |--   Alt (L=False, M=False)
-          |--   Alt (L=False, M=False)
+    |--   Alt (L=False, M=True)
+          |--   Alt (L=False, M=True)
                |--   ASCII=bb ((0, None)) (currentValue=bb, L=False, M=False)
                |--   ASCII=aa ((16, 16)) (currentValue=aa, L=False, M=False)
           |--   ASCII=aaaa ((0, None)) (currentValue=aaaa, L=False, M=False)

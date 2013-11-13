@@ -66,11 +66,11 @@ class FieldSplitAligned(object):
     >>> symbol = Symbol(messages=messages)
     >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> print symbol
-    01ff00ff
-    0222ff0000ff
-    03ff000000ff
-    0444ff00000000ff
-    05ff0000000000ff
+    01ff00ff          
+    0222ff0000ff      
+    03ff000000ff      
+    0444ff00000000ff  
+    05ff0000000000ff  
     06ff000000000000ff
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol)
@@ -86,8 +86,8 @@ class FieldSplitAligned(object):
     >>> messages = [RawMessage(data=sample) for sample in samples]
     >>> symbol = Symbol(messages=messages)
     >>> print symbol
-    hello toto, what's up in France ?
-    hello netzob, what's up in UK ?
+    hello toto, what's up in France ?  
+    hello netzob, what's up in UK ?    
     hello sygus, what's up in Germany ?
 
     >>> fs = FieldSplitAligned()
@@ -103,16 +103,16 @@ class FieldSplitAligned(object):
     >>> messages = [RawMessage(data=sample) for sample in samples]
     >>> symbol = Symbol(messages=messages)
     >>> print symbol
-    John-0108030405--john.doe@gmail.com
-    Mathieu-0908070605-31 rue de Paris, 75000 Paris, France-mat@yahoo.fr
+    John-0108030405--john.doe@gmail.com                                                      
+    Mathieu-0908070605-31 rue de Paris, 75000 Paris, France-mat@yahoo.fr                     
     Olivia-0348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hotmail.fr
 
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol, useSemantic = False)
     >>> print symbol
-    John    | -0 | 10 | 8 | 03040 | 5 | - | - | john.    | d | o | e | @gm                  | a |     | i | l.        | c |           | o | m
-    Mathieu | -0 | 90 | 8 | 07060 | 5 |   | - | 31 rue   | d |   | e |  Paris, 75000 P      | a | r   | i | s, Fran   | c | e-mat@yah | o | o.fr
-    Olivia  | -0 | 34 | 8 | 2345  | 5 | 6 | - | 7 allee  | d |   | e | s peupliers, 13000 M | a | rse | i | lle, Fran | c | e-        | o | livia.tortue@hotmail.fr
+    John    | -0 | 10 | 8 |                                  | 0 | 3 | 0 | 4 | 0 | 5--joh          | n | .do | e |                | @ | gmail   | . | com
+    Mathieu | -0 | 90 | 8 | 070605-31 rue de Paris, 75       | 0 |   | 0 |   | 0 |  Paris, Fra     | n | c   | e | -mat           | @ | yahoo   | . | fr 
+    Olivia  | -0 | 34 | 8 | 234556-7 allee des peupliers, 13 | 0 |   | 0 |   | 0 |  Marseille, Fra | n | c   | e | -olivia.tortue | @ | hotmail | . | fr 
 
     >>> applicativeDatas = []
     >>> applicativeDatas.append(ApplicativeData("Firstname", ASCII("John")))
@@ -134,6 +134,9 @@ class FieldSplitAligned(object):
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol, useSemantic=True)
     >>> print symbol
+    John    | -0 | 10 | 8 | 030405 | - |                                                | - | john.doe@gmail.com      
+    Mathieu | -0 | 90 | 8 | 070605 | - | 31 rue de Paris, 75000 Paris, France           | - | mat@yahoo.fr            
+    Olivia  | -0 | 34 | 8 | 234556 | - | 7 allee des peupliers, 13000 Marseille, France | - | olivia.tortue@hotmail.fr
 
     """
 

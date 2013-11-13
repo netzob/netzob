@@ -84,10 +84,10 @@ class SearchEngine(object):
     >>> print searchResults
     1 occurence(s) found.
     >>> print m
-    [1383948883.0 None->None] %2dNetzob%2d is a tool that helps experts in their reverse engineering processes.
+    [0;32m[1383948883.0 [0;m[1;32mNone[1;m[0;32m-&gt;[0;m[1;32mNone[1;m[0;32m][0;m Netzob is a tool that helps [1;41mexperts in th[1;meir reverse engineering processes.
     >>> m.clearSearchResults()
     >>> print m
-    [1383948883.0 None->None] Netzob is a tool that helps experts in their reverse engineering processes.
+    [0;32m[1383948883.0 [0;m[1;32mNone[1;m[0;32m-&gt;[0;m[1;32mNone[1;m[0;32m][0;m Netzob is a tool that helps experts in their reverse engineering processes.
 
     """
 
