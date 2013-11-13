@@ -51,7 +51,7 @@ class L3NetworkMessage(L2NetworkMessage):
     >>> print msg.destination
     192.168.10.245
     >>> print msg
-    [1352293417.28 192.168.10.100->192.168.10.245] 090002300202f000
+    [0;32m[1352293417.28 [0;m[1;32m192.168.10.100[1;m[0;32m-&gt;[0;m[1;32m192.168.10.245[1;m[0;32m][0;m 090002300202f000
 
     """
 
@@ -119,9 +119,3 @@ class L3NetworkMessage(L2NetworkMessage):
         :type: str
         """
         return self.__l3DestinationAddress
-
-    def __str__(self):
-        HLS = "\033[1;32m"
-        HLE = "\033[1;m"
-        data = super(L3NetworkMessage, self).__str__()
-        return HLS + "[{0} {1}->{2}]".format(self.date, self.source, self.destination) + HLE + " {0}".format(str(binascii.b2a_hex(self.data)))

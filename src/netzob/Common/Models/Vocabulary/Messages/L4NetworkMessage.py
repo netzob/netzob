@@ -29,7 +29,6 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import time
-import binascii
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -52,7 +51,7 @@ class L4NetworkMessage(L3NetworkMessage):
     >>> print msg.destination
     192.168.10.245:80
     >>> print msg
-    [1352293417.28 192.168.10.100:2049->192.168.10.245:80] 090002300202f000
+    [0;32m[1352293417.28 [0;m[1;32m192.168.10.100:2049[1;m[0;32m-&gt;[0;m[1;32m192.168.10.245:80[1;m[0;32m][0;m 090002300202f000
 
     """
 
@@ -122,12 +121,3 @@ class L4NetworkMessage(L3NetworkMessage):
         :type: str
         """
         return "{0}:{1}".format(str(self.l3DestinationAddress), str(self.l4DestinationAddress))
-
-    def __str__(self):
-        HLS1 = "\033[0;32m"
-        HLE1 = "\033[0;m"
-
-        HLS2 = "\033[1;32m"
-        HLE2 = "\033[1;m"
-        super(L4NetworkMessage, self).__str__()
-        return HLS1 + "[{0} {1}{2}{3}->{4}{5}{6}]".format(self.date, HLE1 + HLS2, self.source, HLE2 + HLS1, HLE1 + HLS2, self.destination, HLE2 + HLS1) + HLE1 + " {0}".format(str(binascii.b2a_hex(self.data)))

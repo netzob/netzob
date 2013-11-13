@@ -67,12 +67,7 @@ class RawMessage(AbstractMessage):
         :parameter data: the content of the message
         :type data: a :class:`object`
         """
-        super(RawMessage, self).__init__(data)
-        if date is None:
-            date = time.mktime(time.gmtime())
-        self.date = date
-        self.__source = source
-        self.__destination = destination
+        super(RawMessage, self).__init__(data=data, date=date, source=source, destination=destination)
 
     def priority(self):
         """Return the value that will be used to represent the current message when sorted
@@ -81,60 +76,3 @@ class RawMessage(AbstractMessage):
         :type: int
         """
         return int(self.date * 1000)
-
-    def __str__(self):
-        """Returns a string that describes the message.
-
-        :warning: This string should only considered for debuging and/or fast visualization. Do not
-        rely on it since its format can often be modified.
-        """
-
-        HLS = "\033[1;32m"
-        HLE = "\033[1;m"
-        data = super(RawMessage, self).__str__()
-        return HLS + "[{0} {1}->{2}]".format(self.date, self.source, self.destination) + HLE + " {0}".format(data)
-
-    @property
-    def date(self):
-        """The date when the message was captured.
-        The date must be encoded in the epoch format.
-
-        :type:float
-        :raise: a TypeError if date is not valid
-        """
-        return self.__date
-
-    @date.setter
-    @typeCheck(float)
-    def date(self, date):
-        if date is None:
-            raise TypeError("Date cannot be None")
-        self.__date = date
-
-    @property
-    def source(self):
-        """The name or type of the source which emitted
-        the current message
-
-        :type: str
-        """
-        return self.__source
-
-    @source.setter
-    @typeCheck(str)
-    def source(self, source):
-        self.__source = source
-
-    @property
-    def destination(self):
-        """The name or type of the destination which received
-        the current message
-
-        :type: str
-        """
-        return self.__destination
-
-    @destination.setter
-    @typeCheck(str)
-    def destination(self, destination):
-        self.__destination = destination

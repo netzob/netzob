@@ -51,13 +51,13 @@ class L2NetworkMessage(RawMessage):
     >>> print msg.destination
     00:02:3f:a8:bf:21
     >>> print msg
-    [1352293417.28 00:02:7b:00:bf:33->00:02:3f:a8:bf:21] 090002300202f000
+    [0;32m[1352293417.28 [0;m[1;32m00:02:7b:00:bf:33[1;m[0;32m-&gt;[0;m[1;32m00:02:3f:a8:bf:21[1;m[0;32m][0;m 090002300202f000
 
     """
 
     def __init__(self, data, date=None, l2Protocol=None, l2SourceAddress=None,
                  l2DestinationAddress=None):
-        super(L2NetworkMessage, self).__init__(data, date, l2SourceAddress, l2DestinationAddress)
+        super(L2NetworkMessage, self).__init__(data, date=date, source=l2SourceAddress, destination=l2DestinationAddress)
         self.l2Protocol = str(l2Protocol)
         self.l2SourceAddress = str(l2SourceAddress)
         self.l2DestinationAddress = str(l2DestinationAddress)
@@ -100,27 +100,3 @@ class L2NetworkMessage(RawMessage):
     @typeCheck(str)
     def l2DestinationAddress(self, l2DestinationAddress):
         self.__l2DestinationAddress = l2DestinationAddress
-
-    @property
-    def source(self):
-        """The name or type of the source which emitted
-        the current message
-
-        :type: str
-        """
-        return self.__l2SourceAddress
-
-    @property
-    def destination(self):
-        """The name or type of the destination which received
-        the current message
-
-        :type: str
-        """
-        return self.__l2DestinationAddress
-
-    def __str__(self):
-        HLS = "\033[1;32m"
-        HLE = "\033[1;m"
-        data = super(L2NetworkMessage, self).__str__()
-        return HLS + "[{0} {1}->{2}]".format(self.date, self.source, self.destination) + HLE + " {0}".format(str(binascii.b2a_hex(self.data)))

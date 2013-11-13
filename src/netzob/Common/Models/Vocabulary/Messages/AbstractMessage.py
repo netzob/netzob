@@ -29,6 +29,8 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import uuid
+import binascii
+import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -53,7 +55,7 @@ from netzob.Common.Models.Vocabulary.Functions.VisualizationFunction import Visu
 class AbstractMessage(SortableObject):
     """Every message must inherits from this class"""
 
-    def __init__(self, data, _id=None, session=None):
+    def __init__(self, data, _id=None, session=None, date=None, source=None, destination=None):
         """
         :parameter data: the content of the message
         :type data: a :class:`object`
@@ -61,12 +63,23 @@ class AbstractMessage(SortableObject):
         :type _id: :class:`uuid.UUID`
         :keyword session: the session in which the message was captures
         :type session: :class:`netzob.Common.Models.Vocabulary.Session.Session`
+        :parameter date: the timestamp of the message
+        :type date: a :class:`int`
+        :parameter source: the optional source address of the message
+        :type source: a :class:`str`
+        :parameter destination: the optional destination address of the message
+        :type destination: a :class:`str`
         """
         self.data = data
         self.session = session
         if _id is None:
             _id = uuid.uuid4()
         self.id = _id
+        if date is None:
+            date = time.mktime(time.gmtime())
+        self.__date = date
+        self.__source = source
+        self.__destination = destination
         self.__visualizationFunctions = TypedList(VisualizationFunction)
         self.__metadata = dict()
         self.__semanticTags = dict()
@@ -157,22 +170,22 @@ class AbstractMessage(SortableObject):
         rely on it since its format can often be modified.
         """
 
-        functionTable = FunctionApplicationTable([self.data])        
+        # Add visualization effects to the data
+        functionTable = FunctionApplicationTable([self.data])
         for function in self.visualizationFunctions:
-            start = function.start / 8
+            start = (function.start / 8)
             end = (function.end / 8)
-            #tmpData = tmpData[:start] + HLS + tmpData[start:end] + HLE + tmpData[end:]
             functionTable.applyFunction(function, start, end)
-            #functionTable.applyFunction(function, i_data, i_data + len(dataField))
-        return "".join(functionTable.getResult())
-        # tmpData = self.data
-        # for function in self.visualizationFunctions:
-        #     start = function.start / 8
-        #     end = function.end / 8
-        #     tmpData = tmpData[:start] + HLS + tmpData[start:end] + HLE + tmpData[end:]
-        #     #functionTable.applyFunction(function, i_data, i_data + len(dataField))
-        # return tmpData
+        tmpData = "".join(functionTable.getResult())
 
+        # Add header in front of the data
+        HLS1 = "\033[0;32m"
+        HLE1 = "\033[0;m"
+        HLS2 = "\033[1;32m"
+        HLE2 = "\033[1;m"
+        header = HLS1 + "[{0} {1}{2}{3}->{4}{5}{6}]".format(self.date, HLE1 + HLS2, self.source, HLE2 + HLS1, HLE1 + HLS2, self.destination, HLE2 + HLS1) + HLE1
+        return "{0} {1}".format(header, tmpData)
+    
     @property
     def id(self):
         """The unique identified of the message
@@ -200,6 +213,51 @@ class AbstractMessage(SortableObject):
     @data.setter
     def data(self, data):
         self.__data = data
+
+    @property
+    def date(self):
+        """The date when the message was captured.
+        The date must be encoded in the epoch format.
+
+        :type:float
+        :raise: a TypeError if date is not valid
+        """
+        return self.__date
+
+    @date.setter
+    @typeCheck(float)
+    def date(self, date):
+        if date is None:
+            raise TypeError("Date cannot be None")
+        self.__date = date
+
+    @property
+    def source(self):
+        """The name or type of the source which emitted
+        the current message
+
+        :type: str
+        """
+        return self.__source
+
+    @source.setter
+    @typeCheck(str)
+    def source(self, source):
+        self.__source = source
+
+    @property
+    def destination(self):
+        """The name or type of the destination which received
+        the current message
+
+        :type: str
+        """
+        return self.__destination
+
+    @destination.setter
+    @typeCheck(str)
+    def destination(self, destination):
+        self.__destination = destination
 
     @property
     def metadata(self):
