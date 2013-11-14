@@ -80,7 +80,10 @@ class Size(AbstractRelationVariableLeaf):
     >>> f2 = Field(ASCII(nbChars=(5, 10)), name="payload")
     >>> f1 = Field(Size(f2, dataType=ASCII(nbChars=1), factor=1/8.0, offset=1), name="size")
     >>> s = Symbol([f1, f2])
-    >>> s.specialize()
+    >>> m = TypeConverter.convert(s.specialize(), Raw, HexaString)
+    >>> computed_size = int(m[0:2], 16)
+    >>> print computed_size == len(m) / 2
+    True
 
     """
 
