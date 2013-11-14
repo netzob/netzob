@@ -101,10 +101,10 @@ class ClusterByKeyField(object):
         newSymbols = []
 
         # Retrieve cells the main field
-        fieldsCells = field.getCells()
+        fieldsCells = field.getCells(encoded=False)
 
         # Retrieve uniq values of the key field
-        keyFieldValues = keyField.getValues()
+        keyFieldValues = keyField.getValues(encoded=False)
         keyFieldValues = list(set(keyFieldValues))
         if len(keyFieldValues) == 0:
             return newSymbols
@@ -130,7 +130,7 @@ class ClusterByKeyField(object):
                 newField = Field(domain=domain)
                 newFields.append(newField)
 
-            s = Symbol(newFields, messages=datas, name="symbol_{0}".format(str(keyFieldValue)))
+            s = Symbol(newFields, messages=datas, name="symbol_{0}".format(str(TypeConverter.convert(keyFieldValue, Raw, HexaString))))
             newSymbols.append(s)
 
         return newSymbols
