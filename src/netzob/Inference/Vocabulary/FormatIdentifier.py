@@ -47,6 +47,7 @@ from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Inference.Vocabulary.FormatIdentifierOperations.ClusterByAlignment import ClusterByAlignment
 from netzob.Inference.Vocabulary.FormatIdentifierOperations.ClusterByKeyField import ClusterByKeyField
 from netzob.Inference.Vocabulary.FormatIdentifierOperations.ClusterByApplicativeData import ClusterByApplicativeData
+from netzob.Inference.Vocabulary.FormatIdentifierOperations.ClusterBySize import ClusterBySize
 
 
 class FormatIdentifier(object):
@@ -145,3 +146,37 @@ class FormatIdentifier(object):
 
         clusterByKeyField = ClusterByKeyField()
         return clusterByKeyField.cluster(field, keyField)
+
+    @staticmethod
+    @typeCheck(list)
+    def clusterBySize(messages):
+        """This clustering process regroups messages that have
+        equivalent size.
+
+        >>> from netzob.all import *
+        >>> import binascii
+        >>> samples = ["00ffff1100abcd", "00aaaa1100abcd", "00bbbb1100abcd", "001100abcd", "001100ffff", "00ffffffff1100abcd"]
+        >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
+        >>> newSymbols = FormatIdentifier.clusterBySize(messages)
+        >>> for sym in newSymbols:
+        ...     print "[" + sym.name + "]"
+        ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
+        ...     print sym
+        [symbol_9]
+        00ffffffff1100abcd
+        [symbol_5]
+        001100abcd
+        001100ffff
+        [symbol_7]
+        00ffff1100abcd
+        00aaaa1100abcd
+        00bbbb1100abcd
+
+        :param messages: the messages to cluster.
+        :type messages: a list of :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+        :return: a list of symbol representing all the computed clusters
+        :rtype: a list of :class:`netzob.Common.Models.Vocabulary.Symbol.Symbol`
+        """
+
+        clustering = ClusterBySize()
+        return clustering.cluster(messages)

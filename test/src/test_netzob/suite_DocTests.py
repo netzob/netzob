@@ -48,6 +48,7 @@ from netzob.Inference.Vocabulary.FormatEditorOperations.FieldSplitStatic import 
 from netzob.Inference.Vocabulary.FormatIdentifierOperations import ClusterByKeyField
 from netzob.Inference.Vocabulary.FormatIdentifierOperations import ClusterByApplicativeData
 from netzob.Inference.Vocabulary.FormatIdentifierOperations import ClusterByAlignment
+from netzob.Inference.Vocabulary.FormatIdentifierOperations import ClusterBySize
 from netzob.Common.Utils import SortedTypedList
 
 from netzob.Inference.Vocabulary.Search import SearchTask
@@ -106,7 +107,7 @@ def getSuite():
         IPv4.__module__,
         ClusterByApplicativeData,
         ClusterByAlignment,
-
+        ClusterBySize,
         
         # Size.__module__,
         RawMessage.__module__,
