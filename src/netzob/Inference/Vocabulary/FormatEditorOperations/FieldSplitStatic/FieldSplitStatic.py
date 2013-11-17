@@ -274,7 +274,7 @@ class FieldSplitStatic(object):
         FormatEditor.resetFormat(field)
 
         # Create a field for each entry
-        newFields = [Field(domain=DomainFactory.normalizeDomain([Raw(TypeConverter.convert(v, HexaString, BitArray)) for v in val])) for val in indexedValues]
+        newFields = [Field(domain=DomainFactory.normalizeDomain([Raw(TypeConverter.convert(v, HexaString, BitArray)) for v in val]), name="Field-"+str(i)) for (i, val) in enumerate(indexedValues)]
         field.children = newFields
 
     def __computeStepForUnitsize(self):
