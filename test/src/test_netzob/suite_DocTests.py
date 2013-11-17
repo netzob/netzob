@@ -49,6 +49,7 @@ from netzob.Inference.Vocabulary.FormatIdentifierOperations import ClusterByKeyF
 from netzob.Inference.Vocabulary.FormatIdentifierOperations import ClusterByApplicativeData
 from netzob.Inference.Vocabulary.FormatIdentifierOperations import ClusterByAlignment
 from netzob.Inference.Vocabulary.FormatIdentifierOperations import ClusterBySize
+from netzob.Inference.Vocabulary.FormatIdentifierOperations import FindKeyFields
 from netzob.Common.Utils import SortedTypedList
 
 from netzob.Inference.Vocabulary.Search import SearchTask
@@ -93,6 +94,7 @@ def getSuite():
         FieldSplitStatic,
         FieldSplitAligned,
         FormatIdentifier.__module__,
+        FindKeyFields,
         FieldReseter,
         AbstractMessage,
         ClusterByKeyField,
