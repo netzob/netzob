@@ -313,6 +313,16 @@ class FieldSplitStatic(object):
         :keyword unitSize: the required size of static element to create a static field
         :type unitSize: :class:`int`.
         """
+
+        if field is None:
+            raise TypeError("Field cannot be None.")
+
+        if unitSize is None:
+            raise TypeError("Unitsize cannot be None.")
+
+        if len(field.messages) < 1:
+            raise ValueError("The associated symbol does not contain any message.")
+
         pSplit = FieldSplitStatic(unitSize, mergeAdjacentStaticFields, mergeAdjacentDynamicFields)
         pSplit.execute(field)
 

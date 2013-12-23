@@ -146,6 +146,9 @@ class FormatEditor(object):
         if unitSize is None:
             raise TypeError("Unitsize cannot be None")
 
+        if len(field.messages) < 1:
+            raise ValueError("The associated symbol does not contain any message.")
+
         FieldSplitStatic.split(field, unitSize, mergeAdjacentStaticFields, mergeAdjacentDynamicFields)
 
     @staticmethod

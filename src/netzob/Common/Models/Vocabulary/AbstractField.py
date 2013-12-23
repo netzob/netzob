@@ -232,6 +232,9 @@ class AbstractField(AbstractMementoCreator):
         :raises: :class:`netzob.Common.Models.Vocabulary.AbstractField.AlignmentException` if an error occurs while aligning messages
         """
 
+        if len(self.messages) < 1:
+            raise ValueError("This symbol does not contain any message.")
+
         # Fetch all the data to align
         data = [TypeConverter.convert(message.data, Raw, HexaString) for message in self.messages]
 
