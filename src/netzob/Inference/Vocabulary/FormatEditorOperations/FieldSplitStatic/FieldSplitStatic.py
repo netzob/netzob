@@ -274,7 +274,7 @@ class FieldSplitStatic(object):
         FormatEditor.resetFormat(field)
 
         # Create a field for each entry
-        newFields = [Field(domain=DomainFactory.normalizeDomain([Raw(TypeConverter.convert(v, HexaString, BitArray)) for v in val])) for val in indexedValues]
+        newFields = [Field(domain=DomainFactory.normalizeDomain([Raw(TypeConverter.convert(v, HexaString, BitArray)) for v in val]), name="Field-"+str(i)) for (i, val) in enumerate(indexedValues)]
         field.children = newFields
 
     def __computeStepForUnitsize(self):
@@ -313,6 +313,16 @@ class FieldSplitStatic(object):
         :keyword unitSize: the required size of static element to create a static field
         :type unitSize: :class:`int`.
         """
+
+        if field is None:
+            raise TypeError("Field cannot be None.")
+
+        if unitSize is None:
+            raise TypeError("Unitsize cannot be None.")
+
+        if len(field.messages) < 1:
+            raise ValueError("The associated symbol does not contain any message.")
+
         pSplit = FieldSplitStatic(unitSize, mergeAdjacentStaticFields, mergeAdjacentDynamicFields)
         pSplit.execute(field)
 

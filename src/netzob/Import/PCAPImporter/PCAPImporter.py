@@ -315,7 +315,7 @@ class PCAPImporter(object):
                 fp = open(filePath)
                 fp.close()
             except IOError, e:
-                errorMessage = _("Error while trying to open the " -
+                errorMessage = _("Error while trying to open the "
                                  + "file {0}.").format(filePath)
                 if e.errno == errno.EACCES:
                     errorMessage = _("Error while trying to open the file "

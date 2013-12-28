@@ -35,6 +35,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import binascii
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -52,6 +53,11 @@ from netzob.Common.Models.Types.ASCII import ASCII
 class HexaString(AbstractType):
 
     def __init__(self, value=None, size=(None, None)):
+        if value is not None and not isinstance(value, bitarray):
+            from netzob.Common.Models.Types.TypeConverter import TypeConverter
+            from netzob.Common.Models.Types.BitArray import BitArray
+            value = TypeConverter.convert(value, HexaString, BitArray)
+
         super(HexaString, self).__init__(self.__class__.__name__, value, size)
 
     def canParse(self, data):

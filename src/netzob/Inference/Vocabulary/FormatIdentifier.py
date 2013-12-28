@@ -48,6 +48,7 @@ from netzob.Inference.Vocabulary.FormatIdentifierOperations.ClusterByAlignment i
 from netzob.Inference.Vocabulary.FormatIdentifierOperations.ClusterByKeyField import ClusterByKeyField
 from netzob.Inference.Vocabulary.FormatIdentifierOperations.ClusterByApplicativeData import ClusterByApplicativeData
 from netzob.Inference.Vocabulary.FormatIdentifierOperations.ClusterBySize import ClusterBySize
+from netzob.Inference.Vocabulary.FormatIdentifierOperations.FindKeyFields import FindKeyFields
 
 
 class FormatIdentifier(object):
@@ -148,6 +149,36 @@ class FormatIdentifier(object):
         return clusterByKeyField.cluster(field, keyField)
 
     @staticmethod
+    @typeCheck(AbstractField)
+    def findKeyFields(field):
+        """Try to identify potential key fields in a symbol/field.
+
+        >>> import binascii
+        >>> from netzob.all import *
+        >>> samples = ["00ff2f000011",	"000010000000",	"00fe1f000000",	"000020000000", "00ff1f000000",	"00ff1f000000",	"00ff2f000000",	"00fe1f000000"]
+        >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
+        >>> symbol = Symbol(messages=messages)
+        >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
+        >>> FormatEditor.splitStatic(symbol)
+        >>> results = FormatIdentifier.findKeyFields(symbol)
+        >>> for result in results:
+        ...     print "Field name: " + result["keyField"].name + ", number of clusters: " + str(result["nbClusters"])
+        Field name: Field-1, number of clusters: 5
+        Field name: Field-3, number of clusters: 2
+
+        :param field: the field in which we want to identify key fields.
+        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :raise Exception if something bad happens
+
+        """
+        # Safe checks
+        if field is None:
+            raise TypeError("'field' should not be None")
+
+        keyFieldsFinder = FindKeyFields()
+        return keyFieldsFinder.execute(field)
+
+    @staticmethod
     @typeCheck(list)
     def clusterBySize(messages):
         """This clustering process regroups messages that have
@@ -177,6 +208,10 @@ class FormatIdentifier(object):
         :return: a list of symbol representing all the computed clusters
         :rtype: a list of :class:`netzob.Common.Models.Vocabulary.Symbol.Symbol`
         """
+
+        # Safe checks
+        if messages is None:
+            raise TypeError("'messages' should not be None")
 
         clustering = ClusterBySize()
         return clustering.cluster(messages)

@@ -373,7 +373,7 @@ class NetzobStaticRegex(NetzobRegex):
         if staticValue is None:
             raise TypeError("Static value cannot be None")
         if not HexaString().canParse(staticValue):
-            raise ValueError("The specified value cannot be parse as an HexaString")
+            raise ValueError("The specified value cannot be parse as an HexaString: {0}".format(str(staticValue)))
 
         self.__staticValue = staticValue.lower()
         self.__updateRegex()

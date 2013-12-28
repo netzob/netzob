@@ -46,6 +46,7 @@ from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Models.Types.AbstractType import AbstractType
 from netzob.Inference.Vocabulary.FormatEditorOperations.FieldSplitStatic.FieldSplitStatic import FieldSplitStatic
+from netzob.Inference.Vocabulary.FormatEditorOperations.FieldSplitDelimiter import FieldSplitDelimiter
 from netzob.Inference.Vocabulary.FormatEditorOperations.FieldReseter import FieldReseter
 from netzob.Inference.Vocabulary.FormatEditorOperations.FieldOperations import FieldOperations
 from netzob.Inference.Vocabulary.FormatEditorOperations.FieldSplitAligned.FieldSplitAligned import FieldSplitAligned
@@ -146,7 +147,44 @@ class FormatEditor(object):
         if unitSize is None:
             raise TypeError("Unitsize cannot be None")
 
+        if len(field.messages) < 1:
+            raise ValueError("The associated symbol does not contain any message.")
+
         FieldSplitStatic.split(field, unitSize, mergeAdjacentStaticFields, mergeAdjacentDynamicFields)
+
+    @staticmethod
+    @typeCheck(AbstractField, AbstractType)
+    def splitDelimiter(field, delimiter):
+        """Split a field (or symbol) with a specific delimiter. The
+        delimiter can be passed either as an ASCII, a Raw, an
+        HexaString, or any objects that inherit from AbstractType.
+
+        >>> from netzob.all import *
+        >>> samples = ["aaaaff000000ff10",	"bbff110010ff00000011",	"ccccccccfffe1f000000ff12"]
+        >>> messages = [RawMessage(data=sample) for sample in samples]
+        >>> symbol = Symbol(messages=messages[:3])
+        >>> FormatEditor.splitDelimiter(symbol, ASCII("ff"))
+        >>> print symbol
+        aaaa     | ff | 000000     | ff | 10      
+        bb       | ff | 110010     | ff | 00000011
+        cccccccc | ff | fe1f000000 | ff | 12      
+
+        :param field : the field to consider when spliting
+        :type: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :param delimiter : the delimiter used to split messages of the field
+        :type: :class:`netzob.Common.Models.Types.AbstractType.AbstractType`
+        """
+
+        if delimiter is None:
+            raise TypeError("Delimiter cannot be None or empty")
+
+        if field is None:
+            raise TypeError("Field cannot be None")
+
+        if len(field.messages) < 1:
+            raise ValueError("The associated symbol does not contain any message.")
+
+        FieldSplitDelimiter.split(field, delimiter)
 
     @staticmethod
     @typeCheck(AbstractField)

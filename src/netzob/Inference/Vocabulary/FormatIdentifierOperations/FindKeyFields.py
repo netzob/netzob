@@ -44,6 +44,7 @@
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
+from netzob.Common.Utils.NetzobRegex import NetzobStaticRegex
 from netzob.Common.Models.Vocabulary.Field import Field
 from netzob.Common.Models.Vocabulary.Symbol import Symbol
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
@@ -54,39 +55,30 @@ from netzob.Common.Models.Vocabulary.Domain.DomainFactory import DomainFactory
 
 
 @NetzobLogger
-class ClusterByKeyField(object):
-    """This operation clusters the messages belonging to the
-    specified field following their value in the specified key field.
+class FindKeyFields(object):
+    """This class provides methods to identify potential key fields in
+    symbols/fields.
     """
 
-    @typeCheck(AbstractField, AbstractField)
-    def cluster(self, field, keyField):
-        """Create and return new symbols according to a specific key
-        field.
+    @typeCheck(AbstractField)
+    def execute(self, field):
+        """Try to identify potential key fields in a symbol/field.
 
         >>> import binascii
         >>> from netzob.all import *
-        >>> samples = ["00ff2f000000",	"000020000000",	"00ff2f000000"]
+        >>> samples = ["00ff2f000011",	"000010000000",	"00fe1f000000",	"000020000000", "00ff1f000000",	"00ff1f000000",	"00ff2f000000",	"00fe1f000000"]
         >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
-        >>> f1 = Field(Raw(nbBytes=1))
-        >>> f2 = Field(Raw(nbBytes=2))
-        >>> f3 = Field(Raw(nbBytes=3))
-        >>> symbol = Symbol([f1, f2, f3], messages=messages)
-        >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-        >>> newSymbols = FormatIdentifier.clusterByKeyField(symbol, f2)
-        >>> for sym in newSymbols:
-        ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
-        ...     print sym.name + ":"
-        ...     print sym
-        symbol_ff2f:
-        00 | ff2f | 000000
-        00 | ff2f | 000000
-        symbol_0020:
-        00 | 0020 | 000000
+        >>> symbol = Symbol(messages=messages)
+        >>> FormatEditor.splitStatic(symbol)
 
-        :param field: the field we want to split in new symbols
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
-        :param keyField: the field used as a key during the splitting operation
+        >>> finder = FindKeyFields()
+        >>> results = finder.execute(symbol)
+        >>> for result in results:
+        ...     print "Field name: " + result["keyField"].name + ", number of clusters: " + str(result["nbClusters"]) + ", distribution: " + str(result["distribution"])
+        Field name: Field-1, number of clusters: 5, distribution: [2, 2, 1, 1, 2]
+        Field name: Field-3, number of clusters: 2, distribution: [1, 7]
+
+        :param field: the field in which we want to identify key fields.
         :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
         :raise Exception if something bad happens
         """
@@ -94,44 +86,33 @@ class ClusterByKeyField(object):
         # Safe checks
         if field is None:
             raise TypeError("'field' should not be None")
-        if keyField is None:
-            raise TypeError("'keyField' should not be None")
-        if not keyField in field.children:
-            raise TypeError("'keyField' is not a child of 'field'")
+        if len(field.messages) < 2:
+            return []
 
-        newSymbols = []
+        results = []
+        cells = field.getCells(encoded=False, styled=False, transposed=False)
+        columns = zip(*cells)
 
-        # Retrieve cells the main field
-        fieldsCells = field.getCells(encoded=False, styled=False)
+        # Retrieve dynamic fields with fixed size
+        for (i, f) in enumerate(field.children):
+            if not isinstance(f.regex, NetzobStaticRegex):
+                isCandidate = True
+                lRef = len(columns[i][1])
+                for val in columns[i][1:]:
+                    if lRef != len(val):
+                        isCandidate = False
+                        break
+                if isCandidate == True:
+                    results.append({"keyField": f})
 
-        # Retrieve uniq values of the key field
-        keyFieldValues = keyField.getValues(encoded=False, styled=False)
-        keyFieldValues = list(set(keyFieldValues))
-        if len(keyFieldValues) == 0:
-            return newSymbols
+        # Compute clusters according to each key field found
+        from netzob.Inference.Vocabulary.FormatIdentifier import FormatIdentifier
+        for result in results:
+            tmpClusters = FormatIdentifier.clusterByKeyField(field, result["keyField"])
+            result["nbClusters"] = len(tmpClusters)
+            distrib = []  # Compute clusters distribution
+            for cluster in tmpClusters:
+                distrib.append(len(cluster.messages))
+            result["distribution"] = distrib
 
-        # Construct a dict with splitted messages (data) according to the key field
-        newDatas = {}
-        for idx_field, fieldChild in enumerate(field.children):  # Loop over children of the main field
-            if fieldChild == keyField:  # If the child corresponds to the key field
-                for keyFieldValue in keyFieldValues:
-                    newDatas[keyFieldValue] = []
-                    for idx_msg in range(len(fieldsCells)):
-                        if fieldsCells[idx_msg][idx_field] == keyFieldValue:
-                            newData = "".join(fieldsCells[idx_msg])
-                            newData = RawMessage(newData)
-                            newDatas[keyFieldValue].append(newData)
-                break
-
-        # Create new symbols for each splitted group, and propagate the same fields domain for each symbol
-        for (keyFieldValue, datas) in newDatas.items():
-            newFields = []
-            for f in field.children:
-                domain = DomainFactory.normalizeDomain(f.domain)
-                newField = Field(domain=domain)
-                newFields.append(newField)
-
-            s = Symbol(newFields, messages=datas, name="symbol_{0}".format(TypeConverter.convert(keyFieldValue, Raw, HexaString)))
-            newSymbols.append(s)
-
-        return newSymbols
+        return results
