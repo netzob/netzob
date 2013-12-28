@@ -345,7 +345,7 @@ class NetzobStaticRegex(NetzobRegex):
     >>> regex = NetzobStaticRegex("toto")
     Traceback (most recent call last):
     ...
-    ValueError: The specified value cannot be parse as an HexaString
+    ValueError: The specified value cannot be parse as an HexaString: toto
 
     """
 
