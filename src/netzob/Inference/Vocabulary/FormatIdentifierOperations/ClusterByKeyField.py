@@ -49,6 +49,7 @@ from netzob.Common.Models.Vocabulary.Symbol import Symbol
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.HexaString import HexaString
 from netzob.Common.Models.Types.Raw import Raw
+from netzob.Common.Models.Types.ASCII import ASCII
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Common.Models.Vocabulary.Domain.DomainFactory import DomainFactory
 
@@ -101,7 +102,7 @@ class ClusterByKeyField(object):
 
         newSymbols = []
 
-        # Retrieve cells the main field
+        # Retrieve cells of the main field
         fieldsCells = field.getCells(encoded=False, styled=False)
 
         # Retrieve uniq values of the key field
@@ -112,26 +113,33 @@ class ClusterByKeyField(object):
 
         # Construct a dict with splitted messages (data) according to the key field
         newDatas = {}
+        newDomains = {}
         for idx_field, fieldChild in enumerate(field.children):  # Loop over children of the main field
             if fieldChild == keyField:  # If the child corresponds to the key field
                 for keyFieldValue in keyFieldValues:
-                    newDatas[keyFieldValue] = []
+                    newDatas[keyFieldValue] = []  # In order to keep the association between messages and their new symbols
+                    newDomains[keyFieldValue] = []  # In order to keep the association between domains and their new symbols
                     for idx_msg in range(len(fieldsCells)):
                         if fieldsCells[idx_msg][idx_field] == keyFieldValue:
                             newData = "".join(fieldsCells[idx_msg])
                             newData = RawMessage(newData)
                             newDatas[keyFieldValue].append(newData)
+                            newDomain = fieldsCells[idx_msg]
+                            newDomains[keyFieldValue].append(newDomain)
+                    newDomains[keyFieldValue] = zip(*newDomains[keyFieldValue])  # Inverse the array to have fields values for the first dimension
                 break
 
-        # Create new symbols for each splitted group, and propagate the same fields domain for each symbol
+        # Create new symbols for each splitted group, and recreate the fields domain for each symbol
         for (keyFieldValue, datas) in newDatas.items():
             newFields = []
-            for f in field.children:
-                domain = DomainFactory.normalizeDomain(f.domain)
+            for (idx, f) in enumerate(field.children):
+                domain = DomainFactory.normalizeDomain(list(newDomains[keyFieldValue][idx]))
                 newField = Field(domain=domain)
                 newFields.append(newField)
 
-            s = Symbol(newFields, messages=datas, name="symbol_{0}".format(TypeConverter.convert(keyFieldValue, Raw, HexaString)))
+            if not ASCII().canParse(keyFieldValue):
+                keyFieldValue = TypeConverter.convert(keyFieldValue, Raw, HexaString)
+            s = Symbol(newFields, messages=datas, name="symbol_{0}".format(keyFieldValue))
             newSymbols.append(s)
 
         return newSymbols
