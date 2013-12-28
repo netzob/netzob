@@ -62,11 +62,11 @@ class FormatEditor(object):
 
     @staticmethod
     @typeCheck(AbstractField)
-    def splitAligned(field, useSemantic=True):
+    def splitAligned(field, useSemantic=True, doInternalSlick=False):
         if field is None:
             raise TypeError("Field cannot be None")
 
-        fs = FieldSplitAligned()
+        fs = FieldSplitAligned(doInternalSlick=doInternalSlick)
         fs.execute(field, useSemantic)
 
     @staticmethod

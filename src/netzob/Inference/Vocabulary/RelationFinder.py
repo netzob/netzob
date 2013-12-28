@@ -29,6 +29,7 @@
 #| Global Imports
 #+----------------------------------------------
 import uuid
+import math
 
 #+----------------------------------------------
 #| Local Imports
@@ -36,6 +37,7 @@ import uuid
 from netzob import _libRelation
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
+from netzob.Common.Models.Types.AbstractType import AbstractType
 from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Models.Types.Decimal import Decimal
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
@@ -70,6 +72,7 @@ class RelationFinder(object):
     REL_SIZE = "SizeRelation"
     REL_DATA = "DataRelation"
     REL_EQUALITY = "EqualityRelation"
+    REL_UNKNOWN = "Unknown"
 
     def __init__(self):
         pass
@@ -158,7 +161,13 @@ class RelationFinder(object):
                     if len(x_fields) == 1 and len(y_fields) == 1 and x_fields[0].id == y_fields[0].id:
                         continue
                     relation_type = self._findRelationType(x_attribute, y_attribute)
-                    self._logger.debug("Correlation found between '" + str(x_fields) + ":" + x_attribute + "' and '" + str(y_fields) + ":" + y_attribute + "'")
+                    # We do not consider unqualified relation (for example, the size of a field is linked to the size of another field)
+                    if relation_type == self.REL_UNKNOWN:
+                        continue
+                    # DataRelation should produce an empty intersection between related fields
+                    if relation_type == self.REL_DATA and len(set(x_fields).intersection(set(y_fields))) > 0:
+                        continue
+                    self._logger.debug("Relation found between '" + str(x_fields) + ":" + x_attribute + "' and '" + str(y_fields) + ":" + y_attribute + "'")
                     id_relation = str(uuid.uuid4())
                     results.append({'id': id_relation,
                                     "relation_type": relation_type,
@@ -218,10 +227,10 @@ class RelationFinder(object):
         return results
 
     def _findRelationType(self, x_attribute, y_attribute):
-        typeRelation = "Unknown"
+        typeRelation = self.REL_UNKNOWN
         if (x_attribute == self.ATTR_VALUE and y_attribute == self.ATTR_SIZE) or (x_attribute == self.ATTR_SIZE and y_attribute == self.ATTR_VALUE):
             typeRelation = self.REL_SIZE
-        elif (x_attribute == x_attribute) and x_attribute == self.ATTR_VALUE:
+        elif x_attribute == x_attribute == self.ATTR_VALUE:
             typeRelation = self.REL_DATA
         return typeRelation
 
@@ -259,17 +268,14 @@ class RelationFinder(object):
         lines_data = []
         line_header = []
 
-        # Compute the table of values
-        valuesTable = []
-        fields = symbol.children
-        for field in fields:
-            valuesTable.append(field.getValues(encoded=False, styled=False))
+        # Compute the list of values for each field
+        (fields, fieldsValues) = self._getAllFieldsValues(symbol)
 
         # Compute the table of concatenation of values
-        for i in range(len(fields[:])):
-            for j in range(i+1, len(fields)+1):
+        for i in range(len(fieldsValues[:])):
+            for j in range(i+1, len(fieldsValues)+1):
                 # We generate the data
-                concatCellsData = self._generateConcatData(valuesTable[i:j])
+                concatCellsData = self._generateConcatData(fieldsValues[i:j])
 
                 # We generate lines and header for fields values
                 line_header.append((fields[i:j], self.ATTR_VALUE))
@@ -294,6 +300,20 @@ class RelationFinder(object):
 
         return (line_header, lines_data)
 
+    def _getAllFieldsValues(self, field):
+        # This recursive function returns a tuple containing
+        # (array of all fields, array of values of each field)
+        if len(field.children) > 0:
+            fields = []
+            values = []
+            for f in field.children:
+                (retFields, retValues) = self._getAllFieldsValues(f)
+                fields.extend(retFields)
+                values.extend(retValues)
+            return (fields, values)
+        else:
+            return ([field], [field.getValues(encoded=False, styled=False)])
+
     def _generateConcatData(self, cellsDataList):
         """Generates the concatenation of each cell of each field.
         Example:
@@ -314,7 +334,10 @@ class RelationFinder(object):
         result = []
         for data in cellsData:
             if len(data) > 0:
-                result.append(TypeConverter.convert(data[:8], Raw, Decimal))  # We take only the first 8 octets
+                data = data[:8]  # We take at most 8 bytes
+                unitSize = int(AbstractType.UNITSIZE_8) * len(data)
+                unitSize = int(pow(2, math.ceil(math.log(unitSize, 2))))  # Round to the nearest upper power of 2
+                result.append(Decimal.encode(data, endianness=AbstractType.ENDIAN_BIG, unitSize=str(unitSize)))
             else:
                 result.append(0)
         return result
