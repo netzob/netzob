@@ -388,7 +388,7 @@ class FieldSplitAligned(object):
             for applicativeD in message.session.applicativeData:
                 appValues[applicativeD.value] = applicativeD.name
         else:
-            self._logger.info("Message is not attached to a session, so no applicative data will be considered while computing the alignment.")
+            self._logger.debug("Message is not attached to a session, so no applicative data will be considered while computing the alignment.")
 
         if len(appValues) > 0:
             searchResults = SearchEngine.searchInMessage(appValues.keys(), message, addTags=False)
