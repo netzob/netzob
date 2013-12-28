@@ -79,7 +79,8 @@ class SortedTypedList(object):
 
     def __init__(self, membersTypes, elements=None):
         self.membersTypes = membersTypes
-        self.__tree = AVLTree()
+        self.__treePriorities = AVLTree()
+        self.__mapMessages = dict()
         if elements is not None and len(elements) > 0:
             self._extend(elements)
 
@@ -113,14 +114,14 @@ class SortedTypedList(object):
         """
 
         l = []
-        for x in self.__tree.values():
-            l.append(x)
+        for x in self.__treePriorities.keys():
+            l.extend(self.__mapMessages[x])
         return l
 
     def clear(self):
         """remove all items from the list.
         It's a O(n) operation"""
-        self.__tree.clear()
+        self.__treePriorities.clear()
 
     def _extend(self, elements):
         """Add all the elements in the current list.
@@ -133,8 +134,12 @@ class SortedTypedList(object):
 
         d = dict()
         for e in elements:
-            d[e.priority()] = e
-        self.__tree.update(d)
+            d[e.priority()] = None
+            if e.priority() in self.__mapMessages:
+                self.__mapMessages[e.priority()].append(e)
+            else:
+                self.__mapMessages[e.priority()] = [e]
+        self.__treePriorities.update(d)
 
     def _check(self, v):
         if not isinstance(v, self.membersTypes):
@@ -145,14 +150,14 @@ class SortedTypedList(object):
     def __len__(self):
         """Returns the number of elements in the sorted list which takes
         O(1) operation :)"""
-        return len(self.__tree)
+        return len(self.__treePriorities)
 
     def __str__(self):
-        return ', \n'.join([str(v) for k, v in self.__tree.items()])
+        return ', \n'.join([str(v) for v in self.values()])
 
     def __repr__(self):
-        return repr(self.__tree)
+        return repr(str(self))
 
     def __iter__(self):
         """SortedTypedList is an iterable over its values (and not its keys)."""
-        return self.__tree.values().__iter__()
+        return self.__treePriorities.values().__iter__()
