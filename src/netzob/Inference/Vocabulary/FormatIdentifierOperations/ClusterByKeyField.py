@@ -75,7 +75,7 @@ class ClusterByKeyField(object):
         >>> symbol = Symbol([f1, f2, f3], messages=messages)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
         >>> newSymbols = FormatIdentifier.clusterByKeyField(symbol, f2)
-        >>> for sym in newSymbols:
+        >>> for sym in newSymbols.values():
         ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
         ...     print sym.name + ":"
         ...     print sym
@@ -100,7 +100,7 @@ class ClusterByKeyField(object):
         if not keyField in field.children:
             raise TypeError("'keyField' is not a child of 'field'")
 
-        newSymbols = []
+        newSymbols = {}
 
         # Retrieve cells of the main field
         fieldsCells = field.getCells(encoded=False, styled=False)
@@ -140,6 +140,6 @@ class ClusterByKeyField(object):
             if not ASCII().canParse(keyFieldValue):
                 keyFieldValue = TypeConverter.convert(keyFieldValue, Raw, HexaString)
             s = Symbol(newFields, messages=datas, name="symbol_{0}".format(keyFieldValue))
-            newSymbols.append(s)
+            newSymbols["symbol_{0}".format(keyFieldValue)] = s
 
         return newSymbols
