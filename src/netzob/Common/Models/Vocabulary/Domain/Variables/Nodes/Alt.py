@@ -302,6 +302,21 @@ class Alt(AbstractVariableNode):
 
         # self._logger.debug("Variable {0}: {1}. ]".format(self.name, writingToken))
 
+    def maxSize(self):
+        """Returns the max size of a data this variable can represent
+
+        :return: the max size
+        :rtype: :class:`int`
+        """
+        maxSize = 0
+        self._logger.debug("max size of alt")
+        for child in self.children:
+            if maxSize is None or child.maxSize() is None:
+                maxSize = None
+            elif maxSize < child.maxSize():
+                maxSize = child.maxSize()
+        return maxSize
+
     def buildRegex(self):
         """This method creates a regex based on the children of the Alternate.
 

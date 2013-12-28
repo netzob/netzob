@@ -582,6 +582,16 @@ class Data(AbstractVariableLeaf):
         else:
             return NetzobRegex.buildRegexForSizedValue(self.dataType.size)
 
+    def maxSize(self):
+        """Returns the max size of a data this variable can represent
+
+        :return: the max size
+        :rtype: :class:`int`
+        """
+        self._logger.debug("Max size of data")
+
+        return self.dataType.size[1]
+
     def __str__(self):
         """The str method, mostly for debugging purpose."""
         if self.currentValue is None:

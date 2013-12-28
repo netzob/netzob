@@ -87,15 +87,6 @@ class AbstractVariable(object):
         # The variables just above the current variable in the tree representation.
         self.__fathers = []
 
-    def __key(self):
-        return (self.id)
-
-    def __eq__(x, y):
-        return x.__key() == y.__key()
-
-    def __hash__(self):
-        return hash(self.__key())
-
     def getProgeny(self):
         """Get this variable and all variable that descends from it. (i.e. son, grandson...).
         Return EVERY child variable, especially for alternate variable.
@@ -247,9 +238,28 @@ class AbstractVariable(object):
         """
         raise NotImplementedError("The current variable doesn't support 'getDictOfValues'.")
 
+    #@abc.abstractmethod
+    def maxSize(self):
+        """Returns the max size of a data this variable can represent
+        :todo: should be mandatory (abc.abstractmethod)
+        
+        :return: the max size
+        :rtype: :class:`int`
+        """
+        raise NotImplementedError("The current variable doesn't support 'maxSize'.")        
+
     #+---------------------------------------------------------------------------+
     #| Special Functions                                                         |
     #+---------------------------------------------------------------------------+
+    def __key(self):
+        return (self.id)
+
+    def __eq__(x, y):
+        return x.__key() == y.__key()
+
+    def __hash__(self):
+        return hash(self.__key())
+
     def __str__(self):
         """The str method, mostly for debugging purpose."""
         return "{0} (L={1}, M={2})".format(self.varType, self.learnable, self.mutable)
