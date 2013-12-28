@@ -107,12 +107,12 @@ class FieldSplitAligned(object):
     Mathieu-0908070605-31 rue de Paris, 75000 Paris, France-mat@yahoo.fr                     
     Olivia-0348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hotmail.fr
 
-    >>> fs = FieldSplitAligned()
+    >>> fs = FieldSplitAligned(doInternalSlick=True)
     >>> fs.execute(symbol, useSemantic = False)
     >>> print symbol
-    John    | -0 | 10 | 8 |                                  | 0 | 3 | 0 | 4 | 0 | 5--joh          | n | .do | e |                | @ | gmail   | . | com
-    Mathieu | -0 | 90 | 8 | 070605-31 rue de Paris, 75       | 0 |   | 0 |   | 0 |  Paris, Fra     | n | c   | e | -mat           | @ | yahoo   | . | fr 
-    Olivia  | -0 | 34 | 8 | 234556-7 allee des peupliers, 13 | 0 |   | 0 |   | 0 |  Marseille, Fra | n | c   | e | -olivia.tortue | @ | hotmail | . | fr 
+    John    | -0 | 10 | 8 | 03040 | 5 | - | - | john.do                                                     | e | @g   | ma | il      | . | com
+    Mathieu | -0 | 90 | 8 | 07060 | 5 |   | - | 31 rue de Paris, 75000 Paris, Franc                         | e | -    | ma | t@yahoo | . | fr 
+    Olivia  | -0 | 34 | 8 | 2345  | 5 | 6 | - | 7 allee des peupliers, 13000 Marseille, France-olivia.tortu | e | @hot | ma | il      | . | fr    
 
     >>> applicativeDatas = []
     >>> applicativeDatas.append(ApplicativeData("Firstname", ASCII("John")))

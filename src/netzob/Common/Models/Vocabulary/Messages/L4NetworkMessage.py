@@ -45,13 +45,13 @@ class L4NetworkMessage(L3NetworkMessage):
     """Definition of a layer 4 network message
 
     >>> import binascii
-    >>> msg = L4NetworkMessage(binascii.unhexlify("090002300202f000"), date=1352293417.28, l3SourceAddress="192.168.10.100", l3DestinationAddress="192.168.10.245", l4SourceAddress=2049, l4DestinationAddress=80)
+    >>> msg = L4NetworkMessage("090002300202f000", date=1352293417.28, l3SourceAddress="192.168.10.100", l3DestinationAddress="192.168.10.245", l4SourceAddress=2049, l4DestinationAddress=80)
     >>> print msg.source
     192.168.10.100:2049
     >>> print msg.destination
     192.168.10.245:80
     >>> print msg
-    [0;32m[1352293417.28 [0;m[1;32m192.168.10.100:2049[1;m[0;32m-&gt;[0;m[1;32m192.168.10.245:80[1;m[0;32m][0;m 090002300202f000
+    [0;32m[1352293417.28 [0;m[1;32m192.168.10.100:2049[1;m[0;32m->[0;m[1;32m192.168.10.245:80[1;m[0;32m][0;m 090002300202f000
 
     """
 
