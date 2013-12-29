@@ -73,6 +73,14 @@ class NoSymbolException(Exception):
     pass
 
 
+class GenerationException(Exception):
+    pass
+
+
+class AbstractionException(Exception):
+    pass
+
+
 @NetzobLogger
 class AbstractField(AbstractMementoCreator):
     """Represents all the different classes which participates in fields definitions of a message format."""
@@ -465,6 +473,54 @@ class AbstractField(AbstractMementoCreator):
         :raises: :class:`netzob.Common.Models.Vocabulary.AbstractField.GenerationException` if an error occurs while generating a message
         """
         return
+
+    @staticmethod
+    def abstract(data, fields):
+        """Search in the fields the first one that can abstract the data.
+
+        >>> from netzob.all import *
+        >>> messages = [RawMessage("{0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'zoby'] for city in ['Paris', 'Berlin']]
+
+        >>> f1a = Field("netzob")
+        >>> f2a = Field(", what's up in ")
+        >>> f3a = Field(["Paris", "Berlin"])
+        >>> f4a = Field(" ?")
+        >>> s1 = Symbol([f1a, f2a, f3a, f4a], name="Symbol-netzob")
+
+        >>> f1b = Field("zoby")
+        >>> f2b = Field(", what's up in ")
+        >>> f3b = Field(["Paris", "Berlin"])
+        >>> f4b = Field(" ?")
+        >>> s2 = Symbol([f1b, f2b, f3b, f4b], name="Symbol-zoby")
+
+        >>> for m in messages:
+        ...    abstractedSymbol = AbstractField.abstract(m.data, [s1, s2])
+        ...    print abstractedSymbol.name
+        Symbol-netzob
+        Symbol-netzob
+        Symbol-zoby
+        Symbol-zoby
+
+        :parameter data: the data that should be abstracted in symbol
+        :type data: :class:`str`
+        :parameter fields: a list of fields/symbols targeted during the abstraction process
+        :type fields: :class:`list` of :class:`netzob.Common.Models.Vocabulary.AbstractField`
+
+        :return: a field/symbol
+        :rtype: :class:`netzob.Common.Models.Vocabulary.AbstractField`
+        :raises: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractionException` if an error occurs while abstracting the data
+        """
+
+        data = [TypeConverter.convert(data, Raw, HexaString)]
+        from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
+        for field in fields:
+            try:
+                alignedData = DataAlignment.align(data, field, encoded=False)
+                return field
+            except Exception:
+                continue
+        self._logger.debug("Impossible to abstract the message in one of the specified symbols.")
+        return None  # TODO: return UnknownSymbol once implemented
 
     def getSymbol(self):
         """Computes the symbol to which this field is attached.

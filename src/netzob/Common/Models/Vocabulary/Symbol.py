@@ -115,7 +115,7 @@ class Symbol(AbstractField):
         result = []
         for child in self.children:
             if not writingToken.isValueForVariableAvailable(child.domain):
-                raise Exception("Impossible to specialize field {0}".format(child.name))
+                raise GenerationException("Impossible to specialize field {0}".format(child.name))
             result.append(TypeConverter.convert(writingToken.getValueForVariable(child.domain), BitArray, Raw))
 
         return ''.join(result)
