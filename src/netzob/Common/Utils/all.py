@@ -31,3 +31,4 @@
 
 #from Serialization import *
 from netzob.Common.Utils.NetzobRegex import NetzobRegex
+from netzob.Common.Utils.Serializer import Serializer
