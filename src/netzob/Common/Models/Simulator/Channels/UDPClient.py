@@ -35,6 +35,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import socket
+import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -62,10 +63,13 @@ class UDPClient(AbstractChannel):
 
     """
 
-    def __init__(self, destIP, destPort):
+    @typeCheck(str, int)
+    def __init__(self, destIP, destPort, localIP="127.0.0.1", localPort=random.randint(1024,65535)):
         super(UDPClient, self).__init__(isServer=False)
         self.destIP = destIP
         self.destPort = destPort
+        self.localIP = localIP
+        self.localPort = localPort
         self.__isOpen = False
         self.__socket = None
 
@@ -80,6 +84,7 @@ class UDPClient(AbstractChannel):
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # Reuse the connection
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.__socket.bind((self.localIP, self.localPort))
 
     def close(self):
         """Close the communication channel."""
@@ -99,6 +104,7 @@ class UDPClient(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
+    @typeCheck(str)
     def write(self, data):
         """Write on the communication channel the specified data
 
