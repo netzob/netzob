@@ -59,7 +59,7 @@ class RelationFinder(object):
     >>> for rel in rels:
     ...     print rel["relation_type"] + " between " + rel["x_field"].name + ":" + rel["x_attribute"] + \
             " and " + rel["y_field"].name + ":" + rel["y_attribute"]
-    SizeRelation between Field:value and Field:size
+    SizeRelation between Field-1:value and Field-3:size
 
     """
 

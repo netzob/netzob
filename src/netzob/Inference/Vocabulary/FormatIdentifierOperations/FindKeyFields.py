@@ -75,7 +75,7 @@ class FindKeyFields(object):
         >>> results = finder.execute(symbol)
         >>> for result in results:
         ...     print "Field name: " + result["keyField"].name + ", number of clusters: " + str(result["nbClusters"]) + ", distribution: " + str(result["distribution"])
-        Field name: Field-1, number of clusters: 5, distribution: [2, 2, 1, 1, 2]
+        Field name: Field-1, number of clusters: 5, distribution: [1, 2, 2, 2, 1]
         Field name: Field-3, number of clusters: 2, distribution: [1, 7]
 
         :param field: the field in which we want to identify key fields.
@@ -111,7 +111,7 @@ class FindKeyFields(object):
             tmpClusters = FormatIdentifier.clusterByKeyField(field, result["keyField"])
             result["nbClusters"] = len(tmpClusters)
             distrib = []  # Compute clusters distribution
-            for cluster in tmpClusters:
+            for cluster in tmpClusters.values():
                 distrib.append(len(cluster.messages))
             result["distribution"] = distrib
 

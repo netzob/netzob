@@ -60,7 +60,7 @@ class State(AbstractState):
     >>> from netzob.all import *
     >>> s0 = State()
     >>> print s0.name
-    None
+    State
 
     >>> s1 = State(name="S1")
     >>> print s1.name
@@ -68,13 +68,13 @@ class State(AbstractState):
 
     >>> t = Transition(s0, s1, None, None)
     >>> print t.startState.name
-    None
+    State
     >>> print t.endState.name
     S1
     >>> print len(s0.transitions)
     1
     >>> print s0.transitions[0].startState.name
-    None
+    State
     >>> print s0.transitions[0].endState.name
     S1
 

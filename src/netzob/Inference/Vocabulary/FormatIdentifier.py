@@ -128,7 +128,29 @@ class FormatIdentifier(object):
     def clusterByKeyField(field, keyField):
         """Create and return new symbols according to a specific key
         field.
+
         This method is a wrapper for :class:`netzob.Inference.Vocabulary.FormatIdentifierOperations.ClusterByKeyField.ClusterByKeyField`
+
+        >>> import binascii
+        >>> from netzob.all import *
+        >>> samples = ["00ff2f000000",	"000020000000",	"00ff2f000000"]
+        >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
+        >>> f1 = Field(Raw(nbBytes=1))
+        >>> f2 = Field(Raw(nbBytes=2))
+        >>> f3 = Field(Raw(nbBytes=3))
+        >>> symbol = Symbol([f1, f2, f3], messages=messages)
+        >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
+
+        >>> newSymbols = FormatIdentifier.clusterByKeyField(symbol, f2)
+        >>> for sym in newSymbols.values():
+        ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
+        ...     print sym.name + ":"
+        ...     print sym
+        symbol_ :
+        00 | 0020 | 000000
+        symbol_ff2f:
+        00 | ff2f | 000000
+        00 | ff2f | 000000
 
         :param field: the field we want to split in new symbols
         :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
@@ -162,9 +184,9 @@ class FormatIdentifier(object):
         >>> FormatEditor.splitStatic(symbol)
         >>> results = FormatIdentifier.findKeyFields(symbol)
         >>> for result in results:
-        ...     print "Field name: " + result["keyField"].name + ", number of clusters: " + str(result["nbClusters"])
-        Field name: Field-1, number of clusters: 5
-        Field name: Field-3, number of clusters: 2
+        ...     print "Field name: " + result["keyField"].name + ", number of clusters: " + str(result["nbClusters"]) + ", distribution: " + str(result["distribution"])
+        Field name: Field-1, number of clusters: 5, distribution: [1, 2, 2, 2, 1]
+        Field name: Field-3, number of clusters: 2, distribution: [1, 7]
 
         :param field: the field in which we want to identify key fields.
         :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
