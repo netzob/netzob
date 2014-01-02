@@ -37,3 +37,4 @@ from netzob.Common.Models.Vocabulary.Symbol import Symbol
 from netzob.Common.Models.Vocabulary.Session import Session
 from netzob.Common.Models.Vocabulary.ApplicativeData import ApplicativeData
 from netzob.Common.Models.Vocabulary.EmptySymbol import EmptySymbol
+from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
