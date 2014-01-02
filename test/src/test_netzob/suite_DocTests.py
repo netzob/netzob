@@ -84,10 +84,15 @@ def getSuite():
         VariableReadingToken.__module__,
         # # JSONSerializator.__module__,
         # # TCPServer.__module__,
-        # # Actor.__module__,
+        Actor.__module__,
+        TCPServer.__module__,
+        TCPClient.__module__,
+        UDPServer.__module__,
+        UDPClient.__module__,
         # # Angluin.__module__,
         State.__module__,
         Transition.__module__,
+        AbstractionLayer.__module__,
         NetzobRegex,
         ParallelDataAlignment,
 
@@ -122,6 +127,7 @@ def getSuite():
         FieldOperations,
         CorrelationFinder.__module__,
         RelationFinder.__module__,
+        Automata.__module__,
     ]
 
     suite = unittest.TestSuite()
