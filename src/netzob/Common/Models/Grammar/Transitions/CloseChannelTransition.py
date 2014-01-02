@@ -81,7 +81,7 @@ class CloseChannelTransition(AbstractTransition):
         :param name: :class:`str`
 
         """
-        super(CloseChannelTransition, self).__init__(CloseChannelTransition.TYPE, startState, endState, _id, name, priority=0)
+        super(CloseChannelTransition, self).__init__(CloseChannelTransition.TYPE, startState, endState, _id, name, priority=20)
 
     @typeCheck(AbstractionLayer)
     def executeAsInitiator(self, abstractionLayer):
@@ -133,3 +133,10 @@ class CloseChannelTransition(AbstractTransition):
 
         self.active = False
         return self.endState
+
+    @property
+    def description(self):
+        if self._description is not None:
+            return self._description
+        else:
+            return "CloseChannelTransition"

@@ -133,3 +133,10 @@ class OpenChannelTransition(AbstractTransition):
 
         self.active = False
         return self.endState
+
+    @property
+    def description(self):
+        if self._description is not None:
+            return self._description
+        else:
+            return "OpenChannelTransition"

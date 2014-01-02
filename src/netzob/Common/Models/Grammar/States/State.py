@@ -36,6 +36,7 @@
 #+---------------------------------------------------------------------------+
 import uuid
 import random
+import traceback
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -49,6 +50,7 @@ from netzob.Common.Models.Simulator.AbstractionLayer import AbstractionLayer
 from netzob.Common.Models.Grammar.Transitions.Transition import Transition
 from netzob.Common.Models.Grammar.States.AbstractState import AbstractState
 from netzob.Common.Models.Grammar.Transitions.AbstractTransition import AbstractTransition
+from netzob.Common.Models.Grammar.Transitions.CloseChannelTransition import CloseChannelTransition
 
 
 @NetzobLogger
@@ -78,14 +80,14 @@ class State(AbstractState):
 
     """
 
-    def __init__(self, _id=uuid.uuid4(), name=None):
+    def __init__(self, name=None):
         """
         :keyword _id: the unique identifier of the state
         :type _id: :class:`uuid.UUID`
         :keyword name: the name of the state
         :type name: :class:`str`
         """
-        super(State, self).__init__(_id=_id, name=name)
+        super(State, self).__init__(name=name)
         self.__transitions = []
 
     @typeCheck(AbstractionLayer)
@@ -106,21 +108,23 @@ class State(AbstractState):
 
         # Pick the next transition
         nextTransition = self.__pickNextTransition()
+        self._logger.info("Next transition: {0}.".format(nextTransition))
 
-        if nextTransition:
+        if nextTransition is None:
             self.active = False
             raise Exception("No transition to execute, we stop here.")
 
         # Execute picked transition as an initiator
         try:
             nextState = nextTransition.executeAsInitiator(abstractionLayer)
+            self._logger.info("Transition '{0}' leads to state: {1}.".format(str(nextTransition), str(nextState)))
         except Exception, e:
             self.active = False
             raise e
 
         if nextState is None:
             self.active = False
-            raise Exception("The execution of transition {0} on state {1} did not return the next state.".format(nextTransition.name, self.name))
+            raise Exception("The execution of transition {0} on state {1} did not return the next state.".format(str(nextTransition), self.name))
 
         self.active = False
         return nextState
@@ -139,7 +143,7 @@ class State(AbstractState):
         if abstractionLayer is None:
             raise TypeError("AbstractionLayer cannot be None")
 
-        self._logger.debug("Execute state {0} as a not initiator".format(self.name))
+        self._logger.debug("Execute state {0} as a non-initiator".format(self.name))
 
         self.active = True
 
@@ -157,19 +161,28 @@ class State(AbstractState):
             if transition.priority == 0:
                 nextTransition = transition
 
+        # Else, execute the closing transition, if it is the last one remaining
+        if nextTransition is None:
+            if len(self.transitions) == 1 and self.transitions[0].TYPE == CloseChannelTransition.TYPE:
+                nextTransition = self.transitions[0]
+            
         if nextTransition is not None:
             nextState = nextTransition.executeAsNotInitiator(abstractionLayer)
+            self._logger.info("Transition '{0}' leads to state: {1}.".format(str(nextTransition), str(nextState)))
             if nextState is None:
                 self.active = False
                 raise Exception("The execution of transition {0} on state {1} did not return the next state.".format(nextTransition.name, self.name))
+            return nextState
 
-        # Wait to receive a symbol
+        # Else, we wait to receive a symbol
         try:
             (receivedSymbol, receivedMessage) = abstractionLayer.readSymbol()
             if receivedSymbol is None:
                 raise Exception("The abstraction layer returned a None received symbol")
+            self._logger.info("Input symbol: " + str(receivedSymbol.name))
 
             # Find the transition which accepts the received symbol as an input symbol
+            nextTransition = None
             for transition in self.transitions:
                 if transition.type == Transition.TYPE and transition.inputSymbol.id == receivedSymbol.id:
                     nextTransition = transition
@@ -180,10 +193,12 @@ class State(AbstractState):
                 nextState = self
             else:
                 nextState = nextTransition.executeAsNotInitiator(abstractionLayer)
+                self._logger.info("Transition '{0}' leads to state: {1}.".format(str(nextTransition), str(nextState)))
 
         except Exception, e:
             self._logger.warning("An exception occured when receiving a symbol from the abstraction layer.")
             self.active = False
+            self._logger.warning(traceback.format_exc())
             raise e
 
         self.active = False
