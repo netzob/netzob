@@ -484,8 +484,13 @@ class AbstractType(object):
             from netzob.Common.Models.Types.Decimal import Decimal
             return Decimal(value=data)
         if isinstance(data, str):
-            from netzob.Common.Models.Types.ASCII import ASCII
-            return ASCII(value=data)
+            try:
+                from netzob.Common.Models.Types.ASCII import ASCII
+                normalizedData = ASCII(value=data)
+            except:
+                from netzob.Common.Models.Types.Raw import Raw
+                normalizedData = Raw(value=data)
+            return normalizedData
 
         raise TypeError("Not a valid data, impossible to normalize it.")
 
