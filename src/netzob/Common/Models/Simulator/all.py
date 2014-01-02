@@ -31,3 +31,4 @@
 from netzob.Common.Models.Simulator.Channels.all import *
 
 from netzob.Common.Models.Simulator.Actor import Actor
+from netzob.Common.Models.Simulator.AbstractionLayer import AbstractionLayer
