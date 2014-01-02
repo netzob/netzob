@@ -57,17 +57,42 @@ class UDPClient(AbstractChannel):
     open method on the UDP client which connects to the server.
 
     >>> from netzob.all import *
-    >>> client = UDPClient(destIP='127.0.0.1', destPort=9999)
+    >>> import time
+    >>> client = UDPClient(remoteIP='127.0.0.1', remotePort=9999)
     >>> client.open()
+    >>> client.close()
 
+    >>> symbol = Symbol([Field("Hello Zoby !")])
+    >>> s0 = State()
+    >>> s1 = State()
+    >>> s2 = State()
+    >>> openTransition = OpenChannelTransition(startState=s0, endState=s1)
+    >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol])
+    >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
+    >>> automata = Automata(s0, [symbol])
+
+    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8888)
+    >>> abstractionLayer = AbstractionLayer(channel, [symbol])
+    >>> server = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
+
+    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8888)
+    >>> abstractionLayer = AbstractionLayer(channel, [symbol])
+    >>> client = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
+
+    >>> server.start()
+    >>> client.start()
+
+    >>> time.sleep(1)
+    >>> client.stop()
+    >>> server.stop()
 
     """
 
     @typeCheck(str, int)
-    def __init__(self, destIP, destPort, localIP="127.0.0.1", localPort=random.randint(1024,65535)):
+    def __init__(self, remoteIP, remotePort, localIP=None, localPort=None):
         super(UDPClient, self).__init__(isServer=False)
-        self.destIP = destIP
-        self.destPort = destPort
+        self.remoteIP = remoteIP
+        self.remotePort = remotePort
         self.localIP = localIP
         self.localPort = localPort
         self.__isOpen = False
@@ -84,7 +109,8 @@ class UDPClient(AbstractChannel):
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # Reuse the connection
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.__socket.bind((self.localIP, self.localPort))
+        if self.localIP is not None and self.localPort is not None:
+            self.__socket.bind((self.localIP, self.localPort))
 
     def close(self):
         """Close the communication channel."""
@@ -112,7 +138,7 @@ class UDPClient(AbstractChannel):
         :type data: binary object
         """
         if self.__socket is not None:
-            self.__socket.sendto(data, (self.destIP, self.destPort))
+            self.__socket.sendto(data, (self.remoteIP, self.remotePort))
         else:
             raise Exception("socket is not available")
 
@@ -135,37 +161,64 @@ class UDPClient(AbstractChannel):
     # Properties
 
     @property
-    def destIP(self):
+    def remoteIP(self):
         """IP on which the server will listen.
 
         :type: :class:`str`
         """
-        return self.__destIP
+        return self.__remoteIP
 
-    @destIP.setter
+    @remoteIP.setter
     @typeCheck(str)
-    def destIP(self, destIP):
-        if destIP is None:
-            raise TypeError("ListeningIP cannot be None")
+    def remoteIP(self, remoteIP):
+        if remoteIP is None:
+            raise TypeError("Listening IP cannot be None")
 
-        self.__destIP = destIP
+        self.__remoteIP = remoteIP
 
     @property
-    def destPort(self):
+    def remotePort(self):
         """UDP Port on which the server will listen.
         Its value must be above 0 and under 65535.
 
 
         :type: :class:`int`
         """
-        return self.__destPort
+        return self.__remotePort
 
-    @destPort.setter
+    @remotePort.setter
     @typeCheck(int)
-    def destPort(self, destPort):
-        if destPort is None:
-            raise TypeError("ListeningPort cannot be None")
-        if destPort <= 0 or destPort > 65535:
+    def remotePort(self, remotePort):
+        if remotePort is None:
+            raise TypeError("Listening Port cannot be None")
+        if remotePort <= 0 or remotePort > 65535:
             raise ValueError("ListeningPort must be > 0 and <= 65535")
 
-        self.__destPort = destPort
+        self.__remotePort = remotePort
+
+    @property
+    def localIP(self):
+        """IP on which the server will listen.
+
+        :type: :class:`str`
+        """
+        return self.__localIP
+
+    @localIP.setter
+    @typeCheck(str)
+    def localIP(self, localIP):
+        self.__localIP = localIP
+
+    @property
+    def localPort(self):
+        """UDP Port on which the server will listen.
+        Its value must be above 0 and under 65535.
+
+        :type: :class:`int`
+        """
+        return self.__localPort
+
+    @localPort.setter
+    @typeCheck(int)
+    def localPort(self, localPort):
+        self.__localPort = localPort
