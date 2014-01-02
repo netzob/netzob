@@ -31,3 +31,4 @@
 
 from netzob.Common.Models.Grammar.States.all import *
 from netzob.Common.Models.Grammar.Transitions.all import *
+from netzob.Common.Models.Grammar.Automata import Automata
