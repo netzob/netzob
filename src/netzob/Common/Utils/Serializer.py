@@ -38,6 +38,7 @@ import uuid
 import os
 import json
 import logging
+import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -62,7 +63,20 @@ class UUIDJsonPickleHandler(jsonpickle.handlers.BaseHandler):
     def restore(self, data):
         return uuid.UUID(hex=data['hex'])
 
+class BitarrayJsonPickleHandler(jsonpickle.handlers.BaseHandler):
+    """Handler used to process serialization of 'uuid' objects, as
+    they are, by default, un-deserializable with jsonpickle.
+    """
+
+    def flatten(self, obj, data):
+        data['value01'] = obj.to01()
+        return data 
+
+    def restore(self, data):
+        return bitarray.bitarray(data['value01'])
+
 jsonpickle.handlers.registry.register(uuid.UUID, UUIDJsonPickleHandler)
+jsonpickle.handlers.registry.register(bitarray.bitarray, BitarrayJsonPickleHandler)
 
 class Serializer(object):
     """Class providing static methods for object serialization and
