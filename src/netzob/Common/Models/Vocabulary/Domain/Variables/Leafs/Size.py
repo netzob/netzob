@@ -34,6 +34,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+import math
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -161,7 +162,10 @@ class Size(AbstractRelationVariableLeaf):
                 if fieldValue is None:
                     break
                 else:
-                    size += len(fieldValue)
+                    tmpLen = len(fieldValue)
+                    tmpLen = int(math.ceil(tmpLen / 8.0) * 8)  # Round to the upper closest multiple of 8 (the size of a byte),
+                                                               # because this is what will be considered durring field specialization
+                    size += tmpLen
             size = size * self.factor + self.offset
 
             return TypeConverter.convert(size, Decimal, BitArray)
