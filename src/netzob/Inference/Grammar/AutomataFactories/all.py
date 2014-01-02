@@ -30,4 +30,3 @@
 # see docs.python.org/2/tutorial/modules.html
 
 # from netzob.Inference.Grammar.Angluin import Angluin
-from netzob.Inference.Grammar.AutomataFactories.all import *
