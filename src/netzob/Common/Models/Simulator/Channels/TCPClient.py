@@ -68,11 +68,11 @@ class TCPClient(AbstractChannel):
     >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
     >>> automata = Automata(s0, [symbol])
 
-    >>> channel = TCPServer(localIP="127.0.0.1", localPort=8888)
+    >>> channel = TCPServer(localIP="127.0.0.1", localPort=8885)
     >>> abstractionLayer = AbstractionLayer(channel, [symbol])
     >>> server = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
 
-    >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8888)
+    >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8885)
     >>> abstractionLayer = AbstractionLayer(channel, [symbol])
     >>> client = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
 
@@ -85,12 +85,13 @@ class TCPClient(AbstractChannel):
 
     """
 
-    def __init__(self, remoteIP, remotePort, localIP=None, localPort=None):
+    def __init__(self, remoteIP, remotePort, localIP=None, localPort=None, timeout=5):
         super(TCPClient, self).__init__(isServer=False)
         self.remoteIP = remoteIP
         self.remotePort = remotePort
         self.localIP = localIP
         self.localPort = localPort
+        self.timeout = timeout
         self.__isOpen = False
         self.__socket = None
 
@@ -105,6 +106,7 @@ class TCPClient(AbstractChannel):
         self.__socket = socket.socket()
         # Reuse the connection
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.__socket.settimeout(self.timeout)
         if self.localIP is not None and self.localPort is not None:
             self.__socket.bind((self.localIP, self.localPort))
         self._logger.debug("Connect to the TCP server to {0}:{1}".format(self.remoteIP, self.remotePort))
@@ -218,3 +220,12 @@ class TCPClient(AbstractChannel):
     @typeCheck(int)
     def localPort(self, localPort):
         self.__localPort = localPort
+
+    @property
+    def timeout(self):
+        return self.__timeout
+
+    @timeout.setter
+    @typeCheck(int)
+    def timeout(self, timeout):
+        self.__timeout = timeout

@@ -79,11 +79,11 @@ class Actor(threading.Thread):
     >>> automata = Automata(s0, symbolList)
 
     >>> # Create actors: Alice (a server) and Bob (a client)
-    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8888)
+    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
     >>> alice = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
 
-    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8888)
+    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
     >>> bob = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
 

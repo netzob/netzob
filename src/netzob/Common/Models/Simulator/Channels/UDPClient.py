@@ -71,30 +71,31 @@ class UDPClient(AbstractChannel):
     >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
     >>> automata = Automata(s0, [symbol])
 
-    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8888)
+    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8883)
     >>> abstractionLayer = AbstractionLayer(channel, [symbol])
     >>> server = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
 
-    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8888)
+    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8883)
     >>> abstractionLayer = AbstractionLayer(channel, [symbol])
     >>> client = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
 
     >>> server.start()
     >>> client.start()
 
-    >>> time.sleep(1)
+    >>> time.sleep(2)
     >>> client.stop()
     >>> server.stop()
 
     """
 
     @typeCheck(str, int)
-    def __init__(self, remoteIP, remotePort, localIP=None, localPort=None):
+    def __init__(self, remoteIP, remotePort, localIP=None, localPort=None, timeout=5):
         super(UDPClient, self).__init__(isServer=False)
         self.remoteIP = remoteIP
         self.remotePort = remotePort
         self.localIP = localIP
         self.localPort = localPort
+        self.timeout = timeout
         self.__isOpen = False
         self.__socket = None
 
@@ -109,6 +110,7 @@ class UDPClient(AbstractChannel):
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # Reuse the connection
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.__socket.settimeout(self.timeout)
         if self.localIP is not None and self.localPort is not None:
             self.__socket.bind((self.localIP, self.localPort))
 
@@ -222,3 +224,12 @@ class UDPClient(AbstractChannel):
     @typeCheck(int)
     def localPort(self, localPort):
         self.__localPort = localPort
+
+    @property
+    def timeout(self):
+        return self.__timeout
+
+    @timeout.setter
+    @typeCheck(int)
+    def timeout(self, timeout):
+        self.__timeout = timeout

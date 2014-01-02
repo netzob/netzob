@@ -57,11 +57,11 @@ class AbstractionLayer(object):
     >>> from netzob.all import *
     >>> symbol = Symbol([Field("Hello Zoby !")], name = "Symbol_Hello")
 
-    >>> channelIn = UDPServer(localIP="127.0.0.1", localPort=8888)
+    >>> channelIn = UDPServer(localIP="127.0.0.1", localPort=8889)
     >>> abstractionLayerIn = AbstractionLayer(channelIn, [symbol])
     >>> abstractionLayerIn.openChannel()
 
-    >>> channelOut = UDPClient(remoteIP="127.0.0.1", remotePort=8888)
+    >>> channelOut = UDPClient(remoteIP="127.0.0.1", remotePort=8889)
     >>> abstractionLayerOut = AbstractionLayer(channelOut, [symbol])
     >>> abstractionLayerOut.openChannel()
 

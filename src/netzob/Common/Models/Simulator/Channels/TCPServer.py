@@ -69,11 +69,11 @@ class TCPServer(AbstractChannel):
     >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
     >>> automata = Automata(s0, [symbol])
 
-    >>> channel = TCPServer(localIP="127.0.0.1", localPort=8888)
+    >>> channel = TCPServer(localIP="127.0.0.1", localPort=8886)
     >>> abstractionLayer = AbstractionLayer(channel, [symbol])
     >>> server = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
 
-    >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8888)
+    >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8886)
     >>> abstractionLayer = AbstractionLayer(channel, [symbol])
     >>> client = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
 
@@ -86,10 +86,11 @@ class TCPServer(AbstractChannel):
 
     """
 
-    def __init__(self, localIP, localPort):
+    def __init__(self, localIP, localPort, timeout=5):
         super(TCPServer, self).__init__(isServer=True)
         self.localIP = localIP
         self.localPort = localPort
+        self.timeout = timeout
         self.__isOpen = False
         self.__socket = None
         self.__clientSocket = None
@@ -103,6 +104,7 @@ class TCPServer(AbstractChannel):
         self.__socket = socket.socket()
         # Reuse the connection
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.__socket.settimeout(self.timeout)
         self._logger.debug("Bind the TCP server to {0}:{1}".format(self.localIP, self.localPort))
         self.__socket.bind((self.localIP, self.localPort))
         self.__socket.listen(1)
@@ -194,3 +196,12 @@ class TCPServer(AbstractChannel):
             raise ValueError("LocalPort must be > 0 and <= 65535")
 
         self.__localPort = localPort
+
+    @property
+    def timeout(self):
+        return self.__timeout
+
+    @timeout.setter
+    @typeCheck(int)
+    def timeout(self, timeout):
+        self.__timeout = timeout

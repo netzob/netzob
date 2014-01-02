@@ -71,11 +71,11 @@ class UDPServer(AbstractChannel):
     >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
     >>> automata = Automata(s0, [symbol])
 
-    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8888)
+    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8884)
     >>> abstractionLayer = AbstractionLayer(channel, [symbol])
     >>> server = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
 
-    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8888)
+    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8884)
     >>> abstractionLayer = AbstractionLayer(channel, [symbol])
     >>> client = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
 
@@ -89,10 +89,11 @@ class UDPServer(AbstractChannel):
     """
 
     @typeCheck(str, int)
-    def __init__(self, localIP, localPort):
+    def __init__(self, localIP, localPort, timeout=5):
         super(UDPServer, self).__init__(isServer=False)
         self.localIP = localIP
         self.localPort = localPort
+        self.timeout = timeout
         self.__isOpen = False
         self.__socket = None
         self.__remoteAddr = None
@@ -108,6 +109,7 @@ class UDPServer(AbstractChannel):
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # Reuse the connection
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.__socket.settimeout(self.timeout)
         self.__socket.bind((self.localIP, self.localPort))
 
     def close(self):
@@ -193,3 +195,12 @@ class UDPServer(AbstractChannel):
             raise ValueError("ListeningPort must be > 0 and <= 65535")
 
         self.__localPort = localPort
+
+    @property
+    def timeout(self):
+        return self.__timeout
+
+    @timeout.setter
+    @typeCheck(int)
+    def timeout(self, timeout):
+        self.__timeout = timeout
