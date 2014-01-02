@@ -36,6 +36,7 @@
 #+---------------------------------------------------------------------------+
 import uuid
 import abc
+import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -519,7 +520,7 @@ class AbstractField(AbstractMementoCreator):
                 return field
             except Exception:
                 continue
-        self._logger.debug("Impossible to abstract the message in one of the specified symbols.")
+        logging.debug("Impossible to abstract the message in one of the specified symbols.")
         return None  # TODO: return UnknownSymbol once implemented
 
     def getSymbol(self):
