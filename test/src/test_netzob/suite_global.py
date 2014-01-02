@@ -36,7 +36,7 @@ import os
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from test_netzob import suite_Common
+#from test_netzob import suite_Common
 from test_netzob import suite_Tutorials
 from test_netzob import suite_DocTests
 
