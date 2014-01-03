@@ -47,7 +47,7 @@ from netzob.Common.Models.Grammar.Transitions.CloseChannelTransition import Clos
 class ChainedStatesAutomataFactory(object):
 
     @staticmethod
-    @typeCheck(list)
+    @typeCheck(list, list)
     def generate(abstractSession, symbolList):
         """Generate an automata that contains as many states and
         transitions as the number of request-response couples in the

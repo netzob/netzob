@@ -40,6 +40,7 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Grammar.States.State import State
 from netzob.Inference.Grammar.AutomataFactories.OneStateAutomataFactory import OneStateAutomataFactory
 from netzob.Inference.Grammar.AutomataFactories.ChainedStatesAutomataFactory import ChainedStatesAutomataFactory
+from netzob.Inference.Grammar.AutomataFactories.PTAAutomataFactory import PTAAutomataFactory
 
 
 @NetzobLogger
@@ -177,7 +178,7 @@ class Automata(object):
         return states
 
     @staticmethod
-    @typeCheck(list)
+    @typeCheck(list, list)
     def generateChainedStatesAutomata(abstractSession, symbolList):
         """Generate an automata that contains as many states and
         transitions as the number of request-response couples in the
@@ -215,14 +216,14 @@ class Automata(object):
         "State 3" ... "End state" [fontsize=5, label="CloseChannelTransition", URL="..."];
         }
 
-        :return: a list containing all the discovered states.
-        :rtype: a :class:`list`
+        :return: an automata with one sequence of chained states.
+        :rtype: a :class:`netzob.Common.Models.Grammar.Automata.Automata`
 
         """
         return ChainedStatesAutomataFactory.generate(abstractSession, symbolList)
 
     @staticmethod
-    @typeCheck(list)
+    @typeCheck(list, list)
     def generateOneStateAutomata(abstractSession, symbolList):
         """Generate an automata that, according to an abstract
         session, contains a main state where each request-response
@@ -256,11 +257,85 @@ class Automata(object):
         "Main state" ... "End state" [fontsize=5, label="CloseChannelTransition", URL="..."];
         }
 
-        :return: a list containing all the discovered states.
-        :rtype: a :class:`list`
+        :return: an automata with one main state.
+        :rtype: a :class:`netzob.Common.Models.Grammar.Automata.Automata`
 
         """
         return OneStateAutomataFactory.generate(abstractSession, symbolList)
+
+    @staticmethod
+    @typeCheck(list, list)
+    def generatePTAAutomata(abstractSessions, symbolList):
+        """Generate 
+
+        >>> from netzob.all import *
+        >>> symbolSYN = Symbol([Field(ASCII("SYN"))], name="Symbol_SYN")
+        >>> symbolSYNACK = Symbol([Field(ASCII("SYN/ACK"))], name="Symbol_SYNACK")
+        >>> symbolACK = Symbol([Field(ASCII("ACK"))], name="Symbol_ACK")
+        >>> symbolPUSH = Symbol([Field(ASCII("PUSH"))], name="Symbol_PUSH")
+        >>> symbolList = [symbolSYN, symbolSYNACK, symbolACK, symbolPUSH]
+
+        >>> msg1 = RawMessage("SYN", source="A", destination="B")
+        >>> msg2 = RawMessage("SYN/ACK", source="B", destination="A")
+        >>> msg3 = RawMessage("ACK", source="A", destination="B")
+        >>> msg4 = RawMessage("PUSH", source="B", destination="A")
+        >>> session = Session([msg1, msg2, msg3, msg4])
+        >>> abstractSession1 = session.abstract(symbolList)
+
+        >>> msg1 = RawMessage("SYN", source="A", destination="B")
+        >>> msg2 = RawMessage("SYN/ACK", source="B", destination="A")
+        >>> msg3 = RawMessage("SYN", source="A", destination="B")
+        >>> msg4 = RawMessage("PUSH", source="B", destination="A")
+        >>> msg5 = RawMessage("SYN", source="A", destination="B")
+        >>> msg6 = RawMessage("PUSH", source="B", destination="A")
+        >>> session = Session([msg1, msg2, msg3, msg4, msg5, msg6])
+        >>> abstractSession2 = session.abstract(symbolList)
+
+        >>> msg1 = RawMessage("SYN", source="A", destination="B")
+        >>> msg2 = RawMessage("SYN/ACK", source="B", destination="A")
+        >>> msg3 = RawMessage("ACK", source="A", destination="B")
+        >>> msg4 = RawMessage("PUSH", source="B", destination="A")
+        >>> msg5 = RawMessage("SYN", source="A", destination="B")
+        >>> msg6 = RawMessage("PUSH", source="B", destination="A")
+        >>> msg7 = RawMessage("SYN", source="A", destination="B")
+        >>> msg8 = RawMessage("PUSH", source="B", destination="A")
+        >>> session = Session([msg1, msg2, msg3, msg4, msg5, msg6, msg7, msg8])
+        >>> abstractSession3 = session.abstract(symbolList)
+
+        >>> abstractSessions = [abstractSession1, abstractSession2, abstractSession3]
+
+        >>> automata = Automata.generatePTAAutomata(abstractSessions, symbolList)
+        >>> dotcode = automata.generateDotCode()
+        >>> print dotcode #doctest: +ELLIPSIS
+        digraph G {
+        "Start state" [shape=doubleoctagon, style=filled, fillcolor=white, URL="..."];
+        "State 0" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
+        "State 1" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
+        "State 4" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
+        "State 5" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
+        "End state 6" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
+        "State 2" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
+        "State 7" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
+        "State 8" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
+        "End state 9" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
+        "End state 3" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
+        "Start state" ... "State 0" [fontsize=5, label="OpenChannelTransition", URL="..."];
+        "State 0" ... "State 1" [fontsize=5, label="Transition (Symbol_SYN;{Symbol_SYNACK})", URL="..."];
+        "State 1" ... "State 2" [fontsize=5, label="Transition (Symbol_ACK;{Symbol_PUSH})", URL="..."];
+        "State 1" ... "State 4" [fontsize=5, label="Transition (Symbol_SYN;{Symbol_PUSH})", URL="..."];
+        "State 4" ... "State 5" [fontsize=5, label="Transition (Symbol_SYN;{Symbol_PUSH})", URL="..."];
+        "State 5" ... "End state 6" [fontsize=5, label="CloseChannelTransition", URL="..."];
+        "State 2" ... "End state 3" [fontsize=5, label="CloseChannelTransition", URL="..."];
+        "State 2" ... "State 7" [fontsize=5, label="Transition (Symbol_SYN;{Symbol_PUSH})", URL="..."];
+        "State 7" ... "State 8" [fontsize=5, label="Transition (Symbol_SYN;{Symbol_PUSH})", URL="..."];
+        "State 8" ... "End state 9" [fontsize=5, label="CloseChannelTransition", URL="..."];
+        }
+
+        :return: an automata based on a PTA (Prefix Tree Acceptator).
+        :rtype: a :class:`netzob.Common.Models.Grammar.Automata.Automata`
+
+        """
+        return PTAAutomataFactory.generate(abstractSessions, symbolList)
 
     @property
     def initialState(self):

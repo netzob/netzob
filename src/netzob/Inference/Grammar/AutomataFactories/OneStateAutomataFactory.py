@@ -47,6 +47,7 @@ from netzob.Common.Models.Grammar.Transitions.CloseChannelTransition import Clos
 class OneStateAutomataFactory(object):
 
     @staticmethod
+    @typeCheck(list, list)
     def generate(abstractSession, symbolList):
         """Generate an automata that, according to an abstract
         session, contains a main state where each request-response
