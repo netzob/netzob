@@ -75,7 +75,7 @@ class FieldOperations(object):
              |--   Raw=None ((16, 16)) (currentValue=None, L=False, M=True)
         |--  f3
              |--   Raw=None ((24, 24)) (currentValue=None, L=False, M=True)
-        >>> FormatEditor.mergeFields(f2, f3)
+        >>> Format.mergeFields(f2, f3)
         >>> print symbol._str_debug()
         Symbol
         |--  f1
@@ -88,7 +88,7 @@ class FieldOperations(object):
         00 | ff2f000000
         00 | 0010000000
         00 | fe1f000000
-        >>> FormatEditor.mergeFields(symbol.children[0], symbol.children[1])
+        >>> Format.mergeFields(symbol.children[0], symbol.children[1])
         >>> print symbol._str_debug()
         Symbol
         |--  Merge

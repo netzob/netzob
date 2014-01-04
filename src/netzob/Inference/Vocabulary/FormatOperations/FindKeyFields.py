@@ -69,7 +69,7 @@ class FindKeyFields(object):
         >>> samples = ["00ff2f000011",	"000010000000",	"00fe1f000000",	"000020000000", "00ff1f000000",	"00ff1f000000",	"00ff2f000000",	"00fe1f000000"]
         >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
         >>> symbol = Symbol(messages=messages)
-        >>> FormatEditor.splitStatic(symbol)
+        >>> Format.splitStatic(symbol)
 
         >>> finder = FindKeyFields()
         >>> results = finder.execute(symbol)
@@ -106,9 +106,9 @@ class FindKeyFields(object):
                     results.append({"keyField": f})
 
         # Compute clusters according to each key field found
-        from netzob.Inference.Vocabulary.FormatIdentifier import FormatIdentifier
+        from netzob.Inference.Vocabulary.Format import Format
         for result in results:
-            tmpClusters = FormatIdentifier.clusterByKeyField(field, result["keyField"])
+            tmpClusters = Format.clusterByKeyField(field, result["keyField"])
             result["nbClusters"] = len(tmpClusters)
             distrib = []  # Compute clusters distribution
             for cluster in tmpClusters.values():

@@ -64,7 +64,7 @@ class test_ManualFieldStatic(NetzobTestCase):
         # 00ff0f000000
         # 00fe2f000000
 
-        FormatEditor.splitStatic(symbol, unitSize=AbstractType.UNITSIZE_8, mergeAdjacentStaticFields=False, mergeAdjacentDynamicFields=False)
+        Format.splitStatic(symbol, unitSize=AbstractType.UNITSIZE_8, mergeAdjacentStaticFields=False, mergeAdjacentDynamicFields=False)
         logging.info(symbol)
         # 00 | ff | 1f | 00 | 00 | 00
         # 00 | fe | 1f | 00 | 00 | 00
@@ -75,7 +75,7 @@ class test_ManualFieldStatic(NetzobTestCase):
         # 00 | ff | 0f | 00 | 00 | 00
         # 00 | fe | 2f | 00 | 00 | 00
 
-        FormatEditor.mergeFields(symbol.children[1], symbol.children[2])
+        Format.mergeFields(symbol.children[1], symbol.children[2])
         logging.info(symbol)
         # 00 | ff1f | 00 | 00 | 00
         # 00 | fe1f | 00 | 00 | 00
@@ -86,7 +86,7 @@ class test_ManualFieldStatic(NetzobTestCase):
         # 00 | ff0f | 00 | 00 | 00
         # 00 | fe2f | 00 | 00 | 00
 
-        FormatEditor.mergeFields(symbol.children[2], symbol.children[3])
+        Format.mergeFields(symbol.children[2], symbol.children[3])
         logging.info(symbol)
         # 00 | ff1f | 0000 | 00
         # 00 | fe1f | 0000 | 00

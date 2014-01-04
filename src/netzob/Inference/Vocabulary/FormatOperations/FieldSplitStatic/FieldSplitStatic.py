@@ -270,8 +270,8 @@ class FieldSplitStatic(object):
             indexedValues = result
 
         # Reset the field
-        from netzob.Inference.Vocabulary.FormatEditor import FormatEditor
-        FormatEditor.resetFormat(field)
+        from netzob.Inference.Vocabulary.Format import Format
+        Format.resetFormat(field)
 
         # Create a field for each entry
         newFields = [Field(domain=DomainFactory.normalizeDomain([Raw(TypeConverter.convert(v, HexaString, BitArray)) for v in val]), name="Field-"+str(i)) for (i, val) in enumerate(indexedValues)]

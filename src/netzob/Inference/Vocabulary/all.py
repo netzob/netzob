@@ -30,7 +30,6 @@
 # see docs.python.org/2/tutorial/modules.html
 from netzob.Inference.Vocabulary.Search.all import *
 
-from netzob.Inference.Vocabulary.FormatEditor import FormatEditor
-from netzob.Inference.Vocabulary.FormatIdentifier import FormatIdentifier
+from netzob.Inference.Vocabulary.Format import Format
 from netzob.Inference.Vocabulary.RelationFinder import RelationFinder
 from netzob.Inference.Vocabulary.CorrelationFinder import CorrelationFinder

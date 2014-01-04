@@ -52,7 +52,7 @@ class RelationFinder(object):
     >>> samples = ["0007ff2f000000000000", "0011ffaaaaaaaaaaaaaabbcc0010000000000000", "0012ffddddddddddddddddddddfe1f000000000000"]
     >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
     >>> symbol = Symbol(messages=messages)
-    >>> FormatEditor.splitStatic(symbol)
+    >>> Format.splitStatic(symbol)
     >>> rels = RelationFinder.findOnFields(symbol.children[1], symbol.children[3])
     >>> print len(rels)
     1

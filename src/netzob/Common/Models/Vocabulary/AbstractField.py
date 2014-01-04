@@ -438,7 +438,7 @@ class AbstractField(AbstractMementoCreator):
         hello lapy, what's up in Paris ?   
         hello lapy, what's up in Berlin ?  
         hello lapy, what's up in New-York ?
-        >>> FormatEditor.splitStatic(lapySymbol)
+        >>> Format.splitStatic(lapySymbol)
         >>> lapySymbol.encodingFunctions.add(TypeEncodingFunction(HexaString))
         >>> print lapySymbol
         68656c6c6f206c6170792c2077686174277320757020696e20 | 5061726973203f      

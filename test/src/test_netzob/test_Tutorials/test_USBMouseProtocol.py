@@ -379,7 +379,7 @@ class test_USBMouseProtocol(NetzobTestCase):
         initialSymbol = Symbol(messages=messages)
 
         # Split following the value
-        FormatEditor.splitStatic(initialSymbol, mergeAdjacentDynamicFields=False)
+        Format.splitStatic(initialSymbol, mergeAdjacentDynamicFields=False)
 
         initialSymbol.addEncodingFunction(TypeEncodingFunction(HexaString))
 

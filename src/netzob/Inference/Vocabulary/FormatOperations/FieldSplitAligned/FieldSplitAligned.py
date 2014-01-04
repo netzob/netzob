@@ -161,8 +161,8 @@ class FieldSplitAligned(object):
             raise TypeError("useSemantic cannot be None")
 
         # First step: we clean and reset the field
-        from netzob.Inference.Vocabulary.FormatEditor import FormatEditor
-        FormatEditor.resetFormat(field)
+        from netzob.Inference.Vocabulary.Format import Format
+        Format.resetFormat(field)
 
         # Retrieve all the segment of messages to align
         messageValues = field.getMessageValues(encoded=False, styled=False)

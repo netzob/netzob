@@ -45,7 +45,6 @@
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Symbol import Symbol
 from netzob.Common.Models.Vocabulary.Messages.AbstractMessage import AbstractMessage
-from netzob.Inference.Vocabulary.FormatEditor import FormatEditor
 from netzob.Common.C_Extensions.WrapperArgsFactory import WrapperArgsFactory
 
 #+---------------------------------------------------------------------------+
@@ -84,10 +83,10 @@ class ClusterByAlignment(object):
     4d79206970206164647265737320697320 |        | 0a | 7879d4
 
     >>> print symbols[2]
-    68656c6c6f20 | 64697472696368 | 2c2077686174277320757020696e20 | 4d756e696368       | 203f
-    68656c6c6f20 | 64697472696368 | 2c2077686174277320757020696e20 | 5061726973         | 203f
     68656c6c6f20 | 6361726c69746f | 2c2077686174277320757020696e20 | 4d756e696368       | 203f
     68656c6c6f20 | 6361726c69746f | 2c2077686174277320757020696e20 | 5061726973         | 203f
+    68656c6c6f20 | 64697472696368 | 2c2077686174277320757020696e20 | 4d756e696368       | 203f
+    68656c6c6f20 | 64697472696368 | 2c2077686174277320757020696e20 | 5061726973         | 203f
     68656c6c6f20 | 6361726c69746f | 2c2077686174277320757020696e20 | 5669656e6e65       | 203f
     68656c6c6f20 | 64697472696368 | 2c2077686174277320757020696e20 | 5669656e6e65       | 203f
     68656c6c6f20 | 746f746f       | 2c2077686174277320757020696e20 | 5061726973         | 203f
@@ -100,6 +99,7 @@ class ClusterByAlignment(object):
     68656c6c6f20 | 64697472696368 | 2c2077686174277320757020696e20 | 42617263656c6f6e65 | 203f
     68656c6c6f20 | 746f746f       | 2c2077686174277320757020696e20 | 42617263656c6f6e65 | 203f
     68656c6c6f20 | 7a6f6279       | 2c2077686174277320757020696e20 | 42617263656c6f6e65 | 203f
+
     """
 
     def __init__(self, minEquivalence=50, internalSlick=True, recomputeMatrixThreshold=None):
@@ -127,7 +127,8 @@ class ClusterByAlignment(object):
         # Retrieve the alignment of each symbol and the build the associated regular expression
         for symbol in symbols:
             self._logger.info("Align messages from symbol {0}".format(symbol.name))
-            FormatEditor.splitAligned(symbol, useSemantic=False)
+            from netzob.Inference.Vocabulary.Format import Format
+            Format.splitAligned(symbol, useSemantic=False)
 
         return symbols
 

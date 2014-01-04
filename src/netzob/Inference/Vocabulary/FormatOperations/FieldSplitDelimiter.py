@@ -65,7 +65,7 @@ class FieldSplitDelimiter(object):
         >>> samples = ["aaaaff000000ff10",	"bbff110010ff00000011",	"ccccccccfffe1f000000ff12"]
         >>> messages = [RawMessage(data=sample) for sample in samples]
         >>> symbol = Symbol(messages=messages[:3])
-        >>> FormatEditor.splitDelimiter(symbol, ASCII("ff"))
+        >>> Format.splitDelimiter(symbol, ASCII("ff"))
         >>> print symbol
         aaaa     | ff | 000000     | ff | 10      
         bb       | ff | 110010     | ff | 00000011
@@ -120,8 +120,8 @@ class FieldSplitDelimiter(object):
         newFields.pop()
 
         # Reset the field
-        from netzob.Inference.Vocabulary.FormatEditor import FormatEditor
-        FormatEditor.resetFormat(field)
+        from netzob.Inference.Vocabulary.Format import Format
+        Format.resetFormat(field)
 
         # Create a field for each entry
         field.children = newFields
