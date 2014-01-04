@@ -98,7 +98,7 @@ class CorrelationFinder(object):
         except:
             # Fall back to classical relations
             import logging
-            logging.warn("Numpy package needed for CorrelationFinder. Fall back to RelationFinder instead.")
+            logging.warn("'numpy' and 'minepy' packages needed for CorrelationFinder. Fall back to RelationFinder instead.")
             return RelationFinder.findOnSymbol(symbol)
 
         cf = CorrelationFinder(minMic)
