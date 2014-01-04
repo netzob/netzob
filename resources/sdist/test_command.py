@@ -33,6 +33,7 @@ import os
 import sys
 import unittest
 
+
 class test_command(Command):
     description = "Test Netzob"
 
@@ -79,7 +80,7 @@ class test_command(Command):
             testResult = runner.run(currentTestSuite)
         else:
             # We execute the test suite
-            File = open(self.reportfile, "w")
+            File = open(self.reportfile, 'w')
             File.write('<?xml version="1.0" encoding="utf-8"?>\n')
             reporter = XMLTestRunner(File)
             reporter.run(currentTestSuite)
@@ -91,18 +92,17 @@ class test_command(Command):
         """Clean the file to handle non-UTF8 bytes.
         """
 
-        aFile = open(filePath, "r")
+        aFile = open(filePath, 'r')
         data = aFile.read()
         aFile.close()
 
         cleanData = ""
         for c in data:
-            try:
-                c.encode('utf-8')
-            except:
-                c = repr(c)
-            cleanData += c
+            if (0x1f < ord(c) < 0x80) or (ord(c) == 0x9) or (ord(c) == 0xa) or (ord(c) == 0xd):
+                cleanData += c
+            else:
+                cleanData += repr(c)
 
-        aFile = open(filePath, "w")
+        aFile = open(filePath, 'w')
         aFile.write(cleanData)
         aFile.close()
