@@ -80,6 +80,29 @@ class test_command(Command):
         else:
             # We execute the test suite
             File = open(self.reportfile, "w")
+            File.write('<?xml version="1.0" encoding="utf-8"?>\n')
             reporter = XMLTestRunner(File)
             reporter.run(currentTestSuite)
             File.close()
+
+            self.cleanFile(self.reportfile)
+
+    def cleanFile(self, filePath):
+        """Clean the file to handle non-UTF8 bytes.
+        """
+
+        aFile = open(filePath, "r")
+        data = aFile.read()
+        aFile.close()
+
+        cleanData = ""
+        for c in data:
+            try:
+                c.encode('utf-8')
+            except:
+                c = repr(c)
+            cleanData += c
+
+        aFile = open(filePath, "w")
+        aFile.write(cleanData)
+        aFile.close()
