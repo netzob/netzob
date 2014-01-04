@@ -192,7 +192,6 @@ dependencies = [
     'bintrees >= 2.0.0',
     'netaddr >= 0.7',
     'minepy >= 1.0.0',
-    'numpy',
     'jsonpickle'
 ]
 
