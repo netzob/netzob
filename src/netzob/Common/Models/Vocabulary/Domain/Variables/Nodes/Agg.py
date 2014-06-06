@@ -218,6 +218,7 @@ class Agg(AbstractVariableNode):
             raise Exception("Nothing to read because no data is assigned to the current Agg.")
 
         valueToParse = readingToken.getValueForVariable(self)
+        sizeValueParsed = 0
 
         for child in self.children:
             # Memorize each child susceptible to be restored. One by one.
@@ -226,6 +227,7 @@ class Agg(AbstractVariableNode):
                 dictOfValues[key] = val
 
             # Child execution.
+            self._logger.debug("AGG-child will parse: {0}".format(valueToParse))
             readingToken.setValueForVariable(child, valueToParse)
             child.read(readingToken)
             if not readingToken.Ok:
@@ -233,6 +235,11 @@ class Agg(AbstractVariableNode):
             else:
                 childValue = readingToken.getValueForVariable(child)
                 valueToParse = valueToParse[len(childValue):]
+                sizeValueParsed += len(childValue)
+                self._logger.debug("child has parsed {0} bit".format(len(childValue)))
+
+        self._logger.debug("Agg parsed : {0}".format(valueToParse[:sizeValueParsed]))
+        #readingToken.setValueForVariable(self, valueToParse[:sizeValueParsed])
 
         # If it has failed we restore every executed children and the index.
         if not readingToken.Ok:
@@ -250,8 +257,9 @@ class Agg(AbstractVariableNode):
                 #     # We restore the cached values.
                 #     child.restore(readingToken)
         else:
+            pass
             # The value of the variable is simply the value we 'ate'.
-            self.currentValue = readingToken.value[savedIndex:readingToken.index]
+            #self.currentValue = readingToken.value[savedIndex:readingToken.index]
 
         self._logger.debug("Variable {0} ] -".format(readingToken))
 
