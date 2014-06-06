@@ -45,10 +45,62 @@ from functools import wraps
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 
+# Definition of the ColorStreamHandler class only if dependency colorama is
+# available on the current system.
+try:
+    from colorama import Fore, Back, Style
+
+    class ColourStreamHandler(logging.StreamHandler):
+        """ A colorized output SteamHandler """
+
+        # Some basic colour scheme defaults
+        colours = {
+            'DEBUG': Fore.CYAN,
+            'INFO': Fore.GREEN,
+            'WARN': Fore.YELLOW,
+            'WARNING': Fore.YELLOW,
+            'ERROR': Fore.RED,
+            'CRIT': Back.RED + Fore.WHITE,
+            'CRITICAL': Back.RED + Fore.WHITE
+        }
+
+        @property
+        def is_tty(self):
+            """ Check if we are using a "real" TTY. If we are not using a TTY it means that
+            the colour output should be disabled.
+
+            :return: Using a TTY status
+            :rtype: bool
+            """
+            try:
+                return getattr(self.stream, 'isatty', None)()
+            except:
+                return False
+
+        def emit(self, record):
+            try:
+                message = self.format(record)
+
+                if not self.is_tty:
+                    self.stream.write(message)
+                else:
+                    self.stream.write(self.colours[record.levelname] + message + Style.RESET_ALL)
+                self.stream.write(getattr(self, 'terminator', '\n'))
+                self.flush()
+            except (KeyboardInterrupt, SystemExit):
+                raise
+            except:
+                self.handleError(record)
+
+    has_colour = True
+except Exception, e:
+    has_colour = False
+
+
 def NetzobLogger(klass):
-    """This class decorator add (if necessary) an instance
+    """This class decorator adds (if necessary) an instance
     of the logger (self.__logger) to the attached class
-    and remove from the getState the logger.
+    and removes from the getState the logger.
 
     """
 
@@ -60,13 +112,19 @@ def NetzobLogger(klass):
             break
     if not found:
         klass._logger = logging.getLogger(klass.__name__)
+        handler = ColourStreamHandler() if has_colour else logging.StreamHandler()
+        handler.setLevel(logging.DEBUG)
+        fmt = '[%(processName)s/%(threadName)s/%(levelname)s] %(relativeCreated)d: %(message)s'
+        handler.setFormatter(logging.Formatter(fmt))
+        klass._logger.addHandler(handler)
+        klass._logger.propagate = False
 
     # Exclude logger from __getstate__
     def getState(self, **kwargs):
         r = dict()
         for k, v in self.__dict__.items():
             if not isinstance(v, logging.Logger):
-                r[k]=v
+                r[k] = v
         return r
 
     def setState(self, dict):
@@ -77,6 +135,7 @@ def NetzobLogger(klass):
     klass.__setState__ = setState
 
     return klass
+
 
 def typeCheck(*types):
     """Decorator which reduces the amount of code to type-check attributes.
