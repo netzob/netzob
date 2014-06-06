@@ -238,9 +238,17 @@ class AbstractField(AbstractMementoCreator):
         # Fetch all the data to align
         data = [TypeConverter.convert(message.data, Raw, HexaString) for message in self.messages]
 
-        # Execute a parallel alignment
-        from netzob.Common.Utils.DataAlignment.ParallelDataAlignment import ParallelDataAlignment
-        return ParallelDataAlignment.align(data, self, encoded=encoded)
+        # [DEBUG] set to false for debug only. A sequential alignment is more simple to debug
+        useParallelAlignment = False
+
+        if useParallelAlignment:
+            # Execute a parallel alignment
+            from netzob.Common.Utils.DataAlignment.ParallelDataAlignment import ParallelDataAlignment
+            return ParallelDataAlignment.align(data, self, encoded=encoded)
+        else:
+            # Execute a sequential alignment
+            from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
+            return DataAlignment.align(data, self, encoded=encoded)
 
     @typeCheck(bool, bool)
     def getValues(self, encoded=True, styled=True):
@@ -523,7 +531,12 @@ class AbstractField(AbstractMementoCreator):
         if currentDepth is None:
             currentDepth = 0
 
-        if len(self.children) == 0 or currentDepth == depth:
+        self._logger.debug("get leaf fields of {0}".format(self.name))
+
+        if len(self.children) == 0:
+            return [self]
+
+        if currentDepth == depth:
             return [self]
 
         leafFields = []

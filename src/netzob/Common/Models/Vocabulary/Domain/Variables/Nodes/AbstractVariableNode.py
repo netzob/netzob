@@ -89,6 +89,7 @@ class AbstractVariableNode(AbstractVariable):
     @children.setter
     def children(self, children):
         from netzob.Common.Models.Vocabulary.Domain.DomainFactory import DomainFactory
+        self._children = []
         for child in children:
             normalizedChild = DomainFactory.normalizeDomain(child)
             self._children.append(normalizedChild)
