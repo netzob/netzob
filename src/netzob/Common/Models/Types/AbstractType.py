@@ -198,7 +198,7 @@ class AbstractType(object):
     def __str__(self):
         from netzob.Common.Models.Types.TypeConverter import TypeConverter
         from netzob.Common.Models.Types.BitArray import BitArray
-        if self.value != None:
+        if self.value is not None:
             return "{0}={1} ({2})".format(self.typeName, TypeConverter.convert(self.value, BitArray, self.__class__), self.size)
         else:
             return "{0}={1} ({2})".format(self.typeName, self.value, self.size)
@@ -484,7 +484,7 @@ class AbstractType(object):
             from netzob.Common.Models.Types.ASCII import ASCII
             return ASCII(value=data)
 
-        raise TypeError("Not a valid data, impossible to normalize it.")
+        raise TypeError("Not a valid data ({0}), impossible to normalize it.", type(data))
 
     def buildDataRepresentation(self):
         """It creates a :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data.Data` following the specified type.
