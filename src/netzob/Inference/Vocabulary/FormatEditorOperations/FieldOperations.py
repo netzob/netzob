@@ -64,43 +64,78 @@ class FieldOperations(object):
         >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
         >>> f1 = Field(Raw(nbBytes=1), name="f1")
         >>> f2 = Field(Raw(nbBytes=2), name="f2")
-        >>> f3 = Field(Raw(nbBytes=3), name="f3")
-        >>> symbol = Symbol([f1, f2, f3], messages=messages)
+        >>> f3 = Field(Raw(nbBytes=2), name="f3")
+        >>> f4 = Field(Raw(nbBytes=1), name="f4")
+        >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-        >>> print symbol._str_debug()
-        Symbol
-        |--  f1
-             |--   Raw=None ((8, 8)) (currentValue=None, L=False, M=True)
-        |--  f2
-             |--   Raw=None ((16, 16)) (currentValue=None, L=False, M=True)
-        |--  f3
-             |--   Raw=None ((24, 24)) (currentValue=None, L=False, M=True)
-        >>> FormatEditor.mergeFields(f2, f3)
-        >>> print symbol._str_debug()
-        Symbol
-        |--  f1
-             |--   Raw=None ((8, 8)) (currentValue=None, L=False, M=True)
-        |--  Merge
-             |--   Agg (L=False, M=False)
-                   |--   Raw=None ((16, 16)) (currentValue=None, L=False, M=True)
-                   |--   Raw=None ((24, 24)) (currentValue=None, L=False, M=True)
         >>> print symbol
-        00 | ff2f000000
-        00 | 0010000000
-        00 | fe1f000000
+        00 | ff2f | 0000 | 00
+        00 | 0010 | 0000 | 00
+        00 | fe1f | 0000 | 00
+        >>> FormatEditor.mergeFields(f2, f3)
+        >>> print symbol
+        00 | ff2f0000 | 00
+        00 | 00100000 | 00
+        00 | fe1f0000 | 00
+        >>> FormatEditor.mergeFields(symbol.children[0], symbol.children[1])
+        >>> print symbol
+        00ff2f0000 | 00
+        0000100000 | 00
+        00fe1f0000 | 00
         >>> FormatEditor.mergeFields(symbol.children[0], symbol.children[1])
         >>> print symbol._str_debug()
         Symbol
         |--  Merge
              |--   Agg (L=False, M=False)
-                   |--   Raw=None ((8, 8)) (currentValue=None, L=False, M=True)
                    |--   Agg (L=False, M=False)
-                        |--   Raw=None ((16, 16)) (currentValue=None, L=False, M=True)
-                        |--   Raw=None ((24, 24)) (currentValue=None, L=False, M=True)
+                        |--   Raw=None ((8, 8)) (currentValue=None, L=False, M=True)
+                        |--   Agg (L=False, M=False)
+                             |--   Raw=None ((16, 16)) (currentValue=None, L=False, M=True)
+                             |--   Raw=None ((16, 16)) (currentValue=None, L=False, M=True)
+                   |--   Raw=None ((8, 8)) (currentValue=None, L=False, M=True)
         >>> print symbol
-        00ff2f000000
-        000010000000
-        00fe1f000000
+
+        # >>> samples = ["00ff2f000000", "000010000000",	"00fe1f000000"]
+        # >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
+        # >>> f1 = Field(Raw(nbBytes=1), name="f1")
+        # >>> f2 = Field(Raw(nbBytes=2), name="f2")
+        # >>> f3 = Field(Raw(nbBytes=3), name="f3")
+        # >>> symbol = Symbol([f1, f2, f3], messages=messages)
+        # >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
+        # >>> print symbol._str_debug()
+        # Symbol
+        # |--  f1
+        #      |--   Raw=None ((8, 8)) (currentValue=None, L=False, M=True)
+        # |--  f2
+        #      |--   Raw=None ((16, 16)) (currentValue=None, L=False, M=True)
+        # |--  f3
+        #      |--   Raw=None ((24, 24)) (currentValue=None, L=False, M=True)
+        # >>> FormatEditor.mergeFields(f2, f3)
+        # >>> print symbol._str_debug()
+        # Symbol
+        # |--  f1
+        #      |--   Raw=None ((8, 8)) (currentValue=None, L=False, M=True)
+        # |--  Merge
+        #      |--   Agg (L=False, M=False)
+        #            |--   Raw=None ((16, 16)) (currentValue=None, L=False, M=True)
+        #            |--   Raw=None ((24, 24)) (currentValue=None, L=False, M=True)
+        # >>> print symbol
+        # 00 | ff2f000000
+        # 00 | 0010000000
+        # 00 | fe1f000000
+        # >>> FormatEditor.mergeFields(symbol.children[0], symbol.children[1])
+        # >>> print symbol._str_debug()
+        # Symbol
+        # |--  Merge
+        #      |--   Agg (L=False, M=False)
+        #            |--   Raw=None ((8, 8)) (currentValue=None, L=False, M=True)
+        #            |--   Agg (L=False, M=False)
+        #                 |--   Raw=None ((16, 16)) (currentValue=None, L=False, M=True)
+        #                 |--   Raw=None ((24, 24)) (currentValue=None, L=False, M=True)
+        # >>> print symbol
+        # 00ff2f000000
+        # 000010000000
+        # 00fe1f000000
 
         :param field1: the left field to merge
         :type field1: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
@@ -137,8 +172,9 @@ class FieldOperations(object):
         if iField2 != iField1 + 1:
             raise ValueError("Field1 must be directly on the left of field2 (iField1={0}, iField2={1})".format(iField1, iField2))
 
-        # build a new field
-        newField = Field(Agg([field1.domain, field2.domain]), name="Merge")
+        # build a new field domain
+        newDomain = Agg([field1.domain, field2.domain])
+        newField = Field(domain=newDomain, name="Merge")
         parent = field1.parent
         before = parent.children[:iField1]
         after = parent.children[iField2 + 1:]
