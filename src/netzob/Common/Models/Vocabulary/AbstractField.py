@@ -546,6 +546,16 @@ class AbstractField(AbstractMementoCreator):
 
         return leafFields
 
+    @abc.abstractmethod
+    def _addEOL(self):
+        """Adds in the definition domain of this element the implicit EOL in the right places"""
+        return
+
+    @abc.abstractmethod
+    def _removeEOL(self):
+        """Removes from the definition domain any EOL element"""
+        return
+
     def hasParent(self):
         """Computes if the current element has a parent.
 

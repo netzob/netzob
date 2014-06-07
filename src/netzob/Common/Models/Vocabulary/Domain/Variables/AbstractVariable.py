@@ -242,11 +242,21 @@ class AbstractVariable(object):
     def maxSize(self):
         """Returns the max size of a data this variable can represent
         :todo: should be mandatory (abc.abstractmethod)
-        
+
         :return: the max size
         :rtype: :class:`int`
         """
-        raise NotImplementedError("The current variable doesn't support 'maxSize'.")        
+        raise NotImplementedError("The current variable doesn't support 'maxSize'.")
+
+    @abc.abstractmethod
+    def _addEOL(self):
+        """Adds in the definition domain of this element the implicit EOL in the right places"""
+        return
+
+    @abc.abstractmethod
+    def _removeEOL(self):
+        """Removes any EOL element in this definition domain"""
+        return
 
     #+---------------------------------------------------------------------------+
     #| Special Functions                                                         |

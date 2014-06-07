@@ -125,6 +125,27 @@ class Symbol(AbstractField):
         while(len(self.__messages) > 0):
             self.__messages.pop()
 
+    def _addEOL(self):
+        """Adds in the definition domain of this element the implicit EOL in the right places"""
+        for iChild in range(1, len(self.children)):
+            currentField = self.children[iChild - 1]
+            nextField = self.children[iChild]
+
+            if not currentField._isStatic() and nextField._isStatic():
+                currentField._addEOL()
+            elif iChild == len(self.children) - 1:
+                nextField._addEOL()
+
+    def _removeEOL(self):
+        for iChild in range(1, len(self.children)):
+            currentField = self.children[iChild - 1]
+            nextField = self.children[iChild]
+
+            if not currentField._isStatic() and nextField._isStatic():
+                currentField._removeEOL()
+            elif iChild == len(self.children) - 1:
+                nextField._removeEOL()
+
     # Properties
 
     @property

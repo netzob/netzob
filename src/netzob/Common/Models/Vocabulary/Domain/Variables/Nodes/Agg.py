@@ -325,3 +325,11 @@ class Agg(AbstractVariableNode):
         regexes = [child.buildRegex() for child in self.children]
         regex = NetzobRegex.buildRegexForAggregateRegexes(regexes)
         return regex
+
+    def _addEOL(self):
+        """Adds in the definition domain of this element the implicit EOL in the last child of the AGG"""
+        self.children[len(self.children) - 1]._addEOL()
+
+    def _removeEOL(self):
+        """Removes any EOL element in this definition domain"""
+        self.children[len(self.children) - 1]._removeEOL()

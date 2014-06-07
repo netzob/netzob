@@ -86,6 +86,9 @@ class DomainEncodingFunction(EncodingFunction):
         elif variable.varType == "Agg" or variable.varType == "Alt":
             for child in variable.children:
                 result.extend(self.encodeChild(child, readingToken))
+        elif variable.varType == "Eol":
+            # nothing to encode when child is EOL
+            pass
         else:
             raise Exception("Unknown type of variable: {0}".format(variable.varType))
 

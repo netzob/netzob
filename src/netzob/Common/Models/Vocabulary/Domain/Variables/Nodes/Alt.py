@@ -46,9 +46,12 @@ import random
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Utils.NetzobRegex import NetzobRegex
 from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
+from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken import AbstractVariableProcessingToken
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken import VariableReadingToken
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken import VariableWritingToken
+from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Agg import Agg
+from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Eol import Eol
 
 
 @NetzobLogger
@@ -65,6 +68,17 @@ class Alt(AbstractVariableNode):
     Raw=None ((0, None))
     >>> print domain.children[1].dataType
     ASCII=None ((0, None))
+
+    That's another simple example that also illustrates rollback mechanisms
+
+    >>> from netzob.all import *
+    >>> m1 = RawMessage("220044")
+    >>> f1 = Field("22")
+    >>> f2 = Field(Alt(["00", "0044", "0", "004"]))
+    >>> s = Symbol([f1, f2], messages=[m1])
+    >>> print s
+    22 | 000044
+
     """
 
     def __init__(self, children=None, learnable=False, mutable=True):
@@ -106,7 +120,7 @@ class Alt(AbstractVariableNode):
             self.readChildren(readingToken, self.mutable)
         else:
             # no child.
-            self._logger.debug("Write abort: the variable has no child.")
+            self._logger.debug("read abort: the variable has no child.")
             readingToken.Ok(False)
 
         # Variable notification
@@ -345,3 +359,22 @@ class Alt(AbstractVariableNode):
         regexes = [child.buildRegex() for child in self.children]
         regex = NetzobRegex.buildRegexForAlternativeRegexes(regexes)
         return regex
+
+    def _addEOL(self):
+        """Adds in the definition domain of this element the implicit EOL in every child of the ALT"""
+        newChilds = []
+        for child in self.children:
+            if isinstance(child, AbstractVariableLeaf):
+                # replace the child which is a node by an aggregation that denotes the child + EOL
+                agg = Agg(children=[child, Eol()])
+                newChilds.append(agg)
+            else:
+                child._addEOL()
+                newChilds.append(child)
+
+        self.children = newChilds
+
+    def _removeEOL(self):
+        """Removes any EOL element in this definition domain"""
+        for child in self.children:
+            child._removeEOL()

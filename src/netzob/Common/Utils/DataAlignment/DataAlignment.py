@@ -120,20 +120,39 @@ class DataAlignment(threading.Thread):
         if self.field is None:
             raise TypeError("Field cannot be None")
 
+        # If we are executing an alignment of a message with a symbol, we need
+        # to add EOL in the symbol definition before doing so
+        from netzob.Common.Models.Vocabulary.Symbol import Symbol
+        if isinstance(self.field, Symbol):
+            self.field._addEOL()
+
         result = MatrixList()
 
+        # We retrieve all the leaf fields of the root of the provided field
         rootLeafFields = self.__root._getLeafFields(depth=self.depth)
         if self.__root != self.field:
             targetedFieldLeafFields = self.field._getLeafFields(depth=self.depth)
         else:
             targetedFieldLeafFields = rootLeafFields
 
+        # -- debug display
+        self._logger.debug("Targeted leaf fields: ")
+        for f in targetedFieldLeafFields:
+            self._logger.debug("- {0}".format(f.name))
+        self._logger.debug(self.__root._str_debug())
+        # -- debug display
+
         for d in self.data:
             self._logger.debug("Data to align: {0}".format(d))
             try:
                 # split the message following the regex definition
                 splittedData = self.__splitDataWithRegex(d, rootLeafFields)
+
+                # -- debug display
+                for f in targetedFieldLeafFields:
+                    self._logger.debug("{0} = {1}".format(f.name, splittedData[f.regex.id]))
                 self._logger.debug("Splitted data = {0}".format(splittedData))
+                # -- debug display
 
                 # apply the field definition on each slice
                 remainingData = ''
@@ -141,18 +160,27 @@ class DataAlignment(threading.Thread):
                 rToken = VariableReadingToken()
 
                 for field in targetedFieldLeafFields:
-                    self._logger.debug("Target leaf field : {0}({1})".format(field.name, field.__class__))
+                    self._logger.debug("Target leaf field {0}({1})".format(field.name, field.domain))
                     if field.regex.id not in splittedData.keys() or len(splittedData[field.regex.id]) == 0:
                         raise Exception("Content of field {0} ({1}) has not been found on message, alignment failed.")
 
                     if len(splittedData[field.regex.id]) > 1:
                         raise Exception("Multiple values are available for the same field, this is not yet supported.")
 
+                    # retrieves the data to parse from the regex result
                     data = splittedData[field.regex.id][0]
+                    # appends to this data potentially remaining data from previous field parsing
                     fieldData = remainingData + data
-                    rToken.setValueForVariable(field.domain, TypeConverter.convert(fieldData, HexaString, BitArray))
+                    # converts the data in bitarray
+                    bitArrayFieldData = TypeConverter.convert(fieldData, HexaString, BitArray)
+                    self._logger.debug("Parse: {0}".format(fieldData))
 
+                    # sets the value to parse in the reading token
+                    rToken.setValueForVariable(field.domain, bitArrayFieldData)
+
+                    # executes the parsing
                     (value, remainingData) = self.__applyFieldDefinition(field, rToken)
+
                     rToken.setValueForVariable(field.domain, TypeConverter.convert(fieldData, HexaString, BitArray))
 
                     fieldsValue.append(value)
@@ -161,10 +189,18 @@ class DataAlignment(threading.Thread):
                     raise Exception("The data has not be fully consummed by the field definition.")
                 result.append(fieldsValue)
             except Exception, e:
+
+                if isinstance(self.field, Symbol):
+                    self.field._removeEOL()
+
                 tb = traceback.format_exc()
                 self._logger.warning("An exception occurred while aligning a data : {0}".format(e))
                 self._logger.warning(tb)
+
                 raise e
+
+        if isinstance(self.field, Symbol):
+            self.field._removeEOL()
 
         return result
 
@@ -174,10 +210,11 @@ class DataAlignment(threading.Thread):
         provided data. It returns a tupple which indicates the consummed data and the remainning data
         after the application of the field domain on the data.
 
-        :param data: the data to parse with the field definition
-        :type data: :class:`str` of hexastring
         :param field: the field from which we consider the domain to parse the data
         :type field: :class:`netzob.Common.Models.Vocabulary.Field.Field`
+        :param rToken: the reading token
+        :type field: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken.VariableReadingToken`
+
         :return: a tuple indicating the consummed data and the remaining data.
         :rtype: a tuple of :class:`str`, :class:`str`
         :raise Exception if something failed while parsing the data with the field domain.

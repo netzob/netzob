@@ -227,3 +227,11 @@ class AbstractVariableLeaf(AbstractVariable):
         tab.append("|--   ")
         tab.append("{0}".format(self))
         return ''.join(tab)
+
+    def _addEOL(self):
+        """nothing to be done here, only nodes manage EOL"""
+        pass
+
+    def _removeEOL(self):
+        """nothing to be done here, only nodes manage EOL"""
+        pass

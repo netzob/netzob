@@ -45,6 +45,7 @@
 from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Alt import Alt
 from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Agg import Agg
 from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
+from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Eol import Eol
 from netzob.Common.Models.Types.AbstractType import AbstractType
 from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
 from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
@@ -98,7 +99,7 @@ class DomainFactory(object):
 
     @staticmethod
     def __normalizeLeafDomain(domain):
-        if isinstance(domain, (Data, AbstractRelationVariableLeaf)):
+        if isinstance(domain, (Data, AbstractRelationVariableLeaf, Eol)):
             return domain
         else:
             return AbstractType.normalize(domain).buildDataRepresentation()
@@ -118,7 +119,7 @@ class DomainFactory(object):
             else:
                 for child in domain.children:
                     tmpResult.append(DomainFactory.normalizeDomain(child))
-            uniqResult = []    
+            uniqResult = []
             for elt in tmpResult:
                 if isinstance(elt, AbstractVariableNode):
                     uniqResult.append(elt)
@@ -128,7 +129,7 @@ class DomainFactory(object):
                         if uElt == elt:
                             found = True
                             break
-                    if found == False:
+                    if found is False:
                         uniqResult.append(elt)
             if len(uniqResult) == 1:
                 return uniqResult[0]

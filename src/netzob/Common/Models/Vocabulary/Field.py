@@ -50,6 +50,7 @@ from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Vocabulary.Domain.DomainFactory import DomainFactory
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken import VariableWritingToken
+from netzob.Common.Utils.NetzobRegex import NetzobStaticRegex
 
 
 class InvalidDomainException(Exception):
@@ -196,6 +197,27 @@ class Field(AbstractField):
                 return TypeConverter.convert(writingToken.getValueForVariable(self.domain), BitArray, Raw)
             else:
                 raise Exception("The definition of the field does not support its specialization.")
+
+    def _isStatic(self):
+        """Returns True if the field denotes a static content"""
+        return isinstance(self.regex, NetzobStaticRegex)
+
+    def _addEOL(self):
+        """Adds in the definition domain of this element the implicit EOL in the right places"""
+
+        if len(self.children) > 0:
+            self.children[len(self.children) - 1]._addEOL()
+        else:
+            self.domain._addEOL()
+
+    def _removeEOL(self):
+        """Removes EOL from the definition domain of the field
+        @todo: not yet implemented
+        """
+        if len(self.children) > 0:
+            self.children[len(self.children) - 1]._removeEOL()
+        else:
+            self.domain._removeEOL()
 
     @property
     def domain(self):
