@@ -250,8 +250,6 @@ class FormatEditor(object):
         00ff2f0000 | 00
         0000100000 | 00
         00fe1f0000 | 00
-        >>> FormatEditor.mergeFields(symbol.children[0], symbol.children[1])
-        >>> print symbol
 
         :param field: the field we want to reset
         :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
