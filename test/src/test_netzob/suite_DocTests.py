@@ -121,7 +121,7 @@ def getSuite():
 
         # Modules related to the grammatical inference
         # --------------------------------------------
-        Angluin.__module__,
+        # Angluin.__module__,
         State.__module__,
         Transition.__module__,
         AbstractionLayer.__module__,
