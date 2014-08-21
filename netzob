@@ -61,19 +61,23 @@ if __name__ == "__main__":
     if os.name == 'nt':
         sys.path.insert(0, 'lib/libNeedleman/')
 
-    # Launch the GUI or the plugin manager
-    if commandLineParser.isStartGUIRequested():
-        GObject.threads_init()  # for handling concurrent GUI access from threads
-        from netzob.NetzobMainController import NetzobMainController
-        netzobController = NetzobMainController()
-        netzobController.run()
-    # Display the management of plugins
-    elif commandLineParser.isManagePluginsRequested():
-        from netzob.NetzobPluginManagement import NetzobPluginManagement
-        netzobPluginManagement = NetzobPluginManagement(commandLineParser)
-        netzobPluginManagement.start()
-    # Launch the interactive session
-    elif commandLineParser.isInteractiveConsoleRequested():
-        from netzob.NetzobInteractiveSessionController import NetzobInteractiveSessionController
-        interactiveSession = NetzobInteractiveSessionController()
-        interactiveSession.start()
+    # # Launch the GUI or the plugin manager
+    # if commandLineParser.isStartGUIRequested():
+    #     GObject.threads_init()  # for handling concurrent GUI access from threads
+    #     from netzob.NetzobMainController import NetzobMainController
+    #     netzobController = NetzobMainController()
+    #     netzobController.run()
+    # # Display the management of plugins
+    # elif commandLineParser.isManagePluginsRequested():
+    #     from netzob.NetzobPluginManagement import NetzobPluginManagement
+    #     netzobPluginManagement = NetzobPluginManagement(commandLineParser)
+    #     netzobPluginManagement.start()
+    # # Launch the interactive session
+    # elif commandLineParser.isInteractiveConsoleRequested():
+    #     from netzob.NetzobInteractiveSessionController import NetzobInteractiveSessionController
+    #     interactiveSession = NetzobInteractiveSessionController()
+    #     interactiveSession.start()
+
+    from netzob.NetzobInteractiveSessionController import NetzobInteractiveSessionController
+    interactiveSession = NetzobInteractiveSessionController()
+    interactiveSession.start()

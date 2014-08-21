@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -65,7 +65,7 @@ class test_StaticFieldSlicing(NetzobTestCase):
         # 00fe2f000000
 
         # lets slice data
-        FormatEditor.splitStatic(symbol)
+        Format.splitStatic(symbol)
 
         logging.info(symbol)
         # 00 | ff1f | 000000
@@ -77,7 +77,7 @@ class test_StaticFieldSlicing(NetzobTestCase):
         # 00 | ff0f | 000000
         # 00 | fe2f | 000000
 
-        FormatEditor.splitStatic(symbol, unitSize=AbstractType.UNITSIZE_8, mergeAdjacentStaticFields=False, mergeAdjacentDynamicFields=False)
+        Format.splitStatic(symbol, unitSize=AbstractType.UNITSIZE_8, mergeAdjacentStaticFields=False, mergeAdjacentDynamicFields=False)
         logging.info(symbol)
         # 00 | ff | 1f | 00 | 00 | 00
         # 00 | fe | 1f | 00 | 00 | 00
@@ -88,7 +88,7 @@ class test_StaticFieldSlicing(NetzobTestCase):
         # 00 | ff | 0f | 00 | 00 | 00
         # 00 | fe | 2f | 00 | 00 | 00
 
-        FormatEditor.splitStatic(symbol, unitSize=AbstractType.UNITSIZE_16, mergeAdjacentStaticFields=False, mergeAdjacentDynamicFields=False)
+        Format.splitStatic(symbol, unitSize=AbstractType.UNITSIZE_16, mergeAdjacentStaticFields=False, mergeAdjacentDynamicFields=False)
         logging.info(symbol)
         # 00ff | 1f00 | 0000
         # 00fe | 1f00 | 0000
@@ -99,7 +99,7 @@ class test_StaticFieldSlicing(NetzobTestCase):
         # 00ff | 0f00 | 0000
         # 00fe | 2f00 | 0000
 
-        FormatEditor.splitStatic(symbol, unitSize=AbstractType.UNITSIZE_16, mergeAdjacentStaticFields=False, mergeAdjacentDynamicFields=True)
+        Format.splitStatic(symbol, unitSize=AbstractType.UNITSIZE_16, mergeAdjacentStaticFields=False, mergeAdjacentDynamicFields=True)
         logging.info(symbol)
         # 00ff1f00 | 0000
         # 00fe1f00 | 0000

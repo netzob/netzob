@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -85,7 +85,7 @@ class SearchEngine(object):
     1 occurence(s) found.
     >>> print m
     [0;32m[1383948883.0 [0;m[1;32mNone[1;m[0;32m-&gt;[0;m[1;32mNone[1;m[0;32m][0;m Netzob is a tool that helps [1;41mexperts in th[1;meir reverse engineering processes.
-    >>> m.clearSearchResults()
+    >>> m.clearVisualizationFunctions()
     >>> print m
     [0;32m[1383948883.0 [0;m[1;32mNone[1;m[0;32m-&gt;[0;m[1;32mNone[1;m[0;32m][0;m Netzob is a tool that helps experts in their reverse engineering processes.
 

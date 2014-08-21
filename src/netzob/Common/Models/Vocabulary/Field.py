@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -212,7 +212,6 @@ class Field(AbstractField):
 
     def _removeEOL(self):
         """Removes EOL from the definition domain of the field
-        @todo: not yet implemented
         """
         if len(self.children) > 0:
             self.children[len(self.children) - 1]._removeEOL()

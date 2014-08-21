@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -32,6 +32,7 @@ from distutils.core import Command
 import os
 import sys
 import unittest
+
 
 class test_command(Command):
     description = "Test Netzob"
@@ -79,7 +80,29 @@ class test_command(Command):
             testResult = runner.run(currentTestSuite)
         else:
             # We execute the test suite
-            File = open(self.reportfile, "w")
+            File = open(self.reportfile, 'w')
+            File.write('<?xml version="1.0" encoding="utf-8"?>\n')
             reporter = XMLTestRunner(File)
             reporter.run(currentTestSuite)
             File.close()
+
+            self.cleanFile(self.reportfile)
+
+    def cleanFile(self, filePath):
+        """Clean the file to handle non-UTF8 bytes.
+        """
+
+        aFile = open(filePath, 'r')
+        data = aFile.read()
+        aFile.close()
+
+        cleanData = ""
+        for c in data:
+            if (0x1f < ord(c) < 0x80) or (ord(c) == 0x9) or (ord(c) == 0xa) or (ord(c) == 0xd):
+                cleanData += c
+            else:
+                cleanData += repr(c)
+
+        aFile = open(filePath, 'w')
+        aFile.write(cleanData)
+        aFile.close()

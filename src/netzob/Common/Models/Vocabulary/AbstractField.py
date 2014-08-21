@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -36,6 +36,7 @@
 #+---------------------------------------------------------------------------+
 import uuid
 import abc
+import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -70,6 +71,14 @@ class AlignmentException(Exception):
 
 
 class NoSymbolException(Exception):
+    pass
+
+
+class GenerationException(Exception):
+    pass
+
+
+class AbstractionException(Exception):
     pass
 
 
@@ -437,7 +446,7 @@ class AbstractField(AbstractMementoCreator):
         hello lapy, what's up in Paris ?   
         hello lapy, what's up in Berlin ?  
         hello lapy, what's up in New-York ?
-        >>> FormatEditor.splitStatic(lapySymbol)
+        >>> Format.splitStatic(lapySymbol)
         >>> lapySymbol.encodingFunctions.add(TypeEncodingFunction(HexaString))
         >>> print lapySymbol
         68656c6c6f206c6170792c2077686174277320757020696e20 | 5061726973203f      
@@ -474,6 +483,54 @@ class AbstractField(AbstractMementoCreator):
         """
         return
 
+    @staticmethod
+    def abstract(data, fields):
+        """Search in the fields the first one that can abstract the data.
+
+        >>> from netzob.all import *
+        >>> messages = [RawMessage("{0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'zoby'] for city in ['Paris', 'Berlin']]
+
+        >>> f1a = Field("netzob")
+        >>> f2a = Field(", what's up in ")
+        >>> f3a = Field(["Paris", "Berlin"])
+        >>> f4a = Field(" ?")
+        >>> s1 = Symbol([f1a, f2a, f3a, f4a], name="Symbol-netzob")
+
+        >>> f1b = Field("zoby")
+        >>> f2b = Field(", what's up in ")
+        >>> f3b = Field(["Paris", "Berlin"])
+        >>> f4b = Field(" ?")
+        >>> s2 = Symbol([f1b, f2b, f3b, f4b], name="Symbol-zoby")
+
+        >>> for m in messages:
+        ...    abstractedSymbol = AbstractField.abstract(m.data, [s1, s2])
+        ...    print abstractedSymbol.name
+        Symbol-netzob
+        Symbol-netzob
+        Symbol-zoby
+        Symbol-zoby
+
+        :parameter data: the data that should be abstracted in symbol
+        :type data: :class:`str`
+        :parameter fields: a list of fields/symbols targeted during the abstraction process
+        :type fields: :class:`list` of :class:`netzob.Common.Models.Vocabulary.AbstractField`
+
+        :return: a field/symbol
+        :rtype: :class:`netzob.Common.Models.Vocabulary.AbstractField`
+        :raises: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractionException` if an error occurs while abstracting the data
+        """
+
+        data = [TypeConverter.convert(data, Raw, HexaString)]
+        from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
+        for field in fields:
+            try:
+                alignedData = DataAlignment.align(data, field, encoded=False)
+                return field
+            except Exception:
+                continue
+        logging.debug("Impossible to abstract the message in one of the specified symbols.")
+        return None  # TODO: return UnknownSymbol once implemented
+
     def getSymbol(self):
         """Computes the symbol to which this field is attached.
 
@@ -502,7 +559,7 @@ class AbstractField(AbstractMementoCreator):
 
         >>> field = Field(name="L0")
         >>> headerField = Field(name="L0_header")
-        >>> payloadField = Field(name="L0_footer")
+        >>> payloadField = Field(name="L0_payload")
         >>> footerField = Field(name="L0_footer")
 
         >>> fieldL1 = Field(name="L1")
@@ -530,8 +587,6 @@ class AbstractField(AbstractMementoCreator):
         """
         if currentDepth is None:
             currentDepth = 0
-
-        self._logger.debug("get leaf fields of {0}".format(self.name))
 
         if len(self.children) == 0:
             return [self]

@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -48,7 +48,7 @@ versionName = "WaddlingPeccary"
 #+---------------------------------------------------------------------------+
 #| Copyright mentions
 #+---------------------------------------------------------------------------+
-copyright = "Copyright (C) 2011 Georges Bossert and Frédéric Guihéry"
+copyright = "Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry"
 
 #+---------------------------------------------------------------------------+
 #| Description of the application

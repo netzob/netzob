@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -36,8 +36,11 @@ from gettext import gettext as _
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from minepy import MINE
-import numpy
+try:
+    import numpy
+    from minepy import MINE
+except:
+    pass
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -47,6 +50,7 @@ from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Models.Types.Decimal import Decimal
+from netzob.Inference.Vocabulary.RelationFinder import RelationFinder
 
 
 @NetzobLogger
@@ -59,7 +63,7 @@ class CorrelationFinder(object):
     >>> samples = ["0007ff2f000000000000", "0011ffaaaaaaaaaaaaaabbcc0010000000000000", "0012ffddddddddddddddddddddfe1f000000000000"]
     >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
     >>> symbol = Symbol(messages=messages)
-    >>> FormatEditor.splitStatic(symbol)
+    >>> Format.splitStatic(symbol)
     >>> rels = CorrelationFinder.find(symbol)
     >>> print len(rels)
     64
@@ -88,6 +92,14 @@ class CorrelationFinder(object):
         :param minMic: the minimum correlation score 
         :type minMic: :class:`float`
         """
+
+        try:
+            import numpy
+        except:
+            # Fall back to classical relations
+            import logging
+            logging.warn("'numpy' and 'minepy' packages needed for CorrelationFinder. Fall back to RelationFinder instead.")
+            return RelationFinder.findOnSymbol(symbol)
 
         cf = CorrelationFinder(minMic)
         return cf.execute(symbol)

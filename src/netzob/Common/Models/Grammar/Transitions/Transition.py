@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -98,6 +98,8 @@ class Transition(AbstractTransition):
 
         self.inputSymbol = inputSymbol
         self.outputSymbols = outputSymbols
+        self.outputSymbolProbabilities = {}  # TODO: not yet implemented
+        self.outputSymbolReactionTimes = {}  # TODO: not yet implemented
 
     @typeCheck(AbstractionLayer)
     def executeAsInitiator(self, abstractionLayer):
@@ -125,7 +127,7 @@ class Transition(AbstractTransition):
             abstractionLayer.writeSymbol(self.inputSymbol)
 
             # Waits for the reception of a symbol
-            receivedSymbol = abstractionLayer.readSymbol()
+            (receivedSymbol, receivedMessage) = abstractionLayer.readSymbol()
 
         except Exception, e:
             self.active = False
@@ -135,6 +137,9 @@ class Transition(AbstractTransition):
         # Computes the next state following the received symbol
         # if its an expected one, it returns the endState of the transition
         # if not it raises an exception
+        for outputSymbol in self.outputSymbols:
+            self._logger.info("Possible output symbol: '{0}' (id={1}).".format(outputSymbol.name, outputSymbol.id))
+
         if receivedSymbol in self.outputSymbols:
             self.active = False
             return self.endState
@@ -162,7 +167,7 @@ class Transition(AbstractTransition):
         # Pick the output symbol to emit
         pickedSymbol = self.__pickOutputSymbol()
         if pickedSymbol is None:
-            self._logger.debug("No output symbol to send, we pich an EmptySymbol as output symbol.")
+            self._logger.debug("No output symbol to send, we pick an EmptySymbol as output symbol.")
             pickedSymbol = EmptySymbol()
 
         # Sleep before emiting the symbol (if equired)
@@ -170,7 +175,7 @@ class Transition(AbstractTransition):
             time.sleep(self.outputSymbolReactionTimes[pickedSymbol])
 
         # Emit the symbol
-        self.abstractionLayer.writeSymbol(pickedSymbol)
+        abstractionLayer.writeSymbol(pickedSymbol)
 
         # Return the endState
         self.active = False
@@ -211,7 +216,7 @@ class Transition(AbstractTransition):
                 outputSymbolsWithProbability[outputSymbol] = probabilityPerSymbolWithNoExplicitProbability
 
         # pick the good output symbol following the probability
-        distribution = [outputSymbol for inner in [[k] * v for k, v in outputSymbolsWithProbability.items()] for outputSymbolsWithNoProbability in inner]
+        distribution = [outputSymbol for inner in [[k] * int(v) for k, v in outputSymbolsWithProbability.items()] for outputSymbolsWithNoProbability in inner]
 
         return random.choice(distribution)
 
@@ -270,3 +275,13 @@ class Transition(AbstractTransition):
             for symbol in outputSymbols:
                 if symbol is not None:
                     self.__outputSymbols.append(symbol)
+
+    @property
+    def description(self):
+        if self._description is not None:
+            return self._description
+        else:
+            desc = []
+            for outputSymbol in self.outputSymbols:
+                desc.append(str(outputSymbol.name))
+            return self.name + " (" + str(self.inputSymbol.name) + ";{" + ",".join(desc) + "})"

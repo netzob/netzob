@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -204,9 +204,12 @@ class AbstractType(object):
             return "{0}={1} ({2})".format(self.typeName, self.value, self.size)
 
     def __repr__(self):
-        from netzob.Common.Models.Types.TypeConverter import TypeConverter
-        from netzob.Common.Models.Types.BitArray import BitArray
-        return str(TypeConverter.convert(self.value, BitArray, self.__class__))
+        if self.value != None:
+            from netzob.Common.Models.Types.TypeConverter import TypeConverter
+            from netzob.Common.Models.Types.BitArray import BitArray
+            return str(TypeConverter.convert(self.value, BitArray, self.__class__))
+        else:
+            return str(self.value)
 
     def __key(self):
         return (self.typeName, self.value, self.size, self.unitSize, self.endianness, self.sign)
@@ -481,8 +484,13 @@ class AbstractType(object):
             from netzob.Common.Models.Types.Decimal import Decimal
             return Decimal(value=data)
         if isinstance(data, str):
-            from netzob.Common.Models.Types.ASCII import ASCII
-            return ASCII(value=data)
+            try:
+                from netzob.Common.Models.Types.ASCII import ASCII
+                normalizedData = ASCII(value=data)
+            except:
+                from netzob.Common.Models.Types.Raw import Raw
+                normalizedData = Raw(value=data)
+            return normalizedData
 
         raise TypeError("Not a valid data ({0}), impossible to normalize it.", type(data))
 

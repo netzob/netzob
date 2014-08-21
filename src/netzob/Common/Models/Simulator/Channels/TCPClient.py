@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -56,16 +56,42 @@ class TCPClient(AbstractChannel):
     method on the tcp client which connects to the server.
 
     >>> from netzob.all import *
-    >>> client = TCPClient(destIP='127.0.0.1', destPort=9999)
-    >>> client.open()
+    >>> import time
+    >>> client = TCPClient(remoteIP='127.0.0.1', remotePort=9999)
 
+    >>> symbol = Symbol([Field("Hello Zoby !")])
+    >>> s0 = State()
+    >>> s1 = State()
+    >>> s2 = State()
+    >>> openTransition = OpenChannelTransition(startState=s0, endState=s1)
+    >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol])
+    >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
+    >>> automata = Automata(s0, [symbol])
+
+    >>> channel = TCPServer(localIP="127.0.0.1", localPort=8885)
+    >>> abstractionLayer = AbstractionLayer(channel, [symbol])
+    >>> server = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
+
+    >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8885)
+    >>> abstractionLayer = AbstractionLayer(channel, [symbol])
+    >>> client = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
+
+    >>> server.start()
+    >>> client.start()
+
+    >>> time.sleep(1)
+    >>> client.stop()
+    >>> server.stop()
 
     """
 
-    def __init__(self, destIP, destPort):
+    def __init__(self, remoteIP, remotePort, localIP=None, localPort=None, timeout=5):
         super(TCPClient, self).__init__(isServer=False)
-        self.destIP = destIP
-        self.destPort = destPort
+        self.remoteIP = remoteIP
+        self.remotePort = remotePort
+        self.localIP = localIP
+        self.localPort = localPort
+        self.timeout = timeout
         self.__isOpen = False
         self.__socket = None
 
@@ -80,8 +106,11 @@ class TCPClient(AbstractChannel):
         self.__socket = socket.socket()
         # Reuse the connection
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self._logger.debug("Connect to the TCP server to {0}:{1}".format(self.destIP, self.destPort))
-        self.__socket.connect((self.destIP, self.destPort))
+        self.__socket.settimeout(self.timeout)
+        if self.localIP is not None and self.localPort is not None:
+            self.__socket.bind((self.localIP, self.localPort))
+        self._logger.debug("Connect to the TCP server to {0}:{1}".format(self.remoteIP, self.remotePort))
+        self.__socket.connect((self.remoteIP, self.remotePort))
 
     def close(self):
         """Close the communication channel."""
@@ -130,37 +159,73 @@ class TCPClient(AbstractChannel):
     # Properties
 
     @property
-    def listeningIP(self):
+    def remoteIP(self):
         """IP on which the server will listen.
 
         :type: :class:`str`
         """
-        return self.__listeningIP
+        return self.__remoteIP
 
-    @listeningIP.setter
+    @remoteIP.setter
     @typeCheck(str)
-    def listeningIP(self, listeningIP):
-        if listeningIP is None:
-            raise TypeError("ListeningIP cannot be None")
+    def remoteIP(self, remoteIP):
+        if remoteIP is None:
+            raise TypeError("RemoteIP cannot be None")
 
-        self.__listeningIP = listeningIP
+        self.__remoteIP = remoteIP
 
     @property
-    def listeningPort(self):
+    def remotePort(self):
         """TCP Port on which the server will listen.
         Its value must be above 0 and under 65535.
 
 
         :type: :class:`int`
         """
-        return self.__listeningPort
+        return self.__remotePort
 
-    @listeningPort.setter
+    @remotePort.setter
     @typeCheck(int)
-    def listeningPort(self, listeningPort):
-        if listeningPort is None:
-            raise TypeError("ListeningPort cannot be None")
-        if listeningPort <= 0 or listeningPort > 65535:
-            raise ValueError("ListeningPort must be > 0 and <= 65535")
+    def remotePort(self, remotePort):
+        if remotePort is None:
+            raise TypeError("RemotePort cannot be None")
+        if remotePort <= 0 or remotePort > 65535:
+            raise ValueError("RemotePort must be > 0 and <= 65535")
 
-        self.__listeningPort = listeningPort
+        self.__remotePort = remotePort
+
+    @property
+    def localIP(self):
+        """IP on which the server will listen.
+
+        :type: :class:`str`
+        """
+        return self.__localIP
+
+    @localIP.setter
+    @typeCheck(str)
+    def localIP(self, localIP):
+        self.__localIP = localIP
+
+    @property
+    def localPort(self):
+        """TCP Port on which the server will listen.
+        Its value must be above 0 and under 65535.
+
+        :type: :class:`int`
+        """
+        return self.__localPort
+
+    @localPort.setter
+    @typeCheck(int)
+    def localPort(self, localPort):
+        self.__localPort = localPort
+
+    @property
+    def timeout(self):
+        return self.__timeout
+
+    @timeout.setter
+    @typeCheck(int)
+    def timeout(self, timeout):
+        self.__timeout = timeout

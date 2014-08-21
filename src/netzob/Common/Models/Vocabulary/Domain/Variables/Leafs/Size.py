@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -34,10 +34,12 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+import math
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
@@ -64,20 +66,20 @@ class Size(AbstractRelationVariableLeaf):
     >>> from netzob.all import *
 
 
-    # >>> import random
-    # >>> f1 = Field(ASCII(nbChars=(5,10)))
-    # >>> f2 = Field(";")
-    # >>> f3 = Field(Size(f1))
-    # >>> s = Symbol(fields=[f1, f2, f3])
-    # >>> msgs = [RawMessage(s.specialize()) for i in xrange(10)]
-    # >>> s.messages = msgs
-    # >>> values = random.choice(s.getCells())
-    # >>> len(values[0])*4 == int(TypeConverter.convert(values[2], HexaString, Raw))
-    # True
+    >>> import random
+    >>> f1 = Field(ASCII(nbChars=(8)))
+    >>> f2 = Field(";")
+    >>> f3 = Field(Size(f1, dataType=Raw(nbBytes=2)))
+    >>> s = Symbol(fields=[f1, f2, f3])
+    >>> msgs = [RawMessage(s.specialize()) for i in xrange(10)]
+    >>> s.messages = msgs
+    >>> values = random.choice(s.getCells())
+    >>> len(values[0])*8 == int(TypeConverter.convert(values[2], Raw, HexaString), 16)
+    True
 
     While next demo, illustrates a size field declared before its target field
 
-    >>> f2 = Field(ASCII(nbChars=(5, 10)), name="payload")
+    # >>> f2 = Field(ASCII(nbChars=(5, 10)), name="payload")
     >>> f1 = Field(Size(f2, dataType=ASCII(nbChars=1), factor=1/8.0, offset=1), name="size")
     >>> s = Symbol([f1, f2])
     >>> m = TypeConverter.convert(s.specialize(), Raw, HexaString)
@@ -161,10 +163,17 @@ class Size(AbstractRelationVariableLeaf):
                 if fieldValue is None:
                     break
                 else:
-                    size += len(fieldValue)
+                    tmpLen = len(fieldValue)
+                    tmpLen = int(math.ceil(tmpLen / 8.0) * 8)  # Round to the upper closest multiple of 8 (the size of a byte),
+                                                               # because this is what will be considered durring field specialization
+                    size += tmpLen
             size = size * self.factor + self.offset
+            b = TypeConverter.convert(size, Decimal, BitArray)
 
-            return TypeConverter.convert(size, Decimal, BitArray)
+            while len(b)<self.dataType.size[0]:
+                b.insert(0, False)
+
+            return b
 
     def __str__(self):
         """The str method."""

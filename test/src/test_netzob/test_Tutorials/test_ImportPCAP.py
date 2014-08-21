@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -45,7 +45,7 @@ class test_ImportPCAP(NetzobTestCase):
         from a PCAP and store them in a dedicated symbol"""
 
         pcapFile = os.path.join("test", "resources", "pcaps", "botnet_irc_bot.pcap")
-        symbol = Symbol(messages=PCAPImporter.readFile(pcapFile))
+        symbol = Symbol(messages=PCAPImporter.readFile(pcapFile).values())
         self.assertTrue(len(symbol.messages) == 17)
 
     def test_importPCAPApplicativeLayer(self):

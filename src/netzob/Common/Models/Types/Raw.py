@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -77,18 +77,21 @@ class Raw(AbstractType):
         super(Raw, self).__init__(self.__class__.__name__, value, nbBits, unitSize=unitSize, endianness=endianness, sign=sign)
 
     def __str__(self):
-        from netzob.Common.Models.Types.TypeConverter import TypeConverter
-        from netzob.Common.Models.Types.BitArray import BitArray
-        from netzob.Common.Models.Types.HexaString import HexaString
         if self.value != None:
+            from netzob.Common.Models.Types.TypeConverter import TypeConverter
+            from netzob.Common.Models.Types.BitArray import BitArray
+            from netzob.Common.Models.Types.HexaString import HexaString
             return "{0}={1} ({2})".format(self.typeName, TypeConverter.convert(self.value, BitArray, HexaString), self.size)
         else:
             return "{0}={1} ({2})".format(self.typeName, self.value, self.size)
 
     def __repr__(self):
-        from netzob.Common.Models.Types.TypeConverter import TypeConverter
-        from netzob.Common.Models.Types.BitArray import BitArray
-        return str(TypeConverter.convert(self.value, BitArray, self.__class__))
+        if self.value != None:
+            from netzob.Common.Models.Types.TypeConverter import TypeConverter
+            from netzob.Common.Models.Types.BitArray import BitArray
+            return str(TypeConverter.convert(self.value, BitArray, self.__class__))
+        else:
+            return str(self.value)
 
     def _convertNbBytesinNbBits(self, nbBytes):
         nbMinBit = None

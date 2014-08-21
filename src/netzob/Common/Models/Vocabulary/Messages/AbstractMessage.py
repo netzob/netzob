@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -98,7 +98,7 @@ class AbstractMessage(SortableObject):
         >>> m2 = RawMessage("Toto, hello you", source="server", destination="client")
         >>> m2.isValidForField(symbol)
         True
-        >>> m1 = RawMessage("Tutu, hello", source="server", destination="client")
+        >>> m1 = RawMessage("Toto, hello !", source="server", destination="client")
         >>> m1.isValidForField(symbol)
         False
 

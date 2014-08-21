@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -54,10 +54,13 @@ class AbstractState(object):
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, _id=uuid.uuid4(), name=None):
-        self.id = _id
+    def __init__(self, name=None):
+        self.__id = uuid.uuid4()
         self.name = name
         self.active = False
+
+    def __str__(self):
+        return str(self.name)
 
     # Execution abstract methods
 
@@ -83,7 +86,7 @@ class AbstractState(object):
     @id.setter
     @typeCheck(uuid.UUID)
     def id(self, _id):
-        if _id is None:
+        if id is None:
             raise TypeError("id cannot be None")
         self.__id = _id
 
@@ -100,7 +103,7 @@ class AbstractState(object):
     @typeCheck(str)
     def name(self, name):
         if name is None:
-            name = "None"
+            name = "State"
 
         self.__name = name
 

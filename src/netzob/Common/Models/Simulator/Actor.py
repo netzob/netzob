@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -35,6 +35,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import threading
+import traceback
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -45,13 +46,14 @@ import threading
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Grammar.States.AbstractState import AbstractState
-from netzob.Common.Models.Simulator.Channels.AbstractChannel import AbstractChannel
+from netzob.Common.Models.Grammar.Automata import Automata
+from netzob.Common.Models.Simulator.AbstractionLayer import AbstractionLayer
 
 
 @NetzobLogger
 class Actor(threading.Thread):
     """An actor is an instance of a traffic generator which given a grammar and a vocabular
-    can generate and parse messages from a specified channel.
+    can generate and parse messages from a specified abstraction layer.
 
     For instance we can create two very simple network Actors which communicate together through
     a TCP channel and exchanges their names until one stops.
@@ -60,12 +62,12 @@ class Actor(threading.Thread):
     The grammar is very simple, we first open the channel, and allow Alice to send random time "alice> hello". Bob answers everytime "bob> hello".
     It's Alice which decide to stop the communication.
 
-    The communication happens over a TCP:8888 connection.
-
     >>> from netzob.all import *
+    >>> import time
     >>> # First we create the symbols
     >>> aliceSymbol = Symbol(name="Alice-Hello", fields=[Field("alice>hello")])
     >>> bobSymbol = Symbol(name="Bob-Hello", fields=[Field("bob>hello")])
+    >>> symbolList = [aliceSymbol, bobSymbol]
 
     >>> # Create the grammar
     >>> s0 = State(name="S0")
@@ -74,59 +76,65 @@ class Actor(threading.Thread):
     >>> openTransition = OpenChannelTransition(startState=s0, endState=s1, name="Open")
     >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=aliceSymbol, outputSymbols=[bobSymbol], name="hello")
     >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2, name="Close")
+    >>> automata = Automata(s0, symbolList)
 
-    >>> # create first actor: Alice the initiator of the communicatio
-    >>> alice = Actor(initialState = s0, initiator = True, channel = TCPServer(listeningIP="127.0.0.1", listeningPort=8888))
-    >>> bob = Actor(initialState = s0, initiator = False, channel = TCPClient(listeningIP="127.0.0.1", listeningPort=8888))
+    >>> # Create actors: Alice (a server) and Bob (a client)
+    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887)
+    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
+    >>> alice = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
 
-    >>> # start alice
+    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887)
+    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
+    >>> bob = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
+
     >>> alice.start()
-
-    >>> # start bob
     >>> bob.start()
 
-    >>> # wait alice and bob are no more alive
-    >>> while alice.alive or bob.alive: time.sleep(5)
-    >>> print "OK"
+    >>> time.sleep(2)
 
-
+    >>> bob.stop()
+    >>> alice.stop()
 
     """
 
-    def __init__(self, initialState, initiator, channel):
+    def __init__(self, automata, initiator, abstractionLayer):
         """
         Constructor of an actor
 
-        :parameter initialState: the initial state where the actor will begin
-        :type initialState: :class:`netzob.Common.Models.Grammar.States.AbstractState.AbstractState`
+        :parameter automata: the automata the actor will visit
+        :type automata: :class:`netzob.Common.Models.Grammar.Automata.Automata`
         :parameter initiator: indicates if the actor initiates the communication and emits the input symbol
         :type name: :class:`boolean`
-        :parameter channel: the channel on which the communication will happen
-        :type channel: :class:`netzob.Common.Models.Simulator.Channels.AbstractChannel.AbstractChannel`
+        :parameter abstractionLayer: the abstractionLayer used to abstract and specialize symbols
+        :type abstractionLayer: :class:`netzob.Common.Models.Simulator.AbstractionLayer`
 
         """
-        self.initialState = initialState
+        super(Actor, self).__init__()
+        self.automata = automata
         self.initiator = initiator
-        self.channel = channel
+        self.abstractionLayer = abstractionLayer
         self.__stopEvent = threading.Event()
 
     def run(self):
         """Entry point of an actor executed when the thread is started."""
 
-        currentState = self.initialState
+        currentState = self.automata.initialState
         while not self.__stopEvent.isSet():
             try:
+                self._logger.info("Current state: {0}.".format(currentState))
                 if self.initiator:
                     currentState = currentState.executeAsInitiator(self.abstractionLayer)
                 else:
-                    currentState = currentState.executeAsNoInitiator(self.abstractionLayer)
+                    currentState = currentState.executeAsNotInitiator(self.abstractionLayer)
 
                 if currentState is None:
                     self._logger.warning("The execution of transition did not returned a state")
                     self.stop()
 
-            except Exception:
+            except Exception, e:
                 self._logger.warning("Exception raised when on the execution of state {0}.".format(currentState.name))
+                self._logger.warning("Exception error: {0}".format(str(e)))
+                self._logger.warning(traceback.format_exc())
                 self.stop()
 
         self._logger.info("Actor {0} has finished to execute".format(self.name))
@@ -134,32 +142,8 @@ class Actor(threading.Thread):
     def stop(self):
         """Stop the current thread.
 
-        This operation is not immediate because
-        we try to stop the thread as cleanly as possible.
-
-        To illustrate its usage, we create an infinite actor
-        and stop it afterward
-
-        >>> import time
-        >>> from netzob.all import *
-        >>> aliceSymbol = Symbol(name="Alice-Hello", fields=[Field("alice>hello")])
-
-        >>> # Create the grammar
-        >>> s0 = State(name="S0")
-        >>> s1 = State(name="S1")
-        >>> openTransition = OpenChannelTransition(startState=s0, endState=s1, name="Open")
-        >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=aliceSymbol, outputSymbols=[aliceSymbol], name="hello")
-
-        >>> # create first actor: Alice the initiator of the communicatio
-        >>> alice = Actor(initialState = s0, initiator = True, channel = TCPServer(listeningIP="127.0.0.1", listeningPort=8888))
-        >>> bob = Actor(initialState = s0, initiator = True, channel = TCPClient(targetIP="127.0.0.1", targetPort=8888))
-
-        >>> alice.start()
-        >>> bob.start()
-
-        >>> time.sleep(5)
-        >>> bob.stop()
-        >>> alice.stop()
+        This operation is not immediate because we try to stop the
+        thread as cleanly as possible.
 
         """
         self._logger.debug("Actor {0} has been requested to stop".format(self.name))
@@ -175,19 +159,19 @@ class Actor(threading.Thread):
         return self.__stopEvent.is_set()
 
     @property
-    def initialState(self):
+    def automata(self):
         """The initial state where the actor starts in the grammar.
 
         :type: :class:`netzob.Common.Models.Grammar.States.AbstractState.AbstractState`
         """
-        return self.__initialsState
+        return self.__automata
 
-    @initialState.setter
-    @typeCheck(AbstractState)
-    def initialState(self, initialState):
-        if initialState is None:
-            raise TypeError("Initial state cannot be None")
-        self.__initialState = initialState
+    @automata.setter
+    @typeCheck(Automata)
+    def automata(self, automata):
+        if automata is None:
+            raise TypeError("Automata cannot be None")
+        self.__automata = automata
 
     @property
     def initiator(self):
@@ -206,16 +190,12 @@ class Actor(threading.Thread):
         self.__initiator = initiator
 
     @property
-    def channel(self):
-        """The communication channel on which the actor will communicate
+    def abstractionLayer(self):
+        return self.__abstractionLayer
 
-        :type: :class:`netzob.Common.Models.Simulator.Channels.AbstractChannel.AbstractChannel`
-        """
-        return self.__channel
-
-    @channel.setter
-    @typeCheck(AbstractChannel)
-    def channel(self, channel):
-        if channel is None:
-            raise TypeError("Channel cannot be None")
-        self.__channel = channel
+    @abstractionLayer.setter
+    @typeCheck(AbstractionLayer)
+    def abstractionLayer(self, abstractionLayer):
+        if abstractionLayer is None:
+            raise TypeError("AbstractionLayer cannot be None")
+        self.__abstractionLayer = abstractionLayer

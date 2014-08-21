@@ -6,7 +6,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -43,26 +43,37 @@ from netzob.Common.Models.Vocabulary import AbstractField
 from netzob.Common.Models.Vocabulary.Domain.Variables import AbstractVariable
 from netzob.Common.Models.Vocabulary.Messages import AbstractMessage
 
-from netzob.Inference.Vocabulary.FormatEditorOperations import FieldReseter
-from netzob.Inference.Vocabulary.FormatEditorOperations.FieldSplitStatic import FieldSplitStatic
-from netzob.Inference.Vocabulary.FormatIdentifierOperations import ClusterByKeyField
-from netzob.Inference.Vocabulary.FormatIdentifierOperations import ClusterByApplicativeData
-from netzob.Inference.Vocabulary.FormatIdentifierOperations import ClusterByAlignment
-from netzob.Inference.Vocabulary.FormatIdentifierOperations import ClusterBySize
-from netzob.Inference.Vocabulary.FormatIdentifierOperations import FindKeyFields
+from netzob.Inference.Vocabulary.FormatOperations import FieldReseter
+from netzob.Inference.Vocabulary.FormatOperations.FieldSplitStatic import FieldSplitStatic
+from netzob.Inference.Vocabulary.FormatOperations import ClusterByKeyField
+from netzob.Inference.Vocabulary.FormatOperations import ClusterByApplicativeData
+from netzob.Inference.Vocabulary.FormatOperations import ClusterByAlignment
+from netzob.Inference.Vocabulary.FormatOperations import ClusterBySize
+from netzob.Inference.Vocabulary.FormatOperations import FindKeyFields
 from netzob.Common.Utils import SortedTypedList
 
 from netzob.Inference.Vocabulary.Search import SearchTask
 from netzob.Inference.Vocabulary.Search import SearchResult
-from netzob.Inference.Vocabulary.FormatEditorOperations.FieldSplitAligned import FieldSplitAligned
-from netzob.Inference.Vocabulary.FormatEditorOperations import FieldSplitDelimiter
+from netzob.Inference.Vocabulary.FormatOperations.FieldSplitAligned import FieldSplitAligned
+from netzob.Inference.Vocabulary.FormatOperations import FieldSplitDelimiter
 
-from netzob.Inference.Vocabulary.FormatEditorOperations import FieldOperations
+from netzob.Inference.Vocabulary.FormatOperations import FieldOperations
 
 
 def getSuite():
     # List of modules to include in the list of tests
     modules = [
+
+        # Modules related to common types and data structures
+        # ---------------------------------------------------
+        ASCII.__module__,
+        Decimal.__module__,
+        BitArray.__module__,
+        Raw.__module__,
+        HexaString.__module__,
+
+        # Modules related to the vocabulary inference
+        # -------------------------------------------
         Protocol.__module__,
         Field.__module__,
         DataAlignment,
@@ -72,34 +83,22 @@ def getSuite():
         Alt.__module__,
         Agg.__module__,
         Data.__module__,
-        ASCII.__module__,
-        Decimal.__module__,
-        BitArray.__module__,
-        Raw.__module__,
-        HexaString.__module__,
-        AbstractType.__module__,
-        Memory.__module__,
-        TypeConverter.__module__,
-        AbstractVariable,
-        VariableReadingToken.__module__,
-        # # JSONSerializator.__module__,
-        # # TCPServer.__module__,
-        # # Actor.__module__,
-        # # Angluin.__module__,
-        State.__module__,
-        Transition.__module__,
-        NetzobRegex,
-        ParallelDataAlignment,
-
-        FormatEditor.__module__,
         FieldSplitStatic,
         FieldSplitAligned,
         FieldSplitDelimiter,
-        FormatIdentifier.__module__,
         FindKeyFields,
         FieldReseter,
         AbstractMessage,
         ClusterByKeyField,
+        ParallelDataAlignment,
+        RawMessage.__module__,
+        L2NetworkMessage.__module__,
+        L3NetworkMessage.__module__,
+        L4NetworkMessage.__module__,
+        FieldOperations,
+        CorrelationFinder.__module__,
+        RelationFinder.__module__,
+        Format.__module__,
         Session.__module__,
         SortedTypedList,
         ApplicativeData.__module__,
@@ -112,16 +111,35 @@ def getSuite():
         ClusterByApplicativeData,
         ClusterByAlignment,
         ClusterBySize,
-        
-        # Size.__module__,
-        RawMessage.__module__,
-        L2NetworkMessage.__module__,
-        L3NetworkMessage.__module__,
-        L4NetworkMessage.__module__,
+        NetzobRegex,
+        AbstractType.__module__,
+        Memory.__module__,
+        TypeConverter.__module__,
+        AbstractVariable,
+        VariableReadingToken.__module__,
+        Size.__module__,
 
-        FieldOperations,
-        CorrelationFinder.__module__,
-        RelationFinder.__module__,
+        # Modules related to the grammatical inference
+        # --------------------------------------------
+        Angluin.__module__,
+        State.__module__,
+        Transition.__module__,
+        AbstractionLayer.__module__,
+        Automata.__module__,
+        
+        # Modules related to the protocol simulation
+        # ------------------------------------------
+        Actor.__module__,
+        TCPServer.__module__,
+        TCPClient.__module__,
+        UDPServer.__module__,
+        UDPClient.__module__,
+
+        # Other
+        # -----
+        # # # JSONSerializator.__module__,
+        # # # TCPServer.__module__,
+
     ]
 
     suite = unittest.TestSuite()

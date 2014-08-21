@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -52,7 +52,7 @@ class AbstractTransition(object):
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, _type, startState, endState, _id=uuid.uuid4(), name=None, priority=10):
+    def __init__(self, _type, startState, endState, _id=uuid.uuid4(), name=None, priority=10, description=None):
         """Constructor of a Transition.
 
         :param _type: the type of the transition
@@ -81,7 +81,11 @@ class AbstractTransition(object):
         self.id = _id
         self.name = name
         self.priority = priority
+        self._description = description
         self.active = False
+
+    def __str__(self):
+        return str(self.name)
 
     # Execution abstract methods
 
@@ -218,3 +222,12 @@ class AbstractTransition(object):
         if active is None:
             raise TypeError("The active info cannot be None")
         self.__active = active
+
+    @property
+    def description(self):
+        return self._description
+
+    @description.setter
+    @typeCheck(str)
+    def description(self, description):
+        self._description = description

@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -42,6 +42,7 @@ from netzob.Common.Models.Vocabulary.Messages.AbstractMessage import AbstractMes
 from netzob.Common.Utils.SortedTypedList import SortedTypedList
 from netzob.Common.Utils.TypedList import TypedList
 from netzob.Common.Models.Vocabulary.ApplicativeData import ApplicativeData
+from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 
 
 @NetzobLogger
@@ -67,7 +68,7 @@ class Session(object):
 
     """
 
-    def __init__(self, messages=None, _id=None, applicativeData=None):
+    def __init__(self, messages=None, _id=None, applicativeData=None, name="Session"):
         """
         :parameter messages: the messages exchanged in the current session
         :type data: a list of :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage.AbstractMessage`
@@ -87,6 +88,7 @@ class Session(object):
         if applicativeData is None:
             applicativeData = []
         self.applicativeData = applicativeData
+        self.name = name
 
     @property
     def id(self):
@@ -168,3 +170,145 @@ class Session(object):
         self.clearApplicativeData()
         for app in applicativeData:
             self.applicativeData.append(app)
+
+    @property
+    def name(self):
+        return self.__name
+
+    @name.setter
+    @typeCheck(str)
+    def name(self, _name):
+        if _name is None:
+            raise TypeError("Name cannot be None")
+        self.__name = _name
+
+    def getEndpointsList(self):
+        """Retrieve all the endpoints couples that are present in the
+        session.
+
+        >>> from netzob.all import *
+        >>> msg1 = RawMessage("SYN", source="A", destination="B")
+        >>> msg2 = RawMessage("SYN/ACK", source="B", destination="A")
+        >>> msg3 = RawMessage("ACK", source="A", destination="C")
+        >>> session = Session([msg1, msg2, msg3])
+        >>> print len(session.getEndpointsList())
+        2
+        >>> print session.getEndpointsList()
+        [('A', 'B'), ('A', 'C')]
+
+        :return: a list containing couple of endpoints (src, dst).
+        :rtype: a :class:`list`
+
+        """
+
+        endpointsList = []
+        for message in self.messages.values():
+            src = message.source
+            dst = message.destination
+            endpoints1 = (src, dst)
+            endpoints2 = (dst, src)
+            if (not endpoints1 in endpointsList) and (not endpoints2 in endpointsList):
+                endpointsList.append(endpoints1)
+        return endpointsList
+
+    def getTrueSessions(self):
+        """Retrieve the true sessions embedded in the current
+        session. A session is here characterized by a uniq endpoints
+        couple.
+
+        TODO: a more precise solution would be to use flow
+        reconstruction (as in TCP).
+
+        >>> from netzob.all import *
+        >>> msg1 = RawMessage("SYN", source="A", destination="B")
+        >>> msg2 = RawMessage("SYN/ACK", source="B", destination="A")
+        >>> msg3 = RawMessage("ACK", source="A", destination="C")
+        >>> session = Session([msg1, msg2, msg3])
+        >>> print len(session.getTrueSessions())
+        2
+        >>> for trueSession in session.getTrueSessions():
+        ...    print trueSession.name
+        Session: 'A' - 'B'
+        Session: 'A' - 'C'
+
+        :return: a list containing true sessions embedded in the current session.
+        :rtype: a :class:`list`
+
+        """
+
+        trueSessions = []
+        for endpoints in self.getEndpointsList():
+            trueSessionMessages = []
+            src = None
+            dst = None
+            for message in self.messages.values():
+                if message.source in endpoints and message.destination in endpoints:
+                    trueSessionMessages.append(message)
+                    if src is None:
+                        src = message.source
+                    if dst is None:
+                        dst = message.destination
+            trueSession = Session(messages=trueSessionMessages, applicativeData=self.applicativeData, name="Session: '" + str(src) + "' - '" + str(dst) + "'")
+            trueSessions.append(trueSession)
+        return trueSessions
+
+    def isTrueSession(self):
+        """Tell if the current session is true. A session is said to
+        be true if the communication flow pertain to a uniq
+        applicative session between a couple of endpoints.
+
+        >>> from netzob.all import *
+        >>> msg1 = RawMessage("SYN", source="A", destination="B")
+        >>> msg2 = RawMessage("SYN/ACK", source="B", destination="A")
+        >>> msg3 = RawMessage("ACK", source="A", destination="B")
+        >>> session = Session([msg1, msg2, msg3])
+        >>> print session.isTrueSession()
+        True
+
+        :return: a boolean telling if the current session is a true one (i.e. it corresponds to a uniq applicative session between two endpoints).
+        :rtype: a :class:`bool`
+
+        """
+
+        if len(self.getTrueSessions()) == 1:
+            return True
+        else:
+            return False
+
+    @typeCheck(list)
+    def abstract(self, symbolList):
+        """This method abstract each message of the current session
+        into symbols according to a list of symbols given as
+        parameter.
+
+        >>> from netzob.all import *
+        >>> symbolSYN = Symbol([Field(ASCII("SYN"))], name="Symbol_SYN")
+        >>> symbolSYNACK = Symbol([Field(ASCII("SYN/ACK"))], name="Symbol_SYNACK")
+        >>> symbolACK = Symbol([Field(ASCII("ACK"))], name="Symbol_ACK")
+        >>> symbolList = [symbolSYN, symbolSYNACK, symbolACK]
+
+        >>> msg1 = RawMessage("SYN", source="A", destination="B")
+        >>> msg2 = RawMessage("SYN/ACK", source="B", destination="A")
+        >>> msg3 = RawMessage("ACK", source="A", destination="B")
+
+        >>> session = Session([msg1, msg2, msg3])
+        >>> if session.isTrueSession():
+        ...    for src, dst, sym in session.abstract(symbolList):
+        ...        print str(src) + " - " + str(dst) + " : " + str(sym.name)
+        A - B : Symbol_SYN
+        B - A : Symbol_SYNACK
+        A - B : Symbol_ACK
+
+        :return: a list of tuples containing the following elements : (source, destination, symbol).
+        :rtype: a :class:`list`
+
+        """
+
+        abstractSession = []
+        if not self.isTrueSession():
+            self._logger.warn("The current session cannot be abstracted as it not a true session (i.e. it may contain inner true sessions).")
+            return abstractSession
+        for message in self.messages.values():
+            symbol = AbstractField.abstract(message.data, symbolList)
+            abstractSession.append((message.source, message.destination, symbol))
+        return abstractSession
