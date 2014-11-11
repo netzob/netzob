@@ -94,19 +94,25 @@ class HexaString(AbstractType):
         if len(data) == 0:
             return False
 
-        if not ASCII().canParse(data):
-            return False
+        # import logging
+        # logger = logging.getLogger(__name__)
 
-        try:
-            value = ASCII.encode(data)
-        except:
-            return False
+        # logger.warn("PAF: {0}".format(data))
+            
+        # if not ASCII().canParse(data):
+        #     logger.warn("OUPS: {0}".format(data))
+        #     return False
+
+        # try:
+        #     value = ASCII.encode(data)
+        # except:
+        #     return False
 
         allowedValues = [str(i) for i in range(0, 10)]
         allowedValues.extend(["a", "b", "c", "d", "e", "f"])
 
-        for i in xrange(0, len(value)):
-            if not value[i].lower() in allowedValues:
+        for i in xrange(0, len(data)):
+            if not data[i].lower() in allowedValues:
                 return False
 
         return True

@@ -48,7 +48,6 @@ from bitarray import bitarray
 from netzob.Common.Models.Types.AbstractType import AbstractType
 from netzob.Common.Utils.Decorators import NetzobLogger, typeCheck
 
-
 @NetzobLogger
 class ASCII(AbstractType):
     """The netzob type ASCII, a wrapper for the "string" object (encoded in utf-8)
@@ -156,9 +155,6 @@ class ASCII(AbstractType):
         >>> print t.mutate()
         {'ascii(inversed)-bits(littleEndian)': bitarray('00100110001101100100111011110110111011101111011000110110001101101010011000010110'), 'ascii(inversed-upper)-bits(littleEndian)': bitarray('00100010001100100100101011110010111010101111001000110010001100101010001000010010'), 'ascii(upper)-bits(littleEndian)': bitarray('00010010101000100011001000110010111100101110101011110010010010100011001000100010'), 'ascii-bits(bigEndian)': bitarray('01101000011001010110110001101100011011110111011101101111011100100110110001100100'), 'ascii(inversed)-bits(bigEndian)': bitarray('01100100011011000111001001101111011101110110111101101100011011000110010101101000'), 'ascii(upper)-bits(bigEndian)': bitarray('01001000010001010100110001001100010011110101011101001111010100100100110001000100'), 'ascii-bits(littleEndian)': bitarray('00010110101001100011011000110110111101101110111011110110010011100011011000100110'), 'ascii(inversed-upper)-bits(bigEndian)': bitarray('01000100010011000101001001001111010101110100111101001100010011000100010101001000')}
 
-        >>> t = ASCII(nbChars=(5, 10))
-        >>> len(t.mutate().keys())
-        12
 
         :keyword prefixDescription: prefix to attach to the description of the generated mutation.
         :type prefixDescription: :class:`str`
@@ -202,23 +198,23 @@ class ASCII(AbstractType):
         """This method returns True if data is an ASCII (utf-8)
 
         >>> from netzob.all import *
-        >>> ASCII().canParse(TypeConverter.convert("hello netzob", ASCII, Raw))
+        >>> ASCII().canParse(TypeConverter.convert("hello netzob", ASCII, BitArray))
         True
 
         The ascii table is defined from 0 to 127:
-        >>> ASCII().canParse(TypeConverter.convert(128, Decimal, Raw, src_sign=AbstractType.SIGN_UNSIGNED))
+        >>> ASCII().canParse(TypeConverter.convert(128, Decimal, BitArray, src_sign=AbstractType.SIGN_UNSIGNED))
         False
 
         >>> a = ASCII(nbChars=10)
-        >>> a.canParse("hellohello")
+        >>> a.canParse(TypeConverter.convert("hellohello", ASCII, BitArray))
         True
-        >>> a.canParse("hello hello")
+        >>> a.canParse(TypeConverter.convert("hello hello", ASCII, BitArray))
         False
 
         >>> a = ASCII(nbChars=(2,20))
-        >>> a.canParse("Netzob")
+        >>> a.canParse(TypeConverter.convert("Netzob", ASCII, BitArray))
         True
-        >>> a.canParse("Hello netzob, what's up ?")
+        >>> a.canParse(TypeConverter.convert("Hello netzob, what's up ?", ASCII, BitArray))
         False
 
         :param data: the data to check
@@ -234,17 +230,24 @@ class ASCII(AbstractType):
         if len(data) == 0:
             return False
 
+        # Ascii must be 8 bits modulo length
+        if len(data)%8 != 0:
+            return False
+        self._logger.debug("Data {0}: {1}".format(data, len(data)))
+
+        rawData = data.tobytes()
+
         try:
-            data.encode('utf-8')
+            rawData.encode('utf-8')
         except:
             return False
 
         (minChar, maxChar) = self.nbChars
         if minChar is not None:
-            if len(data) < minChar:
+            if len(rawData) < minChar:
                 return False
         if maxChar is not None:
-            if len(data) > maxChar:
+            if len(rawData) > maxChar:
                 return False
 
         return True

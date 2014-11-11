@@ -34,6 +34,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -43,64 +44,61 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
-from netzob.Common.Models.Vocabulary.Field import Field
-from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Utils.NetzobRegex import NetzobRegex
+from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
+from netzob.Common.Models.Vocabulary.Domain.Specializer.VariableSpecializerResult import VariableSpecializerResult
 
 
 @NetzobLogger
-class FieldReseter(object):
-    """This class defines the required operation to reset
-    the definition of a field. It reinitializes the definition domain
-    as a raw field and delete its children.
-
-    >>> import binascii
-    >>> from netzob.all import *
-    >>> samples = ["00ff2f000000",	"000010000000",	"00fe1f000000"]
-    >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
-    >>> f1 = Field(Raw(nbBytes=1))
-    >>> f21 = Field(Raw(nbBytes=1))
-    >>> f22 = Field(Raw(nbBytes=1))
-    >>> f2 = Field()
-    >>> f2.children = [f21, f22]
-    >>> f3 = Field(Raw())
-    >>> symbol = Symbol([f1, f2, f3], messages=messages)
-    >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print symbol
-    00 | ff | 2f | 000000
-    00 | 00 | 10 | 000000
-    00 | fe | 1f | 000000
-    >>> reseter = FieldReseter()
-    >>> reseter.reset(symbol)
-    >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print symbol
-    00ff2f000000
-    000010000000
-    00fe1f000000
+class VariableSpecializerPath(object):
+    """This class denotes one specializing result of a variable
+    
     """
+    
+    def __init__(self, variableSpecializer, generatedContent, originalVariableSpecializerPath=None):
+        self.name = str(uuid.uuid4())
+        self._logger.debug("Generated Content = {0}".format(generatedContent))
+        self.generatedContent = generatedContent
+        self.variableSpecializer = variableSpecializer
+        self.memory = self.variableSpecializer.memory.duplicate()
+        
+        self.originalVariableSpecializerPath = originalVariableSpecializerPath
+        self.variableSpecializerResults = []
+        if originalVariableSpecializerPath is not None:
+            self.variableSpecializerResults.extend(originalVariableSpecializerPath.variableSpecializerResults)
 
-    @typeCheck(AbstractField)
-    def reset(self, field):
-        """Resets the format (field hierarchy and definition domain) of
-        the specified field.
+            
+    def createVariableSpecializerResult(self, variable, specializerResult, generatedContent):
+        variableSpecializerResult = VariableSpecializerResult(variable, specializerResult, generatedContent)
+        if specializerResult:
+            self._logger.debug("New specializer result attached to path {0}: {1}".format(self, variableSpecializerResult))
+    
+            if self.generatedContent is None:
+                self.generatedContent = variableSpecializerResult.generatedContent
+            else:
+                self.generatedContent.extend(variableSpecializerResult.generatedContent)
+        else:
+            self._logger.debug("creation of an invalid specializer result.")
+        
+        self.variableSpecializerResults.append(variableSpecializerResult)
+        self._logger.debug("After registering new VariablePathResult, Path is {0}".format(self))        
 
+    def __str__(self):
+        return "Path {0} (generatedContent={1})".format(self.name, self.generatedContent)
 
-        :param field: the field we want to reset
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
-        :raise Exception if something bad happens
-        """
+    @property
+    def generatedContent(self):
+        return self.__generatedContent
 
-        if field is None:
-            raise TypeError("The field to reset must be specified and cannot be None")
+    @generatedContent.setter
+    def generatedContent(self, generatedContent):
+        self.__generatedContent = generatedContent
 
-        self._logger.debug("Reset the definition of field {0} ({1})".format(field.name, field.id))
-        field.clearChildren()
+    @property
+    def memory(self):
+        return self.__memory
 
-        if isinstance(field, Symbol):
-            field.children = [Field()]
-
-        if isinstance(field, Field):
-            field.domain = Raw(None)
-            field.regex = NetzobRegex.buildDefaultRegex()
+    @memory.setter
+    def memory(self, memory):
+        if memory is None:
+            raise Exception("Memory cannot be None")
+        self.__memory = memory        

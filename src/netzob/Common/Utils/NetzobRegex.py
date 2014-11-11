@@ -43,13 +43,14 @@ import uuid
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Utils.TypedList import TypedList
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Models.Types.HexaString import HexaString
 
 
+@NetzobLogger
 class NetzobRegex(object):
     """Represents a regex describing field boundaries. Static methods
     can be used to build the regex. Don't use the constructor unless you really
@@ -78,9 +79,9 @@ class NetzobRegex(object):
     def regex(self, regex):
         if regex is None:
             raise TypeError("The regex cannot be None")
-
+        
         self.__regex = "(?P<{0}>{1})".format(self.id, regex)
-
+        
     @property
     def id(self):
         return self.__id
@@ -154,6 +155,16 @@ class NetzobRegex(object):
         return NetzobStaticRegex(hexaStringValue)
 
     @staticmethod
+    def buildRegexForEol():
+        """It creates a NetzobRegex which represents an EOL
+
+        :return: the regex which represents an EOL
+        :type: :class:`netzob.Common.Utils.NetzobRegex.NetzobRegex`
+
+        """
+        return NetzobEolRegex()
+
+    @staticmethod
     def buildRegexForSizedValue(size):
         return NetzobSizedRegex(size)
 
@@ -166,6 +177,7 @@ class NetzobRegex(object):
         return NetzobAggregateRegex(regexes)
 
 
+@NetzobLogger
 class NetzobSizedRegex(NetzobRegex):
     """Represents an aggregate regex.
 
@@ -232,6 +244,7 @@ class NetzobSizedRegex(NetzobRegex):
         self.__updateRegex()
 
 
+@NetzobLogger
 class NetzobAggregateRegex(NetzobRegex):
     """Represents an aggregate regex.
 
@@ -271,14 +284,17 @@ class NetzobAggregateRegex(NetzobRegex):
 
     @children.setter
     def children(self, children):
+        self._logger.debug("PAN {0}".format(children))
+        # for child in children:
+        #     if child is None:
+        #         raise TypeError("No child can be None")
         for child in children:
-            if child is None:
-                raise TypeError("No child can be None")
-        for child in children:
-            self.__children.append(child)
+            if child is not None:
+                self.__children.append(child)
         self.__updateRegex()
 
 
+@NetzobLogger
 class NetzobAlternativeRegex(NetzobRegex):
     """Represents an alternative regex.
 
@@ -323,6 +339,7 @@ class NetzobAlternativeRegex(NetzobRegex):
         self.__updateRegex()
 
 
+@NetzobLogger
 class NetzobStaticRegex(NetzobRegex):
     """Represents a regex with a static value.
 

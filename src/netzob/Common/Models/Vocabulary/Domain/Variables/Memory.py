@@ -32,6 +32,7 @@
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
@@ -42,185 +43,239 @@ from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import Ab
 
 @NetzobLogger
 class Memory(object):
-    """Definition of a memory, used to store variable values in a persisting and independent way.
-
-    Example of usages:
-
-
-    >>> from netzob.all import *
-    >>> f1 = Field("hello1")
-    >>> f2 = Field(100)
-    >>> m = Memory()
-    >>> m.memorize(f1.domain)
-    >>> m.memorize(f2.domain)
-    >>> m.persistMemory()
-    >>> print len(m.memory.keys())
-    2
-    >>> duplicatedMemory = m.duplicate()
-    >>> print len(duplicatedMemory.memory.keys())
-    2
+    """Definition of a memory, used to store variable values (in bitarray) in a persisting and independent way.
 
     """
 
     def __init__(self):
         """Constructor of Memory"""
-        # create logger with the given configuration
-
         self.__memory = dict()
-        self.__temporaryMemory = dict()
         self.__memoryAccessCB = None
+
+    @typeCheck(AbstractVariable, bitarray)
+    def memorize(self, variable, value):
+        """Memorizes the provided variable value.
+
+        >>> from netzob.all import *
+        >>> variable = Data(ASCII(), name="var1")
+        >>> memory = Memory()
+        >>> memory.memorize(variable, TypeConverter.convert("hello", ASCII, BitArray))
+        >>> print memory
+        Data (ASCII=None ((0, None))): bitarray('0001011010100110001101100011011011110110')
+        
+        """
+        self.memory[variable] = value
+
+    @typeCheck(AbstractVariable)
+    def hasValue(self, variable):
+        """Returns true if memory contains a value for the provided variable
+
+        >>> from netzob.all import *
+        >>> variable = Data(ASCII(), name="var1")
+        >>> memory = Memory()
+        >>> memory.memorize(variable, TypeConverter.convert("hello", ASCII, BitArray))
+        >>> memory.hasValue(variable)
+        True
+        >>> variable2 = Data(ASCII(), name="var2")
+        >>> memory.hasValue(variable2)
+        False
+
+        """
+        return variable in self.memory.keys()
+
+    @typeCheck(AbstractVariable)
+    def getValue(self, variable):
+        """Returns the value memorized for the provided variable
+
+        >>> from netzob.all import *
+        >>> variable = Data(ASCII(), name="var1")
+        >>> memory = Memory()
+        >>> memory.memorize(variable, TypeConverter.convert("hello", ASCII, BitArray))
+        >>> memory.getValue(variable)
+        bitarray('0001011010100110001101100011011011110110')
+
+        """
+        return self.memory[variable]
+    
+    @typeCheck(AbstractVariable)
+    def forget(self, variable):
+        """Forgets any memorized value of the provided variable
+
+        >>> from netzob.all import *
+        >>> variable = Data(ASCII(), name="var1")
+        >>> memory = Memory()
+        >>> memory.memorize(variable, TypeConverter.convert("hello", ASCII, BitArray))
+        >>> memory.hasValue(variable)
+        True
+        >>> memory.forget(variable)
+        >>> memory.hasValue(variable)
+        False
+        """
+        if variable in self.memory.keys():
+            self.memory.pop(variable, None)
+        self._logger.warning("Cannot forget a variable ({0}) that has not been memorized.".format(variable))
 
     def duplicate(self):
         """Duplicates in a new memory
 
         >>> from netzob.all import *
-        >>> f1 = Field("Protocol RE")
-        >>> f2 = Field(100)
+        >>> d1 = Data(Decimal)
+        >>> d2 = Data(ASCII)
         >>> m = Memory()
-        >>> m.memorize(f1.domain)
-        >>> m.memorize(f2.domain)
-        >>> m.persistMemory()
-        >>> print len(m.memory.keys())
-        2
-        >>> n = m.duplicate()
-        >>> print len(n.memory.keys())
-        2
+        >>> m.memorize(d1, TypeConverter.convert(100, Decimal, BitArray))
+        >>> m.memorize(d2, TypeConverter.convert("hello", ASCII, BitArray))
+        >>> m.getValue(d1)
+        bitarray('00100110')
+        >>> m2 = m.duplicate()
+        >>> m2.getValue(d1)
+        bitarray('00100110')
+        >>> m.getValue(d1).bytereverse()
+        >>> m.getValue(d1)
+        bitarray('01100100')
+        >>> m2.getValue(d1)
+        bitarray('00100110')
 
         :return: a new memory containing the same entries than current one
         :rtype: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Memory`
         """
         duplicatedMemory = Memory()
         for k in self.memory.keys():
-            duplicatedMemory.memory[k] = self.memory[k]
-        duplicatedMemory.createMemory()
+            duplicatedMemory.memory[k] = self.memory[k].copy()
         return duplicatedMemory
+        
+    def __str__(self):
+        result = []
+        for var, value in self.memory.iteritems():
+            result.append("{0}: {1}".format(var, value))
+        return '\n'.join(result)
+        
 
-#+---------------------------------------------------------------------------+
-#| Functions on memories                                                     |
-#+---------------------------------------------------------------------------+
-    def createMemory(self):
-        """Reinit the temporary memory and copy all values from the real memory in it.
-        """
-        self.__temporaryMemory = dict()
-        for key in self.memory.keys():
-            self.__temporaryMemory[key] = self.memory[key]
+# #+---------------------------------------------------------------------------+
+# #| Functions on memories                                                     |
+# #+---------------------------------------------------------------------------+
+#     def createMemory(self):
+#         """Reinit the temporary memory and copy all values from the real memory in it.
+#         """
+#         self.__temporaryMemory = dict()
+#         for key in self.memory.keys():
+#             self.__temporaryMemory[key] = self.memory[key]
 
-    def persistMemory(self):
-        """Copy all values from the temporary memory into the real memory.
-        """
-        self.__memory = dict()
-        for key in self.__temporaryMemory.keys():
-            self.memory[key] = self.__temporaryMemory[key]
+#     def persistMemory(self):
+#         """Copy all values from the temporary memory into the real memory.
+#         """
+#         self.__memory = dict()
+#         for key in self.__temporaryMemory.keys():
+#             self.memory[key] = self.__temporaryMemory[key]
 
-    def cleanMemory(self):
-        """Remove all variables and values from real and temporary memories.
-        """
-        # self.memory = dict()  # TODO: impement this change in all calling functions.
-        self.__temporaryMemory = dict()
+#     def cleanMemory(self):
+#         """Remove all variables and values from real and temporary memories.
+#         """
+#         # self.memory = dict()  # TODO: impement this change in all calling functions.
+#         self.__temporaryMemory = dict()
 
-    def recallMemory(self):
-        """Return all values store in the temporary memory.
+#     def recallMemory(self):
+#         """Return all values store in the temporary memory.
 
-        :return: the value of all variables in the temporary memory.
-        :rtype: a :class:`dict`
-        """
-        return self.__temporaryMemory
+#         :return: the value of all variables in the temporary memory.
+#         :rtype: a :class:`dict`
+#         """
+#         return self.__temporaryMemory
 
-    def printMemory(self):
-        """Debug functions which print all values in temporary memory.
-        """
-        self._logger.debug("Memory map:")
-        for _id, _val in self.__temporaryMemory.iteritems():
-            self._logger.debug("> {0}  = {1}".format(_id, _val))
+#     def printMemory(self):
+#         """Debug functions which print all values in temporary memory.
+#         """
+#         self._logger.debug("Memory map:")
+#         for _id, _val in self.__temporaryMemory.iteritems():
+#             self._logger.debug("> {0}  = {1}".format(_id, _val))
 
-#+---------------------------------------------------------------------------+
-#| Functions on temporary memory elements                                    |
-#+---------------------------------------------------------------------------+
-    @typeCheck(AbstractVariable)
-    def hasMemorized(self, variable):
-        """Check if a variable is in the temporary memory.
+# #+---------------------------------------------------------------------------+
+# #| Functions on temporary memory elements                                    |
+# #+---------------------------------------------------------------------------+
+#     @typeCheck(AbstractVariable)
+#     def hasMemorized(self, variable):
+#         """Check if a variable is in the temporary memory.
 
-        :param variable: the given variable we search in memory.
-        :type variable: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
-        :return: True if the variable has been found in the memory.
-        :rtype: :class:`bool`
-        :raise: :class:`TypeError` if parameter is not valid
-        """
-        if variable is None:
-            raise TypeError("variable cannot be None")
+#         :param variable: the given variable we search in memory.
+#         :type variable: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
+#         :return: True if the variable has been found in the memory.
+#         :rtype: :class:`bool`
+#         :raise: :class:`TypeError` if parameter is not valid
+#         """
+#         if variable is None:
+#             raise TypeError("variable cannot be None")
 
-        return variable.id in self.__temporaryMemory.keys()
+#         return variable.id in self.__temporaryMemory.keys()
 
-    @typeCheck(AbstractVariable)
-    def restore(self, variable):
-        """Copy back the value of a variable from the real memory in the temporary memory.
+#     @typeCheck(AbstractVariable)
+#     def restore(self, variable):
+#         """Copy back the value of a variable from the real memory in the temporary memory.
 
-        :param variable: the given variable, the value of which we want to restore.
-        :type variable: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
-        :raise: :class:`TypeError` if parameter is not valid
-        """
-        if variable is None:
-            raise TypeError("variable cannot be None")
+#         :param variable: the given variable, the value of which we want to restore.
+#         :type variable: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
+#         :raise: :class:`TypeError` if parameter is not valid
+#         """
+#         if variable is None:
+#             raise TypeError("variable cannot be None")
 
-        if variable.id in self.memory.keys():
-            self.__temporaryMemory[variable.id] = self.memory[variable.id]
-            if self.memoryAccessCB is not None:
-                value = variable.currentValue
-                self.memoryAccessCB("W", variable, value)
+#         if variable.id in self.memory.keys():
+#             self.__temporaryMemory[variable.id] = self.memory[variable.id]
+#             if self.memoryAccessCB is not None:
+#                 value = variable.currentValue
+#                 self.memoryAccessCB("W", variable, value)
 
-    @typeCheck(AbstractVariable)
-    def memorize(self, variable):
-        """Save the current value of a variable in memory.
+#     @typeCheck(AbstractVariable)
+#     def memorize(self, variable, value):
+#         """Save the current value of a variable in memory.
 
-        :param variable: the given variable, the value of which we want to save.
-        :type variable: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
-        :raise: :class:`TypeError` if parameter is not valid
-        """
-        if variable is None:
-            raise TypeError("variable cannot be None")
+#         :param variable: the given variable, the value of which we want to save.
+#         :type variable: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
+#         :raise: :class:`TypeError` if parameter is not valid
+#         """
+#         if variable is None:
+#             raise TypeError("variable cannot be None")
 
-        if variable.currentValue is not None:
-            self.__temporaryMemory[variable.id] = variable.currentValue
-            if self.memoryAccessCB is not None:
-                value = variable.currentValue
-                self.memoryAccessCB("W", variable, value)
+#         if variable.currentValue is not None:
+#             self.__temporaryMemory[variable.id] = variable.currentValue
+#             if self.memoryAccessCB is not None:
+#                 value = variable.currentValue
+#                 self.memoryAccessCB("W", variable, value)
 
-    @typeCheck(AbstractVariable)
-    def forget(self, variable):
-        """Remove a variable and its value from the temporary memory.
+#     @typeCheck(AbstractVariable)
+#     def forget(self, variable):
+#         """Remove a variable and its value from the temporary memory.
 
-        :param variable: the given variable, the value of which we want to forget.
-        :type variable: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
-        :raise: :class:`TypeError` if parameter is not valid
-        """
-        if variable is None:
-            raise TypeError("variable cannot be None")
+#         :param variable: the given variable, the value of which we want to forget.
+#         :type variable: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
+#         :raise: :class:`TypeError` if parameter is not valid
+#         """
+#         if variable is None:
+#             raise TypeError("variable cannot be None")
 
-        if self.hasMemorized(variable):
-            del self.__temporaryMemory[variable.id]
-            if self.memoryAccessCB is not None:
-                self.memoryAccessCB("D", variable, None)
+#         if self.hasMemorized(variable):
+#             del self.__temporaryMemory[variable.id]
+#             if self.memoryAccessCB is not None:
+#                 self.memoryAccessCB("D", variable, None)
 
-    @typeCheck(AbstractVariable)
-    def recall(self, variable):
-        """Return the value of one variable store in the temporary memory.
+#     @typeCheck(AbstractVariable)
+#     def recall(self, variable):
+#         """Return the value of one variable store in the temporary memory.
 
-        :param variable: the given variable, the value of which we are searching.
-        :type variable: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
-        :return: the value of the given variable in the temporary memory or None is not available
-        :rtype: :class:`bitarray`
-        :raise: :class:`TypeError` if parameter is not valid
-        """
-        if variable is None:
-            raise TypeError("variable cannot be None")
+#         :param variable: the given variable, the value of which we are searching.
+#         :type variable: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
+#         :return: the value of the given variable in the temporary memory or None is not available
+#         :rtype: :class:`bitarray`
+#         :raise: :class:`TypeError` if parameter is not valid
+#         """
+#         if variable is None:
+#             raise TypeError("variable cannot be None")
 
-        if self.hasMemorized(variable):
-            value = self.__temporaryMemory[variable.id]
-            if self.memoryAccessCB is not None:
-                self.memoryAccessCB("R", variable, value)
-            return value
-        else:
-            return None
+#         if self.hasMemorized(variable):
+#             value = self.__temporaryMemory[variable.id]
+#             if self.memoryAccessCB is not None:
+#                 self.memoryAccessCB("R", variable, value)
+#             return value
+#         else:
+#             return None
 
     @property
     def memory(self):
@@ -236,15 +291,15 @@ class Memory(object):
         for k, v in memory.iteritems():
             self.__memory[k] = v
 
-    @property
-    def memoryAccessCB(self):
-        """Callback to execute after a memory access.
+    # @property
+    # def memoryAccessCB(self):
+    #     """Callback to execute after a memory access.
 
-        :type: function
-        :raise: `TypeError` if parameter's type is not valid
-        """
-        return self.__memoryAccessCB
+    #     :type: function
+    #     :raise: `TypeError` if parameter's type is not valid
+    #     """
+    #     return self.__memoryAccessCB
 
-    @memoryAccessCB.setter
-    def memoryAccessCB(self, memoryAccessCB):
-        self.__memoryAccessCB = memoryAccessCB
+    # @memoryAccessCB.setter
+    # def memoryAccessCB(self, memoryAccessCB):
+    #     self.__memoryAccessCB = memoryAccessCB

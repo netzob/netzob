@@ -43,64 +43,61 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
-from netzob.Common.Models.Vocabulary.Field import Field
-from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Utils.NetzobRegex import NetzobRegex
-
+from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
+from netzob.Common.Models.Vocabulary.Domain.Specializer.VariableSpecializerPath import VariableSpecializerPath
 
 @NetzobLogger
-class FieldReseter(object):
-    """This class defines the required operation to reset
-    the definition of a field. It reinitializes the definition domain
-    as a raw field and delete its children.
-
-    >>> import binascii
-    >>> from netzob.all import *
-    >>> samples = ["00ff2f000000",	"000010000000",	"00fe1f000000"]
-    >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
-    >>> f1 = Field(Raw(nbBytes=1))
-    >>> f21 = Field(Raw(nbBytes=1))
-    >>> f22 = Field(Raw(nbBytes=1))
-    >>> f2 = Field()
-    >>> f2.children = [f21, f22]
-    >>> f3 = Field(Raw())
-    >>> symbol = Symbol([f1, f2, f3], messages=messages)
-    >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print symbol
-    00 | ff | 2f | 000000
-    00 | 00 | 10 | 000000
-    00 | fe | 1f | 000000
-    >>> reseter = FieldReseter()
-    >>> reseter.reset(symbol)
-    >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print symbol
-    00ff2f000000
-    000010000000
-    00fe1f000000
+class VariableSpecializer():
+    """Computes the specialization of a token-tree and returns a raw data
     """
 
-    @typeCheck(AbstractField)
-    def reset(self, field):
-        """Resets the format (field hierarchy and definition domain) of
-        the specified field.
 
+    def __init__(self, variable, memory = None):
+        self.variable = variable
+        if memory is not None:
+            self.memory = memory
+        else:
+            self.memory = Memory()
 
-        :param field: the field we want to reset
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
-        :raise Exception if something bad happens
-        """
+    def specialize(self):
+        """Execute the specialize operation"""
 
-        if field is None:
-            raise TypeError("The field to reset must be specified and cannot be None")
+        if self.variable is None:
+            raise Exception("No definition domain specified.")
 
-        self._logger.debug("Reset the definition of field {0} ({1})".format(field.name, field.id))
-        field.clearChildren()
+        self._logger.debug("Specialize variable {0}".format(self.variable))
+            
+        self.__clearResults()
 
-        if isinstance(field, Symbol):
-            field.children = [Field()]
+        # we create the initial parser path
+        variableSpecializerPath = self._createVariableSpecializerPath(None)
 
-        if isinstance(field, Field):
-            field.domain = Raw(None)
-            field.regex = NetzobRegex.buildDefaultRegex()
+        self.variableSpecializerPaths = self.variable.specialize(variableSpecializerPath)
+        self._logger.debug("Specializing variable '{0}' generated '{1}' valid paths".format(self.variable, len(self.variableSpecializerPaths)))
+        
+        return self.isOk()
+
+        
+    def _createVariableSpecializerPath(self, generatedContent, originalVariableSpecializerPath=None):
+        self._logger.debug("Generated content of the path = {0}".format(generatedContent))
+        copy_generatedContent = None
+
+        if generatedContent is not None:
+            copy_generatedContent = generatedContent.copy()
+        
+        varPath = VariableSpecializerPath(self, copy_generatedContent, originalVariableSpecializerPath)
+        return varPath
+
+        
+    
+    def isOk(self):
+        """Returns True if at least one valid VariableSpecializerResult is available"""
+        return len(self.variableSpecializerPaths)>0
+    
+    def __clearResults(self):
+        """Prepare for a new specializing by cleaning any previously results"""
+        self.variableSpecializerResults = []
+        self.variableSpecializerPaths = []        
+
+    
+

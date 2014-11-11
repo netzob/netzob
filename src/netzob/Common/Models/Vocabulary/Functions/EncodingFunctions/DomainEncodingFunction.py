@@ -62,9 +62,9 @@ class DomainEncodingFunction(EncodingFunction):
     >>> f = Field(name="f0", domain=Agg(["There are ", Decimal(10), " solutions."]))
     >>> m = RawMessage("There are " + TypeConverter.convert(10, Decimal, Raw) + " solutions.")
     >>> s = Symbol(fields=[f], messages=[m], name="Symbol")
+    >>> s.addEncodingFunction(TypeEncodingFunction(ASCII))
     >>> print s
-    There are 10 solutions.
-
+    There are . solutions.
     """
 
     def encode(self, field, readingToken):
@@ -79,7 +79,7 @@ class DomainEncodingFunction(EncodingFunction):
         if not readingToken.isValueForVariableAvailable(variable):
             return result
 
-        if variable.varType == "Data" or variable.varType == "Size":
+        if variable.varType == "Data" or variable.varType == "Size" or variable.varType == "InternetChecksum":
             val = readingToken.getValueForVariable(variable)
             encodedVal = TypeConverter.convert(val, BitArray, variable.dataType.__class__)
             result.append(str(encodedVal))

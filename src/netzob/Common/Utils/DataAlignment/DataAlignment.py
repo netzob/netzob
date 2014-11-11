@@ -37,7 +37,7 @@
 import threading
 import regex as re
 from bitarray import bitarray
-import traceback
+
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -56,6 +56,7 @@ from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken import VariableReadingToken
 from netzob.Common.Models.Vocabulary.Functions.EncodingFunction import EncodingFunction
+from netzob.Common.Models.Vocabulary.Domain.Parser.FieldParser import FieldParser
 
 
 @NetzobLogger
@@ -69,25 +70,52 @@ class DataAlignment(threading.Thread):
 
     >>> from netzob.all import *
     >>> from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
-    >>> # Create 10 data which follows format : 'hello '+random number of [5-10] digits+' welcome'.
-    >>> data = [TypeConverter.convert('hello {0}, welcome'.format(''.join([str(y) for y in range(0, 10)])), Raw, HexaString) for x in range(0, 10)]
-    >>> # Now we create a symbol with its field structure to represent this type of message
-    >>> fields = [Field('hello '), Field(ASCII(nbChars=(5,10))), Field(', welcome')]
+    >>> import random
+    >>> import string
+
+    >>> contents = [TypeConverter.convert('hello {0} hello'.format(''.join([random.choice(string.letters) for y in range(random.randint(5,10))])), Raw, HexaString) for x in range(10)]
+    >>> fields = [Field("hello ", name="f0"), Field(ASCII(nbChars=(5,10)), name="f1"), Field(" hello", name="f2")]
     >>> symbol = Symbol(fields=fields)
-    >>> alignedData = DataAlignment.align(data, symbol, encoded=True)
+    >>> alignedData = DataAlignment.align(contents, symbol, encoded=True)
     >>> print len(alignedData)
     10
+    
+
+    >>> # Create 10 data which follows format : 'hello '+random number of [5-10] digits+' welcome'.
+    >>> data = [TypeConverter.convert('hello {0}, welcome'.format(random.choice(["tototo"])), Raw, HexaString) for x in range(5)]
+    >>> # Now we create a symbol with its field structure to represent this type of message
+    >>> fields = [Field(ASCII('hello ')), Field(Agg([Alt([ASCII("toto"), ASCII("to")]), Alt([ASCII("to"), ASCII("toto")])])), Field(ASCII(', welcome'))]
+    >>> symbol = Symbol(fields=fields)
+    >>> alignedData = DataAlignment.align(data, symbol)
+    >>> print len(alignedData)
+    5
     >>> print alignedData
-    hello  | 0123456789 | , welcome
-    hello  | 0123456789 | , welcome
-    hello  | 0123456789 | , welcome
-    hello  | 0123456789 | , welcome
-    hello  | 0123456789 | , welcome
-    hello  | 0123456789 | , welcome
-    hello  | 0123456789 | , welcome
-    hello  | 0123456789 | , welcome
-    hello  | 0123456789 | , welcome
-    hello  | 0123456789 | , welcome
+    68656c6c6f20 | 746f746f746f | 2c2077656c636f6d65
+    68656c6c6f20 | 746f746f746f | 2c2077656c636f6d65
+    68656c6c6f20 | 746f746f746f | 2c2077656c636f6d65
+    68656c6c6f20 | 746f746f746f | 2c2077656c636f6d65
+    68656c6c6f20 | 746f746f746f | 2c2077656c636f6d65
+
+    >>> # Lets try to align a more complex message
+    >>> msg1 = TypeConverter.convert("helloPUTtotoPA343", Raw, HexaString)
+    >>> msg2 = TypeConverter.convert("helloGETtototoPA", Raw, HexaString)
+    >>> msg3 = TypeConverter.convert("helloPUTtotototoPAdqs4qsd33", Raw, HexaString)
+    >>> messages = [msg1, msg2, msg3]
+    >>> fh1 = Field("hello", name="f1")
+    >>> fh2 = Field(ASCII(nbChars=(3)), name="f4")
+    >>> fh3 = Field(Agg([Alt(["toto", "to"]), Alt(["to", "toto"])]), name="f3")
+    >>> fb1 = Field(ASCII("PA"), name="f5")
+    >>> fb2 = Field(Raw(nbBytes=(0,10)))
+    >>> headerFields = [fh1, fh2, fh3]
+    >>> bodyFields = [fb1, fb2]
+
+    >>> symbol = Symbol(fields=headerFields+bodyFields)
+    >>> alignedData2 = DataAlignment.align(messages, symbol)
+    >>> print alignedData2
+    68656c6c6f | 505554 | 746f746f         | 5041 | 333433            
+    68656c6c6f | 474554 | 746f746f746f     | 5041 |                   
+    68656c6c6f | 505554 | 746f746f746f746f | 5041 | 647173347173643333
+
 
     """
 
@@ -120,16 +148,12 @@ class DataAlignment(threading.Thread):
         if self.field is None:
             raise TypeError("Field cannot be None")
 
-        # If we are executing an alignment of a message with a symbol, we need
-        # to add EOL in the symbol definition before doing so
-        from netzob.Common.Models.Vocabulary.Symbol import Symbol
-        if isinstance(self.field, Symbol):
-            self.field._addEOL()
-
+        # Aligned messages are stored in a MatrixList for better display
         result = MatrixList()
 
         # We retrieve all the leaf fields of the root of the provided field
         rootLeafFields = self.__root._getLeafFields(depth=self.depth)
+            
         if self.__root != self.field:
             targetedFieldLeafFields = self.field._getLeafFields(depth=self.depth)
         else:
@@ -139,149 +163,118 @@ class DataAlignment(threading.Thread):
         self._logger.debug("Targeted leaf fields: ")
         for f in targetedFieldLeafFields:
             self._logger.debug("- {0}".format(f.name))
-        self._logger.debug(self.__root._str_debug())
         # -- debug display
-
+        
+        # we successively parse/align each data
         for d in self.data:
-            self._logger.debug("Data to align: {0}".format(d))
-            try:
-                # split the message following the regex definition
-                splittedData = self.__splitDataWithRegex(d, rootLeafFields)
+        
+            self._logger.debug("[START] Parsing Data : '{0}'".format(d))
+            (rawParsingResult, encodedParsingResult) = self._parseData(d, rootLeafFields, targetedFieldLeafFields)
+            self._logger.debug("[END] Parsing Data '{0}' produced '{1}'".format(d, encodedParsingResult))
 
-                # -- debug display
-                for f in targetedFieldLeafFields:
-                    self._logger.debug("{0} = {1}".format(f.name, splittedData[f.regex.id]))
-                self._logger.debug("Splitted data = {0}".format(splittedData))
-                # -- debug display
-
-                # apply the field definition on each slice
-                remainingData = ''
-                fieldsValue = []
-                rToken = VariableReadingToken()
-
-                for field in targetedFieldLeafFields:
-                    self._logger.debug("Target leaf field {0}({1})".format(field.name, field.domain))
-                    if field.regex.id not in splittedData.keys() or len(splittedData[field.regex.id]) == 0:
-                        raise Exception("Content of field {0} ({1}) has not been found on message, alignment failed.")
-
-                    if len(splittedData[field.regex.id]) > 1:
-                        raise Exception("Multiple values are available for the same field, this is not yet supported.")
-
-                    # retrieves the data to parse from the regex result
-                    data = splittedData[field.regex.id][0]
-                    # appends to this data potentially remaining data from previous field parsing
-                    fieldData = remainingData + data
-                    # converts the data in bitarray
-                    bitArrayFieldData = TypeConverter.convert(fieldData, HexaString, BitArray)
-                    self._logger.debug("Parse: {0}".format(fieldData))
-
-                    # sets the value to parse in the reading token
-                    rToken.setValueForVariable(field.domain, bitArrayFieldData)
-
-                    # executes the parsing
-                    (value, remainingData) = self.__applyFieldDefinition(field, rToken)
-
-                    rToken.setValueForVariable(field.domain, TypeConverter.convert(fieldData, HexaString, BitArray))
-
-                    fieldsValue.append(value)
-
-                if len(remainingData) > 0:
-                    raise Exception("The data has not be fully consummed by the field definition.")
-                result.append(fieldsValue)
-            except Exception, e:
-
-                if isinstance(self.field, Symbol):
-                    self.field._removeEOL()
-
-                tb = traceback.format_exc()
-                self._logger.warning("An exception occurred while aligning a data : {0}".format(e))
-                self._logger.warning(tb)
-
-                raise e
-
-        if isinstance(self.field, Symbol):
-            self.field._removeEOL()
-
+            # additionnal check (just to be certain dataParsing equals the data)
+            if not ''.join(rawParsingResult) in TypeConverter.convert(d, HexaString, Raw):
+                raise Exception("<!> You found a case which broke our parsing engine: concat alignedData not in original message not '{0}' in '{1}'".format(''.join(rawParsingResult), TypeConverter.convert(d, HexaString, Raw)))
+            result.append(encodedParsingResult)
+            
         return result
 
-    @typeCheck(AbstractField)
-    def __applyFieldDefinition(self, field, rToken):
-        """This method applies the domain parser associated with the specified field on the
-        provided data. It returns a tupple which indicates the consummed data and the remainning data
-        after the application of the field domain on the data.
+            
+    def _parseData(self, d, rootLeafFields, targetedFieldLeafFields):
+        """Internal method that aligns one data according to the provided fields"""
+    
+        self._logger.debug("Data to align: {0}".format(d))
+        # split the message following the regex definition
+        splittedDatas = self.__splitDataWithRegex(d, rootLeafFields)
 
-        :param field: the field from which we consider the domain to parse the data
-        :type field: :class:`netzob.Common.Models.Vocabulary.Field.Field`
-        :param rToken: the reading token
-        :type field: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken.VariableReadingToken`
+        # first we check if the regex parsing was a success:
+        # we verify the regex has identified a segment for each field
+        for field in targetedFieldLeafFields:
+            for splittedData in splittedDatas:
+                if field.regex.id not in splittedData.keys() or len(splittedData[field.regex.id]) == 0:
+                    raise Exception("Content of field {0} ({1}) has not been found on message, alignment failed.")
 
-        :return: a tuple indicating the consummed data and the remaining data.
-        :rtype: a tuple of :class:`str`, :class:`str`
-        :raise Exception if something failed while parsing the data with the field domain.
+                if len(splittedData[field.regex.id]) > 1:
+                    raise Exception("Multiple values are available for the same field, this is not yet supported.")
+        
+        # store all the parsing results
+        parsingResults = []
 
-        """
-        originalValue = rToken.getValueForVariable(field.domain)
+        # we analyze each result of the regex parsing
+        for splittedData in splittedDatas:
+            # Yes, we create an empty array that contains an empty array
+            # fieldParserPaths[0] => one path in the token-tree. a path = [FieldParserResult0, ....]
+            fieldParserPaths = [[]] # = [[FieldParserResult0, FieldParserResult1, ...], [], []]
 
-        self._logger.debug("Apply Field {0} ({1})".format(field.name, field.domain))
-        field.domain.read(rToken)
+            # we parse the current regex result according to each field token-tree
+            for ifield, currentField in enumerate(targetedFieldLeafFields):
+                # regex applies on the hexastring level, token-tree applies on the bitarray level, we execute a convertion
+                fieldContent = TypeConverter.convert(splittedData[currentField.regex.id][0], HexaString, BitArray)
 
-        if not rToken.Ok:
-            raise Exception("The field specification does not allow to parse data.")
+                newFieldParserPaths = []
 
-        readValue = rToken.getValueForVariable(field.domain)
+                for i_fieldParserPath, fieldParserPath in enumerate(fieldParserPaths):
+                    # we retrieve the remaining data
+                    remainingData = None
+                    if len(fieldParserPath) > 0:
+                        remainingData = fieldParserPath[ifield-1].remainingData
 
-        if self.encoded:
-            consummedData = self.__applyEncodingFunctionsOnField(readValue, field, rToken)
-        else:
-            consummedData = TypeConverter.convert(readValue, BitArray, Raw)
+                    if remainingData is not None:
+                        content = remainingData.copy()
+                        content.extend(fieldContent.copy())
+                    else:
+                        content = fieldContent.copy()
 
-        remainingData = TypeConverter.convert(originalValue[len(readValue):], BitArray, HexaString)
-        self._logger.debug("Sucessfuly parsed data, Consummed : {0}, remainingData: {1}".format(consummedData, remainingData))
+                    # start the field parser
+                    fieldParser = FieldParser(currentField)
+                    if fieldParser.parse(content):
+                        for fieldParserResult in fieldParser.fieldParserResults:
+                            path = []
+                            path.extend(fieldParserPath)
+                            path.append(fieldParserResult)
+                            newFieldParserPaths.append(path)
+                    else:
+                        self._logger.debug("Field parsing failed.")
+                            
+                fieldParserPaths = newFieldParserPaths
 
-        return (consummedData, remainingData)
+                if len(fieldParserPaths) == 0:
+                    raise Exception("Invalid, content: {0}, field: {1}".format(fieldContent, currentField._str_debug()))
+            
+            parsingResults.extend(fieldParserPaths)
 
-    @typeCheck(bitarray, AbstractField, VariableReadingToken)
-    def __applyEncodingFunctionsOnField(self, data, field, readingToken):
-        """Encodes the aligned data using the definition of the field
-        and of its variables.
-        The expected behavior is to encode the data with the default
-        encoding filter which is the DomainEncodingFunction that encode
-        data following the domain of the used variables to parse.
+        # remove all the paths where the last field parser result has none empty remaining data
+        removeItems = []
+        for parsingResult in parsingResults:
+            if len(parsingResult[-1].remainingData) != 0:
+                removeItems.append(parsingResult)
 
-        :parameter data: the data to encode
-        :type data: :class:`bitarray`
-        :parameter field: the field from which the data belongs
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
-        :parameter readingToken: the reading token used to parse provided data
-        :type readingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken.VariableReadingToken`
-        :return: the encoded data
-        :rtype: :class:`str`
-        """
+        for removeItem in removeItems:
+            parsingResults.remove(removeItem)
+            
+        parsingResult = None
+        if len(parsingResults) == 0:
+            raise Exception("Message cannot be parsed according to fields specification")
+        if len(parsingResults) > 1:
+            self._logger.fatal("TODO: multiple parsing results found !")
+        parsingResult = parsingResults[0]
 
-        if field is None:
-            raise TypeError("The field cannot be None.")
-        if data is None:
-            raise TypeError("The data cannot be None.")
-
-        if not readingToken.isValueForVariableAvailable(field.domain):
-            raise Exception("There are no value associated with the field, impossible to encode it.")
-
-        currentField = field
-        encodingFunctions = None
-        while encodingFunctions is None or len(encodingFunctions) == 0:
-            encodingFunctions = currentField.encodingFunctions
-            if currentField.parent is None:
-                break
-            currentField = currentField.parent
-
-        if encodingFunctions is None or len(encodingFunctions) == 0:
-            encodingFunction = EncodingFunction.getDefaultEncodingFunction()
-            encodedValue = encodingFunction.encode(field, readingToken)
-        else:
-            for encodingFunction in encodingFunctions.values():
-                encodedValue = encodingFunction.encode(field, readingToken)
-
-        return str(encodedValue)
+        resultEncoded = []
+        resultRaw = []
+        for ifield, currentField in enumerate(targetedFieldLeafFields):
+            # now we apply encoding and mathematic functions
+            fieldValue = parsingResult[ifield].consumedData  # here we have bitarrays
+            
+            if self.encoded and len(currentField.encodingFunctions.values()) > 0:
+                for encodingFunction in currentField.encodingFunctions.values():
+                    fieldValue = encodingFunction.encode(fieldValue)
+            else:
+                fieldValue = TypeConverter.convert(fieldValue, BitArray, Raw)
+        
+            resultEncoded.append(fieldValue)
+            resultRaw.append(TypeConverter.convert(parsingResult[ifield].consumedData, BitArray, Raw))
+            
+        return (resultRaw, resultEncoded)
 
     @typeCheck(str)
     def __splitDataWithRegex(self, data, fields):
@@ -305,37 +298,41 @@ class DataAlignment(threading.Thread):
 
         # build the regex
         regexes = [field.regex for field in fields]
+        
         regex = NetzobAggregateRegex(regexes)
+                    
+        self._logger.debug("Regex: {0}".format(regex.finalRegex()))
 
         dynamicDatas = None
         try:
             # Now we apply the regex over the message
             compiledRegex = re.compile(regex.finalRegex())
-            dynamicDatas = compiledRegex.match(data)
+            validDynamicDatas = compiledRegex.finditer(data)
         except Exception, e:
             self._logger.warning("An error occured in the alignment process")
-            raise e
-
-        if dynamicDatas is None:
             self._logger.warning("The regex of the group doesn't match one of its message")
             self._logger.warning("Regex: {0}".format(regex.finalRegex()))
             if len(data) > 255:
                 self._logger.warning("Message: {0}...".format(data[:255]))
             else:
                 self._logger.warning("Message: {0}".format(data))
-            raise Exception("The regex of the group doesn't match one of its message")
+            raise e
 
-        result = dynamicDatas.capturesdict()
+        results = []
+        for dynamicDatas in validDynamicDatas:
+            results.append(dynamicDatas.capturesdict())
+            # Memory optimization offered by regex module
+            dynamicDatas.detach_string()
 
-        # Memory optimization offered by regex module
-        dynamicDatas.detach_string()
-
-        return result
+        self._logger.debug("{0} ways of parsing the message with a regex was found.".format(len(results)))
+        self._logger.debug(results)
+            
+        return results                
 
     # Static method
     @staticmethod
     @typeCheck(str, AbstractField, int)
-    def align(data, field, depth=None, encoded=False):
+    def align(data, field, depth=None, encoded=True):
         """Execute an alignment of specified data with provided field.
         Data must be provided as a list of hexastring.
 

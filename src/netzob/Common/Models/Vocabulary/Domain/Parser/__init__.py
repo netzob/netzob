@@ -28,8 +28,3 @@
 
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
-from netzob.Common.Models.Vocabulary.Domain.Variables.all import *
-
-from netzob.Common.Models.Vocabulary.Domain.DomainFactory import DomainFactory
-
-from netzob.Common.Models.Vocabulary.Domain.Parser.all import *

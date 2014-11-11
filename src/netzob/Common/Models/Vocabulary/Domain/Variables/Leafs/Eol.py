@@ -44,6 +44,7 @@ from bitarray import bitarray
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.NetzobRegex import NetzobRegex
 from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken import AbstractVariableProcessingToken
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken import VariableReadingToken
@@ -60,15 +61,6 @@ class Eol(AbstractVariableLeaf):
     def __init__(self):
         """The constructor."""
         super(Eol, self).__init__(self.__class__.__name__)
-
-    def __key(self):
-        return (self.dataType, self.currentValue, self.learnable, self.mutable)
-
-    def __eq__(x, y):
-        return x.__key() == y.__key()
-
-    def __hash__(self):
-        return hash(self.__key())
 
     @typeCheck(AbstractVariableProcessingToken)
     def isDefined(self, processingToken):
@@ -161,7 +153,7 @@ class Eol(AbstractVariableLeaf):
         pass
 
     def buildRegex(self):
-        pass
+        return NetzobRegex.buildRegexForEol()
 
     def __str__(self):
         """The str method, mostly for debugging purpose."""

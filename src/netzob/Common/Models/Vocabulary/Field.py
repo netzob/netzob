@@ -49,9 +49,8 @@ from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Vocabulary.Domain.DomainFactory import DomainFactory
-from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken import VariableWritingToken
 from netzob.Common.Utils.NetzobRegex import NetzobStaticRegex
-
+from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
 
 class InvalidDomainException(Exception):
     pass
@@ -106,7 +105,7 @@ class Field(AbstractField):
 
     a field which value is the size of the payloadField
 
-    >>> f = Field([Size(payloadField)])
+    >>> # f = Field([Size(payloadField)])
 
 
     Here are few examples of 'alternative' fields:
@@ -136,8 +135,8 @@ class Field(AbstractField):
             domain = Raw(None)
         self.domain = domain
 
-    @typeCheck(VariableWritingToken, object)
-    def specialize(self, writingToken=None, generationStrategy=None):
+    @typeCheck(Memory, object)
+    def specialize(self, memory=None, generationStrategy=None):
         """Specialize the current field to build a raw data that
         follows the fields definitions attached to current element.
 
@@ -160,8 +159,6 @@ class Field(AbstractField):
         hello zoby
         hello zoby
 
-        :keyword writingToken: internal buffer of generated content to ensure relations between fields
-        :type writingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken.VariableWritingToken`
         :keyword generatorStrategy: if set, this generation strategy will be used to pilot this generation process
         :type generatorStrategy: :class:`object`
 
@@ -169,54 +166,20 @@ class Field(AbstractField):
         :rtype: :class:`str``
         :raises: :class:`netzob.Common.Models.Vocabulary.AbstractField.GenerationException` if an error occurs while generating a message
         """
+        self._logger.debug("Specializes field {0}".format(self.name))
         if self.__domain is None:
             raise InvalidDomainException("The domain is not defined.")
 
-        if writingToken is None:
-            # Create a Variable Writing Token
-            writingToken = VariableWritingToken(generationStrategy=generationStrategy)
-
-        if len(self.children) > 0:
-            for child in self.children:
-                child.specialize(writingToken)
-
-            result = None
-            for child in self.children:
-                if not writingToken.isValueForVariableAvailable(child.domain):
-                    raise Exception("Impossible to specialize field {0}".format(child.name))
-                if result is None:
-                    result = writingToken.getValueForVariable(child.domain)
-                else:
-                    result += writingToken.getValueForVariable(child.domain)
-
-            writingToken.setValueForVariable(self.domain, result)
-        else:
-            self.domain.write(writingToken)
-
-            if writingToken.isValueForVariableAvailable(self.domain):
-                return TypeConverter.convert(writingToken.getValueForVariable(self.domain), BitArray, Raw)
-            else:
-                raise Exception("The definition of the field does not support its specialization.")
+        if memory is None:
+            # Create a new memory
+            memory = Memory()
+        from netzob.Common.Models.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
+        fs = FieldSpecializer(self, memory=memory)
+        return TypeConverter.convert(fs.specialize(), BitArray, Raw)
 
     def _isStatic(self):
         """Returns True if the field denotes a static content"""
         return isinstance(self.regex, NetzobStaticRegex)
-
-    def _addEOL(self):
-        """Adds in the definition domain of this element the implicit EOL in the right places"""
-
-        if len(self.children) > 0:
-            self.children[len(self.children) - 1]._addEOL()
-        else:
-            self.domain._addEOL()
-
-    def _removeEOL(self):
-        """Removes EOL from the definition domain of the field
-        """
-        if len(self.children) > 0:
-            self.children[len(self.children) - 1]._removeEOL()
-        else:
-            self.domain._removeEOL()
 
     @property
     def domain(self):
@@ -234,6 +197,7 @@ class Field(AbstractField):
     @domain.setter
     def domain(self, domain):
         normalizedDomain = DomainFactory.normalizeDomain(domain)
+        self._logger.debug("Create Normalized regex for {0}".format(normalizedDomain))
         self.regex = normalizedDomain.buildRegex()
         self.__domain = normalizedDomain
 

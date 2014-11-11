@@ -44,6 +44,8 @@ from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Models.Types.AbstractType import AbstractType
 from netzob.Common.Models.Vocabulary.Domain.DomainFactory import DomainFactory
 from netzob.Common.Models.Vocabulary.Field import Field
+from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Alt import Alt
+from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Agg import Agg
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.Raw import Raw
@@ -77,6 +79,10 @@ class FieldSplitDelimiter(object):
         :type: :class:`netzob.Common.Models.Types.AbstractType.AbstractType`
         """
 
+        import logging
+        _logger = logging.getLogger("paf")
+
+        
         if delimiter is None:
             raise TypeError("Delimiter cannot be None.")
 
@@ -88,13 +94,15 @@ class FieldSplitDelimiter(object):
 
         # Find message substrings after applying delimiter
         splittedMessages = []
+
         for cell in field.getValues(encoded=False, styled=False):
             splittedMessage = cell.split(delimiter.value.tobytes())
             splittedMessages.append(splittedMessage)
 
+        import itertools
         # Inverse the array, so that columns contains observed values for each field
-        splittedMessages = zip(*splittedMessages)
-
+        splittedMessages = list(itertools.izip_longest(*splittedMessages))
+        
         # If the delimiter does not create splitted fields
         if len(splittedMessages) <= 1:
             return
@@ -106,17 +114,26 @@ class FieldSplitDelimiter(object):
             iField += 1
             fieldDomain = []
             isEmptyField = True  # To avoid adding an empty field
+            emptyValueFound = False
             for v in splittedMessages[i]:
-                if v != "":
+                _logger.debug(v)
+                if v != "" and v is not None:
                     isEmptyField = False
                     fieldDomain.append(Raw(v))
                 else:
                     fieldDomain.append(Raw(nbBytes=0))
+
             if not isEmptyField:
-                newFields.append(Field(domain=DomainFactory.normalizeDomain(fieldDomain), name="Field-"+str(iField)))
+                newField = Field(domain=DomainFactory.normalizeDomain(fieldDomain), name="Field-"+str(iField))
+                newField.encodingFunctions = field.encodingFunctions.values()
+                newFields.append(newField)
                 iField += 1
+
             fieldName = "Field-sep-" + TypeConverter.convert(delimiter.value, BitArray, HexaString)
+            
             newFields.append(Field(domain=delimiter, name=fieldName))
+            #newFields[-2].domain=Alt([delimiter, Raw(nbBytes=0)])
+
         newFields.pop()
 
         # Reset the field

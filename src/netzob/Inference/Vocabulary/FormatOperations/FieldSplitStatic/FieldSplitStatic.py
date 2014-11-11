@@ -73,6 +73,7 @@ class FieldSplitStatic(object):
     00ff1f00000015
     00ff2f00000016
     00fe1f00000017
+    
     >>> fs = FieldSplitStatic()
     >>> fs.execute(symbol)
     >>> print symbol
@@ -202,8 +203,8 @@ class FieldSplitStatic(object):
 
         if field is None:
             raise TypeError("The field cannot be None")
-
         fieldValues = [TypeConverter.convert(data, Raw, HexaString) for data in field.getValues(encoded=False)]
+
         if len(fieldValues) == 0:
             raise Exception("No value found in the field.")
 
@@ -269,13 +270,19 @@ class FieldSplitStatic(object):
 
             indexedValues = result
 
-        # Reset the field
-        from netzob.Inference.Vocabulary.Format import Format
-        Format.resetFormat(field)
-
         # Create a field for each entry
-        newFields = [Field(domain=DomainFactory.normalizeDomain([Raw(TypeConverter.convert(v, HexaString, BitArray)) for v in val]), name="Field-"+str(i)) for (i, val) in enumerate(indexedValues)]
-        field.children = newFields
+        newFields = []
+        for (i, val) in enumerate(indexedValues):
+            fName = "Field-{0}".format(i)            
+            fDomain = DomainFactory.normalizeDomain([Raw(TypeConverter.convert(v, HexaString, BitArray)) for v in set(val)])
+            newFields.append(Field(domain=fDomain, name=fName))
+
+        # attach encoding functions
+        for newField in newFields:
+            newField.encodingFunctions = field.encodingFunctions.values()
+
+        field.children = newFields        
+            
 
     def __computeStepForUnitsize(self):
         """Computes the step following the specified unitsize.

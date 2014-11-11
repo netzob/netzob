@@ -64,7 +64,7 @@ class VariableReadingToken(AbstractVariableProcessingToken):
         return "ReadingToken: isOk: {0}, value left: {1}".format(self.Ok, repr(TypeConverter.convert(self.value[self.index:], BitArray, Raw)))
 
     @typeCheck(AbstractVariable, int)
-    def read(self, variable, increment):
+    def read(self, variable, incrXement):
         """A variable reads a piece of the token value.
 
         :param variable: store the index+increment section to the variable

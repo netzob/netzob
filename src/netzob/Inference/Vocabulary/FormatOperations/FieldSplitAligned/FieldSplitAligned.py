@@ -72,6 +72,7 @@ class FieldSplitAligned(object):
     0444ff00000000ff  
     05ff0000000000ff  
     06ff000000000000ff
+
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol)
     >>> print symbol
@@ -97,7 +98,7 @@ class FieldSplitAligned(object):
     hello  | netzob | , what's up in  | UK      |  ?
     hello  | sygus  | , what's up in  | Germany |  ?
 
-    Let's illustrate the use of semantic constrained sequence alignment with a simple example
+    # Let's illustrate the use of semantic constrained sequence alignment with a simple example
 
     >>> samples = ["John-0108030405--john.doe@gmail.com", "Mathieu-0908070605-31 rue de Paris, 75000 Paris, France-mat@yahoo.fr", "Olivia-0348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hotmail.fr"]
     >>> messages = [RawMessage(data=sample) for sample in samples]
@@ -185,8 +186,8 @@ class FieldSplitAligned(object):
         # Build Fields based on computed alignement and semantic tags
         self._updateFieldsFromAlignment(field, alignment, semanticTags)
 
-        # if useSemantic:
-        #     self._createSubFieldsFollowingSemanticTags(field, alignment, semanticTags)
+        #if useSemantic:
+        #    self._createSubFieldsFollowingSemanticTags(field, alignment, semanticTags)
 
     @typeCheck(AbstractField, str, dict)
     def _updateFieldsFromAlignment(self, field, alignment, semanticTags):
@@ -203,7 +204,6 @@ class FieldSplitAligned(object):
             raise TypeError("Alignment cannot be None")
         if semanticTags is None:
             raise TypeError("SemanticTags cannot be None")
-
 
         self._logger.debug("Semantic Tags : {0}".format(semanticTags))
         self._logger.debug("Alignment: {0}".format(alignment))
@@ -226,6 +226,9 @@ class FieldSplitAligned(object):
             else:
                 newField = Field(Raw(TypeConverter.convert(entryVal, HexaString, Raw)))
             step1Fields.append(newField)
+
+        for f in step1Fields:
+            f.encodingFunctions = field.encodingFunctions.values()
 
         field.children = step1Fields
 
@@ -450,10 +453,10 @@ class FieldSplitAligned(object):
         """createSubFieldsForAStaticField:
         Analyzes the static field provided and create sub fields following
         the provided semantic tags."""
-        logging.debug("Create subfields for static field {0} : {1}".format(field.getName(), align))
+        self._logger.debug("Create subfields for static field {0} : {1}".format(field.getName(), align))
 
         if len(field.getLocalFields()) > 0:
-            logging.warning("Impossible to create sub fields for this field since its not cleaned")
+            self._logger.warning("Impossible to create sub fields for this field since its not cleaned")
             return
 
         subFields = []

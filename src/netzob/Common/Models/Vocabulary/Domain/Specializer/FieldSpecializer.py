@@ -34,7 +34,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-
+import random
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
@@ -43,64 +43,86 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
 from netzob.Common.Models.Vocabulary.Field import Field
-from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Utils.NetzobRegex import NetzobRegex
+from netzob.Common.Models.Vocabulary.Domain.Parser.VariableParser import VariableParser
+from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
+from netzob.Common.Models.Vocabulary.Domain.Parser.FieldParserResult import FieldParserResult
+
+from netzob.Common.Models.Vocabulary.Domain.Specializer.VariableSpecializer import VariableSpecializer
+from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
 
 
 @NetzobLogger
-class FieldReseter(object):
-    """This class defines the required operation to reset
-    the definition of a field. It reinitializes the definition domain
-    as a raw field and delete its children.
+class FieldSpecializer():
+    """Computes the specialization of a field and its token-tree into a raw data
 
-    >>> import binascii
+    Examples:
+
     >>> from netzob.all import *
-    >>> samples = ["00ff2f000000",	"000010000000",	"00fe1f000000"]
-    >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
-    >>> f1 = Field(Raw(nbBytes=1))
-    >>> f21 = Field(Raw(nbBytes=1))
-    >>> f22 = Field(Raw(nbBytes=1))
-    >>> f2 = Field()
-    >>> f2.children = [f21, f22]
-    >>> f3 = Field(Raw())
-    >>> symbol = Symbol([f1, f2, f3], messages=messages)
-    >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print symbol
-    00 | ff | 2f | 000000
-    00 | 00 | 10 | 000000
-    00 | fe | 1f | 000000
-    >>> reseter = FieldReseter()
-    >>> reseter.reset(symbol)
-    >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print symbol
-    00ff2f000000
-    000010000000
-    00fe1f000000
+    >>> f = Field("Hello")
+    >>> fs = FieldSpecializer(f)
+    >>> print fs.specialize()
+    bitarray('0001001010100110001101100011011011110110')
+
+    >>> f = Field(ASCII(nbChars=10))
+    >>> fs = FieldSpecializer(f)
+    >>> print len(fs.specialize())
+    80
+
+    >>> f = Field(ASCII(nbChars=(4, 10)))
+    >>> fs = FieldSpecializer(f)
+    >>> print 32<=len(fs.specialize())<=80
+    True
+
+    >>> d = Alt([ASCII("netzob"), ASCII("zoby")])
+    >>> f = Field(d)
+    >>> fs = FieldSpecializer(f)
+    >>> val = set([TypeConverter.convert(fs.specialize(), BitArray, ASCII) for x in range(100)])
+    >>> print val
+    set(['netzob', 'zoby'])
+
+    >>> d = Agg([ASCII("hello"), ASCII(" "), Alt([ASCII("netzob"), ASCII("zoby")])])
+    >>> f = Field(d)
+    >>> fs = FieldSpecializer(f)
+    >>> val = set([TypeConverter.convert(fs.specialize(), BitArray, ASCII) for x in range(100)])
+    >>> print val
+    set(['hello zoby', 'hello netzob'])
+
     """
 
-    @typeCheck(AbstractField)
-    def reset(self, field):
-        """Resets the format (field hierarchy and definition domain) of
-        the specified field.
+    def __init__(self, field, memory = None):
+        self.field = field
+        if memory is not None:
+            self.memory = memory
+        else:
+            self.memory = Memory()
+
+    def specialize(self):
+        """Execute the specialize operation"""
+
+        self._logger.debug("Specialize field {0}".format(self.field.name))
+
+        # we retrieve the field definition domain
+        domain = self.field.domain
+
+        # and check it exists
+        if domain is None:
+            raise Exception("No definition domain specified for field '{0}', cannnot parse the content against it.".format(self.field.name))
+
+        # we create a first VariableParser and uses it to parse the domain
+        variableSpecializer = self.__createVariableSpecializer(domain)
+        if not variableSpecializer.specialize():
+            raise Exception("An error occurred while specializing variable {0}".format(domain))
+
+        paths = variableSpecializer.variableSpecializerPaths
+
+        if len(paths) == 0:
+            raise Exception("No valid specialization path found.")
+
+        return random.choice(paths).generatedContent
 
 
-        :param field: the field we want to reset
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
-        :raise Exception if something bad happens
-        """
-
-        if field is None:
-            raise TypeError("The field to reset must be specified and cannot be None")
-
-        self._logger.debug("Reset the definition of field {0} ({1})".format(field.name, field.id))
-        field.clearChildren()
-
-        if isinstance(field, Symbol):
-            field.children = [Field()]
-
-        if isinstance(field, Field):
-            field.domain = Raw(None)
-            field.regex = NetzobRegex.buildDefaultRegex()
+    def __createVariableSpecializer(self, domain):
+        """Creates a variable specializer"""
+        variableSpecializer = VariableSpecializer(domain, self.memory)
+        return variableSpecializer

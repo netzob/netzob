@@ -38,15 +38,17 @@
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Utils.TypedList import TypedList
 from netzob.Common.Models.Vocabulary.Messages.AbstractMessage import AbstractMessage
 from netzob.Common.Models.Vocabulary.Field import Field
-from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken import VariableWritingToken
+from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
@@ -95,7 +97,8 @@ class Symbol(AbstractField):
             fields = [Field()]
         self.children = fields
 
-    def specialize(self, writingToken=None, generationStrategy=None):
+    @typeCheck(Memory, object)
+    def specialize(self, memory=None, generationStrategy=None):
         """Specialize and generate an hexastring which content
         follows the fields definitions attached to current element.
 
@@ -106,17 +109,13 @@ class Symbol(AbstractField):
         :rtype: :class:`str``
         :raises: :class:`netzob.Common.Models.Vocabulary.AbstractField.GenerationException` if an error occurs while generating a message
         """
-        if writingToken is None:
-            writingToken = VariableWritingToken(generationStrategy=generationStrategy)
-
-        for child in self.children:
-            child.specialize(writingToken)
+        if memory is None:
+            memory = Memory()
 
         result = []
         for child in self.children:
-            if not writingToken.isValueForVariableAvailable(child.domain):
-                raise GenerationException("Impossible to specialize field {0}".format(child.name))
-            result.append(TypeConverter.convert(writingToken.getValueForVariable(child.domain), BitArray, Raw))
+            specialize = child.specialize(memory)
+            result.append(specialize)
 
         return ''.join(result)
 

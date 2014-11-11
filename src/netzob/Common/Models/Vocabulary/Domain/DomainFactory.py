@@ -75,15 +75,14 @@ class DomainFactory(object):
     >>> print domain.children[1].dataType
     ASCII=! ((0, None))
 
-    >>> f = Field(domain=[Alt(["bb", ASCII("aa", nbChars=2), ASCII("aa", nbChars=2)]), ["aaaa", "aaaa"]])
+    >>> f = Field(domain=Agg([ASCII("hello"), ["netzob", "zoby"]]))
     >>> print f._str_debug()
     Field
-    |--   Alt (L=False, M=True)
-          |--   Alt (L=False, M=True)
-               |--   ASCII=bb ((0, None)) (currentValue=bb, L=False, M=False)
-               |--   ASCII=aa ((16, 16)) (currentValue=aa, L=False, M=False)
-          |--   ASCII=aaaa ((0, None)) (currentValue=aaaa, L=False, M=False)
-
+    |--   Agg
+          |--   Data (ASCII=hello ((0, None)))
+          |--   Alt
+               |--   Data (ASCII=netzob ((0, None)))
+               |--   Data (ASCII=zoby ((0, None)))
     """
 
     @staticmethod

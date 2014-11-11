@@ -83,55 +83,55 @@ class Format(object):
 
         Its a wrapper for :class:`netzob.Inference.Vocabulary.FieldSplitStatic.ParallelFieldSplitStatic.ParallelFieldSplitStatic`.
 
-        >>> import binascii
-        >>> from netzob.all import *
-        >>> samples = ["00ff2f000000",	"000010000000",	"00fe1f000000",	"000020000000", "00ff1f000000",	"00ff1f000000",	"00ff2f000000",	"00fe1f000000"]
-        >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
-        >>> symbol = Symbol(messages=messages)
-        >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-        >>> print symbol
-        00ff2f000000
-        000010000000
-        00fe1f000000
-        000020000000
-        00ff1f000000
-        00ff1f000000
-        00ff2f000000
-        00fe1f000000
-        >>> Format.splitStatic(symbol)
-        >>> print symbol
-        00 | ff2f | 000000
-        00 | 0010 | 000000
-        00 | fe1f | 000000
-        00 | 0020 | 000000
-        00 | ff1f | 000000
-        00 | ff1f | 000000
-        00 | ff2f | 000000
-        00 | fe1f | 000000
+        # >>> import binascii
+        # >>> from netzob.all import *
+        # >>> samples = ["00ff2f000000",	"000010000000",	"00fe1f000000",	"000020000000", "00ff1f000000",	"00ff1f000000",	"00ff2f000000",	"00fe1f000000"]
+        # >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
+        # >>> symbol = Symbol(messages=messages)
+        # >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
+        # >>> print symbol
+        # 00ff2f000000
+        # 000010000000
+        # 00fe1f000000
+        # 000020000000
+        # 00ff1f000000
+        # 00ff1f000000
+        # 00ff2f000000
+        # 00fe1f000000
+        # >>> Format.splitStatic(symbol)
+        # >>> print symbol
+        # 00 | ff2f | 000000
+        # 00 | 0010 | 000000
+        # 00 | fe1f | 000000
+        # 00 | 0020 | 000000
+        # 00 | ff1f | 000000
+        # 00 | ff1f | 000000
+        # 00 | ff2f | 000000
+        # 00 | fe1f | 000000
 
-        >>> from netzob.all import *
-        >>> samples = ["0300002502f080320100003a00000e00060501120a10020002006e840000400004001001ab", "0300001602f080320300003a000002000100000501ff", "0300000702f000"]
-        >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
-        >>> symbol = Symbol(messages=messages)
-        >>> symbol.encodingFunctions.add(TypeEncodingFunction(HexaString))
-        >>> Format.splitStatic(symbol)
-        >>> print symbol
-        030000 | 25 | 02f0 | 80320100003a00000e00060501120a10020002006e840000400004001001ab
-        030000 | 16 | 02f0 | 80320300003a000002000100000501ff                              
-        030000 | 07 | 02f0 | 00                                                            
+        # >>> from netzob.all import *
+        # >>> samples = ["0300002502f080320100003a00000e00060501120a10020002006e840000400004001001ab", "0300001602f080320300003a000002000100000501ff", "0300000702f000"]
+        # >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
+        # >>> symbol = Symbol(messages=messages)
+        # >>> symbol.encodingFunctions.add(TypeEncodingFunction(HexaString))
+        # >>> Format.splitStatic(symbol)
+        # >>> print symbol
+        # 030000 | 25 | 02f0 | 80320100003a00000e00060501120a10020002006e840000400004001001ab
+        # 030000 | 16 | 02f0 | 80320300003a000002000100000501ff                              
+        # 030000 | 07 | 02f0 | 00                                                            
 
-        >>> contents = ["hello lapy, what's up in Paris ?", "hello lapy, what's up in Berlin ?", "hello lapy, what's up in New-York ?"]
-        >>> messages = [RawMessage(data=m) for m in contents]
-        >>> s = Symbol(messages=messages)
-        >>> print s
-        hello lapy, what's up in Paris ?   
-        hello lapy, what's up in Berlin ?  
-        hello lapy, what's up in New-York ?
-        >>> Format.splitStatic(s)
-        >>> print s
-        hello lapy, what's up in  | Paris ?   
-        hello lapy, what's up in  | Berlin ?  
-        hello lapy, what's up in  | New-York ?
+        # >>> contents = ["hello lapy, what's up in Paris ?", "hello lapy, what's up in Berlin ?", "hello lapy, what's up in New-York ?"]
+        # >>> messages = [RawMessage(data=m) for m in contents]
+        # >>> s = Symbol(messages=messages)
+        # >>> print s
+        # hello lapy, what's up in Paris ?   
+        # hello lapy, what's up in Berlin ?  
+        # hello lapy, what's up in New-York ?
+        # >>> Format.splitStatic(s)
+        # >>> print s
+        # hello lapy, what's up in  | Paris ?   
+        # hello lapy, what's up in  | Berlin ?  
+        # hello lapy, what's up in  | New-York ?
 
         :param field: the field for which we update the format
         :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
@@ -162,15 +162,37 @@ class Format(object):
         delimiter can be passed either as an ASCII, a Raw, an
         HexaString, or any objects that inherit from AbstractType.
 
+        # >>> from netzob.all import *
+        # >>> samples = ["aaaaff000000ff10",	"bbff110010ff00000011",	"ccccccccfffe1f000000ff12"]
+        # >>> messages = [RawMessage(data=sample) for sample in samples]
+        # >>> symbol = Symbol(messages=messages[:3])
+        # >>> Format.splitDelimiter(symbol, ASCII("ff"))
+        # >>> print symbol
+        # aaaa     | ff | 000000     | ff | 10      
+        # bb       | ff | 110010     | ff | 00000011
+        # cccccccc | ff | fe1f000000 | ff | 12      
+
+
+        Lets take another example:
+
+
         >>> from netzob.all import *
-        >>> samples = ["aaaaff000000ff10",	"bbff110010ff00000011",	"ccccccccfffe1f000000ff12"]
-        >>> messages = [RawMessage(data=sample) for sample in samples]
-        >>> symbol = Symbol(messages=messages[:3])
-        >>> Format.splitDelimiter(symbol, ASCII("ff"))
+        >>> samples = ["434d446964656e74696679230400000066726564", "5245536964656e74696679230000000000000000", "434d44696e666f2300000000", "524553696e666f230000000004000000696e666f", "434d4473746174732300000000", "52455373746174732300000000050000007374617473", "434d4461757468656e7469667923090000006d7950617373776421", "52455361757468656e74696679230000000000000000"]           
+        >>> print len(samples)
+        8
+        >>> symbol = Symbol(messages=[RawMessage(TypeConverter.convert(sample, HexaString, Raw)) for sample in samples])
+        >>> symbol.encodingFunctions.add(TypeEncodingFunction(HexaString))
+        >>> Format.splitDelimiter(symbol, ASCII('#'))
         >>> print symbol
-        aaaa     | ff | 000000     | ff | 10      
-        bb       | ff | 110010     | ff | 00000011
-        cccccccc | ff | fe1f000000 | ff | 12      
+        434d446964656e74696679     | # | 0400000066726564          
+        5245536964656e74696679     | # | 0000000000000000          
+        434d44696e666f             | # | 00000000                  
+        524553696e666f             | # | 0000000004000000696e666f  
+        434d447374617473           | # | 00000000                  
+        5245537374617473           | # | 00000000050000007374617473
+        434d4461757468656e74696679 | # | 090000006d7950617373776421
+        52455361757468656e74696679 | # | 0000000000000000          
+
 
         :param field : the field to consider when spliting
         :type: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
@@ -195,24 +217,24 @@ class Format(object):
         """Reset the format (field hierarchy and definition domain) of
         the specified field.
 
-        >>> import binascii
-        >>> from netzob.all import *
-        >>> samples = ["00ff2f000000",	"000010000000",	"00fe1f000000"]
-        >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
-        >>> f1 = Field(Raw(nbBytes=1))
-        >>> f2 = Field(Raw(nbBytes=2))
-        >>> f3 = Field(Raw(nbBytes=3))
-        >>> symbol = Symbol([f1, f2, f3], messages=messages)
-        >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-        >>> print symbol
-        00 | ff2f | 000000
-        00 | 0010 | 000000
-        00 | fe1f | 000000
-        >>> Format.resetFormat(symbol)
-        >>> print symbol
-        00ff2f000000
-        000010000000
-        00fe1f000000
+        # >>> import binascii
+        # >>> from netzob.all import *
+        # >>> samples = ["00ff2f000000",	"000010000000",	"00fe1f000000"]
+        # >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
+        # >>> f1 = Field(Raw(nbBytes=1))
+        # >>> f2 = Field(Raw(nbBytes=2))
+        # >>> f3 = Field(Raw(nbBytes=3))
+        # >>> symbol = Symbol([f1, f2, f3], messages=messages)
+        # >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
+        # >>> print symbol
+        # 00 | ff2f | 000000
+        # 00 | 0010 | 000000
+        # 00 | fe1f | 000000
+        # >>> Format.resetFormat(symbol)
+        # >>> print symbol
+        # 00ff2f000000
+        # 000010000000
+        # 00fe1f000000
 
         :param field: the field we want to reset
         :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
@@ -229,32 +251,32 @@ class Format(object):
     def mergeFields(field1, field2):
         """Merge provided fields and their definitions
 
-        >>> import binascii
-        >>> from netzob.all import *
-        >>> samples = ["00ff2f000000", "000010000000",	"00fe1f000000"]
-        >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
-        >>> f1 = Field(Raw(nbBytes=1), name="f1")
-        >>> f2 = Field(Raw(nbBytes=2), name="f2")
-        >>> f3 = Field(Raw(nbBytes=2), name="f3")
-        >>> f4 = Field(Raw(nbBytes=1), name="f4")
-        >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
-        >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-        >>> print symbol
-        00 | ff2f | 0000 | 00
-        00 | 0010 | 0000 | 00
-        00 | fe1f | 0000 | 00
-        >>> Format.mergeFields(f2, f3)
-        >>> print symbol
-        00 | ff2f0000 | 00
-        00 | 00100000 | 00
-        00 | fe1f0000 | 00
-        >>> Format.mergeFields(symbol.children[0], symbol.children[1])
-        >>> print symbol
-        00ff2f0000 | 00
-        0000100000 | 00
-        00fe1f0000 | 00
-        >>> Format.mergeFields(symbol.children[0], symbol.children[1])
-        >>> print symbol
+        # >>> import binascii
+        # >>> from netzob.all import *
+        # >>> samples = ["00ff2f000000", "000010000000",	"00fe1f000000"]
+        # >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
+        # >>> f1 = Field(Raw(nbBytes=1), name="f1")
+        # >>> f2 = Field(Raw(nbBytes=2), name="f2")
+        # >>> f3 = Field(Raw(nbBytes=2), name="f3")
+        # >>> f4 = Field(Raw(nbBytes=1), name="f4")
+        # >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
+        # >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
+        # >>> print symbol
+        # 00 | ff2f | 0000 | 00
+        # 00 | 0010 | 0000 | 00
+        # 00 | fe1f | 0000 | 00
+        # >>> Format.mergeFields(f2, f3)
+        # >>> print symbol
+        # 00 | ff2f0000 | 00
+        # 00 | 00100000 | 00
+        # 00 | fe1f0000 | 00
+        # >>> Format.mergeFields(symbol.children[0], symbol.children[1])
+        # >>> print symbol
+        # 00ff2f0000 | 00
+        # 0000100000 | 00
+        # 00fe1f0000 | 00
+        # >>> Format.mergeFields(symbol.children[0], symbol.children[1])
+        # >>> print symbol
 
         :param field: the field we want to reset
         :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
@@ -283,29 +305,29 @@ class Format(object):
     def clusterByApplicativeData(messages):
         """Regroup messages having the same applicative data in their content.
 
-        >>> import time
-        >>> import random
-        >>> import operator
-        >>> from netzob.all import *
-        >>> # we create 3 types of messages:
+        # >>> import time
+        # >>> import random
+        # >>> import operator
+        # >>> from netzob.all import *
+        # >>> # we create 3 types of messages:
 
-        >>> messages = []
-        >>> for x in range(5):
-        ...     messages.append(RawMessage("ACK {0}".format(random.randint(0, 50)), source="A", destination="B", date=time.mktime(time.strptime("9 Aug 13 10:{0}:01".format(x), "%d %b %y %H:%M:%S"))))
-        ...     messages.append(RawMessage("SYN {0}".format(random.randint(0, 50)), source="A", destination="B", date=time.mktime(time.strptime("9 Aug 13 10:{0}:02".format(x), "%d %b %y %H:%M:%S"))))
-        ...     messages.append(RawMessage("SYN/ACK {0}".format(random.randint(0, 50)), source="B", destination="A", date=time.mktime(time.strptime("9 Aug 13 10:{0}:03".format(x), "%d %b %y %H:%M:%S"))))
-        ...     time.sleep(0.2)
-        >>> session = Session(messages=messages)
-        >>> appDatas = []
-        >>> appDatas.append(ApplicativeData("ACK", ASCII("ack")))
-        >>> appDatas.append(ApplicativeData("SYN", ASCII("syn")))
-        >>> session.applicativeData = appDatas
-        >>> symbols = Format.clusterByApplicativeData(messages)
-        >>> for symbol in sorted(symbols, key=operator.attrgetter("name")):
-        ...     print "Symbol : {0} = {1} messages.".format(symbol.name, len(symbol.messages))
-        Symbol : ACK = 5 messages.
-        Symbol : ACK;SYN = 5 messages.
-        Symbol : SYN = 5 messages.
+        # >>> messages = []
+        # >>> for x in range(5):
+        # ...     messages.append(RawMessage("ACK {0}".format(random.randint(0, 50)), source="A", destination="B", date=time.mktime(time.strptime("9 Aug 13 10:{0}:01".format(x), "%d %b %y %H:%M:%S"))))
+        # ...     messages.append(RawMessage("SYN {0}".format(random.randint(0, 50)), source="A", destination="B", date=time.mktime(time.strptime("9 Aug 13 10:{0}:02".format(x), "%d %b %y %H:%M:%S"))))
+        # ...     messages.append(RawMessage("SYN/ACK {0}".format(random.randint(0, 50)), source="B", destination="A", date=time.mktime(time.strptime("9 Aug 13 10:{0}:03".format(x), "%d %b %y %H:%M:%S"))))
+        # ...     time.sleep(0.2)
+        # >>> session = Session(messages=messages)
+        # >>> appDatas = []
+        # >>> appDatas.append(ApplicativeData("ACK", ASCII("ack")))
+        # >>> appDatas.append(ApplicativeData("SYN", ASCII("syn")))
+        # >>> session.applicativeData = appDatas
+        # >>> symbols = Format.clusterByApplicativeData(messages)
+        # >>> for symbol in sorted(symbols, key=operator.attrgetter("name")):
+        # ...     print "Symbol : {0} = {1} messages.".format(symbol.name, len(symbol.messages))
+        # Symbol : ACK = 5 messages.
+        # Symbol : ACK;SYN = 5 messages.
+        # Symbol : SYN = 5 messages.
 
         :param messages: the messages to cluster.
         :type messages: a list of :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage.AbstractMessage`
@@ -340,26 +362,26 @@ class Format(object):
 
         This method is a wrapper for :class:`netzob.Inference.Vocabulary.FormatOperations.ClusterByKeyField.ClusterByKeyField`
 
-        >>> import binascii
-        >>> from netzob.all import *
-        >>> samples = ["00ff2f000000",	"000020000000",	"00ff2f000000"]
-        >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
-        >>> f1 = Field(Raw(nbBytes=1))
-        >>> f2 = Field(Raw(nbBytes=2))
-        >>> f3 = Field(Raw(nbBytes=3))
-        >>> symbol = Symbol([f1, f2, f3], messages=messages)
-        >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
+        # >>> import binascii
+        # >>> from netzob.all import *
+        # >>> samples = ["00ff2f000000",	"000020000000",	"00ff2f000000"]
+        # >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
+        # >>> f1 = Field(Raw(nbBytes=1))
+        # >>> f2 = Field(Raw(nbBytes=2))
+        # >>> f3 = Field(Raw(nbBytes=3))
+        # >>> symbol = Symbol([f1, f2, f3], messages=messages)
+        # >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
 
-        >>> newSymbols = Format.clusterByKeyField(symbol, f2)
-        >>> for sym in newSymbols.values():
-        ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
-        ...     print sym.name + ":"
-        ...     print sym
-        symbol_\x00 :
-        00 | 0020 | 000000
-        symbol_ff2f:
-        00 | ff2f | 000000
-        00 | ff2f | 000000
+        # >>> newSymbols = Format.clusterByKeyField(symbol, f2)
+        # >>> for sym in newSymbols.values():
+        # ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
+        # ...     print sym.name + ":"
+        # ...     print sym
+        # symbol_\x00 :
+        # 00 | 0020 | 000000
+        # symbol_ff2f:
+        # 00 | ff2f | 000000
+        # 00 | ff2f | 000000
 
         :param field: the field we want to split in new symbols
         :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
@@ -384,18 +406,18 @@ class Format(object):
     def findKeyFields(field):
         """Try to identify potential key fields in a symbol/field.
 
-        >>> import binascii
-        >>> from netzob.all import *
-        >>> samples = ["00ff2f000011",	"000010000000",	"00fe1f000000",	"000020000000", "00ff1f000000",	"00ff1f000000",	"00ff2f000000",	"00fe1f000000"]
-        >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
-        >>> symbol = Symbol(messages=messages)
-        >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-        >>> Format.splitStatic(symbol)
-        >>> results = Format.findKeyFields(symbol)
-        >>> for result in results:
-        ...     print "Field name: " + result["keyField"].name + ", number of clusters: " + str(result["nbClusters"]) + ", distribution: " + str(result["distribution"])
-        Field name: Field-1, number of clusters: 5, distribution: [1, 2, 2, 2, 1]
-        Field name: Field-3, number of clusters: 2, distribution: [1, 7]
+        # >>> import binascii
+        # >>> from netzob.all import *
+        # >>> samples = ["00ff2f000011",	"000010000000",	"00fe1f000000",	"000020000000", "00ff1f000000",	"00ff1f000000",	"00ff2f000000",	"00fe1f000000"]
+        # >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
+        # >>> symbol = Symbol(messages=messages)
+        # >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
+        # >>> Format.splitStatic(symbol)
+        # >>> results = Format.findKeyFields(symbol)
+        # >>> for result in results:
+        # ...     print "Field name: " + result["keyField"].name + ", number of clusters: " + str(result["nbClusters"]) + ", distribution: " + str(result["distribution"])
+        # Field name: Field-1, number of clusters: 5, distribution: [1, 2, 2, 2, 1]
+        # Field name: Field-3, number of clusters: 2, distribution: [1, 7]
 
         :param field: the field in which we want to identify key fields.
         :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
@@ -415,24 +437,24 @@ class Format(object):
         """This clustering process regroups messages that have
         equivalent size.
 
-        >>> from netzob.all import *
-        >>> import binascii
-        >>> samples = ["00ffff1100abcd", "00aaaa1100abcd", "00bbbb1100abcd", "001100abcd", "001100ffff", "00ffffffff1100abcd"]
-        >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
-        >>> newSymbols = Format.clusterBySize(messages)
-        >>> for sym in newSymbols:
-        ...     print "[" + sym.name + "]"
-        ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
-        ...     print sym
-        [symbol_9]
-        00ffffffff1100abcd
-        [symbol_5]
-        001100abcd
-        001100ffff
-        [symbol_7]
-        00ffff1100abcd
-        00aaaa1100abcd
-        00bbbb1100abcd
+        # >>> from netzob.all import *
+        # >>> import binascii
+        # >>> samples = ["00ffff1100abcd", "00aaaa1100abcd", "00bbbb1100abcd", "001100abcd", "001100ffff", "00ffffffff1100abcd"]
+        # >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
+        # >>> newSymbols = Format.clusterBySize(messages)
+        # >>> for sym in newSymbols:
+        # ...     print "[" + sym.name + "]"
+        # ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
+        # ...     print sym
+        # [symbol_9]
+        # 00ffffffff1100abcd
+        # [symbol_5]
+        # 001100abcd
+        # 001100ffff
+        # [symbol_7]
+        # 00ffff1100abcd
+        # 00aaaa1100abcd
+        # 00bbbb1100abcd
 
         :param messages: the messages to cluster.
         :type messages: a list of :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage.AbstractMessage`

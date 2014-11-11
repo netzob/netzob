@@ -34,6 +34,7 @@ from netzob.Common.Models.Vocabulary.Functions.all import *
 
 from netzob.Common.Models.Vocabulary.Field import Field
 from netzob.Common.Models.Vocabulary.Symbol import Symbol
+from netzob.Common.Models.Vocabulary.UnknownSymbol import UnknownSymbol
 from netzob.Common.Models.Vocabulary.Session import Session
 from netzob.Common.Models.Vocabulary.ApplicativeData import ApplicativeData
 from netzob.Common.Models.Vocabulary.EmptySymbol import EmptySymbol

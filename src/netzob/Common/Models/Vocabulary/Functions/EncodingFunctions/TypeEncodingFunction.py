@@ -59,21 +59,9 @@ class TypeEncodingFunction(EncodingFunction):
     >>> f = Field(name="f0", domain=Agg(["There are ", Decimal(10), " solutions."]))
     >>> m = RawMessage("There are " + TypeConverter.convert(10, Decimal, Raw) + " solutions.")
     >>> s = Symbol(fields=[f], messages=[m], name="Symbol")
-    >>> print s
-    There are 10 solutions.
-
-    >>> s.encodingFunctions = [TypeEncodingFunction(HexaString)]
+    >>> s.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> print s
     546865726520617265200a20736f6c7574696f6e732e
-
-    >>> s.encodingFunctions = [TypeEncodingFunction(Decimal)]
-    >>> print s
-    17379346443055693119708541639153417343082080279816276
-
-    >>> s.encodingFunctions = [TypeEncodingFunction(Raw)]
-    >>> print s
-    There are 
-     solutions.
     """
 
     def __init__(self, _type, unitSize=None, endianness=None, sign=None):
@@ -103,10 +91,8 @@ class TypeEncodingFunction(EncodingFunction):
             sign = AbstractType.defaultSign()
         self.sign = sign
 
-    def encode(self, field, readingToken):
-        if not readingToken.getValueForVariable(field.domain):
-            return ''
-        data = readingToken.getValueForVariable(field.domain)
+    def encode(self, data):
+        self._logger.debug(data)
         return TypeConverter.convert(data, BitArray, self.type, src_unitSize=self.unitSize, src_endianness=self.endianness, src_sign=self.sign)
 
     def priority(self):

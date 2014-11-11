@@ -58,7 +58,8 @@ from netzob.Inference.Vocabulary.FormatOperations.FieldSplitAligned import Field
 from netzob.Inference.Vocabulary.FormatOperations import FieldSplitDelimiter
 
 from netzob.Inference.Vocabulary.FormatOperations import FieldOperations
-
+from netzob.Common.Models.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
+from netzob.Common.Models.Vocabulary.Domain.Specializer.VariableSpecializer import VariableSpecializer
 
 def getSuite():
     # List of modules to include in the list of tests
@@ -79,6 +80,8 @@ def getSuite():
         DataAlignment,
         AbstractField,
         Symbol.__module__,
+        EmptySymbol.__module__,
+        UnknownSymbol.__module__,
         DomainFactory.__module__,
         Alt.__module__,
         Agg.__module__,
@@ -116,24 +119,27 @@ def getSuite():
         Memory.__module__,
         TypeConverter.__module__,
         AbstractVariable,
-        VariableReadingToken.__module__,
         Size.__module__,
+        InternetChecksum.__module__,
+        FieldParser.__module__,
+        VariableSpecializer.__module__,
+        FieldSpecializer.__module__,
 
         # Modules related to the grammatical inference
         # --------------------------------------------
         # Angluin.__module__,
-        State.__module__,
-        Transition.__module__,
-        AbstractionLayer.__module__,
-        Automata.__module__,
+        # State.__module__,
+        # Transition.__module__,
+        # AbstractionLayer.__module__,
+        # Automata.__module__,
         
         # Modules related to the protocol simulation
         # ------------------------------------------
-        Actor.__module__,
-        TCPServer.__module__,
-        TCPClient.__module__,
-        UDPServer.__module__,
-        UDPClient.__module__,
+        # Actor.__module__,
+        # TCPServer.__module__,
+        # TCPClient.__module__,
+        # UDPServer.__module__,
+        # UDPClient.__module__,
 
         # Other
         # -----

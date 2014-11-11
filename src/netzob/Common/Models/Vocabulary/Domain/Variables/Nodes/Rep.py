@@ -34,6 +34,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -43,64 +44,32 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
-from netzob.Common.Models.Vocabulary.Field import Field
-from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Utils.NetzobRegex import NetzobRegex
+from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
+from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
+from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken import AbstractVariableProcessingToken
+from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken import VariableReadingToken
+from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken import VariableWritingToken
+from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Agg import Agg
+from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Eol import Eol
 
 
 @NetzobLogger
-class FieldReseter(object):
-    """This class defines the required operation to reset
-    the definition of a field. It reinitializes the definition domain
-    as a raw field and delete its children.
+class Rep(AbstractVariableNode):
+    """Represents a REPetition of a domain with an optional separator domain
 
-    >>> import binascii
-    >>> from netzob.all import *
-    >>> samples = ["00ff2f000000",	"000010000000",	"00fe1f000000"]
-    >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
-    >>> f1 = Field(Raw(nbBytes=1))
-    >>> f21 = Field(Raw(nbBytes=1))
-    >>> f22 = Field(Raw(nbBytes=1))
-    >>> f2 = Field()
-    >>> f2.children = [f21, f22]
-    >>> f3 = Field(Raw())
-    >>> symbol = Symbol([f1, f2, f3], messages=messages)
-    >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print symbol
-    00 | ff | 2f | 000000
-    00 | 00 | 10 | 000000
-    00 | fe | 1f | 000000
-    >>> reseter = FieldReseter()
-    >>> reseter.reset(symbol)
-    >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print symbol
-    00ff2f000000
-    000010000000
-    00fe1f000000
     """
 
-    @typeCheck(AbstractField)
-    def reset(self, field):
-        """Resets the format (field hierarchy and definition domain) of
-        the specified field.
+    def __init__(self, repeatDomain, separatorDomain=None, learnable=False, mutable=True):
+        super(Rep, self).__init__(self.__class__.__name__, repeatDomain, learnable=learnable, mutable=mutable)
+
+    def parse(self, variableParserPath):
+        """Parse the content with the definition domain of a repeat."""
+        self._logger.debug("Parse '{0}' as {1} with parser path '{2}'".format(variableParserPath.remainingData, self, variableParserPath))
+
+        results = []
+
+        return results
 
 
-        :param field: the field we want to reset
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
-        :raise Exception if something bad happens
-        """
-
-        if field is None:
-            raise TypeError("The field to reset must be specified and cannot be None")
-
-        self._logger.debug("Reset the definition of field {0} ({1})".format(field.name, field.id))
-        field.clearChildren()
-
-        if isinstance(field, Symbol):
-            field.children = [Field()]
-
-        if isinstance(field, Field):
-            field.domain = Raw(None)
-            field.regex = NetzobRegex.buildDefaultRegex()
+    #OLD

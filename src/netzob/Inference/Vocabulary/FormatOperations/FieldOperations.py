@@ -72,12 +72,14 @@ class FieldOperations(object):
         00 | ff2f | 0000 | 00
         00 | 0010 | 0000 | 00
         00 | fe1f | 0000 | 00
+        
         >>> fo = FieldOperations()
         >>> fo.mergeFields(f2, f3)
         >>> print symbol
         00 | ff2f0000 | 00
         00 | 00100000 | 00
         00 | fe1f0000 | 00
+
         >>> fo.mergeFields(symbol.children[0], symbol.children[1])
         >>> print symbol
         00ff2f0000 | 00
@@ -127,6 +129,7 @@ class FieldOperations(object):
         # build a new field domain
         newDomain = Agg([field1.domain, field2.domain])
         newField = Field(domain=newDomain, name="Merge")
+        newField.encodingFunctions = field1.encodingFunctions.values()
         parent = field1.parent
         before = parent.children[:iField1]
         after = parent.children[iField2 + 1:]

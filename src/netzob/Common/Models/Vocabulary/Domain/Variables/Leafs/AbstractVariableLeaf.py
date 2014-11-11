@@ -34,6 +34,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+import abc
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -44,6 +45,7 @@
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
+from netzob.Common.Models.Vocabulary.Domain.Variables.SVAS import SVAS
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken import VariableReadingToken
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken import VariableWritingToken
 
@@ -58,166 +60,69 @@ class AbstractVariableLeaf(AbstractVariable):
 
     """
 
-    def __init__(self, varType, name=None, learnable=False, mutable=False):
-        super(AbstractVariableLeaf, self).__init__(varType, name=name, learnable=learnable, mutable=mutable)
+    def __init__(self, varType, name=None, svas=None):
+        super(AbstractVariableLeaf, self).__init__(varType, name=name, svas=svas)
 
-    @typeCheck(VariableReadingToken)
-    def read(self, readingToken):
-        """Grants a reading access to the variable. The value of readingToken is read bit by bit.
+    def parse(self, variableParserPath):
+        """@toto TO BE DOCUMENTED"""
 
-        if the variable is
-        - mutable & learnable & defined: forget, compareFormat, learn, memorize, read
-        - mutable & learnable & !defined: compareFormat, learn, memorize, read
+        if self.svas is None:
+            raise Exception("Cannot parse if the variable has no assigned SVAS.")
 
-        - mutable & !learnable & defined: compareFormat
-        - mutable & !learnable & !defined: compareFormat
-
-        - !mutable & learnable & defined: compare
-        - !mutable & learnable & !defined: compareFormat, learn, memorize
-
-        - !mutable & !learnable & defined: compare
-        - !mutable & !learnable & !defined: KO
-
-
-        :param readingToken: a token which contains all critical information on this reading access.
-        :type readingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingToken.VariableReadingToken.VariableReadingToken`
-        """
-        self._logger.debug("[ Read access on {0}:".format(self))
-
-        if self.mutable:
-            if self.learnable:
-                if self.isDefined(readingToken):
-                    self._logger.debug("\t mutable, learnable, defined")
-                    # mutable, learnable and defined.
-                    self.compareFormat(readingToken)
-                    if readingToken.Ok:
-                        self.forget(readingToken)
-                        self.learn(readingToken)
-                        self.memorize(readingToken)
-                        tmpSize = len(readingToken.value[readingToken.index:])
-                        readingToken.incrementIndex(tmpSize)
-                else:
-                    self._logger.debug("\t mutable, learnable, !defined")
-                    # mutable, learnable and not defined.
-                    self.compareFormat(readingToken)
-                    self.learn(readingToken)
-                    self.memorize(readingToken)
-                    tmpSize = len(readingToken.value[readingToken.index:])
-                    readingToken.incrementIndex(tmpSize)
-
-            else:
-                if self.isDefined(readingToken):
-                    self._logger.debug("\t mutable, !learnable, defined")
-                    # mutable, not learnable and defined.
-                    self.compareFormat(readingToken)
-                else:
-                    self._logger.debug("\t mutable, !learnable, !defined")
-                    # mutable, learnable and not defined.
-                    self.compareFormat(readingToken)
+        if self.isDefined(variableParserPath):
+            if self.svas == SVAS.CONSTANT:
+                return self.valueCMP(variableParserPath)
+            elif self.svas == SVAS.PERSISTENT:
+                return self.learn(variableParserPath)
         else:
-            if self.learnable:
-                if self.isDefined(readingToken):
-                    self._logger.debug("\t !mutable, learnable, defined")
-                    # not mutable, learnable and defined.
-                    self.compare(readingToken)
+            if self.svas == SVAS.CONSTANT:
+                self._logger.debug("Cannot parse '{0}' as svas is CONSTANT and no value is available.".format(self))
+                return []
+            elif self.svas == SVAS.EPHEMERAL:
+                return self.learn(variableParserPath)
 
-                else:
-                    self._logger.debug("\t !mutable, learnable, defined")
-                    # not mutable, learnable and not defined.
-                    self.compareFormat(readingToken)
-                    self.learn(readingToken)
-                    self.memorize(readingToken)
-
-            else:
-                if self.isDefined(readingToken):
-                    self._logger.debug("\t !mutable, !learnable, defined")
-                    # not mutable, not learnable and defined.
-                    self.compare(readingToken)
-
-                else:
-                    self._logger.debug("\t !mutable, !learnable, !defined")
-                    # not mutable, not learnable and not defined.
-                    self._logger.debug("Read abort: the variable is neither defined, nor mutable.")
-                    readingToken.Ok = False
-
-        # Variable notification
-        #if readingToken.Ok:
-        #    self.notifyBoundedVariables("read", readingToken, self.getValue(readingToken))
-
-        self._logger.debug("\t {0}. ]".format(readingToken))
-
-    @typeCheck(VariableWritingToken)
-    def write(self, writingToken):
-        """Grants a writing access to the variable.
-        A value is written according to encountered node variable rules and is stored in the provided writingToken.
-
-        mutable & learnable & defined: mutate, writeValue
-        mutable & learnable & !defined: generate, memorize, writeValue
-
-        mutable & !learnable & defined: generate, writeValue
-        mutable & !learnable & !defined: generate, writeValue
-
-        !mutable & learnable & defined: writeValue
-        !mutable & learnable & !defined: generate, memorize, writeValue
-
-        !mutable & !learnable & defined: writeValue
-        !mutable & !learnable & !defined: KO
+        raise Exception("Not yet implemented.")
 
 
-        :param writingToken: a token which contains all critical information on this writing access.
-        :type writingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingToken.VariableWritingToken.VariableWritingToken`
-        """
-        self._logger.debug("[ {0} (leaf): write access:".format(self))
-        self.tokenChoppedIndexes = []  # New write access => new final value and new reference to it.
-        if self.mutable:
-            if self.learnable:
-                if self.isDefined(writingToken):
-                    # mutable, learnable and defined.
-                    self.mutate(writingToken)
-                    self.writeValue(writingToken)
+    def specialize(self, variableSpecializerPath):
+        """@toto TO BE DOCUMENTED"""
 
-                else:
-                    # mutable, learnable and not defined.
-                    self.generate(writingToken)
-                    self.memorize(writingToken)
-                    self.writeValue(writingToken)
-            else:
-                if self.isDefined(writingToken):
-                    # mutable, not learnable, defined.
-                    self.generate(writingToken)
-                    self.writeValue(writingToken)
+        if self.svas is None:
+            raise Exception("Cannot specialize if the variable has no assigned SVAS.")
 
-                else:
-                    # mutable, not learnable, not defined.
-                    self.generate(writingToken)
-                    self.writeValue(writingToken)
+        if self.isDefined(variableSpecializerPath):
+            if self.svas == SVAS.CONSTANT or self.svas == SVAS.PERSISTENT:
+                return self.use(variableSpecializerPath)
+            elif self.svas == SVAS.EPHEMERAL:
+                return self.regenerateAndMemorize(variableSpecializerPath)
+            elif self.svas == SVAS.VOLATILE:
+                return self.regenerate(variableSpecializerPath)
         else:
-            if self.learnable:
-                if self.isDefined(writingToken):
-                    # not mutable, learnable and defined.
-                    self.writeValue(writingToken)
+            if self.svas == SVAS.CONSTANT:
+                self._logger.debug("Cannot specialize '{0}' as svas is CONSTANT and no value is available.".format(self))
+                return []
+            elif self.svas == SVAS.EPHEMERAL or self.svas == SVAS.EPHEMERAL:
+                return self.regenerateAndMemorize(variableSpecializerPath)
+            elif self.svas == SVAS.VOLATILE:
+                return self.regenerate(variableSpecializerPath)
 
-                else:
-                    # not mutable, learnable and not defined.
-                    self.generate(writingToken)
-                    self.memorize(writingToken)
-                    self.writeValue(writingToken)
+        raise Exception("Not yet implemented.")
+    
+    @abc.abstractmethod
+    def isDefined(self, variablParserPath):
+        return Exception("Not yet implemented.")
+            
+    @abc.abstractmethod
+    def valueCMP(self, variableParserPath):
+        return Exception("Not yet implemented.")
 
-            else:
-                if self.isDefined(writingToken):
-                    # not mutable, not learnable and defined.
-                    self.writeValue(writingToken)
+    @abc.abstractmethod
+    def learn(self, variableParserPath):
+        return Exception("Not yet implemented.")
 
-                else:
-                    # not mutable, not learnable and not defined.
-                    self._logger.debug("Write abort: the variable is neither defined, nor mutable.")
-                    writingToken.Ok = False
-
-        # Variable notification
-        #if writingToken.Ok:
-        #    self.notifyBoundedVariables("write", writingToken)
-
-        self._logger.debug("\t: {0}. ]".format(writingToken))
+    @abc.abstractmethod
+    def typeCMP(self, variableParserPath):
+        return Exception("Not yet implemented.")
 
     def _str_debug(self, deepness=0):
         """Returns a string which denotes
@@ -227,11 +132,178 @@ class AbstractVariableLeaf(AbstractVariable):
         tab.append("|--   ")
         tab.append("{0}".format(self))
         return ''.join(tab)
+        
 
-    def _addEOL(self):
-        """nothing to be done here, only nodes manage EOL"""
-        pass
+    # @typeCheck(VariableReadingToken)
+    # def read(self, readingToken):
+    #     """Grants a reading access to the variable. The value of readingToken is read bit by bit.
 
-    def _removeEOL(self):
-        """nothing to be done here, only nodes manage EOL"""
-        pass
+    #     if the variable is
+    #     - mutable & learnable & defined: forget, compareFormat, learn, memorize, read
+    #     - mutable & learnable & !defined: compareFormat, learn, memorize, read
+
+    #     - mutable & !learnable & defined: compareFormat
+    #     - mutable & !learnable & !defined: compareFormat
+
+    #     - !mutable & learnable & defined: compare
+    #     - !mutable & learnable & !defined: compareFormat, learn, memorize
+
+    #     - !mutable & !learnable & defined: compare
+    #     - !mutable & !learnable & !defined: KO
+
+
+    #     :param readingToken: a token which contains all critical information on this reading access.
+    #     :type readingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingToken.VariableReadingToken.VariableReadingToken`
+    #     """
+    #     self._logger.debug("[ Read access on {0}:".format(self))
+
+    #     if self.mutable:
+    #         if self.learnable:
+    #             if self.isDefined(readingToken):
+    #                 self._logger.debug("\t mutable, learnable, defined")
+    #                 # mutable, learnable and defined.
+    #                 self.compareFormat(readingToken)
+    #                 if readingToken.Ok:
+    #                     self.forget(readingToken)
+    #                     self.learn(readingToken)
+    #                     self.memorize(readingToken)
+    #                     tmpSize = len(readingToken.value[readingToken.index:])
+    #                     readingToken.incrementIndex(tmpSize)
+    #             else:
+    #                 self._logger.debug("\t mutable, learnable, !defined")
+    #                 # mutable, learnable and not defined.
+    #                 self.compareFormat(readingToken)
+    #                 self.learn(readingToken)
+    #                 self.memorize(readingToken)
+    #                 tmpSize = len(readingToken.value[readingToken.index:])
+    #                 readingToken.incrementIndex(tmpSize)
+
+    #         else:
+    #             if self.isDefined(readingToken):
+    #                 self._logger.debug("\t mutable, !learnable, defined")
+    #                 # mutable, not learnable and defined.
+    #                 self.compareFormat(readingToken)
+    #             else:
+    #                 self._logger.debug("\t mutable, !learnable, !defined")
+    #                 # mutable, learnable and not defined.
+    #                 self.compareFormat(readingToken)
+    #     else:
+    #         if self.learnable:
+    #             if self.isDefined(readingToken):
+    #                 self._logger.debug("\t !mutable, learnable, defined")
+    #                 # not mutable, learnable and defined.
+    #                 self.compare(readingToken)
+
+    #             else:
+    #                 self._logger.debug("\t !mutable, learnable, defined")
+    #                 # not mutable, learnable and not defined.
+    #                 self.compareFormat(readingToken)
+    #                 self.learn(readingToken)
+    #                 self.memorize(readingToken)
+
+    #         else:
+    #             if self.isDefined(readingToken):
+    #                 self._logger.debug("\t !mutable, !learnable, defined")
+    #                 # not mutable, not learnable and defined.
+    #                 self.compare(readingToken)
+
+    #             else:
+    #                 self._logger.debug("\t !mutable, !learnable, !defined")
+    #                 # not mutable, not learnable and not defined.
+    #                 self._logger.debug("Read abort: the variable is neither defined, nor mutable.")
+    #                 readingToken.Ok = False
+
+    #     # Variable notification
+    #     #if readingToken.Ok:
+    #     #    self.notifyBoundedVariables("read", readingToken, self.getValue(readingToken))
+
+    #     self._logger.debug("\t {0}. ]".format(readingToken))
+
+    # @typeCheck(VariableWritingToken)
+    # def write(self, writingToken):
+    #     """Grants a writing access to the variable.
+    #     A value is written according to encountered node variable rules and is stored in the provided writingToken.
+
+    #     mutable & learnable & defined: mutate, writeValue
+    #     mutable & learnable & !defined: generate, memorize, writeValue
+
+    #     mutable & !learnable & defined: generate, writeValue
+    #     mutable & !learnable & !defined: generate, writeValue
+
+    #     !mutable & learnable & defined: writeValue
+    #     !mutable & learnable & !defined: generate, memorize, writeValue
+
+    #     !mutable & !learnable & defined: writeValue
+    #     !mutable & !learnable & !defined: KO
+
+
+    #     :param writingToken: a token which contains all critical information on this writing access.
+    #     :type writingToken: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingToken.VariableWritingToken.VariableWritingToken`
+    #     """
+    #     self._logger.debug("[ {0} (leaf): write access:".format(self))
+    #     self.tokenChoppedIndexes = []  # New write access => new final value and new reference to it.
+    #     if self.mutable:
+    #         if self.learnable:
+    #             if self.isDefined(writingToken):
+    #                 self._logger.debug("{0} is mutable, learnable and defined.".format(self))
+    #                 # mutable, learnable and defined.
+    #                 self.mutate(writingToken)
+    #                 self.writeValue(writingToken)
+
+    #             else:
+    #                 self._logger.debug("{0} is mutable, learnable and ! defined.".format(self))
+    #                 # mutable, learnable and not defined.
+    #                 self.generate(writingToken)
+    #                 self.memorize(writingToken)
+    #                 self.writeValue(writingToken)
+    #         else:
+    #             if self.isDefined(writingToken):
+    #                 self._logger.debug("{0} is mutable, ! learnable and defined.".format(self))
+    #                 # mutable, not learnable, defined.
+    #                 self.generate(writingToken)
+    #                 self.writeValue(writingToken)
+
+    #             else:
+    #                 self._logger.debug("{0} is mutable, ! learnable and ! defined.".format(self))                    
+    #                 # mutable, not learnable, not defined.
+    #                 self.generate(writingToken)
+    #                 self.writeValue(writingToken)
+    #     else:
+    #         if self.learnable:
+    #             if self.isDefined(writingToken):
+    #                 self._logger.debug("{0} is ! mutable, learnable and defined.".format(self))                    
+    #                 # not mutable, learnable and defined.
+    #                 self.writeValue(writingToken)
+
+    #             else:
+    #                 # not mutable, learnable and not defined.
+    #                 self._logger.debug("{0} is ! mutable, learnable and  ! defined.".format(self))                    
+    #                 self.generate(writingToken)
+    #                 self.memorize(writingToken)
+    #                 self.writeValue(writingToken)
+
+    #         else:
+    #             if self.isDefined(writingToken):
+    #                 self._logger.debug("{0} is ! mutable, ! learnable and defined.".format(self))                    
+    #                 # not mutable, not learnable and defined.
+    #                 self.writeValue(writingToken)
+
+    #             else:
+    #                 # not mutable, not learnable and not defined.                    
+    #                 self._logger.debug("Write abort: the variable is neither defined, nor mutable.")
+    #                 writingToken.Ok = False
+
+    #     # Variable notification
+    #     #if writingToken.Ok:
+    #     #    self.notifyBoundedVariables("write", writingToken)
+
+    #     self._logger.debug("\t: {0}. ]".format(writingToken))
+
+
+    # def _addEOL(self):
+    #     """nothing to be done here, only nodes manage EOL"""
+    #     pass
+
+    # def _removeEOL(self):
+    #     """nothing to be done here, only nodes manage EOL"""
+    #     pass

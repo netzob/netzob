@@ -100,6 +100,64 @@ class Size(AbstractRelationVariableLeaf):
         self.factor = factor
         self.offset = offset
 
+    def __key(self):
+        return (self.dataType, self.factor, self.offset)
+
+    def __eq__(x, y):
+        try:
+            return x.__key() == y.__key()
+        except:
+            return False
+
+    def __hash__(self):
+        return hash(self.__key())
+
+    def isDefined(self, variableParserPath):
+        # we retrieve the memory of the current path
+        memory = variableParserPath.memory
+
+        return memory.hasMemorized(self)
+
+    def valueCMP(self, variableParserPath):
+        if variableParserPath is None:
+            raise Exception("VariableParserPath cannot be None")
+
+        # first checks the pointed fields all have a value
+        hasValue = True
+        for field in self.fields:
+            if field.domain != self and not variableParserPath.isValueForVariableAvailable(field.domain):
+                hasValue = False
+
+        if not hasValue:
+            raise Exception("Impossible to compute the value (getValue) of the current Size field since some of its dependencies have no value")
+        else:
+            size = 0
+            for field in self.fields:
+                if field.domain is self:
+                    fieldValue = self.dataType.generate()
+                else:
+                    fieldValue = variableParserPath.getValueForVariable(field.domain)
+                if fieldValue is None:
+                    break
+                else:
+                    tmpLen = len(fieldValue)
+                    tmpLen = int(math.ceil(tmpLen / 8.0) * 8)  # Round to the upper closest multiple of 8 (the size of a byte),
+                                                               # because this is what will be considered durring field specialization
+                    size += tmpLen
+            size = size * self.factor + self.offset
+            b = TypeConverter.convert(size, Decimal, BitArray)
+
+            while len(b)<self.dataType.size[0]:
+                b.insert(0, False)
+
+        content = variableParserPath.remainingData
+
+        if content == b:
+            variableParserPath.createVariableParserResult(self, True, b, None)
+            
+
+
+        
     def buildRegex(self):
         """This method creates a regex based on the size
         established in the domain."""

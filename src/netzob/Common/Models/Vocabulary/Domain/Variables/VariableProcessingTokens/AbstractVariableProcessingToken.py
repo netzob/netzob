@@ -43,6 +43,7 @@ from netzob.Common.Models.Types.AbstractType import AbstractType
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.ASCII import ASCII
 from netzob.Common.Models.Types.BitArray import BitArray
+from netzob.Common.Models.Types.Raw import Raw
 
 from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 
@@ -91,13 +92,17 @@ class AbstractVariableProcessingToken(object):
     def setValueForVariable(self, variable, value):
         if variable is None:
             raise TypeError("Variable cannot be None")
+        
+        self._logger.fatal("Saving value {0} in variable {1}".format(TypeConverter.convert(value, BitArray, Raw), variable))
+        
         self.__linkedValues[variable.id] = value
         if variable.id in self.__relationCallbacks.keys():
-            self._logger.debug("A relation might be completed now...")
+            self._logger.debug("{0} participates in a relation, we might be able to complete it now...".format(variable))
             toCall = self.__relationCallbacks[variable.id]
-
+            
             for cb in toCall:
                 (domain, call) = cb
+                self._logger.debug("Execute Relation callback {0} / {1}".format(domain, call))
                 self.__relationCallbacks[variable.id].remove(cb)
                 if domain.isDefined(self):
                     self._logger.debug("relation defined.")
@@ -106,6 +111,8 @@ class AbstractVariableProcessingToken(object):
                         raise Exception("A relation has failed.")
                 else:
                     self._logger.debug("Relation cannot yet be computed, more dependencies required.")
+
+        self._logger.debug("End of setValueForVariable.")
 
     @typeCheck(AbstractVariable)
     def getValueForVariable(self, variable):

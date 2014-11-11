@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -6,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -29,60 +28,57 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import unittest
-import sys
-import os
+
+
+#+---------------------------------------------------------------------------+
+#| Related third party imports
+#+---------------------------------------------------------------------------+
+import inspect
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-#from test_netzob import suite_Common
-from test_netzob import suite_Tutorials
-from test_netzob import suite_DocTests
-
-#from test_netzob import suite_Import
-from common.xmlrunner import XMLTestRunner
 
 
-def getSuite():
-    globalSuite = unittest.TestSuite()
+class JSONSerializator(object):
 
-    modulesOfTests = []
-    modulesOfSuites = [
-        suite_DocTests,  # tests extracted from docstrings (doctests)
-        #  suite_Common,
-        # suite_Tutorials
-    ]
-    # modulesOfTests = [test_NetzobGui]
+    @staticmethod
+    def serialize(obj):
+        """Serialize the specified object under a specific
+        JSON format.
+        It inspects the specified object to search for attributes to
+        serialize.
 
-    # Add individual tests
-    for module in modulesOfTests:
-        globalSuite.addTests(unittest.TestLoader().loadTestsFromModule(module))
+        >>> from netzob.all import *
+        >>> msg = RawMessage("hello")
+        >>> print JSONSerializator.serialize(msg)
 
-    # Add suites
-    for module in modulesOfSuites:
-        globalSuite.addTests(module.getSuite())
+        It's not possible to serialize a None object
 
-    return globalSuite
+        >>> JSONSerializator.serialize(None)
+        Traceback (most recent call last):
+        ...
+        TypeError: Cannot serialize a None object
+    
+        :parameter obj: the object to serialize
+        :type obj: :class:`object`
+        :return: the object serialized in JSON
+        :rtype: :class:`str`
+        """
 
-if __name__ == "__main__":
-    # Output is given through argument.
-    # If no argument: output to stdout
-    outputStdout = True
+        if obj is None:
+            raise TypeError("Cannot serialize a None object")
 
-    if (len(sys.argv) == 2):
-        outputStdout = False
-        reportFile = sys.argv[1]
+        typeObj = type(obj)
+        props = []
+        for entry in typeObj.__dict__.values():
+            if inspect.isdatadescriptor(entry):
+                props.append(entry)
 
-    # We retrieve the current test suite
-    currentTestSuite = getSuite()
-
-    # We execute the test suite
-    if outputStdout:
-        runner = unittest.TextTestRunner()
-        testResult = runner.run(currentTestSuite)
-    else:
-        File = open(reportFile, "w")
-        reporter = XMLTestRunner(File)
-        reporter.run(currentTestSuite)
-        File.close()
+        for prop in props:
+            print prop.fget.__name__, prop.fget
+            
+                                        
+                
+    
+        return "TEST"

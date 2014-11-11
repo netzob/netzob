@@ -44,6 +44,7 @@
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Common.Models.Vocabulary.Symbol import Symbol
+from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 
 
 class EmptySymbol(Symbol):
@@ -56,7 +57,7 @@ class EmptySymbol(Symbol):
     """
 
     def __init__(self, receptionTimeout=None):
-        super(EmptySymbol, self).__init__(fields=None, name=None)
+        super(EmptySymbol, self).__init__(fields=None, name=None, messages=[RawMessage()])
         if receptionTimeout is None:
             receptionTimeout = EmptySymbol.defaultReceptionTimeout()
 

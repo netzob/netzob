@@ -70,6 +70,8 @@ class AbstractMessage(SortableObject):
         :parameter destination: the optional destination address of the message
         :type destination: a :class:`str`
         """
+        if data is None:
+            data = ''
         self.data = data
         self.session = session
         if _id is None:

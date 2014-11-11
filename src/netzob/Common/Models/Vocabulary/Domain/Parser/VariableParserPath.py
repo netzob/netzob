@@ -34,6 +34,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -43,64 +44,64 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
-from netzob.Common.Models.Vocabulary.Field import Field
-from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Utils.NetzobRegex import NetzobRegex
+from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
+from netzob.Common.Models.Vocabulary.Domain.Parser.VariableParserResult import VariableParserResult
 
 
 @NetzobLogger
-class FieldReseter(object):
-    """This class defines the required operation to reset
-    the definition of a field. It reinitializes the definition domain
-    as a raw field and delete its children.
-
-    >>> import binascii
-    >>> from netzob.all import *
-    >>> samples = ["00ff2f000000",	"000010000000",	"00fe1f000000"]
-    >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
-    >>> f1 = Field(Raw(nbBytes=1))
-    >>> f21 = Field(Raw(nbBytes=1))
-    >>> f22 = Field(Raw(nbBytes=1))
-    >>> f2 = Field()
-    >>> f2.children = [f21, f22]
-    >>> f3 = Field(Raw())
-    >>> symbol = Symbol([f1, f2, f3], messages=messages)
-    >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print symbol
-    00 | ff | 2f | 000000
-    00 | 00 | 10 | 000000
-    00 | fe | 1f | 000000
-    >>> reseter = FieldReseter()
-    >>> reseter.reset(symbol)
-    >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print symbol
-    00ff2f000000
-    000010000000
-    00fe1f000000
+class VariableParserPath(object):
+    """This class denotes one parsing result of a variable against a specified content
+    
     """
+    
+    def __init__(self, variableParser, consumedData, remainingData, originalVariableParserPath=None):
+        self.name = str(uuid.uuid4())
+        self._logger.debug("CD = {0}".format(consumedData))
+        self.consumedData = consumedData
+        self.remainingData = remainingData
+        self.variableParser = variableParser
+        self.memory = self.variableParser.memory.duplicate()
+        
+        self.originalVariableParserPath = originalVariableParserPath
+        self.variableParserResults = []
+        if originalVariableParserPath is not None:
+            self.variableParserResults.extend(originalVariableParserPath.variableParserResults)
 
-    @typeCheck(AbstractField)
-    def reset(self, field):
-        """Resets the format (field hierarchy and definition domain) of
-        the specified field.
+            
+    def createVariableParserResult(self, variable, parserResult, consumedData, remainedData):
+        variableParserResult = VariableParserResult(variable, parserResult, consumedData, remainedData)
+        if parserResult:
+            self._logger.debug("New parser result attached to path {0}: {1}".format(self, variableParserResult))
+            self.remainingData = variableParserResult.remainedData
+    
+            if self.consumedData is None:
+                self._logger.debug("consumed is none...")
+                self.consumedData = variableParserResult.consumedData
+            else:
+                self.consumedData.extend(variableParserResult.consumedData)
+        else:
+            self._logger.debug("creation of an invalid parser result.")
+        
+        self.variableParserResults.append(variableParserResult)
+        self._logger.debug("After registering new VariablePathResult, Path is {0}".format(self))        
 
+    def __str__(self):
+        return "Path {0} (consumedData={1}, remainingData={2}".format(self.name, self.consumedData, self.remainingData)
 
-        :param field: the field we want to reset
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
-        :raise Exception if something bad happens
-        """
+    @property
+    def consumedData(self):
+        return self.__consumedData
 
-        if field is None:
-            raise TypeError("The field to reset must be specified and cannot be None")
+    @consumedData.setter
+    def consumedData(self, consumedData):
+        self.__consumedData = consumedData
 
-        self._logger.debug("Reset the definition of field {0} ({1})".format(field.name, field.id))
-        field.clearChildren()
+    @property
+    def memory(self):
+        return self.__memory
 
-        if isinstance(field, Symbol):
-            field.children = [Field()]
-
-        if isinstance(field, Field):
-            field.domain = Raw(None)
-            field.regex = NetzobRegex.buildDefaultRegex()
+    @memory.setter
+    def memory(self, memory):
+        if memory is None:
+            raise Exception("Memory cannot be None")
+        self.__memory = memory        

@@ -46,7 +46,7 @@ import random
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-
+from netzob.Common.Models.Vocabulary.Domain.Variables.SVAS import SVAS
 
 @NetzobLogger
 class AbstractType(object):
@@ -515,14 +515,14 @@ class AbstractType(object):
         """
         from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
 
-        if self.value is None:
-            mutable = True
-            learnable = False
+        svas = None
+        
+        if self.value is not None:
+            svas = SVAS.CONSTANT
         else:
-            mutable = False
-            learnable = False
+            svas = SVAS.EPHEMERAL
 
-        return Data(dataType=self, originalValue=self.value, learnable=learnable, mutable=mutable)
+        return Data(dataType=self, originalValue=self.value, svas=svas)
 
     @property
     def typeName(self):

@@ -43,64 +43,65 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
-from netzob.Common.Models.Vocabulary.Field import Field
-from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Utils.NetzobRegex import NetzobRegex
-
+from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 
 @NetzobLogger
-class FieldReseter(object):
-    """This class defines the required operation to reset
-    the definition of a field. It reinitializes the definition domain
-    as a raw field and delete its children.
-
-    >>> import binascii
-    >>> from netzob.all import *
-    >>> samples = ["00ff2f000000",	"000010000000",	"00fe1f000000"]
-    >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
-    >>> f1 = Field(Raw(nbBytes=1))
-    >>> f21 = Field(Raw(nbBytes=1))
-    >>> f22 = Field(Raw(nbBytes=1))
-    >>> f2 = Field()
-    >>> f2.children = [f21, f22]
-    >>> f3 = Field(Raw())
-    >>> symbol = Symbol([f1, f2, f3], messages=messages)
-    >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print symbol
-    00 | ff | 2f | 000000
-    00 | 00 | 10 | 000000
-    00 | fe | 1f | 000000
-    >>> reseter = FieldReseter()
-    >>> reseter.reset(symbol)
-    >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print symbol
-    00ff2f000000
-    000010000000
-    00fe1f000000
+class VariableSpecializerResult():
+    """This class denotes one specializer result of a variable
+    
     """
 
-    @typeCheck(AbstractField)
-    def reset(self, field):
-        """Resets the format (field hierarchy and definition domain) of
-        the specified field.
+    def __init__(self, variable, result, generatedContent):
+        self.variable = variable
+        self.result = result
+        self.generatedContent = generatedContent
 
+    def isOk(self):
+        """Returns True if this results is True"""
+        return self.result
 
-        :param field: the field we want to reset
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
-        :raise Exception if something bad happens
+    def __str__(self):
+        return "VarSpecializerResult (result={0}, generatedContent={1})".format(self.result, self.generatedContent)
+    
+    @property
+    def result(self):
+        return self.__result
+
+    @result.setter
+    @typeCheck(bool)
+    def result(self, result):
+        if result is None:
+            raise Exception("Result cannot be None")
+        self.__result = result
+            
+    @property
+    def variable(self):
+        """The variable that will be use to parse some content
+
+        :type: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable`
         """
+        return self.__variable
 
-        if field is None:
-            raise TypeError("The field to reset must be specified and cannot be None")
+    @variable.setter
+    @typeCheck(AbstractVariable)
+    def variable(self, variable):
+        if variable is None:
+            raise ValueError("Variable cannot be None")
 
-        self._logger.debug("Reset the definition of field {0} ({1})".format(field.name, field.id))
-        field.clearChildren()
+        self.__variable = variable
 
-        if isinstance(field, Symbol):
-            field.children = [Field()]
+    @property
+    def generatedContent(self):
+        """The generatedContent obtained after parsing
 
-        if isinstance(field, Field):
-            field.domain = Raw(None)
-            field.regex = NetzobRegex.buildDefaultRegex()
+        :type: raw
+        """
+        return self.__generatedContent
+
+    @generatedContent.setter
+    def generatedContent(self, generatedContent):
+        self.__generatedContent = generatedContent
+
+
+    
+
