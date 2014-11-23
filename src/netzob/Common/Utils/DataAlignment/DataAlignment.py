@@ -256,7 +256,8 @@ class DataAlignment(threading.Thread):
         if len(parsingResults) == 0:
             raise Exception("Message cannot be parsed according to fields specification")
         if len(parsingResults) > 1:
-            self._logger.fatal("TODO: multiple parsing results found !")
+            # TODO: new version should support the selection of which parsing result must be retained
+            self._logger.debug("TODO: multiple parsing results found !")
         parsingResult = parsingResults[0]
 
         resultEncoded = []
