@@ -91,8 +91,6 @@ class ClusterByKeyField(object):
         :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
         :raise Exception if something bad happens
         """
-        import logging
-        _logger = logging.getLogger("paf")
 
         # Safe checks
         if field is None:
@@ -106,23 +104,32 @@ class ClusterByKeyField(object):
         
         keyFieldMessageValues = keyField.getMessageValues()
 
-        # Retrieve uniq values of the key field
-        keyFieldValues = list(set(keyFieldMessageValues.values()))
-        if len(keyFieldValues) == 0:
-            return newSymbols
-        _logger.warn(keyFieldValues)
-        
         # we create a symbol for each of these uniq values        
         for message, keyFieldValue in keyFieldMessageValues.iteritems():
             if keyFieldValue not in newSymbols.keys():
                 newSymbols[keyFieldValue] = Symbol(name="symbol_{0}".format(TypeConverter.convert(keyFieldValue, Raw, HexaString)), messages=[message])
-                # we recreate the same fields in this new symbol as the fields that exist in the original symbol
-                for f in field.children:
-                    newF = Field(name=f.name, domain=f.domain)
-                    newF.parent = newSymbols[keyFieldValue]
-                    newSymbols[keyFieldValue].children.append(newF)
             else:
                 newSymbols[keyFieldValue].messages.append(message)
+
+        for newSymbol in newSymbols.values():
+            # we recreate the same fields in this new symbol as the fields that exist in the original symbol
+            newSymbol.clearChildren()
+            for f in field.children:
+                newF = Field(name=f.name, domain=f.domain)
+                newF.parent = newSymbol
+                newSymbol.children.append(newF)
+            # we remove endless fields that accepts no values
+            cells = newSymbol.getCells()
+            max_i_cell_with_value = 0
+            for line in cells:
+                for i_cell, cell in enumerate(line):
+                    if cell != '' and max_i_cell_with_value < i_cell:
+                        max_i_cell_with_value = i_cell
+            newSymbol.clearChildren()
+            for f in field.children[:max_i_cell_with_value+1]:
+                newF = Field(name=f.name, domain=f.domain)
+                newF.parent = newSymbol
+                newSymbol.children.append(newF)
 
         return newSymbols
 
