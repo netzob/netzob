@@ -45,25 +45,27 @@
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Common.Models.Vocabulary.Symbol import Symbol
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
+from netzob.Common.Models.Vocabulary.Messages.AbstractMessage import AbstractMessage
+
 
 class UnknownSymbol(Symbol):
     """An unknown symbol is a special type of symbol that is returned to represent a message that cannot be abstracted
 
     >>> from netzob.all import *
     >>> u = UnknownSymbol()
-    >>> print u
-    <BLANKLINE>
+    >>> print u.name
+    Unknown Symbol
 
     >>> msg = RawMessage("hello")
     >>> u = UnknownSymbol(msg)
-    >>> print u
-    <BLANKLINE>
+    >>> print u.name
+    Unknown Symbol
 
     """
 
     def __init__(self, message=None):
-        super(UnknownSymbol, self).__init__(fields=None, name="Unknown Symbol", messages=[RawMessage()])
-        self.message = message
+        self.message = message    
+        super(UnknownSymbol, self).__init__(fields=None, name="Unknown Symbol", messages=[self.message])
 
     @property
     def message(self):
@@ -74,5 +76,9 @@ class UnknownSymbol(Symbol):
         return self.__message
 
     @message.setter
+    @typeCheck(AbstractMessage)
     def message(self, message):
+        if message is None:
+            message = RawMessage()
+        
         self.__message = message
