@@ -101,21 +101,25 @@ class ClusterByKeyField(object):
             raise TypeError("'keyField' is not a child of 'field'")
 
         newSymbols = {}
-        
+
         keyFieldMessageValues = keyField.getMessageValues()
 
         # we create a symbol for each of these uniq values        
         for message, keyFieldValue in keyFieldMessageValues.iteritems():
-            if keyFieldValue not in newSymbols.keys():
-                newSymbols[keyFieldValue] = Symbol(name="symbol_{0}".format(TypeConverter.convert(keyFieldValue, Raw, HexaString)), messages=[message])
+            if "symbol_{0}".format(keyFieldValue) not in newSymbols.keys():
+                newSymbols["symbol_{0}".format(keyFieldValue)] = Symbol(name=keyFieldValue, messages=[message])
             else:
-                newSymbols[keyFieldValue].messages.append(message)
+                newSymbols["symbol_{0}".format(keyFieldValue)].messages.append(message)
 
         for newSymbol in newSymbols.values():
             # we recreate the same fields in this new symbol as the fields that exist in the original symbol
             newSymbol.clearChildren()
             for f in field.children:
-                newF = Field(name=f.name, domain=f.domain)
+                if f == keyField:
+                    newFieldDomain = newSymbol.name
+                else:
+                    newFieldDomain = f.domain
+                newF = Field(name=f.name, domain=newFieldDomain)
                 newF.parent = newSymbol
                 newSymbol.children.append(newF)
             # we remove endless fields that accepts no values
@@ -127,7 +131,11 @@ class ClusterByKeyField(object):
                         max_i_cell_with_value = i_cell
             newSymbol.clearChildren()
             for f in field.children[:max_i_cell_with_value+1]:
-                newF = Field(name=f.name, domain=f.domain)
+                if f == keyField:
+                    newFieldDomain = newSymbol.name
+                else:
+                    newFieldDomain = f.domain
+                newF = Field(name=f.name, domain=newFieldDomain)
                 newF.parent = newSymbol
                 newSymbol.children.append(newF)
 
