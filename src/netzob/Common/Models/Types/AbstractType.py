@@ -60,9 +60,9 @@ class AbstractType(object):
     >>> from netzob.all import *
     >>> t = ASCII("netzob")
     >>> t.value
-    bitarray('011101101010011000101110010111101111011001000110')
+    bitarray('011011100110010101110100011110100110111101100010')
     >>> print t.endianness
-    little
+    big
     """
 
     __metaclass__ = abc.ABCMeta
@@ -472,7 +472,7 @@ class AbstractType(object):
         >>> print normalizedData.__class__
         <class 'netzob.Common.Models.Types.ASCII.ASCII'>
         >>> print normalizedData.value
-        bitarray('011101101010011000101110010111101111011001000110')
+        bitarray('011011100110010101110100011110100110111101100010')
         """
 
         if data is None:
