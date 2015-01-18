@@ -127,15 +127,15 @@ class Memory(object):
         >>> m.memorize(d1, TypeConverter.convert(100, Decimal, BitArray))
         >>> m.memorize(d2, TypeConverter.convert("hello", ASCII, BitArray))
         >>> m.getValue(d1)
-        bitarray('00100110')
+        bitarray('01100100')
         >>> m2 = m.duplicate()
         >>> m2.getValue(d1)
-        bitarray('00100110')
+        bitarray('01100100')
         >>> m.getValue(d1).bytereverse()
         >>> m.getValue(d1)
-        bitarray('01100100')
-        >>> m2.getValue(d1)
         bitarray('00100110')
+        >>> m2.getValue(d1)
+        bitarray('01100100')
 
         :return: a new memory containing the same entries than current one
         :rtype: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Memory`
