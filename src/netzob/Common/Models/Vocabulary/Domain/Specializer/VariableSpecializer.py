@@ -43,8 +43,8 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Common.Models.Vocabulary.Domain.Specializer.VariableSpecializerPath import VariableSpecializerPath
+from netzob.Common.Models.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 
 @NetzobLogger
 class VariableSpecializer():
@@ -52,52 +52,22 @@ class VariableSpecializer():
     """
 
 
-    def __init__(self, variable, memory = None):
+    def __init__(self, variable):
         self.variable = variable
-        if memory is not None:
-            self.memory = memory
-        else:
-            self.memory = Memory()
 
-    def specialize(self):
+    @typeCheck(SpecializingPath)
+    def specialize(self, specializingPath):
         """Execute the specialize operation"""
 
+        if specializingPath is None:
+            raise Exception("SpecializingPath path cannot be None")
         if self.variable is None:
-            raise Exception("No definition domain specified.")
-
-        self._logger.debug("Specialize variable {0}".format(self.variable))
-            
-        self.__clearResults()
+            raise Exception("Variable cannot be None")
 
         # we create the initial parser path
-        variableSpecializerPath = self._createVariableSpecializerPath(None)
-
-        self.variableSpecializerPaths = self.variable.specialize(variableSpecializerPath)
-        self._logger.debug("Specializing variable '{0}' generated '{1}' valid paths".format(self.variable, len(self.variableSpecializerPaths)))
+        variableSpecializingPaths = self.variable.specialize(specializingPath)
         
-        return self.isOk()
+        self._logger.debug("Specializing variable '{0}' generated '{1}' valid paths".format(self.variable, len(variableSpecializingPaths)))
 
-        
-    def _createVariableSpecializerPath(self, generatedContent, originalVariableSpecializerPath=None):
-        self._logger.debug("Generated content of the path = {0}".format(generatedContent))
-        copy_generatedContent = None
-
-        if generatedContent is not None:
-            copy_generatedContent = generatedContent.copy()
-        
-        varPath = VariableSpecializerPath(self, copy_generatedContent, originalVariableSpecializerPath)
-        return varPath
-
-        
-    
-    def isOk(self):
-        """Returns True if at least one valid VariableSpecializerResult is available"""
-        return len(self.variableSpecializerPaths)>0
-    
-    def __clearResults(self):
-        """Prepare for a new specializing by cleaning any previously results"""
-        self.variableSpecializerResults = []
-        self.variableSpecializerPaths = []        
-
-    
+        return variableSpecializingPaths
 

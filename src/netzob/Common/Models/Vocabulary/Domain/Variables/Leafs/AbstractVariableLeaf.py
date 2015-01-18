@@ -46,8 +46,6 @@ import abc
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Common.Models.Vocabulary.Domain.Variables.SVAS import SVAS
-from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken import VariableReadingToken
-from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken import VariableWritingToken
 
 
 @NetzobLogger
@@ -63,66 +61,77 @@ class AbstractVariableLeaf(AbstractVariable):
     def __init__(self, varType, name=None, svas=None):
         super(AbstractVariableLeaf, self).__init__(varType, name=name, svas=svas)
 
-    def parse(self, variableParserPath):
+    def parse(self, parsingPath, acceptCallBack=True):
         """@toto TO BE DOCUMENTED"""
 
         if self.svas is None:
             raise Exception("Cannot parse if the variable has no assigned SVAS.")
 
-        if self.isDefined(variableParserPath):
-            if self.svas == SVAS.CONSTANT:
-                return self.valueCMP(variableParserPath)
-            elif self.svas == SVAS.PERSISTENT:
-                return self.learn(variableParserPath)
+        if self.isDefined(parsingPath):
+            if self.svas == SVAS.CONSTANT or self.svas == SVAS.PERSISTENT:
+                return self.valueCMP(parsingPath, acceptCallBack)
+            elif self.svas == SVAS.EPHEMERAL:
+                return self.learn(parsingPath, acceptCallBack)
+            elif self.svas == SVAS.VOLATILE:
+                return self.domainCMP(parsingPath, acceptCallBack)
         else:
             if self.svas == SVAS.CONSTANT:
                 self._logger.debug("Cannot parse '{0}' as svas is CONSTANT and no value is available.".format(self))
                 return []
-            elif self.svas == SVAS.EPHEMERAL:
-                return self.learn(variableParserPath)
+            elif self.svas == SVAS.EPHEMERAL or self.svas == SVAS.PERSISTENT:
+                return self.learn(parsingPath, acceptCallBack)
+            elif self.svas == SVAS.VOLATILE:
+                return self.domainCMP(parsingPath, acceptCallBack)
+            
 
-        raise Exception("Not yet implemented.")
+        raise Exception("Not yet implemented: {0}.".format(self.svas))
 
 
-    def specialize(self, variableSpecializerPath):
+    #
+    # methods that must be defined to support the abstraction process
+    #
+    @abc.abstractmethod
+    def isDefined(self, parsingPath):
+        raise NotImplementedError("method isDefined is not implemented")
+
+    @abc.abstractmethod
+    def domainCMP(self, parsingPath):
+        raise NotImplementedError("method domainCMP is not implemented")
+    
+    @abc.abstractmethod
+    def valueCMP(self, parsingPath):
+        raise NotImplementedError("method valueCMP is not implemented")
+
+    @abc.abstractmethod
+    def learn(self, parsingPath):
+        raise NotImplementedError("method learn is not implemented")
+
+
+
+    def specialize(self, parsingPath, acceptCallBack=True):
         """@toto TO BE DOCUMENTED"""
 
         if self.svas is None:
             raise Exception("Cannot specialize if the variable has no assigned SVAS.")
-
-        if self.isDefined(variableSpecializerPath):
+        self._logger.debug("Specialize : {0}".format(self))
+        if self.isDefined(parsingPath):
             if self.svas == SVAS.CONSTANT or self.svas == SVAS.PERSISTENT:
-                return self.use(variableSpecializerPath)
+                return self.use(parsingPath, acceptCallBack)
             elif self.svas == SVAS.EPHEMERAL:
-                return self.regenerateAndMemorize(variableSpecializerPath)
+                return self.regenerateAndMemorize(parsingPath, acceptCallBack)
             elif self.svas == SVAS.VOLATILE:
-                return self.regenerate(variableSpecializerPath)
+                return self.regenerate(parsingPath, acceptCallBack)
         else:
             if self.svas == SVAS.CONSTANT:
                 self._logger.debug("Cannot specialize '{0}' as svas is CONSTANT and no value is available.".format(self))
                 return []
-            elif self.svas == SVAS.EPHEMERAL or self.svas == SVAS.EPHEMERAL:
-                return self.regenerateAndMemorize(variableSpecializerPath)
+            elif self.svas == SVAS.EPHEMERAL or self.svas == SVAS.PERSISTENT:
+                return self.regenerateAndMemorize(parsingPath, acceptCallBack)
             elif self.svas == SVAS.VOLATILE:
-                return self.regenerate(variableSpecializerPath)
+                return self.regenerate(parsingPath, acceptCallBack)
 
         raise Exception("Not yet implemented.")
     
-    @abc.abstractmethod
-    def isDefined(self, variablParserPath):
-        return Exception("Not yet implemented.")
-            
-    @abc.abstractmethod
-    def valueCMP(self, variableParserPath):
-        return Exception("Not yet implemented.")
-
-    @abc.abstractmethod
-    def learn(self, variableParserPath):
-        return Exception("Not yet implemented.")
-
-    @abc.abstractmethod
-    def typeCMP(self, variableParserPath):
-        return Exception("Not yet implemented.")
 
     def _str_debug(self, deepness=0):
         """Returns a string which denotes

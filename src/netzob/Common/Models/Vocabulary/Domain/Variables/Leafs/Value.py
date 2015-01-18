@@ -51,128 +51,135 @@ from netzob.Common.Models.Types.ASCII import ASCII
 from netzob.Common.Models.Types.AbstractType import AbstractType
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.BitArray import BitArray
-from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Types.Decimal import Decimal
-from netzob.Common.Models.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Common.Models.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 from netzob.Common.Models.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
+from netzob.Common.Models.Vocabulary.Domain.GenericPath import GenericPath
+
 
 
 @NetzobLogger
-class Size(AbstractRelationVariableLeaf):
-    """A size relation between one variable and a the value of a field
-
-    In the following example, a size field is declared after its field.
+class Value(AbstractRelationVariableLeaf):
+    """A value relation between one variable and the value of a field
 
     >>> from netzob.all import *
-
-    >>> f0 = Field(ASCII(nbChars=(1,10)))
-    >>> f1 = Field(ASCII(";"))
-    >>> f2 = Field(Size(f0))
-    >>> s  = Symbol(fields=[f0, f1, f2])
-    >>> msg1  = RawMessage("netzob;\x06")
+    >>> msg = RawMessage("netzob;netzob!")
+    >>> f1 = Field(ASCII(nbChars=(2, 8)), name="f1")
+    >>> f2 = Field(ASCII(";"), name="f2")
+    >>> f3 = Field(Value(f1), name="f3")
+    >>> f4 = Field(ASCII("!"), name="f4")
+    >>> s = Symbol(fields=[f1, f2, f3, f4])
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg1, s)
-    [bitarray('011011100110010101110100011110100110111101100010'), bitarray('00111011'), bitarray('00000110')]
-    >>> msg2  = RawMessage("netzob;\x03")
+    >>> print mp.parseMessage(msg, s)
+    [bitarray('011011100110010101110100011110100110111101100010'), bitarray('00111011'), bitarray('011011100110010101110100011110100110111101100010'), bitarray('00100001')]
+
+    # lets try another way of expressing such a relation
+
+    >>> from netzob.all import *
+    >>> msg = RawMessage("netzob;netzob!")
+    >>> f3 = Field(ASCII(nbChars=6), name="f3")
+    >>> f1 = Field(Value(f3), name="f1")
+    >>> f2 = Field(ASCII(";"), name="f2")
+    >>> f4 = Field(ASCII("!"), name="f4")
+    >>> s = Symbol(fields=[f1, f2, f3, f4])
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg2, s)
-    Traceback (most recent call last):
-      ...
-    Exception: No parsing path returned while parsing message netzob;
+    >>> print mp.parseMessage(msg, s)
+    [bitarray('011011100110010101110100011110100110111101100010'), bitarray('00111011'), bitarray('011011100110010101110100011110100110111101100010'), bitarray('00100001')]
 
-    
-    While next demo, illustrates a size field declared before its target field
 
-    >>> f2 = Field(ASCII(nbChars=(1,10)), name="f2")
-    >>> f1 = Field(ASCII(";"), name="f1", )
-    >>> f0 = Field(Size(f2), name="f0")
-    >>> s  = Symbol(fields=[f0, f1, f2])
-    >>> msg1  = RawMessage("\x06;netzob")
-    >>> mp = MessageParser()
+    Lets see what happen when we specialize a Value field
 
-    >>> print mp.parseMessage(msg1, s)
-    [bitarray('00000110'), bitarray('00111011'), bitarray('011011100110010101110100011110100110111101100010')]
-
-    >>> msg2  = RawMessage("\x03;netzob")
-    >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg2, s)
-    Traceback (most recent call last):
-      ...
-    Exception: No parsing path returned while parsing message ;netzob
-
-    Let's see what happen with specialization of a Size field
-    
-    >>> f0 = Field(ASCII(nbChars=20))
-    >>> f1 = Field(ASCII(";"))
-    >>> f2 = Field(Size(f0))
-    >>> s  = Symbol(fields=[f0, f1, f2])
+    >>> from netzob.all import *
+    >>> f1 = Field(ASCII("netzob"), name="f1")
+    >>> f2 = Field(ASCII(";"), name="f2")
+    >>> f3 = Field(Value(f1), name="f3")
+    >>> f4 = Field(ASCII("!"), name="f4")
+    >>> s = Symbol(fields=[f1, f2, f3, f4])
     >>> ms = MessageSpecializer()
-    >>> res= TypeConverter.convert(ms.specializeSymbol(s).generatedContent, BitArray, Raw)
-    >>> '\x14' in res
-    True
-
+    >>> print TypeConverter.convert(ms.specializeSymbol(s).generatedContent, BitArray, Raw)
+    netzob;netzob!
+    
+    >>> from netzob.all import *
+    >>> f3 = Field(ASCII("netzob"), name="f3")
+    >>> f2 = Field(ASCII(";"), name="f2")
+    >>> f1 = Field(Value(f3), name="f1")
+    >>> f4 = Field(ASCII("!"), name="f4")
+    >>> s = Symbol(fields=[f1, f2, f3, f4])
+    >>> ms = MessageSpecializer()
+    >>> print TypeConverter.convert(ms.specializeSymbol(s).generatedContent, BitArray, Raw)
+    netzob;netzob!
+    
     """
 
-    def __init__(self, fields, dataType=None, factor=1/float(8), offset=0, name=None):
-        if isinstance(fields, AbstractField):
-            fields = [fields]
-        super(Size, self).__init__("Size", fieldDependencies=fields, name=name)
-        self.fields = fields
-        if dataType is None:
-            dataType = Raw(nbBytes=1)
-        self.dataType = dataType
-        self.factor = factor
-        self.offset = offset
-
-    def __key(self):
-        return (self.dataType, self.factor, self.offset)
-
-    def __eq__(x, y):
-        try:
-            return x.__key() == y.__key()
-        except:
-            return False
-
-    def __hash__(self):
-        return hash(self.__key())
+    def __init__(self, field, name=None):
+        if not isinstance(field, AbstractField):
+            raise Exception("Expecting a field")
+        super(Value, self).__init__("Value", fieldDependencies=[field], name=name)
 
     @typeCheck(GenericPath)
-    def isDefined(self, parsingPath):        
-        # we retrieve the memory of the current path
-        memory = parsingPath.memory
+    def isDefined(self, path):
+        """Checks if a value is available either in data's definition or in memory
+
+        :parameter path: the current path used either to abstract and specializa this data
+        :type path: :class:`netzob.Common.Models.Vocabulary.Domain.GenericPath.GenericPath`
+        :return: a boolean that indicates if a value is available for this data
+        :rtype: :class:`bool`
+    
+        """
+        if path is None:
+            raise Exception("Path cannot be None")
+
+        # we check if memory referenced its value (memory is priority)
+        memory = path.memory
+
+        if memory is None:
+            raise Exception("Provided path has no memory attached.")
+        
         return memory.hasValue(self)
 
-    @typeCheck(ParsingPath)
-    def valueCMP(self, parsingPath):
+    @typeCheck(GenericPath)
+    def valueCMP(self, parsingPath, acceptCallBack=True):
+        self._logger.debug("ValueCMP")
         results = []
         if parsingPath is None:
             raise Exception("ParsingPath cannot be None")
 
-        sizeOfPossibleValue = self.dataType.size()
-        if sizeOfPossibleValue[0] != sizeOfPossibleValue[1]:
-            raise Exception("Impossible to abstract messages if a size field has a dynamic size")
-
         content = parsingPath.getDataAssignedToVariable(self)
-        possibleValue = content[:sizeOfPossibleValue[1]]
-        self._logger.warn("Possible value of size field: {0}".format(possibleValue))
-        
-        expectedValue = self._computeExpectedValue(parsingPath)
-        if expectedValue is None:
-            # the expected value cannot be computed
-            # we add a callback
-            self._addCallBacksOnUndefinedFields(parsingPath)
-        else:
-            if possibleValue[:len(expectedValue)] == expectedValue:
-                parsingPath.addResult(self, expectedValue.copy())
-            results.append(parsingPath)                
+        if content is None:
+            raise Exception("No data assigned.")
 
+        # we verify we have access to the expected value
+        expectedValue = self._computeExpectedValue(parsingPath)
+        self._logger.debug("Expected value to parse: {0}".format(expectedValue))
+
+        if expectedValue is None:
+
+            # lets compute what could be the possible value
+            fieldDep = self.fieldDependencies[0]
+            (minSizeDep, maxSizeDep) = fieldDep.domain.dataType.size
+            if minSizeDep > len(content):
+                self._logger.debug("Size of the content to parse is smallest than the min expected size of the dependency field")
+                return results
+
+            for size in xrange(min(maxSizeDep, len(content)), minSizeDep -1, -1):
+                # we create a new parsing path and returns it
+                newParsingPath = parsingPath.duplicate()
+                newParsingPath.addResult(self, content[:size].copy())        
+                self._addCallBacksOnUndefinedFields(newParsingPath)
+                results.append(newParsingPath)           
+        else:
+            if content[:len(expectedValue)] == expectedValue:
+                self._logger.debug("add result: {0}".format( expectedValue.copy()))
+                parsingPath.addResult(self, expectedValue.copy())
+                results.append(parsingPath)
+
+        return results
+            
     @typeCheck(ParsingPath)
-    def learn(self, parsingPath):
-        raise Exception("not implemented")
-        self._logger.warn("SIZE LEARN")
+    def learn(self, parsingPath, acceptCallBack=True):
+        self._logger.warn("Value LEARN")
         if parsingPath is None:
             raise Exception("VariableParserPath cannot be None")
+        raise Exception("Not Implemented")
         return []
 
     @typeCheck(ParsingPath)
@@ -182,82 +189,29 @@ class Size(AbstractRelationVariableLeaf):
         It creates a VariableSpecializerResult in the provided path if
         the remainingData (or some if it) follows the type definition"""
 
-
-        results = []
-        self._logger.debug("domainCMP executed on {0} by a size domain".format(parsingPath))
-
-        minSize, maxSize = self.dataType.size
-        if minSize != maxSize:
-            raise Exception("Impossible to abstract messages if a size field has a dynamic size")
-
-        content = parsingPath.getDataAssignedToVariable(self)
-        possibleValue = content[:maxSize]
-
-        expectedValue = self._computeExpectedValue(parsingPath)
-        self._logger.debug("Expected Value: {0}".format(expectedValue))
-        self._logger.debug("possible Value: {0}".format(possibleValue))            
+        return self.valueCMP(parsingPath, acceptCallBack)
         
-        if expectedValue is None:
-            # the expected value cannot be computed
-            if acceptCallBack:
-                # we add a callback
-                self._addCallBacksOnUndefinedFields(parsingPath)
-                # register the remaining data
-                parsingPath.addResult(self, possibleValue.copy())
-                results.append(parsingPath)
-            else:
-                raise Exception("no more callback accepted.")
-        else:
-            if possibleValue[:len(expectedValue)] == expectedValue:
-                self._logger.debug("Callback executed with success")
-                parsingPath.addResult(self, expectedValue.copy())
-                results.append(parsingPath)
-            else:
-                self._logger.debug("Executed callback has failed.")
-        return results
 
-    @typeCheck(GenericPath)
+    @typeCheck(ParsingPath)
     def _addCallBacksOnUndefinedFields(self, parsingPath):
         """Identify each dependency field that is not yet defined and register a
         callback to try to recompute the value """
         for field in self.fieldDependencies:
-            if field.domain != self and not parsingPath.isDataAvailableForField(field):
+            if field.domain != self and not parsingPath.isDataAvailableForField(field):                
                 parsingPath.registerFieldCallBack(field, self)
 
-    @typeCheck(GenericPath)
     def _computeExpectedValue(self, parsingPath):
-        self._logger.debug("compute expected value for Size field")
-                
-        # first checks the pointed fields all have a value
-        hasValue = True
-        for field in self.fieldDependencies:
-            if field.domain != self and not parsingPath.isDataAvailableForVariable(field.domain):
-                self._logger.debug("Field : {0} has no value".format(field.id))
-                hasValue = False
+        self._logger.debug("compute expected value for Value field")
 
-        if not hasValue:
+        fieldDep = self.fieldDependencies[0]
+        if fieldDep is None:
+            raise Exception("No dependency field specified.")
+
+        if not parsingPath.isDataAvailableForField(fieldDep):
             return None
         else:
-            size = 0
-            for field in self.fieldDependencies:
-                if field.domain is self:
-                    fieldValue = self.dataType.generate()
-                else:
-                    fieldValue = parsingPath.getDataAssignedToVariable(field.domain)
-                    self._logger.fatal("fieldValue: {0}".format(fieldValue))
-                if fieldValue is None:
-                    break
-                else:
-                    tmpLen = len(fieldValue)
-                    size += tmpLen
-
-            size = int(size * self.factor + self.offset)
-            b = TypeConverter.convert(size, Decimal, BitArray)
+            return parsingPath.getDataAssignedToField(fieldDep)
             
-#            while len(b)<self.dataType.size[0]:
-#                b.insert(0, False)
-        return b
-
     @typeCheck(SpecializingPath)
     def regenerate(self, variableSpecializerPath, moreCallBackAccepted=True):
         """This method participates in the specialization proces.
@@ -265,31 +219,66 @@ class Size(AbstractRelationVariableLeaf):
         It creates a VariableSpecializerResult in the provided path that
         contains a generated value that follows the definition of the Data
         """
-        self._logger.warning("Regenerate size {0}".format(self))
+        self._logger.warning("Regenerate value {0}".format(self))
         if variableSpecializerPath is None:
             raise Exception("VariableSpecializerPath cannot be None")
 
         try:
             newValue = self._computeExpectedValue(variableSpecializerPath)
-            self._logger.warning("VALUE FOUND AND COMPUTED FOR SIZE FIELD : {0}".format(newValue))
+            self._logger.warning("VALUE FOUND AND COMPUTED FOR VALUE FIELD : {0}".format(newValue))
             variableSpecializerPath.addResult(self, newValue)
         except Exception, e:
-            self._logger.debug("Cannot specialize since no value is available for the size dependencies, we create a callback function in case it can be computed later: {0}".format(e))
+            self._logger.debug("Cannot specialize since no value is available for the value dependencies, we create a callback function in case it can be computed later: {0}".format(e))
             
             pendingValue = TypeConverter.convert("PENDING VALUE", ASCII, BitArray)
             variableSpecializerPath.addResult(self, pendingValue)
             if moreCallBackAccepted:
-                for field in self.fields:
+                for field in self.fieldDependencies:
                     variableSpecializerPath.registerFieldCallBack(field, self, parsingCB=False)
-
             else:
                 raise e
             
         return [variableSpecializerPath]
+
+
+    # def getValue(self, processingToken):
+    #     """Return the current value of targeted field.
+    #     """
+    #     # first checks the pointed fields all have a value
+    #     hasValue = True
+    #     for field in self.fields:
+    #         if field.domain != self and not processingToken.isValueForVariableAvailable(field.domain):
+    #             hasValue = False
+
+    #     if not hasValue:
+    #         raise Exception("Impossible to compute the value (getValue) of the current Size field since some of its dependencies have no value")
+    #     else:
+    #         size = 0
+    #         for field in self.fields:
+    #             if field.domain is self:
+    #                 fieldValue = self.dataType.generate()
+    #             else:
+    #                 fieldValue = processingToken.getValueForVariable(field.domain)
+    #             if fieldValue is None:
+    #                 break
+    #             else:
+    #                 tmpLen = len(fieldValue)
+    #                 tmpLen = int(math.ceil(tmpLen / 8.0) * 8)  # Round to the upper closest multiple of 8 (the size of a byte),
+    #                                                            # because this is what will be considered durring field specialization
+    #                 size += tmpLen
+    #         size = size * self.factor + self.offset
+    #         b = TypeConverter.convert(size, Decimal, BitArray)
+
+    #         while len(b)<self.dataType.size[0]:
+    #             b.insert(0, False)
+
+    #         return b
+
+        
             
     def __str__(self):
         """The str method."""
-        return "Size({0}) - Type:{1}".format(str([f.name for f in self.fields]), self.dataType)
+        return "Value({0})".format(str(self.fieldDependencies[0].name))
 
     @property
     def dataType(self):

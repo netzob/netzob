@@ -45,9 +45,7 @@
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Field import Field
 from netzob.Common.Models.Vocabulary.Domain.Parser.VariableParser import VariableParser
-from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
-from netzob.Common.Models.Vocabulary.Domain.Parser.FieldParserResult import FieldParserResult
-from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
+from netzob.Common.Models.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 
 
 @NetzobLogger
@@ -62,94 +60,118 @@ class FieldParser():
     
     >>> content = TypeConverter.convert("toto", ASCII, BitArray)
     >>> parser = FieldParser(f1)
-    >>> print parser.parse(content)
+    >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
+    >>> parsingPath.assignDataToField(content, f1)
+    >>> parsingPaths = parser.parse(parsingPath)
+    >>> len(parsingPaths)>0
     True
-    >>> print '\\n'.join([str(result) for result in parser.fieldParserResults])
-    FieldParserResult (consumed=bitarray('00101110111101100010111011110110'), remaining=bitarray())
-    FieldParserResult (consumed=bitarray('001011101111011000101110'), remaining=bitarray('11110110'))
-    FieldParserResult (consumed=bitarray('0010111011110110'), remaining=bitarray('0010111011110110'))
-    FieldParserResult (consumed=bitarray('00101110'), remaining=bitarray('111101100010111011110110'))
+
+    >>> print '\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths])
+    toto
+    tot
+    to
+    t
 
     >>> f1 = Field(name="f1", domain=Agg([ASCII(nbChars=(1,4)), ASCII(".txt")]))
     >>> content = TypeConverter.convert("toto.txt", ASCII, BitArray)
     >>> parser = FieldParser(f1)
-    >>> print parser.parse(content)
+    >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
+    >>> parsingPath.assignDataToField(content, f1)
+    >>> parsingPaths = parser.parse(parsingPath)
+    >>> len(parsingPaths)>0
     True
-    >>> print '\\n'.join([str(result) for result in parser.fieldParserResults])
-    FieldParserResult (consumed=bitarray('0010111011110110001011101111011001110100001011100001111000101110'), remaining=bitarray())
+
+    >>> print '\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths])
+    toto.txt
     
     >>> f1 = Field(name="f1", domain=Agg([ASCII("toto"), ASCII(" "), ASCII("tata")]))
     >>> content = TypeConverter.convert("toto tata", ASCII, BitArray)
     >>> parser = FieldParser(f1)
-    >>> print parser.parse(content)
+    >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
+    >>> parsingPath.assignDataToField(content, f1)
+    >>> parsingPaths = parser.parse(parsingPath)
+    >>> len(parsingPaths)>0
     True
-    >>> print ''.join([str(result) for result in parser.fieldParserResults])
-    FieldParserResult (consumed=bitarray('001011101111011000101110111101100000010000101110100001100010111010000110'), remaining=bitarray())
+
+    >>> print '\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths])
+    toto tata
 
     >>> f1 = Field(name="f1", domain=Alt([ASCII("toto"), ("tata")]))
     >>> content = TypeConverter.convert("toto", ASCII, BitArray)
     >>> parser = FieldParser(f1)
-    >>> print parser.parse(content)
+    >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
+    >>> parsingPath.assignDataToField(content, f1)
+    >>> parsingPaths = parser.parse(parsingPath)
+    >>> len(parsingPaths)>0
     True
-    >>> print ''.join([str(result) for result in parser.fieldParserResults])
-    FieldParserResult (consumed=bitarray('00101110111101100010111011110110'), remaining=bitarray())
 
-    # Let's illustrate that our parser support multiple results
+    >>> print '\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths])
+    toto
+
+    # # Let's illustrate that our parser support multiple results
 
     >>> f1 = Field(name="f1", domain=Alt([ASCII("toto"), ("to")]))
     >>> content = TypeConverter.convert("toto", ASCII, BitArray)
     >>> parser = FieldParser(f1)
-    >>> print parser.parse(content)
+    >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
+    >>> parsingPath.assignDataToField(content, f1)
+    >>> parsingPaths = parser.parse(parsingPath)
+    >>> len(parsingPaths)>0
     True
-    >>> print '\\n'.join([str(result) for result in parser.fieldParserResults])
-    FieldParserResult (consumed=bitarray('00101110111101100010111011110110'), remaining=bitarray())
-    FieldParserResult (consumed=bitarray('0010111011110110'), remaining=bitarray('0010111011110110'))
 
-    Yes, the following example is (mostly) the reason for this last year's development :)
+    >>> print '\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths])    
+    toto
+    to
+
+    # Yes, the following example is (mostly) the reason for this last year's development :)
 
     >>> f1 = Field(name="f1", domain=Agg([Alt(["to", "toto"]), Alt(["to", "toto"])]))
     >>> content = TypeConverter.convert("tototo", ASCII, BitArray)
     >>> parser = FieldParser(f1)
-    >>> print parser.parse(content)
+    >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
+    >>> parsingPath.assignDataToField(content, f1)
+    >>> parsingPaths = parser.parse(parsingPath)
+    >>> len(parsingPaths)>0
     True
-    >>> print '\\n'.join([str(result) for result in parser.fieldParserResults])
-    FieldParserResult (consumed=bitarray('00101110111101100010111011110110'), remaining=bitarray('0010111011110110'))
-    FieldParserResult (consumed=bitarray('001011101111011000101110111101100010111011110110'), remaining=bitarray())
-    FieldParserResult (consumed=bitarray('001011101111011000101110111101100010111011110110'), remaining=bitarray())
+
+    >>> print '\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths])        
+    toto
+    tototo
+    tototo
 
     >>> f1 = Field(name="f1", domain=Agg([ASCII(nbChars=(1,10)), ASCII(".txt")]))
     >>> content = TypeConverter.convert("helloword.txt", ASCII, BitArray)
     >>> parser = FieldParser(f1)
-    >>> print parser.parse(content)
+    >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
+    >>> parsingPath.assignDataToField(content, f1)
+    >>> parsingPaths = parser.parse(parsingPath)
+    >>> len(parsingPaths)>0
     True
-    >>> print '\\n'.join([str(result) for result in parser.fieldParserResults])
-    FieldParserResult (consumed=bitarray('00010110101001100011011000110110111101101110111011110110010011100010011001110100001011100001111000101110'), remaining=bitarray())
+
+    >>> print '\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths])
+    helloword.txt
 
     >>> f1 = Field(name="f1", domain=Agg([ASCII(nbChars=(1,10)), ASCII(".txt")]))
     >>> content = TypeConverter.convert("helloword.tot", ASCII, BitArray)
     >>> parser = FieldParser(f1)
-    >>> print parser.parse(content)
+    >>> parser = FieldParser(f1)
+    >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
+    >>> parsingPath.assignDataToField(content, f1)
+    >>> parsingPaths = parser.parse(parsingPath)
+    >>> len(parsingPaths)>0
     False
-
+    
     """
 
-    def __init__(self, field, memory=None):
+    def __init__(self, field):
         self.field = field
-        if memory is not None:
-            self.memory = memory
-        else:
-            self.memory = Memory()
-            
-        self.__clearResults()
 
-    def parse(self, content):
-        """Parses the specified content against the field definition domain
+    @typeCheck(ParsingPath)
+    def parse(self, parsingPath):
+        """Parses the specified content (the remaining data in the parsingPath) against the field definition domain
 
-        It returns True if the content is valid according to the field definition domain.
+        It returns the parsing paths
         """
-        self._logger.debug("Parse '{0}' with field '{1}' specifications".format(content, self.field.name))
-
-        self.__clearResults()
     
         # we retrieve the field definition domain
         domain = self.field.domain
@@ -157,46 +179,30 @@ class FieldParser():
         # and check it exists
         if domain is None:
             raise Exception("No definition domain specified for field '{0}', cannnot parse the content against it.".format(self.field.name))
-        
+
+        # check we have something to parse
+        data = parsingPath.getDataAssignedToField(self.field)
+
+        self._logger.debug("Parses '{0}' with field '{1}' specifications".format(data, self.field.name))
+
+        # we assign this data to the field's variable
+        parsingPath.assignDataToVariable(data.copy(), self.field.domain)                
+
         # we create a first VariableParser and uses it to parse the domain
-        variableParser = self.__createVariableParser(domain)
-        variableParser.parse(content)
+        variableParser = VariableParser(domain)
+        resultParsingPaths = variableParser.parse(parsingPath)
 
-        # we create as many FieldParserResult as we found valid paths
-        for path in variableParser.variableParserPaths:
-            # check path
-            if content[:len(path.consumedData)] == path.consumedData:
-                self.__createFieldParserResult(path)
-            else:
-                self._logger.debug("{0} didn't consume {1}".format(path, content))
+        newResults = []
         
-        return self.isOk()
+        for resultParsingPath in resultParsingPaths:
+            if resultParsingPath.isDataAvailableForVariable(self.field.domain):
+                try:
+                    resultParsingPath.addResultToField(self.field, resultParsingPath.getDataAssignedToVariable(self.field.domain))
+                    newResults.append(resultParsingPath)
+                except:
+                    pass
 
-
-    def isOk(self):
-        """Returns True if at least one valid FieldParserResult is available"""
-
-        return len(self.fieldParserResults) > 0
-
-    @typeCheck(AbstractVariable)
-    def __createVariableParser(self, domain):
-        """Create a new variable parser based on current FieldParser"""
-        variableParser = VariableParser(domain, self.memory)        
-        self.__variableParsers.append(variableParser)
-        
-        return variableParser
-
-    def __createFieldParserResult(self, path):
-        """Create a field parser result based on specified path"""
-        if path is None:
-            raise Exception("Path cannot be None")
-
-        self.fieldParserResults.append(FieldParserResult(self.field, path.consumedData, path.remainingData))
-        
-    def __clearResults(self):
-        """Prepare for a new parsing by cleaning any previously results"""
-        self.fieldParserResults = []
-        self.__variableParsers = []
+        return newResults 
 
     @property
     def field(self):
@@ -214,21 +220,6 @@ class FieldParser():
 
         self.__field = field
 
-
-    @property
-    def fieldParserResults(self):
-        """The list of parsing results obtained after last call to parse() method
-
-        :type: a list of :class:`netzob.Common.Models.Vocabulary.Domain.Parser.FieldParserResult.FieldParserResult`
-        """
-        return self.__fieldParserResults
-
-    @fieldParserResults.setter
-    def fieldParserResults(self, results):
-        if results is None:
-            raise ValueError("FieldParserResults cannot be None, it should be an empty list if really you want to clear the results")
-
-        self.__fieldParserResults = results        
 
 
     

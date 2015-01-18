@@ -88,8 +88,6 @@ class BitArray(AbstractType):
         if len(data) == 0:
             return False
 
-        data = BitArray.encode(data, unitSize=unitSize, endianness=endianness, sign=sign)
-
         (nbMinBits, nbMaxBits) = self.size
 
         nbBitsData = len(data)
@@ -180,6 +178,6 @@ class BitArray(AbstractType):
         else:
             raise ValueError("Invalid endianness value")
 
-        b = bitarray(endian=endian)
+        b = bitarray(endian=endian)            
         b.frombytes(data)
         return b

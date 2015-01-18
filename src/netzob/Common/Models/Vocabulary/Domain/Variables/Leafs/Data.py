@@ -34,7 +34,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -45,19 +44,11 @@ from bitarray import bitarray
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Utils.NetzobRegex import NetzobRegex
-from netzob.Common.Models.Types.AbstractType import AbstractType
 from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
-from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken import AbstractVariableProcessingToken
-from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken import VariableReadingToken
-from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken import VariableWritingToken
-from netzob.Common.Models.Types.TypeConverter import TypeConverter
-from netzob.Common.Models.Types.BitArray import BitArray
-from netzob.Common.Models.Types.ASCII import ASCII
-from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Types.HexaString import HexaString
-from netzob.Common.Models.Vocabulary.Domain.Parser.VariableParserPath import VariableParserPath
-from netzob.Common.Models.Vocabulary.Domain.Specializer.VariableSpecializerPath import VariableSpecializerPath
+from netzob.Common.Models.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
+from netzob.Common.Models.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
+from netzob.Common.Models.Vocabulary.Domain.GenericPath import GenericPath
+
 
 @NetzobLogger
 class Data(AbstractVariableLeaf):
@@ -84,6 +75,217 @@ class Data(AbstractVariableLeaf):
     Data
     >>> print TypeConverter.convert(f.domain.currentValue, BitArray, ASCII)
     hello zoby
+
+
+    Below are more unit tests that aims at testing that a Data variable is correctly handled in all cases
+    of abstraction and specialization.
+
+    Let's begin with abstraction. We must consider the following cases:
+    * CONSTANT
+    * PERSISTENT
+    * EPHEMERAL
+    * VOLATILE
+
+    Case 1: Abstraction of a constant data
+
+    >>> from netzob.all import *
+    >>> f0 = Field(domain=Data(dataType=ASCII(), originalValue=TypeConverter.convert("netzob", ASCII, BitArray), name="netzob", svas=SVAS.CONSTANT))
+    >>> s = Symbol(name="S0", fields=[f0])
+    >>> msg1 = RawMessage("netzob")
+    >>> mp = MessageParser()
+    >>> print mp.parseMessage(msg1, s)
+    [bitarray('011011100110010101110100011110100110111101100010')]
+
+    >>> msg2 = RawMessage("netzab")
+    >>> mp = MessageParser()
+    >>> print mp.parseMessage(msg2, s)
+    Traceback (most recent call last):
+      ...
+    Exception: No parsing path returned while parsing message netzab
+
+
+    Case 2: Abstraction of a persitent data
+
+    >>> from netzob.all import *
+    >>> f0 = Field(domain=Data(dataType=ASCII(nbChars=(5, 10)), name="netzob", svas=SVAS.PERSISTENT))
+    >>> s = Symbol(name="S0", fields=[f0])
+    >>> msg1 = RawMessage("netzob")
+    >>> msg2 = RawMessage("netzob")
+    >>> msg3 = RawMessage("netzab")
+    >>> mp = MessageParser()
+    >>> print mp.parseMessage(msg1, s)
+    [bitarray('011011100110010101110100011110100110111101100010')]
+    >>> print mp.parseMessage(msg2, s)
+    [bitarray('011011100110010101110100011110100110111101100010')]
+    >>> print mp.parseMessage(msg3, s)
+    Traceback (most recent call last):
+      ...
+    Exception: No parsing path returned while parsing message netzab
+
+
+    >>> f0 = Field(domain=Data(dataType=ASCII(), originalValue=TypeConverter.convert("netzob", ASCII, BitArray), name="netzob", svas=SVAS.PERSISTENT))
+    >>> s = Symbol(name="S0", fields=[f0])
+    >>> msg1 = RawMessage("netzab")
+    >>> mp = MessageParser()
+    >>> print mp.parseMessage(msg1, s)
+    Traceback (most recent call last):
+      ...
+    Exception: No parsing path returned while parsing message netzab
+    
+
+    Case 3: Abstraction of an ephemeral data
+
+    >>> from netzob.all import *
+    >>> f0 = Field(domain=Data(dataType=ASCII(nbChars=(5, 10)), name="netzob", svas=SVAS.EPHEMERAL))
+    >>> s = Symbol(name="S0", fields=[f0])
+    >>> msg1 = RawMessage("netzob")
+    >>> msg2 = RawMessage("netzob")
+    >>> msg3 = RawMessage("netzab")
+    >>> mp = MessageParser()
+    >>> print mp.parseMessage(msg1, s)
+    [bitarray('011011100110010101110100011110100110111101100010')]
+    >>> print mp.memory
+    Data (ASCII=None ((40, 80))): netzob
+
+    >>> print mp.parseMessage(msg2, s)
+    [bitarray('011011100110010101110100011110100110111101100010')]
+    >>> print mp.memory
+    Data (ASCII=None ((40, 80))): netzob
+    
+    >>> print mp.parseMessage(msg3, s)
+    [bitarray('011011100110010101110100011110100110000101100010')]
+    >>> print mp.memory
+    Data (ASCII=None ((40, 80))): netzab
+
+
+    Case 4: Abstraction of a volatile data
+
+    >>> from netzob.all import *
+    >>> f0 = Field(domain=Data(dataType=ASCII(nbChars=(5, 10)), name="netzob", svas=SVAS.VOLATILE))
+    >>> s = Symbol(name="S0", fields=[f0])
+    >>> msg1 = RawMessage("netzob")
+    >>> msg2 = RawMessage("netzob")
+    >>> msg3 = RawMessage("netzab")
+    >>> mp = MessageParser()
+    >>> print mp.parseMessage(msg1, s)
+    [bitarray('011011100110010101110100011110100110111101100010')]
+    >>> print len(str(mp.memory))
+    0
+
+    >>> print mp.parseMessage(msg2, s)
+    [bitarray('011011100110010101110100011110100110111101100010')]
+    >>> print len(str(mp.memory))
+    0
+    
+    >>> print mp.parseMessage(msg3, s)
+    [bitarray('011011100110010101110100011110100110000101100010')]
+    >>> print len(str(mp.memory))
+    0
+
+    
+    Now, let's focus on the specialization of a data field
+
+    Case 1: Specialization of a constant data
+
+    >>> from netzob.all import *
+    >>> f0 = Field(domain=Data(dataType=ASCII(), originalValue=TypeConverter.convert("netzob", ASCII, BitArray), name="netzob", svas=SVAS.CONSTANT))
+    >>> s = Symbol(name="S0", fields=[f0])
+    >>> ms = MessageSpecializer()
+    >>> print ms.specializeSymbol(s).generatedContent
+    bitarray('011011100110010101110100011110100110111101100010')
+    >>> print ms.specializeSymbol(s).generatedContent
+    bitarray('011011100110010101110100011110100110111101100010')
+    >>> print len(str(ms.memory))
+    0
+
+    >>> f0 = Field(domain=Data(dataType=ASCII(nbChars=(5, 10)), name="netzob", svas=SVAS.CONSTANT))
+    >>> s = Symbol(name="S0", fields=[f0])
+    >>> ms = MessageSpecializer()
+    >>> print ms.specializeSymbol(s).generatedContent
+    Traceback (most recent call last):
+      ...
+    Exception: Cannot specialize this symbol.
+
+
+    Case 2: Specialization of a persistent data
+
+    >>> from netzob.all import *
+    >>> f0 = Field(domain=Data(dataType=ASCII(), originalValue=TypeConverter.convert("netzob", ASCII, BitArray), name="netzob", svas=SVAS.PERSISTENT))
+    >>> s = Symbol(name="S0", fields=[f0])
+    >>> ms = MessageSpecializer()
+    >>> print ms.specializeSymbol(s).generatedContent
+    bitarray('011011100110010101110100011110100110111101100010')
+    >>> print len(str(ms.memory))
+    0
+
+    >>> f0 = Field(domain=Data(dataType=ASCII(nbChars=5), name="netzob", svas=SVAS.PERSISTENT))
+    >>> s = Symbol(name="S0", fields=[f0])
+    >>> ms = MessageSpecializer()
+    >>> generated1 = ms.specializeSymbol(s).generatedContent
+    >>> print len(generated1)
+    40
+    >>> print ms.memory.hasValue(f0.domain)
+    True
+    >>> generated2 = ms.specializeSymbol(s).generatedContent
+    >>> print len(generated2)
+    40
+    >>> generated1 == generated2
+    True
+
+    Case 3: Specialization of an ephemeral data
+
+
+    >>> from netzob.all import *
+    >>> f0 = Field(domain=Data(dataType=ASCII(), originalValue=TypeConverter.convert("netzob", ASCII, BitArray), name="netzob", svas=SVAS.EPHEMERAL))
+    >>> s = Symbol(name="S0", fields=[f0])
+    >>> ms = MessageSpecializer()
+    >>> print ms.memory.hasValue(f0.domain)
+    False
+    >>> generated1 = ms.specializeSymbol(s).generatedContent
+    >>> print ms.memory.hasValue(f0.domain)
+    True
+    >>> generated2 = ms.specializeSymbol(s).generatedContent
+    >>> generated2 == ms.memory.getValue(f0.domain)
+    True
+    >>> generated1 == generated2
+    False
+
+    
+    >>> from netzob.all import *
+    >>> f0 = Field(domain=Data(dataType=ASCII(nbChars=(5, 10)), name="netzob", svas=SVAS.EPHEMERAL))
+    >>> s = Symbol(name="S0", fields=[f0])
+    >>> ms = MessageSpecializer()
+    >>> print ms.memory.hasValue(f0.domain)
+    False
+    >>> generated1 = ms.specializeSymbol(s).generatedContent
+    >>> print ms.memory.hasValue(f0.domain)
+    True
+    >>> generated2 = ms.specializeSymbol(s).generatedContent
+    >>> generated2 == ms.memory.getValue(f0.domain)
+    True
+    >>> generated1 == generated2
+    False
+
+    
+    Case 4: Specialization of a volatile data
+
+
+    >>> from netzob.all import *
+    >>> f0 = Field(domain=Data(dataType=ASCII(nbChars=(5,10)), name="netzob", svas=SVAS.VOLATILE))
+    >>> s = Symbol(name="S0", fields=[f0])
+    >>> ms = MessageSpecializer()
+    >>> print ms.memory.hasValue(f0.domain)
+    False
+    >>> generated1 = ms.specializeSymbol(s).generatedContent
+    >>> print ms.memory.hasValue(f0.domain)
+    False
+    >>> generated2 = ms.specializeSymbol(s).generatedContent
+    >>> generated2 == ms.memory.hasValue(f0.domain)
+    False
+    >>> generated1 == generated2
+    False
+    
+        
     """
 
     def __init__(self, dataType, originalValue=None, name=None, svas=None):
@@ -108,50 +310,46 @@ class Data(AbstractVariableLeaf):
         self.dataType = dataType
         self.currentValue = originalValue
 
-    def __key(self):
-        return (self.id, self.name, self.dataType)
-
-    def __eq__(x, y):
-        try:
-            return x.__key() == y.__key()
-        except:
-            return False
-
-    def __hash__(self):
-        return hash(self.__key())
-
     def __str__(self):
         return "Data ({0})".format(self.dataType)
 
-    def isDefined(self, variableParserPath):
-        memory = variableParserPath.memory
-        return memory.hasValue(self) or self.currentValue is not None
-            
-    def valueCMP(self, variableParserPath):
-        if variableParserPath is None:
-            raise Exception("VariableParserPath cannot be None")
-        if self.currentValue is None:
-            raise Exception("Data '{0}' has no value defined in its definition domain".format(self.currentValue))
+    @typeCheck(GenericPath)
+    def isDefined(self, path):
+        """Checks if a value is available either in data's definition or in memory
 
-        content = variableParserPath.remainingData
-        self._logger.debug("ValueCMP {0} against {1} with {2}".format(self.currentValue, content, variableParserPath))
+        :parameter path: the current path used either to abstract and specializa this data
+        :type path: :class:`netzob.Common.Models.Vocabulary.Domain.GenericPath.GenericPath`
+        :return: a boolean that indicates if a value is available for this data
+        :rtype: :class:`bool`
+    
+        """
+        if path is None:
+            raise Exception("Path cannot be None")
+
+        # first we check if current value is assigned to the data
+        if not self.currentValue is None:
+            return True
+
+        # we check if memory referenced its value (memory is priority)
+        memory = path.memory
+
+        if memory is None:
+            raise Exception("Provided path has no memory attached.")
         
-        if len(content)>=len(self.currentValue) and content[:len(self.currentValue)] == self.currentValue:
-            remains = content[len(self.currentValue):]
-            self._logger.debug("'{0}' starts with '{1}', the content can be parsed (remains: {2})".format(content, self.currentValue, remains))
-            
-            variableParserPath.createVariableParserResult(self, True, self.currentValue, remains)
-            return [variableParserPath]
-        else:
-            self._logger.debug("{0} cannot be parsed with variable {1}".format(content, self))
-            variableParserPath.createVariableParserResult(self, False, None, content)
-            return []
+        return memory.hasValue(self)
 
-    def learn(self, variableParserPath):
-        if variableParserPath is None:
-            raise Exception("VariableParserPath cannot be None")
+    @typeCheck(ParsingPath)
+    def domainCMP(self, parsingPath, acceptCallBack=True):
+        """Checks if the value assigned to this variable could be parsed against
+        the definition domain of the data.
 
-        content = variableParserPath.remainingData
+        """
+
+        if parsingPath is None:
+            raise Exception("ParsingPath cannot be None")
+
+        content = parsingPath.getDataAssignedToVariable(self)
+        
         self._logger.debug("Learn {0} with {1}".format(content, self.dataType))
             
         (minSize, maxSize) = self.dataType.size
@@ -162,26 +360,82 @@ class Data(AbstractVariableLeaf):
         
         if len(content) < minSize:
             self._logger.debug("Length of the content is too short ({0}), expect data of at least {1} bits".format(len(content), minSize))
-            variableParserPath.createVariableParserResult(self, False, None, content)
             return results
-
-        self._logger.debug("maxSize={0}, len(content)={1}, minSize={2}".format(maxSize, len(content), minSize))
+            
         for size in xrange(min(maxSize, len(content)), minSize -1, -1):
             # size == 0 : deals with 'optional' data
             if size == 0 or self.dataType.canParse(content[:size]):
-                self._logger.debug("Found a valid value : '{0}'".format(content[:size]))
                 # we create a new parsing path and returns it
+                newParsingPath = parsingPath.duplicate()
+
+                newParsingPath.addResult(self, content[:size].copy())
+                results.append(newParsingPath)
+            
+        return results
+        
+    @typeCheck(ParsingPath)
+    def valueCMP(self, parsingPath, acceptCallBack=True):
+        if parsingPath is None:
+            raise Exception("ParsingPath cannot be None")
                 
-                newParserPath = VariableParserPath(variableParserPath.variableParser, variableParserPath.consumedData, variableParserPath.remainingData, variableParserPath)
-                self._logger.debug("consumed: {0}, remaining: {1}".format(content[:size], content[size:]))
-                newParserPath.createVariableParserResult(self, True, content[:size], content[size:])
-                newParserPath.memory.memorize(self, content[:size])
-                results.append(newParserPath)
+        expectedValue = self.currentValue
+
+        # we check a value is available in memory
+        memory = parsingPath.memory
+        if memory is None:
+            raise Exception("No memory available")
+            
+        if memory.hasValue(self):
+            expectedValue = memory.getValue(self)
+
+        if expectedValue is None:        
+            raise Exception("Data '{0}' has no value defined in its definition domain".format(self))        
+
+        content = parsingPath.getDataAssignedToVariable(self)
+        if content is None:
+            raise Exception("No data assigned to the variable")
+            
+        results = []
+        if len(content)>=len(expectedValue) and content[:len(expectedValue)] == expectedValue:
+            parsingPath.addResult(self, expectedValue.copy())
+            results.append(parsingPath)
+        else:
+            self._logger.debug("{0} cannot be parsed with variable {1}".format(content, self.id))
+        return results
+
+    @typeCheck(ParsingPath)
+    def learn(self, parsingPath, acceptCallBack=True):
+            
+        if parsingPath is None:
+            raise Exception("ParsingPath cannot be None")
+
+        content = parsingPath.getDataAssignedToVariable(self)
+        
+        self._logger.debug("Learn {0} with {1}".format(content, self.dataType))
+            
+        (minSize, maxSize) = self.dataType.size
+        if maxSize is None:
+            maxSize = len(content)        
+
+        results = []
+        
+        if len(content) < minSize:
+            self._logger.debug("Length of the content is too short ({0}), expect data of at least {1} bits".format(len(content), minSize))
+            return results
+            
+        for size in xrange(min(maxSize, len(content)), minSize -1, -1):
+            # size == 0 : deals with 'optional' data
+            if size == 0 or self.dataType.canParse(content[:size]):
+                # we create a new parsing path and returns it
+                newParsingPath = parsingPath.duplicate()
+                newParsingPath.addResult(self, content[:size].copy())
+                newParsingPath.memory.memorize(self, content[:size].copy())
+                results.append(newParsingPath)
             
         return results
 
-    @typeCheck(VariableSpecializerPath)
-    def use(self, variableSpecializerPath):
+    @typeCheck(SpecializingPath)
+    def use(self, variableSpecializerPath, acceptCallBack=True):
         """This method participates in the specialization proces.
         It creates a VariableSpecializerResult in the provided path that either
         contains the memorized value or the predefined value of the variable"""
@@ -190,35 +444,41 @@ class Data(AbstractVariableLeaf):
             raise Exception("VariableSpecializerPath cannot be None")
 
         memory = variableSpecializerPath.memory
+
+        result = []
+        
         if memory.hasValue(self):
-            variableSpecializerPath.createVariableSpecializerResult(self, True, memory.getValue(self))
+            variableSpecializerPath.addResult(self, memory.getValue(self))
+            result.append(variableSpecializerPath)
         elif self.currentValue is not None:
-            variableSpecializerPath.createVariableSpecializerResult(self, True, self.currentValue)
-        else:
-            variableSpecializerPath.createVariableSpecializerResult(self, False, None)
+            variableSpecializerPath.addResult(self, self.currentValue)
+            result.append(variableSpecializerPath)
 
-        return [variableSpecializerPath]
+        return result
 
-    @typeCheck(VariableSpecializerPath)
-    def regenerate(self, variableSpecializerPath):
+    @typeCheck(SpecializingPath)
+    def regenerate(self, variableSpecializerPath, acceptCallBack=True):
         """This method participates in the specialization proces.
         It creates a VariableSpecializerResult in the provided path that
         contains a generated value that follows the definition of the Data
         """
+        self._logger.debug("Regenerate Variable {0}".format(self))
         
         if variableSpecializerPath is None:
             raise Exception("VariableSpecializerPath cannot be None")
 
         newValue = self.dataType.generate()
 
-        variableSpecializerPath.createVariableSpecializerResult(self, True, newValue)
+        variableSpecializerPath.addResult(self, newValue)
         return [variableSpecializerPath]
 
-    @typeCheck(VariableSpecializerPath)
-    def regenerateAndMemorize(self, variableSpecializerPath):
+    @typeCheck(SpecializingPath)
+    def regenerateAndMemorize(self, variableSpecializerPath, acceptCallBack=True):
         """This method participates in the specialization proces.
         It memorizes the value present in the path of the variable
         """
+
+        self._logger.debug("RegenerateAndMemorize Variable {0}".format(self))
         
         if variableSpecializerPath is None:
             raise Exception("VariableSpecializerPath cannot be None")
@@ -226,43 +486,40 @@ class Data(AbstractVariableLeaf):
         newValue = self.dataType.generate()
         variableSpecializerPath.memory.memorize(self, newValue)
         
-        variableSpecializerPath.createVariableSpecializerResult(self, True, newValue)
+        variableSpecializerPath.addResult(self, newValue)
         return [variableSpecializerPath]
 
-    def typeCMP(self, variableParserPath):
-        raise Exception("No yet implemented")
+    # def buildRegex(self):
+    #     """This method creates a regex based on the children of the Data.
+    #     The regex is encoded in HexaString
 
-    def buildRegex(self):
-        """This method creates a regex based on the children of the Data.
-        The regex is encoded in HexaString
+    #     For instance, if the value is static :
 
-        For instance, if the value is static :
-
-        >>> from netzob.all import *
-        >>> d1 = Data(ASCII(), TypeConverter.convert("hello", ASCII, BitArray))
-        >>> print str(d1.buildRegex())[38:-1]
-        68656c6c6f
+    #     >>> from netzob.all import *
+    #     >>> d1 = Data(ASCII(), TypeConverter.convert("hello", ASCII, BitArray))
+    #     >>> print str(d1.buildRegex())[38:-1]
+    #     68656c6c6f
          
-        >>> d2 = Data(Decimal(), TypeConverter.convert(20, Decimal, BitArray))
-        >>> print str(d2.buildRegex())[38:-1]
-        14
+    #     >>> d2 = Data(Decimal(), TypeConverter.convert(20, Decimal, BitArray))
+    #     >>> print str(d2.buildRegex())[38:-1]
+    #     14
 
-        >>> d3 = Data(ASCII(nbChars=(2, 10)))
-        >>> print str(d3.buildRegex())[38:-1]
-        .{4,20}
+    #     >>> d3 = Data(ASCII(nbChars=(2, 10)))
+    #     >>> print str(d3.buildRegex())[38:-1]
+    #     .{4,20}
 
-        >>> d4 = Data(ASCII())
-        >>> print str(d4.buildRegex())[38:-1]
-        .{0,}
+    #     >>> d4 = Data(ASCII())
+    #     >>> print str(d4.buildRegex())[38:-1]
+    #     .{0,}
         
-        :return: a regex which can be used to identify the section in which the domain can be found
-        :rtype: :class:`netzob.Common.Utils.NetzobRegex.NetzobRegex`
-        """
+    #     :return: a regex which can be used to identify the section in which the domain can be found
+    #     :rtype: :class:`netzob.Common.Utils.NetzobRegex.NetzobRegex`
+    #     """
 
-        if self.currentValue is not None:
-            return NetzobRegex.buildRegexForStaticValue(TypeConverter.convert(self.currentValue, BitArray, Raw))
-        else:
-            return NetzobRegex.buildRegexForSizedValue(self.dataType.size)
+    #     if self.currentValue is not None:
+    #         return NetzobRegex.buildRegexForStaticValue(TypeConverter.convert(self.currentValue, BitArray, Raw))
+    #     else:
+    #         return NetzobRegex.buildRegexForSizedValue(self.dataType.size)
         
     @property
     def currentValue(self):

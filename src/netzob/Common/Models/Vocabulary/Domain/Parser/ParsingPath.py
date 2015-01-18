@@ -38,72 +38,61 @@
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
+from bitarray import bitarray
 
-#+---------------------------------------------------------------------------+
-#| Local application imports                                                 |
-#+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
-from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken import AbstractVariableProcessingToken
+from netzob.Common.Models.Types.TypeConverter import TypeConverter
+from netzob.Common.Models.Types.BitArray import BitArray
+from netzob.Common.Models.Types.Raw import Raw
+from netzob.Common.Models.Vocabulary.Domain.GenericPath import GenericPath
 
+@NetzobLogger
+class ParsingPath(GenericPath):
 
-class AbstractVariableNode(AbstractVariable):
-    """Represents a node in the variable definition of a field.
+    def __init__(self, dataToParse, memory, dataAssignedToField=None, dataAssignedToVariable=None, fieldCallbacks = None, ok = None, parsedData=None):
+        super(ParsingPath, self).__init__(memory, dataAssignedToField=dataAssignedToField, dataAssignedToVariable=dataAssignedToVariable, fieldCallbacks=fieldCallbacks)        
+        self.originalDataToParse = dataToParse.copy()
+        if ok is None:
+            self.__ok = True
+        else:
+            self.__ok = ok
 
-    A node is a variable which accepts children, such as Alternate(:class:`netzob.Common.Models.Vocabulary.Variables.Nodes.Alt.Alt`)
-    and Aggregate (:class:`netzob.Common.Models.Vocabulary.Variables.Nodes.Agg.Agg`).
-    Thus both of them inherits from this.
-
-    """
-
-    def __init__(self, varType, children=None, svas=None):
-        super(AbstractVariableNode, self).__init__(varType, svas=svas)
-        self._children = []
-        if children is not None:
-            self.children = children
-
+    def validForMessage(self, fields, bitArrayMessage):
+        """Checks if the parsing path can represent the provided bitArrayMessage
+        under the provided fields."""
+        
+        parsedMessage = None
+        for field in fields:
+            if not self.isDataAvailableForField(field):
+                return False
             
+            if parsedMessage is None:
+                parsedMessage = self.getDataAssignedToField(field).copy()
+            else:
+                parsedMessage += self.getDataAssignedToField(field).copy()
 
-    @typeCheck(AbstractVariableProcessingToken)
-    def getDictOfValues(self, processingToken):
-        """We concatenate every dictOfValues of each child.
-        """
-        if processingToken is None:
-            raise TypeError("Processing token cannot be None")
+        return parsedMessage == bitArrayMessage
 
-        dictOfValues = dict()
-        for child in self.children:
-            dictOfValue = child.getDictOfValues(processingToken)
-            for key, val in dictOfValue.iteritems():
-                dictOfValues[key] = val
-        return dictOfValues
+    def duplicate(self):
+        dField = {}
+        for key, value in self._dataAssignedToField.iteritems():
+            dField[key] = value.copy()
 
-    @property
-    def children(self):
-        """Sorted typed list of children attached to the variable node.
-        .. warning:: Setting this value with a list copies its members and not the list itself.
+        dVariable = {}
+        for key, value in self._dataAssignedToVariable.iteritems():
+            dVariable[key] = value.copy()
 
-        :type: a list of :class:`netzob.Common.Models.Vocabulary.Variables.Variable`
+        fCall = {}
+        for key, value in self._fieldCallbacks.iteritems():
+            fCall[key] = value
 
-        """
-        return self._children
+        result = ParsingPath(self.originalDataToParse, memory=self.memory.duplicate(), dataAssignedToField = dField, dataAssignedToVariable=dVariable, fieldCallbacks=fCall, ok=self.ok())
+        
+        return result
+        
+        
 
-    @children.setter
-    def children(self, children):
-        from netzob.Common.Models.Vocabulary.Domain.DomainFactory import DomainFactory
-        self._children = []
-        for child in children:
-            normalizedChild = DomainFactory.normalizeDomain(child)
-            self._children.append(normalizedChild)
-
-    def _str_debug(self, deepness=0):
-        """Returns a string which denotes
-        the current field definition using a tree display"""
-
-        tab = ["     " for x in xrange(deepness - 1)]
-        tab.append("|--   ")
-        tab.append("{0}".format(self))
-        lines = [''.join(tab)]
-        for f in self.children:
-            lines.append(" " + f._str_debug(deepness + 1))
-        return '\n'.join(lines)
+    def ok(self):
+        return self.__ok
+        

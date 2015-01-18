@@ -33,3 +33,5 @@ from netzob.Common.Models.Vocabulary.Domain.Variables.all import *
 from netzob.Common.Models.Vocabulary.Domain.DomainFactory import DomainFactory
 
 from netzob.Common.Models.Vocabulary.Domain.Parser.all import *
+
+from netzob.Common.Models.Vocabulary.Domain.Specializer.all import *

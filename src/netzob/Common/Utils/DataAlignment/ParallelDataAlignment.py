@@ -75,7 +75,7 @@ class ParallelDataAlignment(object):
 
     >>> # Create 1000 data which follows format : 'hello '+random number of 5 to 10 digits+', welcome'.
     >>> # Compare the duration of their alignment with 1 and automatic threads computation
-    >>> data = [TypeConverter.convert('hello {0}, welcome to {1}'.format(''.join([str(random.randint(0,9)) for y in range(0, random.randint(5,10))]),''.join([str(random.randint(0,9)) for y in range(0, random.randint(10,20))])), Raw, HexaString) for x in range(0, 1000)]
+    >>> data = ['hello {0}, welcome to {1}'.format(''.join([str(random.randint(0,9)) for y in range(0, random.randint(5,10))]),''.join([str(random.randint(0,9)) for y in range(0, random.randint(10,20))])) for x in range(0, 1000)]
     >>> # Now we create a symbol with its field structure to represent this type of message
     >>> fields = [Field('hello '), Field(ASCII(nbChars=(5,10))), Field(', welcome to '), Field(ASCII(nbChars=(10,20)))]
     >>> symbol = Symbol(fields=fields)

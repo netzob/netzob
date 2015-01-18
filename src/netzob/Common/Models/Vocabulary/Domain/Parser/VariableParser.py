@@ -44,9 +44,7 @@
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
-from netzob.Common.Models.Vocabulary.Domain.Parser.VariableParserPath import VariableParserPath
-from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
-
+from netzob.Common.Models.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 
 @NetzobLogger
 class VariableParser(object):
@@ -54,52 +52,25 @@ class VariableParser(object):
 
     """
 
-    def __init__(self, variable, memory):
+    def __init__(self, variable):
         self.variable = variable
-        self.memory = memory
-        self.__clearResults()
 
-    def parse(self, content):
-        """Parses the specified content against the variable"""
-        self._logger.debug("Parse '{0}' with variable '{1}' specifications".format(content, self.variable))
-
-        self.__clearResults()
-
-        # we create the initial parser path
-        variableParserPath = self._createVariableParserPath(None, content)
-
-        self.variableParserPaths = self.variable.parse(variableParserPath)
-        self._logger.debug("Parsing variable '{0}' generated '{1}' valid paths".format(self.variable, len(self.variableParserPaths)))
+    @typeCheck(ParsingPath)
+    def parse(self, parsingPath):
+        """Parses the specified content (in the parsingPath) against the variable"""
+        if parsingPath is None:
+            raise Exception("Parsing path cannot be None")
+        if self.variable is None:
+            raise Exception("Variable cannot be None")
         
-        return self.isOk()
-
-    def isOk(self):
-        """Returns True if at least one valid VariableParserResult is available"""
-        return len(self.variableParserPaths)>0
-    
-    def __clearResults(self):
-        """Prepare for a new parsing by cleaning any previously results"""
-        self.variableParserResults = []
-        self.variableParserPaths = []        
-
-    def _createVariableParserPath(self, consumedContent, remainingContent, originalVariableParserPath=None):
-        self._logger.debug("rContent = {0}".format(remainingContent))
-        copy_consumedContent = None
-        copy_remainingContent = None
-
-        if consumedContent is not None:
-            copy_consumedContent = consumedContent.copy()
-
-        if remainingContent is not None:
-            copy_remainingContent = remainingContent.copy()
         
-        varPath = VariableParserPath(self, copy_consumedContent, copy_remainingContent, originalVariableParserPath)
-        return varPath
+        dataToParse = parsingPath.getDataAssignedToVariable(self.variable)
+        self._logger.debug("Parse '{0}' with variable '{1}' specifications".format(dataToParse, self.variable))
 
-    def createVariableParser(self, content):
-        variableParser = VariableParser(content)
-        self.variableParserChildren.append(variableParser)
-        return variableParser        
+        parsingPaths = self.variable.parse(parsingPath)
+        self._logger.debug("Parsing variable '{0}' generated '{1}' valid paths".format(self.variable, len(parsingPaths)))
+        
+        return parsingPaths
 
     @property
     def variable(self):
@@ -116,50 +87,4 @@ class VariableParser(object):
             raise ValueError("Variable cannot be None")
 
         self.__variable = variable
-
-    @property
-    def memory(self):
-        """The memory that will be use to parse some content
-
-        :type: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Memory.Memory`
-        """
-        return self.__memory
-
-    @memory.setter
-    @typeCheck(Memory)
-    def memory(self, memory):
-        if memory is None:
-            raise ValueError("Memory cannot be None")
-
-        self.__memory = memory        
-        
-    @property
-    def variableParserResults(self):
-        """The list of parsing results obtained after last call to parse() method
-
-        :type: a list of :class:`netzob.Common.Models.Vocabulary.Domain.Parser.FieldParserResult.FieldParserResult`
-        """
-        return self.__variableParserResults
-
-    @variableParserResults.setter
-    def variableParserResults(self, results):
-        if results is None:
-            raise ValueError("FieldParserResults cannot be None, it should be an empty list if really you want to clear the results")
-
-        self.__variableParserResults = results
-
-    @property
-    def variableParserChildren(self):
-        """The list of variable parser that were created while executing the parse() method
-
-        :type: a list of :class:`netzob.Common.Models.Vocabulary.Domain.Parser.VariableParser.VariableParser`
-        """
-        return self.__variableParserChildren
-
-    @variableParserChildren.setter
-    def variableParserChildren(self, results):
-        if results is None:
-            raise ValueError("VariableParserChildren cannot be None, it should be an empty list if really you want to clear the results")
-
-        self.__variableParserChildren = results
 

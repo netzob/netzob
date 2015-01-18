@@ -32,4 +32,5 @@
 from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Eol import Eol
 from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Size import Size
+from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Value import Value
 from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.InternetChecksum import InternetChecksum

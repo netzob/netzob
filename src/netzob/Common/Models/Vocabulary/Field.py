@@ -82,6 +82,8 @@ class Field(AbstractField):
     a field containing a specific binary: '1000' = 8 in decimal
 
     >>> f = Field(0b1000)
+    >>> f.specialize()
+    '\x08'
 
     a field containing a raw value of 8 bits (1 byte)
 
@@ -90,7 +92,9 @@ class Field(AbstractField):
     a field with a specific raw value
 
     >>> f = Field(Raw('\x00\x01\x02\x03'))
-
+    >>> f.specialize()
+    '\x00\x01\x02\x03'
+    
     a field representing a random IPv4
 
     >>> f = Field(IPv4())
@@ -105,7 +109,7 @@ class Field(AbstractField):
 
     a field which value is the size of the payloadField
 
-    >>> # f = Field([Size(payloadField)])
+    >>> f = Field([Size(payloadField)])
 
 
     Here are few examples of 'alternative' fields:
@@ -135,8 +139,7 @@ class Field(AbstractField):
             domain = Raw(None)
         self.domain = domain
 
-    @typeCheck(Memory, object)
-    def specialize(self, memory=None, generationStrategy=None):
+    def specialize(self):
         """Specialize the current field to build a raw data that
         follows the fields definitions attached to current element.
 
@@ -159,9 +162,6 @@ class Field(AbstractField):
         hello zoby
         hello zoby
 
-        :keyword generatorStrategy: if set, this generation strategy will be used to pilot this generation process
-        :type generatorStrategy: :class:`object`
-
         :return: a generated content represented with an hexastring
         :rtype: :class:`str``
         :raises: :class:`netzob.Common.Models.Vocabulary.AbstractField.GenerationException` if an error occurs while generating a message
@@ -169,13 +169,22 @@ class Field(AbstractField):
         self._logger.debug("Specializes field {0}".format(self.name))
         if self.__domain is None:
             raise InvalidDomainException("The domain is not defined.")
-
-        if memory is None:
-            # Create a new memory
-            memory = Memory()
+            
         from netzob.Common.Models.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
-        fs = FieldSpecializer(self, memory=memory)
-        return TypeConverter.convert(fs.specialize(), BitArray, Raw)
+        fs = FieldSpecializer(self)
+        specializingPaths = fs.specialize()
+
+        if len(specializingPaths) < 1:
+            raise Exception("Cannot specialize this field")
+            
+        specializingPath = specializingPaths[0]
+
+        self._logger.debug("field specializing done: {0}".format(specializingPath))
+        if specializingPath is None:
+            raise Exception("The specialization of the field {0} returned no result.".format(self.name))
+
+        return TypeConverter.convert(specializingPath.getDataAssignedToVariable(self.domain), BitArray, Raw)
+
 
     def _isStatic(self):
         """Returns True if the field denotes a static content"""

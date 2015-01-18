@@ -43,11 +43,9 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Utils.NetzobRegex import NetzobRegex
 from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
-from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken import AbstractVariableProcessingToken
-from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken import VariableReadingToken
-from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableWritingToken import VariableWritingToken
+from netzob.Common.Models.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
+from netzob.Common.Models.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 
 
 @NetzobLogger
@@ -56,110 +54,165 @@ class Agg(AbstractVariableNode):
 
     To create an aggregate:
 
+    # >>> from netzob.all import *
+    # >>> domain = Agg([Raw(), ASCII()])
+    # >>> print domain.varType
+    # Agg
+    # >>> print domain.children[0].dataType
+    # Raw=None ((0, None))
+    # >>> print domain.children[1].dataType
+    # ASCII=None ((0, None))
+    # >>> domain.children.append(Agg([10, 20, 30]))
+    # >>> print len(domain.children)
+    # 3
+    # >>> domain.children.remove(domain.children[0])
+    # >>> print len(domain.children)
+    # 2
+
+
+    Let's see the abstraction process of an AGGREGATE
+
+    # >>> from netzob.all import *
+    # >>> v1 = ASCII(nbChars=(1, 10))
+    # >>> v2 = ASCII(".txt")
+    # >>> f0 = Field(Agg([v1, v2]), name="f0")
+    # >>> f1 = Field(ASCII("!"))
+    # >>> s = Symbol([f0, f1])
+    # >>> msg1 = RawMessage("netzob.txt!")
+    # >>> mp = MessageParser()
+    # >>> print mp.parseMessage(msg1, s)
+    # [bitarray('01101110011001010111010001111010011011110110001000101110011101000111100001110100'), bitarray('00100001')]
+
+    # >>> msg2 = RawMessage("netzobtxt!")
+    # >>> mp = MessageParser()
+    # >>> print mp.parseMessage(msg2, s)
+    # Traceback (most recent call last):
+    #   ...
+    # Exception: No parsing path returned while parsing message netzobtxt!
+    
+
+    Let's see the specializing process of an AGGREGATE
+
     >>> from netzob.all import *
-    >>> domain = Agg([Raw(), ASCII()])
-    >>> print domain.varType
-    Agg
-    >>> print domain.children[0].dataType
-    Raw=None ((0, None))
-    >>> print domain.children[1].dataType
-    ASCII=None ((0, None))
-    >>> domain.children.append(Agg([10, 20, 30]))
-    >>> print len(domain.children)
-    3
-    >>> domain.children.remove(domain.children[0])
-    >>> print len(domain.children)
-    2
+    >>> d1 = ASCII("hello")
+    >>> d2 = ASCII(" netzob")
+    >>> f = Field(Agg([d1, d2]))
+    >>> s = Symbol(fields=[f])
+    >>> print s.specialize()
+    hello netzob
 
     """
 
     def __init__(self, children=None, svas=None):
         super(Agg, self).__init__(self.__class__.__name__, children, svas=svas)
 
-    def parse(self, variableParserPath):
+    @typeCheck(ParsingPath)
+    def parse(self, parsingPath):
         """Parse the content with the definition domain of the aggregate.
         """
-        self._logger.debug("Parse '{0}' as {1} with parser path '{2}'".format(variableParserPath.remainingData, self, variableParserPath))
+        dataToParse = parsingPath.getDataAssignedToVariable(self).copy()
+        self._logger.debug("Parse '{0}' as {1} with parser path '{2}'".format(dataToParse, self, parsingPath))
 
         # initialy, there is a unique path to test (the provided one)
-        parserPaths = [variableParserPath]
-
+        parsingPath.assignDataToVariable(dataToParse.copy(), self.children[0])
+        parsingPaths = [parsingPath]
+        
         # we parse all the children with the parserPaths produced by previous children
-        for child in self.children:
-            newParserPaths = []
-            
-            for parserPath in parserPaths:
-                self._logger.debug("Parse {0} with {1}".format(child, parserPath))
-                childParserPaths = child.parse(parserPath)
-                if len(childParserPaths) == 0:
-                    # current child did not produce any valid parser path
-                    self._logger.debug("Children {0} failed to parse with the parsingPath {1}.".format(child, parserPath))
-                else:
-                    # at least one child path managed to parse, we save the valid paths it produced
-                    self._logger.debug("Children {0} succesfuly applied with the parsingPath {1} ({2} procuded paths)".format(child, parserPath, len(childParserPaths)))
-                    newParserPaths.extend(childParserPaths)
-
-            parserPaths = newParserPaths
-
-            if len(parserPaths) == 0:
-                self._logger.debug("Children {0} didn't apply to any of the parser path we have, we stop Agg parser".format(child))
-                variableParserPath.createVariableParserResult(self, False, None, variableParserPath.remainingData)
-                return [] # return no valid paths
+        for i_child in xrange(len(self.children)):
+            self._logger.warn("CHILD: {0}/{1}".format(i_child, len(self.children)))
+            current_child = self.children[i_child]
+            if i_child < len(self.children)-1:
+                next_child = self.children[i_child+1]
             else:
-                self._logger.debug("OK")
+                next_child = None
+                
+            newParsingPaths = []
+            
+            for parsingPath in parsingPaths:
+                self._logger.warn("Parse {0} with {1}".format(current_child.id, parsingPath))
+                value_before_parsing = parsingPath.getDataAssignedToVariable(current_child).copy()
+                childParsingPaths = current_child.parse(parsingPath)
+
+                if len(childParsingPaths) == 0:
+                    # current child did not produce any valid parser path
+                    self._logger.debug("Children {0} failed to parse with the parsingPath {1}.".format(current_child, parsingPath))
+                else:
+
+                    for childParsingPath in childParsingPaths:
+                        if childParsingPath.ok():
+                            value_after_parsing =  childParsingPath.getDataAssignedToVariable(current_child).copy()
+                            remainingValue = value_before_parsing[len(value_after_parsing):].copy()
+                            self._logger.warn("RM={0}".format(remainingValue))
+                            if next_child is not None:
+                                childParsingPath.assignDataToVariable(remainingValue, next_child)
+                        
+                            # at least one child path managed to parse, we save the valid paths it produced
+                            self._logger.debug("Children {0} succesfuly applied with the parsingPath {1} ({2} procuded paths)".format(current_child, parsingPath, len(childParsingPaths)))
+                            newParsingPaths.append(childParsingPath)
+
+            parsingPaths = newParsingPaths
+
+            if len(parsingPaths) == 0:
+                self._logger.debug("Children {0} didn't apply to any of the parser path we have, we stop Agg parser".format(current_child))
+                return [] # return no valid paths
 
         # ok we managed to parse all the children, and it produced some valid parser paths. We return them
-        for parserPath in parserPaths:
-            self._logger.debug("- {0}".format(parserPath))
-        return parserPaths
+        for parsingPath in parsingPaths:
+            parsedData = None
+            for child in self.children:
+                if parsedData is None:
+                    parsedData = parsingPath.getDataAssignedToVariable(child).copy()
+                else:
+                    parsedData+= parsingPath.getDataAssignedToVariable(child).copy()
+                    
+            parsingPath.addResult(self, parsedData)
+        return parsingPaths
 
-    def specialize(self, variableSpecializerPath):
+    @typeCheck(SpecializingPath)
+    def specialize(self, originalSpecializingPath):
         """Specializes an Agg"""
-        self._logger.debug("Specialize '{0}' as {1} with path '{2}'".format(variableSpecializerPath.generatedContent, self, variableSpecializerPath))
 
         # initialy, there is a unique path to specialize (the provided one)
-        specializerPaths = [variableSpecializerPath]
+        specializingPaths = [originalSpecializingPath]
 
         # we parse all the children with the specializerPaths produced by previous children
         for child in self.children:
-            newSpecializerPaths = []
+            newSpecializingPaths = []
 
-            self._logger.debug("Specializing AGG child with {0} paths".format(len(specializerPaths)))
-            for specializerPath in specializerPaths:
-                self._logger.debug("- {0}".format(specializerPath))
+            self._logger.debug("Specializing AGG child with {0} paths".format(len(specializingPaths)))
             
-            for specializerPath in specializerPaths:
-                self._logger.debug("Spcialize {0} with {1}".format(child, specializerPath))
-                childSpecializerPaths = child.specialize(specializerPath)
-                if len(childSpecializerPaths) == 0:
-                    # current child did not produce any valid specializer path
-                    self._logger.debug("Children {0} failed to specialize with the path {1}.".format(child, specializerPath))
-                else:
+            for specializingPath in specializingPaths:
+                self._logger.debug("Spcialize {0} with {1}".format(child, specializingPath))
+            
+                childSpecializingPaths = child.specialize(specializingPath)
+                
+                
+                if len(childSpecializingPaths) > 0:
                     # at least one child path managed to specialize, we save the valid paths it produced
-                    self._logger.debug("Children {0} succesfuly applied with the specializing path {1} ({2} procuded paths)".format(child, specializerPath, len(childSpecializerPaths)))
-                    self._logger.debug("Parent path: {0}".format(specializerPath))
-                    self._logger.debug("Generated Paths:")
-                    for childSpecializerPath in childSpecializerPaths:
-                        self._logger.debug("- {0}".format(childSpecializerPath))
-                    
-                    newSpecializerPaths.extend(childSpecializerPaths)
+                    for childSpecializingPath in childSpecializingPaths:
+                        newSpecializingPaths.append(childSpecializingPath)
 
-            specializerPaths = newSpecializerPaths
+            specializingPaths = newSpecializingPaths
 
-            self._logger.debug("Specializing AGG child has produced {0} paths".format(len(specializerPaths)))
-            for specializerPath in specializerPaths:
-                self._logger.debug("- {0}".format(specializerPath))
+        self._logger.debug("Specializing AGG child has produced {0} paths".format(len(specializingPaths)))
 
+        if len(specializingPaths) == 0:
+            self._logger.debug("Children {0} didn't apply to any of the specializer path we have, we stop Agg specializer".format(child))
+            return [] # return no valid paths
 
-            if len(specializerPaths) == 0:
-                self._logger.debug("Children {0} didn't apply to any of the specializer path we have, we stop Agg specializer".format(child))
-                variableSpecializerPath.createVariableSpecializerResult(self, False, variableSpecializerPath.generatedContent)
-                return [] # return no valid paths
-            else:
-                self._logger.debug("OK")
-
+        for specializingPath in specializingPaths:
+            value = None
+            for child in self.children:
+                if value is None:
+                    value = specializingPath.getDataAssignedToVariable(child)
+                else:
+                    value += specializingPath.getDataAssignedToVariable(child)
+        
+            specializingPath.addResult(self, value)
+        
+            
         # ok we managed to parse all the children, and it produced some valid specializer paths. We return them
-        return specializerPaths
+        return specializingPaths
 
 
     # OLD

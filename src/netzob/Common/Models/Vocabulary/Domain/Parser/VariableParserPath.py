@@ -56,7 +56,6 @@ class VariableParserPath(object):
     
     def __init__(self, variableParser, consumedData, remainingData, originalVariableParserPath=None):
         self.name = str(uuid.uuid4())
-        self._logger.debug("CD = {0}".format(consumedData))
         self.consumedData = consumedData
         self.remainingData = remainingData
         self.variableParser = variableParser
@@ -67,6 +66,12 @@ class VariableParserPath(object):
         if originalVariableParserPath is not None:
             self.variableParserResults.extend(originalVariableParserPath.variableParserResults)
 
+    def getValueToParse(self, variable):
+        """Returns the value that is assigned to the specified variable"""
+        
+
+        
+            
             
     def createVariableParserResult(self, variable, parserResult, consumedData, remainedData):
         variableParserResult = VariableParserResult(variable, parserResult, consumedData, remainedData)

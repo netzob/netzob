@@ -73,7 +73,7 @@ class DataAlignment(threading.Thread):
     >>> import random
     >>> import string
 
-    >>> contents = [TypeConverter.convert('hello {0} hello'.format(''.join([random.choice(string.letters) for y in range(random.randint(5,10))])), Raw, HexaString) for x in range(10)]
+    >>> contents = ['hello {0} hello'.format(''.join([random.choice(string.letters) for y in range(random.randint(5,10))])) for x in range(10)]
     >>> fields = [Field("hello ", name="f0"), Field(ASCII(nbChars=(5,10)), name="f1"), Field(" hello", name="f2")]
     >>> symbol = Symbol(fields=fields)
     >>> alignedData = DataAlignment.align(contents, symbol, encoded=True)
@@ -81,8 +81,8 @@ class DataAlignment(threading.Thread):
     10
     
 
-    >>> # Create 10 data which follows format : 'hello '+random number of [5-10] digits+' welcome'.
-    >>> data = [TypeConverter.convert('hello {0}, welcome'.format(random.choice(["tototo"])), Raw, HexaString) for x in range(5)]
+    >>> # one more fun test case
+    >>> data = ['hello {0}, welcome'.format(random.choice(["tototo"])) for x in range(5)]
     >>> # Now we create a symbol with its field structure to represent this type of message
     >>> fields = [Field(ASCII('hello ')), Field(Agg([Alt([ASCII("toto"), ASCII("to")]), Alt([ASCII("to"), ASCII("toto")])])), Field(ASCII(', welcome'))]
     >>> symbol = Symbol(fields=fields)
@@ -90,16 +90,16 @@ class DataAlignment(threading.Thread):
     >>> print len(alignedData)
     5
     >>> print alignedData
-    68656c6c6f20 | 746f746f746f | 2c2077656c636f6d65
-    68656c6c6f20 | 746f746f746f | 2c2077656c636f6d65
-    68656c6c6f20 | 746f746f746f | 2c2077656c636f6d65
-    68656c6c6f20 | 746f746f746f | 2c2077656c636f6d65
-    68656c6c6f20 | 746f746f746f | 2c2077656c636f6d65
+    hello  | tototo | , welcome
+    hello  | tototo | , welcome
+    hello  | tototo | , welcome
+    hello  | tototo | , welcome
+    hello  | tototo | , welcome
 
     >>> # Lets try to align a more complex message
-    >>> msg1 = TypeConverter.convert("helloPUTtotoPA343", Raw, HexaString)
-    >>> msg2 = TypeConverter.convert("helloGETtototoPA", Raw, HexaString)
-    >>> msg3 = TypeConverter.convert("helloPUTtotototoPAdqs4qsd33", Raw, HexaString)
+    >>> msg1 = "helloPUTtotoPA343"
+    >>> msg2 = "helloGETtototoPA"
+    >>> msg3 = "helloPUTtotototoPAdqs4qsd33"
     >>> messages = [msg1, msg2, msg3]
     >>> fh1 = Field("hello", name="f1")
     >>> fh2 = Field(ASCII(nbChars=(3)), name="f4")
@@ -112,9 +112,9 @@ class DataAlignment(threading.Thread):
     >>> symbol = Symbol(fields=headerFields+bodyFields)
     >>> alignedData2 = DataAlignment.align(messages, symbol)
     >>> print alignedData2
-    68656c6c6f | 505554 | 746f746f         | 5041 | 333433            
-    68656c6c6f | 474554 | 746f746f746f     | 5041 |                   
-    68656c6c6f | 505554 | 746f746f746f746f | 5041 | 647173347173643333
+    hello | PUT | toto     | PA | 343      
+    hello | GET | tototo   | PA |          
+    hello | PUT | totototo | PA | dqs4qsd33
 
 
     """
@@ -154,181 +154,220 @@ class DataAlignment(threading.Thread):
         # We retrieve all the leaf fields of the root of the provided field
         rootLeafFields = self.__root._getLeafFields(depth=self.depth)
             
-        if self.__root != self.field:
-            targetedFieldLeafFields = self.field._getLeafFields(depth=self.depth)
-        else:
-            targetedFieldLeafFields = rootLeafFields
+        # if self.__root != self.field:
+        #     targetedFieldLeafFields = self.field._getLeafFields(depth=self.depth)
+        # else:
+        targetedFieldLeafFields = rootLeafFields
 
-        # -- debug display
-        self._logger.debug("Targeted leaf fields: ")
         for f in targetedFieldLeafFields:
-            self._logger.debug("- {0}".format(f.name))
-        # -- debug display
-        
-        # we successively parse/align each data
-        for d in self.data:
-        
-            self._logger.debug("[START] Parsing Data : '{0}'".format(d))
-            (rawParsingResult, encodedParsingResult) = self._parseData(d, rootLeafFields, targetedFieldLeafFields)
-            self._logger.debug("[END] Parsing Data '{0}' produced '{1}'".format(d, encodedParsingResult))
+            self._logger.debug(f.name)
 
-            # additionnal check (just to be certain dataParsing equals the data)
-            if not ''.join(rawParsingResult) in TypeConverter.convert(d, HexaString, Raw):
-                raise Exception("<!> You found a case which broke our parsing engine: concat alignedData not in original message not '{0}' in '{1}'".format(''.join(rawParsingResult), TypeConverter.convert(d, HexaString, Raw)))
-            result.append(encodedParsingResult)
+        for d in self.data:
+            from netzob.Common.Models.Vocabulary.Domain.Parser.MessageParser import MessageParser
             
+            mp = MessageParser()
+            #alignedMsg = mp.parseRaw(TypeConverter.convert(d, HexaString, Raw), targetedFieldLeafFields)
+            alignedMsg = mp.parseRaw(d, targetedFieldLeafFields)
+
+            alignedEncodedMsg = []
+            for ifield, currentField in enumerate(targetedFieldLeafFields):
+
+                # now we apply encoding and mathematic functions
+                fieldValue = alignedMsg[ifield]
+            
+                if self.encoded and len(currentField.encodingFunctions.values()) > 0:
+                    for encodingFunction in currentField.encodingFunctions.values():
+                        fieldValue = encodingFunction.encode(fieldValue)
+                else:
+                    fieldValue = TypeConverter.convert(fieldValue, BitArray, Raw)
+
+                if currentField in self.field._getLeafFields(depth=self.depth):
+                    alignedEncodedMsg.append(fieldValue)
+
+            result.append(alignedEncodedMsg)
+
         return result
 
+        
+        
+
+    #     We retrieve all the leaf fields of the root of the provided field
+    #     rootLeafFields = self.__root._getLeafFields(depth=self.depth)
             
-    def _parseData(self, d, rootLeafFields, targetedFieldLeafFields):
-        """Internal method that aligns one data according to the provided fields"""
+    #     if self.__root != self.field:
+    #         targetedFieldLeafFields = self.field._getLeafFields(depth=self.depth)
+    #     else:
+    #         targetedFieldLeafFields = rootLeafFields
+
+    #     -- debug display
+    #     self._logger.debug("Targeted leaf fields: ")
+    #     for f in targetedFieldLeafFields:
+    #         self._logger.debug("- {0}".format(f.name))
+    #     -- debug display
+        
+    #     we successively parse/align each data
+    #     for d in self.data:            
+    #         self._logger.debug("[START] Parsing Data : '{0}'".format(d))
+    #         (rawParsingResult, encodedParsingResult) = self._parseData(d, rootLeafFields, targetedFieldLeafFields)
+    #         self._logger.debug("[END] Parsing Data '{0}' produced '{1}'".format(d, encodedParsingResult))
+
+    #         additionnal check (just to be certain dataParsing equals the data)
+    #         if not ''.join(rawParsingResult) in TypeConverter.convert(d, HexaString, Raw):
+    #             raise Exception("<!> You found a case which broke our parsing engine: concat alignedData not in original message not '{0}' in '{1}'".format(''.join(rawParsingResult), TypeConverter.convert(d, HexaString, Raw)))
+    #         result.append(encodedParsingResult)
+            
+    #     return result
+
+            
+    # def _parseData(self, d, rootLeafFields, targetedFieldLeafFields):
+    #     """Internal method that aligns one data according to the provided fields"""
     
-        self._logger.debug("Data to align: {0}".format(d))
-        # split the message following the regex definition
-        splittedDatas = self.__splitDataWithRegex(d, rootLeafFields)
+    #     self._logger.debug("Data to align: {0}".format(d))
+    #     split the message following the regex definition
+    #     splittedDatas = self.__splitDataWithRegex(d, rootLeafFields)
 
-        # first we check if the regex parsing was a success:
-        # we verify the regex has identified a segment for each field
-        for field in targetedFieldLeafFields:
-            for splittedData in splittedDatas:
-                if field.regex.id not in splittedData.keys() or len(splittedData[field.regex.id]) == 0:
-                    raise Exception("Content of field {0} ({1}) has not been found on message, alignment failed.")
+    #     first we check if the regex parsing was a success:
+    #     we verify the regex has identified a segment for each field
+    #     for field in targetedFieldLeafFields:
+    #         for splittedData in splittedDatas:
+    #             if field.regex.id not in splittedData.keys() or len(splittedData[field.regex.id]) == 0:
+    #                 raise Exception("Content of field {0} ({1}) has not been found on message, alignment failed.")
 
-                if len(splittedData[field.regex.id]) > 1:
-                    raise Exception("Multiple values are available for the same field, this is not yet supported.")
+    #             if len(splittedData[field.regex.id]) > 1:
+    #                 raise Exception("Multiple values are available for the same field, this is not yet supported.")
         
-        # store all the parsing results
-        parsingResults = []
+    #     store all the parsing results
+    #     parsingResults = []
 
-        # we analyze each result of the regex parsing
-        for splittedData in splittedDatas:
-            # Yes, we create an empty array that contains an empty array
-            # fieldParserPaths[0] => one path in the token-tree. a path = [FieldParserResult0, ....]
-            fieldParserPaths = [[]] # = [[FieldParserResult0, FieldParserResult1, ...], [], []]
+    #     we analyze each result of the regex parsing
+    #     for splittedData in splittedDatas:
+    #         Yes, we create an empty array that contains an empty array
+    #         fieldParserPaths[0] => one path in the token-tree. a path = [FieldParserResult0, ....]
+    #         fieldParserPaths = [[]] = [[FieldParserResult0, FieldParserResult1, ...], [], []]
 
-            # we parse the current regex result according to each field token-tree
-            for ifield, currentField in enumerate(targetedFieldLeafFields):
-                # regex applies on the hexastring level, token-tree applies on the bitarray level, we execute a convertion
-                fieldContent = TypeConverter.convert(splittedData[currentField.regex.id][0], HexaString, BitArray)
+    #         we parse the current regex result according to each field token-tree
+    #         for ifield, currentField in enumerate(targetedFieldLeafFields):
+    #             regex applies on the hexastring level, token-tree applies on the bitarray level, we execute a convertion
+    #             fieldContent = TypeConverter.convert(splittedData[currentField.regex.id][0], HexaString, BitArray)
 
-                newFieldParserPaths = []
+    #             newFieldParserPaths = []
 
-                for i_fieldParserPath, fieldParserPath in enumerate(fieldParserPaths):
-                    # we retrieve the remaining data
-                    remainingData = None
-                    if len(fieldParserPath) > 0:
-                        remainingData = fieldParserPath[ifield-1].remainingData
+    #             for i_fieldParserPath, fieldParserPath in enumerate(fieldParserPaths):
+    #                 we retrieve the remaining data
+    #                 remainingData = None
+    #                 if len(fieldParserPath) > 0:
+    #                     remainingData = fieldParserPath[ifield-1].remainingData
 
-                    if remainingData is not None:
-                        content = remainingData.copy()
-                        content.extend(fieldContent.copy())
-                    else:
-                        content = fieldContent.copy()
+    #                 if remainingData is not None:
+    #                     content = remainingData.copy()
+    #                     content.extend(fieldContent.copy())
+    #                 else:
+    #                     content = fieldContent.copy()
 
-                    # start the field parser
-                    fieldParser = FieldParser(currentField)
-                    if fieldParser.parse(content):
-                        for fieldParserResult in fieldParser.fieldParserResults:
-                            path = []
-                            path.extend(fieldParserPath)
-                            path.append(fieldParserResult)
-                            newFieldParserPaths.append(path)
-                    else:
-                        self._logger.debug("Field parsing failed.")
+    #                 start the field parser
+    #                 fieldParser = FieldParser(currentField)
+    #                 if fieldParser.parse(content):
+    #                     for fieldParserResult in fieldParser.fieldParserResults:
+    #                         path = []
+    #                         path.extend(fieldParserPath)
+    #                         path.append(fieldParserResult)
+    #                         newFieldParserPaths.append(path)
+    #                 else:
+    #                     self._logger.debug("Field parsing failed.")
                             
-                fieldParserPaths = newFieldParserPaths
+    #             fieldParserPaths = newFieldParserPaths
 
-                if len(fieldParserPaths) == 0:
-                    raise Exception("Invalid, content: {0}, field: {1}".format(fieldContent, currentField._str_debug()))
+    #             if len(fieldParserPaths) == 0:
+    #                 raise Exception("Invalid, content: {0}, field: {1}".format(fieldContent, currentField._str_debug()))
             
-            parsingResults.extend(fieldParserPaths)
+    #         parsingResults.extend(fieldParserPaths)
 
-        # remove all the paths where the last field parser result has none empty remaining data
-        removeItems = []
-        for parsingResult in parsingResults:
-            if len(parsingResult[-1].remainingData) != 0:
-                removeItems.append(parsingResult)
+    #     remove all the paths where the last field parser result has none empty remaining data
+    #     removeItems = []
+    #     for parsingResult in parsingResults:
+    #         if len(parsingResult[-1].remainingData) != 0:
+    #             removeItems.append(parsingResult)
 
-        for removeItem in removeItems:
-            parsingResults.remove(removeItem)
+    #     for removeItem in removeItems:
+    #         parsingResults.remove(removeItem)
             
-        parsingResult = None
-        if len(parsingResults) == 0:
-            raise Exception("Message cannot be parsed according to fields specification")
-        if len(parsingResults) > 1:
-            # TODO: new version should support the selection of which parsing result must be retained
-            self._logger.debug("TODO: multiple parsing results found !")
-        parsingResult = parsingResults[0]
+    #     parsingResult = None
+    #     if len(parsingResults) == 0:
+    #         raise Exception("Message cannot be parsed according to fields specification")
+    #     if len(parsingResults) > 1:
+    #         TODO: new version should support the selection of which parsing result must be retained
+    #         self._logger.debug("TODO: multiple parsing results found !")
+    #     parsingResult = parsingResults[0]
 
-        resultEncoded = []
-        resultRaw = []
-        for ifield, currentField in enumerate(targetedFieldLeafFields):
-            # now we apply encoding and mathematic functions
-            fieldValue = parsingResult[ifield].consumedData  # here we have bitarrays
+    #     resultEncoded = []
+    #     resultRaw = []
+    #     for ifield, currentField in enumerate(targetedFieldLeafFields):
+    #         now we apply encoding and mathematic functions
+    #         fieldValue = parsingResult[ifield].consumedData  here we have bitarrays
             
-            if self.encoded and len(currentField.encodingFunctions.values()) > 0:
-                for encodingFunction in currentField.encodingFunctions.values():
-                    fieldValue = encodingFunction.encode(fieldValue)
-            else:
-                fieldValue = TypeConverter.convert(fieldValue, BitArray, Raw)
+    #         if self.encoded and len(currentField.encodingFunctions.values()) > 0:
+    #             for encodingFunction in currentField.encodingFunctions.values():
+    #                 fieldValue = encodingFunction.encode(fieldValue)
+    #         else:
+    #             fieldValue = TypeConverter.convert(fieldValue, BitArray, Raw)
         
-            resultEncoded.append(fieldValue)
-            resultRaw.append(TypeConverter.convert(parsingResult[ifield].consumedData, BitArray, Raw))
+    #         resultEncoded.append(fieldValue)
+    #         resultRaw.append(TypeConverter.convert(parsingResult[ifield].consumedData, BitArray, Raw))
             
-        return (resultRaw, resultEncoded)
+    #     return (resultRaw, resultEncoded)
 
-    @typeCheck(str)
-    def __splitDataWithRegex(self, data, fields):
-        """Split the specified data in possible field following
-        the application of the regex
+    # @typeCheck(str)
+    # def __splitDataWithRegex(self, data, fields):
+    #     """Split the specified data in possible field following
+    #     the application of the regex
 
-        :param data: the data to split must be encoded in hexastring
-        :type data: :class:`str`
-        :param fields: the list of fields to use to parse the specified data
-        :type fields: a list of :class:`netzob.Common.Models.Vocabulary.Field.Field`
-        """
+    #     :param data: the data to split must be encoded in hexastring
+    #     :type data: :class:`str`
+    #     :param fields: the list of fields to use to parse the specified data
+    #     :type fields: a list of :class:`netzob.Common.Models.Vocabulary.Field.Field`
+    #     """
 
-        if data is None:
-            raise TypeError("data cannot be None")
+    #     if data is None:
+    #         raise TypeError("data cannot be None")
 
-        if fields is None:
-            raise TypeError("fields cannot be None")
+    #     if fields is None:
+    #         raise TypeError("fields cannot be None")
 
-        if len(fields) == 0:
-            raise TypeError("At least one field must be specified")
+    #     if len(fields) == 0:
+    #         raise TypeError("At least one field must be specified")
 
-        # build the regex
-        regexes = [field.regex for field in fields]
+    #     build the regex
+    #     regexes = [field.regex for field in fields]
         
-        regex = NetzobAggregateRegex(regexes)
+    #     regex = NetzobAggregateRegex(regexes)
                     
-        self._logger.debug("Regex: {0}".format(regex.finalRegex()))
+    #     self._logger.debug("Regex: {0}".format(regex.finalRegex()))
 
-        dynamicDatas = None
-        try:
-            # Now we apply the regex over the message
-            compiledRegex = re.compile(regex.finalRegex())
-            validDynamicDatas = compiledRegex.finditer(data)
-        except Exception, e:
-            self._logger.warning("An error occured in the alignment process")
-            self._logger.warning("The regex of the group doesn't match one of its message")
-            self._logger.warning("Regex: {0}".format(regex.finalRegex()))
-            if len(data) > 255:
-                self._logger.warning("Message: {0}...".format(data[:255]))
-            else:
-                self._logger.warning("Message: {0}".format(data))
-            raise e
+    #     dynamicDatas = None
+    #     try:
+    #         Now we apply the regex over the message
+    #         compiledRegex = re.compile(regex.finalRegex())
+    #         validDynamicDatas = compiledRegex.finditer(data)
+    #     except Exception, e:
+    #         self._logger.warning("An error occured in the alignment process")
+    #         self._logger.warning("The regex of the group doesn't match one of its message")
+    #         self._logger.warning("Regex: {0}".format(regex.finalRegex()))
+    #         if len(data) > 255:
+    #             self._logger.warning("Message: {0}...".format(data[:255]))
+    #         else:
+    #             self._logger.warning("Message: {0}".format(data))
+    #         raise e
 
-        results = []
-        for dynamicDatas in validDynamicDatas:
-            results.append(dynamicDatas.capturesdict())
-            # Memory optimization offered by regex module
-            dynamicDatas.detach_string()
+    #     results = []
+    #     for dynamicDatas in validDynamicDatas:
+    #         results.append(dynamicDatas.capturesdict())
+    #         Memory optimization offered by regex module
+    #         dynamicDatas.detach_string()
 
-        self._logger.debug("{0} ways of parsing the message with a regex was found.".format(len(results)))
-        self._logger.debug(results)
+    #     self._logger.debug("{0} ways of parsing the message with a regex was found.".format(len(results)))
+    #     self._logger.debug(results)
             
-        return results                
+    #     return results                
 
     # Static method
     @staticmethod

@@ -80,7 +80,7 @@ class AbstractVariable(object):
 
         self.__varType = varType
         if svas is None:
-            svas = SVAS()
+            svas = SVAS.EPHEMERAL
         self.svas = svas
         # A list containing all variables which value is bind to the value of this variable.
         self.__boundedVariables = []
@@ -89,9 +89,7 @@ class AbstractVariable(object):
         # The variables just above the current variable in the tree representation.
         self.__fathers = []
 
-
     
-
 
 
         

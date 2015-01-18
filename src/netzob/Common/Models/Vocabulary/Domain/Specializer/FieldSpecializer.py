@@ -43,12 +43,9 @@ import random
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.Field import Field
-from netzob.Common.Models.Vocabulary.Domain.Parser.VariableParser import VariableParser
-from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
-from netzob.Common.Models.Vocabulary.Domain.Parser.FieldParserResult import FieldParserResult
-
 from netzob.Common.Models.Vocabulary.Domain.Specializer.VariableSpecializer import VariableSpecializer
+from netzob.Common.Models.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
+
 from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
 
 
@@ -61,44 +58,45 @@ class FieldSpecializer():
     >>> from netzob.all import *
     >>> f = Field("Hello")
     >>> fs = FieldSpecializer(f)
-    >>> print fs.specialize()
-    bitarray('0001001010100110001101100011011011110110')
+    >>> print TypeConverter.convert(fs.specialize()[0].getDataAssignedToField(f), BitArray, Raw)
+    Hello
 
     >>> f = Field(ASCII(nbChars=10))
     >>> fs = FieldSpecializer(f)
-    >>> print len(fs.specialize())
+    >>> print len(fs.specialize()[0].getDataAssignedToField(f))
     80
 
     >>> f = Field(ASCII(nbChars=(4, 10)))
     >>> fs = FieldSpecializer(f)
-    >>> print 32<=len(fs.specialize())<=80
+    >>> print 32<=len(fs.specialize()[0].getDataAssignedToField(f))<=80
     True
 
     >>> d = Alt([ASCII("netzob"), ASCII("zoby")])
     >>> f = Field(d)
     >>> fs = FieldSpecializer(f)
-    >>> val = set([TypeConverter.convert(fs.specialize(), BitArray, ASCII) for x in range(100)])
+    >>> val = set([TypeConverter.convert(fs.specialize()[0].getDataAssignedToField(f), BitArray, ASCII) for x in range(100)])
     >>> print val
     set(['netzob', 'zoby'])
 
     >>> d = Agg([ASCII("hello"), ASCII(" "), Alt([ASCII("netzob"), ASCII("zoby")])])
     >>> f = Field(d)
     >>> fs = FieldSpecializer(f)
-    >>> val = set([TypeConverter.convert(fs.specialize(), BitArray, ASCII) for x in range(100)])
+    >>> val = set([TypeConverter.convert(fs.specialize()[0].getDataAssignedToField(f), BitArray, ASCII) for x in range(100)])
     >>> print val
     set(['hello zoby', 'hello netzob'])
 
     """
 
-    def __init__(self, field, memory = None):
+    def __init__(self, field):
         self.field = field
-        if memory is not None:
-            self.memory = memory
-        else:
-            self.memory = Memory()
+        self._logger.debug("Creating a new FieldSpecializer.")
 
-    def specialize(self):
+    @typeCheck(SpecializingPath)
+    def specialize(self, specializingPath=None):
         """Execute the specialize operation"""
+
+        if specializingPath is None:
+            specializingPath = SpecializingPath(memory=Memory())
 
         self._logger.debug("Specialize field {0}".format(self.field.name))
 
@@ -110,19 +108,10 @@ class FieldSpecializer():
             raise Exception("No definition domain specified for field '{0}', cannnot parse the content against it.".format(self.field.name))
 
         # we create a first VariableParser and uses it to parse the domain
-        variableSpecializer = self.__createVariableSpecializer(domain)
-        if not variableSpecializer.specialize():
-            raise Exception("An error occurred while specializing variable {0}".format(domain))
+        variableSpecializer = VariableSpecializer(domain)
+        resultSpecializingPaths = variableSpecializer.specialize(specializingPath)
 
-        paths = variableSpecializer.variableSpecializerPaths
+        for resultSpecializingPath in resultSpecializingPaths:
+            resultSpecializingPath.addResultToField(self.field, resultSpecializingPath.getDataAssignedToVariable(self.field.domain))
 
-        if len(paths) == 0:
-            raise Exception("No valid specialization path found.")
-
-        return random.choice(paths).generatedContent
-
-
-    def __createVariableSpecializer(self, domain):
-        """Creates a variable specializer"""
-        variableSpecializer = VariableSpecializer(domain, self.memory)
-        return variableSpecializer
+        return resultSpecializingPaths

@@ -60,6 +60,10 @@ from netzob.Inference.Vocabulary.FormatOperations import FieldSplitDelimiter
 from netzob.Inference.Vocabulary.FormatOperations import FieldOperations
 from netzob.Common.Models.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
 from netzob.Common.Models.Vocabulary.Domain.Specializer.VariableSpecializer import VariableSpecializer
+from netzob.Common.Models.Vocabulary.Domain.Variables.SVAS import SVAS
+
+from netzob.Common.Models.Vocabulary.Domain.Parser.MessageParser import MessageParser
+from netzob.Common.Models.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
 
 def getSuite():
     # List of modules to include in the list of tests
@@ -67,17 +71,18 @@ def getSuite():
 
         # Modules related to common types and data structures
         # ---------------------------------------------------
-        ASCII.__module__,
-        Decimal.__module__,
-        BitArray.__module__,
-        Raw.__module__,
-        HexaString.__module__,
+        # ASCII.__module__,
+        # Decimal.__module__,
+        # BitArray.__module__,
+        # Raw.__module__,
+        # HexaString.__module__,
 
         # Modules related to the vocabulary inference
         # -------------------------------------------
-        Protocol.__module__,
+        # Protocol.__module__,
         Field.__module__,
         DataAlignment,
+        ParallelDataAlignment,        
         AbstractField,
         Symbol.__module__,
         EmptySymbol.__module__,
@@ -93,7 +98,7 @@ def getSuite():
         FieldReseter,
         AbstractMessage,
         ClusterByKeyField,
-        ParallelDataAlignment,
+        
         RawMessage.__module__,
         L2NetworkMessage.__module__,
         L3NetworkMessage.__module__,
@@ -120,10 +125,16 @@ def getSuite():
         TypeConverter.__module__,
         AbstractVariable,
         Size.__module__,
+        Value.__module__,        
         InternetChecksum.__module__,
         FieldParser.__module__,
         VariableSpecializer.__module__,
         FieldSpecializer.__module__,
+        SVAS.__module__,
+
+        MessageParser.__module__,
+        MessageSpecializer.__module__,
+
 
         # Modules related to the grammatical inference
         # --------------------------------------------

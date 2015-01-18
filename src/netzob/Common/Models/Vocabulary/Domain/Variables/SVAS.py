@@ -49,10 +49,15 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 class SVAS(object):
     """Represents a State Variable Assignment Strategy
 
+    The SVAS of a variable defines how its value is used while abstracting and specializing.
+    The SVAS impacts the memorization strategy.    
+    
     """
 
     CONSTANT = "Constant SVAS"
     EPHEMERAL = "Ephemeral SVAS"
+    VOLATILE = "Volatile SVAS"
+    PERSISTENT = "Persistent SVAS"    
 
     def __init__(self):
         pass

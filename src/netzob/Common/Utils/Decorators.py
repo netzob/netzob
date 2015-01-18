@@ -113,7 +113,7 @@ def NetzobLogger(klass):
     if not found:
         klass._logger = logging.getLogger(klass.__name__)
         handler = ColourStreamHandler() if has_colour else logging.StreamHandler()
-        handler.setLevel(logging.INFO)
+        handler.setLevel(logging.DEBUG)
         fmt = '%(relativeCreated)d: [%(levelname)s] %(module)s:%(funcName)s: %(message)s'
         handler.setFormatter(logging.Formatter(fmt))
         klass._logger.addHandler(handler)

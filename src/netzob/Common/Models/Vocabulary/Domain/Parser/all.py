@@ -31,3 +31,4 @@
 
 from netzob.Common.Models.Vocabulary.Domain.Parser.FieldParser import FieldParser
 from netzob.Common.Models.Vocabulary.Domain.Parser.VariableParser import VariableParser
+from netzob.Common.Models.Vocabulary.Domain.Parser.MessageParser import MessageParser

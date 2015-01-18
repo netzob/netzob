@@ -153,7 +153,7 @@ class AbstractType(object):
         :return: the default endianness
         :rtype: str
         """
-        return AbstractType.ENDIAN_LITTLE
+        return AbstractType.ENDIAN_BIG
 
     @staticmethod
     def defaultSign():

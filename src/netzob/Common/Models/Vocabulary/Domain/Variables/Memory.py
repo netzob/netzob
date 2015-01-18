@@ -39,6 +39,9 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
+from netzob.Common.Models.Types.TypeConverter import TypeConverter
+from netzob.Common.Models.Types.BitArray import BitArray
+from netzob.Common.Models.Types.Raw import Raw
 
 
 @NetzobLogger
@@ -49,7 +52,7 @@ class Memory(object):
 
     def __init__(self):
         """Constructor of Memory"""
-        self.__memory = dict()
+        self.memory = dict()
         self.__memoryAccessCB = None
 
     @typeCheck(AbstractVariable, bitarray)
@@ -61,7 +64,7 @@ class Memory(object):
         >>> memory = Memory()
         >>> memory.memorize(variable, TypeConverter.convert("hello", ASCII, BitArray))
         >>> print memory
-        Data (ASCII=None ((0, None))): bitarray('0001011010100110001101100011011011110110')
+        Data (ASCII=None ((0, None))): hello
         
         """
         self.memory[variable] = value
@@ -91,8 +94,8 @@ class Memory(object):
         >>> variable = Data(ASCII(), name="var1")
         >>> memory = Memory()
         >>> memory.memorize(variable, TypeConverter.convert("hello", ASCII, BitArray))
-        >>> memory.getValue(variable)
-        bitarray('0001011010100110001101100011011011110110')
+        >>> print TypeConverter.convert(memory.getValue(variable), BitArray, Raw)
+        hello
 
         """
         return self.memory[variable]
@@ -113,7 +116,6 @@ class Memory(object):
         """
         if variable in self.memory.keys():
             self.memory.pop(variable, None)
-        self._logger.warning("Cannot forget a variable ({0}) that has not been memorized.".format(variable))
 
     def duplicate(self):
         """Duplicates in a new memory
@@ -146,9 +148,23 @@ class Memory(object):
     def __str__(self):
         result = []
         for var, value in self.memory.iteritems():
-            result.append("{0}: {1}".format(var, value))
+            result.append("{0}: {1}".format(var, TypeConverter.convert(value, BitArray, Raw)))
         return '\n'.join(result)
         
+
+    @property
+    def memory(self):
+        """The content of the memory is stored in this dict().
+
+        :type: :class:`dict`
+        """
+        return self.__memory
+
+    @memory.setter
+    def memory(self, memory):
+        self.__memory = dict()
+        for k, v in memory.iteritems():
+            self.__memory[k] = v
 
 # #+---------------------------------------------------------------------------+
 # #| Functions on memories                                                     |
@@ -276,20 +292,6 @@ class Memory(object):
 #             return value
 #         else:
 #             return None
-
-    @property
-    def memory(self):
-        """The content of the memory is stored in this dict().
-
-        :type: :class:`dict`
-        """
-        return self.__memory
-
-    @memory.setter
-    def memory(self, memory):
-        self.__memory = dict()
-        for k, v in memory.iteritems():
-            self.__memory[k] = v
 
     # @property
     # def memoryAccessCB(self):

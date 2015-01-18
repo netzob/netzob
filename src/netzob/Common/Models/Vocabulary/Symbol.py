@@ -100,24 +100,31 @@ class Symbol(AbstractField):
     @typeCheck(Memory, object)
     def specialize(self, memory=None, generationStrategy=None):
         """Specialize and generate an hexastring which content
-        follows the fields definitions attached to current element.
+        follows the fields definitions attached to the field of the symbol.
+
+        >>> from netzob.all import *
+        >>> f1 = Field(domain=ASCII(nbChars=5))
+        >>> f0 = Field(domain=Size(f1))
+        >>> s = Symbol(fields=[f0, f1])
+        >>> result = s.specialize()
+        >>> print result[0]
+        \x05
+        >>> print len(result)
+        6
 
         :keyword generationStrategy: if set, the strategy will be used to generate the fields definitions
         :type generaionrStrategy: :class:``
 
-        :return: a generated content represented with an hexastring
+        :return: a generated content represented as a Raw
         :rtype: :class:`str``
         :raises: :class:`netzob.Common.Models.Vocabulary.AbstractField.GenerationException` if an error occurs while generating a message
         """
-        if memory is None:
-            memory = Memory()
+        from netzob.Common.Models.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
+        msg = MessageSpecializer(memory=memory)
+        spePath = msg.specializeSymbol(self)
 
-        result = []
-        for child in self.children:
-            specialize = child.specialize(memory)
-            result.append(specialize)
-
-        return ''.join(result)
+        if spePath is not None:
+            return TypeConverter.convert(spePath.generatedContent, BitArray, Raw)
 
     def clearMessages(self):
         """Delete all the messages attached to the current symbol"""

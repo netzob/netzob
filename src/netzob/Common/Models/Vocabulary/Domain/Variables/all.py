@@ -33,3 +33,4 @@ from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.all import *
 from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.all import *
 
 from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
+from netzob.Common.Models.Vocabulary.Domain.Variables.SVAS import SVAS

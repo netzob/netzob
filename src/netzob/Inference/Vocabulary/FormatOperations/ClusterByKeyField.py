@@ -79,11 +79,11 @@ class ClusterByKeyField(object):
         ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
         ...     print sym.name + ":"
         ...     print sym
-        symbol_0020:
-        00 | 0020 | 000000
         symbol_ff2f:
         00 | ff2f | 000000
         00 | ff2f | 000000
+        symbol_0020:
+        00 | 0020 | 000000
 
         :param field: the field we want to split in new symbols
         :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
