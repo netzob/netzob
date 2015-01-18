@@ -29,7 +29,6 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import uuid
-import binascii
 import time
 
 #+---------------------------------------------------------------------------+
@@ -113,10 +112,9 @@ class AbstractMessage(SortableObject):
         if field is None:
             raise TypeError("Field cannot be None")
 
-        msgData = [TypeConverter.convert(self.data, Raw, HexaString)]
         try:
-            DataAlignment.align(msgData, field)
-        except Exception:
+            DataAlignment.align([self.data], field)
+        except:
             return False
         return True
 
