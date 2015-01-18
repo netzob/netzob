@@ -148,6 +148,7 @@ class DataAlignment(threading.Thread):
         if self.field is None:
             raise TypeError("Field cannot be None")
 
+
         # Aligned messages are stored in a MatrixList for better display
         result = MatrixList()
 
@@ -159,15 +160,11 @@ class DataAlignment(threading.Thread):
         # else:
         targetedFieldLeafFields = rootLeafFields
 
-        for f in targetedFieldLeafFields:
-            self._logger.debug(f.name)
-
         for d in self.data:
             from netzob.Common.Models.Vocabulary.Domain.Parser.MessageParser import MessageParser
-            
             mp = MessageParser()
             #alignedMsg = mp.parseRaw(TypeConverter.convert(d, HexaString, Raw), targetedFieldLeafFields)
-            alignedMsg = mp.parseRaw(d, targetedFieldLeafFields)
+            alignedMsg = mp.parseRaw(d, targetedFieldLeafFields)            
 
             alignedEncodedMsg = []
             for ifield, currentField in enumerate(targetedFieldLeafFields):
@@ -387,7 +384,7 @@ class DataAlignment(threading.Thread):
         :return: the aligned data
         :rtype: :class:`netzob.Common.Utils.MatrixList.MatrixList`
         """
-
+        
         dAlignment = DataAlignment(data, field, depth, encoded=encoded)
         return dAlignment.execute()
 

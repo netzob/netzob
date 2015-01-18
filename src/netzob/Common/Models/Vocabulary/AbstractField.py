@@ -502,8 +502,6 @@ class AbstractField(AbstractMementoCreator):
         >>> s2 = Symbol([f1b, f2b, f3b, f4b], name="Symbol-zoby")
 
         >>> for m in messages:
-        ...    print m
-        >>> for m in messages:
         ...    abstractedSymbol = AbstractField.abstract(m, [s1, s2])
         ...    print abstractedSymbol.name
         Symbol-netzob
@@ -523,10 +521,10 @@ class AbstractField(AbstractMementoCreator):
         from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
         for field in fields:
             try:                
-                DataAlignment.align(data, field, encoded=False)
+                DataAlignment.align([data], field, encoded=False)
                 return field
-            except Exception, e:
-                raise e
+            except:
+                pass
 
         logging.error("Impossible to abstract the message in one of the specified symbols, we create an unknown symbol for it.")
         
