@@ -147,7 +147,7 @@ class SearchEngine(object):
         >>> se = SearchEngine()
         >>> results = se.searchDataInMessages(sData, msgs, inParallel=False)
         >>> print results
-        50 occurence(s) found.
+        25 occurence(s) found.
 
         Example of a search operation executed in parallel
 
@@ -162,7 +162,7 @@ class SearchEngine(object):
         >>> se = SearchEngine()
         >>> results = se.searchDataInMessages(sData, msgs, inParallel=True)
         >>> print results
-        50 occurence(s) found.
+        25 occurence(s) found.
 
         :parameter data: a list of data to search after. Each data must be provided with its netzob type.
         :type data: a list of :class:`netzob.Common.Models.Types.AbstractType.AbstractType`.
@@ -244,7 +244,7 @@ class SearchEngine(object):
         >>> for result in results:
         ...    print result
         ...    print repr(result.searchTask.properties["data"])
-        Found ascii-bits(littleEndian) at [(80L, 144L)] of bitarray('01001010101001100110111010100110010011101100111010010110011101101110011000000100000011100100111011110110001011101111011011000110111101100011011011001110000001001110111010010110001011100001011000000100011100101010011000101110010111101111011001000110')
+        Found ascii-bits(bigEndian) at [(80L, 144L)] of bitarray('01010010011001010111011001100101011100100111001101101001011011100110011100100000011100000111001001101111011101000110111101100011011011110110110001110011001000000111011101101001011101000110100000100000010011100110010101110100011110100110111101100010')
         protocol
 
 
