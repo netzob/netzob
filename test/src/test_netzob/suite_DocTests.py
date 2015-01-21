@@ -71,17 +71,17 @@ def getSuite():
 
         # Modules related to common types and data structures
         # ---------------------------------------------------
-        # ASCII.__module__,
-        # Decimal.__module__,
-        # BitArray.__module__,
-        # Raw.__module__,
-        # HexaString.__module__,
+        ASCII.__module__,
+        Decimal.__module__,
+        BitArray.__module__,
+        Raw.__module__,
+        HexaString.__module__,
 
         # Modules related to the vocabulary inference
         # -------------------------------------------
-        # Protocol.__module__,
+        Protocol.__module__,
         Field.__module__,
-        DataAlignment,
+        DataAlignment, 
         ParallelDataAlignment,        
         AbstractField,
         Symbol.__module__,
@@ -90,6 +90,7 @@ def getSuite():
         DomainFactory.__module__,
         Alt.__module__,
         Agg.__module__,
+        Repeat.__module__,        
         Data.__module__,
         FieldSplitStatic,
         FieldSplitAligned,
