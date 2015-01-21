@@ -313,6 +313,13 @@ class Data(AbstractVariableLeaf):
     def __str__(self):
         return "Data ({0})".format(self.dataType)
 
+    # These two functions (__eq__ and __key) are usefull to prevent duplicating DATA in ALTs
+    def __eq__(x, y):
+        return x.__key() == y.__key()
+        
+    def __key(self):
+        return (self.__class__.__name__, self.currentValue, self.dataType, self.svas)        
+
     @typeCheck(GenericPath)
     def isDefined(self, path):
         """Checks if a value is available either in data's definition or in memory
