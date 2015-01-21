@@ -244,7 +244,6 @@ class Size(AbstractRelationVariableLeaf):
                     fieldValue = self.dataType.generate()
                 else:
                     fieldValue = parsingPath.getDataAssignedToVariable(field.domain)
-                    self._logger.fatal("fieldValue: {0}".format(fieldValue))
                 if fieldValue is None:
                     break
                 else:
