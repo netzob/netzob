@@ -44,6 +44,7 @@
 #+---------------------------------------------------------------------------+
 from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Alt import Alt
 from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Agg import Agg
+from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
 from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Eol import Eol
 from netzob.Common.Models.Types.AbstractType import AbstractType
@@ -93,6 +94,8 @@ class DomainFactory(object):
         # If domain starts with an Aggregate
         elif isinstance(domain, Agg):
             return DomainFactory.__normalizeAggregateDomain(domain)
+        elif isinstance(domain, Repeat):
+            return DomainFactory.__normalizeRepeatDomain(domain)
         else:
             return DomainFactory.__normalizeLeafDomain(domain)
 
@@ -148,3 +151,8 @@ class DomainFactory(object):
         else:
             raise TypeError("Impossible to normalize the provided domain as an aggregate.")
         return result
+
+    @staticmethod
+    def __normalizeRepeatDomain(domain):
+        return domain
+        
