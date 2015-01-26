@@ -102,7 +102,7 @@ class Alt(AbstractVariableNode):
         super(Alt, self).__init__(self.__class__.__name__, children, svas=svas)
 
     @typeCheck(ParsingPath)
-    def parse(self, parsingPath):
+    def parse(self, parsingPath, carnivorous=False):
         """Parse the content with the definition domain of the alternate."""
 
         if parsingPath is None:

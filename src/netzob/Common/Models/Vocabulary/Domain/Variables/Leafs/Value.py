@@ -137,7 +137,7 @@ class Value(AbstractRelationVariableLeaf):
         return memory.hasValue(self)
 
     @typeCheck(GenericPath)
-    def valueCMP(self, parsingPath, acceptCallBack=True):
+    def valueCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
         self._logger.debug("ValueCMP")
         results = []
         if parsingPath is None:
@@ -175,7 +175,7 @@ class Value(AbstractRelationVariableLeaf):
         return results
             
     @typeCheck(ParsingPath)
-    def learn(self, parsingPath, acceptCallBack=True):
+    def learn(self, parsingPath, acceptCallBack=True, carnivorous=False):
         self._logger.warn("Value LEARN")
         if parsingPath is None:
             raise Exception("VariableParserPath cannot be None")
@@ -183,7 +183,7 @@ class Value(AbstractRelationVariableLeaf):
         return []
 
     @typeCheck(ParsingPath)
-    def domainCMP(self, parsingPath, acceptCallBack=True):
+    def domainCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
         """This method participates in the abstraction process.
 
         It creates a VariableSpecializerResult in the provided path if

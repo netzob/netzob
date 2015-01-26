@@ -166,9 +166,7 @@ class MessageParser(object):
         # we only consider the message data
         dataToParse = message.data
 
-
         fields = symbol._getLeafFields()
-
         
         return self.parseRaw(dataToParse, fields)
 
@@ -207,7 +205,7 @@ class MessageParser(object):
                 next_field = None
                 
             # build a field parser
-            fp = FieldParser(current_field)
+            fp = FieldParser(current_field, lastField=(i_field==len(fields)-1))
             newParsingPaths = []
             
             for parsingPath in parsingPaths:

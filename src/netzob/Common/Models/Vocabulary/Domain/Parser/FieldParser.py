@@ -163,8 +163,9 @@ class FieldParser():
     
     """
 
-    def __init__(self, field):
+    def __init__(self, field, lastField=False):
         self.field = field
+        self.lastField = lastField
 
     @typeCheck(ParsingPath)
     def parse(self, parsingPath):
@@ -190,7 +191,7 @@ class FieldParser():
 
         # we create a first VariableParser and uses it to parse the domain
         variableParser = VariableParser(domain)
-        resultParsingPaths = variableParser.parse(parsingPath)
+        resultParsingPaths = variableParser.parse(parsingPath, carnivorous=self.lastField)
 
         newResults = []
         

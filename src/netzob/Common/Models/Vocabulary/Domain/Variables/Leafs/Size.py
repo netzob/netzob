@@ -144,7 +144,7 @@ class Size(AbstractRelationVariableLeaf):
         return memory.hasValue(self)
 
     @typeCheck(ParsingPath)
-    def valueCMP(self, parsingPath):
+    def valueCMP(self, parsingPath, carnivorous=False):
         results = []
         if parsingPath is None:
             raise Exception("ParsingPath cannot be None")
@@ -168,7 +168,7 @@ class Size(AbstractRelationVariableLeaf):
             results.append(parsingPath)                
 
     @typeCheck(ParsingPath)
-    def learn(self, parsingPath):
+    def learn(self, parsingPath, carnivours=False):
         raise Exception("not implemented")
         self._logger.warn("SIZE LEARN")
         if parsingPath is None:
@@ -176,7 +176,7 @@ class Size(AbstractRelationVariableLeaf):
         return []
 
     @typeCheck(ParsingPath)
-    def domainCMP(self, parsingPath, acceptCallBack=True):
+    def domainCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
         """This method participates in the abstraction process.
 
         It creates a VariableSpecializerResult in the provided path if

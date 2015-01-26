@@ -61,7 +61,7 @@ class AbstractVariableLeaf(AbstractVariable):
     def __init__(self, varType, name=None, svas=None):
         super(AbstractVariableLeaf, self).__init__(varType, name=name, svas=svas)
 
-    def parse(self, parsingPath, acceptCallBack=True):
+    def parse(self, parsingPath, acceptCallBack=True, carnivorous=False):
         """@toto TO BE DOCUMENTED"""
 
         if self.svas is None:
@@ -69,19 +69,19 @@ class AbstractVariableLeaf(AbstractVariable):
 
         if self.isDefined(parsingPath):
             if self.svas == SVAS.CONSTANT or self.svas == SVAS.PERSISTENT:
-                return self.valueCMP(parsingPath, acceptCallBack)
+                return self.valueCMP(parsingPath, acceptCallBack, carnivorous=carnivorous)
             elif self.svas == SVAS.EPHEMERAL:
-                return self.learn(parsingPath, acceptCallBack)
+                return self.learn(parsingPath, acceptCallBack, carnivorous=carnivorous)
             elif self.svas == SVAS.VOLATILE:
-                return self.domainCMP(parsingPath, acceptCallBack)
+                return self.domainCMP(parsingPath, acceptCallBack, carnivorous=carnivorous)
         else:
             if self.svas == SVAS.CONSTANT:
                 self._logger.debug("Cannot parse '{0}' as svas is CONSTANT and no value is available.".format(self))
                 return []
             elif self.svas == SVAS.EPHEMERAL or self.svas == SVAS.PERSISTENT:
-                return self.learn(parsingPath, acceptCallBack)
+                return self.learn(parsingPath, acceptCallBack, carnivorous=carnivorous)
             elif self.svas == SVAS.VOLATILE:
-                return self.domainCMP(parsingPath, acceptCallBack)
+                return self.domainCMP(parsingPath, acceptCallBack, carnivorous=carnivorous)
             
 
         raise Exception("Not yet implemented: {0}.".format(self.svas))
@@ -95,15 +95,15 @@ class AbstractVariableLeaf(AbstractVariable):
         raise NotImplementedError("method isDefined is not implemented")
 
     @abc.abstractmethod
-    def domainCMP(self, parsingPath):
+    def domainCMP(self, parsingPath, acceptCallBack, carnivorous):
         raise NotImplementedError("method domainCMP is not implemented")
     
     @abc.abstractmethod
-    def valueCMP(self, parsingPath):
+    def valueCMP(self, parsingPath, acceptCallBack, carnivorous):
         raise NotImplementedError("method valueCMP is not implemented")
 
     @abc.abstractmethod
-    def learn(self, parsingPath):
+    def learn(self, parsingPath, acceptCallBack, carnivorous):
         raise NotImplementedError("method learn is not implemented")
 
 

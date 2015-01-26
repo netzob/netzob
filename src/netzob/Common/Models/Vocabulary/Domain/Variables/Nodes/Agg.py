@@ -107,7 +107,7 @@ class Agg(AbstractVariableNode):
         super(Agg, self).__init__(self.__class__.__name__, children, svas=svas)
 
     @typeCheck(ParsingPath)
-    def parse(self, parsingPath):
+    def parse(self, parsingPath, carnivorous=False):
         """Parse the content with the definition domain of the aggregate.
         """
         dataToParse = parsingPath.getDataAssignedToVariable(self).copy()

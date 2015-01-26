@@ -346,7 +346,7 @@ class Data(AbstractVariableLeaf):
         return memory.hasValue(self)
 
     @typeCheck(ParsingPath)
-    def domainCMP(self, parsingPath, acceptCallBack=True):
+    def domainCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
         """Checks if the value assigned to this variable could be parsed against
         the definition domain of the data.
 
@@ -368,7 +368,11 @@ class Data(AbstractVariableLeaf):
         if len(content) < minSize:
             self._logger.debug("Length of the content is too short ({0}), expect data of at least {1} bits".format(len(content), minSize))
             return results
-            
+
+        if carnivorous:
+            minSize = len(content)
+            maxSize = len(content)
+
         for size in xrange(min(maxSize, len(content)), minSize -1, -1):
             # size == 0 : deals with 'optional' data
             if size == 0 or self.dataType.canParse(content[:size]):
@@ -381,7 +385,7 @@ class Data(AbstractVariableLeaf):
         return results
         
     @typeCheck(ParsingPath)
-    def valueCMP(self, parsingPath, acceptCallBack=True):
+    def valueCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
         if parsingPath is None:
             raise Exception("ParsingPath cannot be None")
                 
@@ -411,7 +415,7 @@ class Data(AbstractVariableLeaf):
         return results
 
     @typeCheck(ParsingPath)
-    def learn(self, parsingPath, acceptCallBack=True):
+    def learn(self, parsingPath, acceptCallBack=True, carnivorous=False):
             
         if parsingPath is None:
             raise Exception("ParsingPath cannot be None")
@@ -429,6 +433,11 @@ class Data(AbstractVariableLeaf):
         if len(content) < minSize:
             self._logger.debug("Length of the content is too short ({0}), expect data of at least {1} bits".format(len(content), minSize))
             return results
+
+        if carnivorous:
+            minSize = len(content)
+            maxSize = len(content)
+
             
         for size in xrange(min(maxSize, len(content)), minSize -1, -1):
             # size == 0 : deals with 'optional' data
