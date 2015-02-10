@@ -1,57 +1,50 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
-#+---------------------------------------------------------------------------+
-#|          01001110 01100101 01110100 01111010 01101111 01100010            |
-#|                                                                           |
-#|               Netzob : Inferring communication protocols                  |
-#+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
-#| This program is free software: you can redistribute it and/or modify      |
-#| it under the terms of the GNU General Public License as published by      |
-#| the Free Software Foundation, either version 3 of the License, or         |
-#| (at your option) any later version.                                       |
-#|                                                                           |
-#| This program is distributed in the hope that it will be useful,           |
-#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
-#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
-#| GNU General Public License for more details.                              |
-#|                                                                           |
-#| You should have received a copy of the GNU General Public License         |
-#| along with this program. If not, see <http://www.gnu.org/licenses/>.      |
-#+---------------------------------------------------------------------------+
-#| @url      : http://www.netzob.org                                         |
-#| @contact  : contact@netzob.org                                            |
-#| @sponsors : Amossys, http://www.amossys.fr                                |
-#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# |          01001110 01100101 01110100 01111010 01101111 01100010            |
+# |                                                                           |
+# |               Netzob : Inferring communication protocols                  |
+# +---------------------------------------------------------------------------+
+# | Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+# | This program is free software: you can redistribute it and/or modify      |
+# | it under the terms of the GNU General Public License as published by      |
+# | the Free Software Foundation, either version 3 of the License, or         |
+# | (at your option) any later version.                                       |
+# |                                                                           |
+# | This program is distributed in the hope that it will be useful,           |
+# | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+# | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
+# | GNU General Public License for more details.                              |
+# |                                                                           |
+# | You should have received a copy of the GNU General Public License         |
+# | along with this program. If not, see <http://www.gnu.org/licenses/>.      |
+# +---------------------------------------------------------------------------+
+# | @url      : http://www.netzob.org                                         |
+# | @contact  : contact@netzob.org                                            |
+# | @sponsors : Amossys, http://www.amossys.fr                                |
+# |             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| File contributors :                                                       |
-#|       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
-#|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | File contributors :                                                       |
+# |       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
+# |       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Standard library imports                                                  |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Standard library imports                                                  |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Related third party imports                                               |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Related third party imports                                               |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Local application imports                                                 |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Local application imports                                                 |
+# +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Utils.NetzobRegex import NetzobStaticRegex
-from netzob.Common.Models.Vocabulary.Field import Field
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
-from netzob.Common.Models.Types.TypeConverter import TypeConverter
-from netzob.Common.Models.Types.HexaString import HexaString
-from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
-from netzob.Common.Models.Vocabulary.Domain.DomainFactory import DomainFactory
 
 
 @NetzobLogger
@@ -70,12 +63,24 @@ class FindKeyFields(object):
         >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
         >>> symbol = Symbol(messages=messages)
         >>> Format.splitStatic(symbol)
+        >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
+        >>> print symbol
+        00 | ff2f | 0000 | 11
+        00 | 0010 | 0000 | 00
+        00 | fe1f | 0000 | 00
+        00 | 0020 | 0000 | 00
+        00 | ff1f | 0000 | 00
+        00 | ff1f | 0000 | 00
+        00 | ff2f | 0000 | 00
+        00 | fe1f | 0000 | 00
 
         >>> finder = FindKeyFields()
         >>> results = finder.execute(symbol)
         >>> for result in results:
         ...     print "Field name: " + result["keyField"].name + ", number of clusters: " + str(result["nbClusters"]) + ", distribution: " + str(result["distribution"])
-        Field name: Field-1, number of clusters: 5, distribution: [1, 2, 2, 2, 1]
+        Field name: Field-0, number of clusters: 1, distribution: [8]
+        Field name: Field-1, number of clusters: 5, distribution: [2, 1, 2, 2, 1]
+        Field name: Field-2, number of clusters: 1, distribution: [8]
         Field name: Field-3, number of clusters: 2, distribution: [1, 7]
 
         :param field: the field in which we want to identify key fields.
@@ -102,7 +107,7 @@ class FindKeyFields(object):
                     if lRef != len(val):
                         isCandidate = False
                         break
-                if isCandidate == True:
+                if isCandidate:
                     results.append({"keyField": f})
 
         # Compute clusters according to each key field found
