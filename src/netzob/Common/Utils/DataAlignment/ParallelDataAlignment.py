@@ -1,45 +1,45 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
-#+---------------------------------------------------------------------------+
-#|          01001110 01100101 01110100 01111010 01101111 01100010            |
-#|                                                                           |
-#|               Netzob : Inferring communication protocols                  |
-#+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
-#| This program is free software: you can redistribute it and/or modify      |
-#| it under the terms of the GNU General Public License as published by      |
-#| the Free Software Foundation, either version 3 of the License, or         |
-#| (at your option) any later version.                                       |
-#|                                                                           |
-#| This program is distributed in the hope that it will be useful,           |
-#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
-#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
-#| GNU General Public License for more details.                              |
-#|                                                                           |
-#| You should have received a copy of the GNU General Public License         |
-#| along with this program. If not, see <http://www.gnu.org/licenses/>.      |
-#+---------------------------------------------------------------------------+
-#| @url      : http://www.netzob.org                                         |
-#| @contact  : contact@netzob.org                                            |
-#| @sponsors : Amossys, http://www.amossys.fr                                |
-#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# |          01001110 01100101 01110100 01111010 01101111 01100010            |
+# |                                                                           |
+# |               Netzob : Inferring communication protocols                  |
+# +---------------------------------------------------------------------------+
+# | Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+# | This program is free software: you can redistribute it and/or modify      |
+# | it under the terms of the GNU General Public License as published by      |
+# | the Free Software Foundation, either version 3 of the License, or         |
+# | (at your option) any later version.                                       |
+# |                                                                           |
+# | This program is distributed in the hope that it will be useful,           |
+# | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+# | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
+# | GNU General Public License for more details.                              |
+# |                                                                           |
+# | You should have received a copy of the GNU General Public License         |
+# | along with this program. If not, see <http://www.gnu.org/licenses/>.      |
+# +---------------------------------------------------------------------------+
+# | @url      : http://www.netzob.org                                         |
+# | @contact  : contact@netzob.org                                            |
+# | @sponsors : Amossys, http://www.amossys.fr                                |
+# |             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| File contributors :                                                       |
-#|       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
-#|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | File contributors :                                                       |
+# |       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
+# |       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Standard library imports
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Standard library imports
+# +---------------------------------------------------------------------------+
 import multiprocessing
 import time
 
-#+---------------------------------------------------------------------------+
-#| Local application imports
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Local application imports
+# +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
@@ -63,7 +63,6 @@ class ParallelDataAlignment(object):
     in parallel way.
 
     >>> from netzob.all import *
-    >>> from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.AbstractVariableProcessingToken import AbstractVariableProcessingToken
     >>> import random
     >>> import time
     >>> import logging
@@ -71,7 +70,6 @@ class ParallelDataAlignment(object):
     >>> #Temporary raise log level of certain impacting loggers on alignment process
     >>> logging.getLogger(Data.__name__).setLevel(logging.INFO)
     >>> logging.getLogger(DataAlignment.__name__).setLevel(logging.INFO)
-    >>> logging.getLogger(AbstractVariableProcessingToken.__name__).setLevel(logging.INFO)
 
     >>> # Create 1000 data which follows format : 'hello '+random number of 5 to 10 digits+', welcome'.
     >>> # Compare the duration of their alignment with 1 and automatic threads computation
@@ -100,7 +98,6 @@ class ParallelDataAlignment(object):
     >>> # Reset log level of certain impacting loggers on alignment process
     >>> logging.getLogger(Data.__name__).setLevel(logging.DEBUG)
     >>> logging.getLogger(DataAlignment.__name__).setLevel(logging.DEBUG)
-    >>> logging.getLogger(AbstractVariableProcessingToken.__name__).setLevel(logging.DEBUG)
 
 
     """
@@ -185,7 +182,7 @@ class ParallelDataAlignment(object):
 
         for d in data:
             if d not in self.asyncResult.keys():
-                raise Exception("A least one data ({0}) has not been successfully computed by the alignment".format(d))
+                raise Exception("At least one data ({0}) has not been successfully computed by the alignment".format(d))
             result.extend(self.asyncResult[d])
 
         # check the number of computed alignment
