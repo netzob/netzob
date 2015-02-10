@@ -1,43 +1,43 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
-#+---------------------------------------------------------------------------+
-#|          01001110 01100101 01110100 01111010 01101111 01100010            |
-#|                                                                           |
-#|               Netzob.Orgob : Inferring communication protocols                  |
-#+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
-#| This program is free software: you can redistribute it and/or modify      |
-#| it under the terms of the GNU General Public License as published by      |
-#| the Free Software Foundation, either version 3 of the License, or         |
-#| (at your option) any later version.                                       |
-#|                                                                           |
-#| This program is distributed in the hope that it will be useful,           |
-#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
-#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
-#| GNU General Public License for more details.                              |
-#|                                                                           |
-#| You should have received a copy of the GNU General Public License         |
-#| along with this program. If not, see <http://www.gnu.org/licenses/>.      |
-#+---------------------------------------------------------------------------+
-#| @url      : http://www.netzob.org                                         |
-#| @contact  : contact@netzob.org                                            |
-#| @sponsors : Amossys, http://www.amossys.fr                                |
-#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# |          01001110 01100101 01110100 01111010 01101111 01100010            |
+# |                                                                           |
+# |               Netzob : Inferring communication protocols                  |
+# +---------------------------------------------------------------------------+
+# | Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+# | This program is free software: you can redistribute it and/or modify      |
+# | it under the terms of the GNU General Public License as published by      |
+# | the Free Software Foundation, either version 3 of the License, or         |
+# | (at your option) any later version.                                       |
+# |                                                                           |
+# | This program is distributed in the hope that it will be useful,           |
+# | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+# | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
+# | GNU General Public License for more details.                              |
+# |                                                                           |
+# | You should have received a copy of the GNU General Public License         |
+# | along with this program. If not, see <http://www.gnu.org/licenses/>.      |
+# +---------------------------------------------------------------------------+
+# | @url      : http://www.netzob.org                                         |
+# | @contact  : contact@netzob.org                                            |
+# | @sponsors : Amossys, http://www.amossys.fr                                |
+# |             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| File contributors :                                                       |
-#|       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
-#|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | File contributors :                                                       |
+# |       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
+# |       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Standard library imports                                                  |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Standard library imports                                                  |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Related third party imports                                               |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Related third party imports                                               |
+# +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Common.Models.Vocabulary.Symbol import Symbol
@@ -53,6 +53,25 @@ class MessageSpecializer(object):
     """
     >>> from netzob.all import *
 
+    >>> f0 = Field("TOTO")
+    >>> f1 = Field()
+    >>> f2 = Field(Raw(nbBytes=(2, 100)))
+    >>> f1.domain = Size(f2)
+    >>> f3 = Field(ASCII(';'))
+    >>> f4 = Field(Value(f2))
+    >>> s = Symbol(fields=[f0, f1, f2, f3, f4])
+    >>> msgs = [RawMessage(s.specialize()) for i in xrange(1)]
+    >>> s.messages = msgs
+    >>> s.addEncodingFunction(TypeEncodingFunction(HexaString))
+    >>> valueInTab = s.getCells()[0]
+    >>> print valueInTab[0]
+    544f544f
+    >>> size = valueInTab[1]
+    >>> int(size, 16)*2 == len(valueInTab[2])
+    True
+    >>> valueInTab[2] == valueInTab[4]
+    True
+
     >>> f11 = Field(domain=ASCII("hello"), name="F11")
     >>> f12 = Field(domain=ASCII(";"), name="F12")
     >>> f13 = Field(domain=ASCII(nbChars=(5,10)), name="F13")
@@ -67,23 +86,22 @@ class MessageSpecializer(object):
     >>> m1 = TypeConverter.convert(ms.specializeSymbol(s1).generatedContent, BitArray, Raw)
     >>> m1.startswith("hello;")
     True
-    
+
     >>> m2 = TypeConverter.convert(ms.specializeSymbol(s2).generatedContent, BitArray, Raw)
     >>> m2.startswith("master>")
     True
-    
+
     >>> m1[6:] == m2[7:]
     True
 
     """
 
-    def __init__(self, memory = None):
+    def __init__(self, memory=None):
         if memory is None:
             memory = Memory()
         self.memory = memory
 
-
-    @typeCheck(Symbol)    
+    @typeCheck(Symbol)
     def specializeSymbol(self, symbol):
         """This method generates a message based on the provided symbol definition."""
         if symbol is None:
@@ -101,16 +119,16 @@ class MessageSpecializer(object):
             if fieldDomain is None:
                 raise Exception("Cannot specialize field '{0}' since it defines no domain".format(fieldDomain))
 
-            fs = FieldSpecializer(field)    
+            fs = FieldSpecializer(field)
 
             newSpecializingPaths = []
             for specializingPath in specializingPaths:
                 newSpecializingPaths.extend(fs.specialize(specializingPath))
-                                
+
             specializingPaths = newSpecializingPaths
 
         if len(specializingPaths) > 1:
-           self._logger.info("TODO: multiple valid paths found when specializing this message.")
+            self._logger.info("TODO: multiple valid paths found when specializing this message.")
 
         if len(specializingPaths) == 0:
             raise Exception("Cannot specialize this symbol.")
@@ -127,14 +145,8 @@ class MessageSpecializer(object):
                 generatedContent += d.copy()
 
         retainedPath.generatedContent = generatedContent
-        
+
         self._logger.debug("Specialized message: {0}".format(TypeConverter.convert(retainedPath.generatedContent, BitArray, ASCII)))
         self.memory = retainedPath.memory
 
         return retainedPath
-             
-        
-            
-        
-        
-    
