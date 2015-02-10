@@ -1,47 +1,47 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
-#+---------------------------------------------------------------------------+
-#|          01001110 01100101 01110100 01111010 01101111 01100010            |
-#|                                                                           |
-#|               Netzob : Inferring communication protocols                  |
-#+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
-#| This program is free software: you can redistribute it and/or modify      |
-#| it under the terms of the GNU General Public License as published by      |
-#| the Free Software Foundation, either version 3 of the License, or         |
-#| (at your option) any later version.                                       |
-#|                                                                           |
-#| This program is distributed in the hope that it will be useful,           |
-#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
-#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
-#| GNU General Public License for more details.                              |
-#|                                                                           |
-#| You should have received a copy of the GNU General Public License         |
-#| along with this program. If not, see <http://www.gnu.org/licenses/>.      |
-#+---------------------------------------------------------------------------+
-#| @url      : http://www.netzob.org                                         |
-#| @contact  : contact@netzob.org                                            |
-#| @sponsors : Amossys, http://www.amossys.fr                                |
-#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# |          01001110 01100101 01110100 01111010 01101111 01100010            |
+# |                                                                           |
+# |               Netzob : Inferring communication protocols                  |
+# +---------------------------------------------------------------------------+
+# | Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+# | This program is free software: you can redistribute it and/or modify      |
+# | it under the terms of the GNU General Public License as published by      |
+# | the Free Software Foundation, either version 3 of the License, or         |
+# | (at your option) any later version.                                       |
+# |                                                                           |
+# | This program is distributed in the hope that it will be useful,           |
+# | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+# | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
+# | GNU General Public License for more details.                              |
+# |                                                                           |
+# | You should have received a copy of the GNU General Public License         |
+# | along with this program. If not, see <http://www.gnu.org/licenses/>.      |
+# +---------------------------------------------------------------------------+
+# | @url      : http://www.netzob.org                                         |
+# | @contact  : contact@netzob.org                                            |
+# | @sponsors : Amossys, http://www.amossys.fr                                |
+# |             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| File contributors :                                                       |
-#|       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
-#|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | File contributors :                                                       |
+# |       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
+# |       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Standard library imports                                                  |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Standard library imports                                                  |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Related third party imports                                               |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Related third party imports                                               |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Local application imports                                                 |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Local application imports                                                 |
+# +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Models.Vocabulary.Field import Field
@@ -49,9 +49,6 @@ from netzob.Common.Models.Vocabulary.Symbol import Symbol
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.HexaString import HexaString
 from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Types.ASCII import ASCII
-from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
-from netzob.Common.Models.Vocabulary.Domain.DomainFactory import DomainFactory
 
 
 @NetzobLogger
@@ -79,10 +76,10 @@ class ClusterByKeyField(object):
         ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
         ...     print sym.name + ":"
         ...     print sym
-        symbol_ff2f:
+        Symbol_ff2f:
         00 | ff2f | 000000
         00 | ff2f | 000000
-        symbol_0020:
+        Symbol_0020:
         00 | 0020 | 000000
 
         :param field: the field we want to split in new symbols
@@ -97,26 +94,28 @@ class ClusterByKeyField(object):
             raise TypeError("'field' should not be None")
         if keyField is None:
             raise TypeError("'keyField' should not be None")
-        if not keyField in field.children:
+        if keyField not in field.children:
             raise TypeError("'keyField' is not a child of 'field'")
 
         newSymbols = {}
 
         keyFieldMessageValues = keyField.getMessageValues()
 
-        # we create a symbol for each of these uniq values        
+        # we create a symbol for each of these uniq values
         for message, keyFieldValue in keyFieldMessageValues.iteritems():
-            if "symbol_{0}".format(keyFieldValue) not in newSymbols.keys():
-                newSymbols["symbol_{0}".format(keyFieldValue)] = Symbol(name=keyFieldValue, messages=[message])
+            # keyFieldValue = TypeConverter.convert(keyFieldValueRaw, Raw, HexaString)
+            if keyFieldValue not in newSymbols.keys():
+                symbolName = "Symbol_{0}".format(TypeConverter.convert(keyFieldValue, Raw, HexaString))
+                newSymbols[keyFieldValue] = Symbol(name=symbolName, messages=[message])
             else:
-                newSymbols["symbol_{0}".format(keyFieldValue)].messages.append(message)
+                newSymbols[keyFieldValue].messages.append(message)
 
-        for newSymbol in newSymbols.values():
+        for newSymbolKeyValue, newSymbol in newSymbols.iteritems():
             # we recreate the same fields in this new symbol as the fields that exist in the original symbol
             newSymbol.clearChildren()
             for f in field.children:
                 if f == keyField:
-                    newFieldDomain = newSymbol.name
+                    newFieldDomain = newSymbolKeyValue
                 else:
                     newFieldDomain = f.domain
                 newF = Field(name=f.name, domain=newFieldDomain)
@@ -130,9 +129,9 @@ class ClusterByKeyField(object):
                     if cell != '' and max_i_cell_with_value < i_cell:
                         max_i_cell_with_value = i_cell
             newSymbol.clearChildren()
-            for f in field.children[:max_i_cell_with_value+1]:
+            for f in field.children[:max_i_cell_with_value + 1]:
                 if f == keyField:
-                    newFieldDomain = newSymbol.name
+                    newFieldDomain = newSymbolKeyValue
                 else:
                     newFieldDomain = f.domain
                 newF = Field(name=f.name, domain=newFieldDomain)
