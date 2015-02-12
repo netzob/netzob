@@ -69,6 +69,15 @@ class Agg(AbstractVariableNode):
     >>> print len(domain.children)
     2
 
+    Another example of an aggregate
+
+    >>> from netzob.all import *
+    >>> from bitarray import bitarray
+    >>> f0 = Field(Agg([BitArray(bitarray('01101001')), BitArray(nbBits=3), BitArray(nbBits=5)]))
+    >>> s = Symbol(fields=[f0])
+    >>> t = s.specialize()
+    >>> print len(t)
+    2
 
     Let's see the abstraction process of an AGGREGATE
 
@@ -119,7 +128,6 @@ class Agg(AbstractVariableNode):
 
         # we parse all the children with the parserPaths produced by previous children
         for i_child in xrange(len(self.children)):
-            self._logger.warn("CHILD: {0}/{1}".format(i_child, len(self.children)))
             current_child = self.children[i_child]
             if i_child < len(self.children) - 1:
                 next_child = self.children[i_child + 1]
@@ -129,9 +137,9 @@ class Agg(AbstractVariableNode):
             newParsingPaths = []
 
             for parsingPath in parsingPaths:
-                self._logger.warn("Parse {0} with {1}".format(current_child.id, parsingPath))
+                self._logger.debug("Parse {0} with {1}".format(current_child.id, parsingPath))
                 value_before_parsing = parsingPath.getDataAssignedToVariable(current_child).copy()
-                childParsingPaths = current_child.parse(parsingPath)
+                childParsingPaths = current_child.parse(parsingPath, carnivorous=carnivorous)
 
                 if len(childParsingPaths) == 0:
                     # current child did not produce any valid parser path
@@ -142,7 +150,6 @@ class Agg(AbstractVariableNode):
                         if childParsingPath.ok():
                             value_after_parsing = childParsingPath.getDataAssignedToVariable(current_child).copy()
                             remainingValue = value_before_parsing[len(value_after_parsing):].copy()
-                            self._logger.warn("RM={0}".format(remainingValue))
                             if next_child is not None:
                                 childParsingPath.assignDataToVariable(remainingValue, next_child)
 
