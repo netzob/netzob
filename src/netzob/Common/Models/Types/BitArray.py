@@ -1,52 +1,51 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
-#+---------------------------------------------------------------------------+
-#|          01001110 01100101 01110100 01111010 01101111 01100010            |
-#|                                                                           |
-#|               Netzob : Inferring communication protocols                  |
-#+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
-#| This program is free software: you can redistribute it and/or modify      |
-#| it under the terms of the GNU General Public License as published by      |
-#| the Free Software Foundation, either version 3 of the License, or         |
-#| (at your option) any later version.                                       |
-#|                                                                           |
-#| This program is distributed in the hope that it will be useful,           |
-#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
-#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
-#| GNU General Public License for more details.                              |
-#|                                                                           |
-#| You should have received a copy of the GNU General Public License         |
-#| along with this program. If not, see <http://www.gnu.org/licenses/>.      |
-#+---------------------------------------------------------------------------+
-#| @url      : http://www.netzob.org                                         |
-#| @contact  : contact@netzob.org                                            |
-#| @sponsors : Amossys, http://www.amossys.fr                                |
-#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# |          01001110 01100101 01110100 01111010 01101111 01100010            |
+# |                                                                           |
+# |               Netzob : Inferring communication protocols                  |
+# +---------------------------------------------------------------------------+
+# | Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+# | This program is free software: you can redistribute it and/or modify      |
+# | it under the terms of the GNU General Public License as published by      |
+# | the Free Software Foundation, either version 3 of the License, or         |
+# | (at your option) any later version.                                       |
+# |                                                                           |
+# | This program is distributed in the hope that it will be useful,           |
+# | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+# | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
+# | GNU General Public License for more details.                              |
+# |                                                                           |
+# | You should have received a copy of the GNU General Public License         |
+# | along with this program. If not, see <http://www.gnu.org/licenses/>.      |
+# +---------------------------------------------------------------------------+
+# | @url      : http://www.netzob.org                                         |
+# | @contact  : contact@netzob.org                                            |
+# | @sponsors : Amossys, http://www.amossys.fr                                |
+# |             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| File contributors :                                                       |
-#|       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
-#|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | File contributors :                                                       |
+# |       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
+# |       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Standard library imports                                                  |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Standard library imports                                                  |
+# +---------------------------------------------------------------------------+
 import random
 
-#+---------------------------------------------------------------------------+
-#| Related third party imports                                               |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Related third party imports                                               |
+# +---------------------------------------------------------------------------+
 from bitarray import bitarray
 
-#+---------------------------------------------------------------------------+
-#| Local application imports                                                 |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Local application imports                                                 |
+# +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Types.AbstractType import AbstractType
-from netzob.Common.Models.Types.Raw import Raw
 
 
 @NetzobLogger
@@ -59,12 +58,13 @@ class BitArray(AbstractType):
     def __init__(self, value=None, nbBits=(None, None)):
         super(BitArray, self).__init__(self.__class__.__name__, value, nbBits)
 
-    @typeCheck(bitarray, str, str, str)
+    @typeCheck(str, str, str, str)
     def canParse(self, data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
         """For the moment its always true because we consider
         the decimal type to be very similar to the raw type.
 
         >>> from netzob.all import *
+
         >>> BitArray().canParse(TypeConverter.convert("hello netzob", ASCII, Raw))
         True
 
@@ -85,12 +85,16 @@ class BitArray(AbstractType):
         if data is None:
             raise TypeError("data cannot be None")
 
+        if not isinstance(data, str):
+            raise TypeError("Data should be a python raw")
+
         if len(data) == 0:
             return False
 
         (nbMinBits, nbMaxBits) = self.size
 
-        nbBitsData = len(data)
+        nbBitsData = len(data) * 8
+
         if nbMinBits is not None and nbMinBits > nbBitsData:
             return False
         if nbMaxBits is not None and nbMaxBits < nbBitsData:
@@ -123,7 +127,7 @@ class BitArray(AbstractType):
         >>> d = ASCII.decode("hello netzob")
         >>> r = BitArray.encode(d)
         >>> print r.to01()
-        000101101010011000110110001101101111011000000100011101101010011000101110010111101111011001000110
+        011010000110010101101100011011000110111100100000011011100110010101110100011110100110111101100010
         >>> t = BitArray.decode(r)
         >>> print t
         hello netzob
@@ -153,7 +157,7 @@ class BitArray(AbstractType):
         >>> from netzob.all import *
         >>> from netzob.Common.Models.Types.BitArray import BitArray
         >>> BitArray.encode(Decimal.decode(20))
-        bitarray('00101000')
+        bitarray('00010100')
 
         :param data: the data encoded in python raw which will be encoded in current type
         :type data: python raw
@@ -178,6 +182,6 @@ class BitArray(AbstractType):
         else:
             raise ValueError("Invalid endianness value")
 
-        b = bitarray(endian=endian)            
+        b = bitarray(endian=endian)
         b.frombytes(data)
         return b
