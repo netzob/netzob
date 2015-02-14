@@ -113,119 +113,119 @@ class AbstractField(AbstractMementoCreator):
         In addition, visualizationFunctions are also applied if parameter styled is set to True.
         If parameter Transposed is set to True, the matrix is built with rows for fields and columns for messages.
 
-        # >>> from netzob.all import *
-        # >>> messages = [RawMessage("hello {0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'zoby', 'lapy'] for city in ['Paris', 'Berlin', 'New-York']]
-        # >>> fh1 = Field(ASCII("hello "), name="hello")
-        # >>> fh2 = Field(Alt([ASCII("netzob"), ASCII("zoby"), ASCII("lapy"), ASCII("sygus")]), name="pseudo")
-        # >>> fheader = Field(name="header")
-        # >>> fheader.children = [fh1, fh2]
-        # >>> fb1 = Field(", what's up in ", name="whatsup")
-        # >>> fb2 = Field(["Paris", "Berlin", "New-York"], name="city")
-        # >>> fb3 = Field(" ?", name="end")
-        # >>> fbody = Field(name="body")
-        # >>> fbody.children = [fb1, fb2, fb3]
-        # >>> symbol = Symbol([fheader, fbody], messages=messages)
+        >>> from netzob.all import *
+        >>> messages = [RawMessage("hello {0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'zoby', 'lapy'] for city in ['Paris', 'Berlin', 'New-York']]
+        >>> fh1 = Field(ASCII("hello "), name="hello")
+        >>> fh2 = Field(Alt([ASCII("netzob"), ASCII("zoby"), ASCII("lapy"), ASCII("sygus")]), name="pseudo")
+        >>> fheader = Field(name="header")
+        >>> fheader.children = [fh1, fh2]
+        >>> fb1 = Field(", what's up in ", name="whatsup")
+        >>> fb2 = Field(["Paris", "Berlin", "New-York"], name="city")
+        >>> fb3 = Field(" ?", name="end")
+        >>> fbody = Field(name="body")
+        >>> fbody.children = [fb1, fb2, fb3]
+        >>> symbol = Symbol([fheader, fbody], messages=messages)
 
-        # >>> print symbol
-        # hello  | netzob | , what's up in  | Paris    |  ?
-        # hello  | netzob | , what's up in  | Berlin   |  ?
-        # hello  | netzob | , what's up in  | New-York |  ?
-        # hello  | zoby   | , what's up in  | Paris    |  ?
-        # hello  | zoby   | , what's up in  | Berlin   |  ?
-        # hello  | zoby   | , what's up in  | New-York |  ?
-        # hello  | lapy   | , what's up in  | Paris    |  ?
-        # hello  | lapy   | , what's up in  | Berlin   |  ?
-        # hello  | lapy   | , what's up in  | New-York |  ?
+        >>> print symbol
+        hello  | netzob | , what's up in  | Paris    |  ?
+        hello  | netzob | , what's up in  | Berlin   |  ?
+        hello  | netzob | , what's up in  | New-York |  ?
+        hello  | zoby   | , what's up in  | Paris    |  ?
+        hello  | zoby   | , what's up in  | Berlin   |  ?
+        hello  | zoby   | , what's up in  | New-York |  ?
+        hello  | lapy   | , what's up in  | Paris    |  ?
+        hello  | lapy   | , what's up in  | Berlin   |  ?
+        hello  | lapy   | , what's up in  | New-York |  ?
 
-        # >>> fh1.addEncodingFunction(TypeEncodingFunction(HexaString))
-        # >>> fb2.addEncodingFunction(TypeEncodingFunction(HexaString))
-        # >>> print symbol
-        # 68656c6c6f20 | netzob | , what's up in  | 5061726973       |  ?
-        # 68656c6c6f20 | netzob | , what's up in  | 4265726c696e     |  ?
-        # 68656c6c6f20 | netzob | , what's up in  | 4e65772d596f726b |  ?
-        # 68656c6c6f20 | zoby   | , what's up in  | 5061726973       |  ?
-        # 68656c6c6f20 | zoby   | , what's up in  | 4265726c696e     |  ?
-        # 68656c6c6f20 | zoby   | , what's up in  | 4e65772d596f726b |  ?
-        # 68656c6c6f20 | lapy   | , what's up in  | 5061726973       |  ?
-        # 68656c6c6f20 | lapy   | , what's up in  | 4265726c696e     |  ?
-        # 68656c6c6f20 | lapy   | , what's up in  | 4e65772d596f726b |  ?
+        >>> fh1.addEncodingFunction(TypeEncodingFunction(HexaString))
+        >>> fb2.addEncodingFunction(TypeEncodingFunction(HexaString))
+        >>> print symbol
+        68656c6c6f20 | netzob | , what's up in  | 5061726973       |  ?
+        68656c6c6f20 | netzob | , what's up in  | 4265726c696e     |  ?
+        68656c6c6f20 | netzob | , what's up in  | 4e65772d596f726b |  ?
+        68656c6c6f20 | zoby   | , what's up in  | 5061726973       |  ?
+        68656c6c6f20 | zoby   | , what's up in  | 4265726c696e     |  ?
+        68656c6c6f20 | zoby   | , what's up in  | 4e65772d596f726b |  ?
+        68656c6c6f20 | lapy   | , what's up in  | 5061726973       |  ?
+        68656c6c6f20 | lapy   | , what's up in  | 4265726c696e     |  ?
+        68656c6c6f20 | lapy   | , what's up in  | 4e65772d596f726b |  ?
 
-        # >>> print fheader.getCells()
-        # 68656c6c6f20 | netzob
-        # 68656c6c6f20 | netzob
-        # 68656c6c6f20 | netzob
-        # 68656c6c6f20 | zoby  
-        # 68656c6c6f20 | zoby  
-        # 68656c6c6f20 | zoby  
-        # 68656c6c6f20 | lapy  
-        # 68656c6c6f20 | lapy  
-        # 68656c6c6f20 | lapy  
+        >>> print fheader.getCells()
+        68656c6c6f20 | netzob
+        68656c6c6f20 | netzob
+        68656c6c6f20 | netzob
+        68656c6c6f20 | zoby  
+        68656c6c6f20 | zoby  
+        68656c6c6f20 | zoby  
+        68656c6c6f20 | lapy  
+        68656c6c6f20 | lapy  
+        68656c6c6f20 | lapy  
 
-        # >>> print fh1.getCells()
-        # 68656c6c6f20
-        # 68656c6c6f20
-        # 68656c6c6f20
-        # 68656c6c6f20
-        # 68656c6c6f20
-        # 68656c6c6f20
-        # 68656c6c6f20
-        # 68656c6c6f20
-        # 68656c6c6f20
+        >>> print fh1.getCells()
+        68656c6c6f20
+        68656c6c6f20
+        68656c6c6f20
+        68656c6c6f20
+        68656c6c6f20
+        68656c6c6f20
+        68656c6c6f20
+        68656c6c6f20
+        68656c6c6f20
 
-        # >>> print fh2.getCells()
-        # netzob
-        # netzob
-        # netzob
-        # zoby  
-        # zoby  
-        # zoby  
-        # lapy  
-        # lapy  
-        # lapy  
+        >>> print fh2.getCells()
+        netzob
+        netzob
+        netzob
+        zoby  
+        zoby  
+        zoby  
+        lapy  
+        lapy  
+        lapy  
 
-        # >>> print fbody.getCells()
-        # , what's up in  | 5061726973       |  ?
-        # , what's up in  | 4265726c696e     |  ?
-        # , what's up in  | 4e65772d596f726b |  ?
-        # , what's up in  | 5061726973       |  ?
-        # , what's up in  | 4265726c696e     |  ?
-        # , what's up in  | 4e65772d596f726b |  ?
-        # , what's up in  | 5061726973       |  ?
-        # , what's up in  | 4265726c696e     |  ?
-        # , what's up in  | 4e65772d596f726b |  ?
+        >>> print fbody.getCells()
+        , what's up in  | 5061726973       |  ?
+        , what's up in  | 4265726c696e     |  ?
+        , what's up in  | 4e65772d596f726b |  ?
+        , what's up in  | 5061726973       |  ?
+        , what's up in  | 4265726c696e     |  ?
+        , what's up in  | 4e65772d596f726b |  ?
+        , what's up in  | 5061726973       |  ?
+        , what's up in  | 4265726c696e     |  ?
+        , what's up in  | 4e65772d596f726b |  ?
 
-        # >>> print fb1.getCells()
-        # , what's up in 
-        # , what's up in 
-        # , what's up in 
-        # , what's up in 
-        # , what's up in 
-        # , what's up in 
-        # , what's up in 
-        # , what's up in 
-        # , what's up in 
+        >>> print fb1.getCells()
+        , what's up in 
+        , what's up in 
+        , what's up in 
+        , what's up in 
+        , what's up in 
+        , what's up in 
+        , what's up in 
+        , what's up in 
+        , what's up in 
 
-        # >>> print fb2.getCells()
-        # 5061726973      
-        # 4265726c696e    
-        # 4e65772d596f726b
-        # 5061726973      
-        # 4265726c696e    
-        # 4e65772d596f726b
-        # 5061726973      
-        # 4265726c696e    
-        # 4e65772d596f726b
+        >>> print fb2.getCells()
+        5061726973      
+        4265726c696e    
+        4e65772d596f726b
+        5061726973      
+        4265726c696e    
+        4e65772d596f726b
+        5061726973      
+        4265726c696e    
+        4e65772d596f726b
 
-        # >>> print fb3.getCells()
-        #  ?
-        #  ?
-        #  ?
-        #  ?
-        #  ?
-        #  ?
-        #  ?
-        #  ?
-        #  ?
+        >>> print fb3.getCells()
+         ?
+         ?
+         ?
+         ?
+         ?
+         ?
+         ?
+         ?
+         ?
 
         :keyword encoded: if set to True, encoding functions are applied on returned cells
         :type encoded: :class:`bool`
@@ -264,47 +264,47 @@ class AbstractField(AbstractMementoCreator):
         Specific encodingFunctions can also be considered if parameter encoded is set to True.
         In addition, visualizationFunctions are also applied if parameter styled is set to True.
 
-        # >>> from netzob.all import *
-        # >>> messages = [RawMessage("hello {0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'zoby', 'lapy'] for city in ['Paris', 'Berlin', 'New-York']]
-        # >>> f1 = Field("hello ", name="hello")
-        # >>> f2 = Field(["netzob", "zoby", "lapy", "sygus"], name="pseudo")
-        # >>> f3 = Field(", what's up in ", name="whatsup")
-        # >>> f4 = Field(["Paris", "Berlin", "New-York"], name="city")
-        # >>> f5 = Field(" ?", name="end")
-        # >>> symbol = Symbol([f1, f2, f3, f4, f5], messages=messages)
-        # >>> print symbol
-        # hello  | netzob | , what's up in  | Paris    |  ?
-        # hello  | netzob | , what's up in  | Berlin   |  ?
-        # hello  | netzob | , what's up in  | New-York |  ?
-        # hello  | zoby   | , what's up in  | Paris    |  ?
-        # hello  | zoby   | , what's up in  | Berlin   |  ?
-        # hello  | zoby   | , what's up in  | New-York |  ?
-        # hello  | lapy   | , what's up in  | Paris    |  ?
-        # hello  | lapy   | , what's up in  | Berlin   |  ?
-        # hello  | lapy   | , what's up in  | New-York |  ?
-        # >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-        # >>> print symbol
-        # 68656c6c6f20 | 6e65747a6f62 | 2c2077686174277320757020696e20 | 5061726973       | 203f
-        # 68656c6c6f20 | 6e65747a6f62 | 2c2077686174277320757020696e20 | 4265726c696e     | 203f
-        # 68656c6c6f20 | 6e65747a6f62 | 2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
-        # 68656c6c6f20 | 7a6f6279     | 2c2077686174277320757020696e20 | 5061726973       | 203f
-        # 68656c6c6f20 | 7a6f6279     | 2c2077686174277320757020696e20 | 4265726c696e     | 203f
-        # 68656c6c6f20 | 7a6f6279     | 2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
-        # 68656c6c6f20 | 6c617079     | 2c2077686174277320757020696e20 | 5061726973       | 203f
-        # 68656c6c6f20 | 6c617079     | 2c2077686174277320757020696e20 | 4265726c696e     | 203f
-        # 68656c6c6f20 | 6c617079     | 2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
-        # >>> print symbol.getValues()
-        # ['68656c6c6f206e65747a6f622c2077686174277320757020696e205061726973203f', '68656c6c6f206e65747a6f622c2077686174277320757020696e204265726c696e203f', '68656c6c6f206e65747a6f622c2077686174277320757020696e204e65772d596f726b203f', '68656c6c6f207a6f62792c2077686174277320757020696e205061726973203f', '68656c6c6f207a6f62792c2077686174277320757020696e204265726c696e203f', '68656c6c6f207a6f62792c2077686174277320757020696e204e65772d596f726b203f', '68656c6c6f206c6170792c2077686174277320757020696e205061726973203f', '68656c6c6f206c6170792c2077686174277320757020696e204265726c696e203f', '68656c6c6f206c6170792c2077686174277320757020696e204e65772d596f726b203f']
-        # >>> print f1.getValues()
-        # ['68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20']
-        # >>> print f2.getValues()
-        # ['6e65747a6f62', '6e65747a6f62', '6e65747a6f62', '7a6f6279', '7a6f6279', '7a6f6279', '6c617079', '6c617079', '6c617079']
-        # >>> print f3.getValues()
-        # ['2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20']
-        # >>> print f4.getValues()
-        # ['5061726973', '4265726c696e', '4e65772d596f726b', '5061726973', '4265726c696e', '4e65772d596f726b', '5061726973', '4265726c696e', '4e65772d596f726b']
-        # >>> print f5.getValues()
-        # ['203f', '203f', '203f', '203f', '203f', '203f', '203f', '203f', '203f']
+        >>> from netzob.all import *
+        >>> messages = [RawMessage("hello {0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'zoby', 'lapy'] for city in ['Paris', 'Berlin', 'New-York']]
+        >>> f1 = Field("hello ", name="hello")
+        >>> f2 = Field(["netzob", "zoby", "lapy", "sygus"], name="pseudo")
+        >>> f3 = Field(", what's up in ", name="whatsup")
+        >>> f4 = Field(["Paris", "Berlin", "New-York"], name="city")
+        >>> f5 = Field(" ?", name="end")
+        >>> symbol = Symbol([f1, f2, f3, f4, f5], messages=messages)
+        >>> print symbol
+        hello  | netzob | , what's up in  | Paris    |  ?
+        hello  | netzob | , what's up in  | Berlin   |  ?
+        hello  | netzob | , what's up in  | New-York |  ?
+        hello  | zoby   | , what's up in  | Paris    |  ?
+        hello  | zoby   | , what's up in  | Berlin   |  ?
+        hello  | zoby   | , what's up in  | New-York |  ?
+        hello  | lapy   | , what's up in  | Paris    |  ?
+        hello  | lapy   | , what's up in  | Berlin   |  ?
+        hello  | lapy   | , what's up in  | New-York |  ?
+        >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
+        >>> print symbol
+        68656c6c6f20 | 6e65747a6f62 | 2c2077686174277320757020696e20 | 5061726973       | 203f
+        68656c6c6f20 | 6e65747a6f62 | 2c2077686174277320757020696e20 | 4265726c696e     | 203f
+        68656c6c6f20 | 6e65747a6f62 | 2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
+        68656c6c6f20 | 7a6f6279     | 2c2077686174277320757020696e20 | 5061726973       | 203f
+        68656c6c6f20 | 7a6f6279     | 2c2077686174277320757020696e20 | 4265726c696e     | 203f
+        68656c6c6f20 | 7a6f6279     | 2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
+        68656c6c6f20 | 6c617079     | 2c2077686174277320757020696e20 | 5061726973       | 203f
+        68656c6c6f20 | 6c617079     | 2c2077686174277320757020696e20 | 4265726c696e     | 203f
+        68656c6c6f20 | 6c617079     | 2c2077686174277320757020696e20 | 4e65772d596f726b | 203f
+        >>> print symbol.getValues()
+        ['68656c6c6f206e65747a6f622c2077686174277320757020696e205061726973203f', '68656c6c6f206e65747a6f622c2077686174277320757020696e204265726c696e203f', '68656c6c6f206e65747a6f622c2077686174277320757020696e204e65772d596f726b203f', '68656c6c6f207a6f62792c2077686174277320757020696e205061726973203f', '68656c6c6f207a6f62792c2077686174277320757020696e204265726c696e203f', '68656c6c6f207a6f62792c2077686174277320757020696e204e65772d596f726b203f', '68656c6c6f206c6170792c2077686174277320757020696e205061726973203f', '68656c6c6f206c6170792c2077686174277320757020696e204265726c696e203f', '68656c6c6f206c6170792c2077686174277320757020696e204e65772d596f726b203f']
+        >>> print f1.getValues()
+        ['68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20']
+        >>> print f2.getValues()
+        ['6e65747a6f62', '6e65747a6f62', '6e65747a6f62', '7a6f6279', '7a6f6279', '7a6f6279', '6c617079', '6c617079', '6c617079']
+        >>> print f3.getValues()
+        ['2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20']
+        >>> print f4.getValues()
+        ['5061726973', '4265726c696e', '4e65772d596f726b', '5061726973', '4265726c696e', '4e65772d596f726b', '5061726973', '4265726c696e', '4e65772d596f726b']
+        >>> print f5.getValues()
+        ['203f', '203f', '203f', '203f', '203f', '203f', '203f', '203f', '203f']
 
         :keyword encoded: if set to True, encoding functions are applied on returned cells
         :type encoded: :class:`bool`
@@ -327,26 +327,26 @@ class AbstractField(AbstractMementoCreator):
         the current field as proposed by getCells() method but indexed
         per message.
 
-        # >>> from netzob.all import *
-        # >>> messages = [RawMessage("{0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'zoby'] for city in ['Paris', 'Berlin']]
-        # >>> f1 = Field(["netzob", "zoby", "lapy", "sygus"], name="pseudo")
-        # >>> f2 = Field(", what's up in ", name="whatsup")
-        # >>> f3 = Field(["Paris", "Berlin", "New-York"], name="city")
-        # >>> f4 = Field(" ?", name="end")
-        # >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
-        # >>> print symbol
-        # netzob | , what's up in  | Paris  |  ?
-        # netzob | , what's up in  | Berlin |  ?
-        # zoby   | , what's up in  | Paris  |  ?
-        # zoby   | , what's up in  | Berlin |  ?
+        >>> from netzob.all import *
+        >>> messages = [RawMessage("{0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'zoby'] for city in ['Paris', 'Berlin']]
+        >>> f1 = Field(["netzob", "zoby", "lapy", "sygus"], name="pseudo")
+        >>> f2 = Field(", what's up in ", name="whatsup")
+        >>> f3 = Field(["Paris", "Berlin", "New-York"], name="city")
+        >>> f4 = Field(" ?", name="end")
+        >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
+        >>> print symbol
+        netzob | , what's up in  | Paris  |  ?
+        netzob | , what's up in  | Berlin |  ?
+        zoby   | , what's up in  | Paris  |  ?
+        zoby   | , what's up in  | Berlin |  ?
 
-        # >>> messageCells = symbol.getMessageCells()
-        # >>> for message in symbol.messages:
-        # ...    print message.data, messageCells[message]
-        # netzob, what's up in Paris ? ['netzob', ", what's up in ", 'Paris', ' ?']
-        # netzob, what's up in Berlin ? ['netzob', ", what's up in ", 'Berlin', ' ?']
-        # zoby, what's up in Paris ? ['zoby', ", what's up in ", 'Paris', ' ?']
-        # zoby, what's up in Berlin ? ['zoby', ", what's up in ", 'Berlin', ' ?']
+        >>> messageCells = symbol.getMessageCells()
+        >>> for message in symbol.messages:
+        ...    print message.data, messageCells[message]
+        netzob, what's up in Paris ? ['netzob', ", what's up in ", 'Paris', ' ?']
+        netzob, what's up in Berlin ? ['netzob', ", what's up in ", 'Berlin', ' ?']
+        zoby, what's up in Paris ? ['zoby', ", what's up in ", 'Paris', ' ?']
+        zoby, what's up in Berlin ? ['zoby', ", what's up in ", 'Berlin', ' ?']
 
         :keyword encoded: if set to true, values are encoded
         :type encoded: :class:`bool`
@@ -375,26 +375,26 @@ class AbstractField(AbstractMementoCreator):
         the current field as proposed by getValues() method but indexed
         per message.
 
-        # >>> from netzob.all import *
-        # >>> messages = [RawMessage("{0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'zoby'] for city in ['Paris', 'Berlin']]
-        # >>> f1 = Field(["netzob", "zoby", "lapy", "sygus"], name="pseudo")
-        # >>> f2 = Field(", what's up in ", name="whatsup")
-        # >>> f3 = Field(["Paris", "Berlin", "New-York"], name="city")
-        # >>> f4 = Field(" ?", name="end")
-        # >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
-        # >>> print symbol
-        # netzob | , what's up in  | Paris  |  ?
-        # netzob | , what's up in  | Berlin |  ?
-        # zoby   | , what's up in  | Paris  |  ?
-        # zoby   | , what's up in  | Berlin |  ?
+        >>> from netzob.all import *
+        >>> messages = [RawMessage("{0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'zoby'] for city in ['Paris', 'Berlin']]
+        >>> f1 = Field(["netzob", "zoby", "lapy", "sygus"], name="pseudo")
+        >>> f2 = Field(", what's up in ", name="whatsup")
+        >>> f3 = Field(["Paris", "Berlin", "New-York"], name="city")
+        >>> f4 = Field(" ?", name="end")
+        >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
+        >>> print symbol
+        netzob | , what's up in  | Paris  |  ?
+        netzob | , what's up in  | Berlin |  ?
+        zoby   | , what's up in  | Paris  |  ?
+        zoby   | , what's up in  | Berlin |  ?
 
-        # >>> messageValues = f3.getMessageValues()
-        # >>> for message in symbol.messages:
-        # ...    print message.data, messageValues[message]
-        # netzob, what's up in Paris ? Paris
-        # netzob, what's up in Berlin ? Berlin
-        # zoby, what's up in Paris ? Paris
-        # zoby, what's up in Berlin ? Berlin
+        >>> messageValues = f3.getMessageValues()
+        >>> for message in symbol.messages:
+        ...    print message.data, messageValues[message]
+        netzob, what's up in Paris ? Paris
+        netzob, what's up in Berlin ? Berlin
+        zoby, what's up in Paris ? Paris
+        zoby, what's up in Berlin ? Berlin
 
         :keyword encoded: if set to true, values are encoded
         :type encoded: :class:`bool`
