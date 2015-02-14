@@ -1,47 +1,43 @@
 # -*- coding: utf-8 -*-
 
-#+---------------------------------------------------------------------------+
-#|          01001110 01100101 01110100 01111010 01101111 01100010            |
-#|                                                                           |
-#|               Netzob : Inferring communication protocols                  |
-#+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
-#| This program is free software: you can redistribute it and/or modify      |
-#| it under the terms of the GNU General Public License as published by      |
-#| the Free Software Foundation, either version 3 of the License, or         |
-#| (at your option) any later version.                                       |
-#|                                                                           |
-#| This program is distributed in the hope that it will be useful,           |
-#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
-#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
-#| GNU General Public License for more details.                              |
-#|                                                                           |
-#| You should have received a copy of the GNU General Public License         |
-#| along with this program. If not, see <http://www.gnu.org/licenses/>.      |
-#+---------------------------------------------------------------------------+
-#| @url      : http://www.netzob.org                                         |
-#| @contact  : contact@netzob.org                                            |
-#| @sponsors : Amossys, http://www.amossys.fr                                |
-#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# |          01001110 01100101 01110100 01111010 01101111 01100010            |
+# |                                                                           |
+# |               Netzob : Inferring communication protocols                  |
+# +---------------------------------------------------------------------------+
+# | Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+# | This program is free software: you can redistribute it and/or modify      |
+# | it under the terms of the GNU General Public License as published by      |
+# | the Free Software Foundation, either version 3 of the License, or         |
+# | (at your option) any later version.                                       |
+# |                                                                           |
+# | This program is distributed in the hope that it will be useful,           |
+# | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+# | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
+# | GNU General Public License for more details.                              |
+# |                                                                           |
+# | You should have received a copy of the GNU General Public License         |
+# | along with this program. If not, see <http://www.gnu.org/licenses/>.      |
+# +---------------------------------------------------------------------------+
+# | @url      : http://www.netzob.org                                         |
+# | @contact  : contact@netzob.org                                            |
+# | @sponsors : Amossys, http://www.amossys.fr                                |
+# |             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Standard library imports                                                  |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Standard library imports                                                  |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Related third party imports                                               |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Related third party imports                                               |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Local application imports                                                 |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Local application imports                                                 |
+# +---------------------------------------------------------------------------+
 from netzob.Common.Models.Types.AbstractType import AbstractType
-from netzob.Common.Models.Types.ASCII import ASCII
 from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Types.BitArray import BitArray
-from netzob.Common.Models.Types.Decimal import Decimal
-from netzob.Common.Models.Types.IPv4 import IPv4
 
 
 class TypeConverter(object):
@@ -59,7 +55,7 @@ class TypeConverter(object):
     @staticmethod
     def __directEncoding():
         return {
-            #(ASCII,bitarray):TypeConverter.__encodeASCIIToBitarray,
+            # (ASCII,bitarray):TypeConverter.__encodeASCIIToBitarray,
         }
 
     @staticmethod
@@ -74,7 +70,7 @@ class TypeConverter(object):
         >>> data = "That's an helloworld!"
         >>> bin = TypeConverter.convert(data, ASCII, BitArray)
         >>> print bin
-        bitarray('001010100001011010000110001011101110010011001110000001001000011001110110000001000001011010100110001101100011011011110110111011101111011001001110001101100010011010000100')
+        bitarray('010101000110100001100001011101000010011101110011001000000110000101101110001000000110100001100101011011000110110001101111011101110110111101110010011011000110010000100001')
         >>> data == TypeConverter.convert(bin, BitArray, ASCII)
         True
 
@@ -94,16 +90,16 @@ class TypeConverter(object):
         >>> print TypeConverter.convert("zoby", ASCII, Decimal)
         2036494202
         >>> print TypeConverter.convert("zoby", ASCII, Decimal, dst_unitSize=AbstractType.UNITSIZE_32)
-        2036494202
+        2054120057
 
         It also works for 'semantic' data like IPv4s
 
         >>> TypeConverter.convert("192.168.0.10", IPv4, Decimal, dst_sign=AbstractType.SIGN_UNSIGNED)
         167815360
         >>> TypeConverter.convert("127.0.0.1", IPv4, BitArray)
-        bitarray('11111110000000000000000010000000')
+        bitarray('01111111000000000000000000000001')
         >>> TypeConverter.convert(167815360, Decimal, IPv4, src_unitSize=AbstractType.UNITSIZE_32, src_sign=AbstractType.SIGN_UNSIGNED)
-        IPAddress('192.168.0.10')
+        IPAddress('10.0.168.192')
 
         :param sourceType: the data source type
         :type sourceType: :class:`type`
