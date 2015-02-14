@@ -1,43 +1,43 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
-#+---------------------------------------------------------------------------+
-#|          01001110 01100101 01110100 01111010 01101111 01100010            |
-#|                                                                           |
-#|               Netzob : Inferring communication protocols                  |
-#+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
-#| This program is free software: you can redistribute it and/or modify      |
-#| it under the terms of the GNU General Public License as published by      |
-#| the Free Software Foundation, either version 3 of the License, or         |
-#| (at your option) any later version.                                       |
-#|                                                                           |
-#| This program is distributed in the hope that it will be useful,           |
-#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
-#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
-#| GNU General Public License for more details.                              |
-#|                                                                           |
-#| You should have received a copy of the GNU General Public License         |
-#| along with this program. If not, see <http://www.gnu.org/licenses/>.      |
-#+---------------------------------------------------------------------------+
-#| @url      : http://www.netzob.org                                         |
-#| @contact  : contact@netzob.org                                            |
-#| @sponsors : Amossys, http://www.amossys.fr                                |
-#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# |          01001110 01100101 01110100 01111010 01101111 01100010            |
+# |                                                                           |
+# |               Netzob : Inferring communication protocols                  |
+# +---------------------------------------------------------------------------+
+# | Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+# | This program is free software: you can redistribute it and/or modify      |
+# | it under the terms of the GNU General Public License as published by      |
+# | the Free Software Foundation, either version 3 of the License, or         |
+# | (at your option) any later version.                                       |
+# |                                                                           |
+# | This program is distributed in the hope that it will be useful,           |
+# | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+# | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
+# | GNU General Public License for more details.                              |
+# |                                                                           |
+# | You should have received a copy of the GNU General Public License         |
+# | along with this program. If not, see <http://www.gnu.org/licenses/>.      |
+# +---------------------------------------------------------------------------+
+# | @url      : http://www.netzob.org                                         |
+# | @contact  : contact@netzob.org                                            |
+# | @sponsors : Amossys, http://www.amossys.fr                                |
+# |             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| File contributors :                                                       |
-#|       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
-#|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | File contributors :                                                       |
+# |       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
+# |       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Standard library imports                                                  |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Standard library imports                                                  |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Related third party imports                                               |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Related third party imports                                               |
+# +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Common.Models.Vocabulary.Messages.AbstractMessage import AbstractMessage
@@ -69,7 +69,7 @@ class MessageParser(object):
     >>> print mp.parseMessage(msg1, s)
     [bitarray('0110100001100101011011000110110001101111'), bitarray('00100000'), bitarray('011011100110010101110100011110100110111101100010'), bitarray('0010000000100001')]
 
-    
+
     >>> from bitarray import bitarray
     >>> data = bitarray("0000110001101110011001010111010001111010011011110110001000000000")
     >>> msg = RawMessage(TypeConverter.convert(data, BitArray, Raw))
@@ -144,7 +144,7 @@ class MessageParser(object):
     [bitarray('0110110101111001001000000111000001110011011001010111010101100100011011110010000001101001011100110011101000100000'), bitarray('011011100110010101110100011110100110111101100010'), bitarray('00100001')]
     >>> print mp.parseMessage(msg2, s2)
     [bitarray('0111011101100101011011000110001101101111011011010110010100100000'), bitarray('011011100110010101110100011110100110111101100010')]
-    >>> print mp.parseMessage(msg3, s3)    
+    >>> print mp.parseMessage(msg3, s3)
     [bitarray('011011100110010101110100011110100110111101100010'), bitarray('0010000000111110001000000110100001100101011011000110110001101111')]
 
     """
@@ -167,13 +167,13 @@ class MessageParser(object):
         dataToParse = message.data
 
         fields = symbol._getLeafFields()
-        
+
         return self.parseRaw(dataToParse, fields)
 
     @typeCheck(object)
     def parseRaw(self, dataToParse, fields):
         """This method parses the specified raw against the specification of the provided symbol."""
-        if dataToParse is None or len(dataToParse)<=0:
+        if dataToParse is None or len(dataToParse) <= 0:
             raise Exception("Specified data to parse is empty (or None)")
         if fields is None:
             raise Exception("Specified fields is None")
@@ -192,29 +192,28 @@ class MessageParser(object):
         parsingPaths = [ParsingPath(bitArrayToParse.copy(), self.memory)]
         # assign to the first field of the symbol all the data to parse
         parsingPaths[0].assignDataToField(bitArrayToParse.copy(), fields[0])
-        
+
         # we successively apply each fields of the symbol to parse the specified data
         for i_field in xrange(len(fields)):
 
             current_field = fields[i_field]
 
             # identify next field
-            if i_field < len(fields)-1:
-                next_field = fields[i_field+1]
+            if i_field < len(fields) - 1:
+                next_field = fields[i_field + 1]
             else:
                 next_field = None
-                
+
             # build a field parser
-            fp = FieldParser(current_field, lastField=(i_field==len(fields)-1))
+            fp = FieldParser(current_field, lastField=(i_field == len(fields) - 1))
             newParsingPaths = []
-            
+
             for parsingPath in parsingPaths:
                 # we remove erroneous paths
                 value_before_parsing = parsingPath.getDataAssignedToField(current_field).copy()
                 resultParsingPaths = fp.parse(parsingPath)
-                
+
                 for resultParsingPath in resultParsingPaths:
-                    #resultParsingPath.addResultToField(current_field, resultParsingPath.getDataAssignedToVariable(current_field.domain))
                     value_after_parsing = resultParsingPath.getDataAssignedToField(current_field)
                     remainingValue = value_before_parsing[len(value_after_parsing):].copy()
 
@@ -224,34 +223,29 @@ class MessageParser(object):
                     if resultParsingPath.isDataAvailableForField(current_field):
                         newParsingPaths.append(resultParsingPath)
 
-            parsingPaths = newParsingPaths
+            # lets filter
+
+            parsingPaths = newParsingPaths[:100]
 
         finalParsingPaths = []
         for parsingPath in parsingPaths:
             if parsingPath.validForMessage(fields, bitArrayToParse):
                 finalParsingPaths.append(parsingPath)
         if len(finalParsingPaths) == 0:
-            raise Exception("No parsing path returned while parsing message {0}".format(dataToParse))                
+            raise Exception("No parsing path returned while parsing message {0}".format(dataToParse))
 
-        parsingResult = finalParsingPaths[0]
+        parsingResult = finalParsingPaths[len(finalParsingPaths) - 1]
         result = []
         for field in fields:
             result.append(parsingResult.getDataAssignedToField(field))
-            
+
         test = result[0].copy()
-        
+
         for res in result[1:]:
             test += res.copy()
-        
+
 #        if test != bitArrayToParse:
 #            raise Exception("OUPS")
 
         self.memory = parsingResult.memory
         return result
-
-        
-        
-        
-    
-        
-        
