@@ -1,62 +1,54 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
-#+---------------------------------------------------------------------------+
-#|          01001110 01100101 01110100 01111010 01101111 01100010            |
-#|                                                                           |
-#|               Netzob : Inferring communication protocols                  |
-#+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
-#| This program is free software: you can redistribute it and/or modify      |
-#| it under the terms of the GNU General Public License as published by      |
-#| the Free Software Foundation, either version 3 of the License, or         |
-#| (at your option) any later version.                                       |
-#|                                                                           |
-#| This program is distributed in the hope that it will be useful,           |
-#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
-#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
-#| GNU General Public License for more details.                              |
-#|                                                                           |
-#| You should have received a copy of the GNU General Public License         |
-#| along with this program. If not, see <http://www.gnu.org/licenses/>.      |
-#+---------------------------------------------------------------------------+
-#| @url      : http://www.netzob.org                                         |
-#| @contact  : contact@netzob.org                                            |
-#| @sponsors : Amossys, http://www.amossys.fr                                |
-#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# |          01001110 01100101 01110100 01111010 01101111 01100010            |
+# |                                                                           |
+# |               Netzob : Inferring communication protocols                  |
+# +---------------------------------------------------------------------------+
+# | Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+# | This program is free software: you can redistribute it and/or modify      |
+# | it under the terms of the GNU General Public License as published by      |
+# | the Free Software Foundation, either version 3 of the License, or         |
+# | (at your option) any later version.                                       |
+# |                                                                           |
+# | This program is distributed in the hope that it will be useful,           |
+# | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+# | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
+# | GNU General Public License for more details.                              |
+# |                                                                           |
+# | You should have received a copy of the GNU General Public License         |
+# | along with this program. If not, see <http://www.gnu.org/licenses/>.      |
+# +---------------------------------------------------------------------------+
+# | @url      : http://www.netzob.org                                         |
+# | @contact  : contact@netzob.org                                            |
+# | @sponsors : Amossys, http://www.amossys.fr                                |
+# |             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| File contributors :                                                       |
-#|       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
-#|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | File contributors :                                                       |
+# |       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
+# |       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Standard library imports                                                  |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Standard library imports                                                  |
+# +---------------------------------------------------------------------------+
 import threading
-import regex as re
-from bitarray import bitarray
 
+# +---------------------------------------------------------------------------+
+# | Related third party imports                                               |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Related third party imports                                               |
-#+---------------------------------------------------------------------------+
-
-#+---------------------------------------------------------------------------+
-#| Local application imports                                                 |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Local application imports                                                 |
+# +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Utils.MatrixList import MatrixList
-from netzob.Common.Utils.NetzobRegex import NetzobAggregateRegex
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
-from netzob.Common.Models.Types.HexaString import HexaString
 from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken import VariableReadingToken
-from netzob.Common.Models.Vocabulary.Functions.EncodingFunction import EncodingFunction
-from netzob.Common.Models.Vocabulary.Domain.Parser.FieldParser import FieldParser
 
 
 @NetzobLogger
@@ -79,7 +71,6 @@ class DataAlignment(threading.Thread):
     >>> alignedData = DataAlignment.align(contents, symbol, encoded=True)
     >>> print len(alignedData)
     10
-    
 
     >>> # one more fun test case
     >>> data = ['hello {0}, welcome'.format(random.choice(["tototo"])) for x in range(5)]
@@ -116,7 +107,6 @@ class DataAlignment(threading.Thread):
     hello | GET | tototo   | PA |          
     hello | PUT | totototo | PA | dqs4qsd33
 
-
     """
 
     def __init__(self, data, field, depth=None, encoded=True, styled=False):
@@ -148,7 +138,6 @@ class DataAlignment(threading.Thread):
         if self.field is None:
             raise TypeError("Field cannot be None")
 
-
         # Aligned messages are stored in a MatrixList for better display
         result = MatrixList()
 
@@ -163,7 +152,7 @@ class DataAlignment(threading.Thread):
         for d in self.data:
             from netzob.Common.Models.Vocabulary.Domain.Parser.MessageParser import MessageParser
             mp = MessageParser()
-            #alignedMsg = mp.parseRaw(TypeConverter.convert(d, HexaString, Raw), targetedFieldLeafFields)
+            # alignedMsg = mp.parseRaw(TypeConverter.convert(d, HexaString, Raw), targetedFieldLeafFields)
             alignedMsg = mp.parseRaw(d, targetedFieldLeafFields)            
 
             alignedEncodedMsg = []
@@ -184,134 +173,6 @@ class DataAlignment(threading.Thread):
             result.append(alignedEncodedMsg)
 
         return result
-
-        
-        
-
-    #     We retrieve all the leaf fields of the root of the provided field
-    #     rootLeafFields = self.__root._getLeafFields(depth=self.depth)
-            
-    #     if self.__root != self.field:
-    #         targetedFieldLeafFields = self.field._getLeafFields(depth=self.depth)
-    #     else:
-    #         targetedFieldLeafFields = rootLeafFields
-
-    #     -- debug display
-    #     self._logger.debug("Targeted leaf fields: ")
-    #     for f in targetedFieldLeafFields:
-    #         self._logger.debug("- {0}".format(f.name))
-    #     -- debug display
-        
-    #     we successively parse/align each data
-    #     for d in self.data:            
-    #         self._logger.debug("[START] Parsing Data : '{0}'".format(d))
-    #         (rawParsingResult, encodedParsingResult) = self._parseData(d, rootLeafFields, targetedFieldLeafFields)
-    #         self._logger.debug("[END] Parsing Data '{0}' produced '{1}'".format(d, encodedParsingResult))
-
-    #         additionnal check (just to be certain dataParsing equals the data)
-    #         if not ''.join(rawParsingResult) in TypeConverter.convert(d, HexaString, Raw):
-    #             raise Exception("<!> You found a case which broke our parsing engine: concat alignedData not in original message not '{0}' in '{1}'".format(''.join(rawParsingResult), TypeConverter.convert(d, HexaString, Raw)))
-    #         result.append(encodedParsingResult)
-            
-    #     return result
-
-            
-    # def _parseData(self, d, rootLeafFields, targetedFieldLeafFields):
-    #     """Internal method that aligns one data according to the provided fields"""
-    
-    #     self._logger.debug("Data to align: {0}".format(d))
-    #     split the message following the regex definition
-    #     splittedDatas = self.__splitDataWithRegex(d, rootLeafFields)
-
-    #     first we check if the regex parsing was a success:
-    #     we verify the regex has identified a segment for each field
-    #     for field in targetedFieldLeafFields:
-    #         for splittedData in splittedDatas:
-    #             if field.regex.id not in splittedData.keys() or len(splittedData[field.regex.id]) == 0:
-    #                 raise Exception("Content of field {0} ({1}) has not been found on message, alignment failed.")
-
-    #             if len(splittedData[field.regex.id]) > 1:
-    #                 raise Exception("Multiple values are available for the same field, this is not yet supported.")
-        
-    #     store all the parsing results
-    #     parsingResults = []
-
-    #     we analyze each result of the regex parsing
-    #     for splittedData in splittedDatas:
-    #         Yes, we create an empty array that contains an empty array
-    #         fieldParserPaths[0] => one path in the token-tree. a path = [FieldParserResult0, ....]
-    #         fieldParserPaths = [[]] = [[FieldParserResult0, FieldParserResult1, ...], [], []]
-
-    #         we parse the current regex result according to each field token-tree
-    #         for ifield, currentField in enumerate(targetedFieldLeafFields):
-    #             regex applies on the hexastring level, token-tree applies on the bitarray level, we execute a convertion
-    #             fieldContent = TypeConverter.convert(splittedData[currentField.regex.id][0], HexaString, BitArray)
-
-    #             newFieldParserPaths = []
-
-    #             for i_fieldParserPath, fieldParserPath in enumerate(fieldParserPaths):
-    #                 we retrieve the remaining data
-    #                 remainingData = None
-    #                 if len(fieldParserPath) > 0:
-    #                     remainingData = fieldParserPath[ifield-1].remainingData
-
-    #                 if remainingData is not None:
-    #                     content = remainingData.copy()
-    #                     content.extend(fieldContent.copy())
-    #                 else:
-    #                     content = fieldContent.copy()
-
-    #                 start the field parser
-    #                 fieldParser = FieldParser(currentField)
-    #                 if fieldParser.parse(content):
-    #                     for fieldParserResult in fieldParser.fieldParserResults:
-    #                         path = []
-    #                         path.extend(fieldParserPath)
-    #                         path.append(fieldParserResult)
-    #                         newFieldParserPaths.append(path)
-    #                 else:
-    #                     self._logger.debug("Field parsing failed.")
-                            
-    #             fieldParserPaths = newFieldParserPaths
-
-    #             if len(fieldParserPaths) == 0:
-    #                 raise Exception("Invalid, content: {0}, field: {1}".format(fieldContent, currentField._str_debug()))
-            
-    #         parsingResults.extend(fieldParserPaths)
-
-    #     remove all the paths where the last field parser result has none empty remaining data
-    #     removeItems = []
-    #     for parsingResult in parsingResults:
-    #         if len(parsingResult[-1].remainingData) != 0:
-    #             removeItems.append(parsingResult)
-
-    #     for removeItem in removeItems:
-    #         parsingResults.remove(removeItem)
-            
-    #     parsingResult = None
-    #     if len(parsingResults) == 0:
-    #         raise Exception("Message cannot be parsed according to fields specification")
-    #     if len(parsingResults) > 1:
-    #         TODO: new version should support the selection of which parsing result must be retained
-    #         self._logger.debug("TODO: multiple parsing results found !")
-    #     parsingResult = parsingResults[0]
-
-    #     resultEncoded = []
-    #     resultRaw = []
-    #     for ifield, currentField in enumerate(targetedFieldLeafFields):
-    #         now we apply encoding and mathematic functions
-    #         fieldValue = parsingResult[ifield].consumedData  here we have bitarrays
-            
-    #         if self.encoded and len(currentField.encodingFunctions.values()) > 0:
-    #             for encodingFunction in currentField.encodingFunctions.values():
-    #                 fieldValue = encodingFunction.encode(fieldValue)
-    #         else:
-    #             fieldValue = TypeConverter.convert(fieldValue, BitArray, Raw)
-        
-    #         resultEncoded.append(fieldValue)
-    #         resultRaw.append(TypeConverter.convert(parsingResult[ifield].consumedData, BitArray, Raw))
-            
-    #     return (resultRaw, resultEncoded)
 
     # @typeCheck(str)
     # def __splitDataWithRegex(self, data, fields):
