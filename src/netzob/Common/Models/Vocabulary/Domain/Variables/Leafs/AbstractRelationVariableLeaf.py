@@ -34,7 +34,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import abc
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -46,10 +45,6 @@ import abc
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken import VariableReadingToken
-from netzob.Common.Models.Types.TypeConverter import TypeConverter
-from netzob.Common.Models.Types.ASCII import ASCII
-from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Vocabulary.Domain.Variables.SVAS import SVAS
 
 
