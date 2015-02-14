@@ -34,13 +34,8 @@ import unittest
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from test_netzob.test_Common.test_Functions import test_Encoding, test_Transformation, test_Visualization
 
 
 def getSuite():
     functionsSuite = unittest.TestSuite()
-
-    modulesOfTests = [test_Encoding, test_Transformation, test_Visualization]
-    for module in modulesOfTests :
-        functionsSuite.addTests(unittest.TestLoader().loadTestsFromModule(module))
     return functionsSuite
