@@ -58,21 +58,20 @@ class BitArray(AbstractType):
     def __init__(self, value=None, nbBits=(None, None)):
         super(BitArray, self).__init__(self.__class__.__name__, value, nbBits)
 
-    @typeCheck(str, str, str, str)
     def canParse(self, data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
         """For the moment its always true because we consider
         the decimal type to be very similar to the raw type.
 
         >>> from netzob.all import *
 
-        >>> BitArray().canParse(TypeConverter.convert("hello netzob", ASCII, Raw))
+        >>> BitArray().canParse(TypeConverter.convert("hello netzob", ASCII, BitArray))
         True
 
         >>> b = BitArray(nbBits=8)
-        >>> b.canParse(TypeConverter.convert(bitarray('01010101'), BitArray, Raw))
+        >>> b.canParse(bitarray('01010101'))
         True
 
-        >>> b.canParse(TypeConverter.convert(bitarray('010101011'), BitArray, Raw))
+        >>> b.canParse(bitarray('010101011'))
         False
 
         :param data: the data to check
@@ -85,15 +84,15 @@ class BitArray(AbstractType):
         if data is None:
             raise TypeError("data cannot be None")
 
-        if not isinstance(data, str):
-            raise TypeError("Data should be a python raw")
+        if not isinstance(data, bitarray):
+            raise TypeError("Data should be a python raw ({0}:{1})".format(data, type(data)))
 
         if len(data) == 0:
             return False
 
         (nbMinBits, nbMaxBits) = self.size
 
-        nbBitsData = len(data) * 8
+        nbBitsData = len(data)
 
         if nbMinBits is not None and nbMinBits > nbBitsData:
             return False
