@@ -1,48 +1,50 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
-#+---------------------------------------------------------------------------+
-#|          01001110 01100101 01110100 01111010 01101111 01100010            |
-#|                                                                           |
-#|               Netzob : Inferring communication protocols                  |
-#+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
-#| This program is free software: you can redistribute it and/or modify      |
-#| it under the terms of the GNU General Public License as published by      |
-#| the Free Software Foundation, either version 3 of the License, or         |
-#| (at your option) any later version.                                       |
-#|                                                                           |
-#| This program is distributed in the hope that it will be useful,           |
-#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
-#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
-#| GNU General Public License for more details.                              |
-#|                                                                           |
-#| You should have received a copy of the GNU General Public License         |
-#| along with this program. If not, see <http://www.gnu.org/licenses/>.      |
-#+---------------------------------------------------------------------------+
-#| @url      : http://www.netzob.org                                         |
-#| @contact  : contact@netzob.org                                            |
-#| @sponsors : Amossys, http://www.amossys.fr                                |
-#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# |          01001110 01100101 01110100 01111010 01101111 01100010            |
+# |                                                                           |
+# |               Netzob : Inferring communication protocols                  |
+# +---------------------------------------------------------------------------+
+# | Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+# | This program is free software: you can redistribute it and/or modify      |
+# | it under the terms of the GNU General Public License as published by      |
+# | the Free Software Foundation, either version 3 of the License, or         |
+# | (at your option) any later version.                                       |
+# |                                                                           |
+# | This program is distributed in the hope that it will be useful,           |
+# | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+# | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
+# | GNU General Public License for more details.                              |
+# |                                                                           |
+# | You should have received a copy of the GNU General Public License         |
+# | along with this program. If not, see <http://www.gnu.org/licenses/>.      |
+# +---------------------------------------------------------------------------+
+# | @url      : http://www.netzob.org                                         |
+# | @contact  : contact@netzob.org                                            |
+# | @sponsors : Amossys, http://www.amossys.fr                                |
+# |             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| File contributors :                                                       |
-#|       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
-#|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | File contributors :                                                       |
+# |       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
+# |       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Standard library imports                                                  |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Standard library imports                                                  |
+# +---------------------------------------------------------------------------+
+import random
+import os
 from bitarray import bitarray
 
-#+---------------------------------------------------------------------------+
-#| Related third party imports                                               |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Related third party imports                                               |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Local application imports                                                 |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Local application imports                                                 |
+# +---------------------------------------------------------------------------+
 from netzob.Common.Models.Types.AbstractType import AbstractType
 
 
@@ -77,7 +79,7 @@ class Raw(AbstractType):
         super(Raw, self).__init__(self.__class__.__name__, value, nbBits, unitSize=unitSize, endianness=endianness, sign=sign)
 
     def __str__(self):
-        if self.value != None:
+        if self.value is not None:
             from netzob.Common.Models.Types.TypeConverter import TypeConverter
             from netzob.Common.Models.Types.BitArray import BitArray
             from netzob.Common.Models.Types.HexaString import HexaString
@@ -86,7 +88,7 @@ class Raw(AbstractType):
             return "{0}={1} ({2})".format(self.typeName, self.value, self.size)
 
     def __repr__(self):
-        if self.value != None:
+        if self.value is not None:
             from netzob.Common.Models.Types.TypeConverter import TypeConverter
             from netzob.Common.Models.Types.BitArray import BitArray
             return str(TypeConverter.convert(self.value, BitArray, self.__class__))
@@ -106,6 +108,36 @@ class Raw(AbstractType):
                 if nbBytes[1] is not None:
                     nbMaxBit = nbBytes[1] * 8
         return (nbMinBit, nbMaxBit)
+
+    def generate(self, generationStrategy=None):
+        """Generates a random Raw that respects the requested size.
+
+        >>> from netzob.all import *
+        >>> a = Raw(nbBytes=(10))
+        >>> gen = a.generate()
+        >>> print len(gen)
+        80
+
+        >>> from netzob.all import *
+        >>> a = Raw(nbBytes=(10, 20))
+        >>> gen = a.generate()
+        >>> print 10<=len(gen) and 20<=len(gen)
+        True
+
+
+
+        """
+        from netzob.Common.Models.Types.TypeConverter import TypeConverter
+        from netzob.Common.Models.Types.BitArray import BitArray
+
+        minSize, maxSize = self.size
+        if maxSize is None:
+            maxSize = AbstractType.MAXIMUM_GENERATED_DATA_SIZE
+        if minSize is None:
+            minSize = 0
+
+        generatedSize = random.randint(minSize, maxSize)
+        return TypeConverter.convert(os.urandom(generatedSize / 8), Raw, BitArray)
 
     @staticmethod
     def decode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
