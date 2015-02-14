@@ -1,64 +1,58 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
-#+---------------------------------------------------------------------------+
-#|          01001110 01100101 01110100 01111010 01101111 01100010            |
-#|                                                                           |
-#|               Netzob : Inferring communication protocols                  |
-#+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
-#| This program is free software: you can redistribute it and/or modify      |
-#| it under the terms of the GNU General Public License as published by      |
-#| the Free Software Foundation, either version 3 of the License, or         |
-#| (at your option) any later version.                                       |
-#|                                                                           |
-#| This program is distributed in the hope that it will be useful,           |
-#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
-#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
-#| GNU General Public License for more details.                              |
-#|                                                                           |
-#| You should have received a copy of the GNU General Public License         |
-#| along with this program. If not, see <http://www.gnu.org/licenses/>.      |
-#+---------------------------------------------------------------------------+
-#| @url      : http://www.netzob.org                                         |
-#| @contact  : contact@netzob.org                                            |
-#| @sponsors : Amossys, http://www.amossys.fr                                |
-#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# |          01001110 01100101 01110100 01111010 01101111 01100010            |
+# |                                                                           |
+# |               Netzob : Inferring communication protocols                  |
+# +---------------------------------------------------------------------------+
+# | Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+# | This program is free software: you can redistribute it and/or modify      |
+# | it under the terms of the GNU General Public License as published by      |
+# | the Free Software Foundation, either version 3 of the License, or         |
+# | (at your option) any later version.                                       |
+# |                                                                           |
+# | This program is distributed in the hope that it will be useful,           |
+# | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+# | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
+# | GNU General Public License for more details.                              |
+# |                                                                           |
+# | You should have received a copy of the GNU General Public License         |
+# | along with this program. If not, see <http://www.gnu.org/licenses/>.      |
+# +---------------------------------------------------------------------------+
+# | @url      : http://www.netzob.org                                         |
+# | @contact  : contact@netzob.org                                            |
+# | @sponsors : Amossys, http://www.amossys.fr                                |
+# |             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| File contributors :                                                       |
-#|       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
-#|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | File contributors :                                                       |
+# |       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
+# |       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Standard library imports                                                  |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Standard library imports                                                  |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Related third party imports                                               |
-#+---------------------------------------------------------------------------+
-from bitarray import bitarray
-
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
-from netzob.Common.Models.Types.TypeConverter import TypeConverter
-from netzob.Common.Models.Types.BitArray import BitArray
-from netzob.Common.Models.Types.Raw import Raw
+# +---------------------------------------------------------------------------+
+# | Related third party imports                                               |
+# +---------------------------------------------------------------------------+
+from netzob.Common.Utils.Decorators import NetzobLogger
 from netzob.Common.Models.Vocabulary.Domain.GenericPath import GenericPath
+
 
 @NetzobLogger
 class SpecializingPath(GenericPath):
 
-    def __init__(self, memory, dataAssignedToField=None, dataAssignedToVariable=None, fieldCallbacks = None, ok = None):
+    def __init__(self, memory, dataAssignedToField=None, dataAssignedToVariable=None, fieldCallbacks=None, ok=None):
         super(SpecializingPath, self).__init__(memory, dataAssignedToField=dataAssignedToField, dataAssignedToVariable=dataAssignedToVariable, fieldCallbacks=fieldCallbacks)
-        
+
         if ok is None:
             self.__ok = True
         else:
             self.__ok = ok
 
-        
     def duplicate(self):
         dField = {}
         for key, value in self._dataAssignedToField.iteritems():
@@ -72,10 +66,9 @@ class SpecializingPath(GenericPath):
         for key, value in self._fieldCallbacks.iteritems():
             fCall[key] = value
 
-        result = SpecializingPath(memory=self.memory.duplicate(), dataAssignedToField = dField, dataAssignedToVariable=dVariable, fieldCallbacks=fCall, ok=self.ok())
-        
+        result = SpecializingPath(memory=self.memory.duplicate(), dataAssignedToField=dField, dataAssignedToVariable=dVariable, fieldCallbacks=fCall, ok=self.ok())
+
         return result
 
     def ok(self):
         return self.__ok
-        
