@@ -42,13 +42,13 @@ appname = name
 #|    Development version has version number increased and is
 #|    postfixed by ~git
 #+---------------------------------------------------------------------------+
-version = "0.4.2~git"
-versionName = "WaddlingPeccary"
+version = "1.0~git"
+versionName = "Unnamed"
 
 #+---------------------------------------------------------------------------+
 #| Copyright mentions
 #+---------------------------------------------------------------------------+
-copyright = "Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry"
+copyright = "Copyright (C) 2011-2015 Georges Bossert and Frédéric Guihéry"
 
 #+---------------------------------------------------------------------------+
 #| Description of the application
@@ -68,7 +68,7 @@ author = "Georges Bossert, Frédéric Guihéry"
 #+---------------------------------------------------------------------------+
 #| Contributor names
 #+---------------------------------------------------------------------------+
-contributors = ["Georges Bossert <georges.bossert@supelec.fr>",
+contributors = ["Georges Bossert <gbossert@miskin.fr>",
                 "Frédéric Guihéry <frederic.guihery@amossys.fr>",
                 "Olivier Tétard <olivier.tetard@amossys.fr>",
                 "Goulven Guiheux <goulven.guiheux@amossys.fr>",
