@@ -30,7 +30,6 @@
 #+---------------------------------------------------------------------------+
 import logging
 import sys
-from gettext import gettext as _
 from netzob import NetzobResources
 
 
@@ -43,10 +42,6 @@ class DepCheck(object):
     def checkRequiredDependency():
         # Check the C extensions
         if not DepCheck.checkCExtensions():
-            return False
-
-        # Check the lxml dependency
-        if not DepCheck.check_lxml():
             return False
 
         return True
@@ -144,20 +139,4 @@ class DepCheck(object):
         if NetzobResources.BID == "$BID":
             logging.warning("The current executed python code has not been built using setup.py, hence it's not possible to compare the BID of executed libs.")
 
-        return True
-
-    @staticmethod
-    def check_lxml():
-        """Test the lxml requirement is fulfilled"""
-        lxml_required_ver = (2, 3, 0, 0)
-        try:
-            from lxml.etree import LXML_VERSION, __version__
-            if LXML_VERSION >= lxml_required_ver:
-                return True
-            else:
-                logging.error("The loaded version of lxml ({0}) is not compatible.".format(LXML_VERSION))
-                return False
-        except ImportError as e:
-            logging.error("Impossible to find and load the lxml dependency: {0}".format(e))
-            return False
         return True
