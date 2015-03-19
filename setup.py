@@ -184,7 +184,6 @@ moduleLibRelation = Extension('netzob._libRelation',
 # | Definition of the dependencies
 # +----------------------------------------------------------------------------
 dependencies = [
-    'babel',
     'bitarray >= 0.4',
     'lxml',
     'httplib2',
@@ -213,22 +212,6 @@ CMD_CLASS = {
 }
 
 # +----------------------------------------------------------------------------
-# | Activate Babel (i18n) if available
-# +----------------------------------------------------------------------------
-try:
-    import babel
-    from babel.messages import frontend as babel
-    from distutils.command.build import build
-
-    CMD_CLASS.update({'compile_catalog': babel.compile_catalog,
-                      'extract_messages': babel.extract_messages,
-                      'init_catalog': babel.init_catalog,
-                      'update_catalog': babel.update_catalog})
-
-    build.sub_commands.append(('compile_catalog', None))
-except ImportError:
-    print "Info: Babel support unavailable, translations not available"
-
 
 root_data_files = find_data_files(opj("share", "netzob"), netzobStaticResourcesPath, 'logo.png', recursive=False)
 app_data_files = find_data_files(opj("share", "applications"), netzobStaticResourcesPath, 'netzob.desktop', recursive=False)
@@ -286,39 +269,5 @@ setup(
     ],
     long_description=README + '\n' + NEWS,
     cmdclass=CMD_CLASS,
-    entry_points="""[babel.extractors]
-        glade = resources.sdist.babel_extract:extract_glade
-    """,
-    # Files that should be scanned by Babel (if available)
-    message_extractors={
-        'src': [
-            ('**.py', 'python', None)
-        ],
-        'resources': [
-            ('**.glade', 'glade', None)
-        ]
-    },
 )
 
-# +----------------------------------------------------------------------------
-# | Automaticaly apply the command to attached plugins
-# +----------------------------------------------------------------------------
-# that's a fun one :)
-# this if block is executed if sys.argv[1] in ["build", ....]
-if (None, sys.argv[1])[len(sys.argv) > 1] in ["build", "develop", "install", "clean"]:
-    # find all the available plugins sources
-    pluginsPath = getPluginPaths()
-
-    for pluginName, pluginPath in pluginsPath.items():
-        print "------------------------------"
-        print "[I] Plugin Name:\t{0}".format(pluginName)
-        print "[ ] Path:\t\t{0}".format(pluginPath)
-        pluginSetupPath = opj(pluginPath, "setup.py")
-        # Verifies plugin contains a setup.py
-        if not os.path.exists(pluginSetupPath):
-            print "[E] Impossible to find the 'setup.py' file : {0}".format(pluginSetupPath)
-            continue
-        # Create the command to execute
-        os.chdir(pluginPath)
-        cmd = "{0} setup.py {1}".format(sys.executable, " ".join(sys.argv[1:]))
-        os.system(cmd)
