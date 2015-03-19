@@ -52,8 +52,6 @@ from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Models.Types.Decimal import Decimal
-from netzob.Common.Utils.NetzobRegex import NetzobRegex
-from netzob.Common.Models.Vocabulary.Domain.Variables.VariableProcessingTokens.VariableReadingToken import VariableReadingToken
 
 
 @NetzobLogger
@@ -104,31 +102,16 @@ class InternetChecksum(AbstractRelationVariableLeaf):
         if dataType is None:
             dataType = Raw(nbBytes=1)
         self.dataType = dataType
+        raise Exception("Not implemented")
 
-    def buildRegex(self):
-        """This method creates a regex based on the size
-        established in the domain."""
-        return NetzobRegex.buildRegexForSizedValue(self.dataType.size)
-
-    @typeCheck(VariableReadingToken)
     def compareFormat(self, readingToken):
-        if readingToken is None:
-            raise TypeError("readingToken cannot be None")
-        self._logger.debug("- [ {0}: compareFormat".format(self))
-
-        # Retrieve the value to check
-        if not readingToken.isValueForVariableAvailable(self):
-            raise Exception("Cannot compareFormat because not value is linked with the current data")
-
-        data = readingToken.getValueForVariable(self)
-
-        pass
+        raise Exception('Not Implemented')
 
         
     def getValue(self, processingToken):
         """Return the current value of targeted field.
         """
-
+        raise Exception("Not Implemented")
 
         self._logger.debug("Get the value of {0}".format(self))
         
