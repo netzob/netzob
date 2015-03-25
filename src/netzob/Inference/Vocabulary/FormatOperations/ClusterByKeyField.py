@@ -48,7 +48,10 @@ from netzob.Common.Models.Vocabulary.Field import Field
 from netzob.Common.Models.Vocabulary.Symbol import Symbol
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.HexaString import HexaString
+from netzob.Common.Models.Types.ASCII import ASCII
+from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.Raw import Raw
+from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
 
 
 @NetzobLogger
@@ -99,25 +102,36 @@ class ClusterByKeyField(object):
 
         newSymbols = {}
 
-        keyFieldMessageValues = keyField.getMessageValues()
+        keyFieldMessageValues = keyField.getMessageValues(encoded=False, styled=False)
+        newSymbolsSplittedMessages = {}
 
         # we create a symbol for each of these uniq values
         for message, keyFieldValue in keyFieldMessageValues.iteritems():
-            # keyFieldValue = TypeConverter.convert(keyFieldValueRaw, Raw, HexaString)
             if keyFieldValue not in newSymbols.keys():
-                symbolName = "Symbol_{0}".format(TypeConverter.convert(keyFieldValue, Raw, HexaString))
+                if ASCII().canParse(TypeConverter.convert(keyFieldValue, Raw, BitArray)):
+                    keyFieldValue = TypeConverter.convert(keyFieldValue, Raw, ASCII)
+                else:
+                    keyFieldValue = TypeConverter.convert(keyFieldValue, Raw, HexaString)
+                symbolName = "Symbol_{0}".format(keyFieldValue)
                 newSymbols[keyFieldValue] = Symbol(name=symbolName, messages=[message])
+                splittedMessages = DataAlignment.align([message.data], field, encoded=False)
+                newSymbolsSplittedMessages[keyFieldValue] = [splittedMessages[0]]
             else:
                 newSymbols[keyFieldValue].messages.append(message)
+                splittedMessages = DataAlignment.align([message.data], field, encoded=False)
+                newSymbolsSplittedMessages[keyFieldValue].append(splittedMessages[0])
 
         for newSymbolKeyValue, newSymbol in newSymbols.iteritems():
             # we recreate the same fields in this new symbol as the fields that exist in the original symbol
             newSymbol.clearChildren()
-            for f in field.children:
+            for i, f in enumerate(field.children):
                 if f == keyField:
                     newFieldDomain = newSymbolKeyValue
                 else:
-                    newFieldDomain = f.domain
+                    newFieldDomain = set()
+                    for j in range(len(newSymbolsSplittedMessages[newSymbolKeyValue])):
+                        newFieldDomain.add(newSymbolsSplittedMessages[newSymbolKeyValue][j][i])
+                    newFieldDomain = list(newFieldDomain)
                 newF = Field(name=f.name, domain=newFieldDomain)
                 newF.parent = newSymbol
                 newSymbol.children.append(newF)
@@ -129,11 +143,13 @@ class ClusterByKeyField(object):
                     if cell != '' and max_i_cell_with_value < i_cell:
                         max_i_cell_with_value = i_cell
             newSymbol.clearChildren()
-            for f in field.children[:max_i_cell_with_value + 1]:
+            for i, f in enumerate(field.children[:max_i_cell_with_value + 1]):
                 if f == keyField:
                     newFieldDomain = newSymbolKeyValue
                 else:
-                    newFieldDomain = f.domain
+                    newFieldDomain = []
+                    for j in range(len(newSymbolsSplittedMessages[newSymbolKeyValue])):
+                        newFieldDomain.append(newSymbolsSplittedMessages[newSymbolKeyValue][j][i])
                 newF = Field(name=f.name, domain=newFieldDomain)
                 newF.parent = newSymbol
                 newSymbol.children.append(newF)
