@@ -142,17 +142,18 @@ class FieldSplitDelimiter(object):
         iField = -1
         for i in range(len(splittedMessages)):
             iField += 1
-            fieldDomain = []
+            fieldDomain = set()
             isEmptyField = True  # To avoid adding an empty field
             emptyValueFound = False
             for v in splittedMessages[i]:
                 if v != "" and v is not None:
                     isEmptyField = False
-                    fieldDomain.append(Raw(v))
+                    fieldDomain.add(Raw(v))
                 else:
-                    fieldDomain.append(Raw(nbBytes=0))
+                    fieldDomain.add(Raw(nbBytes=0))
 
             if not isEmptyField:
+                fieldDomain = list(fieldDomain)
                 newField = Field(domain=DomainFactory.normalizeDomain(fieldDomain), name="Field-"+str(iField))
                 newField.encodingFunctions = field.encodingFunctions.values()
                 newFields.append(newField)
