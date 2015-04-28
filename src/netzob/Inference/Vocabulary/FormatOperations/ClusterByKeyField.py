@@ -147,9 +147,10 @@ class ClusterByKeyField(object):
                 if f == keyField:
                     newFieldDomain = newSymbolKeyValue
                 else:
-                    newFieldDomain = []
+                    newFieldDomain = set()
                     for j in range(len(newSymbolsSplittedMessages[newSymbolKeyValue])):
-                        newFieldDomain.append(newSymbolsSplittedMessages[newSymbolKeyValue][j][i])
+                        newFieldDomain.add(newSymbolsSplittedMessages[newSymbolKeyValue][j][i])
+                    newFieldDomain = list(newFieldDomain)
                 newF = Field(name=f.name, domain=newFieldDomain)
                 newF.parent = newSymbol
                 newSymbol.children.append(newF)
