@@ -157,12 +157,13 @@ class FieldSplitDelimiter(object):
                 newField = Field(domain=DomainFactory.normalizeDomain(fieldDomain), name="Field-"+str(iField))
                 newField.encodingFunctions = field.encodingFunctions.values()
                 newFields.append(newField)
+                if len(newFields) > 1:
+                    newFields[-2].domain = delimiter  # Update previous field separator if current field is not empty
                 iField += 1
 
             fieldName = "Field-sep-" + TypeConverter.convert(delimiter.value, BitArray, HexaString)
-            
+
             newFields.append(Field(domain=Alt([delimiter, Raw(nbBytes=0)]), name=fieldName))
-            #newFields[-2].domain=Alt([delimiter, Raw(nbBytes=0)])
 
         newFields.pop()
 
