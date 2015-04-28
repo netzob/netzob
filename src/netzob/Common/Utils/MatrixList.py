@@ -53,8 +53,19 @@ class MatrixList(list):
     """
 
     def __repr__(self):
-        cs = zip(*self)
+        # Prepare data to be returned
+        r_repr = []
+        for r in self:
+            r1_repr = []
+            for r1 in r:
+                r1_repr.append(repr(r1))
+            r_repr.append(r1_repr)
+
+        # Prepare format
+        cs = zip(*r_repr)
         c_ws = [max(len(value) for value in c) for c in cs]
         format = ' | '.join(['%%-%ds' % w for w in c_ws])
-        result = [(format % tuple(r)) for r in self]
+
+        # Format data
+        result = [(format % tuple(r)) for r in r_repr]
         return '\n'.join(result)

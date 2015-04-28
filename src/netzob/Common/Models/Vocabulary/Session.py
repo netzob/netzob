@@ -60,11 +60,11 @@ class Session(object):
     >>> msg3 = RawMessage("SYN/ACK", source="B", destination="A", date=time.mktime(time.strptime("9 Aug 13 10:45:03", "%d %b %y %H:%M:%S")))
     >>> session = Session([msg1, msg2, msg3])
     >>> print session.messages.values()[0]
-    [0;32m[1376037901.0 [0;m[1;32mA[1;m[0;32m->[0;m[1;32mB[1;m[0;32m][0;m SYN
+    [0;32m[1376037901.0 [0;m[1;32mA[1;m[0;32m->[0;m[1;32mB[1;m[0;32m][0;m 'SYN'
     >>> print session.messages.values()[1]
-    [0;32m[1376037903.0 [0;m[1;32mB[1;m[0;32m->[0;m[1;32mA[1;m[0;32m][0;m SYN/ACK
+    [0;32m[1376037903.0 [0;m[1;32mB[1;m[0;32m->[0;m[1;32mA[1;m[0;32m][0;m 'SYN/ACK'
     >>> print session.messages.values()[2]
-    [0;32m[1376037905.0 [0;m[1;32mA[1;m[0;32m->[0;m[1;32mB[1;m[0;32m][0;m ACK
+    [0;32m[1376037905.0 [0;m[1;32mA[1;m[0;32m->[0;m[1;32mB[1;m[0;32m][0;m 'ACK'
 
     """
 
@@ -152,7 +152,7 @@ class Session(object):
         >>> print session.applicativeData[0]
         Applicative Data: test=Decimal=20 ((8, 8)))
         >>> print session.applicativeData[1]
-        Applicative Data: test2=ASCII=helloworld ((0, None)))
+        Applicative Data: test2=ASCII=helloworld ((0, 80)))
 
         :type: a list of :class:`netzob.Common.Models.Vocabulary.ApplicativeData.ApplicativeData`.
         """

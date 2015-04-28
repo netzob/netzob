@@ -60,11 +60,11 @@ class Raw(AbstractType):
 
     >>> f = Field(Raw('\x01\x02\x03'))
     >>> print f.domain.dataType
-    Raw=010203 ((0, None))
+    Raw='\\x01\\x02\\x03' ((0, 24))
 
     >>> f.domain.dataType.endianness = AbstractType.ENDIAN_BIG
     >>> print f.domain.dataType
-    Raw=010203 ((0, None))
+    Raw='\\x01\\x02\\x03' ((0, 24))
 
     """
 
@@ -83,7 +83,7 @@ class Raw(AbstractType):
             from netzob.Common.Models.Types.TypeConverter import TypeConverter
             from netzob.Common.Models.Types.BitArray import BitArray
             from netzob.Common.Models.Types.HexaString import HexaString
-            return "{0}={1} ({2})".format(self.typeName, TypeConverter.convert(self.value, BitArray, HexaString), self.size)
+            return "{0}={1} ({2})".format(self.typeName, repr(TypeConverter.convert(self.value, BitArray, Raw)), self.size)
         else:
             return "{0}={1} ({2})".format(self.typeName, self.value, self.size)
 

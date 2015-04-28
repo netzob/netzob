@@ -94,7 +94,7 @@ class Alt(AbstractVariableNode):
     >>> f2 = Field(Alt(["00", "0044", "0", "004"]))
     >>> s = Symbol([f1, f2], messages=[m1], name="S0")
     >>> print s
-    22 | 0044
+    '22' | '0044'
 
     """
 

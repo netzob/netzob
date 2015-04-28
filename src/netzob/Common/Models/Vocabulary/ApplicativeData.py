@@ -54,7 +54,7 @@ class ApplicativeData(object):
 
     >>> app1 = ApplicativeData("Email", ASCII("contact@netzob.org"))
     >>> print app1.value
-    ASCII=contact@netzob.org ((0, None))
+    ASCII=contact@netzob.org ((0, 144))
 
     """
 

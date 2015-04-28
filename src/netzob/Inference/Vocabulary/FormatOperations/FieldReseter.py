@@ -69,16 +69,16 @@ class FieldReseter(object):
     >>> symbol = Symbol([f1, f2, f3], messages=messages)
     >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> print symbol
-    00 | ff | 2f | 000000
-    00 | 00 | 10 | 000000
-    00 | fe | 1f | 000000
+    '00' | 'ff' | '2f' | '000000'
+    '00' | '00' | '10' | '000000'
+    '00' | 'fe' | '1f' | '000000'
     >>> reseter = FieldReseter()
     >>> reseter.reset(symbol)
     >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> print symbol
-    00ff2f000000
-    000010000000
-    00fe1f000000
+    '00ff2f000000'
+    '000010000000'
+    '00fe1f000000'
     """
 
     @typeCheck(AbstractField)

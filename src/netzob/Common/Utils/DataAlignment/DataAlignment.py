@@ -81,11 +81,11 @@ class DataAlignment(threading.Thread):
     >>> print len(alignedData)
     5
     >>> print alignedData
-    hello  | tototo | , welcome
-    hello  | tototo | , welcome
-    hello  | tototo | , welcome
-    hello  | tototo | , welcome
-    hello  | tototo | , welcome
+    'hello ' | 'tototo' | ', welcome'
+    'hello ' | 'tototo' | ', welcome'
+    'hello ' | 'tototo' | ', welcome'
+    'hello ' | 'tototo' | ', welcome'
+    'hello ' | 'tototo' | ', welcome'
 
     >>> # Lets try to align a more complex message
     >>> msg1 = "helloPUTtotoPA343"
@@ -103,9 +103,9 @@ class DataAlignment(threading.Thread):
     >>> symbol = Symbol(fields=headerFields+bodyFields)
     >>> alignedData2 = DataAlignment.align(messages, symbol)
     >>> print alignedData2
-    hello | PUT | toto     | PA | 343      
-    hello | GET | tototo   | PA |          
-    hello | PUT | totototo | PA | dqs4qsd33
+    'hello' | 'PUT' | 'toto'     | 'PA' | '343'      
+    'hello' | 'GET' | 'tototo'   | 'PA' | ''         
+    'hello' | 'PUT' | 'totototo' | 'PA' | 'dqs4qsd33'
 
     """
 

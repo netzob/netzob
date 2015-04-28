@@ -510,7 +510,7 @@ class AbstractType(object):
         >>> print TypeConverter.convert(data.currentValue, BitArray, ASCII)
         hello netzob !
         >>> print data.dataType
-        ASCII=hello netzob ! ((0, None))
+        ASCII=hello netzob ! ((0, 112))
 
         :return: a Data of the current type
         :rtype: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Leads.Data.Data`

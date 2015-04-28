@@ -184,7 +184,7 @@ class AbstractMessage(SortableObject):
         HLS2 = "\033[1;32m"
         HLE2 = "\033[1;m"
         header = HLS1 + "[{0} {1}{2}{3}->{4}{5}{6}]".format(self.date, HLE1 + HLS2, self.source, HLE2 + HLS1, HLE1 + HLS2, self.destination, HLE2 + HLS1) + HLE1
-        return "{0} {1}".format(header, tmpData)
+        return "{0} {1}".format(header, repr(tmpData))
     
     @property
     def id(self):

@@ -73,16 +73,16 @@ class DomainFactory(object):
     >>> print domain.children[0].children[1].dataType
     Decimal=20 ((8, 8))
     >>> print domain.children[1].dataType
-    ASCII=! ((0, None))
+    ASCII=! ((0, 8))
 
     >>> f = Field(domain=Agg([ASCII("hello"), ["netzob", "zoby"]]))
     >>> print f._str_debug()
     Field
     |--   Agg
-          |--   Data (ASCII=hello ((0, None)))
+          |--   Data (ASCII=hello ((0, 40)))
           |--   Alt
-               |--   Data (ASCII=netzob ((0, None)))
-               |--   Data (ASCII=zoby ((0, None)))
+               |--   Data (ASCII=netzob ((0, 48)))
+               |--   Data (ASCII=zoby ((0, 32)))
     """
 
     @staticmethod

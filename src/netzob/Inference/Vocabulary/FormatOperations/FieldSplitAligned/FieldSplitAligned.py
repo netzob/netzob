@@ -66,37 +66,37 @@ class FieldSplitAligned(object):
     >>> symbol = Symbol(messages=messages)
     >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> print symbol
-    01ff00ff          
-    0222ff0000ff      
-    03ff000000ff      
-    0444ff00000000ff  
-    05ff0000000000ff  
-    06ff000000000000ff
+    '01ff00ff'          
+    '0222ff0000ff'      
+    '03ff000000ff'      
+    '0444ff00000000ff'  
+    '05ff0000000000ff'  
+    '06ff000000000000ff'
 
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol)
     >>> print symbol
-    01   | ff00 |            | ff
-    0222 | ff00 | 00         | ff
-    03   | ff00 | 0000       | ff
-    0444 | ff00 | 000000     | ff
-    05   | ff00 | 00000000   | ff
-    06   | ff00 | 0000000000 | ff
+    '01'   | 'ff00' | ''           | 'ff'
+    '0222' | 'ff00' | '00'         | 'ff'
+    '03'   | 'ff00' | '0000'       | 'ff'
+    '0444' | 'ff00' | '000000'     | 'ff'
+    '05'   | 'ff00' | '00000000'   | 'ff'
+    '06'   | 'ff00' | '0000000000' | 'ff'
 
     >>> samples = ["hello toto, what's up in France ?", "hello netzob, what's up in UK ?", "hello sygus, what's up in Germany ?"]
     >>> messages = [RawMessage(data=sample) for sample in samples]
     >>> symbol = Symbol(messages=messages)
     >>> print symbol
-    hello toto, what's up in France ?  
-    hello netzob, what's up in UK ?    
-    hello sygus, what's up in Germany ?
+    "hello toto, what's up in France ?"  
+    "hello netzob, what's up in UK ?"    
+    "hello sygus, what's up in Germany ?"
 
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol, useSemantic = False)
     >>> print symbol
-    hello  | toto   | , what's up in  | France  |  ?
-    hello  | netzob | , what's up in  | UK      |  ?
-    hello  | sygus  | , what's up in  | Germany |  ?
+    'hello ' | 'toto'   | ", what's up in " | 'France'  | ' ?'
+    'hello ' | 'netzob' | ", what's up in " | 'UK'      | ' ?'
+    'hello ' | 'sygus'  | ", what's up in " | 'Germany' | ' ?'
 
     # Let's illustrate the use of semantic constrained sequence alignment with a simple example
 
@@ -104,16 +104,16 @@ class FieldSplitAligned(object):
     >>> messages = [RawMessage(data=sample) for sample in samples]
     >>> symbol = Symbol(messages=messages)
     >>> print symbol
-    John-0108030405--john.doe@gmail.com                                                      
-    Mathieu-0908070605-31 rue de Paris, 75000 Paris, France-mat@yahoo.fr                     
-    Olivia-0348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hotmail.fr
+    'John-0108030405--john.doe@gmail.com'                                                      
+    'Mathieu-0908070605-31 rue de Paris, 75000 Paris, France-mat@yahoo.fr'                     
+    'Olivia-0348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hotmail.fr'
 
     >>> fs = FieldSplitAligned(doInternalSlick=True)
     >>> fs.execute(symbol, useSemantic = False)
     >>> print symbol
-    John    | -0 | 108030405--john.doe@gmail.com                                                    
-    Mathieu | -0 | 908070605-31 rue de Paris, 75000 Paris, France-mat@yahoo.fr                      
-    Olivia  | -0 | 348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hotmail.fr
+    'John'    | '-0' | '108030405--john.doe@g'                                                      | 'ma' | 'il.com'    
+    'Mathieu' | '-0' | '908070605-31 rue de Paris, 75000 Paris, France-'                            | 'ma' | 't@yahoo.fr'
+    'Olivia'  | '-0' | '348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hot' | 'ma' | 'il.fr'     
     
     >>> applicativeDatas = []
     >>> applicativeDatas.append(ApplicativeData("Firstname", ASCII("John")))
@@ -135,9 +135,10 @@ class FieldSplitAligned(object):
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol, useSemantic=True)
     >>> print symbol
-    John    | - | 0108030405 | - |                                                | - | john.doe@gmail.com      
-    Mathieu | - | 0908070605 | - | 31 rue de Paris, 75000 Paris, France           | - | mat@yahoo.fr            
-    Olivia  | - | 0348234556 | - | 7 allee des peupliers, 13000 Marseille, France | - | olivia.tortue@hotmail.fr
+    'John'    | '-0' | '10' | '8' | '030405' | '-' | '-john.doe@gm`'                        | '-' | '-\x85\xccm\xed\xa0'                                                                                            
+    'Mathieu' | '-0' | '90' | '8' | '070605' | '-' | '31 rue de Paris, 75000 Paris, France' | '-' | 'mat@yahoo.fr'                                                                                                  
+    'Olivia'  | '-0' | '34' | '8' | '234556' | '-' | '7 allee des peupliers, 13000 Marseh'  | '-' | '\x8d\x8c\xa5\x84\x08\xceL-\xccl\xa5\xad\xed\x8d.\xcd,%\xce\x8d\xeeN\x8e\xac\xa8\r\r\xee\x8d\xac--\x85\xcc\xce@'
+
 
     """
 

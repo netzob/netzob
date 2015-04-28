@@ -74,7 +74,7 @@ class IPv4(AbstractType):
     >>> msgs = [RawMessage(s.specialize()) for x in xrange(10)]
     >>> s.messages = msgs
     >>> print len(str(s))
-    109
+    269
 
     """
     def __init__(self, value=None, network=None, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):

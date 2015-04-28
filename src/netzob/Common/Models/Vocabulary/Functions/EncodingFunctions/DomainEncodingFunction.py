@@ -64,7 +64,7 @@ class DomainEncodingFunction(EncodingFunction):
     >>> s = Symbol(fields=[f], messages=[m], name="Symbol")
     >>> s.addEncodingFunction(TypeEncodingFunction(ASCII))
     >>> print s
-    There are . solutions.
+    'There are . solutions.'
     """
 
     def encode(self, field, readingToken):
