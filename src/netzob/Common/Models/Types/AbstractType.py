@@ -446,6 +446,9 @@ class AbstractType(object):
             if minSize is None:
                 minSize = 0
 
+            if maxSize is None and self.value is not None:
+                maxSize = len(self.value)
+
             if minSize < 0:
                 raise ValueError("Minimum size must be greater than 0")
             if maxSize is not None and maxSize < minSize:
