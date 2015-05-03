@@ -68,13 +68,10 @@ class IPv4(AbstractType):
 
     >>> f1 = Field("IP=")
     >>> f2 = Field(IPv4())
-
-    >>> f2.domain.learnable = False
     >>> s = Symbol(fields=[f1,f2])
     >>> msgs = [RawMessage(s.specialize()) for x in xrange(10)]
-    >>> s.messages = msgs
-    >>> print len(str(s))
-    269
+    >>> print len(msgs)
+    10
 
     """
     def __init__(self, value=None, network=None, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
