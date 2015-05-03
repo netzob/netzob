@@ -55,6 +55,7 @@ class FieldSpecializer():
     Examples:
 
     >>> from netzob.all import *
+
     >>> f = Field("Hello")
     >>> fs = FieldSpecializer(f)
     >>> print TypeConverter.convert(fs.specialize()[0].getDataAssignedToField(f), BitArray, Raw)
@@ -84,6 +85,26 @@ class FieldSpecializer():
     >>> print val
     set(['hello zoby', 'hello netzob'])
 
+    >>> fpayload = Field()
+    >>> f1 = Field(ASCII("hello "), name="f1")
+    >>> f2 = Field(ASCII("zoby!"), name="f2")
+    >>> fpayload.children = [f1, f2]
+    >>> print fpayload._str_debug()
+    Field
+    |--   Data (Raw=None ((0, None)))
+    |--  f1
+         |--   Data (ASCII=hello  ((0, 48)))
+    |--  f2
+         |--   Data (ASCII=zoby! ((0, 40)))
+    >>> fs = FieldSpecializer(fpayload)
+    >>> result = fs.specialize()[0]
+    >>> TypeConverter.convert(result.getDataAssignedToField(fpayload), BitArray, ASCII)
+    'hello zoby!'
+    >>> TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, ASCII)
+    'hello '
+    >>> TypeConverter.convert(result.getDataAssignedToField(f2), BitArray, ASCII)
+    'zoby!'
+
     """
 
     def __init__(self, field):
@@ -98,6 +119,45 @@ class FieldSpecializer():
             specializingPath = SpecializingPath(memory=Memory())
 
         self._logger.debug("Specialize field {0}".format(self.field.name))
+
+        # does current field has children
+        if len(self.field.children) > 0:
+            return self._specializeFieldWithChildren(specializingPath)
+        else:
+            return self._specializeField(specializingPath)
+
+    @typeCheck(SpecializingPath)
+    def _specializeFieldWithChildren(self, specializingPath=None):
+
+        if specializingPath is None:
+            specializingPath = SpecializingPath(memory=Memory())
+
+        resultPaths = [specializingPath]
+        for child in self.field.children:
+            fs = FieldSpecializer(child)
+
+            tmpResultPaths = []
+            for path in resultPaths:
+                tmpResultPaths.extend(fs.specialize(path))
+            resultPaths = tmpResultPaths
+
+        for resultPath in resultPaths:
+            value = None
+            for child in self.field.children:
+                childResult = resultPath.getDataAssignedToField(child)
+                if value is None:
+                    value = childResult.copy()
+                else:
+                    value += childResult.copy()
+            resultPath.addResultToField(self.field, value)
+
+        return resultPaths
+
+    @typeCheck(SpecializingPath)
+    def _specializeField(self, specializingPath=None):
+
+        if specializingPath is None:
+            specializingPath = SpecializingPath(memory=Memory())
 
         # we retrieve the field definition domain
         domain = self.field.domain
