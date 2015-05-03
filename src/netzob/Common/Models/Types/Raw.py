@@ -149,8 +149,7 @@ class Raw(AbstractType):
 
     @staticmethod
     def canParse(data):
-        """Computes if specified data can be parsed as raw which is always the case if the data
-        is at leats 1 length.
+        """Computes if specified data can be parsed as raw which is always the case if the data is at leats 1 length and aligned on a byte.
 
         >>> from netzob.all import *
         >>> Raw.canParse(TypeConverter.convert("hello netzob", ASCII, Raw))
@@ -171,6 +170,9 @@ class Raw(AbstractType):
             raise TypeError("data cannot be None")
 
         if len(data) == 0:
+            return False
+
+        if len(data) % 8 != 0:
             return False
 
         return True

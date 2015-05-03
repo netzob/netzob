@@ -160,7 +160,33 @@ class FieldParser():
     >>> parsingPaths = parser.parse(parsingPath)
     >>> len(parsingPaths)>0
     False
+
+
+    Below are few tests 
+
+    >>> from netzob.all import *
+    >>> message = RawMessage("\xaa\\x00\xbb")
+    >>> f1 = Field(Raw(nbBytes=(0,1)))
+    >>> f2 = Field("\\x00")
+    >>> f3 = Field(Raw(nbBytes=(0, 2)))
+    >>> s = Symbol([f1, f2, f3], messages=[message])
+    >>> print s
+    '\\xaa' | '\\x00' | '\\xbb'
+
+    >>> msg1 = '\\n\\x00aStrongPwd'
+    >>> msg2 = '\\t\\x00myPasswd!'
+    >>> messages = [RawMessage(data=sample) for sample in [msg1, msg2]]
+    >>> f1 = Field(Raw(nbBytes=(0,1)))
+    >>> f2 = Field("\\x00")
+    >>> f3 = Field(Raw(nbBytes=(0,11)))
+    >>> f4 = Field("wd")
+    >>> f5 = Field(Raw(nbBytes=(0,1)))
+    >>> s = Symbol([f1, f2, f3, f4, f5], messages = messages)
+    >>> print s
+    '\\n' | '\\x00' | 'aStrongP' | 'wd' | '' 
+    '\\t' | '\\x00' | 'myPass'   | 'wd' | '!'
     
+
     """
 
     def __init__(self, field, lastField=False):

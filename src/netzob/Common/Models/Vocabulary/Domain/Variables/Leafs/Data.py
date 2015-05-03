@@ -357,7 +357,7 @@ class Data(AbstractVariableLeaf):
 
         content = parsingPath.getDataAssignedToVariable(self)
         
-        self._logger.debug("Learn {0} with {1}".format(content, self.dataType))
+        self._logger.debug("DomainCMP {0} with {1}".format(content, self.dataType))
             
         (minSize, maxSize) = self.dataType.size
         if maxSize is None:
@@ -437,7 +437,6 @@ class Data(AbstractVariableLeaf):
         if carnivorous:
             minSize = len(content)
             maxSize = len(content)
-
             
         for size in xrange(min(maxSize, len(content)), minSize -1, -1):
             # size == 0 : deals with 'optional' data
