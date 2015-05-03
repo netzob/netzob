@@ -114,7 +114,7 @@ class FieldSpecializer():
     @typeCheck(SpecializingPath)
     def specialize(self, specializingPath=None):
         """Execute the specialize operation"""
-
+        
         if specializingPath is None:
             specializingPath = SpecializingPath(memory=Memory())
 
@@ -149,6 +149,7 @@ class FieldSpecializer():
                     value = childResult.copy()
                 else:
                     value += childResult.copy()
+            resultPath.addResult(self.field.domain, value)
             resultPath.addResultToField(self.field, value)
 
         return resultPaths
