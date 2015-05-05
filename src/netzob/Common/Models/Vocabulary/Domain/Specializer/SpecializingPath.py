@@ -45,8 +45,8 @@ from netzob.Common.Models.Vocabulary.Domain.GenericPath import GenericPath
 @NetzobLogger
 class SpecializingPath(GenericPath):
 
-    def __init__(self, memory, dataAssignedToField=None, dataAssignedToVariable=None, fieldCallbacks=None, ok=None):
-        super(SpecializingPath, self).__init__(memory, dataAssignedToField=dataAssignedToField, dataAssignedToVariable=dataAssignedToVariable, fieldCallbacks=fieldCallbacks)
+    def __init__(self, memory, dataAssignedToField=None, dataAssignedToVariable=None, fieldsCallbacks=None, ok=None):
+        super(SpecializingPath, self).__init__(memory, dataAssignedToField=dataAssignedToField, dataAssignedToVariable=dataAssignedToVariable, fieldsCallbacks=fieldsCallbacks)
 
         if ok is None:
             self.__ok = True
@@ -62,11 +62,9 @@ class SpecializingPath(GenericPath):
         for key, value in self._dataAssignedToVariable.iteritems():
             dVariable[key] = value.copy()
 
-        fCall = {}
-        for key, value in self._fieldCallbacks.iteritems():
-            fCall[key] = value
+        fCall = [x for x in self._fieldsCallbacks]
 
-        result = SpecializingPath(memory=self.memory.duplicate(), dataAssignedToField=dField, dataAssignedToVariable=dVariable, fieldCallbacks=fCall, ok=self.ok())
+        result = SpecializingPath(memory=self.memory.duplicate(), dataAssignedToField=dField, dataAssignedToVariable=dVariable, fieldsCallbacks=fCall, ok=self.ok())
 
         return result
 

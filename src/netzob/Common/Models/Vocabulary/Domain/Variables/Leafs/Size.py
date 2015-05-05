@@ -82,7 +82,7 @@ class Size(AbstractRelationVariableLeaf):
     Exception: No parsing path returned while parsing message netzob;
 
     
-    While next demo, illustrates a size field declared before its target field
+    # While next demo, illustrates a size field declared before its target field
 
     >>> f2 = Field(ASCII(nbChars=(1,10)), name="f2")
     >>> f1 = Field(ASCII(";"), name="f1", )
@@ -99,9 +99,9 @@ class Size(AbstractRelationVariableLeaf):
     >>> print mp.parseMessage(msg2, s)
     Traceback (most recent call last):
       ...
-    Exception: No parsing path returned while parsing message ;netzob
+    Exception: No parsing path returned while parsing message \x03;netzob
 
-    Let's see what happen with specialization of a Size field
+    # Let's see what happen with specialization of a Size field
     
     >>> f0 = Field(ASCII(nbChars=20))
     >>> f1 = Field(ASCII(";"))
@@ -110,6 +110,23 @@ class Size(AbstractRelationVariableLeaf):
     >>> ms = MessageSpecializer()
     >>> res= TypeConverter.convert(ms.specializeSymbol(s).generatedContent, BitArray, Raw)
     >>> '\x14' in res
+    True
+
+    Another set of examples (and tests)
+
+    >>> f0 = Field(ASCII("CMDauthentify"), name="f0")
+    >>> f1 = Field(ASCII('#'), name="sep")
+    >>> f2 = Field(name="f2")
+    >>> f3 = Field(name="size field")
+    >>> f4 = Field(Raw("\\x00\\x00\\x00\\x00"), name="f4")
+    >>> f5 = Field(Raw(nbBytes=11))
+    >>> f6 = Field(Raw('wd'), name="f6")
+    >>> f7 = Field(Raw(nbBytes=(0, 1)))
+    >>> f3.domain = Size([f4, f5, f6])
+    >>> f2.children = [f3, f4, f5, f6, f7]
+    >>> s = Symbol(fields=[f0, f1, f2])
+    >>> ms = MessageSpecializer()
+    >>> "CMDauthentify#\\x11" in TypeConverter.convert(ms.specializeSymbol(s).generatedContent, BitArray, Raw)
     True
 
     """
@@ -193,11 +210,16 @@ class Size(AbstractRelationVariableLeaf):
         content = parsingPath.getDataAssignedToVariable(self)
         possibleValue = content[:maxSize]
 
-        expectedValue = self._computeExpectedValue(parsingPath)
-        self._logger.debug("Expected Value: {0}".format(expectedValue))
-        self._logger.debug("possible Value: {0}".format(possibleValue))            
-        
-        if expectedValue is None:
+        expectedValue = None
+        try:
+            expectedValue = self._computeExpectedValue(parsingPath)
+            if possibleValue[:len(expectedValue)] == expectedValue:
+                self._logger.debug("Callback executed with success")
+                parsingPath.addResult(self, expectedValue.copy())
+                results.append(parsingPath)
+            else:
+                self._logger.debug("Executed callback has failed.")
+        except Exception, e:
             # the expected value cannot be computed
             if acceptCallBack:
                 # we add a callback
@@ -207,22 +229,18 @@ class Size(AbstractRelationVariableLeaf):
                 results.append(parsingPath)
             else:
                 raise Exception("no more callback accepted.")
-        else:
-            if possibleValue[:len(expectedValue)] == expectedValue:
-                self._logger.debug("Callback executed with success")
-                parsingPath.addResult(self, expectedValue.copy())
-                results.append(parsingPath)
-            else:
-                self._logger.debug("Executed callback has failed.")
+
         return results
 
     @typeCheck(GenericPath)
     def _addCallBacksOnUndefinedFields(self, parsingPath):
         """Identify each dependency field that is not yet defined and register a
         callback to try to recompute the value """
-        for field in self.fieldDependencies:
-            if field.domain != self and not parsingPath.isDataAvailableForField(field):
-                parsingPath.registerFieldCallBack(field, self)
+
+        parsingPath.registerFieldCallBack(self.fieldDependencies, self)
+        # for field in self.fieldDependencies:
+        #     if field.domain != self and not parsingPath.isDataAvailableForField(field):
+                
 
     @typeCheck(GenericPath)
     def _computeExpectedValue(self, parsingPath):
@@ -236,7 +254,7 @@ class Size(AbstractRelationVariableLeaf):
                 hasValue = False
 
         if not hasValue:
-            return None
+            raise Exception("Expected value cannot be computed, some dependencies are missing for domain {0}".format(self))
         else:
             size = 0
             for field in self.fieldDependencies:
@@ -264,22 +282,20 @@ class Size(AbstractRelationVariableLeaf):
         It creates a VariableSpecializerResult in the provided path that
         contains a generated value that follows the definition of the Data
         """
-        self._logger.warning("Regenerate size {0}".format(self))
+        self._logger.debug("Regenerate size {0}".format(self))
         if variableSpecializerPath is None:
             raise Exception("VariableSpecializerPath cannot be None")
 
         try:
             newValue = self._computeExpectedValue(variableSpecializerPath)
-            self._logger.warning("VALUE FOUND AND COMPUTED FOR SIZE FIELD : {0}".format(newValue))
             variableSpecializerPath.addResult(self, newValue)
         except Exception, e:
             self._logger.debug("Cannot specialize since no value is available for the size dependencies, we create a callback function in case it can be computed later: {0}".format(e))
-            
             pendingValue = TypeConverter.convert("PENDING VALUE", ASCII, BitArray)
             variableSpecializerPath.addResult(self, pendingValue)
             if moreCallBackAccepted:
-                for field in self.fields:
-                    variableSpecializerPath.registerFieldCallBack(field, self, parsingCB=False)
+#                for field in self.fields:
+                variableSpecializerPath.registerFieldCallBack(self.fields, self, parsingCB=False)
 
             else:
                 raise e

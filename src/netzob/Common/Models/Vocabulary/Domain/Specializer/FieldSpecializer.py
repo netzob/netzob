@@ -144,11 +144,12 @@ class FieldSpecializer():
         for resultPath in resultPaths:
             value = None
             for child in self.field.children:
-                childResult = resultPath.getDataAssignedToField(child)
+                childResult = resultPath.getDataAssignedToVariable(child.domain)
                 if value is None:
                     value = childResult.copy()
                 else:
                     value += childResult.copy()
+
             resultPath.addResult(self.field.domain, value)
             resultPath.addResultToField(self.field, value)
 

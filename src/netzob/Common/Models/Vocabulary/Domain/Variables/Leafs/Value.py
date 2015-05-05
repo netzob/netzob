@@ -196,9 +196,7 @@ class Value(AbstractRelationVariableLeaf):
     def _addCallBacksOnUndefinedFields(self, parsingPath):
         """Identify each dependency field that is not yet defined and register a
         callback to try to recompute the value """
-        for field in self.fieldDependencies:
-            if field.domain != self and not parsingPath.isDataAvailableForField(field):                
-                parsingPath.registerFieldCallBack(field, self)
+        parsingPath.registerFieldCallBack(self.fieldDependencies, self)
 
     def _computeExpectedValue(self, parsingPath):
         self._logger.debug("compute expected value for Value field")
@@ -219,13 +217,13 @@ class Value(AbstractRelationVariableLeaf):
         It creates a VariableSpecializerResult in the provided path that
         contains a generated value that follows the definition of the Data
         """
-        self._logger.warning("Regenerate value {0}".format(self))
+        self._logger.debug("Regenerate value {0}".format(self))
         if variableSpecializerPath is None:
             raise Exception("VariableSpecializerPath cannot be None")
 
         try:
             newValue = self._computeExpectedValue(variableSpecializerPath)
-            self._logger.warning("VALUE FOUND AND COMPUTED FOR VALUE FIELD : {0}".format(newValue))
+
             variableSpecializerPath.addResult(self, newValue)
         except Exception, e:
             self._logger.debug("Cannot specialize since no value is available for the value dependencies, we create a callback function in case it can be computed later: {0}".format(e))
@@ -233,8 +231,7 @@ class Value(AbstractRelationVariableLeaf):
             pendingValue = TypeConverter.convert("PENDING VALUE", ASCII, BitArray)
             variableSpecializerPath.addResult(self, pendingValue)
             if moreCallBackAccepted:
-                for field in self.fieldDependencies:
-                    variableSpecializerPath.registerFieldCallBack(field, self, parsingCB=False)
+                variableSpecializerPath.registerFieldCallBack(self.fieldDependencies, self, parsingCB=False)
             else:
                 raise e
             

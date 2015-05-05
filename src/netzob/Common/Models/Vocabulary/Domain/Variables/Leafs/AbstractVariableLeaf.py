@@ -109,7 +109,6 @@ class AbstractVariableLeaf(AbstractVariable):
 
         if self.svas is None:
             raise Exception("Cannot specialize if the variable has no assigned SVAS.")
-        self._logger.debug("Specialize : {0}".format(self))
         if self.isDefined(parsingPath):
             if self.svas == SVAS.CONSTANT or self.svas == SVAS.PERSISTENT:
                 return self.use(parsingPath, acceptCallBack)

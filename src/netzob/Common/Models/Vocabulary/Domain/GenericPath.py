@@ -46,21 +46,24 @@ from bitarray import bitarray
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Common.Models.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
-
+from netzob.Common.Models.Types.TypeConverter import TypeConverter
+from netzob.Common.Models.Types.BitArray import BitArray
+from netzob.Common.Models.Types.Raw import Raw
 
 @NetzobLogger
 class GenericPath(object):
     """This class is the parent class of both abstraction paths and
     specialization paths"""
 
-    def __init__(self, memory=None, dataAssignedToField=None, dataAssignedToVariable=None, fieldCallbacks=None):
+    def __init__(self, memory=None, dataAssignedToField=None, dataAssignedToVariable=None, fieldsCallbacks=None):
         self.name = str(uuid.uuid4())
         self.memory = memory
-
-        if fieldCallbacks is None:
-            self._fieldCallbacks = {}
+    
+        if fieldsCallbacks is not None:
+            self._fieldsCallbacks = fieldsCallbacks
         else:
-            self._fieldCallbacks = fieldCallbacks
+            self._fieldsCallbacks = []
+        
         if dataAssignedToField is None:
             self._dataAssignedToField = {}
         else:
@@ -96,6 +99,7 @@ class GenericPath(object):
             raise Exception("Data cannot be None")
         if field is None:
             raise Exception("Field cannot be None")
+
         self._dataAssignedToField[field.id] = data
 
     def isDataAvailableForField(self, field):
@@ -141,28 +145,44 @@ class GenericPath(object):
 
         del self._dataAssignedToVariable[variable.id]
 
-    def registerFieldCallBack(self, field, variable, parsingCB=True):
-        if field is None:
-            raise Exception("Field cannot be None")
+    def registerFieldCallBack(self, fields, variable, parsingCB=True):
+        if fields is None:
+            raise Exception("Fields cannot be None")
         if variable is None:
             raise Exception("Variable cannot be None")
 
-        if field.id in self._fieldCallbacks.keys():
-            self._fieldCallbacks[field.id].append((variable, parsingCB))
-        else:
-            self._fieldCallbacks[field.id] = [(variable, parsingCB)]
+        if len(fields) == 0:
+            raise Exception("At least one field must be defined in the callback")
+
+        self._fieldsCallbacks.append((fields, variable, parsingCB))
 
     def _triggerFieldCallbacks(self, field):
-        if field.id in self._fieldCallbacks.keys():
-            for (variable, parsingCB) in self._fieldCallbacks[field.id]:
+
+        moreCallBackFound = True
+        while moreCallBackFound:
+            moreCallBackFound = False
+            callBackToExecute = None
+            
+            for (fields, variable, parsingCB) in self._fieldsCallbacks:
+                fieldsHaveValue = True
+                for f in fields:
+                    if not self.isDataAvailableForField(f):
+                        fieldsHaveValue = False
+                if fieldsHaveValue:
+                    self._logger.debug("Found a callback that must be able to trigger (all its fields are set)")
+                    callBackToExecute = (fields, variable, parsingCB)
+                    break
+                
+            if callBackToExecute is not None:
+                moreCallBackFound = True
+                (fields, variable, parsingCB) = callBackToExecute
                 if parsingCB:
                     resultingPaths = variable.parse(self, acceptCallBack=False)
                 else:
                     resultingPaths = variable.specialize(self, acceptCallBack=False)
                 if len(resultingPaths) == 0:
                     return False
-            del self._fieldCallbacks[field.id]
-
+                self._fieldsCallbacks.remove(callBackToExecute)
         return True
 
     @property
