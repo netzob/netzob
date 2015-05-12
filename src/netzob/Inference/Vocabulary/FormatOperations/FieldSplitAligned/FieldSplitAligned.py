@@ -135,9 +135,9 @@ class FieldSplitAligned(object):
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol, useSemantic=True)
     >>> print symbol
-    'John'    | '-0' | '10' | '8' | '030405' | '-' | '-john.doe@gm`'                        | '-' | '-\x85\xccm\xed\xa0'                                                                                            
-    'Mathieu' | '-0' | '90' | '8' | '070605' | '-' | '31 rue de Paris, 75000 Paris, France' | '-' | 'mat@yahoo.fr'                                                                                                  
-    'Olivia'  | '-0' | '34' | '8' | '234556' | '-' | '7 allee des peupliers, 13000 Marseh'  | '-' | '\x8d\x8c\xa5\x84\x08\xceL-\xccl\xa5\xad\xed\x8d.\xcd,%\xce\x8d\xeeN\x8e\xac\xa8\r\r\xee\x8d\xac--\x85\xcc\xce@'
+    'John'    | '-0' | '10' | '8' | '030405' | '-' | ''                                               | '-' | 'john.doe@gmail.com'      
+    'Mathieu' | '-0' | '90' | '8' | '070605' | '-' | '31 rue de Paris, 75000 Paris, France'           | '-' | 'mat@yahoo.fr'            
+    'Olivia'  | '-0' | '34' | '8' | '234556' | '-' | '7 allee des peupliers, 13000 Marseille, France' | '-' | 'olivia.tortue@hotmail.fr'
 
 
     """
