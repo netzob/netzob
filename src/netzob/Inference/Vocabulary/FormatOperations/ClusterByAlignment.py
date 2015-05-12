@@ -75,30 +75,29 @@ class ClusterByAlignment(object):
     >>> symbols = clustering.cluster(messages)
     >>> len(symbols)
     3
-    >>> for symbol in symbols:
-    ...     symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
+    >>> symbols[0].addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> print symbols[0]
     '4d79206970206164647265737320697320' | '4ea717' | '0a' | ''      
-    '4d79206970206164647265737320697320' | 'c0'     | '0a' | '8000a0'
+    '4d79206970206164647265737320697320' | 'c0a800' | '0a' | ''      
     '4d79206970206164647265737320697320' | ''       | '0a' | '7879d4'
 
     >>> print symbols[2]
-    '68656c6c6f20' | '64697472696368' | '2c2077686174277320757020696e20' | '4d756e696368'       | '203f'
-    '68656c6c6f20' | '64697472696368' | '2c2077686174277320757020696e20' | '5061726973'         | '203f'
-    '68656c6c6f20' | '6361726c69746f' | '2c2077686174277320757020696e20' | '4d756e696368'       | '203f'
-    '68656c6c6f20' | '6361726c69746f' | '2c2077686174277320757020696e20' | '5061726973'         | '203f'
-    '68656c6c6f20' | '6361726c69746f' | '2c2077686174277320757020696e20' | '5669656e6e65'       | '203f'
-    '68656c6c6f20' | '64697472696368' | '2c2077686174277320757020696e20' | '5669656e6e65'       | '203f'
-    '68656c6c6f20' | '746f746f'       | '2c2077686174277320757020696e20' | '5061726973'         | '203f'
-    '68656c6c6f20' | '7a6f6279'       | '2c2077686174277320757020696e20' | '5061726973'         | '203f'
-    '68656c6c6f20' | '746f746f'       | '2c2077686174277320757020696e20' | '4d756e696368'       | '203f'
-    '68656c6c6f20' | '7a6f6279'       | '2c2077686174277320757020696e20' | '4d756e696368'       | '203f'
-    '68656c6c6f20' | '746f746f'       | '2c2077686174277320757020696e20' | '5669656e6e65'       | '203f'
-    '68656c6c6f20' | '7a6f6279'       | '2c2077686174277320757020696e20' | '5669656e6e65'       | '203f'
-    '68656c6c6f20' | '6361726c69746f' | '2c2077686174277320757020696e20' | '42617263656c6f6e65' | '203f'
-    '68656c6c6f20' | '64697472696368' | '2c2077686174277320757020696e20' | '42617263656c6f6e65' | '203f'
-    '68656c6c6f20' | '746f746f'       | '2c2077686174277320757020696e20' | '42617263656c6f6e65' | '203f'
-    '68656c6c6f20' | '7a6f6279'       | '2c2077686174277320757020696e20' | '42617263656c6f6e65' | '203f'
+    'hello ' | 'ditrich' | ", what's up in " | 'Munich'    | ' ?'
+    'hello ' | 'ditrich' | ", what's up in " | 'Paris'     | ' ?'
+    'hello ' | 'carlito' | ", what's up in " | 'Munich'    | ' ?'
+    'hello ' | 'carlito' | ", what's up in " | 'Paris'     | ' ?'
+    'hello ' | 'carlito' | ", what's up in " | 'Vienne'    | ' ?'
+    'hello ' | 'ditrich' | ", what's up in " | 'Vienne'    | ' ?'
+    'hello ' | 'toto'    | ", what's up in " | 'Paris'     | ' ?'
+    'hello ' | 'zoby'    | ", what's up in " | 'Paris'     | ' ?'
+    'hello ' | 'toto'    | ", what's up in " | 'Munich'    | ' ?'
+    'hello ' | 'zoby'    | ", what's up in " | 'Munich'    | ' ?'
+    'hello ' | 'toto'    | ", what's up in " | 'Vienne'    | ' ?'
+    'hello ' | 'zoby'    | ", what's up in " | 'Vienne'    | ' ?'
+    'hello ' | 'carlito' | ", what's up in " | 'Barcelone' | ' ?'
+    'hello ' | 'ditrich' | ", what's up in " | 'Barcelone' | ' ?'
+    'hello ' | 'toto'    | ", what's up in " | 'Barcelone' | ' ?'
+    'hello ' | 'zoby'    | ", what's up in " | 'Barcelone' | ' ?'
 
     """
 
