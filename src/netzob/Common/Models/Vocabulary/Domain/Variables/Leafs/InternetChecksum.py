@@ -49,9 +49,13 @@ from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Models.Types.HexaString import HexaString
 from netzob.Common.Models.Types.AbstractType import AbstractType
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
+from netzob.Common.Models.Types.ASCII import ASCII
 from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Models.Types.Decimal import Decimal
+from netzob.Common.Models.Vocabulary.Domain.GenericPath import GenericPath
+from netzob.Common.Models.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
+from netzob.Common.Models.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 
 
 @NetzobLogger
@@ -80,18 +84,7 @@ class InternetChecksum(AbstractRelationVariableLeaf):
     >>> s.messages = msgs
     >>> s.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> print s
-    08 | 00 | 1607 | 1d22 | 0007 | a8f3f65300000000 | 60b5060000000000101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f3031323334353637
-
-    Now, lets generate multiple ICMP packets with a random payload.
-
-    # >>> dataField.domain = Raw(nbBytes=(0, 60))
-    # >>> msgs = [RawMessage(s.specialize()) for i in xrange(10)]
-    # >>> s.messages = msgs
-    # >>> s.addEncodingFunction(TypeEncodingFunction(HexaString))
-    # >>> print len(s.getCells())
-    # 10
-
-    
+    '08' | '00' | '0716' | '1d22' | '0007' | 'a8f3f65300000000' | '60b5060000000000101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f3031323334353637'
 
     """
 
@@ -102,55 +95,168 @@ class InternetChecksum(AbstractRelationVariableLeaf):
         if dataType is None:
             dataType = Raw(nbBytes=1)
         self.dataType = dataType
-        raise Exception("Not implemented")
 
-    def compareFormat(self, readingToken):
-        raise Exception('Not Implemented')
+    def __key(self):
+        return (self.dataType)
 
+    def __eq__(x, y):
+        try:
+            return x.__key() == y.__key()
+        except:
+            return False
         
-    def getValue(self, processingToken):
-        """Return the current value of targeted field.
-        """
-        raise Exception("Not Implemented")
-
-        self._logger.debug("Get the value of {0}".format(self))
+    def __hash__(self):
+        return hash(self.__key())
         
+    @typeCheck(GenericPath)
+    def isDefined(self, genericPath):
+        
+        # we retrieve the memory of the current path
+        memory = genericPath.memory
+        return memory.hasValue(self)
+
+    @typeCheck(ParsingPath)
+    def valueCMP(self, parsingPath, carnivorous=False):
+        results = []
+        if parsingPath is None:
+            raise Exception("ParsingPath cannot be None")        
+
+        sizeOfPossibleValue = self.dataType.size()
+        if sizeOfPossibleValue[0] != sizeOfPossibleValue[1]:
+            raise Exception("Impossible to abstract messages if a size field has a dynamic size")
+
+        content = parsingPath.getDataAssignedToVariable(self)
+        possibleValue = content[:sizeOfPossibleValue[1]]
+        self._logger.warn("Possible value of Internet Checksum field: {0}".format(possibleValue))
+        
+        expectedValue = self._computeExpectedValue(parsingPath)
+        if expectedValue is None:
+            # the expected value cannot be computed
+            # we add a callback
+            self._addCallBacksOnUndefinedFields(parsingPath)
+        else:
+            if possibleValue[:len(expectedValue)] == expectedValue:
+                parsingPath.addResult(self, expectedValue.copy())
+            results.append(parsingPath)                
+
+    @typeCheck(ParsingPath)
+    def learn(self, parsingPath, carnivours=False):
+        raise Exception("not implemented")
+        self._logger.warn("INTERNEt CHECKSUM LEARN")
+        if parsingPath is None:
+            raise Exception("VariableParserPath cannot be None")
+        return []
+
+
+    @typeCheck(ParsingPath)
+    def domainCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
+        """This method participates in the abstraction process.
+
+        It creates a VariableSpecializerResult in the provided path if
+        the remainingData (or some if it) follows the type definition"""
+
+
+        results = []
+        self._logger.debug("domainCMP executed on {0} by an Internet Checksum domain".format(parsingPath))
+
+        minSize, maxSize = self.dataType.size
+        if minSize != maxSize:
+            raise Exception("Impossible to abstract messages if a size field has a dynamic size")
+
+        content = parsingPath.getDataAssignedToVariable(self)
+        possibleValue = content[:maxSize]
+
+        expectedValue = None
+        try:
+            expectedValue = self._computeExpectedValue(parsingPath)
+            if possibleValue[:len(expectedValue)] == expectedValue:
+                self._logger.debug("Callback executed with success")
+                parsingPath.addResult(self, expectedValue.copy())
+                results.append(parsingPath)
+            else:
+                self._logger.debug("Executed callback has failed.")
+        except Exception, e:
+            # the expected value cannot be computed
+            if acceptCallBack:
+                # we add a callback
+                self._addCallBacksOnUndefinedFields(parsingPath)
+                # register the remaining data
+                parsingPath.addResult(self, possibleValue.copy())
+                results.append(parsingPath)
+            else:
+                raise Exception("no more callback accepted.")
+
+        return results
+    
+    @typeCheck(GenericPath)
+    def _addCallBacksOnUndefinedFields(self, parsingPath):
+        """Identify each dependency field that is not yet defined and register a
+        callback to try to recompute the value """
+
+        parsingPath.registerFieldCallBack(self.fieldDependencies, self)
+
+    @typeCheck(GenericPath)
+    def _computeExpectedValue(self, parsingPath):
+        self._logger.debug("compute expected value for Internet checksum field")
+                
         # first checks the pointed fields all have a value
         hasValue = True
         for field in self.fieldDependencies:
-            self._logger.fatal(field.name)
-            if field.domain != self and not processingToken.isValueForVariableAvailable(field.domain):
+            if field.domain != self and not parsingPath.isDataAvailableForVariable(field.domain):
+                self._logger.debug("Field : {0} has no value".format(field.id))
                 hasValue = False
 
         if not hasValue:
-            raise Exception("Impossible to compute the value (getValue) of the current Size field since some of its dependencies have no value")
+            raise Exception("Expected value cannot be computed, some dependencies are missing for domain {0}".format(self))
+        else:
+            fieldValues = []
+            for field in self.fieldDependencies:
+                if field.domain is self:
+                    fieldSize = random.randint(field.domain.dataType.size[0], field.domain.dataType.size[1])
+                    fieldValue = "\x00"* (fieldSize / 8)
+                else:
+                    fieldValue = TypeConverter.convert(parsingPath.getDataAssignedToVariable(field.domain), BitArray, Raw)
+                if fieldValue is None:
+                    break
+                else:
+                    fieldValues.append(fieldValue)
 
-        fieldValues = []
-        for field in self.fieldDependencies:
-            self._logger.fatal("Domain of {0} = {1}".format(field.name, field.domain))
-            fieldValue = TypeConverter.convert(processingToken.getValueForVariable(field.domain), BitArray, Raw)
+            fieldValues = ''.join(fieldValues)
+            # compute the checksum of this value
+            chsum = self.__checksum(fieldValues)
+            b = TypeConverter.convert(chsum, Decimal, BitArray, src_unitSize=AbstractType.UNITSIZE_16, src_sign = AbstractType.SIGN_UNSIGNED)
+            return b
+
+    @typeCheck(SpecializingPath)
+    def regenerate(self, variableSpecializerPath, moreCallBackAccepted=True):
+        """This method participates in the specialization proces.
+
+        It creates a VariableSpecializerResult in the provided path that
+        contains a generated value that follows the definition of the Data
+        """
+        self._logger.debug("Regenerate Internet Checksum {0}".format(self))
+        if variableSpecializerPath is None:
+            raise Exception("VariableSpecializerPath cannot be None")
+
+        try:
+            newValue = self._computeExpectedValue(variableSpecializerPath)
+            self._logger.fatal("Register ; {0}".format(newValue))
+            variableSpecializerPath.addResult(self, newValue.copy())
+        except Exception, e:
+            self._logger.warn("Cannot specialize since no value is available for the Internet checksum dependencies, we create a callback function in case it can be computed later: {0}".format(e))
+            pendingValue = TypeConverter.convert("PENDING VALUE", ASCII, BitArray)
+            variableSpecializerPath.addResult(self, pendingValue)
+            if moreCallBackAccepted:
+#                for field in self.fields:
+                variableSpecializerPath.registerFieldCallBack(self.fieldDependencies, self, parsingCB=False)
+
+            else:
+                raise e
             
-            if fieldValue == "TEMPORARY" and field.domain.name == self.name:
-                self._logger.fatal("Temporary found")
-                # Internet checksum specifies that un undefined field must filled with 0's
-                # we retrieve its size
-                fieldSize = random.randint(field.domain.dataType.size[0], field.domain.dataType.size[1])
-                # and set it full of zeros
-                fieldValue = "\x00"* (fieldSize / 8)
-                # return TypeConverter.convert(fieldValue, Raw, BitArray)
+        return [variableSpecializerPath]
 
-            # if len(fieldValue)%2 == 1:
-            #     fieldValue = "\x00"+fieldValue
-            self._logger.fatal("Fname = {0}, Values = {1}".format(field.name, repr(fieldValue)))
-            fieldValues.append(fieldValue)
-
-        fieldValues = ''.join(fieldValues)
-        # compute the checksum of this value
-        chsum = self.__checksum(fieldValues)
-        b = TypeConverter.convert(chsum, Decimal, BitArray, src_unitSize=AbstractType.UNITSIZE_16, src_sign = AbstractType.SIGN_UNSIGNED)
-
-        return b
-        
+            
+            
     def __checksum(self, msg):
         self._logger.fatal("Computing checksum of {0}, {1}".format(TypeConverter.convert(msg, Raw, HexaString), len(msg)))
     
@@ -166,11 +272,12 @@ class InternetChecksum(AbstractRelationVariableLeaf):
                 w = ord(msg[i]) + (ord(msg[i+1]) << 8)
             s = carry_around_add(s, w)
         res = ~s & 0xffff
+        self._logger.fatal(res)
         return res
         
     def __str__(self):
         """The str method."""
-        return "InternetChecksum({0}) - Type:{1} (L={2}, M={3})".format(str([f.name for f in self.fieldDependencies]), self.dataType, self.learnable, self.mutable)
+        return "InternetChecksum({0}) - Type:{1}".format(str([f.name for f in self.fieldDependencies]), self.dataType)
 
     @property
     def dataType(self):

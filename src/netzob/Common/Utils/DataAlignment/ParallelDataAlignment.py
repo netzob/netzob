@@ -155,6 +155,7 @@ class ParallelDataAlignment(object):
         :return: a list of aligned data sorted in order to respect the provided order of data.
         :rtype: a :class:`netzob.Common.Utils.MatrixList.MatrixList`
         """
+
         # Create a list of data removed from duplicate entry
         noDuplicateData = list(set(data))
 

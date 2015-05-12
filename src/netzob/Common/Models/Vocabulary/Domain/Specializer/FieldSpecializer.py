@@ -140,7 +140,7 @@ class FieldSpecializer():
             for path in resultPaths:
                 tmpResultPaths.extend(fs.specialize(path))
             resultPaths = tmpResultPaths
-
+        
         for resultPath in resultPaths:
             value = None
             for child in self.field.children:

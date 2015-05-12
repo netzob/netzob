@@ -28,8 +28,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging
-from netzob.Common.Models.Vocabulary.Functions.VisualizationFunction import VisualizationFunction
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -38,12 +36,14 @@ from netzob.Common.Models.Vocabulary.Functions.VisualizationFunction import Visu
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-
+from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Models.Vocabulary.Functions.VisualizationFunction import VisualizationFunction
 
 #+---------------------------------------------------------------------------+
 #| FunctionApplicationTable:
 #|     Definition of a function application table
 #+---------------------------------------------------------------------------+
+@NetzobLogger
 class FunctionApplicationTable(object):
 
     def __init__(self, splittedData):
@@ -59,26 +59,18 @@ class FunctionApplicationTable(object):
             self.appliedFunctions.append((i_col, i_local_start, i_local_end, i_start, i_end, data, function))
 
     def getResult(self):
-        result = []
         styledResult = []
         encodedResult = []
 
-        # First we apply encoding functions
-        # then we apply visualization functions
-        encodingFunctions = []
+        # apply visualization functions
         visualizationFunctions = []
 
         # We split applied functions between encoding and visualization ones
         for appliedFunction in self.appliedFunctions:
             (i_col, i_local_start, i_end_local, i_start, i_end, data, function) = appliedFunction
-#            if function.super().TYPE == EncodingFunction.TYPE:
-#                encodingFunctions.append(appliedFunction)
-#            elif function.super() == VisualizationFunction.TYPE:
             visualizationFunctions.append(appliedFunction)
-#            else:
-#                logging.warn("Unknown function found in the list of applied functions.")
 
-        # # We apply encoding functions per column
+        # We apply encoding functions per column
         for col in range(0, len(self.splittedData)):
             newData = self.splittedData[col]
         #     # Search for functions which applies on current column
@@ -115,10 +107,12 @@ class FunctionApplicationTable(object):
 
         i_global = 0
 
+        self._logger.debug(encodedResult)
+        self._logger.debug(self.splittedData)        
+
         # We apply visualization functions per column
         for col in range(0, len(self.splittedData)):
             encodedCol = encodedResult[col]
-
             if len(encodedCol) > 0:
                 toApplyFunction = []
                 # Retrieve all the visualization functions we should apply on current column

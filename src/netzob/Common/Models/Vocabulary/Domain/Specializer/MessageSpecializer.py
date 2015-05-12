@@ -138,7 +138,18 @@ class MessageSpecializer(object):
         generatedContent = None
         # let's configure the generated content
         for field in symbol.children:
-            d = retainedPath.getDataAssignedToVariable(field.domain)
+            # TODO: only support one level of children... must be improved
+            if len(field.children) > 0:
+                d = None
+                for child in field.children:
+                    if d is None:
+                        d = retainedPath.getDataAssignedToVariable(child.domain).copy()
+                    else:
+                        d += retainedPath.getDataAssignedToVariable(child.domain).copy()
+                
+            else:
+                d = retainedPath.getDataAssignedToVariable(field.domain)
+                
             if generatedContent is None:
                 generatedContent = d.copy()
             else:
