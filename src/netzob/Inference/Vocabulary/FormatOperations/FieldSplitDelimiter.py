@@ -172,4 +172,4 @@ class FieldSplitDelimiter(object):
         Format.resetFormat(field)
 
         # Create a field for each entry
-        field.children = newFields
+        field.fields = newFields

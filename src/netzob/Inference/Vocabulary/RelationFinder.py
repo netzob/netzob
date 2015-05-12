@@ -53,7 +53,7 @@ class RelationFinder(object):
     >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
     >>> symbol = Symbol(messages=messages)
     >>> Format.splitStatic(symbol)
-    >>> rels = RelationFinder.findOnFields(symbol.children[1], symbol.children[3])
+    >>> rels = RelationFinder.findOnFields(symbol.fields[1], symbol.fields[3])
     >>> print len(rels)
     1
     >>> for rel in rels:
@@ -303,10 +303,10 @@ class RelationFinder(object):
     def _getAllFieldsValues(self, field):
         # This recursive function returns a tuple containing
         # (array of all fields, array of values of each field)
-        if len(field.children) > 0:
+        if len(field.fields) > 0:
             fields = []
             values = []
-            for f in field.children:
+            for f in field.fields:
                 (retFields, retValues) = self._getAllFieldsValues(f)
                 fields.extend(retFields)
                 values.extend(retValues)

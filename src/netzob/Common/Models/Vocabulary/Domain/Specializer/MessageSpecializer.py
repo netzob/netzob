@@ -112,7 +112,7 @@ class MessageSpecializer(object):
         # this variable host all the specialization path
         specializingPaths = [SpecializingPath(memory=self.memory)]
 
-        for field in symbol.children:
+        for field in symbol.fields:
             self._logger.debug("Specializing field {0}".format(field.name))
 
             fieldDomain = field.domain
@@ -137,11 +137,11 @@ class MessageSpecializer(object):
 
         generatedContent = None
         # let's configure the generated content
-        for field in symbol.children:
+        for field in symbol.fields:
             # TODO: only support one level of children... must be improved
-            if len(field.children) > 0:
+            if len(field.fields) > 0:
                 d = None
-                for child in field.children:
+                for child in field.fields:
                     if d is None:
                         d = retainedPath.getDataAssignedToVariable(child.domain).copy()
                     else:

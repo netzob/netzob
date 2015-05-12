@@ -171,7 +171,7 @@ class CorrelationFinder(object):
 
         # Compute the table of values
         valuesTable = []
-        fields = symbol.children
+        fields = symbol.fields
         for field in fields:
             valuesTable.append(field.getValues(encoded=False, styled=False))
 
@@ -256,7 +256,7 @@ class CorrelationFinder(object):
         header = []
         lines = []
         cells = dict()
-        fields = symbol.children
+        fields = symbol.fields
         for field in fields:
             if not field.isStatic():
                 header.append((self.ATTR_VALUE, field))

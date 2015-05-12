@@ -97,7 +97,7 @@ class ClusterByKeyField(object):
             raise TypeError("'field' should not be None")
         if keyField is None:
             raise TypeError("'keyField' should not be None")
-        if keyField not in field.children:
+        if keyField not in field.fields:
             raise TypeError("'keyField' is not a child of 'field'")
 
         newSymbols = {}
@@ -123,8 +123,8 @@ class ClusterByKeyField(object):
 
         for newSymbolKeyValue, newSymbol in newSymbols.iteritems():
             # we recreate the same fields in this new symbol as the fields that exist in the original symbol
-            newSymbol.clearChildren()
-            for i, f in enumerate(field.children):
+            newSymbol.clearFields()
+            for i, f in enumerate(field.fields):
                 if f == keyField:
                     newFieldDomain = newSymbolKeyValue
                 else:
@@ -134,7 +134,7 @@ class ClusterByKeyField(object):
                     newFieldDomain = list(newFieldDomain)
                 newF = Field(name=f.name, domain=newFieldDomain)
                 newF.parent = newSymbol
-                newSymbol.children.append(newF)
+                newSymbol.fields.append(newF)
             # we remove endless fields that accepts no values
             cells = newSymbol.getCells()
             max_i_cell_with_value = 0
@@ -142,8 +142,8 @@ class ClusterByKeyField(object):
                 for i_cell, cell in enumerate(line):
                     if cell != '' and max_i_cell_with_value < i_cell:
                         max_i_cell_with_value = i_cell
-            newSymbol.clearChildren()
-            for i, f in enumerate(field.children[:max_i_cell_with_value + 1]):
+            newSymbol.clearFields()
+            for i, f in enumerate(field.fields[:max_i_cell_with_value + 1]):
                 if f == keyField:
                     newFieldDomain = newSymbolKeyValue
                 else:
@@ -153,14 +153,14 @@ class ClusterByKeyField(object):
                     newFieldDomain = list(newFieldDomain)
                 newF = Field(name=f.name, domain=newFieldDomain)
                 newF.parent = newSymbol
-                newSymbol.children.append(newF)
+                newSymbol.fields.append(newF)
 
         return newSymbols
 
         # # Construct a dict with splitted messages (data) according to the key field
         # newDatas = {}
         # newDomains = {}
-        # for idx_field, fieldChild in enumerate(field.children):  # Loop over children of the main field
+        # for idx_field, fieldChild in enumerate(field.fields):  # Loop over children of the main field
         #     if fieldChild == keyField:  # If the child corresponds to the key field
         #         for keyFieldValue in keyFieldValues:
         #             newDatas[keyFieldValue] = []  # In order to keep the association between messages and their new symbols
@@ -178,7 +178,7 @@ class ClusterByKeyField(object):
         # # Create new symbols for each splitted group, and recreate the fields domain for each symbol
         # for (keyFieldValue, datas) in newDatas.items():
         #     newFields = []
-        #     for (idx, f) in enumerate(field.children):
+        #     for (idx, f) in enumerate(field.fields):
         #         domain = DomainFactory.normalizeDomain(list(newDomains[keyFieldValue][idx]))
         #         newField = Field(domain=domain)
         #         _logger.warn(newField._str_debug())

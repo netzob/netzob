@@ -281,8 +281,8 @@ class FieldSplitStatic(object):
         for newField in newFields:
             newField.encodingFunctions = field.encodingFunctions.values()
 
-        field.children = newFields        
-            
+        field.fields = newFields
+
 
     def __computeStepForUnitsize(self):
         """Computes the step following the specified unitsize.

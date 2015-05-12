@@ -88,7 +88,7 @@ class FieldSpecializer():
     >>> fpayload = Field()
     >>> f1 = Field(ASCII("hello "), name="f1")
     >>> f2 = Field(ASCII("zoby!"), name="f2")
-    >>> fpayload.children = [f1, f2]
+    >>> fpayload.fields = [f1, f2]
     >>> print fpayload._str_debug()
     Field
     |--   Data (Raw=None ((0, None)))
@@ -121,7 +121,7 @@ class FieldSpecializer():
         self._logger.debug("Specialize field {0}".format(self.field.name))
 
         # does current field has children
-        if len(self.field.children) > 0:
+        if len(self.field.fields) > 0:
             return self._specializeFieldWithChildren(specializingPath)
         else:
             return self._specializeField(specializingPath)
@@ -133,7 +133,7 @@ class FieldSpecializer():
             specializingPath = SpecializingPath(memory=Memory())
 
         resultPaths = [specializingPath]
-        for child in self.field.children:
+        for child in self.field.fields:
             fs = FieldSpecializer(child)
 
             tmpResultPaths = []
@@ -143,7 +143,7 @@ class FieldSpecializer():
         
         for resultPath in resultPaths:
             value = None
-            for child in self.field.children:
+            for child in self.field.fields:
                 childResult = resultPath.getDataAssignedToVariable(child.domain)
                 if value is None:
                     value = childResult.copy()

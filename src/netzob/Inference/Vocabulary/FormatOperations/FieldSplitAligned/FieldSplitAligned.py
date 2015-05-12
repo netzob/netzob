@@ -231,7 +231,7 @@ class FieldSplitAligned(object):
         for f in step1Fields:
             f.encodingFunctions = field.encodingFunctions.values()
 
-        field.children = step1Fields
+        field.fields = step1Fields
 
     def _splitAlignment(self, align):
         """Splits the specified alignment which is composed of hexastring and of dynamic sections ("-")
@@ -326,7 +326,7 @@ class FieldSplitAligned(object):
     #             pass
     #         innerField = Field(domain=domainElt)
     #         step1Fields.append(innerField)
-    #         field.children.append(innerField)
+    #         field.fields.append(innerField)
 
     @typeCheck(list, list)
     def _alignData(self, values, semanticTags=None):
@@ -429,7 +429,7 @@ class FieldSplitAligned(object):
             else:
                 self._createSubFieldsForADynamicField(rootField, align, semanticTags)
 
-            for f in rootField.children:
+            for f in rootField.fields:
                 self._logger.debug("\t {0} : {1}".format(f.name, f.regex))
         else:
             # We are dealing with multiple fields, lets split them

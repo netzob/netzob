@@ -95,7 +95,7 @@ class Symbol(AbstractField):
         if fields is None:
             # create a default empty field
             fields = [Field()]
-        self.children = fields
+        self.fields = fields
 
     @typeCheck(Memory, object)
     def specialize(self, memory=None, generationStrategy=None):

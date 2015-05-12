@@ -64,7 +64,7 @@ class FieldReseter(object):
     >>> f21 = Field(Raw(nbBytes=1))
     >>> f22 = Field(Raw(nbBytes=1))
     >>> f2 = Field()
-    >>> f2.children = [f21, f22]
+    >>> f2.fields = [f21, f22]
     >>> f3 = Field(Raw())
     >>> symbol = Symbol([f1, f2, f3], messages=messages)
     >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
@@ -96,10 +96,10 @@ class FieldReseter(object):
             raise TypeError("The field to reset must be specified and cannot be None")
 
         self._logger.debug("Reset the definition of field {0} ({1})".format(field.name, field.id))
-        field.clearChildren()
+        field.clearFields()
 
         if isinstance(field, Symbol):
-            field.children = [Field()]
+            field.fields = [Field()]
 
         if isinstance(field, Field):
             field.domain = Raw(None)

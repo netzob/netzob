@@ -94,7 +94,7 @@ class AbstractField(AbstractMementoCreator):
         self.layer = layer
         self.description = ""
 
-        self.__children = TypedList(AbstractField)
+        self.__fields = TypedList(AbstractField)
         self.__parent = None
 
         self.__encodingFunctions = SortedTypedList(EncodingFunction)
@@ -118,12 +118,12 @@ class AbstractField(AbstractMementoCreator):
         >>> fh1 = Field(ASCII("hello "), name="hello")
         >>> fh2 = Field(Alt([ASCII("netzob"), ASCII("zoby"), ASCII("lapy"), ASCII("sygus")]), name="pseudo")
         >>> fheader = Field(name="header")
-        >>> fheader.children = [fh1, fh2]
+        >>> fheader.fields = [fh1, fh2]
         >>> fb1 = Field(", what's up in ", name="whatsup")
         >>> fb2 = Field(["Paris", "Berlin", "New-York"], name="city")
         >>> fb3 = Field(" ?", name="end")
         >>> fbody = Field(name="body")
-        >>> fbody.children = [fb1, fb2, fb3]
+        >>> fbody.fields = [fb1, fb2, fb3]
         >>> symbol = Symbol([fheader, fbody], messages=messages)
 
         >>> print symbol
@@ -442,7 +442,7 @@ class AbstractField(AbstractMementoCreator):
     #     hello  | lapy   | , what's up in  | Paris    |  ?
     #     hello  | lapy   | , what's up in  | Berlin   |  ?
     #     hello  | lapy   | , what's up in  | New-York |  ?
-    #     >>> lapySymbol = Symbol(messages=symbol.children[1].getMessagesWithValue("lapy"))
+    #     >>> lapySymbol = Symbol(messages=symbol.fields[1].getMessagesWithValue("lapy"))
     #     >>> print lapySymbol
     #     hello lapy, what's up in Paris ?   
     #     hello lapy, what's up in Berlin ?  
@@ -568,10 +568,10 @@ class AbstractField(AbstractMementoCreator):
         >>> fieldL1 = Field(name="L1")
         >>> fieldL1_header = Field(name="L1_header")
         >>> fieldL1_payload = Field(name="L1_payload")
-        >>> fieldL1.children = [fieldL1_header, fieldL1_payload]
+        >>> fieldL1.fields = [fieldL1_header, fieldL1_payload]
 
-        >>> payloadField.children = [fieldL1]
-        >>> field.children = [headerField, payloadField, footerField]
+        >>> payloadField.fields = [fieldL1]
+        >>> field.fields = [headerField, payloadField, footerField]
 
         >>> print [f.name for f in field._getLeafFields(depth=None)]
         ['L0_header', 'L1_header', 'L1_payload', 'L0_footer']
@@ -591,16 +591,16 @@ class AbstractField(AbstractMementoCreator):
         if currentDepth is None:
             currentDepth = 0
 
-        if len(self.children) == 0:
+        if len(self.fields) == 0:
             return [self]
 
         if currentDepth == depth:
             return [self]
 
         leafFields = []
-        for children in self.children:
-            if children is not None:
-                leafFields.extend(children._getLeafFields(depth, currentDepth + 1))
+        for fields in self.fields:
+            if fields is not None:
+                leafFields.extend(fields._getLeafFields(depth, currentDepth + 1))
 
         return leafFields
 
@@ -612,16 +612,16 @@ class AbstractField(AbstractMementoCreator):
         """
         return self.__parent is not None
 
-    def clearChildren(self):
+    def clearFields(self):
         """Remove all the children attached to the current element"""
 
-        while(len(self.__children) > 0):
-            self.__children.pop()
+        while(len(self.__fields) > 0):
+            self.__fields.pop()
 
     def clearEncodingFunctions(self):
         """Remove all the encoding functions attached to the current element"""
         self.__encodingFunctions.clear()
-        for child in self.children:
+        for child in self.fields:
             child.clearEncodingFunctions()
 
     def clearVisualizationFunctions(self):
@@ -651,7 +651,7 @@ class AbstractField(AbstractMementoCreator):
         from netzob.Common.Models.Vocabulary.Field import Field
         if isinstance(self, Field):
             lines.append(self.domain._str_debug(deepness + 1))
-        for f in self.children:
+        for f in self.fields:
             lines.append(f._str_debug(deepness + 1))
         return '\n'.join(lines)
 
@@ -745,7 +745,7 @@ class AbstractField(AbstractMementoCreator):
 
     def addEncodingFunction(self, encodingFunction):
         self.encodingFunctions.add(encodingFunction)
-        for child in self.children:
+        for child in self.fields:
             child.addEncodingFunction(encodingFunction)
 
     @property
@@ -783,25 +783,25 @@ class AbstractField(AbstractMementoCreator):
         self.transformationFunctions.extend(transformationFunctions)
 
     @property
-    def children(self):
-        """Sorted list of field children."""
+    def fields(self):
+        """Sorted list of field fields."""
 
-        return self.__children
+        return self.__fields
 
-    @children.setter
-    def children(self, children):
+    @fields.setter
+    def fields(self, fields):
         from netzob.Common.Models.Vocabulary.Field import Field
         # First it checks the specified children are abstractfiled
-        if children is not None:
-            for c in children:
+        if fields is not None:
+            for c in fields:
                 if not isinstance(c, Field):
-                    raise TypeError("Cannot edit the children because at least one specified element is not an AbstractField its a {0}.".format(type(c)))
+                    raise TypeError("Cannot edit the fields because at least one specified element is not an AbstractField its a {0}.".format(type(c)))
 
-        self.clearChildren()
-        if children is not None:
-            for c in children:
+        self.clearFields()
+        if fields is not None:
+            for c in fields:
                 c.parent = self
-                self.__children.append(c)
+                self.__fields.append(c)
 
     @property
     def parent(self):

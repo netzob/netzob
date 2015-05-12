@@ -99,7 +99,7 @@ class FindKeyFields(object):
         columns = zip(*cells)
 
         # Retrieve dynamic fields with fixed size
-        for (i, f) in enumerate(field.children):
+        for (i, f) in enumerate(field.fields):
             if not isinstance(f.regex, NetzobStaticRegex):
                 isCandidate = True
                 lRef = len(columns[i][1])

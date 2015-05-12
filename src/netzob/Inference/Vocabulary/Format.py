@@ -270,12 +270,12 @@ class Format(object):
         # 00 | ff2f0000 | 00
         # 00 | 00100000 | 00
         # 00 | fe1f0000 | 00
-        # >>> Format.mergeFields(symbol.children[0], symbol.children[1])
+        # >>> Format.mergeFields(symbol.fields[0], symbol.fields[1])
         # >>> print symbol
         # 00ff2f0000 | 00
         # 0000100000 | 00
         # 00fe1f0000 | 00
-        # >>> Format.mergeFields(symbol.children[0], symbol.children[1])
+        # >>> Format.mergeFields(symbol.fields[0], symbol.fields[1])
         # >>> print symbol
 
         :param field: the field we want to reset
@@ -395,7 +395,7 @@ class Format(object):
             raise TypeError("'field' should not be None")
         if keyField is None:
             raise TypeError("'keyField' should not be None")
-        if not keyField in field.children:
+        if not keyField in field.fields:
             raise TypeError("'keyField' is not a child of 'field'")
 
         clusterByKeyField = ClusterByKeyField()

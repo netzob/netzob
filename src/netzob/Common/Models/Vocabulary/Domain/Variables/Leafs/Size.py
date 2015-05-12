@@ -123,7 +123,7 @@ class Size(AbstractRelationVariableLeaf):
     >>> f6 = Field(Raw('wd'), name="f6")
     >>> f7 = Field(Raw(nbBytes=(0, 1)))
     >>> f3.domain = Size([f4, f5, f6])
-    >>> f2.children = [f3, f4, f5, f6, f7]
+    >>> f2.fields = [f3, f4, f5, f6, f7]
     >>> s = Symbol(fields=[f0, f1, f2])
     >>> ms = MessageSpecializer()
     >>> "CMDauthentify#\\x11" in TypeConverter.convert(ms.specializeSymbol(s).generatedContent, BitArray, Raw)
