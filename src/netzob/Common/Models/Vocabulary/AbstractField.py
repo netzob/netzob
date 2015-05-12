@@ -246,7 +246,7 @@ class AbstractField(AbstractMementoCreator):
         data = [message.data for message in self.messages]
 
         # [DEBUG] set to false for debug only. A sequential alignment is more simple to debug
-        useParallelAlignment = False
+        useParallelAlignment = True
 
         if useParallelAlignment:
             # Execute a parallel alignment
