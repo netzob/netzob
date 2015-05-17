@@ -86,8 +86,8 @@ class FieldSplitDelimiter(object):
         'CMDauthentify' | '#' | '....myPasswd!'      | ''  | ''     
         'RESauthentify' | '#' | '........'           | ''  | ''     
         'CMDencrypt'    | '#' | '....123456test'     | ''  | ''     
-        'RESencrypt'    | '#' | '........spqvwt6'16' | ''  | ''     
-        'CMDdecrypt'    | '#' | '....spqvwt6'16'     | ''  | ''     
+        'RESencrypt'    | '#' | "........spqvwt6'16" | ''  | ''     
+        'CMDdecrypt'    | '#' | "....spqvwt6'16"     | ''  | ''     
         'RESdecrypt'    | '#' | '........123456test' | ''  | ''     
         'CMDbye'        | '#' | '....'               | ''  | ''     
         'RESbye'        | '#' | '........'           | ''  | ''     
@@ -100,8 +100,8 @@ class FieldSplitDelimiter(object):
         'CMDauthentify' | '#' | '....aStrongPwd'     | ''  | ''     
         'RESauthentify' | '#' | '........'           | ''  | ''     
         'CMDencrypt'    | '#' | '....abcdef'         | ''  | ''     
-        'RESencrypt'    | '#' | '........'           | '#' | ' !&'$'
-        'CMDdecrypt'    | '#' | '....'               | '#' | ' !&'$'
+        'RESencrypt'    | '#' | '........'           | '#' | " !&'$"
+        'CMDdecrypt'    | '#' | '....'               | '#' | " !&'$"
         'RESdecrypt'    | '#' | '........abcdef'     | ''  | ''     
         'CMDbye'        | '#' | '....'               | ''  | ''     
         'RESbye'        | '#' | '........'           | ''  | ''     
@@ -157,8 +157,6 @@ class FieldSplitDelimiter(object):
                 newField = Field(domain=DomainFactory.normalizeDomain(fieldDomain), name="Field-"+str(iField))
                 newField.encodingFunctions = field.encodingFunctions.values()
                 newFields.append(newField)
-                if len(newFields) > 1:
-                    newFields[-2].domain = delimiter  # Update previous field separator if current field is not empty
                 iField += 1
 
             fieldName = "Field-sep-" + TypeConverter.convert(delimiter.value, BitArray, HexaString)
