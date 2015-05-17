@@ -105,13 +105,17 @@ class ClusterByKeyField(object):
         keyFieldMessageValues = keyField.getMessageValues(encoded=False, styled=False)
         newSymbolsSplittedMessages = {}
 
+        # we identify what would be the best type of the key field
+        keyFieldType = ASCII
+        for message, keyFieldValue in keyFieldMessageValues.iteritems():
+            if not ASCII().canParse(TypeConverter.convert(keyFieldValue, Raw, BitArray)):
+                keyFieldType = HexaString
+                break
+
         # we create a symbol for each of these uniq values
         for message, keyFieldValue in keyFieldMessageValues.iteritems():
+            keyFieldValue = TypeConverter.convert(keyFieldValue, Raw, keyFieldType)
             if keyFieldValue not in newSymbols.keys():
-                if ASCII().canParse(TypeConverter.convert(keyFieldValue, Raw, BitArray)):
-                    keyFieldValue = TypeConverter.convert(keyFieldValue, Raw, ASCII)
-                else:
-                    keyFieldValue = TypeConverter.convert(keyFieldValue, Raw, HexaString)
                 symbolName = "Symbol_{0}".format(keyFieldValue)
                 newSymbols[keyFieldValue] = Symbol(name=symbolName, messages=[message])
                 splittedMessages = DataAlignment.align([message.data], field, encoded=False)
@@ -120,13 +124,12 @@ class ClusterByKeyField(object):
                 newSymbols[keyFieldValue].messages.append(message)
                 splittedMessages = DataAlignment.align([message.data], field, encoded=False)
                 newSymbolsSplittedMessages[keyFieldValue].append(splittedMessages[0])
-
         for newSymbolKeyValue, newSymbol in newSymbols.iteritems():
             # we recreate the same fields in this new symbol as the fields that exist in the original symbol
             newSymbol.clearFields()
             for i, f in enumerate(field.fields):
                 if f == keyField:
-                    newFieldDomain = newSymbolKeyValue
+                    newFieldDomain = TypeConverter.convert(newSymbolKeyValue, keyFieldType, Raw)
                 else:
                     newFieldDomain = set()
                     for j in range(len(newSymbolsSplittedMessages[newSymbolKeyValue])):
@@ -135,6 +138,7 @@ class ClusterByKeyField(object):
                 newF = Field(name=f.name, domain=newFieldDomain)
                 newF.parent = newSymbol
                 newSymbol.fields.append(newF)
+
             # we remove endless fields that accepts no values
             cells = newSymbol.getCells()
             max_i_cell_with_value = 0
@@ -145,7 +149,7 @@ class ClusterByKeyField(object):
             newSymbol.clearFields()
             for i, f in enumerate(field.fields[:max_i_cell_with_value + 1]):
                 if f == keyField:
-                    newFieldDomain = newSymbolKeyValue
+                    newFieldDomain = TypeConverter.convert(newSymbolKeyValue, keyFieldType, Raw)
                 else:
                     newFieldDomain = set()
                     for j in range(len(newSymbolsSplittedMessages[newSymbolKeyValue])):
@@ -156,37 +160,3 @@ class ClusterByKeyField(object):
                 newSymbol.fields.append(newF)
 
         return newSymbols
-
-        # # Construct a dict with splitted messages (data) according to the key field
-        # newDatas = {}
-        # newDomains = {}
-        # for idx_field, fieldChild in enumerate(field.fields):  # Loop over children of the main field
-        #     if fieldChild == keyField:  # If the child corresponds to the key field
-        #         for keyFieldValue in keyFieldValues:
-        #             newDatas[keyFieldValue] = []  # In order to keep the association between messages and their new symbols
-        #             newDomains[keyFieldValue] = []  # In order to keep the association between domains and their new symbols
-        #             for idx_msg in range(len(fieldsCells)):
-        #                 if fieldsCells[idx_msg][idx_field] == keyFieldValue:
-        #                     newData = "".join(fieldsCells[idx_msg])
-        #                     newData = RawMessage(newData)
-        #                     newDatas[keyFieldValue].append(newData)
-        #                     newDomain = fieldsCells[idx_msg]
-        #                     newDomains[keyFieldValue].append(newDomain)
-        #             newDomains[keyFieldValue] = zip(*newDomains[keyFieldValue])  # Inverse the array to have fields values for the first dimension
-        #         break
-
-        # # Create new symbols for each splitted group, and recreate the fields domain for each symbol
-        # for (keyFieldValue, datas) in newDatas.items():
-        #     newFields = []
-        #     for (idx, f) in enumerate(field.fields):
-        #         domain = DomainFactory.normalizeDomain(list(newDomains[keyFieldValue][idx]))
-        #         newField = Field(domain=domain)
-        #         _logger.warn(newField._str_debug())
-        #         newFields.append(newField)
-
-        #     if not ASCII().canParse(keyFieldValue):
-        #         keyFieldValue = TypeConverter.convert(keyFieldValue, Raw, HexaString)
-        #     s = Symbol(newFields, messages=datas, name="symbol_{0}".format(keyFieldValue))
-        #     newSymbols["symbol_{0}".format(keyFieldValue)] = s
-
-        # return newSymbols
