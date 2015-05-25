@@ -68,6 +68,7 @@ class FieldOperations(object):
         >>> f4 = Field(Raw(nbBytes=1), name="f4")
         >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
+
         >>> print symbol
         '00' | 'ff2f' | '0000' | '00'
         '00' | '0010' | '0000' | '00'
@@ -85,6 +86,7 @@ class FieldOperations(object):
         '00ff2f0000' | '00'
         '0000100000' | '00'
         '00fe1f0000' | '00'
+        
         >>> fo.mergeFields(symbol.fields[0], symbol.fields[1])
         >>> print symbol
         '00ff2f000000'

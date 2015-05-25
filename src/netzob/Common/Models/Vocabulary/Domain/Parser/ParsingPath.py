@@ -58,6 +58,9 @@ class ParsingPath(GenericPath):
         else:
             self.__ok = ok
 
+    def __str__(self):
+        return "ParsingPath ({}, ok={})".format(id(self), self.__ok)
+
     def validForMessage(self, fields, bitArrayMessage):
         """Checks if the parsing path can represent the provided bitArrayMessage
         under the provided fields."""

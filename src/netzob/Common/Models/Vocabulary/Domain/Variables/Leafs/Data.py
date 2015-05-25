@@ -369,9 +369,9 @@ class Data(AbstractVariableLeaf):
             self._logger.debug("Length of the content is too short ({0}), expect data of at least {1} bits".format(len(content), minSize))
             return results
 
-        if carnivorous:
-            minSize = len(content)
-            maxSize = len(content)
+        # if carnivorous:
+        #     minSize = len(content)
+        #     maxSize = len(content)
 
         for size in xrange(min(maxSize, len(content)), minSize -1, -1):
             # size == 0 : deals with 'optional' data
@@ -434,9 +434,9 @@ class Data(AbstractVariableLeaf):
             self._logger.debug("Length of the content is too short ({0}), expect data of at least {1} bits".format(len(content), minSize))
             return results
 
-        if carnivorous:
-            minSize = len(content)
-            maxSize = len(content)
+#        if carnivorous:
+#            minSize = len(content)
+#            maxSize = len(content)
             
         for size in xrange(min(maxSize, len(content)), minSize -1, -1):
             # size == 0 : deals with 'optional' data
