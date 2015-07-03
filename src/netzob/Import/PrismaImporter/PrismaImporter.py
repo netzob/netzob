@@ -10,6 +10,10 @@ class PrismaImporter(object):
 
     def __init__(self):
         print("Hello Netzob, this is Prisma...\nI'm gonna take over...\nDon't make it harder than necessary.")
+        self.rules = None
+        self.model = None
+        self.templates = None
+        self.Symbols = None
         pass
 
     def getPrisma(self, path):
@@ -38,11 +42,7 @@ class PrismaImporter(object):
         if rules == None or model == None or templates == None:
             print("Big Problem: Couldn't find some of the files")
             return -1
-
-        # x = convertPrisma2Netzob(templates, model, rules)
-
-        # return templates, model, rules
-        pass
+        return
 
     def convertPrisma2Netzob(self):
         symbolContainer = {}
