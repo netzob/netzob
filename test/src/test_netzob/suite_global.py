@@ -6,7 +6,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -31,12 +31,15 @@
 #+---------------------------------------------------------------------------+
 import unittest
 import sys
+import os
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from test_netzob import suite_Common
-from test_netzob import suite_Alignment
+from test_netzob import suite_Tutorials
+from test_netzob import suite_DocTests
+
 #from test_netzob import suite_Import
 from common.xmlrunner import XMLTestRunner
 
@@ -44,15 +47,13 @@ from common.xmlrunner import XMLTestRunner
 def getSuite():
     globalSuite = unittest.TestSuite()
 
-#    modulesOfTests = [test_NetzobGui]
     modulesOfTests = []
-    modulesOfSuites = [suite_Common, suite_Alignment]
-
-    # try:
-    #     from test_netzob import suite_UI
-    #     modulesOfSuites.append(suite_UI)
-    # except ImportError, e:
-    #     print "As python-ldtp is not installed UI tests can't be done!"
+    modulesOfSuites = [
+        suite_DocTests,  # tests extracted from docstrings (doctests)
+        # suite_Common,
+        # suite_Tutorials
+    ]
+    # modulesOfTests = [test_NetzobGui]
 
     # Add individual tests
     for module in modulesOfTests:
@@ -63,7 +64,6 @@ def getSuite():
         globalSuite.addTests(module.getSuite())
 
     return globalSuite
-
 
 if __name__ == "__main__":
     # Output is given through argument.

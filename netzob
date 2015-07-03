@@ -6,7 +6,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011-2015 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -27,13 +27,18 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
+#| File contributors :                                                       |
+#|       - Georges Bossert <gbossert (a) miskin.fr>                          |
+#|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import sys
 import logging
 logging.basicConfig(level=logging.DEBUG)
 import os
-from gi.repository import GObject
 
 #+---------------------------------------------------------------------------+
 #| Local imports
@@ -42,7 +47,8 @@ sys.path.insert(0, 'src/')
 from netzob.Common.CommandLine import CommandLine
 from netzob import release
 
-if __name__ == "__main__":
+def main():
+    """Main function of the Netzob script."""
 
     # Parsing Command Line arguments
     commandLineParser = CommandLine()
@@ -61,19 +67,26 @@ if __name__ == "__main__":
     if os.name == 'nt':
         sys.path.insert(0, 'lib/libNeedleman/')
 
-    # Launch the GUI or the plugin manager
-    if commandLineParser.isStartGUIRequested():
-        GObject.threads_init()  # for handling concurrent GUI access from threads
-        from netzob.NetzobMainController import NetzobMainController
-        netzobController = NetzobMainController()
-        netzobController.run()
-    # Display the management of plugins
-    elif commandLineParser.isManagePluginsRequested():
-        from netzob.NetzobPluginManagement import NetzobPluginManagement
-        netzobPluginManagement = NetzobPluginManagement(commandLineParser)
-        netzobPluginManagement.start()
-    # Launch the interactive session
-    elif commandLineParser.isInteractiveConsoleRequested():
-        from netzob.NetzobInteractiveSessionController import NetzobInteractiveSessionController
-        interactiveSession = NetzobInteractiveSessionController()
-        interactiveSession.start()
+    # # Launch the GUI or the plugin manager
+    # if commandLineParser.isStartGUIRequested():
+    #     GObject.threads_init()  # for handling concurrent GUI access from threads
+    #     from netzob.NetzobMainController import NetzobMainController
+    #     netzobController = NetzobMainController()
+    #     netzobController.run()
+    # # Display the management of plugins
+    # elif commandLineParser.isManagePluginsRequested():
+    #     from netzob.NetzobPluginManagement import NetzobPluginManagement
+    #     netzobPluginManagement = NetzobPluginManagement(commandLineParser)
+    #     netzobPluginManagement.start()
+    # # Launch the interactive session
+    # elif commandLineParser.isInteractiveConsoleRequested():
+    #     from netzob.NetzobInteractiveSessionController import NetzobInteractiveSessionController
+    #     interactiveSession = NetzobInteractiveSessionController()
+    #     interactiveSession.start()
+
+    from netzob.NetzobInteractiveSessionController import NetzobInteractiveSessionController
+    interactiveSession = NetzobInteractiveSessionController()
+    interactiveSession.start()
+
+if __name__ == "__main__":
+    main()

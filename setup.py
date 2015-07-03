@@ -1,57 +1,59 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-#+---------------------------------------------------------------------------+
-#|          01001110 01100101 01110100 01111010 01101111 01100010            |
-#|                                                                           |
-#|               Netzob : Inferring communication protocols                  |
-#+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
-#| This program is free software: you can redistribute it and/or modify      |
-#| it under the terms of the GNU General Public License as published by      |
-#| the Free Software Foundation, either version 3 of the License, or         |
-#| (at your option) any later version.                                       |
-#|                                                                           |
-#| This program is distributed in the hope that it will be useful,           |
-#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
-#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
-#| GNU General Public License for more details.                              |
-#|                                                                           |
-#| You should have received a copy of the GNU General Public License         |
-#| along with this program. If not, see <http://www.gnu.org/licenses/>.      |
-#+---------------------------------------------------------------------------+
-#| @url      : http://www.netzob.org                                         |
-#| @contact  : contact@netzob.org                                            |
-#| @sponsors : Amossys, http://www.amossys.fr                                |
-#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# |          01001110 01100101 01110100 01111010 01101111 01100010            |
+# |                                                                           |
+# |               Netzob : Inferring communication protocols                  |
+# +---------------------------------------------------------------------------+
+# | Copyright (C) 2011_2014 Georges Bossert and Frédéric Guihéry              |
+# | This program is free software: you can redistribute it and/or modify      |
+# | it under the terms of the GNU General Public License as published by      |
+# | the Free Software Foundation, either version 3 of the License, or         |
+# | (at your option) any later version.                                       |
+# |                                                                           |
+# | This program is distributed in the hope that it will be useful,           |
+# | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+# | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
+# | GNU General Public License for more details.                              |
+# |                                                                           |
+# | You should have received a copy of the GNU General Public License         |
+# | along with this program. If not, see <http://www.gnu.org/licenses/>.      |
+# +---------------------------------------------------------------------------+
+# | @url      : http://www.netzob.org                                         |
+# | @contact  : contact@netzob.org                                            |
+# | @sponsors : Amossys, http://www.amossys.fr                                |
+# |             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+# +---------------------------------------------------------------------------+
 
-#+----------------------------------------------------------------------------
-#| Global Imports
-#+----------------------------------------------------------------------------
+# +----------------------------------------------------------------------------
+# | Global Imports
+# +----------------------------------------------------------------------------
 import sys
 import os
 import uuid
-sys.path.insert(0, 'src/')
+
 from setuptools import setup, Extension, find_packages
 
+sys.path.insert(0, 'src/')
 from netzob import release
+
 from resources.sdist.manpage_command import manpage_command
 from resources.sdist.pybuild_command import pybuild_command
 from resources.sdist.test_command import test_command
 from resources.sdist.utils import find_data_files, opj, getPluginPaths
 
-#+----------------------------------------------------------------------------
-#| Definition of variables
-#+----------------------------------------------------------------------------
+# +----------------------------------------------------------------------------
+# | Definition of variables
+# +----------------------------------------------------------------------------
 # Path to the resources
 staticResourcesPath = opj("resources", "static")
 netzobStaticResourcesPath = opj(staticResourcesPath, "netzob")
 pluginsStaticResourcesPath = opj(staticResourcesPath, "plugins")
 
-#+----------------------------------------------------------------------------
-#| Compute the compilation arguments given the current compilation profile
-#+----------------------------------------------------------------------------
+# +----------------------------------------------------------------------------
+# | Compute the compilation arguments given the current compilation profile
+# +----------------------------------------------------------------------------
 # compileProfile = "[no-verify] devel|release"
 #
 # Note :
@@ -99,9 +101,9 @@ elif "release" in compileProfile:
     extraCompileArgs.extend([
         "-O2"])                 # gcc says: "Optimization level 2"
 
-#+----------------------------------------------------------------------------
-#| Definition of the extensions
-#+----------------------------------------------------------------------------
+# +----------------------------------------------------------------------------
+# | Definition of the extensions
+# +----------------------------------------------------------------------------
 # Includes path
 libPath = "lib"
 includesPath = opj(libPath, "includes")
@@ -178,15 +180,18 @@ moduleLibRelation = Extension('netzob._libRelation',
                               include_dirs=includes,
                               libraries=["dl"])
 
-#+----------------------------------------------------------------------------
-#| Definition of the dependencies
-#+----------------------------------------------------------------------------
+# +----------------------------------------------------------------------------
+# | Definition of the dependencies
+# +----------------------------------------------------------------------------
 dependencies = [
-    'babel',
     'bitarray >= 0.4',
-    'lxml',
-    'httplib2',
-    'regex'
+    'regex == 2013-03-11',
+    'bintrees >= 2.0.0',
+    'netaddr >= 0.7',
+    'minepy >= 1.0.0',
+    'numpy',
+    'colorama',
+    'jsonpickle'
 ]
 
 extra_dependencies = {
@@ -195,32 +200,16 @@ extra_dependencies = {
 
 dependency_links = []
 
-#+----------------------------------------------------------------------------
-#| Extensions in the build operations (create manpage, i18n, ...)
-#+----------------------------------------------------------------------------
+# +----------------------------------------------------------------------------
+# | Extensions in the build operations (create manpage, i18n, ...)
+# +----------------------------------------------------------------------------
 CMD_CLASS = {
     'build_py': pybuild_command,
     'build_manpage': manpage_command,
     'test': test_command
 }
 
-#+----------------------------------------------------------------------------
-#| Activate Babel (i18n) if available
-#+----------------------------------------------------------------------------
-try:
-    import babel
-    from babel.messages import frontend as babel
-    from distutils.command.build import build
-
-    CMD_CLASS.update({'compile_catalog': babel.compile_catalog,
-                      'extract_messages': babel.extract_messages,
-                      'init_catalog': babel.init_catalog,
-                      'update_catalog': babel.update_catalog})
-
-    build.sub_commands.append(('compile_catalog', None))
-except ImportError:
-    print "Info: Babel support unavailable, translations not available"
-
+# +----------------------------------------------------------------------------
 
 root_data_files = find_data_files(opj("share", "netzob"), netzobStaticResourcesPath, 'logo.png', recursive=False)
 app_data_files = find_data_files(opj("share", "applications"), netzobStaticResourcesPath, 'netzob.desktop', recursive=False)
@@ -236,9 +225,9 @@ data_files = root_data_files + app_data_files + icons_data_files + default_data_
 README = open('README.rst', 'rt').read()
 NEWS = open('NEWS.rst', 'rt').read()
 
-#+----------------------------------------------------------------------------
-#| Definition of Netzob for setup
-#+----------------------------------------------------------------------------
+# +----------------------------------------------------------------------------
+# | Definition of Netzob for setup
+# +----------------------------------------------------------------------------
 setup(
     name=release.name,
     packages=find_packages(where='src'),
@@ -278,39 +267,5 @@ setup(
     ],
     long_description=README + '\n' + NEWS,
     cmdclass=CMD_CLASS,
-    entry_points="""[babel.extractors]
-        glade = resources.sdist.babel_extract:extract_glade
-    """,
-    # Files that should be scanned by Babel (if available)
-    message_extractors={
-        'src': [
-            ('**.py', 'python', None)
-        ],
-        'resources': [
-            ('**.glade', 'glade', None)
-        ]
-    },
 )
 
-#+----------------------------------------------------------------------------
-#| Automaticaly apply the command to attached plugins
-#+----------------------------------------------------------------------------
-# that's a fun one :)
-# this if block is executed if sys.argv[1] in ["build", ....]
-if (None, sys.argv[1])[len(sys.argv) > 1] in ["build", "develop", "install", "clean"]:
-    # find all the available plugins sources
-    pluginsPath = getPluginPaths()
-
-    for pluginName, pluginPath in pluginsPath.items():
-        print "------------------------------"
-        print "[I] Plugin Name:\t{0}".format(pluginName)
-        print "[ ] Path:\t\t{0}".format(pluginPath)
-        pluginSetupPath = opj(pluginPath, "setup.py")
-        # Verifies plugin contains a setup.py
-        if not os.path.exists(pluginSetupPath):
-            print "[E] Impossible to find the 'setup.py' file : {0}".format(pluginSetupPath)
-            continue
-        # Create the command to execute
-        os.chdir(pluginPath)
-        cmd = "{0} setup.py {1}".format(sys.executable, " ".join(sys.argv[1:]))
-        os.system(cmd)

@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -29,14 +29,14 @@
 #| Global Imports
 #+----------------------------------------------------------------------------
 from distutils.core import Command
-from unittest import TextTestRunner, TestLoader
-from glob import glob
-from os.path import splitext, basename, join as pjoin, walk
 import os
 import sys
+import unittest
 
 
 class test_command(Command):
+    description = "Test Netzob"
+
     user_options = [('reportfile=', None, 'name of the generated XML report file (not required)') ]
 
     def initialize_options(self):
@@ -74,24 +74,35 @@ class test_command(Command):
 
         # We retrieve the current test suite
         currentTestSuite = suite_global.getSuite()
-    
-        # We execute the test suite
-        File = open(self.reportfile, "w")
-        reporter = XMLTestRunner(File)
-        reporter.run(currentTestSuite)
-        File.close()
 
+        if self.reportfile is None or len(self.reportfile) == 0:
+            runner = unittest.TextTestRunner()
+            testResult = runner.run(currentTestSuite)
+        else:
+            # We execute the test suite
+            File = open(self.reportfile, 'w')
+            File.write('<?xml version="1.0" encoding="utf-8"?>\n')
+            reporter = XMLTestRunner(File)
+            reporter.run(currentTestSuite)
+            File.close()
 
-        # runner = TextTestRunner()
-        # testResult = runner.run(currentTestSuite)
+            self.cleanFile(self.reportfile)
 
-        
+    def cleanFile(self, filePath):
+        """Clean the file to handle non-UTF8 bytes.
+        """
 
-        # if (outputStdout == True) :
-        #     runner = TextTestRunner()
-        #     testResult = runner.run(currentTestSuite)
-        # else :
-        #     File = open(reportFile, "w")
-        #     reporter = XMLTestRunner(File)
-        #     reporter.run(currentTestSuite)
-        #     File.close()
+        aFile = open(filePath, 'r')
+        data = aFile.read()
+        aFile.close()
+
+        cleanData = ""
+        for c in data:
+            if (0x1f < ord(c) < 0x80) or (ord(c) == 0x9) or (ord(c) == 0xa) or (ord(c) == 0xd):
+                cleanData += c
+            else:
+                cleanData += repr(c)
+
+        aFile = open(filePath, 'w')
+        aFile.write(cleanData)
+        aFile.close()

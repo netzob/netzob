@@ -5,7 +5,7 @@
 //|                                                                           |
 //|               Netzob : Inferring communication protocols                  |
 //+---------------------------------------------------------------------------+
-//| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+//| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
 //| This program is free software: you can redistribute it and/or modify      |
 //| it under the terms of the GNU General Public License as published by      |
 //| the Free Software Foundation, either version 3 of the License, or         |
@@ -122,10 +122,9 @@ void parseLibscoreComputation(PyObject* factobj, va_list args){
   if (debugMode == TRUE) {
     unsigned int iMessage;
     for(iMessage=0;iMessage<*nbmess;iMessage++) {
-      printf("Message : %d\n", iMessage);
-      printf("Data : ");
       t_message message = (*messages)[iMessage];
-
+      printf("Message : %d (UID Symbol=%s)\n", iMessage, message.uid);
+      printf("Data : ");
       for (i=0; i< message.len; i++) {
 	printf("%02x", (unsigned char) message.alignment[i]);
       }

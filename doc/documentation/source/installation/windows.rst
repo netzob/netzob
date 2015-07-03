@@ -37,10 +37,6 @@ Steps:
 
    #. ::
 
-          easy_install lxml==2.3
-
-   #. ::
-
           easy_install -f "http://downloads.sourceforge.net/project/matplotlib/matplotlib/matplotlib-1.1.0/matplotlib-1.1.0.win32-py2.7.exe?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fmatplotlib%2Ffiles%2Fmatplotlib%2Fmatplotlib-1.1.0%2F&ts=1339591175&use_mirror=netcologne" matplotlib
 
    #. ::

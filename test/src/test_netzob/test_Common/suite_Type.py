@@ -6,7 +6,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -34,15 +34,8 @@ import unittest
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from test_netzob.test_Common.test_Type import test_Endianess
-from test_netzob.test_Common.test_Type import test_TypeIdentifier
-from test_netzob.test_Common.test_Type import test_TypeConvertor
 
 
 def getSuite():
     typeSuite = unittest.TestSuite()
-
-    modulesOfTests = [test_Endianess, test_TypeIdentifier, test_TypeConvertor]
-    for module in modulesOfTests:
-        typeSuite.addTests(unittest.TestLoader().loadTestsFromModule(module))
     return typeSuite

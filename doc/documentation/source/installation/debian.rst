@@ -81,7 +81,7 @@ to install them :
 
 ::
 
-    # apt-get install python python-ptrace python-hachoir-subfile python-matplotlib python-dpkt strace lsof python-pcapy python-bitarray python-dev python-lxml libjs-sphinxdoc python-sphinx
+    # apt-get install python python-ptrace python-hachoir-subfile python-matplotlib python-dpkt strace lsof python-pcapy python-bitarray python-dev libjs-sphinxdoc python-sphinx
 
 Once the requirements are fullfilled you can download the debian file
 (i386 or amd64) and install it using the following command for an i386
