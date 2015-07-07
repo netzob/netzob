@@ -5,6 +5,7 @@ class PrismaState(object):
     def __init__(self,preState,curState):
         self.preState = preState
         self.curState = curState
+        self.name = '{}|{}'.format(preState, curState)
 
     def __str__(self):
         return self.preState + '|' + self.curState
@@ -23,3 +24,6 @@ class PrismaState(object):
 
     def getCurState(self):
         return self.curState
+
+    def getName(self):
+        return self.name
