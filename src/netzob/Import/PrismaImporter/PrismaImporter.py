@@ -11,7 +11,7 @@ from netzob.Common.Models.Grammar.Transitions.Transition import Transition
 
 class PrismaImporter(object):
     def __init__(self):
-        print("Hello Netzob, this is Prisma...\nI'm gonna take over...\nDon't make it harder than necessary.")
+        print("Hello Netzob, this is Prisma...\nI'm gonna take over...\nDon't make it harder than necessary.\n")
         self.rules = None
         self.model = None
         self.templates = None
@@ -49,23 +49,7 @@ class PrismaImporter(object):
         return
 
     def convertPrisma2Netzob(self):
-        symbolContainer = {}
-        for ID, temp in self.templates.IDtoTemp.items():
-        # Symbol(map(lambda y: Field(y),x.content))
-            if 'UAC' in temp.state.getCurState():
-                src = 'client'
-                dst = 'server'
-            else:
-                src = 'server'
-                dst = 'client'
-            fields = map(lambda x: Field(sanitizeRule(x)), temp.content)
-            if fields == []:
-                continue
-                # fields = [Field('')]
-            s = Symbol(fields, [])
-            s = Symbol(fields, [RawMessage(s.specialize(), destination=dst, source=src)])
-            symbolContainer.update({ID: s})
-        self.Symbols = symbolContainer
+        self.Symbols = self.createSymbols()
 
         # get INITIAL state
         for k in self.model.model.keys():
@@ -78,6 +62,25 @@ class PrismaImporter(object):
         for state in self.brokenStates:
             self.States.append(self.createTransitions(state))
 
+    def createSymbols(self):
+        symbolContainer = {}
+        for ID, temp in self.templates.IDtoTemp.items():
+            # Symbol(map(lambda y: Field(y),x.content))
+            if 'UAC' in temp.state.getCurState():
+                src = 'client'
+                dst = 'server'
+            else:
+                src = 'server'
+                dst = 'client'
+            fields = map(lambda x: Field(sanitizeRule(x)), temp.content)
+            if fields == []:
+                continue
+                # fields = [Field('')]
+            s = Symbol(fields, [])
+            s = Symbol(name=str(ID), fields=fields, messages=[RawMessage(s.specialize(), destination=dst, source=src)])
+            symbolContainer.update({ID: s})
+        return symbolContainer
+
     def createStates(self, prismaState):
         if 'END' in prismaState.getCurState():
             return [[State(prismaState.getName())]]
@@ -87,8 +90,6 @@ class PrismaImporter(object):
         nextStates = []
         for nx in self.model.model[prismaState]:
             nextStates.append(nx)
-
-        print(curState, nextStates)
 
         # recurse
         moreStates = []
@@ -110,10 +111,23 @@ class PrismaImporter(object):
         for nx in nextStates:
             for s in self.brokenStates:
                 if s[0].name == nx.getName():
-                    trans.append(Transition(state, s[0]))
+                    temps = self.getTemplates(state.name)
+                    trans.append(Transition(state, s[0], outputSymbols=temps))
         if trans != []:
             state.__transitions = trans
         return state
+
+    def getTemplates(self, stateName):
+        temps = []
+        for pState in self.templates.stateToID.keys():
+            if pState.getName() == stateName:
+                for ID in self.templates.stateToID[pState]:
+                    if ID not in self.Symbols.keys():
+                        continue
+                    s = self.Symbols[ID]
+                    if s not in temps:
+                        temps.append(s)
+        return temps
 
 
 def sanitizeRule(x):
