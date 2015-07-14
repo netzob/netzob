@@ -5,7 +5,7 @@ Netzob documentation
 ====================
 
 **Netzob** is an open source tool for reverse engineering, traffic
-generation and fuzzing of communication protocols. It allows to infer
+generation and fuzzing of communication protocols. It can be used to infer
 the message format and the state machine of a protocol through passive
 and active processes. The model can afterward be used to simulate
 realistic and controllable trafic.
@@ -33,7 +33,7 @@ Contact information
 
 :Website: `http://www.netzob.org <http://www.netzob.org>`_
 :Email: `contact@netzob.org <contact@netzob.org>`_
-:Mailing list: Two lists are available, use the `SYMPA web interface <https://lists.netzob.org/wws>`_ to register.
+:Mailing list: Users, developers and announces lists are available, use the `SYMPA web interface <https://lists.netzob.org/wws>`_ to register.
 :IRC: You can hang-out with us on Freenode's IRC channel #netzob @ freenode.org.
 :Wiki: Discuss strategy on `Netzob's wiki <https://dev.netzob.org/projects/netzob/wiki>`_
 :Twitter: Follow Netzob's official accounts (@Netzob)
