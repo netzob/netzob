@@ -77,17 +77,10 @@ following bunch of prerequisites before initiating Netzob's install process.
 * python
 * python-dev
 * python-impacket
-* libxml2-dev
-* libxslt-dev
 * python-setuptools
-* python-gi
-* gir1.2-gtk-3.0, gir1.2-glib-2.0, gir1.2-gdkpixbuf-2.0, gir1.2-pango-1.0
-* libgtk-3-0
-* graphviz
 
 We also highly recommend to install the following additional dependencies:
 
-* python-babel (for the translations)
 * python-sphinx (for the documentation)
 
 Once the required dependencies are installed, you can test Netzob in
