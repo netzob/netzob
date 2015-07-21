@@ -4,9 +4,11 @@ import os
 
 from netzob.Common.Models.Vocabulary.Symbol import Symbol
 from netzob.Common.Models.Vocabulary.Field import Field
+from netzob.Common.Models.Vocabulary.Session import Session
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Common.Models.Grammar.States.State import State
 from netzob.Common.Models.Grammar.Transitions.Transition import Transition
+from netzob.Common.Models.Grammar.Automata import Automata
 
 
 class PrismaImporter(object):
@@ -15,12 +17,20 @@ class PrismaImporter(object):
         self.rules = None
         self.model = None
         self.templates = None
+        self.Messages = []
         self.Symbols = None
         self.brokenStates = None
         self.States = []
+
+        # debug stuff
+        self.connectedStates = None
+        self.Session = None
+        self.absSess = None
+        self.auto = None
+        self.dot = None
         pass
 
-    def getPrisma(self, path):
+    def getPrisma(self, path, enhance=False):
         templates, model, rules = None, None, None
         for files in os.listdir(path):
             if 'template' in files:
@@ -34,6 +44,8 @@ class PrismaImporter(object):
                 model = prisma.markovParse(f)
                 self.model = model
                 f.close()
+                if enhance:
+                    self.model.modelEnhancer()
                 print('read model')
             if 'rules' in files:
                 f = open('{0}/{1}'.format(path, files), 'r')
@@ -59,8 +71,9 @@ class PrismaImporter(object):
         cpy = copy.deepcopy(self.model)
         self.brokenStates = self.createStates(k)
         self.model = cpy
+        empty = Symbol(name='empty')
         for state in self.brokenStates:
-            self.States.append(self.createTransitions(state))
+            self.States.append(self.createTransitions(state, empty))
 
     def createSymbols(self):
         symbolContainer = {}
@@ -77,7 +90,9 @@ class PrismaImporter(object):
                 continue
                 # fields = [Field('')]
             s = Symbol(fields, [])
-            s = Symbol(name=str(ID), fields=fields, messages=[RawMessage(s.specialize(), destination=dst, source=src)])
+            mess = RawMessage(s.specialize(), destination=dst, source=src)
+            self.Messages.append(mess)
+            s = Symbol(name=str(ID), fields=fields, messages=[mess])
             symbolContainer.update({ID: s})
         return symbolContainer
 
@@ -103,7 +118,7 @@ class PrismaImporter(object):
         moreStates.append([curState, nextStates])
         return moreStates
 
-    def createTransitions(self, state):
+    def createTransitions(self, state, empty):
         if len(state) < 2:
             return state[0]
         trans = []
@@ -112,7 +127,14 @@ class PrismaImporter(object):
             for s in self.brokenStates:
                 if s[0].name == nx.getName():
                     temps = self.getTemplates(state.name)
-                    trans.append(Transition(state, s[0], outputSymbols=temps))
+                    # trans.append(Transition(state, s[0], outputSymbols=temps, inputSymbol=empty, name='tr'))
+                    if 'UAS' in nx.getName().split('|')[-1]:
+                        trans.append(Transition(state, s[0], outputSymbols=temps, inputSymbol=empty, name='tr'))
+                    else:
+                        if state.name == 'START|START':
+                            trans.append(Transition(state, s[0], inputSymbol=empty, name='tr'))
+                        for ID in temps:
+                            trans.append(Transition(state, s[0], inputSymbol=ID, name='tr'))
         if trans != []:
             state.__transitions = trans
         return state
@@ -128,6 +150,60 @@ class PrismaImporter(object):
                     if s not in temps:
                         temps.append(s)
         return temps
+
+    def test(self, full=False):
+        self.getPrisma('/home/dsmp/work/p2p/samples/airplay1st', True)
+        self.convertPrisma2Netzob()
+
+        for s in self.States:
+            for t in s.transitions:
+                if t.endState not in self.States:
+                    print(t.startState.name, '->', t.endState.name)
+
+        for s in self.States:
+            for t in s.transitions:
+                print(t.startState.name, '->', t.endState.name, 'by')
+                for osy in t.outputSymbols:
+                    print(osy.name,)
+                print
+
+        for start in self.States:
+            if 'START|START' in start.name:
+                break
+
+        aut = Automata(start, self.Symbols.values())
+        dot = aut.generateDotCode()
+        f = open('prismaDot', 'w')
+        f.write(dot)
+        f.close()
+        print 'dotcode written to file "prismaDot"'
+
+        if full:
+            # make Session of observed Messages
+            sess = Session(self.Messages)
+            self.Session = sess
+            # make somehow abstraction of this Session
+            # e.g. find matching Symbol for each Message
+            absSess = sess.abstract(self.Symbols.values())
+            self.absSess = absSess
+            # make Automaton and dotCode
+            dotcode = []
+            auto = []
+            auto.append(Automata.generateChainedStatesAutomata(absSess, self.Symbols.values()))
+            dotcode.append(auto[-1].generateDotCode())
+            auto.append(Automata.generateOneStateAutomata(absSess, self.Symbols.values()))
+            dotcode.append(auto[-1].generateDotCode())
+            auto.append(Automata.generatePTAAutomata([absSess], self.Symbols.values()))
+            dotcode.append(auto[-1].generateDotCode())
+            self.auto = auto
+            self.dot = dotcode
+            # save this to testFiles
+            for i in range(3):
+                f = open('dot{}'.format(i), 'w')
+                f.write(dotcode[i])
+                f.close()
+            return start
+        return start
 
 
 def sanitizeRule(x):
