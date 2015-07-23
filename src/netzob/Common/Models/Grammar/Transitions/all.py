@@ -30,5 +30,6 @@
 # see docs.python.org/2/tutorial/modules.html
 
 from netzob.Common.Models.Grammar.Transitions.Transition import Transition
+from netzob.Common.Models.Grammar.Transitions.PrismaTransition import PrismaTransition
 from netzob.Common.Models.Grammar.Transitions.OpenChannelTransition import OpenChannelTransition
 from netzob.Common.Models.Grammar.Transitions.CloseChannelTransition import CloseChannelTransition

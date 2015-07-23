@@ -3,12 +3,14 @@ import copy
 import os
 
 from netzob.Common.Models.Vocabulary.Symbol import Symbol
+from netzob.Common.Models.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Common.Models.Vocabulary.Field import Field
 from netzob.Common.Models.Vocabulary.Session import Session
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Common.Models.Grammar.States.State import State
-from netzob.Common.Models.Grammar.Transitions.Transition import Transition
+from netzob.Common.Models.Grammar.Transitions.PrismaTransition import PrismaTransition
 from netzob.Common.Models.Grammar.Automata import Automata
+from netzob.Common.Models.Types.ASCII import ASCII
 
 
 class PrismaImporter(object):
@@ -71,9 +73,8 @@ class PrismaImporter(object):
         cpy = copy.deepcopy(self.model)
         self.brokenStates = self.createStates(k)
         self.model = cpy
-        empty = Symbol(name='empty')
         for state in self.brokenStates:
-            self.States.append(self.createTransitions(state, empty))
+            self.States.append(self.createPrismaTransitions(state))
 
     def createSymbols(self):
         symbolContainer = {}
@@ -118,7 +119,7 @@ class PrismaImporter(object):
         moreStates.append([curState, nextStates])
         return moreStates
 
-    def createTransitions(self, state, empty):
+    def createPrismaTransitions(self, state):
         if len(state) < 2:
             return state[0]
         trans = []
@@ -127,15 +128,17 @@ class PrismaImporter(object):
             for s in self.brokenStates:
                 if s[0].name == nx.getName():
                     temps = self.getTemplates(state.name)
-                    # trans.append(Transition(state, s[0], outputSymbols=temps, inputSymbol=empty, name='tr'))
-                    if 'UAS' in nx.getName().split('|')[-1]:
-                        trans.append(Transition(state, s[0], outputSymbols=temps, inputSymbol=empty, name='tr'))
+                    # trans.append(PrismaTransition(state, s[0], outputSymbols=temps, inputSymbol=empty, name='tr'))
+                    if 'UAC' in state.name.split('|')[-1]:
+                        trans.append(PrismaTransition(state, s[0], outputSymbols=temps, inputSymbol=EmptySymbol(), name='tr'))
                     else:
-                        if state.name == 'START|START':
-                            trans.append(Transition(state, s[0], inputSymbol=empty, name='tr'))
-                        for ID in temps:
-                            trans.append(Transition(state, s[0], inputSymbol=ID, name='tr'))
-        if trans != []:
+                        # if state.name == 'START|START':
+                        #     print 'yeah'
+                        #     trans.append(PrismaTransition(state, s[0], inputSymbol=EmptySymbol(), name='tr'))
+                        # for ID in temps:
+                        #     trans.append(PrismaTransition(state, s[0], inputSymbol=EmptySymbol(), outputSymbols=[ID], name='tr'))
+                        trans.append(PrismaTransition(state, s[0], inputSymbol=EmptySymbol(), outputSymbols=temps, name='tr'))
+        if trans:
             state.__transitions = trans
         return state
 
@@ -152,7 +155,7 @@ class PrismaImporter(object):
         return temps
 
     def test(self, full=False):
-        self.getPrisma('/home/dsmp/work/p2p/samples/airplay1st', True)
+        self.getPrisma('/home/dsmp/work/p2p/samples/airplay1st')
         self.convertPrisma2Netzob()
 
         for s in self.States:
@@ -177,6 +180,12 @@ class PrismaImporter(object):
         f.write(dot)
         f.close()
         print 'dotcode written to file "prismaDot"'
+
+        # ToDo
+        # chan = TCPClient('127.0.0.1',36666,'127.0.0.1',41337)
+        # absl = AbstractionLayer(chan,pi.Symbols.values())
+        # absl.openChannel()
+        # state = start
 
         if full:
             # make Session of observed Messages
@@ -208,5 +217,6 @@ class PrismaImporter(object):
 
 def sanitizeRule(x):
     if x == '':
-        return 'dsmp'
+        return ASCII(nbChars=(0, 100))
+        # return 'dsmp'
     return x
