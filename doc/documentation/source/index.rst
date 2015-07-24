@@ -12,17 +12,17 @@ realistic and controllable trafic.
 
 The main :ref:`features<overview>` of Netzob are:
 
-**Vocabulary Inference**
+**Protocol Vocabulary Modeling and Inference**
   Netzob includes a complete model to represents the message format of
   a protocol (aka its vocabulary). Using specific algorithms, it
   allows to learn it from provided traces.
 
-**Grammar Inference**
+**Protocol Grammar Modeling and Inference**
   The state machine of a protocol (aka its grammar) defines the valid
   sequences of exchanged messages. Netzob allows to learn it
   semi-automaticaly using specific algorithms.
 
-**Protocol simulation**
+**Protocol Simulation**
   To support the inferring process, a dynamic analysis is perfomed
   based on simulated actors. These can initiate and take part in a
   complex communication following the infered protocol.
@@ -62,6 +62,7 @@ Tutorials
    :maxdepth: 2
 
    tutorials/get_started
+   tutorials/modeling_protocol
    tutorials/peach
    tutorials/wireshark
 
@@ -71,6 +72,11 @@ Tutorials
   the state machine and generation of traffic) through an undocumented
   protocol.
 
+:ref:`Modeling your Protocol with Netzob<tutorial_modeling_protocol>`
+   This tutorial details the main features of Netzob's protocol modeling
+   aspects. It shows how your protocol fields can be described with Netzob's
+   language.     
+  
 :ref:`Auto-generation of Peach pit files/fuzzers<tutorial_peach>`
   This tutorial shows how to take advantage of the Peach exporter
   plugin provided in Netzob to automatically generate Peach pit
