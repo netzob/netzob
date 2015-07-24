@@ -12,6 +12,12 @@ from netzob.Common.Models.Grammar.Transitions.PrismaTransition import PrismaTran
 from netzob.Common.Models.Grammar.Automata import Automata
 from netzob.Common.Models.Types.ASCII import ASCII
 
+import string
+from urllib import unquote
+
+from netzob.Common.Models.Simulator.AbstractionLayer import AbstractionLayer
+from netzob.Common.Models.Simulator.Channels.TCPClient import TCPClient
+
 
 class PrismaImporter(object):
     def __init__(self):
@@ -86,7 +92,14 @@ class PrismaImporter(object):
             else:
                 src = 'server'
                 dst = 'client'
-            fields = map(lambda x: Field(sanitizeRule(x)), temp.content)
+            # mess with contentEncoding
+            # cont = unquote(temp.content)
+            # escCont = ''.join(c for c in cont if c in string.printable)
+            # if not cont == escCont:
+            #     # model as hex
+            #     pass
+            # else:
+            fields = map(lambda x: Field(sanitizeRule(unquote(x))), temp.content)
             if fields == []:
                 continue
                 # fields = [Field('')]
@@ -165,7 +178,7 @@ class PrismaImporter(object):
 
         for s in self.States:
             for t in s.transitions:
-                print(t.startState.name, '->', t.endState.name, 'by')
+                print(t.startState.name, '->', t.endState.name, 'as', t.ROLE, 'by')
                 for osy in t.outputSymbols:
                     print(osy.name,)
                 print
@@ -174,18 +187,19 @@ class PrismaImporter(object):
             if 'START|START' in start.name:
                 break
 
-        aut = Automata(start, self.Symbols.values())
-        dot = aut.generateDotCode()
+        self.auto = Automata(start, self.Symbols.values())
+        dot = self.auto.generateDotCode()
         f = open('prismaDot', 'w')
         f.write(dot)
         f.close()
         print 'dotcode written to file "prismaDot"'
 
-        # ToDo
-        # chan = TCPClient('127.0.0.1',36666,'127.0.0.1',41337)
-        # absl = AbstractionLayer(chan,pi.Symbols.values())
-        # absl.openChannel()
+        chan = TCPClient('127.0.0.1', 36666, '127.0.0.1', 41337)
+        absl = AbstractionLayer(chan, self.Symbols.values())
+        absl.openChannel()
         # state = start
+
+        return absl
 
         if full:
             # make Session of observed Messages
