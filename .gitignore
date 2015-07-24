@@ -21,8 +21,12 @@ doc/documentation/build/
 src/netzob_plugins/*/*/build/
 src/netzob_plugins/*/*/dist/
 unittests_results.xml
+tests-results.xml
+.coverage
 bin
 core
 include/python*
 lib/python*
 lib64
+*.log
+
