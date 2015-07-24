@@ -87,7 +87,7 @@ class Symbol(AbstractField):
         :keyword name: the name of the symbol
         :type name: :class:`str`
         """
-        super(Symbol, self).__init__(name, None, True)
+        super(Symbol, self).__init__(name, True)
         self.__messages = TypedList(AbstractMessage)
         if messages is None:
             messages = []

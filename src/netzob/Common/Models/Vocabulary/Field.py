@@ -134,7 +134,7 @@ class Field(AbstractField):
         :type layer: :class:`bool`
 
         """
-        super(Field, self).__init__(name, None, layer)
+        super(Field, self).__init__(name, layer)
         if domain is None:
             domain = Raw(None)
         self.domain = domain

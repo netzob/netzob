@@ -47,15 +47,11 @@ import logging
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Utils.UndoRedo.AbstractMementoCreator import AbstractMementoCreator
-from netzob.Common.Utils.NetzobRegex import NetzobRegex
 from netzob.Common.Models.Vocabulary.Functions.EncodingFunction import EncodingFunction
 from netzob.Common.Models.Vocabulary.Functions.VisualizationFunction import VisualizationFunction
 from netzob.Common.Models.Vocabulary.Functions.TransformationFunction import TransformationFunction
 from netzob.Common.Utils.TypedList import TypedList
 from netzob.Common.Utils.SortedTypedList import SortedTypedList
-from netzob.Common.Models.Types.TypeConverter import TypeConverter
-from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Types.HexaString import HexaString
 
 
 class InvalidVariableException(Exception):
@@ -88,7 +84,7 @@ class AbstractField(AbstractMementoCreator):
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, name=None, regex=None, layer=False):
+    def __init__(self, name=None, layer=False):
         self.id = uuid.uuid4()
         self.name = name
         self.layer = layer
