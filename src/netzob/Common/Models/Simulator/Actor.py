@@ -116,7 +116,7 @@ class Actor(threading.Thread):
         self.__stopEvent = threading.Event()
 
     def run(self):
-        """Entry point of an actor executed when the thread is started."""
+        """Entry point of an actor executed when the thread is started."""        
 
         currentState = self.automata.initialState
         while not self.__stopEvent.isSet():

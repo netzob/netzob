@@ -28,9 +28,7 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
-from gettext import gettext as _
-import logging
-from netzob.Common.MMSTD.States.impl.NormalState import NormalState
+
 
 #+----------------------------------------------
 #| Related third party imports
@@ -39,23 +37,14 @@ from netzob.Common.MMSTD.States.impl.NormalState import NormalState
 #+----------------------------------------------
 #| Local application imports
 #+----------------------------------------------
-from netzob.Common.MMSTD.Transitions.impl.SimpleTransition import SimpleTransition
-from netzob.Common.MMSTD.Transitions.impl.OpenChannelTransition import OpenChannelTransition
-from netzob.Common.MMSTD.Transitions.impl.CloseChannelTransition import CloseChannelTransition
-from netzob.Common.MMSTD.MMSTD import MMSTD
-from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 
 
-#+----------------------------------------------
-#| MembershipQuery:
-#| Represents a set of query which will be submited to
-#| an oracle
-#+----------------------------------------------
+@NetzobLogger
 class MembershipQuery(object):
+    """Represents a membership queryset of query which will be submited to an oracle"""
 
     def __init__(self, symbols):
-        # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Inference.Grammar.Queries.MembershipQuery.py')
         self.symbols = symbols
 
     def addSymbol(self, symbol):

@@ -65,7 +65,8 @@ from netzob.Common.Models.Vocabulary.Domain.Variables.SVAS import SVAS
 from netzob.Common.Models.Vocabulary.Domain.Parser.MessageParser import MessageParser
 from netzob.Common.Models.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
 
-from netzob.Inference.Grammar.AutomataFactories.ChainedStatesAutomataFactory import ChainedStatesAutomataFactory
+# from netzob.Inference.Grammar.Angluin import Angluin
+# from netzob.Inference.Grammar.AutomataFactories.ChainedStatesAutomataFactory import ChainedStatesAutomataFactory
 
 def getSuite():
     # List of modules to include in the list of tests
@@ -141,12 +142,12 @@ def getSuite():
 
         # Modules related to the grammatical inference
         # --------------------------------------------
-        ChainedStatesAutomataFactory.__module__,
+        # ChainedStatesAutomataFactory.__module__,
         # Angluin.__module__,
-        State.__module__,
-        Transition.__module__,
-        AbstractionLayer.__module__,
-        Automata.__module__,
+        # State.__module__,
+        # Transition.__module__,
+        # AbstractionLayer.__module__,
+        # Automata.__module__,
         
         # Modules related to the protocol simulation
         # ------------------------------------------
