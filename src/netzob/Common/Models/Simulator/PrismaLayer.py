@@ -17,6 +17,7 @@ class PrismaLayer(AbstractionLayer):
 
     # def writeSymbol(self):
     # actually pick symbol as usual
+    # update symbolBuffer
     # check horizon/rules
     # apply rules to symbol (the big show)
     # emit as usual

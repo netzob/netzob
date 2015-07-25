@@ -5,14 +5,12 @@ import os
 from netzob.Common.Models.Vocabulary.Symbol import Symbol
 from netzob.Common.Models.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Common.Models.Vocabulary.Field import Field
-from netzob.Common.Models.Vocabulary.Session import Session
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Common.Models.Grammar.States.State import State
 from netzob.Common.Models.Grammar.Transitions.PrismaTransition import PrismaTransition
 from netzob.Common.Models.Grammar.Automata import Automata
 from netzob.Common.Models.Types.ASCII import ASCII
 
-import string
 from urllib import unquote
 
 from netzob.Common.Models.Simulator.PrismaLayer import PrismaLayer
@@ -25,18 +23,20 @@ class PrismaImporter(object):
         self.rules = None
         self.model = None
         self.templates = None
-        self.Messages = []
-        self.Symbols = None
+        self.absoluteFields = {}
         self.brokenStates = None
-        self.States = []
 
-        # debug stuff
-        self.connectedStates = None
-        self.Session = None
-        self.absSess = None
-        self.auto = None
-        self.dot = None
-        pass
+        # Symbols and States
+        self.Symbols = None
+        self.States = []
+        self.Rules = {}
+        self.copyRules = {}
+        self.dataRules = {}
+
+        # automaton, abstractionLayer, initialState
+        self.Automaton = None
+        self.PrismaLayer = None
+        self.Start = None
 
     def getPrisma(self, path, enhance=False):
         templates, model, rules = None, None, None
@@ -45,6 +45,7 @@ class PrismaImporter(object):
                 f = open('{0}/{1}'.format(path, files), 'r')
                 templates = prisma.templateParse(f)
                 self.templates = templates
+                self.computeABSfields()
                 f.close()
                 print('read templates')
             if 'markov' in files:
@@ -61,11 +62,12 @@ class PrismaImporter(object):
                 self.rules = rules
                 f.close()
                 print('read rules')
-            if rules != None and model != None and templates != None:
+            if rules and model and templates:
                 break
-        if rules == None or model == None or templates == None:
+        if not rules or not model or not templates:
             print("Big Problem: Couldn't find some of the files")
             return -1
+        self.computeRules()
         return
 
     def convertPrisma2Netzob(self):
@@ -85,27 +87,17 @@ class PrismaImporter(object):
     def createSymbols(self):
         symbolContainer = {}
         for ID, temp in self.templates.IDtoTemp.items():
-            # Symbol(map(lambda y: Field(y),x.content))
             if 'UAC' in temp.state.getCurState():
                 src = 'client'
                 dst = 'server'
             else:
                 src = 'server'
                 dst = 'client'
-            # mess with contentEncoding
-            # cont = unquote(temp.content)
-            # escCont = ''.join(c for c in cont if c in string.printable)
-            # if not cont == escCont:
-            #     # model as hex
-            #     pass
-            # else:
             fields = map(lambda x: Field(sanitizeRule(unquote(x))), temp.content)
-            if fields == []:
+            if not fields:
                 continue
-                # fields = [Field('')]
             s = Symbol(fields, [])
             mess = RawMessage(s.specialize(), destination=dst, source=src)
-            self.Messages.append(mess)
             s = Symbol(name=str(ID), fields=fields, messages=[mess])
             symbolContainer.update({ID: s})
         return symbolContainer
@@ -141,16 +133,7 @@ class PrismaImporter(object):
             for s in self.brokenStates:
                 if s[0].name == nx.getName():
                     temps = self.getTemplates(state.name)
-                    # trans.append(PrismaTransition(state, s[0], outputSymbols=temps, inputSymbol=empty, name='tr'))
-                    if 'UAC' in state.name.split('|')[-1]:
-                        trans.append(PrismaTransition(state, s[0], outputSymbols=temps, inputSymbol=EmptySymbol(), name='tr'))
-                    else:
-                        # if state.name == 'START|START':
-                        #     print 'yeah'
-                        #     trans.append(PrismaTransition(state, s[0], inputSymbol=EmptySymbol(), name='tr'))
-                        # for ID in temps:
-                        #     trans.append(PrismaTransition(state, s[0], inputSymbol=EmptySymbol(), outputSymbols=[ID], name='tr'))
-                        trans.append(PrismaTransition(state, s[0], inputSymbol=EmptySymbol(), outputSymbols=temps, name='tr'))
+                    trans.append(PrismaTransition(state, s[0], outputSymbols=temps, inputSymbol=EmptySymbol(), name='tr'))
         if trans:
             state.__transitions = trans
         return state
@@ -166,6 +149,23 @@ class PrismaImporter(object):
                     if s not in temps:
                         temps.append(s)
         return temps
+
+    def computeRules(self):
+        # handle normal rules
+        for rule in self.rules[0].rules.values():
+            pass
+        # handle copy rules
+        for rule in self.rules[1].rules.values():
+            pass
+        # handle data rules
+        for rule in self.rules[2].rules.values():
+            pass
+        pass
+
+    def computeABSfields(self):
+        for template in self.templates.IDtoTemp.values():
+            if template.fields:
+                self.absoluteFields.update({template.ID: template.fields})
 
     def test(self, full=False):
         # self.getPrisma('/home/dsmp/work/p2p/samples/airplay1st')
@@ -186,6 +186,7 @@ class PrismaImporter(object):
 
         for start in self.States:
             if 'START|START' in start.name:
+                self.Start = start
                 break
 
         self.auto = Automata(start, self.Symbols.values())
@@ -196,42 +197,14 @@ class PrismaImporter(object):
         print 'dotcode written to file "prismaDot"'
 
         chan = TCPClient('127.0.0.1', 36666, '127.0.0.1', 41337)
-        absl = PrismaLayer(chan, self.Symbols.values(), 3) # 3 being the HORIZON LENGTH
-        # absl.openChannel()
-        # state = start
+        self.PrismaLayer = PrismaLayer(chan, self.Symbols.values(), 3) # 3 being the HORIZON LENGTH
 
-        return absl
+        return
 
-        if full:
-            # make Session of observed Messages
-            sess = Session(self.Messages)
-            self.Session = sess
-            # make somehow abstraction of this Session
-            # e.g. find matching Symbol for each Message
-            absSess = sess.abstract(self.Symbols.values())
-            self.absSess = absSess
-            # make Automaton and dotCode
-            dotcode = []
-            auto = []
-            auto.append(Automata.generateChainedStatesAutomata(absSess, self.Symbols.values()))
-            dotcode.append(auto[-1].generateDotCode())
-            auto.append(Automata.generateOneStateAutomata(absSess, self.Symbols.values()))
-            dotcode.append(auto[-1].generateDotCode())
-            auto.append(Automata.generatePTAAutomata([absSess], self.Symbols.values()))
-            dotcode.append(auto[-1].generateDotCode())
-            self.auto = auto
-            self.dot = dotcode
-            # save this to testFiles
-            for i in range(3):
-                f = open('dot{}'.format(i), 'w')
-                f.write(dotcode[i])
-                f.close()
-            return start
-        return start
-
-
+# what to do about ruleFields?
 def sanitizeRule(x):
     if x == '':
         return ASCII(nbChars=(0, 100))
         # return 'dsmp'
     return x
+
