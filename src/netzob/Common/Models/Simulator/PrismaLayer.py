@@ -10,13 +10,11 @@ class PrismaLayer(AbstractionLayer):
     def updateSymbolBuffer(self, nextSymbol):
         self.symbolBuffer = self.symbolBuffer[1:] + [nextSymbol]
 
-    @override
     def readSymbol(self):
         symbol, data = super(PrismaLayer, self).readSymbol()
         self.updateSymbolBuffer(symbol)
         return symbol, data
 
-    @override
     # def writeSymbol(self):
     # actually pick symbol as usual
     # check horizon/rules
