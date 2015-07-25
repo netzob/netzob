@@ -15,7 +15,7 @@ from netzob.Common.Models.Types.ASCII import ASCII
 import string
 from urllib import unquote
 
-from netzob.Common.Models.Simulator.AbstractionLayer import AbstractionLayer
+from netzob.Common.Models.Simulator.PrismaLayer import PrismaLayer
 from netzob.Common.Models.Simulator.Channels.TCPClient import TCPClient
 
 
@@ -168,7 +168,8 @@ class PrismaImporter(object):
         return temps
 
     def test(self, full=False):
-        self.getPrisma('/home/dsmp/work/p2p/samples/airplay1st')
+        # self.getPrisma('/home/dsmp/work/p2p/samples/airplay1st')
+        self.getPrisma('/home/dasmoep/work/git/p2p/samples/airplay1st')
         self.convertPrisma2Netzob()
 
         for s in self.States:
@@ -195,8 +196,8 @@ class PrismaImporter(object):
         print 'dotcode written to file "prismaDot"'
 
         chan = TCPClient('127.0.0.1', 36666, '127.0.0.1', 41337)
-        absl = AbstractionLayer(chan, self.Symbols.values())
-        absl.openChannel()
+        absl = PrismaLayer(chan, self.Symbols.values(), 3) # 3 being the HORIZON LENGTH
+        # absl.openChannel()
         # state = start
 
         return absl
