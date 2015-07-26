@@ -78,6 +78,7 @@ following bunch of prerequisites before initiating Netzob's install process.
 * python-dev
 * python-impacket
 * python-setuptools
+* build-essential  
 
 We also highly recommend to install the following additional dependencies:
 
