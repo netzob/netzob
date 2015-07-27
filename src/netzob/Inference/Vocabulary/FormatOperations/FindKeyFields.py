@@ -44,7 +44,6 @@
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Common.Utils.NetzobRegex import NetzobStaticRegex
 
 
 @NetzobLogger
@@ -78,9 +77,7 @@ class FindKeyFields(object):
         >>> results = finder.execute(symbol)
         >>> for result in results:
         ...     print "Field name: " + result["keyField"].name + ", number of clusters: " + str(result["nbClusters"]) + ", distribution: " + str(result["distribution"])
-        Field name: Field-0, number of clusters: 1, distribution: [8]
         Field name: Field-1, number of clusters: 5, distribution: [2, 1, 2, 2, 1]
-        Field name: Field-2, number of clusters: 1, distribution: [8]
         Field name: Field-3, number of clusters: 2, distribution: [1, 7]
 
         :param field: the field in which we want to identify key fields.
@@ -100,15 +97,17 @@ class FindKeyFields(object):
 
         # Retrieve dynamic fields with fixed size
         for (i, f) in enumerate(field.fields):
-            if not isinstance(f.regex, NetzobStaticRegex):
-                isCandidate = True
-                lRef = len(columns[i][1])
-                for val in columns[i][1:]:
-                    if lRef != len(val):
-                        isCandidate = False
-                        break
-                if isCandidate:
-                    results.append({"keyField": f})
+            isCandidate = True
+            lRef = len(columns[i][1])
+            if len(set(columns[i])) <= 1:
+                isCandidate = False
+                continue
+            for val in columns[i][1:]:
+                if lRef != len(val):
+                    isCandidate = False
+                    break
+            if isCandidate:
+                results.append({"keyField": f})
 
         # Compute clusters according to each key field found
         from netzob.Inference.Vocabulary.Format import Format
