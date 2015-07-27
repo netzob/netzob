@@ -55,10 +55,10 @@ class RawMessage(AbstractMessage):
     >>> print msg.destination
     client
     >>> print msg.metadata
-    {}
+    OrderedDict()
     >>> msg.metadata["metadata1"]="value"
     >>> print msg.metadata
-    {'metadata1': 'value'}
+    OrderedDict([('metadata1', 'value')])
 
     """
 

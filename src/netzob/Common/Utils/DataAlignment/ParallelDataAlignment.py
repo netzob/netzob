@@ -36,6 +36,7 @@
 # +---------------------------------------------------------------------------+
 import multiprocessing
 import time
+from collections import OrderedDict
 
 # +---------------------------------------------------------------------------+
 # | Local application imports
@@ -160,7 +161,7 @@ class ParallelDataAlignment(object):
         noDuplicateData = list(set(data))
 
         # Async result host just aligned data under form [(data, alignedData)]
-        self.asyncResult = dict()
+        self.asyncResult = OrderedDict()
 
         # Measure start time
         start = time.time()

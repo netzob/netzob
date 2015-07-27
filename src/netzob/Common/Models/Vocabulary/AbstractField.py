@@ -37,6 +37,7 @@
 import uuid
 import abc
 import logging
+from collections import OrderedDict
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -359,7 +360,7 @@ class AbstractField(AbstractMementoCreator):
         if styled is None:
             raise TypeError("Styled cannot be None")
 
-        result = dict()
+        result = OrderedDict()
         fieldCells = self.getCells(encoded=encoded, styled=styled)
 
         for iMessage, message in enumerate(self.messages):
@@ -407,7 +408,7 @@ class AbstractField(AbstractMementoCreator):
         if styled is None:
             raise TypeError("Styled cannot be None")
 
-        result = dict()
+        result = OrderedDict()
         fieldValues = self.getValues(encoded=encoded, styled=styled)
 
         for iMessage, message in enumerate(self.messages):

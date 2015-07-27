@@ -30,6 +30,7 @@
 #+---------------------------------------------------------------------------+
 import uuid
 import time
+from collections import OrderedDict
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -82,8 +83,8 @@ class AbstractMessage(SortableObject):
         self.__source = source
         self.__destination = destination
         self.__visualizationFunctions = TypedList(VisualizationFunction)
-        self.__metadata = dict()
-        self.__semanticTags = dict()
+        self.__metadata = OrderedDict()
+        self.__semanticTags = OrderedDict()
 
     @typeCheck(AbstractField)
     def isValidForField(self, field):
@@ -340,7 +341,7 @@ class AbstractMessage(SortableObject):
     @typeCheck(dict)
     def semanticTags(self, semanticTags):
         if semanticTags is None:
-            self.__semanticTags = dict()
+            self.__semanticTags = OrderedDict()
 
         # check
         for key, value in semanticTags.iteritems():

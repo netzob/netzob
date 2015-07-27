@@ -25,15 +25,13 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-import uuid
-
-from netzob import _libScoreComputation
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.C_Extensions.WrapperMessage import WrapperMessage
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Common.NetzobException import NetzobException
+from netzob import _libScoreComputation
 
 
 class WrapperArgsFactory(object):

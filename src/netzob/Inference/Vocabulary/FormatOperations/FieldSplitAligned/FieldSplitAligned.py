@@ -35,6 +35,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
+from collections import OrderedDict
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -111,9 +112,9 @@ class FieldSplitAligned(object):
     >>> fs = FieldSplitAligned(doInternalSlick=True)
     >>> fs.execute(symbol, useSemantic = False)
     >>> print symbol
-    'John'    | '-0' | '108030405--john.doe@g'                                                      | 'ma' | 'il.com'    
-    'Mathieu' | '-0' | '908070605-31 rue de Paris, 75000 Paris, France-'                            | 'ma' | 't@yahoo.fr'
-    'Olivia'  | '-0' | '348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hot' | 'ma' | 'il.fr'     
+    'John'    | '-0' | '108030405--john.doe@gmail.com'                                                    
+    'Mathieu' | '-0' | '908070605-31 rue de Paris, 75000 Paris, France-mat@yahoo.fr'                      
+    'Olivia'  | '-0' | '348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hotmail.fr'
     
     >>> applicativeDatas = []
     >>> applicativeDatas.append(ApplicativeData("Firstname", ASCII("John")))
@@ -348,7 +349,7 @@ class FieldSplitAligned(object):
                 raise TypeError("At least one value is None or not an str which is not authorized.")
 
         if semanticTags is None:
-            semanticTags = [dict() for v in values]
+            semanticTags = [OrderedDict() for v in values]
 
         if len(semanticTags) != len(values):
             raise TypeError("There should be a list of semantic tags for each value")
@@ -385,9 +386,9 @@ class FieldSplitAligned(object):
 
         self._logger.debug("Search app data in {0}".format(message.data))
 
-        results = dict()
+        results = OrderedDict()
 
-        appValues = dict()
+        appValues = OrderedDict()
         if message.session is not None:
             for applicativeD in message.session.applicativeData:
                 appValues[applicativeD.value] = applicativeD.name
@@ -442,7 +443,7 @@ class FieldSplitAligned(object):
                 lengthField = ( field.domain.maxSize() / 4)
 
                 # Find semantic tags related to the current section
-                sectionSemanticTags = dict((k, semanticTags[k]) for k in xrange(currentIndex, currentIndex + lengthField))
+                sectionSemanticTags = OrderedDict((k, semanticTags[k]) for k in xrange(currentIndex, currentIndex + lengthField))
 
                 # reccursive call
                 self._logger.debug("Working on field : {0}".format(field.name))
@@ -587,7 +588,7 @@ class FieldSplitAligned(object):
         """Deserialize the information returned from the C library
         and build the semantic tags definitions from it.
         """
-        result = dict()
+        result = OrderedDict()
         arTags = tags.split(';')
         j = 0
         for iTag, tag in enumerate(arTags):
