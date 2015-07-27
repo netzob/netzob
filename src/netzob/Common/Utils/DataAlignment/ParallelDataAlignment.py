@@ -183,7 +183,7 @@ class ParallelDataAlignment(object):
 
         for d in data:
             if d not in self.asyncResult.keys():
-                raise Exception("At least one data ({0}) has not been successfully computed by the alignment".format(d))
+                raise Exception("At least one data ({0}) has not been successfully computed by the alignment".format(repr(d)))
             result.extend(self.asyncResult[d])
 
         # check the number of computed alignment
