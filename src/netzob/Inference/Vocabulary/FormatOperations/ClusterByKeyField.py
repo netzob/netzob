@@ -108,7 +108,16 @@ class ClusterByKeyField(object):
         # we identify what would be the best type of the key field
         keyFieldType = ASCII
         for message, keyFieldValue in keyFieldMessageValues.iteritems():
+            # If the value cannot be parsed as ASCII, we convert it to HexaString
             if not ASCII().canParse(TypeConverter.convert(keyFieldValue, Raw, BitArray)):
+                keyFieldType = HexaString
+                break
+
+            # Even if the value is theoritically parsable as ASCII, some caracters cannot be encoded, so we double check
+            tmp_value = TypeConverter.convert(keyFieldValue, Raw, ASCII)
+            tmp2_value = TypeConverter.convert(tmp_value, ASCII, Raw)
+            if keyFieldValue != tmp2_value:
+                # This means we cannot retrieve the original value by encoding and then decoding in ASCII
                 keyFieldType = HexaString
                 break
 
@@ -124,6 +133,7 @@ class ClusterByKeyField(object):
                 newSymbols[keyFieldValue].messages.append(message)
                 splittedMessages = DataAlignment.align([message.data], field, encoded=False)
                 newSymbolsSplittedMessages[keyFieldValue].append(splittedMessages[0])
+
         for newSymbolKeyValue, newSymbol in newSymbols.iteritems():
             # we recreate the same fields in this new symbol as the fields that exist in the original symbol
             newSymbol.clearFields()
@@ -140,7 +150,7 @@ class ClusterByKeyField(object):
                 newSymbol.fields.append(newF)
 
             # we remove endless fields that accepts no values
-            cells = newSymbol.getCells()
+            cells = newSymbol.getCells(encoded=False, styled=False, transposed=False)
             max_i_cell_with_value = 0
             for line in cells:
                 for i_cell, cell in enumerate(line):
