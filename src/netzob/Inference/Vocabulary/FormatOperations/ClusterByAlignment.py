@@ -34,6 +34,7 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
+from collections import OrderedDict
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -82,10 +83,10 @@ class ClusterByAlignment(object):
     '4d79206970206164647265737320697320' | ''       | '0a' | '7879d4'
 
     >>> print symbols[2]
-    'hello ' | 'ditrich' | ", what's up in " | 'Munich'    | ' ?'
-    'hello ' | 'ditrich' | ", what's up in " | 'Paris'     | ' ?'
     'hello ' | 'carlito' | ", what's up in " | 'Munich'    | ' ?'
     'hello ' | 'carlito' | ", what's up in " | 'Paris'     | ' ?'
+    'hello ' | 'ditrich' | ", what's up in " | 'Munich'    | ' ?'
+    'hello ' | 'ditrich' | ", what's up in " | 'Paris'     | ' ?'
     'hello ' | 'carlito' | ", what's up in " | 'Vienne'    | ' ?'
     'hello ' | 'ditrich' | ", what's up in " | 'Vienne'    | ' ?'
     'hello ' | 'toto'    | ", what's up in " | 'Paris'     | ' ?'
@@ -170,12 +171,12 @@ class ClusterByAlignment(object):
 
         (listScores) = _libScoreComputation.computeSimilarityMatrix(self.internalSlick, self._cb_executionStatus, self._isFinish, debug, wrapper)
         # Retrieve the scores for each association of symbols
-        scores = {}
+        scores = OrderedDict()
         for (iuid, juid, score) in listScores:
             if iuid not in scores.keys():
-                scores[iuid] = {}
+                scores[iuid] = OrderedDict()
             if juid not in scores.keys():
-                scores[juid] = {}
+                scores[juid] = OrderedDict()
             scores[iuid][juid] = score
             if iuid not in scores[juid].keys():
                 scores[juid][iuid] = score
@@ -254,7 +255,7 @@ class ClusterByAlignment(object):
         del self.scores[iuid]
         del self.scores[juid]
         # Create a new col
-        self.scores[newuid] = {}
+        self.scores[newuid] = OrderedDict()
 
         # Should we recompute
         if self.lastScore is None:
