@@ -92,8 +92,8 @@ class Repeat(AbstractVariableNode):
     >>> gen = s.specialize()
     >>> len(gen) == 14
     True
-    >>> gen.count(";")
-    2
+    >>> gen.count(";") >= 2
+    True
 
     >>> from netzob.all import *
     >>> child = Data(dataType=ASCII(nbChars=(5)), svas=SVAS.PERSISTENT)
