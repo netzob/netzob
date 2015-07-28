@@ -168,8 +168,8 @@ class PrismaImporter(object):
                 self.absoluteFields.update({template.ID: template.fields})
 
     def test(self, full=False):
-        # self.getPrisma('/home/dsmp/work/p2p/samples/airplay1st')
-        self.getPrisma('/home/dasmoep/work/git/p2p/samples/airplay1st')
+        self.getPrisma('/home/dsmp/work/p2p/samples/airplay1st', enhance=False)
+        # self.getPrisma('/home/dasmoep/work/git/p2p/samples/airplay1st', enhance=True)
         self.convertPrisma2Netzob()
 
         for s in self.States:
@@ -197,9 +197,10 @@ class PrismaImporter(object):
         print 'dotcode written to file "prismaDot"'
 
         chan = TCPClient('127.0.0.1', 36666, '127.0.0.1', 41337)
-        self.PrismaLayer = PrismaLayer(chan, self.Symbols.values(), 3) # 3 being the HORIZON LENGTH
+        self.PrismaLayer = PrismaLayer(chan, self.Symbols.values(), 3)  # 3 being the HORIZON LENGTH +1
 
         return
+
 
 # what to do about ruleFields?
 def sanitizeRule(x):

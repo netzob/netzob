@@ -15,9 +15,10 @@ class PrismaLayer(AbstractionLayer):
         self.updateSymbolBuffer(symbol)
         return symbol, data
 
-    # def writeSymbol(self):
-    # actually pick symbol as usual
-    # update symbolBuffer
-    # check horizon/rules
-    # apply rules to symbol (the big show)
-    # emit as usual
+    def writeSymbol(self, symbol):
+        # update symbolBuffer
+        self.updateSymbolBuffer(symbol)
+        # check horizon/rules
+        # apply rules to symbol (the big show)
+        # emit as usual
+        super(PrismaLayer, self).writeSymbol(symbol)
