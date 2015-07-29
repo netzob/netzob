@@ -100,11 +100,20 @@ class PrismaImporter(object):
                 continue
             s = PrismaSymbol(fields=fields)
             mess = RawMessage(s.specialize(), destination=dst, source=src)
+            absFields = rules = cpyR = datR = None
             if ID in self.absoluteFields:
                 absFields = self.absoluteFields[ID]
-                s = PrismaSymbol(absFields=absFields, name=str(ID), fields=fields, messages=[mess])
-            else:
-                s = PrismaSymbol(name=str(ID), fields=fields, messages=[mess])
+            if ID in self.Rules:
+                rules = self.Rules[ID]
+                rules = genDict(rules)
+            if ID in self.copyRules:
+                cpyR = self.copyRules[ID]
+                cpyR = genDict(cpyR)
+            if ID in self.dataRules:
+                datR = self.dataRules[ID]
+                datR = genDict(datR)
+            s = PrismaSymbol(absFields=absFields, name=str(ID), fields=fields, messages=[mess],
+                             rules=rules, copyRules=cpyR, dataRules=datR)
             symbolContainer.update({ID: s})
         return symbolContainer
 
@@ -158,15 +167,29 @@ class PrismaImporter(object):
 
     def computeRules(self):
         # handle normal rules
-        for rule in self.rules[0].rules.values():
-            pass
+        for ruleList in self.rules[0].rules.values():
+            for rule in ruleList:
+                ID = rule.dstID[0]
+                if ID not in self.Rules.keys():
+                    self.Rules.update({ID: []})
+                self.Rules[ID].append(rule)
         # handle copy rules
-        for rule in self.rules[1].rules.values():
-            pass
+        seen = []
+        for ruleList in self.rules[1].rules.values():
+            seen.append(rule)
+            for rule in ruleList:
+                ID = rule.dstID[0]
+                if ID not in self.copyRules.keys():
+                    self.copyRules.update({ID: []})
+                self.copyRules[ID].append(rule)
         # handle data rules
-        for rule in self.rules[2].rules.values():
-            pass
-        pass
+        for ruleList in self.rules[2].rules.values():
+            for rule in ruleList:
+                ID = rule.dstID[0]
+                if ID not in self.dataRules.keys():
+                    self.dataRules.update({ID: []})
+                self.dataRules[ID].append(rule)
+        return seen
 
     def computeABSfields(self):
         for template in self.templates.IDtoTemp.values():
@@ -174,8 +197,9 @@ class PrismaImporter(object):
                 self.absoluteFields.update({template.ID: template.fields})
 
     def test(self, full=False):
-        self.getPrisma('/home/dsmp/work/p2p/samples/airplay1st', enhance=False)
+        # self.getPrisma('/home/dsmp/work/p2p/samples/airplay1st', enhance=False)
         # self.getPrisma('/home/dasmoep/work/git/p2p/samples/airplay1st', enhance=True)
+        self.getPrisma('/home/dsmp/Desktop/mynetzob/src/netzob/Import/PrismaImporter/samples/airplay1st', enhance=False)
         self.convertPrisma2Netzob()
 
         for s in self.States:
@@ -191,7 +215,7 @@ class PrismaImporter(object):
                 print
 
         for start in self.States:
-            if 'START|START' in start.name:
+            if start.name == '|'.join(self.horizonLength*['START']):
                 self.Start = start
                 break
 
@@ -205,6 +229,25 @@ class PrismaImporter(object):
         chan = TCPClient('127.0.0.1', 36666, '127.0.0.1', 41337)
         self.PrismaLayer = PrismaLayer(chan, self.Symbols.values(), self.horizonLength+1)
 
+        # for s in self.Symbols.values():
+        #     s.messages = [RawMessage(s.specialize())]
+
+        #  # test rules
+        #  s = self.Symbols[14]
+        #  ss = self.Symbols[5]
+        #  sss = self.Symbols[19]
+
+        # s.setHorizon([s, ss, s])
+        # ss.setHorizon([ss, sss, ss])
+        # # for SeqRule
+        # # f = PrismaField('41')
+        # # for PartRule
+        # f = PrismaField('PREFIX%3Fgetexe%3Dgo.exeSUFFIX')
+        # f.parent = ss
+        # ss.fields[8] = f
+        # ss.messages = [RawMessage(ss.specialize())]
+        # ss.applyRules()
+        # print ss.specialize()
         return
 
 
@@ -220,3 +263,11 @@ def getName(prismaState):
     for i in range(len(prismaState.hist)):
         s += '|'+prismaState.hist[i]
     return s[1:]
+
+def genDict(ruleList):
+    d = {}
+    for rule in ruleList:
+        if rule.ruleHist not in d:
+            d.update({rule.ruleHist: []})
+        d[rule.ruleHist].append(rule)
+    return d
