@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-class RulesContainer(object):
 
+class RulesContainer(object):
     def __init__(self):
-        self.rules= {}
+        self.rules = {}
 
     def __str__(self):
         s = ''
@@ -12,7 +12,7 @@ class RulesContainer(object):
                 s += str(value) + ', '
         return s[:-2]
 
-    def __getitem__(self,key):
+    def __getitem__(self, key):
         return self.rules[key]
 
     def __iter__(self):
@@ -24,7 +24,7 @@ class RulesContainer(object):
     def __len__(self):
         return len(self.rules)
 
-    def add(self,rule):
+    def add(self, rule):
         if rule.hist not in self.rules:
             self.rules[rule.hist] = []
         self.rules[rule.hist].append(rule)

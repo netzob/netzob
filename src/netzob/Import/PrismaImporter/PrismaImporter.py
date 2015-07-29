@@ -2,9 +2,9 @@ import prisma
 import copy
 import os
 
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
+from netzob.Common.Models.Vocabulary.PrismaSymbol import PrismaSymbol
 from netzob.Common.Models.Vocabulary.EmptySymbol import EmptySymbol
-from netzob.Common.Models.Vocabulary.Field import Field
+from netzob.Common.Models.Vocabulary.PrismaField import PrismaField
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Common.Models.Grammar.States.State import State
 from netzob.Common.Models.Grammar.Transitions.PrismaTransition import PrismaTransition
@@ -25,6 +25,7 @@ class PrismaImporter(object):
         self.templates = None
         self.absoluteFields = {}
         self.brokenStates = None
+        self.horizonLength = None
 
         # Symbols and States
         self.Symbols = None
@@ -59,7 +60,8 @@ class PrismaImporter(object):
             if 'rules' in files:
                 f = open('{0}/{1}'.format(path, files), 'r')
                 rules = prisma.ruleParse(f)
-                self.rules = rules
+                self.horizonLength = rules[-1]
+                self.rules = rules[:-1]
                 f.close()
                 print('read rules')
             if rules and model and templates:
@@ -75,7 +77,7 @@ class PrismaImporter(object):
 
         # get INITIAL state
         for k in self.model.model.keys():
-            if k.curState == 'START':
+            if k.getCurState() == 'START':
                 break
         # create States beginning at initial
         cpy = copy.deepcopy(self.model)
@@ -93,21 +95,25 @@ class PrismaImporter(object):
             else:
                 src = 'server'
                 dst = 'client'
-            fields = map(lambda x: Field(sanitizeRule(unquote(x))), temp.content)
+            fields = map(lambda x: PrismaField(sanitizeRule(unquote(x))), temp.content)
             if not fields:
                 continue
-            s = Symbol(fields, [])
+            s = PrismaSymbol(fields=fields)
             mess = RawMessage(s.specialize(), destination=dst, source=src)
-            s = Symbol(name=str(ID), fields=fields, messages=[mess])
+            if ID in self.absoluteFields:
+                absFields = self.absoluteFields[ID]
+                s = PrismaSymbol(absFields=absFields, name=str(ID), fields=fields, messages=[mess])
+            else:
+                s = PrismaSymbol(name=str(ID), fields=fields, messages=[mess])
             symbolContainer.update({ID: s})
         return symbolContainer
 
     def createStates(self, prismaState):
         if 'END' in prismaState.getCurState():
-            return [[State(prismaState.getName())]]
+            return [[State(getName(prismaState))]]
         if prismaState not in self.model.model.keys():
             return
-        curState = State(prismaState.getName())
+        curState = State(getName(prismaState))
         nextStates = []
         for nx in self.model.model[prismaState]:
             nextStates.append(nx)
@@ -131,7 +137,7 @@ class PrismaImporter(object):
         state, nextStates = state
         for nx in nextStates:
             for s in self.brokenStates:
-                if s[0].name == nx.getName():
+                if s[0].name ==getName(nx):
                     temps = self.getTemplates(state.name)
                     trans.append(PrismaTransition(state, s[0], outputSymbols=temps, inputSymbol=EmptySymbol(), name='tr'))
         if trans:
@@ -141,7 +147,7 @@ class PrismaImporter(object):
     def getTemplates(self, stateName):
         temps = []
         for pState in self.templates.stateToID.keys():
-            if pState.getName() == stateName:
+            if getName(pState) == stateName:
                 for ID in self.templates.stateToID[pState]:
                     if ID not in self.Symbols.keys():
                         continue
@@ -189,15 +195,15 @@ class PrismaImporter(object):
                 self.Start = start
                 break
 
-        self.auto = Automata(start, self.Symbols.values())
-        dot = self.auto.generateDotCode()
+        self.Automaton = Automata(start, self.Symbols.values())
+        dot = self.Automaton.generateDotCode()
         f = open('prismaDot', 'w')
         f.write(dot)
         f.close()
         print 'dotcode written to file "prismaDot"'
 
         chan = TCPClient('127.0.0.1', 36666, '127.0.0.1', 41337)
-        self.PrismaLayer = PrismaLayer(chan, self.Symbols.values(), 3)  # 3 being the HORIZON LENGTH +1
+        self.PrismaLayer = PrismaLayer(chan, self.Symbols.values(), self.horizonLength+1)
 
         return
 
@@ -209,3 +215,8 @@ def sanitizeRule(x):
         # return 'dsmp'
     return x
 
+def getName(prismaState):
+    s = ''
+    for i in range(len(prismaState.hist)):
+        s += '|'+prismaState.hist[i]
+    return s[1:]
