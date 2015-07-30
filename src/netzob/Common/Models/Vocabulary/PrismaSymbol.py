@@ -14,10 +14,10 @@ import random
 
 
 class PrismaSymbol(Symbol):
-    __messages = TypedList(AbstractMessage)
-    def __init__(self, absFields=None, fields=None, messages=None, name="Symbol", rules=None, copyRules=None, dataRules=None):
-        super(PrismaSymbol, self).__init__(fields, messages, name)
+
+    def __init__(self, absFields=[], fields=None, messages=None, name="Symbol", rules={}, copyRules={}, dataRules={}):
         self.__messages = TypedList(AbstractMessage)
+        super(PrismaSymbol, self).__init__(fields, messages, name)
         self.horizon = None
         self.rules = rules
         self.copyRules = copyRules
@@ -43,13 +43,16 @@ class PrismaSymbol(Symbol):
             print 'nothing to do'
             return
         hor = self.horizon2ID()
+        print 'checking horizon {}'.format(hor)
         ruleFlag = False
         if hor in self.rules:
+            print 'normal rule'
             ruleFlag = True
             for rule in self.rules[hor]:
                 srcSym = self.horizon[rule.srcID]
                 self.fields[self.absoluteFields[rule.dstField]] = srcSym.fields[srcSym.absoluteFields[rule.srcField]]
         if hor in self.copyRules:
+            print 'found copy rules'
             ruleFlag = True
             for rule in self.copyRules[hor]:
                 srcSym = self.horizon[rule.srcID]
@@ -78,21 +81,23 @@ class PrismaSymbol(Symbol):
                     f.parent = self
                     self.fields[self.absoluteFields[rule.dstField]] = f
         if hor in self.dataRules:
+            print 'found data rules'
             ruleFlag = True
             for rule in self.dataRules[hor]:
                 data = random.choice(rule.data)
-                print rule.data, data
+                print 'from data pool {} chose {}'.format(rule.data, data)
                 f = PrismaField(data)
                 f.parent = self
                 self.fields[self.absoluteFields[rule.dstField]] = f
         if ruleFlag:
             # self.clearMessages()
-            self.messages = [RawMessage(self.specialize())]
+            self.messages = [RawMessage(self.specialize(noRules=True))]
 
-    def specialize(self, memory=None):
-        if self.horizon:
+    def specialize(self, memory=None, noRules=False):
+        if self.horizon and not noRules:
             print 'calling for rules'
             self.applyRules()
+            print 'applied rules'
         from netzob.Common.Models.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
         msg = MessageSpecializer(memory=memory)
         spePath = msg.specializeSymbol(self)

@@ -31,6 +31,8 @@ class PrismaTransition(Transition):
         if self.ROLE == 'client':
             pickedSymbol = self.__pickOutputSymbol()
 
+            # print 'picked symbol {}'.format(pickedSymbol.name)
+
             if pickedSymbol is None:
                 self._logger.debug("Something is wrong here. Got outState without outSymbol..")
                 return self.endState
@@ -48,6 +50,12 @@ class PrismaTransition(Transition):
         else:
             # Waits for the reception of a symbol
             (receivedSymbol, receivedMessage) = abstractionLayer.readSymbol()
+
+            print 'seen {}'.format(receivedSymbol.name)
+            print 'expected:',
+            for s in self.outputSymbols:
+                print s.name,
+            print
 
             if receivedSymbol in self.outputSymbols:
                 self.active = False

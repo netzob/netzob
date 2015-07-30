@@ -18,8 +18,9 @@ from netzob.Common.Models.Simulator.Channels.TCPClient import TCPClient
 
 
 class PrismaImporter(object):
-    def __init__(self):
-        print("Hello Netzob, this is Prisma...\nI'm gonna take over...\nDon't make it harder than necessary.\n")
+    def __init__(self):  # , path=None, targetIP=None, targetPort=None, ourIP=None, ourPort=None):
+        print("\nHello Netzob, this is Prisma...\nI'm gonna take over...\nDon't make it harder than necessary.\n")
+        # of no greater use later on
         self.rules = None
         self.model = None
         self.templates = None
@@ -34,10 +35,39 @@ class PrismaImporter(object):
         self.copyRules = {}
         self.dataRules = {}
 
+        # essential attributes
+        self.__initialized = False
+        # where the PRISMA fiels live
+        self.__path = None
+        # who talks to whom?!
+        self.__targetIP = None
+        self.__targetPort = None
+        self.__ourIP = None
+        self.__ourPort = None
+
         # automaton, abstractionLayer, initialState
+        # everything needed for communication
         self.Automaton = None
         self.PrismaLayer = None
         self.Start = None
+        return
+
+        # set default values for __init__
+        # for testing purpose ONLY
+        # remove this later
+        # find out how to test stuff
+        # if not path:
+        #     path = '/home/dsmp/Desktop/mynetzob/src/netzob/Import/PrismaImporter/samples/airplay1st'
+        # if not targetIP:
+        #     targetIP='127.0.0.1'
+        # if not targetPort:
+        #     targetPort=36666
+        # if not ourIP:
+        #     ourIP='127.0.0.1'
+        # if not ourPort:
+        #     ourPort=41337
+
+        # self.create(path, targetIP, targetPort, ourIP, ourPort)
 
     def getPrisma(self, path, enhance=False):
         templates, model, rules = None, None, None
@@ -100,7 +130,8 @@ class PrismaImporter(object):
                 continue
             s = PrismaSymbol(fields=fields)
             mess = RawMessage(s.specialize(), destination=dst, source=src)
-            absFields = rules = cpyR = datR = None
+            absFields = []
+            rules = cpyR = datR = {}
             if ID in self.absoluteFields:
                 absFields = self.absoluteFields[ID]
             if ID in self.Rules:
@@ -144,6 +175,9 @@ class PrismaImporter(object):
             return state[0]
         trans = []
         state, nextStates = state
+        # are you initialState?
+        if state.name == '|'.join(self.horizonLength*['START']):
+            self.Start = state
         for nx in nextStates:
             for s in self.brokenStates:
                 if s[0].name ==getName(nx):
@@ -196,11 +230,78 @@ class PrismaImporter(object):
             if template.fields:
                 self.absoluteFields.update({template.ID: template.fields})
 
-    def test(self, full=False):
-        # self.getPrisma('/home/dsmp/work/p2p/samples/airplay1st', enhance=False)
-        # self.getPrisma('/home/dasmoep/work/git/p2p/samples/airplay1st', enhance=True)
-        self.getPrisma('/home/dsmp/Desktop/mynetzob/src/netzob/Import/PrismaImporter/samples/airplay1st', enhance=False)
+    def create(self):  # , path, targetIP, targetPort, ourIP, ourPort):
+        if not self.__initialized:
+            print 'Information missing.'
+            return
+        # read files from location
+        print 'reading from location {}'.format(self.getPath())
+        self.getPrisma(self.getPath(), enhance=False)
+        # build netzob structures
+        print 'building Netzob structures'
         self.convertPrisma2Netzob()
+        self.Automaton=Automata(self.Start, self.Symbols.values())
+        print 'seeting up CHANNEL from {}:{} to {}:{}'.format(self.getOurIp(), self.getOurPort(), self.getTargetIp(), self.getTargetPort())
+        chan = TCPClient(self.getOurIp(), self.getOurPort(), self.getTargetIp(), self.getTargetPort())
+        self.PrismaLayer=PrismaLayer(chan, self.Symbols.values(), self.horizonLength+1)
+        print 'ready for takeoff\n'
+
+    #getter 'n' setter
+    def isInitialized(self):
+        return self.__initialized
+
+    def setInitialized(self):
+        if self.__path and self.__ourIP and self.__ourPort and self.__targetIP and self.__targetPort:
+            self.__initialized = not self.__initialized
+
+    def setPath(self, path):
+        self.__path = path
+        self.setInitialized()
+
+    def getPath(self):
+        return self.__path
+
+    def getOurIp(self):
+        return self.__ourIP
+
+    def setOurIp(self, ip):
+        if not ipchecker(ip):
+            raise ValueError
+        self.__ourIP = ip
+        self.setInitialized()
+
+    def getTargetIp(self):
+        return self.__targetIP
+
+    def setTargetIp(self, ip):
+        if not ipchecker(ip):
+            raise ValueError
+        self.__targetIP = ip
+        self.setInitialized()
+
+    def getOurPort(self):
+        return self.__ourPort
+
+    def setOurPort(self, port):
+        if not numchecker(port):
+            raise ValueError
+        self.__ourPort = port
+        self.setInitialized()
+
+    def getTargetPort(self):
+        return self.__targetPort
+
+    def setTargetPort(self, port):
+        if not numchecker(port):
+            raise ValueError
+        self.__targetPort = port
+        self.setInitialized()
+
+    def test(self, full=False):
+        # # self.getPrisma('/home/dsmp/work/p2p/samples/airplay1st', enhance=False)
+        # # self.getPrisma('/home/dasmoep/work/git/p2p/samples/airplay1st', enhance=True)
+        # self.getPrisma('/home/dsmp/Desktop/mynetzob/src/netzob/Import/PrismaImporter/samples/airplay1st', enhance=False)
+        # self.convertPrisma2Netzob()
 
         for s in self.States:
             for t in s.transitions:
@@ -214,36 +315,40 @@ class PrismaImporter(object):
                     print(osy.name,)
                 print
 
-        for start in self.States:
-            if start.name == '|'.join(self.horizonLength*['START']):
-                self.Start = start
-                break
+        # for start in self.States:
+        #     if start.name == '|'.join(self.horizonLength*['START']):
+        #         self.Start = start
+        #         break
 
-        self.Automaton = Automata(start, self.Symbols.values())
+        # self.Automaton = Automata(start, self.Symbols.values())
         dot = self.Automaton.generateDotCode()
         f = open('prismaDot', 'w')
         f.write(dot)
         f.close()
         print 'dotcode written to file "prismaDot"'
 
-        chan = TCPClient('127.0.0.1', 36666, '127.0.0.1', 41337)
-        self.PrismaLayer = PrismaLayer(chan, self.Symbols.values(), self.horizonLength+1)
+        # chan = TCPClient('127.0.0.1', 36666, '127.0.0.1', 41337)
+        # self.PrismaLayer = PrismaLayer(chan, self.Symbols.values(), self.horizonLength+1)
 
         # for s in self.Symbols.values():
         #     s.messages = [RawMessage(s.specialize())]
 
-        #  # test rules
-        #  s = self.Symbols[14]
-        #  ss = self.Symbols[5]
-        #  sss = self.Symbols[19]
+        # test rules
+        s = self.Symbols[14]
+        ss = self.Symbols[5]
+        sss = self.Symbols[19]
 
-        # s.setHorizon([s, ss, s])
         # ss.setHorizon([ss, sss, ss])
         # # for SeqRule
-        # # f = PrismaField('41')
+        s.setHorizon([s, ss, s])
+        f = PrismaField('41')
+        f.parent = ss
+        ss.fields[8] = f
+        ss.messages = [RawMessage(ss.specialize(noRules=True))]
+        s.applyRules()
+        print s.specialize(noRules=True)
         # # for PartRule
         # f = PrismaField('PREFIX%3Fgetexe%3Dgo.exeSUFFIX')
-        # f.parent = ss
         # ss.fields[8] = f
         # ss.messages = [RawMessage(ss.specialize())]
         # ss.applyRules()
@@ -258,11 +363,13 @@ def sanitizeRule(x):
         # return 'dsmp'
     return x
 
+
 def getName(prismaState):
     s = ''
     for i in range(len(prismaState.hist)):
         s += '|'+prismaState.hist[i]
     return s[1:]
+
 
 def genDict(ruleList):
     d = {}
@@ -271,3 +378,28 @@ def genDict(ruleList):
             d.update({rule.ruleHist: []})
         d[rule.ruleHist].append(rule)
     return d
+
+
+def ipchecker(ip):
+    try:
+        split = ip.split('.')
+        if len(split) != 4:
+            return False
+        for i in split:
+            b = numchecker(i)
+            if not b:
+                return False
+        return True
+    except (SyntaxError, AttributeError):
+        print "IP should look like this '127.0.0.1'"
+        return False
+
+
+def numchecker(num):
+    try:
+        int(num)
+        return True
+    except ValueError:
+        print 'You know how a port looks like..'
+        return False
+

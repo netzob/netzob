@@ -5,7 +5,9 @@ from netzob.Common.Models.Vocabulary.EmptySymbol import EmptySymbol
 class PrismaLayer(AbstractionLayer):
     def __init__(self, channel, symbols, horizonLength):
         super(PrismaLayer, self).__init__(channel, symbols)
-        self.symbolBuffer = horizonLength*[EmptySymbol()]
+        e = EmptySymbol()
+        e.name = '-1'
+        self.symbolBuffer = horizonLength*[e]
 
     def updateSymbolBuffer(self, nextSymbol):
         self.symbolBuffer = self.symbolBuffer[1:] + [nextSymbol]
