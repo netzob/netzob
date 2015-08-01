@@ -86,23 +86,23 @@ Tutorials
    proprietary or undocumented protocols.
 
 
-Installation Guides
-===================
+.. Installation Guides
+  ===================
 
-.. toctree::
-   :hidden:
-   :maxdepth: 2
+  .. toctree::
+     :hidden:
+     :maxdepth: 2
 
-   installation/index
-   installation/python
-   installation/debian
-   installation/gentoo
-   installation/windows
+     installation/index
+     installation/python
+     installation/debian
+     installation/gentoo
+     installation/windows
 
-* :ref:`Python package installation<installation_python>`
-* :ref:`Debian package installation<installation_debian>`
-* :ref:`Gentoo package installation<installation_gentoo>`
-* :ref:`Windows package installation<installation_windows>`
+  * :ref:`Python package installation<installation_python>`
+  * :ref:`Debian package installation<installation_debian>`
+  * :ref:`Gentoo package installation<installation_gentoo>`
+  * :ref:`Windows package installation<installation_windows>`
 
 
 .. User Guide
