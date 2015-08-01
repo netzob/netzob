@@ -4,7 +4,7 @@ import os
 
 from netzob.Common.Models.Vocabulary.PrismaSymbol import PrismaSymbol
 from netzob.Common.Models.Vocabulary.EmptySymbol import EmptySymbol
-from netzob.Common.Models.Vocabulary.PrismaField import PrismaField
+from netzob.Common.Models.Vocabulary.Field import Field
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Common.Models.Grammar.States.State import State
 from netzob.Common.Models.Grammar.Transitions.PrismaTransition import PrismaTransition
@@ -40,32 +40,18 @@ class PrismaImporter(object):
         # where the PRISMA fiels live
         self.__path = None
         # who talks to whom?!
-        self.__targetIP = None
-        self.__targetPort = None
-        self.__ourIP = None
-        self.__ourPort = None
+        self.__destinationIP = None
+        self.__destinationPort = None
+        self.__sourceIP = None
+        self.__sourcePort = None
 
         # automaton, abstractionLayer, initialState
         # everything needed for communication
-        self.Automaton = None
-        self.PrismaLayer = None
+        self.__Automaton = None
+        self.__PrismaLayer = None
         self.Start = None
         return
 
-        # set default values for __init__
-        # for testing purpose ONLY
-        # remove this later
-        # find out how to test stuff
-        # if not path:
-        #     path = '/home/dsmp/Desktop/mynetzob/src/netzob/Import/PrismaImporter/samples/airplay1st'
-        # if not targetIP:
-        #     targetIP='127.0.0.1'
-        # if not targetPort:
-        #     targetPort=36666
-        # if not ourIP:
-        #     ourIP='127.0.0.1'
-        # if not ourPort:
-        #     ourPort=41337
 
         # self.create(path, targetIP, targetPort, ourIP, ourPort)
 
@@ -125,7 +111,7 @@ class PrismaImporter(object):
             else:
                 src = 'server'
                 dst = 'client'
-            fields = map(lambda x: PrismaField(sanitizeRule(unquote(x))), temp.content)
+            fields = map(lambda x: Field(sanitizeRule(unquote(x))), temp.content)
             if not fields:
                 continue
             s = PrismaSymbol(fields=fields)
@@ -210,8 +196,8 @@ class PrismaImporter(object):
         # handle copy rules
         seen = []
         for ruleList in self.rules[1].rules.values():
-            seen.append(rule)
             for rule in ruleList:
+                seen.append(rule)
                 ID = rule.dstID[0]
                 if ID not in self.copyRules.keys():
                     self.copyRules.update({ID: []})
@@ -231,7 +217,7 @@ class PrismaImporter(object):
                 self.absoluteFields.update({template.ID: template.fields})
 
     def create(self):  # , path, targetIP, targetPort, ourIP, ourPort):
-        if not self.__initialized:
+        if not self.isInitialized():
             print 'Information missing.'
             return
         # read files from location
@@ -240,68 +226,91 @@ class PrismaImporter(object):
         # build netzob structures
         print 'building Netzob structures'
         self.convertPrisma2Netzob()
-        self.Automaton=Automata(self.Start, self.Symbols.values())
-        print 'seeting up CHANNEL from {}:{} to {}:{}'.format(self.getOurIp(), self.getOurPort(), self.getTargetIp(), self.getTargetPort())
-        chan = TCPClient(self.getOurIp(), self.getOurPort(), self.getTargetIp(), self.getTargetPort())
-        self.PrismaLayer=PrismaLayer(chan, self.Symbols.values(), self.horizonLength+1)
+        self.__setAutomaton(Automata(self.Start, self.Symbols.values()))
+        # self.__Automaton = Automata(self.Start, self.Symbols.values())
+        print 'seeting up CHANNEL from {}:{} to {}:{}'.format(self.getSourceIp(), self.getSourcePort(), self.getDestinationIp(), self.getDestinationPort())
+        chan = TCPClient(self.getSourceIp(), self.getSourcePort(), self.getDestinationIp(), self.getDestinationPort())
+        self.__setPrismaLayer(PrismaLayer(chan, self.Symbols.values(), self.horizonLength+1))
         print 'ready for takeoff\n'
 
     #getter 'n' setter
     def isInitialized(self):
         return self.__initialized
 
-    def setInitialized(self):
-        if self.__path and self.__ourIP and self.__ourPort and self.__targetIP and self.__targetPort:
+    def __setInitialized(self):
+        if self.__path and self.__sourceIP and self.__sourcePort and self.__destinationIP and self.__destinationPort:
             self.__initialized = not self.__initialized
 
     def setPath(self, path):
         self.__path = path
-        self.setInitialized()
+        self.__setInitialized()
 
     def getPath(self):
         return self.__path
 
-    def getOurIp(self):
-        return self.__ourIP
+    def getSourceIp(self):
+        return self.__sourceIP
 
-    def setOurIp(self, ip):
+    def setSourceIp(self, ip):
         if not ipchecker(ip):
             raise ValueError
-        self.__ourIP = ip
-        self.setInitialized()
+        self.__sourceIP = ip
+        self.__setInitialized()
 
-    def getTargetIp(self):
-        return self.__targetIP
+    def getDestinationIp(self):
+        return self.__destinationIP
 
-    def setTargetIp(self, ip):
+    def setDestinationIp(self, ip):
         if not ipchecker(ip):
             raise ValueError
-        self.__targetIP = ip
-        self.setInitialized()
+        self.__destinationIP = ip
+        self.__setInitialized()
 
-    def getOurPort(self):
-        return self.__ourPort
+    def getSourcePort(self):
+        return self.__sourcePort
 
-    def setOurPort(self, port):
+    def setSourcePort(self, port):
         if not numchecker(port):
             raise ValueError
-        self.__ourPort = port
-        self.setInitialized()
+        self.__sourcePort = port
+        self.__setInitialized()
 
-    def getTargetPort(self):
-        return self.__targetPort
+    def getDestinationPort(self):
+        return self.__destinationPort
 
-    def setTargetPort(self, port):
+    def setDestinationPort(self, port):
         if not numchecker(port):
             raise ValueError
-        self.__targetPort = port
-        self.setInitialized()
+        self.__destinationPort = port
+        self.__setInitialized()
+
+    def __setAutomaton(self, Automaton):
+        self.__Automaton = Automaton
+
+    def getAutomaton(self):
+        return self.__Automaton
+
+    def __setPrismaLayer(self, PrismaLayer):
+        self.__PrismaLayer = PrismaLayer
+
+    def getPrismaLayer(self):
+        return self.__PrismaLayer
 
     def test(self, full=False):
         # # self.getPrisma('/home/dsmp/work/p2p/samples/airplay1st', enhance=False)
         # # self.getPrisma('/home/dasmoep/work/git/p2p/samples/airplay1st', enhance=True)
         # self.getPrisma('/home/dsmp/Desktop/mynetzob/src/netzob/Import/PrismaImporter/samples/airplay1st', enhance=False)
         # self.convertPrisma2Netzob()
+
+        self.setPath('/home/dsmp/Desktop/mynetzob/src/netzob/Import/PrismaImporter/samples/airplay1st')
+        self.setDestinationIp('127.0.0.1')
+        self.setDestinationPort(36666)
+        self.setSourceIp('127.0.0.1')
+        self.setSourcePort(41337)
+
+        print self.isInitialized()
+
+        self.create()
 
         for s in self.States:
             for t in s.transitions:
@@ -321,7 +330,7 @@ class PrismaImporter(object):
         #         break
 
         # self.Automaton = Automata(start, self.Symbols.values())
-        dot = self.Automaton.generateDotCode()
+        dot = self.getAutomaton().generateDotCode()
         f = open('prismaDot', 'w')
         f.write(dot)
         f.close()
@@ -341,14 +350,14 @@ class PrismaImporter(object):
         # ss.setHorizon([ss, sss, ss])
         # # for SeqRule
         s.setHorizon([s, ss, s])
-        f = PrismaField('41')
+        f = Field('41')
         f.parent = ss
         ss.fields[8] = f
         ss.messages = [RawMessage(ss.specialize(noRules=True))]
         s.applyRules()
         print s.specialize(noRules=True)
         # # for PartRule
-        # f = PrismaField('PREFIX%3Fgetexe%3Dgo.exeSUFFIX')
+        # f = Field('PREFIX%3Fgetexe%3Dgo.exeSUFFIX')
         # ss.fields[8] = f
         # ss.messages = [RawMessage(ss.specialize())]
         # ss.applyRules()
@@ -391,7 +400,7 @@ def ipchecker(ip):
                 return False
         return True
     except (SyntaxError, AttributeError):
-        print "IP should look like this '127.0.0.1'"
+        print "IP should look like '127.0.0.1'"
         return False
 
 

@@ -11,6 +11,7 @@ from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 
 import random
+from urllib import unquote
 
 
 class PrismaSymbol(Symbol):
@@ -45,6 +46,15 @@ class PrismaSymbol(Symbol):
         hor = self.horizon2ID()
         print 'checking horizon {}'.format(hor)
         ruleFlag = False
+        if hor in self.dataRules:
+            print 'found data rules'
+            ruleFlag = True
+            for rule in self.dataRules[hor]:
+                data = random.choice(rule.data)
+                print 'from data pool {} chose {}'.format(rule.data, data)
+                f = PrismaField(unquote(data))
+                f.parent = self
+                self.fields[self.absoluteFields[rule.dstField]] = f
         if hor in self.rules:
             print 'normal rule'
             ruleFlag = True
@@ -80,15 +90,6 @@ class PrismaSymbol(Symbol):
                         f = PrismaField(split[1])
                     f.parent = self
                     self.fields[self.absoluteFields[rule.dstField]] = f
-        if hor in self.dataRules:
-            print 'found data rules'
-            ruleFlag = True
-            for rule in self.dataRules[hor]:
-                data = random.choice(rule.data)
-                print 'from data pool {} chose {}'.format(rule.data, data)
-                f = PrismaField(data)
-                f.parent = self
-                self.fields[self.absoluteFields[rule.dstField]] = f
         if ruleFlag:
             # self.clearMessages()
             self.messages = [RawMessage(self.specialize(noRules=True))]
