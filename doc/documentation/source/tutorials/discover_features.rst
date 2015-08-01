@@ -11,21 +11,26 @@ described features cover the following capabilities:
 
 -  Import of a PCAP file
 -  Format message inference
+
  -  Partitionment of messages following a specific delimiter
  -  Regroupment of messages following a specific key field
  -  Partitionment of a subset a each message following a sequence aligment
  -  Search for relationships in each group of messages
  -  Modification of the format message to apply found relationships
+
 -  Grammar inference
+
  -  Generation of an automaton with one main state according to a captured sequence of messages
  -  Generation of an automaton with a sequence of states according to a captured sequence of messages
  -  Generation of a Prefix Tree Acceptor (PTA) automaton according to a captured sequence of messages
+
 -  Traffic generation and fuzzing
+
  -  Generation of messages following the inferred message format of each group and through visiting the inferred automata
  -  Fuzzing of an implementation by generating altered message formats
 
 Retrieve Netzob and resources.
-^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 At first, retrieve the source code of Netzob::
 
@@ -39,7 +44,7 @@ Then, you can retrieve the source code of the toy protocol implementation used i
 -  `PCAP of sequence 3 <https://dev.netzob.org/attachments/download/180/target_src_v1_session3.pcap>`_
 
 Import messages from a PCAP file.
-^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Reading packets from a PCAP file is done through the PCAPImporter.readFile() static function. This function can optionally take more parameters to specify a BPF filter, the import layer or the number of packets to capture::
 
@@ -76,7 +81,7 @@ The output is::
 
 
 Regroup messages in a symbol and do a format partitionment with a delimiter
-^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 According to a quick review of the displayed messages, the character '#' sounds interesting as i appears in the middle of each message. So let's use it as a delimiter::
 
@@ -179,7 +184,7 @@ Regarding the partitioned messages, this now looks like this::
 
 
 Cluster according to a key field
-^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The first field seems interesting, as it contains some kind of commands ('CMDencrypt', 'CMDidentify', etc.). Let's thus cluster the symbol according to the first field::
 
@@ -211,7 +216,7 @@ The clustering algorithm produces 14 different symbols, where each symbol has a 
 
 
 Apply a format partitionment with a sequence alignment on the third field of each symbol
-^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 As the last field seems to have a dynamic size, let's have a look at what would provide a sequence alignment (i.e. a means to align static and dynamic sub-fields)::
 
@@ -230,7 +235,7 @@ For the symbol 'CMDencrypt', the sequence alignment of the last field produces t
 
 
 Find field relations in each symbol
-^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Let's now find any relationships is those messages::
 
@@ -262,7 +267,7 @@ In the symbol 'CMDencrypt', we have found a relationship between the content of 
 
 
 Find relations and apply them in the symbol structure
-^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 We then modify the format message to apply the relationship we have just found, by creating a Size field whose value depends on the content of a targeted field. We also specify a factor that basically says that the value of the size field should be one eighth of the size of the buffer field (as every field size is expressed in bits by default)::
 
@@ -300,9 +305,9 @@ The 'CMDencrypt' symbol structure now looks like this::
 That's all for the message format inference. Let's now look at the state machine of this toy protocol.
 
 Generate a chained states automaton
-^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-We will generate a basic automaton that illustrates the sequence of commands and responses extracted from a PCAP file. For each message sent, this will create a new transition to a new state, thus the name of _chained states automaton_::
+We will generate a basic automaton that illustrates the sequence of commands and responses extracted from a PCAP file. For each message sent, this will create a new transition to a new state, thus the name of *chained states automaton*::
 
     # Create a session of messages
     session = Session(messages_session1)
@@ -349,7 +354,7 @@ The obtained automaton is finally converted into Dot code in order to render a g
 
 
 Generate a one state automaton
-^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This time, instead of converting a PCAP into a sequence of states for each message observed, we generate a uniq state that accept any of the observed sent messages to trigger a new transition. In response to each sent message (for example 'CMDencrypt'), we expect a specific response (for example 'REDencrypt')::
 
@@ -390,7 +395,7 @@ The obtained automaton is finally converted into Dot code in order to render a g
 
 
 Generate a PTA-based automaton
-^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Finally, we convert multiple sequences of messages taken form different PCAP files to generate an automaton for which we have merge identical paths. The underlying merging strategy is called a Prefix-Tree Acceptor::
 
@@ -450,7 +455,7 @@ The obtained automaton is finally converted into Dot code in order to render a g
 
 
 Generate messages according to the inferred model
-^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 We now have a pretty good knowledge of the format messsage and grammar of the targeted protocol. Let's thus play with this model, by trying to communicate with a real server implementation.
 
@@ -559,7 +564,7 @@ Regarding the real server, we can see that received messages are well formated, 
 
 
 Do some fuzzing on a specific symbol
-^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Finally, we voluntarily twist the format message of the 'CMDencrypt' symbol, in order to try some fuzzing. The format modification corresponds to an extention of the size of the buffer field (i.e. the one which receives the data to encrypt)::
 
