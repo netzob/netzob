@@ -57,36 +57,33 @@ communication protocols. A detailed overview of the project is
 Tutorials
 =========
 
-.. toctree::
-   :hidden:
-   :maxdepth: 2
+.. :ref:`Get started with Netzob<tutorial_get_started>`
+   The goal of this tutorial is to present the usage of each main
+   component of Netzob (inference of message format, construction of
+   the state machine and generation of traffic) through an undocumented
+   protocol.
 
-   tutorials/get_started
-   tutorials/modeling_protocol
-   tutorials/peach
-   tutorials/wireshark
-
-:ref:`Get started with Netzob<tutorial_get_started>`
-  The goal of this tutorial is to present the usage of each main
-  component of Netzob (inference of message format, construction of
-  the state machine and generation of traffic) through an undocumented
-  protocol.
+:ref:`Discover features of Netzob<discover_features>`
+   The goal of this tutorial is to present the usage of each main
+   component of Netzob (inference of message format, construction of
+   the state machine, generation of traffic and fuzzing) through an undocumented
+   protocol.
 
 :ref:`Modeling your Protocol with Netzob<tutorial_modeling_protocol>`
    This tutorial details the main features of Netzob's protocol modeling
    aspects. It shows how your protocol fields can be described with Netzob's
    language.     
   
-:ref:`Auto-generation of Peach pit files/fuzzers<tutorial_peach>`
-  This tutorial shows how to take advantage of the Peach exporter
-  plugin provided in Netzob to automatically generate Peach pit
-  configuration files, thus allowing to do smart fuzzing on
-  undocumented protocols.
+.. :ref:`Auto-generation of Peach pit files/fuzzers<tutorial_peach>`
+   This tutorial shows how to take advantage of the Peach exporter
+   plugin provided in Netzob to automatically generate Peach pit
+   configuration files, thus allowing to do smart fuzzing on
+   undocumented protocols.
 
-:ref:`Auto-generation of Wireshark dissectors<tutorial_wireshark>`
-  This tutorial shows how to leverage Netzob' format message inference
-  in order to automatically generate Wireshark dissectors for
-  proprietary or undocumented protocols.
+.. :ref:`Auto-generation of Wireshark dissectors<tutorial_wireshark>`
+   This tutorial shows how to leverage Netzob' format message inference
+   in order to automatically generate Wireshark dissectors for
+   proprietary or undocumented protocols.
 
 
 Installation Guides
@@ -108,34 +105,33 @@ Installation Guides
 * :ref:`Windows package installation<installation_windows>`
 
 
-User Guide
-==========
-
-Read the :ref:`Netzob User Guide<user_guide>`.
-
-.. toctree::
+.. User Guide
+   ==========
+   
+   Read the :ref:`Netzob User Guide<user_guide>`.
+   
+   .. toctree::
    :maxdepth: 2
 
-   user_guide/import/index
-   user_guide/inference/index
-   user_guide/simulation/index
-   user_guide/export/index
+      user_guide/import/index
+      user_guide/inference/index
+      user_guide/simulation/index
+      user_guide/export/index
+
+
+API Documentation
+=================
+
+.. toctree::
+   :maxdepth: 1
+
+   developer_guide/API/netzob
 
 
 Developer Guide
 ===============
 
-Read the :ref:`Developer Guide<developer_guide>`.
-
 See how you can :ref:`contribute to Netzob<contributing>`
-
-API explanation:
-
-.. toctree::
-   :maxdepth: 2
-
-   developer_guide/API/netzob
-
 
 Indices and tables
 ==================

@@ -37,7 +37,7 @@ Executing this file should return the following::
 If an error related to the netzob import is returned, check the installation process you followed to install netzob.
 
 Modeling the Protocol Vocabulary
-""""""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^
 
 In Netzob, the vocabulary of a protocol consists in a list of symbols.
 
