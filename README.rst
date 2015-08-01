@@ -128,7 +128,8 @@ The folder ``doc/documentation`` contains all the documentation of Netzob.
 The user manual can be generated based on RST sources located in folder
 ``doc/documentation/source`` with the following commands::
 
-  $ sphinx-apidoc -o doc/documentation/source/developer_guide/API/ src/netzob/
+  $ sphinx-apidoc -T -e -f -o doc/documentation/source/developer_guide/API/ src/netzob/
+  $ find doc/documentation/source/developer_guide/API/ -type f -exec sed -i ':a;N;$!ba;s/Subpackages\n-----------\n\n.. toctree::\n/Subpackages\n-----------\n\n.. toctree::\n    :maxdepth: 1\n    /g' {} +
   $ sphinx-build -b html doc/documentation/source/ doc/documentation/build/
 
 Contributing

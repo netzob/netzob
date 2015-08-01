@@ -32,6 +32,8 @@ sys.path.insert(0, os.path.abspath('../../../src/'))
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.todo', 'sphinx.ext.coverage', 'sphinx.ext.ifconfig', 'sphinx.ext.viewcode']
 
+autodoc_default_flags = ['members']
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -79,7 +81,7 @@ exclude_patterns = []
 
 # If true, the current module name will be prepended to all description
 # unit titles (such as .. function::).
-#add_module_names = True
+add_module_names = False
 
 # If true, sectionauthor and moduleauthor directives will be shown in the
 # output. They are ignored by default.
@@ -225,4 +227,7 @@ man_pages = [
 
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 if on_rtd:
-  os.system("sphinx-apidoc -f -o ./developer_guide/API/ ../../../src/netzob")
+  os.system("sphinx-apidoc -T -e -f -o ./developer_guide/API/ ../../../src/netzob")
+
+  # In order to render a nice toctree, add a maxdepth in each file
+  os.system("find ./developer_guide/API/ -type f -exec sed -i ':a;N;$!ba;s/Subpackages\n-----------\n\n.. toctree::\n/Subpackages\n-----------\n\n.. toctree::\n    :maxdepth: 1\n    /g' {} +")
