@@ -10,13 +10,15 @@ class PrismaTransition(Transition):
 
     TYPE = "PrismaTransition"
 
-    def __init__(self, startState, endState, inputSymbol=None, outputSymbols=[], _id=uuid.uuid4(), name=None):
+    def __init__(self, startState, endState, inputSymbol=None, outputSymbols=[],
+                 _id=uuid.uuid4(), name=None, allSymbols=[]):
         super(PrismaTransition, self).__init__(startState, endState, inputSymbol, outputSymbols, _id, name)
 
         if 'UAC' in startState.name.split('|')[-1]:
             self.ROLE = 'client'
         else:
             self.ROLE = 'server'
+        self.allSymbols = allSymbols
 
     @typeCheck(AbstractionLayer)
     def executeAsInitiator(self, abstractionLayer, receivedSymbol=None):
@@ -57,13 +59,21 @@ class PrismaTransition(Transition):
                 print s.name,
             print
 
+            # hopefully we did a good job at learning
             if receivedSymbol in self.outputSymbols:
                 self.active = False
                 return self.endState
+            # hopefully we then did a semi-good job at learning
+            elif receivedSymbol in self.allSymbols:
+                self.active = False
+                self._logger.warning("Received symbol was not excepted. Try to keep session going..")
+                # raise Exception("Received symbol was not excepted.")
+                return self.endState
+            # unfortunately we did not at all
             else:
                 self.active = False
-                self._logger.warning("Received symbol was not excepted.")
-                raise Exception("Received symbol was not excepted.")
+                self.logger.warning("Received Symbol entire unknown")
+                raise Exception("Received symbol is unknown to us.")
 
     def __pickOutputSymbol(self):
 

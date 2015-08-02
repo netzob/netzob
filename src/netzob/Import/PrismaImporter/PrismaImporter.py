@@ -168,7 +168,8 @@ class PrismaImporter(object):
             for s in self.brokenStates:
                 if s[0].name ==getName(nx):
                     temps = self.getTemplates(state.name)
-                    trans.append(PrismaTransition(state, s[0], outputSymbols=temps, inputSymbol=EmptySymbol(), name='tr'))
+                    trans.append(PrismaTransition(state, s[0], outputSymbols=temps, inputSymbol=EmptySymbol(),
+                                                  allSymbols=self.Symbols, name='tr'))
         if trans:
             state.__transitions = trans
         return state

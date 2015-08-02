@@ -53,14 +53,14 @@ class PrismaSymbol(Symbol):
                 data = random.choice(rule.data)
                 print 'from data pool {} chose {}'.format(rule.data, data)
                 f = Field(unquote(data))
-                f.parent = self
-                self.fields[self.absoluteFields[rule.dstField]] = f
+                # f.parent = self
+                self.fields[self.absoluteFields[rule.dstField]].domain = f.domain
         if hor in self.rules:
             print 'normal rule'
             ruleFlag = True
             for rule in self.rules[hor]:
                 srcSym = self.horizon[rule.srcID]
-                self.fields[self.absoluteFields[rule.dstField]] = srcSym.fields[srcSym.absoluteFields[rule.srcField]]
+                self.fields[self.absoluteFields[rule.dstField]].domain = srcSym.fields[srcSym.absoluteFields[rule.srcField]].domain
         if hor in self.copyRules:
             print 'found copy rules'
             ruleFlag = True
@@ -69,8 +69,8 @@ class PrismaSymbol(Symbol):
                 if 'Seq' in rule.typ:
                     f = Field(str(int(srcSym.fields[srcSym.absoluteFields[rule.srcField]].getValues()[0])
                                         + int(rule.content)))
-                    f.parent = self
-                    self.fields[self.absoluteFields[rule.dstField]] = f
+                    # f.parent = self
+                    self.fields[self.absoluteFields[rule.dstField]].domain = f.domain
                 elif 'Comp' in rule.typ:
                     if 'PREFIX' in rule.ptype:
                         f = Field(srcSym.fields[srcSym.absoluteFields[rule.srcField]].getValues()[0] +
@@ -78,8 +78,8 @@ class PrismaSymbol(Symbol):
                     else:
                         f = Field(random.choice(rule.content) +
                                         srcSym.fields[srcSym.absoluteFields[rule.srcField]].getValues()[0])
-                    f.parent = self
-                    self.fields[self.absoluteFields[rule.dstField]] = f
+                    # f.parent = self
+                    self.fields[self.absoluteFields[rule.dstField]].domain = f.domain
                 else:  # 'Part' in rule.typ
                     split = srcSym.fields[srcSym.absoluteFields[rule.srcField]].getValues()[0].split(rule.content, 1)
                     if len(split) != 2:
@@ -88,8 +88,8 @@ class PrismaSymbol(Symbol):
                         f = Field(split[0])
                     else:
                         f = Field(split[1])
-                    f.parent = self
-                    self.fields[self.absoluteFields[rule.dstField]] = f
+                    # f.parent = self
+                    self.fields[self.absoluteFields[rule.dstField]].domain = f.domain
         if ruleFlag:
             # self.clearMessages()
             self.messages = [RawMessage(self.specialize(noRules=True))]
