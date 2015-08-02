@@ -38,6 +38,7 @@
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
 # +---------------------------------------------------------------------------+
+from bitarray import bitarray
 
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
@@ -107,10 +108,12 @@ class FieldSpecializer(object):
 
     """
 
-    def __init__(self, field):
-        self.field = field
+    def __init__(self, field, arbitraryValue = None):
         self._logger.debug("Creating a new FieldSpecializer.")
 
+        self.field = field
+        self.arbitraryValue = arbitraryValue
+                
     @typeCheck(SpecializingPath)
     def specialize(self, specializingPath=None):
         """Execute the specialize operation"""
@@ -119,6 +122,13 @@ class FieldSpecializer(object):
             specializingPath = SpecializingPath(memory=Memory())
 
         self._logger.debug("Specialize field {0}".format(self.field.name))
+
+        # does an arbitrary value is specified ?
+        if self.arbitraryValue is not None:
+            self._logger.debug("An arbitrary value found for current field: '{}'".format(self.arbitraryValue))
+            specializingPath.addResult(self.field.domain, self.arbitraryValue)
+            specializingPath.addResultToField(self.field, self.arbitraryValue)
+            return [specializingPath]    
 
         # does current field has children
         if len(self.field.fields) > 0:
@@ -177,3 +187,24 @@ class FieldSpecializer(object):
             resultSpecializingPath.addResultToField(self.field, resultSpecializingPath.getDataAssignedToVariable(self.field.domain))
 
         return resultSpecializingPaths
+
+    @property
+    def arbitraryValue(self):
+        """Arbitrary value that must be used when specializing the current field.
+        If set, no specializing process is started on the field domain, instead the provided
+        value is considered.
+
+        It should be noted that no verification is made on the arbitrary value. Thus, this value
+        is not forced to follow field definitions.
+
+        :type: a :class:`BitArray` value
+        :raises: :class:`TypeError`
+        """
+        return self.__arbitraryValue
+
+    @arbitraryValue.setter
+    @typeCheck(bitarray)
+    def arbitraryValue(self, value):
+        self.__arbitraryValue = value
+    
+
