@@ -268,9 +268,15 @@ class Size(AbstractRelationVariableLeaf):
                     tmpLen = len(fieldValue)
                     size += tmpLen
 
+
             size = int(size * self.factor + self.offset)
-            b = TypeConverter.convert(size, Decimal, BitArray)
-            
+
+            size_raw = TypeConverter.convert(size, Decimal, Raw, src_unitSize=self.dataType.unitSize)
+            while len(size_raw) < self.dataType.size[0] / 8:
+                size_raw = '\x00'+size_raw
+        
+            b = TypeConverter.convert(size_raw, Raw, BitArray)
+
 #            while len(b)<self.dataType.size[0]:
 #                b.insert(0, False)
         return b
