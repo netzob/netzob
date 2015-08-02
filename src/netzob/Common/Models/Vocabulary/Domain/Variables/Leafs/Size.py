@@ -209,12 +209,12 @@ class Size(AbstractRelationVariableLeaf):
 
         content = parsingPath.getDataAssignedToVariable(self)
         possibleValue = content[:maxSize]
-
+        
         expectedValue = None
         try:
             expectedValue = self._computeExpectedValue(parsingPath)
+        
             if possibleValue[:len(expectedValue)] == expectedValue:
-                self._logger.debug("Callback executed with success")
                 parsingPath.addResult(self, expectedValue.copy())
                 results.append(parsingPath)
             else:
@@ -270,15 +270,16 @@ class Size(AbstractRelationVariableLeaf):
 
 
             size = int(size * self.factor + self.offset)
-
-            size_raw = TypeConverter.convert(size, Decimal, Raw, src_unitSize=self.dataType.unitSize)
-            while len(size_raw) < self.dataType.size[0] / 8:
-                size_raw = '\x00'+size_raw
-        
+            size_raw = TypeConverter.convert(size, Decimal, Raw, src_unitSize=self.dataType.unitSize)        
             b = TypeConverter.convert(size_raw, Raw, BitArray)
+            
+            # add heading '0'
+            while len(b)<self.dataType.size[0]:
+                b.insert(0, False)
 
-#            while len(b)<self.dataType.size[0]:
-#                b.insert(0, False)
+            # in some cases (when unitSize and size are not equal), it may require to delete some '0' in front
+            while len(b)>self.dataType.size[0]:
+                b.remove(0)
         return b
 
     @typeCheck(SpecializingPath)
