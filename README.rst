@@ -132,6 +132,8 @@ The user manual can be generated based on RST sources located in folder
   $ find doc/documentation/source/developer_guide/API/ -type f -exec sed -i ':a;N;$!ba;s/Subpackages\n-----------\n\n.. toctree::\n/Subpackages\n-----------\n\n.. toctree::\n    :maxdepth: 1\n    /g' {} +
   $ sphinx-build -b html doc/documentation/source/ doc/documentation/build/
 
+An up-to-date version of the documentation is hosted on the `Read The Docs platform <https://netzob.readthedocs.org>`.
+  
 Contributing
 ============
 
