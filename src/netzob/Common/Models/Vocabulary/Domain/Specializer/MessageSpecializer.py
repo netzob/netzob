@@ -120,8 +120,6 @@ class MessageSpecializer(object):
             fieldDomain = field.domain
             if fieldDomain is None:
                 raise Exception("Cannot specialize field '{0}' since it defines no domain".format(fieldDomain))
-            self._logger.fatal([id(f) for f in self.presets.keys()])
-            self._logger.fatal(id(field))
         
             fs = FieldSpecializer(field, presets = self.presets)
 

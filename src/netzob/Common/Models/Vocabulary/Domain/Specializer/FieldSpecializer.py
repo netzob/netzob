@@ -130,7 +130,6 @@ class FieldSpecializer(object):
 
         # does an arbitrary value is specified ?
         if self.arbitraryValue is not None:
-            self._logger.fatal("An arbitrary value found for current field: '{}'".format(self.arbitraryValue))
             specializingPath.addResult(self.field.domain, self.arbitraryValue)
             specializingPath.addResultToField(self.field, self.arbitraryValue)
             return [specializingPath]
