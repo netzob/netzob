@@ -46,10 +46,10 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Domain.Specializer.VariableSpecializer import VariableSpecializer
 from netzob.Common.Models.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
-
+from netzob.Common.Models.Types.BitArray import BitArray
 
 @NetzobLogger
-class FieldSpecializer():
+class FieldSpecializer(object):
     """Computes the specialization of a field and its token-tree into a raw data
 
     Examples:
