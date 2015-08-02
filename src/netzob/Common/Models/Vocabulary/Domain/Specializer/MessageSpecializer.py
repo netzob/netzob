@@ -120,13 +120,10 @@ class MessageSpecializer(object):
             fieldDomain = field.domain
             if fieldDomain is None:
                 raise Exception("Cannot specialize field '{0}' since it defines no domain".format(fieldDomain))
-
-            if field in self.presets.keys():
-                arbitraryValue = self.presets[field]
-            else:
-                arbitraryValue = None
+            self._logger.fatal([id(f) for f in self.presets.keys()])
+            self._logger.fatal(id(field))
         
-            fs = FieldSpecializer(field, arbitraryValue = arbitraryValue)
+            fs = FieldSpecializer(field, presets = self.presets)
 
             newSpecializingPaths = []
             for specializingPath in specializingPaths:

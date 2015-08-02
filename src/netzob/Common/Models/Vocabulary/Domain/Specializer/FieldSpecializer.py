@@ -108,11 +108,16 @@ class FieldSpecializer(object):
 
     """
 
-    def __init__(self, field, arbitraryValue = None):
+    def __init__(self, field, presets = None):
         self._logger.debug("Creating a new FieldSpecializer.")
 
         self.field = field
-        self.arbitraryValue = arbitraryValue
+        self.presets = presets
+        
+        if self.presets is not None and self.field in self.presets.keys():
+            self.arbitraryValue = self.presets[self.field]
+        else:
+            self.arbitraryValue = None
                 
     @typeCheck(SpecializingPath)
     def specialize(self, specializingPath=None):
@@ -125,10 +130,10 @@ class FieldSpecializer(object):
 
         # does an arbitrary value is specified ?
         if self.arbitraryValue is not None:
-            self._logger.debug("An arbitrary value found for current field: '{}'".format(self.arbitraryValue))
+            self._logger.fatal("An arbitrary value found for current field: '{}'".format(self.arbitraryValue))
             specializingPath.addResult(self.field.domain, self.arbitraryValue)
             specializingPath.addResultToField(self.field, self.arbitraryValue)
-            return [specializingPath]    
+            return [specializingPath]
 
         # does current field has children
         if len(self.field.fields) > 0:
@@ -144,7 +149,7 @@ class FieldSpecializer(object):
 
         resultPaths = [specializingPath]
         for child in self.field.fields:
-            fs = FieldSpecializer(child)
+            fs = FieldSpecializer(child, presets = self.presets)
 
             tmpResultPaths = []
             for path in resultPaths:
