@@ -16,9 +16,8 @@ by leveraging bio-informatic and grammatical inferring algorithms in a semi-auto
 
 Netzob is suitable for reversing network protocols, structured files and system and
 process flows (IPC and communication with drivers and devices).
-Dedicated modules are provided to capture and import data in multiple contexts (network, file and process data acquisition).
-Once inferred, a protocol model can afterward be exported to third party tools (Peach, Scapy, Wireshark, etc.)
-or used in the traffic generation engine, to allow simulation of realistic and controllable communication endpoints and flows.
+Once inferred, a protocol model can be used in our traffic generation engine, to allow simulation of realistic
+and controllable communication endpoints and flows.
 
 Netzob handles different types of protocols: text protocols (like HTTP and IRC), delimiter-based protocols,
 fixed fields protocols (like IP and TCP) and variable-length fields protocols (like TLV-based protocols).
@@ -26,12 +25,11 @@ fixed fields protocols (like IP and TCP) and variable-length fields protocols (l
 Technical Description
 ---------------------
 
-Netzob's source code is mostly made of Python (90%) with some specific
-extensions in C (6%). It includes a graphical interface based on GTK3.
+This version of Netzob should used as a python library to be imported either in your scripts
+or in favorite interactive shell (ipython?).
 
-The tool is made of a core (officially maintained) and of bunch of
-plugins (exporters, importers, ...). Some plugins are provided by the team while others are
-created and managed directly by users.
+Netzob's source code is mostly made of Python (90%) with some specific
+extensions in C (6%). 
 
 More Information
 ----------------
@@ -141,12 +139,6 @@ Defects and Features  Requests
 ------------------------------
 
 Help-us by reporting bugs and requesting features using the `Bug Tracker <https://dev.netzob.org/projects/netzob/issues>`_.
-
-Translation
------------
-
-Netzob has `support <https://dev.netzob.org/projects/netzob/wiki/Translation_support>`_ for translation.
-Currently English and French languages are supported. New languages are welcome.
 
 Join the Development Team
 -------------------------
