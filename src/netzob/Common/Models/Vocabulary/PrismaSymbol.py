@@ -2,7 +2,7 @@ __author__ = 'dsmp'
 
 from netzob.Common.Models.Vocabulary.Symbol import Symbol
 from netzob.Import.PrismaImporter.prisma.Hist import Hist
-from netzob.Common.Models.Vocabulary.PrismaField import PrismaField
+from netzob.Common.Models.Vocabulary.Field import Field
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Common.Utils.TypedList import TypedList
 from netzob.Common.Models.Vocabulary.Messages.AbstractMessage import AbstractMessage
@@ -30,7 +30,7 @@ class PrismaSymbol(Symbol):
         self.messages = messages
         if fields is None:
             # create a default empty field
-            fields = [PrismaField()]
+            fields = [Field()]
         self.fields = fields
 
     def setHorizon(self, horizon):
@@ -52,7 +52,7 @@ class PrismaSymbol(Symbol):
             for rule in self.dataRules[hor]:
                 data = random.choice(rule.data)
                 print 'from data pool {} chose {}'.format(rule.data, data)
-                f = PrismaField(unquote(data))
+                f = Field(unquote(data))
                 f.parent = self
                 self.fields[self.absoluteFields[rule.dstField]] = f
         if hor in self.rules:
@@ -67,16 +67,16 @@ class PrismaSymbol(Symbol):
             for rule in self.copyRules[hor]:
                 srcSym = self.horizon[rule.srcID]
                 if 'Seq' in rule.typ:
-                    f = PrismaField(str(int(srcSym.fields[srcSym.absoluteFields[rule.srcField]].getValues()[0])
+                    f = Field(str(int(srcSym.fields[srcSym.absoluteFields[rule.srcField]].getValues()[0])
                                         + int(rule.content)))
                     f.parent = self
                     self.fields[self.absoluteFields[rule.dstField]] = f
                 elif 'Comp' in rule.typ:
                     if 'PREFIX' in rule.ptype:
-                        f = PrismaField(srcSym.fields[srcSym.absoluteFields[rule.srcField]].getValues()[0] +
+                        f = Field(srcSym.fields[srcSym.absoluteFields[rule.srcField]].getValues()[0] +
                                         random.choice(rule.content))
                     else:
-                        f = PrismaField(random.choice(rule.content) +
+                        f = Field(random.choice(rule.content) +
                                         srcSym.fields[srcSym.absoluteFields[rule.srcField]].getValues()[0])
                     f.parent = self
                     self.fields[self.absoluteFields[rule.dstField]] = f
@@ -85,9 +85,9 @@ class PrismaSymbol(Symbol):
                     if len(split) != 2:
                         continue
                     if 'PREFIX' in rule.ptype:
-                        f = PrismaField(split[0])
+                        f = Field(split[0])
                     else:
-                        f = PrismaField(split[1])
+                        f = Field(split[1])
                     f.parent = self
                     self.fields[self.absoluteFields[rule.dstField]] = f
         if ruleFlag:

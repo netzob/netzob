@@ -41,4 +41,3 @@ from netzob.Common.Models.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 
 from netzob.Common.Models.Vocabulary.PrismaSymbol import PrismaSymbol
-from netzob.Common.Models.Vocabulary.PrismaField import PrismaField
