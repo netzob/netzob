@@ -46,6 +46,7 @@ from netzob.Common.Models.Vocabulary.Domain.Specializer.SpecializingPath import 
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.ASCII import ASCII
+from netzob.Common.Models.Vocabulary.Field import Field
 
 
 @NetzobLogger
@@ -96,10 +97,11 @@ class MessageSpecializer(object):
 
     """
 
-    def __init__(self, memory=None):
+    def __init__(self, memory=None, presets=None):
         if memory is None:
             memory = Memory()
         self.memory = memory
+        self.presets = presets
 
     @typeCheck(Symbol)
     def specializeSymbol(self, symbol):
@@ -119,7 +121,12 @@ class MessageSpecializer(object):
             if fieldDomain is None:
                 raise Exception("Cannot specialize field '{0}' since it defines no domain".format(fieldDomain))
 
-            fs = FieldSpecializer(field)
+            if field in self.presets.keys():
+                arbitraryValue = self.presets[field]
+            else:
+                arbitraryValue = None
+        
+            fs = FieldSpecializer(field, arbitraryValue = arbitraryValue)
 
             newSpecializingPaths = []
             for specializingPath in specializingPaths:
@@ -161,3 +168,49 @@ class MessageSpecializer(object):
         self.memory = retainedPath.memory
 
         return retainedPath
+
+
+    @property
+    def memory(self):
+        """Memory used while specializing current symbol.
+
+        :type: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Memory.Memory`
+        :raises: :class:`TypeError`, :class:`ValueError`
+        """
+        return self.__memory
+
+    @memory.setter
+    @typeCheck(Memory)
+    def memory(self, memory):
+        if memory is None:
+            raise ValueError("Memory cannot be None")
+        self.__memory = memory
+
+    @property
+    def presets(self):
+        """A dictionnary that maps arbitrary values some of the specified fields
+        should take on specialization.
+
+        :type: :class:`dict`
+        :raises: :class:`TypeError`, :class:`ValueError`
+        """
+
+        return self.__presets
+
+    @presets.setter
+    def presets(self, presets):
+        if presets is None:
+            presets = dict()
+
+        for k, v in presets.iteritems():
+            if not isinstance(k, Field):
+                raise Exception("Preset's keys must be of Field types")
+
+        self.__presets = dict()
+        
+        for k, v in presets.iteritems():
+            self.__presets[k] = v
+    
+    
+        
+            

@@ -98,7 +98,7 @@ class Symbol(AbstractField):
         self.fields = fields
 
     @typeCheck(Memory, object)
-    def specialize(self, memory=None, generationStrategy=None):
+    def specialize(self, memory=None, generationStrategy=None, presets=None):
         """Specialize and generate an hexastring which content
         follows the fields definitions attached to the field of the symbol.
 
@@ -112,6 +112,29 @@ class Symbol(AbstractField):
         >>> print len(result)
         6
 
+        You can also preset the value of some variables included in the symbol definition.
+
+        >>> from netzob.all import *
+        >>> f1 = Field(domain=ASCII("hello "))
+        >>> f2 = Field(domain=ASCII(nbChars=(1,10)))
+        >>> s = Symbol(fields = [f1, f2])
+        >>> presetValues = dict()
+        >>> presetValues[f2] = TypeConverter.convert("antoine", ASCII, BitArray)
+        >>> print s.specialize(presets = presetValues)
+        hello antoine
+
+        A preseted valued bypasses all the constraints checks on your field definition.
+        For example, in the following example it can be use to bypass a size field definition.
+
+        >>> from netzob.all import *
+        >>> f1 = Field()
+        >>> f2 = Field(domain=Raw(nbBytes=(10,15)))
+        >>> f1.domain = Size(f2)
+        >>> s = Symbol(fields=[f1, f2])
+        >>> presetValues = {f1: TypeConverter.convert("\xff", Raw, BitArray)}        
+        >>> print repr(s.specialize(presets = presetValues)[0])
+        '\\xff'
+
         :keyword generationStrategy: if set, the strategy will be used to generate the fields definitions
         :type generaionrStrategy: :class:``
 
@@ -120,7 +143,7 @@ class Symbol(AbstractField):
         :raises: :class:`netzob.Common.Models.Vocabulary.AbstractField.GenerationException` if an error occurs while generating a message
         """
         from netzob.Common.Models.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
-        msg = MessageSpecializer(memory=memory)
+        msg = MessageSpecializer(memory=memory, presets=presets)
         spePath = msg.specializeSymbol(self)
 
         if spePath is not None:
