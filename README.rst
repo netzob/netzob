@@ -26,7 +26,9 @@ Technical Description
 ---------------------
 
 This version of Netzob should used as a python library to be imported either in your scripts
-or in favorite interactive shell (ipython?).
+or in favorite interactive shell (ipython?). Once installed, we recommend the following statement to import Netzob::
+
+  from netzob.all import *
 
 Netzob's source code is mostly made of Python (90%) with some specific
 extensions in C (6%). 
