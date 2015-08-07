@@ -85,7 +85,7 @@ class TCPClient(AbstractChannel):
 
     """
 
-    def __init__(self, remoteIP, remotePort, localIP=None, localPort=None, timeout=5):
+    def __init__(self, remoteIP, remotePort, localIP=None, localPort=None, timeout=1):
         super(TCPClient, self).__init__(isServer=False)
         self.remoteIP = remoteIP
         self.remotePort = remotePort

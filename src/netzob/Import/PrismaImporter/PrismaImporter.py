@@ -3,6 +3,7 @@ import copy
 import os
 
 from netzob.Common.Models.Vocabulary.PrismaSymbol import PrismaSymbol
+from netzob.Common.Models.Vocabulary.Symbol import Symbol
 from netzob.Common.Models.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Common.Models.Vocabulary.Field import Field
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
@@ -18,7 +19,7 @@ from netzob.Common.Models.Simulator.Channels.TCPClient import TCPClient
 
 
 class PrismaImporter(object):
-    def __init__(self):  # , path=None, targetIP=None, targetPort=None, ourIP=None, ourPort=None):
+    def __init__(self):
         print("\nHello Netzob, this is Prisma...\nI'm gonna take over...\nDon't make it harder than necessary.\n")
         # of no greater use later on
         self.rules = None
@@ -49,11 +50,8 @@ class PrismaImporter(object):
         # everything needed for communication
         self.__Automaton = None
         self.__PrismaLayer = None
-        self.Start = None
+        self.__Start = None
         return
-
-
-        # self.create(path, targetIP, targetPort, ourIP, ourPort)
 
     def getPrisma(self, path, enhance=False):
         templates, model, rules = None, None, None
@@ -91,7 +89,7 @@ class PrismaImporter(object):
     def convertPrisma2Netzob(self):
         self.Symbols = self.createSymbols()
 
-        # get INITIAL state
+        # get initial state
         for k in self.model.model.keys():
             if k.getCurState() == 'START':
                 break
@@ -111,11 +109,11 @@ class PrismaImporter(object):
             else:
                 src = 'server'
                 dst = 'client'
-            fields = map(lambda x: Field(sanitizeRule(unquote(x))), temp.content)
+            fields = map(lambda x: Field(*sanitizeRule(unquote(x), src)), temp.content)
             if not fields:
                 continue
-            s = PrismaSymbol(fields=fields)
-            mess = RawMessage(s.specialize(), destination=dst, source=src)
+            s = Symbol(fields=fields, name=str(ID))
+            msg = RawMessage(s.specialize(), destination=dst, source=src)
             absFields = []
             rules = cpyR = datR = {}
             if ID in self.absoluteFields:
@@ -129,7 +127,7 @@ class PrismaImporter(object):
             if ID in self.dataRules:
                 datR = self.dataRules[ID]
                 datR = genDict(datR)
-            s = PrismaSymbol(absFields=absFields, name=str(ID), fields=fields, messages=[mess],
+            s = PrismaSymbol(absFields=absFields, name=str(ID), fields=fields, messages=[msg],
                              rules=rules, copyRules=cpyR, dataRules=datR)
             symbolContainer.update({ID: s})
         return symbolContainer
@@ -163,13 +161,12 @@ class PrismaImporter(object):
         state, nextStates = state
         # are you initialState?
         if state.name == '|'.join(self.horizonLength*['START']):
-            self.Start = state
+            self.__Start = state
         for nx in nextStates:
             for s in self.brokenStates:
                 if s[0].name ==getName(nx):
                     temps = self.getTemplates(state.name)
-                    trans.append(PrismaTransition(state, s[0], outputSymbols=temps, inputSymbol=EmptySymbol(),
-                                                  allSymbols=self.Symbols, name='tr'))
+                    trans.append(PrismaTransition(state, s[0], outputSymbols=temps, inputSymbol=EmptySymbol(), name='tr'))
         if trans:
             state.__transitions = trans
         return state
@@ -217,21 +214,20 @@ class PrismaImporter(object):
             if template.fields:
                 self.absoluteFields.update({template.ID: template.fields})
 
-    def create(self):  # , path, targetIP, targetPort, ourIP, ourPort):
+    def create(self, enhance=False):
         if not self.isInitialized():
             print 'Information missing.'
             return
         # read files from location
         print 'reading from location {}'.format(self.getPath())
-        self.getPrisma(self.getPath(), enhance=False)
+        self.getPrisma(self.getPath(), enhance)
         # build netzob structures
         print 'building Netzob structures'
         self.convertPrisma2Netzob()
-        self.__setAutomaton(Automata(self.Start, self.Symbols.values()))
-        # self.__Automaton = Automata(self.Start, self.Symbols.values())
-        print 'seeting up CHANNEL from {}:{} to {}:{}'.format(self.getSourceIp(), self.getSourcePort(), self.getDestinationIp(), self.getDestinationPort())
-        chan = TCPClient(self.getSourceIp(), self.getSourcePort(), self.getDestinationIp(), self.getDestinationPort())
-        self.__setPrismaLayer(PrismaLayer(chan, self.Symbols.values(), self.horizonLength+1))
+        self.__setAutomaton(Automata(self.__Start, self.Symbols.values()))
+        print 'setting up CHANNEL from {}:{} to {}:{}'.format(self.getSourceIp(), self.getSourcePort(), self.getDestinationIp(), self.getDestinationPort())
+        chan = TCPClient(self.getDestinationIp(), self.getDestinationPort(), self.getSourceIp(), self.getSourcePort())
+        self.__setLayer(PrismaLayer(chan, self.Symbols.values(), self.horizonLength+1))
         print 'ready for takeoff\n'
 
     #getter 'n' setter
@@ -291,87 +287,35 @@ class PrismaImporter(object):
     def getAutomaton(self):
         return self.__Automaton
 
-    def __setPrismaLayer(self, PrismaLayer):
+    def __setLayer(self, PrismaLayer):
         self.__PrismaLayer = PrismaLayer
 
-    def getPrismaLayer(self):
+    def getLayer(self):
         return self.__PrismaLayer
 
-    def test(self, full=False):
-        # # self.getPrisma('/home/dsmp/work/p2p/samples/airplay1st', enhance=False)
-        # # self.getPrisma('/home/dasmoep/work/git/p2p/samples/airplay1st', enhance=True)
-        # self.getPrisma('/home/dsmp/Desktop/mynetzob/src/netzob/Import/PrismaImporter/samples/airplay1st', enhance=False)
-        # self.convertPrisma2Netzob()
-
-        self.setPath('/home/dsmp/Desktop/mynetzob/src/netzob/Import/PrismaImporter/samples/airplay1st')
-        self.setDestinationIp('127.0.0.1')
-        self.setDestinationPort(36666)
-        self.setSourceIp('127.0.0.1')
-        self.setSourcePort(41337)
-
-        print self.isInitialized()
-
-        self.create()
-
-        for s in self.States:
-            for t in s.transitions:
-                if t.endState not in self.States:
-                    print(t.startState.name, '->', t.endState.name)
-
-        for s in self.States:
-            for t in s.transitions:
-                print(t.startState.name, '->', t.endState.name, 'as', t.ROLE, 'by')
-                for osy in t.outputSymbols:
-                    print(osy.name,)
-                print
-
-        # for start in self.States:
-        #     if start.name == '|'.join(self.horizonLength*['START']):
-        #         self.Start = start
-        #         break
-
-        # self.Automaton = Automata(start, self.Symbols.values())
-        dot = self.getAutomaton().generateDotCode()
-        f = open('prismaDot', 'w')
-        f.write(dot)
-        f.close()
-        print 'dotcode written to file "prismaDot"'
-
-        # chan = TCPClient('127.0.0.1', 36666, '127.0.0.1', 41337)
-        # self.PrismaLayer = PrismaLayer(chan, self.Symbols.values(), self.horizonLength+1)
-
-        # for s in self.Symbols.values():
-        #     s.messages = [RawMessage(s.specialize())]
-
-        # test rules
-        s = self.Symbols[14]
-        ss = self.Symbols[5]
-        sss = self.Symbols[19]
-
-        # ss.setHorizon([ss, sss, ss])
-        # # for SeqRule
-        s.setHorizon([s, ss, s])
-        f = Field('41')
-        f.parent = ss
-        ss.fields[8] = f
-        ss.messages = [RawMessage(ss.specialize(noRules=True))]
-        s.applyRules()
-        print s.specialize(noRules=True)
-        # # for PartRule
-        # f = Field('PREFIX%3Fgetexe%3Dgo.exeSUFFIX')
-        # ss.fields[8] = f
-        # ss.messages = [RawMessage(ss.specialize())]
-        # ss.applyRules()
-        # print ss.specialize()
-        return
+    def getInitial(self):
+        return self.__Start
 
 
 # what to do about ruleFields?
-def sanitizeRule(x):
+def sanitizeRule(x, role):
     if x == '':
-        return ASCII(nbChars=(0, 100))
-        # return 'dsmp'
-    return x
+        return [ASCII(nbChars=(0, 30))]
+    # this is a nightmare
+    # be a little bit more cool if some received message does not
+    # fits a template; a plan never survives first contact with reality
+    if role == 'server':
+        l = len(x)
+        if 'port' in x or 'Port' in x:
+            return [ASCII(nbChars=(l-10, l+10)), x], 'broken'
+        # are you an integer field?
+        b = numchecker(x, False)
+        if b:
+            # if so, model it as a field with no content in a variable size
+            # will match many integers then
+            # note: for RECEIVING only!
+            return [ASCII(nbChars=(1, l+2))]
+    return [x]
 
 
 def getName(prismaState):
@@ -405,11 +349,12 @@ def ipchecker(ip):
         return False
 
 
-def numchecker(num):
+def numchecker(num, port=True):
     try:
         int(num)
         return True
     except ValueError:
-        print 'You know how a port looks like..'
+        if port:
+            print 'You know how a port looks like..'
         return False
 

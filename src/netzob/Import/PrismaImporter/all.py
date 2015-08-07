@@ -30,3 +30,4 @@
 # see docs.python.org/2/tutorial/modules.html
 
 from netzob.Import.PrismaImporter.PrismaImporter import PrismaImporter
+from netzob.Import.PrismaImporter.PrismaTest.PrismaTest import PrismaTest
