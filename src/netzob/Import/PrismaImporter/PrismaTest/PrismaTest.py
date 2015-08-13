@@ -6,8 +6,10 @@ import time
 from socket import error as socket_error
 
 from netzob.Import.PrismaImporter.PrismaImporter import PrismaImporter
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 
-
+@NetzobLogger
 class PrismaTest(object):
     def __init__(self):
         self.pi = PrismaImporter()
@@ -40,7 +42,13 @@ class PrismaTest(object):
             while sPre != s:
                 sPre = s
                 s = s.executeAsInitiator(l)
+                if s =='cycle':
+                    self._logger.critical('cycle detected')
+                    time.sleep(0.3)
+                    l.closeChannel()
+                    return True
             l.closeChannel()
+            time.sleep(1)
             return True
         # probably one cycle ended in the target not responding
         # causing an excaption to be thrown
@@ -48,15 +56,34 @@ class PrismaTest(object):
         except Exception, e:
             return True
 
-    def fuzzyLearn(self):
+    def toast(self, count=0):
+        self.fuzzyLearn(count)
+
+    def fuzzyLearn(self, count=0):
         ret = True
         init = True
+        self.pi.getLayer().reset()
         while ret:
             ret = self.run(init)
             init = False
+            count += 1
+            if not count % 100:
+                self._logger.critical('=== {} === \r\n\r\n'.format(count))
+                self.dot(count)
 
-    def test(self, full=False):
-        self.pi.setPath('/home/dsmp/work/pulsar/src/models/evo1')
+    def dot(self, count):
+        try:
+            os.makedirs('{}/graphs'.format(self.pi.getPath()))
+        except OSError:
+            pass
+        dot = self.pi.getAutomaton().generateDotCode()
+        f = open('{}/graphs/{}'.format(self.pi.getPath(), count), 'w')
+        f.write(dot)
+        f.close()
+        return
+
+    def test(self, dot=True, check=False):
+        self.pi.setPath('/home/dsmp/work/pulsar/src/models/myPlay')
         self.pi.setDestinationIp('127.0.0.1')
         self.pi.setDestinationPort(36666)
         self.pi.setSourceIp('127.0.0.1')
@@ -65,9 +92,27 @@ class PrismaTest(object):
         print self.pi.isInitialized()
 
         self.pi.create(enhance=True)
-        dot = self.pi.getAutomaton().generateDotCode()
-        f = open('prismaDot', 'w')
-        f.write(dot)
-        f.close()
-
+        # there seems to be a problem specializing some Symbols?
+        if check:
+            self._logger.info('testing generated Symbols')
+            for sym in self.pi.Symbols.values():
+                remake(sym)
+        if dot:
+            self.dot('initial')
         return
+
+
+def remake(sym, rerun=False):
+        if sym.role == 'client':
+            try:
+                sym.getCells()
+                sym.specialize(noRules=True)
+            except Exception:
+                if rerun:
+                    print 'deleting entire symbol {}'.format(sym.name)
+                    # self._logger.error('problem with symbol No.{} --> removing it'.format(sym.name))
+                else:
+                    sym.messages = [RawMessage(sym.specialize())]
+                    remake(sym, True)
+
+

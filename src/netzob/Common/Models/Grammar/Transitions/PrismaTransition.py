@@ -1,11 +1,12 @@
-import uuid
-import random
-import time
-
 from netzob.Common.Models.Grammar.Transitions.Transition import Transition
 from netzob.Common.Models.Simulator.AbstractionLayer import AbstractionLayer
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+
+import uuid
+import random
+import time
+import copy
 
 
 @NetzobLogger
@@ -15,7 +16,12 @@ class PrismaTransition(Transition):
 
     def __init__(self, startState, endState, inputSymbol=None, outputSymbols=[], _id=uuid.uuid4(), name=None):
         super(PrismaTransition, self).__init__(startState, endState, inputSymbol, outputSymbols, _id, name)
-
+        # uniqSym = []
+        # for s in self.outputSymbols:
+        #     uniqSym.append(copy.copy(s))
+        self.emitted = []
+        self.invalid = False
+        self.active = False
         if 'UAC' in startState.name.split('|')[-1]:
             self.ROLE = 'client'
         else:
@@ -23,6 +29,15 @@ class PrismaTransition(Transition):
 
     @typeCheck(AbstractionLayer)
     def executeAsInitiator(self, abstractionLayer):
+        try:
+            if len(abstractionLayer.sesSta[-1]) > 29 and len(set(abstractionLayer.sesSta[-1][-10:])) < 7:  # len shortest cycle in graph..
+                # maybe we are cycling?
+                abstractionLayer.sesSta.append([])
+                abstractionLayer.sesSym.append([])
+                return 'cycle'
+        except Exception:
+            print 'what the hell'
+            exit()
         if abstractionLayer is None:
             raise TypeError("Abstraction layer cannot be None")
 
@@ -82,4 +97,21 @@ class PrismaTransition(Transition):
                 return self.endState
 
     def __pickOutputSymbol(self):
-        return random.choice(self.outputSymbols)
+        # if len(self.outputSymbols) == 1:
+        #     return self.outputSymbols[0]
+        self._logger.info("picking symbol")
+        pos = list(set(self.outputSymbols)-set(self.emitted))
+        c = random.choice(pos)
+        # kill too faulty Symbols
+        if (c.faulty >= 9 and c.faulty*1.0/c.emitted > 0.75) or (c.emitted >= 29 and c.faulty*1.0/c.emitted > 0.05):
+            self._logger.critical("picked symbol{} too faulty".format(c.name))
+            if c in self.outputSymbols:
+                self.outputSymbols.remove(c)
+            # no emitable Symbols left? -> invalidate transition
+            if len(self.outputSymbols) == 0:
+                self._logger.critical("invalidating trans")
+                self.invalid = True
+        self.emitted.append(c)
+        if len(self.emitted) >= len(self.outputSymbols):
+            self.emitted = []
+        return c

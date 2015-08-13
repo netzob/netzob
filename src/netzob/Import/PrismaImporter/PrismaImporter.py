@@ -7,7 +7,7 @@ from netzob.Common.Models.Vocabulary.Symbol import Symbol
 from netzob.Common.Models.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Common.Models.Vocabulary.Field import Field
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
-from netzob.Common.Models.Grammar.States.State import State
+from netzob.Common.Models.Grammar.States.PrismaState import PrismaState
 from netzob.Common.Models.Grammar.Transitions.PrismaTransition import PrismaTransition
 from netzob.Common.Models.Grammar.Automata import Automata
 from netzob.Common.Models.Types.ASCII import ASCII
@@ -128,16 +128,16 @@ class PrismaImporter(object):
                 datR = self.dataRules[ID]
                 datR = genDict(datR)
             s = PrismaSymbol(absFields=absFields, name=str(ID), fields=fields, messages=[msg],
-                             rules=rules, copyRules=cpyR, dataRules=datR)
+                             rules=rules, copyRules=cpyR, dataRules=datR, role=src)
             symbolContainer.update({ID: s})
         return symbolContainer
 
     def createStates(self, prismaState):
         if 'END' in prismaState.getCurState():
-            return [[State(getName(prismaState))]]
+            return [[PrismaState(getName(prismaState))]]
         if prismaState not in self.model.model.keys():
             return
-        curState = State(getName(prismaState))
+        curState = PrismaState(getName(prismaState))
         nextStates = []
         for nx in self.model.model[prismaState]:
             nextStates.append(nx)
@@ -164,11 +164,23 @@ class PrismaImporter(object):
             self.__Start = state
         for nx in nextStates:
             for s in self.brokenStates:
-                if s[0].name ==getName(nx):
+                if s[0].name == getName(nx):
                     temps = self.getTemplates(state.name)
-                    trans.append(PrismaTransition(state, s[0], outputSymbols=temps, inputSymbol=EmptySymbol(), name='tr'))
+                    uniqTemps = []
+                    for t in temps:
+                        uniqTemps.append(copy.copy(t))
+                    trans.append(PrismaTransition(state, s[0], outputSymbols=uniqTemps, inputSymbol=EmptySymbol(),
+                                                  name='{}-->{}'.format(state.name, s[0].name)))
         if trans:
             state.__transitions = trans
+            # uniqTrans = []
+            # for t in trans:
+            #     uniqTrans.append(copy.copy(t))
+            state.trans = trans
+            # uniqTrans = []
+            # for t in trans:
+            #     uniqTrans.append(copy.copy(t))
+            # state.memorizedTransitions = trans
         return state
 
     def getTemplates(self, stateName):
@@ -300,7 +312,10 @@ class PrismaImporter(object):
 # what to do about ruleFields?
 def sanitizeRule(x, role):
     if x == '':
-        return [ASCII(nbChars=(0, 30))]
+        if role == 'client':
+            return [ASCII(nbChars=(1, 3))]
+        else:
+            return [ASCII(nbChars=(1, 30))]
     # this is a nightmare
     # be a little bit more cool if some received message does not
     # fits a template; a plan never survives first contact with reality

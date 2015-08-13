@@ -1,5 +1,3 @@
-import time
-
 from netzob.Common.Models.Simulator.AbstractionLayer import AbstractionLayer
 from netzob.Common.Models.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
@@ -18,39 +16,50 @@ class PrismaLayer(AbstractionLayer):
         self.sesSta = [[]]
         self.unknowns = []
         self.unknownCount = -2
+        self.removed = []
 
     def reInit(self):
         e = EmptySymbol()
         e.name = '-1'
         self.symbolBuffer = len(self.symbolBuffer)*[e]
+
+    def reset(self):
+        self.reInit()
+        self.sesSym = [[]]
+        self.sesSta = [[]]
+        self.unknowns = []
+        self.unknownCount = -2
         return
 
     def updateSymbolBuffer(self, nextSymbol):
         self.symbolBuffer = self.symbolBuffer[1:] + [nextSymbol]
 
-    def fuzzyCrack(self, data):
-        if data:
-            l = len(data)
-            for sym in self.symbols:
-                m = sym.messages[0].data
-                if len(m) == l:
-                    pass
-
-    def sessionOver(self):
-        self._logger.critical('The session is over')
+    def sessionOver(self, msg):
+        self._logger.critical('The session is over: {}'.format(msg))
+        # rule out errors
+        # last sent message
+        ds = self.sesSym[-1][-1]
+        ds.faulty += 1
+        si = self.sesSym[-1][-3]
+        si.faulty += 0.05
+        self._logger.critical('incrementing faulty of symNo.{} faulty:{} emitted:{} ratio:{}'.format(
+            ds.name, ds.faulty, ds.emitted, float(ds.faulty)/ds.emitted))
+        self._logger.critical('incrementing faulty of symNo.{} faulty:{} emitted:{} ratio:{}'.format(
+            si.name, si.faulty, si.emitted, float(si.faulty)/si.emitted))
         self.sesSym.append([])
         self.sesSta.append([])
-        time.sleep(0.75)
 
     def readSymbol(self):
         try:
             symbol, data = super(PrismaLayer, self).readSymbol()
         except Exception:
-            self.sessionOver()
+            self.sessionOver(msg='broken channel?')
+            raise Exception("socket is not available")
+        if data == '':
+            self.sessionOver(msg='no data received')
             raise Exception("socket is not available")
         if 'Unknown' in symbol.name:
             self._logger.info("having unknown")
-            # s = self.fuzzyCrack(data)
             symbol = PrismaSymbol(name='{}'.format(self.unknownCount), messages=[RawMessage(data)])
             # maybe we saw this..
             seen = False
@@ -72,10 +81,11 @@ class PrismaLayer(AbstractionLayer):
                     self.symbols.append(symbol)
                 else:
                     self._logger.info("record new unknown at ID{}".format(-1))
-        self._logger.error("going on as usual")
-        self.sesSym[-1].append(symbol.name)
+        self._logger.warning("going on as usual")
+        self.sesSym[-1].append(symbol)
         self.updateSymbolBuffer(symbol)
         symbol.setHorizon(self.symbolBuffer)
+        symbol.messages = [RawMessage(data)]
         self._logger.info('current horizon {}'.format(symbol.horizon2ID()))
         return symbol, data
 
@@ -88,8 +98,9 @@ class PrismaLayer(AbstractionLayer):
         # apply rules to symbol (the big show) NOT TO BE DONE HERE
         # muahhahahahhahahah
         # emit as usual
+        self.sesSym[-1].append(symbol)
+        symbol.emitted += 1
         self._writeSymbol(symbol)
-        self.sesSym[-1].append(symbol.name)
 
     # copied from usal AbstractionLayer
     # need to get hands on the data generated during sending
@@ -105,7 +116,15 @@ class PrismaLayer(AbstractionLayer):
             raise TypeError("The symbol to write on the channel cannot be None")
 
         self._logger.info("Going to specialize symbol: '{0}' (id={1}).".format(symbol.name, symbol.id))
-        data = symbol.specialize()
+        try:
+            data = symbol.specialize()
+        except Exception:
+            self._logger.error('could not specialize sym{}'.format(symbol.name))
+            try:
+                symbol.messages = [RawMessage(symbol.specialize(noRules=True))]
+                data = symbol.specialize()
+            except Exception:
+                self._logger.critical('could not specialize sym{} twice'.format(symbol.name))
         symbol.messages = [RawMessage(data)]
         self._logger.info("Data generated from symbol '{0}': {1}.".format(symbol.name, repr(data)))
 
@@ -113,7 +132,7 @@ class PrismaLayer(AbstractionLayer):
         try:
             self.channel.write(data)
         except Exception:
-            self.sessionOver()
-            raise Exception("socket is not available")
+            self.sessionOver(role='client')
+            raise Exception("error on writing to channel")
         self._logger.info("Writing to communication channel done..")
         return data
