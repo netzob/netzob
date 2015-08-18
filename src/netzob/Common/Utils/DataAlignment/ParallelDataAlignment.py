@@ -216,6 +216,7 @@ class ParallelDataAlignment(object):
         :return: the aligned data
         :rtype: :class:`netzob.Common.Utils.MatrixList.MatrixList`
         """
+        print 'alinging with depth {}, threads {}'.format(depth, nbThread)
         pAlignment = ParallelDataAlignment(field, depth, nbThread, encoded, styled)
         return pAlignment.execute(data)
 

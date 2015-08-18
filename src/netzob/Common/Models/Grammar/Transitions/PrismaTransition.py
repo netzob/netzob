@@ -2,11 +2,11 @@ from netzob.Common.Models.Grammar.Transitions.Transition import Transition
 from netzob.Common.Models.Simulator.AbstractionLayer import AbstractionLayer
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Models.Vocabulary.PrismaSymbol import PrismaSymbol
 
 import uuid
 import random
 import time
-import copy
 
 
 @NetzobLogger
@@ -19,6 +19,14 @@ class PrismaTransition(Transition):
         # uniqSym = []
         # for s in self.outputSymbols:
         #     uniqSym.append(copy.copy(s))
+
+        # super(PrismaTransition, self).__init__(PrismaTransition.TYPE, startState, endState, _id, name, priority=10)
+
+        self.inputSymbol = inputSymbol
+        self.outputSymbols = outputSymbols
+        self.outputSymbolProbabilities = {}  # TODO: not yet implemented
+        self.outputSymbolReactionTimes = {}  # TODO: not yet implemented
+
         self.emitted = []
         self.invalid = False
         self.active = False
@@ -26,6 +34,9 @@ class PrismaTransition(Transition):
             self.ROLE = 'client'
         else:
             self.ROLE = 'server'
+
+    def executeAsNotInitiator(self, abstractionLayer):
+        pass
 
     @typeCheck(AbstractionLayer)
     def executeAsInitiator(self, abstractionLayer):
@@ -57,7 +68,7 @@ class PrismaTransition(Transition):
             if pickedSymbol is None:
                 self._logger.debug("Something is wrong here. Got outState without outSymbol..")
                 abstractionLayer.sesSta[-1].append(self.endState.name)
-                return self.endState
+                return None  # self.endState
 
             # Emit the symbol
             abstractionLayer.writeSymbol(pickedSymbol)
@@ -107,7 +118,7 @@ class PrismaTransition(Transition):
             self._logger.critical("picked symbol{} too faulty".format(c.name))
             if c in self.outputSymbols:
                 self.outputSymbols.remove(c)
-            # no emitable Symbols left? -> invalidate transition
+            # no emittable Symbols left? -> invalidate transition
             if len(self.outputSymbols) == 0:
                 self._logger.critical("invalidating trans")
                 self.invalid = True
@@ -116,15 +127,48 @@ class PrismaTransition(Transition):
             self.emitted = []
         return c
 
+    @property
+    def outputSymbols(self):
+        """Output symbols that can be generated when
+        the current transition is executed.
+
+        >>> from netzob.all import *
+        >>> transition = Transition(State(), State())
+        >>> transition.outputSymbols = None
+        >>> len(transition.outputSymbols)
+        0
+        >>> transition.outputSymbols.append(Symbol())
+        >>> transition.outputSymbols.extend([Symbol(), Symbol()])
+        >>> print len(transition.outputSymbols)
+        3
+        >>> transition.outputSymbols = []
+        >>> print len(transition.outputSymbols)
+        0
+
+        :type: list of :class:`netzob.Common.Models.Vocabulary.Symbol.Symbol`
+        :raise: TypeError if not valid.
+        """
+        return self.__outputSymbols
+
     @outputSymbols.setter
     def outputSymbols(self, outputSymbols):
         if outputSymbols is None:
             self.__outputSymbols = []
         else:
             for symbol in outputSymbols:
-                if not isinstance(symbol, Symbol):
+                if not isinstance(symbol, PrismaSymbol):
                     raise TypeError("One of the output symbol is not a Symbol")
             self.__outputSymbols = []
             for symbol in outputSymbols:
                 if symbol is not None:
                     self.__outputSymbols.append(symbol)
+
+    @property
+    def description(self):
+        if self._description is not None:
+            return self._description
+        else:
+            desc = []
+            for outputSymbol in self.outputSymbols:
+                desc.append(str(outputSymbol.name))
+            return self.name + "\n" + "{" + ",".join(desc) + "}"

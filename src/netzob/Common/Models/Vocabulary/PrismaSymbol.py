@@ -1,7 +1,7 @@
 __author__ = 'dsmp'
 
 from netzob.Common.Models.Vocabulary.Symbol import Symbol
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
+# from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Import.PrismaImporter.prisma.Hist import Hist
 from netzob.Common.Models.Vocabulary.Field import Field
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
@@ -17,16 +17,16 @@ from urllib import unquote
 
 
 @NetzobLogger
-class PrismaSymbol(AbstractField):
+class PrismaSymbol(Symbol):
 
     def __init__(self, pi=None, absFields=[], fields=None, messages=None, name="Symbol",
                  rules={}, copyRules={}, dataRules={}, horizon=[None], role=None):
 
-        super(PrismaSymbol, self).__init__(name, None, True)
-        self.__messages = TypedList(AbstractMessage)
-
+        # super(PrismaSymbol, self).__init__(name, None, True)
         # self.__messages = TypedList(AbstractMessage)
-        # super(PrismaSymbol, self).__init__(fields, messages, name)
+
+        self.__messages = TypedList(AbstractMessage)
+        super(PrismaSymbol, self).__init__(fields, messages, name)
         self.pi = pi
         self.horizon = horizon
         self.rules = rules
@@ -40,7 +40,7 @@ class PrismaSymbol(AbstractField):
 
         if messages is None:
             messages = []
-        self.msg = messages
+        self.messages = messages
         if fields is None:
             # create a default empty field
             fields = [Field()]
@@ -77,7 +77,10 @@ class PrismaSymbol(AbstractField):
                 # self._logger.critical('domain: {}'.format(f.domain))
                 self.fields[self.absoluteFields[int(rule.dstField)]].domain = f.domain
                 # self.messages = [RawMessage(self.specialize(noRules=True))]
+            # self.clearMessages()
+            # tmp = PrismaSymbol(fields=self.fields)
             self.messages = [RawMessage(self.specialize(noRules=True))]
+            # self.fields = tmp.fields
             try:
                 # self._logger.critical('message: {}'.format(self.specialize(noRules=True)))
                 self.getCells()
@@ -91,9 +94,9 @@ class PrismaSymbol(AbstractField):
             for rule in self.rules[hor]:
                 srcSym = self.horizon[int(rule.srcID)]
                 try:
-                    print self.fields[self.absoluteFields[int(rule.dstField)]].domain
+                    # print self.fields[self.absoluteFields[int(rule.dstField)]].domain
                     self.fields[self.absoluteFields[int(rule.dstField)]].domain = srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].domain
-                    print self.fields[self.absoluteFields[int(rule.dstField)]].domain
+                    # print self.fields[self.absoluteFields[int(rule.dstField)]].domain
                     self.messages = [RawMessage(self.specialize(noRules=True))]
                     self._logger.critical('success')
                 except Exception:
@@ -134,7 +137,7 @@ class PrismaSymbol(AbstractField):
                             self._logger.critical('error in copyCompletePREFIX at sym{}'.format(self.name))
                     else:
                         try:
-                            # srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].getValues()[0]
+                            self._logger.critical('data read: {}'.format(srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].getValues()[0]))
                             f = Field(random.choice(rule.content) + srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].getValues()[0])
                             flag = True
                         except Exception as e:
@@ -183,7 +186,7 @@ class PrismaSymbol(AbstractField):
             # tried 'AAAAAAAAAAAAA'
             f = Field('1')
             for ind in self.absoluteFields:
-                self.fields[ind].domain = f.domain
+                self.fields[int(ind)].domain = f.domain
             self.messages = [RawMessage(self.specialize(noRules=True))]
             for field in self.fields:
                 if field.name == 'broken':
@@ -203,7 +206,8 @@ class PrismaSymbol(AbstractField):
             spePath = msg.specializeSymbol(self)
             if not noRules:
                 self._logger.info('getting message just fine')
-        except Exception:
+        except Exception as e:
+            print e.message
             self._logger.critical('something wrong with getting message from symbol')
 
         if spePath is not None:

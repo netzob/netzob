@@ -116,15 +116,16 @@ class PrismaLayer(AbstractionLayer):
             raise TypeError("The symbol to write on the channel cannot be None")
 
         self._logger.info("Going to specialize symbol: '{0}' (id={1}).".format(symbol.name, symbol.id))
-        try:
-            data = symbol.specialize()
-        except Exception:
-            self._logger.error('could not specialize sym{}'.format(symbol.name))
-            try:
-                symbol.messages = [RawMessage(symbol.specialize(noRules=True))]
-                data = symbol.specialize()
-            except Exception:
-                self._logger.critical('could not specialize sym{} twice'.format(symbol.name))
+        data = symbol.specialize()
+        # except Exception as e:
+        #     print e.message
+        #     self._logger.error('could not specialize sym{}'.format(symbol.name))
+        #     try:
+        #         symbol.messages = [RawMessage(symbol.specialize(noRules=True))]
+        #         data = symbol.specialize()
+        #     except Exception:
+        #         self._logger.critical('could not specialize sym{} twice'.format(symbol.name))
+        # self._logger.critical('data: {}'.format(data))
         symbol.messages = [RawMessage(data)]
         self._logger.info("Data generated from symbol '{0}': {1}.".format(symbol.name, repr(data)))
 
