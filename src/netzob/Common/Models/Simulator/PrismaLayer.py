@@ -11,7 +11,7 @@ class PrismaLayer(AbstractionLayer):
         super(PrismaLayer, self).__init__(channel, symbols)
         e = EmptySymbol()
         e.name = '-1'
-        self.symbolBuffer = horizonLength*[e]
+        self.symbolBuffer = 5*horizonLength*[e]
         self.sesSym = [[]]
         self.sesSta = [[]]
         self.unknowns = []

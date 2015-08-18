@@ -115,3 +115,16 @@ class PrismaTransition(Transition):
         if len(self.emitted) >= len(self.outputSymbols):
             self.emitted = []
         return c
+
+    @outputSymbols.setter
+    def outputSymbols(self, outputSymbols):
+        if outputSymbols is None:
+            self.__outputSymbols = []
+        else:
+            for symbol in outputSymbols:
+                if not isinstance(symbol, Symbol):
+                    raise TypeError("One of the output symbol is not a Symbol")
+            self.__outputSymbols = []
+            for symbol in outputSymbols:
+                if symbol is not None:
+                    self.__outputSymbols.append(symbol)

@@ -30,13 +30,13 @@ class PrismaTest(object):
                     # probably killed target -> restart it
                     print 'watch out, target may be gone?! Trying to restart..'
                     if not init:
-                        self.pi.getLayer().sesSym[-2].append('CRASH')
-                        self.pi.getLayer().sesSta[-2].append('CRASH')
+                        self.pi.getLayer().sesSym[-1].append('CRASH')
+                        self.pi.getLayer().sesSta[-1].append('CRASH')
                     time.sleep(11)
                     err = os.system("/home/dsmp/work/xbmc/bin/kodi &")
                     time.sleep(7.5)
-                    if err == 0:
-                        return True
+                    # if err == 0:
+                    #     return True
             s = self.pi.getInitial()
             sPre = None
             while sPre != s:
@@ -70,14 +70,17 @@ class PrismaTest(object):
             if not count % 100:
                 self._logger.critical('=== {} === \r\n\r\n'.format(count))
                 self.dot(count)
+            # find good value here
+            if count == 200000:
+                ret = False
 
     def dot(self, count):
         try:
-            os.makedirs('{}/graphs'.format(self.pi.getPath()))
+            os.makedirs('{}/graphs2'.format(self.pi.getPath()))
         except OSError:
             pass
         dot = self.pi.getAutomaton().generateDotCode()
-        f = open('{}/graphs/{}'.format(self.pi.getPath(), count), 'w')
+        f = open('{}/graphs2/{}'.format(self.pi.getPath(), count), 'w')
         f.write(dot)
         f.close()
         return
@@ -90,8 +93,8 @@ class PrismaTest(object):
         self.pi.setSourcePort(51337)
 
         print self.pi.isInitialized()
-
-        self.pi.create(enhance=True)
+        # enhance maybe is a poor idea (at least at learning lvl)
+        self.pi.create(enhance=False)
         # there seems to be a problem specializing some Symbols?
         if check:
             self._logger.info('testing generated Symbols')

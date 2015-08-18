@@ -1,6 +1,7 @@
 __author__ = 'dsmp'
 
 from netzob.Common.Models.Vocabulary.Symbol import Symbol
+from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Import.PrismaImporter.prisma.Hist import Hist
 from netzob.Common.Models.Vocabulary.Field import Field
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
@@ -16,12 +17,17 @@ from urllib import unquote
 
 
 @NetzobLogger
-class PrismaSymbol(Symbol):
+class PrismaSymbol(AbstractField):
 
-    def __init__(self, absFields=[], fields=None, messages=None, name="Symbol",
+    def __init__(self, pi=None, absFields=[], fields=None, messages=None, name="Symbol",
                  rules={}, copyRules={}, dataRules={}, horizon=[None], role=None):
+
+        super(PrismaSymbol, self).__init__(name, None, True)
         self.__messages = TypedList(AbstractMessage)
-        super(PrismaSymbol, self).__init__(fields, messages, name)
+
+        # self.__messages = TypedList(AbstractMessage)
+        # super(PrismaSymbol, self).__init__(fields, messages, name)
+        self.pi = pi
         self.horizon = horizon
         self.rules = rules
         self.copyRules = copyRules
@@ -34,40 +40,54 @@ class PrismaSymbol(Symbol):
 
         if messages is None:
             messages = []
-        self.messages = messages
-        # WHY??
+        self.msg = messages
         if fields is None:
             # create a default empty field
             fields = [Field()]
         self.fields = fields
 
+    # def copy(self):
+    #     return PrismaSymbol(pi=self.pi, absFields=self.absoluteFields, fields=self.fields, messages=self.messages,
+    #                         rules=self.rules, copyRules=self.copyRules, dataRules=self.dataRules, role=self.role,
+    #                         name=self.name)
+
     def setHorizon(self, horizon):
         self.horizon = horizon
 
     def horizon2ID(self):
-        return Hist(map(lambda x: [int(x.name)], self.horizon))
+        return Hist(map(lambda x: [int(x.name)], self.horizon[-3:]))
 
     def updateHorizon(self, nextSymbol):
         self.horizon = self.horizon[1:] + [nextSymbol]
 
     def applyRules(self):
+        self._logger.critical('rules for sym{}'.format(self.name))
         if not self.horizon[-1]:
             return
         hor = self.horizon2ID()
-        # ruleFlag = False
+        ruleFlag = False
         if hor in self.dataRules:
             self._logger.critical('found data rules')
-            # ruleFlag = True
+            ruleFlag = True
             for rule in self.dataRules[hor]:
                 data = random.choice(rule.data)
-                self._logger.info('from data pool {} chose {}'.format(rule.data, data))
-                f = Field(unquote(data))
+                # self._logger.info('from data pool {} chose {}'.format(rule.data, data))
+                # self._logger.critical('unquoted: {}'.format(unquote(data)))
+                f = Field(str(unquote(data)).strip())
+                # self._logger.critical('domain: {}'.format(f.domain))
                 self.fields[self.absoluteFields[int(rule.dstField)]].domain = f.domain
+                # self.messages = [RawMessage(self.specialize(noRules=True))]
             self.messages = [RawMessage(self.specialize(noRules=True))]
-            self._logger.critical('success')
+            try:
+                # self._logger.critical('message: {}'.format(self.specialize(noRules=True)))
+                self.getCells()
+                # self.fields[int(rule.dstField)].getValues()[0]
+                self._logger.critical('success')
+            except Exception as e:
+                self._logger.critical('DataRule breaks Cells')
         if hor in self.rules:
             self._logger.critical('found exact rule')
-            # ruleFlag = True
+            ruleFlag = True
             for rule in self.rules[hor]:
                 srcSym = self.horizon[int(rule.srcID)]
                 try:
@@ -80,7 +100,7 @@ class PrismaSymbol(Symbol):
                     self._logger.critical('error in exactRule')
         if hor in self.copyRules:
             self._logger.info('found copy rules')
-            # ruleFlag = True
+            ruleFlag = True
             for rule in self.copyRules[hor]:
                 srcSym = self.horizon[int(rule.srcID)]
                 if 'Seq' in rule.typ:
@@ -97,6 +117,7 @@ class PrismaSymbol(Symbol):
                     except ValueError:
                         self._logger.critical("couldn't cast increment to int")
                         self._logger.critical("baseValue:{}".format(srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].getValues()[0]))
+                        inc = 1
                     new = base + inc
                     f = Field(str(new))
                     self.fields[self.absoluteFields[int(rule.dstField)]].domain = f.domain
@@ -113,15 +134,19 @@ class PrismaSymbol(Symbol):
                             self._logger.critical('error in copyCompletePREFIX at sym{}'.format(self.name))
                     else:
                         try:
+                            # srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].getValues()[0]
                             f = Field(random.choice(rule.content) + srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].getValues()[0])
                             flag = True
-                        except Exception:
+                        except Exception as e:
                             self._logger.critical('error in copyCompleteSUFFIX at sym{}'.format(self.name))
-                            # self._logger.critical('{}'.format(rule.content))
-                            # self._logger.critical('{}'.format(int(rule.srcField)))
-                            # self._logger.critical('{}'.format(srcSym.name))
-                            # self._logger.critical('{}'.format(srcSym[int(rule.srcField)].domain))
-                            # self._logger.critical('{}'.format(srcSym[int(rule.srcField)].getValues()[0]))
+                            # self._logger.critical('prefix: {}'.format(rule.content))
+                            # self._logger.critical('prefix: {}'.format(random.choice(rule.content)))
+                            # self._logger.critical('srcField: {}'.format(int(rule.srcField)))
+                            # self._logger.critical('srcID: {}'.format(int(rule.srcID)))
+                            # self._logger.critical('srcSym: {}'.format(srcSym.name))
+                            # self._logger.critical('srcDomain: {}'.format(srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].domain))
+                            # self._logger.critical('along here')
+                            # self._logger.critical('srcValue: {}'.format(srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].getValues()))
                     if flag:
                         self.fields[self.absoluteFields[int(rule.dstField)]].domain = f.domain
                         self.messages = [RawMessage(self.specialize(noRules=True))]
@@ -151,7 +176,7 @@ class PrismaSymbol(Symbol):
                         self._logger.critical('success')
         # if ruleFlag:
         #     self.messages = [RawMessage(self.specialize(noRules=True))]
-        else:
+        if not ruleFlag:
             # heuristically approach:
             # put always same string in rule fields iff horizon does not match
             # maybe reason about what string fits best
@@ -169,8 +194,8 @@ class PrismaSymbol(Symbol):
 
     def specialize(self, memory=None, noRules=False, data=False):
         if not noRules:
-            self._logger.error('specilaizing sym{}'.format(self.name))
-        if self.horizon != [None] and not noRules:
+            self._logger.error('specializing sym{}'.format(self.name))
+        if not noRules and self.horizon != [None]:
             self.applyRules()
         from netzob.Common.Models.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
         try:
@@ -187,7 +212,6 @@ class PrismaSymbol(Symbol):
                 return message
             except Exception:
                 self._logger.critical('something wrong with converting message')
-
 
     def clearMessages(self):
         """Delete all the messages attached to the current symbol"""
@@ -216,3 +240,18 @@ class PrismaSymbol(Symbol):
         self.clearMessages()
         for msg in messages:
             self.__messages.append(msg)
+
+    def toFile(self, parent):
+        ntokens = len(self.fields)
+        fields = ''
+        if self.absoluteFields:
+            fields = ','.join(map(lambda x: str(x), self.absoluteFields))
+        # build strings like this one:
+        # TEMPLATE id:4 state:None.UAC|None.UAC count:2 ntokens:64 fields:2,8,20,24
+        sym = 'TEMPLATE id:{} state:{} count:1 ntokens:{} fields:{}\n'.format(self.name, parent, ntokens, fields)
+        # grep content from exactly what we loaded earlier
+        # hell this is stupid :s
+        temp = self.pi.templates[int(self.name)]
+        for c in temp.content:
+            sym += '{}\n'.format(c)
+        return sym

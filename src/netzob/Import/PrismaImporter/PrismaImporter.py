@@ -1,6 +1,7 @@
 import prisma
 import copy
 import os
+from urllib import unquote
 
 from netzob.Common.Models.Vocabulary.PrismaSymbol import PrismaSymbol
 from netzob.Common.Models.Vocabulary.Symbol import Symbol
@@ -11,13 +12,13 @@ from netzob.Common.Models.Grammar.States.PrismaState import PrismaState
 from netzob.Common.Models.Grammar.Transitions.PrismaTransition import PrismaTransition
 from netzob.Common.Models.Grammar.Automata import Automata
 from netzob.Common.Models.Types.ASCII import ASCII
-
-from urllib import unquote
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 
 from netzob.Common.Models.Simulator.PrismaLayer import PrismaLayer
 from netzob.Common.Models.Simulator.Channels.TCPClient import TCPClient
 
 
+@NetzobLogger
 class PrismaImporter(object):
     def __init__(self):
         print("\nHello Netzob, this is Prisma...\nI'm gonna take over...\nDon't make it harder than necessary.\n")
@@ -109,7 +110,12 @@ class PrismaImporter(object):
             else:
                 src = 'server'
                 dst = 'client'
-            fields = map(lambda x: Field(*sanitizeRule(unquote(x), src)), temp.content)
+            numRuleFields = 1
+            if temp.fields:
+                numRuleFields = len(temp.fields)
+            maxEntropy = min(1000/(8*numRuleFields), 17)
+            maxEntropy = max(maxEntropy, 1)
+            fields = map(lambda x: Field(*sanitizeRule(unquote(x), src, maxEntropy)), temp.content)
             if not fields:
                 continue
             s = Symbol(fields=fields, name=str(ID))
@@ -127,10 +133,53 @@ class PrismaImporter(object):
             if ID in self.dataRules:
                 datR = self.dataRules[ID]
                 datR = genDict(datR)
-            s = PrismaSymbol(absFields=absFields, name=str(ID), fields=fields, messages=[msg],
+            s = PrismaSymbol(pi=self, absFields=absFields, name=str(ID), fields=fields, messages=[msg],
                              rules=rules, copyRules=cpyR, dataRules=datR, role=src)
+            # try:
+            #     s.getCells()
+            # except Exception:
+            #     self._logger.critical('cannot crack sym{} at {}'.format(s.name, maxEntropy))
             symbolContainer.update({ID: s})
         return symbolContainer
+
+    def createSymbol(self, ID, role):
+        temp = self.templates.IDtoTemp[ID]
+        if role == 'client':
+            src = 'client'
+            dst = 'server'
+        else:
+            src = 'server'
+            dst = 'client'
+        numRuleFields = 1
+        if temp.fields:
+            numRuleFields = len(temp.fields)
+        maxEntropy = min(1000/(8*numRuleFields), 17)
+        maxEntropy = max(maxEntropy, 1)
+        fields = map(lambda x: Field(*sanitizeRule(unquote(x), src, maxEntropy)), temp.content)
+        if not fields:
+            return None
+        s = Symbol(fields=fields, name=str(ID))
+        msg = RawMessage(s.specialize(), destination=dst, source=src)
+        absFields = []
+        rules = cpyR = datR = {}
+        if ID in self.absoluteFields:
+            absFields = self.absoluteFields[ID]
+        if ID in self.Rules:
+            rules = self.Rules[ID]
+            rules = genDict(rules)
+        if ID in self.copyRules:
+            cpyR = self.copyRules[ID]
+            cpyR = genDict(cpyR)
+        if ID in self.dataRules:
+            datR = self.dataRules[ID]
+            datR = genDict(datR)
+        s = PrismaSymbol(pi=self, absFields=absFields, name=str(ID), fields=fields, messages=[msg],
+                         rules=rules, copyRules=cpyR, dataRules=datR, role=src)
+        # try:
+        #     s.getCells()
+        # except Exception:
+        #     self._logger.critical('cannot crack sym{} at {}'.format(s.name, maxEntropy))
+        return s
 
     def createStates(self, prismaState):
         if 'END' in prismaState.getCurState():
@@ -165,22 +214,13 @@ class PrismaImporter(object):
         for nx in nextStates:
             for s in self.brokenStates:
                 if s[0].name == getName(nx):
+                    # make each transition its own set of symbols
                     temps = self.getTemplates(state.name)
-                    uniqTemps = []
-                    for t in temps:
-                        uniqTemps.append(copy.copy(t))
-                    trans.append(PrismaTransition(state, s[0], outputSymbols=uniqTemps, inputSymbol=EmptySymbol(),
+                    trans.append(PrismaTransition(state, s[0], outputSymbols=temps, inputSymbol=EmptySymbol(),
                                                   name='{}-->{}'.format(state.name, s[0].name)))
         if trans:
             state.__transitions = trans
-            # uniqTrans = []
-            # for t in trans:
-            #     uniqTrans.append(copy.copy(t))
             state.trans = trans
-            # uniqTrans = []
-            # for t in trans:
-            #     uniqTrans.append(copy.copy(t))
-            # state.memorizedTransitions = trans
         return state
 
     def getTemplates(self, stateName):
@@ -188,11 +228,17 @@ class PrismaImporter(object):
         for pState in self.templates.stateToID.keys():
             if getName(pState) == stateName:
                 for ID in self.templates.stateToID[pState]:
-                    if ID not in self.Symbols.keys():
-                        continue
-                    s = self.Symbols[ID]
-                    if s not in temps:
-                        temps.append(s)
+                    # if ID not in self.Symbols.keys():
+                    #     continue
+                    # s = self.Symbols[ID]
+                    if 'UAC' in stateName:
+                        role = 'client'
+                    else:
+                        role = 'server'
+                    s = self.createSymbol(ID, role)
+                    if s:
+                        if s not in temps:
+                            temps.append(s)
         return temps
 
     def computeRules(self):
@@ -310,12 +356,9 @@ class PrismaImporter(object):
 
 
 # what to do about ruleFields?
-def sanitizeRule(x, role):
+def sanitizeRule(x, role, maxEntropy):
     if x == '':
-        if role == 'client':
-            return [ASCII(nbChars=(1, 3))]
-        else:
-            return [ASCII(nbChars=(1, 30))]
+        return [ASCII(nbChars=(1, maxEntropy))]
     # this is a nightmare
     # be a little bit more cool if some received message does not
     # fits a template; a plan never survives first contact with reality
