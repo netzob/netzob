@@ -191,7 +191,8 @@ dependencies = [
     'minepy >= 1.0.0',
     'numpy',
     'colorama',
-    'jsonpickle'
+    'jsonpickle',
+    'pcapy'
 ]
 
 extra_dependencies = {

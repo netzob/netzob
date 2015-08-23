@@ -49,11 +49,16 @@ Get Started with Netzob
 Install it
 ----------
 
-There are two main ways of installing Netzob. The first one is based on
-per-OS installers while the other one is more 'pythonic'.
+There are three main ways of installing Netzob. The two first solutions install 
+Netzob on your computer. The first one is based on
+per-OS installers while the other one is more 'pythonic'. The last method is based 
+on `docker <https://www.docker.com/>`_.
 
 We recommend the per-OS installers for 'normal' users while
 testers, developers and python experts might prefer the 'pythonic' way.
+
+For use with ``docker``, a ``Dockerfile`` is chipped in this repository and an 
+official build is also on the docker registry `here <https://registry.hub.docker.com/u/netzob/netzob/>`_).
 
 Per-OS Installers:
 ^^^^^^^^^^^^^^^^^^
@@ -96,6 +101,14 @@ Otherwise, if you want to install Netzob on the system::
   python setup.py develop
   python setup.py install
 
+Docker container:
+^^^^^^^^^^^^^^^^^
+A docker build is offered from the docker registry repository. You can download 
+it from command line with the following command:: 
+
+  $ docker pull netzob/netzob
+
+
 Start it
 --------
 
@@ -105,6 +118,11 @@ Once installed, running Netzob is as simple as executing the provided script::
 
 This script is in Python's path if you've installed Netzob, otherwise
 (in developer mode), it's located in the top distribution directory.
+
+If you used the docker container, the following command will allow you to start 
+netzob with your current directory attached to ``/data`` into the container::
+
+  $ docker run --rm -it -v $(pwd):/data netzob/netzob
 
 
 Miscellaneous
