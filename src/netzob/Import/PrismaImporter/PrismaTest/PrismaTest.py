@@ -29,9 +29,11 @@ class PrismaTest(object):
                 except socket_error:
                     # probably killed target -> restart it
                     print 'watch out, target may be gone?! Trying to restart..'
-                    if not init:
-                        self.pi.getLayer().sesSym[-1].append('CRASH')
-                        self.pi.getLayer().sesSta[-1].append('CRASH')
+                    for state in self.pi.getLayer().sesSta[-1]:
+                        # just in case..
+                        state.active = False
+                    self.pi.getLayer().sesSym[-1].append('CRASH')
+                    self.pi.getLayer().sesSta[-1].append('CRASH')
                     time.sleep(11)
                     err = os.system("/home/dsmp/work/xbmc/bin/kodi &")
                     time.sleep(7.5)
@@ -42,22 +44,35 @@ class PrismaTest(object):
             while sPre != s:
                 sPre = s
                 s = s.executeAsInitiator(l)
-                if s =='cycle':
+                if s == 'cycle':
                     self._logger.critical('cycle detected')
-                    time.sleep(0.3)
+                    time.sleep(3)
                     l.closeChannel()
                     return True
-            l.closeChannel()
-            time.sleep(1)
-            return True
+                if 'END' in s.name:
+                    # session ended gracefully
+                    self.pi.getLayer().sesSym[-1].append('end')
+                    self.pi.getLayer().sesSta[-1].append('end')
+                    self._logger.critical('session gracefully ended')
+                    l.closeChannel()
+                    time.sleep(3)
+                    return True
+            time.sleep(3)
         # probably one cycle ended in the target not responding
-        # causing an excaption to be thrown
+        # causing an exception to be thrown
         # causing us to catch it
-        except Exception, e:
+        except Exception:
             return True
 
     def toast(self, count=0):
         self.fuzzyLearn(count)
+
+    def adjustPort(self):
+        c = self.pi.getLayer().channel
+        c.localPort += 1
+        if c.localPort > 60000:
+            c.localPort = 51337
+        return
 
     def fuzzyLearn(self, count=0):
         ret = True
@@ -67,6 +82,7 @@ class PrismaTest(object):
             ret = self.run(init)
             init = False
             count += 1
+            # self.adjustPort()
             if not count % 100:
                 self._logger.critical('=== {} === \r\n\r\n'.format(count))
                 self.dot(count)
@@ -86,7 +102,7 @@ class PrismaTest(object):
         return
 
     def test(self, dot=True, check=False):
-        self.pi.setPath('/home/dsmp/work/pulsar/src/models/myPlay')
+        self.pi.setPath('/home/dsmp/work/pulsar/src/models/first')
         self.pi.setDestinationIp('127.0.0.1')
         self.pi.setDestinationPort(36666)
         self.pi.setSourceIp('127.0.0.1')

@@ -3,6 +3,7 @@ from netzob.Common.Models.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.PrismaSymbol import PrismaSymbol
+from copy import copy
 
 
 @NetzobLogger
@@ -11,7 +12,7 @@ class PrismaLayer(AbstractionLayer):
         super(PrismaLayer, self).__init__(channel, symbols)
         e = EmptySymbol()
         e.name = '-1'
-        self.symbolBuffer = 5*horizonLength*[e]
+        self.symbolBuffer = horizonLength*[e]
         self.sesSym = [[]]
         self.sesSta = [[]]
         self.unknowns = []
@@ -22,6 +23,8 @@ class PrismaLayer(AbstractionLayer):
         e = EmptySymbol()
         e.name = '-1'
         self.symbolBuffer = len(self.symbolBuffer)*[e]
+        self.sesSta.append([])
+        self.sesSym.append([])
 
     def reset(self):
         self.reInit()
@@ -32,7 +35,9 @@ class PrismaLayer(AbstractionLayer):
         return
 
     def updateSymbolBuffer(self, nextSymbol):
-        self.symbolBuffer = self.symbolBuffer[1:] + [nextSymbol]
+        # save a copy here
+        # idea: the message wont be overwritten if symbol more than once in the horizon
+        self.symbolBuffer = self.symbolBuffer[1:] + [copy(nextSymbol)]
 
     def sessionOver(self, msg):
         self._logger.critical('The session is over: {}'.format(msg))
@@ -81,6 +86,8 @@ class PrismaLayer(AbstractionLayer):
                     self.symbols.append(symbol)
                 else:
                     self._logger.info("record new unknown at ID{}".format(-1))
+        self._logger.critical('received from the channel sym{}:'.format(symbol.name))
+        print symbol.messages
         self._logger.warning("going on as usual")
         self.sesSym[-1].append(symbol)
         self.updateSymbolBuffer(symbol)
@@ -95,9 +102,6 @@ class PrismaLayer(AbstractionLayer):
         # set horizon
         symbol.setHorizon(self.symbolBuffer)
         self._logger.info('current horizon {}'.format(symbol.horizon2ID()))
-        # apply rules to symbol (the big show) NOT TO BE DONE HERE
-        # muahhahahahhahahah
-        # emit as usual
         self.sesSym[-1].append(symbol)
         symbol.emitted += 1
         self._writeSymbol(symbol)
@@ -116,24 +120,19 @@ class PrismaLayer(AbstractionLayer):
             raise TypeError("The symbol to write on the channel cannot be None")
 
         self._logger.info("Going to specialize symbol: '{0}' (id={1}).".format(symbol.name, symbol.id))
+        # apply Prisma rules in specializing process
         data = symbol.specialize()
-        # except Exception as e:
-        #     print e.message
-        #     self._logger.error('could not specialize sym{}'.format(symbol.name))
-        #     try:
-        #         symbol.messages = [RawMessage(symbol.specialize(noRules=True))]
-        #         data = symbol.specialize()
-        #     except Exception:
-        #         self._logger.critical('could not specialize sym{} twice'.format(symbol.name))
-        # self._logger.critical('data: {}'.format(data))
+        # update symbols message with what we send over the wire
         symbol.messages = [RawMessage(data)]
+        self._logger.critical('sending over the channel sym{}:'.format(symbol.name))
+        print '{}'.format(symbol.messages)
         self._logger.info("Data generated from symbol '{0}': {1}.".format(symbol.name, repr(data)))
 
         self._logger.info("Going to write to communication channel...")
         try:
             self.channel.write(data)
         except Exception:
-            self.sessionOver(role='client')
+            self.sessionOver(msg='client')
             raise Exception("error on writing to channel")
         self._logger.info("Writing to communication channel done..")
-        return data
+        return

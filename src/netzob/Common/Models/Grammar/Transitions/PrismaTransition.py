@@ -40,6 +40,7 @@ class PrismaTransition(Transition):
 
     @typeCheck(AbstractionLayer)
     def executeAsInitiator(self, abstractionLayer):
+        self._logger.critical('current State {}'.format(self.startState.name))
         try:
             if len(abstractionLayer.sesSta[-1]) > 29 and len(set(abstractionLayer.sesSta[-1][-10:])) < 7:  # len shortest cycle in graph..
                 # maybe we are cycling?
@@ -73,7 +74,7 @@ class PrismaTransition(Transition):
             # Emit the symbol
             abstractionLayer.writeSymbol(pickedSymbol)
             # we gonna sleep here for a while..
-            time.sleep(0.1)
+            time.sleep(1)
 
             # Return the endState
             self.active = False
@@ -85,7 +86,7 @@ class PrismaTransition(Transition):
             # Waits for the reception of a symbol
             (receivedSymbol, receivedMessage) = abstractionLayer.readSymbol()
             # we gonna sleep here for a while..
-            time.sleep(0.1)
+            time.sleep(1)
 
             # hopefully we did a good job at learning
             if receivedSymbol in self.outputSymbols:

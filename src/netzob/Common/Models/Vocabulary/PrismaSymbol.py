@@ -55,13 +55,13 @@ class PrismaSymbol(Symbol):
         self.horizon = horizon
 
     def horizon2ID(self):
-        return Hist(map(lambda x: [int(x.name)], self.horizon[-3:]))
+        return Hist(map(lambda x: [int(x.name)], self.horizon))
 
     def updateHorizon(self, nextSymbol):
         self.horizon = self.horizon[1:] + [nextSymbol]
 
     def applyRules(self):
-        self._logger.critical('rules for sym{}'.format(self.name))
+        # self._logger.critical('rules for sym{}'.format(self.name))
         if not self.horizon[-1]:
             return
         hor = self.horizon2ID()
@@ -72,7 +72,7 @@ class PrismaSymbol(Symbol):
             for rule in self.dataRules[hor]:
                 data = random.choice(rule.data)
                 # self._logger.info('from data pool {} chose {}'.format(rule.data, data))
-                # self._logger.critical('unquoted: {}'.format(unquote(data)))
+                self._logger.critical('data: {}'.format(data))
                 f = Field(str(unquote(data)).strip())
                 # self._logger.critical('domain: {}'.format(f.domain))
                 self.fields[self.absoluteFields[int(rule.dstField)]].domain = f.domain
