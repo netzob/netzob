@@ -49,28 +49,6 @@ Get Started with Netzob
 Install it
 ----------
 
-There are three main ways of installing Netzob. The two first solutions install 
-Netzob on your computer. The first one is based on
-per-OS installers while the other one is more 'pythonic'. The last method is based 
-on `docker <https://www.docker.com/>`_.
-
-We recommend the per-OS installers for 'normal' users while
-testers, developers and python experts might prefer the 'pythonic' way.
-
-For use with ``docker``, a ``Dockerfile`` is chipped in this repository and an 
-official build is also on the docker registry `here <https://registry.hub.docker.com/u/netzob/netzob/>`_).
-
-Per-OS Installers:
-^^^^^^^^^^^^^^^^^^
-
-Please follow the specification documentations for each supported platform:
-
-:Debian/Ubuntu: `Installation documentation on Debian (wiki) <https://dev.netzob.org/projects/netzob/wiki/Installation_documentation_on_Debian>`_
-:Gentoo: `Installation documentation on Gentoo (wiki) <https://dev.netzob.org/projects/netzob/wiki/Installation_documentation_on_Gentoo>`_
-
-Pythonic Installer:
-^^^^^^^^^^^^^^^^^^^
-
 As a 'classic' python project, Netzob is provided with its
 ``setup.py``. This file defines what and how to install the project on a
 python hosting OS.
@@ -84,23 +62,21 @@ following bunch of prerequisites before initiating Netzob's install process.
 * python-impacket
 * python-setuptools
 * build-essential  
-
+* python-numpy
+  
 We also highly recommend to install the following additional dependencies:
 
 * python-sphinx (for the documentation)
 
-Once the required dependencies are installed, you can test Netzob in
-developer mode::
+Once the required dependencies are installed, you can build and install Netzob::
 
-  python setup.py build
-  python setup.py develop --user
-
-Otherwise, if you want to install Netzob on the system::
-
-  python setup.py build
-  python setup.py develop
   python setup.py install
 
+Or if you prefer a more developer-friendly install::
+
+  python setup.py develop --user
+
+  
 Docker container:
 ^^^^^^^^^^^^^^^^^
 A docker build is offered from the docker registry repository. You can download 
