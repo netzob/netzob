@@ -152,6 +152,8 @@ class MessageParser(object):
     def __init__(self, memory=None):
         if memory is None:
             self.memory = Memory()
+        else:
+            self.memory = memory
 
     @typeCheck(AbstractMessage, Symbol)
     def parseMessage(self, message, symbol):
