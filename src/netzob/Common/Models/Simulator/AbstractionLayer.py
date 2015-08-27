@@ -46,6 +46,13 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Symbol import Symbol
 from netzob.Common.Models.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
+from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
+from netzob.Common.Models.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
+from netzob.Common.Models.Vocabulary.Domain.Parser.MessageParser import MessageParser
+from netzob.Common.Models.Types.TypeConverter import TypeConverter
+from netzob.Common.Models.Types.BitArray import BitArray
+from netzob.Common.Models.Types.Raw import Raw
+from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 
 
 @NetzobLogger
@@ -77,6 +84,9 @@ class AbstractionLayer(object):
     def __init__(self, channel, symbols):
         self.channel = channel
         self.symbols = symbols
+        self.memory = Memory()
+        self.specializer = MessageSpecializer(memory = self.memory)
+        self.parser = MessageParser(memory = self.memory)
 
     @typeCheck(Symbol)
     def writeSymbol(self, symbol):
@@ -91,9 +101,14 @@ class AbstractionLayer(object):
             raise TypeError("The symbol to write on the channel cannot be None")
 
         self._logger.info("Going to specialize symbol: '{0}' (id={1}).".format(symbol.name, symbol.id))
-        data = symbol.specialize()
-        self._logger.info("Data generated from symbol '{0}': {1}.".format(symbol.name, repr(data)))
+        
+        dataBin = self.specializer.specializeSymbol(symbol).generatedContent
 
+        self.memory = self.specializer.memory
+        self.parser.memory = self.memory
+        data = TypeConverter.convert(dataBin, BitArray, Raw)
+        self._logger.info("Data generated from symbol '{0}': {1}.".format(symbol.name, repr(data)))
+        
         self._logger.info("Going to write to communication channel...")
         self.channel.write(data)
         self._logger.info("Writing to commnunication channel donne..")
@@ -114,7 +129,17 @@ class AbstractionLayer(object):
         data = self.channel.read()
         self._logger.info("Received data: '{0}'".format(repr(data)))
 
-        symbol = AbstractField.abstract(data, self.symbols)
+        symbol = None
+        for potential in self.symbols:
+            try:
+                self.parser.parseMessage(RawMessage(data), potential)
+                symbol = potential
+                self.memory = self.parser.memory
+                self.specializer.memory = self.memory
+                break
+            except Exception, e:
+                symbol = None
+        
         if symbol is not None:
             self._logger.info("Received symbol on communication channel: '{0}'".format(symbol.name))
         else:
