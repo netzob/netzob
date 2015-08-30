@@ -187,8 +187,15 @@ class FieldSpecializer(object):
         resultSpecializingPaths = variableSpecializer.specialize(specializingPath)
 
         for resultSpecializingPath in resultSpecializingPaths:
-            self._logger.debug("FieldSpecializer Result: {0}".format(resultSpecializingPath.getDataAssignedToVariable(self.field.domain)))
-            resultSpecializingPath.addResultToField(self.field, resultSpecializingPath.getDataAssignedToVariable(self.field.domain))
+
+            assignedData = bitarray('')
+            if resultSpecializingPath.isDataAvailableForVariable(self.field.domain):
+                assignedData = resultSpecializingPath.getDataAssignedToVariable(self.field.domain)
+            else:
+                resultSpecializingPath.addResult(self.field.domain, assignedData)
+
+            self._logger.debug("FieldSpecializer Result: {0}".format(assignedData))
+            resultSpecializingPath.addResultToField(self.field, assignedData)
 
         return resultSpecializingPaths
 
