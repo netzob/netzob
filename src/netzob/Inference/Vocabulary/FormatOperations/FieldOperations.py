@@ -70,28 +70,40 @@ class FieldOperations(object):
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
 
         >>> print symbol
+        f1   | f2     | f3     | f4  
+        ---- | ------ | ------ | ----
         '00' | 'ff2f' | '0000' | '00'
         '00' | '0010' | '0000' | '00'
         '00' | 'fe1f' | '0000' | '00'
+        ---- | ------ | ------ | ----
         
         >>> fo = FieldOperations()
         >>> fo.mergeFields(f2, f3)
         >>> print symbol
+        f1   | Merge      | f4  
+        ---- | ---------- | ----
         '00' | 'ff2f0000' | '00'
         '00' | '00100000' | '00'
         '00' | 'fe1f0000' | '00'
+        ---- | ---------- | ----
 
         >>> fo.mergeFields(symbol.fields[0], symbol.fields[1])
         >>> print symbol
+        Merge        | f4  
+        ------------ | ----
         '00ff2f0000' | '00'
         '0000100000' | '00'
         '00fe1f0000' | '00'
+        ------------ | ----
         
         >>> fo.mergeFields(symbol.fields[0], symbol.fields[1])
         >>> print symbol
+        Merge         
+        --------------
         '00ff2f000000'
         '000010000000'
         '00fe1f000000'
+        --------------
         
         :param field1: the left field to merge
         :type field1: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`

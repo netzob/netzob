@@ -90,12 +90,14 @@ class Alt(AbstractVariableNode):
 
     >>> from netzob.all import *
     >>> m1 = RawMessage("220044")
-    >>> f1 = Field("22")
-    >>> f2 = Field(Alt(["00", "0044", "0", "004"]))
+    >>> f1 = Field("22", name="f1")
+    >>> f2 = Field(Alt(["00", "0044", "0", "004"]), name="f2")
     >>> s = Symbol([f1, f2], messages=[m1], name="S0")
     >>> print s
+    f1   | f2    
+    ---- | ------
     '22' | '0044'
-
+    ---- | ------
     """
 
     def __init__(self, children=None, svas=None):

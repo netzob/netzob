@@ -62,19 +62,25 @@ class Symbol(AbstractField):
     >>> from netzob.all import *
     >>> m1 = RawMessage("hello world")
     >>> m2 = RawMessage("hello earth")
-    >>> fields = [Field("hello "), Field(["world", "earth"])]
+    >>> fields = [Field("hello ", name="f0"), Field(["world", "earth"], name="f1")]
 
     >>> symbol = Symbol(fields, messages=[m1, m2])
     >>> print symbol
+    f0       | f1     
+    -------- | -------
     'hello ' | 'world'
     'hello ' | 'earth'
+    -------- | -------
 
     Another example
     >>> from netzob.all import *
-    >>> s = Symbol([Field("hello "), Field(ASCII(nbChars=(0, 10)))])
+    >>> s = Symbol([Field("hello ", name="f0"), Field(ASCII(nbChars=(0, 10)), name="f1")])
     >>> s.messages.append(RawMessage("hello toto"))
     >>> print s
+    f0       | f1    
+    -------- | ------
     'hello ' | 'toto'
+    -------- | ------
 
     """
 

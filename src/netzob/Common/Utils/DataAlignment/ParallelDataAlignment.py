@@ -181,7 +181,10 @@ class ParallelDataAlignment(object):
 
         # create a Matrix List based on aligned data and requested data
         result = MatrixList()
+        if len(data) > 0:
+            result.headers = self.asyncResult[data[0]].headers
 
+    
         for d in data:
             if d not in self.asyncResult.keys():
                 raise Exception("At least one data ({0}) has not been successfully computed by the alignment".format(repr(d)))

@@ -64,14 +64,17 @@ class FindKeyFields(object):
         >>> Format.splitStatic(symbol)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
         >>> print symbol
-        '00' | 'ff2f' | '0000' | '11'
-        '00' | '0010' | '0000' | '00'
-        '00' | 'fe1f' | '0000' | '00'
-        '00' | '0020' | '0000' | '00'
-        '00' | 'ff1f' | '0000' | '00'
-        '00' | 'ff1f' | '0000' | '00'
-        '00' | 'ff2f' | '0000' | '00'
-        '00' | 'fe1f' | '0000' | '00'
+        Field-0 | Field-1 | Field-2 | Field-3
+        ------- | ------- | ------- | -------
+        '00'    | 'ff2f'  | '0000'  | '11'   
+        '00'    | '0010'  | '0000'  | '00'   
+        '00'    | 'fe1f'  | '0000'  | '00'   
+        '00'    | '0020'  | '0000'  | '00'   
+        '00'    | 'ff1f'  | '0000'  | '00'   
+        '00'    | 'ff1f'  | '0000'  | '00'   
+        '00'    | 'ff2f'  | '0000'  | '00'   
+        '00'    | 'fe1f'  | '0000'  | '00'   
+        ------- | ------- | ------- | -------
 
         >>> finder = FindKeyFields()
         >>> results = finder.execute(symbol)

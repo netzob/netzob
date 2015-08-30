@@ -60,25 +60,31 @@ class FieldReseter(object):
     >>> from netzob.all import *
     >>> samples = ["00ff2f000000",	"000010000000",	"00fe1f000000"]
     >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
-    >>> f1 = Field(Raw(nbBytes=1))
-    >>> f21 = Field(Raw(nbBytes=1))
-    >>> f22 = Field(Raw(nbBytes=1))
-    >>> f2 = Field()
+    >>> f1 = Field(Raw(nbBytes=1), name="f1")
+    >>> f21 = Field(Raw(nbBytes=1), name="f21")
+    >>> f22 = Field(Raw(nbBytes=1), name="f22")
+    >>> f2 = Field(name="f2")
     >>> f2.fields = [f21, f22]
-    >>> f3 = Field(Raw())
+    >>> f3 = Field(Raw(), name="f3")
     >>> symbol = Symbol([f1, f2, f3], messages=messages)
     >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> print symbol
+    f1   | f21  | f22  | f3      
+    ---- | ---- | ---- | --------
     '00' | 'ff' | '2f' | '000000'
     '00' | '00' | '10' | '000000'
     '00' | 'fe' | '1f' | '000000'
+    ---- | ---- | ---- | --------
     >>> reseter = FieldReseter()
     >>> reseter.reset(symbol)
     >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> print symbol
+    Field         
+    --------------
     '00ff2f000000'
     '000010000000'
     '00fe1f000000'
+    --------------
     """
 
     @typeCheck(AbstractField)

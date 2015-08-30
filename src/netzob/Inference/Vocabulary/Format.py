@@ -105,6 +105,8 @@ class Format(object):
         >>> symbol = Symbol(messages=messages)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
         >>> print symbol
+        Field         
+        --------------
         '00ff2f000000'
         '000010000000'
         '00fe1f000000'
@@ -113,17 +115,21 @@ class Format(object):
         '00ff1f000000'
         '00ff2f000000'
         '00fe1f000000'
+        --------------
         
         >>> Format.splitStatic(symbol)
         >>> print symbol
-        '00' | 'ff2f' | '000000'
-        '00' | '0010' | '000000'
-        '00' | 'fe1f' | '000000'
-        '00' | '0020' | '000000'
-        '00' | 'ff1f' | '000000'
-        '00' | 'ff1f' | '000000'
-        '00' | 'ff2f' | '000000'
-        '00' | 'fe1f' | '000000'
+        Field-0 | Field-1 | Field-2 
+        ------- | ------- | --------
+        '00'    | 'ff2f'  | '000000'
+        '00'    | '0010'  | '000000'
+        '00'    | 'fe1f'  | '000000'
+        '00'    | '0020'  | '000000'
+        '00'    | 'ff1f'  | '000000'
+        '00'    | 'ff1f'  | '000000'
+        '00'    | 'ff2f'  | '000000'
+        '00'    | 'fe1f'  | '000000'
+        ------- | ------- | --------
 
         >>> from netzob.all import *
         >>> samples = ["0300002502f080320100003a00000e00060501120a10020002006e840000400004001001ab", "0300001602f080320300003a000002000100000501ff", "0300000702f000"]
@@ -132,22 +138,31 @@ class Format(object):
         >>> symbol.encodingFunctions.add(TypeEncodingFunction(HexaString))
         >>> Format.splitStatic(symbol)
         >>> print symbol
-        '030000' | '25' | '02f0' | '80320100003a00000e00060501120a10020002006e840000400004001001ab'
-        '030000' | '16' | '02f0' | '80320300003a000002000100000501ff'                              
-        '030000' | '07' | '02f0' | '00'                                                            
+        Field-0  | Field-1 | Field-2 | Field-3                                                         
+        -------- | ------- | ------- | ----------------------------------------------------------------
+        '030000' | '25'    | '02f0'  | '80320100003a00000e00060501120a10020002006e840000400004001001ab'
+        '030000' | '16'    | '02f0'  | '80320300003a000002000100000501ff'                              
+        '030000' | '07'    | '02f0'  | '00'                                                            
+        -------- | ------- | ------- | ----------------------------------------------------------------
         
         >>> contents = ["hello lapy, what's up in Paris ?", "hello lapy, what's up in Berlin ?", "hello lapy, what's up in New-York ?"]
         >>> messages = [RawMessage(data=m) for m in contents]
         >>> s = Symbol(messages=messages)
         >>> print s
+        Field                                
+        -------------------------------------
         "hello lapy, what's up in Paris ?"   
         "hello lapy, what's up in Berlin ?"  
         "hello lapy, what's up in New-York ?"
+        -------------------------------------
         >>> Format.splitStatic(s)
         >>> print s
+        Field-0                     | Field-1     
+        --------------------------- | ------------
         "hello lapy, what's up in " | 'Paris ?'   
         "hello lapy, what's up in " | 'Berlin ?'  
         "hello lapy, what's up in " | 'New-York ?'
+        --------------------------- | ------------
 
         :param field: the field for which we update the format
         :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
@@ -184,9 +199,12 @@ class Format(object):
         >>> symbol = Symbol(messages=messages[:3])
         >>> Format.splitDelimiter(symbol, ASCII("ff"))
         >>> print symbol
-        'aaaa'     | 'ff' | '000000'     | 'ff' | '10'      
-        'bb'       | 'ff' | '110010'     | 'ff' | '00000011'
-        'cccccccc' | 'ff' | 'fe1f000000' | 'ff' | '12'      
+        Field-0    | Field-sep-6666 | Field-2      | Field-sep-6666 | Field-4   
+        ---------- | -------------- | ------------ | -------------- | ----------
+        'aaaa'     | 'ff'           | '000000'     | 'ff'           | '10'      
+        'bb'       | 'ff'           | '110010'     | 'ff'           | '00000011'
+        'cccccccc' | 'ff'           | 'fe1f000000' | 'ff'           | '12'      
+        ---------- | -------------- | ------------ | -------------- | ----------
 
 
         Lets take another example:
@@ -200,14 +218,17 @@ class Format(object):
         >>> symbol.encodingFunctions.add(TypeEncodingFunction(HexaString))
         >>> Format.splitDelimiter(symbol, ASCII('#'))
         >>> print symbol
-        '434d446964656e74696679'     | '#' | '0400000066726564'          
-        '5245536964656e74696679'     | '#' | '0000000000000000'          
-        '434d44696e666f'             | '#' | '00000000'                  
-        '524553696e666f'             | '#' | '0000000004000000696e666f'  
-        '434d447374617473'           | '#' | '00000000'                  
-        '5245537374617473'           | '#' | '00000000050000007374617473'
-        '434d4461757468656e74696679' | '#' | '090000006d7950617373776421'
-        '52455361757468656e74696679' | '#' | '0000000000000000'          
+        Field-0                      | Field-sep-23 | Field-2                     
+        ---------------------------- | ------------ | ----------------------------
+        '434d446964656e74696679'     | '#'          | '0400000066726564'          
+        '5245536964656e74696679'     | '#'          | '0000000000000000'          
+        '434d44696e666f'             | '#'          | '00000000'                  
+        '524553696e666f'             | '#'          | '0000000004000000696e666f'  
+        '434d447374617473'           | '#'          | '00000000'                  
+        '5245537374617473'           | '#'          | '00000000050000007374617473'
+        '434d4461757468656e74696679' | '#'          | '090000006d7950617373776421'
+        '52455361757468656e74696679' | '#'          | '0000000000000000'          
+        ---------------------------- | ------------ | ----------------------------
 
 
         :param field : the field to consider when spliting
@@ -243,15 +264,21 @@ class Format(object):
         >>> symbol = Symbol([f1, f2, f3], messages=messages)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
         >>> print symbol
-        '00' | 'ff2f' | '000000'
-        '00' | '0010' | '000000'
-        '00' | 'fe1f' | '000000'
+        Field | Field  | Field   
+        ----- | ------ | --------
+        '00'  | 'ff2f' | '000000'
+        '00'  | '0010' | '000000'
+        '00'  | 'fe1f' | '000000'
+        ----- | ------ | --------
         >>> Format.resetFormat(symbol)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))        
         >>> print symbol
+        Field         
+        --------------
         '00ff2f000000'
         '000010000000'
         '00fe1f000000'
+        --------------
 
         :param field: the field we want to reset
         :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
@@ -279,24 +306,36 @@ class Format(object):
         >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
         >>> print symbol
+        f1   | f2     | f3     | f4  
+        ---- | ------ | ------ | ----
         '00' | 'ff2f' | '0000' | '00'
         '00' | '0010' | '0000' | '00'
         '00' | 'fe1f' | '0000' | '00'
+        ---- | ------ | ------ | ----
         >>> Format.mergeFields(f2, f3)
         >>> print symbol
+        f1   | Merge      | f4  
+        ---- | ---------- | ----
         '00' | 'ff2f0000' | '00'
         '00' | '00100000' | '00'
         '00' | 'fe1f0000' | '00'
+        ---- | ---------- | ----
         >>> Format.mergeFields(symbol.fields[0], symbol.fields[1])
         >>> print symbol
+        Merge        | f4  
+        ------------ | ----
         '00ff2f0000' | '00'
         '0000100000' | '00'
         '00fe1f0000' | '00'
+        ------------ | ----
         >>> Format.mergeFields(symbol.fields[0], symbol.fields[1])
         >>> print symbol
+        Merge         
+        --------------
         '00ff2f000000'
         '000010000000'
         '00fe1f000000'
+        --------------
 
 
         :param field: the field we want to reset
@@ -399,10 +438,16 @@ class Format(object):
         ...     print sym.name + ":"
         ...     print sym
         Symbol_ff2f:
-        '00' | 'ff2f' | '000000'
-        '00' | 'ff2f' | '000000'
+        Field | Field  | Field   
+        ----- | ------ | --------
+        '00'  | 'ff2f' | '000000'
+        '00'  | 'ff2f' | '000000'
+        ----- | ------ | --------
         Symbol_0020:
-        '00' | '0020' | '000000'
+        Field | Field  | Field   
+        ----- | ------ | --------
+        '00'  | '0020' | '000000'
+        ----- | ------ | --------
 
         :param field: the field we want to split in new symbols
         :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
@@ -468,14 +513,23 @@ class Format(object):
         ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
         ...     print sym
         [symbol_9]
+        Field               
+        --------------------
         '00ffffffff1100abcd'
+        --------------------
         [symbol_5]
+        Field       
+        ------------
         '001100abcd'
         '001100ffff'
+        ------------
         [symbol_7]
+        Field           
+        ----------------
         '00ffff1100abcd'
         '00aaaa1100abcd'
         '00bbbb1100abcd'
+        ----------------
 
         :param messages: the messages to cluster.
         :type messages: a list of :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage.AbstractMessage`

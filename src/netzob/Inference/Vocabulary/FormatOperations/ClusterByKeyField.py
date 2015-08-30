@@ -80,10 +80,16 @@ class ClusterByKeyField(object):
         ...     print sym.name + ":"
         ...     print sym
         Symbol_ff2f:
-        '00' | 'ff2f' | '000000'
-        '00' | 'ff2f' | '000000'
+        Field | Field  | Field   
+        ----- | ------ | --------
+        '00'  | 'ff2f' | '000000'
+        '00'  | 'ff2f' | '000000'
+        ----- | ------ | --------
         Symbol_0020:
-        '00' | '0020' | '000000'
+        Field | Field  | Field   
+        ----- | ------ | --------
+        '00'  | '0020' | '000000'
+        ----- | ------ | --------
 
         :param field: the field we want to split in new symbols
         :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`

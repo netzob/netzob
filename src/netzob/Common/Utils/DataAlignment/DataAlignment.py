@@ -73,19 +73,22 @@ class DataAlignment(threading.Thread):
     10
 
     >>> # one more fun test case
-    >>> data = ['hello {0}, welcome'.format(random.choice(["tototo"])) for x in range(5)]
+    >>> data = ['hello tototo, welcome' for  x in range(5)]
     >>> # Now we create a symbol with its field structure to represent this type of message
-    >>> fields = [Field(ASCII('hello ')), Field(Agg([Alt([ASCII("toto"), ASCII("to")]), Alt([ASCII("to"), ASCII("toto")])])), Field(ASCII(', welcome'))]
+    >>> fields = [Field(ASCII('hello '), name="f1"), Field(Agg([Alt([ASCII("toto"), ASCII("to")]), Alt([ASCII("to"), ASCII("toto")])]), name="f2"), Field(ASCII(', welcome'), name="f3")]
     >>> symbol = Symbol(fields=fields)
     >>> alignedData = DataAlignment.align(data, symbol)
     >>> print len(alignedData)
     5
     >>> print alignedData
+    f1       | f2       | f3         
+    -------- | -------- | -----------
     'hello ' | 'tototo' | ', welcome'
     'hello ' | 'tototo' | ', welcome'
     'hello ' | 'tototo' | ', welcome'
     'hello ' | 'tototo' | ', welcome'
     'hello ' | 'tototo' | ', welcome'
+    -------- | -------- | -----------
 
     >>> # Lets try to align a more complex message
     >>> msg1 = "helloPUTtotoPA343"
@@ -93,19 +96,22 @@ class DataAlignment(threading.Thread):
     >>> msg3 = "helloPUTtotototoPAdqs4qsd33"
     >>> messages = [msg1, msg2, msg3]
     >>> fh1 = Field("hello", name="f1")
-    >>> fh2 = Field(ASCII(nbChars=(3)), name="f4")
+    >>> fh2 = Field(ASCII(nbChars=(3)), name="f2")
     >>> fh3 = Field(Agg([Alt(["toto", "to"]), Alt(["to", "toto"])]), name="f3")
-    >>> fb1 = Field(ASCII("PA"), name="f5")
-    >>> fb2 = Field(Raw(nbBytes=(0,10)))
+    >>> fb1 = Field(ASCII("PA"), name="f4")
+    >>> fb2 = Field(Raw(nbBytes=(0,10)), name="f5")
     >>> headerFields = [fh1, fh2, fh3]
     >>> bodyFields = [fb1, fb2]
 
     >>> symbol = Symbol(fields=headerFields+bodyFields)
     >>> alignedData2 = DataAlignment.align(messages, symbol)
     >>> print alignedData2
+    f1      | f2    | f3         | f4   | f5         
+    ------- | ----- | ---------- | ---- | -----------
     'hello' | 'PUT' | 'toto'     | 'PA' | '343'      
     'hello' | 'GET' | 'tototo'   | 'PA' | ''         
     'hello' | 'PUT' | 'totototo' | 'PA' | 'dqs4qsd33'
+    ------- | ----- | ---------- | ---- | -----------
 
     """
 
@@ -139,7 +145,7 @@ class DataAlignment(threading.Thread):
             raise TypeError("Field cannot be None")
 
         # Aligned messages are stored in a MatrixList for better display
-        result = MatrixList()
+        result = MatrixList()        
 
         # We retrieve all the leaf fields of the root of the provided field
         rootLeafFields = self.__root._getLeafFields(depth=self.depth)
@@ -148,6 +154,8 @@ class DataAlignment(threading.Thread):
         #     targetedFieldLeafFields = self.field._getLeafFields(depth=self.depth)
         # else:
         targetedFieldLeafFields = rootLeafFields
+
+        result.headers = [str(field.name) for field in targetedFieldLeafFields]
 
         for d in self.data:
             from netzob.Common.Models.Vocabulary.Domain.Parser.MessageParser import MessageParser

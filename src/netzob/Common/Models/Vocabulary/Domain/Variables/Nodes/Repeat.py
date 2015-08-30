@@ -177,7 +177,7 @@ class Repeat(AbstractVariableNode):
 
         # initialy, there is a unique path to specialize (the provided one)
         specializingPaths = []
-
+    
         for i_repeat in xrange(self.nbRepeat[0], self.nbRepeat[1]):
             newSpecializingPaths = [originalSpecializingPath.duplicate()]
 

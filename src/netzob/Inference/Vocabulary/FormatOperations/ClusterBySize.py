@@ -74,14 +74,23 @@ class ClusterBySize(object):
         ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
         ...     print sym
         [symbol_9]
+        Field               
+        --------------------
         '00ffffffff1100abcd'
+        --------------------
         [symbol_5]
+        Field       
+        ------------
         '001100abcd'
         '001100ffff'
+        ------------
         [symbol_7]
+        Field           
+        ----------------
         '00ffff1100abcd'
         '00aaaa1100abcd'
         '00bbbb1100abcd'
+        ----------------
 
         :param messages: the messages to cluster.
         :type messages: a list of :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage.AbstractMessage`

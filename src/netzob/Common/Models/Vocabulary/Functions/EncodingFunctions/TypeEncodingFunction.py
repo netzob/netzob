@@ -61,9 +61,11 @@ class TypeEncodingFunction(EncodingFunction):
     >>> s = Symbol(fields=[f], messages=[m], name="Symbol")
     >>> s.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> print s
+    f0                                            
+    ----------------------------------------------
     '546865726520617265200a20736f6c7574696f6e732e'
+    ----------------------------------------------
     """
-
     def __init__(self, _type, unitSize=None, endianness=None, sign=None):
         """Creates a new encoding function that will encode
         the data with the specified types and following its attributes. If an attribute

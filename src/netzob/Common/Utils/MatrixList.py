@@ -51,10 +51,36 @@ class MatrixList(list):
     The __str__ method has been redefined to propose
     a nice representation of its content.
     """
+    def __init__(self):
+        self.headers = []
+    
+    @property
+    def headers(self):
+        """A list of sorted strings. Each string will be displayed as a column header"""
+        return self.__headers
 
+    @headers.setter
+    def headers(self, headers):
+        self.__headers = []
+        for h in headers:
+            self.__headers.append(str(h))
+
+
+        
     def __repr__(self):
         # Prepare data to be returned
         r_repr = []
+
+        
+        
+        if len(self) > 0:
+            nb_col = len(self[0])
+            if self.headers is not None and len(self.headers) == nb_col:
+                r_repr.append(self.headers)
+            else:
+                r_repr.append(["Field"] * nb_col)
+
+
         for r in self:
             r1_repr = []
             for r1 in r:
@@ -64,6 +90,9 @@ class MatrixList(list):
         # Prepare format
         cs = zip(*r_repr)
         c_ws = [max(len(value) for value in c) for c in cs]
+        line = ["-"*w for w in c_ws]
+        r_repr.insert(1, line)
+        r_repr.append(line)
         format = ' | '.join(['%%-%ds' % w for w in c_ws])
 
         # Format data

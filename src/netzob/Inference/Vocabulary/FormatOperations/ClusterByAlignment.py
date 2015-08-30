@@ -78,27 +78,33 @@ class ClusterByAlignment(object):
     3
     >>> symbols[0].addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> print symbols[0]
-    '4d79206970206164647265737320697320' | '4ea717' | '0a' | ''      
-    '4d79206970206164647265737320697320' | 'c0a800' | '0a' | ''      
-    '4d79206970206164647265737320697320' | ''       | '0a' | '7879d4'
+    Field                                | Field    | Field | Field   
+    ------------------------------------ | -------- | ----- | --------
+    '4d79206970206164647265737320697320' | '4ea717' | '0a'  | ''      
+    '4d79206970206164647265737320697320' | 'c0a800' | '0a'  | ''      
+    '4d79206970206164647265737320697320' | ''       | '0a'  | '7879d4'
+    ------------------------------------ | -------- | ----- | --------
 
     >>> print symbols[2]
-    'hello ' | 'carlito' | ", what's up in " | 'Munich'    | ' ?'
-    'hello ' | 'carlito' | ", what's up in " | 'Paris'     | ' ?'
-    'hello ' | 'ditrich' | ", what's up in " | 'Munich'    | ' ?'
-    'hello ' | 'ditrich' | ", what's up in " | 'Paris'     | ' ?'
-    'hello ' | 'carlito' | ", what's up in " | 'Vienne'    | ' ?'
-    'hello ' | 'ditrich' | ", what's up in " | 'Vienne'    | ' ?'
-    'hello ' | 'toto'    | ", what's up in " | 'Paris'     | ' ?'
-    'hello ' | 'zoby'    | ", what's up in " | 'Paris'     | ' ?'
-    'hello ' | 'toto'    | ", what's up in " | 'Munich'    | ' ?'
-    'hello ' | 'zoby'    | ", what's up in " | 'Munich'    | ' ?'
-    'hello ' | 'toto'    | ", what's up in " | 'Vienne'    | ' ?'
-    'hello ' | 'zoby'    | ", what's up in " | 'Vienne'    | ' ?'
-    'hello ' | 'carlito' | ", what's up in " | 'Barcelone' | ' ?'
-    'hello ' | 'ditrich' | ", what's up in " | 'Barcelone' | ' ?'
-    'hello ' | 'toto'    | ", what's up in " | 'Barcelone' | ' ?'
-    'hello ' | 'zoby'    | ", what's up in " | 'Barcelone' | ' ?'
+    Field    | Field     | Field             | Field       | Field
+    -------- | --------- | ----------------- | ----------- | -----
+    'hello ' | 'carlito' | ", what's up in " | 'Munich'    | ' ?' 
+    'hello ' | 'carlito' | ", what's up in " | 'Paris'     | ' ?' 
+    'hello ' | 'ditrich' | ", what's up in " | 'Munich'    | ' ?' 
+    'hello ' | 'ditrich' | ", what's up in " | 'Paris'     | ' ?' 
+    'hello ' | 'carlito' | ", what's up in " | 'Vienne'    | ' ?' 
+    'hello ' | 'ditrich' | ", what's up in " | 'Vienne'    | ' ?' 
+    'hello ' | 'toto'    | ", what's up in " | 'Paris'     | ' ?' 
+    'hello ' | 'zoby'    | ", what's up in " | 'Paris'     | ' ?' 
+    'hello ' | 'toto'    | ", what's up in " | 'Munich'    | ' ?' 
+    'hello ' | 'zoby'    | ", what's up in " | 'Munich'    | ' ?' 
+    'hello ' | 'toto'    | ", what's up in " | 'Vienne'    | ' ?' 
+    'hello ' | 'zoby'    | ", what's up in " | 'Vienne'    | ' ?' 
+    'hello ' | 'carlito' | ", what's up in " | 'Barcelone' | ' ?' 
+    'hello ' | 'ditrich' | ", what's up in " | 'Barcelone' | ' ?' 
+    'hello ' | 'toto'    | ", what's up in " | 'Barcelone' | ' ?' 
+    'hello ' | 'zoby'    | ", what's up in " | 'Barcelone' | ' ?' 
+    -------- | --------- | ----------------- | ----------- | -----
 
     """
 
