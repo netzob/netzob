@@ -70,16 +70,3 @@ A file message is defined with the following parameters :
 * the size of the file
 
 
-Definition of a NetworkMessage :
-
-.. automodule:: netzob.Common.Models.FileMessage
-
-    .. autoclass:: FileMessage
-    	:members:
-
-Definition of the factory for XML processing of a FileMessage :
-
-.. automodule:: netzob.Common.Models.Factories.FileMessageFactory
-
-    .. autoclass:: FileMessageFactory   
-  
