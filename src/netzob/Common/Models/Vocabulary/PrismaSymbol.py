@@ -1,5 +1,3 @@
-__author__ = 'dsmp'
-
 from netzob.Common.Models.Vocabulary.Symbol import Symbol
 # from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Import.PrismaImporter.prisma.Hist import Hist
@@ -22,9 +20,6 @@ class PrismaSymbol(Symbol):
     def __init__(self, pi=None, absFields=[], fields=None, messages=None, name="Symbol",
                  rules={}, copyRules={}, dataRules={}, horizon=[None], role=None):
 
-        # super(PrismaSymbol, self).__init__(name, None, True)
-        # self.__messages = TypedList(AbstractMessage)
-
         self.__messages = TypedList(AbstractMessage)
         super(PrismaSymbol, self).__init__(fields, messages, name)
         self.pi = pi
@@ -33,6 +28,8 @@ class PrismaSymbol(Symbol):
         self.copyRules = copyRules
         self.dataRules = dataRules
         self.absoluteFields = absFields
+        # make Symbol aware of its horizons
+        self.horizons = self.horizons(rules, copyRules, dataRules)
 
         self.role = role
         self.faulty = 0.0
@@ -46,10 +43,15 @@ class PrismaSymbol(Symbol):
             fields = [Field()]
         self.fields = fields
 
-    # def copy(self):
-    #     return PrismaSymbol(pi=self.pi, absFields=self.absoluteFields, fields=self.fields, messages=self.messages,
-    #                         rules=self.rules, copyRules=self.copyRules, dataRules=self.dataRules, role=self.role,
-    #                         name=self.name)
+    def horizons(self, rules, copyRules, dataRules):
+        horizons = []
+        for hor in rules.keys():
+            horizons.append(hor)
+        for hor in copyRules.keys():
+            horizons.append(hor)
+        for hor in dataRules.keys():
+            horizons.append(hor)
+        return list(set(horizons))
 
     def setHorizon(self, horizon):
         self.horizon = horizon
@@ -180,6 +182,7 @@ class PrismaSymbol(Symbol):
         # if ruleFlag:
         #     self.messages = [RawMessage(self.specialize(noRules=True))]
         if not ruleFlag:
+            # ToDo: emit Symbol iff the horizon matches
             # heuristically approach:
             # put always same string in rule fields iff horizon does not match
             # maybe reason about what string fits best

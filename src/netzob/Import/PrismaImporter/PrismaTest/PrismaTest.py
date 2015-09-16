@@ -1,5 +1,3 @@
-__author__ = 'dsmp'
-
 import os
 
 import time
@@ -29,16 +27,13 @@ class PrismaTest(object):
                 except socket_error:
                     # probably killed target -> restart it
                     print 'watch out, target may be gone?! Trying to restart..'
-                    for state in self.pi.getLayer().sesSta[-1]:
+                    # set States to not active
+                    for state in self.pi.States:
                         # just in case..
                         state.active = False
-                    self.pi.getLayer().sesSym[-1].append('CRASH')
-                    self.pi.getLayer().sesSta[-1].append('CRASH')
                     time.sleep(11)
-                    err = os.system("/home/dsmp/work/xbmc/bin/kodi &")
+                    os.system("/home/dsmp/work/xbmc/bin/kodi &")
                     time.sleep(7.5)
-                    # if err == 0:
-                    #     return True
             s = self.pi.getInitial()
             sPre = None
             while sPre != s:
@@ -51,8 +46,6 @@ class PrismaTest(object):
                     return True
                 if 'END' in s.name:
                     # session ended gracefully
-                    self.pi.getLayer().sesSym[-1].append('end')
-                    self.pi.getLayer().sesSta[-1].append('end')
                     self._logger.critical('session gracefully ended')
                     l.closeChannel()
                     time.sleep(3)
@@ -71,13 +64,13 @@ class PrismaTest(object):
         c = self.pi.getLayer().channel
         c.localPort += 1
         if c.localPort > 60000:
-            c.localPort = 51337
+            c.localPort = 11337
         return
 
     def fuzzyLearn(self, count=0):
         ret = True
         init = True
-        self.pi.getLayer().reset()
+        self.pi.getLayer().reInit()
         while ret:
             ret = self.run(init)
             init = False
@@ -102,7 +95,10 @@ class PrismaTest(object):
         return
 
     def test(self, dot=True, check=False):
-        self.pi.setPath('/home/dsmp/work/pulsar/src/models/first')
+        if self.pi.isInitialized():
+            return
+        # self.pi.setPath('/home/dsmp/work/pulsar/src/models/1ActionMerge')
+        self.pi.setPath('/data/pulsar/models/1ActionMerge')
         self.pi.setDestinationIp('127.0.0.1')
         self.pi.setDestinationPort(36666)
         self.pi.setSourceIp('127.0.0.1')

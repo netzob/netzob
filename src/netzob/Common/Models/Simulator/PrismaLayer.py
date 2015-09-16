@@ -13,83 +13,30 @@ class PrismaLayer(AbstractionLayer):
         e = EmptySymbol()
         e.name = '-1'
         self.symbolBuffer = horizonLength*[e]
-        self.sesSym = [[]]
-        self.sesSta = [[]]
-        self.unknowns = []
-        self.unknownCount = -2
-        self.removed = []
 
     def reInit(self):
         e = EmptySymbol()
         e.name = '-1'
         self.symbolBuffer = len(self.symbolBuffer)*[e]
-        self.sesSta.append([])
-        self.sesSym.append([])
-
-    def reset(self):
-        self.reInit()
-        self.sesSym = [[]]
-        self.sesSta = [[]]
-        self.unknowns = []
-        self.unknownCount = -2
-        return
 
     def updateSymbolBuffer(self, nextSymbol):
         # save a copy here
         # idea: the message wont be overwritten if symbol more than once in the horizon
         self.symbolBuffer = self.symbolBuffer[1:] + [copy(nextSymbol)]
 
-    def sessionOver(self, msg):
-        self._logger.critical('The session is over: {}'.format(msg))
-        # rule out errors
-        # last sent message
-        ds = self.sesSym[-1][-1]
-        ds.faulty += 1
-        si = self.sesSym[-1][-3]
-        si.faulty += 0.05
-        self._logger.critical('incrementing faulty of symNo.{} faulty:{} emitted:{} ratio:{}'.format(
-            ds.name, ds.faulty, ds.emitted, float(ds.faulty)/ds.emitted))
-        self._logger.critical('incrementing faulty of symNo.{} faulty:{} emitted:{} ratio:{}'.format(
-            si.name, si.faulty, si.emitted, float(si.faulty)/si.emitted))
-        self.sesSym.append([])
-        self.sesSta.append([])
-
     def readSymbol(self):
         try:
             symbol, data = super(PrismaLayer, self).readSymbol()
         except Exception:
-            self.sessionOver(msg='broken channel?')
             raise Exception("socket is not available")
         if data == '':
-            self.sessionOver(msg='no data received')
             raise Exception("socket is not available")
         if 'Unknown' in symbol.name:
             self._logger.info("having unknown")
             symbol = PrismaSymbol(name='{}'.format(self.unknownCount), messages=[RawMessage(data)])
-            # maybe we saw this..
-            seen = False
-            for missingNo in self.unknowns:
-                try:
-                    if missingNo.getCells() == symbol.getCells():
-                        self._logger.info("match {}".format(missingNo.name))
-                        seen = True
-                        symbol = missingNo
-                        break
-                except Exception:
-                    pass
-            if not seen:
-                if data != '':
-                    self._logger.info("record new unknown at ID{}".format(self.unknownCount))
-                    self.unknownCount -= 1
-                    self.unknowns.append(symbol)
-                    # we then could add the unknown to our well-known templates
-                    self.symbols.append(symbol)
-                else:
-                    self._logger.info("record new unknown at ID{}".format(-1))
         self._logger.critical('received from the channel sym{}:'.format(symbol.name))
         print symbol.messages
         self._logger.warning("going on as usual")
-        self.sesSym[-1].append(symbol)
         self.updateSymbolBuffer(symbol)
         symbol.setHorizon(self.symbolBuffer)
         symbol.messages = [RawMessage(data)]
@@ -102,8 +49,6 @@ class PrismaLayer(AbstractionLayer):
         # set horizon
         symbol.setHorizon(self.symbolBuffer)
         self._logger.info('current horizon {}'.format(symbol.horizon2ID()))
-        self.sesSym[-1].append(symbol)
-        symbol.emitted += 1
         self._writeSymbol(symbol)
 
     # copied from usal AbstractionLayer
@@ -132,7 +77,6 @@ class PrismaLayer(AbstractionLayer):
         try:
             self.channel.write(data)
         except Exception:
-            self.sessionOver(msg='client')
             raise Exception("error on writing to channel")
         self._logger.info("Writing to communication channel done..")
         return

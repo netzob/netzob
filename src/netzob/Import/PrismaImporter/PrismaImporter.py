@@ -8,7 +8,7 @@ from netzob.Common.Models.Vocabulary.Symbol import Symbol
 from netzob.Common.Models.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Common.Models.Vocabulary.Field import Field
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
-from netzob.Common.Models.Grammar.States.PrismaState import PrismaState
+from netzob.Common.Models.Grammar.States.State import State
 from netzob.Common.Models.Grammar.Transitions.PrismaTransition import PrismaTransition
 from netzob.Common.Models.Grammar.Automata import Automata
 from netzob.Common.Models.Types.ASCII import ASCII
@@ -183,10 +183,10 @@ class PrismaImporter(object):
 
     def createStates(self, prismaState):
         if 'END' in prismaState.getCurState():
-            return [[PrismaState(getName(prismaState))]]
+            return [[State(getName(prismaState))]]
         if prismaState not in self.model.model.keys():
             return
-        curState = PrismaState(getName(prismaState))
+        curState = State(getName(prismaState))
         nextStates = []
         for nx in self.model.model[prismaState]:
             nextStates.append(nx)
