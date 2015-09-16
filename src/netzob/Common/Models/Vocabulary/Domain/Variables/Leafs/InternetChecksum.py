@@ -52,7 +52,7 @@ from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.ASCII import ASCII
 from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Types.Decimal import Decimal
+from netzob.Common.Models.Types.Integer import Integer
 from netzob.Common.Models.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Common.Models.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 from netzob.Common.Models.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
@@ -227,7 +227,7 @@ class InternetChecksum(AbstractRelationVariableLeaf):
             fieldValues = ''.join(fieldValues)
             # compute the checksum of this value
             chsum = self.__checksum(fieldValues)
-            b = TypeConverter.convert(chsum, Decimal, BitArray, src_unitSize=AbstractType.UNITSIZE_16, src_sign = AbstractType.SIGN_UNSIGNED)
+            b = TypeConverter.convert(chsum, Integer, BitArray, src_unitSize=AbstractType.UNITSIZE_16, src_sign = AbstractType.SIGN_UNSIGNED)
             return b
 
     @typeCheck(SpecializingPath)

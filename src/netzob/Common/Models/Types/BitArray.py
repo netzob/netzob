@@ -155,7 +155,7 @@ class BitArray(AbstractType):
 
         >>> from netzob.all import *
         >>> from netzob.Common.Models.Types.BitArray import BitArray
-        >>> BitArray.encode(Decimal.decode(20))
+        >>> BitArray.encode(Integer.decode(20))
         bitarray('00010100')
 
         :param data: the data encoded in python raw which will be encoded in current type

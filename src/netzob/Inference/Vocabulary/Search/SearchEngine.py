@@ -148,7 +148,7 @@ class SearchEngine(object):
         >>> tools = ["Netzob", "zoby", "toto", "your hand", "a knive"]
         >>> places = ["my office", "school", "your bedroom", "your car", "hell"]
         >>> msgs = [ RawMessage("Reversing {0} with {1} in {2} !".format(s, w, p)) for s in stuff for w in tools for p in places]
-        >>> sData = [ ASCII("protocol"), ASCII("Reversed"), Decimal(10)]
+        >>> sData = [ ASCII("protocol"), ASCII("Reversed"), Integer(10)]
         >>> se = SearchEngine()
         >>> results = se.searchDataInMessages(sData, msgs, inParallel=False)
         >>> print results
@@ -163,7 +163,7 @@ class SearchEngine(object):
         >>> msgs = [ RawMessage("Reversing {0} with {1} in {2}!".format(s, w, p)) for s in stuff for w in tools for p in places]
         >>> print len(msgs)
         150
-        >>> sData = [ASCII("protocol"), ASCII("Reversed"), Decimal(10)]
+        >>> sData = [ASCII("protocol"), ASCII("Reversed"), Integer(10)]
         >>> se = SearchEngine()
         >>> results = se.searchDataInMessages(sData, msgs, inParallel=True)
         >>> print results

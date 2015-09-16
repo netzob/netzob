@@ -90,7 +90,7 @@ class AbstractType(object):
         from netzob.Common.Models.Types.ASCII import ASCII
         from netzob.Common.Models.Types.Raw import Raw
         from netzob.Common.Models.Types.BitArray import BitArray
-        from netzob.Common.Models.Types.Decimal import Decimal
+        from netzob.Common.Models.Types.Integer import Integer
         from netzob.Common.Models.Types.HexaString import HexaString
         from netzob.Common.Models.Types.IPv4 import IPv4
 
@@ -102,7 +102,7 @@ class AbstractType(object):
             # string data
             ASCII,
             # decimal
-            Decimal,
+            Integer,
             # hexstring
             HexaString,
             # IPv4
@@ -296,11 +296,11 @@ class AbstractType(object):
         >>> print t.mutate()
         {'ascii(inversed)-bits(littleEndian)': bitarray('00100110001101100100111011110110111011101111011000110110001101101010011000010110'), 'ascii(inversed-upper)-bits(littleEndian)': bitarray('00100010001100100100101011110010111010101111001000110010001100101010001000010010'), 'ascii(upper)-bits(littleEndian)': bitarray('00010010101000100011001000110010111100101110101011110010010010100011001000100010'), 'ascii-bits(bigEndian)': bitarray('01101000011001010110110001101100011011110111011101101111011100100110110001100100'), 'ascii(inversed)-bits(bigEndian)': bitarray('01100100011011000111001001101111011101110110111101101100011011000110010101101000'), 'ascii(upper)-bits(bigEndian)': bitarray('01001000010001010100110001001100010011110101011101001111010100100100110001000100'), 'ascii-bits(littleEndian)': bitarray('00010110101001100011011000110110111101101110111011110110010011100011011000100110'), 'ascii(inversed-upper)-bits(bigEndian)': bitarray('01000100010011000101001001001111010101110100111101001100010011000100010101001000')}
 
-        >>> t = Decimal(100)
+        >>> t = Integer(100)
         >>> print t.mutate()
         {'bits(littleEndian)': bitarray('00100110'), 'bits(bigEndian)': bitarray('01100100')}
 
-        >>> t = Decimal()
+        >>> t = Integer()
         >>> mutations = t.mutate()
         >>> print len(mutations['bits(littleEndian)'])
         8
@@ -484,8 +484,8 @@ class AbstractType(object):
         if isinstance(data, AbstractType):
             return data
         if isinstance(data, int):
-            from netzob.Common.Models.Types.Decimal import Decimal
-            return Decimal(value=data)
+            from netzob.Common.Models.Types.Integer import Integer
+            return Integer(value=data)
         if isinstance(data, str):
             try:
                 from netzob.Common.Models.Types.ASCII import ASCII

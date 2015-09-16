@@ -121,10 +121,10 @@ class Memory(object):
         """Duplicates in a new memory
 
         >>> from netzob.all import *
-        >>> d1 = Data(Decimal)
+        >>> d1 = Data(Integer)
         >>> d2 = Data(ASCII)
         >>> m = Memory()
-        >>> m.memorize(d1, TypeConverter.convert(100, Decimal, BitArray))
+        >>> m.memorize(d1, TypeConverter.convert(100, Integer, BitArray))
         >>> m.memorize(d2, TypeConverter.convert("hello", ASCII, BitArray))
         >>> m.getValue(d1)
         bitarray('01100100')

@@ -52,7 +52,7 @@ from netzob.Common.Models.Types.AbstractType import AbstractType
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Types.Decimal import Decimal
+from netzob.Common.Models.Types.Integer import Integer
 from netzob.Common.Models.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Common.Models.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 from netzob.Common.Models.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
@@ -270,7 +270,7 @@ class Size(AbstractRelationVariableLeaf):
 
 
             size = int(size * self.factor + self.offset)
-            size_raw = TypeConverter.convert(size, Decimal, Raw, src_unitSize=self.dataType.unitSize)        
+            size_raw = TypeConverter.convert(size, Integer, Raw, src_unitSize=self.dataType.unitSize)        
             b = TypeConverter.convert(size_raw, Raw, BitArray)
             
             # add heading '0'

@@ -264,7 +264,7 @@ class Value(AbstractRelationVariableLeaf):
     #                                                            # because this is what will be considered durring field specialization
     #                 size += tmpLen
     #         size = size * self.factor + self.offset
-    #         b = TypeConverter.convert(size, Decimal, BitArray)
+    #         b = TypeConverter.convert(size, Integer, BitArray)
 
     #         while len(b)<self.dataType.size[0]:
     #             b.insert(0, False)

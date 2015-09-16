@@ -203,7 +203,7 @@ class ASCII(AbstractType):
         True
 
         The ascii table is defined from 0 to 127:
-        >>> ASCII().canParse(TypeConverter.convert(128, Decimal, BitArray, src_sign=AbstractType.SIGN_UNSIGNED))
+        >>> ASCII().canParse(TypeConverter.convert(128, Integer, BitArray, src_sign=AbstractType.SIGN_UNSIGNED))
         False
 
         >>> a = ASCII(nbChars=10)

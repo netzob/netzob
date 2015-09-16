@@ -75,7 +75,7 @@ def getSuite():
         # Modules related to common types and data structures
         # ---------------------------------------------------
         ASCII.__module__,
-        Decimal.__module__,
+        Integer.__module__,
         BitArray.__module__,
         Raw.__module__,
         HexaString.__module__,

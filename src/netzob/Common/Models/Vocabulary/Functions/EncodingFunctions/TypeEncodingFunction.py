@@ -56,8 +56,8 @@ class TypeEncodingFunction(EncodingFunction):
     the specified data.
 
     >>> from netzob.all import *
-    >>> f = Field(name="f0", domain=Agg(["There are ", Decimal(10), " solutions."]))
-    >>> m = RawMessage("There are " + TypeConverter.convert(10, Decimal, Raw) + " solutions.")
+    >>> f = Field(name="f0", domain=Agg(["There are ", Integer(10), " solutions."]))
+    >>> m = RawMessage("There are " + TypeConverter.convert(10, Integer, Raw) + " solutions.")
     >>> s = Symbol(fields=[f], messages=[m], name="Symbol")
     >>> s.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> print s

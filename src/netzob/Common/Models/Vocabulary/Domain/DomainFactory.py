@@ -63,7 +63,7 @@ class DomainFactory(object):
     >>> print domain.children[0].dataType
     Raw=None ((0, None))
     >>> print domain.children[1].dataType
-    Decimal=10 ((8, 8))
+    Integer=10 ((8, 8))
 
     >>> domain = DomainFactory.normalizeDomain(Agg([Alt(["toto", 20]), ASCII("!")]))
     >>> print domain.varType
@@ -71,7 +71,7 @@ class DomainFactory(object):
     >>> print domain.children[0].varType
     Alt
     >>> print domain.children[0].children[1].dataType
-    Decimal=20 ((8, 8))
+    Integer=20 ((8, 8))
     >>> print domain.children[1].dataType
     ASCII=! ((0, 8))
 

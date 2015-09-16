@@ -39,7 +39,7 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.AbstractType import AbstractType
 from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Types.Decimal import Decimal
+from netzob.Common.Models.Types.Integer import Integer
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 
 
@@ -246,7 +246,7 @@ class RelationFinder(object):
                 x = len(x)
         else:
             if len(x) > 0:
-                x = TypeConverter.convert(x[:8], Raw, Decimal)
+                x = TypeConverter.convert(x[:8], Raw, Integer)
             else:
                 x = 0
         if y_attribute == self.ATTR_SIZE:
@@ -254,7 +254,7 @@ class RelationFinder(object):
                 y = len(y)
         else:
             if len(y) > 0:
-                y = TypeConverter.convert(y[:8], Raw, Decimal)
+                y = TypeConverter.convert(y[:8], Raw, Integer)
             else:
                 y = 0
 
@@ -337,7 +337,7 @@ class RelationFinder(object):
                 data = data[:8]  # We take at most 8 bytes
                 unitSize = int(AbstractType.UNITSIZE_8) * len(data)
                 unitSize = int(pow(2, math.ceil(math.log(unitSize, 2))))  # Round to the nearest upper power of 2
-                result.append(Decimal.encode(data, endianness=AbstractType.ENDIAN_BIG, unitSize=str(unitSize)))
+                result.append(Integer.encode(data, endianness=AbstractType.ENDIAN_BIG, unitSize=str(unitSize)))
             else:
                 result.append(0)
         return result

@@ -48,8 +48,8 @@ from bitarray import bitarray
 from netzob.Common.Models.Types.AbstractType import AbstractType
 
 
-class Decimal(AbstractType):
-    """The netzob type Decimal, a wrapper for the "int" object (with unitSize).
+class Integer(AbstractType):
+    """The netzob type Integer, a wrapper for the "int" object (with unitSize).
     Some constraints can be defined and they participate in the definition of the size
     used in the generated regex. The following constraints can be defined:
     - a static decimal value (for instance 20) with a specific unitSize and with a sign definition
@@ -58,31 +58,31 @@ class Decimal(AbstractType):
     - a number of unitSize
 
     >>> from netzob.all import *
-    >>> cDec = Decimal(20)
+    >>> cDec = Integer(20)
     >>> print repr(cDec)
     20
     >>> print cDec.typeName
-    Decimal
+    Integer
     >>> print cDec.value
     bitarray('00010100')
 
     The required size in bits is automaticaly computed following the specifications:
-    >>> dec = Decimal(10)
+    >>> dec = Integer(10)
     >>> print dec.size
     (8, 8)
 
-    >>> dec = Decimal(interval=(-120, 10))
+    >>> dec = Integer(interval=(-120, 10))
     >>> print dec.size
     (16, 16)
 
     Use the convert function to convert the current type to any other netzob type
-    >>> dec = Decimal(10)
+    >>> dec = Integer(10)
     >>> raw = dec.convertValue(Raw, dst_endianness=AbstractType.ENDIAN_BIG)
     >>> print raw
     Raw='\\n' ((0, 8))
 
     Its not possible to convert if the object has not value
-    >>> a = Decimal(nbUnits=3)
+    >>> a = Integer(nbUnits=3)
     >>> a.convertValue(Raw)
     Traceback (most recent call last):
     ...
@@ -95,7 +95,7 @@ class Decimal(AbstractType):
             from netzob.Common.Models.Types.TypeConverter import TypeConverter
             from netzob.Common.Models.Types.BitArray import BitArray
             interval = value
-            value = TypeConverter.convert(value, Decimal, BitArray, src_unitSize=unitSize, src_endianness=endianness, src_sign=sign, dst_unitSize=unitSize, dst_endianness=endianness, dst_sign=sign)
+            value = TypeConverter.convert(value, Integer, BitArray, src_unitSize=unitSize, src_endianness=endianness, src_sign=sign, dst_unitSize=unitSize, dst_endianness=endianness, dst_sign=sign)
         else:
             value = None
 
@@ -106,7 +106,7 @@ class Decimal(AbstractType):
         else:
             nbBits = int(unitSize)
 
-        super(Decimal, self).__init__(self.__class__.__name__, value, nbBits, unitSize=unitSize, endianness=endianness, sign=sign)
+        super(Integer, self).__init__(self.__class__.__name__, value, nbBits, unitSize=unitSize, endianness=endianness, sign=sign)
 
     def _computeNbUnitSizeForInterval(self, interval, unitSize, sign):
         if isinstance(interval, int):
@@ -132,17 +132,17 @@ class Decimal(AbstractType):
             return math.floor((math.floor(math.log(val, 2)) + 2) / int(unitSize)) + 1
 
     def canParse(self, data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
-        """This method returns True if data is a Decimal.
+        """This method returns True if data is a Integer.
         For the moment its always true because we consider
         the decimal type to be very similar to the raw type.
 
         >>> from netzob.all import *
-        >>> Decimal().canParse(TypeConverter.convert("hello netzob", ASCII, Raw))
+        >>> Integer().canParse(TypeConverter.convert("hello netzob", ASCII, Raw))
         True
 
         :param data: the data to check
         :type data: python raw
-        :return: True if data is can be parsed as a Decimal
+        :return: True if data is can be parsed as a Integer
         :rtype: bool
         :raise: TypeError if the data is None
         """
@@ -160,38 +160,38 @@ class Decimal(AbstractType):
         """This method convert the specified data in python raw format.
 
         >>> from netzob.all import *
-        >>> print Decimal.decode(23)
+        >>> print Integer.decode(23)
         \x17
 
-        >>> print Decimal.decode(-1, sign=AbstractType.SIGN_UNSIGNED)
+        >>> print Integer.decode(-1, sign=AbstractType.SIGN_UNSIGNED)
         Traceback (most recent call last):
         ...
         error: ubyte format requires 0 <= number <= 255
 
-        >>> print Decimal.decode(-1, sign=AbstractType.SIGN_SIGNED)
+        >>> print Integer.decode(-1, sign=AbstractType.SIGN_SIGNED)
         \xff
 
-        >>> print Decimal.decode(2000000000000000)
+        >>> print Integer.decode(2000000000000000)
         Traceback (most recent call last):
         ...
         error: byte format requires -128 <= number <= 127
 
-        >>> print Decimal.decode(2000000000000000, unitSize=AbstractType.UNITSIZE_64)
+        >>> print Integer.decode(2000000000000000, unitSize=AbstractType.UNITSIZE_64)
         \x00\x07\x1a\xfdI\x8d\x00\x00
 
-        >>> print Decimal.decode(25, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE)
+        >>> print Integer.decode(25, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE)
         \x19\x00
-        >>> print Decimal.decode(25, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG)
+        >>> print Integer.decode(25, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG)
         \x00\x19
 
         >>> val = 167749568
-        >>> a = Decimal.decode(val, unitSize=AbstractType.UNITSIZE_32)
-        >>> b = Decimal.encode(a, unitSize=AbstractType.UNITSIZE_32)
+        >>> a = Integer.decode(val, unitSize=AbstractType.UNITSIZE_32)
+        >>> b = Integer.encode(a, unitSize=AbstractType.UNITSIZE_32)
         >>> b == val
         True
 
 
-        :param data: the data encoded in Decimal which will be decoded in raw
+        :param data: the data encoded in Integer which will be decoded in raw
         :type data: the current type
         :keyword unitSize: the unitsize to consider while encoding. Values must be one of AbstractType.UNITSIZE_*
         :type unitSize: str
@@ -207,30 +207,30 @@ class Decimal(AbstractType):
         if data is None:
             raise TypeError("data cannot be None")
 
-        f = Decimal.computeFormat(unitSize, endianness, sign)
+        f = Integer.computeFormat(unitSize, endianness, sign)
         return struct.pack(f, int(data))
 
     @staticmethod
     def encode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
-        """This method convert the python raw data to the Decimal.
+        """This method convert the python raw data to the Integer.
 
         >>> from netzob.all import *
 
-        >>> raw = Decimal.decode(23)
-        >>> print Decimal.encode(raw)
+        >>> raw = Integer.decode(23)
+        >>> print Integer.encode(raw)
         23
 
-        >>> raw = Decimal.decode(1200, unitSize=AbstractType.UNITSIZE_16)
-        >>> print Decimal.encode(raw, unitSize=AbstractType.UNITSIZE_16)
+        >>> raw = Integer.decode(1200, unitSize=AbstractType.UNITSIZE_16)
+        >>> print Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16)
         1200
 
-        >>> raw = Decimal.decode(25, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE)
-        >>> print repr(Decimal.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG))
+        >>> raw = Integer.decode(25, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE)
+        >>> print repr(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG))
         6400
-        >>> print repr(Decimal.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE))
+        >>> print repr(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE))
         25
 
-        >>> print Decimal.encode('\xcc\xac\x9c\x0c\x1c\xacL\x1c,\xac', unitSize=AbstractType.UNITSIZE_8)
+        >>> print Integer.encode('\xcc\xac\x9c\x0c\x1c\xacL\x1c,\xac', unitSize=AbstractType.UNITSIZE_8)
         -395865088909314208584756
 
         :param data: the data encoded in python raw which will be encoded in current type
@@ -249,7 +249,7 @@ class Decimal(AbstractType):
         if data is None:
             raise TypeError("data cannot be None")
 
-        perWordFormat = Decimal.computeFormat(unitSize, endianness, sign)
+        perWordFormat = Integer.computeFormat(unitSize, endianness, sign)
 
         nbWords = (len(data) * 8 / int(unitSize))
 

@@ -30,7 +30,7 @@
 # see docs.python.org/2/tutorial/modules.html
 from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Models.Types.ASCII import ASCII
-from netzob.Common.Models.Types.Decimal import Decimal
+from netzob.Common.Models.Types.Integer import Integer
 from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.HexaString import HexaString
 from netzob.Common.Models.Types.TypeConverter import TypeConverter

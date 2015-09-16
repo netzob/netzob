@@ -49,7 +49,7 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Types.Decimal import Decimal
+from netzob.Common.Models.Types.Integer import Integer
 from netzob.Inference.Vocabulary.RelationFinder import RelationFinder
 
 
@@ -224,7 +224,7 @@ class CorrelationFinder(object):
         result = []
         for data in cellsData:
             if len(data) > 0:
-                result.append(TypeConverter.convert(data[:8], Raw, Decimal))  # We take only the first 8 octets
+                result.append(TypeConverter.convert(data[:8], Raw, Integer))  # We take only the first 8 octets
             else:
                 result.append(0)
         return result
@@ -268,9 +268,9 @@ class CorrelationFinder(object):
                 entry = cells[field][i_msg]
                 for k in range(2, 3, 2):
                     if len(entry) > k:
-                        line.append(TypeConvertor.netzobRawToDecimal(entry[:k]))
+                        line.append(TypeConvertor.netzobRawToInteger(entry[:k]))
                     else:
-                        line.append(TypeConvertor.netzobRawToDecimal(entry))
+                        line.append(TypeConvertor.netzobRawToInteger(entry))
 
             lines.append(",".join(line))
 

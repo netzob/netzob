@@ -250,7 +250,7 @@ class AbstractVariable(object):
     #     >>> d1 = Data(ASCII())
     #     >>> len(d1.boundedVariables)
     #     0
-    #     >>> d2 = Data(Decimal())
+    #     >>> d2 = Data(Integer())
     #     >>> len(d2.boundedVariables)
     #     0
     #     >>> d3 = Data(Raw())

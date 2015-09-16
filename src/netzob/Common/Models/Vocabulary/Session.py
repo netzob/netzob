@@ -141,7 +141,7 @@ class Session(object):
         """Applicative data attached to the current session.
 
         >>> from netzob.all import *
-        >>> appData = ApplicativeData("test", Decimal(20))
+        >>> appData = ApplicativeData("test", Integer(20))
         >>> session = Session(applicativeData=[appData])
         >>> print len(session.applicativeData)
         1
@@ -150,7 +150,7 @@ class Session(object):
         >>> print len(session.applicativeData)
         2
         >>> print session.applicativeData[0]
-        Applicative Data: test=Decimal=20 ((8, 8)))
+        Applicative Data: test=Integer=20 ((8, 8)))
         >>> print session.applicativeData[1]
         Applicative Data: test2=ASCII=helloworld ((0, 80)))
 

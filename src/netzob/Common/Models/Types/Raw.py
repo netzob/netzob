@@ -156,7 +156,7 @@ class Raw(AbstractType):
         True
 
         The ascii table is defined from 0 to 127:
-        >>> Raw.canParse(TypeConverter.convert(128, Decimal, BitArray, src_sign=AbstractType.SIGN_UNSIGNED))
+        >>> Raw.canParse(TypeConverter.convert(128, Integer, BitArray, src_sign=AbstractType.SIGN_UNSIGNED))
         True
 
         :param data: the data to check
