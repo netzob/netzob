@@ -227,7 +227,7 @@ man_pages = [
 
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 if on_rtd:
-  os.system("sphinx-apidoc -T -e -f -o ./developer_guide/API/ ../../../src/netzob")
+  os.system("sphinx-apidoc -T -f -o ./developer_guide/API/ ../../../src/netzob")
 
   # In order to render a nice toctree, add a maxdepth in each file
-  os.system("find ./developer_guide/API/ -type f -exec sed -i ':a;N;$!ba;s/Subpackages\n-----------\n\n.. toctree::\n/Subpackages\n-----------\n\n.. toctree::\n    :maxdepth: 1\n    /g' {} +")
+  os.system("sh -c \"find ./developer_guide/API/ -type f -exec sed -i ':a;N;$!ba;s/Subpackages\n-----------\n\n.. toctree::\n/Subpackages\n-----------\n\n.. toctree::\n    :maxdepth: 1\n    /g' {} +\"")
