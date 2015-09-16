@@ -165,7 +165,7 @@ class FieldParser():
     Below are few tests 
 
     >>> from netzob.all import *
-    >>> message = RawMessage("\xaa\\x00\xbb")
+    >>> message = RawMessage("\\xaa\\x00\\xbb")
     >>> f1 = Field(Raw(nbBytes=(0,1)), name="f1")
     >>> f2 = Field("\\x00", name="f2")
     >>> f3 = Field(Raw(nbBytes=(0, 2)), name="f3")
