@@ -230,4 +230,4 @@ if on_rtd:
   os.system("sphinx-apidoc -T -f -o ./developer_guide/API/ ../../../src/netzob")
 
   # In order to render a nice toctree, add a maxdepth in each file
-  os.system("sh -c \"find ./developer_guide/API/ -type f -exec sed -i ':a;N;$!ba;s/Subpackages\n-----------\n\n.. toctree::\n/Subpackages\n-----------\n\n.. toctree::\n    :maxdepth: 1\n    /g' {} +\"")
+  os.system("find ./developer_guide/API/ -type f -exec sed -i ':a;N;$!ba;s/Subpackages\n-----------\n\n.. toctree::\n/Subpackages\n-----------\n\n.. toctree::\n    :maxdepth: 1\n    /g' {} +")
