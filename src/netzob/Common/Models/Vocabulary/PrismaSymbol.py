@@ -43,6 +43,9 @@ class PrismaSymbol(Symbol):
             fields = [Field()]
         self.fields = fields
 
+    def buildFields(self):
+        print self.dataRules
+
     def horizons(self, rules, copyRules, dataRules):
         horizons = []
         for hor in rules.keys():
@@ -62,147 +65,146 @@ class PrismaSymbol(Symbol):
     def updateHorizon(self, nextSymbol):
         self.horizon = self.horizon[1:] + [nextSymbol]
 
-    def applyRules(self):
-        # self._logger.critical('rules for sym{}'.format(self.name))
-        if not self.horizon[-1]:
-            return
-        hor = self.horizon2ID()
-        ruleFlag = False
-        if hor in self.dataRules:
-            self._logger.critical('found data rules')
-            ruleFlag = True
-            for rule in self.dataRules[hor]:
-                data = random.choice(rule.data)
-                # self._logger.info('from data pool {} chose {}'.format(rule.data, data))
-                self._logger.critical('data: {}'.format(data))
-                f = Field(str(unquote(data)).strip())
-                # self._logger.critical('domain: {}'.format(f.domain))
-                self.fields[self.absoluteFields[int(rule.dstField)]].domain = f.domain
-                # self.messages = [RawMessage(self.specialize(noRules=True))]
-            # self.clearMessages()
-            # tmp = PrismaSymbol(fields=self.fields)
-            self.messages = [RawMessage(self.specialize(noRules=True))]
-            # self.fields = tmp.fields
-            try:
-                # self._logger.critical('message: {}'.format(self.specialize(noRules=True)))
-                self.getCells()
-                # self.fields[int(rule.dstField)].getValues()[0]
-                self._logger.critical('success')
-            except Exception as e:
-                self._logger.critical('DataRule breaks Cells')
-        if hor in self.rules:
-            self._logger.critical('found exact rule')
-            ruleFlag = True
-            for rule in self.rules[hor]:
-                srcSym = self.horizon[int(rule.srcID)]
-                try:
-                    # print self.fields[self.absoluteFields[int(rule.dstField)]].domain
-                    self.fields[self.absoluteFields[int(rule.dstField)]].domain = srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].domain
-                    # print self.fields[self.absoluteFields[int(rule.dstField)]].domain
-                    self.messages = [RawMessage(self.specialize(noRules=True))]
-                    self._logger.critical('success')
-                except Exception:
-                    self._logger.critical('error in exactRule')
-        if hor in self.copyRules:
-            self._logger.info('found copy rules')
-            ruleFlag = True
-            for rule in self.copyRules[hor]:
-                srcSym = self.horizon[int(rule.srcID)]
-                if 'Seq' in rule.typ:
-                    self._logger.critical('Sequential')
-                    try:
-                        base = int(srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].getValues()[0])
-                    except ValueError:
-                        self._logger.critical("couldn't cast base to int")
-                        self._logger.critical("baseValue:{}".format(srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].getValues()[0]))
-                        self._logger.critical("setting it to 1")
-                        base = 1
-                    try:
-                        inc = int(rule.content)
-                    except ValueError:
-                        self._logger.critical("couldn't cast increment to int")
-                        self._logger.critical("baseValue:{}".format(srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].getValues()[0]))
-                        inc = 1
-                    new = base + inc
-                    f = Field(str(new))
-                    self.fields[self.absoluteFields[int(rule.dstField)]].domain = f.domain
-                    self.messages = [RawMessage(self.specialize(noRules=True))]
-                    self._logger.critical('success')
-                elif 'Comp' in rule.typ:
-                    self._logger.critical('CopyComplete')
-                    flag = False
-                    if 'PREFIX' in rule.ptype:
-                        try:
-                            f = Field(srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].getValues()[0] + random.choice(rule.content))
-                            flag = True
-                        except Exception:
-                            self._logger.critical('error in copyCompletePREFIX at sym{}'.format(self.name))
-                    else:
-                        try:
-                            self._logger.critical('data read: {}'.format(srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].getValues()[0]))
-                            f = Field(random.choice(rule.content) + srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].getValues()[0])
-                            flag = True
-                        except Exception as e:
-                            self._logger.critical('error in copyCompleteSUFFIX at sym{}'.format(self.name))
-                            # self._logger.critical('prefix: {}'.format(rule.content))
-                            # self._logger.critical('prefix: {}'.format(random.choice(rule.content)))
-                            # self._logger.critical('srcField: {}'.format(int(rule.srcField)))
-                            # self._logger.critical('srcID: {}'.format(int(rule.srcID)))
-                            # self._logger.critical('srcSym: {}'.format(srcSym.name))
-                            # self._logger.critical('srcDomain: {}'.format(srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].domain))
-                            # self._logger.critical('along here')
-                            # self._logger.critical('srcValue: {}'.format(srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].getValues()))
-                    if flag:
-                        self.fields[self.absoluteFields[int(rule.dstField)]].domain = f.domain
-                        self.messages = [RawMessage(self.specialize(noRules=True))]
-                        self._logger.critical('success')
-                else:  # 'Part' in rule.typ
-                    self._logger.critical('CopyPartial')
-                    split = srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].getValues()[0].split(rule.content, 1)
-                    if len(split) != 2:
-                        self._logger.critical('error in SPLIT of copyPartial')
-                        continue
-                    flag = False
-                    if 'PREFIX' in rule.ptype:
-                        try:
-                            f = Field(split[0])
-                            flag = True
-                        except Exception:
-                            self._logger.critical('error in copyPartial')
-                    else:
-                        try:
-                            f = Field(split[1])
-                            flag = True
-                        except Exception:
-                            self._logger.critical('error in copyPartial')
-                    if flag:
-                        self.fields[self.absoluteFields[int(rule.dstField)]].domain = f.domain
-                        self.messages = [RawMessage(self.specialize(noRules=True))]
-                        self._logger.critical('success')
-        # if ruleFlag:
-        #     self.messages = [RawMessage(self.specialize(noRules=True))]
-        if not ruleFlag:
-            # ToDo: emit Symbol iff the horizon matches
-            # heuristically approach:
-            # put always same string in rule fields iff horizon does not match
-            # maybe reason about what string fits best
-            # tried 'AAAAAAAAAAAAA'
-            f = Field('1')
-            for ind in self.absoluteFields:
-                self.fields[int(ind)].domain = f.domain
-            self.messages = [RawMessage(self.specialize(noRules=True))]
-            for field in self.fields:
-                if field.name == 'broken':
-                    field.domain = Field(f.getValues()[0]).domain
-                    self.messages = [RawMessage(self.specialize(noRules=True))]
-            self._logger.warning('No Rules for this context')
-            self.messages = [RawMessage(self.specialize(noRules=True))]
+    # def applyRules(self):
+    #     # self._logger.critical('rules for sym{}'.format(self.name))
+    #     if not self.horizon[-1]:
+    #         return
+    #     hor = self.horizon2ID()
+    #     ruleFlag = False
+    #     if hor in self.dataRules:
+    #         self._logger.critical('found data rules')
+    #         ruleFlag = True
+    #         for rule in self.dataRules[hor]:
+    #             data = random.choice(rule.data)
+    #             # self._logger.info('from data pool {} chose {}'.format(rule.data, data))
+    #             self._logger.critical('data: {}'.format(data))
+    #             f = Field(str(unquote(data)).strip())
+    #             # self._logger.critical('domain: {}'.format(f.domain))
+    #             self.fields[self.absoluteFields[int(rule.dstField)]].domain = f.domain
+    #             # self.messages = [RawMessage(self.specialize(noRules=True))]
+    #         # self.clearMessages()
+    #         # tmp = PrismaSymbol(fields=self.fields)
+    #         self.messages = [RawMessage(self.specialize(noRules=True))]
+    #         # self.fields = tmp.fields
+    #         try:
+    #             # self._logger.critical('message: {}'.format(self.specialize(noRules=True)))
+    #             self.getCells()
+    #             # self.fields[int(rule.dstField)].getValues()[0]
+    #             self._logger.critical('success')
+    #         except Exception as e:
+    #             self._logger.critical('DataRule breaks Cells')
+    #     if hor in self.rules:
+    #         self._logger.critical('found exact rule')
+    #         ruleFlag = True
+    #         for rule in self.rules[hor]:
+    #             srcSym = self.horizon[int(rule.srcID)]
+    #             try:
+    #                 # print self.fields[self.absoluteFields[int(rule.dstField)]].domain
+    #                 self.fields[self.absoluteFields[int(rule.dstField)]].domain = srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].domain
+    #                 # print self.fields[self.absoluteFields[int(rule.dstField)]].domain
+    #                 self.messages = [RawMessage(self.specialize(noRules=True))]
+    #                 self._logger.critical('success')
+    #             except Exception:
+    #                 self._logger.critical('error in exactRule')
+    #     if hor in self.copyRules:
+    #         self._logger.info('found copy rules')
+    #         ruleFlag = True
+    #         for rule in self.copyRules[hor]:
+    #             srcSym = self.horizon[int(rule.srcID)]
+    #             if 'Seq' in rule.typ:
+    #                 self._logger.critical('Sequential')
+    #                 try:
+    #                     base = int(srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].getValues()[0])
+    #                 except ValueError:
+    #                     self._logger.critical("couldn't cast base to int")
+    #                     self._logger.critical("baseValue:{}".format(srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].getValues()[0]))
+    #                     self._logger.critical("setting it to 1")
+    #                     base = 1
+    #                 try:
+    #                     inc = int(rule.content)
+    #                 except ValueError:
+    #                     self._logger.critical("couldn't cast increment to int")
+    #                     self._logger.critical("baseValue:{}".format(srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].getValues()[0]))
+    #                     inc = 1
+    #                 new = base + inc
+    #                 f = Field(str(new))
+    #                 self.fields[self.absoluteFields[int(rule.dstField)]].domain = f.domain
+    #                 self.messages = [RawMessage(self.specialize(noRules=True))]
+    #                 self._logger.critical('success')
+    #             elif 'Comp' in rule.typ:
+    #                 self._logger.critical('CopyComplete')
+    #                 flag = False
+    #                 if 'PREFIX' in rule.ptype:
+    #                     try:
+    #                         f = Field(srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].getValues()[0] + random.choice(rule.content))
+    #                         flag = True
+    #                     except Exception:
+    #                         self._logger.critical('error in copyCompletePREFIX at sym{}'.format(self.name))
+    #                 else:
+    #                     try:
+    #                         self._logger.critical('data read: {}'.format(srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].getValues()[0]))
+    #                         f = Field(random.choice(rule.content) + srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].getValues()[0])
+    #                         flag = True
+    #                     except Exception as e:
+    #                         self._logger.critical('error in copyCompleteSUFFIX at sym{}'.format(self.name))
+    #                         # self._logger.critical('prefix: {}'.format(rule.content))
+    #                         # self._logger.critical('prefix: {}'.format(random.choice(rule.content)))
+    #                         # self._logger.critical('srcField: {}'.format(int(rule.srcField)))
+    #                         # self._logger.critical('srcID: {}'.format(int(rule.srcID)))
+    #                         # self._logger.critical('srcSym: {}'.format(srcSym.name))
+    #                         # self._logger.critical('srcDomain: {}'.format(srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].domain))
+    #                         # self._logger.critical('along here')
+    #                         # self._logger.critical('srcValue: {}'.format(srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].getValues()))
+    #                 if flag:
+    #                     self.fields[self.absoluteFields[int(rule.dstField)]].domain = f.domain
+    #                     self.messages = [RawMessage(self.specialize(noRules=True))]
+    #                     self._logger.critical('success')
+    #             else:  # 'Part' in rule.typ
+    #                 self._logger.critical('CopyPartial')
+    #                 split = srcSym.fields[srcSym.absoluteFields[int(rule.srcField)]].getValues()[0].split(rule.content, 1)
+    #                 if len(split) != 2:
+    #                     self._logger.critical('error in SPLIT of copyPartial')
+    #                     continue
+    #                 flag = False
+    #                 if 'PREFIX' in rule.ptype:
+    #                     try:
+    #                         f = Field(split[0])
+    #                         flag = True
+    #                     except Exception:
+    #                         self._logger.critical('error in copyPartial')
+    #                 else:
+    #                     try:
+    #                         f = Field(split[1])
+    #                         flag = True
+    #                     except Exception:
+    #                         self._logger.critical('error in copyPartial')
+    #                 if flag:
+    #                     self.fields[self.absoluteFields[int(rule.dstField)]].domain = f.domain
+    #                     self.messages = [RawMessage(self.specialize(noRules=True))]
+    #                     self._logger.critical('success')
+    #     # if ruleFlag:
+    #     #     self.messages = [RawMessage(self.specialize(noRules=True))]
+    #     if not ruleFlag:
+    #         # heuristically approach:
+    #         # put always same string in rule fields iff horizon does not match
+    #         # maybe reason about what string fits best
+    #         # tried 'AAAAAAAAAAAAA'
+    #         f = Field('1')
+    #         for ind in self.absoluteFields:
+    #             self.fields[int(ind)].domain = f.domain
+    #         self.messages = [RawMessage(self.specialize(noRules=True))]
+    #         for field in self.fields:
+    #             if field.name == 'broken':
+    #                 field.domain = Field(f.getValues()[0]).domain
+    #                 self.messages = [RawMessage(self.specialize(noRules=True))]
+    #         self._logger.warning('No Rules for this context')
+    #         self.messages = [RawMessage(self.specialize(noRules=True))]
 
     def specialize(self, memory=None, noRules=False, data=False):
         if not noRules:
             self._logger.error('specializing sym{}'.format(self.name))
-        if not noRules and self.horizon != [None]:
-            self.applyRules()
+        # if not noRules and self.horizon != [None]:
+        #     self.applyRules()
         from netzob.Common.Models.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
         try:
             msg = MessageSpecializer(memory=memory)
