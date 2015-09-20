@@ -98,7 +98,8 @@ class PrismaTest(object):
         if self.pi.isInitialized():
             return
         # self.pi.setPath('/home/dsmp/work/pulsar/src/models/1ActionMerge')
-        self.pi.setPath('/data/pulsar/models/1ActionMerge')
+        # self.pi.setPath('/data/pulsar/models/1ActionMerge')
+        self.pi.setPath('/home/dasmoep/work/work/p2p/samples/airplay1st')
         self.pi.setDestinationIp('127.0.0.1')
         self.pi.setDestinationPort(36666)
         self.pi.setSourceIp('127.0.0.1')

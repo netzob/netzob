@@ -393,7 +393,7 @@ class PrismaImporter(object):
 # what to do about ruleFields?
 def sanitizeRule(x, role, maxEntropy):
     if x == '':
-        return [ASCII(nbChars=(1, maxEntropy))], 'rule-field'
+        return [ASCII(nbChars=(1, maxEntropy))]
     # this is a nightmare
     # be a little bit more cool if some received message does not
     # fits a template; a plan never survives first contact with reality

@@ -44,7 +44,22 @@ class PrismaSymbol(Symbol):
         self.fields = fields
 
     def buildFields(self):
-        print self.dataRules
+        # attach rules to the fields
+        for hist, ruleList in self.dataRules.items():
+            for rule in ruleList:
+                field = self.fields[self.absoluteFields[int(rule.dstField)]]
+                field.rules[hist] = rule
+                # field.type = 'data'
+        for hist, ruleList in self.rules.items():
+            for rule in ruleList:
+                field = self.fields[self.absoluteFields[int(rule.dstField)]]
+                field.rules[hist] = rule
+                # field.type = 'exact'
+        for hist, ruleList in self.copyRules.items():
+            for rule in ruleList:
+                field = self.fields[self.absoluteFields[int(rule.dstField)]]
+                field.rules[hist] = rule
+                # field.type = 'copy'
 
     def horizons(self, rules, copyRules, dataRules):
         horizons = []
