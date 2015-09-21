@@ -149,6 +149,8 @@ class MessageParser(object):
 
     """
 
+    MAX_NUMBER_OF_PARSING_PATHS = 100
+
     def __init__(self, memory=None):
         if memory is None:
             self.memory = Memory()
@@ -226,8 +228,11 @@ class MessageParser(object):
                         newParsingPaths.append(resultParsingPath)
 
             # lets filter
-
-            parsingPaths = newParsingPaths[:100]
+            if len(newParsingPaths) > MessageParser.MAX_NUMBER_OF_PARSING_PATHS:
+                self._logger.error("Parsing field '{}' brought '{}' different parsing paths. Only the first '{}' and the last '{}' discovered parsing path are kept".format(current_field.name, len(newParsingPaths), MessageParser.MAX_NUMBER_OF_PARSING_PATHS/2,  MessageParser.MAX_NUMBER_OF_PARSING_PATHS/2))
+                parsingPaths = newParsingPaths[:MessageParser.MAX_NUMBER_OF_PARSING_PATHS/2] + newParsingPaths[len(newParsingPaths) - MessageParser.MAX_NUMBER_OF_PARSING_PATHS/2: ]
+            else:
+                parsingPaths = newParsingPaths
 
         finalParsingPaths = []
         for parsingPath in parsingPaths:
