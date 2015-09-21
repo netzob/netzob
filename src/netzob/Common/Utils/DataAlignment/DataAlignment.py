@@ -156,9 +156,8 @@ class DataAlignment(threading.Thread):
         targetedFieldLeafFields = rootLeafFields
 
         result.headers = [str(field.name) for field in targetedFieldLeafFields]
-
+        from netzob.Common.Models.Vocabulary.Domain.Parser.MessageParser import MessageParser
         for d in self.data:
-            from netzob.Common.Models.Vocabulary.Domain.Parser.MessageParser import MessageParser
             mp = MessageParser()
             # alignedMsg = mp.parseRaw(TypeConverter.convert(d, HexaString, Raw), targetedFieldLeafFields)
             alignedMsg = mp.parseRaw(d, targetedFieldLeafFields)            
