@@ -229,7 +229,7 @@ class MessageParser(object):
 
             # lets filter
             if len(newParsingPaths) > MessageParser.MAX_NUMBER_OF_PARSING_PATHS:
-                self._logger.error("Parsing field '{}' brought '{}' different parsing paths. Only the first '{}' and the last '{}' discovered parsing path are kept".format(current_field.name, len(newParsingPaths), MessageParser.MAX_NUMBER_OF_PARSING_PATHS/2,  MessageParser.MAX_NUMBER_OF_PARSING_PATHS/2))
+                self._logger.warning("Parsing field '{}' brought '{}' different parsing paths. Only the first '{}' and the last '{}' discovered parsing path are kept".format(current_field.name, len(newParsingPaths), MessageParser.MAX_NUMBER_OF_PARSING_PATHS/2,  MessageParser.MAX_NUMBER_OF_PARSING_PATHS/2))
                 parsingPaths = newParsingPaths[:MessageParser.MAX_NUMBER_OF_PARSING_PATHS/2] + newParsingPaths[len(newParsingPaths) - MessageParser.MAX_NUMBER_OF_PARSING_PATHS/2: ]
             else:
                 parsingPaths = newParsingPaths
