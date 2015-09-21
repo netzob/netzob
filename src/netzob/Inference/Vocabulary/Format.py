@@ -79,7 +79,8 @@ class Format(object):
         >>> messages = [RawMessage(message1), RawMessage(message2)]
         >>> symbol = Symbol(messages=messages)
         >>> Format.splitAligned(symbol, doInternalSlick=True)
-        >>> print symbol
+        >>> print len(symbol.getCells())
+        2
 
         """
         if field is None:
