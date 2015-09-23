@@ -62,6 +62,7 @@ class FieldSplitDelimiter(object):
         HexaString, or any objects that inherit from AbstractType.
 
         >>> from netzob.all import *
+        
         >>> samples = ["aaaaff000000ff10",	"bbff110010ff00000011",	"ccccccccfffe1f000000ff12"]
         >>> messages = [RawMessage(data=sample) for sample in samples]
         >>> symbol = Symbol(messages=messages[:3])

@@ -97,7 +97,7 @@ class Agg(AbstractVariableNode):
     >>> print mp.parseMessage(msg2, s)
     Traceback (most recent call last):
       ...
-    Exception: No parsing path returned while parsing message netzobtxt!
+    InvalidParsingPathException: No parsing path returned while parsing 'netzobtxt!'
 
 
     Let's see the specializing process of an AGGREGATE
@@ -141,21 +141,16 @@ class Agg(AbstractVariableNode):
                 value_before_parsing = parsingPath.getDataAssignedToVariable(current_child).copy()
                 childParsingPaths = current_child.parse(parsingPath, carnivorous=carnivorous)
 
-                if len(childParsingPaths) == 0:
-                    # current child did not produce any valid parser path
-                    self._logger.debug("Children {0} failed to parse with the parsingPath {1}.".format(current_child, parsingPath))
-                else:
+                for childParsingPath in childParsingPaths:
+                    if childParsingPath.ok():
+                        value_after_parsing = childParsingPath.getDataAssignedToVariable(current_child).copy()
+                        remainingValue = value_before_parsing[len(value_after_parsing):].copy()
+                        if next_child is not None:
+                            childParsingPath.assignDataToVariable(remainingValue, next_child)
 
-                    for childParsingPath in childParsingPaths:
-                        if childParsingPath.ok():
-                            value_after_parsing = childParsingPath.getDataAssignedToVariable(current_child).copy()
-                            remainingValue = value_before_parsing[len(value_after_parsing):].copy()
-                            if next_child is not None:
-                                childParsingPath.assignDataToVariable(remainingValue, next_child)
-
-                            # at least one child path managed to parse, we save the valid paths it produced
-                            self._logger.debug("Children {0} succesfuly applied with the parsingPath {1} ({2} procuded paths)".format(current_child, parsingPath, len(childParsingPaths)))
-                            newParsingPaths.append(childParsingPath)
+                        # at least one child path managed to parse, we save the valid paths it produced
+                        self._logger.debug("Children {0} succesfuly applied with the parsingPath {1}".format(current_child, parsingPath))
+                        newParsingPaths.append(childParsingPath)
 
             parsingPaths = newParsingPaths
 

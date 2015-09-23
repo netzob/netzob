@@ -49,6 +49,11 @@ from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Models.Vocabulary.Domain.Parser.FieldParser import FieldParser
 
 
+class InvalidParsingPathException(Exception):
+    def __init__(self, msg):
+        super(InvalidParsingPathException, self).__init__(msg)
+
+
 @NetzobLogger
 class MessageParser(object):
     """This class is used to produce the alignment of a message against a symbol
@@ -66,6 +71,7 @@ class MessageParser(object):
     >>> mp = MessageParser()
     >>> print mp.parseMessage(msg, s)
     [bitarray('0110100001100101011011000110110001101111'), bitarray('00100000'), bitarray('0111011101101111011100100110110001100100'), bitarray('0010000000100001')]
+    
     >>> print mp.parseMessage(msg1, s)
     [bitarray('0110100001100101011011000110110001101111'), bitarray('00100000'), bitarray('011011100110010101110100011110100110111101100010'), bitarray('0010000000100001')]
 
@@ -174,6 +180,54 @@ class MessageParser(object):
 
         return self.parseRaw(dataToParse, fields)
 
+
+    def parseRaw_new(self, dataToParse, fields):
+        self._logger.debug("New parsing method executed")
+
+        bitArrayToParse = TypeConverter.convert(dataToParse, Raw, BitArray)
+
+        # building a new parsing path
+        currentParsingPath = ParsingPath(bitArrayToParse.copy(), self.memory)
+        currentParsingPath.assignDataToField(bitArrayToParse.copy(), fields[0])
+
+        # field iterator
+        i_current_field = 0
+        
+        parsingResult = self.parseField_new(currentParsingPath, fields, i_current_field)
+
+        result = []
+        for field in fields:
+            result.append(parsingResult.getDataAssignedToField(field))
+
+        self.memory = parsingResult.memory
+    
+        return result
+
+    def parseField_new(self, parsingPath, fields, i_current_field):
+        self._logger.debug("parseField_new executed for field {} with path : {}".format(i_current_field, parsingPath))
+        currentField = fields[i_current_field]
+
+        fp = FieldParser(currentField, (i_current_field == len(fields) - 1))
+
+        value_before_parsing = parsingPath.getDataAssignedToField(currentField).copy()
+        
+        for newParsingPath in fp.parse(parsingPath):
+            try:
+                value_after_parsing = newParsingPath.getDataAssignedToField(currentField)
+                remainingValue = value_before_parsing[len(value_after_parsing):].copy()
+
+                if i_current_field < len(fields) - 1 :                    
+                    newParsingPath.assignDataToField(remainingValue, fields[i_current_field+1])
+                    return self.parseField_new(newParsingPath, fields, i_current_field + 1)
+                elif len(remainingValue) == 0: # valid parsing path must consume everything
+                    return newParsingPath
+                
+            except InvalidParsingPathException, e:
+                pass
+
+        raise InvalidParsingPathException("No parsing path returned while parsing '{}'".format(TypeConverter.convert(value_before_parsing, BitArray, Raw)))
+        
+    
     @typeCheck(object)
     def parseRaw(self, dataToParse, fields):
         """This method parses the specified raw against the specification of the provided symbol."""
@@ -184,75 +238,83 @@ class MessageParser(object):
         if len(fields) == 0:
             raise Exception("No field specified")
 
-        # self._logger.debug("Parse content '{0}' according to symbol {1}".format(dataToParse, symbol.name))
 
-        # this variable host the result of the parsing
-        parsingResult = None
+        return self.parseRaw_new(dataToParse, fields)
 
-        # we convert the raw into bitarray
-        bitArrayToParse = TypeConverter.convert(dataToParse, Raw, BitArray)
+#         # self._logger.debug("Parse content '{0}' according to symbol {1}".format(dataToParse, symbol.name))
 
-        # initiates the parsing process by creating a first parsing path
-        parsingPaths = [ParsingPath(bitArrayToParse.copy(), self.memory)]
-        # assign to the first field of the symbol all the data to parse
-        parsingPaths[0].assignDataToField(bitArrayToParse.copy(), fields[0])
+#         # this variable host the result of the parsing
+#         parsingResult = None
 
-        # we successively apply each fields of the symbol to parse the specified data
-        for i_field in xrange(len(fields)):
+#         # we convert the raw into bitarray
+#         bitArrayToParse = TypeConverter.convert(dataToParse, Raw, BitArray)
 
-            current_field = fields[i_field]
+#         # initiates the parsing process by creating a first parsing path
+#         parsingPaths = [ParsingPath(bitArrayToParse.copy(), self.memory)]
+#         # assign to the first field of the symbol all the data to parse
+#         parsingPaths[0].assignDataToField(bitArrayToParse.copy(), fields[0])
 
-            # identify next field
-            if i_field < len(fields) - 1:
-                next_field = fields[i_field + 1]
-            else:
-                next_field = None
 
-            # build a field parser
-            fp = FieldParser(current_field, lastField=(i_field == len(fields) - 1))
-            newParsingPaths = []
 
-            for parsingPath in parsingPaths:
-                # we remove erroneous paths
-                value_before_parsing = parsingPath.getDataAssignedToField(current_field).copy()
-                resultParsingPaths = fp.parse(parsingPath)
 
-                for resultParsingPath in resultParsingPaths:
-                    value_after_parsing = resultParsingPath.getDataAssignedToField(current_field)
-                    remainingValue = value_before_parsing[len(value_after_parsing):].copy()
+        
 
-                    if next_field is not None:
-                        resultParsingPath.assignDataToField(remainingValue, next_field)
+#         # we successively apply each fields of the symbol to parse the specified data
+#         for i_field in xrange(len(fields)):
 
-                    if resultParsingPath.isDataAvailableForField(current_field):
-                        newParsingPaths.append(resultParsingPath)
+#             current_field = fields[i_field]
 
-            # lets filter
-            if len(newParsingPaths) > MessageParser.MAX_NUMBER_OF_PARSING_PATHS:
-                self._logger.warning("Parsing field '{}' brought '{}' different parsing paths. Only the first '{}' and the last '{}' discovered parsing path are kept".format(current_field.name, len(newParsingPaths), MessageParser.MAX_NUMBER_OF_PARSING_PATHS/2,  MessageParser.MAX_NUMBER_OF_PARSING_PATHS/2))
-                parsingPaths = newParsingPaths[:MessageParser.MAX_NUMBER_OF_PARSING_PATHS/2] + newParsingPaths[len(newParsingPaths) - MessageParser.MAX_NUMBER_OF_PARSING_PATHS/2: ]
-            else:
-                parsingPaths = newParsingPaths
+#             # identify next field
+#             if i_field < len(fields) - 1:
+#                 next_field = fields[i_field + 1]
+#             else:
+#                 next_field = None
 
-        finalParsingPaths = []
-        for parsingPath in parsingPaths:
-            if parsingPath.validForMessage(fields, bitArrayToParse):
-                finalParsingPaths.append(parsingPath)
-        if len(finalParsingPaths) == 0:
-            raise Exception("No parsing path returned while parsing message {0}".format(dataToParse))
+#             # build a field parser
+#             fp = FieldParser(current_field, lastField=(i_field == len(fields) - 1))
+#             newParsingPaths = []
 
-        parsingResult = finalParsingPaths[len(finalParsingPaths) - 1]
-        result = []
-        for field in fields:
-            result.append(parsingResult.getDataAssignedToField(field))
+#             for parsingPath in parsingPaths:
+#                 # we remove erroneous paths
+#                 value_before_parsing = parsingPath.getDataAssignedToField(current_field).copy()
+#                 resultParsingPaths = fp.parse(parsingPath)
 
-        test = result[0].copy()
+#                 for resultParsingPath in resultParsingPaths:
+#                     value_after_parsing = resultParsingPath.getDataAssignedToField(current_field)
+#                     remainingValue = value_before_parsing[len(value_after_parsing):].copy()
 
-        for res in result[1:]:
-            test += res.copy()
+#                     if next_field is not None:
+#                         resultParsingPath.assignDataToField(remainingValue, next_field)
 
-#        if test != bitArrayToParse:
-#            raise Exception("OUPS")
+#                     if resultParsingPath.isDataAvailableForField(current_field):
+#                         newParsingPaths.append(resultParsingPath)
 
-        self.memory = parsingResult.memory
-        return result
+#             # lets filter
+#             if len(newParsingPaths) > MessageParser.MAX_NUMBER_OF_PARSING_PATHS:
+#                 self._logger.warning("Parsing field '{}' brought '{}' different parsing paths. Only the first '{}' and the last '{}' discovered parsing path are kept".format(current_field.name, len(newParsingPaths), MessageParser.MAX_NUMBER_OF_PARSING_PATHS/2,  MessageParser.MAX_NUMBER_OF_PARSING_PATHS/2))
+#                 parsingPaths = newParsingPaths[:MessageParser.MAX_NUMBER_OF_PARSING_PATHS/2] + newParsingPaths[len(newParsingPaths) - MessageParser.MAX_NUMBER_OF_PARSING_PATHS/2: ]
+#             else:
+#                 parsingPaths = newParsingPaths
+
+#         finalParsingPaths = []
+#         for parsingPath in parsingPaths:
+#             if parsingPath.validForMessage(fields, bitArrayToParse):
+#                 finalParsingPaths.append(parsingPath)
+#         if len(finalParsingPaths) == 0:
+#             raise Exception("No parsing path returned while parsing message {0}".format(dataToParse))
+
+#         parsingResult = finalParsingPaths[len(finalParsingPaths) - 1]
+#         result = []
+#         for field in fields:
+#             result.append(parsingResult.getDataAssignedToField(field))
+
+#         test = result[0].copy()
+
+#         for res in result[1:]:
+#             test += res.copy()
+
+# #        if test != bitArrayToParse:
+# #            raise Exception("OUPS")
+
+#         self.memory = parsingResult.memory
+#         return result

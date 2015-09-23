@@ -67,10 +67,7 @@ class VariableParser(object):
         dataToParse = parsingPath.getDataAssignedToVariable(self.variable)
         self._logger.debug("Parse '{0}' with variable '{1}' specifications".format(dataToParse, self.variable))
 
-        parsingPaths = self.variable.parse(parsingPath, carnivorous=carnivorous)
-        self._logger.debug("Parsing variable '{0}' generated '{1}' valid paths".format(self.variable, len(parsingPaths)))
-        
-        return parsingPaths
+        return self.variable.parse(parsingPath, carnivorous=carnivorous)
 
     @property
     def variable(self):

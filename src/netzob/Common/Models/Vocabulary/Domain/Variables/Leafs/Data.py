@@ -101,7 +101,7 @@ class Data(AbstractVariableLeaf):
     >>> print mp.parseMessage(msg2, s)
     Traceback (most recent call last):
       ...
-    Exception: No parsing path returned while parsing message netzab
+    InvalidParsingPathException: No parsing path returned while parsing 'netzab'
 
 
     Case 2: Abstraction of a persitent data
@@ -120,7 +120,7 @@ class Data(AbstractVariableLeaf):
     >>> print mp.parseMessage(msg3, s)
     Traceback (most recent call last):
       ...
-    Exception: No parsing path returned while parsing message netzab
+    InvalidParsingPathException: No parsing path returned while parsing 'netzab'
 
 
     >>> f0 = Field(domain=Data(dataType=ASCII(), originalValue=TypeConverter.convert("netzob", ASCII, BitArray), name="netzob", svas=SVAS.PERSISTENT))
@@ -130,7 +130,7 @@ class Data(AbstractVariableLeaf):
     >>> print mp.parseMessage(msg1, s)
     Traceback (most recent call last):
       ...
-    Exception: No parsing path returned while parsing message netzab
+    InvalidParsingPathException: No parsing path returned while parsing 'netzab'
 
 
     Case 3: Abstraction of an ephemeral data
@@ -363,26 +363,23 @@ class Data(AbstractVariableLeaf):
         if maxSize is None:
             maxSize = len(content)        
 
-        results = []
-        
         if len(content) < minSize:
             self._logger.debug("Length of the content is too short ({0}), expect data of at least {1} bits".format(len(content), minSize))
-            return results
+        else :
 
-        # if carnivorous:
-        #     minSize = len(content)
-        #     maxSize = len(content)
+            # if carnivorous:
+            #     minSize = len(content)
+            #     maxSize = len(content)
 
-        for size in xrange(min(maxSize, len(content)), minSize -1, -1):
-            # size == 0 : deals with 'optional' data
-            if size == 0 or self.dataType.canParse(content[:size]):
-                # we create a new parsing path and returns it
-                newParsingPath = parsingPath.duplicate()
+            for size in xrange(min(maxSize, len(content)), minSize -1, -1):
+                # size == 0 : deals with 'optional' data
+                if size == 0 or self.dataType.canParse(content[:size]):
+                    # we create a new parsing path and returns it
+                    newParsingPath = parsingPath.duplicate()
 
-                newParsingPath.addResult(self, content[:size].copy())
-                results.append(newParsingPath)
+                    newParsingPath.addResult(self, content[:size].copy())
+                    yield newParsingPath
             
-        return results
         
     @typeCheck(ParsingPath)
     def valueCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
@@ -432,23 +429,21 @@ class Data(AbstractVariableLeaf):
         
         if len(content) < minSize:
             self._logger.debug("Length of the content is too short ({0}), expect data of at least {1} bits".format(len(content), minSize))
-            return results
+        else:
 
-#        if carnivorous:
-#            minSize = len(content)
-#            maxSize = len(content)
-            
-        for size in xrange(min(maxSize, len(content)), minSize -1, -1):
-            # size == 0 : deals with 'optional' data
-            if size == 0 or self.dataType.canParse(content[:size]):
-                # we create a new parsing path and returns it
-                newParsingPath = parsingPath.duplicate()
-                newParsingPath.addResult(self, content[:size].copy())
-                newParsingPath.memory.memorize(self, content[:size].copy())
-                results.append(newParsingPath)
-            
-        return results
+    #        if carnivorous:
+    #            minSize = len(content)
+    #            maxSize = len(content)
 
+            for size in xrange(min(maxSize, len(content)), minSize -1, -1):
+                # size == 0 : deals with 'optional' data
+                if size == 0 or self.dataType.canParse(content[:size]):
+                    # we create a new parsing path and returns it
+                    newParsingPath = parsingPath.duplicate()
+                    newParsingPath.addResult(self, content[:size].copy())
+                    newParsingPath.memory.memorize(self, content[:size].copy())
+                    yield newParsingPath
+            
     @typeCheck(SpecializingPath)
     def use(self, variableSpecializerPath, acceptCallBack=True):
         """This method participates in the specialization proces.

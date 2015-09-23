@@ -83,7 +83,7 @@ class Alt(AbstractVariableNode):
     >>> print mp.parseMessage(msg3, s)
     Traceback (most recent call last):
       ...
-    Exception: No parsing path returned while parsing message nothing
+    InvalidParsingPathException: No parsing path returned while parsing 'nothing'
     
 
     That's another simple example that also illustrates rollback mechanisms
@@ -116,8 +116,6 @@ class Alt(AbstractVariableNode):
         dataToParse = parsingPath.getDataAssignedToVariable(self)
         self._logger.debug("Parse '{0}' with '{1}'".format(dataToParse, self))
 
-        results = []
-        
         parserPaths = [parsingPath]
         parsingPath.assignDataToVariable(dataToParse.copy(), self.children[0])
         
@@ -134,21 +132,11 @@ class Alt(AbstractVariableNode):
             self._logger.debug("ALT Parse of {0}/{1} with {2}".format(i_child+1, len(self.children), parsingPath))
 
             childParsingPaths = child.parse(parsingPath)
-            if len(childParsingPaths) == 0:
-                self._logger.debug("Path {0} on child {1} didn't succeed.".format(parsingPath, child))
-            else:
-                self._logger.debug("Path {0} on child {1} succeed.".format(parsingPath, child))
-                for childParsingPath in childParsingPaths:
-                    if childParsingPath.ok():
-                        childParsingPath.addResult(self, childParsingPath.getDataAssignedToVariable(child))
-                        results.append(childParsingPath)
+            for childParsingPath in childParsingPaths:
+                if childParsingPath.ok():
+                    childParsingPath.addResult(self, childParsingPath.getDataAssignedToVariable(child))
+                    yield childParsingPath
 
-            self._logger.debug("ALT Parse of {0}/{1} produced {2} paths".format(i_child+1, len(self.children), len(results)))
-            
-        if len(results) == 0:
-            self._logger.debug("No children of {0} successfuly parsed {1}".format(self, dataToParse))
-
-        return results
 
     @typeCheck(SpecializingPath)        
     def specialize(self, specializingPath):

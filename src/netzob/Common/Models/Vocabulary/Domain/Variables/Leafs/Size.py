@@ -79,7 +79,7 @@ class Size(AbstractRelationVariableLeaf):
     >>> print mp.parseMessage(msg2, s)
     Traceback (most recent call last):
       ...
-    Exception: No parsing path returned while parsing message netzob;
+    InvalidParsingPathException: No parsing path returned while parsing 'netzob;'
 
     
     # While next demo, illustrates a size field declared before its target field
@@ -99,7 +99,7 @@ class Size(AbstractRelationVariableLeaf):
     >>> print mp.parseMessage(msg2, s)
     Traceback (most recent call last):
       ...
-    Exception: No parsing path returned while parsing message \x03;netzob
+    InvalidParsingPathException: No parsing path returned while parsing '\x03;netzob'
 
     # Let's see what happen with specialization of a Size field
     

@@ -63,9 +63,6 @@ class FieldParser():
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignDataToField(content, f1)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> len(parsingPaths)>0
-    True
-
     >>> print '\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths])
     toto
     tot
@@ -78,9 +75,6 @@ class FieldParser():
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignDataToField(content, f1)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> len(parsingPaths)>0
-    True
-
     >>> print '\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths])
     toto.txt
     
@@ -90,9 +84,6 @@ class FieldParser():
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignDataToField(content, f1)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> len(parsingPaths)>0
-    True
-
     >>> print '\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths])
     toto tata
 
@@ -102,9 +93,6 @@ class FieldParser():
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignDataToField(content, f1)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> len(parsingPaths)>0
-    True
-
     >>> print '\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths])
     toto
 
@@ -116,10 +104,7 @@ class FieldParser():
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignDataToField(content, f1)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> len(parsingPaths)>0
-    True
-
-    >>> print '\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths])    
+    >>> print '\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths])  
     toto
     to
 
@@ -131,10 +116,7 @@ class FieldParser():
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignDataToField(content, f1)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> len(parsingPaths)>0
-    True
-
-    >>> print '\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths])        
+    >>> print '\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths])
     toto
     tototo
     tototo
@@ -145,9 +127,6 @@ class FieldParser():
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignDataToField(content, f1)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> len(parsingPaths)>0
-    True
-
     >>> print '\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths])
     helloword.txt
 
@@ -158,8 +137,10 @@ class FieldParser():
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignDataToField(content, f1)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> len(parsingPaths)>0
-    False
+    >>> next(parsingPaths)
+    Traceback (most recent call last):
+     ...
+    StopIteration
 
 
     Below are few tests 
@@ -225,20 +206,15 @@ class FieldParser():
 
         # we create a first VariableParser and uses it to parse the domain
         variableParser = VariableParser(domain)
-        resultParsingPaths = variableParser.parse(parsingPath, carnivorous=self.lastField)
 
-        newResults = []
-        
-        for resultParsingPath in resultParsingPaths:
+        for resultParsingPath in variableParser.parse(parsingPath, carnivorous=self.lastField):
             if resultParsingPath.isDataAvailableForVariable(self.field.domain):
                 try:
                     resultParsingPath.addResultToField(self.field, resultParsingPath.getDataAssignedToVariable(self.field.domain))
-                    newResults.append(resultParsingPath)
-                except:
-                    pass
-
-        return newResults 
-
+                    yield resultParsingPath
+                except Exception, e:
+                    self._logger.error("An error occurred while parsing variable : {}".format(e))
+    
     @property
     def field(self):
         """The field that will be use to parse some content
