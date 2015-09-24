@@ -371,6 +371,38 @@ class Data(AbstractVariableLeaf):
             #     minSize = len(content)
             #     maxSize = len(content)
 
+            # for offset in xrange(len(content) / 2):
+
+            #     # left
+            #     size = content[:offset]
+            #     if size == 0 or self.dataType.canParse(content[:size]):
+            #         # we create a new parsing path and returns it
+            #         newParsingPath = parsingPath.duplicate()
+            #         newParsingPath.addResult(self, content[:size].copy())
+            #         yield newParsingPath
+
+            #     # right
+            #     size = len(content) - 1 - offset
+            #     if self.dataType.canParse(content[:size]):
+            #         # we create a new parsing path and returns it
+            #         newParsingPath = parsingPath.duplicate()
+            #         newParsingPath.addResult(self, content[:size].copy())
+            #         yield newParsingPath
+
+            # if len(content) / 2 % 2 == 1:
+            #     size = len(content) / 2
+            #     if self.dataType.canParse(content[:size]):
+            #         # we create a new parsing path and returns it
+            #         newParsingPath = parsingPath.duplicate()
+            #         newParsingPath.addResult(self, content[:size].copy())
+            #         yield newParsingPath
+                
+                
+
+
+
+
+            
             for size in xrange(min(maxSize, len(content)), minSize -1, -1):
                 # size == 0 : deals with 'optional' data
                 if size == 0 or self.dataType.canParse(content[:size]):
@@ -434,7 +466,8 @@ class Data(AbstractVariableLeaf):
     #        if carnivorous:
     #            minSize = len(content)
     #            maxSize = len(content)
-
+    
+    
             for size in xrange(min(maxSize, len(content)), minSize -1, -1):
                 # size == 0 : deals with 'optional' data
                 if size == 0 or self.dataType.canParse(content[:size]):
