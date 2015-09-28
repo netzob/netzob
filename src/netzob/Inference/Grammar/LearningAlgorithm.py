@@ -28,10 +28,8 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
-from gettext import gettext as _
 import logging
 import time
-from gi.repository import GObject
 import os
 
 #+----------------------------------------------
@@ -42,7 +40,7 @@ import os
 #| Local application imports
 #+----------------------------------------------
 from netzob.Inference.Grammar.Oracles.NetworkOracle import NetworkOracle
-from netzob.Common.MMSTD.Dictionary.Memory import Memory
+from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
 
 
 #+----------------------------------------------
@@ -163,7 +161,7 @@ class LearningAlgorithm(object):
         # return only the last result
         if len(resultQuery) > 0:
             # Execute the call back function
-            GObject.idle_add(self.callbackFunction, query, tmpResultQuery)
+            # GObject.idle_add(self.callbackFunction, query, tmpResultQuery)
             result = resultQuery[len(resultQuery) - 1]
             self.cache.cacheResult(query, resultQuery)
 
@@ -172,7 +170,7 @@ class LearningAlgorithm(object):
             return result
         else:
             # Execute the call back function
-            GObject.idle_add(self.callbackFunction, query, "OUPS")
+            # GObject.idle_add(self.callbackFunction, query, "OUPS")
             self.cache.cacheResult(query, resultQuery)
             return resultQuery
 

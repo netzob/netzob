@@ -28,7 +28,6 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
-from gettext import gettext as _
 import logging
 import time
 import threading
@@ -41,10 +40,9 @@ import uuid
 #+----------------------------------------------
 #| Local application imports
 #+----------------------------------------------
-from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
-from netzob.Common.MMSTD.Actors.MMSTDVisitor import MMSTDVisitor
-from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
-from netzob.Common.MMSTD.Dictionary.Memory import Memory
+
+from netzob.Common.Models.Simulator.AbstractionLayer import AbstractionLayer
+from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
 
 
 #+----------------------------------------------
