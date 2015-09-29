@@ -162,6 +162,7 @@ class FieldSpecializer():
             specializingPath = SpecializingPath(memory=Memory())
 
         # we retrieve the field definition domain
+        self.field.domainUpdate()
         domain = self.field.domain
 
         # and check it exists

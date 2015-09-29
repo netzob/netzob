@@ -39,18 +39,21 @@ class PrismaTest(object):
             while sPre != s:
                 sPre = s
                 s = s.executeAsInitiator(l)
-                if s == 'cycle':
-                    self._logger.critical('cycle detected')
-                    time.sleep(3)
-                    l.closeChannel()
-                    return True
+                # if s == 'cycle':
+                #     self._logger.critical('cycle detected')
+                #     time.sleep(3)
+                #     l.closeChannel()
+                #     return True
                 if 'END' in s.name:
                     # session ended gracefully
                     self._logger.critical('session gracefully ended')
                     l.closeChannel()
                     time.sleep(3)
                     return True
+            self._logger.critical('session aborted')
             time.sleep(3)
+            l.closeChannel()
+            return True
         # probably one cycle ended in the target not responding
         # causing an exception to be thrown
         # causing us to catch it
@@ -98,8 +101,7 @@ class PrismaTest(object):
         if self.pi.isInitialized():
             return
         # self.pi.setPath('/home/dsmp/work/pulsar/src/models/1ActionMerge')
-        # self.pi.setPath('/data/pulsar/models/1ActionMerge')
-        self.pi.setPath('/home/dasmoep/work/work/p2p/samples/airplay1st')
+        self.pi.setPath('/data/pulsar/models/1ActionMerge')
         self.pi.setDestinationIp('127.0.0.1')
         self.pi.setDestinationPort(36666)
         self.pi.setSourceIp('127.0.0.1')

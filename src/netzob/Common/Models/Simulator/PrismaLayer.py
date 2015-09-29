@@ -13,11 +13,12 @@ class PrismaLayer(AbstractionLayer):
         e = EmptySymbol()
         e.name = '-1'
         self.symbolBuffer = horizonLength*[e]
+        self.horizonLength = horizonLength
 
     def reInit(self):
         e = EmptySymbol()
         e.name = '-1'
-        self.symbolBuffer = len(self.symbolBuffer)*[e]
+        self.symbolBuffer = self.horizonLength*[e]
 
     def updateSymbolBuffer(self, nextSymbol):
         # save a copy here
@@ -35,7 +36,6 @@ class PrismaLayer(AbstractionLayer):
             self._logger.info("having unknown")
             symbol = PrismaSymbol(name='{}'.format(self.unknownCount), messages=[RawMessage(data)])
         self._logger.critical('received from the channel sym{}:'.format(symbol.name))
-        print symbol.messages
         self._logger.warning("going on as usual")
         self.updateSymbolBuffer(symbol)
         symbol.setHorizon(self.symbolBuffer)
@@ -51,7 +51,7 @@ class PrismaLayer(AbstractionLayer):
         self._logger.info('current horizon {}'.format(symbol.horizon2ID()))
         self._writeSymbol(symbol)
 
-    # copied from usal AbstractionLayer
+    # copied from usual AbstractionLayer
     # need to get hands on the data generated during sending
     def _writeSymbol(self, symbol):
         """Write the specified symbol on the communication channel
@@ -70,7 +70,6 @@ class PrismaLayer(AbstractionLayer):
         # update symbols message with what we send over the wire
         symbol.messages = [RawMessage(data)]
         self._logger.critical('sending over the channel sym{}:'.format(symbol.name))
-        print '{}'.format(symbol.messages)
         self._logger.info("Data generated from symbol '{0}': {1}.".format(symbol.name, repr(data)))
 
         self._logger.info("Going to write to communication channel...")

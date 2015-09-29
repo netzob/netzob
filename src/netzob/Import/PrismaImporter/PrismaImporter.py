@@ -105,43 +105,8 @@ class PrismaImporter(object):
         symbolContainer = {}
         for ID, temp in self.templates.IDtoTemp.items():
             s = self.createSymbol(ID)
-            # if 'UAC' in temp.state.getCurState():
-            #     src = 'client'
-            #     dst = 'server'
-            # else:
-            #     src = 'server'
-            #     dst = 'client'
-            # numRuleFields = 1
-            # if temp.fields:
-            #     numRuleFields = len(temp.fields)
-            # maxEntropy = min(1000/(8*numRuleFields), 17)
-            # maxEntropy = max(maxEntropy, 1)
-            # fields = map(lambda x: PrismaField(*sanitizeRule(unquote(x), src, maxEntropy)), temp.content)
-            # if not fields:
-            #     continue
-            # s = PrismaSymbol(fields=fields, name=str(ID), role=src)
-            # if src == 'server':
-            #     s.messages = [RawMessage(s.specialize(), destination=dst, source=src)]
-            # absFields = []
-            # rules = cpyR = datR = {}
-            # if ID in self.absoluteFields:
-            #     s.absoluteFields = self.absoluteFields[ID]
-            # if ID in self.Rules:
-            #     rules = self.Rules[ID]
-            #     s.rules = genDict(rules)
-            # if ID in self.copyRules:
-            #     cpyR = self.copyRules[ID]
-            #     s.copyRules = genDict(cpyR)
-            # if ID in self.dataRules:
-            #     datR = self.dataRules[ID]
-            #     s.dataRules = genDict(datR)
-            # # s = PrismaSymbol(pi=self, absFields=absFields, name=str(ID), fields=fields, messages=[msg],
-            # #                  rules=rules, copyRules=cpyR, dataRules=datR, role=src)
-            # # try:
-            # #     s.getCells()
-            # # except Exception:
-            # #     self._logger.critical('cannot crack sym{} at {}'.format(s.name, maxEntropy))
-            symbolContainer.update({ID: s})
+            if s:
+                symbolContainer.update({ID: s})
         return symbolContainer
 
     def createSymbol(self, ID, role=None):
@@ -158,13 +123,12 @@ class PrismaImporter(object):
         maxEntropy = min(1000/(8*numRuleFields), 17)
         maxEntropy = max(maxEntropy, 1)
         fields = map(lambda x: PrismaField(*sanitizeRule(unquote(x), src, maxEntropy)), temp.content)
-        # if not fields:
-        #     return
+        if not fields:
+            # fields = [PrismaField()]
+            return None
         s = PrismaSymbol(fields=fields, name=str(ID), role=src)
-        if src == 'server':
-            s.messages = [RawMessage(s.specialize(), destination=dst, source=src)]
-        absFields = []
-        rules = cpyR = datR = {}
+        # if src == 'server':
+        s.messages = [RawMessage(s.specialize(), destination=dst, source=src)]
         if ID in self.absoluteFields:
             s.absoluteFields = self.absoluteFields[ID]
         if ID in self.Rules:
@@ -177,43 +141,6 @@ class PrismaImporter(object):
             datR = self.dataRules[ID]
             s.dataRules = genDict(datR)
         s.buildFields()
-        # temp = self.templates.IDtoTemp[ID]
-        # if role == 'client':
-        #     src = 'client'
-        #     dst = 'server'
-        # else:
-        #     src = 'server'
-        #     dst = 'client'
-        # numRuleFields = 1
-        # if temp.fields:
-        #     numRuleFields = len(temp.fields)
-        # maxEntropy = min(1000/(8*numRuleFields), 17)
-        # maxEntropy = max(maxEntropy, 1)
-        # fields = map(lambda x: PrismaField(*sanitizeRule(unquote(x), src, maxEntropy)), temp.content)
-        # if not fields:
-        #     return None
-        # s = PrismaSymbol(fields=fields, name=str(ID))
-        # if src == 'server':
-        #     msg = RawMessage(s.specialize(), destination=dst, source=src)
-        # absFields = []
-        # rules = cpyR = datR = {}
-        # if ID in self.absoluteFields:
-        #     absFields = self.absoluteFields[ID]
-        # if ID in self.Rules:
-        #     rules = self.Rules[ID]
-        #     rules = genDict(rules)
-        # if ID in self.copyRules:
-        #     cpyR = self.copyRules[ID]
-        #     cpyR = genDict(cpyR)
-        # if ID in self.dataRules:
-        #     datR = self.dataRules[ID]
-        #     datR = genDict(datR)
-        # s = PrismaSymbol(pi=self, absFields=absFields, name=str(ID), fields=fields, messages=[msg],
-        #                  rules=rules, copyRules=cpyR, dataRules=datR, role=src)
-        # # try:
-        # #     s.getCells()
-        # # except Exception:
-        # #     self._logger.critical('cannot crack sym{} at {}'.format(s.name, maxEntropy))
         return s
 
     def createStates(self, prismaState):
@@ -251,6 +178,8 @@ class PrismaImporter(object):
                 if s[0].name == getName(nx):
                     # make each transition its own set of symbols
                     temps = self.getTemplates(state.name)
+                    if not temps and state.name != 'START|START':
+                        continue
                     trans.append(PrismaTransition(state, s[0], outputSymbols=temps, inputSymbol=EmptySymbol(),
                                                   name='{}-->{}'.format(state.name, s[0].name)))
         if trans:
@@ -393,7 +322,8 @@ class PrismaImporter(object):
 # what to do about ruleFields?
 def sanitizeRule(x, role, maxEntropy):
     if x == '':
-        return [ASCII(nbChars=(1, maxEntropy))]
+        # return [ASCII(nbChars=(1, maxEntropy))], 'Rule-Field'
+        return ['xY'], 'Rule-Field'
     # this is a nightmare
     # be a little bit more cool if some received message does not
     # fits a template; a plan never survives first contact with reality

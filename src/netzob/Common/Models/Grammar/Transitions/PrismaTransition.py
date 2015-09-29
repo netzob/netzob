@@ -50,7 +50,7 @@ class PrismaTransition(Transition):
         self.active = True
         # manage outputStates
         if self.ROLE == 'client':
-            pickedSymbol = self.__pickOutputSymbol(abstractionLayer.symbolBuffer)
+            pickedSymbol = self.__pickOutputSymbol(abstractionLayer.symbolBuffer[:])
 
             if pickedSymbol is None:
                 self._logger.debug("Something is wrong here. Got outState without outSymbol..")
@@ -91,26 +91,19 @@ class PrismaTransition(Transition):
 
     def __pickOutputSymbol(self, Horizon):
         self._logger.info("picking symbol")
-        # emit Symbol which previously was not emitted
-        # what we 'want' to output
-        pos = set(self.outputSymbols)-set(self.emitted)
-        # check which Symbols are emittable w.r.t. the current horizon
-        # what we 'can' output
-        # print(pos)
-        Horizon = Hist(map(lambda x: [int(x.name)], Horizon))
-        # print(Horizon)
-        posH = set([oS for oS in self.outputSymbols if (not oS.absoluteFields) or Horizon in oS.horizons])
-        # print(posH)
-        if posH:
-            # would be nice to have something we want to output, which can be output ;)
-            pos = pos.intersection(posH)
-            if not pos:
-                self._logger.critical("hist does not match")
-                # no? ok, stick to what we can
-                pos = posH
-            self._logger.critical("matching hist")
-        # print(pos)
-        c = random.choice(list(pos))
+        # what the horizon allows:
+        horizon = Horizon[1:]+['x']
+        emittable = []
+        for sym in self.outputSymbols:
+            horizon[-1] = sym
+            h = Hist(map(lambda x: [int(x.name)], horizon))
+            if (not sym.absoluteFields) or h in sym.horizons:
+                emittable.append(sym)
+        # what we want to emit:
+        favorites = list(set(emittable) - set(self.emitted))
+        if not favorites:
+            favorites = emittable
+        c = random.choice(favorites)
         if c not in self.emitted:
             self.emitted.append(c)
         if len(self.emitted) >= len(self.outputSymbols):

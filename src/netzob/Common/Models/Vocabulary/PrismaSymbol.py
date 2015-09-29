@@ -17,7 +17,7 @@ from urllib import unquote
 @NetzobLogger
 class PrismaSymbol(Symbol):
 
-    def __init__(self, pi=None, absFields=[], fields=None, messages=None, name="Symbol",
+    def __init__(self, fields=None, pi=None, absFields=[], messages=None, name="Symbol",
                  rules={}, copyRules={}, dataRules={}, horizon=[None], role=None):
 
         self.__messages = TypedList(AbstractMessage)
@@ -29,7 +29,7 @@ class PrismaSymbol(Symbol):
         self.dataRules = dataRules
         self.absoluteFields = absFields
         # make Symbol aware of its horizons
-        self.horizons = self.horizons(rules, copyRules, dataRules)
+        self.horizons = []
 
         self.role = role
         self.faulty = 0.0
@@ -46,30 +46,24 @@ class PrismaSymbol(Symbol):
     def buildFields(self):
         # attach rules to the fields
         for hist, ruleList in self.dataRules.items():
+            self.horizons.append(hist)
             for rule in ruleList:
                 field = self.fields[self.absoluteFields[int(rule.dstField)]]
                 field.rules[hist] = rule
-                # field.type = 'data'
+                field.ruleToggle = True
         for hist, ruleList in self.rules.items():
+            self.horizons.append(hist)
             for rule in ruleList:
                 field = self.fields[self.absoluteFields[int(rule.dstField)]]
                 field.rules[hist] = rule
-                # field.type = 'exact'
+                field.ruleToggle = True
         for hist, ruleList in self.copyRules.items():
+            self.horizons.append(hist)
             for rule in ruleList:
                 field = self.fields[self.absoluteFields[int(rule.dstField)]]
                 field.rules[hist] = rule
-                # field.type = 'copy'
-
-    def horizons(self, rules, copyRules, dataRules):
-        horizons = []
-        for hor in rules.keys():
-            horizons.append(hor)
-        for hor in copyRules.keys():
-            horizons.append(hor)
-        for hor in dataRules.keys():
-            horizons.append(hor)
-        return list(set(horizons))
+                field.ruleToggle = True
+        self.horizons = list(set(self.horizons))
 
     def setHorizon(self, horizon):
         self.horizon = horizon
@@ -216,26 +210,29 @@ class PrismaSymbol(Symbol):
     #         self.messages = [RawMessage(self.specialize(noRules=True))]
 
     def specialize(self, memory=None, noRules=False, data=False):
+        self.clearMessages()
         if not noRules:
             self._logger.error('specializing sym{}'.format(self.name))
         # if not noRules and self.horizon != [None]:
         #     self.applyRules()
         from netzob.Common.Models.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
-        try:
-            msg = MessageSpecializer(memory=memory)
-            spePath = msg.specializeSymbol(self)
-            if not noRules:
-                self._logger.info('getting message just fine')
-        except Exception as e:
-            print e.message
-            self._logger.critical('something wrong with getting message from symbol')
+        # try:
+        msg = MessageSpecializer(memory=memory)
+        spePath = msg.specializeSymbol(self)
+        if not noRules:
+            self._logger.info('getting message just fine')
+        # except Exception as e:
+        #     print e.message
+        #     self._logger.critical('something wrong with getting message from symbol')
 
         if spePath is not None:
             try:
                 message = TypeConverter.convert(spePath.generatedContent, BitArray, Raw)
+                self.messages = [RawMessage(message)]
+                # print self.messages[0]
                 return message
             except Exception:
-                self._logger.critical('something wrong with converting message')
+                self._logger.critical('something wrong with converting message Sym{}'.format(self.name))
 
     def clearMessages(self):
         """Delete all the messages attached to the current symbol"""
@@ -279,3 +276,14 @@ class PrismaSymbol(Symbol):
         for c in temp.content:
             sym += '{}\n'.format(c)
         return sym
+
+
+def getHorizons(rules, copyRules, dataRules):
+    horizons = []
+    for hor in rules.keys():
+        horizons.append(hor)
+    for hor in copyRules.keys():
+        horizons.append(hor)
+    for hor in dataRules.keys():
+        horizons.append(hor)
+    return list(set(horizons))
