@@ -3,7 +3,7 @@ from netzob.Common.Models.Simulator.AbstractionLayer import AbstractionLayer
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.PrismaSymbol import PrismaSymbol
-from netzob.Import.PrismaImporter.prisma.Hist import Hist
+from netzob.Import.PrismaImporter.PrismaIO.Hist import Hist
 
 import uuid
 import random

@@ -1,6 +1,6 @@
 from netzob.Common.Models.Vocabulary.Symbol import Symbol
 # from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Import.PrismaImporter.prisma.Hist import Hist
+from netzob.Import.PrismaImporter.PrismaIO.Hist import Hist
 from netzob.Common.Models.Vocabulary.Field import Field
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Common.Utils.TypedList import TypedList
@@ -262,7 +262,7 @@ class PrismaSymbol(Symbol):
         for msg in messages:
             self.__messages.append(msg)
 
-    def toFile(self, parent):
+    def toFile(self, parent, pi):
         ntokens = len(self.fields)
         fields = ''
         if self.absoluteFields:
@@ -272,7 +272,7 @@ class PrismaSymbol(Symbol):
         sym = 'TEMPLATE id:{} state:{} count:1 ntokens:{} fields:{}\n'.format(self.name, parent, ntokens, fields)
         # grep content from exactly what we loaded earlier
         # hell this is stupid :s
-        temp = self.pi.templates[int(self.name)]
+        temp = pi.templates[int(self.name)]
         for c in temp.content:
             sym += '{}\n'.format(c)
         return sym

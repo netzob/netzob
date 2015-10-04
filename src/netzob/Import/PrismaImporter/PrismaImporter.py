@@ -1,4 +1,4 @@
-import prisma
+import PrismaIO
 import copy
 import os
 from urllib import unquote
@@ -59,14 +59,14 @@ class PrismaImporter(object):
         for files in os.listdir(path):
             if 'template' in files:
                 f = open('{0}/{1}'.format(path, files), 'r')
-                templates = prisma.templateParse(f)
+                templates = PrismaIO.templateParse(f)
                 self.templates = templates
                 self.computeABSfields()
                 f.close()
                 print('read templates')
             if 'markov' in files:
                 f = open('{0}/{1}'.format(path, files), 'r')
-                model = prisma.markovParse(f)
+                model = PrismaIO.markovParse(f)
                 self.model = model
                 f.close()
                 if enhance:
@@ -74,7 +74,7 @@ class PrismaImporter(object):
                 print('read model')
             if 'rules' in files:
                 f = open('{0}/{1}'.format(path, files), 'r')
-                rules = prisma.ruleParse(f)
+                rules = PrismaIO.ruleParse(f)
                 self.horizonLength = rules[-1]
                 self.rules = rules[:-1]
                 f.close()

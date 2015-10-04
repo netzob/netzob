@@ -11,6 +11,7 @@ class PrismaExporter(object):
     def toFile(self):
         pi = self.pi
         path = '{}/NetzobEnhanced'.format(pi.getPath())
+        print('writing to:{}'.format(path))
         # make workDir
         try:
             os.makedirs(path)
@@ -25,20 +26,34 @@ class PrismaExporter(object):
         while toDo:
             current = toDo.pop()
             for t in current.transitions:
+                # # is start?
+                # if current == pi.getInitial():
+                #     pass
+                # # maybe transition invalidated
+                # if len(t.outputSymbols) < 1:
+                #     continue
                 # get left (not deleted) Symbols
+                transSyms = '#'
                 for s in t.outputSymbols:
                     symbols.update({s.name: (s, current.name)})
+                    transSyms += s.name + ' '
+                transSyms += '\n'
                 nxt = t.endState
                 # print '{}->{}'.format(current.name, nxt.name)
                 f = open(os.path.join(path, 'nE.markovModel'), 'a')
                 f.write('{}->{},1\n'.format(current.name, nxt.name))
+                f.write(transSyms)
                 f.close()
                 if nxt not in done:
                     toDo.append(nxt)
             done.append(current)
-        f = open(os.path.join(path, 'nE.templtaes'), 'a')
+        t = open(os.path.join(path, 'nE.templates'), 'a')
+        r = open(os.path.join(path, 'nE.rules'), 'a')
         for s, p in symbols.values():
-            f.write(s.toFile(p))
-        f.close()
+            t.write(s.toFile(p, self.pi))
+            for rule in s.rules:
+                r.write(rule.toFile())
+        t.close()
+        r.close()
 
 
