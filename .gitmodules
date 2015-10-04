@@ -1,0 +1,3 @@
+[submodule "src/netzob/Import/PrismaImporter/PrismaIO"]
+	path = src/netzob/Import/PrismaImporter/PrismaIO
+	url = https://github.com/dasbruns/PrismaIO.git
