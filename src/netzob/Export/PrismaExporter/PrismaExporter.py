@@ -51,8 +51,15 @@ class PrismaExporter(object):
         r = open(os.path.join(path, 'nE.rules'), 'a')
         for s, p in symbols.values():
             t.write(s.toFile(p, self.pi))
-            for rule in s.rules:
-                r.write(rule.toFile())
+            for ruleList in s.rules.values():
+                for rule in ruleList:
+                    r.write(rule.toFile())
+            for ruleList in s.dataRules.values():
+                for rule in ruleList:
+                    r.write(rule.toFile())
+            for ruleList in s.copyRules.values():
+                for rule in ruleList:
+                    r.write(rule.toFile())
         t.close()
         r.close()
 
