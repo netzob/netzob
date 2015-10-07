@@ -37,7 +37,7 @@
 import uuid
 import time
 import random
-
+    
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
@@ -131,7 +131,7 @@ class Transition(AbstractTransition):
 
         except Exception, e:
             self.active = False
-            self._logger.warning("An error occured while executing the transition {0} as an initiator".format(self.name))
+            self._logger.warning("An error occured while executing the transition {} as an initiator: {}".format(self.name, e))
             raise e
 
         # Computes the next state following the received symbol
@@ -145,8 +145,9 @@ class Transition(AbstractTransition):
             return self.endState
         else:
             self.active = False
-            self._logger.warning("Received symbol was not excepted.")
-            raise Exception("Received symbol was not excepted.")
+            errorMessage = "Received symbol '{}' was unexpected.".format(receivedSymbol.name)
+            self._logger.warning(errorMessage)
+            raise Exception(errorMessage)
 
     @typeCheck(AbstractionLayer)
     def executeAsNotInitiator(self, abstractionLayer):
