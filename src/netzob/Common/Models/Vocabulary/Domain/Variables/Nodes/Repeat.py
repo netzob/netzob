@@ -58,13 +58,25 @@ class Repeat(AbstractVariableNode):
     Let's see how a repeat domain can be parsed
 
     >>> from netzob.all import *
-    >>> f1 = Field(Repeat(ASCII("netzob"), nbRepeat=(1, 4)))
+    >>> f1 = Field(Repeat(ASCII("netzob"), nbRepeat=(0,3)))
     >>> f2 = Field(ASCII("zoby"))
     >>> s = Symbol([f1, f2])
+
     >>> msg1 = RawMessage("netzobnetzobzoby")
     >>> mp = MessageParser()
     >>> print mp.parseMessage(msg1, s)
     [bitarray('011011100110010101110100011110100110111101100010011011100110010101110100011110100110111101100010'), bitarray('01111010011011110110001001111001')]
+
+    >>> msg2 = RawMessage("netzobzoby")
+    >>> mp = MessageParser()
+    >>> print mp.parseMessage(msg2, s)
+    [bitarray('011011100110010101110100011110100110111101100010'), bitarray('01111010011011110110001001111001')]
+
+    >>> msg4 = RawMessage("zoby")
+    >>> mp = MessageParser()
+    >>> print mp.parseMessage(msg4, s)
+    [bitarray(), bitarray('01111010011011110110001001111001')]
+    
 
     You can also specify a delimitor between each repeated element
 
@@ -124,31 +136,40 @@ class Repeat(AbstractVariableNode):
         # remove any data assigned to this variable
         parsingPath.removeAssignedDataToVariable(self)
 
-        self._logger.debug("Parse '{0}' as {1} with parser path '{2}'".format(dataToParse, self, parsingPath))
+        min_nb_repeat = self.nbRepeat[0]-1
+        max_nb_repeat = self.nbRepeat[1]-1
+        
+        for nb_repeat in range(max_nb_repeat, min_nb_repeat, -1):
+            
+            # initiate a new parsing path based on the current one
+            newParsingPath = parsingPath.duplicate()
+            newParsingPath.assignDataToVariable(dataToParse.copy(), self.children[0])            
+            newParsingPaths = [newParsingPath]
 
-        results = []
-        # we try to parse according to the various different number of repetitions
-        for i_repeat in xrange(self.nbRepeat[0], self.nbRepeat[1]):
+            # deal with the case no repetition is accepted
+            if nb_repeat == 0:
+                newParsingPath.addResult(self, bitarray())
+                yield newParsingPath
 
-            newParsingPaths = [parsingPath.duplicate()]
-            newParsingPaths[0].assignDataToVariable(dataToParse.copy(), self.children[0])
-
-            for i in xrange(i_repeat):
+            # check we can apply nb_repeat times the child
+            for i_repeat in xrange(nb_repeat):
                 tmp_result = []
                 for newParsingPath in newParsingPaths:
-                    childParsingPaths = self.children[0].parse(newParsingPath, carnivorous=carnivorous)
-                    for childParsingPath in childParsingPaths:
+                    for childParsingPath in self.children[0].parse(newParsingPath, carnivorous=carnivorous):
+                        
                         if childParsingPath.isDataAvailableForVariable(self):
                             newResult = childParsingPath.getDataAssignedToVariable(self).copy()
                             newResult += childParsingPath.getDataAssignedToVariable(self.children[0])
                         else:
                             newResult = childParsingPath.getDataAssignedToVariable(self.children[0])
 
+
                         childParsingPath.addResult(self, newResult)
                         childParsingPath.assignDataToVariable(dataToParse.copy()[len(newResult):], self.children[0])
 
+                        # apply delimitor
                         if self.delimitor is not None:
-                            if i < i_repeat - 1:
+                            if i_repeat < nb_repeat - 1:
                                 # check the delimitor is available
                                 toParse = childParsingPath.getDataAssignedToVariable(self.children[0]).copy()
                                 if toParse[:len(self.delimitor)] == self.delimitor:
@@ -161,12 +182,10 @@ class Repeat(AbstractVariableNode):
 
                         else:
                             tmp_result.append(childParsingPath)
+                            
                 newParsingPaths = tmp_result
-
-            for newParsingPath in newParsingPaths:
-                results.append(newParsingPath)
-
-        return results
+            for result in newParsingPaths:
+                yield result
 
     @typeCheck(SpecializingPath)
     def specialize(self, originalSpecializingPath):
