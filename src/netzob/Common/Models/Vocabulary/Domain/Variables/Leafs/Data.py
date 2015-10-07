@@ -354,7 +354,7 @@ class Data(AbstractVariableLeaf):
 
         if parsingPath is None:
             raise Exception("ParsingPath cannot be None")
-
+        
         content = parsingPath.getDataAssignedToVariable(self)
         
         self._logger.debug("DomainCMP {0} with {1}".format(content, self.dataType))
@@ -417,7 +417,7 @@ class Data(AbstractVariableLeaf):
     def valueCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
         if parsingPath is None:
             raise Exception("ParsingPath cannot be None")
-                
+
         expectedValue = self.currentValue
 
         # we check a value is available in memory
@@ -434,7 +434,7 @@ class Data(AbstractVariableLeaf):
         content = parsingPath.getDataAssignedToVariable(self)
         if content is None:
             raise Exception("No data assigned to the variable")
-            
+
         results = []
         if len(content)>=len(expectedValue) and content[:len(expectedValue)] == expectedValue:
             parsingPath.addResult(self, expectedValue.copy())

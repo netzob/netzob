@@ -53,6 +53,8 @@ from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
+from netzob.Common.Models.Vocabulary.UnknownSymbol import UnknownSymbol
+from netzob.Common.Models.Vocabulary.EmptySymbol import EmptySymbol
 
 
 @NetzobLogger
@@ -107,7 +109,9 @@ class AbstractionLayer(object):
         self.memory = self.specializer.memory
         self.parser.memory = self.memory
         data = TypeConverter.convert(dataBin, BitArray, Raw)
-        self._logger.info("Data generated from symbol '{0}': {1}.".format(symbol.name, repr(data)))
+        symbol.messages.append(RawMessage(data))
+
+        self._logger.info("Data generated from symbol '{0}':\n{1}.".format(symbol.name, symbol))
         
         self._logger.info("Going to write to communication channel...")
         self.channel.write(data)
@@ -126,10 +130,10 @@ class AbstractionLayer(object):
         :raise TypeError if the parameter is not valid and Exception if an error occurs.
         """
         self._logger.info("Going to read from communication channel...")
-        data = self.channel.read()
-        self._logger.info("Received data: '{0}'".format(repr(data)))
-
+        data = self.channel.read(timeout = timeout)
+        self._logger.info("Received : {}".format(repr(data)))
         symbol = None
+        
         for potential in self.symbols:
             try:
                 self.parser.parseMessage(RawMessage(data), potential)
@@ -139,12 +143,16 @@ class AbstractionLayer(object):
                 break
             except Exception, e:
                 symbol = None
-        
-        if symbol is not None:
-            self._logger.info("Received symbol on communication channel: '{0}'".format(symbol.name))
-        else:
-            self._logger.info("Received symbol on communication channel: '{0}'".format(symbol))
 
+                
+        if symbol is None and len(data) > 0:
+            symbol = UnknownSymbol()
+        elif symbol is None and len(data) == 0:
+            symbol = EmptySymbol()
+
+        symbol.messages.append(RawMessage(data))
+
+        self._logger.info("Received a message abstracted with symbol '{}' on communication channel:\n{}".format(symbol.name, symbol))
         return (symbol, data)
 
     def openChannel(self):

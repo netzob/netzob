@@ -182,7 +182,7 @@ class MessageParser(object):
 
 
     def parseRaw_new(self, dataToParse, fields):
-        self._logger.debug("New parsing method executed")
+        self._logger.debug("New parsing method executed on {}".format(dataToParse))
 
         bitArrayToParse = TypeConverter.convert(dataToParse, Raw, BitArray)
 
@@ -210,7 +210,7 @@ class MessageParser(object):
         fp = FieldParser(currentField, (i_current_field == len(fields) - 1))
 
         value_before_parsing = parsingPath.getDataAssignedToField(currentField).copy()
-        
+
         for newParsingPath in fp.parse(parsingPath):
             try:
                 value_after_parsing = newParsingPath.getDataAssignedToField(currentField)

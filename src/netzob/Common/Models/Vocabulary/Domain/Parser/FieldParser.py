@@ -213,7 +213,7 @@ class FieldParser():
                     resultParsingPath.addResultToField(self.field, resultParsingPath.getDataAssignedToVariable(self.field.domain))
                     yield resultParsingPath
                 except Exception, e:
-                    self._logger.error("An error occurred while parsing variable : {}".format(e))
+                    self._logger.debug("An error occurred while parsing variable : {}".format(e))
     
     @property
     def field(self):
