@@ -42,12 +42,13 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Symbol import Symbol
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Common.Models.Vocabulary.Messages.AbstractMessage import AbstractMessage
 
 
+@NetzobLogger
 class UnknownSymbol(Symbol):
     """An unknown symbol is a special type of symbol that is returned to represent a message that cannot be abstracted
 
@@ -67,6 +68,12 @@ class UnknownSymbol(Symbol):
         self.message = message    
         super(UnknownSymbol, self).__init__(fields=None, name="Unknown Symbol", messages=[self.message])
 
+    def __eq__(self, other):
+        if other is None:
+            return False
+        return isinstance(other, UnknownSymbol)
+
+    
     @property
     def message(self):
         """This message represents the unknown symbol
