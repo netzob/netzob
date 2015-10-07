@@ -183,17 +183,10 @@ moduleLibRelation = Extension('netzob._libRelation',
 # +----------------------------------------------------------------------------
 # | Definition of the dependencies
 # +----------------------------------------------------------------------------
-dependencies = [
-    'bitarray >= 0.4',
-    'regex == 2013-03-11',
-    'bintrees >= 2.0.0',
-    'netaddr >= 0.7',
-    'minepy >= 1.0.0',
-    'numpy',
-    'colorama',
-    'jsonpickle',
-    'pcapy'
-]
+dependencies = []
+with open('requirements.txt', 'r') as fd_requirements:
+    for dependency in fd_requirements:
+        dependencies.append(dependency.strip())
 
 extra_dependencies = {
     'docs': ['Sphinx>=1.1.3']
