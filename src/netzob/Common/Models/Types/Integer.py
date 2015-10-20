@@ -50,10 +50,11 @@ from netzob.Common.Models.Types.AbstractType import AbstractType
 
 class Integer(AbstractType):
     """The netzob type Integer, a wrapper for the "int" object (with unitSize).
-    Some constraints can be defined and they participate in the definition of the size
-    used in the generated regex. The following constraints can be defined:
-    - a static decimal value (for instance 20) with a specific unitSize and with a sign definition
-    - an interval of decimal value (positive and/or negative), this way the size is automaticaly computed in terms of
+    Some constraints can be defined and they participate in the definition of the size.
+
+    The following constraints can be defined:
+    - a static value (for instance 20) with a specific unitSize and a sign definition
+    - an interval of value (positive and/or negative), this way the size is automaticaly computed in terms of
     number of unitSize required given the sign
     - a number of unitSize
 
@@ -208,6 +209,7 @@ class Integer(AbstractType):
             raise TypeError("data cannot be None")
 
         f = Integer.computeFormat(unitSize, endianness, sign)
+
         return struct.pack(f, int(data))
 
     @staticmethod
