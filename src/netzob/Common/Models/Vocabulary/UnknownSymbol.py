@@ -57,6 +57,7 @@ class UnknownSymbol(Symbol):
     >>> print u.name
     Unknown Symbol
 
+    >>> from netzob.all import *
     >>> msg = RawMessage("hello")
     >>> u = UnknownSymbol(msg)
     >>> print u.name
