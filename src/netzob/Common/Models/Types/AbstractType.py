@@ -93,6 +93,7 @@ class AbstractType(object):
         from netzob.Common.Models.Types.Integer import Integer
         from netzob.Common.Models.Types.HexaString import HexaString
         from netzob.Common.Models.Types.IPv4 import IPv4
+        from netzob.Common.Models.Types.Timestamp import Timestamp
 
         return [
             # an array of bits: [1,0,0,1,1,0..]
@@ -107,6 +108,8 @@ class AbstractType(object):
             HexaString,
             # IPv4
             IPv4,
+            # Timestamp
+            Timestamp
         ]
 
     @staticmethod

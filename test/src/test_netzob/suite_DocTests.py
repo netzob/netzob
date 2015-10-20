@@ -79,7 +79,8 @@ def getSuite():
         BitArray.__module__,
         Raw.__module__,
         HexaString.__module__,
-        IPv4.__module__,        
+        IPv4.__module__,
+        Timestamp.__module__,
 
         # Modules related to the vocabulary inference
         # -------------------------------------------
