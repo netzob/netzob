@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2015 Christian Bruns                                        |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -27,13 +27,14 @@
 
 #+---------------------------------------------------------------------------+
 #| File contributors :                                                       |
-#|       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
-#|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
+#|       - Christian Bruns <christian.bruns1 (a) stud.uni-goettingen.de>     |
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+
+import os
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -42,52 +43,75 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
-from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 
 
-class EmptySymbol(Symbol):
-    """An empty symbol is a special type of symbol principally used by the simulator.
-    It represents the fact of having nothing received or to have nothing to send.
-
-    >>> from netzob.all import *
-    >>> e = EmptySymbol()
-
+class PrismaExporter(object):
+    """ Exporter receives PrismaImporter-Object and writes it to file in the well-known PRISMA-format
     """
+    def __init__(self, pi):
+        self.pi = pi
+        return
 
-    def __init__(self, receptionTimeout=None):
-        super(EmptySymbol, self).__init__(fields=None, name=None, messages=[RawMessage()])
-        if receptionTimeout is None:
-            receptionTimeout = EmptySymbol.defaultReceptionTimeout()
+    def toFile(self, path=None):
+        """ Writes current Prisma-Object to specified path (if provided)
+            OR sub-directory of the previous import-directory
 
-        self.receptionTimeout = receptionTimeout
-
-    @property
-    def receptionTimeout(self):
-        """This timeout represent how many milliseconds of no activity
-        represents the reception of an empty symbol
-
-        :type: class:`int`
+            !!! CAUTION: deletes files in specified path !!!
         """
-        return self.__receptionTimeout
+        if path:
+            var = raw_input("CAUTION, process deletes files in {}. Proceed: [y/N] ".format(path))
+            if 'y' in var or 'Y' in var:
+                pass
+            else:
+                print('Aborting..')
+                return
+        pi = self.pi
+        if not path:
+            path = '{}/NetzobEnhanced'.format(pi.getPath())
+        print('writing to:{}'.format(path))
+        # make workDir
+        try:
+            os.makedirs(path)
+        except OSError:
+            # kill files, be careful here!
+            fl = [f for f in os.listdir(path)]
+            for f in fl:
+                if 'markov' in f or 'template' in f or 'rule' in f:
+                    os.remove(os.path.join(path, f))
+        toDo = [pi.getInitial()]
+        done = []
+        symbols = {}
+        while toDo:
+            current = toDo.pop()
+            for t in current.transitions:
+                transSyms = '# '
+                for s in t.outputSymbols:
+                    symbols.update({s.name: (s, current.name)})
+                    transSyms += s.name + ' '
+                transSyms += '\n'
+                nxt = t.endState
+                # print '{}->{}'.format(current.name, nxt.name)
+                f = open(os.path.join(path, 'nE.markovModel'), 'a')
+                f.write('{}->{},1 '.format(current.name, nxt.name))
+                f.write(transSyms)
+                f.close()
+                if nxt not in done:
+                    toDo.append(nxt)
+            done.append(current)
+        t = open(os.path.join(path, 'nE.templates'), 'a')
+        r = open(os.path.join(path, 'nE.rules'), 'a')
+        for s, p in symbols.values():
+            t.write(s.toFile(p, self.pi))
+            for ruleList in s.rules.values():
+                for rule in ruleList:
+                    r.write(rule.toFile())
+            for ruleList in s.dataRules.values():
+                for rule in ruleList:
+                    r.write(rule.toFile())
+            for ruleList in s.copyRules.values():
+                for rule in ruleList:
+                    r.write(rule.toFile())
+        t.close()
+        r.close()
 
-    @receptionTimeout.setter
-    @typeCheck(int)
-    def receptionTimeout(self, receptionTimeout):
-        if receptionTimeout is None:
-            raise TypeError("Reception timeout cannot be None")
-        if receptionTimeout < 0:
-            raise ValueError("Reception timeout must be positive")
 
-        self.__receptionTimeout = receptionTimeout
-
-    @staticmethod
-    def defaultReceptionTimeout():
-        """Returns the default reception timeout representing
-        an empty symbol
-
-        :return: the default reception timeout in milliseconds
-        :rtype: :class:`int`
-        """
-        return 5000

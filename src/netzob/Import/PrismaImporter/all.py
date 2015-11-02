@@ -28,8 +28,6 @@
 
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
-from netzob.Common.Models.Simulator.Channels.all import *
 
-from netzob.Common.Models.Simulator.Actor import Actor
-from netzob.Common.Models.Simulator.AbstractionLayer import AbstractionLayer
-from netzob.Common.Models.Simulator.PrismaLayer import PrismaLayer
+from netzob.Import.PrismaImporter.PrismaImporter import PrismaImporter
+from netzob.Import.PrismaImporter.PrismaTest.PrismaTest import PrismaTest

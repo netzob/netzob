@@ -110,7 +110,9 @@ class MessageSpecializer(object):
         self._logger.debug("Specifies symbol '{0}'.".format(symbol.name))
 
         # this variable host all the specialization path
+        # print 'spePaths: '
         specializingPaths = [SpecializingPath(memory=self.memory)]
+        # print specializingPaths
 
         for field in symbol.fields:
             self._logger.debug("Specializing field {0}".format(field.name))
@@ -149,13 +151,15 @@ class MessageSpecializer(object):
                 
             else:
                 d = retainedPath.getDataAssignedToVariable(field.domain)
-                
+
             if generatedContent is None:
                 generatedContent = d.copy()
             else:
                 generatedContent += d.copy()
 
         retainedPath.generatedContent = generatedContent
+
+        # print retainedPath._dataAssignedToField
 
         self._logger.debug("Specialized message: {0}".format(TypeConverter.convert(retainedPath.generatedContent, BitArray, ASCII)))
         self.memory = retainedPath.memory
