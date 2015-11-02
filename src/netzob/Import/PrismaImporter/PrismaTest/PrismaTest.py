@@ -1,7 +1,50 @@
-import os
+#-*- coding: utf-8 -*-
 
+#+---------------------------------------------------------------------------+
+#|          01001110 01100101 01110100 01111010 01101111 01100010            |
+#|                                                                           |
+#|               Netzob : Inferring communication protocols                  |
+#+---------------------------------------------------------------------------+
+#| Copyright (C) 2015 Christian Bruns                                        |
+#| This program is free software: you can redistribute it and/or modify      |
+#| it under the terms of the GNU General Public License as published by      |
+#| the Free Software Foundation, either version 3 of the License, or         |
+#| (at your option) any later version.                                       |
+#|                                                                           |
+#| This program is distributed in the hope that it will be useful,           |
+#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
+#| GNU General Public License for more details.                              |
+#|                                                                           |
+#| You should have received a copy of the GNU General Public License         |
+#| along with this program. If not, see <http://www.gnu.org/licenses/>.      |
+#+---------------------------------------------------------------------------+
+#| @url      : http://www.netzob.org                                         |
+#| @contact  : contact@netzob.org                                            |
+#| @sponsors : Amossys, http://www.amossys.fr                                |
+#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
+#| File contributors :                                                       |
+#|       - Christian Bruns <christian.bruns1 (a) stud.uni-goettingen.de>     |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
+#| Standard library imports                                                  |
+#+---------------------------------------------------------------------------+
+
+import os
 import time
 from socket import error as socket_error
+
+#+---------------------------------------------------------------------------+
+#| Related third party imports                                               |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
+#| Local application imports                                                 |
+#+---------------------------------------------------------------------------+
 
 from netzob.Import.PrismaImporter.PrismaImporter import PrismaImporter
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
@@ -9,6 +52,8 @@ from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 
 @NetzobLogger
 class PrismaTest(object):
+    """ Prisma testing unit; just loads files from hardcoded path and fires up an instance of xbmc and communicates
+    """
     def __init__(self):
         self.pi = PrismaImporter()
 
@@ -100,7 +145,6 @@ class PrismaTest(object):
     def test(self, dot=True, check=False):
         if self.pi.isInitialized():
             return
-        # self.pi.setPath('/home/dsmp/work/pulsar/src/models/1ActionMerge')
         self.pi.setPath('/data/pulsar/models/1ActionMerge')
         self.pi.setDestinationIp('127.0.0.1')
         self.pi.setDestinationPort(36666)

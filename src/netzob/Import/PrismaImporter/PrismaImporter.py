@@ -1,10 +1,53 @@
+#-*- coding: utf-8 -*-
+
+#+---------------------------------------------------------------------------+
+#|          01001110 01100101 01110100 01111010 01101111 01100010            |
+#|                                                                           |
+#|               Netzob : Inferring communication protocols                  |
+#+---------------------------------------------------------------------------+
+#| Copyright (C) 2015 Christian Bruns                                        |
+#| This program is free software: you can redistribute it and/or modify      |
+#| it under the terms of the GNU General Public License as published by      |
+#| the Free Software Foundation, either version 3 of the License, or         |
+#| (at your option) any later version.                                       |
+#|                                                                           |
+#| This program is distributed in the hope that it will be useful,           |
+#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
+#| GNU General Public License for more details.                              |
+#|                                                                           |
+#| You should have received a copy of the GNU General Public License         |
+#| along with this program. If not, see <http://www.gnu.org/licenses/>.      |
+#+---------------------------------------------------------------------------+
+#| @url      : http://www.netzob.org                                         |
+#| @contact  : contact@netzob.org                                            |
+#| @sponsors : Amossys, http://www.amossys.fr                                |
+#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
+#| File contributors :                                                       |
+#|       - Christian Bruns <christian.bruns1 (a) stud.uni-goettingen.de>     |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
+#| Standard library imports                                                  |
+#+---------------------------------------------------------------------------+
+
 import PrismaIO
 import copy
 import os
 from urllib import unquote
 
+#+---------------------------------------------------------------------------+
+#| Related third party imports                                               |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
+#| Local application imports                                                 |
+#+---------------------------------------------------------------------------+
+
 from netzob.Common.Models.Vocabulary.PrismaSymbol import PrismaSymbol
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
 from netzob.Common.Models.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Common.Models.Vocabulary.PrismaField import PrismaField
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
@@ -13,14 +56,21 @@ from netzob.Common.Models.Grammar.Transitions.PrismaTransition import PrismaTran
 from netzob.Common.Models.Grammar.Automata import Automata
 from netzob.Common.Models.Types.ASCII import ASCII
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-
 from netzob.Common.Models.Simulator.PrismaLayer import PrismaLayer
 from netzob.Common.Models.Simulator.Channels.TCPClient import TCPClient
 
 
 @NetzobLogger
 class PrismaImporter(object):
+    """ Importer for the well-known PRISMA-format
+    """
     def __init__(self):
+        """ Reads Files from specified path (this is *.markovModel, *.templates and *.rules)
+            Performs mapping:   PrismaState     --> NetzobState
+                                PrismaTemplate  --> NetzobSymbol
+                                PrismaRule      --> NetzobField(Domain)
+        :return: PrismaImporter-object with all relevant Prisma-stuff setup in Netzob-Slang
+        """
         print("\nHello Netzob, this is Prisma...\nI'm gonna take over...\nDon't make it harder than necessary.\n")
         # of no greater use later on
         self.rules = None
@@ -55,6 +105,12 @@ class PrismaImporter(object):
         return
 
     def getPrisma(self, path, enhance=False):
+        """ Reads Prisma-Files
+
+        :param path: where to find Prisma-Files
+        :param enhance: whether model should be pruned
+        :return: None
+        """
         templates, model, rules = None, None, None
         for files in os.listdir(path):
             if 'template' in files:
@@ -110,6 +166,12 @@ class PrismaImporter(object):
         return symbolContainer
 
     def createSymbol(self, ID, role=None):
+        """ Converts PrismaTemplate to NetzobSymbol
+
+        :param ID: the Symbols name (is PrismaTemplates number)
+        :param role: whether this is server- or client-sided
+        :return: created Symbol
+        """
         temp = self.templates.IDtoTemp[ID]
         if 'UAC' in temp.state.getCurState():
             src = 'client'
@@ -144,6 +206,10 @@ class PrismaImporter(object):
         return s
 
     def createStates(self, prismaState):
+        """ Converts PrismaStates to some interState
+        :param prismaState: a PrismaState
+        :return: some interState
+        """
         if 'END' in prismaState.getCurState():
             return [[State(getName(prismaState))]]
         if prismaState not in self.model.model.keys():
@@ -166,6 +232,10 @@ class PrismaImporter(object):
         return moreStates
 
     def createPrismaTransitions(self, state):
+        """ Creates NetzobStates from interStates by adding Transitions
+        :param state: an interState
+        :return: fully qualified NetzobState
+        """
         if len(state) < 2:
             return state[0]
         trans = []
@@ -192,9 +262,6 @@ class PrismaImporter(object):
         for pState in self.templates.stateToID.keys():
             if getName(pState) == stateName:
                 for ID in self.templates.stateToID[pState]:
-                    # if ID not in self.Symbols.keys():
-                    #     continue
-                    # s = self.Symbols[ID]
                     if 'UAC' in stateName:
                         role = 'client'
                     else:
@@ -253,7 +320,19 @@ class PrismaImporter(object):
         print 'ready for takeoff\n'
 
     #getter 'n' setter
-    def isInitialized(self):
+    def isInitialized(self, verbose=False):
+        if verbose and  not self.__initialized:
+            print('Missing:')
+            if not self.__path:
+                print('\tpath')
+            if not self.__sourceIP:
+                print('\tsourceIP')
+            if not self.__sourcePort:
+                print('\tsourcePort')
+            if not self.__destinationIP:
+                print('\tdestinationIP')
+            if not self.__destinationPort:
+                print('\tdestinationPort')
         return self.__initialized
 
     def __setInitialized(self):

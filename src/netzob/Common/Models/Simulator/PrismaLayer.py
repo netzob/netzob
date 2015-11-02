@@ -1,13 +1,63 @@
+#-*- coding: utf-8 -*-
+
+#+---------------------------------------------------------------------------+
+#|          01001110 01100101 01110100 01111010 01101111 01100010            |
+#|                                                                           |
+#|               Netzob : Inferring communication protocols                  |
+#+---------------------------------------------------------------------------+
+#| Copyright (C) 2015 Christian Bruns                                        |
+#| This program is free software: you can redistribute it and/or modify      |
+#| it under the terms of the GNU General Public License as published by      |
+#| the Free Software Foundation, either version 3 of the License, or         |
+#| (at your option) any later version.                                       |
+#|                                                                           |
+#| This program is distributed in the hope that it will be useful,           |
+#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
+#| GNU General Public License for more details.                              |
+#|                                                                           |
+#| You should have received a copy of the GNU General Public License         |
+#| along with this program. If not, see <http://www.gnu.org/licenses/>.      |
+#+---------------------------------------------------------------------------+
+#| @url      : http://www.netzob.org                                         |
+#| @contact  : contact@netzob.org                                            |
+#| @sponsors : Amossys, http://www.amossys.fr                                |
+#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
+#| File contributors :                                                       |
+#|       - Christian Bruns <christian.bruns1 (a) stud.uni-goettingen.de>     |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
+#| Standard library imports                                                  |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
+#| Related third party imports                                               |
+#+---------------------------------------------------------------------------+
+
+from copy import copy
+
+#+---------------------------------------------------------------------------+
+#| Local application imports                                                 |
+#+---------------------------------------------------------------------------+
+
 from netzob.Common.Models.Simulator.AbstractionLayer import AbstractionLayer
 from netzob.Common.Models.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.PrismaSymbol import PrismaSymbol
-from copy import copy
 
 
 @NetzobLogger
 class PrismaLayer(AbstractionLayer):
+    """ Performs as original abstractionLayer, so reads and writes to/from the Channel
+        incorporates the feature of Context (so-called Horizon)
+
+        ToDo: could have the power of learning new, during the learning process unseen Symbols
+    """
     def __init__(self, channel, symbols, horizonLength):
         super(PrismaLayer, self).__init__(channel, symbols)
         e = EmptySymbol()
@@ -44,6 +94,10 @@ class PrismaLayer(AbstractionLayer):
         return symbol, data
 
     def writeSymbol(self, symbol):
+        """ applies the Horizon-updating in its own SymbolBuffer and in Symbols Horizon
+        :param symbol: the Symbol to be emitted
+        :return: None
+        """
         # update symbolBuffer
         self.updateSymbolBuffer(symbol)
         # set horizon
