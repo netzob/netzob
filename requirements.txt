@@ -5,3 +5,4 @@ netaddr==0.7.18
 numpy
 colorama==0.3.3
 jsonpickle==0.9.2
+mock==1.0.1

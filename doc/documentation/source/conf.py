@@ -225,6 +225,18 @@ man_pages = [
 
 # -- Options for apidoc generation in rtfd.org----------------------------------
 
+# Mocking system dependencies
+from mock import Mock as MagicMock
+
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+            return Mock()
+
+MOCK_MODULES = ['pcapy']
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
+
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 if on_rtd:
   os.system("sphinx-apidoc -T -f -o ./developer_guide/API/ ../../../src/netzob")
