@@ -6,3 +6,4 @@ numpy
 colorama==0.3.3
 jsonpickle==0.9.2
 mock==1.0.1
+impacket==0.9.12
