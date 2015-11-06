@@ -112,8 +112,24 @@ class FieldSplitDelimiter(object):
         'CMDbye'        | '#'          | '....'               | ''           | ''     
         'RESbye'        | '#'          | '........'           | ''           | ''     
         --------------- | ------------ | -------------------- | ------------ | -------
-
-
+        >>> print symbol.fields[0]._str_debug()
+        Field-0
+        |--   Alt
+              |--   Data (Raw='CMDidentify' ((0, 88)))
+              |--   Data (Raw='RESidentify' ((0, 88)))
+              |--   Data (Raw='CMDinfo' ((0, 56)))
+              |--   Data (Raw='RESinfo' ((0, 56)))
+              |--   Data (Raw='CMDstats' ((0, 64)))
+              |--   Data (Raw='RESstats' ((0, 64)))
+              |--   Data (Raw='CMDauthentify' ((0, 104)))
+              |--   Data (Raw='RESauthentify' ((0, 104)))
+              |--   Data (Raw='CMDencrypt' ((0, 80)))
+              |--   Data (Raw='RESencrypt' ((0, 80)))
+              |--   Data (Raw='CMDdecrypt' ((0, 80)))
+              |--   Data (Raw='RESdecrypt' ((0, 80)))
+              |--   Data (Raw='CMDbye' ((0, 48)))
+              |--   Data (Raw='RESbye' ((0, 48)))
+ 
         :param field : the field to consider when spliting
         :type: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
         :param delimiter : the delimiter used to split messages of the field
@@ -149,18 +165,27 @@ class FieldSplitDelimiter(object):
         iField = -1
         for i in range(len(splittedMessages)):
             iField += 1
-            fieldDomain = set()
-            isEmptyField = True  # To avoid adding an empty field
-            emptyValueFound = False
+            
+            fieldDomain = list()
+            
+            # temporary set that hosts all the observed values to prevent useless duplicate ones
+            observedValues = set()
+            has_inserted_empty_value = False
+            
+            isEmptyField = True  # To avoid adding an empty field            
             for v in splittedMessages[i]:
                 if v != "" and v is not None:
                     isEmptyField = False
-                    fieldDomain.add(Raw(v))
+                
+                    if v not in observedValues:                    
+                        fieldDomain.append(Raw(v))
+                        observedValues.add(v)
                 else:
-                    fieldDomain.add(Raw(nbBytes=0))
+                    if not has_inserted_empty_value:
+                        fieldDomain.append(Raw(nbBytes=0))
+                        has_inserted_empty_value = True
 
             if not isEmptyField:
-                fieldDomain = list(fieldDomain)
                 newField = Field(domain=DomainFactory.normalizeDomain(fieldDomain), name="Field-"+str(iField))
                 newField.encodingFunctions = field.encodingFunctions.values()
                 newFields.append(newField)
