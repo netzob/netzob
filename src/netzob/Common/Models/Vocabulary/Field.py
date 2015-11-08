@@ -51,6 +51,9 @@ from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Vocabulary.Domain.DomainFactory import DomainFactory
 from netzob.Common.Utils.NetzobRegex import NetzobStaticRegex
 from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
+from netzob.Common.Models.Vocabulary.Flag import Flag
+from netzob.Common.Models.Types.AbstractType import AbstractType
+
 
 class InvalidDomainException(Exception):
     pass
@@ -124,7 +127,7 @@ class Field(AbstractField):
 
     """
 
-    def __init__(self, domain=None, name="Field", layer=False):
+    def __init__(self, domain=None, name="Field", layer=False, flags=None):
         """
         :keyword domain: the definition domain of the field (see domain property to get more information)
         :type domain: a :class:`list` of :class:`object`, default is Raw(None)
@@ -138,6 +141,7 @@ class Field(AbstractField):
         if domain is None:
             domain = Raw(None)
         self.domain = domain
+        self.flags = flags
 
     def specialize(self):
         """Specialize the current field to build a raw data that
@@ -190,6 +194,25 @@ class Field(AbstractField):
         """Returns True if the field denotes a static content"""
         return isinstance(self.regex, NetzobStaticRegex)
 
+    def getFlagValues(self):
+        """This method returns all the observed flag values of the field.
+
+        :return: a :class:`list` of :class:`dict` that maps a :class:`netzob.Common.Models.Vocabulary.Flag.Flag` to a :class:`bool`.
+        """        
+        
+        field_values = self.getValues(encoded=False, styled=False)
+
+        flagValues = []
+        for field_value in field_values:
+            flag_in_field_value = {}
+            for flag in self.flags:                
+                bitValue = TypeConverter.convert(field_value, Raw, BitArray, dst_endianness=self.domain.dataType.endianness)
+                flagValue = bitValue[flag.position]
+                flag_in_field_value[flag] = flagValue
+            flagValues.append(flag_in_field_value)
+            
+        return flagValues
+
     @property
     def domain(self):
         """This defines the definition domain of a field.
@@ -224,3 +247,26 @@ class Field(AbstractField):
             self._logger.warning("The field is attached to no symbol and so it has no messages: {0}".format(e))
 
         return messages
+
+    @property
+    def flags(self):
+        """List of the flags that participate in the field definition.
+
+        :type: :class:`list` of :class:`netzob.Common.Models.Vocabulary.Flag.Flag`.
+        :raises: :class:`TypeError`
+
+        """
+        return self.__flags
+
+    @flags.setter
+    def flags(self, flags):
+        # First it checks the specified children are Flags
+        if flags is not None:
+            for c in flags:
+                if not isinstance(c, Flag):
+                    raise TypeError("Cannot edit the flags because at least one specified element is not a Flag {}.".format(type(c)))
+
+        self.__flags = []
+        if flags is not None:
+            for flag in flags:
+                self.__flags.append(flag)

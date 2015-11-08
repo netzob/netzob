@@ -86,6 +86,7 @@ def getSuite():
         # -------------------------------------------
         Protocol.__module__,
         Field.__module__,
+        Flag.__module__,        
         DataAlignment, 
         ParallelDataAlignment,        
         AbstractField,

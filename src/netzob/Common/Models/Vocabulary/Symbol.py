@@ -160,6 +160,29 @@ class Symbol(AbstractField):
         while(len(self.__messages) > 0):
             self.__messages.pop()
 
+    def getFlagValues(self):
+        """This method returns all the observed flag values of the symbol.
+
+        :return: a :class:`list` of :class:`dict` that maps a :class:`netzob.Common.Models.Vocabulary.Flag.Flag` to a :class:`bool`.
+        """        
+        
+        flagValues = None
+        
+        for field in self._getLeafFields():
+            field_flag_values = field.getFlagValues()
+            if flagValues is None:
+                flagValues = field_flag_values
+            else:
+                for i_field, field_flags in enumerate(field_flag_values):
+                    flagValues[i_field].update(field_flags)
+
+        if flagValues is None:
+            flagValues = []
+                
+        return flagValues
+
+
+        
     # Properties
 
     @property
