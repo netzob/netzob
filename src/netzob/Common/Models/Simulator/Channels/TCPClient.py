@@ -118,18 +118,26 @@ class TCPClient(AbstractChannel):
             self.__socket.close()
 
     def read(self, timeout=None):
-        """Read the next message on the communication channel.
+        """Reads the next message on the communication channel.
+        Continues to read while it receives something.
+
 
         @keyword timeout: the maximum time in millisecond to wait before a message can be reached
         @type timeout: :class:`int`
         """
         # TODO: handle timeout
         if self.__socket is not None:
-            try:
-                return self.__socket.recv(1024)
-            except socket.timeout:
-                # says we received nothing (timeout issue)
-                return ""
+
+            result = []
+            fragment = None
+            while fragment is None or len(fragment) > 0:
+                try:
+                    fragment = self.__socket.recv(1024)
+                    result.append(fragment)
+                except Exception, e:
+                    break
+            return "".join(result)
+                
         else:
             raise Exception("socket is not available")
 
