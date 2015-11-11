@@ -47,6 +47,10 @@ import abc
 from netzob.Common.Utils.Decorators import typeCheck
 
 
+class ChannelDownException(Exception):
+    pass
+
+
 class AbstractChannel(object):
 
     __metaclass__ = abc.ABCMeta

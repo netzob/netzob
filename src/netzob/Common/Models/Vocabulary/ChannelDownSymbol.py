@@ -42,52 +42,51 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Symbol import Symbol
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
+from netzob.Common.Models.Vocabulary.Messages.AbstractMessage import AbstractMessage
 
 
-class EmptySymbol(Symbol):
-    """An empty symbol is a special type of symbol principaly used by the simulator.
-    It represents the fact of having nothing received or to have nothing to send.
+@NetzobLogger
+class ChannelDownSymbol(Symbol):
+    """A channel down symbol is a special type of symbol that is returned to represent that no messages could be received as related channel was down
 
     >>> from netzob.all import *
-    >>> e = EmptySymbol()
+    >>> u = ChannelDownSymbol()
+    >>> print u.name
+    ChannelDown Symbol
+
+    >>> from netzob.all import *
+    >>> msg = RawMessage("hello")
+    >>> u = ChannelDownSymbol(msg)
+    >>> print u.name
+    ChannelDown Symbol
 
     """
 
-    def __init__(self, receptionTimeout=None):
-        super(EmptySymbol, self).__init__(fields=None, name="Empty Symbol", messages=[RawMessage()])
-        if receptionTimeout is None:
-            receptionTimeout = EmptySymbol.defaultReceptionTimeout()
+    def __init__(self, message=None):
+        self.message = message    
+        super(ChannelDownSymbol, self).__init__(fields=None, name="ChannelDown Symbol", messages=[self.message])
 
-        self.receptionTimeout = receptionTimeout
+    def __eq__(self, other):
+        if other is None:
+            return False
+        return isinstance(other, ChannelDownSymbol)
 
+    
     @property
-    def receptionTimeout(self):
-        """This timeout represent how many milliseconds of no activity
-        represents the reception of an empty symbol
+    def message(self):
+        """This message represents the message could not be sent as channel was down
 
-        :type: class:`int`
+        :type: class:`RawMessage`
         """
-        return self.__receptionTimeout
+        return self.__message
 
-    @receptionTimeout.setter
-    @typeCheck(int)
-    def receptionTimeout(self, receptionTimeout):
-        if receptionTimeout is None:
-            raise TypeError("Reception timeout cannot be None")
-        if receptionTimeout < 0:
-            raise ValueError("Reception timeout must be positive")
-
-        self.__receptionTimeout = receptionTimeout
-
-    @staticmethod
-    def defaultReceptionTimeout():
-        """Returns the default reception timeout representing
-        an empty symbol
-
-        :return: the default reception timeout in milliseconds
-        :rtype: :class:`int`
-        """
-        return 5000
+    @message.setter
+    @typeCheck(AbstractMessage)
+    def message(self, message):
+        if message is None:
+            message = RawMessage()
+        
+        self.__message = message

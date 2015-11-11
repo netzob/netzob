@@ -44,7 +44,7 @@ import socket
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Simulator.Channels.AbstractChannel import AbstractChannel
+from netzob.Common.Models.Simulator.Channels.AbstractChannel import AbstractChannel, ChannelDownException
 
 
 @NetzobLogger
@@ -125,7 +125,11 @@ class TCPClient(AbstractChannel):
         """
         # TODO: handle timeout
         if self.__socket is not None:
-            return self.__socket.recv(1024)
+            try:
+                return self.__socket.recv(1024)
+            except socket.timeout:
+                # says we received nothing (timeout issue)
+                return ""
         else:
             raise Exception("socket is not available")
 
@@ -136,7 +140,11 @@ class TCPClient(AbstractChannel):
         :type data: binary object
         """
         if self.__socket is not None:
-            self.__socket.sendall(data)
+            try:
+                self.__socket.sendall(data)
+            except socket.error:
+                raise ChannelDownException()
+
         else:
             raise Exception("socket is not available")
 

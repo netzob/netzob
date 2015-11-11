@@ -55,6 +55,8 @@ from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Common.Models.Vocabulary.UnknownSymbol import UnknownSymbol
 from netzob.Common.Models.Vocabulary.EmptySymbol import EmptySymbol
+from netzob.Common.Models.Simulator.Channels.AbstractChannel import ChannelDownException
+
 
 
 @NetzobLogger

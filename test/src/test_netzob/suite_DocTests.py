@@ -92,6 +92,7 @@ def getSuite():
         Symbol.__module__,
         EmptySymbol.__module__,
         UnknownSymbol.__module__,
+        ChannelDownSymbol.__module__,
         DomainFactory.__module__,
         Alt.__module__,
         Agg.__module__,
