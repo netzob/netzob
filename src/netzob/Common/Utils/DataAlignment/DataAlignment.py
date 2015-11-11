@@ -52,7 +52,7 @@ from netzob.Common.Models.Types.Raw import Raw
 
 
 @NetzobLogger
-class DataAlignment(threading.Thread):
+class DataAlignment(object):
     """This class allows to align data given a field
     specification. This class inherits from :class:`threading.Thread` which allows
     to execute it asynchronously but also to execute it in a traditionnal way.
