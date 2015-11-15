@@ -64,6 +64,8 @@ from netzob.Common.Models.Vocabulary.Domain.Variables.SVAS import SVAS
 
 from netzob.Common.Models.Vocabulary.Domain.Parser.MessageParser import MessageParser
 from netzob.Common.Models.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
+from netzob.Common.Models.Vocabulary.Domain.Parser.FlowParser import FlowParser
+
 
 # from netzob.Inference.Grammar.Angluin import Angluin
 # from netzob.Inference.Grammar.AutomataFactories.ChainedStatesAutomataFactory import ChainedStatesAutomataFactory
@@ -140,6 +142,8 @@ def getSuite():
 
         MessageParser.__module__,
         MessageSpecializer.__module__,
+
+        FlowParser.__module__,
 
 
         # Modules related to the grammatical inference
