@@ -59,8 +59,11 @@ class MessageParser(object):
     """This class is used to produce the alignment of a message against a symbol
     specification. It can also be used to abstract a message against a symbol
 
-    >>> from netzob.all import *
 
+    Below codes illustrates how to parse a message according to a single symbol.
+
+    
+    >>> from netzob.all import *
     >>> msg = RawMessage("hello world !")
     >>> msg1 = RawMessage("hello netzob !")
     >>> f0 = Field(name="F0", domain=ASCII(nbChars=(4,5)))
@@ -71,11 +74,11 @@ class MessageParser(object):
     >>> mp = MessageParser()
     >>> print mp.parseMessage(msg, s)
     [bitarray('0110100001100101011011000110110001101111'), bitarray('00100000'), bitarray('0111011101101111011100100110110001100100'), bitarray('0010000000100001')]
-    
     >>> print mp.parseMessage(msg1, s)
     [bitarray('0110100001100101011011000110110001101111'), bitarray('00100000'), bitarray('011011100110010101110100011110100110111101100010'), bitarray('0010000000100001')]
 
 
+    >>> from netzob.all import *
     >>> from bitarray import bitarray
     >>> data = bitarray("0000110001101110011001010111010001111010011011110110001000000000")
     >>> msg = RawMessage(TypeConverter.convert(data, BitArray, Raw))
@@ -88,6 +91,7 @@ class MessageParser(object):
     >>> print mp.parseMessage(msg, s)
     [bitarray('00001100'), bitarray('011011100110010101110100011110100110111101100010'), bitarray('000'), bitarray('00000')]
 
+    >>> from netzob.all import *
     >>> from bitarray import bitarray
     >>> b = bitarray('01101110011001010111010001111010011011110110001000111011000001100110100001100101011011000110110001101111')
     >>> r = TypeConverter.convert(b, BitArray, Raw)
@@ -101,6 +105,7 @@ class MessageParser(object):
     >>> print mp.parseMessage(msg, s)
     [bitarray('011011100110010101110100011110100110111101100010'), bitarray('00111011'), bitarray('00000110'), bitarray('0110100001100101011011000110110001101111')]
 
+    >>> from netzob.all import *
     >>> from bitarray import bitarray
     >>> b = bitarray('0000011001101110011001010111010001111010011011110110001000111011')
     >>> r = TypeConverter.convert(b, BitArray, Raw)
@@ -113,18 +118,19 @@ class MessageParser(object):
     >>> print mp.parseMessage(msg, s)
     [bitarray('00000110'), bitarray('011011100110010101110100011110100110111101100010'), bitarray('00111011')]
 
-    Let's verify the abstraction of intra-relationships
+    # Let's verify the abstraction of intra-relationships
 
-    # >>> b = "netzob > my name is netzob"
-    # >>> r = TypeConverter.convert(b, ASCII, Raw)
-    # >>> msg = RawMessage(r)
-    # >>> f1 = Field(ASCII(nbChars=(1,20)), name="F1")
-    # >>> f2 = Field(" > my name is ", name="F2")
-    # >>> f3 = Field(Value(f1), name="F3")
-    # >>> s = Symbol(fields=[f1, f2, f3])
-    # >>> mp = MessageParser()
-    # >>> print mp.parseMessage(msg, s)
-    # [bitarray('011011100110010101110100011110100110111101100010'), bitarray('0010000000111110001000000110110101111001001000000110111001100001011011010110010100100000011010010111001100100000'), bitarray('011011100110010101110100011110100110111101100010')]
+    >>> from netzob.all import *
+    >>> b = "netzob > my name is netzob"
+    >>> r = TypeConverter.convert(b, ASCII, Raw)
+    >>> msg = RawMessage(r)
+    >>> f1 = Field(ASCII(nbChars=(1,20)), name="F1")
+    >>> f2 = Field(" > my name is ", name="F2")
+    >>> f3 = Field(Value(f1), name="F3")
+    >>> s = Symbol(fields=[f1, f2, f3])
+    >>> mp = MessageParser()
+    >>> print mp.parseMessage(msg, s)
+    [bitarray('011011100110010101110100011110100110111101100010'), bitarray('0010000000111110001000000110110101111001001000000110111001100001011011010110010100100000011010010111001100100000'), bitarray('011011100110010101110100011110100110111101100010')]
 
     # Let's test inter-symbol relationships
 
