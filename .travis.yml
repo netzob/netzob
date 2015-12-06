@@ -7,10 +7,8 @@ python:
   - "3.4"
   - "3.5"
   - "pypy"
-virtualenv:
-  system_site_packages: true  
 before_install:
-  - sudo apt-get install python-pcapy
+  - sudo apt-get install libpcap-dev  
 # command to install dependencies
 install:
   - pip install .
