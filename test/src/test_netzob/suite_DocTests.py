@@ -58,6 +58,7 @@ from netzob.Inference.Vocabulary.FormatOperations.FieldSplitAligned import Field
 from netzob.Inference.Vocabulary.FormatOperations import FieldSplitDelimiter
 
 from netzob.Inference.Vocabulary.FormatOperations import FieldOperations
+from netzob.Common.Models.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Common.Models.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
 from netzob.Common.Models.Vocabulary.Domain.Specializer.VariableSpecializer import VariableSpecializer
 from netzob.Common.Models.Vocabulary.Domain.Variables.SVAS import SVAS
@@ -136,6 +137,7 @@ def getSuite():
         Value.__module__,        
         InternetChecksum.__module__,
         FieldParser.__module__,
+        GenericPath.__module__,
         VariableSpecializer.__module__,
         FieldSpecializer.__module__,
         SVAS.__module__,

@@ -75,21 +75,62 @@ class GenericPath(object):
             self._dataAssignedToVariable = dataAssignedToVariable
 
     def addResult(self, variable, result):
+        """This method can be use to register the bitarray obtained after having parsed a variable
+
+        >>> from netzob.all import *
+        >>> path = GenericPath()
+        >>> var = Data(dataType=ASCII())
+        >>> print path.isDataAvailableForVariable(var)
+        False
+        >>> path.addResult(var, TypeConverter.convert("test", ASCII, BitArray))
+        >>> print path.isDataAvailableForVariable(var)
+        True
+        >>> print path.getDataAssignedToVariable(var)
+        bitarray('01110100011001010111001101110100')
+
+        """
+        
         self.assignDataToVariable(result, variable)
 
     def addResultToField(self, field, result):
+        """This method can be use to register the bitarray obtained after having parsed a field (i.e. multiple variables)
+
+        >>> from netzob.all import *
+        >>> path = GenericPath()
+        >>> field = Field(ASCII())
+        >>> print path.isDataAvailableForField(field)
+        False
+        >>> path.addResultToField(field, TypeConverter.convert("test", ASCII, BitArray))
+        >>> print path.isDataAvailableForField(field)
+        True
+        >>> print path.getDataAssignedToField(field)
+        bitarray('01110100011001010111001101110100')
+
+        """        
         self.assignDataToField(result, field)
 
         if not self._triggerFieldCallbacks(field):
             raise Exception("Impossible to assign this result to the field (CB has failed)")
 
     def getDataAssignedToField(self, field):
+        """Return the value assigned to the specified field
+
+        >>> from netzob.all import *
+        >>> path = GenericPath()
+        >>> f0 = Field(ASCII())
+        >>> print path.isDataAvailableForField(f0)
+        False
+        >>> path.addResultToField(f0, TypeConverter.convert("test", ASCII, BitArray))
+        >>> print path.getDataAssignedToField(f0)
+        bitarray('01110100011001010111001101110100')
+        """
+        
         if field is None:
             raise Exception("Field cannot be None")
 
         if field.id in self._dataAssignedToField:
             return self._dataAssignedToField[field.id]
-        elif self.memory.hasValue(field.domain):
+        elif self.memory is not None and self.memory.hasValue(field.domain):
             return self.memory.getValue(field.domain)
 
         raise Exception("No data is assigned to field '{0}'".format(field.id))
@@ -107,7 +148,9 @@ class GenericPath(object):
             raise Exception("Field cannot be None")
         if field.id in self._dataAssignedToField:
             return True
-        return self.memory.hasValue(field.domain)
+        if self.memory is not None:
+            return self.memory.hasValue(field.domain)
+        return False
 
     def removeAssignedDataToField(self, field):
         if field is None:
