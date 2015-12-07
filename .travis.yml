@@ -17,6 +17,11 @@ install:
   - pip install pcapy
   - python setup.py build
   - python setup.py install
+  - pip install coveralls  
 # command to run tests
-script: "python setup.py test"
+script:
+  - python setup.py test
+  - coverage run --source=src/netzob setup.py test
+after_success:
+  - coveralls
 
