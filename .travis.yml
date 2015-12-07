@@ -7,8 +7,10 @@ python:
   - "3.4"
   - "3.5"
   - "pypy"
-before_install:
-  - sudo apt-get install libpcap-dev  
+addons:
+  apt:
+    packages:
+    - python-pcapy
 # command to install dependencies
 install:
   - pip install .
