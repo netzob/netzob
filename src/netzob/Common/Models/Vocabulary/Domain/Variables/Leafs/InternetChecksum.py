@@ -243,7 +243,6 @@ class InternetChecksum(AbstractRelationVariableLeaf):
 
         try:
             newValue = self._computeExpectedValue(variableSpecializerPath)
-            self._logger.fatal("Register ; {0}".format(newValue))
             variableSpecializerPath.addResult(self, newValue.copy())
         except Exception, e:
             self._logger.warn("Cannot specialize since no value is available for the Internet checksum dependencies, we create a callback function in case it can be computed later: {0}".format(e))
@@ -261,7 +260,7 @@ class InternetChecksum(AbstractRelationVariableLeaf):
             
             
     def __checksum(self, msg):
-        self._logger.fatal("Computing checksum of {0}, {1}".format(TypeConverter.convert(msg, Raw, HexaString), len(msg)))
+        self._logger.debug("Computing checksum of {0}, {1}".format(TypeConverter.convert(msg, Raw, HexaString), len(msg)))
     
         def carry_around_add(a, b):
             c = a + b
@@ -275,7 +274,6 @@ class InternetChecksum(AbstractRelationVariableLeaf):
                 w = ord(msg[i]) + (ord(msg[i+1]) << 8)
             s = carry_around_add(s, w)
         res = ~s & 0xffff
-        self._logger.fatal(res)
         return res
         
     def __str__(self):
