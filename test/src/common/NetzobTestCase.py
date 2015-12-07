@@ -67,6 +67,3 @@ class NetzobTestCase(unittest.TestCase):
         # # Before setting workspace, we verify it exists
         # if os.path.isdir(workspacePath):
         #     NetzobResources.WORKSPACE_DIR = workspacePath
-
-    def getWorkspace(self):
-        return Workspace.loadWorkspace(NetzobResources.WORKSPACE_DIR)
