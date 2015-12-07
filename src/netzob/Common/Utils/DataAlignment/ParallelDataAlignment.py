@@ -68,7 +68,8 @@ class ParallelDataAlignment(object):
     >>> import time
     >>> import logging
 
-    >>> #Temporary raise log level of certain impacting loggers on alignment process
+    >>> # Temporary raise log level of certain impacting loggers on alignment process
+    >>> old_logging_level = logging.getLogger(Symbol.__name__).level
     >>> logging.getLogger(Data.__name__).setLevel(logging.INFO)
     >>> logging.getLogger(DataAlignment.__name__).setLevel(logging.INFO)
 
@@ -97,8 +98,8 @@ class ParallelDataAlignment(object):
     True
 
     >>> # Reset log level of certain impacting loggers on alignment process
-    >>> logging.getLogger(Data.__name__).setLevel(logging.DEBUG)
-    >>> logging.getLogger(DataAlignment.__name__).setLevel(logging.DEBUG)
+    >>> logging.getLogger(Data.__name__).setLevel(old_logging_level)
+    >>> logging.getLogger(DataAlignment.__name__).setLevel(old_logging_level)
 
 
     """
