@@ -136,6 +136,18 @@ class GenericPath(object):
         raise Exception("No data is assigned to field '{0}'".format(field.id))
 
     def assignDataToField(self, data, field):
+        """Assign the specified data to the specified field.
+        This method is wrapped by the `getDataAssignedToField` method.
+
+        >>> from netzob.all import *
+        >>> path = GenericPath()
+        >>> f0 = Field(ASCII())
+        >>> print path.isDataAvailableForField(f0)
+        False
+        >>> path.assignDataToField(TypeConverter.convert("test", ASCII, BitArray), f0)    
+        >>> print path.getDataAssignedToField(f0)
+        bitarray('01110100011001010111001101110100')
+        """
         if data is None:
             raise Exception("Data cannot be None")
         if field is None:
@@ -153,12 +165,40 @@ class GenericPath(object):
         return False
 
     def removeAssignedDataToField(self, field):
+        """Remove predefined data assigned to the specified field
+
+        >>> from netzob.all import *
+        >>> path = GenericPath()
+        >>> f0 = Field(ASCII())
+        >>> print path.isDataAvailableForField(f0)
+        False
+        >>> path.assignDataToField(TypeConverter.convert("netzob", ASCII, BitArray), f0)
+        >>> print path.isDataAvailableForField(f0)
+        True
+        >>> path.removeAssignedDataToField(f0)
+        >>> print path.isDataAvailableForField(f0)
+        False
+        """        
+        
         if field is None:
             raise Exception("Field cannot be None")
         del self._dataAssignedToField[field.id]
 
     @typeCheck(AbstractVariable)
     def getDataAssignedToVariable(self, variable):
+        """Return the data that is assigned to the specified varibale
+
+        >>> from netzob.all import *
+        >>> path = GenericPath()
+        >>> v1 = Data(dataType=ASCII(nbChars=(5, 10)), name="netzob")          
+        >>> print path.isDataAvailableForVariable(v1)
+        False
+        >>> path.assignDataToVariable(TypeConverter.convert("zoby", ASCII, BitArray), v1)
+        >>> print path.getDataAssignedToVariable(v1)
+        bitarray('01111010011011110110001001111001')
+
+        """
+        
         if variable is None:
             raise Exception("Variable cannot be None")
         if variable.id not in self._dataAssignedToVariable:
