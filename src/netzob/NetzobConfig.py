@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -26,12 +25,39 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-# List subpackages to import with the current one
-# see docs.python.org/2/tutorial/modules.html
 
-import release
+#+---------------------------------------------------------------------------+
+#| Class containing global configurations of Netzob.
+#+---------------------------------------------------------------------------+
+class NetzobConfig(object):
+    """
+    Contains global configuration and tuning options of Netzob.
+    """
+    # This value will be used if generate() method is called
+    # without any upper size limit
+    # 8192 is completly arbitrary and equals 1k of data (1024 bytes)
+    max_gen_size = 8192
 
-from NetzobConfig import NetzobConfig
-from netzob.Common.all import *
-from netzob.Inference.all import *
-from netzob.Import.all import *
+    @staticmethod
+    def setMaxDataSize(size):
+        """
+        Set the maximal data size of a packet in bytes. The value is limited
+        so the during generation of packets the memory usage doesn't explode.
+        You can increase the maximal value by calling setMaxDataSize() gloabally.
+
+        >> from netzob.all import *
+        >> NetzobConfig.setMaxDataSize(4048)
+        """
+        if not isinstance(size, int):
+            raise ValueError("Size must be an integer value!")
+        if size <= 0 or (size & (size - 1) != 0):
+            raise ValueError("Value of size must be power of two. E.g. 2048.")
+        NetzobConfig.max_gen_size = size * 8
+
+    @staticmethod
+    def getMaxDataSize():
+        """
+        Returns the current configuration of the maximal value of a packet size
+        in bytes.
+        """
+        return NetzobConfig.max_gen_size / 8
