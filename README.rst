@@ -1,6 +1,8 @@
 ==========================================
 Netzob : Inferring Communication Protocols
 ==========================================
+.. image:: https://api.travis-ci.org/netzob/netzob.svg?branch=next
+.. image:: https://coveralls.io/repos/netzob/netzob/badge.svg?branch=next
 
 About Netzob
 ============
