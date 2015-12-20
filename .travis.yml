@@ -1,20 +1,23 @@
 language: python
+sudo: required
 python:
-  - "2.6"
   - "2.7"
-  - "3.2"
-  - "3.3"
-  - "3.4"
-  - "3.5"
-  - "pypy"
-before_install:
-  - sudo apt-get install libpcap-dev  
+addons:
+  apt:
+    packages:
+    - libpcap-dev
 # command to install dependencies
 install:
   - pip install .
   - pip install -r requirements.txt
+  - pip install pcapy
   - python setup.py build
   - python setup.py install
+  - pip install coveralls  
 # command to run tests
-script: "python setup.py test"
+script:
+  - python setup.py test
+  - coverage run --source=src/netzob setup.py test
+after_success:
+  - coveralls
 

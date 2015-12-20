@@ -31,14 +31,13 @@
 #+---------------------------------------------------------------------------+
 import unittest
 import os.path
-import os
 import logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
-#from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
-from netzob import NetzobResources
-#from netzob.Common.Workspace import Workspace
+# from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+# from netzob import NetzobResources
+# from netzob.Common.Workspace import Workspace
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
