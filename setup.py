@@ -209,11 +209,8 @@ root_data_files = find_data_files(opj("share", "netzob"), netzobStaticResourcesP
 app_data_files = find_data_files(opj("share", "applications"), netzobStaticResourcesPath, 'netzob.desktop', recursive=False)
 icons_data_files = find_data_files(opj("share", "netzob", "icons"), opj(netzobStaticResourcesPath, "icons"), '*.png')
 default_data_files = find_data_files(opj("share", "netzob", "defaults"), opj(netzobStaticResourcesPath, "defaults"), '*.default', recursive=False)
-xsds_data_files = find_data_files(opj("share", "netzob", "xsds"), opj(netzobStaticResourcesPath, "xsds"), '*.xsd')
-locale_data_files = find_data_files(opj("share", "locale"), opj(netzobStaticResourcesPath, "locales"), '*.mo')
-ui_data_files = find_data_files(opj("share", "netzob", "ui"), opj(netzobStaticResourcesPath, "ui"), '*.glade', '*.ui')
 
-data_files = root_data_files + app_data_files + icons_data_files + default_data_files + xsds_data_files + locale_data_files + ui_data_files
+data_files = root_data_files + app_data_files + icons_data_files + default_data_files
 
 # Extract the long description from README.rst and NEWS.rst files
 README = open('README.rst', 'rt').read()
@@ -227,7 +224,6 @@ setup(
     packages=find_packages(where='src'),
     package_dir={
         "netzob": opj("src", "netzob"),
-        "netzob_plugins": opj("src", "netzob_plugins"),
     },
     ext_modules=[moduleLibNeedleman, moduleLibScoreComputation, moduleLibInterface, moduleLibRelation],
     data_files=data_files,
