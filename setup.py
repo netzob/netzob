@@ -49,7 +49,6 @@ from resources.sdist.utils import find_data_files, opj, getPluginPaths
 # Path to the resources
 staticResourcesPath = opj("resources", "static")
 netzobStaticResourcesPath = opj(staticResourcesPath, "netzob")
-pluginsStaticResourcesPath = opj(staticResourcesPath, "plugins")
 
 # +----------------------------------------------------------------------------
 # | Compute the compilation arguments given the current compilation profile
@@ -120,10 +119,6 @@ pyNeedlemanPath = opj(needlemanPath, "Py_lib")
 
 # ArgsFactories path
 argsFactoriesPath = opj(libPath, "argsFactories")
-
-# Regex path
-# regexPath = opj(libPath, "libRegex")
-# pyRegexPath = opj(regexPath, "Py_lib")
 
 # Relation path
 relPath = os.path.join(libPath, "libRelation")
