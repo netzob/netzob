@@ -49,6 +49,7 @@ from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Common.Models.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
 from netzob.Common.Models.Vocabulary.Domain.Parser.MessageParser import MessageParser
+from netzob.Common.Models.Vocabulary.Domain.Parser.FlowParser import FlowParser
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.Raw import Raw
@@ -67,21 +68,35 @@ class AbstractionLayer(object):
 
     >>> from netzob.all import *
     >>> symbol = Symbol([Field("Hello Zoby !")], name = "Symbol_Hello")
-
     >>> channelIn = UDPServer(localIP="127.0.0.1", localPort=8889)
     >>> abstractionLayerIn = AbstractionLayer(channelIn, [symbol])
     >>> abstractionLayerIn.openChannel()
-
     >>> channelOut = UDPClient(remoteIP="127.0.0.1", remotePort=8889)
     >>> abstractionLayerOut = AbstractionLayer(channelOut, [symbol])
     >>> abstractionLayerOut.openChannel()
-
     >>> abstractionLayerOut.writeSymbol(symbol)
     >>> (receivedSymbol, receivedMessage) = abstractionLayerIn.readSymbol()
     >>> print receivedSymbol.name
     Symbol_Hello
     >>> print receivedMessage
     Hello Zoby !
+
+    The abstraction layer can also handle a message flow.
+
+    >>> from netzob.all import *
+    >>> symbolflow = Symbol([Field("Hello Zoby !Whats up ?")], name = "Symbol Flow")
+    >>> symbol1 = Symbol([Field("Hello Zoby !")], name = "Symbol_Hello")
+    >>> symbol2 = Symbol([Field("Whats up ?")], name = "Symbol_WUP")
+    >>> channelIn = UDPServer(localIP="127.0.0.1", localPort=8889)
+    >>> abstractionLayerIn = AbstractionLayer(channelIn, [symbol1, symbol2])
+    >>> abstractionLayerIn.openChannel()
+    >>> channelOut = UDPClient(remoteIP="127.0.0.1", remotePort=8889)
+    >>> abstractionLayerOut = AbstractionLayer(channelOut, [symbolflow])
+    >>> abstractionLayerOut.openChannel()
+    >>> abstractionLayerOut.writeSymbol(symbolflow)
+    >>> (receivedSymbols, receivedMessage) = abstractionLayerIn.readSymbols()
+    >>> print receivedSymbols
+    [Symbol_Hello, Symbol_WUP]
 
     """
 
@@ -91,6 +106,7 @@ class AbstractionLayer(object):
         self.memory = Memory()
         self.specializer = MessageSpecializer(memory = self.memory)
         self.parser = MessageParser(memory = self.memory)
+        self.flow_parser = FlowParser(memory = self.memory)
 
     @typeCheck(Symbol)
     def writeSymbol(self, symbol):
@@ -104,20 +120,57 @@ class AbstractionLayer(object):
         if symbol is None:
             raise TypeError("The symbol to write on the channel cannot be None")
 
-        self._logger.info("Going to specialize symbol: '{0}' (id={1}).".format(symbol.name, symbol.id))
+        self._logger.debug("Specializing symbol '{0}' (id={1}).".format(symbol.name, symbol.id))
         
         dataBin = self.specializer.specializeSymbol(symbol).generatedContent
 
         self.memory = self.specializer.memory
         self.parser.memory = self.memory
         data = TypeConverter.convert(dataBin, BitArray, Raw)
-        symbol.messages.append(RawMessage(data))
 
-        self._logger.info("Data generated from symbol '{0}':\n{1}.".format(symbol.name, symbol))
-        
-        self._logger.info("Going to write to communication channel...")
         self.channel.write(data)
-        self._logger.info("Writing to commnunication channel donne..")
+        self._logger.debug("Writing to commnunication channel done..")                
+
+    @typeCheck(int)
+    def readSymbols(self, timeout=EmptySymbol.defaultReceptionTimeout()):
+        """Read from the abstraction layer a flow and abstract it with one or more consecutive symbols
+        
+        The timeout parameter represents the amount of time (in millisecond) above which
+        no reception of a message triggers the reception of an  :class:`netzob.Common.Models.Vocabulary.EmptySymbol.EmptySymbol`. If timeout set to None
+        or to a negative value means it always wait for the reception of a message.
+
+        :keyword timeout: the time above which no reception of message triggers the reception of an :class:`netzob.Common.Models.Vocabulary.EmptySymbol.EmptySymbol`
+        :type timeout: :class:`int`
+        :raise TypeError if the parameter is not valid and Exception if an error occurs.
+        """
+
+        self._logger.debug("Reading data from communication channel...")
+        data = self.channel.read(timeout = timeout)
+        self._logger.debug("Received : {}".format(repr(data)))
+
+        symbols = []
+
+        # if we read some bytes, we try to abstract them
+        if len(data) > 0:
+            try:
+                symbols_and_data = self.flow_parser.parseFlow(RawMessage(data), self.symbols)
+                for (symbol, alignment) in symbols_and_data:
+                    symbols.append(symbol)
+            except Exception, e:
+                self._logger.error(e)
+                
+            if len(symbols) > 0:
+                self.memory = self.flow_parser.memory
+                self.specializer.memory = self.memory
+        else:
+            symbols.append(EmptySymbol())
+        
+        if len(symbols) == 0 and len(data) > 0:
+            msg = RawMessage(data)
+            symbols.append(UnknownSymbol(message = msg))
+
+        return (symbols, data)
+    
 
     @typeCheck(int)
     def readSymbol(self, timeout=EmptySymbol.defaultReceptionTimeout()):
@@ -131,38 +184,45 @@ class AbstractionLayer(object):
         :type timeout: :class:`int`
         :raise TypeError if the parameter is not valid and Exception if an error occurs.
         """
-        self._logger.info("Going to read from communication channel...")
-        data = self.channel.read(timeout = timeout)
-        self._logger.info("Received : {}".format(repr(data)))
-        symbol = None
-        
-        for potential in self.symbols:
-            try:
-                self.parser.parseMessage(RawMessage(data), potential)
-                symbol = potential
-                self.memory = self.parser.memory
-                self.specializer.memory = self.memory
-                break
-            except Exception, e:
-                symbol = None
 
-                
+        self._logger.debug("Reading data from communication channel...")
+        data = self.channel.read(timeout = timeout)
+        self._logger.debug("Received : {}".format(repr(data)))
+
+        symbol = None
+
+        # if we read some bytes, we try to abstract them
+        if len(data) > 0:
+            for potential in self.symbols:
+                try:
+                    self.parser.parseMessage(RawMessage(data), potential)
+                    symbol = potential
+                    self.memory = self.parser.memory
+                    self.specializer.memory = self.memory
+                    break
+                except Exception:
+                    symbol = None
+
         if symbol is None and len(data) > 0:
-            symbol = UnknownSymbol()
+            msg = RawMessage(data)
+            symbol = UnknownSymbol(message = msg)            
         elif symbol is None and len(data) == 0:
             symbol = EmptySymbol()
 
-        symbol.messages.append(RawMessage(data))
-
-        self._logger.info("Received a message abstracted with symbol '{}' on communication channel:\n{}".format(symbol.name, symbol))
         return (symbol, data)
 
     def openChannel(self):
-        self._logger.info("Going to open the communication channel...")
         self.channel.open()
         self._logger.info("Communication channel opened.")
 
     def closeChannel(self):
-        self._logger.info("Going to close the communication channel...")
         self.channel.close()
         self._logger.info("Communication channel close.")
+
+    def reset(self):
+        self._logger.debug("Reseting abstraction layer")
+        self.memory = Memory()
+        self.specializer = MessageSpecializer(memory = self.memory)
+        self.parser = MessageParser(memory = self.memory)
+        self.flow_parser = FlowParser(memory = self.memory)
+        
