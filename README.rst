@@ -32,8 +32,7 @@ or in favorite interactive shell (ipython?). Once installed, we recommend the fo
 
   from netzob.all import *
 
-Netzob's source code is mostly made of Python (90%) with some specific
-extensions in C (6%). 
+Netzob's source code is mostly made of Python (90%) with some specific extensions in C (6%). 
 
 More Information
 ----------------
@@ -138,7 +137,7 @@ There are multiple ways to help-us.
 Defects and Features  Requests
 ------------------------------
 
-Help-us by reporting bugs and requesting features using the `Bug Tracker <https://dev.netzob.org/projects/netzob/issues>`_.
+Help-us by reporting bugs and requesting features using the `Bug Tracker <https://github.com/netzob/netzob/issues>`_.
 
 Join the Development Team
 -------------------------
