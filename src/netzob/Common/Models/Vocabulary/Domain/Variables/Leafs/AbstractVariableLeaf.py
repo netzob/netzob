@@ -131,7 +131,7 @@ class AbstractVariableLeaf(AbstractVariable):
         """Returns a string which denotes
         the current field definition using a tree display"""
 
-        tab = ["     " for x in xrange(deepness - 1)]
+        tab = ["     " for x in range(deepness - 1)]
         tab.append("|--   ")
         tab.append("{0}".format(self))
         return ''.join(tab)

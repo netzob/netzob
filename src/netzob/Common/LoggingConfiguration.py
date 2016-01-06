@@ -31,7 +31,7 @@
 from gettext import gettext as _
 import logging.config
 import os
-import ConfigParser
+import configparser
 
 #+----------------------------------------------
 #| Related third party imports
@@ -90,7 +90,7 @@ class LoggingConfiguration(object):
         self._parseConfigFile()
 
     def _parseConfigFile(self):
-        self.config = ConfigParser.ConfigParser()
+        self.config = configparser.ConfigParser()
         self.config.read([self.loggingFilePath])
 
     def _writeConfigFile(self):

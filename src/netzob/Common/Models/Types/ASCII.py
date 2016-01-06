@@ -136,7 +136,7 @@ class ASCII(AbstractType):
             minSize = 0
 
         generatedSize = random.randint(minSize, maxSize)
-        randomContent = ''.join([random.choice(string.letters + string.digits) for i in xrange(generatedSize)])
+        randomContent = ''.join([random.choice(string.letters + string.digits) for i in range(generatedSize)])
         return TypeConverter.convert(randomContent, ASCII, BitArray)
 
     @typeCheck(str)
@@ -189,7 +189,7 @@ class ASCII(AbstractType):
             mutations["{0}ascii(inversed-lower)".format(prefixDescription)] = strValue[::-1].lower()
 
         results = dict()
-        for mutationName, mutationValue in mutations.iteritems():
+        for mutationName, mutationValue in mutations.items():
             ba = BitArray(TypeConverter.convert(mutationValue, ASCII, BitArray))
             results.update(ba.mutate(mutationName))
 

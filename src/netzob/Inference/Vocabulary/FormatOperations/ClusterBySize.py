@@ -105,13 +105,13 @@ class ClusterBySize(object):
         messagesByLen = {}
         for msg in messages:
             l = len(msg.data)
-            if not l in messagesByLen.keys():
+            if not l in list(messagesByLen.keys()):
                 messagesByLen[l] = []
             messagesByLen[l].append(msg)
 
         # Create new symbols for each group of equivalend message size
         newSymbols = []
-        for (length, msgs) in messagesByLen.items():
+        for (length, msgs) in list(messagesByLen.items()):
             s = Symbol(messages=msgs, name="symbol_{0}".format(str(length)))
             newSymbols.append(s)
 

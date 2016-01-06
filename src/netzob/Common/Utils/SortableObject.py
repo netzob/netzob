@@ -45,9 +45,7 @@ import abc
 #+---------------------------------------------------------------------------+
 
 
-class SortableObject(object):
-
-    __metaclass__ = abc.ABCMeta
+class SortableObject(object, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def priority(self):

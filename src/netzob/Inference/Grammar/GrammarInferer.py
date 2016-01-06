@@ -146,7 +146,7 @@ class GrammarInferer(threading.Thread):
         endTime = time.time()
         self.log.info("The inferring process is finished !")
 
-        print "Elapsed time: ", (endTime - startTime) * 1000, " msecs"
+        print("Elapsed time: ", (endTime - startTime) * 1000, " msecs")
         self.inferedAutomaton = automaton
 
     def applyMessagesOnAutomata(self, automaton, messages):

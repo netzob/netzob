@@ -65,7 +65,7 @@ class pybuild_command(build_py):
     def updateFileWithBID(self, file, bid):
         """Read the given file and rewrite it
         with the provided BID."""
-        print "Update {0} with BID = {1}".format(file, bid)
+        print("Update {0} with BID = {1}".format(file, bid))
         rFile = open(file, "r")
         initialContent = rFile.read()
         rFile.close()

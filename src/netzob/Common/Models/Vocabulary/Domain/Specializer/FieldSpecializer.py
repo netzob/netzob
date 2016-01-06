@@ -114,7 +114,7 @@ class FieldSpecializer(object):
         self.field = field
         self.presets = presets
         
-        if self.presets is not None and self.field in self.presets.keys():
+        if self.presets is not None and self.field in list(self.presets.keys()):
             self.arbitraryValue = self.presets[self.field]
         else:
             self.arbitraryValue = None

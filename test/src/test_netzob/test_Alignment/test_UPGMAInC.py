@@ -64,10 +64,10 @@ from netzob.Inference.Vocabulary.Alignment.UPGMA import UPGMA
 class test_UPGMAInC(unittest.TestCase):
 
     def generateRandomString(self, min_len, max_len):
-        return ''.join((random.choice(string.letters + string.digits) for _ in xrange(random.randint(min_len, max_len))))
+        return ''.join((random.choice(string.letters + string.digits) for _ in range(random.randint(min_len, max_len))))
 
     def test_deserialisationGroups(self):
-        print "start"
+        print("start")
 
         symbols = []
         nbSymbol = random.randint(2, 50)

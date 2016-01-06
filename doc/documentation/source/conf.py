@@ -47,8 +47,8 @@ source_encoding = 'utf-8-sig'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Netzob'
-copyright = u'2011-2015, Frédéric Guihéry, Georges Bossert'
+project = 'Netzob'
+copyright = '2011-2015, Frédéric Guihéry, Georges Bossert'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -185,8 +185,8 @@ htmlhelp_basename = 'Netzobdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'Netzob.tex', u'Netzob Documentation',
-   u'Frédéric Guihéry, Georges Bossert', 'manual'),
+  ('index', 'Netzob.tex', 'Netzob Documentation',
+   'Frédéric Guihéry, Georges Bossert', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -218,8 +218,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'netzob', u'Netzob Documentation',
-     [u'Frédéric Guihéry, Georges Bossert'], 1)
+    ('index', 'netzob', 'Netzob Documentation',
+     ['Frédéric Guihéry, Georges Bossert'], 1)
 ]
 
 

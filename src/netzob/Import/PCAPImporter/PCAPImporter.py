@@ -105,7 +105,7 @@ class PCAPImporter(object):
         try:
             fp = open(filePath, 'r')
             fp.close()
-        except IOError, e:
+        except IOError as e:
             if e.errno == errno.EACCES:
                 raise IOError("Error while trying to open the file {0}, more permissions are required to read it.").format(filePath)
             else:
@@ -120,7 +120,7 @@ class PCAPImporter(object):
 
         # Check the datalink
         self.datalink = packetReader.datalink()
-        if self.datalink not in PCAPImporter.SUPPORTED_DATALINKS.keys():
+        if self.datalink not in list(PCAPImporter.SUPPORTED_DATALINKS.keys()):
             self._logger.debug("Unkown datalinks")
 
         if self.importLayer > 1 and self.datalink != pcapy.DLT_EN10MB and self.datalink != pcapy.DLT_LINUX_SLL and self.datalink != PCAPImporter.PROTOCOL201:
@@ -138,7 +138,7 @@ class PCAPImporter(object):
         if self.importLayer == 1 or self.importLayer == 2:
             try:
                 (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = self.__decodeLayer2(header, payload)
-            except NetzobImportException, e:
+            except NetzobImportException as e:
                 self._logger.warn("An error occured while decoding layer2 of a packet: {0}".format(e))
                 return
             if len(l2Payload) == 0:
@@ -153,7 +153,7 @@ class PCAPImporter(object):
             try:
                 (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = self.__decodeLayer2(header, payload)
                 (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum) = self.__decodeLayer3(etherType, l2Payload)
-            except NetzobImportException, e:
+            except NetzobImportException as e:
                 self._logger.warn("An error occured while decoding layer2 and layer3 of a packet: {0}".format(e))
                 return
 
@@ -169,7 +169,7 @@ class PCAPImporter(object):
                 (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = self.__decodeLayer2(header, payload)
                 (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum) = self.__decodeLayer3(etherType, l2Payload)
                 (l4Proto, l4SrcPort, l4DstPort, l4Payload) = self.__decodeLayer4(ipProtocolNum, l3Payload)
-            except NetzobImportException, e:
+            except NetzobImportException as e:
                 self._logger.warn("An error occured while decoding layer2, layer3 or layer4 of a packet: {0}".format(e))
                 return
             if len(l4Payload) == 0:
@@ -186,7 +186,7 @@ class PCAPImporter(object):
                 (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = self.__decodeLayer2(header, payload)
                 (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum) = self.__decodeLayer3(etherType, l2Payload)
                 (l4Proto, l4SrcPort, l4DstPort, l4Payload) = self.__decodeLayer4(ipProtocolNum, l3Payload)
-            except NetzobImportException, e:
+            except NetzobImportException as e:
                 self._logger.warn("An error occured while decoding layer2, layer3, layer4 or layer5 of a packet: {0}".format(e))
                 return
             if len(l4Payload) == 0:
@@ -314,7 +314,7 @@ class PCAPImporter(object):
             try:
                 fp = open(filePath)
                 fp.close()
-            except IOError, e:
+            except IOError as e:
                 errorMessage = _("Error while trying to open the "
                                  + "file {0}.").format(filePath)
                 if e.errno == errno.EACCES:

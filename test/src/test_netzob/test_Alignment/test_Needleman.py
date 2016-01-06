@@ -54,7 +54,7 @@ from netzob.all import *
 class test_Needleman(NetzobTestCase):
 
     def generateRandomString(self, min_len, max_len):
-        return ''.join((random.choice(string.letters + string.digits) for _ in xrange(random.randint(min_len, max_len))))
+        return ''.join((random.choice(string.letters + string.digits) for _ in range(random.randint(min_len, max_len))))
 
     def generateRandomBytes(self, min_len, max_len):
         result = ""
@@ -98,9 +98,9 @@ class test_Needleman(NetzobTestCase):
         nwEngine.alignField(symbol.getField())
         symbol.getField().setFormat(Format.STRING)
 
-        print "Computed Regex : {0}".format(symbol.getRegex())
-        print "======="
-        print symbol.getCells(True)
+        print("Computed Regex : {0}".format(symbol.getRegex()))
+        print("=======")
+        print(symbol.getCells(True))
 
         computedFields = symbol.getExtendedFields()
         self.assertTrue(len(computedFields) > 1, "Only one field has been computed which tells us something went wrong.")
@@ -154,7 +154,7 @@ class test_Needleman(NetzobTestCase):
 
         symbol.getField().setFormat(Format.STRING)
 
-        print "Number of computed fields : {0}".format(len(symbol.getExtendedFields()))
+        print("Number of computed fields : {0}".format(len(symbol.getExtendedFields())))
         self.assertEqual(4, len(symbol.getExtendedFields()))
         nbValidMessages = 0
 
@@ -164,9 +164,9 @@ class test_Needleman(NetzobTestCase):
                 nbValidMessages += 1
             self.assertTrue(isValid)
 
-        print symbol.getCells()
+        print(symbol.getCells())
 
-        print "Computed regex is valid for {0}/{1} messages.".format(nbValidMessages, len(symbol.getMessages()))
+        print("Computed regex is valid for {0}/{1} messages.".format(nbValidMessages, len(symbol.getMessages())))
 
 
     # def test_randomAlignmentsWithTwoCenteredMessages(self):

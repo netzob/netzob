@@ -80,10 +80,8 @@ class AbstractionException(Exception):
 
 
 @NetzobLogger
-class AbstractField(AbstractMementoCreator):
+class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
     """Represents all the different classes which participates in fields definitions of a message format."""
-
-    __metaclass__ = abc.ABCMeta
 
     def __init__(self, name=None, layer=False):
         self.id = uuid.uuid4()
@@ -682,7 +680,7 @@ class AbstractField(AbstractMementoCreator):
         """Returns a string which denotes
         the current field definition using a tree display"""
 
-        tab = ["|--  " for x in xrange(deepness)]
+        tab = ["|--  " for x in range(deepness)]
         tab.append(str(self.name))
         lines = [''.join(tab)]
         from netzob.Common.Models.Vocabulary.Field import Field

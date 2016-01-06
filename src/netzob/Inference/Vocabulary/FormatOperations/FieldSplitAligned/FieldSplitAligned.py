@@ -194,13 +194,13 @@ class FieldSplitAligned(object):
         # Semantic tags (a.k.a applicative data)
         semanticTags = None
         if useSemantic:
-            semanticTags = [self.__searchApplicativeDataInMessage(message) for message, values in messageValues.iteritems()]
+            semanticTags = [self.__searchApplicativeDataInMessage(message) for message, values in messageValues.items()]
 
-        if len(messageValues.values()) == 0:
+        if len(list(messageValues.values())) == 0:
             return
 
         # Execute the alignement
-        (alignment, semanticTags, score) = self._alignData(messageValues.values(), semanticTags)
+        (alignment, semanticTags, score) = self._alignData(list(messageValues.values()), semanticTags)
 
         # Check the results
         if alignment is None:
@@ -251,7 +251,7 @@ class FieldSplitAligned(object):
             step1Fields.append(newField)
 
         for f in step1Fields:
-            f.encodingFunctions = field.encodingFunctions.values()
+            f.encodingFunctions = list(field.encodingFunctions.values())
 
         field.fields = step1Fields
 
@@ -376,7 +376,7 @@ class FieldSplitAligned(object):
             raise TypeError("There should be a list of semantic tags for each value")
 
         # Prepare the argument to send to the C wrapper
-        toSend = [(''.join(values[iValue]), semanticTags[iValue]) for iValue in xrange(len(values))]
+        toSend = [(''.join(values[iValue]), semanticTags[iValue]) for iValue in range(len(values))]
 
         wrapper = WrapperArgsFactory("_libNeedleman.alignMessages")
         wrapper.typeList[wrapper.function](toSend)
@@ -417,7 +417,7 @@ class FieldSplitAligned(object):
             self._logger.debug("Message is not attached to a session, so no applicative data will be considered while computing the alignment.")
 
         if len(appValues) > 0:
-            searchResults = SearchEngine.searchInMessage(appValues.keys(), message, addTags=False)
+            searchResults = SearchEngine.searchInMessage(list(appValues.keys()), message, addTags=False)
             for searchResult in searchResults:
                 for (startResultRange, endResultRange) in searchResult.ranges:
                     appDataName = appValues[searchResult.searchTask.properties["data"]]
@@ -464,7 +464,7 @@ class FieldSplitAligned(object):
                 lengthField = ( field.domain.maxSize() / 4)
 
                 # Find semantic tags related to the current section
-                sectionSemanticTags = OrderedDict((k, semanticTags[k]) for k in xrange(currentIndex, currentIndex + lengthField))
+                sectionSemanticTags = OrderedDict((k, semanticTags[k]) for k in range(currentIndex, currentIndex + lengthField))
 
                 # reccursive call
                 self._logger.debug("Working on field : {0}".format(field.name))
@@ -487,7 +487,7 @@ class FieldSplitAligned(object):
         currentTag = None
         currentTagLength = 0
 
-        for index, tag in semanticTags.iteritems():
+        for index, tag in semanticTags.items():
             if tag != currentTag:
                 # Create a sub field
                 subFieldValue = align[index - currentTagLength:index]
@@ -526,7 +526,7 @@ class FieldSplitAligned(object):
 
         semanticTagsForEachMessage = field.getSemanticTagsByMessage()
 
-        for index, tag in semanticTags.iteritems():
+        for index, tag in semanticTags.items():
             if tag != currentTag:
                 # Create a sub field
                 if currentTagLength > 0:
@@ -573,7 +573,7 @@ class FieldSplitAligned(object):
         values = []
 
         # Retrieve value of each message in current field tagged with requested tag
-        for message, tagsInMessage in semanticTagsForEachMessage.iteritems():
+        for message, tagsInMessage in semanticTagsForEachMessage.items():
             initial = None
             end = None
 
@@ -593,7 +593,7 @@ class FieldSplitAligned(object):
                 for i in range(initial, end):
                     del tagsInMessage[i]
 
-        if "" not in values and len(semanticTagsForEachMessage.keys()) > len(values):
+        if "" not in values and len(list(semanticTagsForEachMessage.keys())) > len(values):
             values.append("")
 
         return values

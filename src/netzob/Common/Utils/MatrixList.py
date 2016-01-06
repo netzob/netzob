@@ -88,7 +88,7 @@ class MatrixList(list):
             r_repr.append(r1_repr)
 
         # Prepare format
-        cs = zip(*r_repr)
+        cs = list(zip(*r_repr))
         c_ws = [max(len(value) for value in c) for c in cs]
         line = ["-"*w for w in c_ws]
         r_repr.insert(1, line)

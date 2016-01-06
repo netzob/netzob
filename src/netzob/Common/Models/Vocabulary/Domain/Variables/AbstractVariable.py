@@ -49,13 +49,11 @@ from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Common.Models.Vocabulary.Domain.Variables.SVAS import SVAS
 from netzob.Common.Utils.NetzobRegex import NetzobRegex
 
-class AbstractVariable(object):
+class AbstractVariable(object, metaclass=abc.ABCMeta):
     """A variable participates in the definition domain of a field.
 
     This class is abstract and so should not be instanciated directly.
     """
-
-    __metaclass__ = abc.ABCMeta
 
     def __init__(self, varType, varId=None, name=None, svas=None):
         """Constructor

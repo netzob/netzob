@@ -160,7 +160,7 @@ class DataAlignment(threading.Thread):
         for d in self.data:
             mp = MessageParser()
             # alignedMsg = mp.parseRaw(TypeConverter.convert(d, HexaString, Raw), targetedFieldLeafFields)
-            alignedMsg = mp.parseRaw(d, targetedFieldLeafFields).next()            
+            alignedMsg = next(mp.parseRaw(d, targetedFieldLeafFields))            
 
             alignedEncodedMsg = []
             for ifield, currentField in enumerate(targetedFieldLeafFields):
@@ -168,8 +168,8 @@ class DataAlignment(threading.Thread):
                 # now we apply encoding and mathematic functions
                 fieldValue = alignedMsg[ifield]
             
-                if self.encoded and len(currentField.encodingFunctions.values()) > 0:
-                    for encodingFunction in currentField.encodingFunctions.values():
+                if self.encoded and len(list(currentField.encodingFunctions.values())) > 0:
+                    for encodingFunction in list(currentField.encodingFunctions.values()):
                         fieldValue = encodingFunction.encode(fieldValue)
                 else:
                     fieldValue = TypeConverter.convert(fieldValue, BitArray, Raw)

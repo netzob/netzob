@@ -46,7 +46,7 @@ class WrapperArgsFactory(object):
             "_libScoreComputation.computeSimilarityMatrix": self.computeSimilarityMatrix,
             "_libNeedleman.alignMessages": self.alignMessages}
 
-        if(function in self.typeList.keys()):
+        if(function in list(self.typeList.keys())):
             self.function = function
         else:
             raise NetzobException("Function " + str(function) + " not implemented")
@@ -63,6 +63,6 @@ class WrapperArgsFactory(object):
         self.args = []
         for (data, tags) in values:
             message = RawMessage(data=data)
-            for pos, tag in tags.items():
+            for pos, tag in list(tags.items()):
                 message.addSemanticTag(pos, tag)
             self.args.append(WrapperMessage(message, "Virtual symbol"))

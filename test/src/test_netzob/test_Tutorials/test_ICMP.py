@@ -80,4 +80,4 @@ class test_ICMP(NetzobTestCase):
 
         ping.messages = [RawMessage(ping.specialize()) for i in range(0, 20)]
         cells = ping.getCells()
-        print cells
+        print(cells)

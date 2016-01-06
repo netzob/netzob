@@ -74,7 +74,7 @@ compileProfile = "release"
 
 NETZOB_COMPILE_PROFILE_ENV = "NETZOB_COMPILE_PROFILE"
 # extract requested mode from the environment variable
-if NETZOB_COMPILE_PROFILE_ENV in os.environ.keys():
+if NETZOB_COMPILE_PROFILE_ENV in list(os.environ.keys()):
     compileProfile = os.environ[NETZOB_COMPILE_PROFILE_ENV]
 
 # Default compile arguments
