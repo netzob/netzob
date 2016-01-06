@@ -50,8 +50,20 @@ static PyMethodDef libScoreComputation_methods[] = {
 //+---------------------------------------------------------------------------+
 //| initlibScoreComputation : Python will use this function to init the module
 //+---------------------------------------------------------------------------+
-PyMODINIT_FUNC init_libScoreComputation(void) {
-  (void) Py_InitModule("_libScoreComputation", libScoreComputation_methods);
+PyObject* PyInit__libScoreComputation(void) {
+    static struct PyModuleDef moduledef = {
+    PyModuleDef_HEAD_INIT,
+    "_libScoreComputation",
+    NULL,
+    -1,
+    libScoreComputation_methods,
+    NULL,
+    NULL,
+    NULL,
+    NULL
+  };
+
+  (void) PyModule_Create(&moduledef);
 }
 
 //+---------------------------------------------------------------------------+
@@ -130,8 +142,8 @@ PyObject* py_computeSimilarityMatrix(__attribute__((unused))PyObject* self, PyOb
       for(j_record = i_record + 1; j_record < nbmessage; j_record++){
 
         PyObject *s = PyFloat_FromDouble((double)scoreMatrix[i_record][j_record]);
-        PyObject *i_p = PyString_FromString(mesmessages[i_record].uid);
-        PyObject *j_p = PyString_FromString(mesmessages[j_record].uid);
+        PyObject *i_p = PyBytes_FromString(mesmessages[i_record].uid);
+        PyObject *j_p = PyBytes_FromString(mesmessages[j_record].uid);
         PyObject *res = PyList_New(3);
         if (!s || !i_p || !j_p || !res) {
             Py_XDECREF(recordedScores);

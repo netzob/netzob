@@ -54,8 +54,20 @@ static PyMethodDef libInterface_methods[] = {
 //+---------------------------------------------------------------------------+
 //| initlibInterface : Python will use this function to init the module
 //+---------------------------------------------------------------------------+
-PyMODINIT_FUNC init_libInterface(void) {
-  (void) Py_InitModule("_libInterface", libInterface_methods);
+PyObject* PyInit__libInterface(void) {
+    static struct PyModuleDef moduledef = {
+    PyModuleDef_HEAD_INIT,
+    "_libInterface",
+    NULL,
+    -1,
+    libInterface_methods,
+    NULL,
+    NULL,
+    NULL,
+    NULL
+  };
+
+  (void) PyModule_Create(&moduledef);
 }
 
 int callbackIsFinish(void) {

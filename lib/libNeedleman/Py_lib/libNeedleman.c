@@ -51,8 +51,20 @@ static PyMethodDef libNeedleman_methods[] = {
 //+---------------------------------------------------------------------------+
 //| initlibNeedleman : Python will use this function to init the module
 //+---------------------------------------------------------------------------+
-PyMODINIT_FUNC init_libNeedleman(void) {
-  (void) Py_InitModule("_libNeedleman", libNeedleman_methods);
+PyObject* PyInit__libNeedleman(void) {
+  static struct PyModuleDef moduledef = {
+    PyModuleDef_HEAD_INIT,
+    "_libNeedleman",
+    NULL,
+    -1,
+    libNeedleman_methods,
+    NULL,
+    NULL,
+    NULL,
+    NULL
+  };
+
+  (void) PyModule_Create(&moduledef);
 }
 
 //+---------------------------------------------------------------------------+

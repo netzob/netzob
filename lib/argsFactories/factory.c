@@ -32,8 +32,8 @@
 //| Import Associated Header
 //+---------------------------------------------------------------------------+
 #include "factory.h"
-#define tostring(s) PyString_FromString(s)
-#define getstringattr(o,s) PyString_AsString(PyObject_GetAttr(o,tostring(s)))
+#define tostring(s) PyBytes_FromString(s)
+#define getstringattr(o,s) PyBytes_AsString(PyObject_GetAttr(o,tostring(s)))
 #define getUnsignedLongAttribute(o,s) PyLong_AsUnsignedLong(PyObject_GetAttr(o,tostring(s)))
 
 /*parseArgs return values:
@@ -72,7 +72,7 @@ int parseArgs(PyObject* factobj, ...){
     }
 
     else{
-      PyErr_SetObject(PyExc_NameError, PyString_FromFormat("%s not yet implemented",function));
+      PyErr_SetObject(PyExc_NameError, PyBytes_FromFormat("%s not yet implemented",function));
       return 1;
     }
     return 0;
@@ -94,14 +94,14 @@ void parseLibscoreComputation(PyObject* factobj, va_list args){
   /**
      list : which is a list of messages
   */
-  PyObject* list = PyObject_GetAttr(factobj,PyString_FromString("args"));
+  PyObject* list = PyObject_GetAttr(factobj,PyBytes_FromString("args"));
 
   /**
      Find the number of elements in the list.
      This number of elements = number of messages (nbmess)
   */
-  pysize = PyInt_FromSsize_t(PyList_Size(list));
-  *nbmess = (unsigned int) PyInt_AsLong(pysize);
+  pysize = PyLong_FromSsize_t(PyList_Size(list));
+  *nbmess = (unsigned int) PyLong_AsLong(pysize);
   Py_XDECREF(pysize);
 
   /**
@@ -176,7 +176,7 @@ void parseMessage(PyObject * item, t_message * message) {
     // parse all the tags
     for (j=0; j<message->len; j++) {
       PyObject * listItem = PyList_GetItem(listOfSemanticTags,(Py_ssize_t)j);
-      char * tag = PyString_AsString(listItem);
+      char * tag = PyBytes_AsString(listItem);
 
       message->semanticTags[j] = malloc(sizeof(t_semanticTag));
       message->semanticTags[j]->name = tag;
@@ -216,14 +216,14 @@ void parseLibNeedleman(PyObject* factobj, va_list args){
   /**
      list : which is a list of messages
   */
-  PyObject* list = PyObject_GetAttr(factobj,PyString_FromString("args"));
+  PyObject* list = PyObject_GetAttr(factobj,PyBytes_FromString("args"));
 
   /**
      Find the number of elements in the list.
      This number of elements = number of messages (nbmess)
   */
-  pysize = PyInt_FromSsize_t(PyList_Size(list));
-  *nbmess = (unsigned int) PyInt_AsLong(pysize);
+  pysize = PyLong_FromSsize_t(PyList_Size(list));
+  *nbmess = (unsigned int) PyLong_AsLong(pysize);
   Py_XDECREF(pysize);
 
   /**
