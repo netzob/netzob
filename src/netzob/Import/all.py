@@ -29,4 +29,4 @@
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
 
-from netzob.Import.PCAPImporter.all import *
+#from netzob.Import.PCAPImporter.all import *
