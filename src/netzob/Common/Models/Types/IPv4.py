@@ -284,7 +284,7 @@ class IPv4(AbstractType):
             else:
                 structFormat += "BBBB"
             quads = list(map(str, struct.unpack(structFormat, data)))
-            strIP = string.join(quads, '.')
+            strIP = '.'.join(quads)
 
             ip = IPAddress(strIP)
             if ip is not None and ip.version == 4 and not ip.is_netmask():
