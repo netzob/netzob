@@ -57,7 +57,7 @@ def find_data_files(dstdir, srcdir, *wildcards, **kw):
 
     file_list = []
     if kw.get('recursive', True):
-        os.path.walk(srcdir, walk_helper, (file_list,))
+        os.walk(srcdir, walk_helper, (file_list,))
     else:
         walk_helper((file_list,), srcdir,
                     [os.path.basename(f) for f in glob(opj(srcdir, '*'))])
