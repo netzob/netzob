@@ -55,24 +55,30 @@ class UnknownSymbol(Symbol):
     >>> from netzob.all import *
     >>> u = UnknownSymbol()
     >>> print u.name
-    Unknown Symbol
+    Unknown Symbol ''
 
     >>> from netzob.all import *
     >>> msg = RawMessage("hello")
     >>> u = UnknownSymbol(msg)
     >>> print u.name
-    Unknown Symbol
+    Unknown Symbol 'hello'
 
     """
 
     def __init__(self, message=None):
-        self.message = message    
-        super(UnknownSymbol, self).__init__(fields=None, name="Unknown Symbol", messages=[self.message])
+        self.message = message
+        name_suffix = ""
+        if self.message is not None:
+            data = self.message.data
+            name_suffix = repr(data[:20])
+        
+        super(UnknownSymbol, self).__init__(fields=None, name="Unknown Symbol {}".format(name_suffix), messages=[self.message])
 
-    def __eq__(self, other):
-        if other is None:
-            return False
-        return isinstance(other, UnknownSymbol)
+    def __repr__(self):
+        return self.name
+
+    def __str__(self):
+        return self.name
 
     
     @property
