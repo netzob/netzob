@@ -119,6 +119,8 @@ class TCPServer(AbstractChannel):
             self.__clientSocket.close()
         if self.__socket is not None:
             self.__socket.close()
+        self.isOpen = False
+        self._logger.info("TCPServer has closed its socket")
 
     def read(self, timeout=None):
         """Read the next message on the communication channel.
@@ -126,9 +128,22 @@ class TCPServer(AbstractChannel):
         @keyword timeout: the maximum time in millisecond to wait before a message can be reached
         @type timeout: :class:`int`
         """
-        # TODO: handle timeout
+        reading_seg_size = 1024
+        
         if self.__clientSocket is not None:
-            return self.__clientSocket.recv(1024)
+            data = ""
+            finish = False
+            while not finish:
+                try:
+                    recv = self.__clientSocket.recv(reading_seg_size)
+                except socket.timeout:
+                    # says we received nothing (timeout issue)
+                    recv = ""
+                if recv is None or len(recv) == 0:
+                    finish = True
+                else:
+                    data += recv
+            return data
         else:
             raise Exception("socket is not available")
 
