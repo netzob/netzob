@@ -48,7 +48,7 @@ versionName = "Unnamed"
 #+---------------------------------------------------------------------------+
 #| Copyright mentions
 #+---------------------------------------------------------------------------+
-copyright = "Copyright (C) 2011-2015 Georges Bossert and Frédéric Guihéry"
+copyright = "Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry"
 
 #+---------------------------------------------------------------------------+
 #| Description of the application
