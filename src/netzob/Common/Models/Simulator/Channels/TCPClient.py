@@ -35,6 +35,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import socket
+import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -123,13 +124,22 @@ class TCPClient(AbstractChannel):
         @keyword timeout: the maximum time in millisecond to wait before a message can be reached
         @type timeout: :class:`int`
         """
-        # TODO: handle timeout
+        reading_seg_size = 1024
+        
         if self.__socket is not None:
-            try:
-                return self.__socket.recv(1024)
-            except socket.timeout:
-                # says we received nothing (timeout issue)
-                return ""
+            data = ""
+            finish = False
+            while not finish:
+                try:
+                    recv = self.__socket.recv(reading_seg_size)
+                except socket.timeout:
+                    # says we received nothing (timeout issue)
+                    recv = ""
+                if recv is None or len(recv) == 0:
+                    finish = True
+                else:
+                    data += recv
+            return data
         else:
             raise Exception("socket is not available")
 
