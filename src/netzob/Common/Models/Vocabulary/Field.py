@@ -220,7 +220,7 @@ class Field(AbstractField):
         messages = []
         try:
             messages.extend(self.getSymbol().messages)
-        except Exception, e:
+        except Exception as e:
             self._logger.warning("The field is attached to no symbol and so it has no messages: {0}".format(e))
 
         return messages

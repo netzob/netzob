@@ -306,7 +306,7 @@ class FieldSplitStatic(object):
 
         # attach encoding functions
         for newField in newFields:
-            newField.encodingFunctions = field.encodingFunctions.values()
+            newField.encodingFunctions = list(field.encodingFunctions.values())
 
         field.fields = newFields
 

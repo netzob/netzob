@@ -273,7 +273,7 @@ class AbstractMessage(SortableObject):
     def metadata(self, metadata):
         if metadata is None:
             return TypeError("Metadata cannot be None")
-        for k in metadata.keys():
+        for k in list(metadata.keys()):
             self.setMetadata(k, metadata[k])
 
     @property
@@ -321,7 +321,7 @@ class AbstractMessage(SortableObject):
         if tag is None:
             raise TypeError("Tag cannot be None")
 
-        if position in self.semanticTags.keys():
+        if position in list(self.semanticTags.keys()):
             tags = self.semanticTags[position]
         else:
             tags = []
@@ -344,7 +344,7 @@ class AbstractMessage(SortableObject):
             self.__semanticTags = OrderedDict()
 
         # check
-        for key, value in semanticTags.iteritems():
+        for key, value in semanticTags.items():
             if not isinstance(key, int):
                 raise TypeError("At least one key is not a valid int position")
             if not isinstance(value, list):

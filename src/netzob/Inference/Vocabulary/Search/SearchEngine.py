@@ -221,7 +221,7 @@ class SearchEngine(object):
             pool = multiprocessing.Pool(nbThread)
 
             # Execute search operations
-            pool.map_async(_executeSearch, zip([noDuplicateDatas] * len(messages), messages, [addTags] * len(messages), [dataLabels] * len(messages)), callback=self.__collectResults_cb)
+            pool.map_async(_executeSearch, list(zip([noDuplicateDatas] * len(messages), messages, [addTags] * len(messages), [dataLabels] * len(messages))), callback=self.__collectResults_cb)
 
             # Waits all alignment tasks finish
             pool.close()
@@ -283,7 +283,7 @@ class SearchEngine(object):
             props = dict()
             props['message'] = message
             props['data'] = d
-            if dataLabels is not None and d in dataLabels.keys():
+            if dataLabels is not None and d in list(dataLabels.keys()):
                 props['label'] = dataLabels[d]
 
             searchTasks.extend(self.__buildSearchTasks(normedData, props))
@@ -347,4 +347,4 @@ class SearchEngine(object):
         if data is None:
             raise TypeError("The data cannot be None")
 
-        return [SearchTask(mutation, mutationType, properties=properties) for mutationType, mutation in data.mutate().iteritems()]
+        return [SearchTask(mutation, mutationType, properties=properties) for mutationType, mutation in data.mutate().items()]

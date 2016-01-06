@@ -283,11 +283,11 @@ class IPv4(AbstractType):
                 structFormat += "bbbb"
             else:
                 structFormat += "BBBB"
-            quads = map(str, struct.unpack(structFormat, data))
+            quads = list(map(str, struct.unpack(structFormat, data)))
             strIP = string.join(quads, '.')
 
             ip = IPAddress(strIP)
             if ip is not None and ip.version == 4 and not ip.is_netmask():
                 return ip
-        except Exception, e:
+        except Exception as e:
             raise TypeError("Impossible encode {0} into an IPv4 data ({1})".format(data, e))

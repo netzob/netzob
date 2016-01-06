@@ -129,7 +129,7 @@ class Transition(AbstractTransition):
             # Waits for the reception of a symbol
             (receivedSymbol, receivedMessage) = abstractionLayer.readSymbol()
 
-        except Exception, e:
+        except Exception as e:
             self.active = False
             self._logger.warning("An error occured while executing the transition {} as an initiator: {}".format(self.name, e))
             raise e
@@ -172,7 +172,7 @@ class Transition(AbstractTransition):
             pickedSymbol = EmptySymbol()
 
         # Sleep before emiting the symbol (if equired)
-        if pickedSymbol in self.outputSymbolReactionTimes.keys():
+        if pickedSymbol in list(self.outputSymbolReactionTimes.keys()):
             time.sleep(self.outputSymbolReactionTimes[pickedSymbol])
 
         # Emit the symbol
@@ -195,7 +195,7 @@ class Transition(AbstractTransition):
         nbSymbolWithNoExplicitProbability = 0
         totalProbability = 0
         for outputSymbol in self.outputSymbols:
-            if outputSymbol not in self.outputSymbolProbabilities.keys():
+            if outputSymbol not in list(self.outputSymbolProbabilities.keys()):
                 probability = None
                 nbSymbolWithNoExplicitProbability += 1
             else:
@@ -217,7 +217,7 @@ class Transition(AbstractTransition):
                 outputSymbolsWithProbability[outputSymbol] = probabilityPerSymbolWithNoExplicitProbability
 
         # pick the good output symbol following the probability
-        distribution = [outputSymbol for inner in [[k] * int(v) for k, v in outputSymbolsWithProbability.items()] for outputSymbolsWithNoProbability in inner]
+        distribution = [outputSymbol for inner in [[k] * int(v) for k, v in list(outputSymbolsWithProbability.items())] for outputSymbolsWithNoProbability in inner]
 
         return random.choice(distribution)
 

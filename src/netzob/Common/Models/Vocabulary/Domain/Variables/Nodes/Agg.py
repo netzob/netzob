@@ -127,7 +127,7 @@ class Agg(AbstractVariableNode):
         parsingPaths = [parsingPath]
 
         # we parse all the children with the parserPaths produced by previous children
-        for i_child in xrange(len(self.children)):
+        for i_child in range(len(self.children)):
             current_child = self.children[i_child]
             if i_child < len(self.children) - 1:
                 next_child = self.children[i_child + 1]

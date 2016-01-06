@@ -130,7 +130,7 @@ class TypeConverter(object):
             raise TypeError("Data cannot be None")
 
         # Do we have a specific source to destination encoding function
-        if (sourceType, destinationType) in TypeConverter.__directEncoding().keys():
+        if (sourceType, destinationType) in list(TypeConverter.__directEncoding().keys()):
             func = TypeConverter.__directEncoding()[(sourceType, destinationType)]
             return func(data, src_unitSize, src_endianness, src_sign, dst_unitSize, dst_endianness, dst_sign)
         else:

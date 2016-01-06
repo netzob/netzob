@@ -76,11 +76,11 @@ def checkPEP8(file):
         for line in out.splitlines():
             localResult.append(line)
         return localResult
-    except Exception,e:
+    except Exception as e:
         if str(e).find("[Errno 2] No such file or directory") != -1 :
-            print "[E] PEP8 is not installed."
+            print("[E] PEP8 is not installed.")
         else:
-            print "[E] PEP8 does not work, it is probably not installed.\nThe error is : {0}".format(str(e))
+            print("[E] PEP8 does not work, it is probably not installed.\nThe error is : {0}".format(str(e)))
         sys.exit(1)
         
 
@@ -189,10 +189,10 @@ def checkFile(file):
 
 def verifyResults(results):
     result = 0
-    for f in results.keys():
+    for f in list(results.keys()):
         resultFile = results[f]
         if len(resultFile) > 0:
-            ruleNames = resultFile.keys()
+            ruleNames = list(resultFile.keys())
             localResult = 0
 
             errorForCurrentFile = []
@@ -205,9 +205,9 @@ def verifyResults(results):
                     localResult = 1
 
             if len(errorForCurrentFile) > 0:
-                print "[I] File %s:" % (f)
+                print("[I] File %s:" % (f))
                 for err in errorForCurrentFile:
-                    print err
+                    print(err)
 
     return result
 
@@ -215,7 +215,7 @@ def analyze(providedFiles):
 
     if providedFiles is None:
         # Retrieve all the files to analyze
-        print "[I] Retrieve all the files to analyze from the staged area."
+        print("[I] Retrieve all the files to analyze from the staged area.")
         tmp_files = getFiles()
         files = []
         # Filters directories which could appears in files due to submodules creation
@@ -224,7 +224,7 @@ def analyze(providedFiles):
             if os.path.isfile(f):
                 files.append(f)
     else:
-        print "[I] Retrieve all the file to analyze from the command line arguments."
+        print("[I] Retrieve all the file to analyze from the command line arguments.")
         filesToAnalyze = getFilesFromListOfPath(providedFiles)
 
         files = []
@@ -235,7 +235,7 @@ def analyze(providedFiles):
                     test.close()
                     files.append(fileToAnalyze)
                 except:
-                    print "[E] File %s exists but is not readable." % fileToAnalyze
+                    print("[E] File %s exists but is not readable." % fileToAnalyze)
 
     globalResults = dict()
     for fileToAnalyze in files:
@@ -244,9 +244,9 @@ def analyze(providedFiles):
     # Compute the final result (0=sucess, 1=cannot commit)
     result = verifyResults(globalResults)
     if result == 0:
-        print "[I] No error found, commit allowed."
+        print("[I] No error found, commit allowed.")
     else:
-        print "[E] Errors founds, commit not allowed."
+        print("[E] Errors founds, commit not allowed.")
     sys.exit(result)
 
 def getFilesFromListOfPath(paths):

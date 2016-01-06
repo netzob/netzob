@@ -111,7 +111,7 @@ class HexaString(AbstractType):
         allowedValues = [str(i) for i in range(0, 10)]
         allowedValues.extend(["a", "b", "c", "d", "e", "f"])
 
-        for i in xrange(0, len(data)):
+        for i in range(0, len(data)):
             if not data[i].lower() in allowedValues:
                 return False
 

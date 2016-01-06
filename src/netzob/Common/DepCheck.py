@@ -56,7 +56,7 @@ class DepCheck(object):
             return False
 
         pathToImportedLib = "Unknown path"
-        for m in sys.modules.keys():
+        for m in list(sys.modules.keys()):
             if m == "_libNeedleman":
                 pathToImportedLib = sys.modules[m].__file__
                 logging.debug("Imported _libNeedleman from {0}".format(pathToImportedLib))
@@ -78,7 +78,7 @@ class DepCheck(object):
             return False
 
         pathToImportedLib = "Unknown path"
-        for m in sys.modules.keys():
+        for m in list(sys.modules.keys()):
             if m == "_libScoreComputation":
                 pathToImportedLib = sys.modules[m].__file__
                 logging.debug("Imported _libScoreComputation from {0}".format(pathToImportedLib))
@@ -100,7 +100,7 @@ class DepCheck(object):
             return False
 
         pathToImportedLib = "Unknown path"
-        for m in sys.modules.keys():
+        for m in list(sys.modules.keys()):
             if m == "_libInterface":
                 pathToImportedLib = sys.modules[m].__file__
                 logging.debug("Imported _libInterface from {0}".format(pathToImportedLib))

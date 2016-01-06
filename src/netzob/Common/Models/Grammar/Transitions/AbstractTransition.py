@@ -48,9 +48,7 @@ from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Common.Models.Grammar.States.AbstractState import AbstractState
 
 
-class AbstractTransition(object):
-
-    __metaclass__ = abc.ABCMeta
+class AbstractTransition(object, metaclass=abc.ABCMeta):
 
     def __init__(self, _type, startState, endState, _id=uuid.uuid4(), name=None, priority=10, description=None):
         """Constructor of a Transition.

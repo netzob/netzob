@@ -47,12 +47,10 @@ import abc
 from netzob.Common.Utils.Decorators import typeCheck
 
 
-class AbstractState(object):
+class AbstractState(object, metaclass=abc.ABCMeta):
     """Implementation of the abstract state. Every kind of state usable
     in the grammar of a protocol should inherit from this abstract class.
     """
-
-    __metaclass__ = abc.ABCMeta
 
     def __init__(self, name=None):
         self.__id = uuid.uuid4()

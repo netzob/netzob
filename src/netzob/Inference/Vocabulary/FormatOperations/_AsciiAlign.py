@@ -207,7 +207,7 @@ class AsciiAlign():
                 else:
                     candidates.append(dst)
                     score.append(1)
-        print candidates
+        print(candidates)
         if score.count(max(score)) == 1 and len(candidates) > 2:
             self.server = candidates[score.index(max(score))]
 

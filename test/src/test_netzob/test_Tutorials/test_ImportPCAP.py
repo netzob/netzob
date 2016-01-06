@@ -45,7 +45,7 @@ class test_ImportPCAP(NetzobTestCase):
         from a PCAP and store them in a dedicated symbol"""
 
         pcapFile = os.path.join("test", "resources", "pcaps", "botnet_irc_bot.pcap")
-        symbol = Symbol(messages=PCAPImporter.readFile(pcapFile).values())
+        symbol = Symbol(messages=list(PCAPImporter.readFile(pcapFile).values()))
         self.assertTrue(len(symbol.messages) == 17)
 
     def test_importPCAPApplicativeLayer(self):

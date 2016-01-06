@@ -84,7 +84,7 @@ class Memory(object):
         False
 
         """
-        return variable in self.memory.keys()
+        return variable in list(self.memory.keys())
 
     @typeCheck(AbstractVariable)
     def getValue(self, variable):
@@ -114,7 +114,7 @@ class Memory(object):
         >>> memory.hasValue(variable)
         False
         """
-        if variable in self.memory.keys():
+        if variable in list(self.memory.keys()):
             self.memory.pop(variable, None)
 
     def duplicate(self):
@@ -141,13 +141,13 @@ class Memory(object):
         :rtype: :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Memory`
         """
         duplicatedMemory = Memory()
-        for k in self.memory.keys():
+        for k in list(self.memory.keys()):
             duplicatedMemory.memory[k] = self.memory[k].copy()
         return duplicatedMemory
         
     def __str__(self):
         result = []
-        for var, value in self.memory.iteritems():
+        for var, value in self.memory.items():
             result.append("{0}: {1}".format(var, TypeConverter.convert(value, BitArray, Raw)))
         return '\n'.join(result)
         
@@ -163,7 +163,7 @@ class Memory(object):
     @memory.setter
     def memory(self, memory):
         self.__memory = dict()
-        for k, v in memory.iteritems():
+        for k, v in memory.items():
             self.__memory[k] = v
 
 # #+---------------------------------------------------------------------------+

@@ -49,7 +49,7 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Domain.Variables.SVAS import SVAS
 
 @NetzobLogger
-class AbstractType(object):
+class AbstractType(object, metaclass=abc.ABCMeta):
     """AbstractType is the abstract class of all the classes that represents netzob types.
     In Netzob, a type defines a definition domain as a unique value or specified with specific rules.
     For instance, an integer under a specific interval, a string with a number of chars and an IPv4 of a specific
@@ -64,8 +64,6 @@ class AbstractType(object):
     >>> print t.endianness
     big
     """
-
-    __metaclass__ = abc.ABCMeta
 
     # FEW KEY ELEMENTS
     ENDIAN_BIG = 'big'

@@ -156,7 +156,7 @@ class AbstractionLayer(object):
                 symbols_and_data = self.flow_parser.parseFlow(RawMessage(data), self.symbols)
                 for (symbol, alignment) in symbols_and_data:
                     symbols.append(symbol)
-            except Exception, e:
+            except Exception as e:
                 self._logger.error(e)
                 
             if len(symbols) > 0:

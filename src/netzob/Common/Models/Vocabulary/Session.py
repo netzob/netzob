@@ -116,7 +116,7 @@ class Session(object):
 
     def clearMessages(self):
         """Delete all the messages attached to the current session"""
-        for msg in self.__messages.values():
+        for msg in list(self.__messages.values()):
             msg.session = None
 
         self.__messages.clear()
@@ -202,7 +202,7 @@ class Session(object):
         """
 
         endpointsList = []
-        for message in self.messages.values():
+        for message in list(self.messages.values()):
             src = message.source
             dst = message.destination
             endpoints1 = (src, dst)
@@ -241,7 +241,7 @@ class Session(object):
             trueSessionMessages = []
             src = None
             dst = None
-            for message in self.messages.values():
+            for message in list(self.messages.values()):
                 if message.source in endpoints and message.destination in endpoints:
                     trueSessionMessages.append(message)
                     if src is None:
@@ -308,7 +308,7 @@ class Session(object):
         if not self.isTrueSession():
             self._logger.warn("The current session cannot be abstracted as it not a true session (i.e. it may contain inner true sessions).")
             return abstractSession
-        for message in self.messages.values():
+        for message in list(self.messages.values()):
             symbol = AbstractField.abstract(message.data, symbolList)
             abstractSession.append((message.source, message.destination, symbol))
         return abstractSession

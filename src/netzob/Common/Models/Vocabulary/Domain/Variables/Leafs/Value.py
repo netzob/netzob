@@ -160,7 +160,7 @@ class Value(AbstractRelationVariableLeaf):
                 self._logger.debug("Size of the content to parse is smallest than the min expected size of the dependency field")
                 return results
 
-            for size in xrange(min(maxSizeDep, len(content)), minSizeDep -1, -1):
+            for size in range(min(maxSizeDep, len(content)), minSizeDep -1, -1):
                 # we create a new parsing path and returns it
                 newParsingPath = parsingPath.duplicate()
                 newParsingPath.addResult(self, content[:size].copy())        
@@ -225,7 +225,7 @@ class Value(AbstractRelationVariableLeaf):
             newValue = self._computeExpectedValue(variableSpecializerPath)
 
             variableSpecializerPath.addResult(self, newValue)
-        except Exception, e:
+        except Exception as e:
             self._logger.debug("Cannot specialize since no value is available for the value dependencies, we create a callback function in case it can be computed later: {0}".format(e))
             
             pendingValue = TypeConverter.convert("PENDING VALUE", ASCII, BitArray)

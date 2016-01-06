@@ -126,7 +126,7 @@ class OpenChannelTransition(AbstractTransition):
         # open the channel throught the abstraction layer
         try:
             abstractionLayer.openChannel()
-        except Exception, e:
+        except Exception as e:
             self._logger.warning("An error occured which prevented the good execution of the open channel transition")
             self.active = False
             raise e

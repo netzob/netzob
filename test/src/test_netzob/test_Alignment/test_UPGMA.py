@@ -49,7 +49,7 @@ from netzob.Common.Type.Format import Format
 class test_UPGMA(unittest.TestCase):
 
     def generateRandomString(self, min_len, max_len):
-        return ''.join((random.choice(string.letters + string.digits) for _ in xrange(random.randint(min_len, max_len))))
+        return ''.join((random.choice(string.letters + string.digits) for _ in range(random.randint(min_len, max_len))))
 
     def test_executingClustering(self):
 
@@ -88,9 +88,9 @@ class test_UPGMA(unittest.TestCase):
         result = clusteringSolution.executeClustering()
 
         for symbol in result:
-            print "Symbol: " + str(symbol.getName())
+            print("Symbol: " + str(symbol.getName()))
             for m in symbol.getMessages():
-                print " + " + str(m.getStringData())
+                print(" + " + str(m.getStringData()))
 
     def test_executingClusteringWithOrphanReduction(self):
 
@@ -130,16 +130,16 @@ class test_UPGMA(unittest.TestCase):
         resultAfterOrphan = clusteringSolution.executeOrphanReduction()
 
         if (len(resultAfterOrphan) < len(resultBeforeOrphan)):
-            print "Before Orphan Reduction: "
+            print("Before Orphan Reduction: ")
             for symbol in resultBeforeOrphan:
-                print "Symbol: " + str(symbol.getName())
+                print("Symbol: " + str(symbol.getName()))
                 for m in symbol.getMessages():
-                    print " + " + str(m.getStringData())
+                    print(" + " + str(m.getStringData()))
 
-            print "After Orphan Reduction: "
+            print("After Orphan Reduction: ")
             for symbol in resultAfterOrphan:
-                print "Symbol: " + str(symbol.getName())
+                print("Symbol: " + str(symbol.getName()))
                 for m in symbol.getMessages():
-                    print " + " + str(m.getStringData())
+                    print(" + " + str(m.getStringData()))
 
         self.assertGreaterEqual(len(resultBeforeOrphan), len(resultAfterOrphan))

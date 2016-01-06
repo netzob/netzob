@@ -182,7 +182,7 @@ class MessageParser(object):
         dataToParse = message.data
 
         fields = symbol._getLeafFields()
-        return self.parseRaw(dataToParse, fields).next()
+        return next(self.parseRaw(dataToParse, fields))
 
     @typeCheck(object)
     def parseRaw(self, dataToParse, fields):

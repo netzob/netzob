@@ -178,7 +178,7 @@ class InternetChecksum(AbstractRelationVariableLeaf):
                 results.append(parsingPath)
             else:
                 self._logger.debug("Executed callback has failed.")
-        except Exception, e:
+        except Exception as e:
             # the expected value cannot be computed
             if acceptCallBack:
                 # we add a callback
@@ -244,7 +244,7 @@ class InternetChecksum(AbstractRelationVariableLeaf):
         try:
             newValue = self._computeExpectedValue(variableSpecializerPath)
             variableSpecializerPath.addResult(self, newValue.copy())
-        except Exception, e:
+        except Exception as e:
             self._logger.warn("Cannot specialize since no value is available for the Internet checksum dependencies, we create a callback function in case it can be computed later: {0}".format(e))
             pendingValue = TypeConverter.convert("PENDING VALUE", ASCII, BitArray)
             variableSpecializerPath.addResult(self, pendingValue)

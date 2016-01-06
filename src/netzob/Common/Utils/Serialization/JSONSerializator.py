@@ -71,12 +71,12 @@ class JSONSerializator(object):
 
         typeObj = type(obj)
         props = []
-        for entry in typeObj.__dict__.values():
+        for entry in list(typeObj.__dict__.values()):
             if inspect.isdatadescriptor(entry):
                 props.append(entry)
 
         for prop in props:
-            print prop.fget.__name__, prop.fget
+            print(prop.fget.__name__, prop.fget)
             
                                         
                 

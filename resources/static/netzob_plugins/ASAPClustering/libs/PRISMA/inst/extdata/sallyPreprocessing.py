@@ -28,6 +28,6 @@ for l in sallyIn:
         curNgrams = [ngramInfo.split(":")[1] for ngramInfo in info[0].split(",")]
         allNgrams.update(allNgrams.fromkeys(curNgrams))
     sallyOut.write("%s\n" % " ".join(curNgrams))
-sallyOut.write("%s\n" % " ".join(allNgrams.keys()))
+sallyOut.write("%s\n" % " ".join(list(allNgrams.keys())))
 sallyOut.close()
 sallyIn.close()

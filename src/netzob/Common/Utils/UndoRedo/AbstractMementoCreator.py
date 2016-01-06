@@ -44,13 +44,11 @@ import abc
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 
-class AbstractMementoCreator(object):
+class AbstractMementoCreator(object, metaclass=abc.ABCMeta):
     """Parent class of objects to save for Undo/Redo.
     
     This abstract class must be inherited by all the objects which need to be saved for Undo/Redo processes.
     These objects have to provide two methods, storeInMemento and restoreFromMemento both used to save and restore current state of the object."""
-
-    __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
     def storeInMemento(self):

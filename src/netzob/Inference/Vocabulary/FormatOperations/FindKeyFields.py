@@ -96,7 +96,7 @@ class FindKeyFields(object):
 
         results = []
         cells = field.getCells(encoded=False, styled=False, transposed=False)
-        columns = zip(*cells)
+        columns = list(zip(*cells))
 
         # Retrieve dynamic fields with fixed size
         for (i, f) in enumerate(field.fields):
@@ -118,7 +118,7 @@ class FindKeyFields(object):
             tmpClusters = Format.clusterByKeyField(field, result["keyField"])
             result["nbClusters"] = len(tmpClusters)
             distrib = []  # Compute clusters distribution
-            for cluster in tmpClusters.values():
+            for cluster in list(tmpClusters.values()):
                 distrib.append(len(cluster.messages))
             result["distribution"] = distrib
 

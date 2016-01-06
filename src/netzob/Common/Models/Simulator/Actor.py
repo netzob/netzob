@@ -131,7 +131,7 @@ class Actor(threading.Thread):
                     self._logger.warning("The execution of transition did not returned a state")
                     self.stop()
 
-            except Exception, e:
+            except Exception as e:
                 self._logger.warning("Exception raised when on the execution of state {0}.".format(currentState.name))
                 self._logger.warning("Exception error: {0}".format(str(e)))
                 self._logger.warning(traceback.format_exc())

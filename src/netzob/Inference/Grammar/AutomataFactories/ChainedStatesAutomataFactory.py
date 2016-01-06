@@ -70,7 +70,7 @@ class ChainedStatesAutomataFactory(object):
         outputSymbols = None
         while True:
             try:
-                (source, destination, symbol) = it.next()
+                (source, destination, symbol) = next(it)
                 if source == client:
                     if symbol is not None:
                         inputSymbol = symbol
