@@ -63,6 +63,25 @@ class EmptySymbol(Symbol):
 
         self.receptionTimeout = receptionTimeout
 
+
+    def __eq__(self, other):
+        if other is None:
+            return False
+        return isinstance(other, EmptySymbol)
+
+    def __ne__(self, other):
+        if other is None:
+            return True
+        return not isinstance(other, EmptySymbol)
+
+    def __repr__(self):
+        return "Empty Symbol"
+
+    def __str__(self):
+        return "Empty Symbol"
+
+    
+
     @property
     def receptionTimeout(self):
         """This timeout represent how many milliseconds of no activity
