@@ -103,6 +103,20 @@ class Symbol(AbstractField):
             fields = [Field()]
         self.fields = fields
 
+    def __eq__(self, other):
+        if not isinstance(other, Symbol):
+            return False
+        if other is None:
+            return False
+        return self.name == other.name
+
+    def __ne__(self, other):
+        if other is None:
+            return True
+        if not isinstance(other, Symbol):
+            return True
+        return other.name != self.name
+
     @typeCheck(Memory, object)
     def specialize(self, memory=None, generationStrategy=None, presets=None):
         """Specialize and generate an hexastring which content
@@ -183,3 +197,6 @@ class Symbol(AbstractField):
         self.clearMessages()
         for msg in messages:
             self.__messages.append(msg)
+
+    def __repr__(self):
+        return self.name
