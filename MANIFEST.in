@@ -9,5 +9,3 @@ recursive-include doc *
 recursive-include resources *
 recursive-include lib *
 recursive-exclude * *~ *.orig *.bak *.tmp *.pyc
-recursive-include src/netzob_plugins *.py
-prune src/netzob_plugins/*/*/build
