@@ -72,7 +72,10 @@ class Raw(AbstractType):
         if value is not None and not isinstance(value, bitarray):
             from netzob.Common.Models.Types.TypeConverter import TypeConverter
             from netzob.Common.Models.Types.BitArray import BitArray
-            value = TypeConverter.convert(bytes(value, "utf-8"), Raw, BitArray)
+            if isinstance(value, str):
+                value = TypeConverter.convert(bytes(value, "utf-8"), Raw, BitArray)
+            elif isinstance(value, bytes):
+                value = TypeConverter.convert(value, Raw, BitArray)
 
         nbBits = self._convertNbBytesinNbBits(nbBytes)
 
