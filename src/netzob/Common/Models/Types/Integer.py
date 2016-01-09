@@ -80,7 +80,7 @@ class Integer(AbstractType):
     >>> dec = Integer(10)
     >>> raw = dec.convertValue(Raw, dst_endianness=AbstractType.ENDIAN_BIG)
     >>> print(raw)
-    Raw='\\n' ((0, 8))
+    Raw=b'\\n' ((0, 8))
 
     Its not possible to convert if the object has not value
     >>> a = Integer(nbUnits=3)
@@ -162,7 +162,7 @@ class Integer(AbstractType):
 
         >>> from netzob.all import *
         >>> print(Integer.decode(23))
-        \x17
+        b'\\x17'
 
         >>> print(Integer.decode(-1, sign=AbstractType.SIGN_UNSIGNED))
         Traceback (most recent call last):
@@ -170,7 +170,7 @@ class Integer(AbstractType):
         error: ubyte format requires 0 <= number <= 255
 
         >>> print(Integer.decode(-1, sign=AbstractType.SIGN_SIGNED))
-        \xff
+        b'\\xff'
 
         >>> print(Integer.decode(2000000000000000))
         Traceback (most recent call last):
@@ -178,12 +178,12 @@ class Integer(AbstractType):
         error: byte format requires -128 <= number <= 127
 
         >>> print(Integer.decode(2000000000000000, unitSize=AbstractType.UNITSIZE_64))
-        \x00\x07\x1a\xfdI\x8d\x00\x00
+        b'\\x00\\x07\\x1a\\xfdI\\x8d\\x00\\x00'
 
         >>> print(Integer.decode(25, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE))
-        \x19\x00
+        b'\\x19\\x00'
         >>> print(Integer.decode(25, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG))
-        \x00\x19
+        b'\\x00\\x19'
 
         >>> val = 167749568
         >>> a = Integer.decode(val, unitSize=AbstractType.UNITSIZE_32)
@@ -220,7 +220,7 @@ class Integer(AbstractType):
 
         >>> raw = Integer.decode(23)
         >>> print(Integer.encode(raw))
-        23
+        b'23'
 
         >>> raw = Integer.decode(1200, unitSize=AbstractType.UNITSIZE_16)
         >>> print(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16))
