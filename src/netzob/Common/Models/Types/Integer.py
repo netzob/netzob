@@ -253,7 +253,7 @@ class Integer(AbstractType):
 
         perWordFormat = Integer.computeFormat(unitSize, endianness, sign)
 
-        nbWords = (len(data) * 8 / int(unitSize))
+        nbWords = int(len(data) * 8 / int(unitSize))
 
         finalValue = 0
 
@@ -268,8 +268,8 @@ class Integer(AbstractType):
 
         for i in range(start, end, inc):
             # Extract the portion that represents the current word
-            startPos = iWord * int(unitSize) / 8
-            endPos = iWord * int(unitSize) / 8 + int(unitSize) / 8
+            startPos = int(iWord * int(unitSize) / 8)
+            endPos = int(iWord * int(unitSize) / 8 + int(unitSize) / 8)
 
             wordData = data[startPos:endPos]
             unpackedWord = struct.unpack(perWordFormat, wordData)[0]
