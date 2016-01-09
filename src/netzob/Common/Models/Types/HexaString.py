@@ -111,8 +111,9 @@ class HexaString(AbstractType):
         allowedValues = [str(i) for i in range(0, 10)]
         allowedValues.extend(["a", "b", "c", "d", "e", "f"])
 
+        str_data = data.decode('utf-8')
         for i in range(0, len(data)):
-            if not data[i].lower() in allowedValues:
+            if not str_data[i] in allowedValues:
                 return False
 
         return True
