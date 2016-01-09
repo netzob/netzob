@@ -55,8 +55,8 @@ class ASCII(AbstractType):
 
     >>> from netzob.all import *
     >>> cAscii = ASCII("constante value")
-    >>> print(repr(cAscii))
-    constante value
+    >>> print(cAscii)
+    ASCII=constante value ((0, 120))
     >>> print(cAscii.typeName)
     ASCII
     >>> print(cAscii.value)
@@ -65,11 +65,11 @@ class ASCII(AbstractType):
     Use the convert function to convert the current type to any other netzob type
     >>> raw = cAscii.convertValue(Raw)
     >>> print(repr(raw))
-    constante value
+    b'constante value'
     >>> ip = cAscii.convertValue(IPv4)
     Traceback (most recent call last):
     ...
-    TypeError: Impossible encode constante value into an IPv4 data (unpack requires a string argument of length 4)
+    TypeError: Impossible encode b'constante value' into an IPv4 data (unpack requires a bytes object of length 4)
 
     The type can be used to specify constraints over the domain
     >>> a = ASCII(nbChars=10)
@@ -118,7 +118,7 @@ class ASCII(AbstractType):
         >>> a = ASCII(nbChars=10)
         >>> gen = a.generate()
         >>> len(gen)/8
-        10
+        10.0
 
         >>> b = ASCII("netzob")
         >>> gen = b.generate()
@@ -153,8 +153,11 @@ class ASCII(AbstractType):
 
         >>> from netzob.all import *
         >>> t = ASCII("helloworld")
-        >>> print(t.mutate())
-        {'ascii(inversed)-bits(littleEndian)': bitarray('00100110001101100100111011110110111011101111011000110110001101101010011000010110'), 'ascii(inversed-upper)-bits(littleEndian)': bitarray('00100010001100100100101011110010111010101111001000110010001100101010001000010010'), 'ascii(upper)-bits(littleEndian)': bitarray('00010010101000100011001000110010111100101110101011110010010010100011001000100010'), 'ascii-bits(bigEndian)': bitarray('01101000011001010110110001101100011011110111011101101111011100100110110001100100'), 'ascii(inversed)-bits(bigEndian)': bitarray('01100100011011000111001001101111011101110110111101101100011011000110010101101000'), 'ascii(upper)-bits(bigEndian)': bitarray('01001000010001010100110001001100010011110101011101001111010100100100110001000100'), 'ascii-bits(littleEndian)': bitarray('00010110101001100011011000110110111101101110111011110110010011100011011000100110'), 'ascii(inversed-upper)-bits(bigEndian)': bitarray('01000100010011000101001001001111010101110100111101001100010011000100010101001000')}
+        >>> values = t.mutate()
+        >>> print(values['ascii(upper)-bits(littleEndian)'])
+        bitarray('00010010101000100011001000110010111100101110101011110010010010100011001000100010')
+        >>> print(values['ascii(inversed)-bits(bigEndian)'])
+        bitarray('01100100011011000111001001101111011101110110111101101100011011000110010101101000')
 
 
         :keyword prefixDescription: prefix to attach to the description of the generated mutation.
@@ -282,11 +285,11 @@ class ASCII(AbstractType):
 
         >>> from netzob.all import *
         >>> ASCII.decode("hello")
-        'hello'
+        b'hello'
         >>> ASCII.decode('\x5a\x6f\x62\x79\x20\x69\x73\x20\x64\x61\x20\x70\x6c\x61\x63\x65\x20\x21')
-        'Zoby is da place !'
+        b'Zoby is da place !'
         >>> ASCII.decode(1021)
-        '1021'
+        b'1021'
 
         :param data: the data encoded in ASCII which will be decoded in raw
         :type data: the current type
@@ -332,10 +335,9 @@ class ASCII(AbstractType):
             raise TypeError("data cannot be None")
 
         res = ""
-        for elt in data:
-            ordElt = ord(elt)
+        for ordElt in data:
             if ordElt >= 0x20 and ordElt <= 0x7e:  # means between ' ' and '~'
-                res += elt
+                res += chr(ordElt)
             else:
                 res += "."
 
