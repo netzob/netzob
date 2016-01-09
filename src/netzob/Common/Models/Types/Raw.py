@@ -58,13 +58,13 @@ class Raw(AbstractType):
 
     or with a specific value (default is little endianness)
 
-    >>> f = Field(Raw('\x01\x02\x03'))
+    >>> f = Field(Raw('\\x01\\x02\\x03'))
     >>> print(f.domain.dataType)
-    Raw='\\x01\\x02\\x03' ((0, 24))
+    Raw=b'\\x01\\x02\\x03' ((0, 24))
 
     >>> f.domain.dataType.endianness = AbstractType.ENDIAN_BIG
     >>> print(f.domain.dataType)
-    Raw='\\x01\\x02\\x03' ((0, 24))
+    Raw=b'\\x01\\x02\\x03' ((0, 24))
 
     """
 
@@ -72,7 +72,7 @@ class Raw(AbstractType):
         if value is not None and not isinstance(value, bitarray):
             from netzob.Common.Models.Types.TypeConverter import TypeConverter
             from netzob.Common.Models.Types.BitArray import BitArray
-            value = TypeConverter.convert(value, Raw, BitArray)
+            value = TypeConverter.convert(bytes(value, "utf-8"), Raw, BitArray)
 
         nbBits = self._convertNbBytesinNbBits(nbBytes)
 
@@ -137,7 +137,7 @@ class Raw(AbstractType):
             minSize = 0
 
         generatedSize = random.randint(minSize, maxSize)
-        return TypeConverter.convert(os.urandom(generatedSize / 8), Raw, BitArray)
+        return TypeConverter.convert(os.urandom(int(generatedSize / 8)), Raw, BitArray)
 
     @staticmethod
     def decode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
