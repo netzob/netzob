@@ -136,7 +136,7 @@ class ASCII(AbstractType):
             minSize = 0
 
         generatedSize = random.randint(minSize, maxSize)
-        randomContent = ''.join([random.choice(string.letters + string.digits) for i in range(generatedSize)])
+        randomContent = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(generatedSize)])
         return TypeConverter.convert(randomContent, ASCII, BitArray)
 
     @typeCheck(str)

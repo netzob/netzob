@@ -65,7 +65,7 @@ class DataAlignment(threading.Thread):
     >>> import random
     >>> import string
 
-    >>> contents = ['hello {0} hello'.format(''.join([random.choice(string.letters) for y in range(random.randint(5,10))])) for x in range(10)]
+    >>> contents = ['hello {0} hello'.format(''.join([random.choice(string.ascii_letters) for y in range(random.randint(5,10))])) for x in range(10)]
     >>> fields = [Field("hello ", name="f0"), Field(ASCII(nbChars=(5,10)), name="f1"), Field(" hello", name="f2")]
     >>> symbol = Symbol(fields=fields)
     >>> alignedData = DataAlignment.align(contents, symbol, encoded=True)
