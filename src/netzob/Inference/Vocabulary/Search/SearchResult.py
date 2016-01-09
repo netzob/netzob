@@ -115,6 +115,6 @@ class SearchResult(object):
             raise TypeError("Ranges cannot be None")
 
         for (start, end) in ranges:
-            if not isinstance(start, (int, long)) or not isinstance(end, (int, long)) or end <= start:
+            if not isinstance(start, int) or not isinstance(end, int) or end <= start:
                 raise TypeError("Start and end range must be integers and end > start (start={0}, end={1})".format(start, end))
         self.__ranges = ranges

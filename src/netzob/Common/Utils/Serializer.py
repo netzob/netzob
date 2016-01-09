@@ -99,7 +99,7 @@ class Serializer(object):
         # Check if the string has a valid JSON format
         try:
             json_object = json.loads(jsonString)
-        except ValueError, e:
+        except ValueError as e:
             logging.warn("The string has not a valid JSON format.")
             return None
         logging.warn("This is just a reminder that, for security reasons, important care should be taken when deserializing data from untrusted source !")
@@ -132,7 +132,7 @@ class Serializer(object):
             # Check if this string has a valid JSON format
             try:
                 json_object = json.loads(jsonString)
-            except ValueError, e:
+            except ValueError as e:
                 logging.warn("The string has not a valid JSON format.")
                 return None
             logging.warn("This is just a reminder that, for security reasons, important care should be taken when deserializing data from untrusted source !")

@@ -152,7 +152,7 @@ class Repeat(AbstractVariableNode):
                 yield newParsingPath
 
             # check we can apply nb_repeat times the child
-            for i_repeat in xrange(nb_repeat):
+            for i_repeat in range(nb_repeat):
                 tmp_result = []
                 for newParsingPath in newParsingPaths:
                     for childParsingPath in self.children[0].parse(newParsingPath, carnivorous=carnivorous):
@@ -197,10 +197,10 @@ class Repeat(AbstractVariableNode):
         # initialy, there is a unique path to specialize (the provided one)
         specializingPaths = []
     
-        for i_repeat in xrange(self.nbRepeat[0], self.nbRepeat[1]):
+        for i_repeat in range(self.nbRepeat[0], self.nbRepeat[1]):
             newSpecializingPaths = [originalSpecializingPath.duplicate()]
 
-            for i in xrange(i_repeat):
+            for i in range(i_repeat):
                 childSpecializingPaths = []
                 for newSpecializingPath in newSpecializingPaths:
                     for path in self.children[0].specialize(newSpecializingPath):

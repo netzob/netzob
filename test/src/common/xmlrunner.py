@@ -5,7 +5,7 @@ XML Test Runner for PyUnit
 # Written by Sebastian Rittau <srittau@jroger.in-berlin.de> and placed in
 # the Public Domain. With contributions by Paolo Borelli and others.
 
-from __future__ import with_statement
+
 
 __version__ = "0.1"
 
@@ -18,7 +18,7 @@ import unittest
 from xml.sax.saxutils import escape
 
 try:
-    from StringIO import StringIO
+    from io import StringIO
 except ImportError:
     from io import StringIO
 
@@ -292,7 +292,7 @@ class XMLTestRunnerTest(unittest.TestCase):
         """
         class TestTest(unittest.TestCase):
             def test_foo(self):
-                self.assert_(False)
+                self.assertTrue(False)
         self._try_test_run(TestTest, """<testsuite errors="0" failures="1" name="unittest.TestSuite" tests="1" time="0.000">
   <testcase classname="__main__.TestTest" name="test_foo" time="0.000">
     <failure type="exceptions.AssertionError">Foobar</failure>

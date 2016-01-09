@@ -162,7 +162,7 @@ class FunctionApplicationTable(object):
         previousOld = []
         currentOld = []
 
-        for i in self.conversionAddressingTable.keys():
+        for i in list(self.conversionAddressingTable.keys()):
             currentOld = self.conversionAddressingTable[i]
             if i == i_global:
                 result = []
@@ -192,7 +192,7 @@ class FunctionApplicationTable(object):
         return tags
 
     def updateConversionAddressingTableWithTable(self, table):
-        for original_indice in table.keys():
+        for original_indice in list(table.keys()):
             self.conversionAddressingTable[original_indice] = table.get(original_indice)
 
     def updateConversionAddressingTable(self, old_start, old_end, new_start, new_end):
@@ -210,7 +210,7 @@ class FunctionApplicationTable(object):
             type = "increase"
             factor = sizeSegment // sizeSegmentOld
 
-        for i in self.conversionAddressingTable.keys():
+        for i in list(self.conversionAddressingTable.keys()):
             if i >= old_start and i < old_end:
                 if type == "reduction":
                     tmp_i = (i - old_start)

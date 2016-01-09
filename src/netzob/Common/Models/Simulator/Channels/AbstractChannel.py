@@ -51,9 +51,7 @@ class ChannelDownException(Exception):
     pass
 
 
-class AbstractChannel(object):
-
-    __metaclass__ = abc.ABCMeta
+class AbstractChannel(object, metaclass=abc.ABCMeta):
 
     def __init__(self, isServer, _id=uuid.uuid4()):
         """Constructor for an Abstract Channel

@@ -143,7 +143,7 @@ class FieldOperations(object):
         # build a new field domain
         newDomain = Agg([field1.domain, field2.domain])
         newField = Field(domain=newDomain, name="Merge")
-        newField.encodingFunctions = field1.encodingFunctions.values()
+        newField.encodingFunctions = list(field1.encodingFunctions.values())
         parent = field1.parent
         before = parent.fields[:iField1]
         after = parent.fields[iField2 + 1:]

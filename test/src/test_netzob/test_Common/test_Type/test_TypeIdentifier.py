@@ -49,13 +49,13 @@ class test_TypeIdentifier(NetzobTestCase):
         self.assertIn(Format.DECIMAL, typeIdentifier.getTypes(number))
 
     def test_getTypesAlpha(self):
-        alphabet = map(chr, range(97, 123))
+        alphabet = list(map(chr, list(range(97, 123))))
         alpha = alphabet[random.randint(0, len(alphabet) - 1)]
         typeIdentifier = TypeIdentifier()
         self.assertIn(Format.ALPHA, typeIdentifier.getTypes(alpha))
 
     def test_getTypesAscii(self):
-        alphabet = map(chr, range(97, 123))
+        alphabet = list(map(chr, list(range(97, 123))))
         alpha = alphabet[random.randint(0, len(alphabet) - 1)]
         typeIdentifier = TypeIdentifier()
         self.assertIn(Format.ASCII, typeIdentifier.getTypes(alpha))
@@ -67,7 +67,7 @@ class test_TypeIdentifier(NetzobTestCase):
         self.assertIn(Format.BASE64_ENC, typeIdentifier.getTypes(base64String))
 
     def test_getTypesBinary(self):
-        alphabet = map(chr, range(97, 123))
+        alphabet = list(map(chr, list(range(97, 123))))
         alpha = alphabet[random.randint(0, len(alphabet) - 1)]
         typeIdentifier = TypeIdentifier()
         hexOfNumber = str(hex(ord(alpha)))[2:]

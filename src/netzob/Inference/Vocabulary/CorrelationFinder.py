@@ -247,7 +247,7 @@ class CorrelationFinder(object):
             line = []
             data = message.getStringData()
             rawContent = TypeConvertor.netzobRawToPythonRaw(data)
-            valCrc32 = zlib.crc32(rawContent) & 0xFFFFFFFFL
+            valCrc32 = zlib.crc32(rawContent) & 0xFFFFFFFF
             line.append(str(valCrc32))
             lines.append(",".join(line))
         return (header, lines)
@@ -264,7 +264,7 @@ class CorrelationFinder(object):
 
         for i_msg in range(0, len(symbol.getMessages())):
             line = []
-            for field in cells.keys():
+            for field in list(cells.keys()):
                 entry = cells[field][i_msg]
                 for k in range(2, 3, 2):
                     if len(entry) > k:

@@ -154,7 +154,7 @@ class FieldSplitDelimiter(object):
 
         import itertools
         # Inverse the array, so that columns contains observed values for each field
-        splittedMessages = list(itertools.izip_longest(*splittedMessages))
+        splittedMessages = list(itertools.zip_longest(*splittedMessages))
         
         # If the delimiter does not create splitted fields
         if len(splittedMessages) <= 1:
@@ -187,7 +187,7 @@ class FieldSplitDelimiter(object):
 
             if not isEmptyField:
                 newField = Field(domain=DomainFactory.normalizeDomain(fieldDomain), name="Field-"+str(iField))
-                newField.encodingFunctions = field.encodingFunctions.values()
+                newField.encodingFunctions = list(field.encodingFunctions.values())
                 newFields.append(newField)
                 iField += 1
 

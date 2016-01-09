@@ -179,12 +179,12 @@ class ClusterByAlignment(object):
         # Retrieve the scores for each association of symbols
         scores = OrderedDict()
         for (iuid, juid, score) in listScores:
-            if iuid not in scores.keys():
+            if iuid not in list(scores.keys()):
                 scores[iuid] = OrderedDict()
-            if juid not in scores.keys():
+            if juid not in list(scores.keys()):
                 scores[juid] = OrderedDict()
             scores[iuid][juid] = score
-            if iuid not in scores[juid].keys():
+            if iuid not in list(scores[juid].keys()):
                 scores[juid][iuid] = score
         return scores
 
@@ -272,7 +272,7 @@ class ClusterByAlignment(object):
 
             total_size = size_i + size_j
 
-            for k in self.scores.keys():
+            for k in list(self.scores.keys()):
                 if k != newuid:
                     self.scores[k][newuid] = (size_i * self.scores[k][iuid] + size_j * self.scores[k][juid]) * 1.0 / total_size
                     del self.scores[k][iuid]

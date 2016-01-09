@@ -93,7 +93,7 @@ try:
                 self.handleError(record)
 
     has_colour = True
-except Exception, e:
+except Exception as e:
     has_colour = False
 
 
@@ -106,7 +106,7 @@ def NetzobLogger(klass):
 
     # Verify if a logger already exists
     found = False
-    for k, v in klass.__dict__.iteritems():
+    for k, v in klass.__dict__.items():
         if isinstance(v, logging.Logger):
             found = True
             break
@@ -122,7 +122,7 @@ def NetzobLogger(klass):
     # Exclude logger from __getstate__
     def getState(self, **kwargs):
         r = dict()
-        for k, v in self.__dict__.items():
+        for k, v in list(self.__dict__.items()):
             if not isinstance(v, logging.Logger):
                 r[k] = v
         return r

@@ -197,13 +197,13 @@ class MessageSpecializer(object):
         if presets is None:
             presets = dict()
 
-        for k, v in presets.iteritems():
+        for k, v in presets.items():
             if not isinstance(k, Field):
                 raise Exception("Preset's keys must be of Field types")
 
         self.__presets = dict()
         
-        for k, v in presets.iteritems():
+        for k, v in presets.items():
             self.__presets[k] = v
     
     

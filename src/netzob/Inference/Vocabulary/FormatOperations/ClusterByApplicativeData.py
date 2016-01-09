@@ -126,24 +126,24 @@ class ClusterByApplicativeData(object):
             searchTask = result.searchTask
             message = searchTask.properties['message']
             label = searchTask.properties['label']
-            if label not in labels.values():
+            if label not in list(labels.values()):
                 raise ValueError("Found label ({0}) in a result cannot be identified in the original list of searched labels.".format(label))
-            if message.id not in idMessages.keys():
+            if message.id not in list(idMessages.keys()):
                 raise ValueError("Found message ({0}) cannot be identified in the original list of searched messages.".format(message.id))
             messagesPerAppData[idMessages[message.id]].add(label)
 
         # Build clusters
         clusters = dict()
-        for message, labelsInMessage in messagesPerAppData.iteritems():
+        for message, labelsInMessage in messagesPerAppData.items():
             strAppDatas = ';'.join(sorted(labelsInMessage))
             if len(strAppDatas) == 0:
                 strAppDatas = None
-            if strAppDatas in clusters.keys():
+            if strAppDatas in list(clusters.keys()):
                 clusters[strAppDatas].append(message)
             else:
                 clusters[strAppDatas] = [message]
 
         # Build Symbols
-        symbols = [Symbol(name=strAppDatas, messages=msgs) for strAppDatas, msgs in clusters.iteritems()]
+        symbols = [Symbol(name=strAppDatas, messages=msgs) for strAppDatas, msgs in clusters.items()]
 
         return symbols

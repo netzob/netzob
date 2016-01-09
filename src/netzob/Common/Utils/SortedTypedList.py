@@ -114,7 +114,7 @@ class SortedTypedList(object):
         """
 
         l = []
-        for x in self.__treePriorities.keys():
+        for x in list(self.__treePriorities.keys()):
             l.extend(self.__mapMessages[x])
         return l
 
@@ -153,11 +153,11 @@ class SortedTypedList(object):
         return len(self.__treePriorities)
 
     def __str__(self):
-        return ', \n'.join([str(v) for v in self.values()])
+        return ', \n'.join([str(v) for v in list(self.values())])
 
     def __repr__(self):
         return repr(str(self))
 
     def __iter__(self):
         """SortedTypedList is an iterable over its values (and not its keys)."""
-        return self.__treePriorities.values().__iter__()
+        return list(self.__treePriorities.values()).__iter__()

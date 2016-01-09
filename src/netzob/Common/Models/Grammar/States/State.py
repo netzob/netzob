@@ -118,7 +118,7 @@ class State(AbstractState):
         try:
             nextState = nextTransition.executeAsInitiator(abstractionLayer)
             self._logger.info("Transition '{0}' leads to state: {1}.".format(str(nextTransition), str(nextState)))
-        except Exception, e:
+        except Exception as e:
             self.active = False
             raise e
 
@@ -195,7 +195,7 @@ class State(AbstractState):
                 nextState = nextTransition.executeAsNotInitiator(abstractionLayer)
                 self._logger.info("Transition '{0}' leads to state: {1}.".format(str(nextTransition), str(nextState)))
 
-        except Exception, e:
+        except Exception as e:
             self._logger.warning("An exception occured when receiving a symbol from the abstraction layer.")
             self.active = False
             self._logger.warning(traceback.format_exc())
@@ -220,7 +220,7 @@ class State(AbstractState):
         # create a dictionnary to host the possible transition
         prioritizedTransitions = dict()
         for transition in self.transitions:
-            if transition.priority in prioritizedTransitions.keys():
+            if transition.priority in list(prioritizedTransitions.keys()):
                 prioritizedTransitions[transition.priority].append(transition)
             else:
                 prioritizedTransitions[transition.priority] = [transition]

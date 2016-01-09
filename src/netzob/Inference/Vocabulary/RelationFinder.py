@@ -208,7 +208,7 @@ class RelationFinder(object):
 
         for x_attribute in x_attributes:
             for y_attribute in y_attributes:
-                for (relation_name, relation_fct) in relation_fcts.items():
+                for (relation_name, relation_fct) in list(relation_fcts.items()):
                     isRelation = True
                     for i in range(len(x_values)):
                         if not relation_fct(x_values[i], x_attribute, y_values[i], y_attribute):

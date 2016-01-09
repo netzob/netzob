@@ -171,7 +171,7 @@ class ParallelDataAlignment(object):
         pool = multiprocessing.Pool(self.nbThread)
 
         # Execute Data Alignment
-        pool.map_async(_executeDataAlignment, zip(noDuplicateData, [self.field] * len(noDuplicateData), [self.encoded] * len(noDuplicateData), [self.styled] * len(noDuplicateData)), callback=self.__collectResults_cb)
+        pool.map_async(_executeDataAlignment, list(zip(noDuplicateData, [self.field] * len(noDuplicateData), [self.encoded] * len(noDuplicateData), [self.styled] * len(noDuplicateData))), callback=self.__collectResults_cb)
 
         # Waits all alignment tasks finish
         pool.close()
@@ -187,7 +187,7 @@ class ParallelDataAlignment(object):
 
     
         for d in data:
-            if d not in self.asyncResult.keys():
+            if d not in list(self.asyncResult.keys()):
                 raise Exception("At least one data ({0}) has not been successfully computed by the alignment".format(repr(d)))
             result.extend(self.asyncResult[d])
 

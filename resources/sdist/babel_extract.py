@@ -84,7 +84,7 @@ class GladeParser(object):
                         del self.expat # get rid of circular references
                     done = True
                 else:
-                    if isinstance(data, unicode):
+                    if isinstance(data, str):
                         data = data.encode('utf-8')
                     self.expat.Parse(data, False)
                 for event in self._queue:
@@ -92,15 +92,15 @@ class GladeParser(object):
                 self._queue = []
                 if done:
                     break
-        except expat.ExpatError, e:
+        except expat.ExpatError as e:
             raise ParseError(str(e))
 
     def _handle_start(self, tag, attrib):
-        if u'translatable' in attrib:
-            if attrib[attrib.index(u'translatable')+1] == u'yes':
+        if 'translatable' in attrib:
+            if attrib[attrib.index('translatable')+1] == 'yes':
                 self._translate = True
-                if u'comments' in attrib:
-                    self._comments.append(attrib[attrib.index(u'comments')+1])
+                if 'comments' in attrib:
+                    self._comments.append(attrib[attrib.index('comments')+1])
 
     def _handle_end(self, tag):
         if self._translate is True:
@@ -112,7 +112,7 @@ class GladeParser(object):
 
     def _handle_data(self, text):
         if self._translate:
-            if not text.startswith(u'gtk-'):
+            if not text.startswith('gtk-'):
                 self._data.append(text)
             else:
                 self._translate = False
@@ -122,7 +122,7 @@ class GladeParser(object):
     def _enqueue(self, kind, data=None, comments=None, pos=None):
         if pos is None:
             pos = self._getpos()
-        if kind in (u'property', 'property', 'col', u'col', 'item', u'item'):
+        if kind in ('property', 'property', 'col', 'col', 'item', 'item'):
             if '\n' in data:
                 lines = data.splitlines()
                 lineno = pos[0] - len(lines) + 1

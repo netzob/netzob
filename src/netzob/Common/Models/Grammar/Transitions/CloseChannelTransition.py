@@ -126,7 +126,7 @@ class CloseChannelTransition(AbstractTransition):
         # close the channel throught the abstraction layer
         try:
             abstractionLayer.closeChannel()
-        except Exception, e:
+        except Exception as e:
             self._logger.warning("An error occured which prevented the good execution of the close channel transition")
             self.active = False
             raise e

@@ -403,7 +403,7 @@ class Data(AbstractVariableLeaf):
 
 
             
-            for size in xrange(min(maxSize, len(content)), minSize -1, -1):
+            for size in range(min(maxSize, len(content)), minSize -1, -1):
                 # size == 0 : deals with 'optional' data
                 if size == 0 or self.dataType.canParse(content[:size]):
                     # we create a new parsing path and returns it
@@ -468,7 +468,7 @@ class Data(AbstractVariableLeaf):
     #            maxSize = len(content)
     
     
-            for size in xrange(min(maxSize, len(content)), minSize -1, -1):
+            for size in range(min(maxSize, len(content)), minSize -1, -1):
                 # size == 0 : deals with 'optional' data
                 if size == 0 or self.dataType.canParse(content[:size]):
                     # we create a new parsing path and returns it

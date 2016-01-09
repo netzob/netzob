@@ -113,7 +113,7 @@ class ClusterByKeyField(object):
 
         # we identify what would be the best type of the key field
         keyFieldType = ASCII
-        for message, keyFieldValue in keyFieldMessageValues.iteritems():
+        for message, keyFieldValue in keyFieldMessageValues.items():
             # If the value cannot be parsed as ASCII, we convert it to HexaString
             if not ASCII().canParse(TypeConverter.convert(keyFieldValue, Raw, BitArray)):
                 keyFieldType = HexaString
@@ -128,9 +128,9 @@ class ClusterByKeyField(object):
                 break
 
         # we create a symbol for each of these uniq values
-        for message, keyFieldValue in keyFieldMessageValues.iteritems():
+        for message, keyFieldValue in keyFieldMessageValues.items():
             keyFieldValue = TypeConverter.convert(keyFieldValue, Raw, keyFieldType)
-            if keyFieldValue not in newSymbols.keys():
+            if keyFieldValue not in list(newSymbols.keys()):
                 symbolName = "Symbol_{0}".format(keyFieldValue)
                 newSymbols[keyFieldValue] = Symbol(name=symbolName, messages=[message])
                 splittedMessages = DataAlignment.align([message.data], field, encoded=False)
@@ -140,7 +140,7 @@ class ClusterByKeyField(object):
                 splittedMessages = DataAlignment.align([message.data], field, encoded=False)
                 newSymbolsSplittedMessages[keyFieldValue].append(splittedMessages[0])
 
-        for newSymbolKeyValue, newSymbol in newSymbols.iteritems():
+        for newSymbolKeyValue, newSymbol in newSymbols.items():
             # we recreate the same fields in this new symbol as the fields that exist in the original symbol
             newSymbol.clearFields()
             for i, f in enumerate(field.fields):
