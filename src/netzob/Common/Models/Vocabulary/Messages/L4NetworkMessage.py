@@ -46,11 +46,11 @@ class L4NetworkMessage(L3NetworkMessage):
 
     >>> import binascii
     >>> msg = L4NetworkMessage("090002300202f000", date=1352293417.28, l3SourceAddress="192.168.10.100", l3DestinationAddress="192.168.10.245", l4SourceAddress=2049, l4DestinationAddress=80)
-    >>> print msg.source
+    >>> print(msg.source)
     192.168.10.100:2049
-    >>> print msg.destination
+    >>> print(msg.destination)
     192.168.10.245:80
-    >>> print msg
+    >>> print(msg)
     [0;32m[1352293417.28 [0;m[1;32m192.168.10.100:2049[1;m[0;32m->[0;m[1;32m192.168.10.245:80[1;m[0;32m][0;m '090002300202f000'
 
     """
@@ -121,3 +121,4 @@ class L4NetworkMessage(L3NetworkMessage):
         :type: str
         """
         return "{0}:{1}".format(str(self.l3DestinationAddress), str(self.l4DestinationAddress))
+

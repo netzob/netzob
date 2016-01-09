@@ -67,7 +67,7 @@ class FieldSplitDelimiter(object):
         >>> messages = [RawMessage(data=sample) for sample in samples]
         >>> symbol = Symbol(messages=messages[:3])
         >>> Format.splitDelimiter(symbol, ASCII("ff"))
-        >>> print symbol
+        >>> print(symbol)
         Field-0    | Field-sep-6666 | Field-2      | Field-sep-6666 | Field-4   
         ---------- | -------------- | ------------ | -------------- | ----------
         'aaaa'     | 'ff'           | '000000'     | 'ff'           | '10'      
@@ -80,7 +80,7 @@ class FieldSplitDelimiter(object):
         >>> symbol = Symbol(messages=messages)
         >>> symbol.encodingFunctions.add(TypeEncodingFunction(ASCII))  # Change visualization to hexastring
         >>> Format.splitDelimiter(symbol, ASCII("#"))
-        >>> print symbol
+        >>> print(symbol)
         Field-0         | Field-sep-23 | Field-2              | Field-sep-23 | Field-4
         --------------- | ------------ | -------------------- | ------------ | -------
         'CMDidentify'   | '#'          | '....fred'           | ''           | ''     
@@ -112,7 +112,7 @@ class FieldSplitDelimiter(object):
         'CMDbye'        | '#'          | '....'               | ''           | ''     
         'RESbye'        | '#'          | '........'           | ''           | ''     
         --------------- | ------------ | -------------------- | ------------ | -------
-        >>> print symbol.fields[0]._str_debug()
+        >>> print(symbol.fields[0]._str_debug())
         Field-0
         |--   Alt
               |--   Data (Raw='CMDidentify' ((0, 88)))
@@ -203,3 +203,4 @@ class FieldSplitDelimiter(object):
 
         # Create a field for each entry
         field.fields = newFields
+

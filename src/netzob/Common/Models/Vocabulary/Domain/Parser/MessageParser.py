@@ -72,9 +72,9 @@ class MessageParser(object):
     >>> f3 = Field(name="F3", domain=Agg([ASCII(" "), ASCII("!")]))
     >>> s = Symbol(name="S0", fields=[f0, f1, f2, f3])
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg, s)
+    >>> print(mp.parseMessage(msg, s))
     [bitarray('0110100001100101011011000110110001101111'), bitarray('00100000'), bitarray('0111011101101111011100100110110001100100'), bitarray('0010000000100001')]
-    >>> print mp.parseMessage(msg1, s)
+    >>> print(mp.parseMessage(msg1, s))
     [bitarray('0110100001100101011011000110110001101111'), bitarray('00100000'), bitarray('011011100110010101110100011110100110111101100010'), bitarray('0010000000100001')]
 
 
@@ -88,7 +88,7 @@ class MessageParser(object):
     >>> f4 = Field(name="F4", domain=BitArray(nbBits=5))
     >>> s = Symbol(name="S0", fields=[f1, f2, f3, f4])
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg, s)
+    >>> print(mp.parseMessage(msg, s))
     [bitarray('00001100'), bitarray('011011100110010101110100011110100110111101100010'), bitarray('000'), bitarray('00000')]
 
     >>> from netzob.all import *
@@ -102,7 +102,7 @@ class MessageParser(object):
     >>> f4 = Field(ASCII("hello"), name="F4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg, s)
+    >>> print(mp.parseMessage(msg, s))
     [bitarray('011011100110010101110100011110100110111101100010'), bitarray('00111011'), bitarray('00000110'), bitarray('0110100001100101011011000110110001101111')]
 
     >>> from netzob.all import *
@@ -115,7 +115,7 @@ class MessageParser(object):
     >>> f1 = Field(Size(f2), name="F1")
     >>> s = Symbol(fields=[f1, f2, f3])
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg, s)
+    >>> print(mp.parseMessage(msg, s))
     [bitarray('00000110'), bitarray('011011100110010101110100011110100110111101100010'), bitarray('00111011')]
 
     # Let's verify the abstraction of intra-relationships
@@ -129,7 +129,7 @@ class MessageParser(object):
     >>> f3 = Field(Value(f1), name="F3")
     >>> s = Symbol(fields=[f1, f2, f3])
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg, s)
+    >>> print(mp.parseMessage(msg, s))
     [bitarray('011011100110010101110100011110100110111101100010'), bitarray('0010000000111110001000000110110101111001001000000110111001100001011011010110010100100000011010010111001100100000'), bitarray('011011100110010101110100011110100110111101100010')]
 
     # Let's test inter-symbol relationships
@@ -152,11 +152,11 @@ class MessageParser(object):
     >>> s3 = Symbol(fields=[f31, f32], name="HELLO")
 
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg1, s1)
+    >>> print(mp.parseMessage(msg1, s1))
     [bitarray('0110110101111001001000000111000001110011011001010111010101100100011011110010000001101001011100110011101000100000'), bitarray('011011100110010101110100011110100110111101100010'), bitarray('00100001')]
-    >>> print mp.parseMessage(msg2, s2)
+    >>> print(mp.parseMessage(msg2, s2))
     [bitarray('0111011101100101011011000110001101101111011011010110010100100000'), bitarray('011011100110010101110100011110100110111101100010')]
-    >>> print mp.parseMessage(msg3, s3)
+    >>> print(mp.parseMessage(msg3, s3))
     [bitarray('011011100110010101110100011110100110111101100010'), bitarray('0010000000111110001000000110100001100101011011000110110001101111')]
 
     """
@@ -270,3 +270,4 @@ class MessageParser(object):
         
     
         
+

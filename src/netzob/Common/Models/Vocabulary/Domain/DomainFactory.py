@@ -58,25 +58,25 @@ class DomainFactory(object):
 
     >>> from netzob.all import *
     >>> domain = DomainFactory.normalizeDomain([Raw(), 10])
-    >>> print domain.varType
+    >>> print(domain.varType)
     Alt
-    >>> print domain.children[0].dataType
+    >>> print(domain.children[0].dataType)
     Raw=None ((0, None))
-    >>> print domain.children[1].dataType
+    >>> print(domain.children[1].dataType)
     Integer=10 ((8, 8))
 
     >>> domain = DomainFactory.normalizeDomain(Agg([Alt(["toto", 20]), ASCII("!")]))
-    >>> print domain.varType
+    >>> print(domain.varType)
     Agg
-    >>> print domain.children[0].varType
+    >>> print(domain.children[0].varType)
     Alt
-    >>> print domain.children[0].children[1].dataType
+    >>> print(domain.children[0].children[1].dataType)
     Integer=20 ((8, 8))
-    >>> print domain.children[1].dataType
+    >>> print(domain.children[1].dataType)
     ASCII=! ((0, 8))
 
     >>> f = Field(domain=Agg([ASCII("hello"), ["netzob", "zoby"]]))
-    >>> print f._str_debug()
+    >>> print(f._str_debug())
     Field
     |--   Agg
           |--   Data (ASCII=hello ((0, 40)))
@@ -154,3 +154,4 @@ class DomainFactory(object):
     @staticmethod
     def __normalizeRepeatDomain(domain):
         return domain
+

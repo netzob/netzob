@@ -54,7 +54,7 @@ class RelationFinder(object):
     >>> symbol = Symbol(messages=messages)
     >>> Format.splitStatic(symbol)
     >>> rels = RelationFinder.findOnFields(symbol.fields[1], symbol.fields[3])
-    >>> print len(rels)
+    >>> print(len(rels))
     1
     >>> for rel in rels:
     ...     print rel["relation_type"] + " between " + rel["x_field"].name + ":" + rel["x_attribute"] + \
@@ -350,3 +350,4 @@ class RelationFinder(object):
             else:
                 result.append(0)
         return result
+

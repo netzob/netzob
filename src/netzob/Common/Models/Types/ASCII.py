@@ -55,16 +55,16 @@ class ASCII(AbstractType):
 
     >>> from netzob.all import *
     >>> cAscii = ASCII("constante value")
-    >>> print repr(cAscii)
+    >>> print(repr(cAscii))
     constante value
-    >>> print cAscii.typeName
+    >>> print(cAscii.typeName)
     ASCII
-    >>> print cAscii.value
+    >>> print(cAscii.value)
     bitarray('011000110110111101101110011100110111010001100001011011100111010001100101001000000111011001100001011011000111010101100101')
 
     Use the convert function to convert the current type to any other netzob type
     >>> raw = cAscii.convertValue(Raw)
-    >>> print repr(raw)
+    >>> print(repr(raw))
     constante value
     >>> ip = cAscii.convertValue(IPv4)
     Traceback (most recent call last):
@@ -73,7 +73,7 @@ class ASCII(AbstractType):
 
     The type can be used to specify constraints over the domain
     >>> a = ASCII(nbChars=10)
-    >>> print a.value
+    >>> print(a.value)
     None
 
     Its not possible to convert if the object has not value
@@ -122,7 +122,7 @@ class ASCII(AbstractType):
 
         >>> b = ASCII("netzob")
         >>> gen = b.generate()
-        >>> print len(gen)>0
+        >>> print(len(gen)>0)
         True
 
         """
@@ -153,7 +153,7 @@ class ASCII(AbstractType):
 
         >>> from netzob.all import *
         >>> t = ASCII("helloworld")
-        >>> print t.mutate()
+        >>> print(t.mutate())
         {'ascii(inversed)-bits(littleEndian)': bitarray('00100110001101100100111011110110111011101111011000110110001101101010011000010110'), 'ascii(inversed-upper)-bits(littleEndian)': bitarray('00100010001100100100101011110010111010101111001000110010001100101010001000010010'), 'ascii(upper)-bits(littleEndian)': bitarray('00010010101000100011001000110010111100101110101011110010010010100011001000100010'), 'ascii-bits(bigEndian)': bitarray('01101000011001010110110001101100011011110111011101101111011100100110110001100100'), 'ascii(inversed)-bits(bigEndian)': bitarray('01100100011011000111001001101111011101110110111101101100011011000110010101101000'), 'ascii(upper)-bits(bigEndian)': bitarray('01001000010001010100110001001100010011110101011101001111010100100100110001000100'), 'ascii-bits(littleEndian)': bitarray('00010110101001100011011000110110111101101110111011110110010011100011011000100110'), 'ascii(inversed-upper)-bits(bigEndian)': bitarray('01000100010011000101001001001111010101110100111101001100010011000100010101001000')}
 
 
@@ -312,7 +312,7 @@ class ASCII(AbstractType):
 
         >>> from netzob.all import *
         >>> raw = ASCII.decode("hello zoby!")
-        >>> print ASCII.encode(raw)
+        >>> print(ASCII.encode(raw))
         hello zoby!
 
         :param data: the data encoded in python raw which will be encoded in current type
@@ -340,3 +340,4 @@ class ASCII(AbstractType):
                 res += "."
 
         return res
+

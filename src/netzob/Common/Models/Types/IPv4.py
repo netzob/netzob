@@ -69,8 +69,8 @@ class IPv4(AbstractType):
     >>> f1 = Field("IP=")
     >>> f2 = Field(IPv4())
     >>> s = Symbol(fields=[f1,f2])
-    >>> msgs = [RawMessage(s.specialize()) for x in xrange(10)]
-    >>> print len(msgs)
+    >>> msgs = [RawMessage(s.specialize()) for x in range(10)]
+    >>> print(len(msgs))
     10
 
     """
@@ -245,7 +245,7 @@ class IPv4(AbstractType):
         """Decode the specified IPv4 data into its raw representation.
 
         >>> from netzob.all import *
-        >>> print IPv4.decode("127.0.0.1")
+        >>> print(IPv4.decode("127.0.0.1"))
         \x7f\x00\x00\x01
 
         """
@@ -291,3 +291,4 @@ class IPv4(AbstractType):
                 return ip
         except Exception as e:
             raise TypeError("Impossible encode {0} into an IPv4 data ({1})".format(data, e))
+

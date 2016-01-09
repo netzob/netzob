@@ -56,9 +56,9 @@ class SearchTask(object):
     >>> from netzob.all import *
     >>> data = TypeConverter.convert("netzob", ASCII, BitArray)
     >>> searchTask = SearchTask(data, "original version")
-    >>> print searchTask.description
+    >>> print(searchTask.description)
     original version
-    >>> print TypeConverter.convert(searchTask.data, BitArray, Raw)
+    >>> print(TypeConverter.convert(searchTask.data, BitArray, Raw))
     netzob
 
     """
@@ -124,3 +124,4 @@ class SearchTask(object):
     def properties(self, properties):
         if properties is not None:
             self.__properties.update(properties)
+

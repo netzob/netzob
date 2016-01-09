@@ -63,7 +63,7 @@ class FindKeyFields(object):
         >>> symbol = Symbol(messages=messages)
         >>> Format.splitStatic(symbol)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-        >>> print symbol
+        >>> print(symbol)
         Field-0 | Field-1 | Field-2 | Field-3
         ------- | ------- | ------- | -------
         '00'    | 'ff2f'  | '0000'  | '11'   
@@ -79,7 +79,7 @@ class FindKeyFields(object):
         >>> finder = FindKeyFields()
         >>> results = finder.execute(symbol)
         >>> for result in results:
-        ...     print "Field name: " + result["keyField"].name + ", number of clusters: " + str(result["nbClusters"]) + ", distribution: " + str(result["distribution"])
+        ...     print("Field name: " + result["keyField"].name + ", number of clusters: " + str(result["nbClusters"]) + ", distribution: " + str(result["distribution"]))
         Field name: Field-1, number of clusters: 5, distribution: [2, 1, 2, 2, 1]
         Field name: Field-3, number of clusters: 2, distribution: [1, 7]
 
@@ -123,3 +123,4 @@ class FindKeyFields(object):
             result["distribution"] = distrib
 
         return results
+

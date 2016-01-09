@@ -72,11 +72,11 @@ class Size(AbstractRelationVariableLeaf):
     >>> s  = Symbol(fields=[f0, f1, f2])
     >>> msg1  = RawMessage("netzob;\x06")
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg1, s)
+    >>> print(mp.parseMessage(msg1, s))
     [bitarray('011011100110010101110100011110100110111101100010'), bitarray('00111011'), bitarray('00000110')]
     >>> msg2  = RawMessage("netzob;\x03")
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg2, s)
+    >>> print(mp.parseMessage(msg2, s))
     Traceback (most recent call last):
       ...
     InvalidParsingPathException: No parsing path returned while parsing 'netzob;'
@@ -91,12 +91,12 @@ class Size(AbstractRelationVariableLeaf):
     >>> msg1  = RawMessage("\x06;netzob")
     >>> mp = MessageParser()
 
-    >>> print mp.parseMessage(msg1, s)
+    >>> print(mp.parseMessage(msg1, s))
     [bitarray('00000110'), bitarray('00111011'), bitarray('011011100110010101110100011110100110111101100010')]
 
     >>> msg2  = RawMessage("\x03;netzob")
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg2, s)
+    >>> print(mp.parseMessage(msg2, s))
     Traceback (most recent call last):
       ...
     InvalidParsingPathException: No parsing path returned while parsing '\x03;netzob'
@@ -356,3 +356,4 @@ class Size(AbstractRelationVariableLeaf):
         if offset is None:
             raise TypeError("Offset cannot be None, use 0 if no offset should be applied.")
         self.__offset = offset
+

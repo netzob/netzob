@@ -64,7 +64,7 @@ class Symbol(AbstractField):
     >>> m2 = RawMessage("hello earth")
     >>> fields = [Field("hello ", name="f0"), Field(["world", "earth"], name="f1")]
     >>> symbol = Symbol(fields, messages=[m1, m2])
-    >>> print symbol
+    >>> print(symbol)
     f0       | f1     
     -------- | -------
     'hello ' | 'world'
@@ -76,7 +76,7 @@ class Symbol(AbstractField):
     >>> from netzob.all import *
     >>> s = Symbol([Field("hello ", name="f0"), Field(ASCII(nbChars=(0, 10)), name="f1")])
     >>> s.messages.append(RawMessage("hello toto"))
-    >>> print s
+    >>> print(s)
     f0       | f1    
     -------- | ------
     'hello ' | 'toto'
@@ -127,9 +127,9 @@ class Symbol(AbstractField):
         >>> f0 = Field(domain=Size(f1))
         >>> s = Symbol(fields=[f0, f1])
         >>> result = s.specialize()
-        >>> print result[0]
+        >>> print(result[0])
         \x05
-        >>> print len(result)
+        >>> print(len(result))
         6
 
         You can also preset the value of some variables included in the symbol definition.
@@ -140,7 +140,7 @@ class Symbol(AbstractField):
         >>> s = Symbol(fields = [f1, f2])
         >>> presetValues = dict()
         >>> presetValues[f2] = TypeConverter.convert("antoine", ASCII, BitArray)
-        >>> print s.specialize(presets = presetValues)
+        >>> print(s.specialize(presets = presetValues))
         hello antoine
 
         A preseted valued bypasses all the constraints checks on your field definition.
@@ -152,7 +152,7 @@ class Symbol(AbstractField):
         >>> f1.domain = Size(f2)
         >>> s = Symbol(fields=[f1, f2])
         >>> presetValues = {f1: TypeConverter.convert("\xff", Raw, BitArray)}        
-        >>> print repr(s.specialize(presets = presetValues)[0])
+        >>> print(repr(s.specialize(presets = presetValues)[0]))
         '\\xff'
 
         :keyword generationStrategy: if set, the strategy will be used to generate the fields definitions
@@ -200,3 +200,4 @@ class Symbol(AbstractField):
 
     def __repr__(self):
         return self.name
+

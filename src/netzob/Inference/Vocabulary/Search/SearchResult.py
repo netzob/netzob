@@ -65,11 +65,11 @@ class SearchResult(object):
     >>> searchTask = SearchTask(TypeConverter.convert("o", Raw, BitArray), "letter-o-original")
     >>> ranges = [(4,5), (7,8), (33,34), (40,41)]
     >>> sr = SearchResult(target, searchTask, ranges)
-    >>> print sr.ranges
+    >>> print(sr.ranges)
     [(4, 5), (7, 8), (33, 34), (40, 41)]
-    >>> print TypeConverter.convert(sr.target, BitArray, Raw)
+    >>> print(TypeConverter.convert(sr.target, BitArray, Raw))
     Hello world, that is just a test of netzob.
-    >>> print sr.searchTask.description
+    >>> print(sr.searchTask.description)
     letter-o-original
 
     """
@@ -118,3 +118,4 @@ class SearchResult(object):
             if not isinstance(start, int) or not isinstance(end, int) or end <= start:
                 raise TypeError("Start and end range must be integers and end > start (start={0}, end={1})".format(start, end))
         self.__ranges = ranges
+

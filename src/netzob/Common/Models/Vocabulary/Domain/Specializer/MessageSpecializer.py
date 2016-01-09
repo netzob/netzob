@@ -61,11 +61,11 @@ class MessageSpecializer(object):
     >>> f3 = Field(ASCII(';'))
     >>> f4 = Field(Value(f2))
     >>> s = Symbol(fields=[f0, f1, f2, f3, f4])
-    >>> msgs = [RawMessage(s.specialize()) for i in xrange(1)]
+    >>> msgs = [RawMessage(s.specialize()) for i in range(1)]
     >>> s.messages = msgs
     >>> s.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> valueInTab = s.getCells()[0]
-    >>> print valueInTab[0]
+    >>> print(valueInTab[0])
     544f544f
     >>> size = valueInTab[1]
     >>> int(size, 16)*2 == len(valueInTab[2])
@@ -209,3 +209,4 @@ class MessageSpecializer(object):
     
         
             
+

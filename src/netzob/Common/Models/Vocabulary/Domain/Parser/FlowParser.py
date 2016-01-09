@@ -67,7 +67,7 @@ class FlowParser(object):
     >>> s2 = Symbol(fields=[Field(ASCII("ccdd"))], name="s2")
     >>> mp = FlowParser()
     >>> result = mp.parseFlow(message, [s1, s2])
-    >>> print [(s.name, values) for (s, values) in result]
+    >>> print([(s.name, values) for (s, values) in result])
     [('s1', [bitarray('01100001011000010110001001100010')]), ('s2', [bitarray('01100011011000110110010001100100')])]
 
 
@@ -80,7 +80,7 @@ class FlowParser(object):
     >>> s1 = Symbol(fields=[f1, f2], name="s1")
     >>> fp = FlowParser()
     >>> result = fp.parseFlow(message, [s1])
-    >>> print [(s.name, values) for (s, values) in result]
+    >>> print([(s.name, values) for (s, values) in result])
     [('s1', [bitarray('011010000110010101101100011011000110111100100000'), bitarray('011011100110010101110100011110100110111101100010')]), ('s1', [bitarray('011010000110010101101100011011000110111100100000'), bitarray('01111010011011110110001001111001')])]
 
     
@@ -94,7 +94,7 @@ class FlowParser(object):
     >>> s2 = Symbol(fields = [Field("nawak")], name="s2")
     >>> fp = FlowParser()
     >>> result = fp.parseFlow(message, [s2, s1])
-    >>> print [s.name for (s, values) in result]
+    >>> print([s.name for (s, values) in result])
     ['s1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1', 's1']
 
 
@@ -230,3 +230,4 @@ class FlowParser(object):
 
             
             
+

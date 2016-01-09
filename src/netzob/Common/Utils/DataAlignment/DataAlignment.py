@@ -69,7 +69,7 @@ class DataAlignment(threading.Thread):
     >>> fields = [Field("hello ", name="f0"), Field(ASCII(nbChars=(5,10)), name="f1"), Field(" hello", name="f2")]
     >>> symbol = Symbol(fields=fields)
     >>> alignedData = DataAlignment.align(contents, symbol, encoded=True)
-    >>> print len(alignedData)
+    >>> print(len(alignedData))
     10
 
     >>> # one more fun test case
@@ -78,9 +78,9 @@ class DataAlignment(threading.Thread):
     >>> fields = [Field(ASCII('hello '), name="f1"), Field(Agg([Alt([ASCII("toto"), ASCII("to")]), Alt([ASCII("to"), ASCII("toto")])]), name="f2"), Field(ASCII(', welcome'), name="f3")]
     >>> symbol = Symbol(fields=fields)
     >>> alignedData = DataAlignment.align(data, symbol)
-    >>> print len(alignedData)
+    >>> print(len(alignedData))
     5
-    >>> print alignedData
+    >>> print(alignedData)
     f1       | f2       | f3         
     -------- | -------- | -----------
     'hello ' | 'tototo' | ', welcome'
@@ -105,7 +105,7 @@ class DataAlignment(threading.Thread):
 
     >>> symbol = Symbol(fields=headerFields+bodyFields)
     >>> alignedData2 = DataAlignment.align(messages, symbol)
-    >>> print alignedData2
+    >>> print(alignedData2)
     f1      | f2    | f3         | f4   | f5         
     ------- | ----- | ---------- | ---- | -----------
     'hello' | 'PUT' | 'toto'     | 'PA' | '343'      
@@ -329,3 +329,4 @@ class DataAlignment(threading.Thread):
             raise ValueError("Styled cannot be None")
 
         self.__styled = styled
+

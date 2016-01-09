@@ -46,18 +46,18 @@ class RawMessage(AbstractMessage):
     A RawMessage
 
     >>> msg = RawMessage("That's a simple message")
-    >>> print msg.data
+    >>> print(msg.data)
     That's a simple message
 
     >>> msg = RawMessage("hello everyone", source="server", destination="client")
-    >>> print msg.source
+    >>> print(msg.source)
     server
-    >>> print msg.destination
+    >>> print(msg.destination)
     client
-    >>> print msg.metadata
+    >>> print(msg.metadata)
     OrderedDict()
     >>> msg.metadata["metadata1"]="value"
-    >>> print msg.metadata
+    >>> print(msg.metadata)
     OrderedDict([('metadata1', 'value')])
 
     """
@@ -76,3 +76,4 @@ class RawMessage(AbstractMessage):
         :type: int
         """
         return int(self.date * 1000)
+

@@ -59,11 +59,11 @@ class Raw(AbstractType):
     or with a specific value (default is little endianness)
 
     >>> f = Field(Raw('\x01\x02\x03'))
-    >>> print f.domain.dataType
+    >>> print(f.domain.dataType)
     Raw='\\x01\\x02\\x03' ((0, 24))
 
     >>> f.domain.dataType.endianness = AbstractType.ENDIAN_BIG
-    >>> print f.domain.dataType
+    >>> print(f.domain.dataType)
     Raw='\\x01\\x02\\x03' ((0, 24))
 
     """
@@ -115,13 +115,13 @@ class Raw(AbstractType):
         >>> from netzob.all import *
         >>> a = Raw(nbBytes=(10))
         >>> gen = a.generate()
-        >>> print len(gen)
+        >>> print(len(gen))
         80
 
         >>> from netzob.all import *
         >>> a = Raw(nbBytes=(10, 20))
         >>> gen = a.generate()
-        >>> print 10<=len(gen) and 20<=len(gen)
+        >>> print(10<=len(gen) and 20<=len(gen))
         True
 
 
@@ -176,3 +176,4 @@ class Raw(AbstractType):
             return False
 
         return True
+

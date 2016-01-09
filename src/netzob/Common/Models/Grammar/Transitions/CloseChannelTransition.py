@@ -57,11 +57,11 @@ class CloseChannelTransition(AbstractTransition):
     >>> s0 = State()
     >>> s1 = State()
     >>> t = CloseChannelTransition(s0, s1)
-    >>> print t.name
+    >>> print(t.name)
     None
-    >>> print s0 == t.startState
+    >>> print(s0 == t.startState)
     True
-    >>> print s1 == t.endState
+    >>> print(s1 == t.endState)
     True
 
     """
@@ -140,3 +140,4 @@ class CloseChannelTransition(AbstractTransition):
             return self._description
         else:
             return "CloseChannelTransition"
+

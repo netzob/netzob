@@ -61,19 +61,19 @@ class Data(AbstractVariableLeaf):
     >>> from netzob.all import *
     >>> f = Field()
     >>> f.domain = Data(dataType=ASCII(), originalValue=TypeConverter.convert("zoby", ASCII, BitArray), name="pseudo")
-    >>> print f.domain.varType
+    >>> print(f.domain.varType)
     Data
-    >>> print TypeConverter.convert(f.domain.currentValue, BitArray, Raw)
+    >>> print(TypeConverter.convert(f.domain.currentValue, BitArray, Raw))
     zoby
-    >>> print f.domain.dataType
+    >>> print(f.domain.dataType)
     ASCII=None ((0, None))
-    >>> print f.domain.name
+    >>> print(f.domain.name)
     pseudo
 
     >>> f = Field(ASCII("hello zoby"))
-    >>> print f.domain.varType
+    >>> print(f.domain.varType)
     Data
-    >>> print TypeConverter.convert(f.domain.currentValue, BitArray, ASCII)
+    >>> print(TypeConverter.convert(f.domain.currentValue, BitArray, ASCII))
     hello zoby
 
 
@@ -93,12 +93,12 @@ class Data(AbstractVariableLeaf):
     >>> s = Symbol(name="S0", fields=[f0])
     >>> msg1 = RawMessage("netzob")
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg1, s)
+    >>> print(mp.parseMessage(msg1, s))
     [bitarray('011011100110010101110100011110100110111101100010')]
 
     >>> msg2 = RawMessage("netzab")
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg2, s)
+    >>> print(mp.parseMessage(msg2, s))
     Traceback (most recent call last):
       ...
     InvalidParsingPathException: No parsing path returned while parsing 'netzab'
@@ -113,11 +113,11 @@ class Data(AbstractVariableLeaf):
     >>> msg2 = RawMessage("netzob")
     >>> msg3 = RawMessage("netzab")
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg1, s)
+    >>> print(mp.parseMessage(msg1, s))
     [bitarray('011011100110010101110100011110100110111101100010')]
-    >>> print mp.parseMessage(msg2, s)
+    >>> print(mp.parseMessage(msg2, s))
     [bitarray('011011100110010101110100011110100110111101100010')]
-    >>> print mp.parseMessage(msg3, s)
+    >>> print(mp.parseMessage(msg3, s))
     Traceback (most recent call last):
       ...
     InvalidParsingPathException: No parsing path returned while parsing 'netzab'
@@ -127,7 +127,7 @@ class Data(AbstractVariableLeaf):
     >>> s = Symbol(name="S0", fields=[f0])
     >>> msg1 = RawMessage("netzab")
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg1, s)
+    >>> print(mp.parseMessage(msg1, s))
     Traceback (most recent call last):
       ...
     InvalidParsingPathException: No parsing path returned while parsing 'netzab'
@@ -142,19 +142,19 @@ class Data(AbstractVariableLeaf):
     >>> msg2 = RawMessage("netzob")
     >>> msg3 = RawMessage("netzab")
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg1, s)
+    >>> print(mp.parseMessage(msg1, s))
     [bitarray('011011100110010101110100011110100110111101100010')]
-    >>> print mp.memory
+    >>> print(mp.memory)
     Data (ASCII=None ((40, 80))): netzob
 
-    >>> print mp.parseMessage(msg2, s)
+    >>> print(mp.parseMessage(msg2, s))
     [bitarray('011011100110010101110100011110100110111101100010')]
-    >>> print mp.memory
+    >>> print(mp.memory)
     Data (ASCII=None ((40, 80))): netzob
     
-    >>> print mp.parseMessage(msg3, s)
+    >>> print(mp.parseMessage(msg3, s))
     [bitarray('011011100110010101110100011110100110000101100010')]
-    >>> print mp.memory
+    >>> print(mp.memory)
     Data (ASCII=None ((40, 80))): netzab
 
 
@@ -167,19 +167,19 @@ class Data(AbstractVariableLeaf):
     >>> msg2 = RawMessage("netzob")
     >>> msg3 = RawMessage("netzab")
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg1, s)
+    >>> print(mp.parseMessage(msg1, s))
     [bitarray('011011100110010101110100011110100110111101100010')]
-    >>> print len(str(mp.memory))
+    >>> print(len(str(mp.memory)))
     0
 
-    >>> print mp.parseMessage(msg2, s)
+    >>> print(mp.parseMessage(msg2, s))
     [bitarray('011011100110010101110100011110100110111101100010')]
-    >>> print len(str(mp.memory))
+    >>> print(len(str(mp.memory)))
     0
     
-    >>> print mp.parseMessage(msg3, s)
+    >>> print(mp.parseMessage(msg3, s))
     [bitarray('011011100110010101110100011110100110000101100010')]
-    >>> print len(str(mp.memory))
+    >>> print(len(str(mp.memory)))
     0
 
     
@@ -191,17 +191,17 @@ class Data(AbstractVariableLeaf):
     >>> f0 = Field(domain=Data(dataType=ASCII(), originalValue=TypeConverter.convert("netzob", ASCII, BitArray), name="netzob", svas=SVAS.CONSTANT))
     >>> s = Symbol(name="S0", fields=[f0])
     >>> ms = MessageSpecializer()
-    >>> print ms.specializeSymbol(s).generatedContent
+    >>> print(ms.specializeSymbol(s).generatedContent)
     bitarray('011011100110010101110100011110100110111101100010')
-    >>> print ms.specializeSymbol(s).generatedContent
+    >>> print(ms.specializeSymbol(s).generatedContent)
     bitarray('011011100110010101110100011110100110111101100010')
-    >>> print len(str(ms.memory))
+    >>> print(len(str(ms.memory)))
     0
 
     >>> f0 = Field(domain=Data(dataType=ASCII(nbChars=(5, 10)), name="netzob", svas=SVAS.CONSTANT))
     >>> s = Symbol(name="S0", fields=[f0])
     >>> ms = MessageSpecializer()
-    >>> print ms.specializeSymbol(s).generatedContent
+    >>> print(ms.specializeSymbol(s).generatedContent)
     Traceback (most recent call last):
       ...
     Exception: Cannot specialize this symbol.
@@ -213,21 +213,21 @@ class Data(AbstractVariableLeaf):
     >>> f0 = Field(domain=Data(dataType=ASCII(), originalValue=TypeConverter.convert("netzob", ASCII, BitArray), name="netzob", svas=SVAS.PERSISTENT))
     >>> s = Symbol(name="S0", fields=[f0])
     >>> ms = MessageSpecializer()
-    >>> print ms.specializeSymbol(s).generatedContent
+    >>> print(ms.specializeSymbol(s).generatedContent)
     bitarray('011011100110010101110100011110100110111101100010')
-    >>> print len(str(ms.memory))
+    >>> print(len(str(ms.memory)))
     0
 
     >>> f0 = Field(domain=Data(dataType=ASCII(nbChars=5), name="netzob", svas=SVAS.PERSISTENT))
     >>> s = Symbol(name="S0", fields=[f0])
     >>> ms = MessageSpecializer()
     >>> generated1 = ms.specializeSymbol(s).generatedContent
-    >>> print len(generated1)
+    >>> print(len(generated1))
     40
-    >>> print ms.memory.hasValue(f0.domain)
+    >>> print(ms.memory.hasValue(f0.domain))
     True
     >>> generated2 = ms.specializeSymbol(s).generatedContent
-    >>> print len(generated2)
+    >>> print(len(generated2))
     40
     >>> generated1 == generated2
     True
@@ -239,10 +239,10 @@ class Data(AbstractVariableLeaf):
     >>> f0 = Field(domain=Data(dataType=ASCII(), originalValue=TypeConverter.convert("netzob", ASCII, BitArray), name="netzob", svas=SVAS.EPHEMERAL))
     >>> s = Symbol(name="S0", fields=[f0])
     >>> ms = MessageSpecializer()
-    >>> print ms.memory.hasValue(f0.domain)
+    >>> print(ms.memory.hasValue(f0.domain))
     False
     >>> generated1 = ms.specializeSymbol(s).generatedContent
-    >>> print ms.memory.hasValue(f0.domain)
+    >>> print(ms.memory.hasValue(f0.domain))
     True
     >>> generated2 = ms.specializeSymbol(s).generatedContent
     >>> generated2 == ms.memory.getValue(f0.domain)
@@ -255,10 +255,10 @@ class Data(AbstractVariableLeaf):
     >>> f0 = Field(domain=Data(dataType=ASCII(nbChars=(5, 10)), name="netzob", svas=SVAS.EPHEMERAL))
     >>> s = Symbol(name="S0", fields=[f0])
     >>> ms = MessageSpecializer()
-    >>> print ms.memory.hasValue(f0.domain)
+    >>> print(ms.memory.hasValue(f0.domain))
     False
     >>> generated1 = ms.specializeSymbol(s).generatedContent
-    >>> print ms.memory.hasValue(f0.domain)
+    >>> print(ms.memory.hasValue(f0.domain))
     True
     >>> generated2 = ms.specializeSymbol(s).generatedContent
     >>> generated2 == ms.memory.getValue(f0.domain)
@@ -274,10 +274,10 @@ class Data(AbstractVariableLeaf):
     >>> f0 = Field(domain=Data(dataType=ASCII(nbChars=(5,10)), name="netzob", svas=SVAS.VOLATILE))
     >>> s = Symbol(name="S0", fields=[f0])
     >>> ms = MessageSpecializer()
-    >>> print ms.memory.hasValue(f0.domain)
+    >>> print(ms.memory.hasValue(f0.domain))
     False
     >>> generated1 = ms.specializeSymbol(s).generatedContent
-    >>> print ms.memory.hasValue(f0.domain)
+    >>> print(ms.memory.hasValue(f0.domain))
     False
     >>> generated2 = ms.specializeSymbol(s).generatedContent
     >>> generated2 == ms.memory.hasValue(f0.domain)
@@ -551,3 +551,4 @@ class Data(AbstractVariableLeaf):
         else:
             cv = currentValue
         self.__currentValue = cv
+

@@ -76,8 +76,8 @@ class Timestamp(AbstractType):
     >>> f1 = Field(Timestamp(1444737333), name="Timestamp")
     >>> f2 = Field(Raw("00"), name="End")
     >>> s = Symbol(fields=[f0, f1, f2])
-    >>> s.messages = [RawMessage(s.specialize()) for x in xrange(5)]
-    >>> print s
+    >>> s.messages = [RawMessage(s.specialize()) for x in range(5)]
+    >>> print(s)
     Start | Timestamp    | End 
     ----- | ------------ | ----
     '00'  | 'V\\x1c\\xf15' | '00'
@@ -87,7 +87,7 @@ class Timestamp(AbstractType):
     '00'  | 'V\\x1c\\xf15' | '00'
     ----- | ------------ | ----
     >>> s.fields[1].addEncodingFunction(TypeEncodingFunction(Timestamp))
-    >>> print s
+    >>> print(s)
     Start | Timestamp                  | End 
     ----- | -------------------------- | ----
     '00'  | 'Tue Oct 13 13:55:33 2015' | '00'
@@ -199,10 +199,10 @@ class Timestamp(AbstractType):
         >>> from netzob.all import *
         >>> f = Field(Timestamp())
         >>> value = f.specialize()
-        >>> print len(value)
+        >>> print(len(value))
         4
         >>> f = Field(Timestamp(epoch=Timestamp.EPOCH_WINDOWS, unitSize = AbstractType.UNITSIZE_64))
-        >>> print len(f.specialize())
+        >>> print(len(f.specialize()))
         8
         
 
@@ -237,7 +237,7 @@ class Timestamp(AbstractType):
 
         >>> from netzob.all import *
         >>> value = 1444494130
-        >>> print len(Timestamp.decode(value))
+        >>> print(len(Timestamp.decode(value)))
         4
 
         """
@@ -269,3 +269,4 @@ class Timestamp(AbstractType):
         if epoch is None:
             raise Exception("Epoch cannot be None")
         self.__epoch = epoch
+

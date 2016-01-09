@@ -85,14 +85,14 @@ class ParallelDataAlignment(object):
     >>> alignedData = pAlignment.execute(data)
     >>> end = time.time()
     >>> oneThreadDuration = end-start
-    >>> print len(alignedData)
+    >>> print(len(alignedData))
     1000
     >>> pAlignment = ParallelDataAlignment(field=symbol, depth=None)
     >>> start = time.time()
     >>> alignedData = pAlignment.execute(data)
     >>> end = time.time()
     >>> autoThreadDuration = end-start
-    >>> print len(alignedData)
+    >>> print(len(alignedData))
     1000
     >>> autoThreadDuration <= oneThreadDuration
     True
@@ -315,3 +315,4 @@ class ParallelDataAlignment(object):
             raise ValueError("Styled cannot be None")
 
         self.__styled = styled
+

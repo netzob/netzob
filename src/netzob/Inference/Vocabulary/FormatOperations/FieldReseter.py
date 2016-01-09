@@ -68,7 +68,7 @@ class FieldReseter(object):
     >>> f3 = Field(Raw(), name="f3")
     >>> symbol = Symbol([f1, f2, f3], messages=messages)
     >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print symbol
+    >>> print(symbol)
     f1   | f21  | f22  | f3      
     ---- | ---- | ---- | --------
     '00' | 'ff' | '2f' | '000000'
@@ -78,7 +78,7 @@ class FieldReseter(object):
     >>> reseter = FieldReseter()
     >>> reseter.reset(symbol)
     >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print symbol
+    >>> print(symbol)
     Field         
     --------------
     '00ff2f000000'
@@ -110,3 +110,4 @@ class FieldReseter(object):
         if isinstance(field, Field):
             field.domain = Raw(None)
             field.regex = NetzobRegex.buildDefaultRegex()
+

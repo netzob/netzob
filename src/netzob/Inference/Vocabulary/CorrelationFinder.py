@@ -65,7 +65,7 @@ class CorrelationFinder(object):
     >>> symbol = Symbol(messages=messages)
     >>> Format.splitStatic(symbol)
     >>> rels = CorrelationFinder.find(symbol)
-    >>> print len(rels)
+    >>> print(len(rels))
     64
     """
 
@@ -275,3 +275,4 @@ class CorrelationFinder(object):
             lines.append(",".join(line))
 
         return (header, lines)
+

@@ -56,17 +56,17 @@ class Agg(AbstractVariableNode):
 
     >>> from netzob.all import *
     >>> domain = Agg([Raw(), ASCII()])
-    >>> print domain.varType
+    >>> print(domain.varType)
     Agg
-    >>> print domain.children[0].dataType
+    >>> print(domain.children[0].dataType)
     Raw=None ((0, None))
-    >>> print domain.children[1].dataType
+    >>> print(domain.children[1].dataType)
     ASCII=None ((0, None))
     >>> domain.children.append(Agg([10, 20, 30]))
-    >>> print len(domain.children)
+    >>> print(len(domain.children))
     3
     >>> domain.children.remove(domain.children[0])
-    >>> print len(domain.children)
+    >>> print(len(domain.children))
     2
 
     Another example of an aggregate
@@ -76,7 +76,7 @@ class Agg(AbstractVariableNode):
     >>> f0 = Field(Agg([BitArray(bitarray('01101001')), BitArray(nbBits=3), BitArray(nbBits=5)]))
     >>> s = Symbol(fields=[f0])
     >>> t = s.specialize()
-    >>> print len(t)
+    >>> print(len(t))
     2
 
     Let's see the abstraction process of an AGGREGATE
@@ -89,12 +89,12 @@ class Agg(AbstractVariableNode):
     >>> s = Symbol([f0, f1])
     >>> msg1 = RawMessage("netzob.txt!")
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg1, s)
+    >>> print(mp.parseMessage(msg1, s))
     [bitarray('01101110011001010111010001111010011011110110001000101110011101000111100001110100'), bitarray('00100001')]
 
     >>> msg2 = RawMessage("netzobtxt!")
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg2, s)
+    >>> print(mp.parseMessage(msg2, s))
     Traceback (most recent call last):
       ...
     InvalidParsingPathException: No parsing path returned while parsing 'netzobtxt!'
@@ -107,7 +107,7 @@ class Agg(AbstractVariableNode):
     >>> d2 = ASCII(" netzob")
     >>> f = Field(Agg([d1, d2]))
     >>> s = Symbol(fields=[f])
-    >>> print s.specialize()
+    >>> print(s.specialize())
     hello netzob
 
     """
@@ -213,3 +213,4 @@ class Agg(AbstractVariableNode):
 
         # ok we managed to parse all the children, and it produced some valid specializer paths. We return them
         return specializingPaths
+

@@ -60,11 +60,11 @@ class Transition(AbstractTransition):
     >>> s0 = State()
     >>> s1 = State()
     >>> t = Transition(s0, s1)
-    >>> print t.name
+    >>> print(t.name)
     None
-    >>> print s0 == t.startState
+    >>> print(s0 == t.startState)
     True
-    >>> print s1 == t.endState
+    >>> print(s1 == t.endState)
     True
 
     Additionnal informations can be attached to a transition
@@ -253,10 +253,10 @@ class Transition(AbstractTransition):
         0
         >>> transition.outputSymbols.append(Symbol())
         >>> transition.outputSymbols.extend([Symbol(), Symbol()])
-        >>> print len(transition.outputSymbols)
+        >>> print(len(transition.outputSymbols))
         3
         >>> transition.outputSymbols = []
-        >>> print len(transition.outputSymbols)
+        >>> print(len(transition.outputSymbols))
         0
 
         :type: list of :class:`netzob.Common.Models.Vocabulary.Symbol.Symbol`
@@ -286,3 +286,4 @@ class Transition(AbstractTransition):
             for outputSymbol in self.outputSymbols:
                 desc.append(str(outputSymbol.name))
             return self.name + " (" + str(self.inputSymbol.name) + ";{" + ",".join(desc) + "})"
+

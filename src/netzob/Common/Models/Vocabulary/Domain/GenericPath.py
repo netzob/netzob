@@ -80,12 +80,12 @@ class GenericPath(object):
         >>> from netzob.all import *
         >>> path = GenericPath()
         >>> var = Data(dataType=ASCII())
-        >>> print path.isDataAvailableForVariable(var)
+        >>> print(path.isDataAvailableForVariable(var))
         False
         >>> path.addResult(var, TypeConverter.convert("test", ASCII, BitArray))
-        >>> print path.isDataAvailableForVariable(var)
+        >>> print(path.isDataAvailableForVariable(var))
         True
-        >>> print path.getDataAssignedToVariable(var)
+        >>> print(path.getDataAssignedToVariable(var))
         bitarray('01110100011001010111001101110100')
 
         """
@@ -98,12 +98,12 @@ class GenericPath(object):
         >>> from netzob.all import *
         >>> path = GenericPath()
         >>> field = Field(ASCII())
-        >>> print path.isDataAvailableForField(field)
+        >>> print(path.isDataAvailableForField(field))
         False
         >>> path.addResultToField(field, TypeConverter.convert("test", ASCII, BitArray))
-        >>> print path.isDataAvailableForField(field)
+        >>> print(path.isDataAvailableForField(field))
         True
-        >>> print path.getDataAssignedToField(field)
+        >>> print(path.getDataAssignedToField(field))
         bitarray('01110100011001010111001101110100')
 
         """        
@@ -118,10 +118,10 @@ class GenericPath(object):
         >>> from netzob.all import *
         >>> path = GenericPath()
         >>> f0 = Field(ASCII())
-        >>> print path.isDataAvailableForField(f0)
+        >>> print(path.isDataAvailableForField(f0))
         False
         >>> path.addResultToField(f0, TypeConverter.convert("test", ASCII, BitArray))
-        >>> print path.getDataAssignedToField(f0)
+        >>> print(path.getDataAssignedToField(f0))
         bitarray('01110100011001010111001101110100')
         """
         
@@ -142,10 +142,10 @@ class GenericPath(object):
         >>> from netzob.all import *
         >>> path = GenericPath()
         >>> f0 = Field(ASCII())
-        >>> print path.isDataAvailableForField(f0)
+        >>> print(path.isDataAvailableForField(f0))
         False
         >>> path.assignDataToField(TypeConverter.convert("test", ASCII, BitArray), f0)    
-        >>> print path.getDataAssignedToField(f0)
+        >>> print(path.getDataAssignedToField(f0))
         bitarray('01110100011001010111001101110100')
         """
         if data is None:
@@ -170,13 +170,13 @@ class GenericPath(object):
         >>> from netzob.all import *
         >>> path = GenericPath()
         >>> f0 = Field(ASCII())
-        >>> print path.isDataAvailableForField(f0)
+        >>> print(path.isDataAvailableForField(f0))
         False
         >>> path.assignDataToField(TypeConverter.convert("netzob", ASCII, BitArray), f0)
-        >>> print path.isDataAvailableForField(f0)
+        >>> print(path.isDataAvailableForField(f0))
         True
         >>> path.removeAssignedDataToField(f0)
-        >>> print path.isDataAvailableForField(f0)
+        >>> print(path.isDataAvailableForField(f0))
         False
         """        
         
@@ -191,10 +191,10 @@ class GenericPath(object):
         >>> from netzob.all import *
         >>> path = GenericPath()
         >>> v1 = Data(dataType=ASCII(nbChars=(5, 10)), name="netzob")          
-        >>> print path.isDataAvailableForVariable(v1)
+        >>> print(path.isDataAvailableForVariable(v1))
         False
         >>> path.assignDataToVariable(TypeConverter.convert("zoby", ASCII, BitArray), v1)
-        >>> print path.getDataAssignedToVariable(v1)
+        >>> print(path.getDataAssignedToVariable(v1))
         bitarray('01111010011011110110001001111001')
 
         """
@@ -288,3 +288,4 @@ class GenericPath(object):
     @typeCheck(Memory)
     def memory(self, memory):
         self.__memory = memory
+

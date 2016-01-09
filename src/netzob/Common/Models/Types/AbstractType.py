@@ -61,7 +61,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     >>> t = ASCII("netzob")
     >>> t.value
     bitarray('011011100110010101110100011110100110111101100010')
-    >>> print t.endianness
+    >>> print(t.endianness)
     big
     """
 
@@ -267,7 +267,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         >>> from netzob.all import *
         >>> a = ASCII(nbChars=20)
         >>> l = a.generate()
-        >>> print len(l)
+        >>> print(len(l))
         160
         """
 
@@ -294,16 +294,16 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
         >>> from netzob.all import *
         >>> t = ASCII("helloworld")
-        >>> print t.mutate()
+        >>> print(t.mutate())
         {'ascii(inversed)-bits(littleEndian)': bitarray('00100110001101100100111011110110111011101111011000110110001101101010011000010110'), 'ascii(inversed-upper)-bits(littleEndian)': bitarray('00100010001100100100101011110010111010101111001000110010001100101010001000010010'), 'ascii(upper)-bits(littleEndian)': bitarray('00010010101000100011001000110010111100101110101011110010010010100011001000100010'), 'ascii-bits(bigEndian)': bitarray('01101000011001010110110001101100011011110111011101101111011100100110110001100100'), 'ascii(inversed)-bits(bigEndian)': bitarray('01100100011011000111001001101111011101110110111101101100011011000110010101101000'), 'ascii(upper)-bits(bigEndian)': bitarray('01001000010001010100110001001100010011110101011101001111010100100100110001000100'), 'ascii-bits(littleEndian)': bitarray('00010110101001100011011000110110111101101110111011110110010011100011011000100110'), 'ascii(inversed-upper)-bits(bigEndian)': bitarray('01000100010011000101001001001111010101110100111101001100010011000100010101001000')}
 
         >>> t = Integer(100)
-        >>> print t.mutate()
+        >>> print(t.mutate())
         {'bits(littleEndian)': bitarray('00100110'), 'bits(bigEndian)': bitarray('01100100')}
 
         >>> t = Integer()
         >>> mutations = t.mutate()
-        >>> print len(mutations['bits(littleEndian)'])
+        >>> print(len(mutations['bits(littleEndian)']))
         8
 
         :keyword prefixDescription: prefix to attach to the description of the generated mutation.
@@ -473,9 +473,9 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
         >>> from netzob.all import *
         >>> normalizedData = AbstractType.normalize("netzob")
-        >>> print normalizedData.__class__
+        >>> print(normalizedData.__class__)
         <class 'netzob.Common.Models.Types.ASCII.ASCII'>
-        >>> print normalizedData.value
+        >>> print(normalizedData.value)
         bitarray('011011100110010101110100011110100110111101100010')
         """
 
@@ -505,12 +505,12 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
         >>> from netzob.all import *
         >>> ascii = ASCII("hello netzob !")
-        >>> print ascii.typeName
+        >>> print(ascii.typeName)
         ASCII
         >>> data = ascii.buildDataRepresentation()
-        >>> print TypeConverter.convert(data.currentValue, BitArray, ASCII)
+        >>> print(TypeConverter.convert(data.currentValue, BitArray, ASCII))
         hello netzob !
-        >>> print data.dataType
+        >>> print(data.dataType)
         ASCII=hello netzob ! ((0, 112))
 
         :return: a Data of the current type
@@ -606,3 +606,4 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         if not sign in AbstractType.supportedSign():
             raise TypeError("Specified Sign is not supported, please refer to the list in AbstractType.supportedSign().")
         self.__sign = sign
+

@@ -56,11 +56,11 @@ class Alt(AbstractVariableNode):
 
     >>> from netzob.all import *
     >>> domain = Alt([Raw(), ASCII()])
-    >>> print domain.varType
+    >>> print(domain.varType)
     Alt
-    >>> print domain.children[0].dataType
+    >>> print(domain.children[0].dataType)
     Raw=None ((0, None))
-    >>> print domain.children[1].dataType
+    >>> print(domain.children[1].dataType)
     ASCII=None ((0, None))
 
     Let's see how we can abstract an ALTERNATE
@@ -72,15 +72,15 @@ class Alt(AbstractVariableNode):
     >>> s = Symbol([f0])
     >>> msg1 = RawMessage("netzob")
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg1, s)
+    >>> print(mp.parseMessage(msg1, s))
     [bitarray('011011100110010101110100011110100110111101100010')]
     >>> msg2 = RawMessage("zoby")
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg2, s)
+    >>> print(mp.parseMessage(msg2, s))
     [bitarray('01111010011011110110001001111001')]
     >>> msg3 = RawMessage("nothing")
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg3, s)
+    >>> print(mp.parseMessage(msg3, s))
     Traceback (most recent call last):
       ...
     InvalidParsingPathException: No parsing path returned while parsing 'nothing'
@@ -93,7 +93,7 @@ class Alt(AbstractVariableNode):
     >>> f1 = Field("22", name="f1")
     >>> f2 = Field(Alt(["00", "0044", "0", "004"]), name="f2")
     >>> s = Symbol([f1, f2], messages=[m1], name="S0")
-    >>> print s
+    >>> print(s)
     f1   | f2    
     ---- | ------
     '22' | '0044'
@@ -171,3 +171,4 @@ class Alt(AbstractVariableNode):
         # lets shuffle this ( :) ) >>> by default we only consider the first valid parsing path.
         random.shuffle(specializingPaths)
         return specializingPaths
+

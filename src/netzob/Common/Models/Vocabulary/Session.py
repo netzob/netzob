@@ -59,11 +59,11 @@ class Session(object):
     >>> msg2 = RawMessage("SYN", source="A", destination="B", date=time.mktime(time.strptime("9 Aug 13 10:45:01", "%d %b %y %H:%M:%S")))
     >>> msg3 = RawMessage("SYN/ACK", source="B", destination="A", date=time.mktime(time.strptime("9 Aug 13 10:45:03", "%d %b %y %H:%M:%S")))
     >>> session = Session([msg1, msg2, msg3])
-    >>> print session.messages.values()[0]
+    >>> print(list(session.messages.values())[0])
     [0;32m[1376037901.0 [0;m[1;32mA[1;m[0;32m->[0;m[1;32mB[1;m[0;32m][0;m 'SYN'
-    >>> print session.messages.values()[1]
+    >>> print(list(session.messages.values())[1])
     [0;32m[1376037903.0 [0;m[1;32mB[1;m[0;32m->[0;m[1;32mA[1;m[0;32m][0;m 'SYN/ACK'
-    >>> print session.messages.values()[2]
+    >>> print(list(session.messages.values())[2])
     [0;32m[1376037905.0 [0;m[1;32mA[1;m[0;32m->[0;m[1;32mB[1;m[0;32m][0;m 'ACK'
 
     """
@@ -143,15 +143,15 @@ class Session(object):
         >>> from netzob.all import *
         >>> appData = ApplicativeData("test", Integer(20))
         >>> session = Session(applicativeData=[appData])
-        >>> print len(session.applicativeData)
+        >>> print(len(session.applicativeData))
         1
         >>> appData2 = ApplicativeData("test2", ASCII("helloworld"))
         >>> session.applicativeData.append(appData2)
-        >>> print len(session.applicativeData)
+        >>> print(len(session.applicativeData))
         2
-        >>> print session.applicativeData[0]
+        >>> print(session.applicativeData[0])
         Applicative Data: test=Integer=20 ((8, 8)))
-        >>> print session.applicativeData[1]
+        >>> print(session.applicativeData[1])
         Applicative Data: test2=ASCII=helloworld ((0, 80)))
 
         :type: a list of :class:`netzob.Common.Models.Vocabulary.ApplicativeData.ApplicativeData`.
@@ -191,9 +191,9 @@ class Session(object):
         >>> msg2 = RawMessage("SYN/ACK", source="B", destination="A")
         >>> msg3 = RawMessage("ACK", source="A", destination="C")
         >>> session = Session([msg1, msg2, msg3])
-        >>> print len(session.getEndpointsList())
+        >>> print(len(session.getEndpointsList()))
         2
-        >>> print session.getEndpointsList()
+        >>> print(session.getEndpointsList())
         [('A', 'B'), ('A', 'C')]
 
         :return: a list containing couple of endpoints (src, dst).
@@ -224,10 +224,10 @@ class Session(object):
         >>> msg2 = RawMessage("SYN/ACK", source="B", destination="A")
         >>> msg3 = RawMessage("ACK", source="A", destination="C")
         >>> session = Session([msg1, msg2, msg3])
-        >>> print len(session.getTrueSessions())
+        >>> print(len(session.getTrueSessions()))
         2
         >>> for trueSession in session.getTrueSessions():
-        ...    print trueSession.name
+        ...    print(trueSession.name)
         Session: 'A' - 'B'
         Session: 'A' - 'C'
 
@@ -262,7 +262,7 @@ class Session(object):
         >>> msg2 = RawMessage("SYN/ACK", source="B", destination="A")
         >>> msg3 = RawMessage("ACK", source="A", destination="B")
         >>> session = Session([msg1, msg2, msg3])
-        >>> print session.isTrueSession()
+        >>> print(session.isTrueSession())
         True
 
         :return: a boolean telling if the current session is a true one (i.e. it corresponds to a uniq applicative session between two endpoints).
@@ -294,7 +294,7 @@ class Session(object):
         >>> session = Session([msg1, msg2, msg3])
         >>> if session.isTrueSession():
         ...    for src, dst, sym in session.abstract(symbolList):
-        ...        print str(src) + " - " + str(dst) + " : " + str(sym.name)
+        ...        print(str(src) + " - " + str(dst) + " : " + str(sym.name))
         A - B : Symbol_SYN
         B - A : Symbol_SYNACK
         A - B : Symbol_ACK
@@ -312,3 +312,4 @@ class Session(object):
             symbol = AbstractField.abstract(message.data, symbolList)
             abstractSession.append((message.source, message.destination, symbol))
         return abstractSession
+

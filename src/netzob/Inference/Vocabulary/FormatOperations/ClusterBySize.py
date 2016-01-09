@@ -70,9 +70,9 @@ class ClusterBySize(object):
         >>> clusterer = ClusterBySize()
         >>> newSymbols = clusterer.cluster(messages)
         >>> for sym in newSymbols:
-        ...     print "[" + sym.name + "]"
+        ...     print("[" + sym.name + "]")
         ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
-        ...     print sym
+        ...     print(sym)
         [symbol_9]
         Field               
         --------------------
@@ -116,3 +116,4 @@ class ClusterBySize(object):
             newSymbols.append(s)
 
         return newSymbols
+

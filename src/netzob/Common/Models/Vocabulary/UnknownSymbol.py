@@ -54,13 +54,13 @@ class UnknownSymbol(Symbol):
 
     >>> from netzob.all import *
     >>> u = UnknownSymbol()
-    >>> print u.name
+    >>> print(u.name)
     Unknown Symbol ''
 
     >>> from netzob.all import *
     >>> msg = RawMessage("hello")
     >>> u = UnknownSymbol(msg)
-    >>> print u.name
+    >>> print(u.name)
     Unknown Symbol 'hello'
 
     """
@@ -96,3 +96,4 @@ class UnknownSymbol(Symbol):
             message = RawMessage()
         
         self.__message = message
+

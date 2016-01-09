@@ -69,7 +69,7 @@ class Value(AbstractRelationVariableLeaf):
     >>> f4 = Field(ASCII("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg, s)
+    >>> print(mp.parseMessage(msg, s))
     [bitarray('011011100110010101110100011110100110111101100010'), bitarray('00111011'), bitarray('011011100110010101110100011110100110111101100010'), bitarray('00100001')]
 
     # lets try another way of expressing such a relation
@@ -82,7 +82,7 @@ class Value(AbstractRelationVariableLeaf):
     >>> f4 = Field(ASCII("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg, s)
+    >>> print(mp.parseMessage(msg, s))
     [bitarray('011011100110010101110100011110100110111101100010'), bitarray('00111011'), bitarray('011011100110010101110100011110100110111101100010'), bitarray('00100001')]
 
 
@@ -95,7 +95,7 @@ class Value(AbstractRelationVariableLeaf):
     >>> f4 = Field(ASCII("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
     >>> ms = MessageSpecializer()
-    >>> print TypeConverter.convert(ms.specializeSymbol(s).generatedContent, BitArray, Raw)
+    >>> print(TypeConverter.convert(ms.specializeSymbol(s).generatedContent, BitArray, Raw))
     netzob;netzob!
     
     >>> from netzob.all import *
@@ -105,7 +105,7 @@ class Value(AbstractRelationVariableLeaf):
     >>> f4 = Field(ASCII("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
     >>> ms = MessageSpecializer()
-    >>> print TypeConverter.convert(ms.specializeSymbol(s).generatedContent, BitArray, Raw)
+    >>> print(TypeConverter.convert(ms.specializeSymbol(s).generatedContent, BitArray, Raw))
     netzob;netzob!
     
     """
@@ -320,3 +320,4 @@ class Value(AbstractRelationVariableLeaf):
         if offset is None:
             raise TypeError("Offset cannot be None, use 0 if no offset should be applied.")
         self.__offset = offset
+

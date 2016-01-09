@@ -63,7 +63,7 @@ class DomainEncodingFunction(EncodingFunction):
     >>> m = RawMessage("There are " + TypeConverter.convert(10, Integer, Raw) + " solutions.")
     >>> s = Symbol(fields=[f], messages=[m], name="Symbol")
     >>> s.addEncodingFunction(TypeEncodingFunction(ASCII))
-    >>> print s
+    >>> print(s)
     f0                      
     ------------------------
     'There are . solutions.'
@@ -103,3 +103,4 @@ class DomainEncodingFunction(EncodingFunction):
     def priority(self):
         """Returns the priority of the current encoding filter."""
         return 100
+

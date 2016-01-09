@@ -77,7 +77,7 @@ class ClusterByAlignment(object):
     >>> len(symbols)
     3
     >>> symbols[0].addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print symbols[0]
+    >>> print(symbols[0])
     Field                                | Field    | Field | Field   
     ------------------------------------ | -------- | ----- | --------
     '4d79206970206164647265737320697320' | '4ea717' | '0a'  | ''      
@@ -85,7 +85,7 @@ class ClusterByAlignment(object):
     '4d79206970206164647265737320697320' | ''       | '0a'  | '7879d4'
     ------------------------------------ | -------- | ----- | --------
 
-    >>> print symbols[2]
+    >>> print(symbols[2])
     Field    | Field     | Field             | Field       | Field
     -------- | --------- | ----------------- | ----------- | -----
     'hello ' | 'carlito' | ", what's up in " | 'Munich'    | ' ?' 
@@ -333,3 +333,4 @@ class ClusterByAlignment(object):
     @recomputeMatrixThreshold.setter
     def recomputeMatrixThreshold(self, recomputeMatrixThreshold):
         self.__recomputeMatrixThreshold = recomputeMatrixThreshold
+

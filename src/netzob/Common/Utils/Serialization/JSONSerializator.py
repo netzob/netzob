@@ -51,7 +51,7 @@ class JSONSerializator(object):
 
         >>> from netzob.all import *
         >>> msg = RawMessage("hello")
-        >>> print JSONSerializator.serialize(msg)
+        >>> print(JSONSerializator.serialize(msg))
 
         It's not possible to serialize a None object
 
@@ -82,3 +82,4 @@ class JSONSerializator(object):
                 
     
         return "TEST"
+

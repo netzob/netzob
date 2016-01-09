@@ -59,38 +59,38 @@ class FieldSpecializer(object):
 
     >>> f = Field("Hello")
     >>> fs = FieldSpecializer(f)
-    >>> print TypeConverter.convert(fs.specialize()[0].getDataAssignedToField(f), BitArray, Raw)
+    >>> print(TypeConverter.convert(fs.specialize()[0].getDataAssignedToField(f), BitArray, Raw))
     Hello
 
     >>> f = Field(ASCII(nbChars=10))
     >>> fs = FieldSpecializer(f)
-    >>> print len(fs.specialize()[0].getDataAssignedToField(f))
+    >>> print(len(fs.specialize()[0].getDataAssignedToField(f)))
     80
 
     >>> f = Field(ASCII(nbChars=(4, 10)))
     >>> fs = FieldSpecializer(f)
-    >>> print 32<=len(fs.specialize()[0].getDataAssignedToField(f))<=80
+    >>> print(32<=len(fs.specialize()[0].getDataAssignedToField(f))<=80)
     True
 
     >>> d = Alt([ASCII("netzob"), ASCII("zoby")])
     >>> f = Field(d)
     >>> fs = FieldSpecializer(f)
     >>> val = set([TypeConverter.convert(fs.specialize()[0].getDataAssignedToField(f), BitArray, ASCII) for x in range(100)])
-    >>> print val
+    >>> print(val)
     set(['netzob', 'zoby'])
 
     >>> d = Agg([ASCII("hello"), ASCII(" "), Alt([ASCII("netzob"), ASCII("zoby")])])
     >>> f = Field(d)
     >>> fs = FieldSpecializer(f)
     >>> val = set([TypeConverter.convert(fs.specialize()[0].getDataAssignedToField(f), BitArray, ASCII) for x in range(100)])
-    >>> print val
+    >>> print(val)
     set(['hello zoby', 'hello netzob'])
 
     >>> fpayload = Field()
     >>> f1 = Field(ASCII("hello "), name="f1")
     >>> f2 = Field(ASCII("zoby!"), name="f2")
     >>> fpayload.fields = [f1, f2]
-    >>> print fpayload._str_debug()
+    >>> print(fpayload._str_debug())
     Field
     |--   Data (Raw=None ((0, None)))
     |--  f1
@@ -218,4 +218,5 @@ class FieldSpecializer(object):
     def arbitraryValue(self, value):
         self.__arbitraryValue = value
     
+
 

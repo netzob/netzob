@@ -60,7 +60,7 @@ class TypeEncodingFunction(EncodingFunction):
     >>> m = RawMessage("There are " + TypeConverter.convert(10, Integer, Raw) + " solutions.")
     >>> s = Symbol(fields=[f], messages=[m], name="Symbol")
     >>> s.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print s
+    >>> print(s)
     f0                                            
     ----------------------------------------------
     '546865726520617265200a20736f6c7574696f6e732e'
@@ -148,3 +148,4 @@ class TypeEncodingFunction(EncodingFunction):
         if sign not in AbstractType.supportedSign():
             raise ValueError("This sign is not supported, please refer to the list of supported type in AbstractType.supportedSign()")
         self.__sign = sign
+

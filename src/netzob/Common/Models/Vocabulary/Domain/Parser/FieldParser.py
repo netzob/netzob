@@ -55,7 +55,7 @@ class FieldParser():
 
     >>> from netzob.all import *
     >>> f1 = Field(name="f1", domain=ASCII(nbChars=(1,10)))
-    >>> print f1.domain.svas
+    >>> print(f1.domain.svas)
     Ephemeral SVAS
     
     >>> content = TypeConverter.convert("toto", ASCII, BitArray)
@@ -63,7 +63,7 @@ class FieldParser():
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignDataToField(content, f1)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> print '\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths])
+    >>> print('\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths]))
     toto
     tot
     to
@@ -75,7 +75,7 @@ class FieldParser():
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignDataToField(content, f1)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> print '\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths])
+    >>> print('\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths]))
     toto.txt
     
     >>> f1 = Field(name="f1", domain=Agg([ASCII("toto"), ASCII(" "), ASCII("tata")]))
@@ -84,7 +84,7 @@ class FieldParser():
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignDataToField(content, f1)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> print '\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths])
+    >>> print('\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths]))
     toto tata
 
     >>> f1 = Field(name="f1", domain=Alt([ASCII("toto"), ("tata")]))
@@ -93,7 +93,7 @@ class FieldParser():
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignDataToField(content, f1)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> print '\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths])
+    >>> print('\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths]))
     toto
 
     # # Let's illustrate that our parser support multiple results
@@ -104,7 +104,7 @@ class FieldParser():
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignDataToField(content, f1)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> print '\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths])  
+    >>> print('\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths]))  
     toto
     to
 
@@ -116,7 +116,7 @@ class FieldParser():
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignDataToField(content, f1)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> print '\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths])
+    >>> print('\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths]))
     toto
     tototo
     tototo
@@ -127,7 +127,7 @@ class FieldParser():
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignDataToField(content, f1)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> print '\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths])
+    >>> print('\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths]))
     helloword.txt
 
     >>> f1 = Field(name="f1", domain=Agg([ASCII(nbChars=(1,10)), ASCII(".txt")]))
@@ -151,7 +151,7 @@ class FieldParser():
     >>> f2 = Field("\\x00", name="f2")
     >>> f3 = Field(Raw(nbBytes=(0, 2)), name="f3")
     >>> s = Symbol([f1, f2, f3], messages=[message])
-    >>> print s
+    >>> print(s)
     f1     | f2     | f3    
     ------ | ------ | ------
     '\\xaa' | '\\x00' | '\\xbb'
@@ -167,7 +167,7 @@ class FieldParser():
     >>> f4 = Field("wd", name="f4")
     >>> f5 = Field(Raw(nbBytes=(0,1)), name="f5")
     >>> s = Symbol([f1, f2, f3, f4, f5], messages = messages)
-    >>> print s
+    >>> print(s)
     f1   | f2     | f3         | f4   | f5 
     ---- | ------ | ---------- | ---- | ---
     '\\n' | '\\x00' | 'aStrongP' | 'wd' | '' 
@@ -234,4 +234,5 @@ class FieldParser():
 
 
     
+
 

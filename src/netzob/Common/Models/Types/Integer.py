@@ -60,26 +60,26 @@ class Integer(AbstractType):
 
     >>> from netzob.all import *
     >>> cDec = Integer(20)
-    >>> print repr(cDec)
+    >>> print(repr(cDec))
     20
-    >>> print cDec.typeName
+    >>> print(cDec.typeName)
     Integer
-    >>> print cDec.value
+    >>> print(cDec.value)
     bitarray('00010100')
 
     The required size in bits is automaticaly computed following the specifications:
     >>> dec = Integer(10)
-    >>> print dec.size
+    >>> print(dec.size)
     (8, 8)
 
     >>> dec = Integer(interval=(-120, 10))
-    >>> print dec.size
+    >>> print(dec.size)
     (16, 16)
 
     Use the convert function to convert the current type to any other netzob type
     >>> dec = Integer(10)
     >>> raw = dec.convertValue(Raw, dst_endianness=AbstractType.ENDIAN_BIG)
-    >>> print raw
+    >>> print(raw)
     Raw='\\n' ((0, 8))
 
     Its not possible to convert if the object has not value
@@ -161,28 +161,28 @@ class Integer(AbstractType):
         """This method convert the specified data in python raw format.
 
         >>> from netzob.all import *
-        >>> print Integer.decode(23)
+        >>> print(Integer.decode(23))
         \x17
 
-        >>> print Integer.decode(-1, sign=AbstractType.SIGN_UNSIGNED)
+        >>> print(Integer.decode(-1, sign=AbstractType.SIGN_UNSIGNED))
         Traceback (most recent call last):
         ...
         error: ubyte format requires 0 <= number <= 255
 
-        >>> print Integer.decode(-1, sign=AbstractType.SIGN_SIGNED)
+        >>> print(Integer.decode(-1, sign=AbstractType.SIGN_SIGNED))
         \xff
 
-        >>> print Integer.decode(2000000000000000)
+        >>> print(Integer.decode(2000000000000000))
         Traceback (most recent call last):
         ...
         error: byte format requires -128 <= number <= 127
 
-        >>> print Integer.decode(2000000000000000, unitSize=AbstractType.UNITSIZE_64)
+        >>> print(Integer.decode(2000000000000000, unitSize=AbstractType.UNITSIZE_64))
         \x00\x07\x1a\xfdI\x8d\x00\x00
 
-        >>> print Integer.decode(25, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE)
+        >>> print(Integer.decode(25, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE))
         \x19\x00
-        >>> print Integer.decode(25, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG)
+        >>> print(Integer.decode(25, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG))
         \x00\x19
 
         >>> val = 167749568
@@ -219,20 +219,20 @@ class Integer(AbstractType):
         >>> from netzob.all import *
 
         >>> raw = Integer.decode(23)
-        >>> print Integer.encode(raw)
+        >>> print(Integer.encode(raw))
         23
 
         >>> raw = Integer.decode(1200, unitSize=AbstractType.UNITSIZE_16)
-        >>> print Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16)
+        >>> print(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16))
         1200
 
         >>> raw = Integer.decode(25, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE)
-        >>> print repr(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG))
+        >>> print(repr(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG)))
         6400
-        >>> print repr(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE))
+        >>> print(repr(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE)))
         25
 
-        >>> print Integer.encode('\xcc\xac\x9c\x0c\x1c\xacL\x1c,\xac', unitSize=AbstractType.UNITSIZE_8)
+        >>> print(Integer.encode('\xcc\xac\x9c\x0c\x1c\xacL\x1c,\xac', unitSize=AbstractType.UNITSIZE_8))
         -395865088909314208584756
 
         :param data: the data encoded in python raw which will be encoded in current type
@@ -307,3 +307,4 @@ class Integer(AbstractType):
             unitFormat = unitFormat.upper()
 
         return endianFormat + unitFormat
+

@@ -63,7 +63,7 @@ class Memory(object):
         >>> variable = Data(ASCII(), name="var1")
         >>> memory = Memory()
         >>> memory.memorize(variable, TypeConverter.convert("hello", ASCII, BitArray))
-        >>> print memory
+        >>> print(memory)
         Data (ASCII=None ((0, None))): hello
         
         """
@@ -94,7 +94,7 @@ class Memory(object):
         >>> variable = Data(ASCII(), name="var1")
         >>> memory = Memory()
         >>> memory.memorize(variable, TypeConverter.convert("hello", ASCII, BitArray))
-        >>> print TypeConverter.convert(memory.getValue(variable), BitArray, Raw)
+        >>> print(TypeConverter.convert(memory.getValue(variable), BitArray, Raw))
         hello
 
         """
@@ -305,3 +305,4 @@ class Memory(object):
     # @memoryAccessCB.setter
     # def memoryAccessCB(self, memoryAccessCB):
     #     self.__memoryAccessCB = memoryAccessCB
+

@@ -42,15 +42,15 @@ class L2NetworkMessage(RawMessage):
     """Definition of a layer 2 network message.
 
     >>> msg = L2NetworkMessage("090002300202f000")
-    >>> print msg.data
+    >>> print(msg.data)
     090002300202f000
 
     >>> msg = L2NetworkMessage("090002300202f000", date=1352293417.28, l2SourceAddress="00:02:7b:00:bf:33", l2DestinationAddress="00:02:3f:a8:bf:21")
-    >>> print msg.source
+    >>> print(msg.source)
     00:02:7b:00:bf:33
-    >>> print msg.destination
+    >>> print(msg.destination)
     00:02:3f:a8:bf:21
-    >>> print msg
+    >>> print(msg)
     [0;32m[1352293417.28 [0;m[1;32m00:02:7b:00:bf:33[1;m[0;32m->[0;m[1;32m00:02:3f:a8:bf:21[1;m[0;32m][0;m '090002300202f000'
 
     """
@@ -100,3 +100,4 @@ class L2NetworkMessage(RawMessage):
     @typeCheck(str)
     def l2DestinationAddress(self, l2DestinationAddress):
         self.__l2DestinationAddress = l2DestinationAddress
+

@@ -83,15 +83,15 @@ class SearchEngine(object):
     >>> m = RawMessage(content, date=1383948883.0)
     >>> searchResults = SearchEngine.searchInMessage(["expert"], m)
     >>> searchResults.extend(SearchEngine.searchInMessage(["reverse"], m))
-    >>> print searchResults
+    >>> print(searchResults)
     2 occurence(s) found.
     >>> for searchResult in searchResults:
-    ...    print searchResult.ranges[0][0]/8, searchResult.ranges[0][1]/8
+    ...    print(searchResult.ranges[0][0]/8, searchResult.ranges[0][1]/8)
     28 34
     45 52
-    >>> print content.find('expert'), content.find('expert')+len('expert')
+    >>> print(content.find('expert'), content.find('expert')+len('expert'))
     28 34
-    >>> print content.find('reverse'), content.find('reverse')+len('reverse')
+    >>> print(content.find('reverse'), content.find('reverse')+len('reverse'))
     45 52
     
     """
@@ -151,7 +151,7 @@ class SearchEngine(object):
         >>> sData = [ ASCII("protocol"), ASCII("Reversed"), Integer(10)]
         >>> se = SearchEngine()
         >>> results = se.searchDataInMessages(sData, msgs, inParallel=False)
-        >>> print results
+        >>> print(results)
         25 occurence(s) found.
 
         Example of a search operation executed in parallel
@@ -161,12 +161,12 @@ class SearchEngine(object):
         >>> tools = ["Netzob", "zoby", "toto", "your hand", "a knive"]
         >>> places = ["my office", "school", "your bedroom", "your car", "hell"]
         >>> msgs = [ RawMessage("Reversing {0} with {1} in {2}!".format(s, w, p)) for s in stuff for w in tools for p in places]
-        >>> print len(msgs)
+        >>> print(len(msgs))
         150
         >>> sData = [ASCII("protocol"), ASCII("Reversed"), Integer(10)]
         >>> se = SearchEngine()
         >>> results = se.searchDataInMessages(sData, msgs, inParallel=True)
-        >>> print results
+        >>> print(results)
         25 occurence(s) found.
 
         :parameter data: a list of data to search after. Each data must be provided with its netzob type.
@@ -244,11 +244,11 @@ class SearchEngine(object):
         >>> sData = [ASCII("protocol")]
         >>> se = SearchEngine()
         >>> results = se.searchDataInMessage(sData, message)
-        >>> print results
+        >>> print(results)
         1 occurence(s) found.
         >>> for result in results:
-        ...    print result
-        ...    print repr(result.searchTask.properties["data"])
+        ...    print(result)
+        ...    print(repr(result.searchTask.properties["data"]))
         Found ascii-bits(bigEndian) at [(80L, 144L)] of bitarray('01010010011001010111011001100101011100100111001101101001011011100110011100100000011100000111001001101111011101000110111101100011011011110110110001110011001000000111011101101001011101000110100000100000010011100110010101110100011110100110111101100010')
         protocol
 
@@ -348,3 +348,4 @@ class SearchEngine(object):
             raise TypeError("The data cannot be None")
 
         return [SearchTask(mutation, mutationType, properties=properties) for mutationType, mutation in data.mutate().items()]
+

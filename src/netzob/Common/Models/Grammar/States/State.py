@@ -59,23 +59,23 @@ class State(AbstractState):
 
     >>> from netzob.all import *
     >>> s0 = State()
-    >>> print s0.name
+    >>> print(s0.name)
     State
 
     >>> s1 = State(name="S1")
-    >>> print s1.name
+    >>> print(s1.name)
     S1
 
     >>> t = Transition(s0, s1, None, None)
-    >>> print t.startState.name
+    >>> print(t.startState.name)
     State
-    >>> print t.endState.name
+    >>> print(t.endState.name)
     S1
-    >>> print len(s0.transitions)
+    >>> print(len(s0.transitions))
     1
-    >>> print s0.transitions[0].startState.name
+    >>> print(s0.transitions[0].startState.name)
     State
-    >>> print s0.transitions[0].endState.name
+    >>> print(s0.transitions[0].endState.name)
     S1
 
     """
@@ -251,3 +251,4 @@ class State(AbstractState):
     @property
     def transitions(self):
         return self.__transitions
+

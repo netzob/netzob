@@ -69,7 +69,7 @@ class FieldOperations(object):
         >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
 
-        >>> print symbol
+        >>> print(symbol)
         f1   | f2     | f3     | f4  
         ---- | ------ | ------ | ----
         '00' | 'ff2f' | '0000' | '00'
@@ -79,7 +79,7 @@ class FieldOperations(object):
         
         >>> fo = FieldOperations()
         >>> fo.mergeFields(f2, f3)
-        >>> print symbol
+        >>> print(symbol)
         f1   | Merge      | f4  
         ---- | ---------- | ----
         '00' | 'ff2f0000' | '00'
@@ -88,7 +88,7 @@ class FieldOperations(object):
         ---- | ---------- | ----
 
         >>> fo.mergeFields(symbol.fields[0], symbol.fields[1])
-        >>> print symbol
+        >>> print(symbol)
         Merge        | f4  
         ------------ | ----
         '00ff2f0000' | '00'
@@ -97,7 +97,7 @@ class FieldOperations(object):
         ------------ | ----
         
         >>> fo.mergeFields(symbol.fields[0], symbol.fields[1])
-        >>> print symbol
+        >>> print(symbol)
         Merge         
         --------------
         '00ff2f000000'
@@ -148,3 +148,4 @@ class FieldOperations(object):
         before = parent.fields[:iField1]
         after = parent.fields[iField2 + 1:]
         parent.fields = before + [newField] + after
+

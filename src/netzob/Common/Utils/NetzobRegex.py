@@ -120,7 +120,7 @@ class NetzobRegex(object):
         >>> nRegex = NetzobRegex.buildDefaultRegex()
         >>> compiledRegex = re.compile(str(nRegex))
         >>> dynamicDatas = compiledRegex.match(hexData)
-        >>> print TypeConverter.convert(hexData[dynamicDatas.start(nRegex.id):dynamicDatas.end(nRegex.id)], HexaString, ASCII)
+        >>> print(TypeConverter.convert(hexData[dynamicDatas.start(nRegex.id):dynamicDatas.end(nRegex.id)], HexaString, ASCII))
         Hello netzob, a default regex grabs everything.
 
         :return: a .* default NetzobRegex
@@ -142,7 +142,7 @@ class NetzobRegex(object):
         >>> nRegex = NetzobRegex.buildRegexForStaticValue(data)
         >>> compiledRegex = re.compile(str(nRegex))
         >>> dynamicDatas = compiledRegex.match(hexData)
-        >>> print TypeConverter.convert(hexData[dynamicDatas.start(nRegex.id):dynamicDatas.end(nRegex.id)], HexaString, ASCII)
+        >>> print(TypeConverter.convert(hexData[dynamicDatas.start(nRegex.id):dynamicDatas.end(nRegex.id)], HexaString, ASCII))
         Hello netzob
 
         :param value: the static value the regex must represents
@@ -190,25 +190,25 @@ class NetzobSizedRegex(NetzobRegex):
     >>> nRegex = NetzobRegex.buildRegexForSizedValue((8*4,8*5))
     >>> compiledRegex = re.compile(str(nRegex))
     >>> dynamicDatas = compiledRegex.match(hexData)
-    >>> print TypeConverter.convert(hexData[dynamicDatas.start(nRegex.id):dynamicDatas.end(nRegex.id)], HexaString, ASCII)
+    >>> print(TypeConverter.convert(hexData[dynamicDatas.start(nRegex.id):dynamicDatas.end(nRegex.id)], HexaString, ASCII))
     Hello
 
     >>> nRegex = NetzobRegex.buildRegexForSizedValue((None, None))
     >>> compiledRegex = re.compile(str(nRegex))
     >>> dynamicDatas = compiledRegex.match(hexData)
-    >>> print TypeConverter.convert(hexData[dynamicDatas.start(nRegex.id):dynamicDatas.end(nRegex.id)], HexaString, ASCII)
+    >>> print(TypeConverter.convert(hexData[dynamicDatas.start(nRegex.id):dynamicDatas.end(nRegex.id)], HexaString, ASCII))
     Hello netzob
 
     >>> nRegex = NetzobRegex.buildRegexForSizedValue((16, None))
     >>> compiledRegex = re.compile(str(nRegex))
     >>> dynamicDatas = compiledRegex.match(hexData)
-    >>> print TypeConverter.convert(hexData[dynamicDatas.start(nRegex.id):dynamicDatas.end(nRegex.id)], HexaString, ASCII)
+    >>> print(TypeConverter.convert(hexData[dynamicDatas.start(nRegex.id):dynamicDatas.end(nRegex.id)], HexaString, ASCII))
     Hello netzob
 
     >>> nRegex = NetzobRegex.buildRegexForSizedValue((None, 80))
     >>> compiledRegex = re.compile(str(nRegex))
     >>> dynamicDatas = compiledRegex.match(hexData)
-    >>> print TypeConverter.convert(hexData[dynamicDatas.start(nRegex.id):dynamicDatas.end(nRegex.id)], HexaString, ASCII)
+    >>> print(TypeConverter.convert(hexData[dynamicDatas.start(nRegex.id):dynamicDatas.end(nRegex.id)], HexaString, ASCII))
     Hello netz
 
     """
@@ -261,11 +261,11 @@ class NetzobAggregateRegex(NetzobRegex):
 
     >>> compiledRegex = re.compile(str(nRegex))
     >>> dynamicDatas = compiledRegex.match(hexData)
-    >>> print TypeConverter.convert(hexData[dynamicDatas.start(regex1.id):dynamicDatas.end(regex1.id)], HexaString, ASCII)
+    >>> print(TypeConverter.convert(hexData[dynamicDatas.start(regex1.id):dynamicDatas.end(regex1.id)], HexaString, ASCII))
     Hello netzob
-    >>> print TypeConverter.convert(hexData[dynamicDatas.start(regex2.id):dynamicDatas.end(regex2.id)], HexaString, ASCII)
+    >>> print(TypeConverter.convert(hexData[dynamicDatas.start(regex2.id):dynamicDatas.end(regex2.id)], HexaString, ASCII))
     , what's up ?
-    >>> print TypeConverter.convert(hexData[dynamicDatas.start(nRegex.id):dynamicDatas.end(nRegex.id)], HexaString, ASCII)
+    >>> print(TypeConverter.convert(hexData[dynamicDatas.start(nRegex.id):dynamicDatas.end(nRegex.id)], HexaString, ASCII))
     Hello netzob, what's up ?
 
     """
@@ -354,7 +354,7 @@ class NetzobStaticRegex(NetzobRegex):
 
     >>> compiledRegex = re.compile(str(nRegex))
     >>> dynamicDatas = compiledRegex.match(hexData)
-    >>> print TypeConverter.convert(hexData[dynamicDatas.start(nRegex.id):dynamicDatas.end(nRegex.id)], HexaString, ASCII)
+    >>> print(TypeConverter.convert(hexData[dynamicDatas.start(nRegex.id):dynamicDatas.end(nRegex.id)], HexaString, ASCII))
     Hello netzob !
 
     To illustrate that only an hexastring can be specified
@@ -394,3 +394,4 @@ class NetzobStaticRegex(NetzobRegex):
 
         self.__staticValue = staticValue.lower()
         self.__updateRegex()
+

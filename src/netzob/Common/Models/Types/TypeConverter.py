@@ -69,7 +69,7 @@ class TypeConverter(object):
         >>> from netzob.all import *
         >>> data = "That's an helloworld!"
         >>> bin = TypeConverter.convert(data, ASCII, BitArray)
-        >>> print bin
+        >>> print(bin)
         bitarray('010101000110100001100001011101000010011101110011001000000110000101101110001000000110100001100101011011000110110001101111011101110110111101110010011011000110010000100001')
         >>> data == TypeConverter.convert(bin, BitArray, ASCII)
         True
@@ -78,18 +78,18 @@ class TypeConverter(object):
 
         >>> data = '\x23'
         >>> decData = TypeConverter.convert(data, Raw, Integer)
-        >>> print decData
+        >>> print(decData)
         35
-        >>> print TypeConverter.convert(decData, Integer, ASCII)
+        >>> print(TypeConverter.convert(decData, Integer, ASCII))
         #
 
         You can also play with the unitSize to convert multiple ascii in a single high value decimal
 
         >>> TypeConverter.convert("5", ASCII, Integer)
         53
-        >>> print TypeConverter.convert("zoby", ASCII, Integer)
+        >>> print(TypeConverter.convert("zoby", ASCII, Integer))
         2036494202
-        >>> print TypeConverter.convert("zoby", ASCII, Integer, dst_unitSize=AbstractType.UNITSIZE_32)
+        >>> print(TypeConverter.convert("zoby", ASCII, Integer, dst_unitSize=AbstractType.UNITSIZE_32))
         2054120057
 
         It also works for 'semantic' data like IPv4s
@@ -147,3 +147,4 @@ class TypeConverter(object):
                 outputData = binData
 
             return outputData
+

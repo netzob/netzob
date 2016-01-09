@@ -64,17 +64,17 @@ class Repeat(AbstractVariableNode):
 
     >>> msg1 = RawMessage("netzobnetzobzoby")
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg1, s)
+    >>> print(mp.parseMessage(msg1, s))
     [bitarray('011011100110010101110100011110100110111101100010011011100110010101110100011110100110111101100010'), bitarray('01111010011011110110001001111001')]
 
     >>> msg2 = RawMessage("netzobzoby")
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg2, s)
+    >>> print(mp.parseMessage(msg2, s))
     [bitarray('011011100110010101110100011110100110111101100010'), bitarray('01111010011011110110001001111001')]
 
     >>> msg4 = RawMessage("zoby")
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg4, s)
+    >>> print(mp.parseMessage(msg4, s))
     [bitarray(), bitarray('01111010011011110110001001111001')]
     
 
@@ -86,7 +86,7 @@ class Repeat(AbstractVariableNode):
     >>> s = Symbol([f1, f2])
     >>> msg1 = RawMessage("netzob;zoby;netzobzoby")
     >>> mp = MessageParser()
-    >>> print mp.parseMessage(msg1, s)
+    >>> print(mp.parseMessage(msg1, s))
     [bitarray('011011100110010101110100011110100110111101100010001110110111101001101111011000100111100100111011011011100110010101110100011110100110111101100010'), bitarray('01111010011011110110001001111001')]
 
 
@@ -95,7 +95,7 @@ class Repeat(AbstractVariableNode):
     >>> from netzob.all import *
     >>> f1 = Field(Repeat(ASCII("netzob"), nbRepeat=2))
     >>> s = Symbol([f1])
-    >>> print s.specialize()
+    >>> print(s.specialize())
     netzobnetzob
 
     >>> from netzob.all import *
@@ -263,3 +263,4 @@ class Repeat(AbstractVariableNode):
     @typeCheck(bitarray)
     def delimitor(self, delimitor):
         self.__delimitor = delimitor
+

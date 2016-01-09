@@ -66,7 +66,7 @@ class FieldSplitAligned(object):
     >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
     >>> symbol = Symbol(messages=messages)
     >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print symbol
+    >>> print(symbol)
     Field               
     --------------------
     '01ff00ff'          
@@ -79,7 +79,7 @@ class FieldSplitAligned(object):
 
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol)
-    >>> print symbol
+    >>> print(symbol)
     Field  | Field  | Field        | Field
     ------ | ------ | ------------ | -----
     '01'   | 'ff00' | ''           | 'ff' 
@@ -93,7 +93,7 @@ class FieldSplitAligned(object):
     >>> samples = ["hello toto, what's up in France ?", "hello netzob, what's up in UK ?", "hello sygus, what's up in Germany ?"]
     >>> messages = [RawMessage(data=sample) for sample in samples]
     >>> symbol = Symbol(messages=messages)
-    >>> print symbol
+    >>> print(symbol)
     Field                                
     -------------------------------------
     "hello toto, what's up in France ?"  
@@ -103,7 +103,7 @@ class FieldSplitAligned(object):
 
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol, useSemantic = False)
-    >>> print symbol
+    >>> print(symbol)
     Field    | Field    | Field             | Field     | Field
     -------- | -------- | ----------------- | --------- | -----
     'hello ' | 'toto'   | ", what's up in " | 'France'  | ' ?' 
@@ -116,7 +116,7 @@ class FieldSplitAligned(object):
     >>> samples = ["John-0108030405--john.doe@gmail.com", "Mathieu-0908070605-31 rue de Paris, 75000 Paris, France-mat@yahoo.fr", "Olivia-0348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hotmail.fr"]
     >>> messages = [RawMessage(data=sample) for sample in samples]
     >>> symbol = Symbol(messages=messages)
-    >>> print symbol
+    >>> print(symbol)
     Field                                                                                      
     -------------------------------------------------------------------------------------------
     'John-0108030405--john.doe@gmail.com'                                                      
@@ -126,7 +126,7 @@ class FieldSplitAligned(object):
 
     >>> fs = FieldSplitAligned(doInternalSlick=True)
     >>> fs.execute(symbol, useSemantic = False)
-    >>> print symbol
+    >>> print(symbol)
     Field     | Field | Field                                                                              
     --------- | ----- | -----------------------------------------------------------------------------------
     'John'    | '-0'  | '108030405--john.doe@gmail.com'                                                    
@@ -153,7 +153,7 @@ class FieldSplitAligned(object):
 
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol, useSemantic=True)
-    >>> print symbol
+    >>> print(symbol)
     Field     | Field | Field | Field | Field    | Field | Field                                            | Field | Field                     
     --------- | ----- | ----- | ----- | -------- | ----- | ------------------------------------------------ | ----- | --------------------------
     'John'    | '-0'  | '10'  | '8'   | '030405' | '-'   | ''                                               | '-'   | 'john.doe@gmail.com'      
@@ -262,16 +262,16 @@ class FieldSplitAligned(object):
         >>> import random
         >>> fs = FieldSplitAligned()
         >>> data = "-----01987640988765--876--678987--67898-------6789789-87987978----"
-        >>> print fs._mergeAlign(*fs._splitAlignment(data))
+        >>> print(fs._mergeAlign(*fs._splitAlignment(data)))
         [['-----', True], ['01987640988765', False], ['--', True], ['876', False], ['--', True], ['678987', False], ['--', True], ['67898', False], ['-------', True], ['6789789', False], ['-', True], ['87987978', False], ['----', True]]
         >>> data = "-------------------------------"
-        >>> print fs._mergeAlign(*fs._splitAlignment(data))
+        >>> print(fs._mergeAlign(*fs._splitAlignment(data)))
         [['-------------------------------', True]]
         >>> data = "98754678998765467890875645"
-        >>> print fs._mergeAlign(*fs._splitAlignment(data))
+        >>> print(fs._mergeAlign(*fs._splitAlignment(data)))
         [['98754678998765467890875645', False]]
         >>> data = "---------------987-----6789765--568767---568776897689---567876------------------5678657865-9876579867789-9876879-9876787678657865467876546"
-        >>> print fs._mergeAlign(*fs._splitAlignment(data))
+        >>> print(fs._mergeAlign(*fs._splitAlignment(data)))
         [['---------------', True], ['987', False], ['-----', True], ['6789765', False], ['--', True], ['568767', False], ['---', True], ['568776897689', False], ['---', True], ['567876', False], ['------------------', True], ['5678657865', False], ['-', True], ['9876579867789', False], ['-', True], ['9876879', False], ['-', True], ['9876787678657865467876546', False]]
         >>> nbField = random.randint(50000, 200000)
         >>> tab = []
@@ -678,3 +678,4 @@ class FieldSplitAligned(object):
         if unitSize not in AbstractType.supportedUnitSizes():
             raise TypeError("Specified unitsize is not supported, refers to AbstractType.supportedUnitSizes() for the list.")
         self.__unitSize = unitSize
+

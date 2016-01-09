@@ -86,7 +86,7 @@ class Automata(object):
 
         >>> # Create the automata
         >>> automata = Automata(s0, [inputSymbol, outputSymbol])
-        >>> print automata.generateDotCode() #doctest: +ELLIPSIS
+        >>> print(automata.generateDotCode()) #doctest: +ELLIPSIS
         digraph G {
         "S0" [shape=doubleoctagon, style=filled, fillcolor=white, URL="..."];
         "S1" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
@@ -143,7 +143,7 @@ class Automata(object):
         >>> # Create the automata
         >>> automata = Automata(s0, [inputSymbol, outputSymbol])
         >>> for state in automata.getAllStates():
-        ...    print state
+        ...    print(state)
         State 0
         State 1
         State 2
@@ -201,9 +201,9 @@ class Automata(object):
 
         >>> automata = Automata.generateChainedStatesAutomata(abstractSession, symbolList)
         >>> dotcode = automata.generateDotCode()
-        >>> print len(dotcode)
+        >>> print(len(dotcode))
         1024
-        >>> print dotcode #doctest: +ELLIPSIS
+        >>> print(dotcode) #doctest: +ELLIPSIS
         digraph G {
         "Start state" [shape=doubleoctagon, style=filled, fillcolor=white, URL="..."];
         "State 1" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
@@ -245,9 +245,9 @@ class Automata(object):
 
         >>> automata = Automata.generateOneStateAutomata(abstractSession, symbolList)
         >>> dotcode = automata.generateDotCode()
-        >>> print len(dotcode)
+        >>> print(len(dotcode))
         841
-        >>> print dotcode #doctest: +ELLIPSIS
+        >>> print(dotcode) #doctest: +ELLIPSIS
         digraph G {
         "Start state" [shape=doubleoctagon, style=filled, fillcolor=white, URL="..."];
         "Main state" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
@@ -306,7 +306,7 @@ class Automata(object):
 
         >>> automata = Automata.generatePTAAutomata(abstractSessions, symbolList)
         >>> dotcode = automata.generateDotCode()
-        >>> print dotcode #doctest: +ELLIPSIS
+        >>> print(dotcode) #doctest: +ELLIPSIS
         digraph G {
         "Start state" [shape=doubleoctagon, style=filled, fillcolor=white, URL="..."];
         "State 0" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
@@ -356,3 +356,4 @@ class Automata(object):
     @typeCheck(list)
     def vocabulary(self, vocabulary):
         self.__vocabulary = vocabulary
+

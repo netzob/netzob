@@ -76,9 +76,9 @@ class AbstractionLayer(object):
     >>> abstractionLayerOut.openChannel()
     >>> abstractionLayerOut.writeSymbol(symbol)
     >>> (receivedSymbol, receivedMessage) = abstractionLayerIn.readSymbol()
-    >>> print receivedSymbol.name
+    >>> print(receivedSymbol.name)
     Symbol_Hello
-    >>> print receivedMessage
+    >>> print(receivedMessage)
     Hello Zoby !
 
     The abstraction layer can also handle a message flow.
@@ -95,7 +95,7 @@ class AbstractionLayer(object):
     >>> abstractionLayerOut.openChannel()
     >>> abstractionLayerOut.writeSymbol(symbolflow)
     >>> (receivedSymbols, receivedMessage) = abstractionLayerIn.readSymbols()
-    >>> print receivedSymbols
+    >>> print(receivedSymbols)
     [Symbol_Hello, Symbol_WUP]
 
     """
@@ -226,3 +226,4 @@ class AbstractionLayer(object):
         self.parser = MessageParser(memory = self.memory)
         self.flow_parser = FlowParser(memory = self.memory)
         
+

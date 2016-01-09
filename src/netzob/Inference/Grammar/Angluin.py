@@ -116,12 +116,12 @@ class MealyLSTAR(object):
     >>> time.sleep(10)
 
     # >>> while (angluin.alive): time.sleep(5)
-    >>> print "Inference finish"
+    >>> print("Inference finish")
     Inference finish
 
     >>> alice.stop()
 
-    >>> print angluin.initialStateOfInferedGrammar
+    >>> print(angluin.initialStateOfInferedGrammar)
     State
 
 
@@ -597,3 +597,4 @@ class MealyLSTAR(object):
 #             self.log.info(horizontal)
 
 # #        self.addWordInS(MembershipQuery([]))
+

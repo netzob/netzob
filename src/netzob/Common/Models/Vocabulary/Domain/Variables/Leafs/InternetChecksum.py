@@ -80,10 +80,10 @@ class InternetChecksum(AbstractRelationVariableLeaf):
 
     >>> chksumField.domain = InternetChecksum([headerField, dataField], dataType=Raw(nbBytes=2))
     >>> s = Symbol(fields = [headerField, dataField])
-    >>> msgs = [RawMessage(s.specialize()) for i in xrange(1)]
+    >>> msgs = [RawMessage(s.specialize()) for i in range(1)]
     >>> s.messages = msgs
     >>> s.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print s
+    >>> print(s)
     Type | Code | Checksum | Identifier | Sequence Number | Timestamp          | Payload                                                                                           
     ---- | ---- | -------- | ---------- | --------------- | ------------------ | --------------------------------------------------------------------------------------------------
     '08' | '00' | '0716'   | '1d22'     | '0007'          | 'a8f3f65300000000' | '60b5060000000000101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f3031323334353637'
@@ -298,4 +298,5 @@ class InternetChecksum(AbstractRelationVariableLeaf):
         if maxSize is None:
             raise ValueError("The datatype of a checksum field must declare its length")
         self.__dataType = dataType
+
 

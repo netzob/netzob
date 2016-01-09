@@ -147,7 +147,7 @@ class Field(AbstractField):
 
         >>> from netzob.all import *
         >>> f = Field("hello")
-        >>> print '\\n'.join([f.specialize() for x in range(3)])
+        >>> print('\\n'.join([f.specialize() for x in range(3)]))
         hello
         hello
         hello
@@ -157,7 +157,7 @@ class Field(AbstractField):
         >>> fHello = Field("hello ")
         >>> fName = Field("zoby")
         >>> s = Symbol([fHello, fName])
-        >>> print '\\n'.join([s.specialize() for x in range(3)])
+        >>> print('\\n'.join([s.specialize() for x in range(3)]))
         hello zoby
         hello zoby
         hello zoby
@@ -224,3 +224,4 @@ class Field(AbstractField):
             self._logger.warning("The field is attached to no symbol and so it has no messages: {0}".format(e))
 
         return messages
+

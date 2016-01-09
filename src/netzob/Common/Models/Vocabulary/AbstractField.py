@@ -121,7 +121,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> fbody.fields = [fb1, fb2, fb3]
         >>> symbol = Symbol([fheader, fbody], messages=messages)
 
-        >>> print symbol
+        >>> print(symbol)
         hello    | pseudo   | whatsup           | city       | end 
         -------- | -------- | ----------------- | ---------- | ----
         'hello ' | 'netzob' | ", what's up in " | 'Paris'    | ' ?'
@@ -137,7 +137,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         >>> fh1.addEncodingFunction(TypeEncodingFunction(HexaString))
         >>> fb2.addEncodingFunction(TypeEncodingFunction(HexaString))
-        >>> print symbol
+        >>> print(symbol)
         hello          | pseudo   | whatsup           | city               | end 
         -------------- | -------- | ----------------- | ------------------ | ----
         '68656c6c6f20' | 'netzob' | ", what's up in " | '5061726973'       | ' ?'
@@ -151,7 +151,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         '68656c6c6f20' | 'lapy'   | ", what's up in " | '4e65772d596f726b' | ' ?'
         -------------- | -------- | ----------------- | ------------------ | ----
 
-        >>> print fheader.getCells() 
+        >>> print(fheader.getCells()) 
         Field          | Field   
         -------------- | --------
         '68656c6c6f20' | 'netzob'
@@ -165,7 +165,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         '68656c6c6f20' | 'lapy'  
         -------------- | --------
 
-        >>> print fh1.getCells()
+        >>> print(fh1.getCells())
         Field         
         --------------
         '68656c6c6f20'
@@ -179,7 +179,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         '68656c6c6f20'
         --------------
 
-        >>> print fh2.getCells()
+        >>> print(fh2.getCells())
         Field   
         --------
         'netzob'
@@ -193,7 +193,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         'lapy'  
         --------
 
-        >>> print fbody.getCells()
+        >>> print(fbody.getCells())
         Field             | Field              | Field
         ----------------- | ------------------ | -----
         ", what's up in " | '5061726973'       | ' ?' 
@@ -207,7 +207,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         ", what's up in " | '4e65772d596f726b' | ' ?' 
         ----------------- | ------------------ | -----
 
-        >>> print fb1.getCells()
+        >>> print(fb1.getCells())
         Field            
         -----------------
         ", what's up in "
@@ -221,7 +221,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         ", what's up in "
         -----------------
 
-        >>> print fb2.getCells()
+        >>> print(fb2.getCells())
         Field             
         ------------------
         '5061726973'      
@@ -235,7 +235,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         '4e65772d596f726b'
         ------------------
 
-        >>> print fb3.getCells()
+        >>> print(fb3.getCells())
         Field
         -----
         ' ?' 
@@ -294,7 +294,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> f4 = Field(["Paris", "Berlin", "New-York"], name="city")
         >>> f5 = Field(" ?", name="end")
         >>> symbol = Symbol([f1, f2, f3, f4, f5], messages=messages)
-        >>> print symbol
+        >>> print(symbol)
         hello    | pseudo   | whatsup           | city       | end 
         -------- | -------- | ----------------- | ---------- | ----
         'hello ' | 'netzob' | ", what's up in " | 'Paris'    | ' ?'
@@ -309,7 +309,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         -------- | -------- | ----------------- | ---------- | ----
 
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-        >>> print symbol
+        >>> print(symbol)
         hello          | pseudo         | whatsup                          | city               | end   
         -------------- | -------------- | -------------------------------- | ------------------ | ------
         '68656c6c6f20' | '6e65747a6f62' | '2c2077686174277320757020696e20' | '5061726973'       | '203f'
@@ -323,17 +323,17 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         '68656c6c6f20' | '6c617079'     | '2c2077686174277320757020696e20' | '4e65772d596f726b' | '203f'
         -------------- | -------------- | -------------------------------- | ------------------ | ------
 
-        >>> print symbol.getValues()
+        >>> print(symbol.getValues())
         ['68656c6c6f206e65747a6f622c2077686174277320757020696e205061726973203f', '68656c6c6f206e65747a6f622c2077686174277320757020696e204265726c696e203f', '68656c6c6f206e65747a6f622c2077686174277320757020696e204e65772d596f726b203f', '68656c6c6f207a6f62792c2077686174277320757020696e205061726973203f', '68656c6c6f207a6f62792c2077686174277320757020696e204265726c696e203f', '68656c6c6f207a6f62792c2077686174277320757020696e204e65772d596f726b203f', '68656c6c6f206c6170792c2077686174277320757020696e205061726973203f', '68656c6c6f206c6170792c2077686174277320757020696e204265726c696e203f', '68656c6c6f206c6170792c2077686174277320757020696e204e65772d596f726b203f']
-        >>> print f1.getValues()
+        >>> print(f1.getValues())
         ['68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20']
-        >>> print f2.getValues()
+        >>> print(f2.getValues())
         ['6e65747a6f62', '6e65747a6f62', '6e65747a6f62', '7a6f6279', '7a6f6279', '7a6f6279', '6c617079', '6c617079', '6c617079']
-        >>> print f3.getValues()
+        >>> print(f3.getValues())
         ['2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20']
-        >>> print f4.getValues()
+        >>> print(f4.getValues())
         ['5061726973', '4265726c696e', '4e65772d596f726b', '5061726973', '4265726c696e', '4e65772d596f726b', '5061726973', '4265726c696e', '4e65772d596f726b']
-        >>> print f5.getValues()
+        >>> print(f5.getValues())
         ['203f', '203f', '203f', '203f', '203f', '203f', '203f', '203f', '203f']
 
         :keyword encoded: if set to True, encoding functions are applied on returned cells
@@ -364,7 +364,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> f3 = Field(["Paris", "Berlin", "New-York"], name="city")
         >>> f4 = Field(" ?", name="end")
         >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
-        >>> print symbol
+        >>> print(symbol)
         pseudo   | whatsup           | city     | end 
         -------- | ----------------- | -------- | ----
         'netzob' | ", what's up in " | 'Paris'  | ' ?'
@@ -375,7 +375,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         >>> messageCells = symbol.getMessageCells()
         >>> for message in symbol.messages:
-        ...    print message.data, messageCells[message]
+        ...    print(message.data, messageCells[message])
         netzob, what's up in Paris ? ['netzob', ", what's up in ", 'Paris', ' ?']
         netzob, what's up in Berlin ? ['netzob', ", what's up in ", 'Berlin', ' ?']
         zoby, what's up in Paris ? ['zoby', ", what's up in ", 'Paris', ' ?']
@@ -415,7 +415,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> f3 = Field(["Paris", "Berlin", "New-York"], name="city")
         >>> f4 = Field(" ?", name="end")
         >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
-        >>> print symbol
+        >>> print(symbol)
         pseudo   | whatsup           | city     | end 
         -------- | ----------------- | -------- | ----
         'netzob' | ", what's up in " | 'Paris'  | ' ?'
@@ -426,7 +426,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         >>> messageValues = f3.getMessageValues()
         >>> for message in symbol.messages:
-        ...    print message.data, messageValues[message]
+        ...    print(message.data, messageValues[message])
         netzob, what's up in Paris ? Paris
         netzob, what's up in Berlin ? Berlin
         zoby, what's up in Paris ? Paris
@@ -539,7 +539,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         >>> for m in messages:
         ...    abstractedSymbol = AbstractField.abstract(m, [s1, s2])
-        ...    print abstractedSymbol.name
+        ...    print(abstractedSymbol.name)
         Symbol-netzob
         Symbol-netzob
         Symbol-zoby
@@ -591,7 +591,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         >>> from netzob.all import *
         >>> field = Field("hello", name="F0")
-        >>> print [f.name for f in field._getLeafFields()]
+        >>> print([f.name for f in field._getLeafFields()])
         ['F0']
 
         >>> field = Field(name="L0")
@@ -607,16 +607,16 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> payloadField.fields = [fieldL1]
         >>> field.fields = [headerField, payloadField, footerField]
 
-        >>> print [f.name for f in field._getLeafFields(depth=None)]
+        >>> print([f.name for f in field._getLeafFields(depth=None)])
         ['L0_header', 'L1_header', 'L1_payload', 'L0_footer']
 
-        >>> print [f.name for f in field._getLeafFields(depth=0)]
+        >>> print([f.name for f in field._getLeafFields(depth=0)])
         ['L0']
 
-        >>> print [f.name for f in field._getLeafFields(depth=1)]
+        >>> print([f.name for f in field._getLeafFields(depth=1)])
         ['L0_header', 'L0_payload', 'L0_footer']
 
-        >>> print [f.name for f in field._getLeafFields(depth=2)]
+        >>> print([f.name for f in field._getLeafFields(depth=2)])
         ['L0_header', 'L1', 'L0_footer']
 
         :return: the list of leaf fields
@@ -861,3 +861,4 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
     def restoreFromMemento(self, memento):
         pass
+

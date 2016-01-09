@@ -42,15 +42,15 @@ class L3NetworkMessage(L2NetworkMessage):
     """Definition of a layer 3 network message.
 
     >>> msg = L3NetworkMessage("090002300202f000")
-    >>> print msg.data
+    >>> print(msg.data)
     090002300202f000
 
     >>> msg = L3NetworkMessage("090002300202f000", date=1352293417.28, l3SourceAddress="192.168.10.100", l3DestinationAddress="192.168.10.245")
-    >>> print msg.source
+    >>> print(msg.source)
     192.168.10.100
-    >>> print msg.destination
+    >>> print(msg.destination)
     192.168.10.245
-    >>> print msg
+    >>> print(msg)
     [0;32m[1352293417.28 [0;m[1;32m192.168.10.100[1;m[0;32m->[0;m[1;32m192.168.10.245[1;m[0;32m][0;m '090002300202f000'
 
     """
@@ -119,3 +119,4 @@ class L3NetworkMessage(L2NetworkMessage):
         :type: str
         """
         return self.__l3DestinationAddress
+

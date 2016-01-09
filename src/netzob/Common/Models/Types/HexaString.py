@@ -78,7 +78,7 @@ class HexaString(AbstractType):
         >>> hex = TypeConverter.convert(randomData, Raw, HexaString)
         >>> len(hex)
         16
-        >>> print HexaString().canParse(hex)
+        >>> print(HexaString().canParse(hex))
         True
 
         :param data: the data to check
@@ -128,11 +128,11 @@ class HexaString(AbstractType):
         >>> randomData = os.urandom(1024)
         >>> # Convert to hexastring
         >>> hex = TypeConverter.convert(randomData, Raw, HexaString)
-        >>> print len(hex)
+        >>> print(len(hex))
         2048
         >>> # Convert back to byte and verify we didn't lost anything
         >>> raw = TypeConverter.convert(hex, HexaString, Raw)
-        >>> print raw == randomData
+        >>> print(raw == randomData)
         True
 
 
@@ -167,11 +167,11 @@ class HexaString(AbstractType):
         >>> randomData = os.urandom(4096)
         >>> # Convert to hexastring
         >>> hex = TypeConverter.convert(randomData, Raw, HexaString)
-        >>> print len(hex)
+        >>> print(len(hex))
         8192
         >>> # Convert back to byte and verify we didn't lost anything
         >>> raw = TypeConverter.convert(hex, HexaString, Raw)
-        >>> print raw == randomData
+        >>> print(raw == randomData)
         True
 
         :param data: the data encoded in python raw which will be encoded in current type
@@ -191,3 +191,4 @@ class HexaString(AbstractType):
             raise TypeError("data cannot be None")
 
         return binascii.hexlify(data)
+

@@ -125,10 +125,10 @@ class BitArray(AbstractType):
         >>> from netzob.Common.Models.Types.BitArray import BitArray
         >>> d = ASCII.decode("hello netzob")
         >>> r = BitArray.encode(d)
-        >>> print r.to01()
+        >>> print(r.to01())
         011010000110010101101100011011000110111100100000011011100110010101110100011110100110111101100010
         >>> t = BitArray.decode(r)
-        >>> print t
+        >>> print(t)
         hello netzob
 
 
@@ -184,3 +184,4 @@ class BitArray(AbstractType):
         b = bitarray(endian=endian)
         b.frombytes(data)
         return b
+

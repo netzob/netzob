@@ -49,11 +49,11 @@ class ApplicativeData(object):
     An applicative data can be created out of any information.
     >>> from netzob.all import *
     >>> app = ApplicativeData("Username", ASCII("toto"))
-    >>> print app.name
+    >>> print(app.name)
     Username
 
     >>> app1 = ApplicativeData("Email", ASCII("contact@netzob.org"))
-    >>> print app1.value
+    >>> print(app1.value)
     ASCII=contact@netzob.org ((0, 144))
 
     """
@@ -117,3 +117,4 @@ class ApplicativeData(object):
         :rtype: str
         """
         return "Applicative Data: {0}={1})".format(self.name, self.value)
+

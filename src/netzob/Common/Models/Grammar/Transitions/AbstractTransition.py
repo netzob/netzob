@@ -126,12 +126,12 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         >>> s1 = State(name="S1")
         >>> s2 = State(name="S2")
         >>> t = Transition(s0, s1, name="T0")
-        >>> print t.startState.name
+        >>> print(t.startState.name)
         S0
-        >>> print len(s0.transitions)
+        >>> print(len(s0.transitions))
         1
         >>> t.startState = s2
-        >>> print len(s0.transitions)
+        >>> print(len(s0.transitions))
         0
 
         :type: :class:`netzob.Common.Models.Grammar.State.AbstractState.AbstractState`
@@ -158,7 +158,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         >>> s0 = State(name="S0")
         >>> s1 = State(name="S1")
         >>> t = Transition(s0, s1, name="T0")
-        >>> print t.endState.name
+        >>> print(t.endState.name)
         S1
 
         :type: :class:`netzob.Common.Models.Grammar.State.AbstractState.AbstractState`
@@ -229,3 +229,4 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
     @typeCheck(str)
     def description(self, description):
         self._description = description
+

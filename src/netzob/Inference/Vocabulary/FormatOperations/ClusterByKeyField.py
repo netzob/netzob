@@ -75,10 +75,10 @@ class ClusterByKeyField(object):
         >>> symbol = Symbol([f1, f2, f3], messages=messages)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
         >>> newSymbols = Format.clusterByKeyField(symbol, f2)
-        >>> for sym in newSymbols.values():
+        >>> for sym in list(newSymbols.values()):
         ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
-        ...     print sym.name + ":"
-        ...     print sym
+        ...     print(sym.name + ":")
+        ...     print(sym)
         Symbol_ff2f:
         Field | Field  | Field   
         ----- | ------ | --------
@@ -176,3 +176,4 @@ class ClusterByKeyField(object):
                 newSymbol.fields.append(newF)
 
         return newSymbols
+
