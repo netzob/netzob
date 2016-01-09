@@ -129,7 +129,7 @@ class BitArray(AbstractType):
         011010000110010101101100011011000110111100100000011011100110010101110100011110100110111101100010
         >>> t = BitArray.decode(r)
         >>> print(t)
-        hello netzob
+        b'hello netzob'
 
 
         :param data: the data encoded in BitArray which will be decoded in raw
