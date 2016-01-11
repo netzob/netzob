@@ -83,7 +83,7 @@ class Field(AbstractField):
 
     >>> f = Field(0b1000)
     >>> f.specialize()
-    '\x08'
+    b'\x08'
 
     a field containing a raw value of 8 bits (1 byte)
 
@@ -93,7 +93,7 @@ class Field(AbstractField):
 
     >>> f = Field(Raw('\x00\x01\x02\x03'))
     >>> f.specialize()
-    '\x00\x01\x02\x03'
+    b'\x00\x01\x02\x03'
     
     a field representing a random IPv4
 
@@ -147,20 +147,20 @@ class Field(AbstractField):
 
         >>> from netzob.all import *
         >>> f = Field("hello")
-        >>> print('\\n'.join([f.specialize() for x in range(3)]))
-        hello
-        hello
-        hello
+        >>> print('\\n'.join([str(f.specialize()) for x in range(3)]))
+        b'hello'
+        b'hello'
+        b'hello'
 
         This method also applies on multiple fields using a Symbol
 
         >>> fHello = Field("hello ")
         >>> fName = Field("zoby")
         >>> s = Symbol([fHello, fName])
-        >>> print('\\n'.join([s.specialize() for x in range(3)]))
-        hello zoby
-        hello zoby
-        hello zoby
+        >>> print('\\n'.join([str(s.specialize()) for x in range(3)]))
+        b'hello zoby'
+        b'hello zoby'
+        b'hello zoby'
 
         :return: a generated content represented with an hexastring
         :rtype: :class:`str``
