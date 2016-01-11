@@ -76,7 +76,7 @@ class TypeConverter(object):
 
         To convert a raw data to its decimal representation and then to its ASCII representation
 
-        >>> data = '\x23'
+        >>> data = b'\\x23'
         >>> decData = TypeConverter.convert(data, Raw, Integer)
         >>> print(decData)
         35
