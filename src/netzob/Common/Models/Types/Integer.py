@@ -220,7 +220,7 @@ class Integer(AbstractType):
 
         >>> raw = Integer.decode(23)
         >>> print(Integer.encode(raw))
-        b'23'
+        23
 
         >>> raw = Integer.decode(1200, unitSize=AbstractType.UNITSIZE_16)
         >>> print(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16))
@@ -232,7 +232,7 @@ class Integer(AbstractType):
         >>> print(repr(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE)))
         25
 
-        >>> print(Integer.encode('\xcc\xac\x9c\x0c\x1c\xacL\x1c,\xac', unitSize=AbstractType.UNITSIZE_8))
+        >>> print(Integer.encode(b'\\xcc\\xac\\x9c\\x0c\\x1c\\xacL\\x1c,\\xac', unitSize=AbstractType.UNITSIZE_8))
         -395865088909314208584756
 
         :param data: the data encoded in python raw which will be encoded in current type
