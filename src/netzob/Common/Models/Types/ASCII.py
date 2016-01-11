@@ -241,7 +241,7 @@ class ASCII(AbstractType):
         rawData = data.tobytes()
 
         try:
-            rawData.encode('utf-8')
+            rawData.decode('utf-8')
         except:
             return False
 
