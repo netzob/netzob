@@ -167,7 +167,7 @@ class Integer(AbstractType):
         >>> print(Integer.decode(-1, sign=AbstractType.SIGN_UNSIGNED))
         Traceback (most recent call last):
         ...
-        error: ubyte format requires 0 <= number <= 255
+        struct.error: ubyte format requires 0 <= number <= 255
 
         >>> print(Integer.decode(-1, sign=AbstractType.SIGN_SIGNED))
         b'\\xff'
@@ -175,7 +175,7 @@ class Integer(AbstractType):
         >>> print(Integer.decode(2000000000000000))
         Traceback (most recent call last):
         ...
-        error: byte format requires -128 <= number <= 127
+        struct.error: byte format requires -128 <= number <= 127
 
         >>> print(Integer.decode(2000000000000000, unitSize=AbstractType.UNITSIZE_64))
         b'\\x00\\x07\\x1a\\xfdI\\x8d\\x00\\x00'
