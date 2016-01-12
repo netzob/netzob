@@ -173,7 +173,7 @@ class DataAlignment(threading.Thread):
                         fieldValue = encodingFunction.encode(fieldValue)
                 else:
                     fieldValue = TypeConverter.convert(fieldValue, BitArray, Raw)
-
+                
                 if currentField in self.field._getLeafFields(depth=self.depth):
                     alignedEncodedMsg.append(fieldValue)
 
