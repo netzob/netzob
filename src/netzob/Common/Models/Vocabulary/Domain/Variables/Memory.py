@@ -64,7 +64,7 @@ class Memory(object):
         >>> memory = Memory()
         >>> memory.memorize(variable, TypeConverter.convert("hello", ASCII, BitArray))
         >>> print(memory)
-        Data (ASCII=None ((0, None))): hello
+        Data (ASCII=None ((0, None))): b'hello'
         
         """
         self.memory[variable] = value
@@ -95,7 +95,7 @@ class Memory(object):
         >>> memory = Memory()
         >>> memory.memorize(variable, TypeConverter.convert("hello", ASCII, BitArray))
         >>> print(TypeConverter.convert(memory.getValue(variable), BitArray, Raw))
-        hello
+        b'hello'
 
         """
         return self.memory[variable]

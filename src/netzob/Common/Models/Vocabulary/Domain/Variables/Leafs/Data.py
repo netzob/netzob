@@ -304,21 +304,17 @@ class Data(AbstractVariableLeaf):
 
         :raises: :class:`TypeError` or :class:`ValueError` if parameters are not valid.
         """
-
+        
         super(Data, self).__init__(self.__class__.__name__, name=name, svas=svas)
 
         self.dataType = dataType
-        self.currentValue = originalValue
+        self.currentValue = originalValue        
 
     def __str__(self):
         return "Data ({0})".format(self.dataType)
 
-    # These two functions (__eq__ and __key) are usefull to prevent duplicating DATA in ALTs
-    def __eq__(x, y):
-        return x.__key() == y.__key()
-        
     def __key(self):
-        return (self.__class__.__name__, self.currentValue, self.dataType, self.svas, self.name)        
+        return (self.__class__.__name__, self.currentValue, self.dataType, self.svas, self.name)
 
     @typeCheck(GenericPath)
     def isDefined(self, path):

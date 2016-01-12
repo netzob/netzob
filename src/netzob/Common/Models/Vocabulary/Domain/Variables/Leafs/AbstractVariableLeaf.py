@@ -60,7 +60,7 @@ class AbstractVariableLeaf(AbstractVariable):
 
     def __init__(self, varType, name=None, svas=None):
         super(AbstractVariableLeaf, self).__init__(varType, name=name, svas=svas)
-
+        
     def parse(self, parsingPath, acceptCallBack=True, carnivorous=False):
         """@toto TO BE DOCUMENTED"""
 
