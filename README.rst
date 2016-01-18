@@ -25,8 +25,10 @@ fixed fields protocols (like IP and TCP) and variable-length fields protocols (l
 Technical Description
 ---------------------
 
-This version of Netzob should used as a python library to be imported either in your scripts
-or in favorite interactive shell (ipython?). Once installed, we recommend the following statement to import Netzob::
+This version of Netzob must be used as a python 2.7 library. It can either be imported in your scripts
+or in your favorite interactive shell (ipython?).
+
+Once installed, we recommend the following statement to import Netzob::
 
   from netzob.all import *
 
@@ -49,6 +51,12 @@ Get Started with Netzob
 Install it
 ----------
 
+First thing to do is to check the version of your python interpretor.
+Netzob requires python 2.7::
+
+  $ python --version
+  Python 2.7.11
+
 As a 'classic' python project, Netzob is provided with its
 ``setup.py``. This file defines what and how to install the project on a
 python hosting OS.
@@ -70,7 +78,6 @@ We also highly recommend to install the following additional dependencies:
 
 Once the required dependencies are installed, you can build and install Netzob::
 
-  $ python setup.py build
   # python setup.py install
 
 Or if you prefer a more developer-friendly install::
