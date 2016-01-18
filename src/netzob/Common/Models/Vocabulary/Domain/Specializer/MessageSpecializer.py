@@ -66,7 +66,7 @@ class MessageSpecializer(object):
     >>> s.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> valueInTab = s.getCells()[0]
     >>> print(valueInTab[0])
-    544f544f
+    b'544f544f'
     >>> size = valueInTab[1]
     >>> int(size, 16)*2 == len(valueInTab[2])
     True
@@ -84,11 +84,11 @@ class MessageSpecializer(object):
     >>> s2 = Symbol(fields=[f21, f22, f23])
 
     >>> ms = MessageSpecializer()
-    >>> m1 = TypeConverter.convert(ms.specializeSymbol(s1).generatedContent, BitArray, Raw)
+    >>> m1 = TypeConverter.convert(ms.specializeSymbol(s1).generatedContent, BitArray, ASCII)
     >>> m1.startswith("hello;")
     True
 
-    >>> m2 = TypeConverter.convert(ms.specializeSymbol(s2).generatedContent, BitArray, Raw)
+    >>> m2 = TypeConverter.convert(ms.specializeSymbol(s2).generatedContent, BitArray, ASCII)
     >>> m2.startswith("master>")
     True
 
@@ -120,7 +120,7 @@ class MessageSpecializer(object):
             fieldDomain = field.domain
             if fieldDomain is None:
                 raise Exception("Cannot specialize field '{0}' since it defines no domain".format(fieldDomain))
-        
+
             fs = FieldSpecializer(field, presets = self.presets)
 
             newSpecializingPaths = []
@@ -148,10 +148,10 @@ class MessageSpecializer(object):
                         d = retainedPath.getDataAssignedToVariable(child.domain).copy()
                     else:
                         d += retainedPath.getDataAssignedToVariable(child.domain).copy()
-                
+
             else:
                 d = retainedPath.getDataAssignedToVariable(field.domain)
-                
+
             if generatedContent is None:
                 generatedContent = d.copy()
             else:
@@ -202,11 +202,6 @@ class MessageSpecializer(object):
                 raise Exception("Preset's keys must be of Field types")
 
         self.__presets = dict()
-        
+
         for k, v in presets.items():
             self.__presets[k] = v
-    
-    
-        
-            
-
