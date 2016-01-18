@@ -257,6 +257,25 @@ class DataAlignment(threading.Thread):
         return dAlignment.execute()
 
     # Properties
+    @property
+    def data(self):
+        """The list of data to align.
+        """
+        return self.__data
+
+    @data.setter
+    def data(self, data):
+        if data is None:
+            raise Exception("Data cannot be None")
+        val = []
+        for d in data:
+            if isinstance(d, str):
+                val.append(bytes(d, "utf-8"))
+            elif isinstance(d, bytes):
+                val.append(d)
+            else:
+                raise Exception("Invalid type, data can only be an str or a bytes not {}: {}".format(type(data), d))
+        self.__data = val
 
     @property
     def field(self):
