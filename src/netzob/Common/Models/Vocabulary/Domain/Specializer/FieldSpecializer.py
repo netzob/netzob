@@ -60,7 +60,7 @@ class FieldSpecializer(object):
     >>> f = Field("Hello")
     >>> fs = FieldSpecializer(f)
     >>> print(TypeConverter.convert(fs.specialize()[0].getDataAssignedToField(f), BitArray, Raw))
-    Hello
+    b'Hello'
 
     >>> f = Field(ASCII(nbChars=10))
     >>> fs = FieldSpecializer(f)
@@ -76,15 +76,15 @@ class FieldSpecializer(object):
     >>> f = Field(d)
     >>> fs = FieldSpecializer(f)
     >>> val = set([TypeConverter.convert(fs.specialize()[0].getDataAssignedToField(f), BitArray, ASCII) for x in range(100)])
-    >>> print(val)
-    set(['netzob', 'zoby'])
+    >>> print(sorted(val))
+    ['netzob', 'zoby']
 
     >>> d = Agg([ASCII("hello"), ASCII(" "), Alt([ASCII("netzob"), ASCII("zoby")])])
     >>> f = Field(d)
     >>> fs = FieldSpecializer(f)
     >>> val = set([TypeConverter.convert(fs.specialize()[0].getDataAssignedToField(f), BitArray, ASCII) for x in range(100)])
-    >>> print(val)
-    set(['hello zoby', 'hello netzob'])
+    >>> print(sorted(val))
+    ['hello netzob', 'hello zoby']
 
     >>> fpayload = Field()
     >>> f1 = Field(ASCII("hello "), name="f1")
@@ -113,16 +113,16 @@ class FieldSpecializer(object):
 
         self.field = field
         self.presets = presets
-        
+
         if self.presets is not None and self.field in list(self.presets.keys()):
             self.arbitraryValue = self.presets[self.field]
         else:
             self.arbitraryValue = None
-                
+
     @typeCheck(SpecializingPath)
     def specialize(self, specializingPath=None):
         """Execute the specialize operation"""
-        
+
         if specializingPath is None:
             specializingPath = SpecializingPath(memory=Memory())
 
@@ -154,7 +154,7 @@ class FieldSpecializer(object):
             for path in resultPaths:
                 tmpResultPaths.extend(fs.specialize(path))
             resultPaths = tmpResultPaths
-        
+
         for resultPath in resultPaths:
             value = None
             for child in self.field.fields:
@@ -217,6 +217,3 @@ class FieldSpecializer(object):
     @typeCheck(bitarray)
     def arbitraryValue(self, value):
         self.__arbitraryValue = value
-    
-
-
