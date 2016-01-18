@@ -128,7 +128,7 @@ class Symbol(AbstractField):
         >>> s = Symbol(fields=[f0, f1])
         >>> result = s.specialize()
         >>> print(result[0])
-        \x05
+        5
         >>> print(len(result))
         6
 
@@ -141,7 +141,7 @@ class Symbol(AbstractField):
         >>> presetValues = dict()
         >>> presetValues[f2] = TypeConverter.convert("antoine", ASCII, BitArray)
         >>> print(s.specialize(presets = presetValues))
-        hello antoine
+        b'hello antoine'
 
         A preseted valued bypasses all the constraints checks on your field definition.
         For example, in the following example it can be use to bypass a size field definition.
@@ -152,8 +152,8 @@ class Symbol(AbstractField):
         >>> f1.domain = Size(f2)
         >>> s = Symbol(fields=[f1, f2])
         >>> presetValues = {f1: TypeConverter.convert("\xff", Raw, BitArray)}        
-        >>> print(repr(s.specialize(presets = presetValues)[0]))
-        '\\xff'
+        >>> print(s.specialize(presets = presetValues)[0])
+        195
 
         :keyword generationStrategy: if set, the strategy will be used to generate the fields definitions
         :type generaionrStrategy: :class:``

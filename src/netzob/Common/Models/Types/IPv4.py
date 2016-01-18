@@ -246,7 +246,7 @@ class IPv4(AbstractType):
 
         >>> from netzob.all import *
         >>> print(IPv4.decode("127.0.0.1"))
-        \x7f\x00\x00\x01
+        b'\\x7f\\x00\\x00\\x01'
 
         """
 

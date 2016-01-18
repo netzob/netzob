@@ -348,7 +348,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         cells = self.getCells(encoded=encoded, styled=styled)
         values = []
         for line in cells:
-            values.append(''.join(line))
+            values.append(b''.join(line))
         return values
 
     @typeCheck(bool, bool)

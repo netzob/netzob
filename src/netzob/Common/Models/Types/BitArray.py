@@ -180,8 +180,13 @@ class BitArray(AbstractType):
             endian = 'little'
         else:
             raise ValueError("Invalid endianness value")
-
+        
+        if isinstance(data, bytes):
+            norm_data = data
+        elif isinstance(data, str):
+            norm_data = bytes(data, "utf-8")
+            
         b = bitarray(endian=endian)
-        b.frombytes(data)
+        b.frombytes(norm_data)
         return b
 
