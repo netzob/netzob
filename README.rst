@@ -70,11 +70,12 @@ We also highly recommend to install the following additional dependencies:
 
 Once the required dependencies are installed, you can build and install Netzob::
 
-  python setup.py install
+  $ python setup.py build
+  # python setup.py install
 
 Or if you prefer a more developer-friendly install::
 
-  python setup.py develop --user
+  $ python setup.py develop --user
 
   
 Docker container:
