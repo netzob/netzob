@@ -81,11 +81,13 @@ class MatrixList(list):
         for r in self:
             r1_repr = []
             for r1 in r:
-                v = repr(r1)
-                # remove the starting b' due to the "bytes type"
-                if v.startswith("b'"):
-                    v = v[1:]
-                r1_repr.append(v)
+                if isinstance(r1, bytes):
+                    try:
+                        r1 = r1.decode('utf-8')
+                    except UnicodeDecodeError:
+                        pass
+                r1 = repr(r1)
+                r1_repr.append(r1)
             r_repr.append(r1_repr)
 
         # Prepare format
