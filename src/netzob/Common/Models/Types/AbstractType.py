@@ -482,21 +482,24 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         if data is None:
             raise TypeError("Cannot normalize None data")
 
+        normalizedData = None
+
         if isinstance(data, AbstractType):
             return data
-        if isinstance(data, int):
+        elif isinstance(data, int):
             from netzob.Common.Models.Types.Integer import Integer
             return Integer(value=data)
-        if isinstance(data, str):
-            try:
-                from netzob.Common.Models.Types.ASCII import ASCII
-                normalizedData = ASCII(value=data)
-            except:
-                from netzob.Common.Models.Types.Raw import Raw
-                normalizedData = Raw(value=data)
-            return normalizedData
+        elif isinstance(data, bytes):
+            from netzob.Common.Models.Types.Raw import Raw
+            normalizedData = Raw(value=data)
+        elif isinstance(data, str):
+            from netzob.Common.Models.Types.ASCII import ASCII
+            normalizedData = ASCII(value=data)
 
-        raise TypeError("Not a valid data ({0}), impossible to normalize it.", type(data))
+        if normalizedData is None:
+            raise TypeError("Not a valid data ({0}), impossible to normalize it.", type(data))
+
+        return normalizedData
 
     def buildDataRepresentation(self):
         """It creates a :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Data.Data` following the specified type.

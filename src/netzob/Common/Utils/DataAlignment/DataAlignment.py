@@ -179,6 +179,7 @@ class DataAlignment(threading.Thread):
 
             result.append(alignedEncodedMsg)
 
+
         return result
 
     # @typeCheck(str)

@@ -49,7 +49,6 @@ from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Models.Types.BitArray import BitArray
 from netzob.Common.Models.Types.TypeConverter import TypeConverter
 from netzob.Common.Models.Vocabulary.Domain.DomainFactory import DomainFactory
-from netzob.Common.Utils.NetzobRegex import NetzobStaticRegex
 from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
 
 class InvalidDomainException(Exception):
@@ -186,10 +185,6 @@ class Field(AbstractField):
         return TypeConverter.convert(specializingPath.getDataAssignedToVariable(self.domain), BitArray, Raw)
 
 
-    def _isStatic(self):
-        """Returns True if the field denotes a static content"""
-        return isinstance(self.regex, NetzobStaticRegex)
-
     @property
     def domain(self):
         """This defines the definition domain of a field.
@@ -206,8 +201,6 @@ class Field(AbstractField):
     @domain.setter
     def domain(self, domain):
         normalizedDomain = DomainFactory.normalizeDomain(domain)
-        self._logger.debug("Create Normalized regex for {0}".format(normalizedDomain))
-        self.regex = normalizedDomain.buildRegex()
         self.__domain = normalizedDomain
 
     @property

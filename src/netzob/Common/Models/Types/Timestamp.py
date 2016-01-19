@@ -78,14 +78,14 @@ class Timestamp(AbstractType):
     >>> s = Symbol(fields=[f0, f1, f2])
     >>> s.messages = [RawMessage(s.specialize()) for x in range(5)]
     >>> print(s)
-    Start | Timestamp    | End 
-    ----- | ------------ | ----
-    '00'  | 'V\\x1c\\xf15' | '00'
-    '00'  | 'V\\x1c\\xf15' | '00'
-    '00'  | 'V\\x1c\\xf15' | '00'
-    '00'  | 'V\\x1c\\xf15' | '00'
-    '00'  | 'V\\x1c\\xf15' | '00'
-    ----- | ------------ | ----
+    Start | Timestamp     | End 
+    ----- | ------------- | ----
+    '00'  | b'V\\x1c\\xf15' | '00'
+    '00'  | b'V\\x1c\\xf15' | '00'
+    '00'  | b'V\\x1c\\xf15' | '00'
+    '00'  | b'V\\x1c\\xf15' | '00'
+    '00'  | b'V\\x1c\\xf15' | '00'
+    ----- | ------------- | ----
     >>> s.fields[1].addEncodingFunction(TypeEncodingFunction(Timestamp))
     >>> print(s)
     Start | Timestamp                  | End 

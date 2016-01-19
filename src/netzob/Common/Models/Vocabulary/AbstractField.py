@@ -114,7 +114,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> fh2 = Field(Alt([ASCII("netzob"), ASCII("zoby"), ASCII("lapy"), ASCII("sygus")]), name="pseudo")
         >>> fheader = Field(name="header")
         >>> fheader.fields = [fh1, fh2]
-        >>> fb1 = Field(", what's up in ", name="whatsup")
+        >>> fb1 = Field(ASCII(", what's up in "), name="whatsup")
         >>> fb2 = Field(["Paris", "Berlin", "New-York"], name="city")
         >>> fb3 = Field(" ?", name="end")
         >>> fbody = Field(name="body")
@@ -324,17 +324,17 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         -------------- | -------------- | -------------------------------- | ------------------ | ------
 
         >>> print(symbol.getValues())
-        ['68656c6c6f206e65747a6f622c2077686174277320757020696e205061726973203f', '68656c6c6f206e65747a6f622c2077686174277320757020696e204265726c696e203f', '68656c6c6f206e65747a6f622c2077686174277320757020696e204e65772d596f726b203f', '68656c6c6f207a6f62792c2077686174277320757020696e205061726973203f', '68656c6c6f207a6f62792c2077686174277320757020696e204265726c696e203f', '68656c6c6f207a6f62792c2077686174277320757020696e204e65772d596f726b203f', '68656c6c6f206c6170792c2077686174277320757020696e205061726973203f', '68656c6c6f206c6170792c2077686174277320757020696e204265726c696e203f', '68656c6c6f206c6170792c2077686174277320757020696e204e65772d596f726b203f']
+        [b'68656c6c6f206e65747a6f622c2077686174277320757020696e205061726973203f', b'68656c6c6f206e65747a6f622c2077686174277320757020696e204265726c696e203f', b'68656c6c6f206e65747a6f622c2077686174277320757020696e204e65772d596f726b203f', b'68656c6c6f207a6f62792c2077686174277320757020696e205061726973203f', b'68656c6c6f207a6f62792c2077686174277320757020696e204265726c696e203f', b'68656c6c6f207a6f62792c2077686174277320757020696e204e65772d596f726b203f', b'68656c6c6f206c6170792c2077686174277320757020696e205061726973203f', b'68656c6c6f206c6170792c2077686174277320757020696e204265726c696e203f', b'68656c6c6f206c6170792c2077686174277320757020696e204e65772d596f726b203f']
         >>> print(f1.getValues())
-        ['68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20', '68656c6c6f20']
+        [b'68656c6c6f20', b'68656c6c6f20', b'68656c6c6f20', b'68656c6c6f20', b'68656c6c6f20', b'68656c6c6f20', b'68656c6c6f20', b'68656c6c6f20', b'68656c6c6f20']
         >>> print(f2.getValues())
-        ['6e65747a6f62', '6e65747a6f62', '6e65747a6f62', '7a6f6279', '7a6f6279', '7a6f6279', '6c617079', '6c617079', '6c617079']
+        [b'6e65747a6f62', b'6e65747a6f62', b'6e65747a6f62', b'7a6f6279', b'7a6f6279', b'7a6f6279', b'6c617079', b'6c617079', b'6c617079']
         >>> print(f3.getValues())
-        ['2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20', '2c2077686174277320757020696e20']
+        [b'2c2077686174277320757020696e20', b'2c2077686174277320757020696e20', b'2c2077686174277320757020696e20', b'2c2077686174277320757020696e20', b'2c2077686174277320757020696e20', b'2c2077686174277320757020696e20', b'2c2077686174277320757020696e20', b'2c2077686174277320757020696e20', b'2c2077686174277320757020696e20']
         >>> print(f4.getValues())
-        ['5061726973', '4265726c696e', '4e65772d596f726b', '5061726973', '4265726c696e', '4e65772d596f726b', '5061726973', '4265726c696e', '4e65772d596f726b']
+        [b'5061726973', b'4265726c696e', b'4e65772d596f726b', b'5061726973', b'4265726c696e', b'4e65772d596f726b', b'5061726973', b'4265726c696e', b'4e65772d596f726b']
         >>> print(f5.getValues())
-        ['203f', '203f', '203f', '203f', '203f', '203f', '203f', '203f', '203f']
+        [b'203f', b'203f', b'203f', b'203f', b'203f', b'203f', b'203f', b'203f', b'203f']
 
         :keyword encoded: if set to True, encoding functions are applied on returned cells
         :type encoded: :class:`bool`
@@ -376,10 +376,10 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> messageCells = symbol.getMessageCells()
         >>> for message in symbol.messages:
         ...    print(message.data, messageCells[message])
-        netzob, what's up in Paris ? ['netzob', ", what's up in ", 'Paris', ' ?']
-        netzob, what's up in Berlin ? ['netzob', ", what's up in ", 'Berlin', ' ?']
-        zoby, what's up in Paris ? ['zoby', ", what's up in ", 'Paris', ' ?']
-        zoby, what's up in Berlin ? ['zoby', ", what's up in ", 'Berlin', ' ?']
+        netzob, what's up in Paris ? [b'netzob', b", what's up in ", b'Paris', b' ?']
+        netzob, what's up in Berlin ? [b'netzob', b", what's up in ", b'Berlin', b' ?']
+        zoby, what's up in Paris ? [b'zoby', b", what's up in ", b'Paris', b' ?']
+        zoby, what's up in Berlin ? [b'zoby', b", what's up in ", b'Berlin', b' ?']
 
         :keyword encoded: if set to true, values are encoded
         :type encoded: :class:`bool`
@@ -427,10 +427,10 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> messageValues = f3.getMessageValues()
         >>> for message in symbol.messages:
         ...    print(message.data, messageValues[message])
-        netzob, what's up in Paris ? Paris
-        netzob, what's up in Berlin ? Berlin
-        zoby, what's up in Paris ? Paris
-        zoby, what's up in Berlin ? Berlin
+        netzob, what's up in Paris ? b'Paris'
+        netzob, what's up in Berlin ? b'Berlin'
+        zoby, what's up in Paris ? b'Paris'
+        zoby, what's up in Berlin ? b'Berlin'
 
         :keyword encoded: if set to true, values are encoded
         :type encoded: :class:`bool`
