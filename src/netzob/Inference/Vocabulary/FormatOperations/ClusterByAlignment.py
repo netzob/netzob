@@ -132,7 +132,7 @@ class ClusterByAlignment(object):
 
         # Retrieve the alignment of each symbol and the build the associated regular expression
         for symbol in symbols:
-            self._logger.info("Align messages from symbol {0}".format(symbol.name))
+            self._logger.debug("Align messages from symbol {0}".format(symbol.name))
             from netzob.Inference.Vocabulary.Format import Format
             Format.splitAligned(symbol, useSemantic=False)
 
