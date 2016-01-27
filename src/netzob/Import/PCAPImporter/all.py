@@ -29,4 +29,21 @@
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
 
-from netzob.Import.PCAPImporter.PCAPImporter import PCAPImporter
+pcapy_available = False
+impacket_available = False
+
+try:
+    import pcapy
+    pcapy_available = True
+except ImportError:    
+    pass
+
+try:
+    import impacket
+    impacket_available = True
+except ImportError:
+    pass
+
+    
+if pcapy_available and impacket_available:
+    from netzob.Import.PCAPImporter.PCAPImporter import PCAPImporter

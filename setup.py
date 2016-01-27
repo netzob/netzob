@@ -184,7 +184,9 @@ with open('requirements.txt', 'r') as fd_requirements:
         dependencies.append(dependency.strip())
 
 extra_dependencies = {
-    'docs': ['Sphinx>=1.1.3']
+    'docs': ['Sphinx>=1.1.3'],
+    'network': ['pcapy>=0.10.8', 'impacket>=0.9.12'],
+    'correlation': ['numpy>=1.9.2', 'minepy>=1.0.0']
 }
 
 dependency_links = []
