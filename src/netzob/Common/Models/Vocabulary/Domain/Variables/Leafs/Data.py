@@ -64,7 +64,7 @@ class Data(AbstractVariableLeaf):
     >>> print(f.domain.varType)
     Data
     >>> print(TypeConverter.convert(f.domain.currentValue, BitArray, Raw))
-    zoby
+    b'zoby'
     >>> print(f.domain.dataType)
     ASCII=None ((0, None))
     >>> print(f.domain.name)
@@ -101,7 +101,7 @@ class Data(AbstractVariableLeaf):
     >>> print(mp.parseMessage(msg2, s))
     Traceback (most recent call last):
       ...
-    InvalidParsingPathException: No parsing path returned while parsing 'netzab'
+    netzob.Common.Models.Vocabulary.Domain.Parser.MessageParser.InvalidParsingPathException: No parsing path returned while parsing 'b'netzab''
 
 
     Case 2: Abstraction of a persitent data
@@ -120,7 +120,7 @@ class Data(AbstractVariableLeaf):
     >>> print(mp.parseMessage(msg3, s))
     Traceback (most recent call last):
       ...
-    InvalidParsingPathException: No parsing path returned while parsing 'netzab'
+    netzob.Common.Models.Vocabulary.Domain.Parser.MessageParser.InvalidParsingPathException: No parsing path returned while parsing 'b'netzab''
 
 
     >>> f0 = Field(domain=Data(dataType=ASCII(), originalValue=TypeConverter.convert("netzob", ASCII, BitArray), name="netzob", svas=SVAS.PERSISTENT))
@@ -130,7 +130,7 @@ class Data(AbstractVariableLeaf):
     >>> print(mp.parseMessage(msg1, s))
     Traceback (most recent call last):
       ...
-    InvalidParsingPathException: No parsing path returned while parsing 'netzab'
+    netzob.Common.Models.Vocabulary.Domain.Parser.MessageParser.InvalidParsingPathException: No parsing path returned while parsing 'b'netzab''
 
 
     Case 3: Abstraction of an ephemeral data
@@ -145,17 +145,17 @@ class Data(AbstractVariableLeaf):
     >>> print(mp.parseMessage(msg1, s))
     [bitarray('011011100110010101110100011110100110111101100010')]
     >>> print(mp.memory)
-    Data (ASCII=None ((40, 80))): netzob
+    Data (ASCII=None ((40, 80))): b'netzob'
 
     >>> print(mp.parseMessage(msg2, s))
     [bitarray('011011100110010101110100011110100110111101100010')]
     >>> print(mp.memory)
-    Data (ASCII=None ((40, 80))): netzob
+    Data (ASCII=None ((40, 80))): b'netzob'
     
     >>> print(mp.parseMessage(msg3, s))
     [bitarray('011011100110010101110100011110100110000101100010')]
     >>> print(mp.memory)
-    Data (ASCII=None ((40, 80))): netzab
+    Data (ASCII=None ((40, 80))): b'netzab'
 
 
     Case 4: Abstraction of a volatile data

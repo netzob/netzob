@@ -97,7 +97,7 @@ class Agg(AbstractVariableNode):
     >>> print(mp.parseMessage(msg2, s))
     Traceback (most recent call last):
       ...
-    InvalidParsingPathException: No parsing path returned while parsing 'netzobtxt!'
+    netzob.Common.Models.Vocabulary.Domain.Parser.MessageParser.InvalidParsingPathException: No parsing path returned while parsing 'b'netzobtxt!''
 
 
     Let's see the specializing process of an AGGREGATE
@@ -108,7 +108,7 @@ class Agg(AbstractVariableNode):
     >>> f = Field(Agg([d1, d2]))
     >>> s = Symbol(fields=[f])
     >>> print(s.specialize())
-    hello netzob
+    b'hello netzob'
 
     """
 

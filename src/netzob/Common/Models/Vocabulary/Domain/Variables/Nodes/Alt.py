@@ -83,7 +83,7 @@ class Alt(AbstractVariableNode):
     >>> print(mp.parseMessage(msg3, s))
     Traceback (most recent call last):
       ...
-    InvalidParsingPathException: No parsing path returned while parsing 'nothing'
+    netzob.Common.Models.Vocabulary.Domain.Parser.MessageParser.InvalidParsingPathException: No parsing path returned while parsing 'b'nothing''
     
 
     That's another simple example that also illustrates rollback mechanisms

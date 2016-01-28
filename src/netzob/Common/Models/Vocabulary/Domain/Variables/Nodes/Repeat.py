@@ -96,7 +96,7 @@ class Repeat(AbstractVariableNode):
     >>> f1 = Field(Repeat(ASCII("netzob"), nbRepeat=2))
     >>> s = Symbol([f1])
     >>> print(s.specialize())
-    netzobnetzob
+    b'netzobnetzob'
 
     >>> from netzob.all import *
     >>> f1 = Field(Repeat(IPv4(), nbRepeat=3, delimitor=TypeConverter.convert(";", Raw, BitArray)))
@@ -104,7 +104,7 @@ class Repeat(AbstractVariableNode):
     >>> gen = s.specialize()
     >>> len(gen) == 14
     True
-    >>> gen.count(";") >= 2
+    >>> gen.count(b";") >= 2
     True
 
     >>> from netzob.all import *
@@ -112,7 +112,7 @@ class Repeat(AbstractVariableNode):
     >>> f1 = Field(Repeat(child, nbRepeat=3, delimitor=TypeConverter.convert(";", Raw, BitArray)))
     >>> s = Symbol([f1])
     >>> gen = s.specialize()
-    >>> gen == gen[:5]+";"+gen[:5]+";"+gen[:5]
+    >>> gen == gen[:5]+b";"+gen[:5]+b";"+gen[:5]
     True
 
     """
