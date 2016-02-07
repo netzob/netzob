@@ -263,11 +263,11 @@ class FieldSplitStatic(object):
                 else:
                     # dynamic
                     if len(staticSequences) > 0:
-                        result.append([''.join(staticSequences)])
+                        result.append([b''.join(staticSequences)])
                         staticSequences = []
                     result.append(values)
             if len(staticSequences) > 0:
-                result.append([''.join(staticSequences)])
+                result.append([b''.join(staticSequences)])
             indexedValues = result
 
         # If requested, merges the adjacent dynamic fields
@@ -284,7 +284,7 @@ class FieldSplitStatic(object):
                         dynValues = map(None, *dynamicSequences)
                         tmp_result = []
                         for d in dynValues:
-                            tmp_result.append(''.join([x if x is not None else '' for x in d]))
+                            tmp_result.append(b''.join([x if x is not None else b'' for x in d]))
                         result.append(tmp_result)
                         dynamicSequences = []
                     result.append(values)
@@ -292,7 +292,7 @@ class FieldSplitStatic(object):
                 dynValues = map(None, *dynamicSequences)
                 tmp_result = []
                 for d in dynValues:
-                    tmp_result.append(''.join([x if x is not None else '' for x in d]))
+                    tmp_result.append(b''.join([x if x is not None else b'' for x in d]))
                 result.append(tmp_result)
 
             indexedValues = result

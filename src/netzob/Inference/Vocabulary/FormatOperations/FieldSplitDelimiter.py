@@ -191,7 +191,8 @@ class FieldSplitDelimiter(object):
                 newFields.append(newField)
                 iField += 1
 
-            fieldName = "Field-sep-" + TypeConverter.convert(delimiter.value, BitArray, HexaString)
+            str_delimiter = TypeConverter.convert(delimiter.value, BitArray, HexaString).decode('utf-8')
+            fieldName = "Field-sep-{}".format(str_delimiter)
 
             newFields.append(Field(domain=Alt([delimiter, Raw(nbBytes=0)]), name=fieldName))
 
