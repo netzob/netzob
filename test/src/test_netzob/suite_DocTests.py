@@ -69,6 +69,7 @@ from netzob.Common.Models.Vocabulary.Domain.Parser.FlowParser import FlowParser
 
 from netzob.Common.Models.Simulator.AbstractionLayer import AbstractionLayer
 
+from netzob.Inference.Vocabulary import EntropyMeasurement
 # from netzob.Inference.Grammar.Angluin import Angluin
 # from netzob.Inference.Grammar.AutomataFactories.ChainedStatesAutomataFactory import ChainedStatesAutomataFactory
 
@@ -148,7 +149,7 @@ def getSuite():
 
         FlowParser.__module__,
         AbstractionLayer.__module__,
-
+        EntropyMeasurement
 
         # Modules related to the grammatical inference
         # --------------------------------------------
