@@ -48,12 +48,14 @@ from netzob.Common.Models.Vocabulary.Symbol import Symbol
 from netzob.Common.Models.Vocabulary.Field import Field
 from netzob.Common.Models.Types.Raw import Raw
 from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Agg import Agg
+from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 
+from bitarray import bitarray
 
 @NetzobLogger
 class FieldOperations(object):
     """This class offers various operations to support manual merge and split of fields."""
-
+    
     @typeCheck(AbstractField, AbstractField)
     def mergeFields(self, field1, field2):
         """Merge specified fields.
@@ -140,11 +142,41 @@ class FieldOperations(object):
         if iField2 != iField1 + 1:
             raise ValueError("Field1 must be directly on the left of field2 (iField1={0}, iField2={1})".format(iField1, iField2))
 
-        # build a new field domain
-        newDomain = Agg([field1.domain, field2.domain])
-        newField = Field(domain=newDomain, name="Merge")
-        newField.encodingFunctions = field1.encodingFunctions.values()
-        parent = field1.parent
-        before = parent.fields[:iField1]
+	#Requirements- Two fields should be of same domain and have same dataType
+	if field1.domain.varType != field2.domain.varType:
+		raise TypeError("Two fields should be of same domain")
+
+	if field1.domain.dataType.typeName != field2.domain.dataType.typeName:
+		raise TypeError("DataType of two fields should be same")
+
+	# Append contents of two fields
+	new_field = []
+        for combineField in zip(field1.getValues(), field2.getValues()):
+                combineField = ''.join(map(str,combineField))
+                new_field.append(combineField)
+
+	# Create RawMessage and symbols from new_field
+	index=0
+	msg = range(len(new_field))
+	for index in range(len(new_field)):
+		msg[index] = RawMessage(new_field[index])
+	symbols = Symbol(messages=msg)
+
+	# Position the new field in correct positions with correct dataType size 
+	newField = symbols.fields[0]
+	newField.name = "Merge"
+	sizeField1 = list(field1.domain.dataType.size)
+       	sizeField2 = list(field2.domain.dataType.size)
+        sizeField1[0] = min(sizeField1[0],sizeField2[0])
+       	sizeField1[1] = sizeField1[1] + sizeField2[1]
+	newField.domain.dataType.size = tuple(sizeField1)
+	if field1.domain.currentValue is None or field2.domain.currentValue is None:
+		newField.domain.currentValue = None
+	else:
+		newField.domain.currentValue = (field1.domain.currentValue + field2.domain.currentValue)
+	newField.encodingFunctions = field1.encodingFunctions.values()
+	parent=field1.parent
+	before = parent.fields[:iField1]
         after = parent.fields[iField2 + 1:]
         parent.fields = before + [newField] + after
+
