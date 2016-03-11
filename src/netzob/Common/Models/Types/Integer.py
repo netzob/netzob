@@ -255,6 +255,14 @@ class Integer(AbstractType):
 
         nbWords = (len(data) * 8 / int(unitSize))
 
+        # Check whether the input data matches unitSize. If not take 
+        # precautions to able to pad it with null bytes later.
+        padding_nullbytes = 0
+        rest = (len(data) * 8) % int(unitSize)
+        if rest != 0:
+            nbWords += 1
+            padding_nullbytes = (int(unitSize) - rest) / 8
+
         finalValue = 0
 
         iWord = 0
@@ -272,9 +280,19 @@ class Integer(AbstractType):
             endPos = iWord * int(unitSize) / 8 + int(unitSize) / 8
 
             wordData = data[startPos:endPos]
-            unpackedWord = struct.unpack(perWordFormat, wordData)[0]
 
+            # Pad with null bytes to statisfy the unitSize.
+            if i == (end - inc) and padding_nullbytes > 0:
+                if endianness == AbstractType.ENDIAN_BIG:
+                    wordData = '\x00' * padding_nullbytes + wordData 
+                elif endianness == AbstractType.ENDIAN_LITTLE:
+                    wordData += '\x00' * padding_nullbytes
+                else:
+                     raise ValueError("Invalid endianness value: {0}".format(endianness))
+
+            unpackedWord = struct.unpack(perWordFormat, wordData)[0]
             unpackedWord = unpackedWord << int(unitSize) * iWord
+
             finalValue = finalValue + unpackedWord
 
             iWord += 1
