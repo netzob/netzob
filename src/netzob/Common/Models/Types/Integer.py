@@ -235,6 +235,16 @@ class Integer(AbstractType):
         >>> print Integer.encode('\xcc\xac\x9c\x0c\x1c\xacL\x1c,\xac', unitSize=AbstractType.UNITSIZE_8)
         -395865088909314208584756
 
+        >>> raw = '\xcc\xac\x9c'
+        >>> print Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG)
+        10210476
+
+        >>> print Integer.encode(raw, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_BIG)
+        13413532
+
+        >>> print Integer.encode(raw, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_LITTLE)
+        10267852
+
         :param data: the data encoded in python raw which will be encoded in current type
         :type data: python raw
         :keyword unitSize: the unitsize to consider while encoding. Values must be one of AbstractType.UNITSIZE_*
@@ -282,7 +292,7 @@ class Integer(AbstractType):
             wordData = data[startPos:endPos]
 
             # Pad with null bytes to statisfy the unitSize.
-            if i == (end - inc) and padding_nullbytes > 0:
+            if padding_nullbytes > 0 and i == (end - inc):
                 if endianness == AbstractType.ENDIAN_BIG:
                     wordData = '\x00' * padding_nullbytes + wordData 
                 elif endianness == AbstractType.ENDIAN_LITTLE:
