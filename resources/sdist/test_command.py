@@ -75,26 +75,31 @@ class test_command(Command):
         # We retrieve the current test suite
         currentTestSuite = suite_global.getSuite()
 
+        testResults = None
+    
         if self.reportfile is None or len(self.reportfile) == 0:
-            runner = unittest.TextTestRunner()
-            testResult = runner.run(currentTestSuite)
+            runner = unittest.TextTestRunner(verbosity = 1)
+            testResults = runner.run(currentTestSuite)
         else:
             # We execute the test suite
-            File = open(self.reportfile, 'w')
-            File.write('<?xml version="1.0" encoding="utf-8"?>\n')
-            reporter = XMLTestRunner(File)
-            reporter.run(currentTestSuite)
-            File.close()
+            with open(self.reportfile, 'w') as fd:
+                fd.write('<?xml version="1.0" encoding="utf-8"?>\n')
+                reporter = XMLTestRunner(fd)
+                testResults = reporter.run(currentTestSuite)
 
             self.cleanFile(self.reportfile)
+
+        if testResults is None:
+            sys.exit(False)
+        else:
+            sys.exit(bool(testResults.failures))            
 
     def cleanFile(self, filePath):
         """Clean the file to handle non-UTF8 bytes.
         """
 
-        aFile = open(filePath, 'r')
-        data = aFile.read()
-        aFile.close()
+        with open(filePath, 'r') as aFile:
+            data = aFile.read()
 
         cleanData = ""
         for c in data:
@@ -103,6 +108,5 @@ class test_command(Command):
             else:
                 cleanData += repr(c)
 
-        aFile = open(filePath, 'w')
-        aFile.write(cleanData)
-        aFile.close()
+        with open(filePath, 'w') as aFile:
+            aFile.write(cleanData)
