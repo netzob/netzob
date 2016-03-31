@@ -130,7 +130,7 @@ class InternetChecksum(AbstractRelationVariableLeaf):
 
         content = parsingPath.getDataAssignedToVariable(self)
         possibleValue = content[:sizeOfPossibleValue[1]]
-        self._logger.warn("Possible value of Internet Checksum field: {0}".format(possibleValue))
+        self._logger.debug("Possible value of Internet Checksum field: {0}".format(possibleValue))
         
         expectedValue = self._computeExpectedValue(parsingPath)
         if expectedValue is None:
@@ -145,7 +145,7 @@ class InternetChecksum(AbstractRelationVariableLeaf):
     @typeCheck(ParsingPath)
     def learn(self, parsingPath, carnivours=False):
         raise Exception("not implemented")
-        self._logger.warn("INTERNEt CHECKSUM LEARN")
+        self._logger.debug("INTERNET CHECKSUM LEARN")
         if parsingPath is None:
             raise Exception("VariableParserPath cannot be None")
         return []
@@ -245,7 +245,7 @@ class InternetChecksum(AbstractRelationVariableLeaf):
             newValue = self._computeExpectedValue(variableSpecializerPath)
             variableSpecializerPath.addResult(self, newValue.copy())
         except Exception, e:
-            self._logger.warn("Cannot specialize since no value is available for the Internet checksum dependencies, we create a callback function in case it can be computed later: {0}".format(e))
+            self._logger.debug("Cannot specialize since no value is available for the Internet checksum dependencies, we create a callback function in case it can be computed later: {0}".format(e))
             pendingValue = TypeConverter.convert("PENDING VALUE", ASCII, BitArray)
             variableSpecializerPath.addResult(self, pendingValue)
             if moreCallBackAccepted:
