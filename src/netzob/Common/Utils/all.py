@@ -30,5 +30,4 @@
 # see docs.python.org/2/tutorial/modules.html
 
 #from Serialization import *
-from netzob.Common.Utils.NetzobRegex import NetzobRegex
 #from netzob.Common.Utils.Serializer import Serializer

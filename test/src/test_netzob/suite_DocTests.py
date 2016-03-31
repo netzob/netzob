@@ -130,7 +130,6 @@ def getSuite():
         ClusterByApplicativeData,
         ClusterByAlignment,
         ClusterBySize,
-        NetzobRegex,
         AbstractType.__module__,
         Memory.__module__,
         TypeConverter.__module__,

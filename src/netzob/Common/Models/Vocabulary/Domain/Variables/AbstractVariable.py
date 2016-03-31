@@ -47,7 +47,7 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Common.Models.Vocabulary.Domain.Variables.SVAS import SVAS
-from netzob.Common.Utils.NetzobRegex import NetzobRegex
+
 
 class AbstractVariable(object):
     """A variable participates in the definition domain of a field.
@@ -89,12 +89,6 @@ class AbstractVariable(object):
         # The variables just above the current variable in the tree representation.
         self.__fathers = []
 
-    
-
-
-        
-    def buildRegex(self):
-        return NetzobRegex()
 
     #+---------------------------------------------------------------------------+
     #| Special Functions                                                         |
