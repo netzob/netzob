@@ -36,7 +36,6 @@ import doctest
 # | Local application imports
 # +---------------------------------------------------------------------------+
 from netzob.all import *
-from netzob.Common.Utils import NetzobRegex
 from netzob.Common.Utils.DataAlignment import ParallelDataAlignment
 from netzob.Common.Utils.DataAlignment import DataAlignment
 from netzob.Common.Models.Vocabulary import AbstractField
