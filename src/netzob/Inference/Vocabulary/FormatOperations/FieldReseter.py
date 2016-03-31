@@ -47,7 +47,6 @@ from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Models.Vocabulary.Symbol import Symbol
 from netzob.Common.Models.Vocabulary.Field import Field
 from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Utils.NetzobRegex import NetzobRegex
 
 
 @NetzobLogger
@@ -109,4 +108,3 @@ class FieldReseter(object):
 
         if isinstance(field, Field):
             field.domain = Raw(None)
-            field.regex = NetzobRegex.buildDefaultRegex()
