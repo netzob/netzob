@@ -90,11 +90,11 @@ class Timestamp(AbstractType):
     >>> print s
     Start | Timestamp                  | End 
     ----- | -------------------------- | ----
-    '00'  | 'Tue Oct 13 13:55:33 2015' | '00'
-    '00'  | 'Tue Oct 13 13:55:33 2015' | '00'
-    '00'  | 'Tue Oct 13 13:55:33 2015' | '00'
-    '00'  | 'Tue Oct 13 13:55:33 2015' | '00'
-    '00'  | 'Tue Oct 13 13:55:33 2015' | '00'
+    '00'  | 'Tue Oct 13 11:55:33 2015' | '00'
+    '00'  | 'Tue Oct 13 11:55:33 2015' | '00'
+    '00'  | 'Tue Oct 13 11:55:33 2015' | '00'
+    '00'  | 'Tue Oct 13 11:55:33 2015' | '00'
+    '00'  | 'Tue Oct 13 11:55:33 2015' | '00'
     ----- | -------------------------- | ----
    
     """
@@ -254,7 +254,7 @@ class Timestamp(AbstractType):
         from netzob.Common.Models.Types.Integer import Integer
 
         intValue = TypeConverter.convert(data, Raw, Integer, dst_unitSize=AbstractType.UNITSIZE_32, dst_sign=AbstractType.SIGN_UNSIGNED)
-        parsedTimestamp = datetime.fromtimestamp(intValue)
+        parsedTimestamp = datetime.utcfromtimestamp(intValue)
 
         return parsedTimestamp.strftime("%c")        
     
