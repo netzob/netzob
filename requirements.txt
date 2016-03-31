@@ -1,4 +1,5 @@
 jsonpickle==0.9.2
+pcapy==0.10.8
 impacket==0.9.12
 netaddr==0.7.18
 bitarray==0.8.1
