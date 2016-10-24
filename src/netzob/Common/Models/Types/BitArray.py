@@ -53,6 +53,13 @@ class BitArray(AbstractType):
     """A bitarray netzob type.
 
     It represents a set of bits with possible constraints.
+
+    >>> from netzob.all import *
+    >>> from bitarray import bitarray
+    >>> b = BitArray(value = bitarray('00000000'))
+    >>> print b.generate()
+    bitarray('00000000')
+    
     """
 
     def __init__(self, value=None, nbBits=(None, None)):

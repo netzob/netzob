@@ -134,7 +134,7 @@ class Actor(threading.Thread):
             except Exception, e:
                 self._logger.warning("Exception raised when on the execution of state {0}.".format(currentState.name))
                 self._logger.warning("Exception error: {0}".format(str(e)))
-                self._logger.warning(traceback.format_exc())
+                
                 self.stop()
 
         self._logger.info("Actor {0} has finished to execute".format(self.name))
@@ -146,8 +146,11 @@ class Actor(threading.Thread):
         thread as cleanly as possible.
 
         """
-        self._logger.debug("Actor {0} has been requested to stop".format(self.name))
         self.__stopEvent.set()
+        try:
+            self.abstractionLayer.closeChannel()
+        except Exception, e:
+            self._logger.error(e)
 
     def isActive(self):
         """Computes if the current actor is active i.e. the grammar
@@ -156,7 +159,7 @@ class Actor(threading.Thread):
         :return: True is the actor has not finished
         :rtype: :class:`bool`
         """
-        return self.__stopEvent.is_set()
+        return not self.__stopEvent.is_set()
 
     @property
     def automata(self):

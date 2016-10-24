@@ -119,7 +119,9 @@ class TCPClient(AbstractChannel):
             self.__socket.close()
 
     def read(self, timeout=None):
-        """Read the next message on the communication channel.
+        """Reads the next message on the communication channel.
+        Continues to read while it receives something.
+
 
         @keyword timeout: the maximum time in millisecond to wait before a message can be reached
         @type timeout: :class:`int`
