@@ -170,7 +170,7 @@ of authors, contributors and sponsors.
 Licenses
 ========
 
-This software is licensed under the GPLv3 License. See the ``COPYING.txt`` file
+This software is provided under the GPLv3 License. See the ``COPYING.txt`` file
 in the top distribution directory for the full license text.
 
 The documentation is under the CC-BY-SA licence.
