@@ -167,8 +167,8 @@ Authors, Contributors and Sponsors
 See the top distribution file ``AUTHORS.txt`` for the detailed and updated list
 of authors, contributors and sponsors.
 
-License
-=======
+Licenses
+========
 
 This software is licensed under the GPLv3 License. See the ``COPYING.txt`` file
 in the top distribution directory for the full license text.
