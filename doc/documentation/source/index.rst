@@ -141,3 +141,9 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+Licences
+========
+
+Netzob code in provided under the GPLv3 licence.
+
+The documentation is under the CC-BY-SA licence.
