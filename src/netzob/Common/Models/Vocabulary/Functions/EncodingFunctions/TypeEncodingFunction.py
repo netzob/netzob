@@ -51,7 +51,7 @@ from netzob.Common.Models.Types.AbstractType import AbstractType
 
 @NetzobLogger
 class TypeEncodingFunction(EncodingFunction):
-    """This encoding function allows to specify the type and its attributes
+    r"""This encoding function allows to specify the type and its attributes
     such as the endianness, the sign and the unitsize that will be used to encode
     the specified data.
 
@@ -65,6 +65,33 @@ class TypeEncodingFunction(EncodingFunction):
     ----------------------------------------------
     '546865726520617265200a20736f6c7574696f6e732e'
     ----------------------------------------------
+
+    >>> m=RawMessage('hello\x00\x00\x00\x01')
+    >>> f1=Field(ASCII("hello"))
+    >>> f2=Field(Integer(unitSize=AbstractType.UNITSIZE_32))
+    >>> s = Symbol(fields=[f1,f2], messages=[m])
+    >>> print s
+    Field   | Field             
+    ------- | ------------------
+    'hello' | '\x00\x00\x00\x01'
+    ------- | ------------------
+
+    >>> f2.addEncodingFunction(TypeEncodingFunction(Integer, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_LITTLE))
+    >>> print s
+    Field   | Field   
+    ------- | --------
+    'hello' | 16777216
+    ------- | --------
+
+    >>> f2=Field(Integer(unitSize=AbstractType.UNITSIZE_32))
+    >>> f2.addEncodingFunction(TypeEncodingFunction(Integer, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_BIG))
+    >>> s = Symbol(fields=[f1,f2], messages=[m])
+    >>> print s
+    Field   | Field
+    ------- | -----
+    'hello' | 1    
+    ------- | -----
+
     """
     def __init__(self, _type, unitSize=None, endianness=None, sign=None):
         """Creates a new encoding function that will encode
@@ -95,7 +122,7 @@ class TypeEncodingFunction(EncodingFunction):
 
     def encode(self, data):
         self._logger.debug(data)
-        return TypeConverter.convert(data, BitArray, self.type, src_unitSize=self.unitSize, src_endianness=self.endianness, src_sign=self.sign)
+        return TypeConverter.convert(data, BitArray, self.type, dst_unitSize=self.unitSize, dst_endianness=self.endianness, dst_sign=self.sign)
 
     def priority(self):
         """Returns the priority of the current encoding filter."""
