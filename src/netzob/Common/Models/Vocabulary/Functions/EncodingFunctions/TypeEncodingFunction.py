@@ -95,7 +95,7 @@ class TypeEncodingFunction(EncodingFunction):
 
     def encode(self, data):
         self._logger.debug(data)
-        return TypeConverter.convert(data, BitArray, self.type, src_unitSize=self.unitSize, src_endianness=self.endianness, src_sign=self.sign)
+        return TypeConverter.convert(data, BitArray, self.type, dst_unitSize=self.unitSize, dst_endianness=self.endianness, dst_sign=self.sign)
 
     def priority(self):
         """Returns the priority of the current encoding filter."""
