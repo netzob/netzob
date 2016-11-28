@@ -168,6 +168,7 @@ def getSuite():
         TCPClient.__module__,
         UDPServer.__module__,
         UDPClient.__module__,
+        SSLClient.__module__,
 
         # Modules related to the import
         # -----------------------------
