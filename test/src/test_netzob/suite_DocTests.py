@@ -43,7 +43,8 @@ from netzob.Common.Models.Vocabulary.Domain.Variables import AbstractVariable
 from netzob.Common.Models.Vocabulary.Messages import AbstractMessage
 
 from netzob.Inference.Vocabulary.FormatOperations import FieldReseter
-from netzob.Inference.Vocabulary.FormatOperations.FieldSplitStatic import FieldSplitStatic
+from netzob.Inference.Vocabulary.FormatOperations.FieldSplitStatic.FieldSplitStatic import FieldSplitStatic
+from netzob.Inference.Vocabulary.FormatOperations.FieldSplitStatic.ParallelFieldSplitStatic import ParallelFieldSplitStatic
 from netzob.Inference.Vocabulary.FormatOperations import ClusterByKeyField
 from netzob.Inference.Vocabulary.FormatOperations import ClusterByApplicativeData
 from netzob.Inference.Vocabulary.FormatOperations import ClusterByAlignment
@@ -70,7 +71,9 @@ from netzob.Common.Models.Simulator.AbstractionLayer import AbstractionLayer
 
 from netzob.Inference.Vocabulary import EntropyMeasurement
 # from netzob.Inference.Grammar.Angluin import Angluin
-# from netzob.Inference.Grammar.AutomataFactories.ChainedStatesAutomataFactory import ChainedStatesAutomataFactory
+from netzob.Inference.Grammar.AutomataFactories.ChainedStatesAutomataFactory import ChainedStatesAutomataFactory
+from netzob.Inference.Grammar.AutomataFactories.PTAAutomataFactory import PTAAutomataFactory
+
 
 def getSuite():
     # List of modules to include in the list of tests
@@ -102,9 +105,10 @@ def getSuite():
         Agg.__module__,
         Repeat.__module__,        
         Data.__module__,
-        FieldSplitStatic,
+        FieldSplitStatic.__module__,
         FieldSplitAligned,
         FieldSplitDelimiter,
+        ParallelFieldSplitStatic.__module__,
         FindKeyFields,
         FieldReseter,
         AbstractMessage,
@@ -147,24 +151,27 @@ def getSuite():
 
         FlowParser.__module__,
         AbstractionLayer.__module__,
-        EntropyMeasurement
+        EntropyMeasurement,
 
         # Modules related to the grammatical inference
         # --------------------------------------------
-        # ChainedStatesAutomataFactory.__module__,
         # Angluin.__module__,
-        # State.__module__,
-        # Transition.__module__,
-        # AbstractionLayer.__module__,
-        # Automata.__module__,
+        State.__module__,
+        Transition.__module__,
+        AbstractionLayer.__module__,
+        Automata.__module__,
         
         # Modules related to the protocol simulation
         # ------------------------------------------
-        # Actor.__module__,
-        # TCPServer.__module__,
-        # TCPClient.__module__,
-        # UDPServer.__module__,
-        # UDPClient.__module__,
+        Actor.__module__,
+        TCPServer.__module__,
+        TCPClient.__module__,
+        UDPServer.__module__,
+        UDPClient.__module__,
+
+        # Modules related to the import
+        # -----------------------------
+        PCAPImporter.__module__,
 
         # Other
         # -----
