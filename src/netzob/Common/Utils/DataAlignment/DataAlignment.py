@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -52,7 +52,7 @@ from netzob.Common.Models.Types.Raw import Raw
 
 
 @NetzobLogger
-class DataAlignment(threading.Thread):
+class DataAlignment(object):
     """This class allows to align data given a field
     specification. This class inherits from :class:`threading.Thread` which allows
     to execute it asynchronously but also to execute it in a traditionnal way.

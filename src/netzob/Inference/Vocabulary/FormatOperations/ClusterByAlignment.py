@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -132,7 +132,7 @@ class ClusterByAlignment(object):
 
         # Retrieve the alignment of each symbol and the build the associated regular expression
         for symbol in symbols:
-            self._logger.info("Align messages from symbol {0}".format(symbol.name))
+            self._logger.debug("Align messages from symbol {0}".format(symbol.name))
             from netzob.Inference.Vocabulary.Format import Format
             Format.splitAligned(symbol, useSemantic=False)
 

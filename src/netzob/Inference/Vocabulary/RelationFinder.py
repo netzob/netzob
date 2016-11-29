@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -60,6 +60,15 @@ class RelationFinder(object):
     ...     print rel["relation_type"] + " between " + rel["x_field"].name + ":" + rel["x_attribute"] + \
             " and " + rel["y_field"].name + ":" + rel["y_attribute"]
     SizeRelation between Field-1:value and Field-3:size
+
+    >>> rels = RelationFinder.findOnSymbol(symbol)
+    >>> print len(rels)
+    2
+    >>> for rel in rels:
+    ...     print rel["relation_type"] + " between fields " + str([x.name for x in rel["x_fields"]]) + ":" + rel["x_attribute"] + \
+            " and fields " + str([y.name for y in rel["y_fields"]]) + ":" + rel["y_attribute"]
+    SizeRelation between fields ['Field-0', 'Field-1']:value and fields ['Field-3']:size
+    SizeRelation between fields ['Field-1']:value and fields ['Field-3']:size
 
     """
 

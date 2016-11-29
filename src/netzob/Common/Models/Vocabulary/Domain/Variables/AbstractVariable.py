@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -47,7 +47,7 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Common.Models.Vocabulary.Domain.Variables.SVAS import SVAS
-from netzob.Common.Utils.NetzobRegex import NetzobRegex
+
 
 class AbstractVariable(object):
     """A variable participates in the definition domain of a field.
@@ -87,12 +87,6 @@ class AbstractVariable(object):
         # The variables just above the current variable in the tree representation.
         self.__fathers = []
 
-    
-
-
-        
-    def buildRegex(self):
-        return NetzobRegex()
 
     #+---------------------------------------------------------------------------+
     #| Special Functions                                                         |

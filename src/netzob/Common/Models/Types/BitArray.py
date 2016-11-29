@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -53,6 +53,13 @@ class BitArray(AbstractType):
     """A bitarray netzob type.
 
     It represents a set of bits with possible constraints.
+
+    >>> from netzob.all import *
+    >>> from bitarray import bitarray
+    >>> b = BitArray(value = bitarray('00000000'))
+    >>> print b.generate()
+    bitarray('00000000')
+    
     """
 
     def __init__(self, value=None, nbBits=(None, None)):

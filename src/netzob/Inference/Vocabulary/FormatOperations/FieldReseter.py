@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -47,7 +47,6 @@ from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Models.Vocabulary.Symbol import Symbol
 from netzob.Common.Models.Vocabulary.Field import Field
 from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Utils.NetzobRegex import NetzobRegex
 
 
 @NetzobLogger
@@ -109,5 +108,3 @@ class FieldReseter(object):
 
         if isinstance(field, Field):
             field.domain = Raw(None)
-            field.regex = NetzobRegex.buildDefaultRegex()
-

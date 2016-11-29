@@ -6,7 +6,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -36,7 +36,6 @@ import doctest
 # | Local application imports
 # +---------------------------------------------------------------------------+
 from netzob.all import *
-from netzob.Common.Utils import NetzobRegex
 from netzob.Common.Utils.DataAlignment import ParallelDataAlignment
 from netzob.Common.Utils.DataAlignment import DataAlignment
 from netzob.Common.Models.Vocabulary import AbstractField
@@ -44,7 +43,8 @@ from netzob.Common.Models.Vocabulary.Domain.Variables import AbstractVariable
 from netzob.Common.Models.Vocabulary.Messages import AbstractMessage
 
 from netzob.Inference.Vocabulary.FormatOperations import FieldReseter
-from netzob.Inference.Vocabulary.FormatOperations.FieldSplitStatic import FieldSplitStatic
+from netzob.Inference.Vocabulary.FormatOperations.FieldSplitStatic.FieldSplitStatic import FieldSplitStatic
+from netzob.Inference.Vocabulary.FormatOperations.FieldSplitStatic.ParallelFieldSplitStatic import ParallelFieldSplitStatic
 from netzob.Inference.Vocabulary.FormatOperations import ClusterByKeyField
 from netzob.Inference.Vocabulary.FormatOperations import ClusterByApplicativeData
 from netzob.Inference.Vocabulary.FormatOperations import ClusterByAlignment
@@ -69,8 +69,11 @@ from netzob.Common.Models.Vocabulary.Domain.Parser.FlowParser import FlowParser
 
 from netzob.Common.Models.Simulator.AbstractionLayer import AbstractionLayer
 
+from netzob.Inference.Vocabulary import EntropyMeasurement
 # from netzob.Inference.Grammar.Angluin import Angluin
-# from netzob.Inference.Grammar.AutomataFactories.ChainedStatesAutomataFactory import ChainedStatesAutomataFactory
+from netzob.Inference.Grammar.AutomataFactories.ChainedStatesAutomataFactory import ChainedStatesAutomataFactory
+from netzob.Inference.Grammar.AutomataFactories.PTAAutomataFactory import PTAAutomataFactory
+
 
 def getSuite():
     # List of modules to include in the list of tests
@@ -102,9 +105,10 @@ def getSuite():
         Agg.__module__,
         Repeat.__module__,        
         Data.__module__,
-        FieldSplitStatic,
+        FieldSplitStatic.__module__,
         FieldSplitAligned,
         FieldSplitDelimiter,
+        ParallelFieldSplitStatic.__module__,
         FindKeyFields,
         FieldReseter,
         AbstractMessage,
@@ -129,7 +133,6 @@ def getSuite():
         ClusterByApplicativeData,
         ClusterByAlignment,
         ClusterBySize,
-        NetzobRegex,
         AbstractType.__module__,
         Memory.__module__,
         TypeConverter.__module__,
@@ -148,24 +151,28 @@ def getSuite():
 
         FlowParser.__module__,
         AbstractionLayer.__module__,
-
+        EntropyMeasurement,
 
         # Modules related to the grammatical inference
         # --------------------------------------------
-        # ChainedStatesAutomataFactory.__module__,
         # Angluin.__module__,
-        # State.__module__,
-        # Transition.__module__,
-        # AbstractionLayer.__module__,
-        # Automata.__module__,
+        State.__module__,
+        Transition.__module__,
+        AbstractionLayer.__module__,
+        Automata.__module__,
         
         # Modules related to the protocol simulation
         # ------------------------------------------
-        # Actor.__module__,
-        # TCPServer.__module__,
-        # TCPClient.__module__,
-        # UDPServer.__module__,
-        # UDPClient.__module__,
+        Actor.__module__,
+        TCPServer.__module__,
+        TCPClient.__module__,
+        UDPServer.__module__,
+        UDPClient.__module__,
+        SSLClient.__module__,
+
+        # Modules related to the import
+        # -----------------------------
+        PCAPImporter.__module__,
 
         # Other
         # -----

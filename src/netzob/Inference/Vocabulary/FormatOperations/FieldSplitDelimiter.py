@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -61,8 +61,8 @@ class FieldSplitDelimiter(object):
         delimiter can be passed either as an ASCII, a Raw, an
         HexaString, or any objects that inherit from AbstractType.
 
+
         >>> from netzob.all import *
-        
         >>> samples = ["aaaaff000000ff10",	"bbff110010ff00000011",	"ccccccccfffe1f000000ff12"]
         >>> messages = [RawMessage(data=sample) for sample in samples]
         >>> symbol = Symbol(messages=messages[:3])
@@ -129,7 +129,25 @@ class FieldSplitDelimiter(object):
               |--   Data (Raw='RESdecrypt' ((0, 80)))
               |--   Data (Raw='CMDbye' ((0, 48)))
               |--   Data (Raw='RESbye' ((0, 48)))
- 
+
+
+        Below is another example of the FieldSplitDelimiter usage: it splits fields based on a Raw string.
+
+
+        >>> from netzob.all import *
+        >>> samples = ["\\x01\\x02\\x03\\xff\\x04\\x05\\xff\\x06\\x07", "\\x01\\x02\\xff\\x03\\x04\\x05\\x06\\xff\\x07", "\\x01\\xff\\x02\\x03\\x04\\x05\\x06"]
+        >>> messages = [RawMessage(data=sample) for sample in samples]
+        >>> symbol = Symbol(messages=messages)
+        >>> Format.splitDelimiter(symbol, Raw("\\xff"))
+        >>> print symbol
+        Field-0        | Field-sep-ff | Field-2                | Field-sep-ff | Field-4   
+        -------------- | ------------ | ---------------------- | ------------ | ----------
+        '\\x01\\x02\\x03' | '\\xff'       | '\\x04\\x05'             | '\\xff'       | '\\x06\\x07'
+        '\\x01\\x02'     | '\\xff'       | '\\x03\\x04\\x05\\x06'     | '\\xff'       | '\\x07'    
+        '\\x01'         | '\\xff'       | '\\x02\\x03\\x04\\x05\\x06' | ''           | ''        
+        -------------- | ------------ | ---------------------- | ------------ | ----------
+
+
         :param field : the field to consider when spliting
         :type: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
         :param delimiter : the delimiter used to split messages of the field

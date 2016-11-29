@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -119,7 +119,9 @@ class TCPClient(AbstractChannel):
             self.__socket.close()
 
     def read(self, timeout=None):
-        """Read the next message on the communication channel.
+        """Reads the next message on the communication channel.
+        Continues to read while it receives something.
+
 
         @keyword timeout: the maximum time in millisecond to wait before a message can be reached
         @type timeout: :class:`int`

@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -235,6 +235,16 @@ class Integer(AbstractType):
         >>> print(Integer.encode(b'\\xcc\\xac\\x9c\\x0c\\x1c\\xacL\\x1c,\\xac', unitSize=AbstractType.UNITSIZE_8))
         -395865088909314208584756
 
+        >>> raw = '\xcc\xac\x9c'
+        >>> print Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG)
+        10210476
+
+        >>> print Integer.encode(raw, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_BIG)
+        13413532
+
+        >>> print Integer.encode(raw, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_LITTLE)
+        10267852
+
         :param data: the data encoded in python raw which will be encoded in current type
         :type data: python raw
         :keyword unitSize: the unitsize to consider while encoding. Values must be one of AbstractType.UNITSIZE_*
@@ -255,6 +265,14 @@ class Integer(AbstractType):
 
         nbWords = int(len(data) * 8 / int(unitSize))
 
+        # Check whether the input data matches unitSize. If not take 
+        # precautions to able to pad it with null bytes later.
+        padding_nullbytes = 0
+        rest = (len(data) * 8) % int(unitSize)
+        if rest != 0:
+            nbWords += 1
+            padding_nullbytes = (int(unitSize) - rest) / 8
+
         finalValue = 0
 
         iWord = 0
@@ -272,9 +290,19 @@ class Integer(AbstractType):
             endPos = int(iWord * int(unitSize) / 8 + int(unitSize) / 8)
 
             wordData = data[startPos:endPos]
-            unpackedWord = struct.unpack(perWordFormat, wordData)[0]
 
+            # Pad with null bytes to statisfy the unitSize.
+            if padding_nullbytes > 0 and i == (end - inc):
+                if endianness == AbstractType.ENDIAN_BIG:
+                    wordData = '\x00' * padding_nullbytes + wordData 
+                elif endianness == AbstractType.ENDIAN_LITTLE:
+                    wordData += '\x00' * padding_nullbytes
+                else:
+                     raise ValueError("Invalid endianness value: {0}".format(endianness))
+
+            unpackedWord = struct.unpack(perWordFormat, wordData)[0]
             unpackedWord = unpackedWord << int(unitSize) * iWord
+
             finalValue = finalValue + unpackedWord
 
             iWord += 1
