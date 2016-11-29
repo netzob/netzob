@@ -63,9 +63,9 @@ class NetzobInteractiveSessionController(object):
 +----------------------------------------------------+
 | {0} {1} - {2}
 +----------------------------------------------------+
-| Copyright:\t print release.copyright
-| Contributors:\t print release.contributors
-| License:\t print release.license
+| Copyright:\t print(release.copyright)
+| Contributors:\t print(release.contributors)
+| License:\t print(release.license)
 +----------------------------------------------------+
 | Reverse Deeper with Netzob ({3})
 +----------------------------------------------------+

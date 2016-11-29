@@ -57,7 +57,7 @@ class BitArray(AbstractType):
     >>> from netzob.all import *
     >>> from bitarray import bitarray
     >>> b = BitArray(value = bitarray('00000000'))
-    >>> print b.generate()
+    >>> print(b.generate())
     bitarray('00000000')
     
     """

@@ -139,7 +139,7 @@ class FieldSplitDelimiter(object):
         >>> messages = [RawMessage(data=sample) for sample in samples]
         >>> symbol = Symbol(messages=messages)
         >>> Format.splitDelimiter(symbol, Raw("\\xff"))
-        >>> print symbol
+        >>> print(symbol)
         Field-0        | Field-sep-ff | Field-2                | Field-sep-ff | Field-4   
         -------------- | ------------ | ---------------------- | ------------ | ----------
         '\\x01\\x02\\x03' | '\\xff'       | '\\x04\\x05'             | '\\xff'       | '\\x06\\x07'

@@ -63,11 +63,11 @@ class PCAPImporter(object):
 
     >>> from netzob.all import *
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap").values()
-    >>> print len(messages)
+    >>> print(len(messages))
     14
 
     >>> for m in messages:
-    ...    print repr(m.data)
+    ...    print(repr(m.data))
     'CMDidentify#\\x07\\x00\\x00\\x00Roberto'
     'RESidentify#\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'
     'CMDinfo#\\x00\\x00\\x00\\x00'
@@ -84,23 +84,23 @@ class PCAPImporter(object):
     'RESbye#\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'
 
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=2).values()
-    >>> print repr(messages[0].data)
+    >>> print(repr(messages[0].data))
     '\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x08\\x00E\\x00\\x003\\xdc\\x11@\\x00@\\x11`\\xa6\\x7f\\x00\\x00\\x01\\x7f\\x00\\x00\\x01\\xe1\\xe7\\x10\\x92\\x00\\x1f\\xfe2CMDidentify#\\x07\\x00\\x00\\x00Roberto'
 
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=3).values()
-    >>> print repr(messages[0].data)
+    >>> print(repr(messages[0].data))
     'E\\x00\\x003\\xdc\\x11@\\x00@\\x11`\\xa6\\x7f\\x00\\x00\\x01\\x7f\\x00\\x00\\x01\\xe1\\xe7\\x10\\x92\\x00\\x1f\\xfe2CMDidentify#\\x07\\x00\\x00\\x00Roberto'
 
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=4).values()
-    >>> print repr(messages[0].data)
+    >>> print(repr(messages[0].data))
     '\\xe1\\xe7\\x10\\x92\\x00\\x1f\\xfe2CMDidentify#\\x07\\x00\\x00\\x00Roberto'
 
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=5).values()
-    >>> print repr(messages[0].data)
+    >>> print(repr(messages[0].data))
     'CMDidentify#\\x07\\x00\\x00\\x00Roberto'
 
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_http.pcap", importLayer=5, bpfFilter="tcp").values()
-    >>> print repr(messages[0].data)
+    >>> print(repr(messages[0].data))
     'GET / HTTP/1.1\\r\\nHost: www.free.fr\\r\\nUser-Agent: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa(bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb)ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\\r\\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\\r\\nAccept-Language: en-US,en;q=0.5\\r\\nAccept-Encoding: gzip, deflate\\r\\nConnection: keep-alive\\r\\n\\r\\n'
 
 

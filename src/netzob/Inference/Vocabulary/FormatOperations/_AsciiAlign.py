@@ -108,7 +108,7 @@ class AsciiAlign():
 #            symbol.getFields()[0].setFormat(Format.STRING)
 #            tmpSymbols.extend(alignment.getLastResult())
             try:
-#                print "l"
+#                print("l")
                 al = self.computeAlignment(symbol)
                 symbol.getField().setAlignment(al)
                 alignment.buildRegexFromAlignment(symbol, al, self.defaultFormat)

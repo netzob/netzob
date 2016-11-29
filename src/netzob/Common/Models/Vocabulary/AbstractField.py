@@ -465,8 +465,8 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
     #     >>> f4 = Field(["Paris", "Berlin", "New-York"], name="city")
     #     >>> f5 = Field(" ?", name="end")
     #     >>> symbol = Symbol([f1, f2, f3, f4, f5], messages=messages)
-    #     >>> print symbol.specialize()
-    #     >>> print symbol
+    #     >>> print(symbol.specialize())
+    #     >>> print(symbol)
     #     hello  | netzob | , what's up in  | Paris    |  ?
     #     hello  | netzob | , what's up in  | Berlin   |  ?
     #     hello  | netzob | , what's up in  | New-York |  ?
@@ -477,13 +477,13 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
     #     hello  | lapy   | , what's up in  | Berlin   |  ?
     #     hello  | lapy   | , what's up in  | New-York |  ?
     #     >>> lapySymbol = Symbol(messages=symbol.fields[1].getMessagesWithValue("lapy"))
-    #     >>> print lapySymbol
+    #     >>> print(lapySymbol)
     #     hello lapy, what's up in Paris ?   
     #     hello lapy, what's up in Berlin ?  
     #     hello lapy, what's up in New-York ?
     #     >>> Format.splitStatic(lapySymbol)
     #     >>> lapySymbol.encodingFunctions.add(TypeEncodingFunction(HexaString))
-    #     >>> print lapySymbol
+    #     >>> print(lapySymbol)
     #     68656c6c6f206c6170792c2077686174277320757020696e20 | 5061726973203f      
     #     68656c6c6f206c6170792c2077686174277320757020696e20 | 4265726c696e203f    
     #     68656c6c6f206c6170792c2077686174277320757020696e20 | 4e65772d596f726b203f

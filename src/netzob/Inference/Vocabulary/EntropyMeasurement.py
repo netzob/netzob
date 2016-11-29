@@ -78,7 +78,7 @@ class EntropyMeasurement(object):
     >>> s = Symbol(fields=[f1, f2, f3])
     >>> s.messages = [RawMessage(s.specialize()) for x in xrange(1000)]
     >>> bytes_entropy = [byte_entropy for byte_entropy in EntropyMeasurement.measure_values_entropy(f2.getValues())]
-    >>> print min(bytes_entropy[:10]) > 7
+    >>> print(min(bytes_entropy[:10]) > 7)
     True
     
     

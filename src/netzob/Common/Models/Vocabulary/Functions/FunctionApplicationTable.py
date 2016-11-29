@@ -138,12 +138,12 @@ class FunctionApplicationTable(object):
                     for tag in tags:
                         i_encoded_global_tag = self.conversionAddressingTable[i_global][0]
                         i_encoded_local_tag = len(encodedCol) - len(encodedResult[col]) + i_encoded_letter
-                        # print len(encodedCol)
-                        # print len(encodedResult[col])
-                        # print i_encoded_letter
-                        # print i_encoded_global_tag
-                        # print i_encoded_local_tag
-                        # print encodedCol
+                        # print(len(encodedCol))
+                        # print(len(encodedResult[col]))
+                        # print(i_encoded_letter)
+                        # print(i_encoded_global_tag)
+                        # print(i_encoded_local_tag)
+                        # print(encodedCol)
                         encodedCol = self.insertTagInEncoded(col, i_encoded_local_tag, i_encoded_global_tag, tag, encodedCol)
                     i_global = i_global + 1
 

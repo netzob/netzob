@@ -59,11 +59,11 @@ class Session(object):
     >>> msg2 = RawMessage("SYN", source="A", destination="B", date=time.mktime(time.strptime("9 Aug 13 10:45:01", "%d %b %y %H:%M:%S")))
     >>> msg3 = RawMessage("SYN/ACK", source="B", destination="A", date=time.mktime(time.strptime("9 Aug 13 10:45:03", "%d %b %y %H:%M:%S")))
     >>> session = Session([msg1, msg2, msg3])
-    >>> print session.messages.values()[0].data
+    >>> print(session.messages.values()[0].data)
     SYN
-    >>> print session.messages.values()[1].data
+    >>> print(session.messages.values()[1].data)
     SYN/ACK
-    >>> print session.messages.values()[2].data
+    >>> print(session.messages.values()[2].data)
     ACK
 
     """

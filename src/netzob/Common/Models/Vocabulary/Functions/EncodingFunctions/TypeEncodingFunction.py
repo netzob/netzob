@@ -70,14 +70,14 @@ class TypeEncodingFunction(EncodingFunction):
     >>> f1=Field(ASCII("hello"))
     >>> f2=Field(Integer(unitSize=AbstractType.UNITSIZE_32))
     >>> s = Symbol(fields=[f1,f2], messages=[m])
-    >>> print s
+    >>> print(s)
     Field   | Field             
     ------- | ------------------
     'hello' | '\x00\x00\x00\x01'
     ------- | ------------------
 
     >>> f2.addEncodingFunction(TypeEncodingFunction(Integer, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_LITTLE))
-    >>> print s
+    >>> print(s)
     Field   | Field   
     ------- | --------
     'hello' | 16777216
@@ -86,7 +86,7 @@ class TypeEncodingFunction(EncodingFunction):
     >>> f2=Field(Integer(unitSize=AbstractType.UNITSIZE_32))
     >>> f2.addEncodingFunction(TypeEncodingFunction(Integer, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_BIG))
     >>> s = Symbol(fields=[f1,f2], messages=[m])
-    >>> print s
+    >>> print(s)
     Field   | Field
     ------- | -----
     'hello' | 1    

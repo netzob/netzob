@@ -72,9 +72,9 @@ class GenericMAT(ActiveKnowledgeBase):
     >>> output = mat.submit_word(word)
     >>> mat.stop_target()
     >>> server_channel.close()
-    >>> print len(output)
+    >>> print(len(output))
     3
-    >>> print str(output.letters[0])
+    >>> print(str(output.letters[0]))
     EmptyLetter
     
     
