@@ -138,7 +138,7 @@ class EntropyMeasurement(object):
         # computes longuest message
         longuest = max([len(value) for value in values])
 
-        for i_byte in xrange(longuest):            
+        for i_byte in range(longuest):            
 
             dataset = []
             for value in values:

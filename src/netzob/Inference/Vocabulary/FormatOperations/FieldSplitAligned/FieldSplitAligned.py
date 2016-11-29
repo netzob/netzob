@@ -194,7 +194,7 @@ class FieldSplitAligned(object):
         # Semantic tags (a.k.a applicative data)
         semanticTags = None
         if useSemantic:
-            semanticTags = [self.__searchApplicativeDataInMessage(message) for message, values in messageValues.items()]
+            semanticTags = [self.__searchApplicativeDataInMessage(message) for message, values in list(messageValues.items())]
 
         if len(list(messageValues.values())) == 0:
             return
@@ -487,7 +487,7 @@ class FieldSplitAligned(object):
         currentTag = None
         currentTagLength = 0
 
-        for index, tag in semanticTags.items():
+        for index, tag in list(semanticTags.items()):
             if tag != currentTag:
                 # Create a sub field
                 subFieldValue = align[index - currentTagLength:index]
@@ -526,7 +526,7 @@ class FieldSplitAligned(object):
 
         semanticTagsForEachMessage = field.getSemanticTagsByMessage()
 
-        for index, tag in semanticTags.items():
+        for index, tag in list(semanticTags.items()):
             if tag != currentTag:
                 # Create a sub field
                 if currentTagLength > 0:
@@ -573,7 +573,7 @@ class FieldSplitAligned(object):
         values = []
 
         # Retrieve value of each message in current field tagged with requested tag
-        for message, tagsInMessage in semanticTagsForEachMessage.items():
+        for message, tagsInMessage in list(semanticTagsForEachMessage.items()):
             initial = None
             end = None
 

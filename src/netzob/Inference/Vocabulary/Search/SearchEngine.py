@@ -347,5 +347,5 @@ class SearchEngine(object):
         if data is None:
             raise TypeError("The data cannot be None")
 
-        return [SearchTask(mutation, mutationType, properties=properties) for mutationType, mutation in data.mutate().items()]
+        return [SearchTask(mutation, mutationType, properties=properties) for mutationType, mutation in list(data.mutate().items())]
 

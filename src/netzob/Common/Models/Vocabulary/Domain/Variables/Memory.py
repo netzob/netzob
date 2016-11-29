@@ -147,7 +147,7 @@ class Memory(object):
         
     def __str__(self):
         result = []
-        for var, value in self.memory.items():
+        for var, value in list(self.memory.items()):
             result.append("{0}: {1}".format(var, TypeConverter.convert(value, BitArray, Raw)))
         return '\n'.join(result)
         
@@ -163,7 +163,7 @@ class Memory(object):
     @memory.setter
     def memory(self, memory):
         self.__memory = dict()
-        for k, v in memory.items():
+        for k, v in list(memory.items()):
             self.__memory[k] = v
 
 # #+---------------------------------------------------------------------------+

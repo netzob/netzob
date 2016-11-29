@@ -344,7 +344,7 @@ class AbstractMessage(SortableObject):
             self.__semanticTags = OrderedDict()
 
         # check
-        for key, value in semanticTags.items():
+        for key, value in list(semanticTags.items()):
             if not isinstance(key, int):
                 raise TypeError("At least one key is not a valid int position")
             if not isinstance(value, list):

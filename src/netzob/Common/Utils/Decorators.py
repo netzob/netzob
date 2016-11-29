@@ -106,7 +106,7 @@ def NetzobLogger(klass):
 
     # Verify if a logger already exists
     found = False
-    for k, v in klass.__dict__.items():
+    for k, v in list(klass.__dict__.items()):
         if isinstance(v, logging.Logger):
             found = True
             break

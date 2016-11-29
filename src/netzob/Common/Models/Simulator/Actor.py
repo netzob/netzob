@@ -149,7 +149,7 @@ class Actor(threading.Thread):
         self.__stopEvent.set()
         try:
             self.abstractionLayer.closeChannel()
-        except Exception, e:
+        except Exception as e:
             self._logger.error(e)
 
     def isActive(self):

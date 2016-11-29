@@ -134,7 +134,7 @@ class ClusterByApplicativeData(object):
 
         # Build clusters
         clusters = dict()
-        for message, labelsInMessage in messagesPerAppData.items():
+        for message, labelsInMessage in list(messagesPerAppData.items()):
             strAppDatas = ';'.join(sorted(labelsInMessage))
             if len(strAppDatas) == 0:
                 strAppDatas = None
@@ -144,6 +144,6 @@ class ClusterByApplicativeData(object):
                 clusters[strAppDatas] = [message]
 
         # Build Symbols
-        symbols = [Symbol(name=strAppDatas, messages=msgs) for strAppDatas, msgs in clusters.items()]
+        symbols = [Symbol(name=strAppDatas, messages=msgs) for strAppDatas, msgs in list(clusters.items())]
 
         return symbols

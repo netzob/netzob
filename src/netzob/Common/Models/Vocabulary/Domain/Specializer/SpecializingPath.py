@@ -55,11 +55,11 @@ class SpecializingPath(GenericPath):
 
     def duplicate(self):
         dField = {}
-        for key, value in self._dataAssignedToField.items():
+        for key, value in list(self._dataAssignedToField.items()):
             dField[key] = value.copy()
 
         dVariable = {}
-        for key, value in self._dataAssignedToVariable.items():
+        for key, value in list(self._dataAssignedToVariable.items()):
             dVariable[key] = value.copy()
 
         fCall = [x for x in self._fieldsCallbacks]

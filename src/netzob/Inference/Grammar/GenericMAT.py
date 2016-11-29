@@ -95,14 +95,14 @@ class GenericMAT(ActiveKnowledgeBase):
 
         self.process_wrapper.start()
         
-        for nb_attempt in xrange(10):            
+        for nb_attempt in range(10):            
             if self.process_wrapper.is_ready():
                 break
             time.sleep(1)
 
         # we also try multiple times to open the channel with the target
         channel_is_open = False
-        for nb_attemp in xrange(10):
+        for nb_attemp in range(10):
             try:
                 self.abstraction_layer.openChannel()
                 channel_is_open = True
@@ -133,17 +133,17 @@ class GenericMAT(ActiveKnowledgeBase):
                 for symbol in symbols:
                     try:
                         self.abstraction_layer.writeSymbol(symbol)
-                    except ChannelDownException, e:
+                    except ChannelDownException as e:
                         self._logger.debug("Channel is Down")
                     (curr_output_symbols, data) = self.abstraction_layer.readSymbols()
                     output_symbols.extend(curr_output_symbols)
                 output_letters.append(Letter(symbols=output_symbols))
-            except Exception, e:            
+            except Exception as e:            
                 self._logger.fatal("An error occurred : {}".format(e))
                 output_letters.append(Letter(symbols=[EmptySymbol()]))
 
 
-        for i in xrange(len(word.letters)):
+        for i in range(len(word.letters)):
             input_letter = word.letters[i]
             output_letter = output_letters[i]
             input_str = "None"

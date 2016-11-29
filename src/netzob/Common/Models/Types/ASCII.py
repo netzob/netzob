@@ -192,7 +192,7 @@ class ASCII(AbstractType):
             mutations["{0}ascii(inversed-lower)".format(prefixDescription)] = strValue[::-1].lower()
 
         results = dict()
-        for mutationName, mutationValue in mutations.items():
+        for mutationName, mutationValue in list(mutations.items()):
             ba = BitArray(TypeConverter.convert(mutationValue, ASCII, BitArray))
             results.update(ba.mutate(mutationName))
 
