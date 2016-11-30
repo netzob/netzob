@@ -117,6 +117,12 @@ class Symbol(AbstractField):
             return True
         return other.name != self.name
 
+    def __key(self):
+        return self.id
+
+    def __hash__(self):
+        return hash(self.__key())
+
     @typeCheck(Memory, object)
     def specialize(self, memory=None, generationStrategy=None, presets=None):
         """Specialize and generate an hexastring which content

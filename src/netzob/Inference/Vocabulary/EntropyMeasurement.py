@@ -49,7 +49,7 @@ class EntropyMeasurement(object):
 
     >>> import binascii
     >>> from netzob.all import *
-    >>> fake_random_values = ["00000906", "00110906", "00560902", "00ff0901"]
+    >>> fake_random_values = [b"00000906", b"00110906", b"00560902", b"00ff0901"]
     >>> messages = [RawMessage(binascii.unhexlify(val)) for val in fake_random_values]
     >>> [byte_entropy for byte_entropy in EntropyMeasurement.measure_entropy(messages)]
     [0.0, 2.0, 0.0, 1.5]
@@ -60,11 +60,11 @@ class EntropyMeasurement(object):
     the entropy measurement as illustred below.
     
     
-    >>> f1 = Field("hello ")
+    >>> f1 = Field(b"hello ")
     >>> f2 = Field(Raw(nbBytes=5))
-    >>> f3 = Field(", welcome !")
+    >>> f3 = Field(b", welcome !")
     >>> s = Symbol(fields=[f1, f2, f3])
-    >>> messages = [RawMessage(s.specialize()) for x in xrange(1000)]
+    >>> messages = [RawMessage(s.specialize()) for x in range(1000)]
     >>> bytes_entropy = [byte_entropy for byte_entropy in EntropyMeasurement.measure_entropy(messages)]
     >>> min(bytes_entropy[6:11]) > 7
     True
@@ -76,7 +76,7 @@ class EntropyMeasurement(object):
     >>> f2 = Field(Raw(nbBytes=(10, 20)))
     >>> f3 = Field(Raw(nbBytes=2))
     >>> s = Symbol(fields=[f1, f2, f3])
-    >>> s.messages = [RawMessage(s.specialize()) for x in xrange(1000)]
+    >>> s.messages = [RawMessage(s.specialize()) for x in range(1000)]
     >>> bytes_entropy = [byte_entropy for byte_entropy in EntropyMeasurement.measure_values_entropy(f2.getValues())]
     >>> print(min(bytes_entropy[:10]) > 7)
     True
@@ -159,7 +159,7 @@ class EntropyMeasurement(object):
 
         entropy = 0
         for x in range(256):            
-            p_x = float(values.count(chr(x)))/len(values)
+            p_x = float(values.count(x))/len(values)
             if p_x > 0:
                 entropy += - p_x*math.log(p_x, 2)
                 

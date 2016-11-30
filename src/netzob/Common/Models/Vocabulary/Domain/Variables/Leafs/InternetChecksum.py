@@ -68,15 +68,15 @@ class InternetChecksum(AbstractRelationVariableLeaf):
     with a valid checksum computed on-the-fly.
     
     >>> from netzob.all import *
-    >>> typeField = Field(name="Type", domain=Raw('\\x08'))
-    >>> codeField = Field(name="Code", domain=Raw('\\x00'))
+    >>> typeField = Field(name="Type", domain=Raw(b'\\x08'))
+    >>> codeField = Field(name="Code", domain=Raw(b'\\x00'))
     >>> chksumField = Field(name="Checksum")
-    >>> identField = Field(name="Identifier", domain=Raw('\\x1d\\x22'))
-    >>> seqField = Field(name="Sequence Number", domain=Raw('\\x00\\x07'))
-    >>> timeField = Field(name="Timestamp", domain=Raw('\\xa8\\xf3\\xf6\\x53\\x00\\x00\\x00\\x00'))
+    >>> identField = Field(name="Identifier", domain=Raw(b'\\x1d\\x22'))
+    >>> seqField = Field(name="Sequence Number", domain=Raw(b'\\x00\\x07'))
+    >>> timeField = Field(name="Timestamp", domain=Raw(b'\\xa8\\xf3\\xf6\\x53\\x00\\x00\\x00\\x00'))
     >>> headerField = Field(name="header")
     >>> headerField.fields = [typeField, codeField, chksumField, identField, seqField, timeField]
-    >>> dataField = Field(name="Payload", domain=Raw('\\x60\\xb5\\x06\\x00\\x00\\x00\\x00\\x00\\x10\\x11\\x12\\x13\\x14\\x15\\x16\\x17\\x18\\x19\\x1a\\x1b\\x1c\\x1d\\x1e\\x1f\\x20\\x21\\x22\\x23\\x24\\x25\\x26\\x27\\x28\\x29\\x2a\\x2b\\x2c\\x2d\\x2e\\x2f\\x30\\x31\\x32\\x33\\x34\\x35\\x36\\x37'))
+    >>> dataField = Field(name="Payload", domain=Raw(b'\\x60\\xb5\\x06\\x00\\x00\\x00\\x00\\x00\\x10\\x11\\x12\\x13\\x14\\x15\\x16\\x17\\x18\\x19\\x1a\\x1b\\x1c\\x1d\\x1e\\x1f\\x20\\x21\\x22\\x23\\x24\\x25\\x26\\x27\\x28\\x29\\x2a\\x2b\\x2c\\x2d\\x2e\\x2f\\x30\\x31\\x32\\x33\\x34\\x35\\x36\\x37'))
 
     >>> chksumField.domain = InternetChecksum([headerField, dataField], dataType=Raw(nbBytes=2))
     >>> s = Symbol(fields = [headerField, dataField])
@@ -216,7 +216,7 @@ class InternetChecksum(AbstractRelationVariableLeaf):
             for field in self.fieldDependencies:
                 if field.domain is self:
                     fieldSize = random.randint(field.domain.dataType.size[0], field.domain.dataType.size[1])
-                    fieldValue = "\x00"* (fieldSize / 8)
+                    fieldValue = b"\x00" * int(fieldSize / 8)
                 else:
                     fieldValue = TypeConverter.convert(parsingPath.getDataAssignedToVariable(field.domain), BitArray, Raw)
                 if fieldValue is None:
@@ -224,7 +224,7 @@ class InternetChecksum(AbstractRelationVariableLeaf):
                 else:
                     fieldValues.append(fieldValue)
 
-            fieldValues = ''.join(fieldValues)
+            fieldValues = b''.join(fieldValues)
             # compute the checksum of this value
             chsum = self.__checksum(fieldValues)
             b = TypeConverter.convert(chsum, Integer, BitArray, src_unitSize=AbstractType.UNITSIZE_16, src_sign = AbstractType.SIGN_UNSIGNED)
@@ -269,9 +269,9 @@ class InternetChecksum(AbstractRelationVariableLeaf):
         s = 0
         for i in range(0, len(msg), 2):
             if i + 1 >= len(msg):
-                w = ord(msg[i]) & 0xFF
+                w = msg[i] & 0xFF
             else:        
-                w = ord(msg[i]) + (ord(msg[i+1]) << 8)
+                w = msg[i] + (msg[i+1] << 8)
             s = carry_around_add(s, w)
         res = ~s & 0xffff
         return res

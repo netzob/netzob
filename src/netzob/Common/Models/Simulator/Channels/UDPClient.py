@@ -132,7 +132,7 @@ class UDPClient(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
-    @typeCheck(str)
+    @typeCheck(bytes)
     def write(self, data):
         """Write on the communication channel the specified data
 

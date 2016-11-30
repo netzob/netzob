@@ -131,14 +131,14 @@ class TCPServer(AbstractChannel):
         reading_seg_size = 1024
         
         if self.__clientSocket is not None:
-            data = ""
+            data = b""
             finish = False
             while not finish:
                 try:
                     recv = self.__clientSocket.recv(reading_seg_size)
                 except socket.timeout:
                     # says we received nothing (timeout issue)
-                    recv = ""
+                    recv = b""
                 if recv is None or len(recv) == 0:
                     finish = True
                 else:
