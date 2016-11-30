@@ -63,7 +63,7 @@ PyObject* PyInit__libScoreComputation(void) {
     NULL
   };
 
-  (void) PyModule_Create(&moduledef);
+  return PyModule_Create(&moduledef);
 }
 
 //+---------------------------------------------------------------------------+
@@ -108,7 +108,7 @@ PyObject* py_computeSimilarityMatrix(__attribute__((unused))PyObject* self, PyOb
   python_callback_isFinish = temp2_cb;    /* Remember new callback */
 
   int parseRet;
-  parseRet = parseArgs(wrapperFactory,&nbmessage,&mesmessages);
+  parseRet = parseArgs(wrapperFactory, &nbmessage, &mesmessages);
   //Parsing error: PyErr allready set in parseArgs
   if(parseRet){
     return NULL;

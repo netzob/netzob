@@ -67,7 +67,7 @@ PyObject* PyInit__libInterface(void) {
     NULL
   };
 
-  (void) PyModule_Create(&moduledef);
+  return PyModule_Create(&moduledef);
 }
 
 int callbackIsFinish(void) {

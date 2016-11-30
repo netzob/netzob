@@ -52,7 +52,7 @@ PyObject* PyInit__libRelation(void) {
     NULL
   };
 
-  (void) PyModule_Create(&moduledef);
+  return PyModule_Create(&moduledef);
 
     /* PyObject *d = PyDict_New(); */
     /* exception = PyErr_NewException("_libRelation.error", NULL, NULL); */
