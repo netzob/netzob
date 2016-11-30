@@ -70,16 +70,16 @@ class Size(AbstractRelationVariableLeaf):
     >>> f1 = Field(ASCII(";"))
     >>> f2 = Field(Size(f0))
     >>> s  = Symbol(fields=[f0, f1, f2])
-    >>> msg1  = RawMessage("netzob;\x06")
+    >>> msg1  = RawMessage(b"netzob;\\x06")
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg1, s))
     [bitarray('011011100110010101110100011110100110111101100010'), bitarray('00111011'), bitarray('00000110')]
-    >>> msg2  = RawMessage("netzob;\x03")
+    >>> msg2  = RawMessage(b"netzob;\\x03")
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg2, s))
     Traceback (most recent call last):
       ...
-    InvalidParsingPathException: No parsing path returned while parsing 'netzob;'
+    netzob.Common.Models.Vocabulary.Domain.Parser.MessageParser.InvalidParsingPathException: No parsing path returned while parsing 'b'netzob;\\x03''
 
     
     # While next demo, illustrates a size field declared before its target field
@@ -88,18 +88,18 @@ class Size(AbstractRelationVariableLeaf):
     >>> f1 = Field(ASCII(";"), name="f1", )
     >>> f0 = Field(Size(f2), name="f0")
     >>> s  = Symbol(fields=[f0, f1, f2])
-    >>> msg1  = RawMessage("\x06;netzob")
+    >>> msg1  = RawMessage(b"\\x06;netzob")
     >>> mp = MessageParser()
 
     >>> print(mp.parseMessage(msg1, s))
     [bitarray('00000110'), bitarray('00111011'), bitarray('011011100110010101110100011110100110111101100010')]
 
-    >>> msg2  = RawMessage("\x03;netzob")
+    >>> msg2  = RawMessage(b"\\x03;netzob")
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg2, s))
     Traceback (most recent call last):
       ...
-    InvalidParsingPathException: No parsing path returned while parsing '\x03;netzob'
+    netzob.Common.Models.Vocabulary.Domain.Parser.MessageParser.InvalidParsingPathException: No parsing path returned while parsing 'b'\\x03;netzob''
 
     # Let's see what happen with specialization of a Size field
     
@@ -109,7 +109,7 @@ class Size(AbstractRelationVariableLeaf):
     >>> s  = Symbol(fields=[f0, f1, f2])
     >>> ms = MessageSpecializer()
     >>> res= TypeConverter.convert(ms.specializeSymbol(s).generatedContent, BitArray, Raw)
-    >>> '\x14' in res
+    >>> b'\\x14' in res
     True
 
     Another set of examples (and tests)
@@ -118,15 +118,15 @@ class Size(AbstractRelationVariableLeaf):
     >>> f1 = Field(ASCII('#'), name="sep")
     >>> f2 = Field(name="f2")
     >>> f3 = Field(name="size field")
-    >>> f4 = Field(Raw("\\x00\\x00\\x00\\x00"), name="f4")
+    >>> f4 = Field(Raw(b"\\x00\\x00\\x00\\x00"), name="f4")
     >>> f5 = Field(Raw(nbBytes=11))
-    >>> f6 = Field(Raw('wd'), name="f6")
+    >>> f6 = Field(Raw(b'wd'), name="f6")
     >>> f7 = Field(Raw(nbBytes=(0, 1)))
     >>> f3.domain = Size([f4, f5, f6])
     >>> f2.fields = [f3, f4, f5, f6, f7]
     >>> s = Symbol(fields=[f0, f1, f2])
     >>> ms = MessageSpecializer()
-    >>> "CMDauthentify#\\x11" in TypeConverter.convert(ms.specializeSymbol(s).generatedContent, BitArray, Raw)
+    >>> b"CMDauthentify#\\x11" in TypeConverter.convert(ms.specializeSymbol(s).generatedContent, BitArray, Raw)
     True
 
     """

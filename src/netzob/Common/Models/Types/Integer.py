@@ -235,14 +235,14 @@ class Integer(AbstractType):
         >>> print(Integer.encode(b'\\xcc\\xac\\x9c\\x0c\\x1c\\xacL\\x1c,\\xac', unitSize=AbstractType.UNITSIZE_8))
         -395865088909314208584756
 
-        >>> raw = '\xcc\xac\x9c'
-        >>> print Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG)
+        >>> raw = b'\\xcc\\xac\\x9c'
+        >>> print(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG))
         10210476
 
-        >>> print Integer.encode(raw, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_BIG)
+        >>> print(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_BIG))
         13413532
 
-        >>> print Integer.encode(raw, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_LITTLE)
+        >>> print(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_LITTLE))
         10267852
 
         :param data: the data encoded in python raw which will be encoded in current type
@@ -294,9 +294,9 @@ class Integer(AbstractType):
             # Pad with null bytes to statisfy the unitSize.
             if padding_nullbytes > 0 and i == (end - inc):
                 if endianness == AbstractType.ENDIAN_BIG:
-                    wordData = '\x00' * padding_nullbytes + wordData 
+                    wordData = b'\x00' * int(padding_nullbytes) + wordData
                 elif endianness == AbstractType.ENDIAN_LITTLE:
-                    wordData += '\x00' * padding_nullbytes
+                    wordData += b'\x00' * int(padding_nullbytes)
                 else:
                      raise ValueError("Invalid endianness value: {0}".format(endianness))
 

@@ -59,7 +59,7 @@ class SearchTask(object):
     >>> print(searchTask.description)
     original version
     >>> print(TypeConverter.convert(searchTask.data, BitArray, Raw))
-    netzob
+    b'netzob'
 
     """
 

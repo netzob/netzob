@@ -58,7 +58,7 @@ class FindKeyFields(object):
 
         >>> import binascii
         >>> from netzob.all import *
-        >>> samples = ["00ff2f000011",	"000010000000",	"00fe1f000000",	"000020000000", "00ff1f000000",	"00ff1f000000",	"00ff2f000000",	"00fe1f000000"]
+        >>> samples = [b"00ff2f000011",	b"000010000000", b"00fe1f000000", b"000020000000", b"00ff1f000000", b"00ff1f000000", b"00ff2f000000", b"00fe1f000000"]
         >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
         >>> symbol = Symbol(messages=messages)
         >>> Format.splitStatic(symbol)
@@ -80,7 +80,7 @@ class FindKeyFields(object):
         >>> results = finder.execute(symbol)
         >>> for result in results:
         ...     print("Field name: " + result["keyField"].name + ", number of clusters: " + str(result["nbClusters"]) + ", distribution: " + str(result["distribution"]))
-        Field name: Field-1, number of clusters: 5, distribution: [2, 1, 2, 2, 1]
+        Field name: Field-1, number of clusters: 5, distribution: [2, 1, 2, 1, 2]
         Field name: Field-3, number of clusters: 2, distribution: [1, 7]
 
         :param field: the field in which we want to identify key fields.

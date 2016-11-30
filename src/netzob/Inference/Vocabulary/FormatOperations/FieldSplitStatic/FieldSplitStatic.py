@@ -60,7 +60,7 @@ class FieldSplitStatic(object):
 
     >>> import binascii
     >>> from netzob.all import *
-    >>> samples = ["00ff2f00000010",	"00001000000011",	"00fe1f00000012",	"00002000000013", "00ff1f00000014",	"00ff1f00000015",	"00ff2f00000016",	"00fe1f00000017"]
+    >>> samples = [b"00ff2f00000010", b"00001000000011", b"00fe1f00000012", b"00002000000013", b"00ff1f00000014", b"00ff1f00000015", b"00ff2f00000016", b"00fe1f00000017"]
     >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
     >>> symbol = Symbol(messages=messages)
     >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
@@ -249,7 +249,7 @@ class FieldSplitStatic(object):
                 if i < len(fieldValue):
                     currentIndexValue.append(fieldValue[i:min(len(fieldValue), i + stepUnitsize)])
                 else:
-                    currentIndexValue.append('')
+                    currentIndexValue.append(b'')
             indexedValues.append(currentIndexValue)
 
         # If requested, merges the adjacent static fields
@@ -281,7 +281,7 @@ class FieldSplitStatic(object):
                 else:
                     # static
                     if len(dynamicSequences) > 0:
-                        dynValues = map(None, *dynamicSequences)
+                        dynValues = zip(*dynamicSequences)
                         tmp_result = []
                         for d in dynValues:
                             tmp_result.append(b''.join([x if x is not None else b'' for x in d]))
@@ -289,7 +289,7 @@ class FieldSplitStatic(object):
                         dynamicSequences = []
                     result.append(values)
             if len(dynamicSequences) > 0:
-                dynValues = map(None, *dynamicSequences)
+                dynValues = zip(*dynamicSequences)
                 tmp_result = []
                 for d in dynValues:
                     tmp_result.append(b''.join([x if x is not None else b'' for x in d]))

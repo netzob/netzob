@@ -36,6 +36,7 @@
 # +---------------------------------------------------------------------------+
 import random
 import string
+import collections
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -180,7 +181,7 @@ class ASCII(AbstractType):
 
         strValue = TypeConverter.convert(val, BitArray, ASCII)
 
-        mutations = dict()
+        mutations = collections.OrderedDict()
 
         mutations["{0}ascii".format(prefixDescription)] = strValue
         mutations["{0}ascii(inversed)".format(prefixDescription)] = strValue[::-1]
@@ -191,7 +192,7 @@ class ASCII(AbstractType):
             mutations["{0}ascii(lower)".format(prefixDescription)] = strValue.lower()
             mutations["{0}ascii(inversed-lower)".format(prefixDescription)] = strValue[::-1].lower()
 
-        results = dict()
+        results = collections.OrderedDict()
         for mutationName, mutationValue in list(mutations.items()):
             ba = BitArray(TypeConverter.convert(mutationValue, ASCII, BitArray))
             results.update(ba.mutate(mutationName))

@@ -62,7 +62,7 @@ class FieldSplitAligned(object):
 
     >>> import binascii
     >>> from netzob.all import *
-    >>> samples = ["01ff00ff", "0222ff0000ff", "03ff000000ff", "0444ff00000000ff", "05ff0000000000ff", "06ff000000000000ff"]
+    >>> samples = [b"01ff00ff", b"0222ff0000ff", b"03ff000000ff", b"0444ff00000000ff", b"05ff0000000000ff", b"06ff000000000000ff"]
     >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
     >>> symbol = Symbol(messages=messages)
     >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
@@ -90,7 +90,7 @@ class FieldSplitAligned(object):
     '06'   | 'ff00' | '0000000000' | 'ff' 
     ------ | ------ | ------------ | -----
 
-    >>> samples = ["hello toto, what's up in France ?", "hello netzob, what's up in UK ?", "hello sygus, what's up in Germany ?"]
+    >>> samples = [b"hello toto, what's up in France ?", b"hello netzob, what's up in UK ?", b"hello sygus, what's up in Germany ?"]
     >>> messages = [RawMessage(data=sample) for sample in samples]
     >>> symbol = Symbol(messages=messages)
     >>> print(symbol)
@@ -113,7 +113,7 @@ class FieldSplitAligned(object):
 
     # Let's illustrate the use of semantic constrained sequence alignment with a simple example
 
-    >>> samples = ["John-0108030405--john.doe@gmail.com", "Mathieu-0908070605-31 rue de Paris, 75000 Paris, France-mat@yahoo.fr", "Olivia-0348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hotmail.fr"]
+    >>> samples = [b"John-0108030405--john.doe@gmail.com", b"Mathieu-0908070605-31 rue de Paris, 75000 Paris, France-mat@yahoo.fr", b"Olivia-0348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hotmail.fr"]
     >>> messages = [RawMessage(data=sample) for sample in samples]
     >>> symbol = Symbol(messages=messages)
     >>> print(symbol)
@@ -261,34 +261,34 @@ class FieldSplitAligned(object):
 
         >>> import random
         >>> fs = FieldSplitAligned()
-        >>> data = "-----01987640988765--876--678987--67898-------6789789-87987978----"
+        >>> data = b"-----01987640988765--876--678987--67898-------6789789-87987978----"
         >>> print(fs._mergeAlign(*fs._splitAlignment(data)))
         [['-----', True], ['01987640988765', False], ['--', True], ['876', False], ['--', True], ['678987', False], ['--', True], ['67898', False], ['-------', True], ['6789789', False], ['-', True], ['87987978', False], ['----', True]]
-        >>> data = "-------------------------------"
+        >>> data = b"-------------------------------"
         >>> print(fs._mergeAlign(*fs._splitAlignment(data)))
         [['-------------------------------', True]]
-        >>> data = "98754678998765467890875645"
+        >>> data = b"98754678998765467890875645"
         >>> print(fs._mergeAlign(*fs._splitAlignment(data)))
         [['98754678998765467890875645', False]]
-        >>> data = "---------------987-----6789765--568767---568776897689---567876------------------5678657865-9876579867789-9876879-9876787678657865467876546"
+        >>> data = b"---------------987-----6789765--568767---568776897689---567876------------------5678657865-9876579867789-9876879-9876787678657865467876546"
         >>> print(fs._mergeAlign(*fs._splitAlignment(data)))
         [['---------------', True], ['987', False], ['-----', True], ['6789765', False], ['--', True], ['568767', False], ['---', True], ['568776897689', False], ['---', True], ['567876', False], ['------------------', True], ['5678657865', False], ['-', True], ['9876579867789', False], ['-', True], ['9876879', False], ['-', True], ['9876787678657865467876546', False]]
         >>> nbField = random.randint(50000, 200000)
         >>> tab = []
         >>> for i in range(nbField):
         ...     if i%2 == 0:
-        ...         tab.append("-"*random.randint(1, 20))
+        ...         tab.append(b"-"*random.randint(1, 20))
         ...     else:
-        ...         tab.append("".join([random.choice('0123456789abcdef') for x in range(random.randint(1, 20))]))
-        >>> data = "".join(tab)
+        ...         tab.append(b"".join([random.choice('0123456789abcdef') for x in range(random.randint(1, 20))]))
+        >>> data = b"".join(tab)
         >>> nbField == len(fs._mergeAlign(*fs._splitAlignment(data)))
         True
 
         """
         if len(align) == 1:
-            return ([[align[0], align[0] == "-"]], [])
+            return ([[align[0], align[0] == b"-"]], [])
         elif len(align) == 2:
-            return ([[align[0], align[0] == "-"]], [[align[1], align[1] == "-"]])
+            return ([[align[0], align[0] == b"-"]], [[align[1], align[1] == b"-"]])
 
         indexHalf = len(align) / 2
         leftAlign = align[0:indexHalf]
@@ -318,7 +318,7 @@ class FieldSplitAligned(object):
     #     self._logger.debug("Align = {0}".format(align))
     #     for i, val in enumerate(align):
 
-    #         if (val == "-"):
+    #         if (val == b"-"):
     #             if (found is False):
     #                 start = i
     #                 found = True
@@ -366,7 +366,7 @@ class FieldSplitAligned(object):
             raise TypeError("At least one value must be provided.")
 
         for val in values:
-            if val is None or not isinstance(val, str):
+            if val is None or not isinstance(val, bytes):
                 raise TypeError("At least one value is None or not an str which is not authorized.")
 
         if semanticTags is None:
@@ -376,7 +376,7 @@ class FieldSplitAligned(object):
             raise TypeError("There should be a list of semantic tags for each value")
 
         # Prepare the argument to send to the C wrapper
-        toSend = [(''.join(values[iValue]), semanticTags[iValue]) for iValue in range(len(values))]
+        toSend = [(values[iValue], semanticTags[iValue]) for iValue in range(len(values))]
 
         wrapper = WrapperArgsFactory("_libNeedleman.alignMessages")
         wrapper.typeList[wrapper.function](toSend)
@@ -420,7 +420,7 @@ class FieldSplitAligned(object):
             searchResults = SearchEngine.searchInMessage(list(appValues.keys()), message, addTags=False)
             for searchResult in searchResults:
                 for (startResultRange, endResultRange) in searchResult.ranges:
-                    appDataName = appValues[searchResult.searchTask.properties["data"]]
+                    appDataName = appValues[searchResult.searchTask.properties[b"data"]]
                     for pos in range(startResultRange/4, endResultRange/4):
                         results[pos] = appDataName
 
@@ -503,7 +503,7 @@ class FieldSplitAligned(object):
 
         if len(subFields) > 1:
             for iSubField, subFieldValue in enumerate(subFields):
-                subField = Field("{0}_{1}".format(field.getName(), iSubField), "({0})".format(subFieldValue), field.getSymbol())
+                subField = Field(b"{0}_{1}".format(field.getName(), iSubField), b"({0})".format(subFieldValue), field.getSymbol())
                 field.addLocalField(subField)
 
     def _createSubFieldsForADynamicField(self, field, align, semanticTags):
@@ -543,7 +543,7 @@ class FieldSplitAligned(object):
 
         for iSubField, (tag, values) in enumerate(subFields):
             if len(values) > 0:
-                if tag == "None":
+                if tag == b"None":
                     minValue = None
                     maxValue = None
                     for v in values:
@@ -551,14 +551,14 @@ class FieldSplitAligned(object):
                             minValue = len(v)
                         if maxValue is None or len(v) > maxValue:
                             maxValue = len(v)
-                    subField = Field("{0}_{1}".format(field.getName(), iSubField), "(.{" + str(minValue) + "," + str(maxValue) + "})", field.getSymbol())
+                    subField = Field(b"{0}_{1}".format(field.getName(), iSubField), b"(.{" + str(minValue) + b"," + str(maxValue) + b"})", field.getSymbol())
 
                     field.addLocalField(subField)
                 else:
                     # create regex based on unique values
                     newRegex = '|'.join(list(set(values)))
-                    newRegex = "({0})".format(newRegex)
-                    subField = Field("{0}_{1}".format(field.getName(), iSubField), newRegex, field.getSymbol())
+                    newRegex = b"({0})".format(newRegex)
+                    subField = Field(b"{0}_{1}".format(field.getName(), iSubField), newRegex, field.getSymbol())
                     field.addLocalField(subField)
 
     @typeCheck(AbstractField, dict, str)
@@ -593,8 +593,8 @@ class FieldSplitAligned(object):
                 for i in range(initial, end):
                     del tagsInMessage[i]
 
-        if "" not in values and len(list(semanticTagsForEachMessage.keys())) > len(values):
-            values.append("")
+        if b"" not in values and len(list(semanticTagsForEachMessage.keys())) > len(values):
+            values.append(b"")
 
         return values
 
@@ -613,7 +613,7 @@ class FieldSplitAligned(object):
         arTags = tags.split(';')
         j = 0
         for iTag, tag in enumerate(arTags):
-            if tag != "None":
+            if tag != b"None":
                 result[j]=tag[2:-2]
             else:
                 result[j]=tag
@@ -640,14 +640,14 @@ class FieldSplitAligned(object):
         if not (unitSize == AbstractType.UNITSIZE_8 or unitSize == AbstractType.UNITSIZE_4):
             raise ValueError("Deserializing with unitSize {0} not yet implemented, only 4 and 8 supported.".format(unitSize))
 
-        align = ""
+        align = b""
         for i, c in enumerate(mask):
-            if c != '\x02':
-                if c == '\x01':
+            if c != b'\x02':
+                if c == b'\x01':
                     if unitSize == AbstractType.UNITSIZE_8:
-                        align += "--"
+                        align += b"--"
                     elif unitSize == AbstractType.UNITSIZE_4:
-                        align += "-"
+                        align += b"-"
                 else:
                     if unitSize == AbstractType.UNITSIZE_8:
                         align += TypeConverter.convert(regex[i:i + 1], Raw, HexaString)

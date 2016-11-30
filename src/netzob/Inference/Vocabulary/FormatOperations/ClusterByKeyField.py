@@ -34,6 +34,7 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
+import collections
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -67,7 +68,7 @@ class ClusterByKeyField(object):
 
         >>> import binascii
         >>> from netzob.all import *
-        >>> samples = ["00ff2f000000",	"000020000000",	"00ff2f000000"]
+        >>> samples = [b"00ff2f000000", b"000020000000", b"00ff2f000000"]
         >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
         >>> f1 = Field(Raw(nbBytes=1))
         >>> f2 = Field(Raw(nbBytes=2))
@@ -91,6 +92,7 @@ class ClusterByKeyField(object):
         '00'  | '0020' | '000000'
         ----- | ------ | --------
 
+
         :param field: the field we want to split in new symbols
         :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
         :param keyField: the field used as a key during the splitting operation
@@ -106,7 +108,7 @@ class ClusterByKeyField(object):
         if keyField not in field.fields:
             raise TypeError("'keyField' is not a child of 'field'")
 
-        newSymbols = {}
+        newSymbols = collections.OrderedDict()
 
         keyFieldMessageValues = keyField.getMessageValues(encoded=False, styled=False)
         newSymbolsSplittedMessages = {}

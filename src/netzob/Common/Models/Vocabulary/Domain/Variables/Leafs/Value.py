@@ -96,7 +96,7 @@ class Value(AbstractRelationVariableLeaf):
     >>> s = Symbol(fields=[f1, f2, f3, f4])
     >>> ms = MessageSpecializer()
     >>> print(TypeConverter.convert(ms.specializeSymbol(s).generatedContent, BitArray, Raw))
-    netzob;netzob!
+    b'netzob;netzob!'
     
     >>> from netzob.all import *
     >>> f3 = Field(ASCII("netzob"), name="f3")
@@ -106,7 +106,7 @@ class Value(AbstractRelationVariableLeaf):
     >>> s = Symbol(fields=[f1, f2, f3, f4])
     >>> ms = MessageSpecializer()
     >>> print(TypeConverter.convert(ms.specializeSymbol(s).generatedContent, BitArray, Raw))
-    netzob;netzob!
+    b'netzob;netzob!'
     
     """
 

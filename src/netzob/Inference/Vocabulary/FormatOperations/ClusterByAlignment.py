@@ -170,7 +170,7 @@ class ClusterByAlignment(object):
                 raise TypeError("At least one specified symbol is not a valid symbol")
 
         # Execute the Clustering part in C
-        debug = False
+        debug = True
         wrapper = WrapperArgsFactory("_libScoreComputation.computeSimilarityMatrix")
         wrapper.typeList[wrapper.function](symbols)
         self._logger.debug("wrapper = {0}".format(wrapper))

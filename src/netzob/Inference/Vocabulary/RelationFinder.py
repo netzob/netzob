@@ -49,7 +49,7 @@ class RelationFinder(object):
 
     >>> import binascii
     >>> from netzob.all import *
-    >>> samples = ["0007ff2f000000000000", "0011ffaaaaaaaaaaaaaabbcc0010000000000000", "0012ffddddddddddddddddddddfe1f000000000000"]
+    >>> samples = [b"0007ff2f000000000000", b"0011ffaaaaaaaaaaaaaabbcc0010000000000000", b"0012ffddddddddddddddddddddfe1f000000000000"]
     >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
     >>> symbol = Symbol(messages=messages)
     >>> Format.splitStatic(symbol)
@@ -333,7 +333,7 @@ class RelationFinder(object):
 
         if len(cellsDataList) < 1:
             return []
-        result = ["" for cell in cellsDataList[0]]
+        result = [b"" for cell in cellsDataList[0]]
         for cellsData in cellsDataList:
             for i, data in enumerate(cellsData):
                 result[i] += data

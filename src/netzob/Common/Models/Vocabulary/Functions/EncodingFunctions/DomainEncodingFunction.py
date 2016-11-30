@@ -60,7 +60,7 @@ class DomainEncodingFunction(EncodingFunction):
 
     >>> from netzob.all import *
     >>> f = Field(name="f0", domain=Agg(["There are ", Integer(10), " solutions."]))
-    >>> m = RawMessage("There are " + TypeConverter.convert(10, Integer, Raw) + " solutions.")
+    >>> m = RawMessage(b"There are " + TypeConverter.convert(10, Integer, Raw) + b" solutions.")
     >>> s = Symbol(fields=[f], messages=[m], name="Symbol")
     >>> s.addEncodingFunction(TypeEncodingFunction(ASCII))
     >>> print(s)

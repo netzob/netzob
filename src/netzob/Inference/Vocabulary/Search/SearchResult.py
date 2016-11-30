@@ -61,14 +61,14 @@ class SearchResult(object):
 
     >>> from netzob.all import *
     >>> from netzob.Inference.Vocabulary.Search.SearchTask import SearchTask
-    >>> target = TypeConverter.convert("Hello world, that is just a test of netzob.", Raw, BitArray)
+    >>> target = TypeConverter.convert(b"Hello world, that is just a test of netzob.", Raw, BitArray)
     >>> searchTask = SearchTask(TypeConverter.convert("o", Raw, BitArray), "letter-o-original")
     >>> ranges = [(4,5), (7,8), (33,34), (40,41)]
     >>> sr = SearchResult(target, searchTask, ranges)
     >>> print(sr.ranges)
     [(4, 5), (7, 8), (33, 34), (40, 41)]
     >>> print(TypeConverter.convert(sr.target, BitArray, Raw))
-    Hello world, that is just a test of netzob.
+    b'Hello world, that is just a test of netzob.'
     >>> print(sr.searchTask.description)
     letter-o-original
 
