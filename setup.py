@@ -239,6 +239,7 @@ setup(
     keywords=release.keywords,
     classifiers=[
         "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
         "Programming Language :: C",
         "Development Status :: 4 - Beta",
         "Environment :: X11 Applications :: GTK",
