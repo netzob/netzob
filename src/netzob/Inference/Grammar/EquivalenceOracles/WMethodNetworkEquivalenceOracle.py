@@ -201,8 +201,8 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
 
         for i in range(1, v + 1):
             self.log.info("Computing X^{0}: ".format(str(i)))
-            self.log.info("MQ INputs: ".format(str(len(mqInputs))))
-            self.log.info("W: ".format(str(len(W))))
+            self.log.info("MQ INputs: {}".format(str(len(mqInputs))))
+            self.log.info("W: {}".format(str(len(W))))
             X[i] = []
             previousX = X[i - 1]
             self.log.info(previousX)

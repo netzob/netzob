@@ -131,9 +131,6 @@ class Timestamp(AbstractType):
         """
         if value is not None and not isinstance(value, bitarray):
             # converts the specified value in bitarray
-            from netzob.Common.Models.Types.TypeConverter import TypeConverter
-            from netzob.Common.Models.Types.BitArray import BitArray
-            from netzob.Common.Models.Types.Integer import Integer
             value = TypeConverter.convert(value, Integer, BitArray, src_unitSize=unitSize, src_endianness=endianness, src_sign=sign)
 
         self.epoch = epoch
@@ -207,10 +204,6 @@ class Timestamp(AbstractType):
         
 
         """
-        from netzob.Common.Models.Types.BitArray import BitArray
-        from netzob.Common.Models.Types.TypeConverter import TypeConverter
-        from netzob.Common.Models.Types.Integer import Integer
-
         if self.value is not None:
             return self.value
     
@@ -250,8 +243,6 @@ class Timestamp(AbstractType):
     @staticmethod
     def encode(data, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.defaultEndianness(), sign=AbstractType.SIGN_UNSIGNED):
         from netzob.Common.Models.Types.Raw import Raw
-        from netzob.Common.Models.Types.TypeConverter import TypeConverter
-        from netzob.Common.Models.Types.Integer import Integer
 
         intValue = TypeConverter.convert(data, Raw, Integer, dst_unitSize=AbstractType.UNITSIZE_32, dst_sign=AbstractType.SIGN_UNSIGNED)
         parsedTimestamp = datetime.utcfromtimestamp(intValue)

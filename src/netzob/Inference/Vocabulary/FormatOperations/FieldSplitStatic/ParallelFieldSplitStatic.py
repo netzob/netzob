@@ -44,6 +44,7 @@ import time
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Types.AbstractType import AbstractType
 from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
+from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
 
 
 def _executeDataAlignment(arg, **kwargs):

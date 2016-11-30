@@ -31,6 +31,7 @@
 import errno
 import time
 import uuid
+import zlib
 from gettext import gettext as _
 
 #+---------------------------------------------------------------------------+
@@ -246,7 +247,7 @@ class CorrelationFinder(object):
         for message in messages:
             line = []
             data = message.getStringData()
-            rawContent = TypeConvertor.netzobRawToPythonRaw(data)
+            rawContent = TypeConverter.netzobRawToPythonRaw(data)
             valCrc32 = zlib.crc32(rawContent) & 0xFFFFFFFF
             line.append(str(valCrc32))
             lines.append(",".join(line))
@@ -268,9 +269,9 @@ class CorrelationFinder(object):
                 entry = cells[field][i_msg]
                 for k in range(2, 3, 2):
                     if len(entry) > k:
-                        line.append(TypeConvertor.netzobRawToInteger(entry[:k]))
+                        line.append(TypeConverter.netzobRawToInteger(entry[:k]))
                     else:
-                        line.append(TypeConvertor.netzobRawToInteger(entry))
+                        line.append(TypeConverter.netzobRawToInteger(entry))
 
             lines.append(",".join(line))
 

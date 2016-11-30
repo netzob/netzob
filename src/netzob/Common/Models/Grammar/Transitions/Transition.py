@@ -77,7 +77,7 @@ class Transition(AbstractTransition):
 
     TYPE = "Transition"
 
-    def __init__(self, startState, endState, inputSymbol=None, outputSymbols=[], _id=uuid.uuid4(), name=None):
+    def __init__(self, startState, endState, inputSymbol=None, outputSymbols=None, _id=uuid.uuid4(), name=None):
         """Constructor of a Transition.
 
         :param startState: initial state of the transition
@@ -95,6 +95,9 @@ class Transition(AbstractTransition):
 
         """
         super(Transition, self).__init__(Transition.TYPE, startState, endState, _id, name, priority=10)
+
+        if outputSymbols is None:
+            outputSymbols = []
 
         self.inputSymbol = inputSymbol
         self.outputSymbols = outputSymbols
