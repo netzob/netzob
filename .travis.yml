@@ -26,6 +26,7 @@
 #+---------------------------------------------------------------------------+
 #| File contributors :                                                       |
 #|       - Georges Bossert <gbossert (a) miskin.fr>                          |
+#|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
 #+---------------------------------------------------------------------------+
 
 #
@@ -37,7 +38,7 @@
 language: python
 sudo: required
 python:
-  - "2.7"
+  - "3"
 addons:
   apt:
     packages:
