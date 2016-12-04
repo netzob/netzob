@@ -41,11 +41,11 @@ from netzob.Common.Models.Vocabulary.Messages.L2NetworkMessage import L2NetworkM
 class L3NetworkMessage(L2NetworkMessage):
     """Definition of a layer 3 network message.
 
-    >>> msg = L3NetworkMessage("090002300202f000")
+    >>> msg = L3NetworkMessage(b"090002300202f000")
     >>> print(msg.data)
-    090002300202f000
+    b'090002300202f000'
 
-    >>> msg = L3NetworkMessage("090002300202f000", date=1352293417.28, l3SourceAddress="192.168.10.100", l3DestinationAddress="192.168.10.245")
+    >>> msg = L3NetworkMessage(b"090002300202f000", date=1352293417.28, l3SourceAddress="192.168.10.100", l3DestinationAddress="192.168.10.245")
     >>> print(msg.source)
     192.168.10.100
     >>> print(msg.destination)

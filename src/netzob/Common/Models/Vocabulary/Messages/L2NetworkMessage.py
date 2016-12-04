@@ -41,11 +41,11 @@ from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
 class L2NetworkMessage(RawMessage):
     """Definition of a layer 2 network message.
 
-    >>> msg = L2NetworkMessage("090002300202f000")
+    >>> msg = L2NetworkMessage(b"090002300202f000")
     >>> print(msg.data)
-    090002300202f000
+    b'090002300202f000'
 
-    >>> msg = L2NetworkMessage("090002300202f000", date=1352293417.28, l2SourceAddress="00:02:7b:00:bf:33", l2DestinationAddress="00:02:3f:a8:bf:21")
+    >>> msg = L2NetworkMessage(b"090002300202f000", date=1352293417.28, l2SourceAddress="00:02:7b:00:bf:33", l2DestinationAddress="00:02:3f:a8:bf:21")
     >>> print(msg.source)
     00:02:7b:00:bf:33
     >>> print(msg.destination)

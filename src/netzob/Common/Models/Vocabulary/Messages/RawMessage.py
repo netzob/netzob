@@ -43,13 +43,12 @@ from netzob.Common.Models.Vocabulary.Messages.AbstractMessage import AbstractMes
 
 class RawMessage(AbstractMessage):
     """Represents a raw Message which is a single message with some content and very few meta-data.
-    A RawMessage
 
-    >>> msg = RawMessage("That's a simple message")
+    >>> msg = RawMessage(b"That's a simple message")
     >>> print(msg.data)
-    That's a simple message
+    b"That's a simple message"
 
-    >>> msg = RawMessage("hello everyone", source="server", destination="client")
+    >>> msg = RawMessage(b"hello everyone", source="server", destination="client")
     >>> print(msg.source)
     server
     >>> print(msg.destination)

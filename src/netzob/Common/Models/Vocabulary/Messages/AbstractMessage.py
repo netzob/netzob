@@ -94,13 +94,13 @@ class AbstractMessage(SortableObject):
 
         >>> from netzob.all import *
         >>> f0 = Field(Raw(nbBytes=4))
-        >>> f1 = Field(", hello ", name="F1")
+        >>> f1 = Field(b", hello ", name="F1")
         >>> f2 = Field(Raw(nbBytes=(2,5)), name="F2")
         >>> symbol = Symbol([f0, f1, f2], name="Symbol")
-        >>> m2 = RawMessage("Toto, hello you", source="server", destination="client")
+        >>> m2 = RawMessage(b"Toto, hello you", source="server", destination="client")
         >>> m2.isValidForField(symbol)
         True
-        >>> m1 = RawMessage("Toto, hello !", source="server", destination="client")
+        >>> m1 = RawMessage(b"Toto, hello !", source="server", destination="client")
         >>> m1.isValidForField(symbol)
         False
 
@@ -177,7 +177,7 @@ class AbstractMessage(SortableObject):
             start = (function.start / 8)
             end = (function.end / 8)
             functionTable.applyFunction(function, start, end)
-        tmpData = "".join(functionTable.getResult())
+        tmpData = b"".join(functionTable.getResult()).decode('utf-8')
 
         # Add header in front of the data
         HLS1 = "\033[0;32m"

@@ -45,7 +45,7 @@ class L4NetworkMessage(L3NetworkMessage):
     """Definition of a layer 4 network message
 
     >>> import binascii
-    >>> msg = L4NetworkMessage("090002300202f000", date=1352293417.28, l3SourceAddress="192.168.10.100", l3DestinationAddress="192.168.10.245", l4SourceAddress=2049, l4DestinationAddress=80)
+    >>> msg = L4NetworkMessage(b"090002300202f000", date=1352293417.28, l3SourceAddress="192.168.10.100", l3DestinationAddress="192.168.10.245", l4SourceAddress=2049, l4DestinationAddress=80)
     >>> print(msg.source)
     192.168.10.100:2049
     >>> print(msg.destination)
