@@ -142,8 +142,8 @@ PyObject* py_computeSimilarityMatrix(__attribute__((unused))PyObject* self, PyOb
       for(j_record = i_record + 1; j_record < nbmessage; j_record++){
 
         PyObject *s = PyFloat_FromDouble((double)scoreMatrix[i_record][j_record]);
-        PyObject *i_p = PyBytes_FromString(mesmessages[i_record].uid);
-        PyObject *j_p = PyBytes_FromString(mesmessages[j_record].uid);
+        PyObject *i_p = PyUnicode_FromString(mesmessages[i_record].uid);
+        PyObject *j_p = PyUnicode_FromString(mesmessages[j_record].uid);
         PyObject *res = PyList_New(3);
         if (!s || !i_p || !j_p || !res) {
             Py_XDECREF(recordedScores);

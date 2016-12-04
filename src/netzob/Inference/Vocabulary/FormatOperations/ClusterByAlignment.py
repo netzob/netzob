@@ -68,22 +68,21 @@ class ClusterByAlignment(object):
     >>> cities = ["Paris", "Munich", "Barcelone", "Vienne"]
     >>> ips = ["192.168.0.10", "10.120.121.212", "78.167.23.10"]
     >>> # Creation of the different types of message
-    >>> msgsType1 = [ RawMessage("hello {0}, what's up in {1} ?".format(pseudo, city)) for pseudo in pseudos for city in cities]
-    >>> msgsType2 = [ RawMessage("My ip address is {0}".format(TypeConverter.convert(ip, IPv4, Raw))) for ip in ips]
-    >>> msgsType3 = [ RawMessage("Your IP is {0}, name = {1} and city = {2}".format(TypeConverter.convert(ip, IPv4, Raw), pseudo, city)) for ip in ips for pseudo in pseudos for city in cities]
-    >>> messages = msgsType1+msgsType2+msgsType3
+    >>> msgsType1 = [ RawMessage("hello {0}, what's up in {1} ?".format(pseudo, city).encode('utf-8')) for pseudo in pseudos for city in cities]
+    >>> msgsType2 = [ RawMessage("My ip address is {0}".format(ip).encode('utf-8')) for ip in ips]
+    >>> msgsType3 = [ RawMessage("Your IP is {0}, name = {1} and city = {2}".format(ip, pseudo, city).encode('utf-8')) for ip in ips for pseudo in pseudos for city in cities]
+    >>> messages = msgsType1 + msgsType2 + msgsType3
     >>> clustering = ClusterByAlignment()
     >>> symbols = clustering.cluster(messages)
     >>> len(symbols)
     3
-    >>> symbols[0].addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> print(symbols[0])
-    Field                                | Field    | Field | Field   
-    ------------------------------------ | -------- | ----- | --------
-    '4d79206970206164647265737320697320' | '4ea717' | '0a'  | ''      
-    '4d79206970206164647265737320697320' | 'c0a800' | '0a'  | ''      
-    '4d79206970206164647265737320697320' | ''       | '0a'  | '7879d4'
-    ------------------------------------ | -------- | ----- | --------
+    Field               | Field | Field | Field | Field | Field | Field | Field | Field | Field
+    ------------------- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | -----
+    'My ip address is ' | '78'  | '.1'  | '67'  | '.'   | '23'  | '.'   | ''    | '1'   | '0'  
+    'My ip address is ' | '192' | '.1'  | '68'  | '.'   | '0'   | '.'   | ''    | '1'   | '0'  
+    'My ip address is ' | '10'  | '.1'  | '20'  | '.'   | '121' | '.'   | '2'   | '1'   | '2'  
+    ------------------- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | -----
 
     >>> print(symbols[2])
     Field    | Field     | Field             | Field       | Field
@@ -170,7 +169,7 @@ class ClusterByAlignment(object):
                 raise TypeError("At least one specified symbol is not a valid symbol")
 
         # Execute the Clustering part in C
-        debug = True
+        debug = False
         wrapper = WrapperArgsFactory("_libScoreComputation.computeSimilarityMatrix")
         wrapper.typeList[wrapper.function](symbols)
         self._logger.debug("wrapper = {0}".format(wrapper))

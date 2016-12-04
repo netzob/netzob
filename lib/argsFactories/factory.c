@@ -32,9 +32,6 @@
 //| Import Associated Header
 //+---------------------------------------------------------------------------+
 #include "factory.h"
-#define tostring(s) PyBytes_FromString(s)
-#define getstringattr(o,s) PyBytes_AsString(PyObject_GetAttr(o,tostring(s)))
-#define getUnsignedLongAttribute(o,s) PyLong_AsUnsignedLong(PyObject_GetAttr(o,tostring(s)))
 
 /*parseArgs return values:
 *	0: Success
@@ -42,6 +39,8 @@
 *	2: not WrapperFactory
 */
 int parseArgs(PyObject* factobj, ...){
+  PyObject* wrapperObj;
+  char* function=NULL;
   va_list args;
   va_start(args,factobj);
 
@@ -50,8 +49,15 @@ int parseArgs(PyObject* factobj, ...){
      Python : WrapperArgsFactory.function
   */
   if(PyObject_HasAttrString(factobj,"function")){
-    char* function=NULL;
-    function =  getstringattr(factobj,"function");
+
+    wrapperObj = PyObject_GetAttrString(factobj, "function");
+    if(wrapperObj == NULL) {
+      PyErr_SetString(PyExc_TypeError, "Error when calling PyObject_GetAttrString()");
+      return 1;
+    }
+
+    function = PyUnicode_AsUTF8(wrapperObj);
+    
     /**
        Function name found.
        It searches for a parser which can manage this format of wrapper
@@ -94,7 +100,7 @@ void parseLibscoreComputation(PyObject* factobj, va_list args){
   /**
      list : which is a list of messages
   */
-  PyObject* list = PyObject_GetAttr(factobj,PyBytes_FromString("args"));
+  PyObject* list = PyObject_GetAttrString(factobj, "args");
 
   /**
      Find the number of elements in the list.
@@ -149,7 +155,7 @@ void parseMessage(PyObject * item, t_message * message) {
   /**
      message.alignment contains the message.getReducedStringData() in python raw format. Its the content of the message. If its during orphan reduction, this content is reduced to the considered section (sliding window).
   */
-  tmp_alignment = getstringattr(item,"alignment");
+  tmp_alignment = PyBytes_AsString(PyObject_GetAttrString(item, "alignment"));
   message->alignment = (unsigned char*) tmp_alignment;
 
   /**
@@ -160,7 +166,7 @@ void parseMessage(PyObject * item, t_message * message) {
   /**
      message->len contains the size of tmp_alignment
   **/
-  message->len = (unsigned int) getUnsignedLongAttribute(item,"length");
+  message->len = (unsigned int) PyLong_AsUnsignedLong(PyObject_GetAttrString(item, "length"));
 
   /**
      message->semanticTags contains the list of tags attached to each half-byte of the alignment
@@ -168,7 +174,7 @@ void parseMessage(PyObject * item, t_message * message) {
   message->semanticTags = calloc(message->len, sizeof(t_semanticTag *));
 
   // retrieve the list of tags
-  PyObject* listOfSemanticTags = PyObject_GetAttr(item,tostring("semanticTags"));
+  PyObject* listOfSemanticTags = PyObject_GetAttrString(item, "semanticTags");
 
   // verify its a list
   if (PyList_CheckExact(listOfSemanticTags) && message->len == (unsigned int)PyList_Size(listOfSemanticTags)) {
@@ -176,7 +182,7 @@ void parseMessage(PyObject * item, t_message * message) {
     // parse all the tags
     for (j=0; j<message->len; j++) {
       PyObject * listItem = PyList_GetItem(listOfSemanticTags,(Py_ssize_t)j);
-      char * tag = PyBytes_AsString(listItem);
+      char * tag = PyUnicode_AsUTF8(listItem);
 
       message->semanticTags[j] = malloc(sizeof(t_semanticTag));
       message->semanticTags[j]->name = tag;
@@ -190,7 +196,7 @@ void parseMessage(PyObject * item, t_message * message) {
 
      Warning: I though it was message's UID, but its not !!
   */
-  message->uid = getstringattr(item,"uid");
+  message->uid = PyUnicode_AsUTF8(PyObject_GetAttrString(item, "uid"));
 
 }
 
@@ -216,7 +222,7 @@ void parseLibNeedleman(PyObject* factobj, va_list args){
   /**
      list : which is a list of messages
   */
-  PyObject* list = PyObject_GetAttr(factobj,PyBytes_FromString("args"));
+  PyObject* list = PyObject_GetAttrString(factobj, "args");
 
   /**
      Find the number of elements in the list.
@@ -266,8 +272,3 @@ void parseLibNeedleman(PyObject* factobj, va_list args){
   }
 
 }
-
-
-
-#undef getstringattr
-#undef tostring

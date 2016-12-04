@@ -212,7 +212,7 @@ class FieldSplitAligned(object):
         #if useSemantic:
         #    self._createSubFieldsFollowingSemanticTags(field, alignment, semanticTags)
 
-    @typeCheck(AbstractField, str, dict)
+    @typeCheck(AbstractField, bytes, dict)
     def _updateFieldsFromAlignment(self, field, alignment, semanticTags):
         """This methods creates a regex based on the computed alignment
         by the Needleman&Wunsch algorithm and the attached semantic tags.
@@ -245,7 +245,7 @@ class FieldSplitAligned(object):
 
         for (entryVal, entryDyn) in splited:
             if entryDyn:
-                newField = Field(Raw(nbBytes=(0, len(entryVal) / 2)))
+                newField = Field(Raw(nbBytes=(0, int(len(entryVal) / 2))))
             else:
                 newField = Field(Raw(TypeConverter.convert(entryVal, HexaString, Raw)))
             step1Fields.append(newField)
@@ -279,21 +279,21 @@ class FieldSplitAligned(object):
         ...     if i%2 == 0:
         ...         tab.append(b"-"*random.randint(1, 20))
         ...     else:
-        ...         tab.append(b"".join([random.choice('0123456789abcdef') for x in range(random.randint(1, 20))]))
+        ...         tab.append("".join([random.choice('0123456789abcdef') for x in range(random.randint(1, 20))]).encode('utf-8'))
         >>> data = b"".join(tab)
         >>> nbField == len(fs._mergeAlign(*fs._splitAlignment(data)))
         True
 
         """
         if len(align) == 1:
-            return ([[align[0], align[0] == b"-"]], [])
+            return ([[chr(align[0]), chr(align[0]) == "-"]], [])
         elif len(align) == 2:
-            return ([[align[0], align[0] == b"-"]], [[align[1], align[1] == b"-"]])
+            return ([[chr(align[0]), chr(align[0]) == "-"]], [[chr(align[1]), chr(align[1]) == "-"]])
 
-        indexHalf = len(align) / 2
+        indexHalf = int(len(align) / 2)
         leftAlign = align[0:indexHalf]
         rightAlign = align[indexHalf:]
-
+        
         leftLeftAlign, rightLeftAlign = self._splitAlignment(leftAlign)
         mergedLeftAlign = self._mergeAlign(leftLeftAlign, rightLeftAlign)
 
@@ -388,7 +388,6 @@ class FieldSplitAligned(object):
         # Deserialize returned info
         alignment = self._deserializeAlignment(regex, mask, self.unitSize)
         semanticTags = self._deserializeSemanticTags(semanticTags, self.unitSize)
-
         return (alignment, semanticTags, scores)
 
     @typeCheck(AbstractMessage)
@@ -420,8 +419,8 @@ class FieldSplitAligned(object):
             searchResults = SearchEngine.searchInMessage(list(appValues.keys()), message, addTags=False)
             for searchResult in searchResults:
                 for (startResultRange, endResultRange) in searchResult.ranges:
-                    appDataName = appValues[searchResult.searchTask.properties[b"data"]]
-                    for pos in range(startResultRange/4, endResultRange/4):
+                    appDataName = appValues[searchResult.searchTask.properties["data"]]
+                    for pos in range(int(startResultRange/4), int(endResultRange/4)):
                         results[pos] = appDataName
 
         return results
@@ -461,7 +460,7 @@ class FieldSplitAligned(object):
                 self._logger.debug("field regex = {0} (maxSize={1})".format(field.regex, field.domain.maxSize()))
 
                 # Retrieve the size of the current field
-                lengthField = ( field.domain.maxSize() / 4)
+                lengthField = (int(field.domain.maxSize() / 4))
 
                 # Find semantic tags related to the current section
                 sectionSemanticTags = OrderedDict((k, semanticTags[k]) for k in range(currentIndex, currentIndex + lengthField))
@@ -642,8 +641,8 @@ class FieldSplitAligned(object):
 
         align = b""
         for i, c in enumerate(mask):
-            if c != b'\x02':
-                if c == b'\x01':
+            if c != 2:
+                if c == 1:
                     if unitSize == AbstractType.UNITSIZE_8:
                         align += b"--"
                     elif unitSize == AbstractType.UNITSIZE_4:

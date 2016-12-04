@@ -58,17 +58,17 @@ class SortedTypedList(object):
 
     >>> from netzob.all import *
     >>> from netzob.Common.Utils.SortedTypedList import SortedTypedList
-    >>> msg1 = RawMessage("msg1", date=25.0)
-    >>> msg2 = RawMessage("msg2", date=2.0)
-    >>> msg3 = RawMessage("msg3", date=1456487548.0)
+    >>> msg1 = RawMessage(b"msg1", date=25.0)
+    >>> msg2 = RawMessage(b"msg2", date=2.0)
+    >>> msg3 = RawMessage(b"msg3", date=1456487548.0)
     >>> l = SortedTypedList(RawMessage, [msg2, msg3, msg1])
     >>> print(list(l.values())[0])
     [0;32m[2.0 [0;m[1;32mNone[1;m[0;32m->[0;m[1;32mNone[1;m[0;32m][0;m 'msg2'
 
-    >>> msg4 = RawMessage("msg4", date=145548.0)
+    >>> msg4 = RawMessage(b"msg4", date=145548.0)
     >>> l.add(msg4)
-    >>> msg5 = RawMessage("msg5", date=14.0)
-    >>> msg6 = RawMessage("msg6", date=1745645548.0)
+    >>> msg5 = RawMessage(b"msg5", date=14.0)
+    >>> msg6 = RawMessage(b"msg6", date=1745645548.0)
     >>> l.addAll([msg5, msg6])
     >>> print(list(l.values())[5])
     [0;32m[1745645548.0 [0;m[1;32mNone[1;m[0;32m->[0;m[1;32mNone[1;m[0;32m][0;m 'msg6'
