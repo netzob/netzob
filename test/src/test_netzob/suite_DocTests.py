@@ -170,9 +170,9 @@ def getSuite():
         UDPClient.__module__,
         SSLClient.__module__,
 
-        # Modules related to the import
-        # -----------------------------
-        PCAPImporter.__module__,
+        # # Modules related to the import
+        # # -----------------------------
+        # PCAPImporter.__module__,
 
         # Other
         # -----
