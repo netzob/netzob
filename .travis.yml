@@ -38,7 +38,7 @@
 language: python
 sudo: required
 python:
-  - "3"
+  - "3.4"
 addons:
   apt:
     packages:
