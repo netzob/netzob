@@ -35,8 +35,13 @@ from gettext import gettext as _
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 import pcapy
-import impacket.ImpactDecoder as Decoders
-import impacket.ImpactPacket as Packets
+
+## FIXME: Temporary deactivate this module as it is not currently supported in Python3
+# import impacket.ImpactDecoder as Decoders
+# import impacket.ImpactPacket as Packets
+## Instead, import local adapted files
+from netzob.Import.PCAPImporter import ImpactPacket as Packets
+from netzob.Import.PCAPImporter import ImpactDecoder as Decoders
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -68,40 +73,40 @@ class PCAPImporter(object):
 
     >>> for m in messages:
     ...    print(repr(m.data))
-    'CMDidentify#\\x07\\x00\\x00\\x00Roberto'
-    'RESidentify#\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'
-    'CMDinfo#\\x00\\x00\\x00\\x00'
-    'RESinfo#\\x00\\x00\\x00\\x00\\x04\\x00\\x00\\x00info'
-    'CMDstats#\\x00\\x00\\x00\\x00'
-    'RESstats#\\x00\\x00\\x00\\x00\\x05\\x00\\x00\\x00stats'
-    'CMDauthentify#\\n\\x00\\x00\\x00aStrongPwd'
-    'RESauthentify#\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'
-    'CMDencrypt#\\x06\\x00\\x00\\x00abcdef'
-    "RESencrypt#\\x00\\x00\\x00\\x00\\x06\\x00\\x00\\x00$ !&'$"
-    "CMDdecrypt#\\x06\\x00\\x00\\x00$ !&'$"
-    'RESdecrypt#\\x00\\x00\\x00\\x00\\x06\\x00\\x00\\x00abcdef'
-    'CMDbye#\\x00\\x00\\x00\\x00'
-    'RESbye#\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'
+    b'CMDidentify#\\x07\\x00\\x00\\x00Roberto'
+    b'RESidentify#\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'
+    b'CMDinfo#\\x00\\x00\\x00\\x00'
+    b'RESinfo#\\x00\\x00\\x00\\x00\\x04\\x00\\x00\\x00info'
+    b'CMDstats#\\x00\\x00\\x00\\x00'
+    b'RESstats#\\x00\\x00\\x00\\x00\\x05\\x00\\x00\\x00stats'
+    b'CMDauthentify#\\n\\x00\\x00\\x00aStrongPwd'
+    b'RESauthentify#\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'
+    b'CMDencrypt#\\x06\\x00\\x00\\x00abcdef'
+    b"RESencrypt#\\x00\\x00\\x00\\x00\\x06\\x00\\x00\\x00$ !&'$"
+    b"CMDdecrypt#\\x06\\x00\\x00\\x00$ !&'$"
+    b'RESdecrypt#\\x00\\x00\\x00\\x00\\x06\\x00\\x00\\x00abcdef'
+    b'CMDbye#\\x00\\x00\\x00\\x00'
+    b'RESbye#\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'
 
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=2).values()
     >>> print(repr(messages[0].data))
-    '\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x08\\x00E\\x00\\x003\\xdc\\x11@\\x00@\\x11`\\xa6\\x7f\\x00\\x00\\x01\\x7f\\x00\\x00\\x01\\xe1\\xe7\\x10\\x92\\x00\\x1f\\xfe2CMDidentify#\\x07\\x00\\x00\\x00Roberto'
+    b'\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x08\\x00E\\x00\\x003\\xdc\\x11@\\x00@\\x11`\\xa6\\x7f\\x00\\x00\\x01\\x7f\\x00\\x00\\x01\\xe1\\xe7\\x10\\x92\\x00\\x1f\\xfe2CMDidentify#\\x07\\x00\\x00\\x00Roberto'
 
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=3).values()
     >>> print(repr(messages[0].data))
-    'E\\x00\\x003\\xdc\\x11@\\x00@\\x11`\\xa6\\x7f\\x00\\x00\\x01\\x7f\\x00\\x00\\x01\\xe1\\xe7\\x10\\x92\\x00\\x1f\\xfe2CMDidentify#\\x07\\x00\\x00\\x00Roberto'
+    b'E\\x00\\x003\\xdc\\x11@\\x00@\\x11`\\xa6\\x7f\\x00\\x00\\x01\\x7f\\x00\\x00\\x01\\xe1\\xe7\\x10\\x92\\x00\\x1f\\xfe2CMDidentify#\\x07\\x00\\x00\\x00Roberto'
 
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=4).values()
     >>> print(repr(messages[0].data))
-    '\\xe1\\xe7\\x10\\x92\\x00\\x1f\\xfe2CMDidentify#\\x07\\x00\\x00\\x00Roberto'
+    b'\\xe1\\xe7\\x10\\x92\\x00\\x1f\\xfe2CMDidentify#\\x07\\x00\\x00\\x00Roberto'
 
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=5).values()
     >>> print(repr(messages[0].data))
-    'CMDidentify#\\x07\\x00\\x00\\x00Roberto'
+    b'CMDidentify#\\x07\\x00\\x00\\x00Roberto'
 
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_http.pcap", importLayer=5, bpfFilter="tcp").values()
     >>> print(repr(messages[0].data))
-    'GET / HTTP/1.1\\r\\nHost: www.free.fr\\r\\nUser-Agent: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa(bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb)ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\\r\\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\\r\\nAccept-Language: en-US,en;q=0.5\\r\\nAccept-Encoding: gzip, deflate\\r\\nConnection: keep-alive\\r\\n\\r\\n'
+    b'GET / HTTP/1.1\\r\\nHost: www.free.fr\\r\\nUser-Agent: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa(bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb)ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\\r\\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\\r\\nAccept-Language: en-US,en;q=0.5\\r\\nAccept-Encoding: gzip, deflate\\r\\nConnection: keep-alive\\r\\n\\r\\n'
 
 
     """
@@ -280,6 +285,7 @@ class PCAPImporter(object):
     def __decodeLayer3(self, etherType, l2Payload):
         """Internal method that parses the specified header and extracts
         layer3 related proprieties."""
+
         if etherType == Packets.IP.ethertype:
             l3Proto = "IP"
             l3Decoder = Decoders.IPDecoder()
@@ -304,6 +310,7 @@ class PCAPImporter(object):
     def __decodeLayer4(self, ipProtocolNum, l3Payload):
         """Internal method that parses the specified header and extracts
         layer4 related proprieties."""
+
         if ipProtocolNum == Packets.UDP.protocol:
             l4Proto = "UDP"
             l4Decoder = Decoders.UDPDecoder()
