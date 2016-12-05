@@ -133,7 +133,10 @@ class ClusterByKeyField(object):
         for message, keyFieldValue in list(keyFieldMessageValues.items()):
             keyFieldValue = TypeConverter.convert(keyFieldValue, Raw, keyFieldType)
             if keyFieldValue not in list(newSymbols.keys()):
-                symbolName = "Symbol_{0}".format(keyFieldValue.decode("utf-8"))
+                if type(keyFieldValue) is str:
+                    symbolName = "Symbol_{0}".format(keyFieldValue)
+                else:
+                    symbolName = "Symbol_{0}".format(keyFieldValue.decode("utf-8"))
                 newSymbols[keyFieldValue] = Symbol(name=symbolName, messages=[message])
                 splittedMessages = DataAlignment.align([message.data], field, encoded=False)
                 newSymbolsSplittedMessages[keyFieldValue] = [splittedMessages[0]]
