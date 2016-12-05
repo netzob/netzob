@@ -43,20 +43,21 @@ addons:
   apt:
     packages:
     - libpcap-dev
+    - python3
 
 # Installation process
 
 install:
-  - pip install -r requirements.txt
-  - python setup.py build
-  - python setup.py install
-  - pip install coveralls
+  - python3 -m pip install -r requirements.txt
+  - python3 setup.py build
+  - python3 setup.py install
+  - python3 -m pip install coveralls
 
 # Executing unit-tests and measure coverages
 
 script:
-  - python setup.py test
-  - coverage run --source=src/netzob setup.py test
+  - python3 setup.py test
+  - python3 -m coverage run --source=src/netzob setup.py test
 after_success:
   - coveralls
 
