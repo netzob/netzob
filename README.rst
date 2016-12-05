@@ -1,8 +1,16 @@
 ==========================================
 Netzob : Inferring Communication Protocols
 ==========================================
-.. image:: https://api.travis-ci.org/netzob/netzob.svg?branch=next
-.. image:: https://coveralls.io/repos/netzob/netzob/badge.svg?branch=next
+
+.. image:: https://travis-ci.org/netzob/netzob.svg?branch=feature%2Fpython3
+    :target: https://travis-ci.org/netzob/netzob
+
+.. image:: https://coveralls.io/repos/github/netzob/netzob/badge.svg?branch=feature%2Fpython3
+   :target: https://coveralls.io/github/netzob/netzob?branch=feature%2Fpython3
+
+.. image:: https://landscape.io/github/netzob/netzob/feature/python3/landscape.svg?style=flat
+   :target: https://landscape.io/github/netzob/netzob/feature/python3
+   :alt: Code Health
 
 About Netzob
 ============
