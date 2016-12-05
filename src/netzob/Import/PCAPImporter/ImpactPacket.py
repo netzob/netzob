@@ -19,6 +19,7 @@ import socket
 import string
 import sys
 from binascii import hexlify
+from functools import reduce
 
 """Classes to build network packets programmatically.
 

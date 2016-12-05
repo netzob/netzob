@@ -63,16 +63,9 @@ class EthDecoder(Decoder):
         if e.get_ether_type() == ImpactPacket.IP.ethertype:
             self.ip_decoder = IPDecoder()
             packet = self.ip_decoder.decode(aBuffer[off:])
-        elif e.get_ether_type() == IP6.IP6.ethertype:
-            self.ip6_decoder = IP6Decoder()
-            packet = self.ip6_decoder.decode(aBuffer[off:])
         elif e.get_ether_type() == ImpactPacket.ARP.ethertype:
             self.arp_decoder = ARPDecoder()
             packet = self.arp_decoder.decode(aBuffer[off:])
-        # LLC ?
-        elif e.get_ether_type() < 1500:
-            self.llc_decoder = LLCDecoder()
-            packet = self.llc_decoder.decode(aBuffer[off:])
         else:
             self.data_decoder = DataDecoder()
             packet = self.data_decoder.decode(aBuffer[off:])
@@ -126,67 +119,6 @@ class IPDecoder(Decoder):
             packet = self.data_decoder.decode(aBuffer[off:end])
         i.contains(packet)
         return i
-
-class HopByHopDecoder(Decoder):
-    def __init__(self):
-        pass
-
-    def decode(self, buffer):
-        hop_by_hop = IP6_Extension_Headers.Hop_By_Hop(buffer)
-        self.set_decoded_protocol(hop_by_hop)
-        start_pos = hop_by_hop.get_header_size()
-        contained_protocol = hop_by_hop.get_next_header()
-
-        multi_protocol_decoder = IP6MultiProtocolDecoder(contained_protocol)
-        child_packet = multi_protocol_decoder.decode(buffer[start_pos:])
-        
-        hop_by_hop.contains(child_packet)
-        return hop_by_hop
-
-class DestinationOptionsDecoder(Decoder):
-    def __init__(self):
-        pass
-
-    def decode(self, buffer):
-        destination_options = IP6_Extension_Headers.Destination_Options(buffer)
-        self.set_decoded_protocol(destination_options)
-        start_pos = destination_options.get_header_size()
-        contained_protocol = destination_options.get_next_header()
-
-        multi_protocol_decoder = IP6MultiProtocolDecoder(contained_protocol)
-        child_packet = multi_protocol_decoder.decode(buffer[start_pos:])
-        
-        destination_options.contains(child_packet)
-        return destination_options
-
-class RoutingOptionsDecoder(Decoder):
-    def __init__(self):
-        pass
-
-    def decode(self, buffer):
-        routing_options = IP6_Extension_Headers.Routing_Options(buffer)
-        self.set_decoded_protocol(routing_options)
-        start_pos = routing_options.get_header_size()
-        contained_protocol = routing_options.get_next_header()
-
-        multi_protocol_decoder = IP6MultiProtocolDecoder(contained_protocol)
-        child_packet = multi_protocol_decoder.decode(buffer[start_pos:])
-        
-        routing_options.contains(child_packet)
-        return routing_options
-
-class ARPDecoder(Decoder):
-    def __init__(self):
-        pass
-
-    def decode(self, aBuffer):
-        arp = ImpactPacket.ARP(aBuffer)
-        self.set_decoded_protocol( arp )
-        off = arp.get_header_size()
-        self.data_decoder = DataDecoder()
-        packet = self.data_decoder.decode(aBuffer[off:])
-        arp.contains(packet)
-        return arp
 
 class UDPDecoder(Decoder):
     def __init__(self):
