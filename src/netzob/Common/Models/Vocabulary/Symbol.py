@@ -121,7 +121,7 @@ class Symbol(AbstractField):
         return self.id
 
     def __hash__(self):
-        return hash(self.__key())
+        return hash(frozenset(self.name))
 
     @typeCheck(Memory, object)
     def specialize(self, memory=None, generationStrategy=None, presets=None):
