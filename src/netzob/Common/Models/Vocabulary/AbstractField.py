@@ -562,11 +562,12 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
             except:
                 pass
 
-        logging.error("Impossible to abstract the message in one of the specified symbols, we create an unknown symbol for it.")
-        
         from netzob.Common.Models.Vocabulary.UnknownSymbol import UnknownSymbol
         from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
-        return UnknownSymbol(RawMessage(data))
+        unknown_symbol = UnknownSymbol(RawMessage(data))
+        logging.error("Impossible to abstract the message in one of the specified symbols, we create an unknown symbol for it: '%s'", unknown_symbol)
+
+        return unknown_symbol
 
     def getSymbol(self):
         """Computes the symbol to which this field is attached.
