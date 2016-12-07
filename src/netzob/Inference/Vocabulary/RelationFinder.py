@@ -176,6 +176,14 @@ class RelationFinder(object):
                     # DataRelation should produce an empty intersection between related fields
                     if relation_type == self.REL_DATA and len(set(x_fields).intersection(set(y_fields))) > 0:
                         continue
+                    # SizeRelation should a size field composed of multiple fields
+                    if relation_type == self.REL_SIZE:
+                        if x_attribute == self.ATTR_VALUE:
+                            if len(x_fields) > 1:
+                                continue
+                        elif y_attribute == self.ATTR_VALUE:
+                            if len(y_fields) > 1:
+                                continue
                     self._logger.debug("Relation found between '" + str(x_fields) + ":" + x_attribute + "' and '" + str(y_fields) + ":" + y_attribute + "'")
                     id_relation = str(uuid.uuid4())
                     results.append({'id': id_relation,
