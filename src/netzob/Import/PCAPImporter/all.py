@@ -30,7 +30,7 @@
 # see docs.python.org/2/tutorial/modules.html
 
 pcapy_available = False
-impacket_available = False
+#impacket_available = False
 
 try:
     import pcapy
@@ -38,12 +38,12 @@ try:
 except ImportError:    
     pass
 
-try:
-    import impacket
-    impacket_available = True
-except ImportError:
-    pass
+# try:
+#     import impacket
+#     impacket_available = True
+# except ImportError:
+#     pass
 
     
-if pcapy_available and impacket_available:
+if pcapy_available:# and impacket_available:
     from netzob.Import.PCAPImporter.PCAPImporter import PCAPImporter
