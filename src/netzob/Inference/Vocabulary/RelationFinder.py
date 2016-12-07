@@ -63,7 +63,7 @@ class RelationFinder(object):
 
     >>> rels = RelationFinder.findOnSymbol(symbol)
     >>> print(len(rels))
-    2
+    1
     >>> for rel in rels:
     ...     print(rel["relation_type"] + " between fields " + str([x.name for x in rel["x_fields"]]) + ":" + rel["x_attribute"] + \
             " and fields " + str([y.name for y in rel["y_fields"]]) + ":" + rel["y_attribute"])
