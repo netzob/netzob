@@ -35,7 +35,7 @@ fixed fields protocols (like IP and TCP) and variable-length fields protocols (l
 Technical Description
 ---------------------
 
-This version of Netzob must be used as a python 2.7 library. It can either be imported in your scripts
+This version of Netzob must be used as a Python 3 library. It can either be imported in your scripts
 or in your favorite interactive shell (ipython?).
 
 Once installed, we recommend the following statement to import Netzob::
@@ -60,11 +60,11 @@ Get Started with Netzob
 Install it
 ----------
 
-First thing to do is to check the version of your python interpretor.
-Netzob requires python 2.7::
+First thing to do is to check the version of your python3 interpretor.
+Netzob requires python 3::
 
-  $ python --version
-  Python 2.7.11
+  $ python3 --version
+  Python 3.4.2
 
 As a 'classic' python project, Netzob is provided with its
 ``setup.py``. This file defines what and how to install the project on a
@@ -74,12 +74,10 @@ This file depends on ``setuptools`` which like few other modules cannot be
 automatically installed. The reason why, you have to manually install the
 following bunch of prerequisites before initiating Netzob's install process.
 
-* python
-* python-dev
-* python-impacket
-* python-setuptools
+* python3
+* python3-dev
+* python3-setuptools
 * build-essential  
-* python-numpy
   
 We also highly recommend to install the following additional dependencies:
 
@@ -87,11 +85,11 @@ We also highly recommend to install the following additional dependencies:
 
 Once the required dependencies are installed, you can build and install Netzob::
 
-  # python setup.py install
+  # python3 setup.py install
 
 Or if you prefer a more developer-friendly install::
 
-  $ python setup.py develop --user
+  $ python3 setup.py develop --user
 
   
 Docker container:
@@ -125,7 +123,7 @@ Configuration requirements for Network and PCAP input::
 
 *Note: Capturing data from network interfaces often requires admin privileges. Before we provide a cleaner and secure way (see issue 425 on the bugtracker for updated information - https://dev.netzob.org/issues/425), a possible HACK is to provide additionnal capabilities to the python binary.* ::
 
-  $ sudo setcap cap_net_raw=ep /usr/bin/python2.XX
+  $ sudo setcap cap_net_raw=ep /usr/bin/python3.XX
 
 Configuration requirements for IPC input on Ubuntu::
 
