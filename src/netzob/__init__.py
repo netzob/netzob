@@ -31,5 +31,5 @@
 
 from sys import version_info
 
-if version_info[0] <= 3:
+if version_info[0] < 3:
     raise ImportError("This version of Netzob is only compatible with Python3.")
