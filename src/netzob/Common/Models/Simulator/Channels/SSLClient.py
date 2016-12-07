@@ -88,7 +88,7 @@ class SSLClient(AbstractChannel):
             self.__socket.bind((self.localIP, self.localPort))
 
         # lets create the ssl context
-        context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+        context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
         context.check_hostname = False
         context.load_default_certs()
         if self.server_cert_file is not None:
