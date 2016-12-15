@@ -141,7 +141,7 @@ class Transition(AbstractTransition):
         # if its an expected one, it returns the endState of the transition
         # if not it raises an exception
         for outputSymbol in self.outputSymbols:
-            self._logger.info("Possible output symbol: '{0}' (id={1}).".format(outputSymbol.name, outputSymbol.id))
+            self._logger.debug("Possible output symbol: '{0}' (id={1}).".format(outputSymbol.name, outputSymbol.id))
 
         if receivedSymbol in self.outputSymbols:
             self.active = False

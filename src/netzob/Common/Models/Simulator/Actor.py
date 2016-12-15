@@ -121,7 +121,7 @@ class Actor(threading.Thread):
         currentState = self.automata.initialState
         while not self.__stopEvent.isSet():
             try:
-                self._logger.info("Current state: {0}.".format(currentState))
+                self._logger.debug("Current state: {0}.".format(currentState))
                 if self.initiator:
                     currentState = currentState.executeAsInitiator(self.abstractionLayer)
                 else:
@@ -137,7 +137,7 @@ class Actor(threading.Thread):
                 
                 self.stop()
 
-        self._logger.info("Actor {0} has finished to execute".format(self.name))
+        self._logger.debug("Actor {0} has finished to execute".format(self.name))
 
     def stop(self):
         """Stop the current thread.

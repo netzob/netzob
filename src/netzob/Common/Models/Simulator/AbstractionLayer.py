@@ -211,11 +211,11 @@ class AbstractionLayer(object):
 
     def openChannel(self):
         self.channel.open()
-        self._logger.info("Communication channel opened.")
+        self._logger.debug("Communication channel opened.")
 
     def closeChannel(self):
         self.channel.close()
-        self._logger.info("Communication channel close.")
+        self._logger.debug("Communication channel close.")
 
     def reset(self):
         self._logger.debug("Reseting abstraction layer")
