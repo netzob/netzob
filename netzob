@@ -48,7 +48,9 @@ if sys.version_info[0] < 3:
 sys.path.insert(0, 'src/')
 from netzob.Common.CommandLine import CommandLine
 from netzob import release
+from netzob.Common.Utils.Decorators import NetzobLogger
 
+@NetzobLogger
 def main():
     """Main function of the Netzob script."""
 
@@ -61,7 +63,7 @@ def main():
     # Starting the dependency checker
     from netzob.Common.DepCheck import DepCheck
     if not DepCheck.checkRequiredDependency():
-        logging.fatal("Some required dependency are not available and prevent netzob from starting.")
+        main._logger.fatal("Some required dependency are not available and prevent netzob from starting.")
         sys.exit()
 
     # Insert in the path the directory where _libNeedleman.pyd is
