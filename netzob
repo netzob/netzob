@@ -36,8 +36,6 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import sys
-import logging
-logging.basicConfig(level=logging.DEBUG)
 import os
 
 if sys.version_info[0] < 3:
