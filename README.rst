@@ -92,8 +92,9 @@ Or if you prefer a more developer-friendly install::
   $ python3 setup.py develop --user
 
   
-Docker container:
-^^^^^^^^^^^^^^^^^
+Docker container
+^^^^^^^^^^^^^^^^
+
 A docker build is offered from the docker registry repository. You can download 
 it from command line with the following command:: 
 
@@ -110,24 +111,38 @@ Once installed, running Netzob is as simple as executing the provided script::
 This script is in Python's path if you've installed Netzob, otherwise
 (in developer mode), it's located in the top distribution directory.
 
+Docker container
+^^^^^^^^^^^^^^^^
+
 If you used the docker container, the following command will allow you to start 
 netzob with your current directory attached to ``/data`` into the container::
 
   $ docker run --rm -it -v $(pwd):/data netzob/netzob
 
-
 Miscellaneous
 -------------
 
-Configuration requirements for Network and PCAP input::
+Configuration of Log Level
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-*Note: Capturing data from network interfaces often requires admin privileges. Before we provide a cleaner and secure way (see issue 425 on the bugtracker for updated information - https://dev.netzob.org/issues/425), a possible HACK is to provide additionnal capabilities to the python binary.* ::
+Environment variable ```NETZOB_LOG_VERBOSITY``` can be use to set the logging level. The numeric values of logging levels are given in the Python Documentation of the `Logging Module <https://docs.python.org/3.5/library/logging.html#levels>`_. For example, the following command starts netzob in *DEBUG* mode::
 
-  $ sudo setcap cap_net_raw=ep /usr/bin/python3.XX
+  $ NETZOB_LOG_LEVEL=10 ./netzob
 
-Configuration requirements for IPC input on Ubuntu::
+Configuration requirements for Network and PCAP input
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  $ sudo bash -c "echo 0 > /proc/sys/kernel/yama/ptrace_scope"
+Capturing data from network interfaces often requires admin privileges. 
+Before we provide a cleaner and secure way (see issue 425 on the bugtracker for updated information - https://dev.netzob.org/issues/425), a possible *HACK* is to provide additional capabilities to the python binary::
+
+$ sudo setcap cap_net_raw=ep /usr/bin/python3.XX
+
+Configuration requirements for IPC input on Ubuntu
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The following command must be triggered before collecting IPC exchanges with Netzob on Ubuntu (see https://www.kernel.org/doc/Documentation/security/Yama.txt)::
+
+$ sudo bash -c "echo 0 > /proc/sys/kernel/yama/ptrace_scope"
 
 Documentation
 =============
