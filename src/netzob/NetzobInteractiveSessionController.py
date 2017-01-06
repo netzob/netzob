@@ -38,6 +38,7 @@ import code
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob import release
+from netzob.Common.Utils.Decorators import NetzobLogger
 
 
 class NetzobInteractiveSessionController(object):
@@ -70,3 +71,23 @@ class NetzobInteractiveSessionController(object):
 | Reverse Deeper with Netzob ({3})
 +----------------------------------------------------+
 """.format(release.appname, release.version, release.versionName, release.url)
+
+class NetzobIPythonShellController(NetzobInteractiveSessionController):
+    """Execute Netzob in a IPython embedded shell"""
+
+    def __init__(self):
+        import IPython
+        self.shell = IPython.terminal.embed.InteractiveShellEmbed()
+
+    def start(self):
+        import netzob.all
+        self.shell(header=self.getBanner(), module=netzob.all)
+
+@NetzobLogger
+class NetzobSessionControllerFactory(object):
+    def __call__(self):
+        try:
+            return NetzobIPythonShellController()
+        except Exception as e:
+            self._logger.warning("Cannot initialize IPython shell: {}".format(e))
+        return NetzobInteractiveSessionController()

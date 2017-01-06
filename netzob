@@ -88,9 +88,9 @@ def main():
     #     interactiveSession = NetzobInteractiveSessionController()
     #     interactiveSession.start()
 
-    from netzob.NetzobInteractiveSessionController import NetzobInteractiveSessionController
-    interactiveSession = NetzobInteractiveSessionController()
-    interactiveSession.start()
+    from netzob.NetzobInteractiveSessionController import NetzobSessionControllerFactory
+    sessionControllerFactory = NetzobSessionControllerFactory()
+    sessionControllerFactory().start()
 
 if __name__ == "__main__":
     main()
