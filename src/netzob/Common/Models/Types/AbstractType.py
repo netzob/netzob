@@ -47,6 +47,7 @@ import random
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Models.Vocabulary.Domain.Variables.SVAS import SVAS
+from netzob.NetzobConfig import NetzobConfig
 
 @NetzobLogger
 class AbstractType(object):
@@ -82,7 +83,7 @@ class AbstractType(object):
     # This value will be used if generate() method is called
     # without any upper size limit
     # 8192 is completly arbitrary and equals 1k of data (1024 bytes)
-    MAXIMUM_GENERATED_DATA_SIZE = 8192
+    #MAXIMUM_GENERATED_DATA_SIZE = 8192
 
     @staticmethod
     def supportedTypes():
@@ -275,7 +276,8 @@ class AbstractType(object):
 
         minSize, maxSize = self.size
         if maxSize is None:
-            maxSize = AbstractType.MAXIMUM_GENERATED_DATA_SIZE
+            #maxSize = AbstractType.MAXIMUM_GENERATED_DATA_SIZE
+            maxSize = NetzobConfig.getMaxDataSize() * 8
 
         generatedSize = random.randint(minSize, maxSize)
         randomContent = [random.randint(0, 1) for i in range(0, generatedSize)]
@@ -456,8 +458,11 @@ class AbstractType(object):
                 raise ValueError("Minimum size must be greater than 0")
             if maxSize is not None and maxSize < minSize:
                 raise ValueError("Maximum must be greater or equals to the minimum")
-            if maxSize is not None and maxSize > AbstractType.MAXIMUM_GENERATED_DATA_SIZE:
-                raise ValueError("Maximum size supported for a variable is {0}.".format(AbstractType.MAXIMUM_GENERATED_DATA_SIZE))
+            if maxSize is not None and maxSize > (NetzobConfig.getMaxDataSize() * 8):
+                raise ValueError("Maximum size supported for a variable is {0}\
+ bits multiplyed by unit size (default 8).".format(NetzobConfig.getMaxDataSize()))
+            #if maxSize is not None and maxSize > AbstractType.MAXIMUM_GENERATED_DATA_SIZE:
+            #    raise ValueError("Maximum size supported for a variable is {0}.".format(AbstractType.MAXIMUM_GENERATED_DATA_SIZE))
 
             self.__size = (minSize, maxSize)
         else:

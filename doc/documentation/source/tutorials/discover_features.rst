@@ -603,6 +603,28 @@ In the server part, we quickly get a segmentation fault, due to a bug in the par
   Program received signal SIGSEGV, Segmentation fault.
   0x08048bc0 in api_encrypt (in=0x45ce7e32 <Address 0x45ce7e32 out of bounds>, len=3561020133, out=0xb4f2eded <Address 0xb4f2eded out of bounds>) at amo_api.c:80
    80	      tmpData[i] = (in[i] ^ key) % 0xff;
+   
+Troubleshooting
+^^^^^^^^^^^^^^^
+
+When your network traces contain big packets you will stumble upon the following exception::
+
+  from netzob.all import *
+  messages = PCAPImporter.readFile('trace_with_large_packets.pcap').values()
+  symbols = Format.clusterByAlignment(messages)
+
+  ValueError                                Traceback (most recent call last)
+  ----> 1 symbols = Format.clusterByAlignment(messages)
+  [...]
+  ValueError: Maximum size supported for a variable is 1024 bits multiplyed by unit size (default 8).
+
+Netzob gives you the opportunity to generate packet payloads when modeling your own protocol. When one doesn't state an upper size limit for a packet, then Netzob's internal limit is used. This is set to 1024 bytes by default. 
+Sometimes this limit prevents you from working with network traces containing bigger packets. You can raise the maximal packet size globally::
+
+  NetzobConfig.setMaxDataSize(4096)
+  symbols = Format.clusterByAlignment(messages)
+
+
 
 That's all folks for this introduction tutorial. You can get the entire `source code <https://dev.netzob.org/attachments/download/183/inference_target_src_v1.py>`_ of the script used to infer and play with the protocol:
 
