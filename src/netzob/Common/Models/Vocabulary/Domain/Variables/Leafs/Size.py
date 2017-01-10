@@ -245,7 +245,7 @@ class Size(AbstractRelationVariableLeaf):
     @typeCheck(GenericPath)
     def _computeExpectedValue(self, parsingPath):
         self._logger.debug("compute expected value for Size field")
-                
+
         # first checks the pointed fields all have a value
         hasValue = True
         for field in self.fieldDependencies:
@@ -258,19 +258,30 @@ class Size(AbstractRelationVariableLeaf):
         else:
             size = 0
             for field in self.fieldDependencies:
+
+                # Retrieve field value
                 if field.domain is self:
                     fieldValue = self.dataType.generate()
                 else:
                     fieldValue = parsingPath.getDataAssignedToVariable(field.domain)
                 if fieldValue is None:
                     break
+
+                # Retrieve length of field value
+                if fieldValue == TypeConverter.convert("PENDING VALUE", ASCII, BitArray):
+                    # Handle case where field value is not currently known.
+                    # In such case, we retrieve the max length of the datatype
+                    minSize, maxSize = field.domain.dataType.size
+                    if maxSize is None:
+                        maxSize = AbstractType.MAXIMUM_GENERATED_DATA_SIZE
+                    tmpLen = maxSize
                 else:
                     tmpLen = len(fieldValue)
-                    size += tmpLen
+                size += tmpLen
 
 
             size = int(size * self.factor + self.offset)
-            size_raw = TypeConverter.convert(size, Integer, Raw, src_unitSize=self.dataType.unitSize)        
+            size_raw = TypeConverter.convert(size, Integer, Raw, src_unitSize=self.dataType.unitSize)
             b = TypeConverter.convert(size_raw, Raw, BitArray)
             
             # add heading '0'
@@ -280,6 +291,7 @@ class Size(AbstractRelationVariableLeaf):
             # in some cases (when unitSize and size are not equal), it may require to delete some '0' in front
             while len(b)>self.dataType.size[0]:
                 b.remove(0)
+
         return b
 
     @typeCheck(SpecializingPath)

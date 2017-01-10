@@ -308,7 +308,7 @@ class Data(AbstractVariableLeaf):
         super(Data, self).__init__(self.__class__.__name__, name=name, svas=svas)
 
         self.dataType = dataType
-        self.currentValue = originalValue        
+        self.currentValue = originalValue
 
     def __str__(self):
         return "Data ({0})".format(self.dataType)
