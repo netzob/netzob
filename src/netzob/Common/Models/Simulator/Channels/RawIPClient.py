@@ -96,7 +96,7 @@ class RawIPClient(AbstractChannel):
             raise RuntimeError("The channel is already open, cannot open it again")
 
         self.__socket = socket.socket(socket.AF_PACKET, socket.SOCK_DGRAM, socket.htons(RawIPClient.ETH_P_IP))
-        self.__socket.bind(("lo", RawIPClient.ETH_P_IP))
+        self.__socket.bind((self.interface, RawIPClient.ETH_P_IP))
 
     def close(self):
         """Close the communication channel."""
@@ -125,7 +125,7 @@ class RawIPClient(AbstractChannel):
         """
         if self.__socket is not None:
             packet = self.buildPacket(data)
-            self.__socket.sendto(packet, ('lo', RawIPClient.ETH_P_IP))
+            self.__socket.sendto(packet, (self.interface, RawIPClient.ETH_P_IP))
         else:
             raise Exception("socket is not available")
 
