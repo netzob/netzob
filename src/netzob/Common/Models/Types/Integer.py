@@ -135,7 +135,7 @@ class Integer(AbstractType):
     def canParse(self, data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
         """This method returns True if data is a Integer.
         For the moment its always true because we consider
-        the decimal type to be very similar to the raw type.
+        the integer type to be very similar to the raw type.
 
         >>> from netzob.all import *
         >>> Integer().canParse(TypeConverter.convert("hello netzob", ASCII, Raw))
@@ -329,7 +329,7 @@ class Integer(AbstractType):
         elif unitSize == AbstractType.UNITSIZE_64:
             unitFormat = 'q'
         else:
-            raise ValueError("Only 8, 16, 32 and 64 bits unitsize are available for decimals")
+            raise ValueError("Only 8, 16, 32 and 64 bits unitsize are available for integers")
         # sign
         if sign == AbstractType.SIGN_UNSIGNED:
             unitFormat = unitFormat.upper()
