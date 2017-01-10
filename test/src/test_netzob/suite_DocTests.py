@@ -169,6 +169,7 @@ def getSuite():
         UDPServer.__module__,
         UDPClient.__module__,
         SSLClient.__module__,
+        RawIPClient.__module__,
 
         # Modules related to the import
         # -----------------------------

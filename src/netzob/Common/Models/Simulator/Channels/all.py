@@ -34,3 +34,4 @@ from netzob.Common.Models.Simulator.Channels.TCPClient import TCPClient
 from netzob.Common.Models.Simulator.Channels.UDPClient import UDPClient
 from netzob.Common.Models.Simulator.Channels.UDPServer import UDPServer
 from netzob.Common.Models.Simulator.Channels.SSLClient import SSLClient
+from netzob.Common.Models.Simulator.Channels.RawIPClient import RawIPClient
