@@ -1728,3 +1728,49 @@ class TCPOption(PacketBuffer):
         elif op == TCPOption.TCPOPT_TIMESTAMP:
             pass # TODO
         return tmp_str
+
+class ICMP(Header):
+    ICMP_UNREACH =           3
+
+    protocol = 1
+    def __init__(self, aBuffer = None):
+        Header.__init__(self, 8)
+        if(aBuffer):
+            self.load_header(aBuffer)
+
+    def get_icmp_type(self):
+        return self.get_byte(0)
+    def set_icmp_type(self, value):
+        self.set_byte(0, value)
+
+    def get_code(self):
+        return self.get_byte(1)
+    def set_code(self, value):
+        self.set_byte(1, value)
+
+    def get_checksum(self):
+        return self.get_word(2)
+    def set_checksum(self, value):
+        self.set_word(2, value)
+
+    def get_identifier(self):
+        return self.get_word(4)
+    def set_identifier(self, value):
+        self.set_word(4, value)
+
+    def get_sequence_number(self):
+        return self.get_word(6)
+    def set_sequence_number(self, value):
+        self.set_word(6, value)
+
+    def get_header_size(self):
+        return 8
+
+    def __str__(self):
+        tmp_str = 'ICMP seq=%d -> %d' % (self.get_sequence_number())
+        if self.child():
+            tmp_str += '\n' + str(self.child())
+        return tmp_str
+
+    def get_packet(self):
+        return Header.get_packet(self)
