@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -27,15 +27,14 @@
 
 #+---------------------------------------------------------------------------+
 #| File contributors :                                                       |
-#|       - Georges Bossert <gbossert (a) miskin.fr>                          |
+#|       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
+#|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import socket
-import time
-import ssl
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -45,37 +44,60 @@ import ssl
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Model.Simulator.Channels.AbstractChannel import AbstractChannel, ChannelDownException
+from netzob.Simulator.Channels.AbstractChannel import AbstractChannel
 
 
 @NetzobLogger
-class SSLClient(AbstractChannel):
-    """An SSLClient is a communication channel that relies on SSL. It allows to create client connecting
-    to a specific IP:Port server over a TCP/SSL socket.
+class TCPServer(AbstractChannel):
+    """A TCPServer is a communication channel. It allows to create
+    server listening on a specified IP:Port over a TCP socket.
 
     When the actor execute an OpenChannelTransition, it calls the open
-    method on the ssl client which connects to the server.
+    method on the tcp server which starts the server. The objective of
+    the server is to wait for the client to connect.
+
+    >>> from netzob.all import *
+    >>> import time
+    >>> server = TCPServer(localIP='127.0.0.1', localPort=9999)
+
+    >>> symbol = Symbol([Field("Hello Zoby !")])
+    >>> s0 = State()
+    >>> s1 = State()
+    >>> s2 = State()
+    >>> openTransition = OpenChannelTransition(startState=s0, endState=s1)
+    >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol])
+    >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
+    >>> automata = Automata(s0, [symbol])
+
+    >>> channel = TCPServer(localIP="127.0.0.1", localPort=8886)
+    >>> abstractionLayer = AbstractionLayer(channel, [symbol])
+    >>> server = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
+
+    >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8886)
+    >>> abstractionLayer = AbstractionLayer(channel, [symbol])
+    >>> client = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
+
+    >>> server.start()
+    >>> client.start()
+
+    >>> time.sleep(1)
+    >>> client.stop()
+    >>> server.stop()
 
     """
 
-    def __init__(self, remoteIP, remotePort, localIP=None, localPort=None, timeout=2, server_cert_file=None, alpn_protocols=None):
-        super(SSLClient, self).__init__(isServer=False)
-        self.remoteIP = remoteIP
-        self.remotePort = remotePort
+    def __init__(self, localIP, localPort, timeout=5):
+        super(TCPServer, self).__init__(isServer=True)
         self.localIP = localIP
         self.localPort = localPort
         self.timeout = timeout
         self.__isOpen = False
         self.__socket = None
-        self.__ssl_socket = None
-        self.server_cert_file = server_cert_file
-        self.alpn_protocols = alpn_protocols
+        self.__clientSocket = None
 
     def open(self, timeout=None):
-        """Open the communication channel. If the channel is a client, it starts to connect
-        to the specified server.
-        """
-
+        """Open the communication channel. If the channel is a server, it starts to listen
+        and will create an instance for each different client"""
         if self.isOpen:
             raise RuntimeError("The channel is already open, cannot open it again")
 
@@ -83,37 +105,22 @@ class SSLClient(AbstractChannel):
         # Reuse the connection
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.__socket.settimeout(self.timeout)
-        
-        if self.localIP is not None and self.localPort is not None:
-            self.__socket.bind((self.localIP, self.localPort))
-
-        # lets create the ssl context
-        context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-        context.check_hostname = False
-        context.load_default_certs()
-        if self.server_cert_file is not None:
-            context.verify_mode = ssl.CERT_REQUIRED
-            context.load_cert_chain(self.server_cert_file)
-        else:
-            context.verify_mode = ssl.CERT_NONE
-
-        if self.alpn_protocols is not None:
-            context.set_alpn_protocols(self.alpn_protocols)
-
-        
-        # lets wrap the socket to create the ssl tunnel
-        self.__ssl_socket = context.wrap_socket(self.__socket)
-        self.__ssl_socket.settimeout(self.timeout)
-            
-        self._logger.debug("Connect to the SSL server to {0}:{1}".format(self.remoteIP, self.remotePort))
-        self.__ssl_socket.connect((self.remoteIP, self.remotePort))
+        self._logger.debug("Bind the TCP server to {0}:{1}".format(self.localIP, self.localPort))
+        self.__socket.bind((self.localIP, self.localPort))
+        self.__socket.listen(1)
+        self._logger.debug("Ready to accept new TCP connections...")
+        self.__clientSocket, addr = self.__socket.accept()
+        self._logger.debug("New TCP connection received.")
+        self.isOpen = True
 
     def close(self):
         """Close the communication channel."""
-        if self.__ssl_socket is not None:
-            self.__ssl_socket.close()
+        if self.__clientSocket is not None:
+            self.__clientSocket.close()
         if self.__socket is not None:
             self.__socket.close()
+        self.isOpen = False
+        self._logger.info("TCPServer has closed its socket")
 
     def read(self, timeout=None):
         """Read the next message on the communication channel.
@@ -123,13 +130,13 @@ class SSLClient(AbstractChannel):
         """
         reading_seg_size = 1024
         
-        if self.__ssl_socket is not None:
+        if self.__clientSocket is not None:
             data = b""
             finish = False
             while not finish:
                 try:
-                    recv = self.__ssl_socket.recv(reading_seg_size)
-                except ssl.SSLError:
+                    recv = self.__clientSocket.recv(reading_seg_size)
+                except socket.timeout:
                     # says we received nothing (timeout issue)
                     recv = b""
                 if recv is None or len(recv) == 0:
@@ -146,12 +153,8 @@ class SSLClient(AbstractChannel):
         :parameter data: the data to write on the channel
         :type data: binary object
         """
-        if self.__socket is not None:
-            try:
-                self.__ssl_socket.sendall(data)
-            except ssl.SSLError:
-                raise ChannelDownException()
-
+        if self.__clientSocket is not None:
+            self.__clientSocket.sendall(data)
         else:
             raise Exception("socket is not available")
 
@@ -174,42 +177,6 @@ class SSLClient(AbstractChannel):
     # Properties
 
     @property
-    def remoteIP(self):
-        """IP on which the server will listen.
-
-        :type: :class:`str`
-        """
-        return self.__remoteIP
-
-    @remoteIP.setter
-    @typeCheck(str)
-    def remoteIP(self, remoteIP):
-        if remoteIP is None:
-            raise TypeError("RemoteIP cannot be None")
-
-        self.__remoteIP = remoteIP
-
-    @property
-    def remotePort(self):
-        """TCP Port on which the server will listen.
-        Its value must be above 0 and under 65535.
-
-
-        :type: :class:`int`
-        """
-        return self.__remotePort
-
-    @remotePort.setter
-    @typeCheck(int)
-    def remotePort(self, remotePort):
-        if remotePort is None:
-            raise TypeError("RemotePort cannot be None")
-        if remotePort <= 0 or remotePort > 65535:
-            raise ValueError("RemotePort must be > 0 and <= 65535")
-
-        self.__remotePort = remotePort
-
-    @property
     def localIP(self):
         """IP on which the server will listen.
 
@@ -220,12 +187,16 @@ class SSLClient(AbstractChannel):
     @localIP.setter
     @typeCheck(str)
     def localIP(self, localIP):
+        if localIP is None:
+            raise TypeError("LocalIP cannot be None")
+
         self.__localIP = localIP
 
     @property
     def localPort(self):
         """TCP Port on which the server will listen.
         Its value must be above 0 and under 65535.
+
 
         :type: :class:`int`
         """
@@ -234,6 +205,11 @@ class SSLClient(AbstractChannel):
     @localPort.setter
     @typeCheck(int)
     def localPort(self, localPort):
+        if localPort is None:
+            raise TypeError("LocalPort cannot be None")
+        if localPort <= 0 or localPort > 65535:
+            raise ValueError("LocalPort must be > 0 and <= 65535")
+
         self.__localPort = localPort
 
     @property
@@ -241,5 +217,6 @@ class SSLClient(AbstractChannel):
         return self.__timeout
 
     @timeout.setter
+    @typeCheck(int)
     def timeout(self, timeout):
         self.__timeout = timeout

@@ -28,7 +28,10 @@
 
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
-from netzob.Model.Simulator.Channels.all import *
 
-from netzob.Model.Simulator.Actor import Actor
-from netzob.Model.Simulator.AbstractionLayer import AbstractionLayer
+from netzob.Simulator.Channels.TCPServer import TCPServer
+from netzob.Simulator.Channels.TCPClient import TCPClient
+from netzob.Simulator.Channels.UDPClient import UDPClient
+from netzob.Simulator.Channels.UDPServer import UDPServer
+from netzob.Simulator.Channels.SSLClient import SSLClient
+from netzob.Simulator.Channels.RawIPClient import RawIPClient

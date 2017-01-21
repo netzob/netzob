@@ -46,7 +46,7 @@ import traceback
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Model.Simulator.AbstractionLayer import AbstractionLayer
+from netzob.Simulator.AbstractionLayer import AbstractionLayer
 from netzob.Model.Grammar.Transitions.Transition import Transition
 from netzob.Model.Grammar.States.AbstractState import AbstractState
 from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransition
@@ -96,7 +96,7 @@ class State(AbstractState):
         The abstraction layer that will be used is specified as a parameter.
 
         :parameter abstractionLayer: the abstraction layer that will be used to access to the channel
-        :type abstractionLayer: :class:`netzob.Model.Simulator.AbstractionLayer.AbstractionLayer`
+        :type abstractionLayer: :class:`netzob.Simulator.AbstractionLayer.AbstractionLayer`
         :raise Exceptions if an error occurs somewhere (sorry this is be vague i known @todo)
         """
         if abstractionLayer is None:
@@ -137,7 +137,7 @@ class State(AbstractState):
         At the end if no exception occur, it returns the next state.
 
         :param abstractionLayer: the abstraction layer from which it receives messages
-        :type abstractionLayer: :class:`netzob.Model.Simulator.AbstractionLayer.AbstractionLayer`
+        :type abstractionLayer: :class:`netzob.Simulator.AbstractionLayer.AbstractionLayer`
         :raise Exception if something goes bad (sorry for the lack of detail) @todo
         """
         if abstractionLayer is None:
