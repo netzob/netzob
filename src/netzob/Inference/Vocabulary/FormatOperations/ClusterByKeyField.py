@@ -44,14 +44,14 @@ import collections
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Common.Models.Vocabulary.Field import Field
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
-from netzob.Common.Models.Types.TypeConverter import TypeConverter
-from netzob.Common.Models.Types.HexaString import HexaString
-from netzob.Common.Models.Types.ASCII import ASCII
-from netzob.Common.Models.Types.BitArray import BitArray
-from netzob.Common.Models.Types.Raw import Raw
+from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.Field import Field
+from netzob.Model.Vocabulary.Symbol import Symbol
+from netzob.Model.Types.TypeConverter import TypeConverter
+from netzob.Model.Types.HexaString import HexaString
+from netzob.Model.Types.ASCII import ASCII
+from netzob.Model.Types.BitArray import BitArray
+from netzob.Model.Types.Raw import Raw
 from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
 
 
@@ -94,9 +94,9 @@ class ClusterByKeyField(object):
 
 
         :param field: the field we want to split in new symbols
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :param keyField: the field used as a key during the splitting operation
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :raise Exception if something bad happens
         """
 

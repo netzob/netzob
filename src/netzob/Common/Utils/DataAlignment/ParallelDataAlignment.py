@@ -42,7 +42,7 @@ from collections import OrderedDict
 # | Local application imports
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
 from netzob.Common.Utils.MatrixList import MatrixList
 
@@ -108,7 +108,7 @@ class ParallelDataAlignment(object):
         """Constructor.
 
         :param field: the format definition that will be user
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :keyword depth: the limit in depth in the format (use None for not limit)
         :type depth: :class:`int`
         :keyword nbThread: the maximum number of thread that will be used.
@@ -208,7 +208,7 @@ class ParallelDataAlignment(object):
         :param data: the data to align as a list of hexastring
         :type data: :class:`list`
         :param field : the field to consider when aligning
-        :type: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :keyword depth: maximum field depth to consider (similar to layer depth)
         :type depth: :class:`int`.
         :keyword nbThread: the number of thread to use when parallelizing
@@ -231,7 +231,7 @@ class ParallelDataAlignment(object):
         """The field that contains the definition domain used
         to align data
 
-        :type: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         """
         return self.__field
 

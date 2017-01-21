@@ -47,10 +47,10 @@ except:
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Common.Models.Types.TypeConverter import TypeConverter
-from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Types.Integer import Integer
+from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Types.TypeConverter import TypeConverter
+from netzob.Model.Types.Raw import Raw
+from netzob.Model.Types.Integer import Integer
 from netzob.Inference.Vocabulary.RelationFinder import RelationFinder
 
 
@@ -89,7 +89,7 @@ class CorrelationFinder(object):
         parse the results.
 
         :param symbol: the symbol in which we are looking for correlations
-        :type symbol: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type symbol: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :param minMic: the minimum correlation score 
         :type minMic: :class:`float`
         """
@@ -112,7 +112,7 @@ class CorrelationFinder(object):
     def execute(self, symbol):
         """
         :param symbol: the symbol in which we are looking for correlations
-        :type symbol: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type symbol: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         """
 
         (attributeValues_headers, attributeValues) = self._generateAttributeValuesForSymbol(symbol)

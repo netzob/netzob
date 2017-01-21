@@ -38,9 +38,9 @@ import doctest
 from netzob.all import *
 from netzob.Common.Utils.DataAlignment import ParallelDataAlignment
 from netzob.Common.Utils.DataAlignment import DataAlignment
-from netzob.Common.Models.Vocabulary import AbstractField
-from netzob.Common.Models.Vocabulary.Domain.Variables import AbstractVariable
-from netzob.Common.Models.Vocabulary.Messages import AbstractMessage
+from netzob.Model.Vocabulary import AbstractField
+from netzob.Model.Vocabulary.Domain.Variables import AbstractVariable
+from netzob.Model.Vocabulary.Messages import AbstractMessage
 
 from netzob.Inference.Vocabulary.FormatOperations import FieldReseter
 from netzob.Inference.Vocabulary.FormatOperations.FieldSplitStatic.FieldSplitStatic import FieldSplitStatic
@@ -58,16 +58,16 @@ from netzob.Inference.Vocabulary.FormatOperations.FieldSplitAligned import Field
 from netzob.Inference.Vocabulary.FormatOperations import FieldSplitDelimiter
 
 from netzob.Inference.Vocabulary.FormatOperations import FieldOperations
-from netzob.Common.Models.Vocabulary.Domain.GenericPath import GenericPath
-from netzob.Common.Models.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
-from netzob.Common.Models.Vocabulary.Domain.Specializer.VariableSpecializer import VariableSpecializer
-from netzob.Common.Models.Vocabulary.Domain.Variables.SVAS import SVAS
+from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
+from netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
+from netzob.Model.Vocabulary.Domain.Specializer.VariableSpecializer import VariableSpecializer
+from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
 
-from netzob.Common.Models.Vocabulary.Domain.Parser.MessageParser import MessageParser
-from netzob.Common.Models.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
-from netzob.Common.Models.Vocabulary.Domain.Parser.FlowParser import FlowParser
+from netzob.Model.Vocabulary.Domain.Parser.MessageParser import MessageParser
+from netzob.Model.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
+from netzob.Model.Vocabulary.Domain.Parser.FlowParser import FlowParser
 
-from netzob.Common.Models.Simulator.AbstractionLayer import AbstractionLayer
+from netzob.Model.Simulator.AbstractionLayer import AbstractionLayer
 
 from netzob.Inference.Vocabulary import EntropyMeasurement
 # from netzob.Inference.Grammar.Angluin import Angluin

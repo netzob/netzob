@@ -36,11 +36,11 @@ import math
 #+----------------------------------------------
 from netzob import _libRelation
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Types.TypeConverter import TypeConverter
-from netzob.Common.Models.Types.AbstractType import AbstractType
-from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Types.Integer import Integer
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Types.TypeConverter import TypeConverter
+from netzob.Model.Types.AbstractType import AbstractType
+from netzob.Model.Types.Raw import Raw
+from netzob.Model.Types.Integer import Integer
+from netzob.Model.Vocabulary.AbstractField import AbstractField
 
 
 @NetzobLogger
@@ -92,7 +92,7 @@ class RelationFinder(object):
         symbol/field.
 
         :param symbol: the symbol in which we are looking for relations
-        :type symbol: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type symbol: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         """
 
         rf = RelationFinder()
@@ -113,7 +113,7 @@ class RelationFinder(object):
     # def executeOnSymbol(self, symbol):
     #     """
     #     :param symbol: the symbol in which we are looking for relations
-    #     :type symbol: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+    #     :type symbol: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
     #     """
 
     #     cells = [field.getValues(encoded=False, styled=False)

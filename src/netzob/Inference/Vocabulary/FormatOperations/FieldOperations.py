@@ -43,11 +43,11 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
-from netzob.Common.Models.Vocabulary.Field import Field
-from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Agg import Agg
+from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.Symbol import Symbol
+from netzob.Model.Vocabulary.Field import Field
+from netzob.Model.Types.Raw import Raw
+from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
 
 
 @NetzobLogger
@@ -106,9 +106,9 @@ class FieldOperations(object):
         --------------
         
         :param field1: the left field to merge
-        :type field1: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field1: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :param field2: the right field to merge
-        :type field2: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field2: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
 
         :raise Exception if something bad happens
         """

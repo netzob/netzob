@@ -44,8 +44,8 @@ from collections import OrderedDict
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
-from netzob.Common.Models.Vocabulary.Messages.AbstractMessage import AbstractMessage
+from netzob.Model.Vocabulary.Symbol import Symbol
+from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
 from netzob.Common.C_Extensions.WrapperArgsFactory import WrapperArgsFactory
 
 # +---------------------------------------------------------------------------+

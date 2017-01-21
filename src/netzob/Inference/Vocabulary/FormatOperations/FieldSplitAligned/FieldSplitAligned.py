@@ -41,14 +41,14 @@ from collections import OrderedDict
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Common.C_Extensions.WrapperArgsFactory import WrapperArgsFactory
-from netzob.Common.Models.Types.AbstractType import AbstractType
-from netzob.Common.Models.Types.TypeConverter import TypeConverter
-from netzob.Common.Models.Types.HexaString import HexaString
-from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Vocabulary.Field import Field
-from netzob.Common.Models.Vocabulary.Messages.AbstractMessage import AbstractMessage
+from netzob.Model.Types.AbstractType import AbstractType
+from netzob.Model.Types.TypeConverter import TypeConverter
+from netzob.Model.Types.HexaString import HexaString
+from netzob.Model.Types.Raw import Raw
+from netzob.Model.Vocabulary.Field import Field
+from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
 from netzob.Inference.Vocabulary.Search.SearchEngine import SearchEngine
 from netzob import _libNeedleman
 
@@ -176,7 +176,7 @@ class FieldSplitAligned(object):
         """Execute the alignement on the specified field.
 
         :parameter field: the field that will be aligned
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         """
         if field is None:
             raise TypeError("Field cannot be None")
@@ -358,7 +358,7 @@ class FieldSplitAligned(object):
         :parameter values: values to align
         :type values: a list of hexastring.
         :keyword semanticTags: semantic tags to consider when aligning
-        :type semanticTags: a dict of :class:`netzob.Common.Models.Vocabulary.SemanticTag.SemanticTag`
+        :type semanticTags: a dict of :class:`netzob.Model.Vocabulary.SemanticTag.SemanticTag`
         :return: the alignment, its score and the semantic tags
         :rtype: a tupple (alignement, semanticTags, score)
         """
@@ -397,7 +397,7 @@ class FieldSplitAligned(object):
         of the applicative data identified.
 
         :parameter message: the message in which we search any applicative data
-        :type message: :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+        :type message: :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
         :return: a dict that describes the position of identified applicative data
         :rtype: :class:`dict`
         """

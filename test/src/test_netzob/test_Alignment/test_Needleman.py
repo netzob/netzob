@@ -37,7 +37,7 @@ from datetime import datetime
 
 from common.NetzobTestCase import NetzobTestCase
 from netzob.Common.ExecutionContext import ExecutionContext
-from netzob.Common.Models.RawMessage import RawMessage
+from netzob.Model.RawMessage import RawMessage
 from netzob.Common.Symbol import Symbol
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Type.UnitSize import UnitSize

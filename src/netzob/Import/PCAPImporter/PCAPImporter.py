@@ -49,13 +49,13 @@ from netzob.Import.PCAPImporter import ImpactDecoder as Decoders
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Utils.SortedTypedList import SortedTypedList
 from netzob.Common.NetzobException import NetzobImportException
-from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Types.HexaString import HexaString
-from netzob.Common.Models.Types.TypeConverter import TypeConverter
-from netzob.Common.Models.Vocabulary.Messages.AbstractMessage import AbstractMessage
-from netzob.Common.Models.Vocabulary.Messages.L2NetworkMessage import L2NetworkMessage
-from netzob.Common.Models.Vocabulary.Messages.L3NetworkMessage import L3NetworkMessage
-from netzob.Common.Models.Vocabulary.Messages.L4NetworkMessage import L4NetworkMessage
+from netzob.Model.Types.Raw import Raw
+from netzob.Model.Types.HexaString import HexaString
+from netzob.Model.Types.TypeConverter import TypeConverter
+from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
+from netzob.Model.Vocabulary.Messages.L2NetworkMessage import L2NetworkMessage
+from netzob.Model.Vocabulary.Messages.L3NetworkMessage import L3NetworkMessage
+from netzob.Model.Vocabulary.Messages.L4NetworkMessage import L4NetworkMessage
 
 
 @NetzobLogger
@@ -355,7 +355,7 @@ class PCAPImporter(object):
         :param nbPackets: the number of packets to import
         :type nbPackets: :class:`int`
         :return: a list of captured messages
-        :rtype: a list of :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage`
+        :rtype: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
         """
 
         # Verify the existence of input files
@@ -410,7 +410,7 @@ class PCAPImporter(object):
         :param nbPackets: the number of packets to import
         :type nbPackets: :class:`int`
         :return: a list of captured messages
-        :rtype: a list of :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage`
+        :rtype: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
         """
 
         importer = PCAPImporter()
@@ -437,7 +437,7 @@ class PCAPImporter(object):
         :param nbPackets: the number of packets to import
         :type nbPackets: :class:`int`
         :return: a list of captured messages
-        :rtype: a list of :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage`
+        :rtype: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
         """
 
         importer = PCAPImporter()

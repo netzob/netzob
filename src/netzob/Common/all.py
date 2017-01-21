@@ -29,5 +29,5 @@
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
 
-from netzob.Common.Models.all import *
+from netzob.Model.all import *
 from netzob.Common.Utils.all import *
