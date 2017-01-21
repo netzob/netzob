@@ -43,7 +43,7 @@
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.AbstractField import AbstractField
 
 
 @NetzobLogger
@@ -84,7 +84,7 @@ class FindKeyFields(object):
         Field name: Field-3, number of clusters: 2, distribution: [1, 7]
 
         :param field: the field in which we want to identify key fields.
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :raise Exception if something bad happens
         """
 

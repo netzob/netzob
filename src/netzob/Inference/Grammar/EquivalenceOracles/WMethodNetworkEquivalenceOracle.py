@@ -42,7 +42,7 @@ import os
 #+----------------------------------------------
 from netzob.Inference.Grammar.EquivalenceOracles.AbstractEquivalenceOracle import AbstractEquivalenceOracle
 from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery
-from netzob.Common.Models.Vocabulary.EmptySymbol import EmptySymbol
+from netzob.Model.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Inference.Grammar.Oracles.NetworkOracle import NetworkOracle
 
 

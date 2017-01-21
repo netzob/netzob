@@ -43,9 +43,9 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
-from netzob.Common.Models.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.Symbol import Symbol
+from netzob.Model.Types.AbstractType import AbstractType
 from netzob.Inference.Vocabulary.FormatOperations.FieldSplitStatic.FieldSplitStatic import FieldSplitStatic
 from netzob.Inference.Vocabulary.FormatOperations.FieldSplitDelimiter import FieldSplitDelimiter
 from netzob.Inference.Vocabulary.FormatOperations.FieldReseter import FieldReseter
@@ -166,7 +166,7 @@ class Format(object):
         --------------------------- | ------------
 
         :param field: the field for which we update the format
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :keyword unitSize: the required size of static element to create a static field
         :type unitSize: :class:`int`.
         :keyword mergeAdjacentStaticFields: if set to true, adjacent static fields are merged in a single field
@@ -233,9 +233,9 @@ class Format(object):
 
 
         :param field : the field to consider when spliting
-        :type: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :param delimiter : the delimiter used to split messages of the field
-        :type: :class:`netzob.Common.Models.Types.AbstractType.AbstractType`
+        :type: :class:`netzob.Model.Types.AbstractType.AbstractType`
         """
 
         if delimiter is None:
@@ -282,7 +282,7 @@ class Format(object):
         --------------
 
         :param field: the field we want to reset
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :raise Exception if something bad happens
         """
         if field is None:
@@ -340,7 +340,7 @@ class Format(object):
 
 
         :param field: the field we want to reset
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :raise Exception if something bad happens
         """
         if field1 is None or field2 is None:
@@ -391,9 +391,9 @@ class Format(object):
         Symbol : SYN = 5 messages.
 
         :param messages: the messages to cluster.
-        :type messages: a list of :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+        :type messages: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
         :return: a list of symbol representing all the computed clusters
-        :rtype: a list of :class:`netzob.Common.Models.Vocabulary.Symbol.Symbol`
+        :rtype: a list of :class:`netzob.Model.Vocabulary.Symbol.Symbol`
         :raises: a TypeError if symbol is not valid.
         """
         if (messages is None or len(messages) == 0):
@@ -451,9 +451,9 @@ class Format(object):
         ----- | ------ | --------
 
         :param field: the field we want to split in new symbols
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :param keyField: the field used as a key during the splitting operation
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :raise Exception if something bad happens
 
         """
@@ -487,7 +487,7 @@ class Format(object):
         Field name: Field-3, number of clusters: 2, distribution: [1, 7]
 
         :param field: the field in which we want to identify key fields.
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :raise Exception if something bad happens
 
         """
@@ -533,9 +533,9 @@ class Format(object):
         ----------------
 
         :param messages: the messages to cluster.
-        :type messages: a list of :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+        :type messages: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
         :return: a list of symbol representing all the computed clusters
-        :rtype: a list of :class:`netzob.Common.Models.Vocabulary.Symbol.Symbol`
+        :rtype: a list of :class:`netzob.Model.Vocabulary.Symbol.Symbol`
         """
 
         # Safe checks

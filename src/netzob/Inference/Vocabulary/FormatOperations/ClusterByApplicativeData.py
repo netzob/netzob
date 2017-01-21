@@ -44,9 +44,9 @@ import operator
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
-from netzob.Common.Models.Vocabulary.Messages.AbstractMessage import AbstractMessage
-from netzob.Common.Models.Vocabulary.ApplicativeData import ApplicativeData
+from netzob.Model.Vocabulary.Symbol import Symbol
+from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
+from netzob.Model.Vocabulary.ApplicativeData import ApplicativeData
 from netzob.Inference.Vocabulary.Search.SearchEngine import SearchEngine
 
 

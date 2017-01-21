@@ -43,14 +43,14 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Common.Models.Vocabulary.Field import Field
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
-from netzob.Common.Models.Types.TypeConverter import TypeConverter
-from netzob.Common.Models.Types.HexaString import HexaString
-from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
-from netzob.Common.Models.Vocabulary.Domain.DomainFactory import DomainFactory
+from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.Field import Field
+from netzob.Model.Vocabulary.Symbol import Symbol
+from netzob.Model.Types.TypeConverter import TypeConverter
+from netzob.Model.Types.HexaString import HexaString
+from netzob.Model.Types.Raw import Raw
+from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
+from netzob.Model.Vocabulary.Domain.DomainFactory import DomainFactory
 
 
 @NetzobLogger
@@ -93,7 +93,7 @@ class ClusterBySize(object):
         ----------------
 
         :param messages: the messages to cluster.
-        :type messages: a list of :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+        :type messages: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
         :raise Exception if something bad happens
         """
 

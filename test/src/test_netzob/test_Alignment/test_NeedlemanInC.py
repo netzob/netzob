@@ -58,7 +58,7 @@ sys.path.insert(0, 'src/')
 #+---------------------------------------------------------------------------+
 from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
 from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Models.RawMessage import RawMessage
+from netzob.Model.RawMessage import RawMessage
 
 
 class test_NeedlemanInC(unittest.TestCase):

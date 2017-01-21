@@ -41,8 +41,8 @@ import uuid
 #| Local application imports
 #+----------------------------------------------
 
-from netzob.Common.Models.Simulator.AbstractionLayer import AbstractionLayer
-from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
+from netzob.Model.Simulator.AbstractionLayer import AbstractionLayer
+from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 
 
 #+----------------------------------------------

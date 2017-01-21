@@ -51,7 +51,7 @@ except:
     sys.path.append(build_lib_path)
 
 from netzob.Common.ExecutionContext import ExecutionContext
-from netzob.Common.Models.RawMessage import RawMessage
+from netzob.Model.RawMessage import RawMessage
 from netzob.Common.Symbol import Symbol
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Inference.Vocabulary.Alignment.UPGMA import UPGMA

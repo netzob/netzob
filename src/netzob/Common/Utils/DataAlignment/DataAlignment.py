@@ -44,11 +44,11 @@ import threading
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Utils.MatrixList import MatrixList
-from netzob.Common.Models.Types.TypeConverter import TypeConverter
-from netzob.Common.Models.Types.BitArray import BitArray
-from netzob.Common.Models.Types.Raw import Raw
+from netzob.Model.Types.TypeConverter import TypeConverter
+from netzob.Model.Types.BitArray import BitArray
+from netzob.Model.Types.Raw import Raw
 
 
 @NetzobLogger
@@ -121,7 +121,7 @@ class DataAlignment(object):
         :param data: the list of data that will be aligned, data must be encoded in HexaString
         :type data: a :class:`list` of data to align
         :param field: the format definition that will be user
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :keyword depth: the limit in depth in the format (use None for not limit)
         :type depth: :class:`int`
         :keyword encoded: indicates if the result should be encoded following field definition
@@ -156,7 +156,7 @@ class DataAlignment(object):
         targetedFieldLeafFields = rootLeafFields
 
         result.headers = [str(field.name) for field in targetedFieldLeafFields]
-        from netzob.Common.Models.Vocabulary.Domain.Parser.MessageParser import MessageParser
+        from netzob.Model.Vocabulary.Domain.Parser.MessageParser import MessageParser
         for d in self.data:
             mp = MessageParser()
             # alignedMsg = mp.parseRaw(TypeConverter.convert(d, HexaString, Raw), targetedFieldLeafFields)
@@ -190,7 +190,7 @@ class DataAlignment(object):
     #     :param data: the data to split must be encoded in hexastring
     #     :type data: :class:`str`
     #     :param fields: the list of fields to use to parse the specified data
-    #     :type fields: a list of :class:`netzob.Common.Models.Vocabulary.Field.Field`
+    #     :type fields: a list of :class:`netzob.Model.Vocabulary.Field.Field`
     #     """
 
     #     if data is None:
@@ -245,7 +245,7 @@ class DataAlignment(object):
         :param data: the data to align as a list of hexastring
         :type data: :class:`list`
         :param field : the field to consider when aligning
-        :type: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :keyword depth: maximum field depth to consider (similar to layer depth)
         :type depth: :class:`int`.
         :keyword encoded: set to True if you want the returned result to follow the encoding functions
@@ -283,7 +283,7 @@ class DataAlignment(object):
         """The field that contains the definition domain used
         to align data
 
-        :type: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         """
         return self.__field
 

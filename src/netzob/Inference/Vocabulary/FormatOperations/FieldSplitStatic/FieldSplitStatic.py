@@ -43,14 +43,14 @@ import operator
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Common.Models.Types.AbstractType import AbstractType
-from netzob.Common.Models.Vocabulary.Domain.DomainFactory import DomainFactory
-from netzob.Common.Models.Vocabulary.Field import Field
-from netzob.Common.Models.Types.TypeConverter import TypeConverter
-from netzob.Common.Models.Types.BitArray import BitArray
-from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Types.HexaString import HexaString
+from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Domain.DomainFactory import DomainFactory
+from netzob.Model.Vocabulary.Field import Field
+from netzob.Model.Types.TypeConverter import TypeConverter
+from netzob.Model.Types.BitArray import BitArray
+from netzob.Model.Types.Raw import Raw
+from netzob.Model.Types.HexaString import HexaString
 
 
 @NetzobLogger
@@ -224,7 +224,7 @@ class FieldSplitStatic(object):
         Children of the specified field will be replaced with new fields.
 
         :param field: the format definition that will be user
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :raise Exception: if something bad happens
         """
 
@@ -339,7 +339,7 @@ class FieldSplitStatic(object):
         following the value variation every unitSize
 
         :param field : the field to consider when spliting
-        :type: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :keyword mergeAdjacentStaticFields: if set to true, adjacent static fields are merged in a single field
         :type mergeAdjacentStaticFields: :class:`bool`
         :keyword mergeAdjacentDynamicFields: if set to true, adjacent dynamic fields are merged in a single field

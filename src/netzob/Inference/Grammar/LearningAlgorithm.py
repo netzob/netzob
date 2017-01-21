@@ -40,7 +40,7 @@ import os
 #| Local application imports
 #+----------------------------------------------
 from netzob.Inference.Grammar.Oracles.NetworkOracle import NetworkOracle
-from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
+from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 
 
 #+----------------------------------------------

@@ -43,10 +43,10 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
-from netzob.Common.Models.Vocabulary.Field import Field
-from netzob.Common.Models.Types.Raw import Raw
+from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.Symbol import Symbol
+from netzob.Model.Vocabulary.Field import Field
+from netzob.Model.Types.Raw import Raw
 
 
 @NetzobLogger
@@ -93,7 +93,7 @@ class FieldReseter(object):
 
 
         :param field: the field we want to reset
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :raise Exception if something bad happens
         """
 
