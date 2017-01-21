@@ -44,7 +44,7 @@ from bitarray import bitarray
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Model.Simulator.Channels.AbstractChannel import AbstractChannel
+from netzob.Simulator.Channels.AbstractChannel import AbstractChannel
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Types.IPv4 import IPv4

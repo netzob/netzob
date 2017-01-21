@@ -35,6 +35,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import socket
+import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -44,23 +45,22 @@ import socket
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Model.Simulator.Channels.AbstractChannel import AbstractChannel
+from netzob.Simulator.Channels.AbstractChannel import AbstractChannel
 
 
 @NetzobLogger
-class UDPServer(AbstractChannel):
-    """A UDPServer is a communication channel. It allows to create a
-    server that listen to a specific IP:Port over a UDP socket.
+class UDPClient(AbstractChannel):
+    """A UDPClient is a communication channel. It allows to create client connecting
+    to a specific IP:Port server over a UDP socket.
 
     When the actor executes an OpenChannelTransition, it calls the
-    open method on the UDP server which makes it to listen for
-    incomming messages.
+    open method on the UDP client which connects to the server.
 
     >>> from netzob.all import *
     >>> import time
-    >>> server = UDPServer(localIP='127.0.0.1', localPort=9999)
-    >>> server.open()
-    >>> server.close()
+    >>> client = UDPClient(remoteIP='127.0.0.1', remotePort=9999)
+    >>> client.open()
+    >>> client.close()
 
     >>> symbol = Symbol([Field("Hello Zoby !")])
     >>> s0 = State()
@@ -71,46 +71,48 @@ class UDPServer(AbstractChannel):
     >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
     >>> automata = Automata(s0, [symbol])
 
-    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8884)
+    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8883)
     >>> abstractionLayer = AbstractionLayer(channel, [symbol])
     >>> server = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
 
-    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8884)
+    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8883)
     >>> abstractionLayer = AbstractionLayer(channel, [symbol])
     >>> client = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
 
     >>> server.start()
     >>> client.start()
 
-    >>> time.sleep(1)
+    >>> time.sleep(2)
     >>> client.stop()
     >>> server.stop()
 
     """
 
     @typeCheck(str, int)
-    def __init__(self, localIP, localPort, timeout=5):
-        super(UDPServer, self).__init__(isServer=False)
+    def __init__(self, remoteIP, remotePort, localIP=None, localPort=None, timeout=5):
+        super(UDPClient, self).__init__(isServer=False)
+        self.remoteIP = remoteIP
+        self.remotePort = remotePort
         self.localIP = localIP
         self.localPort = localPort
         self.timeout = timeout
         self.__isOpen = False
         self.__socket = None
-        self.__remoteAddr = None
 
     def open(self, timeout=None):
-        """Open the communication channel. This will open a UDP socket
-        that listen for incomming messages.
+        """Open the communication channel. If the channel is a client, it starts to connect
+        to the specified server.
         """
 
         if self.isOpen:
-            raise RuntimeError("The channel is already open, cannot open it again.")
+            raise RuntimeError("The channel is already open, cannot open it again")
 
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # Reuse the connection
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.__socket.settimeout(self.timeout)
-        self.__socket.bind((self.localIP, self.localPort))
+        if self.localIP is not None and self.localPort is not None:
+            self.__socket.bind((self.localIP, self.localPort))
 
     def close(self):
         """Close the communication channel."""
@@ -125,7 +127,7 @@ class UDPServer(AbstractChannel):
         """
         # TODO: handle timeout
         if self.__socket is not None:
-            (data, self.__remoteAddr) = self.__socket.recvfrom(1024)
+            (data, remoteAddr) = self.__socket.recvfrom(1024)
             return data
         else:
             raise Exception("socket is not available")
@@ -137,10 +139,10 @@ class UDPServer(AbstractChannel):
         :parameter data: the data to write on the channel
         :type data: binary object
         """
-        if self.__socket is not None and self.__remoteAddr is not None:
-            self.__socket.sendto(data, self.__remoteAddr)
+        if self.__socket is not None:
+            self.__socket.sendto(data, (self.remoteIP, self.remotePort))
         else:
-            raise Exception("Socket is not available or remote address is not known.")
+            raise Exception("socket is not available")
 
     # Management methods
 
@@ -161,6 +163,42 @@ class UDPServer(AbstractChannel):
     # Properties
 
     @property
+    def remoteIP(self):
+        """IP on which the server will listen.
+
+        :type: :class:`str`
+        """
+        return self.__remoteIP
+
+    @remoteIP.setter
+    @typeCheck(str)
+    def remoteIP(self, remoteIP):
+        if remoteIP is None:
+            raise TypeError("Listening IP cannot be None")
+
+        self.__remoteIP = remoteIP
+
+    @property
+    def remotePort(self):
+        """UDP Port on which the server will listen.
+        Its value must be above 0 and under 65535.
+
+
+        :type: :class:`int`
+        """
+        return self.__remotePort
+
+    @remotePort.setter
+    @typeCheck(int)
+    def remotePort(self, remotePort):
+        if remotePort is None:
+            raise TypeError("Listening Port cannot be None")
+        if remotePort <= 0 or remotePort > 65535:
+            raise ValueError("ListeningPort must be > 0 and <= 65535")
+
+        self.__remotePort = remotePort
+
+    @property
     def localIP(self):
         """IP on which the server will listen.
 
@@ -171,16 +209,12 @@ class UDPServer(AbstractChannel):
     @localIP.setter
     @typeCheck(str)
     def localIP(self, localIP):
-        if localIP is None:
-            raise TypeError("ListeningIP cannot be None")
-
         self.__localIP = localIP
 
     @property
     def localPort(self):
         """UDP Port on which the server will listen.
         Its value must be above 0 and under 65535.
-
 
         :type: :class:`int`
         """
@@ -189,11 +223,6 @@ class UDPServer(AbstractChannel):
     @localPort.setter
     @typeCheck(int)
     def localPort(self, localPort):
-        if localPort is None:
-            raise TypeError("ListeningPort cannot be None")
-        if localPort <= 0 or localPort > 65535:
-            raise ValueError("ListeningPort must be > 0 and <= 65535")
-
         self.__localPort = localPort
 
     @property

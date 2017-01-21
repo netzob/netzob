@@ -35,7 +35,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import socket
-import random
+import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -45,22 +45,20 @@ import random
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Model.Simulator.Channels.AbstractChannel import AbstractChannel
+from netzob.Simulator.Channels.AbstractChannel import AbstractChannel, ChannelDownException
 
 
 @NetzobLogger
-class UDPClient(AbstractChannel):
-    """A UDPClient is a communication channel. It allows to create client connecting
-    to a specific IP:Port server over a UDP socket.
+class TCPClient(AbstractChannel):
+    """A TCPClient is a communication channel. It allows to create client connecting
+    to a specific IP:Port server over a TCP socket.
 
-    When the actor executes an OpenChannelTransition, it calls the
-    open method on the UDP client which connects to the server.
+    When the actor execute an OpenChannelTransition, it calls the open
+    method on the tcp client which connects to the server.
 
     >>> from netzob.all import *
     >>> import time
-    >>> client = UDPClient(remoteIP='127.0.0.1', remotePort=9999)
-    >>> client.open()
-    >>> client.close()
+    >>> client = TCPClient(remoteIP='127.0.0.1', remotePort=9999)
 
     >>> symbol = Symbol([Field("Hello Zoby !")])
     >>> s0 = State()
@@ -71,26 +69,25 @@ class UDPClient(AbstractChannel):
     >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
     >>> automata = Automata(s0, [symbol])
 
-    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8883)
+    >>> channel = TCPServer(localIP="127.0.0.1", localPort=8885)
     >>> abstractionLayer = AbstractionLayer(channel, [symbol])
     >>> server = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
 
-    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8883)
+    >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8885)
     >>> abstractionLayer = AbstractionLayer(channel, [symbol])
     >>> client = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
 
     >>> server.start()
     >>> client.start()
 
-    >>> time.sleep(2)
+    >>> time.sleep(1)
     >>> client.stop()
     >>> server.stop()
 
     """
 
-    @typeCheck(str, int)
     def __init__(self, remoteIP, remotePort, localIP=None, localPort=None, timeout=5):
-        super(UDPClient, self).__init__(isServer=False)
+        super(TCPClient, self).__init__(isServer=False)
         self.remoteIP = remoteIP
         self.remotePort = remotePort
         self.localIP = localIP
@@ -107,12 +104,14 @@ class UDPClient(AbstractChannel):
         if self.isOpen:
             raise RuntimeError("The channel is already open, cannot open it again")
 
-        self.__socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.__socket = socket.socket()
         # Reuse the connection
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.__socket.settimeout(self.timeout)
         if self.localIP is not None and self.localPort is not None:
             self.__socket.bind((self.localIP, self.localPort))
+        self._logger.debug("Connect to the TCP server to {0}:{1}".format(self.remoteIP, self.remotePort))
+        self.__socket.connect((self.remoteIP, self.remotePort))
 
     def close(self):
         """Close the communication channel."""
@@ -120,19 +119,32 @@ class UDPClient(AbstractChannel):
             self.__socket.close()
 
     def read(self, timeout=None):
-        """Read the next message on the communication channel.
+        """Reads the next message on the communication channel.
+        Continues to read while it receives something.
+
 
         @keyword timeout: the maximum time in millisecond to wait before a message can be reached
         @type timeout: :class:`int`
         """
-        # TODO: handle timeout
+        reading_seg_size = 1024
+        
         if self.__socket is not None:
-            (data, remoteAddr) = self.__socket.recvfrom(1024)
+            data = b""
+            finish = False
+            while not finish:
+                try:
+                    recv = self.__socket.recv(reading_seg_size)
+                except socket.timeout:
+                    # says we received nothing (timeout issue)
+                    recv = b""
+                if recv is None or len(recv) == 0:
+                    finish = True
+                else:
+                    data += recv
             return data
         else:
             raise Exception("socket is not available")
 
-    @typeCheck(bytes)
     def write(self, data):
         """Write on the communication channel the specified data
 
@@ -140,7 +152,11 @@ class UDPClient(AbstractChannel):
         :type data: binary object
         """
         if self.__socket is not None:
-            self.__socket.sendto(data, (self.remoteIP, self.remotePort))
+            try:
+                self.__socket.sendall(data)
+            except socket.error:
+                raise ChannelDownException()
+
         else:
             raise Exception("socket is not available")
 
@@ -174,13 +190,13 @@ class UDPClient(AbstractChannel):
     @typeCheck(str)
     def remoteIP(self, remoteIP):
         if remoteIP is None:
-            raise TypeError("Listening IP cannot be None")
+            raise TypeError("RemoteIP cannot be None")
 
         self.__remoteIP = remoteIP
 
     @property
     def remotePort(self):
-        """UDP Port on which the server will listen.
+        """TCP Port on which the server will listen.
         Its value must be above 0 and under 65535.
 
 
@@ -192,9 +208,9 @@ class UDPClient(AbstractChannel):
     @typeCheck(int)
     def remotePort(self, remotePort):
         if remotePort is None:
-            raise TypeError("Listening Port cannot be None")
+            raise TypeError("RemotePort cannot be None")
         if remotePort <= 0 or remotePort > 65535:
-            raise ValueError("ListeningPort must be > 0 and <= 65535")
+            raise ValueError("RemotePort must be > 0 and <= 65535")
 
         self.__remotePort = remotePort
 
@@ -213,7 +229,7 @@ class UDPClient(AbstractChannel):
 
     @property
     def localPort(self):
-        """UDP Port on which the server will listen.
+        """TCP Port on which the server will listen.
         Its value must be above 0 and under 65535.
 
         :type: :class:`int`

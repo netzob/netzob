@@ -32,6 +32,6 @@
 from netzob.Model.Vocabulary.all import *
 from netzob.Model.Grammar.all import *
 from netzob.Model.Types.all import *
-from netzob.Model.Simulator.all import *
+from netzob.Simulator.all import *
 
 from netzob.Model.Protocol import Protocol

@@ -67,7 +67,7 @@ from netzob.Model.Vocabulary.Domain.Parser.MessageParser import MessageParser
 from netzob.Model.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
 from netzob.Model.Vocabulary.Domain.Parser.FlowParser import FlowParser
 
-from netzob.Model.Simulator.AbstractionLayer import AbstractionLayer
+from netzob.Simulator.AbstractionLayer import AbstractionLayer
 
 from netzob.Inference.Vocabulary import EntropyMeasurement
 # from netzob.Inference.Grammar.Angluin import Angluin

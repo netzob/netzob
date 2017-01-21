@@ -55,7 +55,7 @@ from netzob.Model.Types.BitArray import BitArray
 from netzob.Model.Types.Raw import Raw
 from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Model.Vocabulary.UnknownSymbol import UnknownSymbol
-from netzob.Model.Simulator.Channels.AbstractChannel import ChannelDownException
+from netzob.Simulator.Channels.AbstractChannel import ChannelDownException
 
 
 

@@ -49,7 +49,7 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransition
-from netzob.Model.Simulator.AbstractionLayer import AbstractionLayer
+from netzob.Simulator.AbstractionLayer import AbstractionLayer
 
 
 @NetzobLogger
@@ -115,7 +115,7 @@ class Transition(AbstractTransition):
         it raises an exception.
 
         :param abstractionLayer: the abstraction layer which allows to access to the channel
-        :type abstractionLayer: :class:`netzob.Model.Simulator.AbstractionLayer.AbstractionLayer`
+        :type abstractionLayer: :class:`netzob.Simulator.AbstractionLayer.AbstractionLayer`
         :return: the end state of the transition if not exception is raised
         :rtype: :class:`netzob.Model.Grammar.States.AbstractState.AbstractState`
         :raise: TypeError if parameter are not valid and Exception if an error occurs whil executing the transition.
@@ -159,7 +159,7 @@ class Transition(AbstractTransition):
         choose this transition. We only have to pick an output symbol and emit it.
 
         :param abstractionLayer: the abstraction layer which allows to access to the channel
-        :type abstractionLayer: :class:`netzob.Model.Simulator.AbstractionLayer.AbstractionLayer`
+        :type abstractionLayer: :class:`netzob.Simulator.AbstractionLayer.AbstractionLayer`
         :return: the end state of the transition if not exception is raised
         :rtype: :class:`netzob.Model.Grammar.States.AbstractState.AbstractState`
         """

@@ -47,7 +47,7 @@ from pylstar.Word import Word
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import NetzobLogger
-from netzob.Model.Simulator.Channels.AbstractChannel import ChannelDownException
+from netzob.Simulator.Channels.AbstractChannel import ChannelDownException
 from netzob.Model.Vocabulary.EmptySymbol import EmptySymbol
 
 

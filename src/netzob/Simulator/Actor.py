@@ -47,7 +47,7 @@ import traceback
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Grammar.States.AbstractState import AbstractState
 from netzob.Model.Grammar.Automata import Automata
-from netzob.Model.Simulator.AbstractionLayer import AbstractionLayer
+from netzob.Simulator.AbstractionLayer import AbstractionLayer
 
 
 @NetzobLogger
@@ -106,7 +106,7 @@ class Actor(threading.Thread):
         :parameter initiator: indicates if the actor initiates the communication and emits the input symbol
         :type name: :class:`boolean`
         :parameter abstractionLayer: the abstractionLayer used to abstract and specialize symbols
-        :type abstractionLayer: :class:`netzob.Model.Simulator.AbstractionLayer`
+        :type abstractionLayer: :class:`netzob.Simulator.AbstractionLayer`
 
         """
         super(Actor, self).__init__()

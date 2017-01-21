@@ -45,7 +45,7 @@ import uuid
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransition
-from netzob.Model.Simulator.AbstractionLayer import AbstractionLayer
+from netzob.Simulator.AbstractionLayer import AbstractionLayer
 
 
 @NetzobLogger
@@ -89,7 +89,7 @@ class OpenChannelTransition(AbstractTransition):
         changes nothing from the open channel transition point of view.
 
         :param abstractionLayer: the abstraction layer which allows to access to the channel
-        :type abstractionLayer: :class:`netzob.Model.Simulator.AbstractionLayer.AbstractionLayer`
+        :type abstractionLayer: :class:`netzob.Simulator.AbstractionLayer.AbstractionLayer`
         :return: the end state of the transition if not exception is raised
         :rtype: :class:`netzob.Model.Grammar.States.AbstractState.AbstractState`
         """
@@ -101,7 +101,7 @@ class OpenChannelTransition(AbstractTransition):
         changes nothing from the open channel transition point of view.
 
         :param abstractionLayer: the abstraction layer which allows to access to the channel
-        :type abstractionLayer: :class:`netzob.Model.Simulator.AbstractionLayer.AbstractionLayer`
+        :type abstractionLayer: :class:`netzob.Simulator.AbstractionLayer.AbstractionLayer`
         :return: the end state of the transition if not exception is raised
         :rtype: :class:`netzob.Model.Grammar.States.AbstractState.AbstractState`
         """
@@ -113,7 +113,7 @@ class OpenChannelTransition(AbstractTransition):
         changes nothing from the open channel transition point of view.
 
         :param abstractionLayer: the abstraction layer which allows to access to the channel
-        :type abstractionLayer: :class:`netzob.Model.Simulator.AbstractionLayer.AbstractionLayer`
+        :type abstractionLayer: :class:`netzob.Simulator.AbstractionLayer.AbstractionLayer`
         :return: the end state of the transition if not exception is raised
         :rtype: :class:`netzob.Model.Grammar.States.AbstractState.AbstractState`
         """
