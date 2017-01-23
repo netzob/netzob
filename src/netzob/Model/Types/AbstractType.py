@@ -35,6 +35,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import abc
+import uuid
 from bitarray import bitarray
 import random
 import collections
@@ -184,6 +185,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         :type sign: str
         """
 
+        self.id = uuid.uuid4()
         self.typeName = typeName
         self.value = value
         self.size = size
@@ -532,6 +534,25 @@ class AbstractType(object, metaclass=abc.ABCMeta):
             svas = SVAS.EPHEMERAL
 
         return Data(dataType=self, originalValue=self.value, svas=svas)
+
+    @property
+    def id(self):
+        """Unique identifier of the type.
+
+        This value must be a unique UUID instance (generated with uuid.uuid4()).
+
+        :type: :class:`uuid.UUID`
+        :raises: :class:`TypeError`, :class:`ValueError`
+        """
+
+        return self.__id
+
+    @id.setter
+    @typeCheck(uuid.UUID)
+    def id(self, id):
+        if id is None:
+            raise ValueError("id is Mandatory.")
+        self.__id = id
 
     @property
     def typeName(self):
