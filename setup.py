@@ -220,7 +220,7 @@ setup(
     name=release.name,
     packages=find_packages(where='src'),
     package_dir={
-        "netzob": opj("src", "netzob"),
+        "": "src",
     },
     ext_modules=[moduleLibNeedleman, moduleLibScoreComputation, moduleLibInterface, moduleLibRelation],
     data_files=data_files,
