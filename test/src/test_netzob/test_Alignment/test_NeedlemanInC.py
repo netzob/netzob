@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -58,13 +58,13 @@ sys.path.insert(0, 'src/')
 #+---------------------------------------------------------------------------+
 from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
 from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Models.RawMessage import RawMessage
+from netzob.Model.RawMessage import RawMessage
 
 
 class test_NeedlemanInC(unittest.TestCase):
 
     def generateRandomString(self, min_len, max_len):
-        return ''.join((random.choice(string.letters + string.digits) for _ in xrange(random.randint(min_len, max_len))))
+        return ''.join((random.choice(string.letters + string.digits) for _ in range(random.randint(min_len, max_len))))
 
     def test_deserialisationMessages(self):
         nbTest = 10
@@ -99,8 +99,8 @@ class test_NeedlemanInC(unittest.TestCase):
             (score1, score2, score3) = scores
             (alignmentBis, scoresBis) = alignmentSolution.align(True, messages)
             (scoreBis1, scoreBis2, scoreBis3) = scoresBis
-            print alignment
-            print alignmentBis
+            print(alignment)
+            print(alignmentBis)
 
             self.assertGreaterEqual(scoreBis1, score1)
             self.assertGreaterEqual(scoreBis1, 90)

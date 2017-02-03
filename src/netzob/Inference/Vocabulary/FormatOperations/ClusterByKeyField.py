@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -34,6 +34,7 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
+import collections
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -43,14 +44,14 @@
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Common.Models.Vocabulary.Field import Field
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
-from netzob.Common.Models.Types.TypeConverter import TypeConverter
-from netzob.Common.Models.Types.HexaString import HexaString
-from netzob.Common.Models.Types.ASCII import ASCII
-from netzob.Common.Models.Types.BitArray import BitArray
-from netzob.Common.Models.Types.Raw import Raw
+from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.Field import Field
+from netzob.Model.Vocabulary.Symbol import Symbol
+from netzob.Model.Types.TypeConverter import TypeConverter
+from netzob.Model.Types.HexaString import HexaString
+from netzob.Model.Types.ASCII import ASCII
+from netzob.Model.Types.BitArray import BitArray
+from netzob.Model.Types.Raw import Raw
 from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
 
 
@@ -67,7 +68,7 @@ class ClusterByKeyField(object):
 
         >>> import binascii
         >>> from netzob.all import *
-        >>> samples = ["00ff2f000000",	"000020000000",	"00ff2f000000"]
+        >>> samples = [b"00ff2f000000", b"000020000000", b"00ff2f000000"]
         >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
         >>> f1 = Field(Raw(nbBytes=1))
         >>> f2 = Field(Raw(nbBytes=2))
@@ -75,10 +76,10 @@ class ClusterByKeyField(object):
         >>> symbol = Symbol([f1, f2, f3], messages=messages)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
         >>> newSymbols = Format.clusterByKeyField(symbol, f2)
-        >>> for sym in newSymbols.values():
+        >>> for sym in list(newSymbols.values()):
         ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
-        ...     print sym.name + ":"
-        ...     print sym
+        ...     print(sym.name + ":")
+        ...     print(sym)
         Symbol_ff2f:
         Field | Field  | Field   
         ----- | ------ | --------
@@ -91,10 +92,11 @@ class ClusterByKeyField(object):
         '00'  | '0020' | '000000'
         ----- | ------ | --------
 
+
         :param field: the field we want to split in new symbols
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :param keyField: the field used as a key during the splitting operation
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :raise Exception if something bad happens
         """
 
@@ -106,14 +108,14 @@ class ClusterByKeyField(object):
         if keyField not in field.fields:
             raise TypeError("'keyField' is not a child of 'field'")
 
-        newSymbols = {}
+        newSymbols = collections.OrderedDict()
 
         keyFieldMessageValues = keyField.getMessageValues(encoded=False, styled=False)
         newSymbolsSplittedMessages = {}
 
         # we identify what would be the best type of the key field
         keyFieldType = ASCII
-        for message, keyFieldValue in keyFieldMessageValues.iteritems():
+        for message, keyFieldValue in list(keyFieldMessageValues.items()):
             # If the value cannot be parsed as ASCII, we convert it to HexaString
             if not ASCII().canParse(TypeConverter.convert(keyFieldValue, Raw, BitArray)):
                 keyFieldType = HexaString
@@ -128,10 +130,13 @@ class ClusterByKeyField(object):
                 break
 
         # we create a symbol for each of these uniq values
-        for message, keyFieldValue in keyFieldMessageValues.iteritems():
+        for message, keyFieldValue in list(keyFieldMessageValues.items()):
             keyFieldValue = TypeConverter.convert(keyFieldValue, Raw, keyFieldType)
-            if keyFieldValue not in newSymbols.keys():
-                symbolName = "Symbol_{0}".format(keyFieldValue)
+            if keyFieldValue not in list(newSymbols.keys()):
+                if type(keyFieldValue) is str:
+                    symbolName = "Symbol_{0}".format(keyFieldValue)
+                else:
+                    symbolName = "Symbol_{0}".format(keyFieldValue.decode("utf-8"))
                 newSymbols[keyFieldValue] = Symbol(name=symbolName, messages=[message])
                 splittedMessages = DataAlignment.align([message.data], field, encoded=False)
                 newSymbolsSplittedMessages[keyFieldValue] = [splittedMessages[0]]
@@ -140,7 +145,7 @@ class ClusterByKeyField(object):
                 splittedMessages = DataAlignment.align([message.data], field, encoded=False)
                 newSymbolsSplittedMessages[keyFieldValue].append(splittedMessages[0])
 
-        for newSymbolKeyValue, newSymbol in newSymbols.iteritems():
+        for newSymbolKeyValue, newSymbol in list(newSymbols.items()):
             # we recreate the same fields in this new symbol as the fields that exist in the original symbol
             newSymbol.clearFields()
             for i, f in enumerate(field.fields):
@@ -176,3 +181,4 @@ class ClusterByKeyField(object):
                 newSymbol.fields.append(newF)
 
         return newSymbols
+

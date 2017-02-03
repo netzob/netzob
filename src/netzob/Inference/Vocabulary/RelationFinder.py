@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -36,11 +36,11 @@ import math
 #+----------------------------------------------
 from netzob import _libRelation
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Types.TypeConverter import TypeConverter
-from netzob.Common.Models.Types.AbstractType import AbstractType
-from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Types.Integer import Integer
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Types.TypeConverter import TypeConverter
+from netzob.Model.Types.AbstractType import AbstractType
+from netzob.Model.Types.Raw import Raw
+from netzob.Model.Types.Integer import Integer
+from netzob.Model.Vocabulary.AbstractField import AbstractField
 
 
 @NetzobLogger
@@ -49,17 +49,25 @@ class RelationFinder(object):
 
     >>> import binascii
     >>> from netzob.all import *
-    >>> samples = ["0007ff2f000000000000", "0011ffaaaaaaaaaaaaaabbcc0010000000000000", "0012ffddddddddddddddddddddfe1f000000000000"]
+    >>> samples = [b"0007ff2f000000000000", b"0011ffaaaaaaaaaaaaaabbcc0010000000000000", b"0012ffddddddddddddddddddddfe1f000000000000"]
     >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
     >>> symbol = Symbol(messages=messages)
     >>> Format.splitStatic(symbol)
     >>> rels = RelationFinder.findOnFields(symbol.fields[1], symbol.fields[3])
-    >>> print len(rels)
+    >>> print(len(rels))
     1
     >>> for rel in rels:
-    ...     print rel["relation_type"] + " between " + rel["x_field"].name + ":" + rel["x_attribute"] + \
-            " and " + rel["y_field"].name + ":" + rel["y_attribute"]
+    ...     print(rel["relation_type"] + " between " + rel["x_field"].name + ":" + rel["x_attribute"] + \
+            " and " + rel["y_field"].name + ":" + rel["y_attribute"])
     SizeRelation between Field-1:value and Field-3:size
+
+    >>> rels = RelationFinder.findOnSymbol(symbol)
+    >>> print(len(rels))
+    1
+    >>> for rel in rels:
+    ...     print(rel["relation_type"] + " between fields " + str([x.name for x in rel["x_fields"]]) + ":" + rel["x_attribute"] + \
+            " and fields " + str([y.name for y in rel["y_fields"]]) + ":" + rel["y_attribute"])
+    SizeRelation between fields ['Field-1']:value and fields ['Field-3']:size
 
     """
 
@@ -84,7 +92,7 @@ class RelationFinder(object):
         symbol/field.
 
         :param symbol: the symbol in which we are looking for relations
-        :type symbol: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type symbol: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         """
 
         rf = RelationFinder()
@@ -105,7 +113,7 @@ class RelationFinder(object):
     # def executeOnSymbol(self, symbol):
     #     """
     #     :param symbol: the symbol in which we are looking for relations
-    #     :type symbol: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+    #     :type symbol: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
     #     """
 
     #     cells = [field.getValues(encoded=False, styled=False)
@@ -167,6 +175,14 @@ class RelationFinder(object):
                     # DataRelation should produce an empty intersection between related fields
                     if relation_type == self.REL_DATA and len(set(x_fields).intersection(set(y_fields))) > 0:
                         continue
+                    # SizeRelation should a size field composed of multiple fields
+                    if relation_type == self.REL_SIZE:
+                        if x_attribute == self.ATTR_VALUE:
+                            if len(x_fields) > 1:
+                                continue
+                        elif y_attribute == self.ATTR_VALUE:
+                            if len(y_fields) > 1:
+                                continue
                     self._logger.debug("Relation found between '" + str(x_fields) + ":" + x_attribute + "' and '" + str(y_fields) + ":" + y_attribute + "'")
                     id_relation = str(uuid.uuid4())
                     results.append({'id': id_relation,
@@ -208,7 +224,7 @@ class RelationFinder(object):
 
         for x_attribute in x_attributes:
             for y_attribute in y_attributes:
-                for (relation_name, relation_fct) in relation_fcts.items():
+                for (relation_name, relation_fct) in list(relation_fcts.items()):
                     isRelation = True
                     for i in range(len(x_values)):
                         if not relation_fct(x_values[i], x_attribute, y_values[i], y_attribute):
@@ -324,7 +340,7 @@ class RelationFinder(object):
 
         if len(cellsDataList) < 1:
             return []
-        result = ["" for cell in cellsDataList[0]]
+        result = [b"" for cell in cellsDataList[0]]
         for cellsData in cellsDataList:
             for i, data in enumerate(cellsData):
                 result[i] += data
@@ -350,3 +366,4 @@ class RelationFinder(object):
             else:
                 result.append(0)
         return result
+

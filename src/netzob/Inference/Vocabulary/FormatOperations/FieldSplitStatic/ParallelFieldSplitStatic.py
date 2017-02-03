@@ -6,7 +6,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -42,8 +42,9 @@ import time
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Types.AbstractType import AbstractType
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
 
 
 def _executeDataAlignment(arg, **kwargs):
@@ -66,7 +67,7 @@ class ParallelFieldSplitStatic(object):
         """Constructor.
 
         :param field : the field to consider when spliting
-        :type: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :keyword unitSize: the required size of static element to create a static field
         :type unitSize: :class:`int`.
         :keyword nbThread: the number of thread to use when spliting
@@ -130,7 +131,7 @@ class ParallelFieldSplitStatic(object):
         following the value variation every unitSize
 
         :param field : the field to consider when spliting
-        :type: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :keyword unitSize: the required size of static element to create a static field
         :type unitSize: :class:`int`.
         :keyword nbThread: the number of thread to use when spliting
@@ -146,7 +147,7 @@ class ParallelFieldSplitStatic(object):
         """The field that contains the definition domain used
         to align data
 
-        :type: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         """
         return self.__field
 

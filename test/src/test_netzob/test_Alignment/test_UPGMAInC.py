@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -51,7 +51,7 @@ except:
     sys.path.append(build_lib_path)
 
 from netzob.Common.ExecutionContext import ExecutionContext
-from netzob.Common.Models.RawMessage import RawMessage
+from netzob.Model.RawMessage import RawMessage
 from netzob.Common.Symbol import Symbol
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Inference.Vocabulary.Alignment.UPGMA import UPGMA
@@ -64,10 +64,10 @@ from netzob.Inference.Vocabulary.Alignment.UPGMA import UPGMA
 class test_UPGMAInC(unittest.TestCase):
 
     def generateRandomString(self, min_len, max_len):
-        return ''.join((random.choice(string.letters + string.digits) for _ in xrange(random.randint(min_len, max_len))))
+        return ''.join((random.choice(string.letters + string.digits) for _ in range(random.randint(min_len, max_len))))
 
     def test_deserialisationGroups(self):
-        print "start"
+        print("start")
 
         symbols = []
         nbSymbol = random.randint(2, 50)

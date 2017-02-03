@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -57,7 +57,7 @@ def find_data_files(dstdir, srcdir, *wildcards, **kw):
 
     file_list = []
     if kw.get('recursive', True):
-        os.path.walk(srcdir, walk_helper, (file_list,))
+        os.walk(srcdir, walk_helper, (file_list,))
     else:
         walk_helper((file_list,), srcdir,
                     [os.path.basename(f) for f in glob(opj(srcdir, '*'))])

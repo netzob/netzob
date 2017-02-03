@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -43,9 +43,9 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
-from netzob.Common.Models.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.Symbol import Symbol
+from netzob.Model.Types.AbstractType import AbstractType
 from netzob.Inference.Vocabulary.FormatOperations.FieldSplitStatic.FieldSplitStatic import FieldSplitStatic
 from netzob.Inference.Vocabulary.FormatOperations.FieldSplitDelimiter import FieldSplitDelimiter
 from netzob.Inference.Vocabulary.FormatOperations.FieldReseter import FieldReseter
@@ -79,7 +79,7 @@ class Format(object):
         >>> messages = [RawMessage(message1), RawMessage(message2)]
         >>> symbol = Symbol(messages=messages)
         >>> Format.splitAligned(symbol, doInternalSlick=True)
-        >>> print len(symbol.getCells())
+        >>> print(len(symbol.getCells()))
         2
 
         """
@@ -105,7 +105,7 @@ class Format(object):
         >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
         >>> symbol = Symbol(messages=messages)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-        >>> print symbol
+        >>> print(symbol)
         Field         
         --------------
         '00ff2f000000'
@@ -119,7 +119,7 @@ class Format(object):
         --------------
         
         >>> Format.splitStatic(symbol)
-        >>> print symbol
+        >>> print(symbol)
         Field-0 | Field-1 | Field-2 
         ------- | ------- | --------
         '00'    | 'ff2f'  | '000000'
@@ -138,7 +138,7 @@ class Format(object):
         >>> symbol = Symbol(messages=messages)
         >>> symbol.encodingFunctions.add(TypeEncodingFunction(HexaString))
         >>> Format.splitStatic(symbol)
-        >>> print symbol
+        >>> print(symbol)
         Field-0  | Field-1 | Field-2 | Field-3                                                         
         -------- | ------- | ------- | ----------------------------------------------------------------
         '030000' | '25'    | '02f0'  | '80320100003a00000e00060501120a10020002006e840000400004001001ab'
@@ -149,7 +149,7 @@ class Format(object):
         >>> contents = ["hello lapy, what's up in Paris ?", "hello lapy, what's up in Berlin ?", "hello lapy, what's up in New-York ?"]
         >>> messages = [RawMessage(data=m) for m in contents]
         >>> s = Symbol(messages=messages)
-        >>> print s
+        >>> print(s)
         Field                                
         -------------------------------------
         "hello lapy, what's up in Paris ?"   
@@ -157,7 +157,7 @@ class Format(object):
         "hello lapy, what's up in New-York ?"
         -------------------------------------
         >>> Format.splitStatic(s)
-        >>> print s
+        >>> print(s)
         Field-0                     | Field-1     
         --------------------------- | ------------
         "hello lapy, what's up in " | 'Paris ?'   
@@ -166,7 +166,7 @@ class Format(object):
         --------------------------- | ------------
 
         :param field: the field for which we update the format
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :keyword unitSize: the required size of static element to create a static field
         :type unitSize: :class:`int`.
         :keyword mergeAdjacentStaticFields: if set to true, adjacent static fields are merged in a single field
@@ -199,7 +199,7 @@ class Format(object):
         >>> messages = [RawMessage(data=sample) for sample in samples]
         >>> symbol = Symbol(messages=messages[:3])
         >>> Format.splitDelimiter(symbol, ASCII("ff"))
-        >>> print symbol
+        >>> print(symbol)
         Field-0    | Field-sep-6666 | Field-2      | Field-sep-6666 | Field-4   
         ---------- | -------------- | ------------ | -------------- | ----------
         'aaaa'     | 'ff'           | '000000'     | 'ff'           | '10'      
@@ -213,12 +213,12 @@ class Format(object):
 
         >>> from netzob.all import *
         >>> samples = ["434d446964656e74696679230400000066726564", "5245536964656e74696679230000000000000000", "434d44696e666f2300000000", "524553696e666f230000000004000000696e666f", "434d4473746174732300000000", "52455373746174732300000000050000007374617473", "434d4461757468656e7469667923090000006d7950617373776421", "52455361757468656e74696679230000000000000000"]           
-        >>> print len(samples)
+        >>> print(len(samples))
         8
         >>> symbol = Symbol(messages=[RawMessage(TypeConverter.convert(sample, HexaString, Raw)) for sample in samples])
         >>> symbol.encodingFunctions.add(TypeEncodingFunction(HexaString))
         >>> Format.splitDelimiter(symbol, ASCII('#'))
-        >>> print symbol
+        >>> print(symbol)
         Field-0                      | Field-sep-23 | Field-2                     
         ---------------------------- | ------------ | ----------------------------
         '434d446964656e74696679'     | '#'          | '0400000066726564'          
@@ -233,9 +233,9 @@ class Format(object):
 
 
         :param field : the field to consider when spliting
-        :type: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :param delimiter : the delimiter used to split messages of the field
-        :type: :class:`netzob.Common.Models.Types.AbstractType.AbstractType`
+        :type: :class:`netzob.Model.Types.AbstractType.AbstractType`
         """
 
         if delimiter is None:
@@ -264,7 +264,7 @@ class Format(object):
         >>> f3 = Field(Raw(nbBytes=3))
         >>> symbol = Symbol([f1, f2, f3], messages=messages)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-        >>> print symbol
+        >>> print(symbol)
         Field | Field  | Field   
         ----- | ------ | --------
         '00'  | 'ff2f' | '000000'
@@ -273,7 +273,7 @@ class Format(object):
         ----- | ------ | --------
         >>> Format.resetFormat(symbol)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))        
-        >>> print symbol
+        >>> print(symbol)
         Field         
         --------------
         '00ff2f000000'
@@ -282,7 +282,7 @@ class Format(object):
         --------------
 
         :param field: the field we want to reset
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :raise Exception if something bad happens
         """
         if field is None:
@@ -306,7 +306,7 @@ class Format(object):
         >>> f4 = Field(Raw(nbBytes=1), name="f4")
         >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-        >>> print symbol
+        >>> print(symbol)
         f1   | f2     | f3     | f4  
         ---- | ------ | ------ | ----
         '00' | 'ff2f' | '0000' | '00'
@@ -314,7 +314,7 @@ class Format(object):
         '00' | 'fe1f' | '0000' | '00'
         ---- | ------ | ------ | ----
         >>> Format.mergeFields(f2, f3)
-        >>> print symbol
+        >>> print(symbol)
         f1   | Merge      | f4  
         ---- | ---------- | ----
         '00' | 'ff2f0000' | '00'
@@ -322,7 +322,7 @@ class Format(object):
         '00' | 'fe1f0000' | '00'
         ---- | ---------- | ----
         >>> Format.mergeFields(symbol.fields[0], symbol.fields[1])
-        >>> print symbol
+        >>> print(symbol)
         Merge        | f4  
         ------------ | ----
         '00ff2f0000' | '00'
@@ -330,7 +330,7 @@ class Format(object):
         '00fe1f0000' | '00'
         ------------ | ----
         >>> Format.mergeFields(symbol.fields[0], symbol.fields[1])
-        >>> print symbol
+        >>> print(symbol)
         Merge         
         --------------
         '00ff2f000000'
@@ -340,7 +340,7 @@ class Format(object):
 
 
         :param field: the field we want to reset
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :raise Exception if something bad happens
         """
         if field1 is None or field2 is None:
@@ -385,15 +385,15 @@ class Format(object):
         >>> session.applicativeData = appDatas
         >>> symbols = Format.clusterByApplicativeData(messages)
         >>> for symbol in sorted(symbols, key=operator.attrgetter("name")):
-        ...     print "Symbol : {0} = {1} messages.".format(symbol.name, len(symbol.messages))
+        ...     print("Symbol : {0} = {1} messages.".format(symbol.name, len(symbol.messages)))
         Symbol : ACK = 5 messages.
         Symbol : ACK;SYN = 5 messages.
         Symbol : SYN = 5 messages.
 
         :param messages: the messages to cluster.
-        :type messages: a list of :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+        :type messages: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
         :return: a list of symbol representing all the computed clusters
-        :rtype: a list of :class:`netzob.Common.Models.Vocabulary.Symbol.Symbol`
+        :rtype: a list of :class:`netzob.Model.Vocabulary.Symbol.Symbol`
         :raises: a TypeError if symbol is not valid.
         """
         if (messages is None or len(messages) == 0):
@@ -434,10 +434,10 @@ class Format(object):
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
 
         >>> newSymbols = Format.clusterByKeyField(symbol, f2)
-        >>> for sym in newSymbols.values():
+        >>> for sym in list(newSymbols.values()):
         ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
-        ...     print sym.name + ":"
-        ...     print sym
+        ...     print(sym.name + ":")
+        ...     print(sym)
         Symbol_ff2f:
         Field | Field  | Field   
         ----- | ------ | --------
@@ -451,9 +451,9 @@ class Format(object):
         ----- | ------ | --------
 
         :param field: the field we want to split in new symbols
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :param keyField: the field used as a key during the splitting operation
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :raise Exception if something bad happens
 
         """
@@ -482,12 +482,12 @@ class Format(object):
         >>> Format.splitStatic(symbol)
         >>> results = Format.findKeyFields(symbol)
         >>> for result in results:
-        ...     print "Field name: " + result["keyField"].name + ", number of clusters: " + str(result["nbClusters"]) + ", distribution: " + str(result["distribution"])
-        Field name: Field-1, number of clusters: 5, distribution: [2, 1, 2, 2, 1]
+        ...     print("Field name: " + result["keyField"].name + ", number of clusters: " + str(result["nbClusters"]) + ", distribution: " + str(result["distribution"]))
+        Field name: Field-1, number of clusters: 5, distribution: [2, 1, 2, 1, 2]
         Field name: Field-3, number of clusters: 2, distribution: [1, 7]
 
         :param field: the field in which we want to identify key fields.
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :raise Exception if something bad happens
 
         """
@@ -510,9 +510,9 @@ class Format(object):
         >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
         >>> newSymbols = Format.clusterBySize(messages)
         >>> for sym in newSymbols:
-        ...     print "[" + sym.name + "]"
+        ...     print("[" + sym.name + "]")
         ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
-        ...     print sym
+        ...     print(sym)
         [symbol_9]
         Field               
         --------------------
@@ -533,9 +533,9 @@ class Format(object):
         ----------------
 
         :param messages: the messages to cluster.
-        :type messages: a list of :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+        :type messages: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
         :return: a list of symbol representing all the computed clusters
-        :rtype: a list of :class:`netzob.Common.Models.Vocabulary.Symbol.Symbol`
+        :rtype: a list of :class:`netzob.Model.Vocabulary.Symbol.Symbol`
         """
 
         # Safe checks
@@ -544,3 +544,4 @@ class Format(object):
 
         clustering = ClusterBySize()
         return clustering.cluster(messages)
+

@@ -5,7 +5,7 @@
 //|                                                                           |
 //|               Netzob : Inferring communication protocols                  |
 //+---------------------------------------------------------------------------+
-//| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+//| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 //| This program is free software: you can redistribute it and/or modify      |
 //| it under the terms of the GNU General Public License as published by      |
 //| the Free Software Foundation, either version 3 of the License, or         |
@@ -54,8 +54,20 @@ static PyMethodDef libInterface_methods[] = {
 //+---------------------------------------------------------------------------+
 //| initlibInterface : Python will use this function to init the module
 //+---------------------------------------------------------------------------+
-PyMODINIT_FUNC init_libInterface(void) {
-  (void) Py_InitModule("_libInterface", libInterface_methods);
+PyObject* PyInit__libInterface(void) {
+    static struct PyModuleDef moduledef = {
+    PyModuleDef_HEAD_INIT,
+    "_libInterface",
+    NULL,
+    -1,
+    libInterface_methods,
+    NULL,
+    NULL,
+    NULL,
+    NULL
+  };
+
+  return PyModule_Create(&moduledef);
 }
 
 int callbackIsFinish(void) {

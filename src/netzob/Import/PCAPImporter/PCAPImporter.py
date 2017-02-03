@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -35,8 +35,13 @@ from gettext import gettext as _
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 import pcapy
-import impacket.ImpactDecoder as Decoders
-import impacket.ImpactPacket as Packets
+
+## FIXME: Temporary deactivate this module as it is not currently supported in Python3
+# import impacket.ImpactDecoder as Decoders
+# import impacket.ImpactPacket as Packets
+## Instead, import local adapted files
+from netzob.Import.PCAPImporter import ImpactPacket as Packets
+from netzob.Import.PCAPImporter import ImpactDecoder as Decoders
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -44,13 +49,13 @@ import impacket.ImpactPacket as Packets
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Utils.SortedTypedList import SortedTypedList
 from netzob.Common.NetzobException import NetzobImportException
-from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Types.HexaString import HexaString
-from netzob.Common.Models.Types.TypeConverter import TypeConverter
-from netzob.Common.Models.Vocabulary.Messages.AbstractMessage import AbstractMessage
-from netzob.Common.Models.Vocabulary.Messages.L2NetworkMessage import L2NetworkMessage
-from netzob.Common.Models.Vocabulary.Messages.L3NetworkMessage import L3NetworkMessage
-from netzob.Common.Models.Vocabulary.Messages.L4NetworkMessage import L4NetworkMessage
+from netzob.Model.Types.Raw import Raw
+from netzob.Model.Types.HexaString import HexaString
+from netzob.Model.Types.TypeConverter import TypeConverter
+from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
+from netzob.Model.Vocabulary.Messages.L2NetworkMessage import L2NetworkMessage
+from netzob.Model.Vocabulary.Messages.L3NetworkMessage import L3NetworkMessage
+from netzob.Model.Vocabulary.Messages.L4NetworkMessage import L4NetworkMessage
 
 
 @NetzobLogger
@@ -60,6 +65,49 @@ class PCAPImporter(object):
     - PCAPImporter.readFiles(...)
     - PCAPimporter.readFile(...)
     refer to their documentation to have an overview of the required parameters.
+
+    >>> from netzob.all import *
+    >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap").values()
+    >>> print(len(messages))
+    14
+
+    >>> for m in messages:
+    ...    print(repr(m.data))
+    b'CMDidentify#\\x07\\x00\\x00\\x00Roberto'
+    b'RESidentify#\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'
+    b'CMDinfo#\\x00\\x00\\x00\\x00'
+    b'RESinfo#\\x00\\x00\\x00\\x00\\x04\\x00\\x00\\x00info'
+    b'CMDstats#\\x00\\x00\\x00\\x00'
+    b'RESstats#\\x00\\x00\\x00\\x00\\x05\\x00\\x00\\x00stats'
+    b'CMDauthentify#\\n\\x00\\x00\\x00aStrongPwd'
+    b'RESauthentify#\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'
+    b'CMDencrypt#\\x06\\x00\\x00\\x00abcdef'
+    b"RESencrypt#\\x00\\x00\\x00\\x00\\x06\\x00\\x00\\x00$ !&'$"
+    b"CMDdecrypt#\\x06\\x00\\x00\\x00$ !&'$"
+    b'RESdecrypt#\\x00\\x00\\x00\\x00\\x06\\x00\\x00\\x00abcdef'
+    b'CMDbye#\\x00\\x00\\x00\\x00'
+    b'RESbye#\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'
+
+    >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=2).values()
+    >>> print(repr(messages[0].data))
+    b'\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x08\\x00E\\x00\\x003\\xdc\\x11@\\x00@\\x11`\\xa6\\x7f\\x00\\x00\\x01\\x7f\\x00\\x00\\x01\\xe1\\xe7\\x10\\x92\\x00\\x1f\\xfe2CMDidentify#\\x07\\x00\\x00\\x00Roberto'
+
+    >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=3).values()
+    >>> print(repr(messages[0].data))
+    b'E\\x00\\x003\\xdc\\x11@\\x00@\\x11`\\xa6\\x7f\\x00\\x00\\x01\\x7f\\x00\\x00\\x01\\xe1\\xe7\\x10\\x92\\x00\\x1f\\xfe2CMDidentify#\\x07\\x00\\x00\\x00Roberto'
+
+    >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=4).values()
+    >>> print(repr(messages[0].data))
+    b'\\xe1\\xe7\\x10\\x92\\x00\\x1f\\xfe2CMDidentify#\\x07\\x00\\x00\\x00Roberto'
+
+    >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=5).values()
+    >>> print(repr(messages[0].data))
+    b'CMDidentify#\\x07\\x00\\x00\\x00Roberto'
+
+    >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_http.pcap", importLayer=5, bpfFilter="tcp").values()
+    >>> print(repr(messages[0].data))
+    b'GET / HTTP/1.1\\r\\nHost: www.free.fr\\r\\nUser-Agent: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa(bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb)ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\\r\\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\\r\\nAccept-Language: en-US,en;q=0.5\\r\\nAccept-Encoding: gzip, deflate\\r\\nConnection: keep-alive\\r\\n\\r\\n'
+
 
     """
 
@@ -105,7 +153,7 @@ class PCAPImporter(object):
         try:
             fp = open(filePath, 'r')
             fp.close()
-        except IOError, e:
+        except IOError as e:
             if e.errno == errno.EACCES:
                 raise IOError("Error while trying to open the file {0}, more permissions are required to read it.").format(filePath)
             else:
@@ -120,7 +168,7 @@ class PCAPImporter(object):
 
         # Check the datalink
         self.datalink = packetReader.datalink()
-        if self.datalink not in PCAPImporter.SUPPORTED_DATALINKS.keys():
+        if self.datalink not in list(PCAPImporter.SUPPORTED_DATALINKS.keys()):
             self._logger.debug("Unkown datalinks")
 
         if self.importLayer > 1 and self.datalink != pcapy.DLT_EN10MB and self.datalink != pcapy.DLT_LINUX_SLL and self.datalink != PCAPImporter.PROTOCOL201:
@@ -138,7 +186,7 @@ class PCAPImporter(object):
         if self.importLayer == 1 or self.importLayer == 2:
             try:
                 (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = self.__decodeLayer2(header, payload)
-            except NetzobImportException, e:
+            except NetzobImportException as e:
                 self._logger.warn("An error occured while decoding layer2 of a packet: {0}".format(e))
                 return
             if len(l2Payload) == 0:
@@ -153,7 +201,7 @@ class PCAPImporter(object):
             try:
                 (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = self.__decodeLayer2(header, payload)
                 (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum) = self.__decodeLayer3(etherType, l2Payload)
-            except NetzobImportException, e:
+            except NetzobImportException as e:
                 self._logger.warn("An error occured while decoding layer2 and layer3 of a packet: {0}".format(e))
                 return
 
@@ -169,7 +217,7 @@ class PCAPImporter(object):
                 (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = self.__decodeLayer2(header, payload)
                 (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum) = self.__decodeLayer3(etherType, l2Payload)
                 (l4Proto, l4SrcPort, l4DstPort, l4Payload) = self.__decodeLayer4(ipProtocolNum, l3Payload)
-            except NetzobImportException, e:
+            except NetzobImportException as e:
                 self._logger.warn("An error occured while decoding layer2, layer3 or layer4 of a packet: {0}".format(e))
                 return
             if len(l4Payload) == 0:
@@ -186,7 +234,7 @@ class PCAPImporter(object):
                 (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = self.__decodeLayer2(header, payload)
                 (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum) = self.__decodeLayer3(etherType, l2Payload)
                 (l4Proto, l4SrcPort, l4DstPort, l4Payload) = self.__decodeLayer4(ipProtocolNum, l3Payload)
-            except NetzobImportException, e:
+            except NetzobImportException as e:
                 self._logger.warn("An error occured while decoding layer2, layer3, layer4 or layer5 of a packet: {0}".format(e))
                 return
             if len(l4Payload) == 0:
@@ -237,6 +285,7 @@ class PCAPImporter(object):
     def __decodeLayer3(self, etherType, l2Payload):
         """Internal method that parses the specified header and extracts
         layer3 related proprieties."""
+
         if etherType == Packets.IP.ethertype:
             l3Proto = "IP"
             l3Decoder = Decoders.IPDecoder()
@@ -261,6 +310,7 @@ class PCAPImporter(object):
     def __decodeLayer4(self, ipProtocolNum, l3Payload):
         """Internal method that parses the specified header and extracts
         layer4 related proprieties."""
+
         if ipProtocolNum == Packets.UDP.protocol:
             l4Proto = "UDP"
             l4Decoder = Decoders.UDPDecoder()
@@ -305,7 +355,7 @@ class PCAPImporter(object):
         :param nbPackets: the number of packets to import
         :type nbPackets: :class:`int`
         :return: a list of captured messages
-        :rtype: a list of :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage`
+        :rtype: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
         """
 
         # Verify the existence of input files
@@ -314,7 +364,7 @@ class PCAPImporter(object):
             try:
                 fp = open(filePath)
                 fp.close()
-            except IOError, e:
+            except IOError as e:
                 errorMessage = _("Error while trying to open the "
                                  + "file {0}.").format(filePath)
                 if e.errno == errno.EACCES:
@@ -360,7 +410,7 @@ class PCAPImporter(object):
         :param nbPackets: the number of packets to import
         :type nbPackets: :class:`int`
         :return: a list of captured messages
-        :rtype: a list of :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage`
+        :rtype: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
         """
 
         importer = PCAPImporter()
@@ -387,7 +437,7 @@ class PCAPImporter(object):
         :param nbPackets: the number of packets to import
         :type nbPackets: :class:`int`
         :return: a list of captured messages
-        :rtype: a list of :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage`
+        :rtype: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
         """
 
         importer = PCAPImporter()

@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -49,13 +49,13 @@ class test_TypeIdentifier(NetzobTestCase):
         self.assertIn(Format.DECIMAL, typeIdentifier.getTypes(number))
 
     def test_getTypesAlpha(self):
-        alphabet = map(chr, range(97, 123))
+        alphabet = list(map(chr, list(range(97, 123))))
         alpha = alphabet[random.randint(0, len(alphabet) - 1)]
         typeIdentifier = TypeIdentifier()
         self.assertIn(Format.ALPHA, typeIdentifier.getTypes(alpha))
 
     def test_getTypesAscii(self):
-        alphabet = map(chr, range(97, 123))
+        alphabet = list(map(chr, list(range(97, 123))))
         alpha = alphabet[random.randint(0, len(alphabet) - 1)]
         typeIdentifier = TypeIdentifier()
         self.assertIn(Format.ASCII, typeIdentifier.getTypes(alpha))
@@ -67,7 +67,7 @@ class test_TypeIdentifier(NetzobTestCase):
         self.assertIn(Format.BASE64_ENC, typeIdentifier.getTypes(base64String))
 
     def test_getTypesBinary(self):
-        alphabet = map(chr, range(97, 123))
+        alphabet = list(map(chr, list(range(97, 123))))
         alpha = alphabet[random.randint(0, len(alphabet) - 1)]
         typeIdentifier = TypeIdentifier()
         hexOfNumber = str(hex(ord(alpha)))[2:]

@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -44,9 +44,9 @@ import operator
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
-from netzob.Common.Models.Vocabulary.Messages.AbstractMessage import AbstractMessage
-from netzob.Common.Models.Vocabulary.ApplicativeData import ApplicativeData
+from netzob.Model.Vocabulary.Symbol import Symbol
+from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
+from netzob.Model.Vocabulary.ApplicativeData import ApplicativeData
 from netzob.Inference.Vocabulary.Search.SearchEngine import SearchEngine
 
 
@@ -126,24 +126,24 @@ class ClusterByApplicativeData(object):
             searchTask = result.searchTask
             message = searchTask.properties['message']
             label = searchTask.properties['label']
-            if label not in labels.values():
+            if label not in list(labels.values()):
                 raise ValueError("Found label ({0}) in a result cannot be identified in the original list of searched labels.".format(label))
-            if message.id not in idMessages.keys():
+            if message.id not in list(idMessages.keys()):
                 raise ValueError("Found message ({0}) cannot be identified in the original list of searched messages.".format(message.id))
             messagesPerAppData[idMessages[message.id]].add(label)
 
         # Build clusters
         clusters = dict()
-        for message, labelsInMessage in messagesPerAppData.iteritems():
+        for message, labelsInMessage in list(messagesPerAppData.items()):
             strAppDatas = ';'.join(sorted(labelsInMessage))
             if len(strAppDatas) == 0:
                 strAppDatas = None
-            if strAppDatas in clusters.keys():
+            if strAppDatas in list(clusters.keys()):
                 clusters[strAppDatas].append(message)
             else:
                 clusters[strAppDatas] = [message]
 
         # Build Symbols
-        symbols = [Symbol(name=strAppDatas, messages=msgs) for strAppDatas, msgs in clusters.iteritems()]
+        symbols = [Symbol(name=strAppDatas, messages=msgs) for strAppDatas, msgs in list(clusters.items())]
 
         return symbols

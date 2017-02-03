@@ -49,7 +49,6 @@ from resources.sdist.utils import find_data_files, opj, getPluginPaths
 # Path to the resources
 staticResourcesPath = opj("resources", "static")
 netzobStaticResourcesPath = opj(staticResourcesPath, "netzob")
-pluginsStaticResourcesPath = opj(staticResourcesPath, "plugins")
 
 # +----------------------------------------------------------------------------
 # | Compute the compilation arguments given the current compilation profile
@@ -121,10 +120,6 @@ pyNeedlemanPath = opj(needlemanPath, "Py_lib")
 # ArgsFactories path
 argsFactoriesPath = opj(libPath, "argsFactories")
 
-# Regex path
-# regexPath = opj(libPath, "libRegex")
-# pyRegexPath = opj(regexPath, "Py_lib")
-
 # Relation path
 relPath = os.path.join(libPath, "libRelation")
 pyRelPath = os.path.join(relPath, "Py_lib")
@@ -189,7 +184,9 @@ with open('requirements.txt', 'r') as fd_requirements:
         dependencies.append(dependency.strip())
 
 extra_dependencies = {
-    'docs': ['Sphinx>=1.1.3']
+    'docs': ['Sphinx>=1.1.3'],
+    'network': ['pcapy>=0.10.8', 'impacket>=0.9.12'],
+    'correlation': ['numpy>=1.9.2', 'minepy>=1.0.0']
 }
 
 dependency_links = []
@@ -209,11 +206,8 @@ root_data_files = find_data_files(opj("share", "netzob"), netzobStaticResourcesP
 app_data_files = find_data_files(opj("share", "applications"), netzobStaticResourcesPath, 'netzob.desktop', recursive=False)
 icons_data_files = find_data_files(opj("share", "netzob", "icons"), opj(netzobStaticResourcesPath, "icons"), '*.png')
 default_data_files = find_data_files(opj("share", "netzob", "defaults"), opj(netzobStaticResourcesPath, "defaults"), '*.default', recursive=False)
-xsds_data_files = find_data_files(opj("share", "netzob", "xsds"), opj(netzobStaticResourcesPath, "xsds"), '*.xsd')
-locale_data_files = find_data_files(opj("share", "locale"), opj(netzobStaticResourcesPath, "locales"), '*.mo')
-ui_data_files = find_data_files(opj("share", "netzob", "ui"), opj(netzobStaticResourcesPath, "ui"), '*.glade', '*.ui')
 
-data_files = root_data_files + app_data_files + icons_data_files + default_data_files + xsds_data_files + locale_data_files + ui_data_files
+data_files = root_data_files + app_data_files + icons_data_files + default_data_files
 
 # Extract the long description from README.rst and NEWS.rst files
 README = open('README.rst', 'rt').read()
@@ -226,8 +220,7 @@ setup(
     name=release.name,
     packages=find_packages(where='src'),
     package_dir={
-        "netzob": opj("src", "netzob"),
-        "netzob_plugins": opj("src", "netzob_plugins"),
+        "": "src",
     },
     ext_modules=[moduleLibNeedleman, moduleLibScoreComputation, moduleLibInterface, moduleLibRelation],
     data_files=data_files,
@@ -246,6 +239,7 @@ setup(
     keywords=release.keywords,
     classifiers=[
         "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
         "Programming Language :: C",
         "Development Status :: 4 - Beta",
         "Environment :: X11 Applications :: GTK",

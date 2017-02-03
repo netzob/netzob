@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -52,66 +52,66 @@ class DepCheck(object):
         try:
             from netzob import _libNeedleman
         except ImportError as e:
-            logging.error("Impossible to import the libNeedleman: {0}".format(e))
+            logging.error("Impossible to import the libNeedleman: %s", e)
             return False
 
         pathToImportedLib = "Unknown path"
-        for m in sys.modules.keys():
+        for m in list(sys.modules.keys()):
             if m == "_libNeedleman":
                 pathToImportedLib = sys.modules[m].__file__
-                logging.debug("Imported _libNeedleman from {0}".format(pathToImportedLib))
+                logging.debug("Imported _libNeedleman from %s", pathToImportedLib)
         try:
             BIDNeedleman = _libNeedleman.getBID()
             if BIDNeedleman != NetzobResources.BID and NetzobResources.BID != "$BID":
-                logging.error("Binary Identifier is {0} (expected {1}).".format(BIDNeedleman, NetzobResources.BID))
+                logging.error("Binary Identifier is %s (expected %s).", BIDNeedleman, NetzobResources.BID)
                 logging.error("The loaded libNeedleman library is deprecated, please rebuild it.")
                 return False
         except AttributeError:
-            logging.error("The _libNeedleman imported ({0}) is not the expected one and do not provide all the required methods.".format(pathToImportedLib))
+            logging.error("The _libNeedleman imported (%s) is not the expected one and do not provide all the required methods.", pathToImportedLib)
             return False
 
         # Verify we can load the lib ScoreComputation
         try:
             from netzob import _libScoreComputation
         except ImportError as e:
-            logging.error("Impossible to import the libScoreComputation: {0}".format(e))
+            logging.error("Impossible to import the libScoreComputation: %s", e)
             return False
 
         pathToImportedLib = "Unknown path"
-        for m in sys.modules.keys():
+        for m in list(sys.modules.keys()):
             if m == "_libScoreComputation":
                 pathToImportedLib = sys.modules[m].__file__
-                logging.debug("Imported _libScoreComputation from {0}".format(pathToImportedLib))
+                logging.debug("Imported _libScoreComputation from %s", pathToImportedLib)
         try:
             BIDScoreComputation = _libScoreComputation.getBID()
             if BIDScoreComputation != NetzobResources.BID and NetzobResources.BID != "$BID":
-                logging.error("Binary Identifier is {0} (expected {1}).".format(BIDScoreComputation, NetzobResources.BID))
+                logging.error("Binary Identifier is %s (expected %s).", BIDScoreComputation, NetzobResources.BID)
                 logging.error("The loaded libScoreComputation library is deprecated, please rebuild it.")
                 return False
         except AttributeError:
-            logging.error("The _libScoreComputation imported ({0}) is not the expected one and do not provide all the required methods.".format(pathToImportedLib))
+            logging.error("The _libScoreComputation imported (%s) is not the expected one and do not provide all the required methods.", pathToImportedLib)
             return False
 
         # Verify we can load the lib Interface
         try:
             from netzob import _libInterface
         except ImportError as e:
-            logging.error("Impossible to import the libInterface: {0}".format(e))
+            logging.error("Impossible to import the libInterface: %s", e)
             return False
 
         pathToImportedLib = "Unknown path"
-        for m in sys.modules.keys():
+        for m in list(sys.modules.keys()):
             if m == "_libInterface":
                 pathToImportedLib = sys.modules[m].__file__
-                logging.debug("Imported _libInterface from {0}".format(pathToImportedLib))
+                logging.debug("Imported _libInterface from %s", pathToImportedLib)
         try:
             BIDInterface = _libInterface.getBID()
             if BIDInterface != NetzobResources.BID and NetzobResources.BID != "$BID":
-                logging.error("Binary Identifier is {0} (expected {1}).".format(BIDInterface, NetzobResources.BID))
+                logging.error("Binary Identifier is %s (expected %s).", BIDInterface, NetzobResources.BID)
                 logging.error("The loaded libInterface library is deprecated, please rebuild it.")
                 return False
         except AttributeError:
-            logging.error("The _libInterface imported ({0}) is not the expected one and do not provide all the required methods.".format(pathToImportedLib))
+            logging.error("The _libInterface imported (%s) is not the expected one and do not provide all the required methods.", pathToImportedLib)
             return False
 
         # # Verify we can load the lib Regex

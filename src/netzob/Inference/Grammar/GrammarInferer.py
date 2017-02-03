@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -146,7 +146,7 @@ class GrammarInferer(threading.Thread):
         endTime = time.time()
         self.log.info("The inferring process is finished !")
 
-        print "Elapsed time: ", (endTime - startTime) * 1000, " msecs"
+        print("Elapsed time: {} msecs".format((endTime - startTime) * 1000))
         self.inferedAutomaton = automaton
 
     def applyMessagesOnAutomata(self, automaton, messages):

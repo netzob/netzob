@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -43,7 +43,7 @@
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.AbstractField import AbstractField
 
 
 @NetzobLogger
@@ -58,12 +58,12 @@ class FindKeyFields(object):
 
         >>> import binascii
         >>> from netzob.all import *
-        >>> samples = ["00ff2f000011",	"000010000000",	"00fe1f000000",	"000020000000", "00ff1f000000",	"00ff1f000000",	"00ff2f000000",	"00fe1f000000"]
+        >>> samples = [b"00ff2f000011",	b"000010000000", b"00fe1f000000", b"000020000000", b"00ff1f000000", b"00ff1f000000", b"00ff2f000000", b"00fe1f000000"]
         >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
         >>> symbol = Symbol(messages=messages)
         >>> Format.splitStatic(symbol)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-        >>> print symbol
+        >>> print(symbol)
         Field-0 | Field-1 | Field-2 | Field-3
         ------- | ------- | ------- | -------
         '00'    | 'ff2f'  | '0000'  | '11'   
@@ -79,12 +79,12 @@ class FindKeyFields(object):
         >>> finder = FindKeyFields()
         >>> results = finder.execute(symbol)
         >>> for result in results:
-        ...     print "Field name: " + result["keyField"].name + ", number of clusters: " + str(result["nbClusters"]) + ", distribution: " + str(result["distribution"])
-        Field name: Field-1, number of clusters: 5, distribution: [2, 1, 2, 2, 1]
+        ...     print("Field name: " + result["keyField"].name + ", number of clusters: " + str(result["nbClusters"]) + ", distribution: " + str(result["distribution"]))
+        Field name: Field-1, number of clusters: 5, distribution: [2, 1, 2, 1, 2]
         Field name: Field-3, number of clusters: 2, distribution: [1, 7]
 
         :param field: the field in which we want to identify key fields.
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :raise Exception if something bad happens
         """
 
@@ -96,7 +96,7 @@ class FindKeyFields(object):
 
         results = []
         cells = field.getCells(encoded=False, styled=False, transposed=False)
-        columns = zip(*cells)
+        columns = list(zip(*cells))
 
         # Retrieve dynamic fields with fixed size
         for (i, f) in enumerate(field.fields):
@@ -118,8 +118,9 @@ class FindKeyFields(object):
             tmpClusters = Format.clusterByKeyField(field, result["keyField"])
             result["nbClusters"] = len(tmpClusters)
             distrib = []  # Compute clusters distribution
-            for cluster in tmpClusters.values():
+            for cluster in list(tmpClusters.values()):
                 distrib.append(len(cluster.messages))
             result["distribution"] = distrib
 
         return results
+

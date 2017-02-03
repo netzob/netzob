@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -41,8 +41,8 @@ import uuid
 #| Local application imports
 #+----------------------------------------------
 
-from netzob.Common.Models.Simulator.AbstractionLayer import AbstractionLayer
-from netzob.Common.Models.Vocabulary.Domain.Variables.Memory import Memory
+from netzob.Simulator.AbstractionLayer import AbstractionLayer
+from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 
 
 #+----------------------------------------------
@@ -105,7 +105,7 @@ class NetworkOracle(threading.Thread):
         symbols = []
         # Retrieve all the IO from the abstraction layer
         abstractionLayer = self.oracle.getAbstractionLayer()
-        print "Abstraction layer = " + str(abstractionLayer)
+        print("Abstraction layer = {}".format(str(abstractionLayer)))
         for io in abstractionLayer.getGeneratedInputAndOutputsSymbols():
             symbols.append(DictionarySymbol(io))
         return symbols

@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -42,7 +42,7 @@ from collections import OrderedDict
 # | Local application imports
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
 from netzob.Common.Utils.MatrixList import MatrixList
 
@@ -68,7 +68,8 @@ class ParallelDataAlignment(object):
     >>> import time
     >>> import logging
 
-    >>> #Temporary raise log level of certain impacting loggers on alignment process
+    >>> # Temporary raise log level of certain impacting loggers on alignment process
+    >>> old_logging_level = logging.getLogger(Symbol.__name__).level
     >>> logging.getLogger(Data.__name__).setLevel(logging.INFO)
     >>> logging.getLogger(DataAlignment.__name__).setLevel(logging.INFO)
 
@@ -84,21 +85,21 @@ class ParallelDataAlignment(object):
     >>> alignedData = pAlignment.execute(data)
     >>> end = time.time()
     >>> oneThreadDuration = end-start
-    >>> print len(alignedData)
+    >>> print(len(alignedData))
     1000
     >>> pAlignment = ParallelDataAlignment(field=symbol, depth=None)
     >>> start = time.time()
     >>> alignedData = pAlignment.execute(data)
     >>> end = time.time()
     >>> autoThreadDuration = end-start
-    >>> print len(alignedData)
+    >>> print(len(alignedData))
     1000
     >>> autoThreadDuration <= oneThreadDuration
     True
 
     >>> # Reset log level of certain impacting loggers on alignment process
-    >>> logging.getLogger(Data.__name__).setLevel(logging.DEBUG)
-    >>> logging.getLogger(DataAlignment.__name__).setLevel(logging.DEBUG)
+    >>> logging.getLogger(Data.__name__).setLevel(old_logging_level)
+    >>> logging.getLogger(DataAlignment.__name__).setLevel(old_logging_level)
 
 
     """
@@ -107,7 +108,7 @@ class ParallelDataAlignment(object):
         """Constructor.
 
         :param field: the format definition that will be user
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :keyword depth: the limit in depth in the format (use None for not limit)
         :type depth: :class:`int`
         :keyword nbThread: the maximum number of thread that will be used.
@@ -170,7 +171,7 @@ class ParallelDataAlignment(object):
         pool = multiprocessing.Pool(self.nbThread)
 
         # Execute Data Alignment
-        pool.map_async(_executeDataAlignment, zip(noDuplicateData, [self.field] * len(noDuplicateData), [self.encoded] * len(noDuplicateData), [self.styled] * len(noDuplicateData)), callback=self.__collectResults_cb)
+        pool.map_async(_executeDataAlignment, list(zip(noDuplicateData, [self.field] * len(noDuplicateData), [self.encoded] * len(noDuplicateData), [self.styled] * len(noDuplicateData))), callback=self.__collectResults_cb)
 
         # Waits all alignment tasks finish
         pool.close()
@@ -186,7 +187,7 @@ class ParallelDataAlignment(object):
 
     
         for d in data:
-            if d not in self.asyncResult.keys():
+            if d not in list(self.asyncResult.keys()):
                 raise Exception("At least one data ({0}) has not been successfully computed by the alignment".format(repr(d)))
             result.extend(self.asyncResult[d])
 
@@ -207,7 +208,7 @@ class ParallelDataAlignment(object):
         :param data: the data to align as a list of hexastring
         :type data: :class:`list`
         :param field : the field to consider when aligning
-        :type: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :keyword depth: maximum field depth to consider (similar to layer depth)
         :type depth: :class:`int`.
         :keyword nbThread: the number of thread to use when parallelizing
@@ -230,7 +231,7 @@ class ParallelDataAlignment(object):
         """The field that contains the definition domain used
         to align data
 
-        :type: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         """
         return self.__field
 
@@ -314,3 +315,4 @@ class ParallelDataAlignment(object):
             raise ValueError("Styled cannot be None")
 
         self.__styled = styled
+

@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -44,11 +44,11 @@ import threading
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Utils.MatrixList import MatrixList
-from netzob.Common.Models.Types.TypeConverter import TypeConverter
-from netzob.Common.Models.Types.BitArray import BitArray
-from netzob.Common.Models.Types.Raw import Raw
+from netzob.Model.Types.TypeConverter import TypeConverter
+from netzob.Model.Types.BitArray import BitArray
+from netzob.Model.Types.Raw import Raw
 
 
 @NetzobLogger
@@ -65,11 +65,11 @@ class DataAlignment(object):
     >>> import random
     >>> import string
 
-    >>> contents = ['hello {0} hello'.format(''.join([random.choice(string.letters) for y in range(random.randint(5,10))])) for x in range(10)]
+    >>> contents = ['hello {0} hello'.format(''.join([random.choice(string.ascii_letters) for y in range(random.randint(5,10))])) for x in range(10)]
     >>> fields = [Field("hello ", name="f0"), Field(ASCII(nbChars=(5,10)), name="f1"), Field(" hello", name="f2")]
     >>> symbol = Symbol(fields=fields)
     >>> alignedData = DataAlignment.align(contents, symbol, encoded=True)
-    >>> print len(alignedData)
+    >>> print(len(alignedData))
     10
 
     >>> # one more fun test case
@@ -78,9 +78,9 @@ class DataAlignment(object):
     >>> fields = [Field(ASCII('hello '), name="f1"), Field(Agg([Alt([ASCII("toto"), ASCII("to")]), Alt([ASCII("to"), ASCII("toto")])]), name="f2"), Field(ASCII(', welcome'), name="f3")]
     >>> symbol = Symbol(fields=fields)
     >>> alignedData = DataAlignment.align(data, symbol)
-    >>> print len(alignedData)
+    >>> print(len(alignedData))
     5
-    >>> print alignedData
+    >>> print(alignedData)
     f1       | f2       | f3         
     -------- | -------- | -----------
     'hello ' | 'tototo' | ', welcome'
@@ -105,7 +105,7 @@ class DataAlignment(object):
 
     >>> symbol = Symbol(fields=headerFields+bodyFields)
     >>> alignedData2 = DataAlignment.align(messages, symbol)
-    >>> print alignedData2
+    >>> print(alignedData2)
     f1      | f2    | f3         | f4   | f5         
     ------- | ----- | ---------- | ---- | -----------
     'hello' | 'PUT' | 'toto'     | 'PA' | '343'      
@@ -121,7 +121,7 @@ class DataAlignment(object):
         :param data: the list of data that will be aligned, data must be encoded in HexaString
         :type data: a :class:`list` of data to align
         :param field: the format definition that will be user
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :keyword depth: the limit in depth in the format (use None for not limit)
         :type depth: :class:`int`
         :keyword encoded: indicates if the result should be encoded following field definition
@@ -156,11 +156,11 @@ class DataAlignment(object):
         targetedFieldLeafFields = rootLeafFields
 
         result.headers = [str(field.name) for field in targetedFieldLeafFields]
-        from netzob.Common.Models.Vocabulary.Domain.Parser.MessageParser import MessageParser
+        from netzob.Model.Vocabulary.Domain.Parser.MessageParser import MessageParser
         for d in self.data:
             mp = MessageParser()
             # alignedMsg = mp.parseRaw(TypeConverter.convert(d, HexaString, Raw), targetedFieldLeafFields)
-            alignedMsg = mp.parseRaw(d, targetedFieldLeafFields)            
+            alignedMsg = next(mp.parseRaw(d, targetedFieldLeafFields))            
 
             alignedEncodedMsg = []
             for ifield, currentField in enumerate(targetedFieldLeafFields):
@@ -168,16 +168,17 @@ class DataAlignment(object):
                 # now we apply encoding and mathematic functions
                 fieldValue = alignedMsg[ifield]
             
-                if self.encoded and len(currentField.encodingFunctions.values()) > 0:
-                    for encodingFunction in currentField.encodingFunctions.values():
+                if self.encoded and len(list(currentField.encodingFunctions.values())) > 0:
+                    for encodingFunction in list(currentField.encodingFunctions.values()):
                         fieldValue = encodingFunction.encode(fieldValue)
                 else:
                     fieldValue = TypeConverter.convert(fieldValue, BitArray, Raw)
-
+                
                 if currentField in self.field._getLeafFields(depth=self.depth):
                     alignedEncodedMsg.append(fieldValue)
 
             result.append(alignedEncodedMsg)
+
 
         return result
 
@@ -189,7 +190,7 @@ class DataAlignment(object):
     #     :param data: the data to split must be encoded in hexastring
     #     :type data: :class:`str`
     #     :param fields: the list of fields to use to parse the specified data
-    #     :type fields: a list of :class:`netzob.Common.Models.Vocabulary.Field.Field`
+    #     :type fields: a list of :class:`netzob.Model.Vocabulary.Field.Field`
     #     """
 
     #     if data is None:
@@ -244,7 +245,7 @@ class DataAlignment(object):
         :param data: the data to align as a list of hexastring
         :type data: :class:`list`
         :param field : the field to consider when aligning
-        :type: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :keyword depth: maximum field depth to consider (similar to layer depth)
         :type depth: :class:`int`.
         :keyword encoded: set to True if you want the returned result to follow the encoding functions
@@ -257,13 +258,32 @@ class DataAlignment(object):
         return dAlignment.execute()
 
     # Properties
+    @property
+    def data(self):
+        """The list of data to align.
+        """
+        return self.__data
+
+    @data.setter
+    def data(self, data):
+        if data is None:
+            raise Exception("Data cannot be None")
+        val = []
+        for d in data:
+            if isinstance(d, str):
+                val.append(bytes(d, "utf-8"))
+            elif isinstance(d, bytes):
+                val.append(d)
+            else:
+                raise Exception("Invalid type, data can only be an str or a bytes not {}: {}".format(type(data), d))
+        self.__data = val
 
     @property
     def field(self):
         """The field that contains the definition domain used
         to align data
 
-        :type: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         """
         return self.__field
 
@@ -329,3 +349,4 @@ class DataAlignment(object):
             raise ValueError("Styled cannot be None")
 
         self.__styled = styled
+

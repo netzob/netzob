@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -58,21 +58,21 @@ class SortedTypedList(object):
 
     >>> from netzob.all import *
     >>> from netzob.Common.Utils.SortedTypedList import SortedTypedList
-    >>> msg1 = RawMessage("msg1", date=25.0)
-    >>> msg2 = RawMessage("msg2", date=2.0)
-    >>> msg3 = RawMessage("msg3", date=1456487548.0)
+    >>> msg1 = RawMessage(b"msg1", date=25.0)
+    >>> msg2 = RawMessage(b"msg2", date=2.0)
+    >>> msg3 = RawMessage(b"msg3", date=1456487548.0)
     >>> l = SortedTypedList(RawMessage, [msg2, msg3, msg1])
-    >>> print l.values()[0]
+    >>> print(list(l.values())[0])
     [0;32m[2.0 [0;m[1;32mNone[1;m[0;32m->[0;m[1;32mNone[1;m[0;32m][0;m 'msg2'
 
-    >>> msg4 = RawMessage("msg4", date=145548.0)
+    >>> msg4 = RawMessage(b"msg4", date=145548.0)
     >>> l.add(msg4)
-    >>> msg5 = RawMessage("msg5", date=14.0)
-    >>> msg6 = RawMessage("msg6", date=1745645548.0)
+    >>> msg5 = RawMessage(b"msg5", date=14.0)
+    >>> msg6 = RawMessage(b"msg6", date=1745645548.0)
     >>> l.addAll([msg5, msg6])
-    >>> print l.values()[5]
+    >>> print(list(l.values())[5])
     [0;32m[1745645548.0 [0;m[1;32mNone[1;m[0;32m->[0;m[1;32mNone[1;m[0;32m][0;m 'msg6'
-    >>> print len(l)
+    >>> print(len(l))
     6
 
     """
@@ -114,7 +114,7 @@ class SortedTypedList(object):
         """
 
         l = []
-        for x in self.__treePriorities.keys():
+        for x in list(self.__treePriorities.keys()):
             l.extend(self.__mapMessages[x])
         return l
 
@@ -153,11 +153,12 @@ class SortedTypedList(object):
         return len(self.__treePriorities)
 
     def __str__(self):
-        return ', \n'.join([str(v) for v in self.values()])
+        return ', \n'.join([str(v) for v in list(self.values())])
 
     def __repr__(self):
         return repr(str(self))
 
     def __iter__(self):
         """SortedTypedList is an iterable over its values (and not its keys)."""
-        return self.__treePriorities.values().__iter__()
+        return list(self.__treePriorities.values()).__iter__()
+

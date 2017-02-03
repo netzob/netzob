@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -31,14 +31,13 @@
 #+---------------------------------------------------------------------------+
 import unittest
 import os.path
-import os
 import logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
-#from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
-from netzob import NetzobResources
-#from netzob.Common.Workspace import Workspace
+# from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+# from netzob import NetzobResources
+# from netzob.Common.Workspace import Workspace
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -67,6 +66,3 @@ class NetzobTestCase(unittest.TestCase):
         # # Before setting workspace, we verify it exists
         # if os.path.isdir(workspacePath):
         #     NetzobResources.WORKSPACE_DIR = workspacePath
-
-    def getWorkspace(self):
-        return Workspace.loadWorkspace(NetzobResources.WORKSPACE_DIR)

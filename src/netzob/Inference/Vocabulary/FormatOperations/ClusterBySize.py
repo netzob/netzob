@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -43,14 +43,14 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Common.Models.Vocabulary.Field import Field
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
-from netzob.Common.Models.Types.TypeConverter import TypeConverter
-from netzob.Common.Models.Types.HexaString import HexaString
-from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
-from netzob.Common.Models.Vocabulary.Domain.DomainFactory import DomainFactory
+from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.Field import Field
+from netzob.Model.Vocabulary.Symbol import Symbol
+from netzob.Model.Types.TypeConverter import TypeConverter
+from netzob.Model.Types.HexaString import HexaString
+from netzob.Model.Types.Raw import Raw
+from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
+from netzob.Model.Vocabulary.Domain.DomainFactory import DomainFactory
 
 
 @NetzobLogger
@@ -70,9 +70,9 @@ class ClusterBySize(object):
         >>> clusterer = ClusterBySize()
         >>> newSymbols = clusterer.cluster(messages)
         >>> for sym in newSymbols:
-        ...     print "[" + sym.name + "]"
+        ...     print("[" + sym.name + "]")
         ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
-        ...     print sym
+        ...     print(sym)
         [symbol_9]
         Field               
         --------------------
@@ -93,7 +93,7 @@ class ClusterBySize(object):
         ----------------
 
         :param messages: the messages to cluster.
-        :type messages: a list of :class:`netzob.Common.Models.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+        :type messages: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
         :raise Exception if something bad happens
         """
 
@@ -105,14 +105,15 @@ class ClusterBySize(object):
         messagesByLen = {}
         for msg in messages:
             l = len(msg.data)
-            if not l in messagesByLen.keys():
+            if not l in list(messagesByLen.keys()):
                 messagesByLen[l] = []
             messagesByLen[l].append(msg)
 
         # Create new symbols for each group of equivalend message size
         newSymbols = []
-        for (length, msgs) in messagesByLen.items():
+        for (length, msgs) in list(messagesByLen.items()):
             s = Symbol(messages=msgs, name="symbol_{0}".format(str(length)))
             newSymbols.append(s)
 
         return newSymbols
+

@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -51,7 +51,7 @@ class JSONSerializator(object):
 
         >>> from netzob.all import *
         >>> msg = RawMessage("hello")
-        >>> print JSONSerializator.serialize(msg)
+        >>> print(JSONSerializator.serialize(msg))
 
         It's not possible to serialize a None object
 
@@ -71,14 +71,15 @@ class JSONSerializator(object):
 
         typeObj = type(obj)
         props = []
-        for entry in typeObj.__dict__.values():
+        for entry in list(typeObj.__dict__.values()):
             if inspect.isdatadescriptor(entry):
                 props.append(entry)
 
         for prop in props:
-            print prop.fget.__name__, prop.fget
+            print(prop.fget.__name__, prop.fget)
             
                                         
                 
     
         return "TEST"
+

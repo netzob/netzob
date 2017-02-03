@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -43,11 +43,10 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
-from netzob.Common.Models.Vocabulary.Field import Field
-from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Utils.NetzobRegex import NetzobRegex
+from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.Symbol import Symbol
+from netzob.Model.Vocabulary.Field import Field
+from netzob.Model.Types.Raw import Raw
 
 
 @NetzobLogger
@@ -68,7 +67,7 @@ class FieldReseter(object):
     >>> f3 = Field(Raw(), name="f3")
     >>> symbol = Symbol([f1, f2, f3], messages=messages)
     >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print symbol
+    >>> print(symbol)
     f1   | f21  | f22  | f3      
     ---- | ---- | ---- | --------
     '00' | 'ff' | '2f' | '000000'
@@ -78,7 +77,7 @@ class FieldReseter(object):
     >>> reseter = FieldReseter()
     >>> reseter.reset(symbol)
     >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print symbol
+    >>> print(symbol)
     Field         
     --------------
     '00ff2f000000'
@@ -94,7 +93,7 @@ class FieldReseter(object):
 
 
         :param field: the field we want to reset
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :raise Exception if something bad happens
         """
 
@@ -109,4 +108,3 @@ class FieldReseter(object):
 
         if isinstance(field, Field):
             field.domain = Raw(None)
-            field.regex = NetzobRegex.buildDefaultRegex()

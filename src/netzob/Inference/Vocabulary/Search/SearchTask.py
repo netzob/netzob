@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -56,10 +56,10 @@ class SearchTask(object):
     >>> from netzob.all import *
     >>> data = TypeConverter.convert("netzob", ASCII, BitArray)
     >>> searchTask = SearchTask(data, "original version")
-    >>> print searchTask.description
+    >>> print(searchTask.description)
     original version
-    >>> print TypeConverter.convert(searchTask.data, BitArray, Raw)
-    netzob
+    >>> print(TypeConverter.convert(searchTask.data, BitArray, Raw))
+    b'netzob'
 
     """
 
@@ -83,7 +83,7 @@ class SearchTask(object):
     def data(self):
         """Data that will be searched.
 
-        :type: :class:`netzob.Common.Models.Types.AbstractType.AbstractType`
+        :type: :class:`netzob.Model.Types.AbstractType.AbstractType`
         """
 
         return self.__data
@@ -124,3 +124,4 @@ class SearchTask(object):
     def properties(self, properties):
         if properties is not None:
             self.__properties.update(properties)
+

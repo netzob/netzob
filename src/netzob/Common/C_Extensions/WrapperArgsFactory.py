@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -29,7 +29,7 @@
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.C_Extensions.WrapperMessage import WrapperMessage
-from netzob.Common.Models.Vocabulary.Messages.RawMessage import RawMessage
+from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Common.NetzobException import NetzobException
 from netzob import _libScoreComputation
 
@@ -46,7 +46,7 @@ class WrapperArgsFactory(object):
             "_libScoreComputation.computeSimilarityMatrix": self.computeSimilarityMatrix,
             "_libNeedleman.alignMessages": self.alignMessages}
 
-        if(function in self.typeList.keys()):
+        if(function in list(self.typeList.keys())):
             self.function = function
         else:
             raise NetzobException("Function " + str(function) + " not implemented")
@@ -63,6 +63,6 @@ class WrapperArgsFactory(object):
         self.args = []
         for (data, tags) in values:
             message = RawMessage(data=data)
-            for pos, tag in tags.items():
+            for pos, tag in list(tags.items()):
                 message.addSemanticTag(pos, tag)
             self.args.append(WrapperMessage(message, "Virtual symbol"))

@@ -67,7 +67,7 @@ class manpage_command(Command):
             cmdLine = cmdLineClass()
             self._parser = cmdLine.getConfiguredParser()
 
-        except ImportError, err:
+        except ImportError as err:
             raise
 
     def finalize_options(self):

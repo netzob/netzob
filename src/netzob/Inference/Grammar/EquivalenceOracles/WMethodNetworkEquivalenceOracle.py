@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -42,7 +42,7 @@ import os
 #+----------------------------------------------
 from netzob.Inference.Grammar.EquivalenceOracles.AbstractEquivalenceOracle import AbstractEquivalenceOracle
 from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery
-from netzob.Common.Models.Vocabulary.EmptySymbol import EmptySymbol
+from netzob.Model.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Inference.Grammar.Oracles.NetworkOracle import NetworkOracle
 
 
@@ -201,8 +201,8 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
 
         for i in range(1, v + 1):
             self.log.info("Computing X^{0}: ".format(str(i)))
-            self.log.info("MQ INputs: ".format(str(len(mqInputs))))
-            self.log.info("W: ".format(str(len(W))))
+            self.log.info("MQ INputs: {}".format(str(len(mqInputs))))
+            self.log.info("W: {}".format(str(len(W))))
             X[i] = []
             previousX = X[i - 1]
             self.log.info(previousX)

@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -37,7 +37,7 @@ from datetime import datetime
 
 from common.NetzobTestCase import NetzobTestCase
 from netzob.Common.ExecutionContext import ExecutionContext
-from netzob.Common.Models.RawMessage import RawMessage
+from netzob.Model.RawMessage import RawMessage
 from netzob.Common.Symbol import Symbol
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Type.UnitSize import UnitSize
@@ -54,7 +54,7 @@ from netzob.all import *
 class test_Needleman(NetzobTestCase):
 
     def generateRandomString(self, min_len, max_len):
-        return ''.join((random.choice(string.letters + string.digits) for _ in xrange(random.randint(min_len, max_len))))
+        return ''.join((random.choice(string.letters + string.digits) for _ in range(random.randint(min_len, max_len))))
 
     def generateRandomBytes(self, min_len, max_len):
         result = ""
@@ -98,9 +98,9 @@ class test_Needleman(NetzobTestCase):
         nwEngine.alignField(symbol.getField())
         symbol.getField().setFormat(Format.STRING)
 
-        print "Computed Regex : {0}".format(symbol.getRegex())
-        print "======="
-        print symbol.getCells(True)
+        print("Computed Regex : {0}".format(symbol.getRegex()))
+        print("=======")
+        print(symbol.getCells(True))
 
         computedFields = symbol.getExtendedFields()
         self.assertTrue(len(computedFields) > 1, "Only one field has been computed which tells us something went wrong.")
@@ -154,7 +154,7 @@ class test_Needleman(NetzobTestCase):
 
         symbol.getField().setFormat(Format.STRING)
 
-        print "Number of computed fields : {0}".format(len(symbol.getExtendedFields()))
+        print("Number of computed fields : {0}".format(len(symbol.getExtendedFields())))
         self.assertEqual(4, len(symbol.getExtendedFields()))
         nbValidMessages = 0
 
@@ -164,9 +164,9 @@ class test_Needleman(NetzobTestCase):
                 nbValidMessages += 1
             self.assertTrue(isValid)
 
-        print symbol.getCells()
+        print(symbol.getCells())
 
-        print "Computed regex is valid for {0}/{1} messages.".format(nbValidMessages, len(symbol.getMessages()))
+        print("Computed regex is valid for {0}/{1} messages.".format(nbValidMessages, len(symbol.getMessages())))
 
 
     # def test_randomAlignmentsWithTwoCenteredMessages(self):

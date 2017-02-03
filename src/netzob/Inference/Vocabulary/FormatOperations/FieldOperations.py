@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -43,11 +43,11 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Common.Models.Vocabulary.Symbol import Symbol
-from netzob.Common.Models.Vocabulary.Field import Field
-from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Agg import Agg
+from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.Symbol import Symbol
+from netzob.Model.Vocabulary.Field import Field
+from netzob.Model.Types.Raw import Raw
+from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
 
 
 @NetzobLogger
@@ -69,7 +69,7 @@ class FieldOperations(object):
         >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
 
-        >>> print symbol
+        >>> print(symbol)
         f1   | f2     | f3     | f4  
         ---- | ------ | ------ | ----
         '00' | 'ff2f' | '0000' | '00'
@@ -79,7 +79,7 @@ class FieldOperations(object):
         
         >>> fo = FieldOperations()
         >>> fo.mergeFields(f2, f3)
-        >>> print symbol
+        >>> print(symbol)
         f1   | Merge      | f4  
         ---- | ---------- | ----
         '00' | 'ff2f0000' | '00'
@@ -88,7 +88,7 @@ class FieldOperations(object):
         ---- | ---------- | ----
 
         >>> fo.mergeFields(symbol.fields[0], symbol.fields[1])
-        >>> print symbol
+        >>> print(symbol)
         Merge        | f4  
         ------------ | ----
         '00ff2f0000' | '00'
@@ -97,7 +97,7 @@ class FieldOperations(object):
         ------------ | ----
         
         >>> fo.mergeFields(symbol.fields[0], symbol.fields[1])
-        >>> print symbol
+        >>> print(symbol)
         Merge         
         --------------
         '00ff2f000000'
@@ -106,9 +106,9 @@ class FieldOperations(object):
         --------------
         
         :param field1: the left field to merge
-        :type field1: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field1: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :param field2: the right field to merge
-        :type field2: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field2: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
 
         :raise Exception if something bad happens
         """
@@ -143,8 +143,9 @@ class FieldOperations(object):
         # build a new field domain
         newDomain = Agg([field1.domain, field2.domain])
         newField = Field(domain=newDomain, name="Merge")
-        newField.encodingFunctions = field1.encodingFunctions.values()
+        newField.encodingFunctions = list(field1.encodingFunctions.values())
         parent = field1.parent
         before = parent.fields[:iField1]
         after = parent.fields[iField2 + 1:]
         parent.fields = before + [newField] + after
+

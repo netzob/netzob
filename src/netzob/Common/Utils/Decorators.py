@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -35,6 +35,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import logging
+import os
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -93,7 +94,7 @@ try:
                 self.handleError(record)
 
     has_colour = True
-except Exception, e:
+except Exception as e:
     has_colour = False
 
 
@@ -106,14 +107,17 @@ def NetzobLogger(klass):
 
     # Verify if a logger already exists
     found = False
-    for k, v in klass.__dict__.iteritems():
+    for k, v in list(klass.__dict__.items()):
         if isinstance(v, logging.Logger):
             found = True
             break
     if not found:
         klass._logger = logging.getLogger(klass.__name__)
+        try:
+            klass._logger.setLevel(int(os.environ['NETZOB_LOG_LEVEL']))
+        except:
+            pass
         handler = ColourStreamHandler() if has_colour else logging.StreamHandler()
-        handler.setLevel(logging.DEBUG)
         fmt = '%(relativeCreated)d: [%(levelname)s] %(module)s:%(funcName)s: %(message)s'
         handler.setFormatter(logging.Formatter(fmt))
         klass._logger.addHandler(handler)
@@ -122,7 +126,7 @@ def NetzobLogger(klass):
     # Exclude logger from __getstate__
     def getState(self, **kwargs):
         r = dict()
-        for k, v in self.__dict__.items():
+        for k, v in list(self.__dict__.items()):
             if not isinstance(v, logging.Logger):
                 r[k] = v
         return r

@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -47,7 +47,7 @@ class WrapperMessage(object):
 
         for i in range(0, len(rawData)):
             # SemanticTag can be "None" (that's why the str method)
-            if i * 2 in message.semanticTags.keys():
+            if i * 2 in list(message.semanticTags.keys()):
                 semanticTag = str(message.semanticTags[i * 2])
             else:
                 semanticTag = str(None)

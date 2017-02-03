@@ -2,6 +2,16 @@
 Netzob : Inferring Communication Protocols
 ==========================================
 
+.. image:: https://travis-ci.org/netzob/netzob.svg?branch=next
+    :target: https://travis-ci.org/netzob/netzob
+
+.. image:: https://coveralls.io/repos/github/netzob/netzob/badge.svg?branch=next
+   :target: https://coveralls.io/github/netzob/netzob?branch=next
+
+.. image:: https://landscape.io/github/netzob/netzob/next/landscape.svg?style=flat
+   :target: https://landscape.io/github/netzob/netzob/next
+   :alt: Code Health
+
 About Netzob
 ============
 
@@ -25,15 +35,14 @@ fixed fields protocols (like IP and TCP) and variable-length fields protocols (l
 Technical Description
 ---------------------
 
-This version of Netzob must be used as a python 2.7 library. It can either be imported in your scripts
+This version of Netzob must be used as a Python 3 library. It can either be imported in your scripts
 or in your favorite interactive shell (ipython?).
 
 Once installed, we recommend the following statement to import Netzob::
 
   from netzob.all import *
 
-Netzob's source code is mostly made of Python (90%) with some specific
-extensions in C (6%). 
+Netzob's source code is mostly made of Python (90%) with some specific extensions in C (6%). 
 
 More Information
 ----------------
@@ -51,11 +60,11 @@ Get Started with Netzob
 Install it
 ----------
 
-First thing to do is to check the version of your python interpretor.
-Netzob requires python 2.7::
+First thing to do is to check the version of your python3 interpretor.
+Netzob requires python 3::
 
-  $ python --version
-  Python 2.7.11
+  $ python3 --version
+  Python 3.4.2
 
 As a 'classic' python project, Netzob is provided with its
 ``setup.py``. This file defines what and how to install the project on a
@@ -65,12 +74,10 @@ This file depends on ``setuptools`` which like few other modules cannot be
 automatically installed. The reason why, you have to manually install the
 following bunch of prerequisites before initiating Netzob's install process.
 
-* python
-* python-dev
-* python-impacket
-* python-setuptools
+* python3
+* python3-dev
+* python3-setuptools
 * build-essential  
-* python-numpy
   
 We also highly recommend to install the following additional dependencies:
 
@@ -78,15 +85,16 @@ We also highly recommend to install the following additional dependencies:
 
 Once the required dependencies are installed, you can build and install Netzob::
 
-  # python setup.py install
+  # python3 setup.py install
 
 Or if you prefer a more developer-friendly install::
 
-  $ python setup.py develop --user
+  $ python3 setup.py develop --user
 
   
-Docker container:
-^^^^^^^^^^^^^^^^^
+Docker container
+^^^^^^^^^^^^^^^^
+
 A docker build is offered from the docker registry repository. You can download 
 it from command line with the following command:: 
 
@@ -103,24 +111,38 @@ Once installed, running Netzob is as simple as executing the provided script::
 This script is in Python's path if you've installed Netzob, otherwise
 (in developer mode), it's located in the top distribution directory.
 
+Docker container
+^^^^^^^^^^^^^^^^
+
 If you used the docker container, the following command will allow you to start 
 netzob with your current directory attached to ``/data`` into the container::
 
   $ docker run --rm -it -v $(pwd):/data netzob/netzob
 
-
 Miscellaneous
 -------------
 
-Configuration requirements for Network and PCAP input::
+Configuration of Log Level
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-*Note: Capturing data from network interfaces often requires admin privileges. Before we provide a cleaner and secure way (see issue 425 on the bugtracker for updated information - https://dev.netzob.org/issues/425), a possible HACK is to provide additionnal capabilities to the python binary.* ::
+Environment variable ```NETZOB_LOG_VERBOSITY``` can be use to set the logging level. The numeric values of logging levels are given in the Python Documentation of the `Logging Module <https://docs.python.org/3.5/library/logging.html#levels>`_. For example, the following command starts netzob in *DEBUG* mode::
 
-  $ sudo setcap cap_net_raw=ep /usr/bin/python2.XX
+  $ NETZOB_LOG_LEVEL=10 ./netzob
 
-Configuration requirements for IPC input on Ubuntu::
+Configuration requirements for Network and PCAP input
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  $ sudo bash -c "echo 0 > /proc/sys/kernel/yama/ptrace_scope"
+Capturing data from network interfaces often requires admin privileges. 
+Before we provide a cleaner and secure way (see issue 425 on the bugtracker for updated information - https://dev.netzob.org/issues/425), a possible *HACK* is to provide additional capabilities to the python binary::
+
+$ sudo setcap cap_net_raw=ep /usr/bin/python3.XX
+
+Configuration requirements for IPC input on Ubuntu
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The following command must be triggered before collecting IPC exchanges with Netzob on Ubuntu (see https://www.kernel.org/doc/Documentation/security/Yama.txt)::
+
+$ sudo bash -c "echo 0 > /proc/sys/kernel/yama/ptrace_scope"
 
 Documentation
 =============
@@ -144,7 +166,7 @@ There are multiple ways to help-us.
 Defects and Features  Requests
 ------------------------------
 
-Help-us by reporting bugs and requesting features using the `Bug Tracker <https://dev.netzob.org/projects/netzob/issues>`_.
+Help-us by reporting bugs and requesting features using the `Bug Tracker <https://github.com/netzob/netzob/issues>`_.
 
 Join the Development Team
 -------------------------
@@ -166,10 +188,10 @@ Authors, Contributors and Sponsors
 See the top distribution file ``AUTHORS.txt`` for the detailed and updated list
 of authors, contributors and sponsors.
 
-License
-=======
+Licenses
+========
 
-This software is licensed under the GPLv3 License. See the ``COPYING.txt`` file
+This software is provided under the GPLv3 License. See the ``COPYING.txt`` file
 in the top distribution directory for the full license text.
 
 The documentation is under the CC-BY-SA licence.

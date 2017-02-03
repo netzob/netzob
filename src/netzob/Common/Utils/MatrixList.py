@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -42,8 +42,9 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.Utils.Decorators import NetzobLogger
 
-
+@NetzobLogger
 class MatrixList(list):
     """This type of list has been created to represent it as matrix
     which means its a list of list.
@@ -64,14 +65,10 @@ class MatrixList(list):
         self.__headers = []
         for h in headers:
             self.__headers.append(str(h))
-
-
         
     def __repr__(self):
         # Prepare data to be returned
         r_repr = []
-
-        
         
         if len(self) > 0:
             nb_col = len(self[0])
@@ -84,11 +81,17 @@ class MatrixList(list):
         for r in self:
             r1_repr = []
             for r1 in r:
-                r1_repr.append(repr(r1))
+                if isinstance(r1, bytes):
+                    try:
+                        r1 = r1.decode('utf-8')
+                    except UnicodeDecodeError:
+                        pass
+                r1 = repr(r1)
+                r1_repr.append(r1)
             r_repr.append(r1_repr)
 
         # Prepare format
-        cs = zip(*r_repr)
+        cs = list(zip(*r_repr))
         c_ws = [max(len(value) for value in c) for c in cs]
         line = ["-"*w for w in c_ws]
         r_repr.insert(1, line)

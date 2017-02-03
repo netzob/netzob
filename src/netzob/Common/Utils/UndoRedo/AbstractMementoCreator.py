@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -44,13 +44,11 @@ import abc
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 
-class AbstractMementoCreator(object):
+class AbstractMementoCreator(object, metaclass=abc.ABCMeta):
     """Parent class of objects to save for Undo/Redo.
     
     This abstract class must be inherited by all the objects which need to be saved for Undo/Redo processes.
     These objects have to provide two methods, storeInMemento and restoreFromMemento both used to save and restore current state of the object."""
-
-    __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
     def storeInMemento(self):

@@ -6,7 +6,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -43,14 +43,14 @@ import operator
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Common.Models.Types.AbstractType import AbstractType
-from netzob.Common.Models.Vocabulary.Domain.DomainFactory import DomainFactory
-from netzob.Common.Models.Vocabulary.Field import Field
-from netzob.Common.Models.Types.TypeConverter import TypeConverter
-from netzob.Common.Models.Types.BitArray import BitArray
-from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Types.HexaString import HexaString
+from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Domain.DomainFactory import DomainFactory
+from netzob.Model.Vocabulary.Field import Field
+from netzob.Model.Types.TypeConverter import TypeConverter
+from netzob.Model.Types.BitArray import BitArray
+from netzob.Model.Types.Raw import Raw
+from netzob.Model.Types.HexaString import HexaString
 
 
 @NetzobLogger
@@ -60,11 +60,11 @@ class FieldSplitStatic(object):
 
     >>> import binascii
     >>> from netzob.all import *
-    >>> samples = ["00ff2f00000010",	"00001000000011",	"00fe1f00000012",	"00002000000013", "00ff1f00000014",	"00ff1f00000015",	"00ff2f00000016",	"00fe1f00000017"]
+    >>> samples = [b"00ff2f00000010", b"00001000000011", b"00fe1f00000012", b"00002000000013", b"00ff1f00000014", b"00ff1f00000015", b"00ff2f00000016", b"00fe1f00000017"]
     >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
     >>> symbol = Symbol(messages=messages)
     >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print symbol
+    >>> print(symbol)
     Field           
     ----------------
     '00ff2f00000010'
@@ -79,7 +79,7 @@ class FieldSplitStatic(object):
     
     >>> fs = FieldSplitStatic()
     >>> fs.execute(symbol)
-    >>> print symbol
+    >>> print(symbol)
     Field-0 | Field-1 | Field-2  | Field-3
     ------- | ------- | -------- | -------
     '00'    | 'ff2f'  | '000000' | '10'   
@@ -94,7 +94,7 @@ class FieldSplitStatic(object):
 
     >>> fs = FieldSplitStatic(mergeAdjacentStaticFields=False, mergeAdjacentDynamicFields=False)
     >>> fs.execute(symbol)
-    >>> print symbol
+    >>> print(symbol)
     Field-0 | Field-1 | Field-2 | Field-3 | Field-4 | Field-5 | Field-6
     ------- | ------- | ------- | ------- | ------- | ------- | -------
     '00'    | 'ff'    | '2f'    | '00'    | '00'    | '00'    | '10'   
@@ -109,7 +109,7 @@ class FieldSplitStatic(object):
 
     >>> fs = FieldSplitStatic(mergeAdjacentStaticFields=True, mergeAdjacentDynamicFields=False)
     >>> fs.execute(symbol)
-    >>> print symbol
+    >>> print(symbol)
     Field-0 | Field-1 | Field-2 | Field-3  | Field-4
     ------- | ------- | ------- | -------- | -------
     '00'    | 'ff'    | '2f'    | '000000' | '10'   
@@ -124,7 +124,7 @@ class FieldSplitStatic(object):
 
     >>> fs = FieldSplitStatic(mergeAdjacentStaticFields=False, mergeAdjacentDynamicFields=True)
     >>> fs.execute(symbol)
-    >>> print symbol
+    >>> print(symbol)
     Field-0 | Field-1 | Field-2 | Field-3 | Field-4 | Field-5
     ------- | ------- | ------- | ------- | ------- | -------
     '00'    | 'ff2f'  | '00'    | '00'    | '00'    | '10'   
@@ -141,7 +141,7 @@ class FieldSplitStatic(object):
     We can also plays with the unitsize:
     >>> fs = FieldSplitStatic(AbstractType.UNITSIZE_8, mergeAdjacentDynamicFields=False)
     >>> fs.execute(symbol)
-    >>> print symbol
+    >>> print(symbol)
     Field-0 | Field-1 | Field-2 | Field-3  | Field-4
     ------- | ------- | ------- | -------- | -------
     '00'    | 'ff'    | '2f'    | '000000' | '10'   
@@ -156,7 +156,7 @@ class FieldSplitStatic(object):
 
     >>> fs = FieldSplitStatic(AbstractType.UNITSIZE_16, mergeAdjacentDynamicFields=False)
     >>> fs.execute(symbol)
-    >>> print symbol
+    >>> print(symbol)
     Field-0 | Field-1 | Field-2 | Field-3
     ------- | ------- | ------- | -------
     '00ff'  | '2f00'  | '0000'  | '10'   
@@ -171,7 +171,7 @@ class FieldSplitStatic(object):
 
     >>> fs = FieldSplitStatic(AbstractType.UNITSIZE_32, mergeAdjacentDynamicFields=False)
     >>> fs.execute(symbol)
-    >>> print symbol
+    >>> print(symbol)
     Field-0    | Field-1 
     ---------- | --------
     '00ff2f00' | '000010'
@@ -186,7 +186,7 @@ class FieldSplitStatic(object):
 
     >>> fs = FieldSplitStatic(AbstractType.UNITSIZE_64, mergeAdjacentDynamicFields=False)
     >>> fs.execute(symbol)
-    >>> print symbol
+    >>> print(symbol)
     Field-0         
     ----------------
     '00ff2f00000010'
@@ -224,7 +224,7 @@ class FieldSplitStatic(object):
         Children of the specified field will be replaced with new fields.
 
         :param field: the format definition that will be user
-        :type field: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :raise Exception: if something bad happens
         """
 
@@ -249,7 +249,7 @@ class FieldSplitStatic(object):
                 if i < len(fieldValue):
                     currentIndexValue.append(fieldValue[i:min(len(fieldValue), i + stepUnitsize)])
                 else:
-                    currentIndexValue.append('')
+                    currentIndexValue.append(b'')
             indexedValues.append(currentIndexValue)
 
         # If requested, merges the adjacent static fields
@@ -263,11 +263,11 @@ class FieldSplitStatic(object):
                 else:
                     # dynamic
                     if len(staticSequences) > 0:
-                        result.append([''.join(staticSequences)])
+                        result.append([b''.join(staticSequences)])
                         staticSequences = []
                     result.append(values)
             if len(staticSequences) > 0:
-                result.append([''.join(staticSequences)])
+                result.append([b''.join(staticSequences)])
             indexedValues = result
 
         # If requested, merges the adjacent dynamic fields
@@ -281,18 +281,18 @@ class FieldSplitStatic(object):
                 else:
                     # static
                     if len(dynamicSequences) > 0:
-                        dynValues = map(None, *dynamicSequences)
+                        dynValues = zip(*dynamicSequences)
                         tmp_result = []
                         for d in dynValues:
-                            tmp_result.append(''.join([x if x is not None else '' for x in d]))
+                            tmp_result.append(b''.join([x if x is not None else b'' for x in d]))
                         result.append(tmp_result)
                         dynamicSequences = []
                     result.append(values)
             if len(dynamicSequences) > 0:
-                dynValues = map(None, *dynamicSequences)
+                dynValues = zip(*dynamicSequences)
                 tmp_result = []
                 for d in dynValues:
-                    tmp_result.append(''.join([x if x is not None else '' for x in d]))
+                    tmp_result.append(b''.join([x if x is not None else b'' for x in d]))
                 result.append(tmp_result)
 
             indexedValues = result
@@ -306,7 +306,7 @@ class FieldSplitStatic(object):
 
         # attach encoding functions
         for newField in newFields:
-            newField.encodingFunctions = field.encodingFunctions.values()
+            newField.encodingFunctions = list(field.encodingFunctions.values())
 
         field.fields = newFields
 
@@ -339,7 +339,7 @@ class FieldSplitStatic(object):
         following the value variation every unitSize
 
         :param field : the field to consider when spliting
-        :type: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :keyword mergeAdjacentStaticFields: if set to true, adjacent static fields are merged in a single field
         :type mergeAdjacentStaticFields: :class:`bool`
         :keyword mergeAdjacentDynamicFields: if set to true, adjacent dynamic fields are merged in a single field
@@ -400,3 +400,4 @@ class FieldSplitStatic(object):
             raise TypeError("mergeAdjacentDynamicFields cannot be None")
 
         self.__mergeAdjacentDynamicFields = mergeAdjacentDynamicFields
+

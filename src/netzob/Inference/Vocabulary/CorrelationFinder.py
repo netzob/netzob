@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -31,6 +31,7 @@
 import errno
 import time
 import uuid
+import zlib
 from gettext import gettext as _
 
 #+---------------------------------------------------------------------------+
@@ -46,10 +47,10 @@ except:
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Vocabulary.AbstractField import AbstractField
-from netzob.Common.Models.Types.TypeConverter import TypeConverter
-from netzob.Common.Models.Types.Raw import Raw
-from netzob.Common.Models.Types.Integer import Integer
+from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Types.TypeConverter import TypeConverter
+from netzob.Model.Types.Raw import Raw
+from netzob.Model.Types.Integer import Integer
 from netzob.Inference.Vocabulary.RelationFinder import RelationFinder
 
 
@@ -60,12 +61,12 @@ class CorrelationFinder(object):
 
     >>> import binascii
     >>> from netzob.all import *
-    >>> samples = ["0007ff2f000000000000", "0011ffaaaaaaaaaaaaaabbcc0010000000000000", "0012ffddddddddddddddddddddfe1f000000000000"]
+    >>> samples = [b"0007ff2f000000000000", b"0011ffaaaaaaaaaaaaaabbcc0010000000000000", b"0012ffddddddddddddddddddddfe1f000000000000"]
     >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
     >>> symbol = Symbol(messages=messages)
     >>> Format.splitStatic(symbol)
     >>> rels = CorrelationFinder.find(symbol)
-    >>> print len(rels)
+    >>> print(len(rels))
     64
     """
 
@@ -88,7 +89,7 @@ class CorrelationFinder(object):
         parse the results.
 
         :param symbol: the symbol in which we are looking for correlations
-        :type symbol: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type symbol: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :param minMic: the minimum correlation score 
         :type minMic: :class:`float`
         """
@@ -111,7 +112,7 @@ class CorrelationFinder(object):
     def execute(self, symbol):
         """
         :param symbol: the symbol in which we are looking for correlations
-        :type symbol: :class:`netzob.Common.Models.Vocabulary.AbstractField.AbstractField`
+        :type symbol: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         """
 
         (attributeValues_headers, attributeValues) = self._generateAttributeValuesForSymbol(symbol)
@@ -214,7 +215,7 @@ class CorrelationFinder(object):
 
         if len(cellsDataList) < 1:
             return []
-        result = ["" for cell in cellsDataList[0]]
+        result = [b"" for cell in cellsDataList[0]]
         for cellsData in cellsDataList:
             for i, data in enumerate(cellsData):
                 result[i] += data
@@ -246,10 +247,10 @@ class CorrelationFinder(object):
         for message in messages:
             line = []
             data = message.getStringData()
-            rawContent = TypeConvertor.netzobRawToPythonRaw(data)
-            valCrc32 = zlib.crc32(rawContent) & 0xFFFFFFFFL
+            rawContent = TypeConverter.netzobRawToPythonRaw(data)
+            valCrc32 = zlib.crc32(rawContent) & 0xFFFFFFFF
             line.append(str(valCrc32))
-            lines.append(",".join(line))
+            lines.append(b",".join(line))
         return (header, lines)
 
     def _generateSizeFieldFromBeginingOfField(self, symbol):
@@ -264,14 +265,15 @@ class CorrelationFinder(object):
 
         for i_msg in range(0, len(symbol.getMessages())):
             line = []
-            for field in cells.keys():
+            for field in list(cells.keys()):
                 entry = cells[field][i_msg]
                 for k in range(2, 3, 2):
                     if len(entry) > k:
-                        line.append(TypeConvertor.netzobRawToInteger(entry[:k]))
+                        line.append(TypeConverter.netzobRawToInteger(entry[:k]))
                     else:
-                        line.append(TypeConvertor.netzobRawToInteger(entry))
+                        line.append(TypeConverter.netzobRawToInteger(entry))
 
-            lines.append(",".join(line))
+            lines.append(b",".join(line))
 
         return (header, lines)
+

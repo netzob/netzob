@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -61,15 +61,15 @@ class SearchResult(object):
 
     >>> from netzob.all import *
     >>> from netzob.Inference.Vocabulary.Search.SearchTask import SearchTask
-    >>> target = TypeConverter.convert("Hello world, that is just a test of netzob.", Raw, BitArray)
+    >>> target = TypeConverter.convert(b"Hello world, that is just a test of netzob.", Raw, BitArray)
     >>> searchTask = SearchTask(TypeConverter.convert("o", Raw, BitArray), "letter-o-original")
     >>> ranges = [(4,5), (7,8), (33,34), (40,41)]
     >>> sr = SearchResult(target, searchTask, ranges)
-    >>> print sr.ranges
+    >>> print(sr.ranges)
     [(4, 5), (7, 8), (33, 34), (40, 41)]
-    >>> print TypeConverter.convert(sr.target, BitArray, Raw)
-    Hello world, that is just a test of netzob.
-    >>> print sr.searchTask.description
+    >>> print(TypeConverter.convert(sr.target, BitArray, Raw))
+    b'Hello world, that is just a test of netzob.'
+    >>> print(sr.searchTask.description)
     letter-o-original
 
     """
@@ -115,6 +115,7 @@ class SearchResult(object):
             raise TypeError("Ranges cannot be None")
 
         for (start, end) in ranges:
-            if not isinstance(start, (int, long)) or not isinstance(end, (int, long)) or end <= start:
+            if not isinstance(start, int) or not isinstance(end, int) or end <= start:
                 raise TypeError("Start and end range must be integers and end > start (start={0}, end={1})".format(start, end))
         self.__ranges = ranges
+

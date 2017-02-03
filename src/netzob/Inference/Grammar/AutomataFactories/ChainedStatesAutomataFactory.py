@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -37,10 +37,10 @@
 #| Local application imports
 #+----------------------------------------------
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Common.Models.Grammar.States.State import State
-from netzob.Common.Models.Grammar.Transitions.Transition import Transition
-from netzob.Common.Models.Grammar.Transitions.OpenChannelTransition import OpenChannelTransition
-from netzob.Common.Models.Grammar.Transitions.CloseChannelTransition import CloseChannelTransition
+from netzob.Model.Grammar.States.State import State
+from netzob.Model.Grammar.Transitions.Transition import Transition
+from netzob.Model.Grammar.Transitions.OpenChannelTransition import OpenChannelTransition
+from netzob.Model.Grammar.Transitions.CloseChannelTransition import CloseChannelTransition
 
 
 @NetzobLogger
@@ -70,7 +70,7 @@ class ChainedStatesAutomataFactory(object):
         outputSymbols = None
         while True:
             try:
-                (source, destination, symbol) = it.next()
+                (source, destination, symbol) = next(it)
                 if source == client:
                     if symbol is not None:
                         inputSymbol = symbol
@@ -93,5 +93,5 @@ class ChainedStatesAutomataFactory(object):
         else:
             closeTransition = CloseChannelTransition(startState=sA, endState=sEnd, name="Close")
 
-        from netzob.Common.Models.Grammar.Automata import Automata
+        from netzob.Model.Grammar.Automata import Automata
         return Automata(sStart, symbolList)

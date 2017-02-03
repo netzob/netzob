@@ -5,7 +5,7 @@
 //|                                                                           |
 //|               Netzob : Inferring communication protocols                  |
 //+---------------------------------------------------------------------------+
-//| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+//| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 //| This program is free software: you can redistribute it and/or modify      |
 //| it under the terms of the GNU General Public License as published by      |
 //| the Free Software Foundation, either version 3 of the License, or         |
@@ -39,9 +39,22 @@ static PyMethodDef relation_methods[] = {
     {NULL, NULL, 0, NULL}
 };
 
-PyMODINIT_FUNC init_libRelation(void) {
+PyObject* PyInit__libRelation(void) {
+  static struct PyModuleDef moduledef = {
+    PyModuleDef_HEAD_INIT,
+    "_libRelation",
+    NULL,
+    -1,
+    relation_methods,
+    NULL,
+    NULL,
+    NULL,
+    NULL
+  };
+
+  return PyModule_Create(&moduledef);
+
     /* PyObject *d = PyDict_New(); */
-    (void) Py_InitModule("_libRelation", relation_methods);
     /* exception = PyErr_NewException("_libRelation.error", NULL, NULL); */
     /* PyDict_SetItemString(d, "error", exception); */
 }
@@ -98,11 +111,11 @@ py_find(__attribute__((unused))PyObject* self, PyObject* args) {
         for (j = 0; j < cells_vlen; j++) {
             /* Get, check and copy cells */
             pCell = PySequence_GetItem(pCells, j);
-            if (!PyString_Check(pCell))
+            if (!PyBytes_Check(pCell))
                 goto end2;
-            if ((pppCells[i][j] = malloc(PyString_Size(pCell) * sizeof(**pppCells))) == NULL)
+            if ((pppCells[i][j] = malloc(PyBytes_Size(pCell) * sizeof(**pppCells))) == NULL)
                 goto end2;
-            strcpy(pppCells[i][j], PyString_AsString(pCell));
+            strcpy(pppCells[i][j], PyBytes_AsString(pCell));
         }
     }
     relation_find(&dm, (const char***)pppCells, cells_hlen, cells_vlen);
@@ -141,7 +154,7 @@ create_python_dm(struct relation_datamodel* dm)
     if (!(pDm = PyDict_New()))
         goto error;
     while (dm_it) {
-        pAlgoName = PyString_FromString(dm_it->algo_name);
+        pAlgoName = PyBytes_FromString(dm_it->algo_name);
 
         /* Amend/append a algo/match node */
         if (!(pRefs = PyDict_GetItem(pDm, pAlgoName)))

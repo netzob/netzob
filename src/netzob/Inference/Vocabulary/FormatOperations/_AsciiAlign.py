@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -108,7 +108,7 @@ class AsciiAlign():
 #            symbol.getFields()[0].setFormat(Format.STRING)
 #            tmpSymbols.extend(alignment.getLastResult())
             try:
-#                print "l"
+#                print("l")
                 al = self.computeAlignment(symbol)
                 symbol.getField().setAlignment(al)
                 alignment.buildRegexFromAlignment(symbol, al, self.defaultFormat)
@@ -207,7 +207,7 @@ class AsciiAlign():
                 else:
                     candidates.append(dst)
                     score.append(1)
-        print candidates
+        print(candidates)
         if score.count(max(score)) == 1 and len(candidates) > 2:
             self.server = candidates[score.index(max(score))]
 

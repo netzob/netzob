@@ -5,7 +5,7 @@
 //|                                                                           |
 //|               Netzob : Inferring communication protocols                  |
 //+---------------------------------------------------------------------------+
-//| Copyright (C) 2011-2014 Georges Bossert and Frédéric Guihéry              |
+//| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 //| This program is free software: you can redistribute it and/or modify      |
 //| it under the terms of the GNU General Public License as published by      |
 //| the Free Software Foundation, either version 3 of the License, or         |
@@ -262,6 +262,6 @@ unsigned int serializeSemanticTags(char ** serializedTags, t_semanticTag ** tags
 PyObject * serializeMessage(t_message * message) {
   char * semanticTags = NULL;
   unsigned int lenSemanticTags = serializeSemanticTags(&semanticTags, message->semanticTags, message->len);
-  return Py_BuildValue("(fffs#s#s#)", message->score->s1, message->score->s2, message->score->s3, message->alignment, message->len, message->mask, message->len, semanticTags, lenSemanticTags);
+  return Py_BuildValue("(fffy#y#s#)", message->score->s1, message->score->s2, message->score->s3, message->alignment, message->len, message->mask, message->len, semanticTags, lenSemanticTags);
 
 }
