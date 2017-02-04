@@ -4,13 +4,27 @@ Netzob : Inferring Communication Protocols
 
 .. image:: https://travis-ci.org/netzob/netzob.svg?branch=next
     :target: https://travis-ci.org/netzob/netzob
+    :alt: Continuous integration
 
 .. image:: https://coveralls.io/repos/github/netzob/netzob/badge.svg?branch=next
-   :target: https://coveralls.io/github/netzob/netzob?branch=next
+    :target: https://coveralls.io/github/netzob/netzob?branch=next
+    :alt: Code coverage
 
 .. image:: https://landscape.io/github/netzob/netzob/next/landscape.svg?style=flat
-   :target: https://landscape.io/github/netzob/netzob/next
-   :alt: Code Health
+    :target: https://landscape.io/github/netzob/netzob/next
+    :alt: Code health
+
+.. image:: https://readthedocs.org/projects/gef/badge/?version=latest
+    :target: https://netzob.readthedocs.org/en/latest/
+    :alt: Doc
+
+.. image:: https://img.shields.io/badge/Python-3-brightgreen.svg
+    :target: https://github.com/netzob/netzob
+    :alt: Python3
+
+.. image:: https://img.shields.io/badge/freenode-%23netzob-yellowgreen.svg
+    :target: https://webchat.freenode.net/?channels=#netzob
+    :alt: IRC
 
 About Netzob
 ============
