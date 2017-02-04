@@ -6,14 +6,14 @@ v1.0 -- 2017-02-03
 
 :Version name: StompingFrilledShark
 
-* major improvment
+* major improvement
     * "FlowParser" to parse a succession of message made of different symbols
     * large test campaign created to ensure netzob's quality
     * migration to python3
     * add SSL client and server channels
     * improve package hierarchy
 
-* minor improvment
+* minor improvement
     * enable travis supervision
     * measure test coverage
     * Entropy measurement methods
