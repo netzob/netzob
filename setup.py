@@ -38,7 +38,6 @@ from setuptools import setup, Extension, find_packages
 sys.path.insert(0, 'src/')
 from netzob import release
 
-from resources.sdist.manpage_command import manpage_command
 from resources.sdist.pybuild_command import pybuild_command
 from resources.sdist.test_command import test_command
 from resources.sdist.utils import find_data_files, opj, getPluginPaths
@@ -196,7 +195,6 @@ dependency_links = []
 # +----------------------------------------------------------------------------
 CMD_CLASS = {
     'build_py': pybuild_command,
-    'build_manpage': manpage_command,
     'test': test_command
 }
 
