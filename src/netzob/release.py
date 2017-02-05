@@ -42,13 +42,13 @@ appname = name
 #|    Development version has version number increased and is
 #|    postfixed by ~git
 #+---------------------------------------------------------------------------+
-version = "1.0rc1"
+version = "1.1.dev0"
 versionName = "Unnamed"
 
 #+---------------------------------------------------------------------------+
 #| Copyright mentions
 #+---------------------------------------------------------------------------+
-copyright = "Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry"
+copyright = "Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry"
 
 #+---------------------------------------------------------------------------+
 #| Description of the application
@@ -78,7 +78,13 @@ contributors = ["Georges Bossert <gbossert@miskin.fr>",
                 "Fabien André <fabien.andre@insa-rennes.fr>",
                 "Quentin Heyler <quentin.heyler@etudiant.univ-rennes1.fr>",
                 "Benjamin Dufour <benjamin.dufour@amossys.fr>",
-                "Giuseppe Massaro <n3mes1s.oxoo@gmail.com>"
+                "Giuseppe Massaro <n3mes1s.oxoo@gmail.com>",
+                "Timo Juhani <timo.lindfors@iki.fi>",
+                "winnie",
+                "Remy Delion",
+                "Bertus Kruger",
+                "Eric asselin",
+                "Tammo Krueger"                
                 ]
 
 #+---------------------------------------------------------------------------+
@@ -94,12 +100,12 @@ url = "http://www.netzob.org"
 #+---------------------------------------------------------------------------+
 #| Official url to download the application
 #+---------------------------------------------------------------------------+
-download_url = "http://www.netzob.org/download"
+download_url = "https://github.com/netzob/netzob"
 
 #+---------------------------------------------------------------------------+
 #| Translators
 #+---------------------------------------------------------------------------+
-translator_credits = """Français: Olivier Tétard <olivier.tetard@amossys.fr>"""
+translator_credits = ""
 
 #+---------------------------------------------------------------------------+
 #| Keywords to describe the application

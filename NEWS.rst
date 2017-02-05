@@ -1,6 +1,36 @@
 NEWS
 ====
 
+v1.0 -- 2017-02-03
+------------------
+
+:Version name: StompingFrilledShark
+
+* major improvement
+    * "FlowParser" to parse a succession of message made of different symbols
+    * large test campaign created to ensure netzob's quality
+    * migration to python3
+    * add SSL client and server channels
+    * improve package hierarchy
+
+* minor improvement
+    * enable travis supervision
+    * measure test coverage
+    * Entropy measurement methods
+    * support for timestamps detection
+    * improve size field detection algorithm
+    * enable RAWIP channels
+    * network pcap importer supports ICMP message
+
+* major bug fix
+    * various bug fixes
+    * multiple bug fixes in C alignment methods
+
+* minor bug fix
+    * fix Symbol comparison methods
+    * fix logging verbosity
+    * remove useless codes and resources
+
 v0.4.1 -- 2013-02-02
 --------------------
 

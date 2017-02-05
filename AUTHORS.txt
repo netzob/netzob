@@ -16,6 +16,12 @@ Contributors
   * Quentin Heyler (developer)
   * Benjamin Dufour (developer)
   * Giuseppe Massaro (Arch Linux package maintainer)
+  * Timo Juhani
+  * "winnie"
+  * Remy Delion
+  * Bertus Kruger
+  * Eric asselin
+  * Tammo Krueger"
 
 Sponsors
 --------
