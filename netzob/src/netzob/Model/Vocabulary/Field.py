@@ -215,7 +215,7 @@ class Field(AbstractField):
         """A list containing all the messages that the parents of this field have.
         In reality, a field doesn't have messages, it just returns the messages of its symbol
 
-        :type : a :class:`list` of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+        :type: a :class:`list` of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
         """
         messages = []
         try:
