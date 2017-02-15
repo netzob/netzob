@@ -636,6 +636,8 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         leafFields = []
         for fields in self.fields:
+            if fields.isPseudoField:
+                continue
             if fields is not None:
                 leafFields.extend(
                     fields._getLeafFields(depth, currentDepth + 1))
