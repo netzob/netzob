@@ -29,6 +29,7 @@
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
 
+from netzob.Simulator.Channels.AbstractChannel import AbstractChannel
 from netzob.Simulator.Channels.TCPServer import TCPServer
 from netzob.Simulator.Channels.TCPClient import TCPClient
 from netzob.Simulator.Channels.UDPClient import UDPClient
