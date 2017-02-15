@@ -36,6 +36,10 @@
 #+---------------------------------------------------------------------------+
 import uuid
 import abc
+import socket
+import os
+import fcntl
+import struct
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -64,6 +68,42 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
 
         self.isServer = isServer
         self.id = _id
+
+    # Static methods used to retrieve local network interface and local IP according to a remote IP
+
+    @staticmethod
+    def getLocalInterface(localIP):
+        """Retrieve the network interface name associated with a specific IP
+        address.
+        """
+
+        def getIPFromIfname(ifname):
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            return socket.inet_ntoa(fcntl.ioctl(
+                s.fileno(),
+                0x8915,  # SIOCGIFADDR
+                struct.pack('256s', bytes(ifname[:15], 'utf-8'))
+            )[20:24])
+
+        ifname = None
+        for networkInterface in os.listdir('/sys/class/net/'):
+            ipAddress = getIPFromIfname(networkInterface)
+            if ipAddress == localIP:
+                ifname =  networkInterface
+                break
+        return ifname
+
+    @staticmethod
+    def getLocalIP(remoteIP):
+        """Retrieve the source IP address which will be used to connect to the
+        destination IP address.
+        """
+
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect((remoteIP, 53))
+        localIPAddress = s.getsockname()[0]
+        s.close()
+        return localIPAddress
 
     # OPEN, CLOSE, READ and WRITE methods
 
