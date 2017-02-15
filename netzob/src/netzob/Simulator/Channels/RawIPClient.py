@@ -118,7 +118,7 @@ class RawIPClient(AbstractChannel):
         """
         # TODO: handle timeout
         if self.__socket is not None:
-            (data, remoteAddr) = self.__socket.recvfrom(65535)
+            (data, _) = self.__socket.recvfrom(65535)
 
             # Remove IP header from received data
             # FIXME: handle potential IP options
@@ -138,6 +138,37 @@ class RawIPClient(AbstractChannel):
         if self.__socket is not None:
             packet = self.buildPacket(data)
             self.__socket.sendto(packet, (self.remoteIP, 0))
+        else:
+            raise Exception("socket is not available")
+
+    @typeCheck(bytes)
+    def sendReceive(self, data, timeout=None):
+        """Write on the communication channel the specified data and returns the corresponding response
+
+        :parameter data: the data to write on the channel
+        :type data: binary object
+        @type timeout: :class:`int`
+        """
+        if self.__socket is not None:
+            # get the ports from message to identify the good response (in TCP or UDP)
+            portSrcTx = (data[0] * 256) + data[1]
+            portDstTx = (data[2] * 256) + data[3]
+
+            responseOk = False
+            stopWaitingResponse = False
+            self.write(data)
+            while stopWaitingResponse is False:
+                # TODO: handle timeout
+                dataReceived = self.read(timeout)
+                # get the ports in response (in TCP or UDP over IP)
+                ipHeaderLen = (dataReceived[0] & 15) * 4  # (Bitwise AND 00001111) x 4bytes
+                portSrcRx = (dataReceived[ipHeaderLen] * 256) + dataReceived[ipHeaderLen + 1]
+                portDstRx = (dataReceived[ipHeaderLen + 2] * 256) + dataReceived[ipHeaderLen + 3]
+                stopWaitingResponse = (portSrcTx == portDstRx) and (portDstTx == portSrcRx)
+                if stopWaitingResponse:  # and not timeout
+                    responseOk = True
+            if responseOk:
+                return dataReceived
         else:
             raise Exception("socket is not available")
 
