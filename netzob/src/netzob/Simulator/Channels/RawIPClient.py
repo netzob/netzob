@@ -121,9 +121,9 @@ class RawIPClient(AbstractChannel):
             (data, _) = self.__socket.recvfrom(65535)
 
             # Remove IP header from received data
-            # FIXME: handle potential IP options
-            if len(data) > 20:
-                data = data[20:]
+            ipHeaderLen = (data[0] & 15) * 4  # (Bitwise AND 00001111) x 4bytes --> see RFC-791
+            if len(data) > ipHeaderLen:
+                data = data[ipHeaderLen:]
             return data
         else:
             raise Exception("socket is not available")
@@ -160,10 +160,8 @@ class RawIPClient(AbstractChannel):
             while stopWaitingResponse is False:
                 # TODO: handle timeout
                 dataReceived = self.read(timeout)
-                # get the ports in response (in TCP or UDP over IP)
-                ipHeaderLen = (dataReceived[0] & 15) * 4  # (Bitwise AND 00001111) x 4bytes
-                portSrcRx = (dataReceived[ipHeaderLen] * 256) + dataReceived[ipHeaderLen + 1]
-                portDstRx = (dataReceived[ipHeaderLen + 2] * 256) + dataReceived[ipHeaderLen + 3]
+                portSrcRx = (dataReceived[0] * 256) + dataReceived[1]
+                portDstRx = (dataReceived[2] * 256) + dataReceived[3]
                 stopWaitingResponse = (portSrcTx == portDstRx) and (portDstTx == portSrcRx)
                 if stopWaitingResponse:  # and not timeout
                     responseOk = True
