@@ -82,8 +82,8 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
     # This value will be used if generate() method is called
     # without any upper size limit
-    # 8192 is completly arbitrary and equals 1k of data (1024 bytes)
-    MAXIMUM_GENERATED_DATA_SIZE = 8192
+    # 65535*8 is completly arbitrary and equals to 2^16 - 1 octets
+    MAXIMUM_GENERATED_DATA_SIZE = 65535 * 8
 
     @staticmethod
     def supportedTypes():
