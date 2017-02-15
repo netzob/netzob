@@ -119,6 +119,11 @@ class RawIPClient(AbstractChannel):
         # TODO: handle timeout
         if self.__socket is not None:
             (data, remoteAddr) = self.__socket.recvfrom(65535)
+
+            # Remove IP header from received data
+            # FIXME: handle potential IP options
+            if len(data) > 20:
+                data = data[20:]
             return data
         else:
             raise Exception("socket is not available")
