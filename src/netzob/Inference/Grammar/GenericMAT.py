@@ -79,23 +79,25 @@ class GenericMAT(ActiveKnowledgeBase):
     
     
     """
-    
 
-    def __init__(self, abstraction_layer, process_wrapper=None, cache_file_path = None, submitted_word_cb = None):
-        super(GenericMAT, self).__init__(cache_file_path = cache_file_path)
+    def __init__(self,
+                 abstraction_layer,
+                 process_wrapper=None,
+                 cache_file_path=None,
+                 submitted_word_cb=None):
+        super(GenericMAT, self).__init__(cache_file_path=cache_file_path)
         self.abstraction_layer = abstraction_layer
         self.process_wrapper = process_wrapper
         self.submitted_word_cb = submitted_word_cb
-        
 
     def start_target(self):
         """This method opens the channel"""
-        
+
         self.stop_target()
 
         self.process_wrapper.start()
-        
-        for nb_attempt in range(10):            
+
+        for nb_attempt in range(10):
             if self.process_wrapper.is_ready():
                 break
             time.sleep(1)
@@ -108,11 +110,13 @@ class GenericMAT(ActiveKnowledgeBase):
                 channel_is_open = True
                 break
             except Exception as e:
-                logging.warn("Target is not yet ready (channel cannot be opened): {}".format(e))
+                logging.warn(
+                    "Target is not yet ready (channel cannot be opened): {}".
+                    format(e))
                 time.sleep(1)
 
         if not channel_is_open:
-            raise Exception("Cannot open a channel with the target")        
+            raise Exception("Cannot open a channel with the target")
 
     def stop_target(self):
         """This method stops the channel"""
@@ -125,7 +129,7 @@ class GenericMAT(ActiveKnowledgeBase):
     def submit_word(self, word):
         """This method return the Word produced by the target while submited the specified word"""
         output_letters = []
-        
+
         for letter in word.letters:
             symbols = letter.symbols
             try:
@@ -135,26 +139,26 @@ class GenericMAT(ActiveKnowledgeBase):
                         self.abstraction_layer.writeSymbol(symbol)
                     except ChannelDownException as e:
                         self._logger.debug("Channel is Down")
-                    (curr_output_symbols, data) = self.abstraction_layer.readSymbols()
+                    (curr_output_symbols,
+                     data) = self.abstraction_layer.readSymbols()
                     output_symbols.extend(curr_output_symbols)
                 output_letters.append(Letter(symbols=output_symbols))
-            except Exception as e:            
+            except Exception as e:
                 self._logger.fatal("An error occurred : {}".format(e))
                 output_letters.append(Letter(symbols=[EmptySymbol()]))
-
 
         for i in range(len(word.letters)):
             input_letter = word.letters[i]
             output_letter = output_letters[i]
             input_str = "None"
             output_str = "None"
-            
+
             if input_letter.symbols is not None:
                 input_str = ','.join([s.name for s in input_letter.symbols])
 
             if output_letter.symbols is not None:
                 output_str = ','.join([s.name for s in output_letter.symbols])
-                
+
             self._logger.debug(">>> {}".format(input_str))
             self._logger.debug("<<< {}".format(output_str))
 
@@ -164,11 +168,8 @@ class GenericMAT(ActiveKnowledgeBase):
             try:
                 self.submitted_word_cb(word.letters, output_letters)
             except Exception as e:
-                self._logger.error("Error encountered while executed submitted_word_cb: {}".format(e))
+                self._logger.error(
+                    "Error encountered while executed submitted_word_cb: {}".
+                    format(e))
 
-    
         return Word(output_letters, normalize=False)
-
-
-            
-    

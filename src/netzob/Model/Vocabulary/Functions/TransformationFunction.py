@@ -46,4 +46,3 @@
 
 class TransformationFunction(object):
     """Represents a function which applies to transform the data"""
-    pass

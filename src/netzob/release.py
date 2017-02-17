@@ -68,24 +68,21 @@ author = "Georges Bossert, Frédéric Guihéry"
 #+---------------------------------------------------------------------------+
 #| Contributor names
 #+---------------------------------------------------------------------------+
-contributors = ["Georges Bossert <gbossert@miskin.fr>",
-                "Frédéric Guihéry <frederic.guihery@amossys.fr>",
-                "Olivier Tétard <olivier.tetard@amossys.fr>",
-                "Goulven Guiheux <goulven.guiheux@amossys.fr>",
-                "Maxime Olivier <maxime@miskin.fr>",
-                "Alexandre Pigné <alex@freesenses.net>",
-                "Franck Roland <franck.l.roland@gmail.com>",
-                "Fabien André <fabien.andre@insa-rennes.fr>",
-                "Quentin Heyler <quentin.heyler@etudiant.univ-rennes1.fr>",
-                "Benjamin Dufour <benjamin.dufour@amossys.fr>",
-                "Giuseppe Massaro <n3mes1s.oxoo@gmail.com>",
-                "Timo Juhani <timo.lindfors@iki.fi>",
-                "winnie",
-                "Remy Delion",
-                "Bertus Kruger",
-                "Eric asselin",
-                "Tammo Krueger"                
-                ]
+contributors = [
+    "Georges Bossert <gbossert@miskin.fr>",
+    "Frédéric Guihéry <frederic.guihery@amossys.fr>",
+    "Olivier Tétard <olivier.tetard@amossys.fr>",
+    "Goulven Guiheux <goulven.guiheux@amossys.fr>",
+    "Maxime Olivier <maxime@miskin.fr>",
+    "Alexandre Pigné <alex@freesenses.net>",
+    "Franck Roland <franck.l.roland@gmail.com>",
+    "Fabien André <fabien.andre@insa-rennes.fr>",
+    "Quentin Heyler <quentin.heyler@etudiant.univ-rennes1.fr>",
+    "Benjamin Dufour <benjamin.dufour@amossys.fr>",
+    "Giuseppe Massaro <n3mes1s.oxoo@gmail.com>",
+    "Timo Juhani <timo.lindfors@iki.fi>", "winnie", "Remy Delion",
+    "Bertus Kruger", "Eric asselin", "Tammo Krueger"
+]
 
 #+---------------------------------------------------------------------------+
 #| Email to contact authors
@@ -110,7 +107,10 @@ translator_credits = ""
 #+---------------------------------------------------------------------------+
 #| Keywords to describe the application
 #+---------------------------------------------------------------------------+
-keywords = ["Protocol", "Inference", "Networking", "Reverse Engineering", "Fuzzing", "Security"]
+keywords = [
+    "Protocol", "Inference", "Networking", "Reverse Engineering", "Fuzzing",
+    "Security"
+]
 
 #+---------------------------------------------------------------------------+
 #| Long description

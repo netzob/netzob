@@ -46,7 +46,7 @@ import abc
 
 
 class SortableObject(object, metaclass=abc.ABCMeta):
-
     @abc.abstractmethod
     def priority(self):
-        raise NotImplementedError("The object doesn't implement the method priority.")
+        raise NotImplementedError(
+            "The object doesn't implement the method priority.")

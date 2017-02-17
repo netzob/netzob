@@ -47,7 +47,6 @@ WORKSPACE_DIR = None
 LOCALES_DIR = os.path.join(sys.exec_prefix, "share/locale")
 LOCAL_LOCALES_DIR = "./resources/static/netzob/locales/"
 
-
 #+---------------------------------------------------------------------------+
 #| Unique Binary Identifier (DO NOT EDIT ITS VALUE)
 #| Warning, this variable is automatically updated in the building process.

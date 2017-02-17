@@ -123,4 +123,3 @@ class FindKeyFields(object):
             result["distribution"] = distrib
 
         return results
-

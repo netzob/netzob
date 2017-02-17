@@ -98,9 +98,11 @@ class FieldReseter(object):
         """
 
         if field is None:
-            raise TypeError("The field to reset must be specified and cannot be None")
+            raise TypeError(
+                "The field to reset must be specified and cannot be None")
 
-        self._logger.debug("Reset the definition of field {0} ({1})".format(field.name, field.id))
+        self._logger.debug("Reset the definition of field {0} ({1})".format(
+            field.name, field.id))
         field.clearFields()
 
         if isinstance(field, Symbol):

@@ -46,6 +46,7 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 
+
 @NetzobLogger
 class VariableParser(object):
     """This class can be use to parse some data against the specification of a domain
@@ -62,10 +63,10 @@ class VariableParser(object):
             raise Exception("Parsing path cannot be None")
         if self.variable is None:
             raise Exception("Variable cannot be None")
-        
-        
+
         dataToParse = parsingPath.getDataAssignedToVariable(self.variable)
-        self._logger.debug("Parse '{0}' with variable '{1}' specifications".format(dataToParse, self.variable))
+        self._logger.debug("Parse '{0}' with variable '{1}' specifications".
+                           format(dataToParse, self.variable))
 
         return self.variable.parse(parsingPath, carnivorous=carnivorous)
 
@@ -84,4 +85,3 @@ class VariableParser(object):
             raise ValueError("Variable cannot be None")
 
         self.__variable = variable
-

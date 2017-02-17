@@ -50,11 +50,12 @@ import time
 #|    the grammar of a protocol
 #+----------------------------------------------
 class GrammarInferer(threading.Thread):
-
-    def __init__(self, vocabulary, inputDictionary, oracle, equivalenceOracle, resetScript, cb_submitedQuery, cb_hypotheticalAutomaton):
+    def __init__(self, vocabulary, inputDictionary, oracle, equivalenceOracle,
+                 resetScript, cb_submitedQuery, cb_hypotheticalAutomaton):
         threading.Thread.__init__(self)
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Inference.Grammar.GrammarInferer.py')
+        self.log = logging.getLogger(
+            'netzob.Inference.Grammar.GrammarInferer.py')
         self.vocabulary = vocabulary
         self.inputDictionary = inputDictionary
         self.oracle = oracle
@@ -100,14 +101,20 @@ class GrammarInferer(threading.Thread):
         # Create a MQ cache
         cache = MQCache()
 
-
         # we first initialize the angluin's algo
-        self.learner = Angluin(self.vocabulary, self.inputDictionary, self.oracle, self.resetScript, self.cb_submitedQuery, self.cb_hypotheticalAutomaton, cache)
+        self.learner = Angluin(self.vocabulary, self.inputDictionary,
+                               self.oracle, self.resetScript,
+                               self.cb_submitedQuery,
+                               self.cb_hypotheticalAutomaton, cache)
 
         while not equivalent and self.active:
-            self.log.info("=============================================================================")
+            self.log.info(
+                "============================================================================="
+            )
             self.log.info("Execute one new round of the inferring process")
-            self.log.info("=============================================================================")
+            self.log.info(
+                "============================================================================="
+            )
 
             self.learner.learn()
             if not self.active:
@@ -119,7 +126,8 @@ class GrammarInferer(threading.Thread):
             # Execute the call back function for the hypothetial automaton
             # GObject.idle_add(self.cb_hypotheticalAutomaton, self.hypotheticalAutomaton)
 
-            counterExample = self.equivalenceOracle.findCounterExample(self.hypotheticalAutomaton, self.inputDictionary, cache)
+            counterExample = self.equivalenceOracle.findCounterExample(
+                self.hypotheticalAutomaton, self.inputDictionary, cache)
 
             if not self.active:
                 break
@@ -129,18 +137,21 @@ class GrammarInferer(threading.Thread):
             else:
                 self.log.info("A counter-example has been found")
                 for s in counterExample.getSymbols():
-                    self.log.info("symbol : " + str(s) + " => " + str(s.getID()))
+                    self.log.info("symbol : " + str(s) + " => " + str(
+                        s.getID()))
                 self.learner.addCounterExamples([counterExample])
 
         automaton = self.learner.getInferedAutomata()
-        self.log.info("The following automaton has been computed : " + str(automaton.getDotCode()))
+        self.log.info("The following automaton has been computed : " + str(
+            automaton.getDotCode()))
 
         # Now we apply indeterminism
         i_session = 0
-        sessions = self.vocabulary.getSessions()
+        self.vocabulary.getSessions()
         for session in self.sessions:
-            self.log.info("Re-inject session (" + str(i_session) + ") in the automata")
-            new_automata = self.applyMessagesOnAutomata(automaton, messages)
+            self.log.info("Re-inject session (" + str(i_session) +
+                          ") in the automata")
+            self.applyMessagesOnAutomata(automaton, messages)
             i_session = i_session + 1
 
         endTime = time.time()
@@ -151,5 +162,5 @@ class GrammarInferer(threading.Thread):
 
     def applyMessagesOnAutomata(self, automaton, messages):
         self.log.info("Apply the messages ({0}) on automata".format(messages))
-        currentState = automaton.getInitialState()
+        automaton.getInitialState()
         return automaton

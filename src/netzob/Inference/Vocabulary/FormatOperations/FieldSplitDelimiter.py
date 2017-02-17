@@ -160,7 +160,8 @@ class FieldSplitDelimiter(object):
             raise TypeError("Field cannot be None.")
 
         if len(field.messages) < 1:
-            raise ValueError("The associated symbol does not contain any message.")
+            raise ValueError(
+                "The associated symbol does not contain any message.")
 
         # Find message substrings after applying delimiter
         splittedMessages = []
@@ -172,7 +173,7 @@ class FieldSplitDelimiter(object):
         import itertools
         # Inverse the array, so that columns contains observed values for each field
         splittedMessages = list(itertools.zip_longest(*splittedMessages))
-        
+
         # If the delimiter does not create splitted fields
         if len(splittedMessages) <= 1:
             return
@@ -182,19 +183,19 @@ class FieldSplitDelimiter(object):
         iField = -1
         for i in range(len(splittedMessages)):
             iField += 1
-            
+
             fieldDomain = list()
-            
+
             # temporary set that hosts all the observed values to prevent useless duplicate ones
             observedValues = set()
             has_inserted_empty_value = False
-            
+
             isEmptyField = True  # To avoid adding an empty field            
             for v in splittedMessages[i]:
                 if v != "" and v is not None:
                     isEmptyField = False
-                
-                    if v not in observedValues:                    
+
+                    if v not in observedValues:
                         fieldDomain.append(Raw(v))
                         observedValues.add(v)
                 else:
@@ -203,15 +204,20 @@ class FieldSplitDelimiter(object):
                         has_inserted_empty_value = True
 
             if not isEmptyField:
-                newField = Field(domain=DomainFactory.normalizeDomain(fieldDomain), name="Field-"+str(iField))
-                newField.encodingFunctions = list(field.encodingFunctions.values())
+                newField = Field(
+                    domain=DomainFactory.normalizeDomain(fieldDomain),
+                    name="Field-" + str(iField))
+                newField.encodingFunctions = list(
+                    field.encodingFunctions.values())
                 newFields.append(newField)
                 iField += 1
 
-            str_delimiter = TypeConverter.convert(delimiter.value, BitArray, HexaString).decode('utf-8')
+            str_delimiter = TypeConverter.convert(delimiter.value, BitArray,
+                                                  HexaString).decode('utf-8')
             fieldName = "Field-sep-{}".format(str_delimiter)
 
-            newFields.append(Field(domain=Alt([delimiter, Raw(nbBytes=0)]), name=fieldName))
+            newFields.append(
+                Field(domain=Alt([delimiter, Raw(nbBytes=0)]), name=fieldName))
 
         newFields.pop()
 
@@ -221,4 +227,3 @@ class FieldSplitDelimiter(object):
 
         # Create a field for each entry
         field.fields = newFields
-

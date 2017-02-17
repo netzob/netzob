@@ -66,15 +66,15 @@ class ChannelDownSymbol(Symbol):
     """
 
     def __init__(self, message=None):
-        self.message = message    
-        super(ChannelDownSymbol, self).__init__(fields=None, name="ChannelDown Symbol", messages=[self.message])
+        self.message = message
+        super(ChannelDownSymbol, self).__init__(
+            fields=None, name="ChannelDown Symbol", messages=[self.message])
 
     def __eq__(self, other):
         if other is None:
             return False
         return isinstance(other, ChannelDownSymbol)
 
-    
     @property
     def message(self):
         """This message represents the message could not be sent as channel was down
@@ -88,6 +88,5 @@ class ChannelDownSymbol(Symbol):
     def message(self, message):
         if message is None:
             message = RawMessage()
-        
-        self.__message = message
 
+        self.__message = message

@@ -28,7 +28,6 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
-from gettext import gettext as _
 import logging.config
 import os
 import configparser
@@ -68,9 +67,12 @@ class LoggingConfiguration(object):
     #+----------------------------------------------
     def __init__(self, workspace, opts):
         # First we extract the normal logging config file
-        self.loggingFilePath = os.path.join(workspace.getPath(), workspace.getPathOfLogging())
-        if (self.loggingFilePath != "" and os.path.isfile(self.loggingFilePath)):
-            logging.debug("Logging config file: {0}".format(self.loggingFilePath))
+        self.loggingFilePath = os.path.join(workspace.getPath(),
+                                            workspace.getPathOfLogging())
+        if (self.loggingFilePath != "" and
+                os.path.isfile(self.loggingFilePath)):
+            logging.debug(
+                "Logging config file: {0}".format(self.loggingFilePath))
             logging.config.fileConfig(self.loggingFilePath)
         else:
             logging.info("No logging config file found, create a default one.")
@@ -78,12 +80,16 @@ class LoggingConfiguration(object):
             logger = logging.getLogger("")
             logger.setLevel(logging.INFO)
             h = logging.StreamHandler()
-            f = logging.Formatter("[%(threadName)s]%(asctime)s - %(module)s - %(levelname)s - %(message)s")
+            f = logging.Formatter(
+                "[%(threadName)s]%(asctime)s - %(module)s - %(levelname)s - %(message)s"
+            )
             h.setFormatter(f)
             logger.addHandler(h)
 
         # Override default configuration with command line option
-        if opts.debugLevel in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
+        if opts.debugLevel in [
+                'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'
+        ]:
             logger = logging.getLogger()
             logger.setLevel(opts.debugLevel)
 
@@ -109,8 +115,8 @@ class LoggingConfiguration(object):
         logger = logging.getLogger("")
 
         if level in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
-            logging.info("Updating logging level from {0} to {1}".format(logging.getLevelName(logger.level),
-                                                                         level))
+            logging.info("Updating logging level from {0} to {1}".format(
+                logging.getLevelName(logger.level), level))
             self.config.set("logger_root", "level", level)
             self.config.set("handler_consoleHandler", "level", level)
 

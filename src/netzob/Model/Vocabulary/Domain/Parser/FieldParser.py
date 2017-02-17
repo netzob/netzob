@@ -188,33 +188,42 @@ class FieldParser():
 
         It returns the parsing paths
         """
-    
+
         # we retrieve the field definition domain
         domain = self.field.domain
 
         # and check it exists
         if domain is None:
-            raise Exception("No definition domain specified for field '{0}', cannnot parse the content against it.".format(self.field.name))
+            raise Exception(
+                "No definition domain specified for field '{0}', cannnot parse the content against it.".
+                format(self.field.name))
 
         # check we have something to parse
         data = parsingPath.getDataAssignedToField(self.field)
 
-        self._logger.debug("Parses '{0}' with field '{1}' specifications".format(data, self.field.name))
+        self._logger.debug("Parses '{0}' with field '{1}' specifications".
+                           format(data, self.field.name))
 
         # we assign this data to the field's variable
-        parsingPath.assignDataToVariable(data.copy(), self.field.domain)                
+        parsingPath.assignDataToVariable(data.copy(), self.field.domain)
 
         # we create a first VariableParser and uses it to parse the domain
         variableParser = VariableParser(domain)
 
-        for resultParsingPath in variableParser.parse(parsingPath, carnivorous=self.lastField):
+        for resultParsingPath in variableParser.parse(
+                parsingPath, carnivorous=self.lastField):
             if resultParsingPath.isDataAvailableForVariable(self.field.domain):
                 try:
-                    resultParsingPath.addResultToField(self.field, resultParsingPath.getDataAssignedToVariable(self.field.domain))
+                    resultParsingPath.addResultToField(
+                        self.field,
+                        resultParsingPath.getDataAssignedToVariable(
+                            self.field.domain))
                     yield resultParsingPath
                 except Exception as e:
-                    self._logger.debug("An error occurred while parsing variable : {}".format(e))
-    
+                    self._logger.debug(
+                        "An error occurred while parsing variable : {}".format(
+                            e))
+
     @property
     def field(self):
         """The field that will be use to parse some content
@@ -230,9 +239,3 @@ class FieldParser():
             raise ValueError("Field cannot be None")
 
         self.__field = field
-
-
-
-    
-
-

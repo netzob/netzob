@@ -91,23 +91,46 @@ class Integer(AbstractType):
 
     """
 
-    def __init__(self, value=None, interval=None, nbUnits=None, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+    def __init__(self,
+                 value=None,
+                 interval=None,
+                 nbUnits=None,
+                 unitSize=AbstractType.defaultUnitSize(),
+                 endianness=AbstractType.defaultEndianness(),
+                 sign=AbstractType.defaultSign()):
         if value is not None and not isinstance(value, bitarray):
             from netzob.Model.Types.TypeConverter import TypeConverter
             from netzob.Model.Types.BitArray import BitArray
             interval = value
-            value = TypeConverter.convert(value, Integer, BitArray, src_unitSize=unitSize, src_endianness=endianness, src_sign=sign, dst_unitSize=unitSize, dst_endianness=endianness, dst_sign=sign)
+            value = TypeConverter.convert(
+                value,
+                Integer,
+                BitArray,
+                src_unitSize=unitSize,
+                src_endianness=endianness,
+                src_sign=sign,
+                dst_unitSize=unitSize,
+                dst_endianness=endianness,
+                dst_sign=sign)
         else:
             value = None
 
         if interval is not None:
-            nbBits = int(self._computeNbUnitSizeForInterval(interval, unitSize, sign)) * int(unitSize)
+            nbBits = int(
+                self._computeNbUnitSizeForInterval(interval, unitSize,
+                                                   sign)) * int(unitSize)
         elif nbUnits is not None:
             nbBits = nbUnits * int(unitSize)
         else:
             nbBits = int(unitSize)
 
-        super(Integer, self).__init__(self.__class__.__name__, value, nbBits, unitSize=unitSize, endianness=endianness, sign=sign)
+        super(Integer, self).__init__(
+            self.__class__.__name__,
+            value,
+            nbBits,
+            unitSize=unitSize,
+            endianness=endianness,
+            sign=sign)
 
     def _computeNbUnitSizeForInterval(self, interval, unitSize, sign):
         if isinstance(interval, int):
@@ -128,11 +151,17 @@ class Integer(AbstractType):
         # bspec = ⌊log2(n)⌋ + 1 (+1 for signed)
         val = abs(val)
         if sign == AbstractType.SIGN_UNSIGNED:
-            return math.floor((math.floor(math.log(val, 2)) + 1) / int(unitSize)) + 1
+            return math.floor(
+                (math.floor(math.log(val, 2)) + 1) / int(unitSize)) + 1
         else:
-            return math.floor((math.floor(math.log(val, 2)) + 2) / int(unitSize)) + 1
+            return math.floor(
+                (math.floor(math.log(val, 2)) + 2) / int(unitSize)) + 1
 
-    def canParse(self, data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+    def canParse(self,
+                 data,
+                 unitSize=AbstractType.defaultUnitSize(),
+                 endianness=AbstractType.defaultEndianness(),
+                 sign=AbstractType.defaultSign()):
         """This method returns True if data is a Integer.
         For the moment its always true because we consider
         the integer type to be very similar to the raw type.
@@ -157,7 +186,10 @@ class Integer(AbstractType):
         return True
 
     @staticmethod
-    def decode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+    def decode(data,
+               unitSize=AbstractType.defaultUnitSize(),
+               endianness=AbstractType.defaultEndianness(),
+               sign=AbstractType.defaultSign()):
         """This method convert the specified data in python raw format.
 
         >>> from netzob.all import *
@@ -213,7 +245,10 @@ class Integer(AbstractType):
         return struct.pack(f, int(data))
 
     @staticmethod
-    def encode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+    def encode(data,
+               unitSize=AbstractType.defaultUnitSize(),
+               endianness=AbstractType.defaultEndianness(),
+               sign=AbstractType.defaultSign()):
         """This method convert the python raw data to the Integer.
 
         >>> from netzob.all import *
@@ -298,7 +333,8 @@ class Integer(AbstractType):
                 elif endianness == AbstractType.ENDIAN_LITTLE:
                     wordData += b'\x00' * int(padding_nullbytes)
                 else:
-                     raise ValueError("Invalid endianness value: {0}".format(endianness))
+                    raise ValueError(
+                        "Invalid endianness value: {0}".format(endianness))
 
             unpackedWord = struct.unpack(perWordFormat, wordData)[0]
             unpackedWord = unpackedWord << int(unitSize) * iWord
@@ -317,7 +353,8 @@ class Integer(AbstractType):
         elif endianness == AbstractType.ENDIAN_LITTLE:
             endianFormat = '<'
         else:
-            raise ValueError("Invalid endianness value: {0}".format(endianness))
+            raise ValueError(
+                "Invalid endianness value: {0}".format(endianness))
 
         # unitSize
         if unitSize == AbstractType.UNITSIZE_8:
@@ -329,10 +366,11 @@ class Integer(AbstractType):
         elif unitSize == AbstractType.UNITSIZE_64:
             unitFormat = 'q'
         else:
-            raise ValueError("Only 8, 16, 32 and 64 bits unitsize are available for integers")
+            raise ValueError(
+                "Only 8, 16, 32 and 64 bits unitsize are available for integers"
+            )
         # sign
         if sign == AbstractType.SIGN_UNSIGNED:
             unitFormat = unitFormat.upper()
 
         return endianFormat + unitFormat
-

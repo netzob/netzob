@@ -36,7 +36,8 @@
 #+----------------------------------------------
 #| Local application imports
 #+----------------------------------------------
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck
 
 
 @NetzobLogger
@@ -56,21 +57,18 @@ class ObservationTable(object):
 
         self.__numRows = 0
         self.__suffixes = list()
-        
+
     def initialize(self, initialSuffixes, mqOracle):
         if len(self.__allRows) > 0:
-            raise Exception("Called initialize, but there are already rows present")
+            raise Exception(
+                "Called initialize, but there are already rows present")
 
-        numSuffixes = len(initialSuffixes)
+        len(initialSuffixes)
         self.__suffixes.extend(initialSuffixes)
 
         numLps = len(self.alphabet)
-        numPrefixes = 1 + numLps
+        1 + numLps
 
-        queries = list()
-        
-        
-        
 
     @property
     def alphabet(self):
@@ -79,4 +77,3 @@ class ObservationTable(object):
     @alphabet.setter
     def alphabet(self, alphabet):
         self.__alphabet = alphabet
-        

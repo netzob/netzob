@@ -28,7 +28,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -66,7 +65,8 @@ class RawMessage(AbstractMessage):
         :parameter data: the content of the message
         :type data: a :class:`object`
         """
-        super(RawMessage, self).__init__(data=data, date=date, source=source, destination=destination)
+        super(RawMessage, self).__init__(
+            data=data, date=date, source=source, destination=destination)
 
     def priority(self):
         """Return the value that will be used to represent the current message when sorted
@@ -75,4 +75,3 @@ class RawMessage(AbstractMessage):
         :type: int
         """
         return int(self.date * 1000)
-

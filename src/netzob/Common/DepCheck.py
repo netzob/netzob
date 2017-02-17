@@ -59,37 +59,50 @@ class DepCheck(object):
         for m in list(sys.modules.keys()):
             if m == "_libNeedleman":
                 pathToImportedLib = sys.modules[m].__file__
-                logging.debug("Imported _libNeedleman from %s", pathToImportedLib)
+                logging.debug("Imported _libNeedleman from %s",
+                              pathToImportedLib)
         try:
             BIDNeedleman = _libNeedleman.getBID()
             if BIDNeedleman != NetzobResources.BID and NetzobResources.BID != "$BID":
-                logging.error("Binary Identifier is %s (expected %s).", BIDNeedleman, NetzobResources.BID)
-                logging.error("The loaded libNeedleman library is deprecated, please rebuild it.")
+                logging.error("Binary Identifier is %s (expected %s).",
+                              BIDNeedleman, NetzobResources.BID)
+                logging.error(
+                    "The loaded libNeedleman library is deprecated, please rebuild it."
+                )
                 return False
         except AttributeError:
-            logging.error("The _libNeedleman imported (%s) is not the expected one and do not provide all the required methods.", pathToImportedLib)
+            logging.error(
+                "The _libNeedleman imported (%s) is not the expected one and do not provide all the required methods.",
+                pathToImportedLib)
             return False
 
         # Verify we can load the lib ScoreComputation
         try:
             from netzob import _libScoreComputation
         except ImportError as e:
-            logging.error("Impossible to import the libScoreComputation: %s", e)
+            logging.error("Impossible to import the libScoreComputation: %s",
+                          e)
             return False
 
         pathToImportedLib = "Unknown path"
         for m in list(sys.modules.keys()):
             if m == "_libScoreComputation":
                 pathToImportedLib = sys.modules[m].__file__
-                logging.debug("Imported _libScoreComputation from %s", pathToImportedLib)
+                logging.debug("Imported _libScoreComputation from %s",
+                              pathToImportedLib)
         try:
             BIDScoreComputation = _libScoreComputation.getBID()
             if BIDScoreComputation != NetzobResources.BID and NetzobResources.BID != "$BID":
-                logging.error("Binary Identifier is %s (expected %s).", BIDScoreComputation, NetzobResources.BID)
-                logging.error("The loaded libScoreComputation library is deprecated, please rebuild it.")
+                logging.error("Binary Identifier is %s (expected %s).",
+                              BIDScoreComputation, NetzobResources.BID)
+                logging.error(
+                    "The loaded libScoreComputation library is deprecated, please rebuild it."
+                )
                 return False
         except AttributeError:
-            logging.error("The _libScoreComputation imported (%s) is not the expected one and do not provide all the required methods.", pathToImportedLib)
+            logging.error(
+                "The _libScoreComputation imported (%s) is not the expected one and do not provide all the required methods.",
+                pathToImportedLib)
             return False
 
         # Verify we can load the lib Interface
@@ -103,15 +116,21 @@ class DepCheck(object):
         for m in list(sys.modules.keys()):
             if m == "_libInterface":
                 pathToImportedLib = sys.modules[m].__file__
-                logging.debug("Imported _libInterface from %s", pathToImportedLib)
+                logging.debug("Imported _libInterface from %s",
+                              pathToImportedLib)
         try:
             BIDInterface = _libInterface.getBID()
             if BIDInterface != NetzobResources.BID and NetzobResources.BID != "$BID":
-                logging.error("Binary Identifier is %s (expected %s).", BIDInterface, NetzobResources.BID)
-                logging.error("The loaded libInterface library is deprecated, please rebuild it.")
+                logging.error("Binary Identifier is %s (expected %s).",
+                              BIDInterface, NetzobResources.BID)
+                logging.error(
+                    "The loaded libInterface library is deprecated, please rebuild it."
+                )
                 return False
         except AttributeError:
-            logging.error("The _libInterface imported (%s) is not the expected one and do not provide all the required methods.", pathToImportedLib)
+            logging.error(
+                "The _libInterface imported (%s) is not the expected one and do not provide all the required methods.",
+                pathToImportedLib)
             return False
 
         # # Verify we can load the lib Regex
@@ -137,6 +156,8 @@ class DepCheck(object):
         #     return False
 
         if NetzobResources.BID == "$BID":
-            logging.warning("The current executed python code has not been built using setup.py, hence it's not possible to compare the BID of executed libs.")
+            logging.warning(
+                "The current executed python code has not been built using setup.py, hence it's not possible to compare the BID of executed libs."
+            )
 
         return True

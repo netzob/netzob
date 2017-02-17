@@ -67,7 +67,8 @@ def _executeSearch(arg, **kwargs):
     dataLabels = arg[3]
 
     se = SearchEngine()
-    c = se.searchDataInMessage(data, message, addTags=addTags, dataLabels=dataLabels)
+    c = se.searchDataInMessage(
+        data, message, addTags=addTags, dataLabels=dataLabels)
     return c
 
 
@@ -132,12 +133,19 @@ class SearchEngine(object):
         :raise Exception: if the parameter is not valid
         """
         if results is None:
-            raise TypeError("Internal Error: Collected None during a parallel search operation.")
+            raise TypeError(
+                "Internal Error: Collected None during a parallel search operation."
+            )
         for result in results:
             self.asyncResult.extend(result)
 
     @typeCheck(list, list, bool, bool)
-    def searchDataInMessages(self, datas, messages, addTags=True, inParallel=True, dataLabels=None):
+    def searchDataInMessages(self,
+                             datas,
+                             messages,
+                             addTags=True,
+                             inParallel=True,
+                             dataLabels=None):
         """Search all the data specified in the given messages. Per default, this operation is executed in parallel.
 
         Example of a search operation executed in sequential
@@ -187,13 +195,16 @@ class SearchEngine(object):
         """
 
         if datas is None or len(datas) == 0:
-            raise TypeError("There should be at least one data to search after.")
+            raise TypeError(
+                "There should be at least one data to search after.")
         for data in datas:
             if not isinstance(data, AbstractType):
-                raise TypeError("At least one specified data is not an AbstractType.")
+                raise TypeError(
+                    "At least one specified data is not an AbstractType.")
         for message in messages:
             if not isinstance(message, AbstractMessage):
-                raise TypeError("At least one specified message is not An AbstractMessage.")
+                raise TypeError(
+                    "At least one specified message is not An AbstractMessage.")
 
         # Remove any duplicate data
         noDuplicateDatas = list(set(datas))
@@ -204,7 +215,9 @@ class SearchEngine(object):
             # start = time.time()
 
             for message in messages:
-                results.extend(self.searchDataInMessage(noDuplicateDatas, message, addTags, dataLabels))
+                results.extend(
+                    self.searchDataInMessage(noDuplicateDatas, message,
+                                             addTags, dataLabels))
             # Measure end time
             # end = time.time()
 
@@ -221,7 +234,13 @@ class SearchEngine(object):
             pool = multiprocessing.Pool(nbThread)
 
             # Execute search operations
-            pool.map_async(_executeSearch, list(zip([noDuplicateDatas] * len(messages), messages, [addTags] * len(messages), [dataLabels] * len(messages))), callback=self.__collectResults_cb)
+            pool.map_async(
+                _executeSearch,
+                list(
+                    zip([noDuplicateDatas] * len(messages), messages, [
+                        addTags
+                    ] * len(messages), [dataLabels] * len(messages))),
+                callback=self.__collectResults_cb)
 
             # Waits all alignment tasks finish
             pool.close()
@@ -235,7 +254,8 @@ class SearchEngine(object):
         return results
 
     @typeCheck(list, AbstractMessage, bool)
-    def searchDataInMessage(self, data, message, addTags=True, dataLabels=None):
+    def searchDataInMessage(self, data, message, addTags=True,
+                            dataLabels=None):
         """Search in the specified message any of the given data. These data will be searched as
         it but also under various format.
 
@@ -319,12 +339,17 @@ class SearchEngine(object):
 
         results = SearchResults()
         for (target, searchTask) in searchCases:
-            if target is None or not isinstance(target, bitarray) or searchTask is None or not isinstance(searchTask, SearchTask):
-                raise TypeError("Each search case must a tupple made of a bitarray and a SearchTask instance")
+            if target is None or not isinstance(
+                    target, bitarray) or searchTask is None or not isinstance(
+                        searchTask, SearchTask):
+                raise TypeError(
+                    "Each search case must a tupple made of a bitarray and a SearchTask instance"
+                )
 
             ranges = []
             for startIndex in target.search(searchTask.data):
-                self._logger.debug("Search found {}: {}>{}".format(searchTask.data, startIndex, len(searchTask.data)))
+                self._logger.debug("Search found {}: {}>{}".format(
+                    searchTask.data, startIndex, len(searchTask.data)))
                 ranges.append((startIndex, startIndex + len(searchTask.data)))
 
             if len(ranges) > 0:
@@ -347,5 +372,7 @@ class SearchEngine(object):
         if data is None:
             raise TypeError("The data cannot be None")
 
-        return [SearchTask(mutation, mutationType, properties=properties) for mutationType, mutation in list(data.mutate().items())]
-
+        return [
+            SearchTask(mutation, mutationType, properties=properties)
+            for mutationType, mutation in list(data.mutate().items())
+        ]

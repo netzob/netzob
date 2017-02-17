@@ -35,7 +35,6 @@
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
 import struct
-import string
 import random
 
 # +---------------------------------------------------------------------------+
@@ -74,7 +73,13 @@ class IPv4(AbstractType):
     10
 
     """
-    def __init__(self, value=None, network=None, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+
+    def __init__(self,
+                 value=None,
+                 network=None,
+                 unitSize=AbstractType.defaultUnitSize(),
+                 endianness=AbstractType.defaultEndianness(),
+                 sign=AbstractType.defaultSign()):
         """Builds an IPv4 domain with optional constraints.
 
         :parameter value: specify a constraints over the expected value.
@@ -86,11 +91,26 @@ class IPv4(AbstractType):
         if value is not None and not isinstance(value, bitarray):
             from netzob.Model.Types.TypeConverter import TypeConverter
             from netzob.Model.Types.BitArray import BitArray
-            value = TypeConverter.convert(value, IPv4, BitArray, src_unitSize=unitSize, src_endianness=endianness, src_sign=sign, dst_unitSize=unitSize, dst_endianness=endianness, dst_sign=sign)
+            value = TypeConverter.convert(
+                value,
+                IPv4,
+                BitArray,
+                src_unitSize=unitSize,
+                src_endianness=endianness,
+                src_sign=sign,
+                dst_unitSize=unitSize,
+                dst_endianness=endianness,
+                dst_sign=sign)
 
         self.network = network
 
-        super(IPv4, self).__init__(self.__class__.__name__, value, 32, unitSize=unitSize, endianness=endianness, sign=sign)
+        super(IPv4, self).__init__(
+            self.__class__.__name__,
+            value,
+            32,
+            unitSize=unitSize,
+            endianness=endianness,
+            sign=sign)
 
     def generate(self, generationStrategy=None):
         """Generates a random IPv4 which follows the constraints.
@@ -117,7 +137,16 @@ class IPv4(AbstractType):
             return self.value
         elif self.network is not None:
             ip = random.choice(self.network)
-            return TypeConverter.convert(ip.packed, Raw, BitArray, src_unitSize=self.unitSize, src_endianness=self.endianness, src_sign=self.sign, dst_unitSize=self.unitSize, dst_endianness=self.endianness, dst_sign=self.sign)
+            return TypeConverter.convert(
+                ip.packed,
+                Raw,
+                BitArray,
+                src_unitSize=self.unitSize,
+                src_endianness=self.endianness,
+                src_sign=self.sign,
+                dst_unitSize=self.unitSize,
+                dst_endianness=self.endianness,
+                dst_sign=self.sign)
         else:
             not_valid = [10, 127, 169, 172, 192]
 
@@ -125,12 +154,28 @@ class IPv4(AbstractType):
             while first in not_valid:
                 first = random.randrange(1, 256)
 
-            strip = ".".join([str(first), str(random.randrange(1, 256)), str(random.randrange(1, 256)), str(random.randrange(1, 256))])
+            strip = ".".join([
+                str(first), str(random.randrange(1, 256)),
+                str(random.randrange(1, 256)), str(random.randrange(1, 256))
+            ])
 
             ip = IPv4.encode(strip)
-            return TypeConverter.convert(ip.packed, Raw, BitArray, src_unitSize=self.unitSize, src_endianness=self.endianness, src_sign=self.sign, dst_unitSize=self.unitSize, dst_endianness=self.endianness, dst_sign=self.sign)
+            return TypeConverter.convert(
+                ip.packed,
+                Raw,
+                BitArray,
+                src_unitSize=self.unitSize,
+                src_endianness=self.endianness,
+                src_sign=self.sign,
+                dst_unitSize=self.unitSize,
+                dst_endianness=self.endianness,
+                dst_sign=self.sign)
 
-    def canParse(self, data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+    def canParse(self,
+                 data,
+                 unitSize=AbstractType.defaultUnitSize(),
+                 endianness=AbstractType.defaultEndianness(),
+                 sign=AbstractType.defaultSign()):
         """Computes if specified data can be parsed as an IPv4 with the predefined constraints.
 
         >>> from netzob.all import *
@@ -188,7 +233,8 @@ class IPv4(AbstractType):
             raise TypeError("data cannot be None")
 
         try:
-            ip = IPv4.encode(data, unitSize=unitSize, endianness=endianness, sign=sign)
+            ip = IPv4.encode(
+                data, unitSize=unitSize, endianness=endianness, sign=sign)
             if ip is None or ip.version != 4 or ip.is_netmask():
                 return False
         except:
@@ -197,7 +243,16 @@ class IPv4(AbstractType):
             if self.value is not None:
                 from netzob.Model.Types.TypeConverter import TypeConverter
                 from netzob.Model.Types.BitArray import BitArray
-                return self.value == TypeConverter.convert(data, IPv4, BitArray, src_unitSize=unitSize, src_endianness=endianness, src_sign=sign, dst_unitSize=self.unitSize, dst_endianness=self.endianness, dst_sign=self.sign)
+                return self.value == TypeConverter.convert(
+                    data,
+                    IPv4,
+                    BitArray,
+                    src_unitSize=unitSize,
+                    src_endianness=endianness,
+                    src_sign=sign,
+                    dst_unitSize=self.unitSize,
+                    dst_endianness=self.endianness,
+                    dst_sign=self.sign)
             elif self.network is not None:
                 return ip in self.network
         except:
@@ -235,13 +290,17 @@ class IPv4(AbstractType):
     def network(self, network):
         if network is not None:
             if not self._isValidIPv4Network(network):
-                raise TypeError("Specified network constraints is not valid IPv4 Network.")
+                raise TypeError(
+                    "Specified network constraints is not valid IPv4 Network.")
             self.__network = IPNetwork(network)
         else:
             self.__network = None
 
     @staticmethod
-    def decode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+    def decode(data,
+               unitSize=AbstractType.defaultUnitSize(),
+               endianness=AbstractType.defaultEndianness(),
+               sign=AbstractType.defaultSign()):
         """Decode the specified IPv4 data into its raw representation.
 
         >>> from netzob.all import *
@@ -259,7 +318,10 @@ class IPv4(AbstractType):
         return ip.packed
 
     @staticmethod
-    def encode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+    def encode(data,
+               unitSize=AbstractType.defaultUnitSize(),
+               endianness=AbstractType.defaultEndianness(),
+               sign=AbstractType.defaultSign()):
         """Encodes the specified data into an IPAddress object
 
         :param data: the data to encode into an IPAddress
@@ -290,5 +352,5 @@ class IPv4(AbstractType):
             if ip is not None and ip.version == 4 and not ip.is_netmask():
                 return ip
         except Exception as e:
-            raise TypeError("Impossible encode {0} into an IPv4 data ({1})".format(data, e))
-
+            raise TypeError("Impossible encode {0} into an IPv4 data ({1})".
+                            format(data, e))

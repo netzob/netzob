@@ -50,7 +50,7 @@ class HighlightFunction(VisualizationFunction):
 
     TYPE = "HighlightFunction"
     TAG_START = "\033[1;41m"
-    TAG_END   = "\033[1;m"
+    TAG_END = "\033[1;m"
 
     def __init__(self, start, end):
         super(HighlightFunction, self).__init__(start, end)

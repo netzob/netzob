@@ -110,14 +110,16 @@ class ClusterByKeyField(object):
 
         newSymbols = collections.OrderedDict()
 
-        keyFieldMessageValues = keyField.getMessageValues(encoded=False, styled=False)
+        keyFieldMessageValues = keyField.getMessageValues(
+            encoded=False, styled=False)
         newSymbolsSplittedMessages = {}
 
         # we identify what would be the best type of the key field
         keyFieldType = ASCII
         for message, keyFieldValue in list(keyFieldMessageValues.items()):
             # If the value cannot be parsed as ASCII, we convert it to HexaString
-            if not ASCII().canParse(TypeConverter.convert(keyFieldValue, Raw, BitArray)):
+            if not ASCII().canParse(
+                    TypeConverter.convert(keyFieldValue, Raw, BitArray)):
                 keyFieldType = HexaString
                 break
 
@@ -131,37 +133,49 @@ class ClusterByKeyField(object):
 
         # we create a symbol for each of these uniq values
         for message, keyFieldValue in list(keyFieldMessageValues.items()):
-            keyFieldValue = TypeConverter.convert(keyFieldValue, Raw, keyFieldType)
+            keyFieldValue = TypeConverter.convert(keyFieldValue, Raw,
+                                                  keyFieldType)
             if keyFieldValue not in list(newSymbols.keys()):
                 if type(keyFieldValue) is str:
                     symbolName = "Symbol_{0}".format(keyFieldValue)
                 else:
-                    symbolName = "Symbol_{0}".format(keyFieldValue.decode("utf-8"))
-                newSymbols[keyFieldValue] = Symbol(name=symbolName, messages=[message])
-                splittedMessages = DataAlignment.align([message.data], field, encoded=False)
-                newSymbolsSplittedMessages[keyFieldValue] = [splittedMessages[0]]
+                    symbolName = "Symbol_{0}".format(
+                        keyFieldValue.decode("utf-8"))
+                newSymbols[keyFieldValue] = Symbol(
+                    name=symbolName, messages=[message])
+                splittedMessages = DataAlignment.align(
+                    [message.data], field, encoded=False)
+                newSymbolsSplittedMessages[
+                    keyFieldValue] = [splittedMessages[0]]
             else:
                 newSymbols[keyFieldValue].messages.append(message)
-                splittedMessages = DataAlignment.align([message.data], field, encoded=False)
-                newSymbolsSplittedMessages[keyFieldValue].append(splittedMessages[0])
+                splittedMessages = DataAlignment.align(
+                    [message.data], field, encoded=False)
+                newSymbolsSplittedMessages[keyFieldValue].append(
+                    splittedMessages[0])
 
         for newSymbolKeyValue, newSymbol in list(newSymbols.items()):
             # we recreate the same fields in this new symbol as the fields that exist in the original symbol
             newSymbol.clearFields()
             for i, f in enumerate(field.fields):
                 if f == keyField:
-                    newFieldDomain = TypeConverter.convert(newSymbolKeyValue, keyFieldType, Raw)
+                    newFieldDomain = TypeConverter.convert(newSymbolKeyValue,
+                                                           keyFieldType, Raw)
                 else:
                     newFieldDomain = set()
-                    for j in range(len(newSymbolsSplittedMessages[newSymbolKeyValue])):
-                        newFieldDomain.add(newSymbolsSplittedMessages[newSymbolKeyValue][j][i])
+                    for j in range(
+                            len(newSymbolsSplittedMessages[
+                                newSymbolKeyValue])):
+                        newFieldDomain.add(newSymbolsSplittedMessages[
+                            newSymbolKeyValue][j][i])
                     newFieldDomain = list(newFieldDomain)
                 newF = Field(name=f.name, domain=newFieldDomain)
                 newF.parent = newSymbol
                 newSymbol.fields.append(newF)
 
             # we remove endless fields that accepts no values
-            cells = newSymbol.getCells(encoded=False, styled=False, transposed=False)
+            cells = newSymbol.getCells(
+                encoded=False, styled=False, transposed=False)
             max_i_cell_with_value = 0
             for line in cells:
                 for i_cell, cell in enumerate(line):
@@ -170,15 +184,18 @@ class ClusterByKeyField(object):
             newSymbol.clearFields()
             for i, f in enumerate(field.fields[:max_i_cell_with_value + 1]):
                 if f == keyField:
-                    newFieldDomain = TypeConverter.convert(newSymbolKeyValue, keyFieldType, Raw)
+                    newFieldDomain = TypeConverter.convert(newSymbolKeyValue,
+                                                           keyFieldType, Raw)
                 else:
                     newFieldDomain = set()
-                    for j in range(len(newSymbolsSplittedMessages[newSymbolKeyValue])):
-                        newFieldDomain.add(newSymbolsSplittedMessages[newSymbolKeyValue][j][i])
+                    for j in range(
+                            len(newSymbolsSplittedMessages[
+                                newSymbolKeyValue])):
+                        newFieldDomain.add(newSymbolsSplittedMessages[
+                            newSymbolKeyValue][j][i])
                     newFieldDomain = list(newFieldDomain)
                 newF = Field(name=f.name, domain=newFieldDomain)
                 newF.parent = newSymbol
                 newSymbol.fields.append(newF)
 
         return newSymbols
-

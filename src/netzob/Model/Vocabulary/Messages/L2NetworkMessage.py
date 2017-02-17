@@ -28,7 +28,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import time
 import binascii
 
 #+---------------------------------------------------------------------------+
@@ -55,9 +54,17 @@ class L2NetworkMessage(RawMessage):
 
     """
 
-    def __init__(self, data, date=None, l2Protocol=None, l2SourceAddress=None,
+    def __init__(self,
+                 data,
+                 date=None,
+                 l2Protocol=None,
+                 l2SourceAddress=None,
                  l2DestinationAddress=None):
-        super(L2NetworkMessage, self).__init__(data, date=date, source=l2SourceAddress, destination=l2DestinationAddress)
+        super(L2NetworkMessage, self).__init__(
+            data,
+            date=date,
+            source=l2SourceAddress,
+            destination=l2DestinationAddress)
         self.l2Protocol = str(l2Protocol)
         self.l2SourceAddress = str(l2SourceAddress)
         self.l2DestinationAddress = str(l2DestinationAddress)
@@ -100,4 +107,3 @@ class L2NetworkMessage(RawMessage):
     @typeCheck(str)
     def l2DestinationAddress(self, l2DestinationAddress):
         self.__l2DestinationAddress = l2DestinationAddress
-

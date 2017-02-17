@@ -1,4 +1,3 @@
-
 #-*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -36,7 +35,6 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import multiprocessing
-import time
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -104,7 +102,6 @@ class ParallelFieldSplitStatic(object):
     def execute(self):
         """Execute the parallel splitting
         """
-        pass
         # # Create a list of data removed from duplicate entry
         # noDuplicateData = list(set(data))
 
@@ -125,6 +122,7 @@ class ParallelFieldSplitStatic(object):
         # end = time.time()
 
     # Static method
+
     @staticmethod
     def split(field, unitSize=None, nbThread=None):
         """Split the portion of message in the current field
@@ -177,6 +175,7 @@ class ParallelFieldSplitStatic(object):
             nbThread = multiprocessing.cpu_count()
 
         if nbThread < 0:
-            raise ValueError("NbThread cannot be <0, use None to specify you don't know.")
+            raise ValueError(
+                "NbThread cannot be <0, use None to specify you don't know.")
 
         self.__nbThread = nbThread

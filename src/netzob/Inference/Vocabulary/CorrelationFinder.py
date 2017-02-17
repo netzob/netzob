@@ -29,10 +29,8 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import errno
-import time
 import uuid
 import zlib
-from gettext import gettext as _
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -99,7 +97,9 @@ class CorrelationFinder(object):
         except:
             # Fall back to classical relations
             import logging
-            logging.warn("'numpy' and 'minepy' packages needed for CorrelationFinder. Fall back to RelationFinder instead.")
+            logging.warn(
+                "'numpy' and 'minepy' packages needed for CorrelationFinder. Fall back to RelationFinder instead."
+            )
             return RelationFinder.findOnSymbol(symbol)
 
         cf = CorrelationFinder(minMic)
@@ -115,39 +115,47 @@ class CorrelationFinder(object):
         :type symbol: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         """
 
-        (attributeValues_headers, attributeValues) = self._generateAttributeValuesForSymbol(symbol)
+        (attributeValues_headers,
+         attributeValues) = self._generateAttributeValuesForSymbol(symbol)
         symbolResults = []
 
         # MINE computation of each field's combination
         for i, values_x in enumerate(attributeValues[:-1]):
-            for j, values_y in enumerate(attributeValues[i+1:]):
+            for j, values_y in enumerate(attributeValues[i + 1:]):
                 mine = MINE(alpha=0.6, c=15)
-                mine.compute_score(numpy.array(values_x), numpy.array(values_y))
+                mine.compute_score(
+                    numpy.array(values_x), numpy.array(values_y))
                 mic = round(mine.mic(), 2)
                 if mic > float(self.minMic):
                     # We add the relation to the results
                     (x_fields, x_attribute) = attributeValues_headers[i]
                     (y_fields, y_attribute) = attributeValues_headers[j]
                     # The relation should not apply on the same field
-                    if len(x_fields) == 1 and len(y_fields) == 1 and x_fields[0].id == y_fields[0].id:
+                    if len(x_fields) == 1 and len(y_fields) == 1 and x_fields[
+                            0].id == y_fields[0].id:
                         continue
                     pearson = numpy.corrcoef(values_x, values_y)[0, 1]
                     if not numpy.isnan(pearson):
                         pearson = round(pearson, 2)
-                    relation_type = self._findRelationType(x_attribute, y_attribute)
+                    relation_type = self._findRelationType(x_attribute,
+                                                           y_attribute)
                     self._debug_mine_stats(mine)
-                    self._logger.debug("Correlation found between '" + str(x_fields) + ":" + x_attribute + "' and '" + str(y_fields) + ":" + y_attribute + "'")
+                    self._logger.debug("Correlation found between '" + str(
+                        x_fields) + ":" + x_attribute + "' and '" + str(
+                            y_fields) + ":" + y_attribute + "'")
                     self._logger.debug("  MIC score: " + str(mic))
                     self._logger.debug("  Pearson score: " + str(pearson))
                     id_relation = str(uuid.uuid4())
-                    symbolResults.append({'id': id_relation,
-                                          "relation_type": relation_type,
-                                          'x_fields': x_fields,
-                                          'x_attribute': x_attribute,
-                                          'y_fields': y_fields,
-                                          'y_attribute': y_attribute,
-                                          'mic': mic,
-                                          'pearson': pearson})
+                    symbolResults.append({
+                        'id': id_relation,
+                        "relation_type": relation_type,
+                        'x_fields': x_fields,
+                        'x_attribute': x_attribute,
+                        'y_fields': y_fields,
+                        'y_attribute': y_attribute,
+                        'mic': mic,
+                        'pearson': pearson
+                    })
         return symbolResults
 
     def _debug_mine_stats(self, mine):
@@ -159,7 +167,9 @@ class CorrelationFinder(object):
 
     def _findRelationType(self, x_attribute, y_attribute):
         typeRelation = "Unknown"
-        if (x_attribute == self.ATTR_VALUE and y_attribute == self.ATTR_SIZE) or (x_attribute == self.ATTR_SIZE and y_attribute == self.ATTR_VALUE):
+        if (x_attribute == self.ATTR_VALUE and y_attribute == self.ATTR_SIZE
+            ) or (x_attribute == self.ATTR_SIZE and
+                  y_attribute == self.ATTR_VALUE):
             typeRelation = self.REL_SIZE
         elif (x_attribute == x_attribute) and x_attribute == self.ATTR_VALUE:
             typeRelation = self.REL_DATA
@@ -178,7 +188,7 @@ class CorrelationFinder(object):
 
         # Compute the table of concatenation of values
         for i in range(len(fields[:])):
-            for j in range(i+1, len(fields)+1):
+            for j in range(i + 1, len(fields) + 1):
                 # We generate the data
                 concatCellsData = self._generateConcatData(valuesTable[i:j])
 
@@ -225,7 +235,8 @@ class CorrelationFinder(object):
         result = []
         for data in cellsData:
             if len(data) > 0:
-                result.append(TypeConverter.convert(data[:8], Raw, Integer))  # We take only the first 8 octets
+                result.append(TypeConverter.convert(
+                    data[:8], Raw, Integer))  # We take only the first 8 octets
             else:
                 result.append(0)
         return result
@@ -269,11 +280,11 @@ class CorrelationFinder(object):
                 entry = cells[field][i_msg]
                 for k in range(2, 3, 2):
                     if len(entry) > k:
-                        line.append(TypeConverter.netzobRawToInteger(entry[:k]))
+                        line.append(
+                            TypeConverter.netzobRawToInteger(entry[:k]))
                     else:
                         line.append(TypeConverter.netzobRawToInteger(entry))
 
             lines.append(b",".join(line))
 
         return (header, lines)
-

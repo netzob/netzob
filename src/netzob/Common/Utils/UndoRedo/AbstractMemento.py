@@ -43,6 +43,7 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 
+
 class AbstractMemento(object):
     """This class represents a Memento meaning the serialization of an object state."""
 

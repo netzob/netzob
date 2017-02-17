@@ -45,7 +45,6 @@ from netzob.Model.Grammar.Transitions.CloseChannelTransition import CloseChannel
 
 @NetzobLogger
 class OneStateAutomataFactory(object):
-
     @staticmethod
     @typeCheck(list, list)
     def generate(abstractSession, symbolList):
@@ -56,12 +55,14 @@ class OneStateAutomataFactory(object):
 
         if len(abstractSession) < 1:
             return
-        (client, server, symbol) = abstractSession[0]  # We expect that the first message/symbol is emitted by the client.
-                                                       # So we consider it as the initiator of the session.
+        (client, server, symbol) = abstractSession[
+            0]  # We expect that the first message/symbol is emitted by the client.
+        # So we consider it as the initiator of the session.
         sStart = State(name="Start state")
         sMain = State(name="Main state")
         sEnd = State(name="End state")
-        openTransition = OpenChannelTransition(startState=sStart, endState=sMain, name="Open")
+        openTransition = OpenChannelTransition(
+            startState=sStart, endState=sMain, name="Open")
         it = iter(abstractSession)
         inputSymbol = None
         outputSymbols = None
@@ -76,13 +77,19 @@ class OneStateAutomataFactory(object):
                     if symbol is not None:
                         outputSymbols = [symbol]
                 if inputSymbol is not None and outputSymbols is not None:
-                    mainTransition = Transition(startState=sMain, endState=sMain, inputSymbol=inputSymbol, outputSymbols=outputSymbols, name="Transition")
+                    mainTransition = Transition(
+                        startState=sMain,
+                        endState=sMain,
+                        inputSymbol=inputSymbol,
+                        outputSymbols=outputSymbols,
+                        name="Transition")
                     inputSymbol = None
                     outputSymbols = None
             except StopIteration:
                 break
-        
-        closeTransition = CloseChannelTransition(startState=sMain, endState=sEnd, name="Close")
+
+        closeTransition = CloseChannelTransition(
+            startState=sMain, endState=sEnd, name="Close")
 
         from netzob.Model.Grammar.Automata import Automata
         return Automata(sStart, symbolList)

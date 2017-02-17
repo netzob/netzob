@@ -1,4 +1,3 @@
-
 #-*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -35,9 +34,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import multiprocessing
-import time
-import operator
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -201,9 +197,15 @@ class FieldSplitStatic(object):
 
     """
 
-    SUPPORTED_UNITSIZE = [AbstractType.UNITSIZE_8, AbstractType.UNITSIZE_16, AbstractType.UNITSIZE_32, AbstractType.UNITSIZE_64]
+    SUPPORTED_UNITSIZE = [
+        AbstractType.UNITSIZE_8, AbstractType.UNITSIZE_16,
+        AbstractType.UNITSIZE_32, AbstractType.UNITSIZE_64
+    ]
 
-    def __init__(self, unitSize=AbstractType.UNITSIZE_8, mergeAdjacentStaticFields=True, mergeAdjacentDynamicFields=True):
+    def __init__(self,
+                 unitSize=AbstractType.UNITSIZE_8,
+                 mergeAdjacentStaticFields=True,
+                 mergeAdjacentDynamicFields=True):
         """Constructor.
 
 
@@ -230,7 +232,10 @@ class FieldSplitStatic(object):
 
         if field is None:
             raise TypeError("The field cannot be None")
-        fieldValues = [TypeConverter.convert(data, Raw, HexaString) for data in field.getValues(encoded=False)]
+        fieldValues = [
+            TypeConverter.convert(data, Raw, HexaString)
+            for data in field.getValues(encoded=False)
+        ]
 
         if len(fieldValues) == 0:
             raise Exception("No value found in the field.")
@@ -247,7 +252,8 @@ class FieldSplitStatic(object):
             currentIndexValue = []
             for fieldValue in fieldValues:
                 if i < len(fieldValue):
-                    currentIndexValue.append(fieldValue[i:min(len(fieldValue), i + stepUnitsize)])
+                    currentIndexValue.append(
+                        fieldValue[i:min(len(fieldValue), i + stepUnitsize)])
                 else:
                     currentIndexValue.append(b'')
             indexedValues.append(currentIndexValue)
@@ -284,7 +290,8 @@ class FieldSplitStatic(object):
                         dynValues = zip(*dynamicSequences)
                         tmp_result = []
                         for d in dynValues:
-                            tmp_result.append(b''.join([x if x is not None else b'' for x in d]))
+                            tmp_result.append(b''.join(
+                                [x if x is not None else b'' for x in d]))
                         result.append(tmp_result)
                         dynamicSequences = []
                     result.append(values)
@@ -292,7 +299,8 @@ class FieldSplitStatic(object):
                 dynValues = zip(*dynamicSequences)
                 tmp_result = []
                 for d in dynValues:
-                    tmp_result.append(b''.join([x if x is not None else b'' for x in d]))
+                    tmp_result.append(
+                        b''.join([x if x is not None else b'' for x in d]))
                 result.append(tmp_result)
 
             indexedValues = result
@@ -300,8 +308,11 @@ class FieldSplitStatic(object):
         # Create a field for each entry
         newFields = []
         for (i, val) in enumerate(indexedValues):
-            fName = "Field-{0}".format(i)            
-            fDomain = DomainFactory.normalizeDomain([Raw(TypeConverter.convert(v, HexaString, BitArray)) for v in set(val)])
+            fName = "Field-{0}".format(i)
+            fDomain = DomainFactory.normalizeDomain([
+                Raw(TypeConverter.convert(v, HexaString, BitArray))
+                for v in set(val)
+            ])
             newFields.append(Field(domain=fDomain, name=fName))
 
         # attach encoding functions
@@ -309,7 +320,6 @@ class FieldSplitStatic(object):
             newField.encodingFunctions = list(field.encodingFunctions.values())
 
         field.fields = newFields
-
 
     def __computeStepForUnitsize(self):
         """Computes the step following the specified unitsize.
@@ -334,7 +344,10 @@ class FieldSplitStatic(object):
 
     # Static method
     @staticmethod
-    def split(field, unitSize=AbstractType.UNITSIZE_8, mergeAdjacentStaticFields=True, mergeAdjacentDynamicFields=True):
+    def split(field,
+              unitSize=AbstractType.UNITSIZE_8,
+              mergeAdjacentStaticFields=True,
+              mergeAdjacentDynamicFields=True):
         """Split the portion of message in the current field
         following the value variation every unitSize
 
@@ -355,9 +368,11 @@ class FieldSplitStatic(object):
             raise TypeError("Unitsize cannot be None.")
 
         if len(field.messages) < 1:
-            raise ValueError("The associated symbol does not contain any message.")
+            raise ValueError(
+                "The associated symbol does not contain any message.")
 
-        pSplit = FieldSplitStatic(unitSize, mergeAdjacentStaticFields, mergeAdjacentDynamicFields)
+        pSplit = FieldSplitStatic(unitSize, mergeAdjacentStaticFields,
+                                  mergeAdjacentDynamicFields)
         pSplit.execute(field)
 
     # Properties
@@ -373,7 +388,9 @@ class FieldSplitStatic(object):
             raise TypeError("Unitsize cannot be None")
 
         if unitSize not in FieldSplitStatic.SUPPORTED_UNITSIZE:
-            raise ValueError("The specified unitsize is not supported, only {0} are available".format(FieldSplitStatic.SUPPORTED_UNITSIZE))
+            raise ValueError(
+                "The specified unitsize is not supported, only {0} are available".
+                format(FieldSplitStatic.SUPPORTED_UNITSIZE))
 
         self.__unitSize = unitSize
 
@@ -400,4 +417,3 @@ class FieldSplitStatic(object):
             raise TypeError("mergeAdjacentDynamicFields cannot be None")
 
         self.__mergeAdjacentDynamicFields = mergeAdjacentDynamicFields
-

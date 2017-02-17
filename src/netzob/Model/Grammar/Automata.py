@@ -115,12 +115,17 @@ class Automata(object):
             else:
                 shape = "ellipse"
 
-            dotCode.append('"{0}" [shape={1}, style=filled, fillcolor={2}, URL="{3}"];'.format(state.name, shape, color, state.id))
+            dotCode.append(
+                '"{0}" [shape={1}, style=filled, fillcolor={2}, URL="{3}"];'.
+                format(state.name, shape, color, state.id))
 
         for inputState in states:
             for transition in inputState.transitions:
                 outputState = transition.endState
-                dotCode.append('"{0}" -> "{1}" [fontsize=5, label="{2}", URL="{3}"];'.format(inputState.name, outputState.name, transition.description, transition.id))
+                dotCode.append(
+                    '"{0}" -> "{1}" [fontsize=5, label="{2}", URL="{3}"];'.
+                    format(inputState.name, outputState.name,
+                           transition.description, transition.id))
 
         dotCode.append("}")
 
@@ -160,8 +165,8 @@ class Automata(object):
             if currentState is not None:
                 found = False
                 for tmpState in states:
-                        if tmpState.id == currentState.id:
-                            found = True
+                    if tmpState.id == currentState.id:
+                        found = True
                 if not found:
                     for transition in currentState.transitions:
                         outputState = transition.endState
@@ -220,7 +225,8 @@ class Automata(object):
         :rtype: a :class:`netzob.Model.Grammar.Automata.Automata`
 
         """
-        return ChainedStatesAutomataFactory.generate(abstractSession, symbolList)
+        return ChainedStatesAutomataFactory.generate(abstractSession,
+                                                     symbolList)
 
     @staticmethod
     @typeCheck(list, list)
@@ -356,4 +362,3 @@ class Automata(object):
     @typeCheck(list)
     def vocabulary(self, vocabulary):
         self.__vocabulary = vocabulary
-

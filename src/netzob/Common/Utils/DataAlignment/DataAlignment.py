@@ -34,7 +34,6 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
-import threading
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -145,11 +144,11 @@ class DataAlignment(object):
             raise TypeError("Field cannot be None")
 
         # Aligned messages are stored in a MatrixList for better display
-        result = MatrixList()        
+        result = MatrixList()
 
         # We retrieve all the leaf fields of the root of the provided field
         rootLeafFields = self.__root._getLeafFields(depth=self.depth)
-            
+
         # if self.__root != self.field:
         #     targetedFieldLeafFields = self.field._getLeafFields(depth=self.depth)
         # else:
@@ -160,25 +159,27 @@ class DataAlignment(object):
         for d in self.data:
             mp = MessageParser()
             # alignedMsg = mp.parseRaw(TypeConverter.convert(d, HexaString, Raw), targetedFieldLeafFields)
-            alignedMsg = next(mp.parseRaw(d, targetedFieldLeafFields))            
+            alignedMsg = next(mp.parseRaw(d, targetedFieldLeafFields))
 
             alignedEncodedMsg = []
             for ifield, currentField in enumerate(targetedFieldLeafFields):
 
                 # now we apply encoding and mathematic functions
                 fieldValue = alignedMsg[ifield]
-            
-                if self.encoded and len(list(currentField.encodingFunctions.values())) > 0:
-                    for encodingFunction in list(currentField.encodingFunctions.values()):
+
+                if self.encoded and len(
+                        list(currentField.encodingFunctions.values())) > 0:
+                    for encodingFunction in list(
+                            currentField.encodingFunctions.values()):
                         fieldValue = encodingFunction.encode(fieldValue)
                 else:
-                    fieldValue = TypeConverter.convert(fieldValue, BitArray, Raw)
-                
+                    fieldValue = TypeConverter.convert(fieldValue, BitArray,
+                                                       Raw)
+
                 if currentField in self.field._getLeafFields(depth=self.depth):
                     alignedEncodedMsg.append(fieldValue)
 
             result.append(alignedEncodedMsg)
-
 
         return result
 
@@ -204,9 +205,9 @@ class DataAlignment(object):
 
     #     build the regex
     #     regexes = [field.regex for field in fields]
-        
+
     #     regex = NetzobAggregateRegex(regexes)
-                    
+
     #     self._logger.debug("Regex: {0}".format(regex.finalRegex()))
 
     #     dynamicDatas = None
@@ -232,7 +233,7 @@ class DataAlignment(object):
 
     #     self._logger.debug("{0} ways of parsing the message with a regex was found.".format(len(results)))
     #     self._logger.debug(results)
-            
+
     #     return results                
 
     # Static method
@@ -253,7 +254,7 @@ class DataAlignment(object):
         :return: the aligned data
         :rtype: :class:`netzob.Common.Utils.MatrixList.MatrixList`
         """
-        
+
         dAlignment = DataAlignment(data, field, depth, encoded=encoded)
         return dAlignment.execute()
 
@@ -275,7 +276,9 @@ class DataAlignment(object):
             elif isinstance(d, bytes):
                 val.append(d)
             else:
-                raise Exception("Invalid type, data can only be an str or a bytes not {}: {}".format(type(data), d))
+                raise Exception(
+                    "Invalid type, data can only be an str or a bytes not {}: {}".
+                    format(type(data), d))
         self.__data = val
 
     @property
@@ -314,7 +317,8 @@ class DataAlignment(object):
     @typeCheck(int)
     def depth(self, depth):
         if depth is not None and depth < 0:
-            raise ValueError("Depth cannot be <0, use None to specify unlimited depth")
+            raise ValueError(
+                "Depth cannot be <0, use None to specify unlimited depth")
 
         self.__depth = depth
 
@@ -349,4 +353,3 @@ class DataAlignment(object):
             raise ValueError("Styled cannot be None")
 
         self.__styled = styled
-

@@ -85,7 +85,8 @@ try:
                 if not self.is_tty:
                     self.stream.write(message)
                 else:
-                    self.stream.write(self.colours[record.levelname] + message + Style.RESET_ALL)
+                    self.stream.write(self.colours[record.levelname] + message
+                                      + Style.RESET_ALL)
                 self.stream.write(getattr(self, 'terminator', '\n'))
                 self.flush()
             except (KeyboardInterrupt, SystemExit):
@@ -117,7 +118,8 @@ def NetzobLogger(klass):
             klass._logger.setLevel(int(os.environ['NETZOB_LOG_LEVEL']))
         except:
             pass
-        handler = ColourStreamHandler() if has_colour else logging.StreamHandler()
+        handler = ColourStreamHandler(
+        ) if has_colour else logging.StreamHandler()
         fmt = '%(relativeCreated)d: [%(levelname)s] %(module)s:%(funcName)s: %(message)s'
         handler.setFormatter(logging.Formatter(fmt))
         klass._logger.addHandler(handler)
@@ -163,6 +165,7 @@ def typeCheck(*types):
     .. warning:: if argument is None, the type checking is not executed on it.
 
     """
+
     def _typeCheck_(func):
         def wrapped_f(*args, **kwargs):
             arguments = args[1:]
@@ -176,8 +179,14 @@ def typeCheck(*types):
                         final_types.append(type)
 
                 for i, argument in enumerate(arguments):
-                    if argument is not None and not isinstance(argument, final_types[i]):
-                        raise TypeError("Invalid type for arguments, expecting: {0} and received {1}".format(', '.join([t.__name__ for t in final_types]), argument.__class__.__name__))
+                    if argument is not None and not isinstance(argument,
+                                                               final_types[i]):
+                        raise TypeError(
+                            "Invalid type for arguments, expecting: {0} and received {1}".
+                            format(', '.join([t.__name__ for t in final_types
+                                              ]), argument.__class__.__name__))
             return func(*args, **kwargs)
+
         return wraps(func)(wrapped_f)
+
     return _typeCheck_

@@ -66,6 +66,8 @@ class VariableSpecializer():
         # we create the initial parser path
         variableSpecializingPaths = self.variable.specialize(specializingPath)
 
-        self._logger.debug("Specializing variable '{0}' generated '{1}' valid paths".format(self.variable, len(variableSpecializingPaths)))
+        self._logger.debug(
+            "Specializing variable '{0}' generated '{1}' valid paths".format(
+                self.variable, len(variableSpecializingPaths)))
 
         return variableSpecializingPaths

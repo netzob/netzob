@@ -51,7 +51,6 @@ from netzob.Model.Types.ASCII import ASCII
 
 
 class HexaString(AbstractType):
-
     def __init__(self, value=None, size=(None, None)):
         if value is not None and not isinstance(value, bitarray):
             from netzob.Model.Types.TypeConverter import TypeConverter
@@ -98,7 +97,7 @@ class HexaString(AbstractType):
         # logger = logging.getLogger(__name__)
 
         # logger.warn("PAF: {0}".format(data))
-            
+
         # if not ASCII().canParse(data):
         #     logger.warn("OUPS: {0}".format(data))
         #     return False
@@ -120,7 +119,10 @@ class HexaString(AbstractType):
 
     @staticmethod
     @typeCheck(str)
-    def decode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+    def decode(data,
+               unitSize=AbstractType.defaultUnitSize(),
+               endianness=AbstractType.defaultEndianness(),
+               sign=AbstractType.defaultSign()):
         """This method convert the specified data in python raw format.
 
         >>> from netzob.all import *
@@ -159,7 +161,10 @@ class HexaString(AbstractType):
         return binascii.unhexlify(data)
 
     @staticmethod
-    def encode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+    def encode(data,
+               unitSize=AbstractType.defaultUnitSize(),
+               endianness=AbstractType.defaultEndianness(),
+               sign=AbstractType.defaultSign()):
         """This method convert the python raw data to an HexaString
 
         >>> from netzob.all import *
@@ -192,4 +197,3 @@ class HexaString(AbstractType):
             raise TypeError("data cannot be None")
 
         return binascii.hexlify(data)
-

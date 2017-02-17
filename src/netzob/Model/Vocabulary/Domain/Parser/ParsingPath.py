@@ -40,18 +40,30 @@
 #+---------------------------------------------------------------------------+
 from bitarray import bitarray
 
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Model.Types.TypeConverter import TypeConverter
 from netzob.Model.Types.BitArray import BitArray
 from netzob.Model.Types.Raw import Raw
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 
+
 @NetzobLogger
 class ParsingPath(GenericPath):
-
-    def __init__(self, dataToParse, memory, dataAssignedToField=None, dataAssignedToVariable=None, fieldsCallbacks = None, ok = None, parsedData=None):
-        super(ParsingPath, self).__init__(memory, dataAssignedToField=dataAssignedToField, dataAssignedToVariable=dataAssignedToVariable, fieldsCallbacks=fieldsCallbacks)        
+    def __init__(self,
+                 dataToParse,
+                 memory,
+                 dataAssignedToField=None,
+                 dataAssignedToVariable=None,
+                 fieldsCallbacks=None,
+                 ok=None,
+                 parsedData=None):
+        super(ParsingPath, self).__init__(
+            memory,
+            dataAssignedToField=dataAssignedToField,
+            dataAssignedToVariable=dataAssignedToVariable,
+            fieldsCallbacks=fieldsCallbacks)
         self.originalDataToParse = dataToParse.copy()
         if ok is None:
             self.__ok = True
@@ -64,12 +76,12 @@ class ParsingPath(GenericPath):
     def validForMessage(self, fields, bitArrayMessage):
         """Checks if the parsing path can represent the provided bitArrayMessage
         under the provided fields."""
-        
+
         parsedMessage = None
         for field in fields:
             if not self.isDataAvailableForField(field):
                 return False
-            
+
             if parsedMessage is None:
                 parsedMessage = self.getDataAssignedToField(field).copy()
             else:
@@ -88,12 +100,15 @@ class ParsingPath(GenericPath):
 
         fCall = [x for x in self._fieldsCallbacks]
 
-        result = ParsingPath(self.originalDataToParse, memory=self.memory.duplicate(), dataAssignedToField = dField, dataAssignedToVariable=dVariable, fieldsCallbacks=fCall, ok=self.ok())
-        
+        result = ParsingPath(
+            self.originalDataToParse,
+            memory=self.memory.duplicate(),
+            dataAssignedToField=dField,
+            dataAssignedToVariable=dVariable,
+            fieldsCallbacks=fCall,
+            ok=self.ok())
+
         return result
-        
-        
 
     def ok(self):
         return self.__ok
-        

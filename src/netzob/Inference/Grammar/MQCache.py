@@ -37,7 +37,6 @@ import logging
 #+----------------------------------------------
 #| Local application imports
 #+----------------------------------------------
-import time
 from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery
 
 
@@ -46,7 +45,6 @@ from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery
 #|    A cache for MQs and their results
 #+----------------------------------------------
 class MQCache():
-
     def __init__(self):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.MQCache.py')
@@ -60,7 +58,8 @@ class MQCache():
         return None
 
     def cacheResult(self, mq, result):
-        self.log.debug("Cache the following : " + str(mq) + " == " + str(result))
+        self.log.debug("Cache the following : " + str(mq) + " == " + str(
+            result))
         self.cache[mq] = result
 
     def dumpCache(self):
@@ -91,6 +90,7 @@ class MQCache():
             if symbol is not None:
                 symbolsResult.append(symbol)
         self.cacheResult(mq, symbolsResult)
+
 
 #
 #        (DOWNLOAD,) > [UnknownSymbol, EmptySymbol, EmptySymbol]

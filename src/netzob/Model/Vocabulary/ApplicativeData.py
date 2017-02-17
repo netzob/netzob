@@ -117,4 +117,3 @@ class ApplicativeData(object):
         :rtype: str
         """
         return "Applicative Data: {0}={1})".format(self.name, self.value)
-

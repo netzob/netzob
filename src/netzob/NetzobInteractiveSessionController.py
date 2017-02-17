@@ -72,6 +72,7 @@ class NetzobInteractiveSessionController(object):
 +----------------------------------------------------+
 """.format(release.appname, release.version, release.versionName, release.url)
 
+
 class NetzobIPythonShellController(NetzobInteractiveSessionController):
     """Execute Netzob in a IPython embedded shell"""
 
@@ -83,11 +84,13 @@ class NetzobIPythonShellController(NetzobInteractiveSessionController):
         import netzob.all
         self.shell(header=self.getBanner(), module=netzob.all)
 
+
 @NetzobLogger
 class NetzobSessionControllerFactory(object):
     def __call__(self):
         try:
             return NetzobIPythonShellController()
         except Exception as e:
-            self._logger.warning("Cannot initialize IPython shell: {}".format(e))
+            self._logger.warning(
+                "Cannot initialize IPython shell: {}".format(e))
         return NetzobInteractiveSessionController()

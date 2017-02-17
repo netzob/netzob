@@ -55,7 +55,13 @@ from netzob.Model.Vocabulary.Functions.VisualizationFunction import Visualizatio
 class AbstractMessage(SortableObject):
     """Every message must inherits from this class"""
 
-    def __init__(self, data, _id=None, session=None, date=None, source=None, destination=None):
+    def __init__(self,
+                 data,
+                 _id=None,
+                 session=None,
+                 date=None,
+                 source=None,
+                 destination=None):
         """
         :parameter data: the content of the message
         :type data: a :class:`object`
@@ -153,7 +159,7 @@ class AbstractMessage(SortableObject):
     def clearVisualizationFunctions(self):
         """Remove all the visualization functions attached to the current element"""
 
-        while(len(self.__visualizationFunctions) > 0):
+        while (len(self.__visualizationFunctions) > 0):
             self.__visualizationFunctions.pop()
 
     def priority(self):
@@ -184,9 +190,11 @@ class AbstractMessage(SortableObject):
         HLE1 = "\033[0;m"
         HLS2 = "\033[1;32m"
         HLE2 = "\033[1;m"
-        header = HLS1 + "[{0} {1}{2}{3}->{4}{5}{6}]".format(self.date, HLE1 + HLS2, self.source, HLE2 + HLS1, HLE1 + HLS2, self.destination, HLE2 + HLS1) + HLE1
+        header = HLS1 + "[{0} {1}{2}{3}->{4}{5}{6}]".format(
+            self.date, HLE1 + HLS2, self.source, HLE2 + HLS1, HLE1 + HLS2,
+            self.destination, HLE2 + HLS1) + HLE1
         return "{0} {1}".format(header, repr(tmpData))
-    
+
     @property
     def id(self):
         """The unique identified of the message
@@ -348,9 +356,13 @@ class AbstractMessage(SortableObject):
             if not isinstance(key, int):
                 raise TypeError("At least one key is not a valid int position")
             if not isinstance(value, list):
-                raise TypeError("At least one value of the provided dict is not a list of string")
+                raise TypeError(
+                    "At least one value of the provided dict is not a list of string"
+                )
             for x in value:
                 if not isinstance(x, str):
-                    raise TypeError("At least one value of the provided dict is not a list of string")
+                    raise TypeError(
+                        "At least one value of the provided dict is not a list of string"
+                    )
 
         self.__semanticTags = semanticTags

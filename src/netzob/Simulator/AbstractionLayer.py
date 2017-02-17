@@ -58,7 +58,6 @@ from netzob.Model.Vocabulary.UnknownSymbol import UnknownSymbol
 from netzob.Simulator.Channels.AbstractChannel import ChannelDownException
 
 
-
 @NetzobLogger
 class AbstractionLayer(object):
     """An abstraction layer specializes a symbol into a message before
@@ -102,9 +101,9 @@ class AbstractionLayer(object):
         self.channel = channel
         self.symbols = symbols
         self.memory = Memory()
-        self.specializer = MessageSpecializer(memory = self.memory)
-        self.parser = MessageParser(memory = self.memory)
-        self.flow_parser = FlowParser(memory = self.memory)
+        self.specializer = MessageSpecializer(memory=self.memory)
+        self.parser = MessageParser(memory=self.memory)
+        self.flow_parser = FlowParser(memory=self.memory)
 
     @typeCheck(Symbol)
     def writeSymbol(self, symbol):
@@ -116,10 +115,12 @@ class AbstractionLayer(object):
         :raise TypeError if parameter is not valid and Exception if an exception occurs.
         """
         if symbol is None:
-            raise TypeError("The symbol to write on the channel cannot be None")
+            raise TypeError(
+                "The symbol to write on the channel cannot be None")
 
-        self._logger.debug("Specializing symbol '{0}' (id={1}).".format(symbol.name, symbol.id))
-        
+        self._logger.debug("Specializing symbol '{0}' (id={1}).".format(
+            symbol.name, symbol.id))
+
         dataBin = self.specializer.specializeSymbol(symbol).generatedContent
 
         self.memory = self.specializer.memory
@@ -127,7 +128,7 @@ class AbstractionLayer(object):
         data = TypeConverter.convert(dataBin, BitArray, Raw)
 
         self.channel.write(data)
-        self._logger.debug("Writing to commnunication channel done..")                
+        self._logger.debug("Writing to commnunication channel done..")
 
     @typeCheck(int)
     def readSymbols(self, timeout=EmptySymbol.defaultReceptionTimeout()):
@@ -143,7 +144,7 @@ class AbstractionLayer(object):
         """
 
         self._logger.debug("Reading data from communication channel...")
-        data = self.channel.read(timeout = timeout)
+        data = self.channel.read(timeout=timeout)
         self._logger.debug("Received : {}".format(repr(data)))
 
         symbols = []
@@ -151,24 +152,24 @@ class AbstractionLayer(object):
         # if we read some bytes, we try to abstract them
         if len(data) > 0:
             try:
-                symbols_and_data = self.flow_parser.parseFlow(RawMessage(data), self.symbols)
+                symbols_and_data = self.flow_parser.parseFlow(
+                    RawMessage(data), self.symbols)
                 for (symbol, alignment) in symbols_and_data:
                     symbols.append(symbol)
             except Exception as e:
                 self._logger.error(e)
-                
+
             if len(symbols) > 0:
                 self.memory = self.flow_parser.memory
                 self.specializer.memory = self.memory
         else:
             symbols.append(EmptySymbol())
-        
+
         if len(symbols) == 0 and len(data) > 0:
             msg = RawMessage(data)
-            symbols.append(UnknownSymbol(message = msg))
+            symbols.append(UnknownSymbol(message=msg))
 
         return (symbols, data)
-    
 
     @typeCheck(int)
     def readSymbol(self, timeout=EmptySymbol.defaultReceptionTimeout()):
@@ -184,7 +185,7 @@ class AbstractionLayer(object):
         """
 
         self._logger.debug("Reading data from communication channel...")
-        data = self.channel.read(timeout = timeout)
+        data = self.channel.read(timeout=timeout)
         self._logger.debug("Received : {}".format(repr(data)))
 
         symbol = None
@@ -203,7 +204,7 @@ class AbstractionLayer(object):
 
         if symbol is None and len(data) > 0:
             msg = RawMessage(data)
-            symbol = UnknownSymbol(message = msg)            
+            symbol = UnknownSymbol(message=msg)
         elif symbol is None and len(data) == 0:
             symbol = EmptySymbol()
 
@@ -220,8 +221,6 @@ class AbstractionLayer(object):
     def reset(self):
         self._logger.debug("Reseting abstraction layer")
         self.memory = Memory()
-        self.specializer = MessageSpecializer(memory = self.memory)
-        self.parser = MessageParser(memory = self.memory)
-        self.flow_parser = FlowParser(memory = self.memory)
-        
-
+        self.specializer = MessageSpecializer(memory=self.memory)
+        self.parser = MessageParser(memory=self.memory)
+        self.flow_parser = FlowParser(memory=self.memory)

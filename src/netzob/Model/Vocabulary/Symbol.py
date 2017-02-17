@@ -43,7 +43,8 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Utils.TypedList import TypedList
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
@@ -173,11 +174,12 @@ class Symbol(AbstractField):
         spePath = msg.specializeSymbol(self)
 
         if spePath is not None:
-            return TypeConverter.convert(spePath.generatedContent, BitArray, Raw)
+            return TypeConverter.convert(spePath.generatedContent, BitArray,
+                                         Raw)
 
     def clearMessages(self):
         """Delete all the messages attached to the current symbol"""
-        while(len(self.__messages) > 0):
+        while (len(self.__messages) > 0):
             self.__messages.pop()
 
     # Properties
@@ -198,7 +200,9 @@ class Symbol(AbstractField):
         # First it checks the specified messages are all AbstractMessages
         for msg in messages:
             if not isinstance(msg, AbstractMessage):
-                raise TypeError("Cannot add messages of type {0} in the session, only AbstractMessages are allowed.".format(type(msg)))
+                raise TypeError(
+                    "Cannot add messages of type {0} in the session, only AbstractMessages are allowed.".
+                    format(type(msg)))
 
         self.clearMessages()
         for msg in messages:
@@ -206,4 +210,3 @@ class Symbol(AbstractField):
 
     def __repr__(self):
         return self.name
-

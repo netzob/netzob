@@ -119,10 +119,13 @@ class FieldOperations(object):
         if field1 == field2:
             raise ValueError("Cannot merge a unique field (field1 == field2)")
 
-        self._logger.debug("Merging field {0} with field {1}".format(field1.name, field2.name))
+        self._logger.debug("Merging field {0} with field {1}".format(
+            field1.name, field2.name))
 
         if field1.parent is not field2.parent:
-            raise ValueError("Specified fields don't have the same parent, only fields with same parents can be merged.")
+            raise ValueError(
+                "Specified fields don't have the same parent, only fields with same parents can be merged."
+            )
 
         # retrieve indexes of specified fields
         iField1 = None
@@ -134,11 +137,15 @@ class FieldOperations(object):
                 iField2 = iField
 
         if iField1 is None:
-            raise ValueError("Cannot retrieve position of field1 in its parent fields")
+            raise ValueError(
+                "Cannot retrieve position of field1 in its parent fields")
         if iField2 is None:
-            raise ValueError("Cannot retrieve position of field2 in its parent fields")
+            raise ValueError(
+                "Cannot retrieve position of field2 in its parent fields")
         if iField2 != iField1 + 1:
-            raise ValueError("Field1 must be directly on the left of field2 (iField1={0}, iField2={1})".format(iField1, iField2))
+            raise ValueError(
+                "Field1 must be directly on the left of field2 (iField1={0}, iField2={1})".
+                format(iField1, iField2))
 
         # build a new field domain
         newDomain = Agg([field1.domain, field2.domain])
@@ -148,4 +155,3 @@ class FieldOperations(object):
         before = parent.fields[:iField1]
         after = parent.fields[iField2 + 1:]
         parent.fields = before + [newField] + after
-

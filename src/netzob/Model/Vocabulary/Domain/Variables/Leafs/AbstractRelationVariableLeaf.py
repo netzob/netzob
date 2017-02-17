@@ -55,7 +55,8 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
     """
 
     def __init__(self, varType, fieldDependencies=None, name=None):
-        super(AbstractRelationVariableLeaf, self).__init__(varType, name, svas=SVAS.VOLATILE)
+        super(AbstractRelationVariableLeaf, self).__init__(
+            varType, name, svas=SVAS.VOLATILE)
         if fieldDependencies is None:
             fieldDependencies = []
         self.fieldDependencies = fieldDependencies

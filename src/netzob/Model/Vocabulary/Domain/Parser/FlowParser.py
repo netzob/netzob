@@ -52,7 +52,6 @@ from netzob.Model.Types.Raw import Raw
 from netzob.Model.Vocabulary.Domain.Parser.FieldParser import FieldParser
 
 
-
 @NetzobLogger
 class FlowParser(object):
     """    In some cases, a message can also represent multiple consecutive messages. For instance, TCP flows embeds
@@ -161,7 +160,7 @@ class FlowParser(object):
     
     """
 
-    def __init__(self, memory = None):
+    def __init__(self, memory=None):
         if memory is None:
             self.memory = Memory()
         else:
@@ -177,16 +176,22 @@ class FlowParser(object):
         if message is None:
             raise Exception("Specified cannot be None")
         if symbols is None or len(symbols) == 0:
-            raise Exception("Symbols cannot be None and must be a list of at least one symbol")
+            raise Exception(
+                "Symbols cannot be None and must be a list of at least one symbol"
+            )
 
         data_to_parse_raw = message.data
-        data_to_parse_bitarray = TypeConverter.convert(data_to_parse_raw, Raw, BitArray)
-    
-        for result in self._parseFlow_internal(data_to_parse_bitarray, symbols, self.memory):
+        data_to_parse_bitarray = TypeConverter.convert(data_to_parse_raw, Raw,
+                                                       BitArray)
+
+        for result in self._parseFlow_internal(data_to_parse_bitarray, symbols,
+                                               self.memory):
             return result
 
-        raise InvalidParsingPathException("No parsing path returned while parsing '{}'".format(repr(data_to_parse_raw)))
-    
+        raise InvalidParsingPathException(
+            "No parsing path returned while parsing '{}'".format(
+                repr(data_to_parse_raw)))
+
     def _parseFlow_internal(self, data_to_parse_bitarray, symbols, memory):
         """Parses the specified data"""
 
@@ -194,40 +199,42 @@ class FlowParser(object):
             raise Exception("Nothing to parse")
 
         for symbol in symbols:
-            self._logger.debug("Parsing '{}' with Symbol '{}'".format(data_to_parse_bitarray, symbol.name))
+            self._logger.debug("Parsing '{}' with Symbol '{}'".format(
+                data_to_parse_bitarray, symbol.name))
             flow_parsing_results = []
             try:
-                mp = MessageParser(memory = memory)
-                results = mp.parseBitarray(data_to_parse_bitarray.copy(),
-                                           symbol._getLeafFields(),
-                                           must_consume_everything = False)
+                mp = MessageParser(memory=memory)
+                results = mp.parseBitarray(
+                    data_to_parse_bitarray.copy(),
+                    symbol._getLeafFields(),
+                    must_consume_everything=False)
 
                 for parse_result in results:
-                    parse_result_len = sum([len(value) for value in parse_result])                    
-            
-                    remainings_bitarray = data_to_parse_bitarray[parse_result_len:]
+                    parse_result_len = sum(
+                        [len(value) for value in parse_result])
+
+                    remainings_bitarray = data_to_parse_bitarray[
+                        parse_result_len:]
 
                     if len(remainings_bitarray) > 0:
-                        self._logger.debug("Try to parse the remaining data '{}' with another symbol".format(remainings_bitarray))
-                        try:    
-                            child_flow_parsings = self._parseFlow_internal(remainings_bitarray, symbols, memory.duplicate())
+                        self._logger.debug(
+                            "Try to parse the remaining data '{}' with another symbol".
+                            format(remainings_bitarray))
+                        try:
+                            child_flow_parsings = self._parseFlow_internal(
+                                remainings_bitarray, symbols,
+                                memory.duplicate())
                             for child_flow_parsing in child_flow_parsings:
-                                flow_parsing_results = [(symbol, parse_result)] + child_flow_parsing
-                            
+                                flow_parsing_results = [(symbol, parse_result)
+                                                        ] + child_flow_parsing
+
                                 yield flow_parsing_results
                         except InvalidParsingPathException:
                             pass
                     else:
                         flow_parsing_results = [(symbol, parse_result)]
-                            
+
                         yield flow_parsing_results
 
             except InvalidParsingPathException:
                 pass
-
-
-
-
-            
-            
-

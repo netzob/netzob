@@ -42,7 +42,8 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck
 
 
 @NetzobLogger
@@ -57,7 +58,7 @@ class SVAS(object):
     CONSTANT = "Constant SVAS"
     EPHEMERAL = "Ephemeral SVAS"
     VOLATILE = "Volatile SVAS"
-    PERSISTENT = "Persistent SVAS"    
+    PERSISTENT = "Persistent SVAS"
 
     def __init__(self):
         pass

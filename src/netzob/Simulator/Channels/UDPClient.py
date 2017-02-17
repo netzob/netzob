@@ -35,7 +35,6 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import socket
-import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -89,7 +88,12 @@ class UDPClient(AbstractChannel):
     """
 
     @typeCheck(str, int)
-    def __init__(self, remoteIP, remotePort, localIP=None, localPort=None, timeout=5):
+    def __init__(self,
+                 remoteIP,
+                 remotePort,
+                 localIP=None,
+                 localPort=None,
+                 timeout=5):
         super(UDPClient, self).__init__(isServer=False)
         self.remoteIP = remoteIP
         self.remotePort = remotePort
@@ -105,7 +109,8 @@ class UDPClient(AbstractChannel):
         """
 
         if self.isOpen:
-            raise RuntimeError("The channel is already open, cannot open it again")
+            raise RuntimeError(
+                "The channel is already open, cannot open it again")
 
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # Reuse the connection

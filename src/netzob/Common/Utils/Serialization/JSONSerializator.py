@@ -29,7 +29,6 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 
-
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
@@ -41,7 +40,6 @@ import inspect
 
 
 class JSONSerializator(object):
-
     @staticmethod
     def serialize(obj):
         """Serialize the specified object under a specific
@@ -77,9 +75,5 @@ class JSONSerializator(object):
 
         for prop in props:
             print(prop.fget.__name__, prop.fget)
-            
-                                        
-                
-    
-        return "TEST"
 
+        return "TEST"

@@ -53,13 +53,20 @@ class CommandLine(object):
         """Configure the parser based on Netzob's usage and the
         definition of its options and arguments"""
         self.usage = "usage: %prog [options]"
-        self.parser = optparse.OptionParser(self.usage, prog=release.appname, version=release.version)
-        self.parser.add_option("-d", "--debugLevel", dest="debugLevel", help="Activate debug information ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL')")
+        self.parser = optparse.OptionParser(
+            self.usage, prog=release.appname, version=release.version)
+        self.parser.add_option(
+            "-d",
+            "--debugLevel",
+            dest="debugLevel",
+            help="Activate debug information ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL')"
+        )
         # self.parser.add_option("-i", "--interactive", action="store_true", dest="interactive", help="Starts an interactive Netzob session")
 
     def parse(self):
         """Read and parse the provided arguments and options"""
-        (self.providedOptions, self.providedArguments) = self.parser.parse_args()
+        (self.providedOptions,
+         self.providedArguments) = self.parser.parse_args()
 
     def isInteractiveConsoleRequested(self):
         """Compute and returns if the user has requested the initiation of an interactive session"""

@@ -116,4 +116,3 @@ class ClusterBySize(object):
             newSymbols.append(s)
 
         return newSymbols
-

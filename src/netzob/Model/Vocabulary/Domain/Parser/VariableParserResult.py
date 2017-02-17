@@ -45,6 +45,7 @@
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 
+
 @NetzobLogger
 class VariableParserResult():
     """This class denotes one parsing result of a variable against a specified content
@@ -62,8 +63,9 @@ class VariableParserResult():
         return self.result
 
     def __str__(self):
-        return "VarParserResult (result={0}, consumedData={1}, remainingData={2})".format(self.result, self.consumedData, self.remainedData)
-    
+        return "VarParserResult (result={0}, consumedData={1}, remainingData={2})".format(
+            self.result, self.consumedData, self.remainedData)
+
     @property
     def result(self):
         return self.__result
@@ -74,8 +76,7 @@ class VariableParserResult():
         if result is None:
             raise Exception("Result cannot be None")
         self.__result = result
-            
-        
+
     @property
     def variable(self):
         """The variable that will be use to parse some content
@@ -115,7 +116,3 @@ class VariableParserResult():
     @remainedData.setter
     def remainedData(self, remainedData):
         self.__remainedData = remainedData
-
-
-    
-

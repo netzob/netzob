@@ -84,7 +84,8 @@ class DomainEncodingFunction(EncodingFunction):
 
         if variable.varType == "Data" or variable.varType == "Size" or variable.varType == "InternetChecksum":
             val = readingToken.getValueForVariable(variable)
-            encodedVal = TypeConverter.convert(val, BitArray, variable.dataType.__class__)
+            encodedVal = TypeConverter.convert(val, BitArray,
+                                               variable.dataType.__class__)
             result.append(str(encodedVal))
         elif variable.varType == "Agg" or variable.varType == "Alt":
             for child in variable.children:
@@ -93,7 +94,8 @@ class DomainEncodingFunction(EncodingFunction):
             # nothing to encode when child is EOL
             pass
         else:
-            raise Exception("Unknown type of variable: {0}".format(variable.varType))
+            raise Exception(
+                "Unknown type of variable: {0}".format(variable.varType))
 
         if len(result) == 0:
             return ''
@@ -103,4 +105,3 @@ class DomainEncodingFunction(EncodingFunction):
     def priority(self):
         """Returns the priority of the current encoding filter."""
         return 100
-

@@ -91,7 +91,10 @@ class Format(object):
 
     @staticmethod
     @typeCheck(AbstractField, str)
-    def splitStatic(field, unitSize=AbstractType.UNITSIZE_8, mergeAdjacentStaticFields=True, mergeAdjacentDynamicFields=True):
+    def splitStatic(field,
+                    unitSize=AbstractType.UNITSIZE_8,
+                    mergeAdjacentStaticFields=True,
+                    mergeAdjacentDynamicFields=True):
         """Split the portion of the message matching the specified fields
         following their variations of each unitsize.
         This method returns nothing, it upgrades the field structure
@@ -183,9 +186,11 @@ class Format(object):
             raise TypeError("Unitsize cannot be None")
 
         if len(field.messages) < 1:
-            raise ValueError("The associated symbol does not contain any message.")
+            raise ValueError(
+                "The associated symbol does not contain any message.")
 
-        FieldSplitStatic.split(field, unitSize, mergeAdjacentStaticFields, mergeAdjacentDynamicFields)
+        FieldSplitStatic.split(field, unitSize, mergeAdjacentStaticFields,
+                               mergeAdjacentDynamicFields)
 
     @staticmethod
     @typeCheck(AbstractField, AbstractType)
@@ -245,7 +250,8 @@ class Format(object):
             raise TypeError("Field cannot be None")
 
         if len(field.messages) < 1:
-            raise ValueError("The associated symbol does not contain any message.")
+            raise ValueError(
+                "The associated symbol does not contain any message.")
 
         FieldSplitDelimiter.split(field, delimiter)
 
@@ -286,7 +292,8 @@ class Format(object):
         :raise Exception if something bad happens
         """
         if field is None:
-            raise TypeError("The field to reset must be specified and cannot be None")
+            raise TypeError(
+                "The field to reset must be specified and cannot be None")
 
         fr = FieldReseter()
         fr.reset(field)
@@ -358,7 +365,8 @@ class Format(object):
         When processing, the matrix of scores is computed by the C extensions (L{_libScoreComputation}
         and used to regroup messages and symbols into equivalent cluster.
         """
-        clustering = ClusterByAlignment(minEquivalence=minEquivalence, internalSlick=internalSlick)
+        clustering = ClusterByAlignment(
+            minEquivalence=minEquivalence, internalSlick=internalSlick)
         return clustering.cluster(messages)
 
     @staticmethod
@@ -410,7 +418,9 @@ class Format(object):
             appDatas.extend(session.applicativeData)
 
         if len(appDatas) == 0:
-            raise ValueError("There are no applicative data attached to the session from which the specified messages come from.")
+            raise ValueError(
+                "There are no applicative data attached to the session from which the specified messages come from."
+            )
 
         cluster = ClusterByApplicativeData()
         return cluster.cluster(messages, appDatas)
@@ -544,4 +554,3 @@ class Format(object):
 
         clustering = ClusterBySize()
         return clustering.cluster(messages)
-

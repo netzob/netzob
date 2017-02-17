@@ -34,7 +34,6 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import socket
-import time
 import ssl
 
 #+---------------------------------------------------------------------------+
@@ -58,7 +57,14 @@ class SSLClient(AbstractChannel):
 
     """
 
-    def __init__(self, remoteIP, remotePort, localIP=None, localPort=None, timeout=2, server_cert_file=None, alpn_protocols=None):
+    def __init__(self,
+                 remoteIP,
+                 remotePort,
+                 localIP=None,
+                 localPort=None,
+                 timeout=2,
+                 server_cert_file=None,
+                 alpn_protocols=None):
         super(SSLClient, self).__init__(isServer=False)
         self.remoteIP = remoteIP
         self.remotePort = remotePort
@@ -77,13 +83,14 @@ class SSLClient(AbstractChannel):
         """
 
         if self.isOpen:
-            raise RuntimeError("The channel is already open, cannot open it again")
+            raise RuntimeError(
+                "The channel is already open, cannot open it again")
 
         self.__socket = socket.socket()
         # Reuse the connection
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.__socket.settimeout(self.timeout)
-        
+
         if self.localIP is not None and self.localPort is not None:
             self.__socket.bind((self.localIP, self.localPort))
 
@@ -100,12 +107,12 @@ class SSLClient(AbstractChannel):
         if self.alpn_protocols is not None:
             context.set_alpn_protocols(self.alpn_protocols)
 
-        
         # lets wrap the socket to create the ssl tunnel
         self.__ssl_socket = context.wrap_socket(self.__socket)
         self.__ssl_socket.settimeout(self.timeout)
-            
-        self._logger.debug("Connect to the SSL server to {0}:{1}".format(self.remoteIP, self.remotePort))
+
+        self._logger.debug("Connect to the SSL server to {0}:{1}".format(
+            self.remoteIP, self.remotePort))
         self.__ssl_socket.connect((self.remoteIP, self.remotePort))
 
     def close(self):
@@ -122,7 +129,7 @@ class SSLClient(AbstractChannel):
         @type timeout: :class:`int`
         """
         reading_seg_size = 1024
-        
+
         if self.__ssl_socket is not None:
             data = b""
             finish = False

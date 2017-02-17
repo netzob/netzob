@@ -28,7 +28,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import time
 import binascii
 
 #+---------------------------------------------------------------------------+
@@ -55,10 +54,17 @@ class L3NetworkMessage(L2NetworkMessage):
 
     """
 
-    def __init__(self, data, date=None, l2Protocol=None, l2SourceAddress=None,
-                 l2DestinationAddress=None, l3Protocol=None, l3SourceAddress=None,
+    def __init__(self,
+                 data,
+                 date=None,
+                 l2Protocol=None,
+                 l2SourceAddress=None,
+                 l2DestinationAddress=None,
+                 l3Protocol=None,
+                 l3SourceAddress=None,
                  l3DestinationAddress=None):
-        super(L3NetworkMessage, self).__init__(data, date, l2Protocol, l2SourceAddress, l2DestinationAddress)
+        super(L3NetworkMessage, self).__init__(
+            data, date, l2Protocol, l2SourceAddress, l2DestinationAddress)
         self.l3Protocol = str(l3Protocol)
         self.l3SourceAddress = str(l3SourceAddress)
         self.l3DestinationAddress = str(l3DestinationAddress)
@@ -119,4 +125,3 @@ class L3NetworkMessage(L2NetworkMessage):
         :type: str
         """
         return self.__l3DestinationAddress
-

@@ -73,7 +73,9 @@ class TypedList(collections.MutableSequence):
 
     def check(self, v):
         if not isinstance(v, self.membersTypes):
-            raise TypeError("Invalid type for argument, expecting: {0}, received : {1}".format(self.membersTypes, v.__class__.__name__))
+            raise TypeError(
+                "Invalid type for argument, expecting: {0}, received : {1}".
+                format(self.membersTypes, v.__class__.__name__))
 
     def __len__(self):
         return len(self.list)

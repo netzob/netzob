@@ -104,7 +104,12 @@ class ParallelDataAlignment(object):
 
     """
 
-    def __init__(self, field, depth=None, nbThread=None, encoded=False, styled=False):
+    def __init__(self,
+                 field,
+                 depth=None,
+                 nbThread=None,
+                 encoded=False,
+                 styled=False):
         """Constructor.
 
         :param field: the format definition that will be user
@@ -171,7 +176,13 @@ class ParallelDataAlignment(object):
         pool = multiprocessing.Pool(self.nbThread)
 
         # Execute Data Alignment
-        pool.map_async(_executeDataAlignment, list(zip(noDuplicateData, [self.field] * len(noDuplicateData), [self.encoded] * len(noDuplicateData), [self.styled] * len(noDuplicateData))), callback=self.__collectResults_cb)
+        pool.map_async(
+            _executeDataAlignment,
+            list(
+                zip(noDuplicateData, [self.field] * len(noDuplicateData),
+                    [self.encoded] * len(noDuplicateData), [self.styled] * len(
+                        noDuplicateData))),
+            callback=self.__collectResults_cb)
 
         # Waits all alignment tasks finish
         pool.close()
@@ -185,22 +196,31 @@ class ParallelDataAlignment(object):
         if len(data) > 0:
             result.headers = self.asyncResult[data[0]].headers
 
-    
         for d in data:
             if d not in list(self.asyncResult.keys()):
-                raise Exception("At least one data ({0}) has not been successfully computed by the alignment".format(repr(d)))
+                raise Exception(
+                    "At least one data ({0}) has not been successfully computed by the alignment".
+                    format(repr(d)))
             result.extend(self.asyncResult[d])
 
         # check the number of computed alignment
         if len(result) != len(data):
-            raise Exception("There are not the same number of alignment ({0}) than the number of data ({1})".format(len(result), len(data)))
+            raise Exception(
+                "There are not the same number of alignment ({0}) than the number of data ({1})".
+                format(len(result), len(data)))
 
-        self._logger.debug("Alignment of {0} data took {1}s with {2} threads.".format(len(data), end - start, self.nbThread))
+        self._logger.debug("Alignment of {0} data took {1}s with {2} threads.".
+                           format(len(data), end - start, self.nbThread))
         return result
 
     # Static method
     @staticmethod
-    def align(data, field, depth=None, nbThread=None, encoded=False, styled=False):
+    def align(data,
+              field,
+              depth=None,
+              nbThread=None,
+              encoded=False,
+              styled=False):
         """Execute an alignment of specified data with provided field.
         The alignment will be perfomed in parallel
         Data must be provided as a list of hexastring.
@@ -221,7 +241,8 @@ class ParallelDataAlignment(object):
         :return: the aligned data
         :rtype: :class:`netzob.Common.Utils.MatrixList.MatrixList`
         """
-        pAlignment = ParallelDataAlignment(field, depth, nbThread, encoded, styled)
+        pAlignment = ParallelDataAlignment(field, depth, nbThread, encoded,
+                                           styled)
         return pAlignment.execute(data)
 
     # Properties
@@ -257,7 +278,8 @@ class ParallelDataAlignment(object):
     @typeCheck(int)
     def depth(self, depth):
         if depth is not None and depth < 0:
-            raise ValueError("Depth cannot be <0, use None to specify unlimited depth")
+            raise ValueError(
+                "Depth cannot be <0, use None to specify unlimited depth")
 
         self.__depth = depth
 
@@ -280,7 +302,8 @@ class ParallelDataAlignment(object):
             nbThread = multiprocessing.cpu_count()
 
         if nbThread < 0:
-            raise ValueError("NbThread cannot be <0, use None to specify you don't know.")
+            raise ValueError(
+                "NbThread cannot be <0, use None to specify you don't know.")
 
         self.__nbThread = nbThread
 
@@ -315,4 +338,3 @@ class ParallelDataAlignment(object):
             raise ValueError("Styled cannot be None")
 
         self.__styled = styled
-

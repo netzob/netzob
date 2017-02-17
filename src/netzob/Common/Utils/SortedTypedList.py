@@ -143,9 +143,13 @@ class SortedTypedList(object):
 
     def _check(self, v):
         if not isinstance(v, self.membersTypes):
-            raise TypeError("Invalid type for argument, expecting: {0}, received : {1}".format(self.membersTypes, v.__class__.__name__))
+            raise TypeError(
+                "Invalid type for argument, expecting: {0}, received : {1}".
+                format(self.membersTypes, v.__class__.__name__))
         if not isinstance(v, SortableObject):
-            raise TypeError("Objects inserted in a SortedTypedList must inherits from SortableObject class")
+            raise TypeError(
+                "Objects inserted in a SortedTypedList must inherits from SortableObject class"
+            )
 
     def __len__(self):
         """Returns the number of elements in the sorted list which takes
@@ -161,4 +165,3 @@ class SortedTypedList(object):
     def __iter__(self):
         """SortedTypedList is an iterable over its values (and not its keys)."""
         return list(self.__treePriorities.values()).__iter__()
-

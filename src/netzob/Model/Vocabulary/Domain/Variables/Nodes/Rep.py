@@ -34,7 +34,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -43,7 +42,8 @@ import random
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
 
@@ -54,16 +54,24 @@ class Rep(AbstractVariableNode):
 
     """
 
-    def __init__(self, repeatDomain, separatorDomain=None, learnable=False, mutable=True):
-        super(Rep, self).__init__(self.__class__.__name__, repeatDomain, learnable=learnable, mutable=mutable)
+    def __init__(self,
+                 repeatDomain,
+                 separatorDomain=None,
+                 learnable=False,
+                 mutable=True):
+        super(Rep, self).__init__(
+            self.__class__.__name__,
+            repeatDomain,
+            learnable=learnable,
+            mutable=mutable)
 
     def parse(self, variableParserPath):
         """Parse the content with the definition domain of a repeat."""
-        self._logger.debug("Parse '{0}' as {1} with parser path '{2}'".format(variableParserPath.remainingData, self, variableParserPath))
+        self._logger.debug("Parse '{0}' as {1} with parser path '{2}'".format(
+            variableParserPath.remainingData, self, variableParserPath))
 
         results = []
 
         return results
-
 
     #OLD

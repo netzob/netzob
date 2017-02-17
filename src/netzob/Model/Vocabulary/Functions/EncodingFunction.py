@@ -63,4 +63,5 @@ class EncodingFunction(SortableObject):
     @abc.abstractmethod
     def priority(self):
         """Returns the priority of the current encoding filter."""
-        raise NotImplementedError("The object doesn't implement the method priority.")
+        raise NotImplementedError(
+            "The object doesn't implement the method priority.")

@@ -49,10 +49,12 @@ from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 #| the necessary functions to learn
 #+----------------------------------------------
 class LearningAlgorithm(object):
-
-    def __init__(self, dictionary, inputDictionary, communicationChannel, resetScript, callbackFunction, cb_hypotheticalAutomaton, cache):
+    def __init__(self, dictionary, inputDictionary, communicationChannel,
+                 resetScript, callbackFunction, cb_hypotheticalAutomaton,
+                 cache):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Inference.Grammar.LearningAlgorithm.py')
+        self.log = logging.getLogger(
+            'netzob.Inference.Grammar.LearningAlgorithm.py')
         self.dictionary = dictionary
         self.inputDictionary = inputDictionary
         self.communicationChannel = communicationChannel
@@ -72,7 +74,8 @@ class LearningAlgorithm(object):
 
     def learn(self):
         self.log.error("The LearningAlgorithm class doesn't support 'learn'.")
-        raise NotImplementedError("The LearningAlgorithm class doesn't support 'learn'.")
+        raise NotImplementedError(
+            "The LearningAlgorithm class doesn't support 'learn'.")
 
     def getSubmitedQueries(self):
         return self.submitedQueries
@@ -82,13 +85,15 @@ class LearningAlgorithm(object):
         # Verify the request is not in the cache
         cachedValue = self.cache.getCachedResult(query)
         if cachedValue is not None:
-            self.log.info("The MQ is cached, result obtained: {0} = {1}.".format(str(query), str(cachedValue)))
+            self.log.info("The MQ is cached, result obtained: {0} = {1}.".
+                          format(str(query), str(cachedValue)))
             return cachedValue[len(cachedValue) - 1]
 
         # TODO : must be UPGRADED
         # WARNING
         if self.resetScript != "":
-            self.log.info("Reseting the oracle by executing script: {0}".format(self.resetScript))
+            self.log.info("Reseting the oracle by executing script: {0}".
+                          format(self.resetScript))
             os.system("sh " + self.resetScript)
 
         self.log.info("Submit the following query: {0}".format(str(query)))
@@ -100,7 +105,9 @@ class LearningAlgorithm(object):
 
         self.cb_hypotheticalAutomaton(mmstd)
         time.sleep(2)
-        self.log.info("The current experimentation has generated the following MMSTD: {0}".format(self.log.debug(mmstd.getDotCode())))
+        self.log.info(
+            "The current experimentation has generated the following MMSTD: {0}".
+            format(self.log.debug(mmstd.getDotCode())))
 
         # create an oracle for this MMSTD
         oracle = NetworkOracle(self.communicationChannel, isMaster)
@@ -123,10 +130,10 @@ class LearningAlgorithm(object):
 
         if isMaster:
             resultQuery = oracle.getResults()
-            tmpResultQuery = oracle.getGeneratedOutputSymbols()
+            oracle.getGeneratedOutputSymbols()
         else:
             resultQuery = oracle.getGeneratedInputSymbols()
-            tmpResultQuery = oracle.getGeneratedInputSymbols()
+            oracle.getGeneratedInputSymbols()
 
         self.log.info("---------------------------------------------")
         self.log.info("RESUMONS UN PETIT PEU TOUT CA:")
@@ -145,14 +152,16 @@ class LearningAlgorithm(object):
         for data in oracle.getGeneratedInputSymbols():
             strGeneratedInputSymbols.append(data.getName())
 
-        self.log.info("+ getGeneratedInputSymbols: {0}".format(', '.join(strGeneratedInputSymbols)))
+        self.log.info("+ getGeneratedInputSymbols: {0}".format(', '.join(
+            strGeneratedInputSymbols)))
         self.log.info("---------------------------------------------")
 
         strGeneratedOutputSymbols = []
         for data in oracle.getGeneratedOutputSymbols():
             strGeneratedOutputSymbols.append(data.getName())
 
-        self.log.info("+ getGeneratedOutputSymbols: {0}".format(', '.join(strGeneratedOutputSymbols)))
+        self.log.info("+ getGeneratedOutputSymbols: {0}".format(', '.join(
+            strGeneratedOutputSymbols)))
         self.log.info("---------------------------------------------")
 
         # Register this query and the associated response

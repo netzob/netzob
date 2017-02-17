@@ -34,7 +34,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import operator
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -102,10 +101,14 @@ class ClusterByApplicativeData(object):
 
         for m in messages:
             if not isinstance(m, AbstractMessage):
-                raise TypeError("At least one message ({0}) is not an AbstractMessage.".format(str(m)))
+                raise TypeError(
+                    "At least one message ({0}) is not an AbstractMessage.".
+                    format(str(m)))
         for appData in appDatas:
             if not isinstance(appData, ApplicativeData):
-                raise TypeError("At least one applicative data ({0}) is not an instance of ApplicativeData.".format(str(appData)))
+                raise TypeError(
+                    "At least one applicative data ({0}) is not an instance of ApplicativeData.".
+                    format(str(appData)))
 
         labels = dict()
         for appData in appDatas:
@@ -121,15 +124,23 @@ class ClusterByApplicativeData(object):
 
         searchEngine = SearchEngine()
 
-        searchResults = searchEngine.searchDataInMessages([appData.value for appData in appDatas], messages, inParallel=True, dataLabels=labels)
+        searchResults = searchEngine.searchDataInMessages(
+            [appData.value for appData in appDatas],
+            messages,
+            inParallel=True,
+            dataLabels=labels)
         for result in searchResults:
             searchTask = result.searchTask
             message = searchTask.properties['message']
             label = searchTask.properties['label']
             if label not in list(labels.values()):
-                raise ValueError("Found label ({0}) in a result cannot be identified in the original list of searched labels.".format(label))
+                raise ValueError(
+                    "Found label ({0}) in a result cannot be identified in the original list of searched labels.".
+                    format(label))
             if message.id not in list(idMessages.keys()):
-                raise ValueError("Found message ({0}) cannot be identified in the original list of searched messages.".format(message.id))
+                raise ValueError(
+                    "Found message ({0}) cannot be identified in the original list of searched messages.".
+                    format(message.id))
             messagesPerAppData[idMessages[message.id]].add(label)
 
         # Build clusters
@@ -144,6 +155,9 @@ class ClusterByApplicativeData(object):
                 clusters[strAppDatas] = [message]
 
         # Build Symbols
-        symbols = [Symbol(name=strAppDatas, messages=msgs) for strAppDatas, msgs in list(clusters.items())]
+        symbols = [
+            Symbol(name=strAppDatas, messages=msgs)
+            for strAppDatas, msgs in list(clusters.items())
+        ]
 
         return symbols

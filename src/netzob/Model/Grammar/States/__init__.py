@@ -30,4 +30,3 @@
 # see docs.python.org/2/tutorial/modules.html
 
 from .State import State
-

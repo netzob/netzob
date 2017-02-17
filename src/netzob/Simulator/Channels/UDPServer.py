@@ -104,7 +104,8 @@ class UDPServer(AbstractChannel):
         """
 
         if self.isOpen:
-            raise RuntimeError("The channel is already open, cannot open it again.")
+            raise RuntimeError(
+                "The channel is already open, cannot open it again.")
 
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # Reuse the connection
@@ -140,7 +141,8 @@ class UDPServer(AbstractChannel):
         if self.__socket is not None and self.__remoteAddr is not None:
             self.__socket.sendto(data, self.__remoteAddr)
         else:
-            raise Exception("Socket is not available or remote address is not known.")
+            raise Exception(
+                "Socket is not available or remote address is not known.")
 
     # Management methods
 

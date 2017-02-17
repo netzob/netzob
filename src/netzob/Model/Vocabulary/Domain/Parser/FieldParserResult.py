@@ -42,8 +42,10 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Field import Field
+
 
 @NetzobLogger
 class FieldParserResult():
@@ -57,4 +59,5 @@ class FieldParserResult():
         self.remainingData = remainingData
 
     def __str__(self):
-        return "FieldParserResult (consumed={0}, remaining={1})".format(self.consumedData, self.remainingData)
+        return "FieldParserResult (consumed={0}, remaining={1})".format(
+            self.consumedData, self.remainingData)

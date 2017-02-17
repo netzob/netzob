@@ -44,6 +44,7 @@ import abc
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 
+
 class AbstractMementoCreator(object, metaclass=abc.ABCMeta):
     """Parent class of objects to save for Undo/Redo.
     
@@ -59,7 +60,7 @@ class AbstractMementoCreator(object, metaclass=abc.ABCMeta):
         :returns: the created memento representing current object
         :rtype: netzob.Common.Utils.UndoRedo.AbstractMemento.AbstractMemento
         
-        """        
+        """
         return
 
     @abc.abstractmethod
@@ -76,6 +77,3 @@ class AbstractMementoCreator(object, metaclass=abc.ABCMeta):
         
         """
         return
-        
-    
-

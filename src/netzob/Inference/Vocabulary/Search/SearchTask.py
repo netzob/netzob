@@ -124,4 +124,3 @@ class SearchTask(object):
     def properties(self, properties):
         if properties is not None:
             self.__properties.update(properties)
-

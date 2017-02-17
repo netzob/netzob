@@ -68,25 +68,40 @@ class Raw(AbstractType):
 
     """
 
-    def __init__(self, value=None, nbBytes=None, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+    def __init__(self,
+                 value=None,
+                 nbBytes=None,
+                 unitSize=AbstractType.defaultUnitSize(),
+                 endianness=AbstractType.defaultEndianness(),
+                 sign=AbstractType.defaultSign()):
         if value is not None and not isinstance(value, bitarray):
             from netzob.Model.Types.TypeConverter import TypeConverter
             from netzob.Model.Types.BitArray import BitArray
             if isinstance(value, str):
-                value = TypeConverter.convert(bytes(value, "utf-8"), Raw, BitArray)
+                value = TypeConverter.convert(
+                    bytes(value, "utf-8"), Raw, BitArray)
             elif isinstance(value, bytes):
                 value = TypeConverter.convert(value, Raw, BitArray)
 
         nbBits = self._convertNbBytesinNbBits(nbBytes)
 
-        super(Raw, self).__init__(self.__class__.__name__, value, nbBits, unitSize=unitSize, endianness=endianness, sign=sign)
+        super(Raw, self).__init__(
+            self.__class__.__name__,
+            value,
+            nbBits,
+            unitSize=unitSize,
+            endianness=endianness,
+            sign=sign)
 
     def __str__(self):
         if self.value is not None:
             from netzob.Model.Types.TypeConverter import TypeConverter
             from netzob.Model.Types.BitArray import BitArray
             from netzob.Model.Types.HexaString import HexaString
-            return "{0}={1} ({2})".format(self.typeName, repr(TypeConverter.convert(self.value, BitArray, Raw)), self.size)
+            return "{0}={1} ({2})".format(
+                self.typeName,
+                repr(TypeConverter.convert(self.value, BitArray, Raw)),
+                self.size)
         else:
             return "{0}={1} ({2})".format(self.typeName, self.value, self.size)
 
@@ -111,7 +126,8 @@ class Raw(AbstractType):
         if self.value is not None:
             from netzob.Model.Types.TypeConverter import TypeConverter
             from netzob.Model.Types.BitArray import BitArray
-            return str(TypeConverter.convert(self.value, BitArray, self.__class__))
+            return str(
+                TypeConverter.convert(self.value, BitArray, self.__class__))
         else:
             return str(self.value)
 
@@ -157,14 +173,21 @@ class Raw(AbstractType):
             minSize = 0
 
         generatedSize = random.randint(minSize, maxSize)
-        return TypeConverter.convert(os.urandom(int(generatedSize / 8)), Raw, BitArray)
+        return TypeConverter.convert(
+            os.urandom(int(generatedSize / 8)), Raw, BitArray)
 
     @staticmethod
-    def decode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+    def decode(data,
+               unitSize=AbstractType.defaultUnitSize(),
+               endianness=AbstractType.defaultEndianness(),
+               sign=AbstractType.defaultSign()):
         return data
 
     @staticmethod
-    def encode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+    def encode(data,
+               unitSize=AbstractType.defaultUnitSize(),
+               endianness=AbstractType.defaultEndianness(),
+               sign=AbstractType.defaultSign()):
         return data
 
     @staticmethod
@@ -196,4 +219,3 @@ class Raw(AbstractType):
             return False
 
         return True
-

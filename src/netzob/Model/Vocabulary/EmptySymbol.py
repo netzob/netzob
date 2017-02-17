@@ -57,12 +57,12 @@ class EmptySymbol(Symbol):
     """
 
     def __init__(self, receptionTimeout=None):
-        super(EmptySymbol, self).__init__(fields=None, name="Empty Symbol", messages=[RawMessage()])
+        super(EmptySymbol, self).__init__(
+            fields=None, name="Empty Symbol", messages=[RawMessage()])
         if receptionTimeout is None:
             receptionTimeout = EmptySymbol.defaultReceptionTimeout()
 
         self.receptionTimeout = receptionTimeout
-
 
     def __eq__(self, other):
         if other is None:
@@ -79,8 +79,6 @@ class EmptySymbol(Symbol):
 
     def __str__(self):
         return "Empty Symbol"
-
-    
 
     @property
     def receptionTimeout(self):

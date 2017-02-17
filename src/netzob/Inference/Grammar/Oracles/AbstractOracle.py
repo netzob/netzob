@@ -28,7 +28,6 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
-from gettext import gettext as _
 import logging
 
 #+----------------------------------------------
@@ -44,10 +43,10 @@ import logging
 #| AbstractOracle:
 #+----------------------------------------------
 class AbstractOracle(object):
-
     def __init__(self, type):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Inference.Grammar.Oracle.AbstractOracle.py')
+        self.log = logging.getLogger(
+            'netzob.Inference.Grammar.Oracle.AbstractOracle.py')
         self.type = type
 
     def start(self, mmstd):

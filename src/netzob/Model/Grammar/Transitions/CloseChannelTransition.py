@@ -81,7 +81,13 @@ class CloseChannelTransition(AbstractTransition):
         :param name: :class:`str`
 
         """
-        super(CloseChannelTransition, self).__init__(CloseChannelTransition.TYPE, startState, endState, _id, name, priority=20)
+        super(CloseChannelTransition, self).__init__(
+            CloseChannelTransition.TYPE,
+            startState,
+            endState,
+            _id,
+            name,
+            priority=20)
 
     @typeCheck(AbstractionLayer)
     def executeAsInitiator(self, abstractionLayer):
@@ -127,7 +133,9 @@ class CloseChannelTransition(AbstractTransition):
         try:
             abstractionLayer.closeChannel()
         except Exception as e:
-            self._logger.warning("An error occured which prevented the good execution of the close channel transition")
+            self._logger.warning(
+                "An error occured which prevented the good execution of the close channel transition"
+            )
             self.active = False
             raise e
 
@@ -140,4 +148,3 @@ class CloseChannelTransition(AbstractTransition):
             return self._description
         else:
             return "CloseChannelTransition"
-
