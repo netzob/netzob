@@ -95,7 +95,6 @@ class Protocol(object):
                 if len(automata_zdl) > 0:
                     self._initializeAutomata(automata_zdl)
                     self.definition[Protocol.AUTOMATA] = self.automata
-                Protocol.definitions[self.name] = self.definition
 
     def _initializeSymbols(self, path, modLoaded=None):
         """Parse a dictionary of symbols from a ZDL file.
@@ -161,4 +160,4 @@ class Protocol(object):
     @automata.setter
     @typeCheck(Automata)
     def automata(self, automata):
-        Protocol.AutomataOfProtocols[self.name][Protocol.AUTOMATA] = automata
+        Protocol.definitions[self.name][Protocol.AUTOMATA] = automata
