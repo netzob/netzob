@@ -292,11 +292,13 @@ class Size(AbstractRelationVariableLeaf):
             if field.domain == self:
                 remainingFields.append(field)
             else:
-                # Retrieve the size of the targeted field, if it is a fixed size
-                minSize, maxSize = field.domain.dataType.size
-                if maxSize is not None and minSize == maxSize:
-                    size += minSize
-                    continue
+
+                # Retrieve the size of the targeted field, if it has a fixed size
+                if hasattr(field.domain, "dataType"):
+                    minSize, maxSize = field.domain.dataType.size
+                    if maxSize is not None and minSize == maxSize:
+                        size += minSize
+                        continue
 
                 # Else, retrieve its value if it exists
                 if parsingPath.isDataAvailableForVariable(field.domain):
