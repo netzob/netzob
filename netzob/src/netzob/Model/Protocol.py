@@ -35,6 +35,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import imp
+from os.path import join
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -61,45 +62,69 @@ class Protocol(object):
 
     """
 
-    def __init__(self, name=None, format_zdl=None, automata_zdl=None):
+    # Constants
+    SYMBOLS = 0
+    AUTOMATA = 1
+
+    # Static variables
+    definitions = {}
+
+    def __init__(self, name, path_zdl=None):
         """
         :keyword name: the name of the protocol
         :type name: an :class:`str`
-
         """
         self.__name = name
-        self.__symbols = {}
-        self.__automata = None
+        self.definition = [{}, None]
 
-        if format_zdl is not None:
-            self._initializeSymbols(format_zdl)
+        if self.name in Protocol.definitions:
+            self.definition = Protocol.definitions[self.name]
+        else:
+            format_zdl = None
+            automata_zdl = None
+            Protocol.definitions[self.name] = self.definition
 
-        if automata_zdl is not None:
-            self._initializeAutomata(automata_zdl)
+            if path_zdl is not None:
+                format_zdl = join(path_zdl, name + "_format.zdl")
+                automata_zdl = join(path_zdl, name + "_automata.zdl")
+
+                if len(format_zdl) > 0:
+                    self._initializeSymbols(format_zdl)
+                    self.definition[Protocol.SYMBOLS] = self.symbols
+
+                if len(automata_zdl) > 0:
+                    self._initializeAutomata(automata_zdl)
+                    self.definition[Protocol.AUTOMATA] = self.automata
+                Protocol.definitions[self.name] = self.definition
 
     def _initializeSymbols(self, path, modLoaded=None):
         """Parse a dictionary of symbols from a ZDL file.
         """
-
         if modLoaded is None:
             # Load module from source ZDL file
             modLoaded = imp.load_source("format", path)
 
+        symbols = {}
         # Built dictionary of symbols
         for s in modLoaded.symbols:
             if s.name in self.symbols:
-                raise Exception("Multiple symbols have the same name: {}. Symbol name should be unique.".format(s.name))
-            self.symbols[s.name] = s
+                raise Exception("Multiple symbols have the same name: {}. "
+                                "Symbol name should be unique."
+                                .format(s.name))
+            symbols[s.name] = s
+
+        if len(symbols) > 0:
+            self.definition[Protocol.SYMBOLS] = symbols
+        else:
+            raise Exception("List of symbols for {} protocol is empty."
+                            .format(s.name))
 
     def _initializeAutomata(self, path):
         """Parse an automata from a ZDL file.
         """
-
         # Load module from source ZDL file
         mod = imp.load_source("automata", path)
-
-        # Retrieve automata
-        self.automata = mod.automata
+        self.definition[Protocol.AUTOMATA] = mod.automata
 
     @property
     def name(self):
@@ -109,28 +134,31 @@ class Protocol(object):
         :type: a :class:`str`
         :raises: :class:`TypeError`
         """
-
         return self.__name
-
-    @name.setter
-    @typeCheck(str)
-    def name(self, name):
-        self.__name = name
 
     @property
     def symbols(self):
-        return self.__symbols
+        if self.name in Protocol.definitions:
+            if Protocol.definitions[self.name][Protocol.SYMBOLS] is not None:
+                return Protocol.definitions[self.name][Protocol.SYMBOLS]
+            else:
+                return {}
+        else:
+            return {}
 
     @symbols.setter
     @typeCheck(dict)
     def symbols(self, symbols):
-        self.__symbols = symbols
+        Protocol.definitions[self.name][Protocol.SYMBOLS] = symbols
 
     @property
     def automata(self):
-        return self.__automata
+        if self.name in Protocol.definitions:
+            return Protocol.definitions[self.name][Protocol.AUTOMATA]
+        else:
+            return None
 
     @automata.setter
     @typeCheck(Automata)
     def automata(self, automata):
-        self.__automata = automata
+        Protocol.AutomataOfProtocols[self.name][Protocol.AUTOMATA] = automata
