@@ -175,6 +175,7 @@ def getSuite():
         # Modules related to the import
         # -----------------------------
         PCAPImporter.__module__,
+        FileImporter.__module__
 
         # Other
         # -----
