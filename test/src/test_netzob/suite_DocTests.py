@@ -118,6 +118,7 @@ def getSuite():
         L2NetworkMessage.__module__,
         L3NetworkMessage.__module__,
         L4NetworkMessage.__module__,
+        FileMessage.__module__,
         FieldOperations,
         CorrelationFinder.__module__,
         RelationFinder.__module__,
