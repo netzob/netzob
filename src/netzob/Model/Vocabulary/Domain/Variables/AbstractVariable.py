@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -34,7 +34,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import abc
 import uuid
 
 #+---------------------------------------------------------------------------+
@@ -86,7 +85,6 @@ class AbstractVariable(object):
         self.__tokenChoppedIndexes = []
         # The variables just above the current variable in the tree representation.
         self.__fathers = []
-
 
     #+---------------------------------------------------------------------------+
     #| Special Functions                                                         |
@@ -149,7 +147,8 @@ class AbstractVariable(object):
             raise ValueError("name cannot be None")
         name = name.strip()
         if len(name) == 0:
-            raise ValueError("name must be defined even after being trimmed (len>0)")
+            raise ValueError(
+                "name must be defined even after being trimmed (len>0)")
         self.__name = name
 
     @property
@@ -165,8 +164,6 @@ class AbstractVariable(object):
         if svas is None:
             raise ValueError("svas cannot be None")
         self.__svas = svas
-
-        
 
     # @property
     # def learnable(self):

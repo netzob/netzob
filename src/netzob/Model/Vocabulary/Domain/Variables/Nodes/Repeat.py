@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -136,14 +136,15 @@ class Repeat(AbstractVariableNode):
         # remove any data assigned to this variable
         parsingPath.removeAssignedDataToVariable(self)
 
-        min_nb_repeat = self.nbRepeat[0]-1
-        max_nb_repeat = self.nbRepeat[1]-1
-        
+        min_nb_repeat = self.nbRepeat[0] - 1
+        max_nb_repeat = self.nbRepeat[1] - 1
+
         for nb_repeat in range(max_nb_repeat, min_nb_repeat, -1):
-            
+
             # initiate a new parsing path based on the current one
             newParsingPath = parsingPath.duplicate()
-            newParsingPath.assignDataToVariable(dataToParse.copy(), self.children[0])            
+            newParsingPath.assignDataToVariable(dataToParse.copy(),
+                                                self.children[0])
             newParsingPaths = [newParsingPath]
 
             # deal with the case no repetition is accepted
@@ -155,34 +156,44 @@ class Repeat(AbstractVariableNode):
             for i_repeat in range(nb_repeat):
                 tmp_result = []
                 for newParsingPath in newParsingPaths:
-                    for childParsingPath in self.children[0].parse(newParsingPath, carnivorous=carnivorous):
-                        
-                        if childParsingPath.isDataAvailableForVariable(self):
-                            newResult = childParsingPath.getDataAssignedToVariable(self).copy()
-                            newResult += childParsingPath.getDataAssignedToVariable(self.children[0])
-                        else:
-                            newResult = childParsingPath.getDataAssignedToVariable(self.children[0])
+                    for childParsingPath in self.children[0].parse(
+                            newParsingPath, carnivorous=carnivorous):
 
+                        if childParsingPath.isDataAvailableForVariable(self):
+                            newResult = childParsingPath.getDataAssignedToVariable(
+                                self).copy()
+                            newResult += childParsingPath.getDataAssignedToVariable(
+                                self.children[0])
+                        else:
+                            newResult = childParsingPath.getDataAssignedToVariable(
+                                self.children[0])
 
                         childParsingPath.addResult(self, newResult)
-                        childParsingPath.assignDataToVariable(dataToParse.copy()[len(newResult):], self.children[0])
+                        childParsingPath.assignDataToVariable(
+                            dataToParse.copy()[len(newResult):],
+                            self.children[0])
 
                         # apply delimitor
                         if self.delimitor is not None:
                             if i_repeat < nb_repeat - 1:
                                 # check the delimitor is available
-                                toParse = childParsingPath.getDataAssignedToVariable(self.children[0]).copy()
-                                if toParse[:len(self.delimitor)] == self.delimitor:
-                                    newResult = childParsingPath.getDataAssignedToVariable(self).copy() + self.delimitor
+                                toParse = childParsingPath.getDataAssignedToVariable(
+                                    self.children[0]).copy()
+                                if toParse[:len(
+                                        self.delimitor)] == self.delimitor:
+                                    newResult = childParsingPath.getDataAssignedToVariable(
+                                        self).copy() + self.delimitor
                                     childParsingPath.addResult(self, newResult)
-                                    childParsingPath.assignDataToVariable(dataToParse.copy()[len(newResult):], self.children[0])
+                                    childParsingPath.assignDataToVariable(
+                                        dataToParse.copy()[len(newResult):],
+                                        self.children[0])
                                     tmp_result.append(childParsingPath)
                             else:
                                 tmp_result.append(childParsingPath)
 
                         else:
                             tmp_result.append(childParsingPath)
-                            
+
                 newParsingPaths = tmp_result
             for result in newParsingPaths:
                 yield result
@@ -196,21 +207,25 @@ class Repeat(AbstractVariableNode):
 
         # initialy, there is a unique path to specialize (the provided one)
         specializingPaths = []
-    
+
         for i_repeat in range(self.nbRepeat[0], self.nbRepeat[1]):
             newSpecializingPaths = [originalSpecializingPath.duplicate()]
 
             for i in range(i_repeat):
                 childSpecializingPaths = []
                 for newSpecializingPath in newSpecializingPaths:
-                    for path in self.children[0].specialize(newSpecializingPath):
+                    for path in self.children[0].specialize(
+                            newSpecializingPath):
                         if path.isDataAvailableForVariable(self):
-                            newResult = path.getDataAssignedToVariable(self).copy()
+                            newResult = path.getDataAssignedToVariable(
+                                self).copy()
                             if self.delimitor is not None:
                                 newResult += self.delimitor
-                            newResult += path.getDataAssignedToVariable(self.children[0])
+                            newResult += path.getDataAssignedToVariable(
+                                self.children[0])
                         else:
-                            newResult = path.getDataAssignedToVariable(self.children[0])
+                            newResult = path.getDataAssignedToVariable(
+                                self.children[0])
                         path.addResult(self, newResult)
                         childSpecializingPaths.append(path)
 
@@ -249,9 +264,12 @@ class Repeat(AbstractVariableNode):
             if minNbRepeat < 0:
                 raise ValueError("Minimum nbRepeat must be greater than 0")
             if maxNbRepeat is not None and maxNbRepeat < minNbRepeat:
-                raise ValueError("Maximum must be greater or equals to the minimum")
+                raise ValueError(
+                    "Maximum must be greater or equals to the minimum")
             if maxNbRepeat is not None and maxNbRepeat > MAX_REPEAT:
-                raise ValueError("Maximum nbRepeat supported for a variable is {0}.".format(MAX_REPEAT))
+                raise ValueError(
+                    "Maximum nbRepeat supported for a variable is {0}.".format(
+                        MAX_REPEAT))
 
         self.__nbRepeat = (minNbRepeat, maxNbRepeat)
 
@@ -263,4 +281,3 @@ class Repeat(AbstractVariableNode):
     @typeCheck(bitarray)
     def delimitor(self, delimitor):
         self.__delimitor = delimitor
-

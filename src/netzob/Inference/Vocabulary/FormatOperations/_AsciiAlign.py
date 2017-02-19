@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -41,27 +41,35 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 class AsciiAlign():
-
-    def __init__(self, project, symbols, explodeSymbols, doInternalSlick, defaultFormat, unitSize, cb_status=None):
+    def __init__(self,
+                 project,
+                 symbols,
+                 explodeSymbols,
+                 doInternalSlick,
+                 defaultFormat,
+                 unitSize,
+                 cb_status=None):
         self.symbols = symbols
         self.project = project
         self.doInternalSlick = doInternalSlick
         self.cb_status = cb_status
         self.defaultFormat = defaultFormat
         self.unitSize = unitSize
-        self.log = logging.getLogger('netzob.Inference.Vocabulary.AsciiAlign.py')
+        self.log = logging.getLogger(
+            'netzob.Inference.Vocabulary.AsciiAlign.py')
         self.server = ""
         if explodeSymbols is False:
             self.symbols = symbols
         else:
-             #Create a symbol for each message and reset to constant the tokens
+            #Create a symbol for each message and reset to constant the tokens
             self.symbols = []
             i_symbol = 1
             for symbol in symbols:
                 for m in symbol.getMessages():
                     for t in m.getPattern()[1]:
                         t.setType("constant")
-                    tmpSymbol = Symbol(str(uuid.uuid4()), "Symbol " + str(i_symbol), project)
+                    tmpSymbol = Symbol(
+                        str(uuid.uuid4()), "Symbol " + str(i_symbol), project)
                     tmpSymbol.setPattern(m.getPattern())
                     tmpSymbol.addMessage(m)
                     self.symbols.append(tmpSymbol)
@@ -69,31 +77,38 @@ class AsciiAlign():
 
     def clusterByTokenization(self, symbols):
         self.ServerInference()
-    ################################### Cluster messages according to their tokens
+        ################################### Cluster messages according to their tokens
         ll = len(self.symbols) - 1
         i_equ = 0
-        while(ll > 0):
-            currentPattern = self.symbols[i_equ].getMessages()[0].getPattern()[1]
+        while (ll > 0):
+            currentPattern = self.symbols[i_equ].getMessages()[0].getPattern()[
+                1]
             for j in range(ll):
                 jnext = len(self.symbols) - j - 1
                 cond = False
                 for message in self.symbols[jnext].getMessages():
                     if currentPattern == message.getPattern()[1]:
-#                        score = sum([p1 == p2 for p1, p2 in zip(currentPattern, message.getPattern()[1])])
-                        score2 = self.computeSimilarities(currentPattern, message.getPattern()[1])
-#                        if score >= min(len(currentPattern), len(message.getPattern()[1])):
-                        minilength = min(len(message.getData()), len(self.symbols[i_equ].getMessages()[0].getData()))
+                        #                        score = sum([p1 == p2 for p1, p2 in zip(currentPattern, message.getPattern()[1])])
+                        score2 = self.computeSimilarities(
+                            currentPattern, message.getPattern()[1])
+                        #                        if score >= min(len(currentPattern), len(message.getPattern()[1])):
+                        minilength = min(
+                            len(message.getData()),
+                            len(self.symbols[i_equ].getMessages()[0]
+                                .getData()))
                         if score2 * 2.0 / minilength >= 0.40:
                             cond = True
                         if cond:
                             break
 
-                if(cond):
+                if (cond):
                     currentDst = self.symbols[i_equ].getPattern()[0]
                     otherDst = self.symbols[jnext].getPattern()[0]
-                    if not self.server or (currentDst == otherDst) or (currentDst != self.server and otherDst != self.server):
+                    if not self.server or (currentDst == otherDst) or (
+                            currentDst != self.server and
+                            otherDst != self.server):
                         self.mergeEffectiveRowCol(i_equ, jnext)
-#                        self.log.debug("Merge the equal column/line {0} with the column/line {1}".format(str(i_equ), str(j + 1)))
+                        #                        self.log.debug("Merge the equal column/line {0} with the column/line {1}".format(str(i_equ), str(j + 1)))
                         i_equ -= 1
                         break
             ll -= 1
@@ -101,22 +116,26 @@ class AsciiAlign():
 
     ################################## Align messages
         alignment = NeedlemanAndWunsch(self.unitSize, self.cb_status)
-        tmpSymbols = []
         for symbol in self.symbols:
 
-#            alignment.alignSymbols([symbol], self.project)
-#            symbol.getFields()[0].setFormat(Format.STRING)
-#            tmpSymbols.extend(alignment.getLastResult())
+            #            alignment.alignSymbols([symbol], self.project)
+            #            symbol.getFields()[0].setFormat(Format.STRING)
+            #            tmpSymbols.extend(alignment.getLastResult())
             try:
-#                print("l")
+                #                print("l")
                 al = self.computeAlignment(symbol)
                 symbol.getField().setAlignment(al)
-                alignment.buildRegexFromAlignment(symbol, al, self.defaultFormat)
+                alignment.buildRegexFromAlignment(symbol, al,
+                                                  self.defaultFormat)
 
 #                for (p, fields) in zip(symbol.getPattern()[1], symbol.getFields()):
 #                    field.setFormat(p.getFormat())
             except:
-                logging.warn("Partitionnement error: too much fields ( > 100) for the symbol '" + symbol.getName() + "' len=" + str(len(symbol.getExtendedFields())) + "len " + str(len(symbol.getPattern()[1])))
+                logging.warn(
+                    "Partitionnement error: too much fields ( > 100) for the symbol '"
+                    + symbol.getName() + "' len=" + str(
+                        len(symbol.getExtendedFields())) + "len " + str(
+                            len(symbol.getPattern()[1])))
                 symbol.getField().removeLocalFields()
                 field = Field("Field 0", "(.{, })", symbol)
                 symbol.addLocalField(field)
@@ -148,8 +167,9 @@ class AsciiAlign():
         messages.extend(symbol2.getMessages())
 
         newSymbol = Symbol(str(uuid.uuid4()), symbol1.getName(), self.project)
-        newSymbol.setPattern(self.mergePattern(symbol1.getPattern(), symbol2.getPattern()))
-#        self.log.debug("Patterns to merge: {0} with {1}: Give Result {2}".format(symbol1.getPatternString(), symbol2.getPatternString(), newSymbol.getPatternString()))
+        newSymbol.setPattern(
+            self.mergePattern(symbol1.getPattern(), symbol2.getPattern()))
+        #        self.log.debug("Patterns to merge: {0} with {1}: Give Result {2}".format(symbol1.getPatternString(), symbol2.getPatternString(), newSymbol.getPatternString()))
         for message in messages:
             newSymbol.addMessage(message)
 
@@ -162,7 +182,8 @@ class AsciiAlign():
         patTemp2 = []
         for t1, t2 in zip(p1[1], p2[1]):
 
-            if t1.getLength() == t2.getLength() and t1.getValue() != t2.getValue():
+            if t1.getLength() == t2.getLength() and t1.getValue(
+            ) != t2.getValue():
                 t1.setType("variable")
                 patTemp2.append(t1)
             elif t1.getLength() > t2.getLength():
@@ -172,7 +193,7 @@ class AsciiAlign():
                 t2.setType("variable")
                 patTemp2.append(t2)
             else:
-                if(t2.getType() == "variable"):
+                if (t2.getType() == "variable"):
                     patTemp2.append(t2)
                 else:
                     patTemp2.append(t1)
@@ -181,14 +202,14 @@ class AsciiAlign():
         return patTemp
 
     def computeAlignment(self, symbol):
-#        self.log.debug("Patterns to align: {0} ".format(str(symbol.getPattern())))
+        #        self.log.debug("Patterns to align: {0} ".format(str(symbol.getPattern())))
         pat1 = symbol.getPattern()[1]
         align = ""
         mess = str(symbol.getMessages()[0].getData())
         pat2 = symbol.getMessages()[0].getPattern()[1]
         currentPos = 0
         for t1, t2 in zip(pat1, pat2):
-            if(t1.getType() == "constant"):
+            if (t1.getType() == "constant"):
                 align += mess[currentPos:currentPos + t1.getLength() * 2]
             else:
                 align += "-" * (t1.getLength() * 2)
@@ -214,5 +235,6 @@ class AsciiAlign():
 #+---------------------------------------------------------------------------+
 #| Getters
 #+---------------------------------------------------------------------------+
+
     def getLastResult(self):
         return self.symbols

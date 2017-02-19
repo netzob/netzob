@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -44,6 +44,7 @@ import abc
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 
+
 class AbstractMementoCreator(object, metaclass=abc.ABCMeta):
     """Parent class of objects to save for Undo/Redo.
     
@@ -59,7 +60,7 @@ class AbstractMementoCreator(object, metaclass=abc.ABCMeta):
         :returns: the created memento representing current object
         :rtype: netzob.Common.Utils.UndoRedo.AbstractMemento.AbstractMemento
         
-        """        
+        """
         return
 
     @abc.abstractmethod
@@ -76,6 +77,3 @@ class AbstractMementoCreator(object, metaclass=abc.ABCMeta):
         
         """
         return
-        
-    
-

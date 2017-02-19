@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -99,13 +99,15 @@ class TCPServer(AbstractChannel):
         """Open the communication channel. If the channel is a server, it starts to listen
         and will create an instance for each different client"""
         if self.isOpen:
-            raise RuntimeError("The channel is already open, cannot open it again")
+            raise RuntimeError(
+                "The channel is already open, cannot open it again")
 
         self.__socket = socket.socket()
         # Reuse the connection
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.__socket.settimeout(self.timeout)
-        self._logger.debug("Bind the TCP server to {0}:{1}".format(self.localIP, self.localPort))
+        self._logger.debug("Bind the TCP server to {0}:{1}".format(
+            self.localIP, self.localPort))
         self.__socket.bind((self.localIP, self.localPort))
         self.__socket.listen(1)
         self._logger.debug("Ready to accept new TCP connections...")
@@ -129,7 +131,7 @@ class TCPServer(AbstractChannel):
         @type timeout: :class:`int`
         """
         reading_seg_size = 1024
-        
+
         if self.__clientSocket is not None:
             data = b""
             finish = False

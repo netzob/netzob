@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -59,9 +59,15 @@ class TypeConverter(object):
         }
 
     @staticmethod
-    def convert(data, sourceType, destinationType,
-                src_unitSize=AbstractType.defaultUnitSize(), src_endianness=AbstractType.defaultEndianness(), src_sign=AbstractType.defaultSign(),
-                dst_unitSize=AbstractType.defaultUnitSize(), dst_endianness=AbstractType.defaultEndianness(), dst_sign=AbstractType.defaultSign()):
+    def convert(data,
+                sourceType,
+                destinationType,
+                src_unitSize=AbstractType.defaultUnitSize(),
+                src_endianness=AbstractType.defaultEndianness(),
+                src_sign=AbstractType.defaultSign(),
+                dst_unitSize=AbstractType.defaultUnitSize(),
+                dst_endianness=AbstractType.defaultEndianness(),
+                dst_sign=AbstractType.defaultSign()):
         """Encode data provided as a sourceType to a destinationType.
 
         To convert an ASCII to its binary (bitarray) representation
@@ -123,28 +129,40 @@ class TypeConverter(object):
         """
         # is the two formats supported ?
         if sourceType not in TypeConverter.supportedTypes():
-            raise TypeError("The source type ({0}) is not supported".format(sourceType))
+            raise TypeError(
+                "The source type ({0}) is not supported".format(sourceType))
         if destinationType not in TypeConverter.supportedTypes():
-            raise TypeError("The destination type ({0}) is not supported".format(destinationType))
+            raise TypeError("The destination type ({0}) is not supported".
+                            format(destinationType))
         if data is None:
             raise TypeError("Data cannot be None")
 
         # Do we have a specific source to destination encoding function
-        if (sourceType, destinationType) in list(TypeConverter.__directEncoding().keys()):
-            func = TypeConverter.__directEncoding()[(sourceType, destinationType)]
-            return func(data, src_unitSize, src_endianness, src_sign, dst_unitSize, dst_endianness, dst_sign)
+        if (sourceType, destinationType
+            ) in list(TypeConverter.__directEncoding().keys()):
+            func = TypeConverter.__directEncoding()[(sourceType,
+                                                     destinationType)]
+            return func(data, src_unitSize, src_endianness, src_sign,
+                        dst_unitSize, dst_endianness, dst_sign)
         else:
             # Convert from source to raw
             if sourceType is not Raw:
-                binData = sourceType.decode(data, unitSize=src_unitSize, endianness=src_endianness, sign=src_sign)
+                binData = sourceType.decode(
+                    data,
+                    unitSize=src_unitSize,
+                    endianness=src_endianness,
+                    sign=src_sign)
             else:
                 binData = data
 
             # Convert from raw to Destination
             if destinationType is not Raw:
-                outputData = destinationType.encode(binData, unitSize=dst_unitSize, endianness=dst_endianness, sign=dst_sign)
+                outputData = destinationType.encode(
+                    binData,
+                    unitSize=dst_unitSize,
+                    endianness=dst_endianness,
+                    sign=dst_sign)
             else:
                 outputData = binData
 
             return outputData
-

@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -143,9 +143,13 @@ class SortedTypedList(object):
 
     def _check(self, v):
         if not isinstance(v, self.membersTypes):
-            raise TypeError("Invalid type for argument, expecting: {0}, received : {1}".format(self.membersTypes, v.__class__.__name__))
+            raise TypeError(
+                "Invalid type for argument, expecting: {0}, received : {1}".
+                format(self.membersTypes, v.__class__.__name__))
         if not isinstance(v, SortableObject):
-            raise TypeError("Objects inserted in a SortedTypedList must inherits from SortableObject class")
+            raise TypeError(
+                "Objects inserted in a SortedTypedList must inherits from SortableObject class"
+            )
 
     def __len__(self):
         """Returns the number of elements in the sorted list which takes
@@ -161,4 +165,3 @@ class SortedTypedList(object):
     def __iter__(self):
         """SortedTypedList is an iterable over its values (and not its keys)."""
         return list(self.__treePriorities.values()).__iter__()
-

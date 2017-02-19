@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -107,7 +107,10 @@ class ClusterByAlignment(object):
 
     """
 
-    def __init__(self, minEquivalence=50, internalSlick=True, recomputeMatrixThreshold=None):
+    def __init__(self,
+                 minEquivalence=50,
+                 internalSlick=True,
+                 recomputeMatrixThreshold=None):
         self.minEquivalence = minEquivalence
         self.internalSlick = internalSlick
         self.recomputeMatrixThreshold = recomputeMatrixThreshold
@@ -121,17 +124,24 @@ class ClusterByAlignment(object):
 
         for m in messages:
             if not isinstance(m, AbstractMessage):
-                raise TypeError("At least one message ({0}) is not an AbstractMessage.".format(str(m)))
+                raise TypeError(
+                    "At least one message ({0}) is not an AbstractMessage.".
+                    format(str(m)))
 
-        self._logger.debug("Identify similar messages following their alignment (min_equivalence={0})".format(self.minEquivalence))
+        self._logger.debug(
+            "Identify similar messages following their alignment (min_equivalence={0})".
+            format(self.minEquivalence))
 
-        self._logger.debug("Initiating the clustering by alignment on {0} messages...".format(len(messages)))
+        self._logger.debug(
+            "Initiating the clustering by alignment on {0} messages...".format(
+                len(messages)))
         symbols = self._processUPGMA(messages, self.recomputeMatrixThreshold)
         self._logger.debug("Clustering completed, computing final alignment.")
 
         # Retrieve the alignment of each symbol and the build the associated regular expression
         for symbol in symbols:
-            self._logger.debug("Align messages from symbol {0}".format(symbol.name))
+            self._logger.debug(
+                "Align messages from symbol {0}".format(symbol.name))
             from netzob.Inference.Vocabulary.Format import Format
             Format.splitAligned(symbol, useSemantic=False)
 
@@ -147,7 +157,9 @@ class ClusterByAlignment(object):
             raise TypeError("There should be at least one message.")
         for m in messages:
             if not isinstance(m, AbstractMessage):
-                raise TypeError("At least one message ({0}) is not an AbstractMessage.".format(str(m)))
+                raise TypeError(
+                    "At least one message ({0}) is not an AbstractMessage.".
+                    format(str(m)))
 
         # We create one symbol for each message
         initialSymbols = [Symbol(messages=[message]) for message in messages]
@@ -158,7 +170,8 @@ class ClusterByAlignment(object):
         self.scores = self._computeSimilarityMatrix(initialSymbols)
 
         # Reduce the UPGMA matrix (merge symbols by similarity)
-        return self._computePhylogenicTree(initialSymbols, recomputeMatrixThreshold)
+        return self._computePhylogenicTree(initialSymbols,
+                                           recomputeMatrixThreshold)
 
     @typeCheck(list)
     def _computeSimilarityMatrix(self, symbols):
@@ -166,15 +179,19 @@ class ClusterByAlignment(object):
             raise TypeError("Symbols cannot be None")
         for symbol in symbols:
             if not isinstance(symbol, Symbol):
-                raise TypeError("At least one specified symbol is not a valid symbol")
+                raise TypeError(
+                    "At least one specified symbol is not a valid symbol")
 
         # Execute the Clustering part in C
         debug = False
-        wrapper = WrapperArgsFactory("_libScoreComputation.computeSimilarityMatrix")
+        wrapper = WrapperArgsFactory(
+            "_libScoreComputation.computeSimilarityMatrix")
         wrapper.typeList[wrapper.function](symbols)
         self._logger.debug("wrapper = {0}".format(wrapper))
 
-        (listScores) = _libScoreComputation.computeSimilarityMatrix(self.internalSlick, self._cb_executionStatus, self._isFinish, debug, wrapper)
+        (listScores) = _libScoreComputation.computeSimilarityMatrix(
+            self.internalSlick, self._cb_executionStatus, self._isFinish,
+            debug, wrapper)
         # Retrieve the scores for each association of symbols
         scores = OrderedDict()
         for (iuid, juid, score) in listScores:
@@ -193,29 +210,34 @@ class ClusterByAlignment(object):
         @var max_j: uid of j_maximum
         @var maxScore: the highest global score"""
         maxScore = 0
-        status = 0
-        step = (float(100) - float(self.minEquivalence)) / float(100)
+        (float(100) - float(self.minEquivalence)) / float(100)
         self.lastScore = None
 
         if len(self.scores) > 1:
             max_i = max(self.scores, key=lambda x: self.scores[x][max(self.scores[x], key=lambda y: self.scores[x][y])])
-            max_j = max(self.scores[max_i], key=lambda y: self.scores[max_i][y])
+            max_j = max(self.scores[max_i],
+                        key=lambda y: self.scores[max_i][y])
             maxScore = self.scores[max_i][max_j]
         while len(self.scores) > 1 and maxScore >= self.minEquivalence:
 
-            symbols_uid = [str(s.id) for s in symbols]  # List of the UID in of symbols
-            (i_maximum, j_maximum) = (symbols_uid.index(max_i), symbols_uid.index(max_j))
+            symbols_uid = [str(s.id)
+                           for s in symbols]  # List of the UID in of symbols
+            (i_maximum, j_maximum) = (symbols_uid.index(max_i),
+                                      symbols_uid.index(max_j))
             size_i = len(symbols[i_maximum].messages)
             size_j = len(symbols[j_maximum].messages)
 
-            self._logger.debug("Clustering {0} with {1} (score = {2})".format(str(i_maximum), str(j_maximum), str(maxScore)))
+            self._logger.debug("Clustering {0} with {1} (score = {2})".format(
+                str(i_maximum), str(j_maximum), str(maxScore)))
 
             newuid = self._mergeEffectiveRowCol(symbols, i_maximum, j_maximum)
-            self._updateScore(symbols, max_i, max_j, newuid, size_i, size_j, recomputeMatrixThreshold)
-#            self.log.debug("Score après: {0}".format(str(self.scores)))
+            self._updateScore(symbols, max_i, max_j, newuid, size_i, size_j,
+                              recomputeMatrixThreshold)
+            #            self.log.debug("Score après: {0}".format(str(self.scores)))
             if len(self.scores) > 1:
                 max_i = max(self.scores, key=lambda x: self.scores[x][max(self.scores[x], key=lambda y: self.scores[x][y])])
-                max_j = max(self.scores[max_i], key=lambda y: self.scores[max_i][y])
+                max_j = max(self.scores[max_i],
+                            key=lambda y: self.scores[max_i][y])
                 maxScore = self.scores[max_i][max_j]
         return symbols
 
@@ -244,7 +266,14 @@ class ClusterByAlignment(object):
 
         return str(newSymbol.id)
 
-    def _updateScore(self, symbols, iuid, juid, newuid, size_i, size_j, recomputeMatrixThreshold=None):
+    def _updateScore(self,
+                     symbols,
+                     iuid,
+                     juid,
+                     newuid,
+                     size_i,
+                     size_j,
+                     recomputeMatrixThreshold=None):
         """Update the score of two merged clusters.
         @param iuid: id of the first cluster merged
         @param juid: id of the second cluster merged
@@ -252,7 +281,8 @@ class ClusterByAlignment(object):
         @param size_i: size of the first cluster
         @param size_j: size of the second cluster"""
 
-        self._logger.debug("Update score (recompte matrix : {0})".format(recomputeMatrixThreshold))
+        self._logger.debug("Update score (recompte matrix : {0})".format(
+            recomputeMatrixThreshold))
 
         currentScore = self.scores[iuid][juid]
 
@@ -266,19 +296,23 @@ class ClusterByAlignment(object):
         if self.lastScore is None:
             self.lastScore = currentScore
 
-        if recomputeMatrixThreshold is None or abs(currentScore - self.lastScore) <= recomputeMatrixThreshold:
+        if recomputeMatrixThreshold is None or abs(
+                currentScore - self.lastScore) <= recomputeMatrixThreshold:
             self._logger.debug("Ok no need in recomputing the matrix")
 
             total_size = size_i + size_j
 
             for k in list(self.scores.keys()):
                 if k != newuid:
-                    self.scores[k][newuid] = (size_i * self.scores[k][iuid] + size_j * self.scores[k][juid]) * 1.0 / total_size
+                    self.scores[k][newuid] = (
+                        size_i * self.scores[k][iuid] + size_j *
+                        self.scores[k][juid]) * 1.0 / total_size
                     del self.scores[k][iuid]
                     del self.scores[k][juid]
                     self.scores[newuid][k] = self.scores[k][newuid]
         else:
-            self._logger.debug("Merge and recompute matrix similarity threshold")
+            self._logger.debug(
+                "Merge and recompute matrix similarity threshold")
             self.scores = self.computeSimilarityMatrix(symbols)
 
         self.lastScore = currentScore
@@ -287,7 +321,8 @@ class ClusterByAlignment(object):
         """Callback function called by the C extension to provide info on status
         @param donePercent: a float between 0 and 100 included
         @param currentMessage: a str which represents the current alignment status"""
-        self._logger.debug("[UPGMA status]" + str(donePercent) + "% " + str(currentMessage))
+        self._logger.debug("[UPGMA status]" + str(donePercent) + "% " + str(
+            currentMessage))
 
     def _isFinish(self):
         """Compute if we should finish the current clustering operation.
@@ -332,4 +367,3 @@ class ClusterByAlignment(object):
     @recomputeMatrixThreshold.setter
     def recomputeMatrixThreshold(self, recomputeMatrixThreshold):
         self.__recomputeMatrixThreshold = recomputeMatrixThreshold
-

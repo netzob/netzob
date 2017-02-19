@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -44,9 +44,17 @@ from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 
 @NetzobLogger
 class SpecializingPath(GenericPath):
-
-    def __init__(self, memory, dataAssignedToField=None, dataAssignedToVariable=None, fieldsCallbacks=None, ok=None):
-        super(SpecializingPath, self).__init__(memory, dataAssignedToField=dataAssignedToField, dataAssignedToVariable=dataAssignedToVariable, fieldsCallbacks=fieldsCallbacks)
+    def __init__(self,
+                 memory,
+                 dataAssignedToField=None,
+                 dataAssignedToVariable=None,
+                 fieldsCallbacks=None,
+                 ok=None):
+        super(SpecializingPath, self).__init__(
+            memory,
+            dataAssignedToField=dataAssignedToField,
+            dataAssignedToVariable=dataAssignedToVariable,
+            fieldsCallbacks=fieldsCallbacks)
 
         if ok is None:
             self.__ok = True
@@ -64,7 +72,12 @@ class SpecializingPath(GenericPath):
 
         fCall = [x for x in self._fieldsCallbacks]
 
-        result = SpecializingPath(memory=self.memory.duplicate(), dataAssignedToField=dField, dataAssignedToVariable=dVariable, fieldsCallbacks=fCall, ok=self.ok())
+        result = SpecializingPath(
+            memory=self.memory.duplicate(),
+            dataAssignedToField=dField,
+            dataAssignedToVariable=dVariable,
+            fieldsCallbacks=fCall,
+            ok=self.ok())
 
         return result
 

@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -43,13 +43,17 @@ class WrapperArgsFactory(object):
 
     def __init__(self, function):
         self.typeList = {
-            "_libScoreComputation.computeSimilarityMatrix": self.computeSimilarityMatrix,
-            "_libNeedleman.alignMessages": self.alignMessages}
+            "_libScoreComputation.computeSimilarityMatrix":
+            self.computeSimilarityMatrix,
+            "_libNeedleman.alignMessages":
+            self.alignMessages
+        }
 
-        if(function in list(self.typeList.keys())):
+        if (function in list(self.typeList.keys())):
             self.function = function
         else:
-            raise NetzobException("Function " + str(function) + " not implemented")
+            raise NetzobException("Function " + str(function) +
+                                  " not implemented")
 
     def __str__(self):
         return str(self.args)

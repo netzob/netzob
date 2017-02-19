@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -120,7 +120,8 @@ class Agg(AbstractVariableNode):
         """Parse the content with the definition domain of the aggregate.
         """
         dataToParse = parsingPath.getDataAssignedToVariable(self).copy()
-        self._logger.debug("Parse '{0}' as {1} with parser path '{2}'".format(dataToParse, self, parsingPath))
+        self._logger.debug("Parse '{0}' as {1} with parser path '{2}'".format(
+            dataToParse, self, parsingPath))
 
         # initialy, there is a unique path to test (the provided one)
         parsingPath.assignDataToVariable(dataToParse.copy(), self.children[0])
@@ -137,25 +138,35 @@ class Agg(AbstractVariableNode):
             newParsingPaths = []
 
             for parsingPath in parsingPaths:
-                self._logger.debug("Parse {0} with {1}".format(current_child.id, parsingPath))
-                value_before_parsing = parsingPath.getDataAssignedToVariable(current_child).copy()
-                childParsingPaths = current_child.parse(parsingPath, carnivorous=carnivorous)
+                self._logger.debug(
+                    "Parse {0} with {1}".format(current_child.id, parsingPath))
+                value_before_parsing = parsingPath.getDataAssignedToVariable(
+                    current_child).copy()
+                childParsingPaths = current_child.parse(
+                    parsingPath, carnivorous=carnivorous)
 
                 for childParsingPath in childParsingPaths:
                     if childParsingPath.ok():
-                        value_after_parsing = childParsingPath.getDataAssignedToVariable(current_child).copy()
-                        remainingValue = value_before_parsing[len(value_after_parsing):].copy()
+                        value_after_parsing = childParsingPath.getDataAssignedToVariable(
+                            current_child).copy()
+                        remainingValue = value_before_parsing[len(
+                            value_after_parsing):].copy()
                         if next_child is not None:
-                            childParsingPath.assignDataToVariable(remainingValue, next_child)
+                            childParsingPath.assignDataToVariable(
+                                remainingValue, next_child)
 
                         # at least one child path managed to parse, we save the valid paths it produced
-                        self._logger.debug("Children {0} succesfuly applied with the parsingPath {1}".format(current_child, parsingPath))
+                        self._logger.debug(
+                            "Children {0} succesfuly applied with the parsingPath {1}".
+                            format(current_child, parsingPath))
                         newParsingPaths.append(childParsingPath)
 
             parsingPaths = newParsingPaths
 
             if len(parsingPaths) == 0:
-                self._logger.debug("Children {0} didn't apply to any of the parser path we have, we stop Agg parser".format(current_child))
+                self._logger.debug(
+                    "Children {0} didn't apply to any of the parser path we have, we stop Agg parser".
+                    format(current_child))
                 return []  # return no valid paths
 
         # ok we managed to parse all the children, and it produced some valid parser paths. We return them
@@ -163,9 +174,11 @@ class Agg(AbstractVariableNode):
             parsedData = None
             for child in self.children:
                 if parsedData is None:
-                    parsedData = parsingPath.getDataAssignedToVariable(child).copy()
+                    parsedData = parsingPath.getDataAssignedToVariable(
+                        child).copy()
                 else:
-                    parsedData += parsingPath.getDataAssignedToVariable(child).copy()
+                    parsedData += parsingPath.getDataAssignedToVariable(
+                        child).copy()
 
             parsingPath.addResult(self, parsedData)
         return parsingPaths
@@ -181,10 +194,12 @@ class Agg(AbstractVariableNode):
         for child in self.children:
             newSpecializingPaths = []
 
-            self._logger.debug("Specializing AGG child with {0} paths".format(len(specializingPaths)))
+            self._logger.debug("Specializing AGG child with {0} paths".format(
+                len(specializingPaths)))
 
             for specializingPath in specializingPaths:
-                self._logger.debug("Spcialize {0} with {1}".format(child, specializingPath))
+                self._logger.debug(
+                    "Spcialize {0} with {1}".format(child, specializingPath))
 
                 childSpecializingPaths = child.specialize(specializingPath)
 
@@ -195,10 +210,13 @@ class Agg(AbstractVariableNode):
 
             specializingPaths = newSpecializingPaths
 
-        self._logger.debug("Specializing AGG child has produced {0} paths".format(len(specializingPaths)))
+        self._logger.debug("Specializing AGG child has produced {0} paths".
+                           format(len(specializingPaths)))
 
         if len(specializingPaths) == 0:
-            self._logger.debug("Children {0} didn't apply to any of the specializer path we have, we stop Agg specializer".format(child))
+            self._logger.debug(
+                "Children {0} didn't apply to any of the specializer path we have, we stop Agg specializer".
+                format(child))
             return []  # return no valid paths
 
         for specializingPath in specializingPaths:
@@ -213,4 +231,3 @@ class Agg(AbstractVariableNode):
 
         # ok we managed to parse all the children, and it produced some valid specializer paths. We return them
         return specializingPaths
-

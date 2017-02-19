@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -130,7 +130,6 @@ class RelationFinder(object):
     #                 for rel_id, rel_conf in enumerate(rels):
     #                     print "  %d. F[%d][%d:%d]" % ((rel_id,) + rel_conf)
 
-
     # def executeOnCells(self, cellsTable):
     #     if cellsTable:
     #         # Invert array dimensions liks this:
@@ -147,7 +146,8 @@ class RelationFinder(object):
         """Find exact relations between fields of the provided symbol.
         """
 
-        (attributeValues_headers, attributeValues) = self._generateAttributeValuesForSymbol(symbol)
+        (attributeValues_headers,
+         attributeValues) = self._generateAttributeValuesForSymbol(symbol)
         results = []
 
         for i, x_values in enumerate(attributeValues[:-1]):
@@ -166,14 +166,17 @@ class RelationFinder(object):
                     (x_fields, x_attribute) = attributeValues_headers[i]
                     (y_fields, y_attribute) = attributeValues_headers[j]
                     # The relation should not apply on the same field
-                    if len(x_fields) == 1 and len(y_fields) == 1 and x_fields[0].id == y_fields[0].id:
+                    if len(x_fields) == 1 and len(y_fields) == 1 and x_fields[
+                            0].id == y_fields[0].id:
                         continue
-                    relation_type = self._findRelationType(x_attribute, y_attribute)
+                    relation_type = self._findRelationType(x_attribute,
+                                                           y_attribute)
                     # We do not consider unqualified relation (for example, the size of a field is linked to the size of another field)
                     if relation_type == self.REL_UNKNOWN:
                         continue
                     # DataRelation should produce an empty intersection between related fields
-                    if relation_type == self.REL_DATA and len(set(x_fields).intersection(set(y_fields))) > 0:
+                    if relation_type == self.REL_DATA and len(
+                            set(x_fields).intersection(set(y_fields))) > 0:
                         continue
                     # SizeRelation should a size field composed of multiple fields
                     if relation_type == self.REL_SIZE:
@@ -183,18 +186,26 @@ class RelationFinder(object):
                         elif y_attribute == self.ATTR_VALUE:
                             if len(y_fields) > 1:
                                 continue
-                    self._logger.debug("Relation found between '" + str(x_fields) + ":" + x_attribute + "' and '" + str(y_fields) + ":" + y_attribute + "'")
+                    self._logger.debug("Relation found between '" + str(
+                        x_fields) + ":" + x_attribute + "' and '" + str(
+                            y_fields) + ":" + y_attribute + "'")
                     id_relation = str(uuid.uuid4())
-                    results.append({'id': id_relation,
-                                    "relation_type": relation_type,
-                                    'x_fields': x_fields,
-                                    'x_attribute': x_attribute,
-                                    'y_fields': y_fields,
-                                    'y_attribute': y_attribute})
+                    results.append({
+                        'id': id_relation,
+                        "relation_type": relation_type,
+                        'x_fields': x_fields,
+                        'x_attribute': x_attribute,
+                        'y_fields': y_fields,
+                        'y_attribute': y_attribute
+                    })
         return results
 
     @typeCheck(AbstractField, AbstractField, str, str)
-    def executeOnFields(self, x_field, y_field, x_attribute=None, y_attribute=None):
+    def executeOnFields(self,
+                        x_field,
+                        y_field,
+                        x_attribute=None,
+                        y_attribute=None):
         """Find exact relations between fields according to their
         optional selected attributes.
         """
@@ -224,27 +235,36 @@ class RelationFinder(object):
 
         for x_attribute in x_attributes:
             for y_attribute in y_attributes:
-                for (relation_name, relation_fct) in list(relation_fcts.items()):
+                for (relation_name,
+                     relation_fct) in list(relation_fcts.items()):
                     isRelation = True
                     for i in range(len(x_values)):
-                        if not relation_fct(x_values[i], x_attribute, y_values[i], y_attribute):
+                        if not relation_fct(x_values[i], x_attribute,
+                                            y_values[i], y_attribute):
                             isRelation = False
                             break
                     if isRelation:
-                        self._logger.debug("Relation found between '" + x_attribute + ":" + str(x_field.name) + "' and '" + y_attribute + ":" + str(y_field.name) + "'")
+                        self._logger.debug(
+                            "Relation found between '" + x_attribute + ":" +
+                            str(x_field.name) + "' and '" + y_attribute + ":" +
+                            str(y_field.name) + "'")
                         self._logger.debug("  Relation: " + relation_name)
                         id_relation = str(uuid.uuid4())
-                        results.append({'id': id_relation,
-                                        "relation_type": relation_name,
-                                        'x_field': x_field,
-                                        'x_attribute': x_attribute,
-                                        'y_field': y_field,
-                                        'y_attribute': y_attribute})
+                        results.append({
+                            'id': id_relation,
+                            "relation_type": relation_name,
+                            'x_field': x_field,
+                            'x_attribute': x_attribute,
+                            'y_field': y_field,
+                            'y_attribute': y_attribute
+                        })
         return results
 
     def _findRelationType(self, x_attribute, y_attribute):
         typeRelation = self.REL_UNKNOWN
-        if (x_attribute == self.ATTR_VALUE and y_attribute == self.ATTR_SIZE) or (x_attribute == self.ATTR_SIZE and y_attribute == self.ATTR_VALUE):
+        if (x_attribute == self.ATTR_VALUE and y_attribute == self.ATTR_SIZE
+            ) or (x_attribute == self.ATTR_SIZE and
+                  y_attribute == self.ATTR_VALUE):
             typeRelation = self.REL_SIZE
         elif x_attribute == x_attribute == self.ATTR_VALUE:
             typeRelation = self.REL_DATA
@@ -289,7 +309,7 @@ class RelationFinder(object):
 
         # Compute the table of concatenation of values
         for i in range(len(fieldsValues[:])):
-            for j in range(i+1, len(fieldsValues)+1):
+            for j in range(i + 1, len(fieldsValues) + 1):
                 # We generate the data
                 concatCellsData = self._generateConcatData(fieldsValues[i:j])
 
@@ -352,8 +372,13 @@ class RelationFinder(object):
             if len(data) > 0:
                 data = data[:8]  # We take at most 8 bytes
                 unitSize = int(AbstractType.UNITSIZE_8) * len(data)
-                unitSize = int(pow(2, math.ceil(math.log(unitSize, 2))))  # Round to the nearest upper power of 2
-                result.append(Integer.encode(data, endianness=AbstractType.ENDIAN_BIG, unitSize=str(unitSize)))
+                unitSize = int(pow(2, math.ceil(math.log(
+                    unitSize, 2))))  # Round to the nearest upper power of 2
+                result.append(
+                    Integer.encode(
+                        data,
+                        endianness=AbstractType.ENDIAN_BIG,
+                        unitSize=str(unitSize)))
             else:
                 result.append(0)
         return result
@@ -366,4 +391,3 @@ class RelationFinder(object):
             else:
                 result.append(0)
         return result
-

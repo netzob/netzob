@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -46,7 +46,6 @@ from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransiti
 
 @NetzobLogger
 class PTAAutomataFactory(object):
-
     @staticmethod
     @typeCheck(list, list)
     def generate(abstractSessions, symbolList):
@@ -58,7 +57,8 @@ class PTAAutomataFactory(object):
         from netzob.Inference.Grammar.AutomataFactories.ChainedStatesAutomataFactory import ChainedStatesAutomataFactory
         chainedAutomatons = []
         for abstractSession in abstractSessions:
-            chainedAutomaton = ChainedStatesAutomataFactory.generate(abstractSession, symbolList)
+            chainedAutomaton = ChainedStatesAutomataFactory.generate(
+                abstractSession, symbolList)
             chainedAutomatons.append(chainedAutomaton)
         if len(chainedAutomatons) <= 1:
             return chainedAutomatons[0]
@@ -68,7 +68,10 @@ class PTAAutomataFactory(object):
         idx_state = 0
         ptaStateA = State("State " + str(idx_state))
         ptaStateA_saved = ptaStateA
-        ptaTransition = OpenChannelTransition(startState=ptaInitialState, endState=ptaStateA, name="Open transition")
+        ptaTransition = OpenChannelTransition(
+            startState=ptaInitialState,
+            endState=ptaStateA,
+            name="Open transition")
 
         # Merge the other automatons in the PTA automaton
         for automaton in chainedAutomatons:
@@ -80,7 +83,8 @@ class PTAAutomataFactory(object):
             if initialState is not None and len(initialState.transitions) > 0:
                 transition = initialState.transitions[0]
                 if isinstance(transition, OpenChannelTransition):
-                    transition = PTAAutomataFactory._getNextChainedTransition(transition)
+                    transition = PTAAutomataFactory._getNextChainedTransition(
+                        transition)
                     if transition is None:
                         break
 
@@ -88,33 +92,47 @@ class PTAAutomataFactory(object):
                 while True:
                     # We handle the closing state
                     if isinstance(transition, CloseChannelTransition):
-                        if len(ptaStateA.transitions) > 0 and isinstance(ptaStateA.transitions[0], CloseChannelTransition):
+                        if len(ptaStateA.transitions) > 0 and isinstance(
+                                ptaStateA.transitions[0],
+                                CloseChannelTransition):
                             # The transition is equivalent in the PTA
                             break
                         else:
                             # This is a new transition
                             idx_state += 1
                             ptaStateB = State("End state " + str(idx_state))
-                            ptaTransition = CloseChannelTransition(startState=ptaStateA, endState=ptaStateB, name="Close transition")
+                            ptaTransition = CloseChannelTransition(
+                                startState=ptaStateA,
+                                endState=ptaStateB,
+                                name="Close transition")
                             break
                     inputSymbol = transition.inputSymbol
                     outputSymbols = transition.outputSymbols
 
                     # We do the comparison with the PTA automaton at the transition level
                     newTransition = True
-                    if len(ptaStateA.transitions) > 0 and isinstance(ptaStateA.transitions[0], Transition):
+                    if len(ptaStateA.transitions) > 0 and isinstance(
+                            ptaStateA.transitions[0], Transition):
                         if ptaStateA.transitions[0].inputSymbol == inputSymbol:
-                            if len(ptaStateA.transitions[0].outputSymbols) > 0 and ptaStateA.transitions[0].outputSymbols[0] == outputSymbols[0]:
+                            if len(ptaStateA.transitions[0].outputSymbols
+                                   ) > 0 and ptaStateA.transitions[
+                                       0].outputSymbols[0] == outputSymbols[0]:
                                 # The transition is equivalent in the PTA
                                 newTransition = False
                                 ptaStateA = ptaStateA.transitions[0].endState
                     if newTransition == True:
                         idx_state += 1
                         ptaStateB = State("State " + str(idx_state))
-                        ptaTransition = Transition(startState=ptaStateA, endState=ptaStateB, inputSymbol=inputSymbol, outputSymbols=[outputSymbols[0]], name="Transition")
+                        ptaTransition = Transition(
+                            startState=ptaStateA,
+                            endState=ptaStateB,
+                            inputSymbol=inputSymbol,
+                            outputSymbols=[outputSymbols[0]],
+                            name="Transition")
                         ptaStateA = ptaStateB
 
-                    transition = PTAAutomataFactory._getNextChainedTransition(transition)
+                    transition = PTAAutomataFactory._getNextChainedTransition(
+                        transition)
                     if transition is None:
                         break
 

@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -109,10 +109,10 @@ class EntropyMeasurement(object):
             raise Exception("Messages cannot be None")
         if len(messages) < 2:
             raise Exception("At least two messages must be provided")
-    
+
         values = [m.data for m in messages]
         return EntropyMeasurement.measure_values_entropy(values)
-            
+
     @staticmethod
     def measure_values_entropy(values):
         """This method returns the entropy of bytes found at each position of
@@ -132,13 +132,13 @@ class EntropyMeasurement(object):
 
         if values is None:
             raise Exception("values cannot be None")
-        if len(values) < 1 :
+        if len(values) < 1:
             raise Exception("At least one value must be provided")
 
         # computes longuest message
         longuest = max([len(value) for value in values])
 
-        for i_byte in range(longuest):            
+        for i_byte in range(longuest):
 
             dataset = []
             for value in values:
@@ -148,20 +148,18 @@ class EntropyMeasurement(object):
                     pass
 
             yield EntropyMeasurement.__measure_entropy(dataset)
-            
-            
+
     @staticmethod
     def __measure_entropy(values):
         if values is None:
             raise Exception("values cannot be None")
-        if len(values) < 1 :
+        if len(values) < 1:
             raise Exception("At least one value must be provided")
 
         entropy = 0
-        for x in range(256):            
-            p_x = float(values.count(x))/len(values)
+        for x in range(256):
+            p_x = float(values.count(x)) / len(values)
             if p_x > 0:
-                entropy += - p_x*math.log(p_x, 2)
-                
+                entropy += -p_x * math.log(p_x, 2)
+
         return entropy
-                    

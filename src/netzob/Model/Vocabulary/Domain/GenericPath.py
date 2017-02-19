@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -50,20 +50,25 @@ from netzob.Model.Types.TypeConverter import TypeConverter
 from netzob.Model.Types.BitArray import BitArray
 from netzob.Model.Types.Raw import Raw
 
+
 @NetzobLogger
 class GenericPath(object):
     """This class is the parent class of both abstraction paths and
     specialization paths"""
 
-    def __init__(self, memory=None, dataAssignedToField=None, dataAssignedToVariable=None, fieldsCallbacks=None):
+    def __init__(self,
+                 memory=None,
+                 dataAssignedToField=None,
+                 dataAssignedToVariable=None,
+                 fieldsCallbacks=None):
         self.name = str(uuid.uuid4())
         self.memory = memory
-    
+
         if fieldsCallbacks is not None:
             self._fieldsCallbacks = fieldsCallbacks
         else:
             self._fieldsCallbacks = []
-        
+
         if dataAssignedToField is None:
             self._dataAssignedToField = {}
         else:
@@ -89,7 +94,7 @@ class GenericPath(object):
         bitarray('01110100011001010111001101110100')
 
         """
-        
+
         self.assignDataToVariable(result, variable)
 
     def addResultToField(self, field, result):
@@ -106,11 +111,12 @@ class GenericPath(object):
         >>> print(path.getDataAssignedToField(field))
         bitarray('01110100011001010111001101110100')
 
-        """        
+        """
         self.assignDataToField(result, field)
 
         if not self._triggerFieldCallbacks(field):
-            raise Exception("Impossible to assign this result to the field (CB has failed)")
+            raise Exception(
+                "Impossible to assign this result to the field (CB has failed)")
 
     def getDataAssignedToField(self, field):
         """Return the value assigned to the specified field
@@ -124,7 +130,7 @@ class GenericPath(object):
         >>> print(path.getDataAssignedToField(f0))
         bitarray('01110100011001010111001101110100')
         """
-        
+
         if field is None:
             raise Exception("Field cannot be None")
 
@@ -178,8 +184,8 @@ class GenericPath(object):
         >>> path.removeAssignedDataToField(f0)
         >>> print(path.isDataAvailableForField(f0))
         False
-        """        
-        
+        """
+
         if field is None:
             raise Exception("Field cannot be None")
         del self._dataAssignedToField[field.id]
@@ -198,11 +204,12 @@ class GenericPath(object):
         bitarray('01111010011011110110001001111001')
 
         """
-        
+
         if variable is None:
             raise Exception("Variable cannot be None")
         if variable.id not in self._dataAssignedToVariable:
-            raise Exception("No data is assigned to variable '{0}'".format(variable.name))
+            raise Exception(
+                "No data is assigned to variable '{0}'".format(variable.name))
 
         return self._dataAssignedToVariable[variable.id]
 
@@ -235,7 +242,8 @@ class GenericPath(object):
             raise Exception("Variable cannot be None")
 
         if len(fields) == 0:
-            raise Exception("At least one field must be defined in the callback")
+            raise Exception(
+                "At least one field must be defined in the callback")
 
         self._fieldsCallbacks.append((fields, variable, parsingCB))
 
@@ -245,24 +253,27 @@ class GenericPath(object):
         while moreCallBackFound:
             moreCallBackFound = False
             callBackToExecute = None
-            
+
             for (fields, variable, parsingCB) in self._fieldsCallbacks:
                 fieldsHaveValue = True
                 for f in fields:
                     if not self.isDataAvailableForField(f):
                         fieldsHaveValue = False
                 if fieldsHaveValue:
-                    self._logger.debug("Found a callback that must be able to trigger (all its fields are set)")
+                    self._logger.debug(
+                        "Found a callback that must be able to trigger (all its fields are set)"
+                    )
                     callBackToExecute = (fields, variable, parsingCB)
                     break
-                
+
             if callBackToExecute is not None:
                 moreCallBackFound = True
                 (fields, variable, parsingCB) = callBackToExecute
                 if parsingCB:
                     resultingPaths = variable.parse(self, acceptCallBack=False)
                 else:
-                    resultingPaths = variable.specialize(self, acceptCallBack=False)
+                    resultingPaths = variable.specialize(
+                        self, acceptCallBack=False)
                 if len(resultingPaths) == 0:
                     return False
                 self._fieldsCallbacks.remove(callBackToExecute)
@@ -288,4 +299,3 @@ class GenericPath(object):
     @typeCheck(Memory)
     def memory(self, memory):
         self.__memory = memory
-

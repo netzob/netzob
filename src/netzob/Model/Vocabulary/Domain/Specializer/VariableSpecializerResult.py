@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -45,6 +45,7 @@
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 
+
 @NetzobLogger
 class VariableSpecializerResult():
     """This class denotes one specializer result of a variable
@@ -61,8 +62,9 @@ class VariableSpecializerResult():
         return self.result
 
     def __str__(self):
-        return "VarSpecializerResult (result={0}, generatedContent={1})".format(self.result, self.generatedContent)
-    
+        return "VarSpecializerResult (result={0}, generatedContent={1})".format(
+            self.result, self.generatedContent)
+
     @property
     def result(self):
         return self.__result
@@ -73,7 +75,7 @@ class VariableSpecializerResult():
         if result is None:
             raise Exception("Result cannot be None")
         self.__result = result
-            
+
     @property
     def variable(self):
         """The variable that will be use to parse some content
@@ -101,7 +103,3 @@ class VariableSpecializerResult():
     @generatedContent.setter
     def generatedContent(self, generatedContent):
         self.__generatedContent = generatedContent
-
-
-    
-

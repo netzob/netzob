@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -43,7 +43,8 @@ import uuid
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Model.Vocabulary.Domain.Parser.VariableParserResult import VariableParserResult
 
@@ -53,32 +54,36 @@ class VariableParserPath(object):
     """This class denotes one parsing result of a variable against a specified content
     
     """
-    
-    def __init__(self, variableParser, consumedData, remainingData, originalVariableParserPath=None):
+
+    def __init__(self,
+                 variableParser,
+                 consumedData,
+                 remainingData,
+                 originalVariableParserPath=None):
         self.name = str(uuid.uuid4())
         self.consumedData = consumedData
         self.remainingData = remainingData
         self.variableParser = variableParser
         self.memory = self.variableParser.memory.duplicate()
-        
+
         self.originalVariableParserPath = originalVariableParserPath
         self.variableParserResults = []
         if originalVariableParserPath is not None:
-            self.variableParserResults.extend(originalVariableParserPath.variableParserResults)
+            self.variableParserResults.extend(
+                originalVariableParserPath.variableParserResults)
 
     def getValueToParse(self, variable):
         """Returns the value that is assigned to the specified variable"""
-        
 
-        
-            
-            
-    def createVariableParserResult(self, variable, parserResult, consumedData, remainedData):
-        variableParserResult = VariableParserResult(variable, parserResult, consumedData, remainedData)
+    def createVariableParserResult(self, variable, parserResult, consumedData,
+                                   remainedData):
+        variableParserResult = VariableParserResult(variable, parserResult,
+                                                    consumedData, remainedData)
         if parserResult:
-            self._logger.debug("New parser result attached to path {0}: {1}".format(self, variableParserResult))
+            self._logger.debug("New parser result attached to path {0}: {1}".
+                               format(self, variableParserResult))
             self.remainingData = variableParserResult.remainedData
-    
+
             if self.consumedData is None:
                 self._logger.debug("consumed is none...")
                 self.consumedData = variableParserResult.consumedData
@@ -86,12 +91,15 @@ class VariableParserPath(object):
                 self.consumedData.extend(variableParserResult.consumedData)
         else:
             self._logger.debug("creation of an invalid parser result.")
-        
+
         self.variableParserResults.append(variableParserResult)
-        self._logger.debug("After registering new VariablePathResult, Path is {0}".format(self))        
+        self._logger.debug(
+            "After registering new VariablePathResult, Path is {0}".format(
+                self))
 
     def __str__(self):
-        return "Path {0} (consumedData={1}, remainingData={2}".format(self.name, self.consumedData, self.remainingData)
+        return "Path {0} (consumedData={1}, remainingData={2}".format(
+            self.name, self.consumedData, self.remainingData)
 
     @property
     def consumedData(self):
@@ -109,4 +117,4 @@ class VariableParserPath(object):
     def memory(self, memory):
         if memory is None:
             raise Exception("Memory cannot be None")
-        self.__memory = memory        
+        self.__memory = memory

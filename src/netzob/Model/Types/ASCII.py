@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -85,18 +85,38 @@ class ASCII(AbstractType):
 
     """
 
-    def __init__(self, value=None, nbChars=(None, None), unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+    def __init__(self,
+                 value=None,
+                 nbChars=(None, None),
+                 unitSize=AbstractType.defaultUnitSize(),
+                 endianness=AbstractType.defaultEndianness(),
+                 sign=AbstractType.defaultSign()):
         if value is not None and not isinstance(value, bitarray):
             from netzob.Model.Types.TypeConverter import TypeConverter
             from netzob.Model.Types.BitArray import BitArray
-            value = TypeConverter.convert(value, ASCII, BitArray, src_unitSize=unitSize, src_endianness=endianness, src_sign=sign, dst_unitSize=unitSize, dst_endianness=endianness, dst_sign=sign)
+            value = TypeConverter.convert(
+                value,
+                ASCII,
+                BitArray,
+                src_unitSize=unitSize,
+                src_endianness=endianness,
+                src_sign=sign,
+                dst_unitSize=unitSize,
+                dst_endianness=endianness,
+                dst_sign=sign)
         else:
             value = None
 
         self.nbChars = nbChars
         nbBits = self._convertNbCharsInNbBits(self.nbChars)
 
-        super(ASCII, self).__init__(self.__class__.__name__, value, nbBits, unitSize=unitSize, endianness=endianness, sign=sign)
+        super(ASCII, self).__init__(
+            self.__class__.__name__,
+            value,
+            nbBits,
+            unitSize=unitSize,
+            endianness=endianness,
+            sign=sign)
 
     def _convertNbCharsInNbBits(self, nbChars):
         nbMinBit = None
@@ -137,7 +157,10 @@ class ASCII(AbstractType):
             minSize = 0
 
         generatedSize = random.randint(minSize, maxSize)
-        randomContent = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(generatedSize)])
+        randomContent = ''.join([
+            random.choice(string.ascii_letters + string.digits)
+            for i in range(generatedSize)
+        ])
         return TypeConverter.convert(randomContent, ASCII, BitArray)
 
     @typeCheck(str)
@@ -184,22 +207,32 @@ class ASCII(AbstractType):
         mutations = collections.OrderedDict()
 
         mutations["{0}ascii".format(prefixDescription)] = strValue
-        mutations["{0}ascii(inversed)".format(prefixDescription)] = strValue[::-1]
+        mutations["{0}ascii(inversed)".format(
+            prefixDescription)] = strValue[::-1]
         if strValue != strValue.upper():
-            mutations["{0}ascii(upper)".format(prefixDescription)] = strValue.upper()
-            mutations["{0}ascii(inversed-upper)".format(prefixDescription)] = strValue[::-1].upper()
+            mutations["{0}ascii(upper)".format(
+                prefixDescription)] = strValue.upper()
+            mutations["{0}ascii(inversed-upper)".format(
+                prefixDescription)] = strValue[::-1].upper()
         if strValue != strValue.lower():
-            mutations["{0}ascii(lower)".format(prefixDescription)] = strValue.lower()
-            mutations["{0}ascii(inversed-lower)".format(prefixDescription)] = strValue[::-1].lower()
+            mutations["{0}ascii(lower)".format(
+                prefixDescription)] = strValue.lower()
+            mutations["{0}ascii(inversed-lower)".format(
+                prefixDescription)] = strValue[::-1].lower()
 
         results = collections.OrderedDict()
         for mutationName, mutationValue in list(mutations.items()):
-            ba = BitArray(TypeConverter.convert(mutationValue, ASCII, BitArray))
+            ba = BitArray(
+                TypeConverter.convert(mutationValue, ASCII, BitArray))
             results.update(ba.mutate(mutationName))
 
         return results
 
-    def canParse(self, data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+    def canParse(self,
+                 data,
+                 unitSize=AbstractType.defaultUnitSize(),
+                 endianness=AbstractType.defaultEndianness(),
+                 sign=AbstractType.defaultSign()):
         """This method returns True if data is an ASCII (utf-8)
 
         >>> from netzob.all import *
@@ -271,17 +304,24 @@ class ASCII(AbstractType):
             else:
                 if nbChars[0] is not None:
                     if not isinstance(nbChars[0], int):
-                        raise TypeError("First element of the tupple of the nbChars must be an int if defined.")
+                        raise TypeError(
+                            "First element of the tupple of the nbChars must be an int if defined."
+                        )
                     nbMinChar = nbChars[0]
                 if nbChars[1] is not None:
                     if not isinstance(nbChars[1], int):
-                        raise TypeError("Second element of the tupple of the nbChars must be an int if defined.")
+                        raise TypeError(
+                            "Second element of the tupple of the nbChars must be an int if defined."
+                        )
                     nbMaxChar = nbChars[1]
 
         self.__nbChars = (nbMinChar, nbMaxChar)
 
     @staticmethod
-    def decode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+    def decode(data,
+               unitSize=AbstractType.defaultUnitSize(),
+               endianness=AbstractType.defaultEndianness(),
+               sign=AbstractType.defaultSign()):
         """This method convert the specified data in python raw format.
 
         >>> from netzob.all import *
@@ -311,7 +351,10 @@ class ASCII(AbstractType):
         return str(data).encode('utf-8')
 
     @staticmethod
-    def encode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+    def encode(data,
+               unitSize=AbstractType.defaultUnitSize(),
+               endianness=AbstractType.defaultEndianness(),
+               sign=AbstractType.defaultSign()):
         """This method convert the python raw data to the ASCII.
 
         >>> from netzob.all import *
@@ -343,4 +386,3 @@ class ASCII(AbstractType):
                 res += "."
 
         return res
-

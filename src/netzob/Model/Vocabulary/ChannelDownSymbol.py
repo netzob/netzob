@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -66,15 +66,15 @@ class ChannelDownSymbol(Symbol):
     """
 
     def __init__(self, message=None):
-        self.message = message    
-        super(ChannelDownSymbol, self).__init__(fields=None, name="ChannelDown Symbol", messages=[self.message])
+        self.message = message
+        super(ChannelDownSymbol, self).__init__(
+            fields=None, name="ChannelDown Symbol", messages=[self.message])
 
     def __eq__(self, other):
         if other is None:
             return False
         return isinstance(other, ChannelDownSymbol)
 
-    
     @property
     def message(self):
         """This message represents the message could not be sent as channel was down
@@ -88,6 +88,5 @@ class ChannelDownSymbol(Symbol):
     def message(self, message):
         if message is None:
             message = RawMessage()
-        
-        self.__message = message
 
+        self.__message = message

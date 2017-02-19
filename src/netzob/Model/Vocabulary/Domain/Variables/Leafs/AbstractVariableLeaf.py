@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -59,29 +59,38 @@ class AbstractVariableLeaf(AbstractVariable):
     """
 
     def __init__(self, varType, name=None, svas=None):
-        super(AbstractVariableLeaf, self).__init__(varType, name=name, svas=svas)
-        
+        super(AbstractVariableLeaf, self).__init__(
+            varType, name=name, svas=svas)
+
     def parse(self, parsingPath, acceptCallBack=True, carnivorous=False):
         """@toto TO BE DOCUMENTED"""
 
         if self.svas is None:
-            raise Exception("Cannot parse if the variable has no assigned SVAS.")
+            raise Exception(
+                "Cannot parse if the variable has no assigned SVAS.")
 
         if self.isDefined(parsingPath):
             if self.svas == SVAS.CONSTANT or self.svas == SVAS.PERSISTENT:
-                return self.valueCMP(parsingPath, acceptCallBack, carnivorous=carnivorous)
+                return self.valueCMP(
+                    parsingPath, acceptCallBack, carnivorous=carnivorous)
             elif self.svas == SVAS.EPHEMERAL:
-                return self.learn(parsingPath, acceptCallBack, carnivorous=carnivorous)
+                return self.learn(
+                    parsingPath, acceptCallBack, carnivorous=carnivorous)
             elif self.svas == SVAS.VOLATILE:
-                return self.domainCMP(parsingPath, acceptCallBack, carnivorous=carnivorous)
+                return self.domainCMP(
+                    parsingPath, acceptCallBack, carnivorous=carnivorous)
         else:
             if self.svas == SVAS.CONSTANT:
-                self._logger.debug("Cannot parse '{0}' as svas is CONSTANT and no value is available.".format(self))
+                self._logger.debug(
+                    "Cannot parse '{0}' as svas is CONSTANT and no value is available.".
+                    format(self))
                 return []
             elif self.svas == SVAS.EPHEMERAL or self.svas == SVAS.PERSISTENT:
-                return self.learn(parsingPath, acceptCallBack, carnivorous=carnivorous)
+                return self.learn(
+                    parsingPath, acceptCallBack, carnivorous=carnivorous)
             elif self.svas == SVAS.VOLATILE:
-                return self.domainCMP(parsingPath, acceptCallBack, carnivorous=carnivorous)
+                return self.domainCMP(
+                    parsingPath, acceptCallBack, carnivorous=carnivorous)
 
         raise Exception("Not yet implemented: {0}.".format(self.svas))
 
@@ -108,7 +117,8 @@ class AbstractVariableLeaf(AbstractVariable):
         """@toto TO BE DOCUMENTED"""
 
         if self.svas is None:
-            raise Exception("Cannot specialize if the variable has no assigned SVAS.")
+            raise Exception(
+                "Cannot specialize if the variable has no assigned SVAS.")
         if self.isDefined(parsingPath):
             if self.svas == SVAS.CONSTANT or self.svas == SVAS.PERSISTENT:
                 return self.use(parsingPath, acceptCallBack)
@@ -118,7 +128,9 @@ class AbstractVariableLeaf(AbstractVariable):
                 return self.regenerate(parsingPath, acceptCallBack)
         else:
             if self.svas == SVAS.CONSTANT:
-                self._logger.debug("Cannot specialize '{0}' as svas is CONSTANT and no value is available.".format(self))
+                self._logger.debug(
+                    "Cannot specialize '{0}' as svas is CONSTANT and no value is available.".
+                    format(self))
                 return []
             elif self.svas == SVAS.EPHEMERAL or self.svas == SVAS.PERSISTENT:
                 return self.regenerateAndMemorize(parsingPath, acceptCallBack)

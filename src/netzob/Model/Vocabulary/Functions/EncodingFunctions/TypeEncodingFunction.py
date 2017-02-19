@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -93,6 +93,7 @@ class TypeEncodingFunction(EncodingFunction):
     ------- | -----
 
     """
+
     def __init__(self, _type, unitSize=None, endianness=None, sign=None):
         """Creates a new encoding function that will encode
         the data with the specified types and following its attributes. If an attribute
@@ -122,7 +123,13 @@ class TypeEncodingFunction(EncodingFunction):
 
     def encode(self, data):
         self._logger.debug(data)
-        return TypeConverter.convert(data, BitArray, self.type, dst_unitSize=self.unitSize, dst_endianness=self.endianness, dst_sign=self.sign)
+        return TypeConverter.convert(
+            data,
+            BitArray,
+            self.type,
+            dst_unitSize=self.unitSize,
+            dst_endianness=self.endianness,
+            dst_sign=self.sign)
 
     def priority(self):
         """Returns the priority of the current encoding filter."""
@@ -137,7 +144,9 @@ class TypeEncodingFunction(EncodingFunction):
         if _type is None:
             raise TypeError("Type cannot be None")
         if _type not in AbstractType.supportedTypes():
-            raise TypeError("The type is not supported, please refer to the list of supported type in AbstractType.supportedTypes()")
+            raise TypeError(
+                "The type is not supported, please refer to the list of supported type in AbstractType.supportedTypes()"
+            )
         self.__type = _type
 
     @property
@@ -149,7 +158,9 @@ class TypeEncodingFunction(EncodingFunction):
         if unitSize is None:
             raise TypeError("Unitsize cannot be None.")
         if unitSize not in AbstractType.supportedUnitSizes():
-            raise ValueError("This unitSize is not supported, please refer to the list of supported type in AbstractType.supportedUnitSizes()")
+            raise ValueError(
+                "This unitSize is not supported, please refer to the list of supported type in AbstractType.supportedUnitSizes()"
+            )
         self.__unitSize = unitSize
 
     @property
@@ -161,7 +172,9 @@ class TypeEncodingFunction(EncodingFunction):
         if endianness is None:
             raise TypeError("Endianness cannot be None.")
         if endianness not in AbstractType.supportedEndianness():
-            raise ValueError("This endianness is not supported, please refer to the list of supported type in AbstractType.supportedEndianness()")
+            raise ValueError(
+                "This endianness is not supported, please refer to the list of supported type in AbstractType.supportedEndianness()"
+            )
         self.__endianness = endianness
 
     @property
@@ -173,6 +186,7 @@ class TypeEncodingFunction(EncodingFunction):
         if sign is None:
             raise TypeError("Sign cannot be None.")
         if sign not in AbstractType.supportedSign():
-            raise ValueError("This sign is not supported, please refer to the list of supported type in AbstractType.supportedSign()")
+            raise ValueError(
+                "This sign is not supported, please refer to the list of supported type in AbstractType.supportedSign()"
+            )
         self.__sign = sign
-

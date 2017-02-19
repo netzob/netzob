@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -28,7 +28,6 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
-from gettext import gettext as _
 import logging
 import time
 from collections import deque
@@ -50,18 +49,22 @@ from netzob.Inference.Grammar.Oracles.NetworkOracle import NetworkOracle
 #| WMethodNetworkEquivalenceOracle:
 #+----------------------------------------------
 class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
-
     def __init__(self, communicationChannel, maxSize, resetScript):
-        AbstractEquivalenceOracle.__init__(self, "WMethodNetworkEquivalenceOracle")
+        AbstractEquivalenceOracle.__init__(self,
+                                           "WMethodNetworkEquivalenceOracle")
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Inference.Grammar.EquivalenceOracles.WMethodNetworkEquivalenceOracle')
+        self.log = logging.getLogger(
+            'netzob.Inference.Grammar.EquivalenceOracles.WMethodNetworkEquivalenceOracle'
+        )
         self.communicationChannel = communicationChannel
         self.m = maxSize
         self.resetScript = resetScript
 
     def canWeDistinguishStates(self, mmstd, mq, state1, state2):
-        (traceState1, endStateTrace1) = mmstd.getOutputTrace(state1, mq.getSymbols())
-        (traceState2, endStateTrace2) = mmstd.getOutputTrace(state2, mq.getSymbols())
+        (traceState1, endStateTrace1) = mmstd.getOutputTrace(state1,
+                                                             mq.getSymbols())
+        (traceState2, endStateTrace2) = mmstd.getOutputTrace(state2,
+                                                             mq.getSymbols())
         self.log.info("Trace 1 = {0}".format(str(traceState1)))
         self.log.info("Trace 2 = {0}".format(str(traceState2)))
         if traceState1 == traceState2:
@@ -109,20 +112,24 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
                 if state != state2:
                     found = False
                     for (s1, s2) in couples:
-                        if not ((s1 == state) and (s2 == state2) or ((s1 == state2) and (s2 == state))):
+                        if not ((s1 == state) and (s2 == state2) or (
+                            (s1 == state2) and (s2 == state))):
                             found = True
                     if not found:
                         couples.append((state, state2))
 
-        self.log.info("A number of " + str(len(couples)) + " couples was found")
+        self.log.info("A number of " + str(len(couples)) +
+                      " couples was found")
 
         for (state1, state2) in couples:
-            self.log.info("Search a distinguish string between " + state1.getName() + " and " + state2.getName())
+            self.log.info("Search a distinguish string between " +
+                          state1.getName() + " and " + state2.getName())
             z = MembershipQuery([EmptySymbol()])
 
             mqToTest = deque([])
             for letter in inputDictionary:
-                mqToTest.append(z.getMQSuffixedWithMQ(MembershipQuery([letter])))
+                mqToTest.append(
+                    z.getMQSuffixedWithMQ(MembershipQuery([letter])))
 
             lastIndiguishableZ = z
             distinguishableZ = z
@@ -145,7 +152,9 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
                     distinguishableZ = mq
 
                 i = i + 1
-            self.log.info("FOUND: the following distinguish them: {0} last which doesn't is {1}".format(str(distinguishableZ), str(lastIndiguishableZ)))
+            self.log.info(
+                "FOUND: the following distinguish them: {0} last which doesn't is {1}".
+                format(str(distinguishableZ), str(lastIndiguishableZ)))
             W.append(distinguishableZ)
         self.log.info("=================================")
         self.log.info("W = " + str(W))
@@ -164,8 +173,10 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
             tmpstatesSeen = []
             for letter in inputDictionary:
                 z = mq.getMQSuffixedWithMQ(MembershipQuery([letter]))
-                self.log.debug("Get output trace if we execute the MMSTD with " + str(z.getSymbols()))
-                (trace, outputState) = mmstd.getOutputTrace(mmstd.getInitialState(), z.getSymbols())
+                self.log.debug("Get output trace if we execute the MMSTD with "
+                               + str(z.getSymbols()))
+                (trace, outputState) = mmstd.getOutputTrace(
+                    mmstd.getInitialState(), z.getSymbols())
                 if outputState in statesSeen:
                     # we close this one
                     self.log.info("Adding " + str(z) + " in closeMQ")
@@ -213,7 +224,9 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
                     if not xi in Z:
                         Z.append(xi)
                     else:
-                        self.log.warn("Impossible to add X[{0}] = {1} in Z, it already exists".format(str(i), str(xi)))
+                        self.log.warn(
+                            "Impossible to add X[{0}] = {1} in Z, it already exists".
+                            format(str(i), str(xi)))
 
         for z in Z:
             self.log.info("z = {0}".format(str(z)))
@@ -227,14 +240,16 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
         for t in T:
             self.log.info("=> {0}".format(str(t)))
 
-        testsResults = dict()
-        self.log.info("----> Compute the responses to the the tests over our model and compare them with the real one")
+        self.log.info(
+            "----> Compute the responses to the the tests over our model and compare them with the real one"
+        )
         i_test = 0
         # We compute the response to the different tests over our learning model and compare them with the real one
         for test in T:
             i_test = i_test + 1
             # Compute our results
-            (traceTest, stateTest) = mmstd.getOutputTrace(mmstd.getInitialState(), test.getSymbols())
+            (traceTest, stateTest) = mmstd.getOutputTrace(
+                mmstd.getInitialState(), test.getSymbols())
 
             # Verify the request is not in the cache
             cachedValue = cache.getCachedResult(test)
@@ -244,13 +259,16 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
                     os.system("sh " + self.resetScript)
 
                 self.log.debug("=====================")
-                self.log.debug("Execute test {0}/{1}: {2}".format(str(i_test), str(len(T)), str(test)))
+                self.log.debug("Execute test {0}/{1}: {2}".format(
+                    str(i_test), str(len(T)), str(test)))
                 self.log.debug("=====================")
 
                 isMaster = not self.communicationChannel.isServer()
 
-                testedMmstd = test.toMMSTD(mmstd.getVocabulary(), isMaster)  # TODO TODO
-                oracle = NetworkOracle(self.communicationChannel, isMaster)  # TODO TODO is master ??
+                testedMmstd = test.toMMSTD(mmstd.getVocabulary(),
+                                           isMaster)  # TODO TODO
+                oracle = NetworkOracle(self.communicationChannel,
+                                       isMaster)  # TODO TODO is master ??
                 oracle.setMMSTD(testedMmstd)
                 oracle.start()
                 while oracle.isAlive():

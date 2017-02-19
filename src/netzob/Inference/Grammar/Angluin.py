@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -36,8 +36,10 @@
 #+----------------------------------------------
 #| Local application imports
 #+----------------------------------------------
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Inference.Grammar.lstar.ObservationTable import ObservationTable
+
 
 @NetzobLogger
 class MealyLSTAR(object):
@@ -140,7 +142,9 @@ class MealyLSTAR(object):
         self._logger.debug("Starting the computation of an hypothesis model")
 
     def refineHypothesis(self, counterExample):
-        self._logger.debug("Refining the current hypothesis according to counter example : {}".format(counterExample))
+        self._logger.debug(
+            "Refining the current hypothesis according to counter example : {}".
+            format(counterExample))
 
     def startLearning(self):
         self._logger.debug("Starting the MealyLSTAR inference process.")
@@ -161,8 +165,7 @@ class MealyLSTAR(object):
     def membershipOracle(self, mOracle):
         self.__membershipOracle = mOracle
 
-    
-        
+
 #         # create logger with the given configuration
 #         self.log = logging.getLogger('netzob.Inference.Grammar.MealyLSTAR.py')
 
@@ -597,4 +600,3 @@ class MealyLSTAR(object):
 #             self.log.info(horizontal)
 
 # #        self.addWordInS(MembershipQuery([]))
-

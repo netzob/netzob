@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -52,7 +52,6 @@ class ChannelDownException(Exception):
 
 
 class AbstractChannel(object, metaclass=abc.ABCMeta):
-
     def __init__(self, isServer, _id=uuid.uuid4()):
         """Constructor for an Abstract Channel
 
@@ -76,12 +75,10 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         :keyword timeout: the maximum time to wait for a client to connect
         :type timout:
         """
-        pass
 
     @abc.abstractmethod
     def close(self):
         """Close the communication channel."""
-        pass
 
     @abc.abstractmethod
     def read(self, timeout=None):
@@ -90,7 +87,6 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         @keyword timeout: the maximum time in millisecond to wait before a message can be reached
         @type timeout: :class:`int`
         """
-        pass
 
     @abc.abstractmethod
     def write(self, data):
@@ -99,7 +95,6 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         :parameter data: the data to write on the channel
         :type data: binary object
         """
-        pass
 
     # Management methods
 
@@ -110,7 +105,6 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         :return: the status of the communication channel
         :type: :class:`bool`
         """
-        pass
 
     # Properties
 

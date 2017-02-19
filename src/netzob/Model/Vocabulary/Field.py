@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -35,7 +35,6 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 
-
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
@@ -50,6 +49,7 @@ from netzob.Model.Types.BitArray import BitArray
 from netzob.Model.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Domain.DomainFactory import DomainFactory
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
+
 
 class InvalidDomainException(Exception):
     pass
@@ -168,21 +168,26 @@ class Field(AbstractField):
         self._logger.debug("Specializes field {0}".format(self.name))
         if self.__domain is None:
             raise InvalidDomainException("The domain is not defined.")
-            
+
         from netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
         fs = FieldSpecializer(self)
         specializingPaths = fs.specialize()
 
         if len(specializingPaths) < 1:
             raise Exception("Cannot specialize this field")
-            
+
         specializingPath = specializingPaths[0]
 
-        self._logger.debug("field specializing done: {0}".format(specializingPath))
+        self._logger.debug(
+            "field specializing done: {0}".format(specializingPath))
         if specializingPath is None:
-            raise Exception("The specialization of the field {0} returned no result.".format(self.name))
+            raise Exception(
+                "The specialization of the field {0} returned no result.".
+                format(self.name))
 
-        return TypeConverter.convert(specializingPath.getDataAssignedToVariable(self.domain), BitArray, Raw)
+        return TypeConverter.convert(
+            specializingPath.getDataAssignedToVariable(self.domain), BitArray,
+            Raw)
 
     @property
     def domain(self):
@@ -213,7 +218,8 @@ class Field(AbstractField):
         try:
             messages.extend(self.getSymbol().messages)
         except Exception as e:
-            self._logger.warning("The field is attached to no symbol and so it has no messages: {0}".format(e))
+            self._logger.warning(
+                "The field is attached to no symbol and so it has no messages: {0}".
+                format(e))
 
         return messages
-

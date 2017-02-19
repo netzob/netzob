@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -98,7 +98,7 @@ class Timestamp(AbstractType):
     ----- | -------------------------- | ----
    
     """
-    
+
     EPOCH_WINDOWS = datetime(1601, 1, 1)
     EPOCH_MUMPS = datetime(1840, 12, 31)
     EPOCH_VMS = datetime(1858, 11, 17)
@@ -118,8 +118,14 @@ class Timestamp(AbstractType):
     UNITY_MILLISECOND = 1000
     UNITY_MICROSECOND = 1000000
     UNITY_NANOSECOND = 10000000000
-    
-    def __init__(self, value=None, epoch=EPOCH_UNIX, unity=UNITY_SECOND, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.defaultEndianness(), sign=AbstractType.SIGN_UNSIGNED):
+
+    def __init__(self,
+                 value=None,
+                 epoch=EPOCH_UNIX,
+                 unity=UNITY_SECOND,
+                 unitSize=AbstractType.UNITSIZE_32,
+                 endianness=AbstractType.defaultEndianness(),
+                 sign=AbstractType.SIGN_UNSIGNED):
         """Builds a Timestamp domain with optional constraints.
 
         :param value: specifies the value of the timestamp.
@@ -131,14 +137,30 @@ class Timestamp(AbstractType):
         """
         if value is not None and not isinstance(value, bitarray):
             # converts the specified value in bitarray
-            value = TypeConverter.convert(value, Integer, BitArray, src_unitSize=unitSize, src_endianness=endianness, src_sign=sign)
+            value = TypeConverter.convert(
+                value,
+                Integer,
+                BitArray,
+                src_unitSize=unitSize,
+                src_endianness=endianness,
+                src_sign=sign)
 
         self.epoch = epoch
         self.unity = unity
 
-        super(Timestamp, self).__init__(self.__class__.__name__, value, 32, unitSize=unitSize, endianness=endianness, sign=sign)
+        super(Timestamp, self).__init__(
+            self.__class__.__name__,
+            value,
+            32,
+            unitSize=unitSize,
+            endianness=endianness,
+            sign=sign)
 
-    def canParse(self, data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+    def canParse(self,
+                 data,
+                 unitSize=AbstractType.defaultUnitSize(),
+                 endianness=AbstractType.defaultEndianness(),
+                 sign=AbstractType.defaultSign()):
         """Computes if specified data can be parsed as a Timestamp with the predefined constraints.
 
         >>> from netzob.all import *
@@ -163,7 +185,7 @@ class Timestamp(AbstractType):
 
         if data is None:
             raise TypeError("data cannot be None")
-         
+
         # Timestamp must be 8 bits modulo length
         if len(data) % 8 != 0:
             return False
@@ -173,21 +195,26 @@ class Timestamp(AbstractType):
 
         try:
 
-            value = TypeConverter.convert(data[:int(self.unitSize)], BitArray, Integer, dst_unitSize=AbstractType.UNITSIZE_32, dst_sign=AbstractType.SIGN_UNSIGNED)
+            value = TypeConverter.convert(
+                data[:int(self.unitSize)],
+                BitArray,
+                Integer,
+                dst_unitSize=AbstractType.UNITSIZE_32,
+                dst_sign=AbstractType.SIGN_UNSIGNED)
 
             # convert the value in seconds
             value = value / self.unity
 
             # add the utc now with the epoch
             timestamp_datetime = self.epoch + timedelta(seconds=value)
-            
+
             # convert obtained datetime to timestamp in seconds 
-            result_sec = int( timestamp_datetime.strftime('%s') )
-            
+            result_sec = int(timestamp_datetime.strftime('%s'))
+
             datetime.fromtimestamp(result_sec)
         except Exception:
             return False
-        
+
         return True
 
     def generate(self, generationStrategy=None):
@@ -206,10 +233,10 @@ class Timestamp(AbstractType):
         """
         if self.value is not None:
             return self.value
-    
+
         # computes utc now
-        now = datetime.utcnow()        
-        
+        now = datetime.utcnow()
+
         # substract the utc now with the epoch
         timestamp_datetime = now - self.epoch
 
@@ -217,15 +244,25 @@ class Timestamp(AbstractType):
         result_sec = timestamp_datetime.total_seconds()
 
         # apply the unity
-        result_unity = int(result_sec * self.unity)        
+        result_unity = int(result_sec * self.unity)
 
         # convert to bitarray
-        final = TypeConverter.convert(result_unity, Integer, BitArray, src_unitSize=self.unitSize, src_endianness=self.endianness, src_sign=AbstractType.SIGN_UNSIGNED, dst_endianness=self.endianness)
+        final = TypeConverter.convert(
+            result_unity,
+            Integer,
+            BitArray,
+            src_unitSize=self.unitSize,
+            src_endianness=self.endianness,
+            src_sign=AbstractType.SIGN_UNSIGNED,
+            dst_endianness=self.endianness)
 
         return final
 
     @staticmethod
-    def decode(data, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.defaultEndianness(), sign=AbstractType.SIGN_UNSIGNED):
+    def decode(data,
+               unitSize=AbstractType.UNITSIZE_32,
+               endianness=AbstractType.defaultEndianness(),
+               sign=AbstractType.SIGN_UNSIGNED):
         """Decodes the specified Timestamp data into its raw representation
 
         >>> from netzob.all import *
@@ -238,26 +275,34 @@ class Timestamp(AbstractType):
         if data is None:
             raise TypeError("Data cannot be None")
 
-        return Integer.decode(data, unitSize=unitSize, endianness=endianness, sign=sign)
-        
+        return Integer.decode(
+            data, unitSize=unitSize, endianness=endianness, sign=sign)
+
     @staticmethod
-    def encode(data, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.defaultEndianness(), sign=AbstractType.SIGN_UNSIGNED):
+    def encode(data,
+               unitSize=AbstractType.UNITSIZE_32,
+               endianness=AbstractType.defaultEndianness(),
+               sign=AbstractType.SIGN_UNSIGNED):
         from netzob.Model.Types.Raw import Raw
 
-        intValue = TypeConverter.convert(data, Raw, Integer, dst_unitSize=AbstractType.UNITSIZE_32, dst_sign=AbstractType.SIGN_UNSIGNED)
+        intValue = TypeConverter.convert(
+            data,
+            Raw,
+            Integer,
+            dst_unitSize=AbstractType.UNITSIZE_32,
+            dst_sign=AbstractType.SIGN_UNSIGNED)
         parsedTimestamp = datetime.utcfromtimestamp(intValue)
 
-        return parsedTimestamp.strftime("%c")        
-    
+        return parsedTimestamp.strftime("%c")
+
     @property
     def epoch(self):
         """Initial date expressed in UTC from which timestamp is measured"""
         return self.__epoch
-    
+
     @epoch.setter
     @typeCheck(datetime)
     def epoch(self, epoch):
         if epoch is None:
             raise Exception("Epoch cannot be None")
         self.__epoch = epoch
-

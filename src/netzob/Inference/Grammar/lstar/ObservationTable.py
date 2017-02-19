@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -36,7 +36,8 @@
 #+----------------------------------------------
 #| Local application imports
 #+----------------------------------------------
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck
 
 
 @NetzobLogger
@@ -56,21 +57,18 @@ class ObservationTable(object):
 
         self.__numRows = 0
         self.__suffixes = list()
-        
+
     def initialize(self, initialSuffixes, mqOracle):
         if len(self.__allRows) > 0:
-            raise Exception("Called initialize, but there are already rows present")
+            raise Exception(
+                "Called initialize, but there are already rows present")
 
-        numSuffixes = len(initialSuffixes)
+        len(initialSuffixes)
         self.__suffixes.extend(initialSuffixes)
 
         numLps = len(self.alphabet)
-        numPrefixes = 1 + numLps
+        1 + numLps
 
-        queries = list()
-        
-        
-        
 
     @property
     def alphabet(self):
@@ -79,4 +77,3 @@ class ObservationTable(object):
     @alphabet.setter
     def alphabet(self, alphabet):
         self.__alphabet = alphabet
-        

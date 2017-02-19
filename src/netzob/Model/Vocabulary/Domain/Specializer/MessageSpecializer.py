@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -119,9 +119,11 @@ class MessageSpecializer(object):
 
             fieldDomain = field.domain
             if fieldDomain is None:
-                raise Exception("Cannot specialize field '{0}' since it defines no domain".format(fieldDomain))
+                raise Exception(
+                    "Cannot specialize field '{0}' since it defines no domain".
+                    format(fieldDomain))
 
-            fs = FieldSpecializer(field, presets = self.presets)
+            fs = FieldSpecializer(field, presets=self.presets)
 
             newSpecializingPaths = []
             for specializingPath in specializingPaths:
@@ -130,7 +132,9 @@ class MessageSpecializer(object):
             specializingPaths = newSpecializingPaths
 
         if len(specializingPaths) > 1:
-            self._logger.info("TODO: multiple valid paths found when specializing this message.")
+            self._logger.info(
+                "TODO: multiple valid paths found when specializing this message."
+            )
 
         if len(specializingPaths) == 0:
             raise Exception("Cannot specialize this symbol.")
@@ -145,9 +149,11 @@ class MessageSpecializer(object):
                 d = None
                 for child in field.fields:
                     if d is None:
-                        d = retainedPath.getDataAssignedToVariable(child.domain).copy()
+                        d = retainedPath.getDataAssignedToVariable(
+                            child.domain).copy()
                     else:
-                        d += retainedPath.getDataAssignedToVariable(child.domain).copy()
+                        d += retainedPath.getDataAssignedToVariable(
+                            child.domain).copy()
 
             else:
                 d = retainedPath.getDataAssignedToVariable(field.domain)
@@ -159,11 +165,12 @@ class MessageSpecializer(object):
 
         retainedPath.generatedContent = generatedContent
 
-        self._logger.debug("Specialized message: {0}".format(TypeConverter.convert(retainedPath.generatedContent, BitArray, ASCII)))
+        self._logger.debug("Specialized message: {0}".format(
+            TypeConverter.convert(retainedPath.generatedContent, BitArray,
+                                  ASCII)))
         self.memory = retainedPath.memory
 
         return retainedPath
-
 
     @property
     def memory(self):

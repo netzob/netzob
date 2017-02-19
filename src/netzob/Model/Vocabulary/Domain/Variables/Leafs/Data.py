@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -304,8 +304,9 @@ class Data(AbstractVariableLeaf):
 
         :raises: :class:`TypeError` or :class:`ValueError` if parameters are not valid.
         """
-        
-        super(Data, self).__init__(self.__class__.__name__, name=name, svas=svas)
+
+        super(Data, self).__init__(
+            self.__class__.__name__, name=name, svas=svas)
 
         self.dataType = dataType
         self.currentValue = originalValue
@@ -314,7 +315,8 @@ class Data(AbstractVariableLeaf):
         return "Data ({0})".format(self.dataType)
 
     def __key(self):
-        return (self.__class__.__name__, self.currentValue, self.dataType, self.svas, self.name)
+        return (self.__class__.__name__, self.currentValue, self.dataType,
+                self.svas, self.name)
 
     @typeCheck(GenericPath)
     def isDefined(self, path):
@@ -338,7 +340,7 @@ class Data(AbstractVariableLeaf):
 
         if memory is None:
             raise Exception("Provided path has no memory attached.")
-        
+
         return memory.hasValue(self)
 
     @typeCheck(ParsingPath)
@@ -350,18 +352,21 @@ class Data(AbstractVariableLeaf):
 
         if parsingPath is None:
             raise Exception("ParsingPath cannot be None")
-        
+
         content = parsingPath.getDataAssignedToVariable(self)
-        
-        self._logger.debug("DomainCMP {0} with {1}".format(content, self.dataType))
-            
+
+        self._logger.debug(
+            "DomainCMP {0} with {1}".format(content, self.dataType))
+
         (minSize, maxSize) = self.dataType.size
         if maxSize is None:
-            maxSize = len(content)        
+            maxSize = len(content)
 
         if len(content) < minSize:
-            self._logger.debug("Length of the content is too short ({0}), expect data of at least {1} bits".format(len(content), minSize))
-        else :
+            self._logger.debug(
+                "Length of the content is too short ({0}), expect data of at least {1} bits".
+                format(len(content), minSize))
+        else:
 
             # if carnivorous:
             #     minSize = len(content)
@@ -392,14 +397,8 @@ class Data(AbstractVariableLeaf):
             #         newParsingPath = parsingPath.duplicate()
             #         newParsingPath.addResult(self, content[:size].copy())
             #         yield newParsingPath
-                
-                
 
-
-
-
-            
-            for size in range(min(maxSize, len(content)), minSize -1, -1):
+            for size in range(min(maxSize, len(content)), minSize - 1, -1):
                 # size == 0 : deals with 'optional' data
                 if size == 0 or self.dataType.canParse(content[:size]):
                     # we create a new parsing path and returns it
@@ -407,8 +406,7 @@ class Data(AbstractVariableLeaf):
 
                     newParsingPath.addResult(self, content[:size].copy())
                     yield newParsingPath
-            
-        
+
     @typeCheck(ParsingPath)
     def valueCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
         if parsingPath is None:
@@ -420,51 +418,55 @@ class Data(AbstractVariableLeaf):
         memory = parsingPath.memory
         if memory is None:
             raise Exception("No memory available")
-            
+
         if memory.hasValue(self):
             expectedValue = memory.getValue(self)
 
-        if expectedValue is None:        
-            raise Exception("Data '{0}' has no value defined in its definition domain".format(self))        
+        if expectedValue is None:
+            raise Exception(
+                "Data '{0}' has no value defined in its definition domain".
+                format(self))
 
         content = parsingPath.getDataAssignedToVariable(self)
         if content is None:
             raise Exception("No data assigned to the variable")
 
         results = []
-        if len(content)>=len(expectedValue) and content[:len(expectedValue)] == expectedValue:
+        if len(content) >= len(expectedValue) and content[:len(
+                expectedValue)] == expectedValue:
             parsingPath.addResult(self, expectedValue.copy())
             results.append(parsingPath)
         else:
-            self._logger.debug("{0} cannot be parsed with variable {1}".format(content, self.id))
+            self._logger.debug("{0} cannot be parsed with variable {1}".format(
+                content, self.id))
         return results
 
     @typeCheck(ParsingPath)
     def learn(self, parsingPath, acceptCallBack=True, carnivorous=False):
-            
+
         if parsingPath is None:
             raise Exception("ParsingPath cannot be None")
 
         content = parsingPath.getDataAssignedToVariable(self)
-        
+
         self._logger.debug("Learn {0} with {1}".format(content, self.dataType))
-            
+
         (minSize, maxSize) = self.dataType.size
         if maxSize is None:
-            maxSize = len(content)        
+            maxSize = len(content)
 
-        results = []
-        
+
         if len(content) < minSize:
-            self._logger.debug("Length of the content is too short ({0}), expect data of at least {1} bits".format(len(content), minSize))
+            self._logger.debug(
+                "Length of the content is too short ({0}), expect data of at least {1} bits".
+                format(len(content), minSize))
         else:
 
-    #        if carnivorous:
-    #            minSize = len(content)
-    #            maxSize = len(content)
-    
-    
-            for size in range(min(maxSize, len(content)), minSize -1, -1):
+            #        if carnivorous:
+            #            minSize = len(content)
+            #            maxSize = len(content)
+
+            for size in range(min(maxSize, len(content)), minSize - 1, -1):
                 # size == 0 : deals with 'optional' data
                 if size == 0 or self.dataType.canParse(content[:size]):
                     # we create a new parsing path and returns it
@@ -472,20 +474,20 @@ class Data(AbstractVariableLeaf):
                     newParsingPath.addResult(self, content[:size].copy())
                     newParsingPath.memory.memorize(self, content[:size].copy())
                     yield newParsingPath
-            
+
     @typeCheck(SpecializingPath)
     def use(self, variableSpecializerPath, acceptCallBack=True):
         """This method participates in the specialization proces.
         It creates a VariableSpecializerResult in the provided path that either
         contains the memorized value or the predefined value of the variable"""
-        
+
         if variableSpecializerPath is None:
             raise Exception("VariableSpecializerPath cannot be None")
 
         memory = variableSpecializerPath.memory
 
         result = []
-        
+
         if memory.hasValue(self):
             variableSpecializerPath.addResult(self, memory.getValue(self))
             result.append(variableSpecializerPath)
@@ -502,7 +504,7 @@ class Data(AbstractVariableLeaf):
         contains a generated value that follows the definition of the Data
         """
         self._logger.debug("Regenerate Variable {0}".format(self))
-        
+
         if variableSpecializerPath is None:
             raise Exception("VariableSpecializerPath cannot be None")
 
@@ -512,22 +514,24 @@ class Data(AbstractVariableLeaf):
         return [variableSpecializerPath]
 
     @typeCheck(SpecializingPath)
-    def regenerateAndMemorize(self, variableSpecializerPath, acceptCallBack=True):
+    def regenerateAndMemorize(self,
+                              variableSpecializerPath,
+                              acceptCallBack=True):
         """This method participates in the specialization proces.
         It memorizes the value present in the path of the variable
         """
 
         self._logger.debug("RegenerateAndMemorize Variable {0}".format(self))
-        
+
         if variableSpecializerPath is None:
             raise Exception("VariableSpecializerPath cannot be None")
 
         newValue = self.dataType.generate()
         variableSpecializerPath.memory.memorize(self, newValue)
-        
+
         variableSpecializerPath.addResult(self, newValue)
         return [variableSpecializerPath]
-        
+
     @property
     def currentValue(self):
         """The current value of the data.
@@ -547,4 +551,3 @@ class Data(AbstractVariableLeaf):
         else:
             cv = currentValue
         self.__currentValue = cv
-

@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -81,7 +81,13 @@ class OpenChannelTransition(AbstractTransition):
         :param name: :class:`str`
 
         """
-        super(OpenChannelTransition, self).__init__(OpenChannelTransition.TYPE, startState, endState, _id, name, priority=0)
+        super(OpenChannelTransition, self).__init__(
+            OpenChannelTransition.TYPE,
+            startState,
+            endState,
+            _id,
+            name,
+            priority=0)
 
     @typeCheck(AbstractionLayer)
     def executeAsInitiator(self, abstractionLayer):
@@ -127,7 +133,9 @@ class OpenChannelTransition(AbstractTransition):
         try:
             abstractionLayer.openChannel()
         except Exception as e:
-            self._logger.warning("An error occured which prevented the good execution of the open channel transition")
+            self._logger.warning(
+                "An error occured which prevented the good execution of the open channel transition"
+            )
             self.active = False
             raise e
 
@@ -140,4 +148,3 @@ class OpenChannelTransition(AbstractTransition):
             return self._description
         else:
             return "OpenChannelTransition"
-

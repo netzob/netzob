@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -48,7 +48,6 @@ from netzob.Inference.Vocabulary.Search.SearchTask import SearchTask
 
 
 class SearchResults(list):
-
     def __str__(self):
         return "{0} occurence(s) found.".format(len(self))
 
@@ -80,7 +79,8 @@ class SearchResult(object):
         self.ranges = ranges
 
     def __str__(self):
-        return "Found {0} at {1} of {2}".format(self.searchTask.description, self.ranges, self.target)
+        return "Found {0} at {1} of {2}".format(self.searchTask.description,
+                                                self.ranges, self.target)
 
     @property
     def target(self):
@@ -115,7 +115,9 @@ class SearchResult(object):
             raise TypeError("Ranges cannot be None")
 
         for (start, end) in ranges:
-            if not isinstance(start, int) or not isinstance(end, int) or end <= start:
-                raise TypeError("Start and end range must be integers and end > start (start={0}, end={1})".format(start, end))
+            if not isinstance(start, int) or not isinstance(
+                    end, int) or end <= start:
+                raise TypeError(
+                    "Start and end range must be integers and end > start (start={0}, end={1})".
+                    format(start, end))
         self.__ranges = ranges
-

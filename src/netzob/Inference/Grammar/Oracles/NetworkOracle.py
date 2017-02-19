@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -49,11 +49,11 @@ from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 #| NetworkOracle:
 #+----------------------------------------------
 class NetworkOracle(threading.Thread):
-
     def __init__(self, communicationChannel, isMaster):
         threading.Thread.__init__(self)
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Inference.Grammar.Oracle.NetworkOracle.py')
+        self.log = logging.getLogger(
+            'netzob.Inference.Grammar.Oracle.NetworkOracle.py')
         self.communicationChannel = communicationChannel
         self.isMaster = isMaster
 
@@ -68,11 +68,13 @@ class NetworkOracle(threading.Thread):
         # memory = Memory(self.mmstd.getVocabulary().getVariables())
         memory.createMemory()
         # Create the abstraction layer for this connection
-        abstractionLayer = AbstractionLayer(self.communicationChannel, self.mmstd.getVocabulary(), memory)
+        abstractionLayer = AbstractionLayer(self.communicationChannel,
+                                            self.mmstd.getVocabulary(), memory)
 
         # And we create an MMSTD visitor for this
         anID = str(uuid.uuid4())
-        self.oracle = MMSTDVisitor(anID, "MMSTD-NetworkOracle", self.mmstd, self.isMaster, abstractionLayer)
+        self.oracle = MMSTDVisitor(anID, "MMSTD-NetworkOracle", self.mmstd,
+                                   self.isMaster, abstractionLayer)
         self.oracle.start()
 
         while (self.oracle.isAlive()):

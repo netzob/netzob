@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -98,9 +98,11 @@ class FieldReseter(object):
         """
 
         if field is None:
-            raise TypeError("The field to reset must be specified and cannot be None")
+            raise TypeError(
+                "The field to reset must be specified and cannot be None")
 
-        self._logger.debug("Reset the definition of field {0} ({1})".format(field.name, field.id))
+        self._logger.debug("Reset the definition of field {0} ({1})".format(
+            field.name, field.id))
         field.clearFields()
 
         if isinstance(field, Symbol):

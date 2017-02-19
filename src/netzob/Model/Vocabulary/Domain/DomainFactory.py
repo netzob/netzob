@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -138,7 +138,8 @@ class DomainFactory(object):
                 for elt in uniqResult:
                     result.children.append(elt)
         else:
-            raise TypeError("Impossible to normalize the provided domain as an alternate.")
+            raise TypeError(
+                "Impossible to normalize the provided domain as an alternate.")
         return result
 
     @staticmethod
@@ -148,10 +149,10 @@ class DomainFactory(object):
             for child in domain.children:
                 result.children.append(DomainFactory.normalizeDomain(child))
         else:
-            raise TypeError("Impossible to normalize the provided domain as an aggregate.")
+            raise TypeError(
+                "Impossible to normalize the provided domain as an aggregate.")
         return result
 
     @staticmethod
     def __normalizeRepeatDomain(domain):
         return domain
-

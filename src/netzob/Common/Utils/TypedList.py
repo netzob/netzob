@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -73,7 +73,9 @@ class TypedList(collections.MutableSequence):
 
     def check(self, v):
         if not isinstance(v, self.membersTypes):
-            raise TypeError("Invalid type for argument, expecting: {0}, received : {1}".format(self.membersTypes, v.__class__.__name__))
+            raise TypeError(
+                "Invalid type for argument, expecting: {0}, received : {1}".
+                format(self.membersTypes, v.__class__.__name__))
 
     def __len__(self):
         return len(self.list)

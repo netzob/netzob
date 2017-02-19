@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -35,7 +35,6 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import socket
-import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -86,7 +85,12 @@ class TCPClient(AbstractChannel):
 
     """
 
-    def __init__(self, remoteIP, remotePort, localIP=None, localPort=None, timeout=5):
+    def __init__(self,
+                 remoteIP,
+                 remotePort,
+                 localIP=None,
+                 localPort=None,
+                 timeout=5):
         super(TCPClient, self).__init__(isServer=False)
         self.remoteIP = remoteIP
         self.remotePort = remotePort
@@ -102,7 +106,8 @@ class TCPClient(AbstractChannel):
         """
 
         if self.isOpen:
-            raise RuntimeError("The channel is already open, cannot open it again")
+            raise RuntimeError(
+                "The channel is already open, cannot open it again")
 
         self.__socket = socket.socket()
         # Reuse the connection
@@ -110,7 +115,8 @@ class TCPClient(AbstractChannel):
         self.__socket.settimeout(self.timeout)
         if self.localIP is not None and self.localPort is not None:
             self.__socket.bind((self.localIP, self.localPort))
-        self._logger.debug("Connect to the TCP server to {0}:{1}".format(self.remoteIP, self.remotePort))
+        self._logger.debug("Connect to the TCP server to {0}:{1}".format(
+            self.remoteIP, self.remotePort))
         self.__socket.connect((self.remoteIP, self.remotePort))
 
     def close(self):
@@ -127,7 +133,7 @@ class TCPClient(AbstractChannel):
         @type timeout: :class:`int`
         """
         reading_seg_size = 1024
-        
+
         if self.__socket is not None:
             data = b""
             finish = False

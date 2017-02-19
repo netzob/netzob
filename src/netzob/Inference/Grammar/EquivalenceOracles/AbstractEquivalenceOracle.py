@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -28,7 +28,6 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
-from gettext import gettext as _
 import logging
 
 #+----------------------------------------------
@@ -44,12 +43,14 @@ import logging
 #| AbstractEquivalenceOracle:
 #+----------------------------------------------
 class AbstractEquivalenceOracle(object):
-
     def __init__(self, type):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Inference.Grammar.EquivalenceOracles.AbstractEquivalenceOracle.py')
+        self.log = logging.getLogger(
+            'netzob.Inference.Grammar.EquivalenceOracles.AbstractEquivalenceOracle.py'
+        )
         self.type = type
 
     def findCounterExample(self, mmstd):
         self.log.error("The oracle doesn't support 'findCounterExample'.")
-        raise NotImplementedError("The oracle doesn't support 'findCounterExample'.")
+        raise NotImplementedError(
+            "The oracle doesn't support 'findCounterExample'.")

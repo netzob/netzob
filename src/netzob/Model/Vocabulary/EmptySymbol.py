@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -57,12 +57,12 @@ class EmptySymbol(Symbol):
     """
 
     def __init__(self, receptionTimeout=None):
-        super(EmptySymbol, self).__init__(fields=None, name="Empty Symbol", messages=[RawMessage()])
+        super(EmptySymbol, self).__init__(
+            fields=None, name="Empty Symbol", messages=[RawMessage()])
         if receptionTimeout is None:
             receptionTimeout = EmptySymbol.defaultReceptionTimeout()
 
         self.receptionTimeout = receptionTimeout
-
 
     def __eq__(self, other):
         if other is None:
@@ -79,8 +79,6 @@ class EmptySymbol(Symbol):
 
     def __str__(self):
         return "Empty Symbol"
-
-    
 
     @property
     def receptionTimeout(self):

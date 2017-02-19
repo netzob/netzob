@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -48,6 +48,7 @@ from netzob.Model.Vocabulary.Domain.Specializer.VariableSpecializer import Varia
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Model.Types.BitArray import BitArray
+
 
 @NetzobLogger
 class FieldSpecializer(object):
@@ -108,13 +109,14 @@ class FieldSpecializer(object):
 
     """
 
-    def __init__(self, field, presets = None):
+    def __init__(self, field, presets=None):
         self._logger.debug("Creating a new FieldSpecializer.")
 
         self.field = field
         self.presets = presets
 
-        if self.presets is not None and self.field in list(self.presets.keys()):
+        if self.presets is not None and self.field in list(
+                self.presets.keys()):
             self.arbitraryValue = self.presets[self.field]
         else:
             self.arbitraryValue = None
@@ -148,7 +150,7 @@ class FieldSpecializer(object):
 
         resultPaths = [specializingPath]
         for child in self.field.fields:
-            fs = FieldSpecializer(child, presets = self.presets)
+            fs = FieldSpecializer(child, presets=self.presets)
 
             tmpResultPaths = []
             for path in resultPaths:
@@ -158,7 +160,8 @@ class FieldSpecializer(object):
         for resultPath in resultPaths:
             value = None
             for child in self.field.fields:
-                childResult = resultPath.getDataAssignedToVariable(child.domain)
+                childResult = resultPath.getDataAssignedToVariable(
+                    child.domain)
                 if value is None:
                     value = childResult.copy()
                 else:
@@ -180,21 +183,28 @@ class FieldSpecializer(object):
 
         # and check it exists
         if domain is None:
-            raise Exception("No definition domain specified for field '{0}', cannnot parse the content against it.".format(self.field.name))
+            raise Exception(
+                "No definition domain specified for field '{0}', cannnot parse the content against it.".
+                format(self.field.name))
 
         # we create a first VariableParser and uses it to parse the domain
         variableSpecializer = VariableSpecializer(domain)
-        resultSpecializingPaths = variableSpecializer.specialize(specializingPath)
+        resultSpecializingPaths = variableSpecializer.specialize(
+            specializingPath)
 
         for resultSpecializingPath in resultSpecializingPaths:
 
             assignedData = bitarray('')
-            if resultSpecializingPath.isDataAvailableForVariable(self.field.domain):
-                assignedData = resultSpecializingPath.getDataAssignedToVariable(self.field.domain)
+            if resultSpecializingPath.isDataAvailableForVariable(
+                    self.field.domain):
+                assignedData = resultSpecializingPath.getDataAssignedToVariable(
+                    self.field.domain)
             else:
-                resultSpecializingPath.addResult(self.field.domain, assignedData)
+                resultSpecializingPath.addResult(self.field.domain,
+                                                 assignedData)
 
-            self._logger.debug("FieldSpecializer Result: {0}".format(assignedData))
+            self._logger.debug(
+                "FieldSpecializer Result: {0}".format(assignedData))
             resultSpecializingPath.addResultToField(self.field, assignedData)
 
         return resultSpecializingPaths

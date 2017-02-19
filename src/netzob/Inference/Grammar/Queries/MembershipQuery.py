@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -29,7 +29,6 @@
 #| Standard library imports
 #+----------------------------------------------
 
-
 #+----------------------------------------------
 #| Related third party imports
 #+----------------------------------------------
@@ -37,7 +36,8 @@
 #+----------------------------------------------
 #| Local application imports
 #+----------------------------------------------
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck
 
 
 @NetzobLogger
@@ -72,7 +72,8 @@ class MembershipQuery(object):
         generatedStates.append(rootState)
         initialState = NormalState(1, "State 1")
         generatedStates.append(initialState)
-        openingTransition = OpenChannelTransition(0, "Connection", rootState, initialState, 15000, 3)
+        openingTransition = OpenChannelTransition(0, "Connection", rootState,
+                                                  initialState, 15000, 3)
         rootState.registerTransition(openingTransition)
         previousState = initialState
         idState = 2
@@ -83,7 +84,9 @@ class MembershipQuery(object):
             generatedStates.append(currentState)
             # we create a normal transition between it and the previous state
             idTransition = idState - 1
-            transition = SimpleTransition(idTransition, "Transition " + str(idTransition), previousState, currentState, 1000, symbol)
+            transition = SimpleTransition(
+                idTransition, "Transition " + str(idTransition), previousState,
+                currentState, 1000, symbol)
             previousState.registerTransition(transition)
             idState = idState + 1
             previousState = currentState
@@ -92,7 +95,9 @@ class MembershipQuery(object):
             # We create the opening transition to listen for the first entry
             currentState = NormalState(idState, "State " + str(idState))
             generatedStates.append(currentState)
-            transition = SimpleTransition(idState - 1, "Transition " + str(idState - 1), previousState, currentState, 1000, EmptySymbol())
+            transition = SimpleTransition(
+                idState - 1, "Transition " + str(idState - 1), previousState,
+                currentState, 1000, EmptySymbol())
             previousState.registerTransition(transition)
             previousState = currentState
             idState += 1
@@ -100,7 +105,8 @@ class MembershipQuery(object):
         # Create the transition which close the connection
         endState = NormalState(idState, "State " + str(idState))
         generatedStates.append(endState)
-        closingTransition = CloseChannelTransition(idState - 1, "Disconnection", currentState, endState, 1000)
+        closingTransition = CloseChannelTransition(
+            idState - 1, "Disconnection", currentState, endState, 1000)
         currentState.registerTransition(closingTransition)
 
         mmstd = MMSTD(rootState, dictionary)
@@ -117,7 +123,8 @@ class MembershipQuery(object):
     def getNotEmptyPrefixes(self):
         result = []
         for i in range(0, len(self.getSymbolsWhichAreNotEmpty())):
-            result.append(MembershipQuery(self.getSymbolsWhichAreNotEmpty()[:i + 1]))
+            result.append(
+                MembershipQuery(self.getSymbolsWhichAreNotEmpty()[:i + 1]))
         return result
 
     def getMQSuffixedWithMQ(self, mq):
@@ -155,7 +162,8 @@ class MembershipQuery(object):
             return -1
         if self.isStrictlyEqual(other):
             return 0
-        elif (len(self.getSymbolsWhichAreNotEmpty()) > len(other.getSymbolsWhichAreNotEmpty())):
+        elif (len(self.getSymbolsWhichAreNotEmpty()) >
+              len(other.getSymbolsWhichAreNotEmpty())):
             return 1
         else:
             return -1

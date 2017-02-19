@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -49,8 +49,14 @@ from netzob.Model.Grammar.States.AbstractState import AbstractState
 
 
 class AbstractTransition(object, metaclass=abc.ABCMeta):
-
-    def __init__(self, _type, startState, endState, _id=uuid.uuid4(), name=None, priority=10, description=None):
+    def __init__(self,
+                 _type,
+                 startState,
+                 endState,
+                 _id=uuid.uuid4(),
+                 name=None,
+                 priority=10,
+                 description=None):
         """Constructor of a Transition.
 
         :param _type: the type of the transition
@@ -201,7 +207,8 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         if priority is None:
             raise TypeError("Priority cannot be None")
         if priority < 0 or priority > 100:
-            raise TypeError("The priority must respect range : 0<=priority<100")
+            raise TypeError(
+                "The priority must respect range : 0<=priority<100")
 
         self.__priority = priority
 
@@ -229,4 +236,3 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
     @typeCheck(str)
     def description(self, description):
         self._description = description
-
