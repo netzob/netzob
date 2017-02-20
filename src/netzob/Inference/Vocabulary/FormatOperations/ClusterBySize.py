@@ -34,6 +34,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+from collections import OrderedDict
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -73,17 +74,6 @@ class ClusterBySize(object):
         ...     print("[" + sym.name + "]")
         ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
         ...     print(sym)
-        [symbol_9]
-        Field               
-        --------------------
-        '00ffffffff1100abcd'
-        --------------------
-        [symbol_5]
-        Field       
-        ------------
-        '001100abcd'
-        '001100ffff'
-        ------------
         [symbol_7]
         Field           
         ----------------
@@ -91,6 +81,17 @@ class ClusterBySize(object):
         '00aaaa1100abcd'
         '00bbbb1100abcd'
         ----------------
+        [symbol_5]
+        Field       
+        ------------
+        '001100abcd'
+        '001100ffff'
+        ------------
+        [symbol_9]
+        Field               
+        --------------------
+        '00ffffffff1100abcd'
+        --------------------
 
         :param messages: the messages to cluster.
         :type messages: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
@@ -102,7 +103,7 @@ class ClusterBySize(object):
             raise TypeError("'messages' should not be None")
 
         # Cluster messages by size
-        messagesByLen = {}
+        messagesByLen = OrderedDict()
         for msg in messages:
             l = len(msg.data)
             if not l in list(messagesByLen.keys()):
