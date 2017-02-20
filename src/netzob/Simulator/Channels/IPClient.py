@@ -120,36 +120,45 @@ class IPClient(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
-    # @typeCheck(bytes)
-    # def sendReceive(self, data, timeout=None):
-    #     """Write on the communication channel the specified data and returns
-    #     the corresponding response.
+    @typeCheck(bytes)
+    def sendReceive(self, data, timeout=None):
+        """Write on the communication channel the specified data and returns
+        the corresponding response.
 
-    #     :parameter data: the data to write on the channel
-    #     :type data: binary object
-    #     @type timeout: :class:`int`
+        :parameter data: the data to write on the channel
+        :type data: binary object
+        @type timeout: :class:`int`
 
-    #     """
-    #     if self.__socket is not None:
-    #         # get the ports from message to identify the good response (in TCP or UDP)
-    #         portSrcTx = (data[0] * 256) + data[1]
-    #         portDstTx = (data[2] * 256) + data[3]
+        """
+        if self.__socket is not None:
+            # get the ports from message to identify the good response
+            #  (in TCP or UDP)
 
-    #         responseOk = False
-    #         stopWaitingResponse = False
-    #         self.write(data)
-    #         while stopWaitingResponse is False:
-    #             # TODO: handle timeout
-    #             dataReceived = self.read(timeout)
-    #             portSrcRx = (dataReceived[0] * 256) + dataReceived[1]
-    #             portDstRx = (dataReceived[2] * 256) + dataReceived[3]
-    #             stopWaitingResponse = (portSrcTx == portDstRx) and (portDstTx == portSrcRx)
-    #             if stopWaitingResponse:  # and not timeout
-    #                 responseOk = True
-    #         if responseOk:
-    #             return dataReceived
-    #     else:
-    #         raise Exception("socket is not available")
+            portSrcTx = (data[0] * 256) + data[1]
+            portDstTx = (data[2] * 256) + data[3]
+
+            responseOk = False
+            stopWaitingResponse = False
+            self.write(data)
+            while stopWaitingResponse is False:
+                # TODO: handle timeout
+                dataReceived = self.read(timeout)
+
+                # IHL = (Bitwise AND 00001111) x 4bytes
+                ipHeaderLen = (dataReceived[0] & 15) * 4
+                portSrcRx = (dataReceived[ipHeaderLen] * 256) + \
+                    dataReceived[ipHeaderLen + 1]
+                portDstRx = (dataReceived[ipHeaderLen + 2] * 256) + \
+                    dataReceived[ipHeaderLen + 3]
+
+                stopWaitingResponse = (portSrcTx == portDstRx) and \
+                    (portDstTx == portSrcRx)
+                if stopWaitingResponse:  # and not timeout
+                    responseOk = True
+            if responseOk:
+                return dataReceived
+        else:
+            raise Exception("socket is not available")
 
     # Management methods
 
