@@ -34,7 +34,8 @@
 #
 
 # Definition of the environment
-
+env:
+  - NETZOB_TEST_NO_PERFORMANCE=yes
 language: python
 sudo: required
 python:
