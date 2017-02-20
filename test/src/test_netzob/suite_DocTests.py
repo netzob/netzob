@@ -118,6 +118,7 @@ def getSuite():
         L2NetworkMessage.__module__,
         L3NetworkMessage.__module__,
         L4NetworkMessage.__module__,
+        FileMessage.__module__,
         FieldOperations,
         CorrelationFinder.__module__,
         RelationFinder.__module__,
@@ -174,6 +175,7 @@ def getSuite():
         # Modules related to the import
         # -----------------------------
         PCAPImporter.__module__,
+        FileImporter.__module__
 
         # Other
         # -----
