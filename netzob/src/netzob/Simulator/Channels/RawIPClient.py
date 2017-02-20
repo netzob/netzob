@@ -74,8 +74,6 @@ class RawIPClient(AbstractChannel):
 
     """
 
-    ETH_P_IP = 0x0800
-
     @typeCheck(str, int)
     def __init__(self,
                  remoteIP,
