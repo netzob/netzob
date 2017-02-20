@@ -326,7 +326,13 @@ class Size(AbstractRelationVariableLeaf):
                 size += len(fieldValue)
 
         size = int(size * self.factor + self.offset)
-        size_raw = TypeConverter.convert(size, Integer, Raw, src_unitSize=self.dataType.unitSize)
+        size_raw = TypeConverter.convert(size,
+                                         Integer,
+                                         Raw,
+                                         src_unitSize=self.dataType.unitSize,
+                                         dst_unitSize=self.dataType.unitSize,
+                                         src_sign=self.dataType.sign,
+                                         dst_sign=self.dataType.sign)
         b = TypeConverter.convert(size_raw, Raw, BitArray)
 
         # add heading '0'
