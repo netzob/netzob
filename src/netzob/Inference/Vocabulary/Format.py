@@ -523,17 +523,6 @@ class Format(object):
         ...     print("[" + sym.name + "]")
         ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
         ...     print(sym)
-        [symbol_9]
-        Field               
-        --------------------
-        '00ffffffff1100abcd'
-        --------------------
-        [symbol_5]
-        Field       
-        ------------
-        '001100abcd'
-        '001100ffff'
-        ------------
         [symbol_7]
         Field           
         ----------------
@@ -541,6 +530,17 @@ class Format(object):
         '00aaaa1100abcd'
         '00bbbb1100abcd'
         ----------------
+        [symbol_5]
+        Field       
+        ------------
+        '001100abcd'
+        '001100ffff'
+        ------------
+        [symbol_9]
+        Field               
+        --------------------
+        '00ffffffff1100abcd'
+        --------------------
 
         :param messages: the messages to cluster.
         :type messages: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
