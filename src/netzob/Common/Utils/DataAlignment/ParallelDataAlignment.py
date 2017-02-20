@@ -67,6 +67,7 @@ class ParallelDataAlignment(object):
     >>> import random
     >>> import time
     >>> import logging
+    >>> import os
 
     >>> # Temporary raise log level of certain impacting loggers on alignment process
     >>> old_logging_level = logging.getLogger(Symbol.__name__).level
@@ -94,7 +95,8 @@ class ParallelDataAlignment(object):
     >>> autoThreadDuration = end-start
     >>> print(len(alignedData))
     1000
-    >>> # autoThreadDuration <= oneThreadDuration
+    >>> if ('NETZOB_TEST_NO_PERFORMANCE' not in os.environ.keys() or os.environ['NETZOB_TEST_NO_PERFORMANCE'] != "yes") and autoThreadDuration >= oneThreadDuration:
+    ...     print("Error, multi-thread version slower ({}) than single threaded execution ({})".format(autoThreadDuration, oneThreadDuration))
 
     >>> # Reset log level of certain impacting loggers on alignment process
     >>> logging.getLogger(Data.__name__).setLevel(old_logging_level)
