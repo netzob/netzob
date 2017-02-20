@@ -175,9 +175,25 @@ class Symbol(AbstractField):
             new_keys = {}
             old_keys = []
             for k, v in list(presets.items()):
+
+                # Handle case where k is a Field
                 if isinstance(k, Field):
-                    continue
+                    if isinstance(v, bitarray):
+                        continue
+                    elif hasattr(k.domain, "dataType"):
+                        presets[k] = TypeConverter.convert(v, k.domain.dataType.__class__, BitArray,
+                                                           src_unitSize=k.domain.dataType.unitSize,
+                                                           dst_unitSize=k.domain.dataType.unitSize,
+                                                           src_sign=k.domain.dataType.sign,
+                                                           dst_sign=k.domain.dataType.sign,
+                                                           src_endianness=k.domain.dataType.endianness,
+                                                           dst_endianness=k.domain.dataType.endianness)
+                    else:
+                        raise Exception("Cannot find the default dataType for field '{}'".format(k))
+
+                # Handle case where k is a string
                 elif isinstance(k, str):
+
                     # Retrieve associated Field based on its string name
                     for f in self._getLeafFields(includePseudoFields=True):
                         if f.name == k:
