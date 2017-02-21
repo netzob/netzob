@@ -83,6 +83,8 @@ class RawIPClient(AbstractChannel):
                  timeout=5):
         super(RawIPClient, self).__init__(isServer=False)
         self.remoteIP = remoteIP
+        if localIP is None:
+            localIP = self.getLocalIP(remoteIP)
         self.localIP = localIP
         self.upperProtocol = upperProtocol
         self.interface = interface
