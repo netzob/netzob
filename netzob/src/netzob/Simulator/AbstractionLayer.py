@@ -113,10 +113,10 @@ class AbstractionLayer(object):
         :param symbol: the symbol to write on the channel
         :type symbol: :class:`netzob.Model.Vocabulary.Symbol.Symbol`
 
-        :param rate: specifies the bandwidth to respect durring traffic emission (should be used with duration=)
+        :param rate: specifies the bandwidth in octets to respect durring traffic emission (should be used with duration= parameter)
         :type rate: int
 
-        :param duration: tells how much time the symbol is written on the channel
+        :param duration: tells how much seconds the symbol is continuously written on the channel
         :type duration: int
 
         :param presets: specifies how to parameterize the emitted symbol
@@ -139,7 +139,7 @@ class AbstractionLayer(object):
         self.parser.memory = self.memory
         data = TypeConverter.convert(dataBin, BitArray, Raw)
 
-        self.channel.write(data)
+        self.channel.write(data, rate=rate, duration=duration)
         self._logger.debug("Writing to commnunication channel done..")
 
     @typeCheck(int)
