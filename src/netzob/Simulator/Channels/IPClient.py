@@ -109,7 +109,6 @@ class IPClient(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
-    @typeCheck(bytes)
     def writePacket(self, data):
         """Write on the communication channel the specified data
 
@@ -121,7 +120,6 @@ class IPClient(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
-    @typeCheck(bytes)
     def sendReceive(self, data, timeout=None):
         """Write on the communication channel the specified data and returns
         the corresponding response.

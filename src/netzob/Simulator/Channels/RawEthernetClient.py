@@ -143,7 +143,6 @@ class RawEthernetClient(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
-    @typeCheck(bytes)
     def writePacket(self, data):
         """Write on the communication channel the specified data
 
