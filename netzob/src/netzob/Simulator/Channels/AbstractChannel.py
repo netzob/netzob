@@ -139,8 +139,11 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         :parameter data: the data to write on the channel
         :type data: bytes object
 
-        :param rate: specifies the bandwidth to respect durring traffic emission (should be used with duration=)
+        :param rate: specifies the bandwidth in octets to respect durring traffic emission (should be used with duration= parameter)
         :type rate: int
+
+        :param duration: tells how much seconds the symbol is continuously written on the channel
+        :type duration: int
 
         :param duration: tells how much time the symbol is written on the channel
         :type duration: int
