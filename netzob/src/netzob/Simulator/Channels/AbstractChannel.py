@@ -133,12 +133,18 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         @type timeout: :class:`int`
         """
 
-    @typeCheck(bytes, int, int)
     def write(self, data, rate=None, duration=None):
         """Write on the communication channel the specified data
 
         :parameter data: the data to write on the channel
         :type data: bytes object
+
+        :param rate: specifies the bandwidth to respect durring traffic emission (should be used with duration=)
+        :type rate: int
+
+        :param duration: tells how much time the symbol is written on the channel
+        :type duration: int
+
         """
 
         if duration is None:
