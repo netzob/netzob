@@ -34,6 +34,7 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
+from bitarray import bitarray
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -110,6 +111,8 @@ class MessageSpecializer(object):
             raise Exception("Specified symbol is None")
 
         self._logger.debug("Specifies symbol '{0}'.".format(symbol.name))
+
+        self._update_presets(symbol)
 
         # this variable host all the specialization path
         specializingPaths = [SpecializingPath(memory=self.memory)]
@@ -215,10 +218,67 @@ class MessageSpecializer(object):
             presets = dict()
 
         for k, v in list(presets.items()):
-            if not isinstance(k, Field):
-                raise Exception("Preset's keys must be of Field types")
+            if not isinstance(k, (Field, str)):
+                raise Exception("Preset's keys must be of Field or string types")
 
         self.__presets = dict()
 
         for k, v in list(presets.items()):
             self.__presets[k] = v
+
+    @typeCheck(Symbol)
+    def _update_presets(self, symbol):
+        """Update the presets dict, according to the symbol definition.
+
+        """
+
+        if self.presets is None:
+            return
+
+        new_keys = {}
+        old_keys = []
+        for k, v in list(self.presets.items()):
+
+            # Handle case where k is a Field
+            if isinstance(k, Field):
+                if isinstance(v, bitarray):
+                    continue
+                elif hasattr(k.domain, "dataType"):
+                    self.presets[k] = TypeConverter.convert(v, k.domain.dataType.__class__, BitArray,
+                                                            src_unitSize=k.domain.dataType.unitSize,
+                                                            dst_unitSize=k.domain.dataType.unitSize,
+                                                            src_sign=k.domain.dataType.sign,
+                                                            dst_sign=k.domain.dataType.sign,
+                                                            src_endianness=k.domain.dataType.endianness,
+                                                            dst_endianness=k.domain.dataType.endianness)
+                else:
+                    raise Exception("Cannot find the default dataType for field '{}'".format(k))
+
+            # Handle case where k is a string
+            elif isinstance(k, str):
+
+                # Retrieve associated Field based on its string name
+                for f in symbol._getLeafFields(includePseudoFields=True):
+                    if f.name == k:
+                        if isinstance(v, bitarray):
+                            new_keys[f] = v
+                            old_keys.append(k)
+                        elif hasattr(f.domain, "dataType"):
+                            new_keys[f] = TypeConverter.convert(v, f.domain.dataType.__class__, BitArray,
+                                                                src_unitSize=f.domain.dataType.unitSize,
+                                                                dst_unitSize=f.domain.dataType.unitSize,
+                                                                src_sign=f.domain.dataType.sign,
+                                                                dst_sign=f.domain.dataType.sign,
+                                                                src_endianness=f.domain.dataType.endianness,
+                                                                dst_endianness=f.domain.dataType.endianness)
+                            old_keys.append(k)
+                        else:
+                            raise Exception("Cannot find the default dataType for field '{}'".format(f))
+                        break
+            else:
+                raise Exception("Preset's keys must be of Field or string types")
+
+        # Replace string keys by their equivalent Field keys
+        for old_key in old_keys:
+            self.presets.pop(old_key)
+        self.presets.update(new_keys)
