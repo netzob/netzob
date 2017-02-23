@@ -170,56 +170,6 @@ class Symbol(AbstractField):
         :raises: :class:`netzob.Model.Vocabulary.AbstractField.GenerationException` if an error occurs while generating a message
         """
 
-        if presets is not None:
-
-            new_keys = {}
-            old_keys = []
-            for k, v in list(presets.items()):
-
-                # Handle case where k is a Field
-                if isinstance(k, Field):
-                    if isinstance(v, bitarray):
-                        continue
-                    elif hasattr(k.domain, "dataType"):
-                        presets[k] = TypeConverter.convert(v, k.domain.dataType.__class__, BitArray,
-                                                           src_unitSize=k.domain.dataType.unitSize,
-                                                           dst_unitSize=k.domain.dataType.unitSize,
-                                                           src_sign=k.domain.dataType.sign,
-                                                           dst_sign=k.domain.dataType.sign,
-                                                           src_endianness=k.domain.dataType.endianness,
-                                                           dst_endianness=k.domain.dataType.endianness)
-                    else:
-                        raise Exception("Cannot find the default dataType for field '{}'".format(k))
-
-                # Handle case where k is a string
-                elif isinstance(k, str):
-
-                    # Retrieve associated Field based on its string name
-                    for f in self._getLeafFields(includePseudoFields=True):
-                        if f.name == k:
-                            if isinstance(v, bitarray):
-                                new_keys[f] = v
-                                old_keys.append(k)
-                            elif hasattr(f.domain, "dataType"):
-                                new_keys[f] = TypeConverter.convert(v, f.domain.dataType.__class__, BitArray,
-                                                                    src_unitSize=f.domain.dataType.unitSize,
-                                                                    dst_unitSize=f.domain.dataType.unitSize,
-                                                                    src_sign=f.domain.dataType.sign,
-                                                                    dst_sign=f.domain.dataType.sign,
-                                                                    src_endianness=f.domain.dataType.endianness,
-                                                                    dst_endianness=f.domain.dataType.endianness)
-                                old_keys.append(k)
-                            else:
-                                raise Exception("Cannot find the default dataType for field '{}'".format(f))
-                            break
-                else:
-                    raise Exception("Preset's keys must be of Field or string types")
-
-            # Replace string keys by their equivalent Field keys
-            for old_key in old_keys:
-                presets.pop(old_key)
-            presets.update(new_keys)
-
         from netzob.Model.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
         msg = MessageSpecializer(memory=memory, presets=presets)
         spePath = msg.specializeSymbol(self)
