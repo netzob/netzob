@@ -132,19 +132,12 @@ class RawIPClient(AbstractChannel):
             raise Exception("socket is not available")
 
     @typeCheck(bytes)
-    def write(self, data):
+    def writePacket(self, data):
         """Write on the communication channel the specified data
 
         :parameter data: the data to write on the channel
         :type data: binary object
         """
-
-        if self.header is None:
-            raise Exception("IP header structure is None")
-
-        if self.__socket is None:
-            raise Exception("socket is not available")
-
         self.header_presets['ip.payload'] = data
         packet = self.header.specialize(presets=self.header_presets)
         self.__socket.sendto(packet, (self.remoteIP, 0))

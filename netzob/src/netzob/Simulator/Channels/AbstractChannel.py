@@ -40,6 +40,7 @@ import socket
 import os
 import fcntl
 import struct
+import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -49,6 +50,7 @@ import struct
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Model.Vocabulary.AbstractField import AbstractField
 
 
 class ChannelDownException(Exception):
@@ -87,7 +89,10 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
 
         ifname = None
         for networkInterface in os.listdir('/sys/class/net/'):
-            ipAddress = getIPFromIfname(networkInterface)
+            try:
+                ipAddress = getIPFromIfname(networkInterface)
+            except:
+                continue
             if ipAddress == localIP:
                 ifname =  networkInterface
                 break
@@ -128,8 +133,31 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         @type timeout: :class:`int`
         """
 
+    @typeCheck(bytes, int, int)
+    def write(self, data, rate=None, duration=None):
+        """Write on the communication channel the specified data
+
+        :parameter data: the data to write on the channel
+        :type data: bytes object
+        """
+
+        if duration is None:
+            self.writePacket(data)
+        else:
+
+            t_start = time.time()
+            while True:
+
+                self.writePacket(data)
+                t_current = time.time()
+
+                t_delta = (t_current - t_start) % 1
+
+                if t_current - t_start > duration:
+                    break
+
     @abc.abstractmethod
-    def write(self, data):
+    def writePacket(self, data):
         """Write on the communication channel the specified data
 
         :parameter data: the data to write on the channel

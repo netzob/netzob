@@ -151,7 +151,7 @@ class TCPClient(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
-    def write(self, data):
+    def writePacket(self, data):
         """Write on the communication channel the specified data
 
         :parameter data: the data to write on the channel
