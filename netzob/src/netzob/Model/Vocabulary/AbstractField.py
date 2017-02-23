@@ -600,12 +600,12 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
             raise NoSymbolException(
                 "Impossible to retrieve the symbol attached to this element")
 
-    def _getLeafFields(self, depth=None, currentDepth=0, includePseudoFields=False):
+    def getLeafFields(self, depth=None, currentDepth=0, includePseudoFields=False):
         """Extract the leaf fields to consider regarding the specified depth
 
         >>> from netzob.all import *
         >>> field = Field("hello", name="F0")
-        >>> print([f.name for f in field._getLeafFields()])
+        >>> print([f.name for f in field.getLeafFields()])
         ['F0']
 
         >>> field = Field(name="L0")
@@ -621,16 +621,16 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> payloadField.fields = [fieldL1]
         >>> field.fields = [headerField, payloadField, footerField]
 
-        >>> print([f.name for f in field._getLeafFields(depth=None)])
+        >>> print([f.name for f in field.getLeafFields(depth=None)])
         ['L0_header', 'L1_header', 'L1_payload', 'L0_footer']
 
-        >>> print([f.name for f in field._getLeafFields(depth=0)])
+        >>> print([f.name for f in field.getLeafFields(depth=0)])
         ['L0']
 
-        >>> print([f.name for f in field._getLeafFields(depth=1)])
+        >>> print([f.name for f in field.getLeafFields(depth=1)])
         ['L0_header', 'L0_payload', 'L0_footer']
 
-        >>> print([f.name for f in field._getLeafFields(depth=2)])
+        >>> print([f.name for f in field.getLeafFields(depth=2)])
         ['L0_header', 'L1', 'L0_footer']
 
         :return: the list of leaf fields
@@ -655,7 +655,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
                 else:
                     continue
             if fields is not None:
-                leafFields.extend(fields._getLeafFields(depth, currentDepth + 1, includePseudoFields))
+                leafFields.extend(fields.getLeafFields(depth, currentDepth + 1, includePseudoFields))
 
         return leafFields
 

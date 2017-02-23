@@ -206,7 +206,7 @@ class FlowParser(object):
                 mp = MessageParser(memory=memory)
                 results = mp.parseBitarray(
                     data_to_parse_bitarray.copy(),
-                    symbol._getLeafFields(),
+                    symbol.getLeafFields(),
                     must_consume_everything=False)
 
                 for parse_result in results:
