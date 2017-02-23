@@ -138,7 +138,8 @@ class UDPServer(AbstractChannel):
         :type data: binary object
         """
         if self.__socket is not None and self.__remoteAddr is not None:
-            self.__socket.sendto(data, self.__remoteAddr)
+            len_data = self.__socket.sendto(data, self.__remoteAddr)
+            return len_data
         else:
             raise Exception(
                 "Socket is not available or remote address is not known.")

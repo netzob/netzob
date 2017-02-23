@@ -137,9 +137,11 @@ class RawIPClient(AbstractChannel):
         :parameter data: the data to write on the channel
         :type data: binary object
         """
+
         self.header_presets['ip.payload'] = data
         packet = self.header.specialize(presets=self.header_presets)
-        self.__socket.sendto(packet, (self.remoteIP, 0))
+        len_data = self.__socket.sendto(packet, (self.remoteIP, 0))
+        return len_data
 
     @typeCheck(bytes)
     def sendReceive(self, data, timeout=None):

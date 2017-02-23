@@ -144,7 +144,8 @@ class UDPClient(AbstractChannel):
         :type data: binary object
         """
         if self.__socket is not None:
-            self.__socket.sendto(data, (self.remoteIP, self.remotePort))
+            len_data = self.__socket.sendto(data, (self.remoteIP, self.remotePort))
+            return len_data
         else:
             raise Exception("socket is not available")
 
