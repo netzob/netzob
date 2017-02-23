@@ -106,12 +106,22 @@ class AbstractionLayer(object):
         self.flow_parser = FlowParser(memory=self.memory)
 
     @typeCheck(Symbol)
-    def writeSymbol(self, symbol):
+    def writeSymbol(self, symbol, rate=None, duration=None, presets=None):
         """Write the specified symbol on the communication channel
         after specializing it into a contextualized message.
 
         :param symbol: the symbol to write on the channel
         :type symbol: :class:`netzob.Model.Vocabulary.Symbol.Symbol`
+
+        :param rate: specifies the bandwidth to respect durring traffic emission (should be used with duration=)
+        :type rate: int
+
+        :param duration: tells how much time the symbol is written on the channel
+        :type duration: int
+
+        :param presets: specifies how to parameterize the emitted symbol
+        :type presets: dict
+
         :raise TypeError if parameter is not valid and Exception if an exception occurs.
         """
         if symbol is None:
@@ -121,7 +131,9 @@ class AbstractionLayer(object):
         self._logger.debug("Specializing symbol '{0}' (id={1}).".format(
             symbol.name, symbol.id))
 
+        self.specializer.presets = presets
         dataBin = self.specializer.specializeSymbol(symbol).generatedContent
+        self.specializer.presets = None
 
         self.memory = self.specializer.memory
         self.parser.memory = self.memory
