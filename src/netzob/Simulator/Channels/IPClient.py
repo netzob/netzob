@@ -87,6 +87,7 @@ class IPClient(AbstractChannel):
                 "The channel is already open, cannot open it again")
 
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, self.upperProtocol)
+        self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 2**30)
         self.__socket.bind((self.localIP, self.upperProtocol))
 
     def close(self):
@@ -109,7 +110,7 @@ class IPClient(AbstractChannel):
             raise Exception("socket is not available")
 
     @typeCheck(bytes)
-    def write(self, data):
+    def writePacket(self, data):
         """Write on the communication channel the specified data
 
         :parameter data: the data to write on the channel

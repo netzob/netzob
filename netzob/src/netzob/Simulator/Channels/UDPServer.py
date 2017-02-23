@@ -132,7 +132,7 @@ class UDPServer(AbstractChannel):
             raise Exception("socket is not available")
 
     @typeCheck(bytes)
-    def write(self, data):
+    def writePacket(self, data):
         """Write on the communication channel the specified data
 
         :parameter data: the data to write on the channel
