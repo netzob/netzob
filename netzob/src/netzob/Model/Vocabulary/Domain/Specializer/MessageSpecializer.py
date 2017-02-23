@@ -258,7 +258,7 @@ class MessageSpecializer(object):
             elif isinstance(k, str):
 
                 # Retrieve associated Field based on its string name
-                for f in symbol._getLeafFields(includePseudoFields=True):
+                for f in symbol.getLeafFields(includePseudoFields=True):
                     if f.name == k:
                         if isinstance(v, bitarray):
                             new_keys[f] = v

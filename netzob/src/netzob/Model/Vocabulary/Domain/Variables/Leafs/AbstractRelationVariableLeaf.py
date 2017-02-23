@@ -79,4 +79,4 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
                 raise TypeError("At least one specified field is not a Field.")
         self.__fieldDependencies = []
         for f in fields:
-            self.__fieldDependencies.extend(f._getLeafFields())
+            self.__fieldDependencies.extend(f.getLeafFields())

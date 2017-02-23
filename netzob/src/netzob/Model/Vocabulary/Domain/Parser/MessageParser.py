@@ -180,7 +180,7 @@ class MessageParser(object):
         # we only consider the message data
         dataToParse = message.data
 
-        fields = symbol._getLeafFields()
+        fields = symbol.getLeafFields()
         return next(self.parseRaw(dataToParse, fields))
 
     @typeCheck(object)
