@@ -34,6 +34,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -123,10 +124,41 @@ class AbstractionLayer(object):
         :type presets: dict
 
         :raise TypeError if parameter is not valid and Exception if an exception occurs.
+
         """
+
         if symbol is None:
             raise TypeError(
                 "The symbol to write on the channel cannot be None")
+
+        if duration is None:
+            self._writeSymbol(symbol, presets=presets)
+        else:
+
+            t_start = time.time()
+            while True:
+
+                data = self._writeSymbol(symbol, presets=presets)
+                t_current = time.time()
+
+                t_delta = (t_current - t_start) % 1
+
+                if t_current - t_start > duration:
+                    break
+
+    def _writeSymbol(self, symbol, presets=None):
+        """Write the specified symbol on the communication channel after
+        specializing it into a contextualized message.
+
+        :param symbol: the symbol to write on the channel
+        :type symbol: :class:`netzob.Model.Vocabulary.Symbol.Symbol`
+
+        :param presets: specifies how to parameterize the emitted symbol
+        :type presets: dict
+
+        :raise TypeError if parameter is not valid and Exception if an exception occurs.
+
+        """
 
         self._logger.debug("Specializing symbol '{0}' (id={1}).".format(
             symbol.name, symbol.id))
@@ -139,8 +171,9 @@ class AbstractionLayer(object):
         self.parser.memory = self.memory
         data = TypeConverter.convert(dataBin, BitArray, Raw)
 
-        self.channel.write(data, rate=rate, duration=duration)
+        self.channel.write(data)
         self._logger.debug("Writing to commnunication channel done..")
+        return data
 
     @typeCheck(int)
     def readSymbols(self, timeout=EmptySymbol.defaultReceptionTimeout()):
