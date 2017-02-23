@@ -157,6 +157,7 @@ class TCPServer(AbstractChannel):
         """
         if self.__clientSocket is not None:
             self.__clientSocket.sendall(data)
+            return len(data)
         else:
             raise Exception("socket is not available")
 

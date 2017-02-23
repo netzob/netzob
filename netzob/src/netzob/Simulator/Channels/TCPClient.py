@@ -160,6 +160,7 @@ class TCPClient(AbstractChannel):
         if self.__socket is not None:
             try:
                 self.__socket.sendall(data)
+                return len(data)
             except socket.error:
                 raise ChannelDownException()
 

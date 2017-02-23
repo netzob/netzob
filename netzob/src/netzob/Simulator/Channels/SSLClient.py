@@ -156,6 +156,7 @@ class SSLClient(AbstractChannel):
         if self.__socket is not None:
             try:
                 self.__ssl_socket.sendall(data)
+                return len(data)
             except ssl.SSLError:
                 raise ChannelDownException()
 

@@ -117,7 +117,8 @@ class IPClient(AbstractChannel):
         :type data: binary object
         """
         if self.__socket is not None:
-            self.__socket.sendto(data, (self.remoteIP, 0))
+            len_data = self.__socket.sendto(data, (self.remoteIP, 0))
+            return len_data
         else:
             raise Exception("socket is not available")
 

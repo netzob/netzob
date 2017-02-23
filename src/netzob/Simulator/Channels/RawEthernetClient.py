@@ -158,7 +158,8 @@ class RawEthernetClient(AbstractChannel):
 
         self.header_presets['ip.payload'] = data
         packet = self.header.specialize(presets=self.header_presets)
-        self.__socket.sendto(packet, (self.interface, RawEthernetClient.ETH_P_ALL))
+        len_data = self.__socket.sendto(packet, (self.interface, RawEthernetClient.ETH_P_ALL))
+        return len_data
 
     @typeCheck(bytes)
     def sendReceive(self, data, timeout=None):

@@ -150,20 +150,47 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
 
         """
 
+        len_data = 0
         if duration is None:
-            self.writePacket(data)
+            len_data = self.writePacket(data)
         else:
 
             t_start = time.time()
+            t_elapsed = 0
+            t_delta = 0
             while True:
 
-                self.writePacket(data)
-                t_current = time.time()
-
-                t_delta = (t_current - t_start) % 1
-
-                if t_current - t_start > duration:
+                t_elapsed = time.time() - t_start
+                if t_elapsed > duration:
                     break
+
+                # Specialize the symbol and send it over the channel
+                len_data += self.writePacket(data)
+
+                if rate is None:
+                    t_tmp = t_elapsed
+                    t_elapsed = time.time() - t_start
+                    t_delta += t_elapsed - t_tmp
+                else:
+                    # Wait some time to that we follow a specific rate
+                    while True:
+                        t_tmp = t_elapsed
+                        t_elapsed = time.time() - t_start
+                        t_delta += t_elapsed - t_tmp
+
+                        if (len_data / t_elapsed) > rate:
+                            time.sleep(0.001)
+                        else:
+                            break
+
+                # Show some log every seconds
+                if t_delta > 1:
+                    t_delta = 0
+                    self._logger.debug("Rate rule: {} ko/s, current rate: {} ko/s, sent data: {} ko, nb seconds elapsed: {}".format(round(rate / 1024, 2),
+                                                                                                                                    round((len_data / t_elapsed) / 1024, 2),
+                                                                                                                                    round(len_data / 1024, 2),
+                                                                                                                                    round(t_elapsed, 2)))
+        return len_data
 
     @abc.abstractmethod
     def writePacket(self, data):
