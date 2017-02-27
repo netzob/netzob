@@ -56,9 +56,6 @@ class Protocol(object):
     >>> icmp = Protocol("ICMP")
     >>> icmp.name
     'ICMP'
-    >>> icmp.name = "HTTP"
-    >>> icmp.name
-    'HTTP'
 
     """
 
@@ -134,6 +131,8 @@ class Protocol(object):
         :raises: :class:`TypeError`
         """
         return self.__name
+
+    # Note: name attribute is read-only, that's why no setter is implemented
 
     @property
     def symbols(self):
