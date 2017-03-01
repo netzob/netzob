@@ -97,7 +97,7 @@ class TCPClient(AbstractChannel):
         self.localIP = localIP
         self.localPort = localPort
         self.timeout = timeout
-        self.__isOpen = False
+        self.type = AbstractChannel.TYPE_TCPCLIENT
         self.__socket = None
 
     def open(self, timeout=None):
@@ -118,11 +118,13 @@ class TCPClient(AbstractChannel):
         self._logger.debug("Connect to the TCP server to {0}:{1}".format(
             self.remoteIP, self.remotePort))
         self.__socket.connect((self.remoteIP, self.remotePort))
+        self.isOpen = True
 
     def close(self):
         """Close the communication channel."""
         if self.__socket is not None:
             self.__socket.close()
+        self.isOpen = False
 
     def read(self, timeout=None):
         """Reads the next message on the communication channel.
@@ -168,20 +170,6 @@ class TCPClient(AbstractChannel):
             raise Exception("socket is not available")
 
     # Management methods
-
-    @property
-    def isOpen(self):
-        """Returns if the communication channel is open
-
-        :return: the status of the communication channel
-        :type: :class:`bool`
-        """
-        return self.__isOpen
-
-    @isOpen.setter
-    @typeCheck(bool)
-    def isOpen(self, isOpen):
-        self.__isOpen = isOpen
 
     # Properties
 

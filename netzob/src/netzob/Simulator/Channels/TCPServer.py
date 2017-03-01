@@ -91,7 +91,7 @@ class TCPServer(AbstractChannel):
         self.localIP = localIP
         self.localPort = localPort
         self.timeout = timeout
-        self.__isOpen = False
+        self.type = AbstractChannel.TYPE_TCPSERVER
         self.__socket = None
         self.__clientSocket = None
 
@@ -162,20 +162,6 @@ class TCPServer(AbstractChannel):
             raise Exception("socket is not available")
 
     # Management methods
-
-    @property
-    def isOpen(self):
-        """Returns if the communication channel is open
-
-        :return: the status of the communication channel
-        :type: :class:`bool`
-        """
-        return self.__isOpen
-
-    @isOpen.setter
-    @typeCheck(bool)
-    def isOpen(self, isOpen):
-        self.__isOpen = isOpen
 
     # Properties
 

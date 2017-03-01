@@ -74,7 +74,7 @@ class IPClient(AbstractChannel):
         self.upperProtocol = upperProtocol
         self.interface = interface
         self.timeout = timeout
-        self.__isOpen = False
+        self.type = AbstractChannel.TYPE_IPCLIENT
         self.__socket = None
 
     def open(self, timeout=None):
@@ -90,11 +90,13 @@ class IPClient(AbstractChannel):
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 2**30)
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 2**30)
         self.__socket.bind((self.localIP, self.upperProtocol))
+        self.isOpen = True
 
     def close(self):
         """Close the communication channel."""
         if self.__socket is not None:
             self.__socket.close()
+        self.isOpen = False
 
     def read(self, timeout=None):
         """Read the next message on the communication channel.
@@ -162,20 +164,6 @@ class IPClient(AbstractChannel):
             raise Exception("socket is not available")
 
     # Management methods
-
-    @property
-    def isOpen(self):
-        """Returns if the communication channel is open
-
-        :return: the status of the communication channel
-        :type: :class:`bool`
-        """
-        return self.__isOpen
-
-    @isOpen.setter
-    @typeCheck(bool)
-    def isOpen(self, isOpen):
-        self.__isOpen = isOpen
 
     # Properties
 
