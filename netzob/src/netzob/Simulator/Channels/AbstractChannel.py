@@ -50,7 +50,6 @@ import time
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Model.Vocabulary.AbstractField import AbstractField
 
 
 class ChannelDownException(Exception):
@@ -58,6 +57,17 @@ class ChannelDownException(Exception):
 
 
 class AbstractChannel(object, metaclass=abc.ABCMeta):
+
+    TYPE_UNDEFINED = 0
+    TYPE_RAWIPCLIENT = 1
+    TYPE_IPCLIENT = 2
+    TYPE_RAWETHERNETCLIENT = 3
+    TYPE_SSLCLIENT = 4
+    TYPE_TCPCLIENT = 5
+    TYPE_TCPSERVER = 6
+    TYPE_UDPCLIENT = 7
+    TYPE_UDPSERVER = 8
+
     def __init__(self, isServer, _id=uuid.uuid4()):
         """Constructor for an Abstract Channel
 
@@ -70,6 +80,8 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
 
         self.isServer = isServer
         self.id = _id
+        self.isOpened = False
+        self.type = AbstractChannel.TYPE_UNDEFINED
 
     def __enter__(self):
         """Enter the runtime channel context.
@@ -82,7 +94,8 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         """
         self.close()
 
-    # Static methods used to retrieve local network interface and local IP according to a remote IP
+    # Static methods used to retrieve local network interface
+    # and local IP according to a remote IP
 
     @staticmethod
     def getLocalInterface(localIP):
@@ -105,7 +118,7 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
             except:
                 continue
             if ipAddress == localIP:
-                ifname =  networkInterface
+                ifname = networkInterface
                 break
         return ifname
 
@@ -125,8 +138,8 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def open(self, timeout=None):
-        """Open the communication channel. If the channel is a server, it starts to listen
-        and will create an instance for each different client.
+        """Open the communication channel. If the channel is a server, it starts
+        to listen and will create an instance for each different client.
 
         :keyword timeout: the maximum time to wait for a client to connect
         :type timout:
@@ -213,15 +226,30 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
 
     # Management methods
 
-    @abc.abstractmethod
+    @property
     def isOpen(self):
         """Returns if the communication channel is open
 
         :return: the status of the communication channel
         :type: :class:`bool`
         """
+        return self.isOpened
+
+    @isOpen.setter
+    @typeCheck(bool)
+    def isOpen(self, isOpen):
+        self.isOpened = isOpen
 
     # Properties
+
+    @property
+    def channelType(self):
+        """Returns if the communication channel type
+
+        :return: the type of the communication channel
+        :type: :class:`int`
+        """
+        return self.type
 
     @property
     def isServer(self):

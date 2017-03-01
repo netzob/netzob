@@ -89,10 +89,10 @@ class RawIPClient(AbstractChannel):
         self.upperProtocol = upperProtocol
         self.interface = interface
         self.timeout = timeout
-        self.__isOpen = False
         self.__socket = None
         self.header = None  # The IP header symbol format
         self.header_presets = {}  # Dict used to parameterize IP header fields
+        self.type = AbstractChannel.TYPE_RAWIPCLIENT
 
         # Header initialization
         self.initHeader()
@@ -109,11 +109,13 @@ class RawIPClient(AbstractChannel):
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, self.upperProtocol)
         self.__socket.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
         self.__socket.bind((self.localIP, self.upperProtocol))
+        self.isOpen = True
 
     def close(self):
         """Close the communication channel."""
         if self.__socket is not None:
             self.__socket.close()
+        self.isOpen = False
 
     def read(self, timeout=None):
         """Read the next message on the communication channel.
@@ -237,7 +239,7 @@ class RawIPClient(AbstractChannel):
                                                       ip_checksum,
                                                       ip_saddr,
                                                       ip_daddr], dataType=Raw(nbBytes=2, unitSize=AbstractType.UNITSIZE_16))
-        
+
         self.header = Symbol(name='IP layer', fields=[ip_ver,
                                                       ip_ihl,
                                                       ip_tos,
@@ -253,20 +255,6 @@ class RawIPClient(AbstractChannel):
                                                       ip_payload])
 
     # Management methods
-
-    @property
-    def isOpen(self):
-        """Returns if the communication channel is open
-
-        :return: the status of the communication channel
-        :type: :class:`bool`
-        """
-        return self.__isOpen
-
-    @isOpen.setter
-    @typeCheck(bool)
-    def isOpen(self, isOpen):
-        self.__isOpen = isOpen
 
     # Properties
 

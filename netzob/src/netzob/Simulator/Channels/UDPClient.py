@@ -100,7 +100,7 @@ class UDPClient(AbstractChannel):
         self.localIP = localIP
         self.localPort = localPort
         self.timeout = timeout
-        self.__isOpen = False
+        self.type = AbstractChannel.TYPE_UDPCLIENT
         self.__socket = None
 
     def open(self, timeout=None):
@@ -118,11 +118,13 @@ class UDPClient(AbstractChannel):
         self.__socket.settimeout(self.timeout)
         if self.localIP is not None and self.localPort is not None:
             self.__socket.bind((self.localIP, self.localPort))
+        self.isOpen = True
 
     def close(self):
         """Close the communication channel."""
         if self.__socket is not None:
             self.__socket.close()
+        self.isOpen = False
 
     def read(self, timeout=None):
         """Read the next message on the communication channel.
@@ -150,20 +152,6 @@ class UDPClient(AbstractChannel):
             raise Exception("socket is not available")
 
     # Management methods
-
-    @property
-    def isOpen(self):
-        """Returns if the communication channel is open
-
-        :return: the status of the communication channel
-        :type: :class:`bool`
-        """
-        return self.__isOpen
-
-    @isOpen.setter
-    @typeCheck(bool)
-    def isOpen(self, isOpen):
-        self.__isOpen = isOpen
 
     # Properties
 

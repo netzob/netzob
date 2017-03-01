@@ -71,7 +71,7 @@ class SSLClient(AbstractChannel):
         self.localIP = localIP
         self.localPort = localPort
         self.timeout = timeout
-        self.__isOpen = False
+        self.type = AbstractChannel.TYPE_SSLCLIENT
         self.__socket = None
         self.__ssl_socket = None
         self.server_cert_file = server_cert_file
@@ -114,6 +114,7 @@ class SSLClient(AbstractChannel):
         self._logger.debug("Connect to the SSL server to {0}:{1}".format(
             self.remoteIP, self.remotePort))
         self.__ssl_socket.connect((self.remoteIP, self.remotePort))
+        self.isOpen = True
 
     def close(self):
         """Close the communication channel."""
@@ -121,6 +122,7 @@ class SSLClient(AbstractChannel):
             self.__ssl_socket.close()
         if self.__socket is not None:
             self.__socket.close()
+        self.isOpen = False
 
     def read(self, timeout=None):
         """Read the next message on the communication channel.
@@ -164,20 +166,6 @@ class SSLClient(AbstractChannel):
             raise Exception("socket is not available")
 
     # Management methods
-
-    @property
-    def isOpen(self):
-        """Returns if the communication channel is open
-
-        :return: the status of the communication channel
-        :type: :class:`bool`
-        """
-        return self.__isOpen
-
-    @isOpen.setter
-    @typeCheck(bool)
-    def isOpen(self, isOpen):
-        self.__isOpen = isOpen
 
     # Properties
 

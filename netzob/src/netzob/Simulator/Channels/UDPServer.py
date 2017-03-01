@@ -94,7 +94,7 @@ class UDPServer(AbstractChannel):
         self.localIP = localIP
         self.localPort = localPort
         self.timeout = timeout
-        self.__isOpen = False
+        self.type = AbstractChannel.TYPE_UDPSERVER
         self.__socket = None
         self.__remoteAddr = None
 
@@ -112,11 +112,13 @@ class UDPServer(AbstractChannel):
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.__socket.settimeout(self.timeout)
         self.__socket.bind((self.localIP, self.localPort))
+        self.isOpen = True
 
     def close(self):
         """Close the communication channel."""
         if self.__socket is not None:
             self.__socket.close()
+        self.isOpen = False
 
     def read(self, timeout=None):
         """Read the next message on the communication channel.
@@ -145,20 +147,6 @@ class UDPServer(AbstractChannel):
                 "Socket is not available or remote address is not known.")
 
     # Management methods
-
-    @property
-    def isOpen(self):
-        """Returns if the communication channel is open
-
-        :return: the status of the communication channel
-        :type: :class:`bool`
-        """
-        return self.__isOpen
-
-    @isOpen.setter
-    @typeCheck(bool)
-    def isOpen(self, isOpen):
-        self.__isOpen = isOpen
 
     # Properties
 

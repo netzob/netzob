@@ -95,14 +95,14 @@ class RawEthernetClient(AbstractChannel):
         self.upperProtocol = upperProtocol
         self.interface = interface
         self.timeout = timeout
-        self.__isOpen = False
         self.__socket = None
         self.header = None  # The IP header symbol format
         self.header_presets = {}  # Dict used to parameterize IP header fields
+        self.type = AbstractChannel.TYPE_RAWETHERNETCLIENT
 
         # Header initialization
         self.initHeader()
-        
+
     def open(self, timeout=None):
         """Open the communication channel. If the channel is a client, it starts to connect
         to the specified server.
@@ -114,11 +114,13 @@ class RawEthernetClient(AbstractChannel):
 
         self.__socket = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.htons(RawEthernetClient.ETH_P_ALL))
         self.__socket.bind((self.interface, RawEthernetClient.ETH_P_ALL))
+        self.isOpen = True
 
     def close(self):
         """Close the communication channel."""
         if self.__socket is not None:
             self.__socket.close()
+        self.isOpen = False
 
     def read(self, timeout=None):
         """Read the next message on the communication channel.
@@ -309,20 +311,6 @@ class RawEthernetClient(AbstractChannel):
                                                             ip_payload])
 
     # Management methods
-
-    @property
-    def isOpen(self):
-        """Returns if the communication channel is open
-
-        :return: the status of the communication channel
-        :type: :class:`bool`
-        """
-        return self.__isOpen
-
-    @isOpen.setter
-    @typeCheck(bool)
-    def isOpen(self, isOpen):
-        self.__isOpen = isOpen
 
     # Properties
 
