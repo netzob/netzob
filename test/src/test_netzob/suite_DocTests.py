@@ -128,6 +128,7 @@ def getSuite():
         ApplicativeData.__module__,
         DomainEncodingFunction.__module__,
         TypeEncodingFunction.__module__,
+        ZLibEncodingFunction.__module__,
         Base64EncodingFunction.__module__,
         SearchEngine.__module__,
         SearchTask,
