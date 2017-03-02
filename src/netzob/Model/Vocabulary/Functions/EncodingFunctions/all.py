@@ -30,3 +30,4 @@
 # see docs.python.org/2/tutorial/modules.html
 from netzob.Model.Vocabulary.Functions.EncodingFunctions.DomainEncodingFunction import DomainEncodingFunction
 from netzob.Model.Vocabulary.Functions.EncodingFunctions.TypeEncodingFunction import TypeEncodingFunction
+from netzob.Model.Vocabulary.Functions.EncodingFunctions.Base64EncodingFunction import Base64EncodingFunction
