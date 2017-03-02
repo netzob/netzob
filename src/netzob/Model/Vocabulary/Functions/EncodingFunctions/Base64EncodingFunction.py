@@ -109,12 +109,12 @@ class Base64EncodingFunction(EncodingFunction):
         :parameter encode_data: if set to true, this function encodes in base64 the original value
         :type encode_data: :class:`bool`
         """
-        self._encode_data = encode_data
+        self.encode_data = encode_data
 
     def encode(self, data):
         data_raw = TypeConverter.convert(data,BitArray,Raw)
         result = None
-        if self._encode_data:
+        if self.encode_data:
             result = base64.b64encode(data_raw)
         else:
             result = base64.b64decode(data_raw)
