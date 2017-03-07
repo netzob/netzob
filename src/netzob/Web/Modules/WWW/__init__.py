@@ -46,7 +46,9 @@ from netzob.Web.Extensions import APIExtension
 www = Blueprint(
     'www',
     __name__,
-    template_folder='templates')
+    template_folder='templates',
+    static_folder='static'
+    )
 
 def init_app(app, **kwargs):
     app.register_blueprint(www)
