@@ -48,7 +48,7 @@ api = Namespace(
 
 @api.route('/')
 @NetzobLogger
-class Symbols(Resource):
+class SymbolEndpoint(Resource):
 
     def get(self):
         """List all symbols

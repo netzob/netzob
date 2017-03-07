@@ -28,37 +28,36 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from importlib import import_module
+
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
+from flask import Blueprint, abort, render_template
+from jinja2 import TemplateNotFound
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob import release
+from netzob.Web.Extensions import APIExtension
 
+www = Blueprint(
+    'www',
+    __name__,
+    template_folder='templates')
 
+def init_app(app, **kwargs):
+    app.register_blueprint(www)
+
+@www.route('/')
 @NetzobLogger
-class ModuleManager(object):
-    """Configures the modules that participate in the web application"""
-
-    def __init__(self):
-        self.__module_names = [
-            "Symbol",
-            "API",
-            "WWW"
-        ]
-        
-    def init_app(self, app, **kwargs):
-        """Initialization of the application modules"""
-
-        self._logger.debug("Initializating modules...")
-        for module_name in self.__module_names:
-            import_module('..%s' % module_name, package=__name__).init_app(app, **kwargs)
-            
-        self._logger.debug("All the modules are initialized")
-            
-
-
+def get():
+    try:
+        return render_template('index.html')
+    except TemplateNotFound as e:
+        get._logger.error("Template not found : {}".format(e))
+        abort(404)
+    
+    
