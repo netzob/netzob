@@ -43,19 +43,9 @@ from netzob.Common.Utils.Decorators import NetzobLogger
 class NetzobWebSessionController(object):
     """Execute Netzob web interface"""
 
-    def __init__(self):
+    def __init__(self, listen_host, listen_port):
         pass
 
     def start(self):
         raise NotImplementedError("Web interface is not yet implemented.")
-
-@NetzobLogger
-class NetzobWebSessionControllerFactory(object):
-    
-    def __call__(self):
-        try:
-            return NetzobWebSessionController()
-        except Exception as e:
-            self._logger.warning(
-                "Cannot initializes Web Session Controller: {}".format(e))
 

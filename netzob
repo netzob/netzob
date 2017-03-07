@@ -75,28 +75,14 @@ def main():
         from netzob.Common.Controllers.NetzobInteractiveSessionController import NetzobSessionControllerFactory
         sessionControllerFactory = NetzobSessionControllerFactory()
         sessionControllerFactory().start()
+        
     elif commandLineParser.web_requested:
-        from netzob.Common.Controllers.NetzobWebSessionController import NetzobWebSessionControllerFactory
-        sessionControllerFactory = NetzobWebSessionControllerFactory()
-        sessionControllerFactory().start()
+        listen_host = commandLineParser.web_listen_host
+        listen_port = commandLineParser.web_listen_port
 
-    # # Launch the GUI or the plugin manager
-    # if commandLineParser.isStartGUIRequested():
-    #     GObject.threads_init()  # for handling concurrent GUI access from threads
-    #     from netzob.NetzobMainController import NetzobMainController
-    #     netzobController = NetzobMainController()
-    #     netzobController.run()
-    # # Display the management of plugins
-    # elif commandLineParser.isManagePluginsRequested():
-    #     from netzob.NetzobPluginManagement import NetzobPluginManagement
-    #     netzobPluginManagement = NetzobPluginManagement(commandLineParser)
-    #     netzobPluginManagement.start()
-    # # Launch the interactive session
-    # elif commandLineParser.isInteractiveConsoleRequested():
-    #     from netzob.NetzobInteractiveSessionController import NetzobInteractiveSessionController
-    #     interactiveSession = NetzobInteractiveSessionController()
-    #     interactiveSession.start()
-
+        from netzob.Common.Controllers.NetzobWebSessionController import NetzobWebSessionController
+        sessionController = NetzobWebSessionController(listen_host = listen_host, listen_port = listen_port)
+        sessionController.start()
 
 if __name__ == "__main__":
     main()

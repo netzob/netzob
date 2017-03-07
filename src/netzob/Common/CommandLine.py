@@ -75,6 +75,23 @@ class CommandLine(object):
             dest="web",
             help="Starts the web interface"
         )
+
+        self.parser.add_option(
+            "--listen-host",
+            action="store",
+            type="string",
+            default="127.0.0.1",
+            dest="listen_host",
+            help="Host address the web interface binds to"
+        )
+        self.parser.add_option(
+            "--listen-port",
+            action="store",
+            type="int",
+            default=8080,
+            dest="listen_port",
+            help="Port number the web interface binds to"
+        )
         
     def parse(self):
         """Read and parse the provided arguments and options"""
@@ -98,6 +115,18 @@ class CommandLine(object):
         if self.providedOptions is None:
             return False
         return self.providedOptions.web
+
+    @property
+    def web_listen_host(self):
+        if self.parser is None:
+            self.parse()
+        return self.providedOptions.listen_host
+
+    @property
+    def web_listen_port(self):
+        if self.parser is None:
+            self.parse()
+        return self.providedOptions.listen_port
     
     def getOptions(self):
         return self.providedOptions
