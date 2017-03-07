@@ -47,7 +47,7 @@ class NetzobWebSessionController(object):
         pass
 
     def start(self):
-        self._logger.debug("Starting Netzob web session controller")
+        raise NotImplementedError("Web interface is not yet implemented.")
 
 @NetzobLogger
 class NetzobWebSessionControllerFactory(object):
