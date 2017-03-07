@@ -6,3 +6,6 @@ numpy
 colorama==0.3.3
 bintrees==2.0.0
 minepy==1.0.0
+Flask>=0.11
+flask-restplus>=0.9.1
+werkzeug==0.11.11

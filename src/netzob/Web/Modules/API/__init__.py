@@ -29,55 +29,22 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 
+
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from flask import Flask
+from flask import Blueprint
+from flask_restplus import Api
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import NetzobLogger
-from netzob.Web.Extensions.ExtensionManager import ExtensionManager
-from netzob.Web.Modules.ModuleManager import ModuleManager
+from netzob import release
+from netzob.Web.Extensions import APIExtension
 
+def init_app(app, **kwargs):
 
-@NetzobLogger
-class NetzobWebSessionController(object):
-    """Execute Netzob web interface"""
-
-    def __init__(self, listen_host, listen_port):
-        self.__listen_host = listen_host
-        self.__listen_port = listen_port
-        self.__app = self.__create_app(
-            debug_mode = True
-        )
-
-    def __create_app(self, debug_mode):
-        """This internal methods create the Flask application and configures it"""
-
-        app = Flask(__name__)
-
-        # lets set various config values
-        app.config['SECRET_KEY'] = "this-really-needs-to-be-changed"
-        app.config['URL_PREFIX'] = "/api"
-        app.config['SWAGGER_UI_JSONEDITOR'] = debug_mode
-
-        # configure the web extensions
-        extension_manager = ExtensionManager()
-        extension_manager.init_app(app)
-
-        # configure the web modules
-        module_manager = ModuleManager()
-        module_manager.init_app(app)
-
-        return app
-
-    def start(self):
-        self._logger.warn("Netzob web interface is available at http://{}:{}".format(self.__listen_host, self.__listen_port))
-        self.__app.run(
-            host = self.__listen_host,
-            port = self.__listen_port,
-            debug = self.__app.config['DEBUG']
-        )
-
+    api_v1_blueprint = Blueprint('api', __name__, url_prefix=app.config['URL_PREFIX'])
+    APIExtension.NETZOB_API.init_app(api_v1_blueprint)
+    app.register_blueprint(api_v1_blueprint)

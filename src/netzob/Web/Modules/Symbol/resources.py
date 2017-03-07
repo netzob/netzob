@@ -32,52 +32,28 @@
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from flask import Flask
+from flask import request
+from flask_restplus import Namespace, Resource, fields
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import NetzobLogger
-from netzob.Web.Extensions.ExtensionManager import ExtensionManager
-from netzob.Web.Modules.ModuleManager import ModuleManager
+
+api = Namespace(
+    'Symbols',
+    description="Handle symbols of your protocol",
+    path='/symbols')
 
 
+@api.route('/')
 @NetzobLogger
-class NetzobWebSessionController(object):
-    """Execute Netzob web interface"""
+class Symbols(Resource):
 
-    def __init__(self, listen_host, listen_port):
-        self.__listen_host = listen_host
-        self.__listen_port = listen_port
-        self.__app = self.__create_app(
-            debug_mode = True
-        )
+    def get(self):
+        """List all symbols
 
-    def __create_app(self, debug_mode):
-        """This internal methods create the Flask application and configures it"""
-
-        app = Flask(__name__)
-
-        # lets set various config values
-        app.config['SECRET_KEY'] = "this-really-needs-to-be-changed"
-        app.config['URL_PREFIX'] = "/api"
-        app.config['SWAGGER_UI_JSONEDITOR'] = debug_mode
-
-        # configure the web extensions
-        extension_manager = ExtensionManager()
-        extension_manager.init_app(app)
-
-        # configure the web modules
-        module_manager = ModuleManager()
-        module_manager.init_app(app)
-
-        return app
-
-    def start(self):
-        self._logger.warn("Netzob web interface is available at http://{}:{}".format(self.__listen_host, self.__listen_port))
-        self.__app.run(
-            host = self.__listen_host,
-            port = self.__listen_port,
-            debug = self.__app.config['DEBUG']
-        )
-
+        """
+        self._logger.debug("[GET] Symbols triggered")
+        return []
+    

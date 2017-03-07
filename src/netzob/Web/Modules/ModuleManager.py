@@ -28,56 +28,36 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
+from importlib import import_module
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from flask import Flask
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import NetzobLogger
-from netzob.Web.Extensions.ExtensionManager import ExtensionManager
-from netzob.Web.Modules.ModuleManager import ModuleManager
 
 
 @NetzobLogger
-class NetzobWebSessionController(object):
-    """Execute Netzob web interface"""
+class ModuleManager(object):
+    """Configures the modules that participate in the web application"""
 
-    def __init__(self, listen_host, listen_port):
-        self.__listen_host = listen_host
-        self.__listen_port = listen_port
-        self.__app = self.__create_app(
-            debug_mode = True
-        )
+    def __init__(self):
+        self.__module_names = [
+            "Symbol",
+            "API"
+        ]
+        
+    def init_app(self, app, **kwargs):
+        """Initialization of the application modules"""
 
-    def __create_app(self, debug_mode):
-        """This internal methods create the Flask application and configures it"""
+        self._logger.debug("Initializating modules...")
+        for module_name in self.__module_names:
+            import_module('..%s' % module_name, package=__name__).init_app(app, **kwargs)
+            
+        self._logger.debug("All the modules are initialized")
+            
 
-        app = Flask(__name__)
-
-        # lets set various config values
-        app.config['SECRET_KEY'] = "this-really-needs-to-be-changed"
-        app.config['URL_PREFIX'] = "/api"
-        app.config['SWAGGER_UI_JSONEDITOR'] = debug_mode
-
-        # configure the web extensions
-        extension_manager = ExtensionManager()
-        extension_manager.init_app(app)
-
-        # configure the web modules
-        module_manager = ModuleManager()
-        module_manager.init_app(app)
-
-        return app
-
-    def start(self):
-        self._logger.warn("Netzob web interface is available at http://{}:{}".format(self.__listen_host, self.__listen_port))
-        self.__app.run(
-            host = self.__listen_host,
-            port = self.__listen_port,
-            debug = self.__app.config['DEBUG']
-        )
 
