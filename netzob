@@ -71,6 +71,15 @@ def main():
     if os.name == 'nt':
         sys.path.insert(0, 'lib/libNeedleman/')
 
+    if commandLineParser.interactive_console_requested:
+        from netzob.Common.Controllers.NetzobInteractiveSessionController import NetzobSessionControllerFactory
+        sessionControllerFactory = NetzobSessionControllerFactory()
+        sessionControllerFactory().start()
+    elif commandLineParser.web_requested:
+        from netzob.Common.Controllers.NetzobWebSessionController import NetzobWebSessionControllerFactory
+        sessionControllerFactory = NetzobWebSessionControllerFactory()
+        sessionControllerFactory().start()
+
     # # Launch the GUI or the plugin manager
     # if commandLineParser.isStartGUIRequested():
     #     GObject.threads_init()  # for handling concurrent GUI access from threads
@@ -88,9 +97,6 @@ def main():
     #     interactiveSession = NetzobInteractiveSessionController()
     #     interactiveSession.start()
 
-    from netzob.NetzobInteractiveSessionController import NetzobSessionControllerFactory
-    sessionControllerFactory = NetzobSessionControllerFactory()
-    sessionControllerFactory().start()
 
 if __name__ == "__main__":
     main()

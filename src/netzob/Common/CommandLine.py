@@ -61,14 +61,28 @@ class CommandLine(object):
             dest="debugLevel",
             help="Activate debug information ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL')"
         )
-        # self.parser.add_option("-i", "--interactive", action="store_true", dest="interactive", help="Starts an interactive Netzob session")
-
+        self.parser.add_option(
+            "-i",
+            "--interactive",
+            action="store_true",
+            dest="interactive",
+            help="Starts an interactive Netzob session"
+        )
+        self.parser.add_option(
+            "-w",
+            "--web",
+            action="store_true",
+            dest="web",
+            help="Starts the web interface"
+        )
+        
     def parse(self):
         """Read and parse the provided arguments and options"""
         (self.providedOptions,
          self.providedArguments) = self.parser.parse_args()
 
-    def isInteractiveConsoleRequested(self):
+    @property
+    def interactive_console_requested(self):
         """Compute and returns if the user has requested the initiation of an interactive session"""
         if self.parser is None:
             self.parse()
@@ -76,6 +90,15 @@ class CommandLine(object):
             return False
         return self.providedOptions.interactive
 
+    @property
+    def web_requested(self):
+        """Compute and returns if the user has requested the initiation of the web interface"""
+        if self.parser is None:
+            self.parse()
+        if self.providedOptions is None:
+            return False
+        return self.providedOptions.web
+    
     def getOptions(self):
         return self.providedOptions
 
