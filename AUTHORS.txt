@@ -1,0 +1,126 @@
+Authors
+-------
+ 
+  * Georges Bossert
+  * Frédéric Guihéry
+
+Contributors
+------------
+
+  * Olivier Tétard (Debian package maintainer)
+  * Goulven Guiheux (Windows package developer and maintainer)
+  * Maxime Olivier (Quality enforcer)
+  * Alexandre Pigné (Gentoo package maintainer)
+  * Franck Roland (developer)
+  * Fabien André (developer)
+  * Quentin Heyler (developer)
+  * Benjamin Dufour (developer)
+  * Giuseppe Massaro (Arch Linux package maintainer)
+  * Timo Juhani
+  * "winnie"
+  * Remy Delion
+  * Bertus Kruger
+  * Eric asselin
+  * Tammo Krueger"
+
+Sponsors
+--------
+
+  * AMOSSYS: http://www.amossys.fr
+  * Supélec: http://www.rennes.supelec.fr/ren/rd/cidre/
+
+Copyrights
+----------
+
+Netzob is licensed under the terms of the GNU GPL either version 3 of
+the License, or (at your option) any later version. Most of the code
+is copyrighted by Georges Bossert and Frédéric Guihéry (please refer
+to the file headers).
+
+List of external libraries or icons that are embedded in Netzob's
+source code:
+
+  * src/netzob/ExternalLibs/xdot.py:
+    - Licence: LGPL-3+
+    - Copyright: 2008 Jose Fonseca
+
+  * src/netzob/ExternalLibs/xmlrunner.py:
+     - Copyright: Sebastian Rittau <srittau@jroger.in-berlin.de>
+     - License: public-domain
+
+  * resources/sdist/babel_extract.py:
+     - Copyright: 2006 Ufsoft.org - Pedro Algarvio <ufs@ufsoft.org>
+     - License: BSD-3-clause
+
+  * src/netzob_plugins/Exporters/PeachExporter/*
+     - Copyright: 2011 AMOSSYS
+     - License: GPL-3+
+
+  * resources/static/netzob/icons/24x24/{select-all.png,
+                                         capture-messages.png,
+                                         import-messages.png}
+     - Copyright: 2006-2007 Everaldo Coelho
+     - License: LGPL-2.1
+
+  * resources/static/netzob/icons/24x24/rename.png
+     - Copyright: VistaICO.com
+     - License: CC-BY-3.0
+
+  * resources/static/netzob/icons/24x24/{concat-field.png,
+                                         concat-symbol.png,
+                                         messages-distribution.png,
+                                         split-field.png,
+                                         variable-table.png,
+                                         partitioning-reset.png,
+                                         partitioning-sequence.png,
+                                         partitioning-simple.png}:
+     - Copyright: David Vignoni et al. <www.oxygen-icons.org>
+     - License: CC-BY-SA-3.0 or LGPL-2.1
+
+  * resources/static/netzob/icons/scalable/22x22/variable-table.svgz:
+     - Copyright: David Vignoni et al. <www.oxygen-icons.org>
+     - License: CC-BY-SA-3.0 or LGPL-2.1
+
+  * resources/static/netzob/icons/24x24/partitioning-smooth.png
+    - License: public-domain
+
+  * resources/static/netzob/icons/24x24/{create-variable.png,
+                                        edit-cut-left.png,
+                                        edit-cut-right.png,
+                                        field-limit.png,
+                                        new-window.png,
+                                        partitioning-base-file.png,
+                                        partitioning-force.png,
+                                        search-environment-dep.png,
+                                        partitioning-freeze.png}:
+     - Copyright: 2002-2008 Ulisse Perusin <uli.peru@gmail.com> et al.
+     - License: LGPL-3 or CC-BY-SA-3.0
+
+  * resources/static/netzob/icons/scalable/24x24/partitioning-freeze.svg
+     - Copyright: 2002-2008 Ulisse Perusin <uli.peru@gmail.com> et al.
+     - License: LGPL-3 or CC-BY-SA-3.0
+
+  * resources/static/netzob/icons/24x24/move-to-symbol.png
+     - Copyright: 2010  Aron Xu <aronxu@gnome.org> et al.
+     - Copyright: 2002-2008 Ulisse Perusin <uli.peru@gmail.com> et al.
+     - License: LGPL-3
+     - Comment: Icon file is resulting from the merge of two icons,
+                one from the 'gnome-theme-standard' package
+                (LGPL-2.1+), the other from the 'gnome-icon-theme'
+                package (LGPL-3 or CC-BY-SA-3.0)
+
+  * resources/static/netzob/icons/24x24/unselect-all.png
+     - Copyright: 2006-2007 Everaldo Coelho
+     - Copyright: 2002-2008 Ulisse Perusin <uli.peru@gmail.com> et al.
+     - License: GPL-3
+     - Comment: Icon file is resulting from the merge of two icons,
+                one from the 'gnome-icon-theme' package (LGPL-3 or
+                CC-BY-SA-3.0) and the other from Everaldo Coelho
+                (LGPL-2.1). As a result, the file is licenced under
+                the terms of the GPL-3 licence (see
+                <http://www.gnu.org/licenses/gpl-faq.html#AllCompatibility>).
+
+  * resources/static/netzob/icons/24x24/merge-items.png
+     - Copyright: 2010 The Noun Project
+     - License: CC-BY-3.0
+     - Link: http://thenounproject.com/noun/merge/

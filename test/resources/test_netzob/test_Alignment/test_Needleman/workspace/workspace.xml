@@ -1,0 +1,15 @@
+<netzob:workspace xmlns:netzob="http://www.netzob.org/workspace"
+	creation_date="2012-02-20T10:03:39" name="New Workspace">
+	<netzob:configuration>
+		<netzob:traces>traces</netzob:traces>
+		<netzob:logging>logging/logging.conf</netzob:logging>
+		<netzob:prototypes>prototypes</netzob:prototypes>
+	</netzob:configuration>
+	<netzob:projects>
+		<netzob:project path="projects/06cd818a-1b27-4346-9410-6d4b413e5267/" />
+
+	</netzob:projects>
+	<netzob:traces>
+		
+	</netzob:traces>
+</netzob:workspace>

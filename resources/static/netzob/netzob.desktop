@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Netzob
+GenericName=Netzob
+Comment=Network protocol modelization by reverse engineering
+Icon=netzob
+Exec=netzob
+Terminal=false
+# Categorie entry according to version 1.0 of
+# http://www.freedesktop.org/wiki/Specifications/menu-spec
+Categories=GTK;GNOME;Network;

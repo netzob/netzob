@@ -1,0 +1,8 @@
+jsonpickle==0.9.2
+pcapy==0.10.10
+netaddr==0.7.18
+bitarray==0.8.1
+numpy
+colorama==0.3.3
+bintrees==2.0.0
+minepy==1.0.0

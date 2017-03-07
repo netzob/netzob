@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+#+---------------------------------------------------------------------------+
+#|          01001110 01100101 01110100 01111010 01101111 01100010            |
+#|                                                                           |
+#|               Netzob : Inferring communication protocols                  |
+#+---------------------------------------------------------------------------+
+#| Copyright (C) 2011-2015 Georges Bossert and Frédéric Guihéry              |
+#| This program is free software: you can redistribute it and/or modify      |
+#| it under the terms of the GNU General Public License as published by      |
+#| the Free Software Foundation, either version 3 of the License, or         |
+#| (at your option) any later version.                                       |
+#|                                                                           |
+#| This program is distributed in the hope that it will be useful,           |
+#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
+#| GNU General Public License for more details.                              |
+#|                                                                           |
+#| You should have received a copy of the GNU General Public License         |
+#| along with this program. If not, see <http://www.gnu.org/licenses/>.      |
+#+---------------------------------------------------------------------------+
+#| @url      : http://www.netzob.org                                         |
+#| @contact  : contact@netzob.org                                            |
+#| @sponsors : Amossys, http://www.amossys.fr                                |
+#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
+#| File contributors :                                                       |
+#|       - Georges Bossert <gbossert (a) miskin.fr>                          |
+#|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
+#| Standard library imports
+#+---------------------------------------------------------------------------+
+import sys
+import os
+
+if sys.version_info[0] < 3:
+    print("This version of Netzob is only compatible with Python3.")
+    sys.exit(42)
+
+#+---------------------------------------------------------------------------+
+#| Local imports
+#+---------------------------------------------------------------------------+
+sys.path.insert(0, 'src/')
+from netzob.Common.CommandLine import CommandLine
+from netzob import release
+from netzob.Common.Utils.Decorators import NetzobLogger
+
+@NetzobLogger
+def main():
+    """Main function of the Netzob script."""
+
+    # Parsing Command Line arguments
+    commandLineParser = CommandLine()
+
+    # Compute the requested execution following the provided arguments
+    commandLineParser.parse()
+
+    # Starting the dependency checker
+    from netzob.Common.DepCheck import DepCheck
+    if not DepCheck.checkRequiredDependency():
+        main._logger.fatal("Some required dependency are not available and prevent netzob from starting.")
+        sys.exit()
+
+    # Insert in the path the directory where _libNeedleman.pyd is
+    # TODO here !
+    if os.name == 'nt':
+        sys.path.insert(0, 'lib/libNeedleman/')
+
+    # # Launch the GUI or the plugin manager
+    # if commandLineParser.isStartGUIRequested():
+    #     GObject.threads_init()  # for handling concurrent GUI access from threads
+    #     from netzob.NetzobMainController import NetzobMainController
+    #     netzobController = NetzobMainController()
+    #     netzobController.run()
+    # # Display the management of plugins
+    # elif commandLineParser.isManagePluginsRequested():
+    #     from netzob.NetzobPluginManagement import NetzobPluginManagement
+    #     netzobPluginManagement = NetzobPluginManagement(commandLineParser)
+    #     netzobPluginManagement.start()
+    # # Launch the interactive session
+    # elif commandLineParser.isInteractiveConsoleRequested():
+    #     from netzob.NetzobInteractiveSessionController import NetzobInteractiveSessionController
+    #     interactiveSession = NetzobInteractiveSessionController()
+    #     interactiveSession.start()
+
+    from netzob.NetzobInteractiveSessionController import NetzobSessionControllerFactory
+    sessionControllerFactory = NetzobSessionControllerFactory()
+    sessionControllerFactory().start()
+
+if __name__ == "__main__":
+    main()

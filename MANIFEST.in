@@ -1,0 +1,13 @@
+include AUTHORS.txt
+include COPYING.txt
+include NEWS.rst
+include PKG-INFO.txt
+include README.rst
+include requirements.txt
+exclude doc/netzob.1
+exclude test-results.xml
+recursive-exclude resources *.mo
+recursive-exclude doc/documentation/build *
+recursive-include resources *
+recursive-include lib *
+recursive-exclude * *~ *.orig *.bak *.tmp *.pyc *.log
