@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
 #|                                                                           |
@@ -29,39 +32,49 @@
 #|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
 #+---------------------------------------------------------------------------+
 
-#
-# TRAVIS Continuous Integration Definition file
-#
+#+---------------------------------------------------------------------------+
+#| Standard library imports
+#+---------------------------------------------------------------------------+
+import sys
+import os
 
-# Definition of the environment
-env:
-  - NETZOB_TEST_NO_PERFORMANCE=yes
-language: python
-sudo: required
-python:
-  - 3.3
-  - 3.4
-  - 3.5
-  - 3.6
-addons:
-  apt:
-    packages:
-    - libpcap-dev
-    - python3
+if sys.version_info[0] < 3:
+    print("This version of Netzob is only compatible with Python3.")
+    sys.exit(42)
 
-# Installation process
+#+---------------------------------------------------------------------------+
+#| Local imports
+#+---------------------------------------------------------------------------+
+sys.path.insert(0, 'src/')
+from netzob.Common.CommandLine import CommandLine
+from netzob import release
+from netzob.Common.Utils.Decorators import NetzobLogger
 
-install:
-  - cd netzob && python3 -m pip install -r requirements.txt
-  - cd netzob && python3 setup.py build
-  - cd netzob && python3 setup.py install
-  - cd netzob && python3 -m pip install coveralls
+@NetzobLogger
+def main():
+    """Main function of the Netzob script."""
 
-# Executing unit-tests and measure coverages
+    # Parsing Command Line arguments
+    commandLineParser = CommandLine()
 
-script:
-  - cd netzob && python3 setup.py test
-  - cd netzob && python3 -m coverage run --source=src/netzob setup.py test
-after_success:
-  - cd netzob && coveralls
+    # Compute the requested execution following the provided arguments
+    commandLineParser.parse()
 
+    # Starting the dependency checker
+    from netzob.Common.DepCheck import DepCheck
+    if not DepCheck.checkRequiredDependency():
+        main._logger.fatal("Some required dependency are not available and prevent netzob from starting.")
+        sys.exit()
+
+    # Insert in the path the directory where _libNeedleman.pyd is
+    # TODO here !
+    if os.name == 'nt':
+        sys.path.insert(0, 'lib/libNeedleman/')
+
+    if commandLineParser.interactive_console_requested:
+        from netzob.Common.Controllers.NetzobInteractiveSessionController import NetzobSessionControllerFactory
+        sessionControllerFactory = NetzobSessionControllerFactory()
+        sessionControllerFactory().start()
+
+if __name__ == "__main__":
+    main()

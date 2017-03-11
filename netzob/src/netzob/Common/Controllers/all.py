@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
 #|                                                                           |
@@ -23,45 +26,6 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| File contributors :                                                       |
-#|       - Georges Bossert <gbossert (a) miskin.fr>                          |
-#|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
-#+---------------------------------------------------------------------------+
-
-#
-# TRAVIS Continuous Integration Definition file
-#
-
-# Definition of the environment
-env:
-  - NETZOB_TEST_NO_PERFORMANCE=yes
-language: python
-sudo: required
-python:
-  - 3.3
-  - 3.4
-  - 3.5
-  - 3.6
-addons:
-  apt:
-    packages:
-    - libpcap-dev
-    - python3
-
-# Installation process
-
-install:
-  - cd netzob && python3 -m pip install -r requirements.txt
-  - cd netzob && python3 setup.py build
-  - cd netzob && python3 setup.py install
-  - cd netzob && python3 -m pip install coveralls
-
-# Executing unit-tests and measure coverages
-
-script:
-  - cd netzob && python3 setup.py test
-  - cd netzob && python3 -m coverage run --source=src/netzob setup.py test
-after_success:
-  - cd netzob && coveralls
+# List subpackages to import with the current one
+# see docs.python.org/2/tutorial/modules.html
 
