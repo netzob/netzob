@@ -75,14 +75,6 @@ def main():
         from netzob.Common.Controllers.NetzobInteractiveSessionController import NetzobSessionControllerFactory
         sessionControllerFactory = NetzobSessionControllerFactory()
         sessionControllerFactory().start()
-        
-    elif commandLineParser.web_requested:
-        listen_host = commandLineParser.web_listen_host
-        listen_port = commandLineParser.web_listen_port
-
-        from netzob.Common.Controllers.NetzobWebSessionController import NetzobWebSessionController
-        sessionController = NetzobWebSessionController(listen_host = listen_host, listen_port = listen_port)
-        sessionController.start()
 
 if __name__ == "__main__":
     main()
