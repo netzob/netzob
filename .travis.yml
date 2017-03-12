@@ -52,6 +52,7 @@ addons:
 # Installation process
 
 install:
+  - cd netzob
   - python3 -m pip install -r requirements.txt
   - python3 setup.py build
   - python3 setup.py install
