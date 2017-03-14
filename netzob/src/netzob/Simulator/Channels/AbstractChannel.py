@@ -68,6 +68,8 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
     TYPE_UDPCLIENT = 7
     TYPE_UDPSERVER = 8
 
+    DEFAULT_WRITE_COUNTER_MAX = -1
+
     def __init__(self, isServer, _id=uuid.uuid4()):
         """Constructor for an Abstract Channel
 
@@ -82,6 +84,8 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         self.id = _id
         self.isOpened = False
         self.type = AbstractChannel.TYPE_UNDEFINED
+        self.writeCounter = 0
+        self.writeCounterMax = AbstractChannel.DEFAULT_WRITE_COUNTER_MAX
 
     def __enter__(self):
         """Enter the runtime channel context.
@@ -157,13 +161,29 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         @type timeout: :class:`int`
         """
 
+    def setWriteCounterMax(self, maxValue):
+        """Change the max number of writings.
+        When it is reached, no packet can be sent anymore until
+        clearWriteCounter() is called.
+        if maxValue==-1, the sending limit is deactivated.
+
+        :parameter maxValue: the new max value
+        :type maxValue: int
+        """
+        self.writeCounterMax = maxValue
+
+    def clearWriteCounter(self):
+        """Reset the writings counter.
+        """
+        self.writeCounter = 0
+
     def write(self, data, rate=None, duration=None):
         """Write on the communication channel the specified data
 
         :parameter data: the data to write on the channel
         :type data: bytes object
 
-        :param rate: specifies the bandwidth in octets to respect durring traffic emission (should be used with duration= parameter)
+        :param rate: specifies the bandwidth in octets to respect during traffic emission (should be used with duration= parameter)
         :type rate: int
 
         :param duration: tells how much seconds the symbol is continuously written on the channel
@@ -174,6 +194,12 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
 
         """
 
+        if ((self.writeCounterMax > 0) and
+           (self.writeCounter > self.writeCounterMax)):
+            raise Exception("Max write counter reached ({})"
+                            .format(self.writeCounterMax))
+
+        self.writeCounter += 1
         len_data = 0
         if duration is None:
             len_data = self.writePacket(data)
