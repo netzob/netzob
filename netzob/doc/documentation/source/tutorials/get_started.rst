@@ -75,8 +75,8 @@ etc.).
 
 For this tutorial, you can import network messages with the provided
 PCAP file. But we recommand to use the provided implementation to
-generate samples of traffic and capture them with Netzob. You can to
-this with the Netwok Capturer plugin, which is accessible is the menu
+generate samples of traffic and capture them with Netzob. You can do
+this with the Netwok Capturer plugin, which is accessible in the menu
 ``File`` > ``Capture messages`` > ``Capture network traffic``.
 
 .. figure:: https://dev.netzob.org/attachments/113/tuto_capture-small.png
@@ -85,7 +85,7 @@ this with the Netwok Capturer plugin, which is accessible is the menu
    :alt: 
 
 
-As shown on the picture, you have to launch the capture at the Layer 4
+As shown in the picture, you have to launch the capture at the Layer 4
 on the localhost ``lo`` interface. As the targeted protocol works over
 UDP, you'll be able to capture only the UDP payloads. Then launch the
 server of the targeted protocol and then the client. This one will send

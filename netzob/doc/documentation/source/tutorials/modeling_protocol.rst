@@ -135,9 +135,9 @@ A *Data Variables* describes a data which value is of a given type. Various type
     >>> field.specialize()
     '\xc0\xa8\x00\x0b'
     
-Along with Data variables, the definition domain of a field can embed the definition of relationships. Two kinds of relationships are supported In Netzob; intra-symbol relationships and inter-symbol relationships. The former denotes a relationship between the size or the value of a variable against another field in the same symbol. The latter one denotes a relationship against a field of another symbol. Currently, three kinds of relationships is supported.
+Along with Data variables, the definition domain of a field can embed the definition of relationships. Two kinds of relationships are supported in Netzob; intra-symbol relationships and inter-symbol relationships. The former denotes a relationship between the size or the value of a variable against another field in the same symbol. The latter one denotes a relationship against a field of another symbol. Currently, three kinds of relationships are supported.
   
-* A *Size Relationship* that describes a data which value is the size of another field.
+* A *Size Relationship* that describes a data whose value is the size of another field.
 
   The size field can be declared before the targeted field in the same symbol::
 
@@ -171,7 +171,7 @@ Along with Data variables, the definition domain of a field can embed the defini
     
 * A *Value Relationship* is very similar to the size relationship except that the relationship applies on the value of the targeted field.
 
-  For example, a symbol can be made of three fields, the former is a random sequence of 5 bytes, the second is a simple ASCII delimitor (':') while latest shares the same value than the first field::
+  For example, a symbol can be made of three fields, the former being a random sequence of 5 bytes, the second a simple ASCII delimitor (':') while the latest shares the same value than the first field::
 
     >>> f1 = Field(Raw(nbBytes=5))
     >>> f2 = Field(ASCII(':'))
@@ -182,9 +182,9 @@ Along with Data variables, the definition domain of a field can embed the defini
     >>> s.specialize()
     '6H\xf9\x84\xc4:6H\xf9\x84\xc4'
 
-  More details and examples of Size relationships can be found in its API doc :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Size`.
+  More details and examples of Value relationships can be found in its API doc :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Size`.
     
-* An *InternetChecksum Variable* describes a data which value is the IP checksum of one or more other fields.
+* An *InternetChecksum Variable* describes a data whose value is the IP checksum of one or more other fields.
 
   The following example, illustrates the creation of an ICMP Echo request packet with a valid checksum represented on two bytes computed on-the-fly::
     
