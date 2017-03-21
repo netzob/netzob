@@ -213,7 +213,7 @@ class RawEthernetClient(AbstractChannel):
             dstMacAddr = binascii.unhexlify(dstMacAddr)
         else:
             # Force ARP resolution
-            p = subprocess.Popen("ping -c1 {}".format(self.remoteIP), shell=True)
+            p = subprocess.Popen(["/bin/ping", "-c1", self.remoteIP])
             p.wait()
             time.sleep(0.1)
 
