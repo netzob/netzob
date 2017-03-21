@@ -56,7 +56,7 @@ Reading packets from a PCAP file is done through the PCAPImporter.readFile() sta
   messages = messages_session1 + messages_session2
 
   for message in messages:
-      print message
+      print(message)
 
 The output is::
 
@@ -89,11 +89,11 @@ According to a quick review of the displayed messages, the character '#' sounds 
 
   Format.splitDelimiter(symbol, ASCII("#"))
 
-  print "[+] Symbol structure:"
-  print symbol._str_debug()
+  print("[+] Symbol structure:")
+  print(symbol._str_debug())
 
-  print "[+] Partitionned messages:"
-  print symbol
+  print("[+] Partitionned messages:")
+  print(symbol)
 
 We now obtain the following symbol (i.e. our goup of messages) structure::
 
@@ -190,10 +190,10 @@ The first field seems interesting, as it contains some kind of commands ('CMDenc
 
   symbols = Format.clusterByKeyField(symbol, symbol.fields[0])
 
-  print "[+] Number of symbols after clustering: {0}".format(len(symbols))
-  print "[+] Symbol list:"
+  print("[+] Number of symbols after clustering: {0}".format(len(symbols)))
+  print("[+] Symbol list:")
   for keyFieldName, s in symbols.items():
-      print "  * {0}".format(keyFieldName)
+      print("  * {0}".format(keyFieldName))
 
 The clustering algorithm produces 14 different symbols, where each symbol has a uniq value in the first field.::
 
@@ -222,8 +222,8 @@ As the last field seems to have a dynamic size, let's have a look at what would 
 
     for symbol in symbols.values():
         Format.splitAligned(symbol.fields[2], doInternalSlick=True)
-        print "[+] Partitionned messages:"
-        print symbol
+        print("[+] Partitionned messages:")
+        print(symbol)
 
 For the symbol 'CMDencrypt', the sequence alignment of the last field produces the following format, where we can observe a static field of '\x00\x00\x00' surrounded by two variable fields. The last field seems to be the buffer we want to encrypt, as the key field name suggest (i.e. 'CMDencrypt').::
 
@@ -242,16 +242,16 @@ Let's now find any relationships is those messages::
     for symbol in symbols.values():
         rels = RelationFinder.findOnSymbol(symbol)
 
-        print "[+] Relations found: "
+        print("[+] Relations found: ")
         for rel in rels:
-            print "  " + rel["relation_type"] + ", between '" + rel["x_attribute"] + "' of:"
-            print "    " + str('-'.join([f.name for f in rel["x_fields"]]))
+            print("  " + rel["relation_type"] + ", between '" + rel["x_attribute"] + "' of:")
+            print("    " + str('-'.join([f.name for f in rel["x_fields"]])))
             p = [v.getValues()[:] for v in rel["x_fields"]]
-            print "    " + str(p)
-            print "  " + "and '" + rel["y_attribute"] + "' of:"
-            print "    " + str('-'.join([f.name for f in rel["y_fields"]]))
+            print("    " + str(p))
+            print("  " + "and '" + rel["y_attribute"] + "' of:")
+            print("    " + str('-'.join([f.name for f in rel["y_fields"]])))
             p = [v.getValues()[:] for v in rel["y_fields"]]
-            print "    " + str(p)
+            print("    " + str(p))
 
 In the symbol 'CMDencrypt', we have found a relationship between the content of a field (the third one) and the length of another field (the last one, which presumably contains the buffer we want to encrypt).::
 
@@ -280,8 +280,8 @@ We then modify the format message to apply the relationship we have just found, 
             rel = rels[0]
             rel["x_fields"][0].domain = Size(rel["y_fields"], factor=1/8.0)
 
-        print "[+] Symbol structure:"
-        print symbol._str_debug()
+        print("[+] Symbol structure:")
+        print(symbol._str_debug())
 
 The 'CMDencrypt' symbol structure now looks like this::
 
@@ -320,7 +320,7 @@ We will generate a basic automaton that illustrates the sequence of commands and
 
     # Print the dot representation of the automata
     dotcode = automata.generateDotCode()
-    print dotcode
+    print(dotcode)
 
 The obtained automaton is finally converted into Dot code in order to render a graphical version of it.::
 
@@ -369,7 +369,7 @@ This time, instead of converting a PCAP into a sequence of states for each messa
 
     # Print the dot representation of the automata
     dotcode = automata.generateDotCode()
-    print dotcode
+    print(dotcode)
 
 The obtained automaton is finally converted into Dot code in order to render a graphical version of it.::
 
@@ -415,7 +415,7 @@ Finally, we convert multiple sequences of messages taken form different PCAP fil
 
     # Print the dot representation of the automata
     dotcode = automata.generateDotCode()
-    print dotcode
+    print(dotcode)
 
 The obtained automaton is finally converted into Dot code in order to render a graphical version of it.::
 
@@ -477,7 +477,7 @@ Then, we create a UDP client that will communicate with the server (on 127.0.0.1
 
     # Visit the automata for n iteration
     state = automata.initialState
-    for n in xrange(8):
+    for n in range(8):
         state = state.executeAsInitiator(abstractionLayerOut)
 
 We go through 8 iterations in the automaton.::
@@ -570,10 +570,10 @@ Finally, we voluntarily twist the format message of the 'CMDencrypt' symbol, in 
 
     def send_and_receive_symbol(symbol):
         data = symbol.specialize()
-	print "[+] Sending: {0}".format(repr(data))
+	print("[+] Sending: {0}".format(repr(data)))
 	channelOut.write(data)
 	data = channelOut.read()
-	print "[+] Receiving: {0}".format(repr(data))
+	print("[+] Receiving: {0}".format(repr(data)))
 
     # Update symbol definition to allow a broader payload size
     symbols["CMDencrypt"].fields[2].fields[2].domain = Raw(nbBytes=(10, 120))
