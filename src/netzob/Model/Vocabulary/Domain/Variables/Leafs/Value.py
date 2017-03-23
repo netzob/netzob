@@ -107,7 +107,23 @@ class Value(AbstractRelationVariableLeaf):
     >>> ms = MessageSpecializer()
     >>> print(TypeConverter.convert(ms.specializeSymbol(s).generatedContent, BitArray, Raw))
     b'netzob;netzob!'
-    
+
+    This checks for an issue that the Value Relation had with Alt fields.
+
+    >>> from netzob.all import *
+    >>> messagevalue = RawMessage(b'\x55\xcd\x55\xcd\x0c\x00\x01')
+    >>> messagevaluetwo = RawMessage(b'\x58\xcf\x58\xcf\x0c\x00\x01')
+    >>> field1 = Field(name="f1", domain=Alt([Raw(b'\x55\xcd'), Raw(b'\x58\xcf')]))
+    >>> field2 = Field(name="f2", domain=Raw(b'\x0c\x00\x01'))
+    >>> fieldValue = Field(name="value", domain=Value(field1))
+    >>> sym = Symbol(messages=[messagevalue, messagevaluetwo], fields=[fieldValue, field1, field2])
+
+    value    | f1       | f2
+    -------- | -------- | --------------
+    b'U\xcd' | b'U\xcd' | '\x0c\x00\x01'
+    b'X\xcf' | b'X\xcf' | '\x0c\x00\x01'
+    -------- | -------- | --------------
+
     """
 
     def __init__(self, field, name=None):
@@ -155,7 +171,15 @@ class Value(AbstractRelationVariableLeaf):
 
             # lets compute what could be the possible value
             fieldDep = self.fieldDependencies[0]
-            (minSizeDep, maxSizeDep) = fieldDep.domain.dataType.size
+            try:
+                (minSizeDep, maxSizeDep) = fieldDep.domain.dataType.size
+            except:
+                (minSizeDep,maxSizeDep) = (0,0)
+                for child in fieldDep.domain.children:
+                    if maxSizeDep < child.dataType.size[1]:
+                        maxSizeDep = child.dataType.size[1]
+                    if minSizeDep > child.dataType.size[0] or (minSizeDep == 0 and child.dataType.size[0] != 0):
+                        minSizeDep = child.dataType.size[0]
             if minSizeDep > len(content):
                 self._logger.debug("Size of the content to parse is smallest than the min expected size of the dependency field")
                 return results
