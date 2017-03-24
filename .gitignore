@@ -1,0 +1,11 @@
+#Compiled source#
+*.pyc
+
+#Other#
+__pycache__  
+
+#Useless XML stuff#
+*.xml
+
+#.ignore#
+.idea

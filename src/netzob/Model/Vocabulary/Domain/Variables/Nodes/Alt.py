@@ -48,6 +48,12 @@ from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import 
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 
+from netzob.Model.Types.TypeConverter import TypeConverter
+from netzob.Model.Types.BitArray import BitArray
+from netzob.Model.Types.Raw import Raw
+
+from bitarray import bitarray
+
 @NetzobLogger
 class Alt(AbstractVariableNode):
     """Represents an Alternative (OR) in the domain definition

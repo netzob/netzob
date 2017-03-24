@@ -89,6 +89,21 @@ class InternetChecksum(AbstractRelationVariableLeaf):
     '08' | '00' | '0716'   | '1d22'     | '0007'          | 'a8f3f65300000000' | '60b5060000000000101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f3031323334353637'
     ---- | ---- | -------- | ---------- | --------------- | ------------------ | --------------------------------------------------------------------------------------------------
 
+    Fixed an issue with Alt field
+
+    >>> messageCS =  RawMessage(b'\x32\x9d\x55\xcd\x0c\x00\x01')
+    >>> messageCS2 = RawMessage(b'\x30\x9a\x58\xcf\x0c\x00\x01')
+    >>> field1 = Field(name="aftermut", domain=Alt([Raw(b'\x55\xcd'),Raw(b'\x58\xcf')]))
+    >>> field2 = Field(name="afterstat", domain=Raw(b'\x0c\x00\x01'))
+    >>> fieldCS = Field(name="CS",domain=InternetChecksum([field1,field2]))
+    >>> sym = Symbol(messages=[messageCS,messageCS2],fields=[fieldCS,field1,field2])
+    >>> print(sym)
+    CS       | aftermut | afterstat
+    -------- | -------- | --------------
+    b'2\x9d' | b'U\xcd' | '\x0c\x00\x01'
+    b'0\x9a' | b'X\xcf' | '\x0c\x00\x01'
+    -------- | -------- | --------------
+
     """
 
     def __init__(self, fields, dataType=None, name=None):
@@ -96,7 +111,7 @@ class InternetChecksum(AbstractRelationVariableLeaf):
             fields = [fields]
         super(InternetChecksum, self).__init__("InternetChecksum", fieldDependencies=fields, name=name)
         if dataType is None:
-            dataType = Raw(nbBytes=1)
+            dataType = Raw(nbBytes=2)
         self.dataType = dataType
 
     def __key(self):
@@ -118,13 +133,16 @@ class InternetChecksum(AbstractRelationVariableLeaf):
         memory = genericPath.memory
         return memory.hasValue(self)
 
+
     @typeCheck(ParsingPath)
     def valueCMP(self, parsingPath, carnivorous=False):
         results = []
         if parsingPath is None:
             raise Exception("ParsingPath cannot be None")
-
-        sizeOfPossibleValue = self.dataType.size()
+        try:
+            sizeOfPossibleValue = self.dataType.size()
+        except:
+            sizeOfPossibleValue = self.dataType.size
         if sizeOfPossibleValue[0] != sizeOfPossibleValue[1]:
             raise Exception("Impossible to abstract messages if a size field has a dynamic size")
 
@@ -150,15 +168,12 @@ class InternetChecksum(AbstractRelationVariableLeaf):
             raise Exception("VariableParserPath cannot be None")
         return []
 
-
     @typeCheck(ParsingPath)
     def domainCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
         """This method participates in the abstraction process.
 
         It creates a VariableSpecializerResult in the provided path if
         the remainingData (or some if it) follows the type definition"""
-
-
         results = []
         self._logger.debug("domainCMP executed on {0} by an Internet Checksum domain".format(parsingPath))
 
@@ -168,7 +183,6 @@ class InternetChecksum(AbstractRelationVariableLeaf):
 
         content = parsingPath.getDataAssignedToVariable(self)
         possibleValue = content[:maxSize]
-
         expectedValue = None
         try:
             expectedValue = self._computeExpectedValue(parsingPath)
@@ -177,7 +191,7 @@ class InternetChecksum(AbstractRelationVariableLeaf):
                 parsingPath.addResult(self, expectedValue.copy())
                 results.append(parsingPath)
             else:
-                self._logger.debug("Executed callback has failed.")
+               self._logger.debug("Executed callback has failed.")
         except Exception as e:
             # the expected value cannot be computed
             if acceptCallBack:
@@ -206,14 +220,20 @@ class InternetChecksum(AbstractRelationVariableLeaf):
         hasValue = True
         for field in self.fieldDependencies:
             if field.domain != self and not parsingPath.isDataAvailableForVariable(field.domain):
-                self._logger.debug("Field : {0} has no value".format(field.id))
-                hasValue = False
+                try:
+                    field.domain.children
+                    for child in field.domain.children:
+                        parsingPath.assignDataToVariable(parsingPath.getDataAssignedToVariable(child),field.domain)
+                except:
+                    self._logger.debug("Field : {0} has no value".format(field.id))
+                    hasValue = False
 
         if not hasValue:
             raise Exception("Expected value cannot be computed, some dependencies are missing for domain {0}".format(self))
         else:
             fieldValues = []
             for field in self.fieldDependencies:
+                # Retrieve field value
                 if field.domain is self:
                     fieldSize = random.randint(field.domain.dataType.size[0], field.domain.dataType.size[1])
                     fieldValue = b"\x00" * int(fieldSize / 8)

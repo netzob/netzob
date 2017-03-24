@@ -36,6 +36,8 @@
 # +---------------------------------------------------------------------------+
 import uuid
 from bitarray import bitarray
+#Debug
+import IPython
 # +---------------------------------------------------------------------------+
 # | related third party imports                                               |
 # +---------------------------------------------------------------------------+
@@ -49,6 +51,7 @@ from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVa
 from netzob.Model.Types.TypeConverter import TypeConverter
 from netzob.Model.Types.BitArray import BitArray
 from netzob.Model.Types.Raw import Raw
+
 
 @NetzobLogger
 class GenericPath(object):
@@ -198,12 +201,13 @@ class GenericPath(object):
         bitarray('01111010011011110110001001111001')
 
         """
-        
         if variable is None:
             raise Exception("Variable cannot be None")
         if variable.id not in self._dataAssignedToVariable:
+         #   if variable.currentValue is not None:
+         #       self._dataAssignedToVariable[variable.id] = variable.currentValue
+          #  else:
             raise Exception("No data is assigned to variable '{0}'".format(variable.name))
-
         return self._dataAssignedToVariable[variable.id]
 
     @typeCheck(AbstractVariable)
