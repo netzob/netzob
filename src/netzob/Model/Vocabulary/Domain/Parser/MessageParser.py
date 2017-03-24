@@ -223,7 +223,6 @@ class MessageParser(object):
                 result.append(parsingResult.getDataAssignedToField(field))
 
             self.memory = parsingResult.memory
-
             yield result
 
         raise InvalidParsingPathException("No parsing path returned while parsing '{}'".format(TypeConverter.convert(bitArrayToParse, BitArray, Raw)))
@@ -266,8 +265,6 @@ class MessageParser(object):
                 pass
 
         raise StopIteration()
-        # InvalidParsingPathException("No parsing path returned while parsing '{}'".format(TypeConverter.convert(value_before_parsing, BitArray, Raw)))
-
 
 
 

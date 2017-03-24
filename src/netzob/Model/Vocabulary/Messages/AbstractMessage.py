@@ -177,9 +177,10 @@ class AbstractMessage(SortableObject):
             start = (function.start / 8)
             end = (function.end / 8)
             functionTable.applyFunction(function, start, end)
-
-        tmpData = b"".join(functionTable.getResult())
-
+        try:
+            tmpData = b"".join(functionTable.getResult())
+        except:
+            tmpData = "".join(functionTable.getResult())
         # Add header in front of the data
         HLS1 = "\033[0;32m"
         HLE1 = "\033[0;m"

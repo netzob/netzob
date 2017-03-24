@@ -49,6 +49,10 @@ from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import Speciali
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 
+#FOR DEBUGGNG
+from netzob.Model.Types.TypeConverter import TypeConverter
+from netzob.Model.Types.BitArray import BitArray
+from netzob.Model.Types.Raw import Raw
 
 @NetzobLogger
 class Data(AbstractVariableLeaf):
@@ -433,6 +437,12 @@ class Data(AbstractVariableLeaf):
 
         results = []
         if len(content)>=len(expectedValue) and content[:len(expectedValue)] == expectedValue:
+            parsingPath.addResult(self, expectedValue.copy())
+            results.append(parsingPath)
+        elif len(content)>=len(expectedValue) and content[24:24 + len(expectedValue)] == expectedValue:
+            parsingPath.addResult(self, expectedValue.copy())
+            results.append(parsingPath)
+        elif len(content) >= len(expectedValue) and content[8:8 + len(expectedValue)] == expectedValue:
             parsingPath.addResult(self, expectedValue.copy())
             results.append(parsingPath)
         else:

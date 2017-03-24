@@ -121,9 +121,25 @@ class Field(AbstractField):
 
     >>> f = Field([10, ASCII(nbChars=(10, 11))])
 
+    Netgoblin_fork:Here is how to add a message to a field not attached to any symbols
+
+    >>> f = Field(domain=Raw(b'\xc4\x00\x01\x01\x00\x00\x00\x00\x04\x00\x00\x00'))
+    >>> mess = RawMessage(b'\xc4\x00\x01\x01\x00\x00\x00\x00\x04\x00\x00\x00')
+    >>> f.messages=[mess]
+    >>> f.getValues()
+    [b'\xc4\x00\x01\x01\x00\x00\x00\x00\x04\x00\x00\x00']
+    >>> f.messages.append(mess)
+    >>> f.getValues()
+    [b'\xc4\x00\x01\x01\x00\x00\x00\x00\x04\x00\x00\x00', b'\xc4\x00\x01\x01\x00\x00\x00\x00\x04\x00\x00\x00']
+    >>> f.messages=[]
+    >>> f.messages=[mess]
+    >>> f.getValues()
+    [b'\xc4\x00\x01\x01\x00\x00\x00\x00\x04\x00\x00\x00']
+
+
     """
 
-    def __init__(self, domain=None, name="Field", layer=False):
+    def __init__(self, domain=None, name="Field", layer=False,messages = []):
         """
         :keyword domain: the definition domain of the field (see domain property to get more information)
         :type domain: a :class:`list` of :class:`object`, default is Raw(None)
@@ -137,6 +153,7 @@ class Field(AbstractField):
         if domain is None:
             domain = Raw(None)
         self.domain = domain
+        self.__messages = messages
 
     def specialize(self):
         """Specialize the current field to build a raw data that
@@ -205,15 +222,38 @@ class Field(AbstractField):
     @property
     def messages(self):
         """A list containing all the messages that the parents of this field have.
-        In reality, a field doesn't have messages, it just returns the messages of its symbol
+        In reality, a field doesn't have messages, it just returns the messages of its symbol.
+        Netgoblin_fork: If the field is not attached to a symbol and hence has no messages, one may append or add
+        messages using the messages setter
 
         :type : a :class:`list` of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
         """
-        messages = []
+
+        #if(self.__messages and not self.getSymbol().messages):
+        #    return self.__messages
+        #else:
         try:
-            messages.extend(self.getSymbol().messages)
+            self.getSymbol().messages
+            self.__messages = []
+            self.__messages.extend(self.getSymbol().messages)
         except Exception as e:
             self._logger.warning("The field is attached to no symbol and so it has no messages: {0}".format(e))
+            self._logger.warning("Hence we will return the property, either empty or set to what the user specified.")
+        return self.__messages
 
-        return messages
+    @messages.setter
+    def messages(self,message):
+        """
+        Netgoblin_fork: This setter takes either a list of messages or a message as a parameter. It then performs a check
+        If the variable is not a list it appends it to the property. Otherwise it replaces the property list and the parameter list.
 
+        :param message:
+        :return:
+        """
+        if not isinstance(message,list):
+            try:
+                self.__messages.append(message)
+            except Exception as e:
+                self._logger.debug("Could not add a message to Field: {0}".format(e))
+        else:
+            self.__messages = message

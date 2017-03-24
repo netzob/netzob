@@ -180,6 +180,26 @@ class Symbol(AbstractField):
         while(len(self.__messages) > 0):
             self.__messages.pop()
 
+    def getFieldFromIndex(self, index):
+        """
+        Get the field in which the index of a value in a message belongs
+
+        :param index:
+        :return field,field_index_in_symbol:
+        """
+        for field_index_in_symbol,field in enumerate(self.fields):
+            try:
+                for i,val in enumerate(field.getValues()):
+                    if rebuilt_messages[i]:
+                        rebuilt_messages[i] += val
+                        if len(rebuilt_messages[i]) - 1 == index:
+                            return field,field_index_in_symbol
+                    else:
+                        rebuilt_messages.append(val)
+            except:
+                raise "Field has no values or something else is preventing the search"
+
+
     # Properties
 
     @property
