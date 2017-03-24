@@ -61,7 +61,7 @@ class TCPServer(AbstractChannel):
     >>> import time
     >>> server = TCPServer(localIP='127.0.0.1', localPort=9999)
 
-    >>> symbol = Symbol([Field("Hello Zoby !")])
+    >>> symbol = Symbol([Field("Hello everyone!")])
     >>> s0 = State()
     >>> s1 = State()
     >>> s2 = State()

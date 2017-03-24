@@ -60,7 +60,7 @@ class TCPClient(AbstractChannel):
     >>> import time
     >>> client = TCPClient(remoteIP='127.0.0.1', remotePort=9999)
 
-    >>> symbol = Symbol([Field("Hello Zoby !")])
+    >>> symbol = Symbol([Field("Hello everyone!")])
     >>> s0 = State()
     >>> s1 = State()
     >>> s2 = State()
