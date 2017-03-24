@@ -63,7 +63,7 @@ class UDPServer(AbstractChannel):
     >>> server.open()
     >>> server.close()
 
-    >>> symbol = Symbol([Field("Hello Zoby !")])
+    >>> symbol = Symbol([Field("Hello everyone!")])
     >>> s0 = State()
     >>> s1 = State()
     >>> s2 = State()

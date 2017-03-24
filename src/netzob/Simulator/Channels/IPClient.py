@@ -56,7 +56,7 @@ class IPClient(AbstractChannel):
     >>> from netzob.all import *
     >>> client = IPClient(remoteIP='127.0.0.1')
     >>> client.open()
-    >>> symbol = Symbol([Field("Hello Zoby !")])
+    >>> symbol = Symbol([Field("Hello everyone!")])
     >>> client.write(symbol.specialize())
     >>> client.close()
 
