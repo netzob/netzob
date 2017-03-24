@@ -250,6 +250,15 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         :type data: binary object
         """
 
+    @abc.abstractmethod
+    def sendReceive(self, data, timeout=None):
+        """Write on the communication channel the specified data and returns the corresponding response
+
+        :parameter data: the data to write on the channel
+        :type data: binary object
+        @type timeout: :class:`int`
+        """
+
     # Management methods
 
     @property
