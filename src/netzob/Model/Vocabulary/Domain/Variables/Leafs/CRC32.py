@@ -90,6 +90,21 @@ class CRC32(AbstractRelationVariableLeaf):
     '08' | '00' | '0716'   | '1d22'     | '0007'          | 'a8f3f65300000000' | '60b5060000000000101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f3031323334353637'
     ---- | ---- | -------- | ---------- | --------------- | ------------------ | --------------------------------------------------------------------------------------------------
 
+    Fixed an issue with Alt Field
+
+    >>> messageCRC = RawMessage(b'\x8f\x48\xeb\xcc\x55\xcd\x0c\x00\x01')
+    >>> messageCRC2 = RawMessage(b'\xb5\x44\x72\x9e\x58\xcf\x0c\x00\x01')
+    >>> field1 = Field(name="aftermut", domain=Alt([Raw(b'\x55\xcd'), Raw(b'\x58\xcf')]))
+    >>> field2 = Field(name="afterstat", domain=Raw(b'\x0c\x00\x01'))
+    >>> fieldCS = Field(name="CRC", domain=CRC32([field1, field2],endianness='little'))
+    >>> sym = Symbol(messages=[messageCRC, messageCRC2], fields=[fieldCS, field1, field2])
+    >>> print(sym)
+    CRC              | aftermut | afterstat
+    ---------------- | -------- | --------------
+    b'\x8fH\xeb\xcc' | b'U\xcd' | '\x0c\x00\x01'
+    b'\xb5Dr\x9e'    | b'X\xcf' | '\x0c\x00\x01'
+    ---------------- | -------- | --------------
+
     """
 
     def __init__(self, fields, dataType=None, name=None, endianness = AbstractType.defaultEndianness()):
@@ -97,7 +112,7 @@ class CRC32(AbstractRelationVariableLeaf):
             fields = [fields]
         super(CRC32, self).__init__("CRC32", fieldDependencies=fields, name=name)
         if dataType is None:
-            dataType = Raw(nbBytes=1)
+            dataType = Raw(nbBytes=4)
         self.dataType = dataType
         self.endianness = endianness
 
@@ -132,7 +147,7 @@ class CRC32(AbstractRelationVariableLeaf):
 
         content = parsingPath.getDataAssignedToVariable(self)
         possibleValue = content[:sizeOfPossibleValue[1]]
-        self._logger.debug("Possible value of CRC32 field: {0}".format(possibleValue))
+        self._logger.warn("Possible value of CRC32 field: {0}".format(possibleValue))
 
         expectedValue = self._computeExpectedValue(parsingPath)
         if expectedValue is None:
@@ -174,8 +189,7 @@ class CRC32(AbstractRelationVariableLeaf):
         expectedValue = None
         try:
             expectedValue = self._computeExpectedValue(parsingPath)
-            if possibleValue[:len(expectedValue)] == expectedValue:
-                self._logger.debug("Callback executed with success")
+            if possibleValue[:len(expectedValue)] == expectedValue: #or expectedValue[:len(possibleValue)] == possibleValue:
                 parsingPath.addResult(self, expectedValue.copy())
                 results.append(parsingPath)
             else:
@@ -216,6 +230,7 @@ class CRC32(AbstractRelationVariableLeaf):
         else:
             fieldValues = []
             for field in self.fieldDependencies:
+                # Retrieve field value
                 if field.domain is self:
                     fieldSize = random.randint(field.domain.dataType.size[0], field.domain.dataType.size[1])
                     fieldValue = b"\x00" * int(fieldSize / 8)
@@ -230,7 +245,6 @@ class CRC32(AbstractRelationVariableLeaf):
             # compute the crc of this value
             chsum = self.__crc32(fieldValues)
             b = TypeConverter.convert(chsum, Integer, BitArray, src_unitSize=AbstractType.UNITSIZE_32, src_sign = AbstractType.SIGN_UNSIGNED,src_endianness= self.endianness)
-            #b = TypeConverter.convert(chsum, Integer, BitArray, src_unitSize=AbstractType.UNITSIZE_32,src_sign=AbstractType.SIGN_UNSIGNED)
             return b
 
     @typeCheck(SpecializingPath)
