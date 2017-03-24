@@ -34,4 +34,4 @@ from netzob.Inference.Vocabulary.Format import Format
 from netzob.Inference.Vocabulary.RelationFinder import RelationFinder
 from netzob.Inference.Vocabulary.CorrelationFinder import CorrelationFinder
 from netzob.Inference.Vocabulary.EntropyMeasurement import EntropyMeasurement
-#from netzob.Inference.Vocabulary.CRCFinder import CRCFinder
+from netzob.Inference.Vocabulary.CRCFinder import CRCFinder
