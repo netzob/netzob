@@ -313,10 +313,10 @@ We will generate a basic automaton that illustrates the sequence of commands and
     session = Session(messages_session1)
 
     # Abstract this session according to the inferred symbols
-    abstractSession = session.abstract(symbols.values())
+    abstractSession = session.abstract(list(symbols.values()))
 
     # Generate an automata according to the observed sequence of messages/symbols
-    automata = Automata.generateChainedStatesAutomata(abstractSession, symbols.values())
+    automata = Automata.generateChainedStatesAutomata(abstractSession, list(symbols.values()))
 
     # Print the dot representation of the automata
     dotcode = automata.generateDotCode()
@@ -362,10 +362,10 @@ This time, instead of converting a PCAP into a sequence of states for each messa
     session = Session(messages_session1)
 
     # Abstract this session according to the inferred symbols
-    abstractSession = session.abstract(symbols.values())
+    abstractSession = session.abstract(list(symbols.values()))
 
     # Generate an automata according to the observed sequence of messages/symbols
-    automata = Automata.generateOneStateAutomata(abstractSession, symbols.values())
+    automata = Automata.generateOneStateAutomata(abstractSession, list(symbols.values()))
 
     # Print the dot representation of the automata
     dotcode = automata.generateDotCode()
@@ -407,11 +407,11 @@ Finally, we convert multiple sequences of messages taken form different PCAP fil
     session3 = Session(messages_session3)
 
     # Abstract this session according to the inferred symbols
-    abstractSession1 = session1.abstract(symbols.values())
-    abstractSession3 = session3.abstract(symbols.values())
+    abstractSession1 = session1.abstract(list(symbols.values()))
+    abstractSession3 = session3.abstract(list(symbols.values()))
 
     # Generate an automata according to the observed sequence of messages/symbols
-    automata = Automata.generatePTAAutomata([abstractSession1, abstractSession3], symbols.values())
+    automata = Automata.generatePTAAutomata([abstractSession1, abstractSession3], list(symbols.values()))
 
     # Print the dot representation of the automata
     dotcode = automata.generateDotCode()
@@ -472,7 +472,7 @@ Then, we create a UDP client that will communicate with the server (on 127.0.0.1
 
     # Create a UDP client instance
     channelOut = UDPClient(remoteIP="127.0.0.1", remotePort=4242)
-    abstractionLayerOut = AbstractionLayer(channelOut, symbols.values())
+    abstractionLayerOut = AbstractionLayer(channelOut, list(symbols.values()))
     abstractionLayerOut.openChannel()
 
     # Visit the automata for n iteration
