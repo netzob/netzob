@@ -28,6 +28,7 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
+from collections.abc import ValuesView
 
 #+----------------------------------------------
 #| Related third party imports
@@ -47,7 +48,7 @@ from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransiti
 @NetzobLogger
 class PTAAutomataFactory(object):
     @staticmethod
-    @typeCheck(list, list)
+    @typeCheck(list, ValuesView)
     def generate(abstractSessions, symbolList):
         """Generate an automata by merging different abstract sessions
         in a Prefix Tree Acceptor (PTA).

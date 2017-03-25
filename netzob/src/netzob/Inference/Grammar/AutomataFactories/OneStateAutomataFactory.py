@@ -28,6 +28,7 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
+from collections.abc import ValuesView
 
 #+----------------------------------------------
 #| Related third party imports
@@ -46,7 +47,7 @@ from netzob.Model.Grammar.Transitions.CloseChannelTransition import CloseChannel
 @NetzobLogger
 class OneStateAutomataFactory(object):
     @staticmethod
-    @typeCheck(list, list)
+    @typeCheck(list, ValuesView)
     def generate(abstractSession, symbolList):
         """Generate an automata that, according to an abstract
         session, contains a main state where each request-response
