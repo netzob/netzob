@@ -13,7 +13,7 @@ from netzob.Model.Types.AbstractType import AbstractType
 from netzob.Model.Types.Raw import Raw
 from netzob.Model.Types.Integer import Integer
 from netzob.Model.Vocabulary.AbstractField import AbstractField
-from  netzob.Model.Vocabulary.Domain.Variables.Leafs import CRC32
+from  netzob.Model.Vocabulary.Domain.Variables.Leafs.CRC32 import CRC32
 
 
 @NetzobLogger
@@ -49,7 +49,7 @@ class CRCFinder(object):
 
     @staticmethod
     @typeCheck(AbstractField)
-    def findOnSymbol(symbol):
+    def findOnSymbol(symbol,create_fields=False):
         """Find exact relations between fields in the provided
         symbol/field.
 
@@ -58,20 +58,19 @@ class CRCFinder(object):
         """
 
         cf = CRCFinder()
-        return cf.executeOnSymbol(symbol)
+        return cf.executeOnSymbol(symbol,create_fields)
 
 
     @typeCheck(AbstractField)
-    def executeOnSymbol(self, symbol,create_fields = False):
+    def executeOnSymbol(self, symbol,create_fields):
         """Find crc32 relations between fields of the provided symbol. Symbol must have messages
         """
-        create_fields = True
         for message in symbol.messages:
             results = collections.namedtuple('Results', ['CRC_be', 'CRC_le', 'CRC_mid_be', 'CRC_mid_le'])
             field_results = collections.namedtuple('Results', ['CRC_be', 'CRC_le', 'CRC_mid_be', 'CRC_mid_le'])
             searched_string = message.data
-            results.CRC_be, results.CRC_le = self.search_CRC(searched_string)
-            results.CRC_mid_be, results.CRC_mid_le = self.search_mid_CRC(searched_string)
+            results.CRC_be, results.CRC_le = self.__search_CRC(searched_string)
+            results.CRC_mid_be, results.CRC_mid_le = self.__search_mid_CRC(searched_string)
             self._logger.critical("Found the following results:")
             self._logger.critical("CRC_BE : " + str(results.CRC_be) + "")
             self._logger.critical("CRC_LE : " + str(results.CRC_le) + "")
@@ -87,8 +86,8 @@ class CRCFinder(object):
                     max_length = max([len(i) for i in field_values])
                     val = field_values[0] # Does not matter if field is Static or ALT, it always follows the same scheme.
                     fields_dict = dict()
-                    field_results.CRC_be, field_results.CRC_le = self.search_CRC(val)
-                    field_results.CRC_mid_be, field_results.CRC_mid_le = self.search_mid_CRC(val)
+                    field_results.CRC_be, field_results.CRC_le = self.__search_CRC(val)
+                    field_results.CRC_mid_be, field_results.CRC_mid_le = self.__search_mid_CRC(val)
                     if field_results.CRC_be or field_results.CRC_le or field_results.CRC_mid_be or field_results.CRC_mid_le:
                         # If refining the search gives results => The CRC and the elements that are used for the CRC are all inside one field
                         # Hence we create subfields
@@ -120,7 +119,6 @@ class CRCFinder(object):
                             #TODO
                             pass
                     else:
-                        print(symbol)
                         # CRC and arguments always split in between other fields => Delete fields and create new ones Or just return indexes, and let user redefine fields manually
                         #Step1: Find field corresponding to index result
                         #Step2: Check if field is not CRC (if all values of size 4)
@@ -128,43 +126,67 @@ class CRCFinder(object):
                         #Step3 : See if end of CRC still in field
                         #Step3.A : if still in field, deleter field and create new CRC field as well as two other fields
                         #Step3.B: If not, delete the two fields and create new CRC field as well as two other fields
-                        if results.CRC_be:
-                            for crcindex in results.CRC_be:
-                                searchedfield = self.getFieldFromIndex(crcindex,symbol)
-                                print(index)
-                                pass
+                        if results.CRC_le:
+                            self.__automate_field_creation(results.CRC_le,symbol,endianness='little')
+                        elif results.CRC_be:
+                            self.__automate_field_creation(results.CRC_be,symbol,endianness='big')
+                        elif results.CRC_mid_be:
+                            #TODO
+                            pass
+                        elif results.CRC_mid_le:
+                            #TODO
+                            pass
+                        else:
+                            #TODO
+                            pass
+
 
             else:
                 self._logger.debug("Symbol has no fields. Creating new ones...")
         else:
             self._logger.debug("Sorry, no CRC found")
 
-    def search_CRC(self,searched_string):
+
+    def __search_CRC(self,searched_string):
+        """
+        Looks for a CRC in BE and LE. The CRC is computed thanks to all the data following the CRC
+
+        :param searched_string: The string we are working on
+        :return: found_BE_CRCS_index as int,found_LE_CRCS_index as int
+        """
         found_BE_CRCS_index = []
         found_LE_CRCS_index = []
         i = 0  # Start search index
         while i + 5 < len(searched_string) - 1:
-            # BIG ENDIAN BASIC SEARCH
+            # LITTLE ENDIAN BASIC SEARCH
             try:
                 compared = bytes.fromhex(hex(binascii.crc32(searched_string[i + 4:]))[2:])[::-1]
             except:
                 compared = bytes.fromhex('0' + hex(binascii.crc32(searched_string[i + 4:]))[2:])[::-1]
             if searched_string[i:i + 4] == compared:
                 self._logger.critical(compared)
-                self._logger.debug("Found a CRC, adding it to found_BE_CRCS_index[]!")
-                found_BE_CRCS_index.append(i)
-            # LITTLE ENDIAN BASIC SEARCH
+                self._logger.debug("Found a CRC, adding it to found_LE_CRCS_index[]!")
+                found_LE_CRCS_index.append(i)
+            # BIG ENDIAN BASIC SEARCH
             try:
                 compared = bytes.fromhex(hex(binascii.crc32(searched_string[i + 4:][::-1]))[2:])[::-1]
             except:
                 compared = bytes.fromhex('0' + hex(binascii.crc32(searched_string[i + 4:][::-1]))[2:])[::-1]
             if searched_string[i:i+4] == compared :
-                self._logger.debug("Found a LE CRC, adding to found_LE_CRCS_index[]!")
-                found_LE_CRCS_index.append(i)
+                self._logger.debug("Found a LE CRC, adding to found_BE_CRCS_index[]!")
+                found_BE_CRCS_index.append(i)
             i += 1
         return found_BE_CRCS_index,found_LE_CRCS_index
 
-    def search_mid_CRC(self,searched_string):
+
+    def __search_mid_CRC(self,searched_string):
+        """
+        Looks for a CRC of the value b'\xca\xfe\x00\x00\x00\x00\xba\xbe', the b'\x00\x00\x00\x00' is then replaced by the computed CRC in the message.
+        Return values are the index results of the search in little and big endian
+
+        :param searched_string: A Raw string in which we look for the CRC
+        :return: found_BE_CRCS_index as int,found_LE_CRCS_index as int
+        """
         found_BE_CRCS_index = []
         found_LE_CRCS_index = []
         i = 0  # Start search index
@@ -185,7 +207,15 @@ class CRCFinder(object):
             i += 1
         return found_BE_CRCS_index,found_LE_CRCS_index
 
-    def getFieldFromIndex(self, index,symbol):
+
+    def __getFieldFromIndex(self, index,symbol):
+        """
+        This method tries to return the Field an index from a message belongs to.
+
+        :param index: An int. The index of a value in a message belonging to a symbol
+        :param symbol: The symbol we are working on
+        :return: Field object, maxSize as int, field_index as int
+        """
         #field_dict = dict()
         totalSize = 0
         for field in symbol.fields:
@@ -202,6 +232,94 @@ class CRCFinder(object):
                 minSize,maxSize = field.domain.dataType.size
             totalSize += maxSize
             if index < (totalSize/8):
-                return field
-             #field_dict[field] = minSize,maxSize
-        #pass
+                #Compute the index of the CRC relative to the field
+                field_index = totalSize - index
+                field_index = totalSize - field_index
+                return field, maxSize,field_index
+
+    def __define_field(self,val_set,field):
+        """
+
+        :param val_set: A set of values in the field
+        :param field: The field containing the CRC
+        :return: new_field: A new field (Alt or Raw)
+        """
+        if len(val_set) > 1:
+            # More than one value, create Alt Fields
+            domain_list = []
+            for value in val_set:
+                domain_list.append(Raw(value))
+            new_field = Field(name=searchedfield.name, domain=Alt(domain_list))
+        else:
+            # Only one value, create static Fields
+            new_field = Field(name=searchedfield.name, domain=Raw(val_set.pop()))
+        return new_field
+
+    def __automate_field_creation(self,results,symbol,endianness):
+        """
+        This method attempts to create a CRC field. It creates either a big or little endian CRC relation field using all the following fields to compute the CRC.
+
+        :param results: list of CRC indexes
+        :param symbol: The symbol in wich we want to define CRC fields
+        :param endianness: A string stating the endianness of the CRC, should either be "big" or "little"
+        """
+        domain_field_list = []
+        subfields = []
+        for crcindex in results:
+            searchedfield, field_size, field_index = self.__getFieldFromIndex(crcindex, symbol)
+            # Get all the fields after the current field (to define the CRC domain Relation
+            afterField = False
+            for f in symbol.fields:
+                if afterField:
+                    domain_field_list.append(f)
+                elif f.name == searchedfield.name:
+                    afterField = True
+            if field_size / 8 == 4:
+                # Is the field just CRC or more?
+                searchedfield.name = "CRC32_LE" + str(crcindex)
+                searchedfield.domain = CRC32(domain_field_list, endianness=endianness)
+            elif field_size > 4:
+                # The Field is the CRC and something else.
+                if field_index == 0:
+                    # CRC at beginning of field. Create new fields after CRC
+                    # Create a list of possible values
+                    val_list = []
+                    for val in searchedfield.getValues():
+                        val_list.append(val[4:])
+                        # Make a set
+                    val_set = set(val_list)
+                    newf = self.__define_field(val_set)
+                    domain_field_list.insert(0, newf)
+                    crc32field = Field(name="CRC32_LE" + str(crcindex), domain=CRC32(domain_field_list,endianness=endianness))
+                    subfields.append(crc32field)
+                    subfields.append(newf)
+                elif field_index / 8 + 4 == field_size / 8:
+                    # CRC at end of field. Create new fields before CRC
+                    # Create a list of possible values
+                    val_list = []
+                    for val in searchedfield.getValues():
+                        val_list.append(val[:field_index])
+                        # Make a set
+                    val_set = set(val_list)
+                    newf = self.__define_field(val_set)
+                    crc32field = Field(name="CRC32_LE" + str(crcindex), domain=CRC32(domain_field_list,endianness=endianness))
+                    subfields.append(newf)
+                    subfields(crc32field)
+                else:
+                    # CRC in the middle. Create new fields before and after CRC
+                    val_list1 = []
+                    val_list2 = []
+                    for val in searchedfield.getValues():
+                        val_list1.append(val[4:])
+                        val_list2.append(val[:field_index])
+                    # Make a set
+                    val_set1 = set(val_list1)
+                    val_set2 = set(val_list2)
+                    newf1 = self.__define_field(val_set1)
+                    newf2 = self.__define_field(val_set2)
+                    domain_field_list.insert(0, newf2)
+                    crc32field = Field(name="CRC32_LE" + str(crcindex), domain=CRC32(domain_field_list,endianness=endianness))
+                    subfields.append(newf1)
+                    subfields.append(crc32field)
+                    subfields.append(newf2)
+                searchedfield.fields = subfields
