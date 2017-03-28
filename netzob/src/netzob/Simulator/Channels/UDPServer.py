@@ -147,6 +147,15 @@ class UDPServer(AbstractChannel):
             raise Exception(
                 "Socket is not available or remote address is not known.")
 
+    @typeCheck(bytes)
+    def sendReceive(self, data, timeout=None):
+        """Write on the communication channel the specified data and returns
+        the corresponding response.
+
+        """
+
+        raise NotImplementedError("Not yet implemented")
+
     # Management methods
 
     # Properties

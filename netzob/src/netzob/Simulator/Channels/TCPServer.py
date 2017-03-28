@@ -162,6 +162,15 @@ class TCPServer(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
+    @typeCheck(bytes)
+    def sendReceive(self, data, timeout=None):
+        """Write on the communication channel the specified data and returns
+        the corresponding response.
+
+        """
+
+        raise NotImplementedError("Not yet implemented")
+
     # Management methods
 
     # Properties
