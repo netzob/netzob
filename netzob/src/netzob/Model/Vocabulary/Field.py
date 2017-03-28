@@ -123,7 +123,7 @@ class Field(AbstractField):
 
     """
 
-    def __init__(self, domain=None, name="Field", layer=False):
+    def __init__(self, domain=None, name="Field", layer=False, isPseudoField=False):
         """
         :keyword domain: the definition domain of the field (see domain property to get more information)
         :type domain: a :class:`list` of :class:`object`, default is Raw(None)
@@ -131,12 +131,15 @@ class Field(AbstractField):
         :type name: :class:`str`
         :keyword layer: a flag indicating if field is a layer
         :type layer: :class:`bool`
+        :keyword isPseudoField: a flag indicating if field is a pseudo field, meaning it is used internally but does not produce data
+        :type isPseudoField: :class:`bool`
 
         """
         super(Field, self).__init__(name, layer)
         if domain is None:
             domain = Raw(None)
         self.domain = domain
+        self.isPseudoField = isPseudoField
 
     def specialize(self):
         """Specialize the current field to build a raw data that
@@ -223,3 +226,20 @@ class Field(AbstractField):
                 format(e))
 
         return messages
+
+    @property
+    def isPseudoField(self):
+        """Flag describing if current field is a isPseudoField.
+
+        :type: :class:`bool`
+        :raises: :class:`TypeError`
+        """
+
+        return self.__isPseudoField
+
+    @isPseudoField.setter
+    @typeCheck(bool)
+    def isPseudoField(self, isPseudoField):
+        if isPseudoField is None:
+            isPseudoField = False
+        self.__isPseudoField = isPseudoField
