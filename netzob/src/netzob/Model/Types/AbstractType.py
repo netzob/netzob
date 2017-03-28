@@ -103,7 +103,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
             Raw,
             # string data
             ASCII,
-            # decimal
+            # integer
             Integer,
             # hexstring
             HexaString,
