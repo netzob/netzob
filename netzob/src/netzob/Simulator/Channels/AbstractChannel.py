@@ -109,7 +109,8 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         """
         self.close()
 
-    # Static methods used to retrieve local network interface and local IP according to a remote IP
+    # Static methods used to retrieve local network interface
+    # and local IP according to a remote IP
 
     @staticmethod
     def getLocalInterface(localIP):
