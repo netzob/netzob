@@ -218,23 +218,25 @@ class CRCFinder(object):
         #field_dict = dict()
         totalSize = 0
         for field in symbol.fields:
-            #Check if normal or Alt field:
+            # Check if normal or Alt field:
             try:
-                #If Alt field we get the min and max size for each children
-                minSize, maxSize = (0,0)
+                # If Alt field we get the min and max size for each children
+                minSize, maxSize = (0, 0)
                 for child in field.domain.children:
                     if child.dataType.size[1] > maxSize:
                         maxSize = child.dataType.size[1]
                     if child.dataType.size[0] < minSize or minSize == 0:
                         minSize = child.dataType.size[0]
             except:
-                minSize,maxSize = field.domain.dataType.size
+                minSize, maxSize = field.domain.dataType.size
             totalSize += maxSize
-            if index < (totalSize/8):
-                #Compute the index of the CRC relative to the field
-                field_index = totalSize - index
+            if index < (totalSize / 8):
+                # Compute the index of the CRC relative to the field
+                field_index = totalSize - (8 * index)
                 field_index = totalSize - field_index
-                return field, maxSize,field_index
+                crcIndexInField = (8 * index) - field_index
+                return field, maxSize, crcIndexInField
+
 
     def __define_field(self,val_set,field):
         """
@@ -391,18 +393,21 @@ class CRCFinder(object):
                             else:
                                 #The four bytes are split into several fields. We delete all thes fields and create a new field and insert it at the index of the first of these fields in symbol.fields()
                                 for j in range(1,4):
-                                    prevField, minSize, maxSize = self.__getFieldFromIndex(crcindex - j, symbol)
+                                    try:
+                                        prevField, minSize, maxSize = self.__getFieldFromIndex(crcindex - j, symbol)
+                                    except:
+                                        pass
                                     temp_field_list.append(prevField)
-                                    temp_field_list = set(temp_field_list) #All the fields containing the four bytes
-                                    for fiel in set(temp_field_list):
+                                    temp_field_set = set(temp_field_list) #All the fields containing the four bytes
+                                    for fiel in temp_field_set:
                                         miny = 99999
+                                        stuffToDel = []
                                         for y,fol in enumerate(symbol.fields):
                                             if fol == fiel:
                                                 if y < miny:
                                                     miny = y
+                                                    stuffToDel.append(y)
                                                     temp = symbol.fields[y]
-                                                del symbol.fields[y]
-
                     newf2 = self.__define_field(val_list,temp)
                     domain_field_list.append(newf2)
                     domain_field_list.append(Field(domain=Raw(b'\x00\x00\x00\x00')))
