@@ -212,9 +212,8 @@ class InternetChecksum(AbstractRelationVariableLeaf):
         # first checks the pointed fields all have a value
         hasValue = True
         for field in self.fieldDependencies:
-            if field.domain != self and not parsingPath.isDataAvailableForVariable(
-                    field.domain):
-                self._logger.debug("Field : {0} has no value".format(field.id))
+            if field.domain is not self and not parsingPath.isDataAvailableForVariable(field.domain):
+                self._logger.debug("The following field domain has no value: '{0}'".format(field.domain))
                 hasValue = False
 
         if not hasValue:
