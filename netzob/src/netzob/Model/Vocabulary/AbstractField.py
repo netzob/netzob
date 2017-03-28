@@ -589,7 +589,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
             raise NoSymbolException(
                 "Impossible to retrieve the symbol attached to this element")
 
-    def _getLeafFields(self, depth=None, currentDepth=0):
+    def _getLeafFields(self, depth=None, currentDepth=0, includePseudoFields=False):
         """Extract the leaf fields to consider regarding the specified depth
 
         >>> from netzob.all import *
@@ -636,11 +636,15 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         leafFields = []
         for fields in self.fields:
+
+            # Handle case where the field is pseudo (meaning it does not procude concrete value)
             if fields.isPseudoField:
-                continue
+                if includePseudoFields:
+                    pass
+                else:
+                    continue
             if fields is not None:
-                leafFields.extend(
-                    fields._getLeafFields(depth, currentDepth + 1))
+                leafFields.extend(fields._getLeafFields(depth, currentDepth + 1, includePseudoFields))
 
         return leafFields
 
