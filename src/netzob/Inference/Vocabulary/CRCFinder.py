@@ -137,7 +137,7 @@ class CRCFinder(object):
                         elif results.CRC_mid_le:
                             self.__automate_mid_field_creation(results.CRC_mid_le, symbol, endianness='little')
                         else:
-                            raise 'Did not succeed creating fields'
+                            self._logger.debug('Did not succeed creating fields')
 
 
             else:
@@ -195,9 +195,9 @@ class CRCFinder(object):
                 compared = bytes.fromhex(hex(binascii.crc32(searched_string[i-5:i-1] + b'\x00\x00\x00\x00' + searched_string[i+3:i+7]))[2:])
             except:
                 compared = bytes.fromhex('0' + hex(binascii.crc32(searched_string[i-5:i-1] + b'\x00\x00\x00\x00' + searched_string[i+3:i+7]))[2:])
-            if searched_string[i:i + 4] == compared:
+            if searched_string[i-1:i + 3] == compared:
                 self._logger.debug("Found a CRC, adding it to found_BE_CRCS_index[]!")
-                found_CRCS_index.append(i)
+                found_BE_CRCS_index.append(i-1)
             # LITTLE ENDIAN BASIC SEARCH
             compared = compared[::-1]
             if searched_string[i-1:i+3] == compared :
