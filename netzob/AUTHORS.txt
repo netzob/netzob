@@ -21,13 +21,14 @@ Contributors
   * Remy Delion
   * Bertus Kruger
   * Eric asselin
-  * Tammo Krueger"
+  * Tammo Krueger
 
 Sponsors
 --------
 
   * AMOSSYS: http://www.amossys.fr
   * Supélec: http://www.rennes.supelec.fr/ren/rd/cidre/
+  * ANSSI:   https://www.ssi.gouv.fr
 
 Copyrights
 ----------
