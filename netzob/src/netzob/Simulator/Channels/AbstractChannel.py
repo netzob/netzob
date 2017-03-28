@@ -98,17 +98,6 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         """
         self.close()
 
-    def __enter__(self):
-        """Enter the runtime channel context.
-        """
-        self.open()
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        """Exit the runtime channel context.
-        """
-        self.close()
-
     # Static methods used to retrieve local network interface
     # and local IP according to a remote IP
 
