@@ -89,6 +89,11 @@ class RawIPClient(AbstractChannel):
         self.timeout = timeout
         self.__isOpen = False
         self.__socket = None
+        self.header = None  # The IP header symbol format
+        self.header_presets = {}  # Dict used to parameterize IP header fields
+
+        # Header initialization
+        self.initHeader()
 
     def open(self, timeout=None):
         """Open the communication channel. If the channel is a client, it starts to connect
@@ -133,11 +138,16 @@ class RawIPClient(AbstractChannel):
         :parameter data: the data to write on the channel
         :type data: binary object
         """
-        if self.__socket is not None:
-            packet = self.buildPacket(data)
-            self.__socket.sendto(packet, (self.remoteIP, 0))
-        else:
+
+        if self.header is None:
+            raise Exception("IP header structure is None")
+
+        if self.__socket is None:
             raise Exception("socket is not available")
+
+        self.header_presets['ip.payload'] = data
+        packet = self.header.specialize(presets=self.header_presets)
+        self.__socket.sendto(packet, (self.remoteIP, 0))
 
     @typeCheck(bytes)
     def sendReceive(self, data, timeout=None):
@@ -168,57 +178,33 @@ class RawIPClient(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
-    def buildPacket(self, payload):
-        """Build a raw IP packet including the IP layer and its payload.
+    def initHeader(self):
+        """Initialize the IP header according to the IP format definition.
 
-        :parameter payload: the payload to write on the channel
-        :type payload: binary object
         """
 
         ip_ver = Field(
-            name='Version', domain=BitArray(
+            name='ip.version', domain=BitArray(
                 value=bitarray('0100')))  # IP Version 4
-        ip_ihl = Field(name='Header length', domain=BitArray(bitarray('0000')))
+        ip_ihl = Field(name='ip.hdr_len', domain=BitArray(bitarray('0000')))
         ip_tos = Field(
-            name='TOS',
+            name='ip.tos',
             domain=Data(
                 dataType=BitArray(nbBits=8),
                 originalValue=bitarray('00000000'),
                 svas=SVAS.PERSISTENT))
         ip_tot_len = Field(
-            name='Total length', domain=BitArray(bitarray('0000000000000000')))
-        ip_id = Field(name='Identification number', domain=BitArray(nbBits=16))
-        ip_flags = Field(
-            name='Flags',
-            domain=Data(
-                dataType=BitArray(nbBits=3),
-                originalValue=bitarray('000'),
-                svas=SVAS.PERSISTENT))
-        ip_frag_off = Field(
-            name='Fragment offset',
-            domain=Data(
-                dataType=BitArray(nbBits=13),
-                originalValue=bitarray('0000000000000'),
-                svas=SVAS.PERSISTENT))
-        ip_ttl = Field(
-            name='TTL',
-            domain=Data(
-                dataType=BitArray(nbBits=8),
-                originalValue=bitarray('10000000'),
-                svas=SVAS.PERSISTENT))
-        ip_proto = Field(
-            name='Protocol',
-            domain=Integer(
-                value=self.upperProtocol,
-                unitSize=AbstractType.UNITSIZE_8,
-                endianness=AbstractType.ENDIAN_BIG,
-                sign=AbstractType.SIGN_UNSIGNED))
-        ip_checksum = Field(
-            name='Checksum', domain=BitArray(bitarray('0000000000000000')))
-        ip_saddr = Field(name='Source address', domain=IPv4(self.localIP))
+            name='ip.len', domain=BitArray(bitarray('0000000000000000')))
+        ip_id = Field(name='ip.id', domain=BitArray(nbBits=16))
+        ip_flags = Field(name='ip.flags', domain=Data(dataType=BitArray(nbBits=3), originalValue=bitarray('000'), svas=SVAS.PERSISTENT))
+        ip_frag_off = Field(name='ip.fragment', domain=Data(dataType=BitArray(nbBits=13), originalValue=bitarray('0000000000000'), svas=SVAS.PERSISTENT))
+        ip_ttl = Field(name='ip.ttl', domain=Data(dataType=BitArray(nbBits=8), originalValue=bitarray('01000000'), svas=SVAS.PERSISTENT))
+        ip_proto = Field(name='ip.proto', domain=Integer(value=self.upperProtocol, unitSize=AbstractType.UNITSIZE_8, endianness=AbstractType.ENDIAN_BIG, sign=AbstractType.SIGN_UNSIGNED))
+        ip_checksum = Field(name='ip.checksum', domain=BitArray(bitarray('0000000000000000')))
+        ip_saddr = Field(name='ip.src', domain=IPv4(self.localIP))
         ip_daddr = Field(
-            name='Destination address', domain=IPv4(self.remoteIP))
-        ip_payload = Field(name='Payload', domain=payload)
+            name='ip.dst', domain=IPv4(self.remoteIP))
+        ip_payload = Field(name='ip.payload', domain=Raw())
 
         ip_ihl.domain = Size([ip_ver,
                               ip_ihl,
@@ -242,7 +228,7 @@ class RawIPClient(AbstractChannel):
                                   ip_checksum,
                                   ip_saddr,
                                   ip_daddr,
-                                  ip_payload], dataType=Raw(nbBytes=2, unitSize=AbstractType.UNITSIZE_16), factor=1/float(8))
+                                  ip_payload], dataType=Integer(unitSize=AbstractType.UNITSIZE_16, sign=AbstractType.SIGN_UNSIGNED), factor=1/float(8))
         ip_checksum.domain = InternetChecksum(fields=[ip_ver,
                                                       ip_ihl,
                                                       ip_tos,
@@ -256,20 +242,19 @@ class RawIPClient(AbstractChannel):
                                                       ip_saddr,
                                                       ip_daddr], dataType=Raw(nbBytes=2, unitSize=AbstractType.UNITSIZE_16))
         
-        packet = Symbol(name='IP layer', fields=[ip_ver,
-                                                 ip_ihl,
-                                                 ip_tos,
-                                                 ip_tot_len,
-                                                 ip_id,
-                                                 ip_flags,
-                                                 ip_frag_off,
-                                                 ip_ttl,
-                                                 ip_proto,
-                                                 ip_checksum,
-                                                 ip_saddr,
-                                                 ip_daddr,
-                                                 ip_payload])
-        return packet.specialize()
+        self.header = Symbol(name='IP layer', fields=[ip_ver,
+                                                      ip_ihl,
+                                                      ip_tos,
+                                                      ip_tot_len,
+                                                      ip_id,
+                                                      ip_flags,
+                                                      ip_frag_off,
+                                                      ip_ttl,
+                                                      ip_proto,
+                                                      ip_checksum,
+                                                      ip_saddr,
+                                                      ip_daddr,
+                                                      ip_payload])
 
     # Management methods
 
