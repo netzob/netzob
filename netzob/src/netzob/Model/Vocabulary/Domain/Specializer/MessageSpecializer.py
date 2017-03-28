@@ -144,10 +144,20 @@ class MessageSpecializer(object):
         generatedContent = None
         # let's configure the generated content
         for field in symbol.fields:
+
+            # do no produce content if it is a pseudo field
+            if field.isPseudoField is True:
+                continue
+
             # TODO: only support one level of children... must be improved
             if len(field.fields) > 0:
                 d = None
                 for child in field.fields:
+
+                    # do no produce content if it is a pseudo field
+                    if child.isPseudoField is True:
+                        continue
+
                     if d is None:
                         d = retainedPath.getDataAssignedToVariable(
                             child.domain).copy()
