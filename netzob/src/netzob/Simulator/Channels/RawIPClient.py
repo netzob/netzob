@@ -189,35 +189,55 @@ class RawIPClient(AbstractChannel):
             name='Destination address', domain=IPv4(self.remoteIP))
         ip_payload = Field(name='Payload', domain=payload)
 
-        ip_ihl.domain = Size(
-            [
-                ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags,
-                ip_frag_off, ip_ttl, ip_proto, ip_checksum, ip_saddr, ip_daddr
-            ],
-            dataType=BitArray(nbBits=4),
-            factor=1 / float(32))
-        ip_tot_len.domain = Size(
-            [
-                ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags,
-                ip_frag_off, ip_ttl, ip_proto, ip_checksum, ip_saddr, ip_daddr,
-                ip_payload
-            ],
-            dataType=Raw(nbBytes=2),
-            factor=1 / float(8))
-        ip_checksum.domain = InternetChecksum(
-            fields=[
-                ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags,
-                ip_frag_off, ip_ttl, ip_proto, ip_checksum, ip_saddr, ip_daddr
-            ],
-            dataType=Raw(nbBytes=2))
-
-        packet = Symbol(
-            name='IP layer',
-            fields=[
-                ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags,
-                ip_frag_off, ip_ttl, ip_proto, ip_checksum, ip_saddr, ip_daddr,
-                ip_payload
-            ])
+        ip_ihl.domain = Size([ip_ver,
+                              ip_ihl,
+                              ip_tos,
+                              ip_tot_len,
+                              ip_id, ip_flags,
+                              ip_frag_off,
+                              ip_ttl, ip_proto,
+                              ip_checksum,
+                              ip_saddr,
+                              ip_daddr], dataType=BitArray(nbBits=4), factor=1/float(32))
+        ip_tot_len.domain = Size([ip_ver,
+                                  ip_ihl,
+                                  ip_tos,
+                                  ip_tot_len,
+                                  ip_id,
+                                  ip_flags,
+                                  ip_frag_off,
+                                  ip_ttl,
+                                  ip_proto,
+                                  ip_checksum,
+                                  ip_saddr,
+                                  ip_daddr,
+                                  ip_payload], dataType=Raw(nbBytes=2, unitSize=AbstractType.UNITSIZE_16), factor=1/float(8))
+        ip_checksum.domain = InternetChecksum(fields=[ip_ver,
+                                                      ip_ihl,
+                                                      ip_tos,
+                                                      ip_tot_len,
+                                                      ip_id,
+                                                      ip_flags,
+                                                      ip_frag_off,
+                                                      ip_ttl,
+                                                      ip_proto,
+                                                      ip_checksum,
+                                                      ip_saddr,
+                                                      ip_daddr], dataType=Raw(nbBytes=2, unitSize=AbstractType.UNITSIZE_16))
+        
+        packet = Symbol(name='IP layer', fields=[ip_ver,
+                                                 ip_ihl,
+                                                 ip_tos,
+                                                 ip_tot_len,
+                                                 ip_id,
+                                                 ip_flags,
+                                                 ip_frag_off,
+                                                 ip_ttl,
+                                                 ip_proto,
+                                                 ip_checksum,
+                                                 ip_saddr,
+                                                 ip_daddr,
+                                                 ip_payload])
         return packet.specialize()
 
     # Management methods
