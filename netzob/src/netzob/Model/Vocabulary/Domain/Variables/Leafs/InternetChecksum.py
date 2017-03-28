@@ -225,27 +225,34 @@ class InternetChecksum(AbstractRelationVariableLeaf):
             fieldValues = []
             for field in self.fieldDependencies:
                 if field.domain is self:
-                    fieldSize = random.randint(field.domain.dataType.size[0],
-                                               field.domain.dataType.size[1])
-                    fieldValue = b"\x00" * int(fieldSize / 8)
+                    fieldSize = random.randint(field.domain.dataType.size[0], field.domain.dataType.size[1])
+                    fieldValue = TypeConverter.convert(b"\x00" * int(fieldSize / 8), Raw, BitArray)
                 else:
-                    fieldValue = TypeConverter.convert(
-                        parsingPath.getDataAssignedToVariable(field.domain),
-                        BitArray, Raw)
+                    fieldValue = parsingPath.getDataAssignedToVariable(field.domain)
+
                 if fieldValue is None:
                     break
+                elif fieldValue.tobytes() == TypeConverter.convert("PENDING VALUE", ASCII, BitArray).tobytes():
+                    # Handle case where field value is not currently known.
+                    raise Exception("Expected value cannot be computed, some dependencies are missing for domain {0}".format(self))
                 else:
                     fieldValues.append(fieldValue)
 
-            fieldValues = b''.join(fieldValues)
+            # Aggregate all field value in a uniq bitarray object
+            concatFieldValues = bitarray('')
+            for f in fieldValues:
+                concatFieldValues += f
+
+            # Convert the bitarray object in a Raw object, as the checksum function expect a Raw input
+            concatFieldValues = TypeConverter.convert(concatFieldValues, BitArray, Raw)
+
             # compute the checksum of this value
-            chsum = self.__checksum(fieldValues)
-            b = TypeConverter.convert(
-                chsum,
-                Integer,
-                BitArray,
-                src_unitSize=AbstractType.UNITSIZE_16,
-                src_sign=AbstractType.SIGN_UNSIGNED)
+            chsum = self.__checksum(concatFieldValues)
+            b = TypeConverter.convert(chsum, Integer, BitArray,
+                                      src_endianness=AbstractType.ENDIAN_LITTLE,
+                                      dst_endianness=self.dataType.endianness,
+                                      src_unitSize=AbstractType.UNITSIZE_16,
+                                      src_sign = AbstractType.SIGN_UNSIGNED)
             return b
 
     @typeCheck(SpecializingPath)
