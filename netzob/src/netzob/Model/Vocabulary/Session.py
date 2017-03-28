@@ -323,7 +323,6 @@ class Session(object):
             )
             return abstractSession
         for message in list(self.messages.values()):
-            symbol = AbstractField.abstract(message.data, symbolList)
-            abstractSession.append(
-                (message.source, message.destination, symbol))
+            (symbol, structured_message) = AbstractField.abstract(message.data, symbolList)
+            abstractSession.append((message.source, message.destination, symbol))
         return abstractSession
