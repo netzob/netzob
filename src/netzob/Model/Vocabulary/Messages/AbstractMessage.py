@@ -178,11 +178,9 @@ class AbstractMessage(SortableObject):
             end = (function.end / 8)
             functionTable.applyFunction(function, start, end)
         try:
-            tmpData = b"".join(functionTable.getResult()).decode('utf-8')
+            tmpData = b"".join(functionTable.getResult())
         except:
-            tmpData = b"".join(functionTable.getResult()).decode('ISO-8859-1')
-
-
+            tmpData = "".join(functionTable.getResult())
         # Add header in front of the data
         HLS1 = "\033[0;32m"
         HLE1 = "\033[0;m"

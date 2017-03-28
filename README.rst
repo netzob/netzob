@@ -1,5 +1,5 @@
 ==========================================
-NetGoblin : A netzob fork taylored for scada and Minizob
+NetGoblin : A netzob fork taylored for scada and TAPIRE
 ==========================================
 Added functionalities:
 -Several bugs corrected when it comes to TypeEncodingFunction (refer to https://github.com/warsang/netzob/commit/09ae2ddd97cabb65ef65ee2b67c2fd86566140b8)
