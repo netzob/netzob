@@ -36,6 +36,8 @@
 # +---------------------------------------------------------------------------+
 import uuid
 from bitarray import bitarray
+from random import shuffle
+
 # +---------------------------------------------------------------------------+
 # | related third party imports                                               |
 # +---------------------------------------------------------------------------+
@@ -250,9 +252,20 @@ class GenericPath(object):
     def _triggerFieldCallbacks(self, field):
 
         moreCallBackFound = True
-        while moreCallBackFound:
+
+        # Try n-times to trigger callbacks as there can have deadlocks
+        # between mutually linked domain definitions
+        for i in range(10):
+            if moreCallBackFound is False:
+                break
+
             moreCallBackFound = False
             callBackToExecute = None
+
+            # Mix the callbacks functions, as we want to call them
+            # randomly in order to eliminate potential deadlocks due
+            # to mutually linked domain definitions
+            shuffle(self._fieldsCallbacks)
 
             for (fields, variable, parsingCB) in self._fieldsCallbacks:
                 fieldsHaveValue = True
@@ -272,10 +285,10 @@ class GenericPath(object):
                 if parsingCB:
                     resultingPaths = variable.parse(self, acceptCallBack=False)
                 else:
-                    resultingPaths = variable.specialize(
-                        self, acceptCallBack=False)
+                    resultingPaths = variable.specialize(self, acceptCallBack=True)
                 if len(resultingPaths) == 0:
                     return False
+
                 self._fieldsCallbacks.remove(callBackToExecute)
         return True
 
