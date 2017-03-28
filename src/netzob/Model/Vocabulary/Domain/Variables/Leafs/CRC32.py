@@ -96,7 +96,7 @@ class CRC32(AbstractRelationVariableLeaf):
     >>> messageCRC2 = RawMessage(b'\xb5\x44\x72\x9e\x58\xcf\x0c\x00\x01')
     >>> field1 = Field(name="aftermut", domain=Alt([Raw(b'\x55\xcd'), Raw(b'\x58\xcf')]))
     >>> field2 = Field(name="afterstat", domain=Raw(b'\x0c\x00\x01'))
-    >>> fieldCS = Field(name="CRC", domain=CRC32([field1, field2],endianness='little'))
+    >>> fieldCS = Field(name="CRC", domain=CRC32([field1, field2],endiannendianness='little'))
     >>> sym = Symbol(messages=[messageCRC, messageCRC2], fields=[fieldCS, field1, field2])
     >>> print(sym)
     CRC              | aftermut | afterstat
@@ -327,6 +327,3 @@ class CRC32(AbstractRelationVariableLeaf):
                 "Specified Endianness is not supported, please refer to the list in AbstractType.supportedEndianness().")
 
         self.__endianness = endianness
-
-        #if self.fields is not None and self.fields.value.endian() != self.__endianness:
-         #   self.value = bitarray(self.value, endian=self.__endianness)
