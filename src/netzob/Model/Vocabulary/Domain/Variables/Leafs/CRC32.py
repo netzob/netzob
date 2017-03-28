@@ -327,6 +327,3 @@ class CRC32(AbstractRelationVariableLeaf):
                 "Specified Endianness is not supported, please refer to the list in AbstractType.supportedEndianness().")
 
         self.__endianness = endianness
-
-        #if self.fields is not None and self.fields.value.endian() != self.__endianness:
-         #   self.value = bitarray(self.value, endian=self.__endianness)

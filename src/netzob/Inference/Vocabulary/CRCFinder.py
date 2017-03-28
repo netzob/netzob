@@ -15,6 +15,8 @@ from netzob.Model.Types.Integer import Integer
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from  netzob.Model.Vocabulary.Domain.Variables.Leafs.CRC32 import CRC32
 
+from netzob.Model.Vocabulary.Field import Field
+from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
 
 @NetzobLogger
 class CRCFinder(object):
@@ -131,14 +133,11 @@ class CRCFinder(object):
                         elif results.CRC_be:
                             self.__automate_field_creation(results.CRC_be,symbol,endianness='big')
                         elif results.CRC_mid_be:
-                            #TODO
-                            pass
+                            self.__automate_mid_field_creation(results.CRC_mid_be,symbol,endianness='big')
                         elif results.CRC_mid_le:
-                            #TODO
-                            pass
+                            self.__automate_mid_field_creation(results.CRC_mid_le, symbol, endianness='little')
                         else:
-                            #TODO
-                            pass
+                            raise 'Did not succeed creating fields'
 
 
             else:
@@ -249,15 +248,16 @@ class CRCFinder(object):
             domain_list = []
             for value in val_set:
                 domain_list.append(Raw(value))
-            new_field = Field(name=searchedfield.name, domain=Alt(domain_list))
+            new_field = Field(name=field.name, domain=Alt(domain_list))
         else:
             # Only one value, create static Fields
-            new_field = Field(name=searchedfield.name, domain=Raw(val_set.pop()))
+            new_field = Field(name=field.name, domain=Raw(val_set.pop()))
         return new_field
 
     def __automate_field_creation(self,results,symbol,endianness):
         """
-        This method attempts to create a CRC field. It creates either a big or little endian CRC relation field using all the following fields to compute the CRC.
+        This method attempts to create a CRC field. It creates either a big or little
+        endian CRC relation field using all the following fields to compute the CRC.
 
         :param results: list of CRC indexes
         :param symbol: The symbol in wich we want to define CRC fields
@@ -276,7 +276,10 @@ class CRCFinder(object):
                     afterField = True
             if field_size / 8 == 4:
                 # Is the field just CRC or more?
-                searchedfield.name = "CRC32_LE" + str(crcindex)
+                if endianness == 'little':
+                    searchedfield.name = "CRC32_LE" + str(crcindex)
+                else:
+                    searchedfield.name = "CRC32_BE" + str(crcindex)
                 searchedfield.domain = CRC32(domain_field_list, endianness=endianness)
             elif field_size > 4:
                 # The Field is the CRC and something else.
@@ -288,9 +291,12 @@ class CRCFinder(object):
                         val_list.append(val[4:])
                         # Make a set
                     val_set = set(val_list)
-                    newf = self.__define_field(val_set)
+                    newf = self.__define_field(val_set,searchedfield)
                     domain_field_list.insert(0, newf)
-                    crc32field = Field(name="CRC32_LE" + str(crcindex), domain=CRC32(domain_field_list,endianness=endianness))
+                    if endianness == 'little':
+                        crc32field = Field(name="CRC32_LE" + str(crcindex), domain=CRC32(domain_field_list,endianness=endianness))
+                    else:
+                        crc32field = Field(name="CRC32_BE" + str(crcindex), domain=CRC32(domain_field_list,endianness=endianness))
                     subfields.append(crc32field)
                     subfields.append(newf)
                 elif field_index / 8 + 4 == field_size / 8:
@@ -301,8 +307,11 @@ class CRCFinder(object):
                         val_list.append(val[:field_index])
                         # Make a set
                     val_set = set(val_list)
-                    newf = self.__define_field(val_set)
-                    crc32field = Field(name="CRC32_LE" + str(crcindex), domain=CRC32(domain_field_list,endianness=endianness))
+                    newf = self.__define_field(val_set,searchedfield)
+                    if endianness == 'little':
+                        crc32field = Field(name="CRC32_LE" + str(crcindex), domain=CRC32(domain_field_list,endianness=endianness))
+                    else:
+                        crc32field = Field(name="CRC32_BE" + str(crcindex), domain=CRC32(domain_field_list,endianness=endianness))
                     subfields.append(newf)
                     subfields(crc32field)
                 else:
@@ -315,10 +324,165 @@ class CRCFinder(object):
                     # Make a set
                     val_set1 = set(val_list1)
                     val_set2 = set(val_list2)
-                    newf1 = self.__define_field(val_set1)
-                    newf2 = self.__define_field(val_set2)
+                    newf1 = self.__define_field(val_set1,searchedfield)
+                    newf2 = self.__define_field(val_set2,searchedfield)
                     domain_field_list.insert(0, newf2)
-                    crc32field = Field(name="CRC32_LE" + str(crcindex), domain=CRC32(domain_field_list,endianness=endianness))
+                    if endianness == 'little':
+                        crc32field = Field(name="CRC32_LE" + str(crcindex), domain=CRC32(domain_field_list,endianness=endianness))
+                    else:
+                        crc32field = Field(name="CRC32_BE" + str(crcindex), domain=CRC32(domain_field_list,endianness=endianness))
+                    subfields.append(newf1)
+                    subfields.append(crc32field)
+                    subfields.append(newf2)
+                searchedfield.fields = subfields
+
+    def __automate_mid_field_creation(self, results, symbol, endianness):
+        """
+                This method attempts to create a CRC field. It creates either a big or little endian CRC relation field using
+                 the value b'\xca\xfe\x00\x00\x00\x00\xba\xbe' to compute the CRC
+                , the b'\x00\x00\x00\x00' is then replaced by the computed CRC in the message.
+
+                :param results: list of CRC indexes
+                :param symbol: The symbol in wich we want to define CRC fields
+                :param endianness: A string stating the endianness of the CRC, should either be "big" or "little"
+                """
+        domain_field_list = []
+        subfields = []
+        for crcindex in results:
+            searchedfield, field_size, field_index = self.__getFieldFromIndex(crcindex, symbol)
+            # Get all the fields after the current field (to define the CRC domain Relation
+            afterField = False
+
+            if field_size / 8 == 4:
+                for i,f in enumerate(symbol.fields):
+                    if f.name == searchedfield.name:
+                        domain_field_list.append(symbol.fields[i-1])
+                        domain_field_list.append(symbol.fields[i+1])
+                # Is the field just CRC or more?
+                if endianness == 'little':
+                    searchedfield.name = "CRC32_mid_LE" + str(crcindex)
+                else:
+                    searchedfield.name = "CRC32_mid_BE" + str(crcindex)
+                searchedfield.domain = CRC32(domain_field_list, endianness=endianness)
+            elif field_size > 4:
+                # The Field is the CRC and something else.
+                if field_index == 0:
+                    # CRC at beginning of field. Create new fields after CRC
+                    # Create a list of possible values
+                    val_list = []
+                    for val in searchedfield.getValues():
+                        val_list.append(val[4:])
+                        # Make a set
+                    val_set = set(val_list)
+                    newf = self.__define_field(val_set,searchedfield)
+                    #Compute second field (the one before the CRC
+                    val_list = [] #List containing the first four bytes used to compute CRC32 (the 4 bytes prior to the CRC)
+                    temp_field_list = []
+                    for prevalue in symbol.getValues():
+                        prevalue = prevalue[crcindex - 4:crcindex]
+                        val_list.append(prevalue)
+                    val_list = set(val_list)
+                    for i, f in enumerate(symbol.fields):
+                        if f.name == searchedfield.name:
+                            prevField,minSize,maxSize = self.__getFieldFromIndex(crcindex - 1,symbol)
+                            if maxSize >= 4:
+                                #The four bytes are contained in only one field. We create a subfield
+                                newf2 = self.__define_field(val_list, temp)
+                            else:
+                                #The four bytes are split into several fields. We delete all thes fields and create a new field and insert it at the index of the first of these fields in symbol.fields()
+                                for j in range(1,4):
+                                    prevField, minSize, maxSize = self.__getFieldFromIndex(crcindex - j, symbol)
+                                    temp_field_list.append(prevField)
+                                    temp_field_list = set(temp_field_list) #All the fields containing the four bytes
+                                    for fiel in set(temp_field_list):
+                                        miny = 99999
+                                        for y,fol in enumerate(symbol.fields):
+                                            if fol == fiel:
+                                                if y < miny:
+                                                    miny = y
+                                                    temp = symbol.fields[y]
+                                                del symbol.fields[y]
+
+                    newf2 = self.__define_field(val_list,temp)
+                    domain_field_list.append(newf2)
+                    domain_field_list.append(Field(domain=Raw(b'\x00\x00\x00\x00')))
+                    domain_field_list.append(newf)
+                    if endianness == 'little':
+                        crc32field = Field(name="CRC32_mid_LE" + str(crcindex),
+                                           domain=CRC32(domain_field_list, endianness=endianness))
+                    else:
+                        crc32field = Field(name="CRC32_mid_BE" + str(crcindex),
+                                           domain=CRC32(domain_field_list, endianness=endianness))
+                    subfields.append(crc32field)
+                    subfields.append(newf)
+                elif field_index / 8 + 4 == field_size / 8:
+                    # CRC at end of field. Create new fields before CRC
+                    # Create a list of possible values
+                    val_list = []
+                    for val in searchedfield.getValues():
+                        val_list.append(val[:field_index])
+                        # Make a set
+                    val_set = set(val_list)
+                    newf = self.__define_field(val_set,searchedfield)
+                    #Compute second field (the one after the CRC
+                    val_list = [] #List containing the last four bytes used to compute CRC32 (the 4 bytes after the CRC)
+                    temp_field_list = []
+                    for prevalue in symbol.getValues():
+                        prevalue = prevalue[crcindex:crcindex+4]
+                        val_list.append(prevalue)
+                    val_list = set(val_list)
+                    for i, f in enumerate(symbol.fields):
+                        if f.name == searchedfield.name:
+                            prevField,minSize,maxSize = self.__getFieldFromIndex(crcindex + 1,symbol)
+                            if maxSize >= 4:
+                                #The four bytes are contained in only one field. We create a subfield
+                                newf2 = self.__define_field(val_list,temp)
+                            else:
+                                #The four bytes are split into several fields. We delete all thes fields and create a new field and insert it at the index of the first of these fields in symbol.fields()
+                                for j in range(1,4):
+                                    prevField, minSize, maxSize = self.__getFieldFromIndex(crcindex + j, symbol)
+                                    temp_field_list.append(prevField)
+                                    temp_field_list = set(temp_field_list) #All the fields containing the four bytes
+                                    for fiel in set(temp_field_list):
+                                        miny = 99999
+                                        for y,fol in enumerate(symbol.fields):
+                                            if fol == fiel:
+                                                if y < miny:
+                                                    miny = y
+                                                    temp = symbol.fields[y]
+                                                del symbol.fields[y]
+                                        symbol.fields[miny] = self.__define_field(val_list,temp)
+                    newf2 = self.__define_field(val_list,temp)
+                    domain_field_list.append(newf)
+                    domain_field_list.append(Field(domain=Raw(b'\x00\x00\x00\x00')))
+                    domain_field_list.append(newf2)
+                    if endianness == 'little':
+                        crc32field = Field(name="CRC32_mid_LE" + str(crcindex),
+                                           domain=CRC32(domain_field_list, endianness=endianness))
+                    else:
+                        crc32field = Field(name="CRC32_mid_BE" + str(crcindex),
+                                           domain=CRC32(domain_field_list, endianness=endianness))
+                    subfields.append(newf)
+                    subfields.append(crc32field)
+                else:
+                    # CRC in the middle. Create new fields before and after CRC
+                    val_list1 = []
+                    val_list2 = []
+                    for val in searchedfield.getValues():
+                        val_list1.append(val[4:])
+                        val_list2.append(val[:field_index])
+                    # Make a set
+                    val_set1 = set(val_list1)
+                    val_set2 = set(val_list2)
+                    newf1 = self.__define_field(val_set1,searchedfield)
+                    newf2 = self.__define_field(val_set2,searchedfield)
+                    domain_field_list.insert(0, newf2)
+                    if endianness == 'little':
+                        crc32field = Field(name="CRC32_LE" + str(crcindex),
+                                           domain=CRC32(domain_field_list, endianness=endianness))
+                    else:
+                        crc32field = Field(name="CRC32_BE" + str(crcindex),
+                                           domain=CRC32(domain_field_list, endianness=endianness))
                     subfields.append(newf1)
                     subfields.append(crc32field)
                     subfields.append(newf2)
