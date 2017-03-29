@@ -66,6 +66,14 @@ class Raw(AbstractType):
     >>> print(f.domain.dataType)
     Raw=b'\\x01\\x02\\x03' ((0, 24))
 
+    The alphabet optional argument can be use to limit the bytes that can participate in the domain value
+
+    >>> f = Field(Raw(nbBytes=100, alphabet=["t", "o"]))
+    >>> data = f.specialize()
+    >>> data_set = set(data)
+    >>> print(data_set)
+    {116, 111}
+
     """
 
     def __init__(self,
@@ -73,7 +81,8 @@ class Raw(AbstractType):
                  nbBytes=None,
                  unitSize=AbstractType.defaultUnitSize(),
                  endianness=AbstractType.defaultEndianness(),
-                 sign=AbstractType.defaultSign()):
+                 sign=AbstractType.defaultSign(),
+                 alphabet=None):
         if value is not None and not isinstance(value, bitarray):
             from netzob.Model.Types.TypeConverter import TypeConverter
             from netzob.Model.Types.BitArray import BitArray
@@ -85,6 +94,8 @@ class Raw(AbstractType):
 
         nbBits = self._convertNbBytesinNbBits(nbBytes)
 
+        self.alphabet = alphabet
+        
         super(Raw, self).__init__(
             self.__class__.__name__,
             value,
@@ -173,8 +184,14 @@ class Raw(AbstractType):
             minSize = 0
 
         generatedSize = random.randint(minSize, maxSize)
-        return TypeConverter.convert(
-            os.urandom(int(generatedSize / 8)), Raw, BitArray)
+
+        generatedValue = None
+        if self.alphabet is None:
+            generatedValue = os.urandom(int(generatedSize / 8))
+        else:
+            generatedValue = "".join([random.choice(self.alphabet) for _ in range(int(generatedSize / 8))])
+            
+        return TypeConverter.convert(generatedValue, Raw, BitArray)
 
     @staticmethod
     def decode(data,
@@ -190,16 +207,18 @@ class Raw(AbstractType):
                sign=AbstractType.defaultSign()):
         return data
 
-    @staticmethod
-    def canParse(data):
+    def canParse(self, data,
+                 unitSize=AbstractType.defaultUnitSize(),
+                 endianness=AbstractType.defaultEndianness(),
+                 sign=AbstractType.defaultSign()):
         """Computes if specified data can be parsed as raw which is always the case if the data is at least 1 length and aligned on a byte.
 
         >>> from netzob.all import *
-        >>> Raw.canParse(TypeConverter.convert("hello netzob", ASCII, BitArray))
+        >>> Raw().canParse(TypeConverter.convert("hello netzob", ASCII, BitArray))
         True
 
         The ascii table is defined from 0 to 127:
-        >>> Raw.canParse(TypeConverter.convert(128, Integer, BitArray, src_sign=AbstractType.SIGN_UNSIGNED))
+        >>> Raw().canParse(TypeConverter.convert(128, Integer, BitArray, src_sign=AbstractType.SIGN_UNSIGNED))
         True
 
         :param data: the data to check
@@ -217,5 +236,11 @@ class Raw(AbstractType):
 
         if len(data) % 8 != 0:
             return False
+
+        if self.alphabet is not None:
+            data_set = set(data)
+            for element in data_set:
+                if element not in self.alphabet:
+                    return False
 
         return True
