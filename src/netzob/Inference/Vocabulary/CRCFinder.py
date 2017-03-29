@@ -1,7 +1,6 @@
 
 import binascii
 import collections
-import IPython
 
 #+----------------------------------------------
 #| Local Imports
@@ -14,7 +13,6 @@ from netzob.Model.Types.Raw import Raw
 from netzob.Model.Types.Integer import Integer
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from  netzob.Model.Vocabulary.Domain.Variables.Leafs.CRC32 import CRC32
-
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
 
@@ -73,11 +71,11 @@ class CRCFinder(object):
             searched_string = message.data
             results.CRC_be, results.CRC_le = self.__search_CRC(searched_string)
             results.CRC_mid_be, results.CRC_mid_le = self.__search_mid_CRC(searched_string)
-            self._logger.critical("Found the following results:")
-            self._logger.critical("CRC_BE : " + str(results.CRC_be) + "")
-            self._logger.critical("CRC_LE : " + str(results.CRC_le) + "")
-            self._logger.critical("CRC_mid_be : " + str(results.CRC_mid_be) + "")
-            self._logger.critical("CRC_mid_le : " + str(results.CRC_mid_le) + "")
+            self._logger.debug("Found the following results:")
+            self._logger.debug("CRC_BE : " + str(results.CRC_be) + "")
+            self._logger.debug("CRC_LE : " + str(results.CRC_le) + "")
+            self._logger.debug("CRC_mid_be : " + str(results.CRC_mid_be) + "")
+            self._logger.debug("CRC_mid_le : " + str(results.CRC_mid_le) + "")
         if create_fields and results:
             self._logger.debug("Refining search to fields...")
             if symbol.fields:
@@ -93,11 +91,11 @@ class CRCFinder(object):
                     if field_results.CRC_be or field_results.CRC_le or field_results.CRC_mid_be or field_results.CRC_mid_le:
                         # If refining the search gives results => The CRC and the elements that are used for the CRC are all inside one field
                         # Hence we create subfields
-                        self._logger.critical("Found the following results in fields:")
-                        self._logger.critical("CRC_BE : " + str(field_results.CRC_be) + "")
-                        self._logger.critical("CRC_LE : " + str(field_results.CRC_le) + "")
-                        self._logger.critical("CRC_mid_be : " + str(field_results.CRC_mid_be) + "")
-                        self._logger.critical("CRC_mid_le : " + str(field_results.CRC_mid_le) + "")
+                        self._logger.debug("Found the following results in fields:")
+                        self._logger.debug("CRC_BE : " + str(field_results.CRC_be) + "")
+                        self._logger.debug("CRC_LE : " + str(field_results.CRC_le) + "")
+                        self._logger.debug("CRC_mid_be : " + str(field_results.CRC_mid_be) + "")
+                        self._logger.debug("CRC_mid_le : " + str(field_results.CRC_mid_le) + "")
                         if max_length > 4:
                             # More than one value (ALT FIELDS) => Need to resize field to CRC and add ALT Fields around
                             # Will need to create the CRC field and static/ALT fields around it.
@@ -163,7 +161,7 @@ class CRCFinder(object):
             except:
                 compared = bytes.fromhex('0' + hex(binascii.crc32(searched_string[i + 4:]))[2:])[::-1]
             if searched_string[i:i + 4] == compared:
-                self._logger.critical(compared)
+                self._logger.debug(compared)
                 self._logger.debug("Found a CRC, adding it to found_LE_CRCS_index[]!")
                 found_LE_CRCS_index.append(i)
             # BIG ENDIAN BASIC SEARCH
