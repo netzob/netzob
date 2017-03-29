@@ -2,16 +2,19 @@
 NetGoblin : A netzob fork taylored for scada and TAPIRE
 ==========================================
 Added functionalities:
--Several bugs corrected when it comes to TypeEncodingFunction (refer to https://github.com/warsang/netzob/commit/09ae2ddd97cabb65ef65ee2b67c2fd86566140b8)
--CRC32 domain implemented in fields
+=====================
+* Several bugs corrected when it comes to TypeEncodingFunctions (refer to https://github.com/warsang/netzob/commit/09ae2ddd97cabb65ef65ee2b67c2fd86566140b8)
+* CRC32 domain implemented in fields
+* CRC32 Seeker
+* IP seeker
 
 TODO:
--CRC16 and other hash functions
--CRC32 finder
--Change metadata finder to match on bits of IP address
--Implement or perfect intraRelations such as packet incrementation
--Perfect EntropyMeasuremnt method to find ciphered data
--Heaps of other stuff!!!
+====
+* CRC16 and other hash functions
+* Implement or perfect intraRelations such as packet incrementation
+* Perfect EntropyMeasuremnt method to find ciphered data
+* Doctest and Docstring for new classes and methods
+* Heaps of other stuff!!!
 
 
 ==========================================
