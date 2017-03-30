@@ -127,6 +127,16 @@ class SymbolCells(Resource):
 
         project_handler = projects_manager.get_project_handler(pid)
         return project_handler.get_symbol_cells(sid)
+    
+@api.route('/<string:sid>/split_align')
+class SymbolSplitAlign(Resource):
+
+    def get(self, pid, sid):
+        """Executes an alignment process on the specified symbol"""
+
+        project_handler = projects_manager.get_project_handler(pid)
+        return project_handler.symbol_split_align(sid)
+
 
 @api.route('/<string:sid>/messages')
 class SymbolMessages(Resource):
