@@ -37,57 +37,23 @@
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
 # +---------------------------------------------------------------------------+
-from flask import Flask, render_template
+from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob_web import api, public, symbols, captures
-from netzob_web.assets import assets
-from netzob_web.extensions import cache, debug_toolbar, api as api_ext
-from netzob_web.settings import ProdConfig
-
-def create_app(config_object=ProdConfig):
-    """An application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
-
-    :param config_object: The configuration object to use.
-    """
-    app = Flask(__name__.split('.')[0])
-    app.config.from_object(config_object)
-    register_extensions(app)
-    register_blueprints(app)
-    register_errorhandlers(app)
-    return app
 
 
-def register_extensions(app):
-    """Register Flask extensions."""
-    assets.init_app(app)
-    cache.init_app(app)
-    debug_toolbar.init_app(app)
-    api_ext.init_app(api.views.blueprint)
-    return None
+blueprint = Blueprint('captures', __name__, static_folder='../static')
 
 
-def register_blueprints(app):
-    """Register Flask blueprints."""
-    app.register_blueprint(api.views.blueprint)    
-    app.register_blueprint(public.views.blueprint)
-    app.register_blueprint(symbols.views.blueprint)    
-    app.register_blueprint(captures.views.blueprint)        
-    return None
+@blueprint.route('/captures', methods=['GET'])
+def home():
+    """Homepage of the captures."""
+    return render_template('captures/home.html')
 
-
-def register_errorhandlers(app):
-    """Register error handlers."""
-    def render_error(error):
-        """Render error template."""
-        # If a HTTPException, pull the `code` attribute; default to 500
-        error_code = getattr(error, 'code', 500)
-        return render_template('{0}.html'.format(error_code)), error_code
-    for errcode in [401, 404, 500]:
-        app.errorhandler(errcode)(render_error)
-    return None
-
-
+@blueprint.route('/captures/file', methods=['GET'])
+def import_file():
+    """Create capture from a file."""
+    return render_template('captures/import_file.html')
 
