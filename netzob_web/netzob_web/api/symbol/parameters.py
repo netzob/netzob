@@ -46,9 +46,14 @@ from flask_restplus import reqparse
 new_symbol = reqparse.RequestParser()
 new_symbol.add_argument('name',
                         type = str,
-                        required = True,
+                        required = False,
                         location = 'json',
                         help = "Name of the symbol")
+new_symbol.add_argument('description',
+                        type = str,
+                        required = False,
+                        location = 'json',
+                        help = "Description of the symbol")
 
 add_field = reqparse.RequestParser()
 add_field.add_argument('fid_before_new',
