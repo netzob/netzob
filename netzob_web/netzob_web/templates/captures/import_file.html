@@ -1,0 +1,201 @@
+
+{% extends "layout.html" %}
+{% block content %}
+
+<h2>Import file</h2>
+<p>
+    Import all the messages stored in a file. One message is found per line. 
+</p>
+
+<div class="panel panel-primary">
+    <div class="panel-body">
+	<form method="POST" id="import_file">
+	    <div class="form-group">
+		<label for="capture_file">Select the files</label>
+		<input type="file" class="form-control" id="capture_files" name="capture_files[]" multiple>
+	    </div>
+	    <button type="submit" class="btn btn-default" id="import_file_button">Extract messages from file</button>
+	    
+	</form>
+    </div>    
+</div>
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+	<h3 class="panel-title">Preview</h3>
+    </div>
+    <div class="panel-body">
+	<table id="messages" class="table display nowrap" width="100%" cellspacing="0" style="width: 800px;margin: 0 auto;" >
+	    <thead>
+		<tr>
+		    <th></th>
+		    <th>File</th>
+		    <th>Line</th>
+		    <th>Payload</th>
+		</tr>
+	    </thead>
+	    <tbody>
+	    </tbody>
+	</table>
+    </div>
+</div>
+
+<div class="panel panel-primary">
+    <div class="panel-body">
+	<form method="POST" id="import_file_final" class="form-inline" >
+	    <center>
+		<div class="form-group">
+		    <label for="capture_name">Symbol name</label>
+		    <input type="text" class="form-control" id="capture_name" name="capture_name">
+		</div>
+
+		<button id="import_file_final_button" type="submit" class="btn btn-primary" >Create symbol with selected messages</a>
+	    </center>
+	</form>
+    </div>    
+</div>
+
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+ function register_message(table, iMsg, filename, iLine, payload) {
+     table.row.add( [
+	 '',
+	 filename,
+	 iLine,
+	 payload
+     ] ).draw( false );     
+ }
+
+ 
+ $(function() {
+
+     var table = $('#messages').DataTable( {
+	 columnDefs: [ {
+             orderable: false,
+             className: 'select-checkbox',
+             targets:   0
+	 } ],
+	 select: {
+             style:    'multi',
+             selector: 'td:first-child',
+	 },
+	 order: [[ 1, 'asc' ]]
+     } );
+     
+     
+     var fileSelect = document.getElementById('capture_files');
+     var uploadButton = document.getElementById('import_file_button');
+     
+     document.getElementById('import_file').onsubmit = function(event) {
+	 event.preventDefault();
+
+	 // Update button text.
+	 uploadButton.innerHTML = 'Uploading...';
+
+	 // Get the selected files from the input.
+	 var files = fileSelect.files;
+
+	 var i_msg = 0;
+	 for (var i = 0; i < files.length; i++) {
+	     var file = files[i];
+
+	     var reader = new FileReader();
+
+	     reader.onload = function(e) {
+		 var arrayBuffer = reader.result;
+		 var int8Array = new Int8Array(arrayBuffer);
+		 var startBuffer = 0;
+		 var subArrayBuffer;
+		 var slice;
+		 var result;
+		 var i_line = 0;
+		 for (var i_byte = 0; i_byte < int8Array.length; i_byte++) {
+		     if (int8Array[i_byte] == 10) {
+			 subArrayBuffer = arrayBuffer.slice(startBuffer, i_byte);
+			 slice = int8Array.subarray(startBuffer, i_byte);
+			 result = String.fromCharCode.apply(null, slice);
+			 startBuffer = i_byte + 1;
+			 i_line += 1;			 
+			 if (result.length > 0) {
+			     i_msg += 1;
+			     register_message(table, i_msg, file.name, i_line, result);
+			 }
+		     } 
+		 }
+		 
+	     }
+	     reader.readAsArrayBuffer(file);
+
+	     // Update button text.
+	     uploadButton.innerHTML = 'Create symbol with selected messages';
+
+	 }
+     }
+
+
+
+     var importButton = document.getElementById('import_file_final_button');
+     document.getElementById('import_file_final').onsubmit = function(event) {
+	 event.preventDefault();
+
+	 
+
+	 // Update button text.
+	 importButton.innerHTML = 'Importing...';
+
+	 var capture_name = $('#capture_name').val();
+
+	 sid = 0
+	 cid = 0
+
+	 
+	 
+	 // creates the symbol
+	 create_symbol(capture_name, function(symbol) {
+	     console.log("Symbol ("+symbol.id+") created");
+	     sid = symbol.id;
+
+	     // creates the capture
+	     create_capture(capture_name, function(capture) {
+		 console.log("Capture ("+capture.id+") created (sid="+sid+")");
+		 cid = capture.id;
+
+		 table.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+		     var data = this.data();
+
+		     var filename = data[1];
+		     var linenumber = data[2];
+		     var content = data[3];
+
+		     create_message(cid, filename+":"+linenumber, "", content, function(message) {
+			 console.log("Message created: "+message.id);
+			 console.log("Putting message "+message.id+" in "+sid);
+			 mid = message.id
+
+			 put_message_in_symbol(sid, mid, function(data) {
+			     console.log("Message puted: "+message.id);
+			 })	
+		     });
+		 });
+	     })
+
+	 })
+
+
+	 // Update button text.
+	 importButton.innerHTML = 'Create symbol with selected messages';
+	 return False;
+	 
+     };
+     
+ });
+
+ 
+</script>
+{% endblock %}
