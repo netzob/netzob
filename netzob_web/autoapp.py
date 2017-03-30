@@ -46,7 +46,7 @@ from flask.helpers import get_debug_flag
 from netzob_web.app import create_app
 from netzob_web.settings import DevConfig, ProdConfig
 
-CONFIG = DevConfig if get_debug_flag() else ProdConfig
+CONFIG = DevConfig# if get_debug_flag() else ProdConfig
 
 
 app = create_app(CONFIG)
