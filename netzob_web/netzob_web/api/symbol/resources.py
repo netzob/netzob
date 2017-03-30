@@ -92,9 +92,17 @@ class SymbolByID(Resource):
         """Patch symbol details by its id"""
 
         args = parameters.new_symbol.parse_args(request)
+
+        new_name = None
+        if "name" in args.keys():
+            new_name = args["name"]
+            
+        new_description = None
+        if "description" in args.keys():
+            new_description = args["description"]
         
         project_handler = projects_manager.get_project_handler(pid)
-        return project_handler.update_symbol(sid, name = args['name'])
+        return project_handler.update_symbol(sid, name = new_name, description = new_description)
 
     def delete(self, pid, sid):
         """Delete a symbol by its id"""
