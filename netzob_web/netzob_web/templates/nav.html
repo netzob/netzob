@@ -1,5 +1,5 @@
 
-<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+<nav class="navbar navbar-inverse" role="navigation">
   <div class="container-fluid">
 
   <!-- Brand and toggle get grouped for better mobile display -->
@@ -19,7 +19,6 @@
   <!-- Collect the nav links, forms, and other content for toggling -->
   <div class="collapse navbar-collapse navbar-ex1-collapse">
     <ul class="nav navbar-nav">
-      <li><a href="{{ url_for('symbols.home') }}">Symbols</a></li>
     </ul>
     {% if current_user and current_user.is_authenticated %}
     <ul class="nav navbar-nav navbar-right">

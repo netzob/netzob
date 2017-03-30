@@ -52,7 +52,7 @@ def home():
     """Homepage of the symbols."""
     return render_template('symbols/home.html')
 
-@blueprint.route('/symbols/<int:symbol_id>', methods=['GET'])
+@blueprint.route('/symbols/<string:symbol_id>', methods=['GET'])
 def symbol(symbol_id):
     """Homepage of a symbol."""
-    return render_template('symbols/symbol.html')
+    return render_template('symbols/symbol.html', sid = symbol_id)
