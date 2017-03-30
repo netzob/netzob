@@ -53,7 +53,7 @@ class IPSeeker(object):
 
     @staticmethod
     @typeCheck(AbstractField)
-    def findOnSymbol(symbol,create_fields=False):
+    def findOnSymbol(symbol,create_fields=False,two_terms=False):
         """Find exact relations between fields in the provided
         symbol/field.
 
@@ -61,28 +61,28 @@ class IPSeeker(object):
         :type symbol: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         """
 
-        cf = CRCFinder()
-        return cf.executeOnSymbol(symbol,create_fields)
+        cf = IPSeeker()
+        return cf.executeOnSymbol(symbol,create_fields,two_terms)
 
 
     @typeCheck(AbstractField)
-    def executeOnSymbol(self,symbol,create_fields):
+    def executeOnSymbol(self,symbol,create_fields=False,two_terms=False):
         """Find IP fields of the provided symbol. Symbol must have messages to extract IP's from layer 3
         """
         ip = symbol.messages[0].l3DestinationAddress
-        self.__seek_ip(ip,symbol,create_fields)
+        self.__seek_ip(ip,symbol,create_fields,two_terms)
         ip = symbol.messages[0].l3SourceAddress
-        self.__seek_ip(ip, symbol, create_fields)
+        self.__seek_ip(ip, symbol, create_fields,two_terms)
 
 
-    def __seek_ip(self,ip, symbol,create_fields = False):
+    def __seek_ip(self,ip, symbol,create_fields = False,two_terms = False):
 
         #Convert IP to hex value:
         hexipstring = binascii.hexlify(socket.inet_aton(ip))
         hexipstring =  binascii.unhexlify(hexipstring)
         index_list = []
         for message in symbol.messages:
-            results = self.__core_find(message.data,hexipstring,index_list)
+            results = self.__core_find(message.data,hexipstring,index_list,two_terms)
             #Change stdout to get message print in buffer
             old_stdout = sys.stdout
             sys.stdout = buffer1 = io.StringIO()
@@ -116,7 +116,7 @@ class IPSeeker(object):
                             pass
                         else:
                             mess = field_values[0]
-                            field_result = self.__core_find(mess,hexipstring,index_list)
+                            field_result = self.__core_find(mess,hexipstring,index_list,two_terms)
                             if field_result.full_be or field_result.one_less_be or field_result.two_less_be or field_result.full_le or field_result.one_less_le or field_result.two_less_le :
                             # Searchstring not always split in between fields => Need to create subfields
                                 self._logger.debug("Searchstring inside fields, creating subfields...")
@@ -213,7 +213,7 @@ class IPSeeker(object):
         return
 
 
-    def __core_find(self,message, hexipstring, index_list):
+    def __core_find(self,message, hexipstring, index_list,two_terms):
         # Define results structure
         results = collections.namedtuple('Results',
                                          ['full_be', 'one_less_be', 'two_less_be', 'full_le', 'one_less_le', 'two_less_le',
@@ -222,14 +222,16 @@ class IPSeeker(object):
         index_list = []
         results.one_less_be = self.__recursive_find(message, index_list, hexipstring[1:])
         index_list = []
-        results.two_less_be = self.__recursive_find(message, index_list, hexipstring[2:])
+        if two_terms:
+            results.two_less_be = self.__recursive_find(message, index_list, hexipstring[2:])
         index_list = []
         # little endian search
         results.full_le = self.__recursive_find(message, index_list, hexipstring[::-1])
         index_list = []
         results.one_less_le = self.__recursive_find(message, index_list, hexipstring[1:][::-1])
         index_list = []
-        results.two_less_le = self.__recursive_find(message, index_list, hexipstring[2:][::-1])
+        if two_terms:
+            results.two_less_le = self.__recursive_find(message, index_list, hexipstring[2:][::-1])
         # Remove results from one byte less searches in two bytes less searches
         for value in results.one_less_be:
             if value + 1 in results.two_less_be:
