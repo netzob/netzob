@@ -9,7 +9,7 @@ html {
 }
 
 body {
-  padding-top: 60px;
+
 }
 
 section {
@@ -83,4 +83,19 @@ footer .footer-nav {
   float: right;
   margin-right: 25px;
   list-style: none;
+}
+
+
+.editable:hover {
+    border-bottom: 1px solid #e7e7e7;
+}
+
+/**
+ *
+ * symbols/symbol.html
+ *
+ */
+
+.symbol-header h2{
+    margin-top:0px;
 }
