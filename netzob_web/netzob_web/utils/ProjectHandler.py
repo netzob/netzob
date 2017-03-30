@@ -85,7 +85,7 @@ class ProjectHandler(object):
             
         return Serializer.symbol_to_json(self.__project.get_symbol(sid = sid))
     
-    def update_symbol(self, sid, name):
+    def update_symbol(self, sid, name, description):
         if sid is None:
             raise ValueError("A SID must be specified")
 
@@ -93,14 +93,14 @@ class ProjectHandler(object):
         if len(sid) == 0:
             raise ValueError("A SID must be specified")
 
-        if name is None:
-            raise ValueError("A name must be specified")
-
-        name = str(name).strip()
-        if len(name) == 0:
-            raise ValueError("A name must be specified")        
+        if name is not None:
+            name = str(name).strip()
+            if len(name) == 0:
+                raise ValueError("A non-empty name must be specified")
+        if description is not None:
+            description = str(description).strip()
             
-        return Serializer.symbol_to_json(self.__project.update_symbol(sid = sid, name = name))
+        return Serializer.symbol_to_json(self.__project.update_symbol(sid = sid, name = name, description = description))
         
     def delete_symbol(self, sid):
         if sid is None:
@@ -219,7 +219,17 @@ class ProjectHandler(object):
             raise ValueError("A FID must be specified")
 
         return self.__project.add_field_in_symbol(sid = sid, fid = fid, fid_before_new = fid_before_new)
-    
+
+    def symbol_split_align(self, sid):
+        if sid is None:
+            raise ValueError("A SID must be specified")
+
+        sid = str(sid).strip()
+        
+        if len(sid) == 0:
+            raise ValueError("A SID must be specified")
+
+        self.__project.symbol_split_align(sid = sid)
     #
     # Messages
     #
