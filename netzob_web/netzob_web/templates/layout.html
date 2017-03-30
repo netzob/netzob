@@ -5,68 +5,89 @@
 <!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
 <!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
-<head>
-  <meta charset="utf-8">
+  <head>
+    <meta charset="utf-8">
 
-  <title>{% block page_title %}
-  
-    Netzob Web Interface
-  
-    {% endblock %}
-  </title>
-  <meta name="description" content="{% block meta_description %}{% endblock %}">
-  <meta name="author" content="{% block meta_author %}{% endblock %}">
+    <title>{% block page_title %}
+      
+      Netzob Web Interface
+      
+      {% endblock %}
+    </title>
+    <meta name="description" content="{% block meta_description %}{% endblock %}">
+    <meta name="author" content="{% block meta_author %}{% endblock %}">
 
-  <!-- Mobile viewport optimized: h5bp.com/viewport -->
-  <meta name="viewport" content="width=device-width">
+    <!-- Mobile viewport optimized: h5bp.com/viewport -->
+    <meta name="viewport" content="width=device-width">
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='libs/font-awesome4/css/font-awesome.min.css') }}">
-  {% assets "css_all" %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='libs/font-awesome4/css/font-awesome.min.css') }}">
+    {% assets "css_all" %}
     <link rel="stylesheet" href="{{ ASSET_URL }}">
-  {% endassets %}
+    {% endassets %}
 
-  {% block css %}{% endblock %}
+    {% block css %}{% endblock %}
 
-</head>
-<body class="{% block body_class %}{% endblock %}">
-{% block body %}
-{% with form=form  %}
-{% include "nav.html" %}
-{% endwith %}
-
-<header>{% block header %}{% endblock %}</header>
-<div class="{% block content_class %}container{% endblock content_class %}">
-
-  <div role="main">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <div class="row">
-      <div class="col-md-12">
-        {% for category, message in messages %}
-        <div class="alert alert-{{ category }}">
-          <a class="close" title="Close" href="#" data-dismiss="alert">&times;</a>
-         {{message}}
-        </div><!-- end .alert -->
-        {% endfor %}
-      </div><!-- end col-md -->
-    </div><!-- end row -->
-        {% endif %}
+  </head>
+  <body class="{% block body_class %}{% endblock %}">
+    {% block body %}
+    {% with form=form  %}
+    {% include "nav.html" %}
     {% endwith %}
 
-    {% block content %}{% endblock %}
-  </div>
+    <header>{% block header %}{% endblock %}</header>
+    <div class="container-fluid">
 
-</div><!-- end container -->
+      <div role="main">
+	{% with messages = get_flashed_messages(with_categories=true) %}
+	{% if messages %}
+	<div class="row">
+	  <div class="col-md-12">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              <a class="close" title="Close" href="#" data-dismiss="alert">&times;</a>
+              {{message}}
+            </div><!-- end .alert -->
+            {% endfor %}
+	  </div><!-- end col-md -->
+	</div><!-- end row -->
+        {% endif %}
+	{% endwith %}
 
-{% include "footer.html" %}
+	<div class="container-fluid" >
+	  <div class="row" >
+	    <div class="col-md-2" style="padding:0px;" >
+	      {% include "left-nav.html" %}
+	    </div>
 
-<!-- JavaScript at the bottom for fast page loading -->
-{% assets "js_all" %}
+	    <div class="col-md-10" >
+	      {% block content %}
+	      content
+	      {% endblock %}
+	    </div>
+	    
+	  </div>
+	</div>
+      </div>
+
+    </div><!-- end container -->
+
+    {% include "footer.html" %}
+
+    <!-- JavaScript at the bottom for fast page loading -->
+    {% assets "js_all" %}
     <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-{% endassets %}
-{% block js %}{% endblock %}
-<!-- end scripts -->
-{% endblock %}
-</body>
+    {% endassets %}
+
+    <script type="text/javascript">
+      
+     // load left nav
+     initialize_left_nav("{{ sid }}");
+
+    </script>
+    
+    {% block js %}{% endblock %}
+    <!-- end scripts -->
+    {% endblock %}
+  </body>
 </html>
 
