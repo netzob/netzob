@@ -4,6 +4,9 @@
 #Other#
 __pycache__  
 
+#Build files#
+build
+
 #Useless XML stuff#
 *.xml
 
