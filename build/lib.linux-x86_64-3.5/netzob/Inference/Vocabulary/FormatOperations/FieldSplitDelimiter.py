@@ -81,37 +81,39 @@ class FieldSplitDelimiter(object):
         >>> symbol.encodingFunctions.add(TypeEncodingFunction(ASCII))  # Change visualization to hexastring
         >>> Format.splitDelimiter(symbol, ASCII("#"))
         >>> print(symbol)
-        Field-0         | Field-sep-23 | Field-2              | Field-sep-23 | Field-4
-        --------------- | ------------ | -------------------- | ------------ | -------
-        'CMDidentify'   | '#'          | '....fred'           | ''           | ''     
-        'RESidentify'   | '#'          | '........'           | ''           | ''     
-        'CMDinfo'       | '#'          | '....'               | ''           | ''     
-        'RESinfo'       | '#'          | '........info'       | ''           | ''     
-        'CMDstats'      | '#'          | '....'               | ''           | ''     
-        'RESstats'      | '#'          | '........stats'      | ''           | ''     
-        'CMDauthentify' | '#'          | '....myPasswd!'      | ''           | ''     
-        'RESauthentify' | '#'          | '........'           | ''           | ''     
-        'CMDencrypt'    | '#'          | '....123456test'     | ''           | ''     
-        'RESencrypt'    | '#'          | "........spqvwt6'16" | ''           | ''     
-        'CMDdecrypt'    | '#'          | "....spqvwt6'16"     | ''           | ''     
-        'RESdecrypt'    | '#'          | '........123456test' | ''           | ''     
-        'CMDbye'        | '#'          | '....'               | ''           | ''     
-        'RESbye'        | '#'          | '........'           | ''           | ''     
-        'CMDidentify'   | '#'          | '....Roberto'        | ''           | ''     
-        'RESidentify'   | '#'          | '........'           | ''           | ''     
-        'CMDinfo'       | '#'          | '....'               | ''           | ''     
-        'RESinfo'       | '#'          | '........info'       | ''           | ''     
-        'CMDstats'      | '#'          | '....'               | ''           | ''     
-        'RESstats'      | '#'          | '........stats'      | ''           | ''     
-        'CMDauthentify' | '#'          | '....aStrongPwd'     | ''           | ''     
-        'RESauthentify' | '#'          | '........'           | ''           | ''     
-        'CMDencrypt'    | '#'          | '....abcdef'         | ''           | ''     
-        'RESencrypt'    | '#'          | '........'           | '#'          | " !&'$"
-        'CMDdecrypt'    | '#'          | '....'               | '#'          | " !&'$"
-        'RESdecrypt'    | '#'          | '........abcdef'     | ''           | ''     
-        'CMDbye'        | '#'          | '....'               | ''           | ''     
-        'RESbye'        | '#'          | '........'           | ''           | ''     
-        --------------- | ------------ | -------------------- | ------------ | -------
+        Field-0         | Field-sep-23 | Field-2                                    | Field-sep-23 | Field-4
+        --------------- | ------------ | ------------------------------------------ | ------------ | -------
+        'CMDidentify'   | '#'          | '\x04\x00\x00\x00fred'                     | ''           | ''
+        'RESidentify'   | '#'          | '\x00\x00\x00\x00\x00\x00\x00\x00'         | ''           | ''
+        'CMDinfo'       | '#'          | '\x00\x00\x00\x00'                         | ''           | ''
+        'RESinfo'       | '#'          | '\x00\x00\x00\x00\x04\x00\x00\x00info'     | ''           | ''
+        'CMDstats'      | '#'          | '\x00\x00\x00\x00'                         | ''           | ''
+        'RESstats'      | '#'          | '\x00\x00\x00\x00\x05\x00\x00\x00stats'    | ''           | ''
+        'CMDauthentify' | '#'          | '\t\x00\x00\x00myPasswd!'                  | ''           | ''
+        'RESauthentify' | '#'          | '\x00\x00\x00\x00\x00\x00\x00\x00'         | ''           | ''
+        'CMDencrypt'    | '#'          | '\n\x00\x00\x00123456test'                 | ''           | ''
+        'RESencrypt'    | '#'          | "\x00\x00\x00\x00\n\x00\x00\x00spqvwt6'16" | ''           | ''
+        'CMDdecrypt'    | '#'          | "\n\x00\x00\x00spqvwt6'16"                 | ''           | ''
+        'RESdecrypt'    | '#'          | '\x00\x00\x00\x00\n\x00\x00\x00123456test' | ''           | ''
+        'CMDbye'        | '#'          | '\x00\x00\x00\x00'                         | ''           | ''
+        'RESbye'        | '#'          | '\x00\x00\x00\x00\x00\x00\x00\x00'         | ''           | ''
+        'CMDidentify'   | '#'          | '\x07\x00\x00\x00Roberto'                  | ''           | ''
+        'RESidentify'   | '#'          | '\x00\x00\x00\x00\x00\x00\x00\x00'         | ''           | ''
+        'CMDinfo'       | '#'          | '\x00\x00\x00\x00'                         | ''           | ''
+        'RESinfo'       | '#'          | '\x00\x00\x00\x00\x04\x00\x00\x00info'     | ''           | ''
+        'CMDstats'      | '#'          | '\x00\x00\x00\x00'                         | ''           | ''
+        'RESstats'      | '#'          | '\x00\x00\x00\x00\x05\x00\x00\x00stats'    | ''           | ''
+        'CMDauthentify' | '#'          | '\n\x00\x00\x00aStrongPwd'                 | ''           | ''
+        'RESauthentify' | '#'          | '\x00\x00\x00\x00\x00\x00\x00\x00'         | ''           | ''
+        'CMDencrypt'    | '#'          | '\x06\x00\x00\x00abcdef'                   | ''           | ''
+        'RESencrypt'    | '#'          | '\x00\x00\x00\x00\x06\x00\x00\x00'         | '#'          | " !&'$"
+        'CMDdecrypt'    | '#'          | '\x06\x00\x00\x00'                         | '#'          | " !&'$"
+        'RESdecrypt'    | '#'          | '\x00\x00\x00\x00\x06\x00\x00\x00abcdef'   | ''           | ''
+        'CMDbye'        | '#'          | '\x00\x00\x00\x00'                         | ''           | ''
+        'RESbye'        | '#'          | '\x00\x00\x00\x00\x00\x00\x00\x00'         | ''           | ''
+        --------------- | ------------ | ------------------------------------------ | ------------ | -------
+
+
         >>> print(symbol.fields[0]._str_debug())
         Field-0
         |--   Alt

@@ -63,6 +63,7 @@ class AbstractVariableLeaf(AbstractVariable):
         
     def parse(self, parsingPath, acceptCallBack=True, carnivorous=False):
         """@toto TO BE DOCUMENTED"""
+        #TODO Documentation
 
         if self.svas is None:
             raise Exception("Cannot parse if the variable has no assigned SVAS.")
@@ -106,6 +107,7 @@ class AbstractVariableLeaf(AbstractVariable):
 
     def specialize(self, parsingPath, acceptCallBack=True):
         """@toto TO BE DOCUMENTED"""
+        #TODO Documentation
 
         if self.svas is None:
             raise Exception("Cannot specialize if the variable has no assigned SVAS.")

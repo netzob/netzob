@@ -182,23 +182,33 @@ class Symbol(AbstractField):
 
     def getFieldFromIndex(self, index):
         """
-        Get the field in which the index of a value in a message belongs
+        This method tries to return the Field an index from a message belongs to.
 
-        :param index:
-        :return field,field_index_in_symbol:
+        :param index: An int. The index of a value in a message belonging to a symbol
+        :param symbol: The symbol we are working on
+        :return: Field object
         """
-        for field_index_in_symbol,field in enumerate(self.fields):
+        # field_dict = dict()
+        totalSize = 0
+        for field in self.fields:
+            # Check if normal or Alt field:
             try:
-                for i,val in enumerate(field.getValues()):
-                    if rebuilt_messages[i]:
-                        rebuilt_messages[i] += val
-                        if len(rebuilt_messages[i]) - 1 == index:
-                            return field,field_index_in_symbol
-                    else:
-                        rebuilt_messages.append(val)
+                # If Alt field we get the min and max size for each children
+                minSize, maxSize = (0, 0)
+                for child in field.domain.children:
+                    if child.dataType.size[1] > maxSize:
+                        maxSize = child.dataType.size[1]
+                    if child.dataType.size[0] < minSize or minSize == 0:
+                        minSize = child.dataType.size[0]
             except:
-                raise "Field has no values or something else is preventing the search"
-
+                minSize, maxSize = field.domain.dataType.size
+            totalSize += maxSize
+            if index < (totalSize / 8):
+                # Compute the index of the CRC relative to the field
+                field_index = totalSize - (8 * index)
+                field_index = totalSize - field_index
+                crcIndexInField = (8 * index) - field_index
+                return field
 
     # Properties
 

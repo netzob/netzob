@@ -61,9 +61,10 @@ class FieldSplitStatic(object):
     >>> import binascii
     >>> from netzob.all import *
     >>> samples = [b"00ff2f00000010", b"00001000000011", b"00fe1f00000012", b"00002000000013", b"00ff1f00000014", b"00ff1f00000015", b"00ff2f00000016", b"00fe1f00000017"]
-    >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
+    >>> for i,sample in enumerate(samples): samples[i] = binascii.unhexlify(sample)
+    >>> messages = [RawMessage(data=sample) for sample in samples]
     >>> symbol = Symbol(messages=messages)
-    >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
+        >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> print(symbol)
     Field           
     ----------------
@@ -92,8 +93,7 @@ class FieldSplitStatic(object):
     '00'    | 'fe1f'  | '000000' | '17'   
     ------- | ------- | -------- | -------
 
-    >>> fs = FieldSplitStatic(mergeAdjacentStaticFields=False, mergeAdjacentDynamicFields=False)
-    >>> fs.execute(symbol)
+    >>> Format.splitStatic(symbol,mergeAdjacentStaticFields=False, mergeAdjacentDynamicFields=False)
     >>> print(symbol)
     Field-0 | Field-1 | Field-2 | Field-3 | Field-4 | Field-5 | Field-6
     ------- | ------- | ------- | ------- | ------- | ------- | -------
@@ -107,8 +107,7 @@ class FieldSplitStatic(object):
     '00'    | 'fe'    | '1f'    | '00'    | '00'    | '00'    | '17'   
     ------- | ------- | ------- | ------- | ------- | ------- | -------
 
-    >>> fs = FieldSplitStatic(mergeAdjacentStaticFields=True, mergeAdjacentDynamicFields=False)
-    >>> fs.execute(symbol)
+    >>> Format.splitStatic(symbol,mergeAdjacentStaticFields=True, mergeAdjacentDynamicFields=False)
     >>> print(symbol)
     Field-0 | Field-1 | Field-2 | Field-3  | Field-4
     ------- | ------- | ------- | -------- | -------
@@ -122,8 +121,7 @@ class FieldSplitStatic(object):
     '00'    | 'fe'    | '1f'    | '000000' | '17'   
     ------- | ------- | ------- | -------- | -------
 
-    >>> fs = FieldSplitStatic(mergeAdjacentStaticFields=False, mergeAdjacentDynamicFields=True)
-    >>> fs.execute(symbol)
+    >>> Format.splitStatic(symbol,mergeAdjacentStaticFields=False, mergeAdjacentDynamicFields=True)
     >>> print(symbol)
     Field-0 | Field-1 | Field-2 | Field-3 | Field-4 | Field-5
     ------- | ------- | ------- | ------- | ------- | -------
@@ -139,8 +137,7 @@ class FieldSplitStatic(object):
 
 
     We can also plays with the unitsize:
-    >>> fs = FieldSplitStatic(AbstractType.UNITSIZE_8, mergeAdjacentDynamicFields=False)
-    >>> fs.execute(symbol)
+    >>> Format.splitStatic(symbol,AbstractType.UNITSIZE_8, mergeAdjacentDynamicFields=False)
     >>> print(symbol)
     Field-0 | Field-1 | Field-2 | Field-3  | Field-4
     ------- | ------- | ------- | -------- | -------
@@ -154,8 +151,7 @@ class FieldSplitStatic(object):
     '00'    | 'fe'    | '1f'    | '000000' | '17'   
     ------- | ------- | ------- | -------- | -------
 
-    >>> fs = FieldSplitStatic(AbstractType.UNITSIZE_16, mergeAdjacentDynamicFields=False)
-    >>> fs.execute(symbol)
+    >>> Format.splitStatic(symbol,AbstractType.UNITSIZE_16, mergeAdjacentDynamicFields=False)
     >>> print(symbol)
     Field-0 | Field-1 | Field-2 | Field-3
     ------- | ------- | ------- | -------
@@ -169,8 +165,7 @@ class FieldSplitStatic(object):
     '00fe'  | '1f00'  | '0000'  | '17'   
     ------- | ------- | ------- | -------
 
-    >>> fs = FieldSplitStatic(AbstractType.UNITSIZE_32, mergeAdjacentDynamicFields=False)
-    >>> fs.execute(symbol)
+    >>> Format.splitStatic(symbol,AbstractType.UNITSIZE_32, mergeAdjacentDynamicFields=False)
     >>> print(symbol)
     Field-0    | Field-1 
     ---------- | --------
@@ -184,8 +179,7 @@ class FieldSplitStatic(object):
     '00fe1f00' | '000017'
     ---------- | --------
 
-    >>> fs = FieldSplitStatic(AbstractType.UNITSIZE_64, mergeAdjacentDynamicFields=False)
-    >>> fs.execute(symbol)
+    >>> Format.splitStatic(symbol,AbstractType.UNITSIZE_64, mergeAdjacentDynamicFields=False)
     >>> print(symbol)
     Field-0         
     ----------------

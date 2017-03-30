@@ -63,7 +63,7 @@ class SortedTypedList(object):
     >>> msg3 = RawMessage(b"msg3", date=1456487548.0)
     >>> l = SortedTypedList(RawMessage, [msg2, msg3, msg1])
     >>> print(list(l.values())[0])
-    [0;32m[2.0 [0;m[1;32mNone[1;m[0;32m->[0;m[1;32mNone[1;m[0;32m][0;m 'msg2'
+    [0;32m[2.0 [0;m[1;32mNone[1;m[0;32m->[0;m[1;32mNone[1;m[0;32m][0;m b'msg2'
 
     >>> msg4 = RawMessage(b"msg4", date=145548.0)
     >>> l.add(msg4)
@@ -71,7 +71,7 @@ class SortedTypedList(object):
     >>> msg6 = RawMessage(b"msg6", date=1745645548.0)
     >>> l.addAll([msg5, msg6])
     >>> print(list(l.values())[5])
-    [0;32m[1745645548.0 [0;m[1;32mNone[1;m[0;32m->[0;m[1;32mNone[1;m[0;32m][0;m 'msg6'
+    [0;32m[1745645548.0 [0;m[1;32mNone[1;m[0;32m->[0;m[1;32mNone[1;m[0;32m][0;m b'msg6'
     >>> print(len(l))
     6
 

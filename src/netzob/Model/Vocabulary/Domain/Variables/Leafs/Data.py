@@ -439,12 +439,12 @@ class Data(AbstractVariableLeaf):
         if len(content)>=len(expectedValue) and content[:len(expectedValue)] == expectedValue:
             parsingPath.addResult(self, expectedValue.copy())
             results.append(parsingPath)
-        elif len(content)>=len(expectedValue) and content[24:24 + len(expectedValue)] == expectedValue:
-            parsingPath.addResult(self, expectedValue.copy())
-            results.append(parsingPath)
-        elif len(content) >= len(expectedValue) and content[8:8 + len(expectedValue)] == expectedValue:
-            parsingPath.addResult(self, expectedValue.copy())
-            results.append(parsingPath)
+        # elif len(content)>=len(expectedValue) and content[24:24 + len(expectedValue)] == expectedValue:
+        #     parsingPath.addResult(self, expectedValue.copy())
+        #     results.append(parsingPath)
+        # elif len(content) >= len(expectedValue) and content[8:8 + len(expectedValue)] == expectedValue:
+        #     parsingPath.addResult(self, expectedValue.copy())
+        #     results.append(parsingPath)
         else:
             self._logger.debug("{0} cannot be parsed with variable {1}".format(content, self.id))
         return results
@@ -463,7 +463,6 @@ class Data(AbstractVariableLeaf):
         if maxSize is None:
             maxSize = len(content)        
 
-        results = []
         
         if len(content) < minSize:
             self._logger.debug("Length of the content is too short ({0}), expect data of at least {1} bits".format(len(content), minSize))

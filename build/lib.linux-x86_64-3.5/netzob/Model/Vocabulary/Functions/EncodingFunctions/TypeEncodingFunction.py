@@ -92,6 +92,37 @@ class TypeEncodingFunction(EncodingFunction):
     'hello' | 1    
     ------- | -----
 
+    >>> m=RawMessage(b'\x68\x65\x6c\x6c\x6f\x00\x00\x00\x01')
+    >>> f1=Field(Raw("\x68\x65\x6c\x6c\x6f"))
+    >>> f2=Field(Integer(unitSize=AbstractType.UNITSIZE_32))
+    >>> s = Symbol(fields=[f1,f2], messages=[m])
+    >>> print(s)
+    Field   | Field
+    ------- | ------------------
+    'hello' | '\x00\x00\x00\x01'
+    ------- | ------------------
+
+    >>> f1.addEncodingFunction(TypeEncodingFunction(ASCII))
+    >>> print(s)
+    Field   | Field
+    ------- | ------------------
+    'hello' | '\x00\x00\x00\x01'
+    ------- | ------------------
+
+    >>> f1.clearEncodingFunctions()
+    >>> print(s)
+    Field   | Field
+    ------- | ------------------
+    'hello' | '\x00\x00\x00\x01'
+    ------- | ------------------
+
+    >>> f1.addEncodingFunction(TypeEncodingFunction(ASCII))
+    >>> print(s)
+    Field   | Field
+    ------- | ------------------
+    'hello' | '\x00\x00\x00\x01'
+    ------- | ------------------
+
     """
     def __init__(self, _type, unitSize=None, endianness=None, sign=None):
         """Creates a new encoding function that will encode

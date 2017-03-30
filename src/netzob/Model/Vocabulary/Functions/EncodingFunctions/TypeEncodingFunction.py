@@ -104,21 +104,21 @@ class TypeEncodingFunction(EncodingFunction):
 
     >>> f1.addEncodingFunction(TypeEncodingFunction(ASCII))
     >>> print(s)
-      Field | Field
+    Field   | Field
     ------- | ------------------
     'hello' | '\x00\x00\x00\x01'
     ------- | ------------------
 
     >>> f1.clearEncodingFunctions()
     >>> print(s)
-      Field | Field
+    Field   | Field
     ------- | ------------------
     'hello' | '\x00\x00\x00\x01'
     ------- | ------------------
 
     >>> f1.addEncodingFunction(TypeEncodingFunction(ASCII))
     >>> print(s)
-      Field | Field
+    Field   | Field
     ------- | ------------------
     'hello' | '\x00\x00\x00\x01'
     ------- | ------------------
