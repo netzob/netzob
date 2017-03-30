@@ -39,18 +39,23 @@ import collections
 # | Related third party imports                                               |
 # +---------------------------------------------------------------------------+
 from netzob.Model.Vocabulary.Symbol import Symbol
-# from netzob.Model.Vocabulary.Field import Field
-# from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
-# from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
-# from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
-# from netzob.Model.Types.ASCII import ASCII
-# from netzob.Model.Types.Raw import Raw
+from netzob.Model.Vocabulary.Field import Field
+from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
+from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
+from netzob.Model.Types.ASCII import ASCII
+from netzob.Model.Types.Raw import Raw
+from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Inference.Vocabulary.Format import Format
+from netzob.Inference.Vocabulary.FormatOperations.FieldSplitAligned.FieldSplitAligned import FieldSplitAligned
+
 
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob_web.utils.Capture import Capture
 
+@NetzobLogger
 class Project(object):
 
     PROJECTS = {    }
@@ -94,9 +99,12 @@ class Project(object):
     def get_symbol(self, sid):
         return self.__symbols[str(sid)]
 
-    def update_symbol(self, sid, name):
+    def update_symbol(self, sid, name, description):
         symbol = self.get_symbol(sid)
-        symbol.name = name
+        if name is not None:
+            symbol.name = name
+        if description is not None:
+            symbol.description = description
         return symbol
     
     def delete_symbol(self, sid):
@@ -124,6 +132,7 @@ class Project(object):
     def add_message_in_symbol(self, sid, mid):
         symbol = self.get_symbol(sid)
         message = self.get_message(mid)
+
         if message in symbol.messages:
             raise Exception("Message is already attached to the symbol")
         
@@ -156,6 +165,10 @@ class Project(object):
             position_to_insert = symbol.fields.index(previous_field) + 1
 
         symbol.fields.insert(position_to_insert, field)
+
+    def symbol_split_align(self, sid):
+        symbol = self.get_symbol(sid)
+        FieldSplitAligned(doInternalSlick=True).execute(symbol, True)
         
     #
     # Messages
