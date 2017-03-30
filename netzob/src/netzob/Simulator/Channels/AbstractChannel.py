@@ -174,9 +174,10 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         self.writeCounterMax = maxValue
 
     def clearWriteCounter(self):
-        """Reset the writings counter.
+        """Reset the writings counters.
         """
         self.writeCounter = 0
+        self.writeCounterMax = AbstractChannel.DEFAULT_WRITE_COUNTER_MAX
 
     def write(self, data, rate=None, duration=None):
         """Write on the communication channel the specified data
