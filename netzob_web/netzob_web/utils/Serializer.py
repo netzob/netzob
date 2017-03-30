@@ -134,8 +134,8 @@ def matrixlist_to_json(matrixlist):
 
     rows = []
     for cell in matrixlist:
-        rows.append({"items": [{"data": str(data)} for data in cell]})
-    
+        rows.append({"items": [{"data": str(data)[2:-1]} for data in cell]})
+
     result = {
         "columns": columns,
         "rows": rows,

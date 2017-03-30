@@ -166,6 +166,8 @@ class SymbolMessage(Resource):
     def put(self, pid, sid, mid):
         """Append a message to a symbol"""
 
+        
+        
         project_handler = projects_manager.get_project_handler(pid)
         return project_handler.add_message_in_symbol(sid, mid)
     
