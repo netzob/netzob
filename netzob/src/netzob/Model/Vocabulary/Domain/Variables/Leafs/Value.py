@@ -105,14 +105,33 @@ class Value(AbstractRelationVariableLeaf):
     >>> ms = MessageSpecializer()
     >>> print(TypeConverter.convert(ms.specializeSymbol(s).generatedContent, BitArray, Raw))
     b'netzob;netzob!'
+
+    A value relationship also accepts custom operations
+
+    >>> from netzob.all import *
+    >>> f0 = Field(1, name="f0")
+    >>> f1 = Field(ASCII(":"), name="f1")
+    >>> f2 = Field(Value(f0, operation = lambda x: TypeConverter.convert(TypeConverter.convert(x, BitArray, Integer) + 1, Integer, BitArray)), name="f2")
+    >>> s = Symbol([f0, f1, f2])
+    >>> print(s.specialize())
+    b'\\x01:\\x02'
+    >>> m1 = RawMessage(s.specialize())
+    >>> s.messages = [m1]
+    >>> print(s)
+    f0     | f1  | f2    
+    ------ | --- | ------
+    '\\x01' | ':' | '\\x02'
+    ------ | --- | ------
     
+
     """
 
-    def __init__(self, field, name=None):
+    def __init__(self, field, name=None, operation=None):
         if not isinstance(field, AbstractField):
             raise Exception("Expecting a field")
         super(Value, self).__init__(
             "Value", fieldDependencies=[field], name=name)
+        self.operation = operation
 
     @typeCheck(GenericPath)
     def isDefined(self, path):
@@ -148,6 +167,7 @@ class Value(AbstractRelationVariableLeaf):
 
         # we verify we have access to the expected value
         expectedValue = self._computeExpectedValue(parsingPath)
+        
         self._logger.debug(
             "Expected value to parse: {0}".format(expectedValue))
 
@@ -211,7 +231,7 @@ class Value(AbstractRelationVariableLeaf):
         if not parsingPath.isDataAvailableForField(fieldDep):
             return None
         else:
-            return parsingPath.getDataAssignedToField(fieldDep)
+            return self._applyOperation(parsingPath.getDataAssignedToField(fieldDep))
 
     @typeCheck(SpecializingPath)
     def regenerate(self, variableSpecializerPath, moreCallBackAccepted=True):
@@ -243,6 +263,14 @@ class Value(AbstractRelationVariableLeaf):
                 raise e
 
         return [variableSpecializerPath]
+
+    def _applyOperation(self, data):
+        """This method can be use to apply the specified operation function to the data parameter.
+        If no operation function is known, the data parameter is returned"""
+        if self.__operation is None:
+            return data
+
+        return self.__operation(data)
 
     # def getValue(self, processingToken):
     #     """Return the current value of targeted field.
@@ -326,3 +354,15 @@ class Value(AbstractRelationVariableLeaf):
             raise TypeError(
                 "Offset cannot be None, use 0 if no offset should be applied.")
         self.__offset = offset
+
+    @property
+    def operation(self):
+        """Defines the operation to be performed on the found value. This operation takes the form
+        of a python function that accepts a single parameter of BitArray type and returns a BitArray."""
+        return self.__operation
+
+    @operation.setter
+    def operation(self, operation):
+        if operation is not None and not callable(operation):
+            raise TypeError("Operation must be a function")
+        self.__operation = operation
