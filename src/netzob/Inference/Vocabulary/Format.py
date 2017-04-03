@@ -44,7 +44,6 @@
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.AbstractField import AbstractField
-from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Types.AbstractType import AbstractType
 from netzob.Inference.Vocabulary.FormatOperations.FieldSplitStatic.FieldSplitStatic import FieldSplitStatic
 from netzob.Inference.Vocabulary.FormatOperations.FieldSplitDelimiter import FieldSplitDelimiter
@@ -55,6 +54,7 @@ from netzob.Inference.Vocabulary.FormatOperations.ClusterByAlignment import Clus
 from netzob.Inference.Vocabulary.FormatOperations.ClusterByKeyField import ClusterByKeyField
 from netzob.Inference.Vocabulary.FormatOperations.ClusterByApplicativeData import ClusterByApplicativeData
 from netzob.Inference.Vocabulary.FormatOperations.ClusterBySize import ClusterBySize
+from netzob.Inference.Vocabulary.FormatOperations.ClusterByCRC import ClusterByCRC
 from netzob.Inference.Vocabulary.FormatOperations.FindKeyFields import FindKeyFields
 
 
@@ -545,3 +545,19 @@ class Format(object):
         clustering = ClusterBySize()
         return clustering.cluster(messages)
 
+    @staticmethod
+    def clusterByCRC(messages):
+        """This clustering process regroups messages or symbols from a message depending on wether they have a CRC or not
+        and on the type of the CRC.
+
+        :param messages: the messages to cluster. Or a symbol containing messages (Typecheck is done in the cluster method)
+        :return: a list of symbol representing all the computed clusters
+        :rtype: a list of :class:`netzob.Model.Vocabulary.Symbol.Symbol`
+        """
+
+        # Safe checks
+        if messages is None:
+            raise TypeError("'messages' should not be None")
+
+        clustering = ClusterByCRC()
+        return clustering.cluster(messages)

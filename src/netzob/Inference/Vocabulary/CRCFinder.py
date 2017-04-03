@@ -69,8 +69,8 @@ class CRCFinder(object):
             results = collections.namedtuple('Results', ['CRC_be', 'CRC_le', 'CRC_mid_be', 'CRC_mid_le'])
             field_results = collections.namedtuple('Results', ['CRC_be', 'CRC_le', 'CRC_mid_be', 'CRC_mid_le'])
             searched_string = message.data
-            results.CRC_be, results.CRC_le = self.__search_CRC(searched_string)
-            results.CRC_mid_be, results.CRC_mid_le = self.__search_mid_CRC(searched_string)
+            results.CRC_be, results.CRC_le = self._search_CRC(searched_string)
+            results.CRC_mid_be, results.CRC_mid_le = self._search_mid_CRC(searched_string)
             self._logger.debug("Found the following results:")
             self._logger.debug("CRC_BE : " + str(results.CRC_be) + "")
             self._logger.debug("CRC_LE : " + str(results.CRC_le) + "")
@@ -86,8 +86,8 @@ class CRCFinder(object):
                     max_length = max([len(i) for i in field_values])
                     val = field_values[0] # Does not matter if field is Static or ALT, it always follows the same scheme.
                     fields_dict = dict()
-                    field_results.CRC_be, field_results.CRC_le = self.__search_CRC(val)
-                    field_results.CRC_mid_be, field_results.CRC_mid_le = self.__search_mid_CRC(val)
+                    field_results.CRC_be, field_results.CRC_le = self._search_CRC(val)
+                    field_results.CRC_mid_be, field_results.CRC_mid_le = self._search_mid_CRC(val)
                     if field_results.CRC_be or field_results.CRC_le or field_results.CRC_mid_be or field_results.CRC_mid_le:
                         # If refining the search gives results => The CRC and the elements that are used for the CRC are all inside one field
                         # Hence we create subfields
@@ -144,7 +144,7 @@ class CRCFinder(object):
             self._logger.debug("Sorry, no CRC found")
 
 
-    def __search_CRC(self,searched_string):
+    def _search_CRC(self,searched_string):
         """
         Looks for a CRC in BE and LE. The CRC is computed thanks to all the data following the CRC
 
@@ -176,7 +176,7 @@ class CRCFinder(object):
         return found_BE_CRCS_index,found_LE_CRCS_index
 
 
-    def __search_mid_CRC(self,searched_string):
+    def _search_mid_CRC(self,searched_string):
         """
         Looks for a CRC of the value b'\xca\xfe\x00\x00\x00\x00\xba\xbe', the b'\x00\x00\x00\x00' is then replaced by the computed CRC in the message.
         Return values are the index results of the search in little and big endian
