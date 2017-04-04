@@ -209,7 +209,14 @@ class AbstractMessage(SortableObject):
             start = (function.start / 8)
             end = (function.end / 8)
             functionTable.applyFunction(function, start, end)
-        return b"".join(functionTable.getResult()).decode('utf-8')
+
+        # Transform the result to a string
+        messageStr = ""
+        for result in functionTable.getResult():
+            for byte in result:
+                messageStr += chr(byte)
+
+        return messageStr
 
     @property
     def id(self):
