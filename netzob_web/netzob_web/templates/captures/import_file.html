@@ -72,6 +72,41 @@
      ] ).draw( false );     
  }
 
+
+ function extract_messages_from_files(table, files) {
+     var reader = new FileReader();
+
+     function extract_messages_from_file(i_msg, file_index) {
+	 if (file_index >= files.length) return;
+
+	 var file = files[file_index];
+	 reader.onload = function(e) {
+	     var arrayBuffer = reader.result;
+	     var int8Array = new Int8Array(arrayBuffer);
+	     var startBuffer = 0;
+	     var subArrayBuffer;
+	     var slice;
+	     var result;
+	     var i_line = 0;
+	     for (var i_byte = 0; i_byte < int8Array.length; i_byte++) {
+		 if (int8Array[i_byte] == 10) {
+		     subArrayBuffer = arrayBuffer.slice(startBuffer, i_byte);
+		     slice = int8Array.subarray(startBuffer, i_byte);
+		     result = String.fromCharCode.apply(null, slice);
+		     startBuffer = i_byte + 1;
+		     i_line += 1;			 
+		     if (result.length > 0) {
+			 i_msg += 1;
+			 register_message(table, i_msg, file.name, i_line, result);			 
+		     }
+		 }
+	     }
+	     extract_messages_from_file(i_msg, file_index + 1);
+	 }
+	 reader.readAsArrayBuffer(file);
+     }
+     extract_messages_from_file(0, 0);
+ }
  
  $(function() {
 
@@ -101,43 +136,13 @@
 	 // Get the selected files from the input.
 	 var files = fileSelect.files;
 
-	 var i_msg = 0;
-	 for (var i = 0; i < files.length; i++) {
-	     var file = files[i];
+	 extract_messages_from_files(table, files);
 
-	     var reader = new FileReader();
+	 // Update button text.
+	 uploadButton.innerHTML = 'Create symbol with selected messages';
 
-	     reader.onload = function(e) {
-		 var arrayBuffer = reader.result;
-		 var int8Array = new Int8Array(arrayBuffer);
-		 var startBuffer = 0;
-		 var subArrayBuffer;
-		 var slice;
-		 var result;
-		 var i_line = 0;
-		 for (var i_byte = 0; i_byte < int8Array.length; i_byte++) {
-		     if (int8Array[i_byte] == 10) {
-			 subArrayBuffer = arrayBuffer.slice(startBuffer, i_byte);
-			 slice = int8Array.subarray(startBuffer, i_byte);
-			 result = String.fromCharCode.apply(null, slice);
-			 startBuffer = i_byte + 1;
-			 i_line += 1;			 
-			 if (result.length > 0) {
-			     i_msg += 1;
-			     register_message(table, i_msg, file.name, i_line, result);
-			 }
-		     } 
-		 }
-		 
-	     }
-	     reader.readAsArrayBuffer(file);
-
-	     // Update button text.
-	     uploadButton.innerHTML = 'Create symbol with selected messages';
-
-	 }
+	 return false;
      }
-
 
 
      var importButton = document.getElementById('import_file_final_button');
