@@ -282,8 +282,8 @@ class Value(AbstractRelationVariableLeaf):
         return [variableSpecializerPath]
 
     def _applyOperation(self, data):
-            """This method can be use to apply the specified operation function to the data parameter.
-            If no operation function is known, the data parameter is returned"""
+        """This method can be use to apply the specified operation function to the data parameter.
+        If no operation function is known, the data parameter is returned"""
 
         if self.__operation is None:
             return data
