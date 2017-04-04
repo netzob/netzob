@@ -200,7 +200,9 @@ class AbstractMessage(SortableObject):
         >>> messages = PCAPImporter.readFile("./test/resources/pcaps/utf8-encoded-messages.pcap").values()
         >>> messages[0]._strWithVisualizationFunctions()
         'welcome, plese login in firstly\\n'
-        >>> print(messages[1]._strWithVisualizationFunctions())
+        >>> print(repr(messages[1]._strWithVisualizationFunctions()))
+        'user\\x00\\x00\\x00\\x00h!/2¼\\x7f\\x00\\x00\\x04\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x12\\x0c@\\x00\\x00\\x00\\x00\\x00\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x10`\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x10`\\x00\\x00\\x00\\x00\\x00xa\\x1d\\x8dÿ\\x7f\\x00\\x00\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00½\\r@\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'
+
         """
 
         # Add visualization effects to the data
