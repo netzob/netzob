@@ -177,13 +177,7 @@ class AbstractMessage(SortableObject):
         rely on it since its format can often be modified.
         """
 
-        # Add visualization effects to the data
-        functionTable = FunctionApplicationTable([self.data])
-        for function in self.visualizationFunctions:
-            start = (function.start / 8)
-            end = (function.end / 8)
-            functionTable.applyFunction(function, start, end)
-        tmpData = b"".join(functionTable.getResult()).decode('utf-8')
+        visualized_payloads = self._strWithVisualizationFunctions()
 
         # Add header in front of the data
         HLS1 = "\033[0;32m"
@@ -193,7 +187,29 @@ class AbstractMessage(SortableObject):
         header = HLS1 + "[{0} {1}{2}{3}->{4}{5}{6}]".format(
             self.date, HLE1 + HLS2, self.source, HLE2 + HLS1, HLE1 + HLS2,
             self.destination, HLE2 + HLS1) + HLE1
-        return "{0} {1}".format(header, repr(tmpData))
+        return "{0} {1}".format(header, repr(visualized_payloads))
+
+    def _strWithVisualizationFunctions(self):
+        """
+        This internal method is used by the __str__ method.
+        It returns the message payload on which visualization functions are applied.
+
+        Regression tests: This method should support messages that embeds non-utf8 chars.
+
+        >>> from netzob.all import *
+        >>> messages = PCAPImporter.readFile("./test/resources/pcaps/utf8-encoded-messages.pcap").values()
+        >>> messages[0]._strWithVisualizationFunctions()
+        'welcome, plese login in firstly\\n'
+        >>> print(messages[1]._strWithVisualizationFunctions())
+        """
+
+        # Add visualization effects to the data
+        functionTable = FunctionApplicationTable([self.data])
+        for function in self.visualizationFunctions:
+            start = (function.start / 8)
+            end = (function.end / 8)
+            functionTable.applyFunction(function, start, end)
+        return b"".join(functionTable.getResult()).decode('utf-8')
 
     @property
     def id(self):
