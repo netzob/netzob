@@ -45,7 +45,7 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, typeSpecifier
 
 
 class Integer(AbstractType):
@@ -121,7 +121,7 @@ class Integer(AbstractType):
         else:
             nbBits = int(unitSize)
 
-        super(Integer, self).__init__(
+        super().__init__(
             self.__class__.__name__,
             value,
             nbBits,
@@ -371,3 +371,28 @@ class Integer(AbstractType):
             unitFormat = unitFormat.upper()
 
         return endianFormat + unitFormat
+
+
+subtypes = typeSpecifier(Integer, "{sign}int{unitSize}{endianness}", {
+    'unitSize': [
+        # (AbstractType.defaultUnitSize(), ''),
+        (AbstractType.UNITSIZE_8, '8'),
+        (AbstractType.UNITSIZE_16, '16'),
+        (AbstractType.UNITSIZE_32, '32'),
+        (AbstractType.UNITSIZE_64, '64')
+    ],
+    'sign': [
+        # (AbstractType.defaultSign(), ''),
+        (AbstractType.SIGN_SIGNED, ''),
+        (AbstractType.SIGN_UNSIGNED, 'u')
+    ],
+    'endianness': [
+        # (AbstractType.defaultEndianness(), ''),
+        (AbstractType.ENDIAN_BIG, 'be'),
+        (AbstractType.ENDIAN_LITTLE, 'le')
+    ]
+})
+
+globals().update(subtypes)
+
+__all__ = ["Integer"] + list(subtypes)

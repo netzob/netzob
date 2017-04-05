@@ -38,6 +38,9 @@
 import abc
 import uuid
 from bitarray import bitarray
+from functools import partial, wraps
+from itertools import product
+from typing import Callable, Any, Mapping, Dict, Iterable, Tuple  # noqa: F401
 import random
 import collections
 
@@ -672,3 +675,55 @@ class AbstractType(object, metaclass=abc.ABCMeta):
                 "Specified Sign is not supported, please refer to the list in AbstractType.supportedSign()."
             )
         self.__sign = sign
+
+
+def typeSpecifier(klass: Callable[..., Any],
+                  name_pattern: str,
+                  defaults: Mapping[str, Iterable[Tuple[Any, str]]]):
+    """
+    Create class wrapper functions of `klass` with default parameters.
+    The name of these class is also computed from a pattern
+
+    :param: klass: the callable from which default values should be applied
+    :type: klass: callable (i.e. a derivated AbstractType class)
+    :param: name_pattern: the pattern name of the specialized type
+    :type: name_pattern: str
+    :param: defaults: a structure of default specialization values
+    :type: defaults: a map of expected argument from klass with a list of
+    specialization values (tuple of the value and the argument name for the
+    pattern)
+
+    >>> from netzob.all import *
+    >>> (v1, v2) = (uint8be(0x80), int8be(-0x80))
+    >>> v1, v2
+    (-128, -128)
+    >>> v1 == v2
+    False
+    >>> Field(v1).specialize() == Field(v2).specialize()
+    True
+    >>> (v1, v2) = (uint16be(0x1234), uint16le(0x3412))
+    >>> Field(v1).specialize() == Field(v2).specialize()
+    True
+    """
+
+    # wrapper used to instanciate classes with `partial`
+    @wraps(klass)
+    def create_klass(*args, **kwargs):
+        return klass(*args, **kwargs)
+
+    # build the list of all named presets
+    kw_pairs = []
+    for key, values in defaults.items():
+        kw_pairs.append([(key, value) for value in values])
+
+    # build the product of all possible combinations, grouped by attribute
+    kw_prod = map(dict, product(*kw_pairs))  # type: Iterable[Dict[str, Tuple[Any, str]]]
+
+    # build the partial functions (with their name)
+    types = {}
+    for kwargs in kw_prod:
+        kw_names = {k: name for (k, (_, name)) in kwargs.items()}
+        name = name_pattern.format(**kw_names)
+        kw_values = {k: v for (k, (v, _)) in kwargs.items()}
+        types[name] = partial(create_klass, **kw_values)
+    return types
