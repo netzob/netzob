@@ -128,13 +128,13 @@ class FieldSpecializer(object):
 
         self._logger.debug("Specialize field {0}".format(self.field.name))
 
-        # does an arbitrary value is specified ?
+        # Is an arbitrary value specified ?
         if self.arbitraryValue is not None:
             specializingPath.addResult(self.field.domain, self.arbitraryValue)
             specializingPath.addResultToField(self.field, self.arbitraryValue)
             return [specializingPath]
 
-        # does current field has children
+        # does current field have children
         if len(self.field.fields) > 0:
             return self._specializeFieldWithChildren(specializingPath)
         else:

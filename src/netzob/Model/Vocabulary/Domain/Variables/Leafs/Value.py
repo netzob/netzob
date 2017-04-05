@@ -54,7 +54,8 @@ from netzob.Model.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
-
+from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
+from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 
 
 @NetzobLogger
@@ -122,10 +123,10 @@ class Value(AbstractRelationVariableLeaf):
     >>> print(s)
     f0     | f1  | f2
     ------ | --- | ------
-    '\\x01' | ':' | '\\x02'
+   '\\x01' | ':' | '\\x02'
     ------ | --- | ------
 
-    This checks for an issue that the Value Relation had with Alt fields.
+    Netgoblin fork: This checks for an issue that the Value Relation had with Alt fields.
 
     >>> from netzob.all import *
     >>> messagevalue = RawMessage(b'\x55\xcd\x55\xcd\x0c\x00\x01')
@@ -141,13 +142,54 @@ class Value(AbstractRelationVariableLeaf):
     b'X\xcf' | b'X\xcf' | '\x0c\x00\x01'
     -------- | -------- | --------------
 
+    Netgoblin fork: This tests the operation method to parse an incremental message.
+
+    >>> from netzob.all import *
+    >>> from netzob.Model.Types.BitArray import BitArray
+    >>> from netzob.Model.Types.Raw import Raw
+    >>> from netzob.Model.Types.TypeConverter import TypeConverter
+    >>>initValue = Raw(b"\x00")
+    >>> f0 = Field(name="incField")
+    >>> f0 = Field(Value(f0, operation = lambda x: TypeConverter.convert(TypeConverter.convert(x, BitArray, Integer) + 1, Integer, BitArray),initValue=TypeConverter.convert(initValue,Raw,BitArray)))
+    >>> mess1 = [RawMessage(b"\x01")]
+    >>> mess2 = [RawMessage(b"\x02")]
+    >>> mess3 = [RawMessage(b"\x03")]
+    >>> mess4 = [RawMessage(b"\x04")]
+    >>> messages = mess1 + mess2 + mess3 + mess4
+    >>> symbol = Symbol(messages = messages, fields=[f0])
+    >>> print(symbol)
+    Field
+    ------
+    '\x01'
+    '\x02'
+    '\x03'
+    '\x04'
+    ------
+
+    >>> from netzob.all import *
+    >>> from netzob.Model.Types.BitArray import BitArray
+    >>> from netzob.Model.Types.Raw import Raw
+    >>> from netzob.Model.Types.TypeConverter import TypeConverter
+    >>> initValue = Raw(b"\x00")
+    >>> f0 = Field(name="incField")
+    >>> f0 = Field(Value(f0, operation = lambda x: TypeConverter.convert(TypeConverter.convert(x, BitArray, Integer) + 1, Integer, BitArray),initValue=TypeConverter.convert(initValue,Raw,BitArray),svas=SVAS.PERSISTENT))
+    >>> print(f0.specialize())
+    b'\x01'
+    >>> print(f0.specialize())
+    b'\x02'
+    >>> print(f0.specialize())
+    b'\x03'
+    >>> print(f0.specialize())
+    b'\x04'
+
     """
 
-    def __init__(self, field, name=None, operation = None):
+    def __init__(self, field, name=None, operation = None, svas = SVAS.VOLATILE,initValue = None):
         if not isinstance(field, AbstractField):
             raise Exception("Expecting a field")
-        super(Value, self).__init__("Value", fieldDependencies=[field], name=name)
+        super(Value, self).__init__("Value", fieldDependencies=[field], name=name,svas = svas)
         self.operation = operation
+        self.initValue = initValue
 
     @typeCheck(GenericPath)
     def isDefined(self, path):
@@ -203,8 +245,11 @@ class Value(AbstractRelationVariableLeaf):
             if minSizeDep > len(content):
                 self._logger.debug("Size of the content to parse is smallest than the min expected size of the dependency field")
                 return results
-
-            for size in range(min(maxSizeDep, len(content)), minSizeDep -1, -1):
+            try:
+                minVal = min(maxSizeDep, len(content))
+            except:
+                minVal = len(content)
+            for size in range(minVal, minSizeDep -1, -1):
                 # we create a new parsing path and returns it
                 newParsingPath = parsingPath.duplicate()
                 newParsingPath.addResult(self, content[:size].copy())        
@@ -323,7 +368,30 @@ class Value(AbstractRelationVariableLeaf):
 
     #         return b
 
-        
+    def generate(self, generationStrategy=None,oldValue=None):
+        """Generates a value that respects the requested size and domain constraints.
+
+        """
+        output = bitarray()
+        if self.operation is None:
+            if oldValue is None:
+                if self.initValue is None:
+                    if self.fieldDependencies:
+                        try:
+                            for fieldDepend in self.fieldDependencies:
+                                output += fieldDepend.domain.currentValue
+                        except:
+                            pass
+                else:
+                    output = self.initValue
+            else:
+                output = oldValue
+        else:
+            if oldValue is None:
+                oldValue = self.initValue
+            output = self._applyOperation(oldValue)
+
+        return output
             
     def __str__(self):
         """The str method."""
@@ -384,3 +452,12 @@ class Value(AbstractRelationVariableLeaf):
         if operation is not None and not callable(operation):
             raise TypeError("Operation must be a function")
         self.__operation = operation
+
+    @property
+    def initValue(self):
+        """Defines the initValue for the operation function to start with should be a BitArray."""
+        return self.__initValue
+
+    @initValue.setter
+    def initValue(self, value):
+        self.__initValue = value

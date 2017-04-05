@@ -113,7 +113,8 @@ class AbstractVariableLeaf(AbstractVariable):
             raise Exception("Cannot specialize if the variable has no assigned SVAS.")
         if self.isDefined(parsingPath):
             if self.svas == SVAS.CONSTANT or self.svas == SVAS.PERSISTENT:
-                return self.use(parsingPath, acceptCallBack)
+                #return self.use(parsingPath, acceptCallBack)
+                return self.regenerateAndMemorize(parsingPath,acceptCallBack)
             elif self.svas == SVAS.EPHEMERAL:
                 return self.regenerateAndMemorize(parsingPath, acceptCallBack)
             elif self.svas == SVAS.VOLATILE:

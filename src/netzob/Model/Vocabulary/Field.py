@@ -50,6 +50,7 @@ from netzob.Model.Types.BitArray import BitArray
 from netzob.Model.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Domain.DomainFactory import DomainFactory
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
+from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
 
 class InvalidDomainException(Exception):
     pass
@@ -139,7 +140,7 @@ class Field(AbstractField):
 
     """
 
-    def __init__(self, domain=None, name="Field", layer=False,messages = []):
+    def __init__(self, domain=None, name="Field", layer=False,messages = [],specializingPaths = None):
         """
         :keyword domain: the definition domain of the field (see domain property to get more information)
         :type domain: a :class:`list` of :class:`object`, default is Raw(None)
@@ -154,6 +155,7 @@ class Field(AbstractField):
             domain = Raw(None)
         self.domain = domain
         self.__messages = messages
+        self.specializingPaths = specializingPaths
 
     def specialize(self):
         """Specialize the current field to build a raw data that
@@ -188,8 +190,14 @@ class Field(AbstractField):
             
         from netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
         fs = FieldSpecializer(self)
-        specializingPaths = fs.specialize()
-
+        if self.domain.svas == SVAS.PERSISTENT:
+            if isinstance(self.specializingPaths,list):
+                self.specializingPaths = fs.specialize(specializingPath=self.specializingPaths[0])
+            else:
+                self.specializingPaths = fs.specialize(specializingPath=self.specializingPaths)
+            specializingPaths = self.specializingPaths
+        else:
+            specializingPaths = fs.specialize()
         if len(specializingPaths) < 1:
             raise Exception("Cannot specialize this field")
             
@@ -257,3 +265,12 @@ class Field(AbstractField):
                 self._logger.debug("Could not add a message to Field: {0}".format(e))
         else:
             self.__messages = message
+
+    @property
+    def specializingPaths(self):
+        """Defines the specializingPaths of a field"""
+        return self.__specializingPaths
+
+    @specializingPaths.setter
+    def specializingPaths(self, value):
+        self.__specializingPaths = value

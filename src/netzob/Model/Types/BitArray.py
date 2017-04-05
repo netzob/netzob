@@ -46,7 +46,7 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Types.AbstractType import AbstractType
-
+from netzob.Model.Types.Raw import Raw
 
 @NetzobLogger
 class BitArray(AbstractType):
@@ -167,6 +167,7 @@ class BitArray(AbstractType):
     @staticmethod
     def encode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
         """This method convert the python raw data to the BitArray.
+        It also converts python Raw to a BitArray
 
         >>> from netzob.all import *
         >>> from netzob.Model.Types.BitArray import BitArray
@@ -200,6 +201,8 @@ class BitArray(AbstractType):
             norm_data = data
         elif isinstance(data, str):
             norm_data = bytes(data, "utf-8")
+        elif isinstance(data, Raw):
+            return data.value
             
         b = bitarray(endian=endian)
         b.frombytes(norm_data)
