@@ -46,7 +46,7 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Inference.Vocabulary.CRCFinder import CRCFinder
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
-
+from netzob.Common.Utils.TypedList import TypedList
 
 @NetzobLogger
 class ClusterByCRC(object):
@@ -62,24 +62,29 @@ class ClusterByCRC(object):
             :raise Exception if something bad happens
         Returns: list: Returns a list of :class:`netzob.Model.Vocabulary.Symbol.Symbol`
         """
+        sym = None
         if isinstance(symbol,Symbol):
             if not symbol.messages:
                 raise "Symbol has no messages. Aborting"
             else:
                 symbol_name = symbol.name
                 messages = symbol.messages.list
+                sym = symbol
         elif isinstance(symbol,list):
             if isinstance(symbol[0],AbstractMessage):
+                messages = symbol
+                symbol_name = "Symbol"
+        elif isinstance(symbol, TypedList):
+            if isinstance(symbol[0], AbstractMessage):
                 messages = symbol
                 symbol_name = "Symbol"
             else:
                 raise TypeError("Typecheck failed. Aborting")
         else:
             raise TypeError("Typecheck failed. Aborting")
-        return self.__executeOnMessages(messages,symbol_name)
+        return self.__executeOnMessages(messages,symbol_name,sym)
 
-    @typeCheck(list,str)
-    def __executeOnMessages(self, messages,symbol_name):
+    def __executeOnMessages(self, messages,symbol_name,symbol):
         """
         Clusters messages by CRC32 type. Takes a symbol which contains messages as input
         Args:
@@ -130,6 +135,8 @@ class ClusterByCRC(object):
             newSymbols = []
         for sym_name,msgs in messageByCRC.items():
             s = Symbol(messages=msgs, name=symbol_name+"_"+sym_name)
+            if symbol is not None:
+                s.fields = symbol.fields
             newSymbols.append(s)
         return newSymbols
 
