@@ -36,6 +36,12 @@
 #+---------------------------------------------------------------------------+
 import socket
 from bitarray import bitarray
+import struct
+from fcntl import ioctl
+import arpreq
+import subprocess
+import time
+import binascii
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -60,20 +66,22 @@ from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
 
 
 @NetzobLogger
-class RawIPClient(AbstractChannel):
-    """A RawIPClient is a communication channel allowing to send IP
+class RawEthernetClient(AbstractChannel):
+    """A RawEthernetClient is a communication channel allowing to send IP
     payloads. This channel is responsible for building the IP layer.
 
     Interesting link: http://www.offensivepython.com/2014/09/packet-injection-capturing-response.html
 
     >>> from netzob.all import *
-    >>> client = RawIPClient(remoteIP='127.0.0.1')
+    >>> client = RawEthernetClient(remoteIP='127.0.0.1')
     >>> client.open()
     >>> symbol = Symbol([Field("Hello everyone!")])
     >>> client.write(symbol.specialize())
     >>> client.close()
 
     """
+
+    ETH_P_ALL = 3
 
     @typeCheck(str, int)
     def __init__(self,
@@ -82,10 +90,8 @@ class RawIPClient(AbstractChannel):
                  upperProtocol=socket.IPPROTO_TCP,
                  interface="eth0",
                  timeout=5):
-        super(RawIPClient, self).__init__(isServer=False)
+        super(RawEthernetClient, self).__init__(isServer=False)
         self.remoteIP = remoteIP
-        if localIP is None:
-            localIP = self.getLocalIP(remoteIP)
         self.localIP = localIP
         self.upperProtocol = upperProtocol
         self.interface = interface
@@ -93,7 +99,7 @@ class RawIPClient(AbstractChannel):
         self.__socket = None
         self.header = None  # The IP header symbol format
         self.header_presets = {}  # Dict used to parameterize IP header fields
-        self.type = AbstractChannel.TYPE_RAWIPCLIENT
+        self.type = AbstractChannel.TYPE_RAWETHERNETCLIENT
 
         # Header initialization
         self.initHeader()
@@ -107,9 +113,8 @@ class RawIPClient(AbstractChannel):
             raise RuntimeError(
                 "The channel is already open, cannot open it again")
 
-        self.__socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, self.upperProtocol)
-        self.__socket.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
-        self.__socket.bind((self.localIP, self.upperProtocol))
+        self.__socket = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.htons(RawEthernetClient.ETH_P_ALL))
+        self.__socket.bind((self.interface, RawEthernetClient.ETH_P_ALL))
         self.isOpen = True
 
     def close(self):
@@ -128,6 +133,11 @@ class RawIPClient(AbstractChannel):
         if self.__socket is not None:
             (data, _) = self.__socket.recvfrom(65535)
 
+            # Remove Ethernet header from received data
+            ethHeaderLen = 14  # (Bitwise AND 00001111) x 4bytes --> see RFC-791
+            if len(data) > ethHeaderLen:
+                data = data[ethHeaderLen:]
+
             # Remove IP header from received data
             ipHeaderLen = (data[0] & 15) * 4  # (Bitwise AND 00001111) x 4bytes --> see RFC-791
             if len(data) > ipHeaderLen:
@@ -143,9 +153,15 @@ class RawIPClient(AbstractChannel):
         :type data: binary object
         """
 
+        if self.header is None:
+            raise Exception("IP header structure is None")
+
+        if self.__socket is None:
+            raise Exception("socket is not available")
+
         self.header_presets['ip.payload'] = data
         packet = self.header.specialize(presets=self.header_presets)
-        len_data = self.__socket.sendto(packet, (self.remoteIP, 0))
+        len_data = self.__socket.sendto(packet, (self.interface, RawEthernetClient.ETH_P_ALL))
         return len_data
 
     @typeCheck(bytes)
@@ -177,10 +193,47 @@ class RawIPClient(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
+    def get_interface_addr(self, ifname):
+        SIOCGIFHWADDR = 0x8927
+        s = socket.socket()
+        response = ioctl(s, SIOCGIFHWADDR, struct.pack("16s16x",ifname))
+        s.close()
+        return struct.unpack("16xh6s8x", response)
+
     def initHeader(self):
         """Initialize the IP header according to the IP format definition.
 
         """
+
+        # Ethernet header
+
+        # Retrieve remote MAC address
+        dstMacAddr = arpreq.arpreq(self.remoteIP)
+        if dstMacAddr is not None:
+            dstMacAddr = dstMacAddr.replace(':', '')
+            dstMacAddr = binascii.unhexlify(dstMacAddr)
+        else:
+            # Force ARP resolution
+            p = subprocess.Popen(["/bin/ping", "-c1", self.remoteIP])
+            p.wait()
+            time.sleep(0.1)
+
+            dstMacAddr = arpreq.arpreq(self.remoteIP)
+            if dstMacAddr is not None:
+                dstMacAddr = dstMacAddr.replace(':', '')
+                dstMacAddr = binascii.unhexlify(dstMacAddr)
+            else:
+                raise Exception("Cannot resolve IP address to a MAC address for IP: '{}'".format(self.remoteIP))
+
+        # Retrieve local MAC address
+        srcMacAddr = self.get_interface_addr(bytes(self.interface, 'utf-8'))[1]
+
+        eth_dst = Field(name='eth.dst', domain=Raw(dstMacAddr))
+        eth_src = Field(name='eth.src', domain=Raw(srcMacAddr))
+        eth_type = Field(name='eth.type', domain=Raw(b"\x08\x00"))
+
+
+        # IP header
 
         ip_ver = Field(
             name='ip.version', domain=BitArray(
@@ -240,20 +293,23 @@ class RawIPClient(AbstractChannel):
                                                       ip_checksum,
                                                       ip_saddr,
                                                       ip_daddr], dataType=Raw(nbBytes=2, unitSize=AbstractType.UNITSIZE_16))
-
-        self.header = Symbol(name='IP layer', fields=[ip_ver,
-                                                      ip_ihl,
-                                                      ip_tos,
-                                                      ip_tot_len,
-                                                      ip_id,
-                                                      ip_flags,
-                                                      ip_frag_off,
-                                                      ip_ttl,
-                                                      ip_proto,
-                                                      ip_checksum,
-                                                      ip_saddr,
-                                                      ip_daddr,
-                                                      ip_payload])
+        
+        self.header = Symbol(name='Ethernet layer', fields=[eth_dst,
+                                                            eth_src,
+                                                            eth_type,
+                                                            ip_ver,
+                                                            ip_ihl,
+                                                            ip_tos,
+                                                            ip_tot_len,
+                                                            ip_id,
+                                                            ip_flags,
+                                                            ip_frag_off,
+                                                            ip_ttl,
+                                                            ip_proto,
+                                                            ip_checksum,
+                                                            ip_saddr,
+                                                            ip_daddr,
+                                                            ip_payload])
 
     # Management methods
 

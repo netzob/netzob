@@ -23,6 +23,7 @@
 #| @contact  : contact@netzob.org                                            |
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+#|             ANSSI,   https://www.ssi.gouv.fr                              |
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
@@ -323,7 +324,6 @@ class Session(object):
             )
             return abstractSession
         for message in list(self.messages.values()):
-            symbol = AbstractField.abstract(message.data, symbolList)
-            abstractSession.append(
-                (message.source, message.destination, symbol))
+            (symbol, structured_message) = AbstractField.abstract(message.data, symbolList)
+            abstractSession.append((message.source, message.destination, symbol))
         return abstractSession

@@ -23,6 +23,7 @@
 #| @contact  : contact@netzob.org                                            |
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+#|             ANSSI,   https://www.ssi.gouv.fr                              |
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
@@ -86,7 +87,7 @@ class InternetChecksum(AbstractRelationVariableLeaf):
     >>> print(s)
     Type | Code | Checksum | Identifier | Sequence Number | Timestamp          | Payload                                                                                           
     ---- | ---- | -------- | ---------- | --------------- | ------------------ | --------------------------------------------------------------------------------------------------
-    '08' | '00' | '0716'   | '1d22'     | '0007'          | 'a8f3f65300000000' | '60b5060000000000101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f3031323334353637'
+    '08' | '00' | '1607'   | '1d22'     | '0007'          | 'a8f3f65300000000' | '60b5060000000000101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f3031323334353637'
     ---- | ---- | -------- | ---------- | --------------- | ------------------ | --------------------------------------------------------------------------------------------------
 
     """
@@ -212,9 +213,8 @@ class InternetChecksum(AbstractRelationVariableLeaf):
         # first checks the pointed fields all have a value
         hasValue = True
         for field in self.fieldDependencies:
-            if field.domain != self and not parsingPath.isDataAvailableForVariable(
-                    field.domain):
-                self._logger.debug("Field : {0} has no value".format(field.id))
+            if field.domain is not self and not parsingPath.isDataAvailableForVariable(field.domain):
+                self._logger.debug("The following field domain has no value: '{0}'".format(field.domain))
                 hasValue = False
 
         if not hasValue:
@@ -225,27 +225,34 @@ class InternetChecksum(AbstractRelationVariableLeaf):
             fieldValues = []
             for field in self.fieldDependencies:
                 if field.domain is self:
-                    fieldSize = random.randint(field.domain.dataType.size[0],
-                                               field.domain.dataType.size[1])
-                    fieldValue = b"\x00" * int(fieldSize / 8)
+                    fieldSize = random.randint(field.domain.dataType.size[0], field.domain.dataType.size[1])
+                    fieldValue = TypeConverter.convert(b"\x00" * int(fieldSize / 8), Raw, BitArray)
                 else:
-                    fieldValue = TypeConverter.convert(
-                        parsingPath.getDataAssignedToVariable(field.domain),
-                        BitArray, Raw)
+                    fieldValue = parsingPath.getDataAssignedToVariable(field.domain)
+
                 if fieldValue is None:
                     break
+                elif fieldValue.tobytes() == TypeConverter.convert("PENDING VALUE", ASCII, BitArray).tobytes():
+                    # Handle case where field value is not currently known.
+                    raise Exception("Expected value cannot be computed, some dependencies are missing for domain {0}".format(self))
                 else:
                     fieldValues.append(fieldValue)
 
-            fieldValues = b''.join(fieldValues)
+            # Aggregate all field value in a uniq bitarray object
+            concatFieldValues = bitarray('')
+            for f in fieldValues:
+                concatFieldValues += f
+
+            # Convert the bitarray object in a Raw object, as the checksum function expect a Raw input
+            concatFieldValues = TypeConverter.convert(concatFieldValues, BitArray, Raw)
+
             # compute the checksum of this value
-            chsum = self.__checksum(fieldValues)
-            b = TypeConverter.convert(
-                chsum,
-                Integer,
-                BitArray,
-                src_unitSize=AbstractType.UNITSIZE_16,
-                src_sign=AbstractType.SIGN_UNSIGNED)
+            chsum = self.__checksum(concatFieldValues)
+            b = TypeConverter.convert(chsum, Integer, BitArray,
+                                      src_endianness=AbstractType.ENDIAN_LITTLE,
+                                      dst_endianness=self.dataType.endianness,
+                                      src_unitSize=AbstractType.UNITSIZE_16,
+                                      src_sign = AbstractType.SIGN_UNSIGNED)
             return b
 
     @typeCheck(SpecializingPath)

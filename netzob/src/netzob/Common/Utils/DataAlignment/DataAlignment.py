@@ -23,6 +23,7 @@
 # | @contact  : contact@netzob.org                                            |
 # | @sponsors : Amossys, http://www.amossys.fr                                |
 # |             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+# |             ANSSI,   https://www.ssi.gouv.fr                              |
 # +---------------------------------------------------------------------------+
 
 # +---------------------------------------------------------------------------+
@@ -147,10 +148,10 @@ class DataAlignment(object):
         result = MatrixList()
 
         # We retrieve all the leaf fields of the root of the provided field
-        rootLeafFields = self.__root._getLeafFields(depth=self.depth)
+        rootLeafFields = self.__root.getLeafFields(depth=self.depth)
 
         # if self.__root != self.field:
-        #     targetedFieldLeafFields = self.field._getLeafFields(depth=self.depth)
+        #     targetedFieldLeafFields = self.field.getLeafFields(depth=self.depth)
         # else:
         targetedFieldLeafFields = rootLeafFields
 
@@ -176,7 +177,7 @@ class DataAlignment(object):
                     fieldValue = TypeConverter.convert(fieldValue, BitArray,
                                                        Raw)
 
-                if currentField in self.field._getLeafFields(depth=self.depth):
+                if currentField in self.field.getLeafFields(depth=self.depth):
                     alignedEncodedMsg.append(fieldValue)
 
             result.append(alignedEncodedMsg)

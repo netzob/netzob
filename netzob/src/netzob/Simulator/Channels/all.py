@@ -24,14 +24,18 @@
 #| @contact  : contact@netzob.org                                            |
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+#|             ANSSI,   https://www.ssi.gouv.fr                              |
 #+---------------------------------------------------------------------------+
 
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
 
+from netzob.Simulator.Channels.AbstractChannel import AbstractChannel
 from netzob.Simulator.Channels.TCPServer import TCPServer
 from netzob.Simulator.Channels.TCPClient import TCPClient
 from netzob.Simulator.Channels.UDPClient import UDPClient
 from netzob.Simulator.Channels.UDPServer import UDPServer
 from netzob.Simulator.Channels.SSLClient import SSLClient
+from netzob.Simulator.Channels.IPClient import IPClient
 from netzob.Simulator.Channels.RawIPClient import RawIPClient
+from netzob.Simulator.Channels.RawEthernetClient import RawEthernetClient

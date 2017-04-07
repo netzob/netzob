@@ -23,6 +23,7 @@
 # | @contact  : contact@netzob.org                                            |
 # | @sponsors : Amossys, http://www.amossys.fr                                |
 # |             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+# |             ANSSI,   https://www.ssi.gouv.fr                              |
 # +---------------------------------------------------------------------------+
 
 # +---------------------------------------------------------------------------+
@@ -169,6 +170,7 @@ class Symbol(AbstractField):
         :rtype: :class:`str``
         :raises: :class:`netzob.Model.Vocabulary.AbstractField.GenerationException` if an error occurs while generating a message
         """
+
         from netzob.Model.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
         msg = MessageSpecializer(memory=memory, presets=presets)
         spePath = msg.specializeSymbol(self)

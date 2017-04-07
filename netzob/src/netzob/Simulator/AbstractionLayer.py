@@ -23,6 +23,7 @@
 #| @contact  : contact@netzob.org                                            |
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+#|             ANSSI,   https://www.ssi.gouv.fr                              |
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
@@ -34,6 +35,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -73,6 +75,7 @@ class AbstractionLayer(object):
     >>> abstractionLayerOut = AbstractionLayer(channelOut, [symbol])
     >>> abstractionLayerOut.openChannel()
     >>> abstractionLayerOut.writeSymbol(symbol)
+    12
     >>> (receivedSymbol, receivedMessage) = abstractionLayerIn.readSymbol()
     >>> print(receivedSymbol.name)
     Symbol_Hello
@@ -91,6 +94,7 @@ class AbstractionLayer(object):
     >>> abstractionLayerOut = AbstractionLayer(channelOut, [symbolflow])
     >>> abstractionLayerOut.openChannel()
     >>> abstractionLayerOut.writeSymbol(symbolflow)
+    22
     >>> (receivedSymbols, receivedMessage) = abstractionLayerIn.readSymbols()
     >>> print(receivedSymbols)
     [Symbol_Hello, Symbol_WUP]
@@ -106,29 +110,100 @@ class AbstractionLayer(object):
         self.flow_parser = FlowParser(memory=self.memory)
 
     @typeCheck(Symbol)
-    def writeSymbol(self, symbol):
+    def writeSymbol(self, symbol, rate=None, duration=None, presets=None):
         """Write the specified symbol on the communication channel
         after specializing it into a contextualized message.
 
         :param symbol: the symbol to write on the channel
         :type symbol: :class:`netzob.Model.Vocabulary.Symbol.Symbol`
+
+        :param rate: specifies the bandwidth in octets to respect durring traffic emission (should be used with duration= parameter)
+        :type rate: int
+
+        :param duration: tells how much seconds the symbol is continuously written on the channel
+        :type duration: int
+
+        :param presets: specifies how to parameterize the emitted symbol
+        :type presets: dict
+
         :raise TypeError if parameter is not valid and Exception if an exception occurs.
+
         """
+
         if symbol is None:
             raise TypeError(
                 "The symbol to write on the channel cannot be None")
 
+        len_data = 0
+        if duration is None:
+            len_data = self._writeSymbol(symbol, presets=presets)
+        else:
+
+            t_start = time.time()
+            t_elapsed = 0
+            t_delta = 0
+            while True:
+
+                t_elapsed = time.time() - t_start
+                if t_elapsed > duration:
+                    break
+
+                # Specialize the symbol and send it over the channel
+                len_data += self._writeSymbol(symbol, presets=presets)
+
+                if rate is None:
+                    t_tmp = t_elapsed
+                    t_elapsed = time.time() - t_start
+                    t_delta += t_elapsed - t_tmp
+                else:
+                    # Wait some time to that we follow a specific rate
+                    while True:
+                        t_tmp = t_elapsed
+                        t_elapsed = time.time() - t_start
+                        t_delta += t_elapsed - t_tmp
+
+                        if (len_data / t_elapsed) > rate:
+                            time.sleep(0.001)
+                        else:
+                            break
+
+                # Show some log every seconds
+                if t_delta > 1:
+                    t_delta = 0
+                    self._logger.debug("Rate rule: {} ko/s, current rate: {} ko/s, sent data: {} ko, nb seconds elapsed: {}".format(round(rate / 1024, 2),
+                                                                                                                                    round((len_data / t_elapsed) / 1024, 2),
+                                                                                                                                    round(len_data / 1024, 2),
+                                                                                                                                    round(t_elapsed, 2)))
+        return len_data
+
+    def _writeSymbol(self, symbol, presets=None):
+        """Write the specified symbol on the communication channel after
+        specializing it into a contextualized message.
+
+        :param symbol: the symbol to write on the channel
+        :type symbol: :class:`netzob.Model.Vocabulary.Symbol.Symbol`
+
+        :param presets: specifies how to parameterize the emitted symbol
+        :type presets: dict
+
+        :raise TypeError if parameter is not valid and Exception if an exception occurs.
+
+        """
+
         self._logger.debug("Specializing symbol '{0}' (id={1}).".format(
             symbol.name, symbol.id))
 
+        self.specializer.presets = presets
         dataBin = self.specializer.specializeSymbol(symbol).generatedContent
+        self.specializer.presets = None
 
         self.memory = self.specializer.memory
         self.parser.memory = self.memory
         data = TypeConverter.convert(dataBin, BitArray, Raw)
 
-        self.channel.write(data)
-        self._logger.debug("Writing to commnunication channel done..")
+        len_data = self.channel.write(data)
+        self._logger.debug("Writing {} octets to commnunication channel done..".format(len_data))
+        return len_data
 
     @typeCheck(int)
     def readSymbols(self, timeout=EmptySymbol.defaultReceptionTimeout()):

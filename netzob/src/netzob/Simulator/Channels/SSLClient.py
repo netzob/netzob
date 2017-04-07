@@ -23,6 +23,7 @@
 #| @contact  : contact@netzob.org                                            |
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+#|             ANSSI,   https://www.ssi.gouv.fr                              |
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
@@ -71,7 +72,7 @@ class SSLClient(AbstractChannel):
         self.localIP = localIP
         self.localPort = localPort
         self.timeout = timeout
-        self.__isOpen = False
+        self.type = AbstractChannel.TYPE_SSLCLIENT
         self.__socket = None
         self.__ssl_socket = None
         self.server_cert_file = server_cert_file
@@ -114,6 +115,7 @@ class SSLClient(AbstractChannel):
         self._logger.debug("Connect to the SSL server to {0}:{1}".format(
             self.remoteIP, self.remotePort))
         self.__ssl_socket.connect((self.remoteIP, self.remotePort))
+        self.isOpen = True
 
     def close(self):
         """Close the communication channel."""
@@ -121,6 +123,7 @@ class SSLClient(AbstractChannel):
             self.__ssl_socket.close()
         if self.__socket is not None:
             self.__socket.close()
+        self.isOpen = False
 
     def read(self, timeout=None):
         """Read the next message on the communication channel.
@@ -147,7 +150,7 @@ class SSLClient(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
-    def write(self, data):
+    def writePacket(self, data):
         """Write on the communication channel the specified data
 
         :parameter data: the data to write on the channel
@@ -156,32 +159,29 @@ class SSLClient(AbstractChannel):
         if self.__socket is not None:
             try:
                 self.__ssl_socket.sendall(data)
+                return len(data)
             except ssl.SSLError:
                 raise ChannelDownException()
 
         else:
             raise Exception("socket is not available")
 
-    # Management methods
+    @typeCheck(bytes)
+    def sendReceive(self, data, timeout=None):
+        """Write on the communication channel the specified data and returns
+        the corresponding response.
 
-    @property
-    def isOpen(self):
-        """Returns if the communication channel is open
-
-        :return: the status of the communication channel
-        :type: :class:`bool`
         """
-        return self.__isOpen
 
-    @isOpen.setter
-    @typeCheck(bool)
-    def isOpen(self, isOpen):
-        self.__isOpen = isOpen
+        raise NotImplementedError("Not yet implemented")
+
+    # Management methods
 
     # Properties
 
     @property
     def remoteIP(self):
+
         """IP on which the server will listen.
 
         :type: :class:`str`

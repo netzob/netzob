@@ -23,6 +23,7 @@
 #| @contact  : contact@netzob.org                                            |
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+#|             ANSSI,   https://www.ssi.gouv.fr                              |
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
@@ -283,20 +284,35 @@ class Size(AbstractRelationVariableLeaf):
         self._logger.debug("compute expected value for Size field")
 
         # first checks the pointed fields all have a value
-        hasValue = True
-        for field in self.fieldDependencies:
-            if field.domain != self and not parsingPath.isDataAvailableForVariable(
-                    field.domain):
-                self._logger.debug("Field : {0} has no value".format(field.id))
-                hasValue = False
+        hasNeededData = True
+        size = 0
+        remainingFields = []
 
-        if not hasValue:
-            raise Exception(
-                "Expected value cannot be computed, some dependencies are missing for domain {0}".
-                format(self))
+        for field in self.fieldDependencies:
+
+            if field.domain == self:
+                remainingFields.append(field)
+            else:
+
+                # Retrieve the size of the targeted field, if it has a fixed size
+                if hasattr(field.domain, "dataType"):
+                    minSize, maxSize = field.domain.dataType.size
+                    if maxSize is not None and minSize == maxSize:
+                        size += minSize
+                        continue
+
+                # Else, retrieve its value if it exists
+                if parsingPath.isDataAvailableForVariable(field.domain):
+                    remainingFields.append(field)
+                else:
+                    self._logger.debug("The following field domain has no value: '{0}'".format(field.domain))
+                    hasNeededData = False
+                    break
+
+        if not hasNeededData:
+            raise Exception("Expected value cannot be computed, some dependencies are missing for domain {0}".format(self))
         else:
-            size = 0
-            for field in self.fieldDependencies:
+            for field in remainingFields:
 
                 # Retrieve field value
                 if field.domain is self:
@@ -308,31 +324,27 @@ class Size(AbstractRelationVariableLeaf):
                     break
 
                 # Retrieve length of field value
-                if fieldValue == TypeConverter.convert("PENDING VALUE", ASCII,
-                                                       BitArray):
-                    # Handle case where field value is not currently known.
-                    # In such case, we retrieve the max length of the datatype
-                    minSize, maxSize = field.domain.dataType.size
-                    if maxSize is None:
-                        maxSize = AbstractType.MAXIMUM_GENERATED_DATA_SIZE
-                    tmpLen = maxSize
-                else:
-                    tmpLen = len(fieldValue)
-                size += tmpLen
+                size += len(fieldValue)
 
-            size = int(size * self.factor + self.offset)
-            size_raw = TypeConverter.convert(
-                size, Integer, Raw, src_unitSize=self.dataType.unitSize)
-            b = TypeConverter.convert(size_raw, Raw, BitArray)
+        size = int(size * self.factor + self.offset)
+        size_raw = TypeConverter.convert(size,
+                                         Integer,
+                                         Raw,
+                                         src_unitSize=self.dataType.unitSize,
+                                         dst_unitSize=self.dataType.unitSize,
+                                         src_sign=self.dataType.sign,
+                                         dst_sign=self.dataType.sign)
+        b = TypeConverter.convert(size_raw, Raw, BitArray)
 
-            # add heading '0'
-            while len(b) < self.dataType.size[0]:
-                b.insert(0, False)
+        # add heading '0'
+        while len(b) < self.dataType.size[0]:
+            b.insert(0, False)
 
-            # in some cases (when unitSize and size are not equal), it may require to delete some '0' in front
-            while len(b) > self.dataType.size[0]:
-                b.remove(0)
+        # in some cases (when unitSize and size are not equal), it may require to delete some '0' in front
+        while len(b) > self.dataType.size[0]:
+            b.remove(0)
 
+        self._logger.debug("computed value for Size field: '{}'".format(b))
         return b
 
     @typeCheck(SpecializingPath)

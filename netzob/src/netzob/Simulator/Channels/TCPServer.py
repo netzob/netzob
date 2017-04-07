@@ -23,6 +23,7 @@
 #| @contact  : contact@netzob.org                                            |
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+#|             ANSSI,   https://www.ssi.gouv.fr                              |
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
@@ -60,7 +61,7 @@ class TCPServer(AbstractChannel):
     >>> import time
     >>> server = TCPServer(localIP='127.0.0.1', localPort=9999)
 
-    >>> symbol = Symbol([Field("Hello Zoby !")])
+    >>> symbol = Symbol([Field("Hello everyone!")])
     >>> s0 = State()
     >>> s1 = State()
     >>> s2 = State()
@@ -91,7 +92,7 @@ class TCPServer(AbstractChannel):
         self.localIP = localIP
         self.localPort = localPort
         self.timeout = timeout
-        self.__isOpen = False
+        self.type = AbstractChannel.TYPE_TCPSERVER
         self.__socket = None
         self.__clientSocket = None
 
@@ -149,7 +150,7 @@ class TCPServer(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
-    def write(self, data):
+    def writePacket(self, data):
         """Write on the communication channel the specified data
 
         :parameter data: the data to write on the channel
@@ -157,24 +158,20 @@ class TCPServer(AbstractChannel):
         """
         if self.__clientSocket is not None:
             self.__clientSocket.sendall(data)
+            return len(data)
         else:
             raise Exception("socket is not available")
 
-    # Management methods
+    @typeCheck(bytes)
+    def sendReceive(self, data, timeout=None):
+        """Write on the communication channel the specified data and returns
+        the corresponding response.
 
-    @property
-    def isOpen(self):
-        """Returns if the communication channel is open
-
-        :return: the status of the communication channel
-        :type: :class:`bool`
         """
-        return self.__isOpen
 
-    @isOpen.setter
-    @typeCheck(bool)
-    def isOpen(self, isOpen):
-        self.__isOpen = isOpen
+        raise NotImplementedError("Not yet implemented")
+
+    # Management methods
 
     # Properties
 

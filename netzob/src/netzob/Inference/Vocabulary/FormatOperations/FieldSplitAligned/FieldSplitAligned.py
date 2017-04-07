@@ -23,6 +23,7 @@
 #| @contact  : contact@netzob.org                                            |
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+#|             ANSSI,   https://www.ssi.gouv.fr                              |
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
@@ -460,7 +461,7 @@ class FieldSplitAligned(object):
         self._logger.debug("original semantic tags: ")
         self._logger.debug(semanticTags)
 
-        originalFields = rootField._getLeafFields()
+        originalFields = rootField.getLeafFields()
 
         if len(originalFields) == 1 and rootField == originalFields[0]:
             # We are dealing with a specific field

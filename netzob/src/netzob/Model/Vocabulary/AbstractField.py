@@ -23,6 +23,7 @@
 #| @contact  : contact@netzob.org                                            |
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+#|             ANSSI,   https://www.ssi.gouv.fr                              |
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
@@ -524,24 +525,29 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> from netzob.all import *
         >>> messages = ["{0}, what's up in {1} ?".format(pseudo, city) for pseudo in ['netzob', 'zoby'] for city in ['Paris', 'Berlin']]
 
-        >>> f1a = Field("netzob")
-        >>> f2a = Field(", what's up in ")
-        >>> f3a = Field(Alt(["Paris", "Berlin"]))
-        >>> f4a = Field(" ?")
+        >>> f1a = Field(name="name", domain="netzob")
+        >>> f2a = Field(name="question", domain=", what's up in ")
+        >>> f3a = Field(name="city", domain=Alt(["Paris", "Berlin"]))
+        >>> f4a = Field(name="mark", domain=" ?")
         >>> s1 = Symbol([f1a, f2a, f3a, f4a], name="Symbol-netzob")
 
-        >>> f1b = Field("zoby")
-        >>> f2b = Field(", what's up in ")
-        >>> f3b = Field(Alt(["Paris", "Berlin"]))
-        >>> f4b = Field(" ?")
+        >>> f1b = Field(name="name", domain="zoby")
+        >>> f2b = Field(name="question", domain=", what's up in ")
+        >>> f3b = Field(name="city", domain=Alt(["Paris", "Berlin"]))
+        >>> f4b = Field(name="mark", domain=" ?")
         >>> s2 = Symbol([f1b, f2b, f3b, f4b], name="Symbol-zoby")
 
         >>> for m in messages:
-        ...    abstractedSymbol = AbstractField.abstract(m, [s1, s2])
+        ...    (abstractedSymbol, structured_data) = AbstractField.abstract(m, [s1, s2])
+        ...    print(structured_data)
         ...    print(abstractedSymbol.name)
+        OrderedDict([('name', b'netzob'), ('question', b", what's up in "), ('city', b'Paris'), ('mark', b' ?')])
         Symbol-netzob
+        OrderedDict([('name', b'netzob'), ('question', b", what's up in "), ('city', b'Berlin'), ('mark', b' ?')])
         Symbol-netzob
+        OrderedDict([('name', b'zoby'), ('question', b", what's up in "), ('city', b'Paris'), ('mark', b' ?')])
         Symbol-zoby
+        OrderedDict([('name', b'zoby'), ('question', b", what's up in "), ('city', b'Berlin'), ('mark', b' ?')])
         Symbol-zoby
 
         :parameter data: the data that should be abstracted in symbol
@@ -549,26 +555,32 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         :parameter fields: a list of fields/symbols targeted during the abstraction process
         :type fields: :class:`list` of :class:`netzob.Model.Vocabulary.AbstractField`
 
-        :return: a field/symbol
-        :rtype: :class:`netzob.Model.Vocabulary.AbstractField`
+        :return: a field/symbol and the structured received message
+        :rtype: a tuple (:class:`netzob.Model.Vocabulary.AbstractField`, dict)
         :raises: :class:`netzob.Model.Vocabulary.AbstractField.AbstractionException` if an error occurs while abstracting the data
         """
         from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
         for field in fields:
             try:
-                DataAlignment.align([data], field, encoded=False)
-                return field
+                # Try to align/parse the data with the current field
+                alignedData = DataAlignment.align([data], field, encoded=False)
+
+                # If it matches, we build a dict that contains, for each field, the associated value that was present in the message
+                structured_data = OrderedDict()
+                for fields_value in alignedData:
+                    for i, field_value in enumerate(fields_value):
+                        structured_data[alignedData.headers[i]] = field_value
+                return (field, structured_data)
             except:
                 pass
 
         from netzob.Model.Vocabulary.UnknownSymbol import UnknownSymbol
         from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
         unknown_symbol = UnknownSymbol(RawMessage(data))
-        logging.error(
-            "Impossible to abstract the message in one of the specified symbols, we create an unknown symbol for it: '%s'",
-            unknown_symbol)
+        structured_data = OrderedDict()
+        logging.error("Impossible to abstract the message in one of the specified symbols, we create an unknown symbol for it: '%s'", unknown_symbol)
 
-        return unknown_symbol
+        return (unknown_symbol, structured_data)
 
     def getSymbol(self):
         """Computes the symbol to which this field is attached.
@@ -589,12 +601,12 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
             raise NoSymbolException(
                 "Impossible to retrieve the symbol attached to this element")
 
-    def _getLeafFields(self, depth=None, currentDepth=0):
+    def getLeafFields(self, depth=None, currentDepth=0, includePseudoFields=False):
         """Extract the leaf fields to consider regarding the specified depth
 
         >>> from netzob.all import *
         >>> field = Field("hello", name="F0")
-        >>> print([f.name for f in field._getLeafFields()])
+        >>> print([f.name for f in field.getLeafFields()])
         ['F0']
 
         >>> field = Field(name="L0")
@@ -610,16 +622,16 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> payloadField.fields = [fieldL1]
         >>> field.fields = [headerField, payloadField, footerField]
 
-        >>> print([f.name for f in field._getLeafFields(depth=None)])
+        >>> print([f.name for f in field.getLeafFields(depth=None)])
         ['L0_header', 'L1_header', 'L1_payload', 'L0_footer']
 
-        >>> print([f.name for f in field._getLeafFields(depth=0)])
+        >>> print([f.name for f in field.getLeafFields(depth=0)])
         ['L0']
 
-        >>> print([f.name for f in field._getLeafFields(depth=1)])
+        >>> print([f.name for f in field.getLeafFields(depth=1)])
         ['L0_header', 'L0_payload', 'L0_footer']
 
-        >>> print([f.name for f in field._getLeafFields(depth=2)])
+        >>> print([f.name for f in field.getLeafFields(depth=2)])
         ['L0_header', 'L1', 'L0_footer']
 
         :return: the list of leaf fields
@@ -636,9 +648,15 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         leafFields = []
         for fields in self.fields:
+
+            # Handle case where the field is pseudo (meaning it does not procude concrete value)
+            if fields.isPseudoField:
+                if includePseudoFields:
+                    pass
+                else:
+                    continue
             if fields is not None:
-                leafFields.extend(
-                    fields._getLeafFields(depth, currentDepth + 1))
+                leafFields.extend(fields.getLeafFields(depth, currentDepth + 1, includePseudoFields))
 
         return leafFields
 

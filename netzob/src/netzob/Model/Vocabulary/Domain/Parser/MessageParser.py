@@ -23,6 +23,7 @@
 # | @contact  : contact@netzob.org                                            |
 # | @sponsors : Amossys, http://www.amossys.fr                                |
 # |             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+# |             ANSSI,   https://www.ssi.gouv.fr                              |
 # +---------------------------------------------------------------------------+
 
 # +---------------------------------------------------------------------------+
@@ -180,7 +181,7 @@ class MessageParser(object):
         # we only consider the message data
         dataToParse = message.data
 
-        fields = symbol._getLeafFields()
+        fields = symbol.getLeafFields()
         return next(self.parseRaw(dataToParse, fields))
 
     @typeCheck(object)

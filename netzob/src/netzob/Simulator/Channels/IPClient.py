@@ -28,7 +28,6 @@
 
 #+---------------------------------------------------------------------------+
 #| File contributors :                                                       |
-#|       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
 #|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
 #+---------------------------------------------------------------------------+
 
@@ -36,6 +35,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import socket
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -45,60 +45,37 @@ import socket
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Simulator.Channels.AbstractChannel import AbstractChannel, ChannelDownException
+from netzob.Simulator.Channels.AbstractChannel import AbstractChannel
 
 
 @NetzobLogger
-class TCPClient(AbstractChannel):
-    """A TCPClient is a communication channel. It allows to create client connecting
-    to a specific IP:Port server over a TCP socket.
-
-    When the actor execute an OpenChannelTransition, it calls the open
-    method on the tcp client which connects to the server.
+class IPClient(AbstractChannel):
+    """A IPClient is a communication channel allowing to send IP
+    payloads. This channel lets the kernel builds the IP layer.
 
     >>> from netzob.all import *
-    >>> import time
-    >>> client = TCPClient(remoteIP='127.0.0.1', remotePort=9999)
-
+    >>> client = IPClient(remoteIP='127.0.0.1')
+    >>> client.open()
     >>> symbol = Symbol([Field("Hello everyone!")])
-    >>> s0 = State()
-    >>> s1 = State()
-    >>> s2 = State()
-    >>> openTransition = OpenChannelTransition(startState=s0, endState=s1)
-    >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol])
-    >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
-    >>> automata = Automata(s0, [symbol])
-
-    >>> channel = TCPServer(localIP="127.0.0.1", localPort=8885)
-    >>> abstractionLayer = AbstractionLayer(channel, [symbol])
-    >>> server = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
-
-    >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8885)
-    >>> abstractionLayer = AbstractionLayer(channel, [symbol])
-    >>> client = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
-
-    >>> server.start()
-    >>> client.start()
-
-    >>> time.sleep(1)
-    >>> client.stop()
-    >>> server.stop()
+    >>> client.write(symbol.specialize())
+    >>> client.close()
 
     """
 
+    @typeCheck(str, int)
     def __init__(self,
                  remoteIP,
-                 remotePort,
                  localIP=None,
-                 localPort=None,
+                 upperProtocol=socket.IPPROTO_TCP,
+                 interface="eth0",
                  timeout=5):
-        super(TCPClient, self).__init__(isServer=False)
+        super(IPClient, self).__init__(isServer=False)
         self.remoteIP = remoteIP
-        self.remotePort = remotePort
         self.localIP = localIP
-        self.localPort = localPort
+        self.upperProtocol = upperProtocol
+        self.interface = interface
         self.timeout = timeout
-        self.type = AbstractChannel.TYPE_TCPCLIENT
+        self.type = AbstractChannel.TYPE_IPCLIENT
         self.__socket = None
 
     def open(self, timeout=None):
@@ -110,15 +87,10 @@ class TCPClient(AbstractChannel):
             raise RuntimeError(
                 "The channel is already open, cannot open it again")
 
-        self.__socket = socket.socket()
-        # Reuse the connection
-        self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.__socket.settimeout(self.timeout)
-        if self.localIP is not None and self.localPort is not None:
-            self.__socket.bind((self.localIP, self.localPort))
-        self._logger.debug("Connect to the TCP server to {0}:{1}".format(
-            self.remoteIP, self.remotePort))
-        self.__socket.connect((self.remoteIP, self.remotePort))
+        self.__socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, self.upperProtocol)
+        self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 2**30)
+        self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 2**30)
+        self.__socket.bind((self.localIP, self.upperProtocol))
         self.isOpen = True
 
     def close(self):
@@ -128,28 +100,15 @@ class TCPClient(AbstractChannel):
         self.isOpen = False
 
     def read(self, timeout=None):
-        """Reads the next message on the communication channel.
-        Continues to read while it receives something.
-
+        """Read the next message on the communication channel.
 
         @keyword timeout: the maximum time in millisecond to wait before a message can be reached
         @type timeout: :class:`int`
         """
-        reading_seg_size = 1024
-
+        # TODO: handle timeout
         if self.__socket is not None:
-            data = b""
-            finish = False
-            while not finish:
-                try:
-                    recv = self.__socket.recv(reading_seg_size)
-                except socket.timeout:
-                    # says we received nothing (timeout issue)
-                    recv = b""
-                if recv is None or len(recv) == 0:
-                    finish = True
-                else:
-                    data += recv
+            (data, _) = self.__socket.recvfrom(65535)
+
             return data
         else:
             raise Exception("socket is not available")
@@ -161,23 +120,49 @@ class TCPClient(AbstractChannel):
         :type data: binary object
         """
         if self.__socket is not None:
-            try:
-                self.__socket.sendall(data)
-                return len(data)
-            except socket.error:
-                raise ChannelDownException()
-
+            len_data = self.__socket.sendto(data, (self.remoteIP, 0))
+            return len_data
         else:
             raise Exception("socket is not available")
 
-    @typeCheck(bytes)
     def sendReceive(self, data, timeout=None):
         """Write on the communication channel the specified data and returns
         the corresponding response.
 
-        """
+        :parameter data: the data to write on the channel
+        :type data: binary object
+        @type timeout: :class:`int`
 
-        raise NotImplementedError("Not yet implemented")
+        """
+        if self.__socket is not None:
+            # get the ports from message to identify the good response
+            #  (in TCP or UDP)
+
+            portSrcTx = (data[0] * 256) + data[1]
+            portDstTx = (data[2] * 256) + data[3]
+
+            responseOk = False
+            stopWaitingResponse = False
+            self.write(data)
+            while stopWaitingResponse is False:
+                # TODO: handle timeout
+                dataReceived = self.read(timeout)
+
+                # IHL = (Bitwise AND 00001111) x 4bytes
+                ipHeaderLen = (dataReceived[0] & 15) * 4
+                portSrcRx = (dataReceived[ipHeaderLen] * 256) + \
+                    dataReceived[ipHeaderLen + 1]
+                portDstRx = (dataReceived[ipHeaderLen + 2] * 256) + \
+                    dataReceived[ipHeaderLen + 3]
+
+                stopWaitingResponse = (portSrcTx == portDstRx) and \
+                    (portDstTx == portSrcRx)
+                if stopWaitingResponse:  # and not timeout
+                    responseOk = True
+            if responseOk:
+                return dataReceived
+        else:
+            raise Exception("socket is not available")
 
     # Management methods
 
@@ -195,29 +180,9 @@ class TCPClient(AbstractChannel):
     @typeCheck(str)
     def remoteIP(self, remoteIP):
         if remoteIP is None:
-            raise TypeError("RemoteIP cannot be None")
+            raise TypeError("Listening IP cannot be None")
 
         self.__remoteIP = remoteIP
-
-    @property
-    def remotePort(self):
-        """TCP Port on which the server will listen.
-        Its value must be above 0 and under 65535.
-
-
-        :type: :class:`int`
-        """
-        return self.__remotePort
-
-    @remotePort.setter
-    @typeCheck(int)
-    def remotePort(self, remotePort):
-        if remotePort is None:
-            raise TypeError("RemotePort cannot be None")
-        if remotePort <= 0 or remotePort > 65535:
-            raise ValueError("RemotePort must be > 0 and <= 65535")
-
-        self.__remotePort = remotePort
 
     @property
     def localIP(self):
@@ -233,18 +198,36 @@ class TCPClient(AbstractChannel):
         self.__localIP = localIP
 
     @property
-    def localPort(self):
-        """TCP Port on which the server will listen.
-        Its value must be above 0 and under 65535.
+    def upperProtocol(self):
+        """Upper protocol, such as TCP, UDP, ICMP, etc.
 
-        :type: :class:`int`
+        :type: :class:`str`
         """
-        return self.__localPort
+        return self.__upperProtocol
 
-    @localPort.setter
+    @upperProtocol.setter
     @typeCheck(int)
-    def localPort(self, localPort):
-        self.__localPort = localPort
+    def upperProtocol(self, upperProtocol):
+        if upperProtocol is None:
+            raise TypeError("Upper protocol cannot be None")
+
+        self.__upperProtocol = upperProtocol
+
+    @property
+    def interface(self):
+        """Interface such as eth0, lo.
+
+        :type: :class:`str`
+        """
+        return self.__interface
+
+    @interface.setter
+    @typeCheck(str)
+    def interface(self, interface):
+        if interface is None:
+            raise TypeError("Interface cannot be None")
+
+        self.__interface = interface
 
     @property
     def timeout(self):

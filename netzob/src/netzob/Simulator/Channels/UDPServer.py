@@ -23,6 +23,7 @@
 #| @contact  : contact@netzob.org                                            |
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+#|             ANSSI,   https://www.ssi.gouv.fr                              |
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
@@ -62,7 +63,7 @@ class UDPServer(AbstractChannel):
     >>> server.open()
     >>> server.close()
 
-    >>> symbol = Symbol([Field("Hello Zoby !")])
+    >>> symbol = Symbol([Field("Hello everyone!")])
     >>> s0 = State()
     >>> s1 = State()
     >>> s2 = State()
@@ -94,7 +95,7 @@ class UDPServer(AbstractChannel):
         self.localIP = localIP
         self.localPort = localPort
         self.timeout = timeout
-        self.__isOpen = False
+        self.type = AbstractChannel.TYPE_UDPSERVER
         self.__socket = None
         self.__remoteAddr = None
 
@@ -112,11 +113,13 @@ class UDPServer(AbstractChannel):
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.__socket.settimeout(self.timeout)
         self.__socket.bind((self.localIP, self.localPort))
+        self.isOpen = True
 
     def close(self):
         """Close the communication channel."""
         if self.__socket is not None:
             self.__socket.close()
+        self.isOpen = False
 
     def read(self, timeout=None):
         """Read the next message on the communication channel.
@@ -131,34 +134,29 @@ class UDPServer(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
-    @typeCheck(bytes)
-    def write(self, data):
+    def writePacket(self, data):
         """Write on the communication channel the specified data
 
         :parameter data: the data to write on the channel
         :type data: binary object
         """
         if self.__socket is not None and self.__remoteAddr is not None:
-            self.__socket.sendto(data, self.__remoteAddr)
+            len_data = self.__socket.sendto(data, self.__remoteAddr)
+            return len_data
         else:
             raise Exception(
                 "Socket is not available or remote address is not known.")
 
-    # Management methods
+    @typeCheck(bytes)
+    def sendReceive(self, data, timeout=None):
+        """Write on the communication channel the specified data and returns
+        the corresponding response.
 
-    @property
-    def isOpen(self):
-        """Returns if the communication channel is open
-
-        :return: the status of the communication channel
-        :type: :class:`bool`
         """
-        return self.__isOpen
 
-    @isOpen.setter
-    @typeCheck(bool)
-    def isOpen(self, isOpen):
-        self.__isOpen = isOpen
+        raise NotImplementedError("Not yet implemented")
+
+    # Management methods
 
     # Properties
 

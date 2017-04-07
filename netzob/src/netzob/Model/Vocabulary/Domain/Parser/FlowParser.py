@@ -23,6 +23,7 @@
 # | @contact  : contact@netzob.org                                            |
 # | @sponsors : Amossys, http://www.amossys.fr                                |
 # |             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+# |             ANSSI,   https://www.ssi.gouv.fr                              |
 # +---------------------------------------------------------------------------+
 
 # +---------------------------------------------------------------------------+
@@ -206,7 +207,7 @@ class FlowParser(object):
                 mp = MessageParser(memory=memory)
                 results = mp.parseBitarray(
                     data_to_parse_bitarray.copy(),
-                    symbol._getLeafFields(),
+                    symbol.getLeafFields(),
                     must_consume_everything=False)
 
                 for parse_result in results:

@@ -23,6 +23,7 @@
 #| @contact  : contact@netzob.org                                            |
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+#|             ANSSI,   https://www.ssi.gouv.fr                              |
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
@@ -61,7 +62,7 @@ class UDPClient(AbstractChannel):
     >>> client.open()
     >>> client.close()
 
-    >>> symbol = Symbol([Field("Hello Zoby !")])
+    >>> symbol = Symbol([Field("Hello everyone!")])
     >>> s0 = State()
     >>> s1 = State()
     >>> s2 = State()
@@ -100,7 +101,7 @@ class UDPClient(AbstractChannel):
         self.localIP = localIP
         self.localPort = localPort
         self.timeout = timeout
-        self.__isOpen = False
+        self.type = AbstractChannel.TYPE_UDPCLIENT
         self.__socket = None
 
     def open(self, timeout=None):
@@ -118,11 +119,13 @@ class UDPClient(AbstractChannel):
         self.__socket.settimeout(self.timeout)
         if self.localIP is not None and self.localPort is not None:
             self.__socket.bind((self.localIP, self.localPort))
+        self.isOpen = True
 
     def close(self):
         """Close the communication channel."""
         if self.__socket is not None:
             self.__socket.close()
+        self.isOpen = False
 
     def read(self, timeout=None):
         """Read the next message on the communication channel.
@@ -137,33 +140,28 @@ class UDPClient(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
-    @typeCheck(bytes)
-    def write(self, data):
+    def writePacket(self, data):
         """Write on the communication channel the specified data
 
         :parameter data: the data to write on the channel
         :type data: binary object
         """
         if self.__socket is not None:
-            self.__socket.sendto(data, (self.remoteIP, self.remotePort))
+            len_data = self.__socket.sendto(data, (self.remoteIP, self.remotePort))
+            return len_data
         else:
             raise Exception("socket is not available")
 
-    # Management methods
+    @typeCheck(bytes)
+    def sendReceive(self, data, timeout=None):
+        """Write on the communication channel the specified data and returns
+        the corresponding response.
 
-    @property
-    def isOpen(self):
-        """Returns if the communication channel is open
-
-        :return: the status of the communication channel
-        :type: :class:`bool`
         """
-        return self.__isOpen
 
-    @isOpen.setter
-    @typeCheck(bool)
-    def isOpen(self, isOpen):
-        self.__isOpen = isOpen
+        raise NotImplementedError("Not yet implemented")
+
+    # Management methods
 
     # Properties
 
