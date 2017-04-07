@@ -46,9 +46,9 @@ except:
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.AbstractField import AbstractField
-from netzob.Model.Types.TypeConverter import TypeConverter
-from netzob.Model.Types.Raw import Raw
-from netzob.Model.Types.Integer import Integer
+from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+from netzob.Model.Vocabulary.Types.Raw import Raw
+from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Inference.Vocabulary.RelationFinder import RelationFinder
 
 

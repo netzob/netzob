@@ -45,9 +45,9 @@
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.AbstractField import AbstractField
-from netzob.Model.Types.Raw import Raw
-from netzob.Model.Types.BitArray import BitArray
-from netzob.Model.Types.TypeConverter import TypeConverter
+from netzob.Model.Vocabulary.Types.Raw import Raw
+from netzob.Model.Vocabulary.Types.BitArray import BitArray
+from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Domain.DomainFactory import DomainFactory
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 
@@ -200,7 +200,7 @@ class Field(AbstractField):
         This definition domain is made of a list of typed values which can optionally have a static value.
         More information on the available types and their specificities are available on their documentations.
 
-        :type: a :class:`list` of :class:`object` -- By object we refer to a primitive object (:class:`int`, :class:`str`, :class:`hex`, :class:`binary`) and netzob types objects inherited from :class:`netzob.Model.Types.AbstractType.AbstractType`
+        :type: a :class:`list` of :class:`object` -- By object we refer to a primitive object (:class:`int`, :class:`str`, :class:`hex`, :class:`binary`) and netzob types objects inherited from :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
         :raises: :class:`netzob.Model.Vocabulary.Field.InvalidDomainException` if domain invalid.
         """
 

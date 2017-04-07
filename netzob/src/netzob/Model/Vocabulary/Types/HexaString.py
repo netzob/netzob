@@ -45,16 +45,16 @@ from bitarray import bitarray
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Model.Types.AbstractType import AbstractType
-from netzob.Model.Types.Raw import Raw
-from netzob.Model.Types.ASCII import ASCII
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.Raw import Raw
+from netzob.Model.Vocabulary.Types.ASCII import ASCII
 
 
 class HexaString(AbstractType):
     def __init__(self, value=None, size=(None, None)):
         if value is not None and not isinstance(value, bitarray):
-            from netzob.Model.Types.TypeConverter import TypeConverter
-            from netzob.Model.Types.BitArray import BitArray
+            from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+            from netzob.Model.Vocabulary.Types.BitArray import BitArray
             value = TypeConverter.convert(value, HexaString, BitArray)
 
         super(HexaString, self).__init__(self.__class__.__name__, value, size)
@@ -142,11 +142,11 @@ class HexaString(AbstractType):
         :param data: the data encoded in hexaString (str) which will be decoded in raw
         :type data: str
         :keyword unitSize: the unit size of the specified data
-        :type unitSize: :class:`netzob.Model.Types.UnitSize.UnitSize`
+        :type unitSize: :class:`netzob.Model.Vocabulary.Types.UnitSize.UnitSize`
         :keyword endianness: the endianness of the specified data
-        :type endianness: :class:`netzob.Model.Types.Endianness.Endianness`
+        :type endianness: :class:`netzob.Model.Vocabulary.Types.Endianness.Endianness`
         :keyword sign: the sign of the specified data
-        :type sign: :class:`netzob.Model.Types.Sign.Sign`
+        :type sign: :class:`netzob.Model.Vocabulary.Types.Sign.Sign`
 
         :return: data encoded in python raw
         :rtype: python raw

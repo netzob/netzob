@@ -89,13 +89,13 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     @staticmethod
     def supportedTypes():
         """Official list of supported types"""
-        from netzob.Model.Types.ASCII import ASCII
-        from netzob.Model.Types.Raw import Raw
-        from netzob.Model.Types.BitArray import BitArray
-        from netzob.Model.Types.Integer import Integer
-        from netzob.Model.Types.HexaString import HexaString
-        from netzob.Model.Types.IPv4 import IPv4
-        from netzob.Model.Types.Timestamp import Timestamp
+        from netzob.Model.Vocabulary.Types.ASCII import ASCII
+        from netzob.Model.Vocabulary.Types.Raw import Raw
+        from netzob.Model.Vocabulary.Types.BitArray import BitArray
+        from netzob.Model.Vocabulary.Types.Integer import Integer
+        from netzob.Model.Vocabulary.Types.HexaString import HexaString
+        from netzob.Model.Vocabulary.Types.IPv4 import IPv4
+        from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
 
         return [
             # an array of bits: [1,0,0,1,1,0..]
@@ -199,8 +199,8 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         self.sign = sign
 
     def __str__(self):
-        from netzob.Model.Types.TypeConverter import TypeConverter
-        from netzob.Model.Types.BitArray import BitArray
+        from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+        from netzob.Model.Vocabulary.Types.BitArray import BitArray
         if self.value is not None:
             return "{0}={1} ({2})".format(
                 self.typeName,
@@ -211,8 +211,8 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
     def __repr__(self):
         if self.value != None:
-            from netzob.Model.Types.TypeConverter import TypeConverter
-            from netzob.Model.Types.BitArray import BitArray
+            from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+            from netzob.Model.Vocabulary.Types.BitArray import BitArray
             return str(
                 TypeConverter.convert(self.value, BitArray, self.__class__))
         else:
@@ -269,8 +269,8 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         if dst_sign not in AbstractType.supportedSign():
             raise TypeError("Sign is not supported.")
 
-        from netzob.Model.Types.TypeConverter import TypeConverter
-        from netzob.Model.Types.BitArray import BitArray
+        from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+        from netzob.Model.Vocabulary.Types.BitArray import BitArray
         return typeClass(
             TypeConverter.convert(
                 self.value,
@@ -335,7 +335,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         :keyword prefixDescription: prefix to attach to the description of the generated mutation.
         :type prefixDescription: :class:`str`
         :return: a dict of computed mutations having the same types than the initial one.
-        :rtype: :class:`dict`<str>=:class:`netzob.Model.Types.AbstractType.AbstractType`
+        :rtype: :class:`dict`<str>=:class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
         """
         if prefixDescription is None:
             prefixDescription = ""
@@ -372,11 +372,11 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         :param data: the data encoded in current type which will be decoded in raw
         :type data: the current type
         :keyword unitSize: the unit size of the specified data
-        :type unitSize: :class:`netzob.Model.Types.UnitSize.UnitSize`
+        :type unitSize: :class:`netzob.Model.Vocabulary.Types.UnitSize.UnitSize`
         :keyword endianness: the endianness of the specified data
-        :type endianness: :class:`netzob.Model.Types.Endianness.Endianness`
+        :type endianness: :class:`netzob.Model.Vocabulary.Types.Endianness.Endianness`
         :keyword sign: the sign of the specified data
-        :type sign: :class:`netzob.Model.Types.Sign.Sign`
+        :type sign: :class:`netzob.Model.Vocabulary.Types.Sign.Sign`
 
         :return: data encoded in python raw
         :rtype: python raw
@@ -393,11 +393,11 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         :param data: the data encoded in python raw which will be encoded in current type
         :type data: python raw
         :keyword unitSize: the unit size of the specified data
-        :type unitSize: :class:`netzob.Model.Types.UnitSize.UnitSize`
+        :type unitSize: :class:`netzob.Model.Vocabulary.Types.UnitSize.UnitSize`
         :keyword endianness: the endianness of the specified data
-        :type endianness: :class:`netzob.Model.Types.Endianness.Endianness`
+        :type endianness: :class:`netzob.Model.Vocabulary.Types.Endianness.Endianness`
         :keyword sign: the sign of the specified data
-        :type sign: :class:`netzob.Model.Types.Sign.Sign`
+        :type sign: :class:`netzob.Model.Vocabulary.Types.Sign.Sign`
 
         :return: data encoded in python raw
         :rtype: python raw
@@ -424,7 +424,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         """The current value of the instance. This value is represented
         under BitArray format
 
-        :type: :class:`netzob.Model.Types.BitArray.BitArray`
+        :type: :class:`netzob.Model.Vocabulary.Types.BitArray.BitArray`
         """
 
         return self.__value
@@ -505,12 +505,12 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         :parameter data: the data to normalize
         :type data: :class:`object`
         :return: an abstractType which value is data
-        :rtype: :class:`netzob.Model.Types.AbstractType.AbstractType`
+        :rtype: :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
 
         >>> from netzob.all import *
         >>> normalizedData = AbstractType.normalize("netzob")
         >>> print(normalizedData.__class__)
-        <class 'netzob.Model.Types.ASCII.ASCII'>
+        <class 'netzob.Model.Vocabulary.Types.ASCII.ASCII'>
         >>> print(normalizedData.value)
         bitarray('011011100110010101110100011110100110111101100010')
         """
@@ -523,13 +523,13 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         if isinstance(data, AbstractType):
             return data
         elif isinstance(data, int):
-            from netzob.Model.Types.Integer import Integer
+            from netzob.Model.Vocabulary.Types.Integer import Integer
             return Integer(value=data)
         elif isinstance(data, bytes):
-            from netzob.Model.Types.Raw import Raw
+            from netzob.Model.Vocabulary.Types.Raw import Raw
             normalizedData = Raw(value=data)
         elif isinstance(data, str):
-            from netzob.Model.Types.ASCII import ASCII
+            from netzob.Model.Vocabulary.Types.ASCII import ASCII
             normalizedData = ASCII(value=data)
 
         if normalizedData is None:

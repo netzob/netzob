@@ -43,8 +43,8 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import NetzobLogger
-from netzob.Model.Types.TypeConverter import TypeConverter
-from netzob.Model.Types.BitArray import BitArray
+from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Functions.EncodingFunction import EncodingFunction
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
 

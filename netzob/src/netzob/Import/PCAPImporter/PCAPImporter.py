@@ -49,9 +49,9 @@ from netzob.Import.PCAPImporter import ImpactDecoder as Decoders
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Common.Utils.SortedTypedList import SortedTypedList
 from netzob.Common.NetzobException import NetzobImportException
-from netzob.Model.Types.Raw import Raw
-from netzob.Model.Types.HexaString import HexaString
-from netzob.Model.Types.TypeConverter import TypeConverter
+from netzob.Model.Vocabulary.Types.Raw import Raw
+from netzob.Model.Vocabulary.Types.HexaString import HexaString
+from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
 from netzob.Model.Vocabulary.Messages.L2NetworkMessage import L2NetworkMessage
 from netzob.Model.Vocabulary.Messages.L3NetworkMessage import L3NetworkMessage

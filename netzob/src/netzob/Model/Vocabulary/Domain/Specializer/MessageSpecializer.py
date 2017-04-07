@@ -45,9 +45,9 @@ from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
-from netzob.Model.Types.TypeConverter import TypeConverter
-from netzob.Model.Types.BitArray import BitArray
-from netzob.Model.Types.ASCII import ASCII
+from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+from netzob.Model.Vocabulary.Types.BitArray import BitArray
+from netzob.Model.Vocabulary.Types.ASCII import ASCII
 from netzob.Model.Vocabulary.Field import Field
 
 

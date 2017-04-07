@@ -47,7 +47,7 @@ from bitarray import bitarray
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import NetzobLogger
-from netzob.Model.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 
 @NetzobLogger
@@ -89,8 +89,8 @@ class IPv4(AbstractType):
         """
 
         if value is not None and not isinstance(value, bitarray):
-            from netzob.Model.Types.TypeConverter import TypeConverter
-            from netzob.Model.Types.BitArray import BitArray
+            from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+            from netzob.Model.Vocabulary.Types.BitArray import BitArray
             value = TypeConverter.convert(
                 value,
                 IPv4,
@@ -129,9 +129,9 @@ class IPv4(AbstractType):
         True
 
         """
-        from netzob.Model.Types.BitArray import BitArray
-        from netzob.Model.Types.TypeConverter import TypeConverter
-        from netzob.Model.Types.Raw import Raw
+        from netzob.Model.Vocabulary.Types.BitArray import BitArray
+        from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+        from netzob.Model.Vocabulary.Types.Raw import Raw
 
         if self.value is not None:
             return self.value
@@ -241,8 +241,8 @@ class IPv4(AbstractType):
             return False
         try:
             if self.value is not None:
-                from netzob.Model.Types.TypeConverter import TypeConverter
-                from netzob.Model.Types.BitArray import BitArray
+                from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+                from netzob.Model.Vocabulary.Types.BitArray import BitArray
                 return self.value == TypeConverter.convert(
                     data,
                     IPv4,
