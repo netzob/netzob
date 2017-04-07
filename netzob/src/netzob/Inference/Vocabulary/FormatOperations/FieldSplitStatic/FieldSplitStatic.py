@@ -40,13 +40,13 @@
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.AbstractField import AbstractField
-from netzob.Model.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Model.Vocabulary.Domain.DomainFactory import DomainFactory
 from netzob.Model.Vocabulary.Field import Field
-from netzob.Model.Types.TypeConverter import TypeConverter
-from netzob.Model.Types.BitArray import BitArray
-from netzob.Model.Types.Raw import Raw
-from netzob.Model.Types.HexaString import HexaString
+from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+from netzob.Model.Vocabulary.Types.BitArray import BitArray
+from netzob.Model.Vocabulary.Types.Raw import Raw
+from netzob.Model.Vocabulary.Types.HexaString import HexaString
 
 
 @NetzobLogger

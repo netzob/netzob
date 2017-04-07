@@ -51,9 +51,9 @@ from netzob.Common.Utils.TypedList import TypedList
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
-from netzob.Model.Types.Raw import Raw
-from netzob.Model.Types.BitArray import BitArray
-from netzob.Model.Types.TypeConverter import TypeConverter
+from netzob.Model.Vocabulary.Types.Raw import Raw
+from netzob.Model.Vocabulary.Types.BitArray import BitArray
+from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 
 
 class Symbol(AbstractField):
