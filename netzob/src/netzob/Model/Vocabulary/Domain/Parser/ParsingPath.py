@@ -43,9 +43,9 @@ from bitarray import bitarray
 from netzob.Common.Utils.Decorators import NetzobLogger
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
-from netzob.Model.Types.TypeConverter import TypeConverter
-from netzob.Model.Types.BitArray import BitArray
-from netzob.Model.Types.Raw import Raw
+from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+from netzob.Model.Vocabulary.Types.BitArray import BitArray
+from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 
 

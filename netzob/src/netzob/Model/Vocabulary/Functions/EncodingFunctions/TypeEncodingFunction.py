@@ -43,10 +43,10 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import NetzobLogger
-from netzob.Model.Types.TypeConverter import TypeConverter
-from netzob.Model.Types.BitArray import BitArray
+from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Functions.EncodingFunction import EncodingFunction
-from netzob.Model.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 
 @NetzobLogger
@@ -97,7 +97,7 @@ class TypeEncodingFunction(EncodingFunction):
     def __init__(self, _type, unitSize=None, endianness=None, sign=None):
         """Creates a new encoding function that will encode
         the data with the specified types and following its attributes. If an attribute
-        is not specified (or set to None), it takes its default value defined in :class:`netzob.Model.Types.AbstractType.AbstractType`.
+        is not specified (or set to None), it takes its default value defined in :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`.
 
         :parameter _type: the type that will be used to encode
         :type _type: :class:`type`

@@ -47,12 +47,12 @@ from bitarray import bitarray
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
 from netzob.Model.Vocabulary.AbstractField import AbstractField
-from netzob.Model.Types.ASCII import ASCII
-from netzob.Model.Types.AbstractType import AbstractType
-from netzob.Model.Types.TypeConverter import TypeConverter
-from netzob.Model.Types.BitArray import BitArray
-from netzob.Model.Types.Raw import Raw
-from netzob.Model.Types.Integer import Integer
+from netzob.Model.Vocabulary.Types.ASCII import ASCII
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+from netzob.Model.Vocabulary.Types.BitArray import BitArray
+from netzob.Model.Vocabulary.Types.Raw import Raw
+from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
@@ -387,7 +387,7 @@ class Size(AbstractRelationVariableLeaf):
     def dataType(self):
         """The datatype used to encode the result of the computed size.
 
-        :type: :class:`netzob.Model.Types.AbstractType.AbstractType`
+        :type: :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
         """
 
         return self.__dataType

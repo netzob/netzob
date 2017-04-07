@@ -292,7 +292,7 @@ class Data(AbstractVariableLeaf):
         """The constructor of a data variable
 
         :param dataType: the definition domain of the data.
-        :type dataType: :class:`netzob.Model.Types.AbstractType.AbstractType`
+        :type dataType: :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
         :keyword originalValue: the value of the data (can be None)
         :type originalValue: :class:`object`
         :keyword name: the name of the data, if None name will be generated

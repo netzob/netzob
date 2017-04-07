@@ -45,7 +45,7 @@ from bitarray import bitarray
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Model.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 
 @NetzobLogger
@@ -137,7 +137,7 @@ class BitArray(AbstractType):
         """This method convert the specified data in python raw format.
 
         >>> from netzob.all import *
-        >>> from netzob.Model.Types.BitArray import BitArray
+        >>> from netzob.Model.Vocabulary.Types.BitArray import BitArray
         >>> d = ASCII.decode("hello netzob")
         >>> r = BitArray.encode(d)
         >>> print(r.to01())
@@ -150,11 +150,11 @@ class BitArray(AbstractType):
         :param data: the data encoded in BitArray which will be decoded in raw
         :type data: bitarray
         :keyword unitSize: the unit size of the specified data
-        :type unitSize: :class:`netzob.Model.Types.UnitSize.UnitSize`
+        :type unitSize: :class:`netzob.Model.Vocabulary.Types.UnitSize.UnitSize`
         :keyword endianness: the endianness of the specified data
-        :type endianness: :class:`netzob.Model.Types.Endianness.Endianness`
+        :type endianness: :class:`netzob.Model.Vocabulary.Types.Endianness.Endianness`
         :keyword sign: the sign of the specified data
-        :type sign: :class:`netzob.Model.Types.Sign.Sign`
+        :type sign: :class:`netzob.Model.Vocabulary.Types.Sign.Sign`
 
         :return: data encoded in python raw
         :rtype: python raw
@@ -172,7 +172,7 @@ class BitArray(AbstractType):
         """This method convert the python raw data to the BitArray.
 
         >>> from netzob.all import *
-        >>> from netzob.Model.Types.BitArray import BitArray
+        >>> from netzob.Model.Vocabulary.Types.BitArray import BitArray
         >>> BitArray.encode(Integer.decode(20))
         bitarray('00010100')
 
@@ -186,7 +186,7 @@ class BitArray(AbstractType):
         :type sign: str
 
         :return: data encoded in BitArray
-        :rtype: :class:`netzob.Model.Types.BitArray.BitArray`
+        :rtype: :class:`netzob.Model.Vocabulary.Types.BitArray.BitArray`
         :raise: TypeError if parameters are not valid.
         """
         if data is None:

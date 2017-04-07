@@ -46,7 +46,7 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Model.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Common.Utils.Decorators import NetzobLogger, typeCheck
 
 
@@ -92,8 +92,8 @@ class ASCII(AbstractType):
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign()):
         if value is not None and not isinstance(value, bitarray):
-            from netzob.Model.Types.TypeConverter import TypeConverter
-            from netzob.Model.Types.BitArray import BitArray
+            from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+            from netzob.Model.Vocabulary.Types.BitArray import BitArray
             value = TypeConverter.convert(
                 value,
                 ASCII,
@@ -147,8 +147,8 @@ class ASCII(AbstractType):
         True
 
         """
-        from netzob.Model.Types.TypeConverter import TypeConverter
-        from netzob.Model.Types.BitArray import BitArray
+        from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+        from netzob.Model.Vocabulary.Types.BitArray import BitArray
 
         minSize, maxSize = self.nbChars
         if maxSize is None:
@@ -187,15 +187,15 @@ class ASCII(AbstractType):
         :keyword prefixDescription: prefix to attach to the description of the generated mutation.
         :type prefixDescription: :class:`str`
         :return: a dict of computed mutations having the same types than the initial one.
-        :rtype: :class:`dict`<str>=:class:`netzob.Model.Types.AbstractType.AbstractType`
+        :rtype: :class:`dict`<str>=:class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
         """
         if prefixDescription is None:
             prefixDescription = ""
         else:
             prefixDescription += "-"
 
-        from netzob.Model.Types.TypeConverter import TypeConverter
-        from netzob.Model.Types.BitArray import BitArray
+        from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+        from netzob.Model.Vocabulary.Types.BitArray import BitArray
 
         if self.value is None:
             val = self.generate()

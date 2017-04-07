@@ -83,7 +83,7 @@ class SearchTask(object):
     def data(self):
         """Data that will be searched.
 
-        :type: :class:`netzob.Model.Types.AbstractType.AbstractType`
+        :type: :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
         """
 
         return self.__data

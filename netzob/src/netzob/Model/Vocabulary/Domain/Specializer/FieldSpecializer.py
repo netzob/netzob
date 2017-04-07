@@ -47,7 +47,7 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Specializer.VariableSpecializer import VariableSpecializer
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
-from netzob.Model.Types.BitArray import BitArray
+from netzob.Model.Vocabulary.Types.BitArray import BitArray
 
 
 @NetzobLogger

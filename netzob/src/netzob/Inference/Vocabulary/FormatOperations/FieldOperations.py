@@ -46,7 +46,7 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Field import Field
-from netzob.Model.Types.Raw import Raw
+from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
 
 

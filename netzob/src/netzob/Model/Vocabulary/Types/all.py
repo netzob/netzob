@@ -28,12 +28,12 @@
 
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
-from netzob.Model.Types.Raw import Raw
-from netzob.Model.Types.ASCII import ASCII
-from netzob.Model.Types.Integer import Integer
-from netzob.Model.Types.BitArray import BitArray
-from netzob.Model.Types.HexaString import HexaString
-from netzob.Model.Types.TypeConverter import TypeConverter
-from netzob.Model.Types.AbstractType import AbstractType
-from netzob.Model.Types.IPv4 import IPv4
-from netzob.Model.Types.Timestamp import Timestamp
+from netzob.Model.Vocabulary.Types.Raw import Raw
+from netzob.Model.Vocabulary.Types.ASCII import ASCII
+from netzob.Model.Vocabulary.Types.Integer import Integer
+from netzob.Model.Vocabulary.Types.BitArray import BitArray
+from netzob.Model.Vocabulary.Types.HexaString import HexaString
+from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.IPv4 import IPv4
+from netzob.Model.Vocabulary.Types.Timestamp import Timestamp

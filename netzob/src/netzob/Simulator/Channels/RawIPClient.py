@@ -48,11 +48,11 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Simulator.Channels.AbstractChannel import AbstractChannel
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Symbol import Symbol
-from netzob.Model.Types.IPv4 import IPv4
-from netzob.Model.Types.Raw import Raw
-from netzob.Model.Types.BitArray import BitArray
-from netzob.Model.Types.Integer import Integer
-from netzob.Model.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.IPv4 import IPv4
+from netzob.Model.Vocabulary.Types.Raw import Raw
+from netzob.Model.Vocabulary.Types.BitArray import BitArray
+from netzob.Model.Vocabulary.Types.Integer import Integer
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Size import Size
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.InternetChecksum import InternetChecksum

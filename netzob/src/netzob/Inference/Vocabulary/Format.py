@@ -45,7 +45,7 @@
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Symbol import Symbol
-from netzob.Model.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Inference.Vocabulary.FormatOperations.FieldSplitStatic.FieldSplitStatic import FieldSplitStatic
 from netzob.Inference.Vocabulary.FormatOperations.FieldSplitDelimiter import FieldSplitDelimiter
 from netzob.Inference.Vocabulary.FormatOperations.FieldReseter import FieldReseter
@@ -240,7 +240,7 @@ class Format(object):
         :param field : the field to consider when spliting
         :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         :param delimiter : the delimiter used to split messages of the field
-        :type: :class:`netzob.Model.Types.AbstractType.AbstractType`
+        :type: :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
         """
 
         if delimiter is None:

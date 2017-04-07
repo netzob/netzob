@@ -45,7 +45,7 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Model.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 
 class Integer(AbstractType):
@@ -99,8 +99,8 @@ class Integer(AbstractType):
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign()):
         if value is not None and not isinstance(value, bitarray):
-            from netzob.Model.Types.TypeConverter import TypeConverter
-            from netzob.Model.Types.BitArray import BitArray
+            from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+            from netzob.Model.Vocabulary.Types.BitArray import BitArray
             interval = value
             value = TypeConverter.convert(
                 value,

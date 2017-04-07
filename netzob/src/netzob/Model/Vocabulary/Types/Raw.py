@@ -45,7 +45,7 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Model.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 
 class Raw(AbstractType):
@@ -84,8 +84,8 @@ class Raw(AbstractType):
                  sign=AbstractType.defaultSign(),
                  alphabet=None):
         if value is not None and not isinstance(value, bitarray):
-            from netzob.Model.Types.TypeConverter import TypeConverter
-            from netzob.Model.Types.BitArray import BitArray
+            from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+            from netzob.Model.Vocabulary.Types.BitArray import BitArray
             if isinstance(value, str):
                 value = TypeConverter.convert(
                     bytes(value, "utf-8"), Raw, BitArray)
@@ -106,9 +106,9 @@ class Raw(AbstractType):
 
     def __str__(self):
         if self.value is not None:
-            from netzob.Model.Types.TypeConverter import TypeConverter
-            from netzob.Model.Types.BitArray import BitArray
-            from netzob.Model.Types.HexaString import HexaString
+            from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+            from netzob.Model.Vocabulary.Types.BitArray import BitArray
+            from netzob.Model.Vocabulary.Types.HexaString import HexaString
             return "{0}={1} ({2})".format(
                 self.typeName,
                 repr(TypeConverter.convert(self.value, BitArray, Raw)),
@@ -135,8 +135,8 @@ class Raw(AbstractType):
 
         """
         if self.value is not None:
-            from netzob.Model.Types.TypeConverter import TypeConverter
-            from netzob.Model.Types.BitArray import BitArray
+            from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+            from netzob.Model.Vocabulary.Types.BitArray import BitArray
             return str(
                 TypeConverter.convert(self.value, BitArray, self.__class__))
         else:
@@ -174,8 +174,8 @@ class Raw(AbstractType):
 
 
         """
-        from netzob.Model.Types.TypeConverter import TypeConverter
-        from netzob.Model.Types.BitArray import BitArray
+        from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+        from netzob.Model.Vocabulary.Types.BitArray import BitArray
 
         minSize, maxSize = self.size
         if maxSize is None:

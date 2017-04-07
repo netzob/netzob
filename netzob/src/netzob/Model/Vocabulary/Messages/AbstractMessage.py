@@ -44,9 +44,9 @@ from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
 from netzob.Common.Utils.SortableObject import SortableObject
 from netzob.Common.Utils.TypedList import TypedList
 from netzob.Model.Vocabulary.AbstractField import AbstractField
-from netzob.Model.Types.TypeConverter import TypeConverter
-from netzob.Model.Types.HexaString import HexaString
-from netzob.Model.Types.Raw import Raw
+from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+from netzob.Model.Vocabulary.Types.HexaString import HexaString
+from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Functions.FunctionApplicationTable import FunctionApplicationTable
 from netzob.Model.Vocabulary.Functions.VisualizationFunction import VisualizationFunction
 

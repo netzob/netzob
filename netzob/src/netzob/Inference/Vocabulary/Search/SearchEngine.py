@@ -47,10 +47,10 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import NetzobLogger, typeCheck
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
-from netzob.Model.Types.AbstractType import AbstractType
-from netzob.Model.Types.TypeConverter import TypeConverter
-from netzob.Model.Types.Raw import Raw
-from netzob.Model.Types.BitArray import BitArray
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+from netzob.Model.Vocabulary.Types.Raw import Raw
+from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Inference.Vocabulary.Search.SearchTask import SearchTask
 from netzob.Inference.Vocabulary.Search.SearchResult import SearchResult, SearchResults
 from netzob.Model.Vocabulary.Functions.VisualizationFunctions.HighlightFunction import HighlightFunction
@@ -107,7 +107,7 @@ class SearchEngine(object):
         it but also under various format.
 
         :parameter data: the data to search after. This data must be provided with its netzob type.
-        :type data: an :class:`netzob.Model.Types.AbstractType.AbstractType`.
+        :type data: an :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`.
         :parameter message: the message in which the search will take place
         :type message: :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
         :keyword addTags: if set to True, visualization functions are added to the message to highlights found results.
@@ -178,7 +178,7 @@ class SearchEngine(object):
         25 occurence(s) found.
 
         :parameter data: a list of data to search after. Each data must be provided with its netzob type.
-        :type data: a list of :class:`netzob.Model.Types.AbstractType.AbstractType`.
+        :type data: a list of :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`.
         :parameter messages: the messages in which the search will take place
         :type message: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
         :keyword addTags: if set to True, visualization functions are added to the message to highlights found results.
@@ -274,7 +274,7 @@ class SearchEngine(object):
 
 
         :parameter data: the data to search after. Data must be provided with their netzob type.
-        :type data: a list of :class:`netzob.Model.Types.AbstractType.AbstractType`.
+        :type data: a list of :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`.
         :parameter message: the message in which the search will take place
         :type message: :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
         :keyword addTags: if set to True, visualization functions are added to the message to highlights found results.
@@ -363,7 +363,7 @@ class SearchEngine(object):
         specified data.
 
         :parameter data: the data from wich it must create search tasks
-        :type data: :class:`netzob.Model.Types.AbstractType.AbstractType`
+        :type data: :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
         :keyword properties: a dict of properties {name, value} to attach to each built searchTask
         :type properties: a dict
         :return: a list of search tasks
