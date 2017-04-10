@@ -167,7 +167,7 @@ Along with Data variables, the definition domain of a field can embed the defini
     >>> s.specialize()
     '\x07\xfb+K\xf4N\x99' # size = 6 + 1 (offset)
 
-  More details and examples of Size relationships can be found in its API doc :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Size`.
+  More details and examples of Value relationships can be found in its API doc :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Size`.
     
 * A *Value Relationship* is very similar to the size relationship except that the relationship applies on the value of the targeted field.
 
