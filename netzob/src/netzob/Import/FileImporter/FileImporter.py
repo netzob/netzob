@@ -90,7 +90,7 @@ class FileImporter(object):
     def __init__(self):
         pass
 
-    @typeCheck(list, str, int, int)    
+    @typeCheck(list, bytes)
     def readMessages(self, filePathList, delimitor=b"\n"):
         """Read all the messages found in the specified filePathList and given a delimitor.
 
@@ -125,9 +125,9 @@ class FileImporter(object):
             self.__readMessagesFromFile(filePath, delimitor)
         
         return self.messages
-
+    
     @typeCheck(str, bytes)
-    def __readMessagesFromFile(self, filePath, delimitor):
+    def __readMessagesFromFile(self, filePath, delimitor=b'\n'):
         if filePath is None or len(str(filePath).strip()) == 0:
             raise TypeError("Filepath cannot be None or empty")
  
@@ -146,7 +146,7 @@ class FileImporter(object):
                 self.messages.add(FileMessage(data, file_path = filePath, file_message_number = i_data))
 
     @staticmethod
-    @typeCheck(list, str)
+    @typeCheck(list, bytes)
     def readFiles(filePathList, delimitor=b'\n'):
         """Read all messages from a list of files. A delimitor must be specified to delimit messages.
 
@@ -161,7 +161,7 @@ class FileImporter(object):
         return importer.readMessages(filePathList, delimitor = delimitor)
     
     @staticmethod
-    @typeCheck(str, str)
+    @typeCheck(str, bytes)
     def readFile(filePath, delimitor=b'\n'):
         """Read all messages from the specified file. 
         Messages are found based on the specified delimitor. 
