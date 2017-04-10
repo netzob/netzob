@@ -96,7 +96,7 @@ class CaptureByID(Resource):
         return project_handler.capture_message(cid = cid)
 
 @api.route('/<string:cid>/messages')
-class CaptureByID(Resource):
+class CaptureMessages(Resource):
 
     @api.expect(pagination_parameters, validate = True)    
     def get(self, pid, cid):
@@ -108,3 +108,4 @@ class CaptureByID(Resource):
         
         project_handler = projects_manager.get_project_handler(pid)        
         return project_handler.get_messages_in_capture(cid, limit = limit, offset = offset)
+

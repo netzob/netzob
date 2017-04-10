@@ -34,68 +34,19 @@
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
 
+
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
 # +---------------------------------------------------------------------------+
-from flask import request
-from flask_restplus import Namespace, Resource
+
 
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob_web.api.parameters import pagination_parameters
-from netzob_web.extensions import projects_manager
-from . import parameters
+from netzob_web.extensions import api
 
-api = Namespace('messages',
-                description="Handle messages of your protocol",
-                path=projects_manager.PATH+'/messages')  # pylint: disable=invalid-name
 
-@api.route('/')
-class Messages(Resource):
-
-    @api.expect(pagination_parameters, validate = True)
-    def get(self, pid):
-        """List all messages
-
-        Returns a list of messages starting from ``offset`` limited by ``limit`` parameter.
-        """
-
-        args = pagination_parameters.parse_args(request)
-        limit = args['limit']
-        offset = args['offset']        
-        
-        project_handler = projects_manager.get_project_handler(pid)        
-        return project_handler.get_messages(limit = limit, offset = offset)
-
-    @api.expect(parameters.new_message, validate = True)
-    def post(self, pid):
-        """Create a new message."""
-
-        args = parameters.new_message.parse_args(request)
-        cid = args['cid']
-        data = args['data']
-        date = args['date']
-        
-        source = args['source']
-        destination = args['destination']
-        messageType = args['messageType']
-        
-        project_handler = projects_manager.get_project_handler(pid)        
-        return project_handler.add_message(cid = cid, messageType = messageType, data = data, date = date, source = source, destination = destination)
-
-@api.route('/<string:mid>/')
-class MessageByID(Resource):
-
-    def get(self, pid, mid):
-        """Fetch a message by its ID"""
-
-        project_handler = projects_manager.get_project_handler(pid)        
-        return project_handler.get_message(mid = mid)
-
-    def delete(self, pid, mid):
-        """Delete a message"""
-        
-        project_handler = projects_manager.get_project_handler(pid)        
-        return project_handler.delete_message(mid = mid)
-
+def init_app(app, **kwargs):
+    
+    from . import resources
+    api.add_namespace(resources.api)

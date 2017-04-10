@@ -4,6 +4,11 @@ var APIClient = (function() {
  
     function createInstance() {
         var client = new $.RestClient('http://localhost:5000/api/p/1/', {stringifyData: true});
+
+	client.add('misc', {
+	    stripTrailingSlash: true,
+	});
+	//client.misc.add('parse_pcap');
 	
 	client.add('captures');
 	client.add('messages');
@@ -37,12 +42,10 @@ var APIClient = (function() {
     };
 })();
 
-function create_message(cid, source, destination, data, function_cb) {
+function create_message(cid, message, function_cb) {
     var client = APIClient.getInstance();
-    console.log("cid="+cid);
-    payload = {"cid":cid,"source": source, "destination": destination, "data": data};
-    
-    client.messages.create(payload).done(function_cb);
+    message.cid = cid;
+    client.messages.create(message).done(function_cb);
 }
 
 function create_capture(name, function_cb) {
@@ -113,3 +116,14 @@ function get_captures(function_cb) {
     client.captures.read().done(function_cb);
 }
 
+function parse_raw(raw_filename, raw_file_content, delimiter, function_cb) {
+    var client = APIClient.getInstance();
+
+    client.misc.create("parse_raw", {"filename": raw_filename, "delimiter": delimiter, "raw": raw_file_content}).done(function_cb);
+}
+
+function parse_pcap(pcap_filename, pcap_file_content, layer, bpf_filter, function_cb) {
+    var client = APIClient.getInstance();
+
+    client.misc.create("parse_pcap", {"filename": pcap_filename, "layer": layer, "bpf": bpf_filter, "pcap": pcap_file_content}).done(function_cb);
+}
