@@ -60,13 +60,13 @@ class RawMessage(AbstractMessage):
 
     """
 
-    def __init__(self, data=None, date=None, source=None, destination=None):
+    def __init__(self, data=None, date=None, source=None, destination=None, messageType="Raw"):
         """
         :parameter data: the content of the message
         :type data: a :class:`object`
         """
         super(RawMessage, self).__init__(
-            data=data, date=date, source=source, destination=destination)
+            data=data, date=date, source=source, destination=destination, messageType = messageType)
 
     def priority(self):
         """Return the value that will be used to represent the current message when sorted
