@@ -33,6 +33,7 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
+import base64
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -47,55 +48,52 @@ from netzob_web.api.parameters import pagination_parameters
 from netzob_web.extensions import projects_manager
 from . import parameters
 
-api = Namespace('messages',
-                description="Handle messages of your protocol",
-                path=projects_manager.PATH+'/messages')  # pylint: disable=invalid-name
+api = Namespace('misc',
+                description="Various tools",
+                path=projects_manager.PATH+'/misc')  # pylint: disable=invalid-name
 
-@api.route('/')
-class Messages(Resource):
 
-    @api.expect(pagination_parameters, validate = True)
-    def get(self, pid):
-        """List all messages
+@api.route('/parse_pcap')
+class ParsePCAP(Resource):
 
-        Returns a list of messages starting from ``offset`` limited by ``limit`` parameter.
+    @api.expect(parameters.parse_pcap, validate = True)
+    def post(self, pid):
+        """Parse the specified PCAP
+
+        Returns a list of messages that are embedded in the pcap
         """
 
-        args = pagination_parameters.parse_args(request)
-        limit = args['limit']
-        offset = args['offset']        
-        
-        project_handler = projects_manager.get_project_handler(pid)        
-        return project_handler.get_messages(limit = limit, offset = offset)
+        args = parameters.parse_pcap.parse_args(request)
+        filename = args['filename']
+        content = args['pcap']
+        layer = args['layer']
+        bpf_filter = args['bpf']
 
-    @api.expect(parameters.new_message, validate = True)
+        content = ''.join(content.split(',')[1:])
+        payload = base64.b64decode(content)
+
+        project_handler = projects_manager.get_project_handler(pid)
+        return project_handler.parse_pcap(filename = filename, layer = layer, bpf_filter = bpf_filter, pcap_content = payload)
+
+@api.route('/parse_raw')
+class ParseRAW(Resource):
+
+    @api.expect(parameters.parse_raw, validate = True)
     def post(self, pid):
-        """Create a new message."""
+        """Parse the specified RAW file
 
-        args = parameters.new_message.parse_args(request)
-        cid = args['cid']
-        data = args['data']
-        date = args['date']
-        
-        source = args['source']
-        destination = args['destination']
-        messageType = args['messageType']
-        
-        project_handler = projects_manager.get_project_handler(pid)        
-        return project_handler.add_message(cid = cid, messageType = messageType, data = data, date = date, source = source, destination = destination)
+        Returns a list of messages that are embedded in the raw file
+        """
 
-@api.route('/<string:mid>/')
-class MessageByID(Resource):
+        args = parameters.parse_raw.parse_args(request)
+        filename = args['filename']
+        content = args['raw']
+        delimiter = bytes(args['delimiter'], 'utf-8')
 
-    def get(self, pid, mid):
-        """Fetch a message by its ID"""
+        content = ''.join(content.split(',')[1:])
+        payload = base64.b64decode(content)
 
-        project_handler = projects_manager.get_project_handler(pid)        
-        return project_handler.get_message(mid = mid)
+        project_handler = projects_manager.get_project_handler(pid)
+        return project_handler.parse_raw(filename = filename, delimiter = delimiter, raw_content = payload)
 
-    def delete(self, pid, mid):
-        """Delete a message"""
-        
-        project_handler = projects_manager.get_project_handler(pid)        
-        return project_handler.delete_message(mid = mid)
-
+    

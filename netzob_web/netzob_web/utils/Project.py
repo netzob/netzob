@@ -34,6 +34,10 @@
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
 import collections
+import shutil
+from tempfile import mkdtemp
+import os
+import time
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -43,11 +47,13 @@ from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
-from netzob.Model.Types.ASCII import ASCII
-from netzob.Model.Types.Raw import Raw
+from netzob.Model.Vocabulary.Types.ASCII import ASCII
+from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Common.Utils.Decorators import NetzobLogger
 from netzob.Inference.Vocabulary.Format import Format
 from netzob.Inference.Vocabulary.FormatOperations.FieldSplitAligned.FieldSplitAligned import FieldSplitAligned
+from netzob.Import.PCAPImporter.PCAPImporter import PCAPImporter
+from netzob.Import.FileImporter.FileImporter import FileImporter
 
 
 # +---------------------------------------------------------------------------+
@@ -179,10 +185,10 @@ class Project(object):
     def get_message(self, mid):
         return self.__messages[str(mid)]
 
-    def create_message(self, cid, data, date = None, source = None, destination = None):
+    def create_message(self, cid, messageType, data, date = None, source = None, destination = None):
 
         capture = self.__captures[str(cid)]
-        message = RawMessage(data = data, date = date, source = source, destination = destination)
+        message = RawMessage(data = data.encode('utf-8'), date = date, source = source, destination = destination)
         capture.messages.append(message)
         
         self.__messages[str(message.id)] = message
@@ -294,8 +300,36 @@ class Project(object):
     #
     # Project
     #
-    
-        
+
+
+    #
+    # Importers
+    #
+    def parse_pcap(self, filename, layer, pcap_content, bpf_filter = None):
+
+        try:
+            tmp_dir = mkdtemp()
+            pcap_file = os.path.join(tmp_dir, "{}.{}".format(time.time(), filename))
+            with open(pcap_file, "wb") as fd:
+                fd.write(pcap_content)
+            return PCAPImporter.readFile(pcap_file, bpfFilter = bpf_filter, importLayer = layer).values()
+
+        finally:
+            shutil.rmtree(tmp_dir)
+
+    def parse_raw(self, filename, raw_content, delimiter = b"\n"):
+
+        try:
+            tmp_dir = mkdtemp()
+            raw_file = os.path.join(tmp_dir, "{}.{}".format(time.time(), filename))
+            with open(raw_file, "wb") as fd:
+                fd.write(raw_content)
+            return FileImporter.readFile(raw_file, delimitor = delimiter).values()
+
+        finally:
+            shutil.rmtree(tmp_dir)
+
+            
     @property
     def name(self):
         return self.__name

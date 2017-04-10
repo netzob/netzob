@@ -247,10 +247,13 @@ class ProjectHandler(object):
                 
         return Serializer.message_to_json(self.__project.get_message(mid = mid))
 
-    def add_message(self, cid, data, date = None, source = None, destination = None):
+    def add_message(self, cid, messageType, data, date = None, source = None, destination = None):
 
         if cid is None:
             raise ValueError("A CID must be specified")
+
+        if messageType is None:
+            raise ValueError("A messageType must be specified")
         
         if data is None:
             raise ValueError("A data must be specified")
@@ -260,6 +263,7 @@ class ProjectHandler(object):
             raise ValueError("A data must be specified")
         
         return Serializer.message_to_json(self.__project.create_message(cid = cid,
+                                                                        messageType = messageType,
                                                                         data = data,
                                                                         date = date,
                                                                         source = source,
@@ -497,5 +501,33 @@ class ProjectHandler(object):
         
         return [Serializer.message_to_json(message) for message in self.__project.get_capture(cid).messages[offset:offset+limit]] 
 
-        
+    #
+    # Importers
+    #
+    def parse_pcap(self, filename, layer, pcap_content, bpf_filter = None):
+
+        if filename is None or len(filename.strip()) == 0:
+            raise ValueError("Filename cannot be None nor empty")
+
+        if layer not in range(1,6):
+            raise ValueError("Invalid import layer ({})".format(layer))
+
+        if pcap_content is None or len(pcap_content) == 0:
+            raise ValueError("PCAP file cannot be None nor empty")
+
+        x = [Serializer.message_to_json(message) for message in self.__project.parse_pcap(filename = filename, layer = layer, pcap_content = pcap_content, bpf_filter = bpf_filter)]
+        return x
+                                           
+    
+    def parse_raw(self, filename, raw_content, delimiter = b"\n"):
+
+        if filename is None or len(filename.strip()) == 0:
+            raise ValueError("Filename cannot be None nor empty")
+
+        if raw_content is None or len(raw_content) == 0:
+            raise ValueError("RAW file cannot be None nor empty")
+
+        x = [Serializer.message_to_json(message) for message in self.__project.parse_raw(filename = filename, delimiter = delimiter, raw_content = raw_content)]
+        return x
+                                           
     

@@ -37,8 +37,8 @@
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
 # +---------------------------------------------------------------------------+
-from netzob.Model.Types.ASCII import ASCII
-from netzob.Model.Types.Raw import Raw
+from netzob.Model.Vocabulary.Types.ASCII import ASCII
+from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
 
@@ -66,10 +66,11 @@ def capture_to_json(capture):
 def message_to_json(message):
     return {
         "id": str(message.id),
+        "messageType": str(message.messageType),
         "date": str(message.date),
         "source": str(message.source),
         "destination": str(message.destination),        
-        "data": message.data
+        "data": message.data.decode('unicode_escape')
     }
 
 def field_to_json(field):

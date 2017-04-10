@@ -63,3 +63,6 @@ type.init_app(blueprint)
 
 from . import capture
 capture.init_app(blueprint)
+
+from . import misc
+misc.init_app(blueprint)
