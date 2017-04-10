@@ -69,3 +69,8 @@ new_message.add_argument('destination',
                         required = False,
                         location = 'json',
                         help = "Name of the destination of the message")
+new_message.add_argument('messageType',
+                        type = str,
+                        required = True,
+                        location = 'json',
+                        help = "Type of message to create")

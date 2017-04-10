@@ -2,36 +2,38 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<h2>Import file</h2>
-<p>
-    Import all the messages stored in a file. One message is found per line. 
-</p>
+<h2>Importers</h2>
 
-<div class="panel panel-primary">
-    <div class="panel-body">
-	<form method="POST" id="import_file">
-	    <div class="form-group">
-		<label for="capture_file">Select the files</label>
-		<input type="file" class="form-control" id="capture_files" name="capture_files[]" multiple>
-	    </div>
-	    <button type="submit" class="btn btn-default" id="import_file_button">Extract messages from file</button>
-	    
-	</form>
-    </div>    
+
+<!-- Nav tabs -->
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#raw_file" aria-controls="home" role="tab" data-toggle="tab">Raw File</a></li>
+    <li role="presentation"><a href="#pcap_file" aria-controls="pcap_file" role="tab" data-toggle="tab">PCAP File</a></li>
+</ul>
+
+<!-- Tab panes -->
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" style="padding-top:10px" id="raw_file">
+	{% include "captures/import_file_raw_form.html" %}
+    </div>
+    <div role="tabpanel" class="tab-pane" style="padding-top:10px" id="pcap_file">
+	{% include "captures/import_file_pcap_form.html" %}	
+    </div>
 </div>
-
+<br />
+<br />
 
 <div class="panel panel-default">
     <div class="panel-heading">
-	<h3 class="panel-title">Preview</h3>
+	<h3 class="panel-title">Messages ready to be imported</h3>
     </div>
     <div class="panel-body">
 	<table id="messages" class="table display nowrap" width="100%" cellspacing="0" style="width: 800px;margin: 0 auto;" >
 	    <thead>
 		<tr>
-		    <th></th>
-		    <th>File</th>
-		    <th>Line</th>
+		    <th>Type</th>
+		    <th>Source</th>
+		    <th>Destination</th>
 		    <th>Payload</th>
 		</tr>
 	    </thead>
@@ -63,63 +65,27 @@
 
 <script>
 
- function register_message(table, iMsg, filename, iLine, payload) {
-     table.row.add( [
-	 '',
-	 filename,
-	 iLine,
-	 payload
-     ] ).draw( false );     
- }
-
-
- function extract_messages_from_files(table, files) {
-     var reader = new FileReader();
-
-     function extract_messages_from_file(i_msg, file_index) {
-	 if (file_index >= files.length) return;
-
-	 var file = files[file_index];
-	 reader.onload = function(e) {
-	     var arrayBuffer = reader.result;
-	     var int8Array = new Int8Array(arrayBuffer);
-	     var startBuffer = 0;
-	     var subArrayBuffer;
-	     var slice;
-	     var result;
-	     var i_line = 0;
-	     for (var i_byte = 0; i_byte < int8Array.length; i_byte++) {
-		 if (int8Array[i_byte] == 10) {
-		     subArrayBuffer = arrayBuffer.slice(startBuffer, i_byte);
-		     slice = int8Array.subarray(startBuffer, i_byte);
-		     result = String.fromCharCode.apply(null, slice);
-		     startBuffer = i_byte + 1;
-		     i_line += 1;			 
-		     if (result.length > 0) {
-			 i_msg += 1;
-			 register_message(table, i_msg, file.name, i_line, result);			 
-		     }
-		 }
-	     }
-	     extract_messages_from_file(i_msg, file_index + 1);
-	 }
-	 reader.readAsArrayBuffer(file);
-     }
-     extract_messages_from_file(0, 0);
- }
+ var retained_messages = [];
  
+ function register_message(table, message) {
+
+     retained_messages.push(message);
+     
+     table.row.add(
+	 [
+	     message.messageType,
+	     message.source,
+	     message.destination,
+	     message.data
+	 ]
+     ).draw( false );     
+ }
  $(function() {
 
+     configure_import_file_raw_form();
+     configure_import_file_pcap_form();
+
      var table = $('#messages').DataTable( {
-	 columnDefs: [ {
-             orderable: false,
-             className: 'select-checkbox',
-             targets:   0
-	 } ],
-	 select: {
-             style:    'multi',
-             selector: 'td:first-child',
-	 },
 	 order: [[ 1, 'asc' ]]
      } );
      
@@ -127,29 +93,9 @@
      var fileSelect = document.getElementById('capture_files');
      var uploadButton = document.getElementById('import_file_button');
      
-     document.getElementById('import_file').onsubmit = function(event) {
-	 event.preventDefault();
-
-	 // Update button text.
-	 uploadButton.innerHTML = 'Uploading...';
-
-	 // Get the selected files from the input.
-	 var files = fileSelect.files;
-
-	 extract_messages_from_files(table, files);
-
-	 // Update button text.
-	 uploadButton.innerHTML = 'Create symbol with selected messages';
-
-	 return false;
-     }
-
-
      var importButton = document.getElementById('import_file_final_button');
      document.getElementById('import_file_final').onsubmit = function(event) {
 	 event.preventDefault();
-
-	 
 
 	 // Update button text.
 	 importButton.innerHTML = 'Importing...';
@@ -159,7 +105,14 @@
 	 sid = 0
 	 cid = 0
 
-	 
+	 $(document).ajaxStop(function() {
+	     $(this).unbind("ajaxStop"); //prevent running again when other calls finish
+
+	     // Update button text.
+	     importButton.innerHTML = 'Create symbol with selected messages';
+
+	     window.location = "/symbols/"+sid;
+	 });
 	 
 	 // creates the symbol
 	 create_symbol(capture_name, function(symbol) {
@@ -171,31 +124,21 @@
 		 console.log("Capture ("+capture.id+") created (sid="+sid+")");
 		 cid = capture.id;
 
-		 table.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
-		     var data = this.data();
-
-		     var filename = data[1];
-		     var linenumber = data[2];
-		     var content = data[3];
-
-		     create_message(cid, filename+":"+linenumber, "", content, function(message) {
+		 
+		 for (var iMsg=0; iMsg < retained_messages.length; iMsg ++) {
+		     create_message(cid, retained_messages[iMsg], function(message) {
 			 console.log("Message created: "+message.id);
 			 console.log("Putting message "+message.id+" in "+sid);
 			 mid = message.id
 
 			 put_message_in_symbol(sid, mid, function(data) {
-			     console.log("Message puted: "+message.id);
+			     console.log("Message added to symbol :)  "+message.id);
 			 })	
 		     });
-		 });
+		 }
 	     })
-
 	 })
 
-
-	 // Update button text.
-	 importButton.innerHTML = 'Create symbol with selected messages';
-	 return False;
 	 
      };
      
