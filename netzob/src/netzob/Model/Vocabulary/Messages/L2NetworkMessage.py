@@ -65,7 +65,8 @@ class L2NetworkMessage(RawMessage):
             data,
             date=date,
             source=l2SourceAddress,
-            destination=l2DestinationAddress)
+            destination=l2DestinationAddress,
+            messageType="Network")
         self.l2Protocol = str(l2Protocol)
         self.l2SourceAddress = str(l2SourceAddress)
         self.l2DestinationAddress = str(l2DestinationAddress)

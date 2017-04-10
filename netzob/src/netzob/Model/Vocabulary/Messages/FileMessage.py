@@ -65,7 +65,7 @@ class FileMessage(AbstractMessage):
         :type file_message_number: `int`
         """
         super(FileMessage, self).__init__(
-            data=data, date=None, source=file_path, destination=None)
+            data=data, date=None, source=file_path, destination=None, messageType = "File")
 
         self.file_path = file_path
         self.file_message_number = file_message_number
