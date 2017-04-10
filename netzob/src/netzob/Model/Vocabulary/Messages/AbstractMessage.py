@@ -61,7 +61,8 @@ class AbstractMessage(SortableObject):
                  session=None,
                  date=None,
                  source=None,
-                 destination=None):
+                 destination=None,
+                 messageType="Unknown"):
         """
         :parameter data: the content of the message
         :type data: a :class:`object`
@@ -75,6 +76,8 @@ class AbstractMessage(SortableObject):
         :type source: a :class:`str`
         :parameter destination: the optional destination address of the message
         :type destination: a :class:`str`
+        :parameter messageType: the type of message (e.g. Network, File, ...), default is "Unknown"
+        :type messageType: a :class:`str`
         """
         if data is None:
             data = ''
@@ -85,6 +88,7 @@ class AbstractMessage(SortableObject):
         self.id = _id
         if date is None:
             date = time.mktime(time.gmtime())
+        self.__messageType = messageType
         self.__date = date
         self.__source = source
         self.__destination = destination
@@ -327,6 +331,22 @@ class AbstractMessage(SortableObject):
         self.visualizationFunctions.extend(visualizationFunctions)
 
     @property
+    def messageType(self):
+        """The type of the message (e.g. network, file, ...)
+
+        :type: :class:`str`
+        """
+
+        return self.__messageType
+
+    @messageType.setter
+    @typeCheck(str)
+    def messageType(self, messageType):
+        if messageType is None:
+            raise TypeError("Message type cannot be None")
+        self.__messageType = messageType
+
+    @property
     def session(self):
         """The session from which message comes from.
 
@@ -338,6 +358,7 @@ class AbstractMessage(SortableObject):
     @session.setter
     def session(self, session):
         self.__session = session
+        
 
     @typeCheck(int, str)
     def addSemanticTag(self, position, tag):
