@@ -8,17 +8,11 @@ import sys
 #+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
-from netzob import _libRelation
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Model.Types.TypeConverter import TypeConverter
-from netzob.Model.Types.AbstractType import AbstractType
-from netzob.Model.Types.Raw import Raw
-from netzob.Model.Types.Integer import Integer
-from netzob.Model.Vocabulary.AbstractField import AbstractField
-from  netzob.Model.Vocabulary.Domain.Variables.Leafs.CRC32 import CRC32
 
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Model.Types.Raw import Raw
+from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Field import Field
-from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
 
 @NetzobLogger
 class IPSeeker(object):

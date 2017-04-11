@@ -43,13 +43,11 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Types.Raw import Raw
 from netzob.Model.Types.BitArray import BitArray
 from netzob.Model.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Domain.DomainFactory import DomainFactory
-from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
 
 class InvalidDomainException(Exception):

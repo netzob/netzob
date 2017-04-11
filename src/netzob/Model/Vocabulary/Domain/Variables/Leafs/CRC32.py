@@ -110,7 +110,7 @@ class CRC32(AbstractRelationVariableLeaf):
     def __init__(self, fields, dataType=None, name=None, endianness = AbstractType.defaultEndianness()):
         if isinstance(fields, AbstractField):
             fields = [fields]
-        super(CRC32, self).__init__("CRC32", fieldDependencies=fields, name=name)
+        super(CRC32, self).__init__(varType="CRC32", fieldDependencies=fields, name=name)
         if dataType is None:
             dataType = Raw(nbBytes=4)
         self.dataType = dataType
