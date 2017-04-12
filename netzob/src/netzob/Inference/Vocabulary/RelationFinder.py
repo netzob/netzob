@@ -266,7 +266,7 @@ class RelationFinder(object):
             ) or (x_attribute == self.ATTR_SIZE and
                   y_attribute == self.ATTR_VALUE):
             typeRelation = self.REL_SIZE
-        elif x_attribute == x_attribute == self.ATTR_VALUE:
+        elif x_attribute == y_attribute == self.ATTR_VALUE:
             typeRelation = self.REL_DATA
         return typeRelation
 
