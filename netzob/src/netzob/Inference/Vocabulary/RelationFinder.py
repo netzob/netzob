@@ -69,6 +69,19 @@ class RelationFinder(object):
             " and fields " + str([y.name for y in rel["y_fields"]]) + ":" + rel["y_attribute"])
     SizeRelation between fields ['Field-1']:value and fields ['Field-3']:size
 
+    The following illustrates DataRelation
+
+    >>> samples = ["Adrien > my name is Adrien", "Zoby > my name is Zoby"]
+    >>> messages = [RawMessage(sample) for sample in samples]
+    >>> symbol = Symbol(messages=messages)
+    >>> Format.splitAligned(symbol)
+    >>> results = RelationFinder.findOnSymbol(symbol)
+    >>> len(results)
+    1
+    >>> print(results[0]['relation_type'])
+    DataRelation
+    >>> results[0]['x_fields'][0].getValues()
+    [b'Adrien', b'Zoby']
     """
 
     # Field's attributes
