@@ -1,5 +1,5 @@
-function initialize_left_nav(current_sid) {
-    refresh_left_nav(current_sid);
+function initialize_nav(current_sid) {
+    refresh_nav(current_sid);
 
     initialize_new_symbol_form();
     
@@ -11,7 +11,7 @@ function initialize_new_symbol_form() {
 	var symbol_name = $("#new_symbol_name").val();
 
 	create_symbol(symbol_name, function(result) {
-	    refresh_left_nav_symbols();
+	    refresh_nav_symbols();
 
 	    $("#new_symbol_modal").modal('toggle');	    	    
 	});
@@ -19,20 +19,18 @@ function initialize_new_symbol_form() {
     });
 }
 
-function refresh_left_nav(current_sid) {
+function refresh_nav(current_sid) {
 
-    refresh_left_nav_symbols(current_sid);
+    refresh_nav_symbols(current_sid);
 
-    refresh_left_nav_captures();
+    refresh_nav_captures();
 
 }
 
-function refresh_left_nav_symbols(current_sid) {
-    $("#list-symbols").empty()
-    console.log(current_sid);
+function refresh_nav_symbols(current_sid) {
+    $("li.list-symbols-entry").remove()
     
     get_symbols(function(symbols) {
-	$("#list-symbols").empty()
 	
 	for (i=0; i< symbols.length; i++) {
 
@@ -42,27 +40,29 @@ function refresh_left_nav_symbols(current_sid) {
 		active_class = " active";
 	    }
 	    
-	    $("#list-symbols").append('<a href="/symbols/'+symbols[i].id+'" class="list-group-item'+active_class+'">'+symbols[i].name+'</a>');
+	    $("#list-symbols").prepend('<li class="list-symbols-entry"><a href="/symbols/'+symbols[i].id+'" class="'+active_class+'">'+symbols[i].name+'</a></li>');
 	}
 	if (symbols.length === 0) {
-	    $("#list-symbols").append('<a href="#" class="list-group-item">No symbol found</a>');
+	    $("#list-symbols").prepend('<li class="list-symbols-entry"><a href="#" >No symbol found</a></li>');
 	}
 	
     });
 }
 
-function refresh_left_nav_captures() {
-    $("#list-captures").empty()
+function refresh_nav_captures() {
+    $("li.list-captures-entry").remove()
     
     get_captures(function(captures) {
-	$("#list-captures").empty()
 	for (i=0; i< captures.length; i++) {
-	    $("#list-captures").append('<li class="list-group-item"><a href="/captures/'+captures[i].id+'">'+captures[i].name+'</a></li>');
+	    $("#list-captures").append('<li class="list-captures-entry"><a href="/captures/'+captures[i].id+'">'+captures[i].name+'</a></li>');
 	}
 	if (captures.length === 0) {
-	    $("#list-captures").append('<li class="list-group-item">No capture found</li>');
-	}	
+	    $("#list-captures").append('<li class="list-captures-entry"><a href="#">No capture found</a></li>');
+	}
+
+	
     });
+    
 }
 
 
