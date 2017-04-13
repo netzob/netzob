@@ -1,47 +1,81 @@
+<div class="navbar navbar-inverse" role="navigation" style="height:42px">
+    <div class="container-fluid">
+	<!-- Brand and toggle get grouped for better mobile display -->
+	<div class="navbar-header">
+	    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+		<span class="sr-only">Toggle navigation</span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+	    </button>
+	</div>
+	<!-- Collect the nav links, forms, and other content for toggling -->
+	<div class="collapse navbar-collapse">
+	    <ul class="nav navbar-nav">
+		<li>
+		    <a href="/" style="color:white">Home</a>
+		</li>
+		<li>
+		    <a href="/captures/file">
+			Import data
+		    </a>
+		</li>
+		<li class="dropdown">
+		    <a class="dropdown-toggle" data-toggle="dropdown" href="#" >
+			Captures
+			<b class="caret"></b>
+		    </a>
+		    <ul class="dropdown-menu" id="list-captures">
+		    </ul>
+		</li>
+		
+		<li class="dropdown">
+		    <a class="dropdown-toggle" data-toggle="dropdown" href="#" >
+			Symbols
+			<b class="caret"></b>
+		    </a>
+		    <ul class="dropdown-menu" id="list-symbols">
+			<li role="separator" class="divider"></li>
+			<li>
+			    <a data-toggle="modal" data-target="#new_symbol_modal" href="#">New Symbol</a>
+			</li>			
+		    </ul>
+		</li>
+	    </ul>
+	    <ul class="nav navbar-nav navbar-right" >
+		<li>
+		    <a href="/api"  style="color:lightblue">
+			API <span class="glyphicon glyphicon-dashboard"></span>			
+		    </a>
+		</li>
+	    </ul>
+	</div><!-- /.navbar-collapse -->
+    </div><!-- /.container -->
+</div>
+<!-- Modal: New Symbol -->
+<div class="modal fade" id="new_symbol_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+	<div class="modal-content">
+	    <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		    <span aria-hidden="true">&times;</span>
+		</button>
+		<h4 class="modal-title" id="myModalLabel">New symbol</h4>
+	    </div>
+	    <div class="modal-body">
 
-<nav class="navbar navbar-inverse" role="navigation">
-  <div class="container-fluid">
-
-  <!-- Brand and toggle get grouped for better mobile display -->
-  <div class="navbar-header">
-    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-      <span class="sr-only">Toggle navigation</span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-    </button>
-    <a class="navbar-brand" href="{{ url_for('public.home') }}">
-
-      Netzob Web Interface
-
-    </a>
-  </div>
-  <!-- Collect the nav links, forms, and other content for toggling -->
-  <div class="collapse navbar-collapse navbar-ex1-collapse">
-    <ul class="nav navbar-nav">
-    </ul>
-    {% if current_user and current_user.is_authenticated %}
-    <ul class="nav navbar-nav navbar-right">
-        <li>
-            <p class="navbar-text"><a class="navbar-link" href="{{ url_for('user.members') }}">Logged in as {{ current_user.username }}</a></p>
-        </li>
-        <li><a class="navbar-link" href="{{ url_for('public.logout') }}"><i class="fa fa-sign-out"></i></a></li>
-
-    </ul>
-    {% elif form %}
-    <ul class="nav navbar-nav navbar-right">
-      <li><a href="{{ url_for('public.register') }}">Create account</a></li>
-    </ul>
-    <form id="loginForm" method="POST" class="navbar-form form-inline navbar-right" action="/" role="login">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-      <div class="form-group">
-        {{ form.username(placeholder="Username", class_="form-control") }}
-        {{ form.password(placeholder="Password", class_="form-control") }}
-      </div>
-      <button type="submit" class="btn btn-default">Log in</button>
-    </form>
-    {% endif %}
-  </div><!-- /.navbar-collapse -->
-  </div><!-- /.container -->
-</nav>
-
+		<form>
+		    <div class="form-group">
+			<label for="new_symbol_name">Name</label>
+			<input type="text" class="form-control" id="new_symbol_name" placeholder="Name">
+		    </div>
+		</form>
+		
+	    </div>
+	    <div class="modal-footer">
+		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		<button id="new_symbol_button" type="button" class="btn btn-primary">Save changes</button>
+	    </div>
+	</div>
+    </div>
+</div>
