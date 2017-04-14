@@ -74,9 +74,9 @@ class SizeFinder(object):
         #Delete all values that are under the base index
         results_LR = self.__delete_before_baseIndex(results_LR,baseIndex)
         results_RL = self.__delete_before_baseIndex(results_RL,baseIndex)
-        self._logger.critical("Results : \n")
-        self._logger.critical("[Left to right search] : " + str(results_LR) + "\n")
-        self._logger.critical("[Right to left search] : " + str(results_RL) + "\n")
+        self._logger.debug("Results : \n")
+        self._logger.debug("[Left to right search] : " + str(results_LR) + "\n")
+        self._logger.debug("[Right to left search] : " + str(results_RL) + "\n")
         if create_fields:
             if results_LR:
                 self.__create_fields(symbol,results_LR)
@@ -96,9 +96,9 @@ class SizeFinder(object):
         size_of_size = 1
         for result in results:
             field_to_split,maxSize,indexInField = self.__getFieldFromIndex(result[0],symbol)
-            self._logger.critical("[Field to split] : " + field_to_split.name + "\n")
+            self._logger.debug("[Field to split] : " + field_to_split.name + "\n")
             first_field_dep ,maxSizefd, indexInFieldfd = self.__getFieldFromIndex(result[1],symbol)
-            self._logger.critical("[First field dependency] : " + first_field_dep.name + "\n")
+            self._logger.debug("[First field dependency] : " + first_field_dep.name + "\n")
             field_dep = self.__get_field_dep(symbol,first_field_dep)
             #Check if static or Alt:
             values_before = []

@@ -127,6 +127,9 @@ class headerDetector(object):
                     if fiel.domain.varType == self.fieldType:
                         return
                     fiel.name += "_HEADER"
+            else:
+                if field.domain.varType == self.fieldType:
+                    return
             field.name += "_HEADER"
 
 
