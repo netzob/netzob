@@ -6,7 +6,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -65,6 +65,9 @@ class FieldSplitStatic(object):
     >>> messages = [RawMessage(data=sample) for sample in samples]
     >>> symbol = Symbol(messages=messages)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
+    >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
+    >>> symbol = Symbol(messages=messages)
+    >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> print(symbol)
     Field           
     ----------------
@@ -94,6 +97,8 @@ class FieldSplitStatic(object):
     ------- | ------- | -------- | -------
 
     >>> Format.splitStatic(symbol,mergeAdjacentStaticFields=False, mergeAdjacentDynamicFields=False)
+    >>> fs = FieldSplitStatic(mergeAdjacentStaticFields=False, mergeAdjacentDynamicFields=False)
+    >>> fs.execute(symbol)
     >>> print(symbol)
     Field-0 | Field-1 | Field-2 | Field-3 | Field-4 | Field-5 | Field-6
     ------- | ------- | ------- | ------- | ------- | ------- | -------
@@ -108,6 +113,8 @@ class FieldSplitStatic(object):
     ------- | ------- | ------- | ------- | ------- | ------- | -------
 
     >>> Format.splitStatic(symbol,mergeAdjacentStaticFields=True, mergeAdjacentDynamicFields=False)
+    >>> fs = FieldSplitStatic(mergeAdjacentStaticFields=True, mergeAdjacentDynamicFields=False)
+    >>> fs.execute(symbol)
     >>> print(symbol)
     Field-0 | Field-1 | Field-2 | Field-3  | Field-4
     ------- | ------- | ------- | -------- | -------
@@ -122,6 +129,8 @@ class FieldSplitStatic(object):
     ------- | ------- | ------- | -------- | -------
 
     >>> Format.splitStatic(symbol,mergeAdjacentStaticFields=False, mergeAdjacentDynamicFields=True)
+    >>> fs = FieldSplitStatic(mergeAdjacentStaticFields=False, mergeAdjacentDynamicFields=True)
+    >>> fs.execute(symbol)
     >>> print(symbol)
     Field-0 | Field-1 | Field-2 | Field-3 | Field-4 | Field-5
     ------- | ------- | ------- | ------- | ------- | -------
@@ -138,6 +147,8 @@ class FieldSplitStatic(object):
 
     We can also plays with the unitsize:
     >>> Format.splitStatic(symbol,AbstractType.UNITSIZE_8, mergeAdjacentDynamicFields=False)
+    >>> fs = FieldSplitStatic(AbstractType.UNITSIZE_8, mergeAdjacentDynamicFields=False)
+    >>> fs.execute(symbol)
     >>> print(symbol)
     Field-0 | Field-1 | Field-2 | Field-3  | Field-4
     ------- | ------- | ------- | -------- | -------
@@ -152,6 +163,8 @@ class FieldSplitStatic(object):
     ------- | ------- | ------- | -------- | -------
 
     >>> Format.splitStatic(symbol,AbstractType.UNITSIZE_16, mergeAdjacentDynamicFields=False)
+    >>> fs = FieldSplitStatic(AbstractType.UNITSIZE_16, mergeAdjacentDynamicFields=False)
+    >>> fs.execute(symbol)
     >>> print(symbol)
     Field-0 | Field-1 | Field-2 | Field-3
     ------- | ------- | ------- | -------
@@ -166,6 +179,8 @@ class FieldSplitStatic(object):
     ------- | ------- | ------- | -------
 
     >>> Format.splitStatic(symbol,AbstractType.UNITSIZE_32, mergeAdjacentDynamicFields=False)
+    >>> fs = FieldSplitStatic(AbstractType.UNITSIZE_32, mergeAdjacentDynamicFields=False)
+    >>> fs.execute(symbol)
     >>> print(symbol)
     Field-0    | Field-1 
     ---------- | --------
@@ -180,6 +195,8 @@ class FieldSplitStatic(object):
     ---------- | --------
 
     >>> Format.splitStatic(symbol,AbstractType.UNITSIZE_64, mergeAdjacentDynamicFields=False)
+    >>> fs = FieldSplitStatic(AbstractType.UNITSIZE_64, mergeAdjacentDynamicFields=False)
+    >>> fs.execute(symbol)
     >>> print(symbol)
     Field-0         
     ----------------
@@ -198,6 +215,15 @@ class FieldSplitStatic(object):
     SUPPORTED_UNITSIZE = [AbstractType.UNITSIZE_8, AbstractType.UNITSIZE_16, AbstractType.UNITSIZE_32, AbstractType.UNITSIZE_64]
 
     def __init__(self, unitSize=AbstractType.UNITSIZE_8, mergeAdjacentStaticFields=True, mergeAdjacentDynamicFields=True):
+    SUPPORTED_UNITSIZE = [
+        AbstractType.UNITSIZE_8, AbstractType.UNITSIZE_16,
+        AbstractType.UNITSIZE_32, AbstractType.UNITSIZE_64
+    ]
+
+    def __init__(self,
+                 unitSize=AbstractType.UNITSIZE_8,
+                 mergeAdjacentStaticFields=True,
+                 mergeAdjacentDynamicFields=True):
         """Constructor.
 
 
@@ -225,6 +251,10 @@ class FieldSplitStatic(object):
         if field is None:
             raise TypeError("The field cannot be None")
         fieldValues = [TypeConverter.convert(data, Raw, HexaString) for data in field.getValues(encoded=False)]
+        fieldValues = [
+            TypeConverter.convert(data, Raw, HexaString)
+            for data in field.getValues(encoded=False)
+        ]
 
         if len(fieldValues) == 0:
             raise Exception("No value found in the field.")
@@ -242,6 +272,8 @@ class FieldSplitStatic(object):
             for fieldValue in fieldValues:
                 if i < len(fieldValue):
                     currentIndexValue.append(fieldValue[i:min(len(fieldValue), i + stepUnitsize)])
+                    currentIndexValue.append(
+                        fieldValue[i:min(len(fieldValue), i + stepUnitsize)])
                 else:
                     currentIndexValue.append(b'')
             indexedValues.append(currentIndexValue)
@@ -279,6 +311,8 @@ class FieldSplitStatic(object):
                         tmp_result = []
                         for d in dynValues:
                             tmp_result.append(b''.join([x if x is not None else b'' for x in d]))
+                            tmp_result.append(b''.join(
+                                [x if x is not None else b'' for x in d]))
                         result.append(tmp_result)
                         dynamicSequences = []
                     result.append(values)
@@ -287,6 +321,8 @@ class FieldSplitStatic(object):
                 tmp_result = []
                 for d in dynValues:
                     tmp_result.append(b''.join([x if x is not None else b'' for x in d]))
+                    tmp_result.append(
+                        b''.join([x if x is not None else b'' for x in d]))
                 result.append(tmp_result)
 
             indexedValues = result
@@ -296,6 +332,11 @@ class FieldSplitStatic(object):
         for (i, val) in enumerate(indexedValues):
             fName = "Field-{0}".format(i)            
             fDomain = DomainFactory.normalizeDomain([Raw(TypeConverter.convert(v, HexaString, BitArray)) for v in set(val)])
+            fName = "Field-{0}".format(i)
+            fDomain = DomainFactory.normalizeDomain([
+                Raw(TypeConverter.convert(v, HexaString, BitArray))
+                for v in set(val)
+            ])
             newFields.append(Field(domain=fDomain, name=fName))
 
         # attach encoding functions
@@ -329,6 +370,10 @@ class FieldSplitStatic(object):
     # Static method
     @staticmethod
     def split(field, unitSize=AbstractType.UNITSIZE_8, mergeAdjacentStaticFields=True, mergeAdjacentDynamicFields=True):
+    def split(field,
+              unitSize=AbstractType.UNITSIZE_8,
+              mergeAdjacentStaticFields=True,
+              mergeAdjacentDynamicFields=True):
         """Split the portion of message in the current field
         following the value variation every unitSize
 
@@ -352,6 +397,11 @@ class FieldSplitStatic(object):
             raise ValueError("The associated symbol does not contain any message.")
 
         pSplit = FieldSplitStatic(unitSize, mergeAdjacentStaticFields, mergeAdjacentDynamicFields)
+            raise ValueError(
+                "The associated symbol does not contain any message.")
+
+        pSplit = FieldSplitStatic(unitSize, mergeAdjacentStaticFields,
+                                  mergeAdjacentDynamicFields)
         pSplit.execute(field)
 
     # Properties
@@ -368,6 +418,9 @@ class FieldSplitStatic(object):
 
         if unitSize not in FieldSplitStatic.SUPPORTED_UNITSIZE:
             raise ValueError("The specified unitsize is not supported, only {0} are available".format(FieldSplitStatic.SUPPORTED_UNITSIZE))
+            raise ValueError(
+                "The specified unitsize is not supported, only {0} are available".
+                format(FieldSplitStatic.SUPPORTED_UNITSIZE))
 
         self.__unitSize = unitSize
 

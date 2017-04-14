@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -61,7 +61,6 @@ class MessageParser(object):
 
 
     Below codes illustrates how to parse a message according to a single symbol.
-
 
     >>> from netzob.all import *
     >>> msg = RawMessage("hello world !")
@@ -167,7 +166,6 @@ class MessageParser(object):
         else:
             self.memory = memory
 
-
     @typeCheck(AbstractMessage, Symbol)
     def parseMessage(self, message, symbol):
         """This method parses the specified message against the specification of the provided symbol.
@@ -198,24 +196,33 @@ class MessageParser(object):
 
         return self.parseBitarray(bitArrayToParse, fields)
 
-    def parseBitarray(self, bitArrayToParse, fields, must_consume_everything = True):
+    def parseBitarray(self,
+                      bitArrayToParse,
+                      fields,
+                      must_consume_everything=True):
         """This method parses the specified bitarray according to the specification of
         the specified fields.
 
         It returns an iterator over all the valid parsing path that can be found.
-
+        
         """
 
-        self._logger.debug("New parsing method executed on {}".format(bitArrayToParse))
+        self._logger.debug(
+            "New parsing method executed on {}".format(bitArrayToParse))
 
         # building a new parsing path
-        currentParsingPath = ParsingPath(bitArrayToParse.copy(), self.memory.duplicate())
+        currentParsingPath = ParsingPath(bitArrayToParse.copy(),
+                                         self.memory.duplicate())
         currentParsingPath.assignDataToField(bitArrayToParse.copy(), fields[0])
 
         # field iterator
         i_current_field = 0
 
-        parsingResults = self._parseBitArrayWithField(currentParsingPath, fields, i_current_field, must_consume_everything = must_consume_everything)
+        parsingResults = self._parseBitArrayWithField(
+            currentParsingPath,
+            fields,
+            i_current_field,
+            must_consume_everything=must_consume_everything)
 
         for parsingResult in parsingResults:
             result = []
@@ -223,12 +230,21 @@ class MessageParser(object):
                 result.append(parsingResult.getDataAssignedToField(field))
 
             self.memory = parsingResult.memory
+
             yield result
 
-        raise InvalidParsingPathException("No parsing path returned while parsing '{}'".format(TypeConverter.convert(bitArrayToParse, BitArray, Raw)))
+        raise InvalidParsingPathException(
+            "No parsing path returned while parsing '{}'".format(
+                TypeConverter.convert(bitArrayToParse, BitArray, Raw)))
 
-    def _parseBitArrayWithField(self, parsingPath, fields, i_current_field, must_consume_everything = True):
-        self._logger.debug("_parseBitArrayWithField executed for field {} with path : {}".format(i_current_field, parsingPath))
+    def _parseBitArrayWithField(self,
+                                parsingPath,
+                                fields,
+                                i_current_field,
+                                must_consume_everything=True):
+        self._logger.debug(
+            "_parseBitArrayWithField executed for field {} with path : {}".
+            format(i_current_field, parsingPath))
         currentField = fields[i_current_field]
 
         carnivorous_parsing = (i_current_field == len(fields) - 1)
@@ -236,24 +252,32 @@ class MessageParser(object):
             carnivorous_parsing = False
 
         fp = FieldParser(currentField, carnivorous_parsing)
-        value_before_parsing = parsingPath.getDataAssignedToField(currentField).copy()
+        value_before_parsing = parsingPath.getDataAssignedToField(
+            currentField).copy()
 
         for newParsingPath in fp.parse(parsingPath):
 
             try:
-                value_after_parsing = newParsingPath.getDataAssignedToField(currentField)
-                remainingValue = value_before_parsing[len(value_after_parsing):].copy()
+                value_after_parsing = newParsingPath.getDataAssignedToField(
+                    currentField)
+                remainingValue = value_before_parsing[len(
+                    value_after_parsing):].copy()
 
-                if i_current_field < len(fields) - 1 :
-                    newParsingPath.assignDataToField(remainingValue, fields[i_current_field+1])
+                if i_current_field < len(fields) - 1:
+                    newParsingPath.assignDataToField(
+                        remainingValue, fields[i_current_field + 1])
 
                     if must_consume_everything is False:
-                        generator = self._parseBitArrayWithField(newParsingPath, fields, i_current_field + 1, must_consume_everything = False)
+                        generator = self._parseBitArrayWithField(
+                            newParsingPath,
+                            fields,
+                            i_current_field + 1,
+                            must_consume_everything=False)
                     else:
-                        generator = self._parseBitArrayWithField(newParsingPath, fields, i_current_field + 1)
+                        generator = self._parseBitArrayWithField(
+                            newParsingPath, fields, i_current_field + 1)
                     for x in generator:
                         yield x
-
 
                 elif not must_consume_everything and len(remainingValue) >= 0:
                     yield newParsingPath
@@ -266,5 +290,4 @@ class MessageParser(object):
 
         raise StopIteration()
 
-
-
+        # InvalidParsingPathException("No parsing path returned while parsing '{}'".format(TypeConverter.convert(value_before_parsing, BitArray, Raw)))

@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -103,6 +103,8 @@ class State(AbstractState):
             raise TypeError("AbstractionLayer cannot be None")
 
         self._logger.debug("Execute state {0} as an initiator".format(self.name))
+        self._logger.debug(
+            "Execute state {0} as an initiator".format(self.name))
 
         self.active = True
 
@@ -118,6 +120,8 @@ class State(AbstractState):
         try:
             nextState = nextTransition.executeAsInitiator(abstractionLayer)
             self._logger.debug("Transition '{0}' leads to state: {1}.".format(str(nextTransition), str(nextState)))
+            self._logger.debug("Transition '{0}' leads to state: {1}.".format(
+                str(nextTransition), str(nextState)))
         except Exception as e:
             self.active = False
             raise e
@@ -125,6 +129,9 @@ class State(AbstractState):
         if nextState is None:
             self.active = False
             raise Exception("The execution of transition {0} on state {1} did not return the next state.".format(str(nextTransition), self.name))
+            raise Exception(
+                "The execution of transition {0} on state {1} did not return the next state.".
+                format(str(nextTransition), self.name))
 
         self.active = False
         return nextState
@@ -144,12 +151,16 @@ class State(AbstractState):
             raise TypeError("AbstractionLayer cannot be None")
 
         self._logger.debug("Execute state {0} as a non-initiator".format(self.name))
+        self._logger.debug(
+            "Execute state {0} as a non-initiator".format(self.name))
 
         self.active = True
 
         # if no transition exists we quit
         if len(self.transitions) == 0:
             self._logger.warn("The current state has no transitions available.")
+            self._logger.warn(
+                "The current state has no transitions available.")
             self.active = False
             raise Exception("No transition available for this state.")
 
@@ -172,6 +183,19 @@ class State(AbstractState):
             if nextState is None:
                 self.active = False
                 raise Exception("The execution of transition {0} on state {1} did not return the next state.".format(nextTransition.name, self.name))
+            if len(self.transitions) == 1 and self.transitions[
+                    0].TYPE == CloseChannelTransition.TYPE:
+                nextTransition = self.transitions[0]
+
+        if nextTransition is not None:
+            nextState = nextTransition.executeAsNotInitiator(abstractionLayer)
+            self._logger.debug("Transition '{0}' leads to state: {1}.".format(
+                str(nextTransition), str(nextState)))
+            if nextState is None:
+                self.active = False
+                raise Exception(
+                    "The execution of transition {0} on state {1} did not return the next state.".
+                    format(nextTransition.name, self.name))
             return nextState
 
         # Else, we wait to receive a symbol
@@ -179,6 +203,8 @@ class State(AbstractState):
             (receivedSymbol, receivedMessage) = abstractionLayer.readSymbol()
             if receivedSymbol is None:
                 raise Exception("The abstraction layer returned a None received symbol")
+                raise Exception(
+                    "The abstraction layer returned a None received symbol")
             self._logger.debug("Input symbol: " + str(receivedSymbol.name))
 
             # Find the transition which accepts the received symbol as an input symbol
@@ -197,6 +223,20 @@ class State(AbstractState):
 
         except Exception as e:
             self._logger.warning("An exception occured when receiving a symbol from the abstraction layer.")
+                self._logger.debug(
+                    "The received symbol did not match any of the registered transition, we stay in place."
+                )
+                nextState = self
+            else:
+                nextState = nextTransition.executeAsNotInitiator(
+                    abstractionLayer)
+                self._logger.debug("Transition '{0}' leads to state: {1}.".
+                                   format(str(nextTransition), str(nextState)))
+
+        except Exception as e:
+            self._logger.warning(
+                "An exception occured when receiving a symbol from the abstraction layer."
+            )
             self.active = False
             self._logger.warning(traceback.format_exc())
             raise e
@@ -226,6 +266,8 @@ class State(AbstractState):
                 prioritizedTransitions[transition.priority] = [transition]
 
         possibleTransitions = prioritizedTransitions[sorted(prioritizedTransitions.keys())[0]]
+        possibleTransitions = prioritizedTransitions[sorted(
+            prioritizedTransitions.keys())[0]]
 
         if len(possibleTransitions) == 1:
             return possibleTransitions[0]
@@ -246,6 +288,9 @@ class State(AbstractState):
         """
         if transition not in self.__transitions:
             raise ValueError("The transition is not associated to the current state so cannot be removed.")
+            raise ValueError(
+                "The transition is not associated to the current state so cannot be removed."
+            )
         self.__transitions.remove(transition)
 
     @property

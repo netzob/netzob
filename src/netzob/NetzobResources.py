@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -54,3 +54,4 @@ LOCAL_LOCALES_DIR = "./resources/static/netzob/locales/"
 #| None : It's the copied version of this file which will be edited not this one.
 #+---------------------------------------------------------------------- -----+
 BID = "4fcd20f2-1529-45c4-af0c-417e4ed39b73"
+BID = "$BID"

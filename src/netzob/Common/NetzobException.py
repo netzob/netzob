@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -48,6 +48,8 @@ class NetzobImportException(NetzobException):
         super(NetzobImportException, self).__init__(
             "Error while importing data from source {0}: {1}".format(
                 source, message))
+            "Error while importing data from source {0}: {1}".format(source,
+                                                                     message))
         self.message = message
         self.source = source
         self.statusCode = statusCode

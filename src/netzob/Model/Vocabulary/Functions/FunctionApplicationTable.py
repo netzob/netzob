@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -39,6 +39,7 @@
 from netzob.Common.Utils.Decorators import NetzobLogger
 from netzob.Model.Vocabulary.Functions.VisualizationFunction import VisualizationFunction
 
+
 #+---------------------------------------------------------------------------+
 #| FunctionApplicationTable:
 #|     Definition of a function application table
@@ -57,6 +58,21 @@ class FunctionApplicationTable(object):
     def applyFunction(self, function, i_start, i_end):
         for (i_col, i_local_start, i_local_end, i_start, i_end, data) in self.getSegments(i_start, i_end):
             self.appliedFunctions.append((i_col, i_local_start, i_local_end, i_start, i_end, data, function))
+    def __init__(self, splittedData):
+        self.splittedData = splittedData
+        self.appliedFunctions = [
+        ]  # [(i_col, i_local_start, i_local_end, i_start, i_end, originalData, newData, function), ...]
+        # We create a conversion addressing table
+        # {(i_data => i_data_functioned), ...}
+        self.conversionAddressingTable = self.getInitialConversionAddressingTable(
+        )
+        self.tags = []
+
+    def applyFunction(self, function, i_start, i_end):
+        for (i_col, i_local_start, i_local_end, i_start, i_end,
+             data) in self.getSegments(i_start, i_end):
+            self.appliedFunctions.append((i_col, i_local_start, i_local_end,
+                                          i_start, i_end, data, function))
 
     def getResult(self):
         styledResult = []
@@ -68,6 +84,8 @@ class FunctionApplicationTable(object):
         # We split applied functions between encoding and visualization ones
         for appliedFunction in self.appliedFunctions:
             (i_col, i_local_start, i_end_local, i_start, i_end, data, function) = appliedFunction
+            (i_col, i_local_start, i_end_local, i_start, i_end, data,
+             function) = appliedFunction
             visualizationFunctions.append(appliedFunction)
 
         # We apply encoding functions per column
@@ -103,12 +121,43 @@ class FunctionApplicationTable(object):
         #     import gi
         #     gi.require_version('Gtk', '3.0')
         #     encodedResult.append(GLib.markup_escape_text(newData))
+            #     # Search for functions which applies on current column
+            #     toApplyFunction = []
+            #     for (i_col, i_local_start, i_local_end, i_start, i_end, data, function) in encodingFunctions:
+            #         if i_col == col:
+            #             toApplyFunction.append((i_col, i_local_start, i_local_end, i_start, i_end, data, function))
+
+            #     # Apply functions
+            #     for (i_col, i_local_start, i_local_end, i_start, i_end, data, function) in toApplyFunction:
+            #         #logging.debug("Apply function {0} on {1}".format(function.getName(), self.splittedData[col][i_local_start:i_local_end]))
+            #         #logging.debug("Conversion table (before):")
+            #         #logging.debug(self.conversionAddressingTable)
+
+            #         tmpData = function.apply(self.splittedData[col][i_local_start:i_local_end])
+            #         newData = newData[0:i_local_start] + tmpData + newData[i_local_end:]
+
+            #         # update in the conversion addressing table
+            #         functionConversionAddressingTable = function.getConversionAddressingTable(self.splittedData[col][i_local_start:i_local_end])
+            #         if functionConversionAddressingTable is None:
+            #              #logging.debug("Automatic deduction of the function conversion addressing table")
+            #             self.updateConversionAddressingTable(i_start, i_end, i_start, i_start + len(tmpData))
+            #         else:
+            #             #logging.debug("Apply the function conversion addressing table")
+            #             self.updateConversionAddressingTableWithTable(functionConversionAddressingTable)
+
+            #         #logging.debug("Conversion table (after):")
+            #         #logging.debug(self.conversionAddressingTable)
+            #     from gi.repository import GLib  # TODO: to fix
+            #     import gi
+            #     gi.require_version('Gtk', '3.0')
+            #     encodedResult.append(GLib.markup_escape_text(newData))
             encodedResult.append(newData)
 
         i_global = 0
 
         self._logger.debug(encodedResult)
         self._logger.debug(self.splittedData)        
+        self._logger.debug(self.splittedData)
 
         # We apply visualization functions per column
         for col in range(0, len(self.splittedData)):
@@ -127,6 +176,23 @@ class FunctionApplicationTable(object):
                         self.registerTag(i_col, function.id, i_local_start, openTag)
                     if endTag is not None:
                         self.registerTag(i_col, function.id, i_local_end, endTag)
+                for (i_col, i_local_start, i_local_end, i_start, i_end, data,
+                     function) in visualizationFunctions:
+                    if i_col == col:
+                        toApplyFunction.append(
+                            (i_col, i_local_start, i_local_end, i_start, i_end,
+                             data, function))
+
+                # Prepare functions for current column
+                for (i_col, i_local_start, i_local_end, i_start, i_end, data,
+                     function) in toApplyFunction:
+                    (openTag, endTag) = function.getTags()
+                    if openTag is not None:
+                        self.registerTag(i_col, function.id, i_local_start,
+                                         openTag)
+                    if endTag is not None:
+                        self.registerTag(i_col, function.id, i_local_end,
+                                         endTag)
 
                 i_letter = 0
                 # Retrieve the new content of current column (with opening and ending tags)
@@ -138,6 +204,15 @@ class FunctionApplicationTable(object):
                     for tag in tags:
                         i_encoded_global_tag = self.conversionAddressingTable[i_global][0]
                         i_encoded_local_tag = len(encodedCol) - len(encodedResult[col]) + i_encoded_letter
+                    i_encoded_letter = self.conversionAddressingTable[
+                        i_global][0] - self.conversionAddressingTable[
+                            i_global - i_letter][0]
+
+                    for tag in tags:
+                        i_encoded_global_tag = self.conversionAddressingTable[
+                            i_global][0]
+                        i_encoded_local_tag = len(encodedCol) - len(
+                            encodedResult[col]) + i_encoded_letter
                         # print(len(encodedCol))
                         # print(len(encodedResult[col]))
                         # print(i_encoded_letter)
@@ -145,6 +220,9 @@ class FunctionApplicationTable(object):
                         # print(i_encoded_local_tag)
                         # print(encodedCol)
                         encodedCol = self.insertTagInEncoded(col, i_encoded_local_tag, i_encoded_global_tag, tag, encodedCol)
+                        encodedCol = self.insertTagInEncoded(
+                            col, i_encoded_local_tag, i_encoded_global_tag,
+                            tag, encodedCol)
                     i_global = i_global + 1
 
                 tags = self.getTags(col, i_letter + 1)
@@ -196,6 +274,11 @@ class FunctionApplicationTable(object):
             self.conversionAddressingTable[original_indice] = table.get(original_indice)
 
     def updateConversionAddressingTable(self, old_start, old_end, new_start, new_end):
+            self.conversionAddressingTable[original_indice] = table.get(
+                original_indice)
+
+    def updateConversionAddressingTable(self, old_start, old_end, new_start,
+                                        new_end):
         sizeSegmentOld = old_end - old_start
         sizeSegment = new_end - new_start
 
@@ -265,6 +348,8 @@ class FunctionApplicationTable(object):
                     in_segment = False
                     i_local_end = i_col_data
                     segments.append((i_col, i_local_start, i_local_end, i_start, i_end, segment))
+                    segments.append((i_col, i_local_start, i_local_end,
+                                     i_start, i_end, segment))
                     return segments
                 i = i + 1
 
@@ -272,6 +357,8 @@ class FunctionApplicationTable(object):
                 if in_segment is True and i is i_end:
                     i_local_end = len(col_data)
                     segments.append((i_col, i_local_start, i_local_end, i_start, i_end, segment))
+                    segments.append((i_col, i_local_start, i_local_end,
+                                     i_start, i_end, segment))
                     segment = ""
                     in_segment = False
                 elif in_segment is True:
@@ -279,6 +366,8 @@ class FunctionApplicationTable(object):
                     # first we close this one
                     i_local_end = i_col_data + 1
                     segments.append((i_col, i_local_start, i_local_end, i_start, i_end, segment))
+                    segments.append((i_col, i_local_start, i_local_end,
+                                     i_start, i_end, segment))
                     segment = ""
                     in_segment is True
                     i_local_start = 0
@@ -286,6 +375,8 @@ class FunctionApplicationTable(object):
             in_segment = False
             i_local_end = len(col_data) + 1
             segments.append((i_col, i_local_start, i_local_end, i_start, i_end, segment))
+            segments.append(
+                (i_col, i_local_start, i_local_end, i_start, i_end, segment))
             return segments
 
         #logging.warn("i_end never reached in the message (i_end=%d, i=%d)" % (i_end, i))

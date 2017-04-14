@@ -6,7 +6,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -29,6 +29,7 @@
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
 from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
+from netzob.Model.Vocabulary.Messages.FileMessage import FileMessage
 from netzob.Model.Vocabulary.Messages.L2NetworkMessage import L2NetworkMessage
 from netzob.Model.Vocabulary.Messages.L3NetworkMessage import L3NetworkMessage
 from netzob.Model.Vocabulary.Messages.L4NetworkMessage import L4NetworkMessage

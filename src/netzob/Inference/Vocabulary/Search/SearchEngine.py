@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -68,6 +68,8 @@ def _executeSearch(arg, **kwargs):
 
     se = SearchEngine()
     c = se.searchDataInMessage(data, message, addTags=addTags, dataLabels=dataLabels)
+    c = se.searchDataInMessage(
+        data, message, addTags=addTags, dataLabels=dataLabels)
     return c
 
 
@@ -133,11 +135,20 @@ class SearchEngine(object):
         """
         if results is None:
             raise TypeError("Internal Error: Collected None during a parallel search operation.")
+            raise TypeError(
+                "Internal Error: Collected None during a parallel search operation."
+            )
         for result in results:
             self.asyncResult.extend(result)
 
     @typeCheck(list, list, bool, bool)
     def searchDataInMessages(self, datas, messages, addTags=True, inParallel=True, dataLabels=None):
+    def searchDataInMessages(self,
+                             datas,
+                             messages,
+                             addTags=True,
+                             inParallel=True,
+                             dataLabels=None):
         """Search all the data specified in the given messages. Per default, this operation is executed in parallel.
 
         Example of a search operation executed in sequential
@@ -194,6 +205,16 @@ class SearchEngine(object):
         for message in messages:
             if not isinstance(message, AbstractMessage):
                 raise TypeError("At least one specified message is not An AbstractMessage.")
+            raise TypeError(
+                "There should be at least one data to search after.")
+        for data in datas:
+            if not isinstance(data, AbstractType):
+                raise TypeError(
+                    "At least one specified data is not an AbstractType.")
+        for message in messages:
+            if not isinstance(message, AbstractMessage):
+                raise TypeError(
+                    "At least one specified message is not An AbstractMessage.")
 
         # Remove any duplicate data
         noDuplicateDatas = list(set(datas))
@@ -205,6 +226,9 @@ class SearchEngine(object):
 
             for message in messages:
                 results.extend(self.searchDataInMessage(noDuplicateDatas, message, addTags, dataLabels))
+                results.extend(
+                    self.searchDataInMessage(noDuplicateDatas, message,
+                                             addTags, dataLabels))
             # Measure end time
             # end = time.time()
 
@@ -222,6 +246,13 @@ class SearchEngine(object):
 
             # Execute search operations
             pool.map_async(_executeSearch, list(zip([noDuplicateDatas] * len(messages), messages, [addTags] * len(messages), [dataLabels] * len(messages))), callback=self.__collectResults_cb)
+            pool.map_async(
+                _executeSearch,
+                list(
+                    zip([noDuplicateDatas] * len(messages), messages, [
+                        addTags
+                    ] * len(messages), [dataLabels] * len(messages))),
+                callback=self.__collectResults_cb)
 
             # Waits all alignment tasks finish
             pool.close()
@@ -236,6 +267,8 @@ class SearchEngine(object):
 
     @typeCheck(list, AbstractMessage, bool)
     def searchDataInMessage(self, data, message, addTags=True, dataLabels=None):
+    def searchDataInMessage(self, data, message, addTags=True,
+                            dataLabels=None):
         """Search in the specified message any of the given data. These data will be searched as
         it but also under various format.
 
@@ -325,6 +358,17 @@ class SearchEngine(object):
             ranges = []
             for startIndex in target.search(searchTask.data):
                 self._logger.debug("Search found {}: {}>{}".format(searchTask.data, startIndex, len(searchTask.data)))
+            if target is None or not isinstance(
+                    target, bitarray) or searchTask is None or not isinstance(
+                        searchTask, SearchTask):
+                raise TypeError(
+                    "Each search case must a tupple made of a bitarray and a SearchTask instance"
+                )
+
+            ranges = []
+            for startIndex in target.search(searchTask.data):
+                self._logger.debug("Search found {}: {}>{}".format(
+                    searchTask.data, startIndex, len(searchTask.data)))
                 ranges.append((startIndex, startIndex + len(searchTask.data)))
 
             if len(ranges) > 0:
@@ -349,3 +393,7 @@ class SearchEngine(object):
 
         return [SearchTask(mutation, mutationType, properties=properties) for mutationType, mutation in list(data.mutate().items())]
 
+        return [
+            SearchTask(mutation, mutationType, properties=properties)
+            for mutationType, mutation in list(data.mutate().items())
+        ]

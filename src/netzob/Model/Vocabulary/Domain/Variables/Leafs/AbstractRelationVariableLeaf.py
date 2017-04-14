@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -48,6 +48,7 @@ from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 
+
 @NetzobLogger
 class AbstractRelationVariableLeaf(AbstractVariableLeaf):
     """Represents a relation relation between variables, one being updated with the others.
@@ -56,6 +57,9 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
 
     def __init__(self, varType, fieldDependencies=None, name=None,svas = SVAS.VOLATILE ):
         super(AbstractRelationVariableLeaf, self).__init__(varType, name, svas=svas)
+    def __init__(self, varType, fieldDependencies=None, name=None):
+        super(AbstractRelationVariableLeaf, self).__init__(
+            varType, name, svas=SVAS.VOLATILE)
         if fieldDependencies is None:
             fieldDependencies = []
         self.fieldDependencies = fieldDependencies

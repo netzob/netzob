@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -62,6 +62,14 @@ class OneStateAutomataFactory(object):
         sMain = State(name="Main state")
         sEnd = State(name="End state")
         openTransition = OpenChannelTransition(startState=sStart, endState=sMain, name="Open")
+        (client, server, symbol) = abstractSession[
+            0]  # We expect that the first message/symbol is emitted by the client.
+        # So we consider it as the initiator of the session.
+        sStart = State(name="Start state")
+        sMain = State(name="Main state")
+        sEnd = State(name="End state")
+        openTransition = OpenChannelTransition(
+            startState=sStart, endState=sMain, name="Open")
         it = iter(abstractSession)
         inputSymbol = None
         outputSymbols = None
@@ -77,12 +85,21 @@ class OneStateAutomataFactory(object):
                         outputSymbols = [symbol]
                 if inputSymbol is not None and outputSymbols is not None:
                     mainTransition = Transition(startState=sMain, endState=sMain, inputSymbol=inputSymbol, outputSymbols=outputSymbols, name="Transition")
+                    mainTransition = Transition(
+                        startState=sMain,
+                        endState=sMain,
+                        inputSymbol=inputSymbol,
+                        outputSymbols=outputSymbols,
+                        name="Transition")
                     inputSymbol = None
                     outputSymbols = None
             except StopIteration:
                 break
         
         closeTransition = CloseChannelTransition(startState=sMain, endState=sEnd, name="Close")
+
+        closeTransition = CloseChannelTransition(
+            startState=sMain, endState=sEnd, name="Close")
 
         from netzob.Model.Grammar.Automata import Automata
         return Automata(sStart, symbolList)

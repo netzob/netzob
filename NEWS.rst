@@ -1,6 +1,22 @@
 NEWS
 ====
 
+v1.0.1 -- 2017-03-05
+--------------------
+
+:Version name: StompingFrilledShark
+
+* minor improvement
+    * Improves code style (mostly PEP8 constraints)
+    * File Importer
+    * On-demand performance tests for parallel alignment (de)activation
+    * Ensures determinism of ClusterBySize clustering method
+    * Base64 and Zlib Encoding functions
+
+* minor bug fix
+    * Updates Copyright dates in source headers
+    * Removes obsolete Rep module
+
 v1.0 -- 2017-02-03
 ------------------
 

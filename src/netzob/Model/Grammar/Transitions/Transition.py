@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -38,6 +38,7 @@ import uuid
 import time
 import random
     
+
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
@@ -78,6 +79,13 @@ class Transition(AbstractTransition):
     TYPE = "Transition"
 
     def __init__(self, startState, endState, inputSymbol=None, outputSymbols=None, _id=uuid.uuid4(), name=None):
+    def __init__(self,
+                 startState,
+                 endState,
+                 inputSymbol=None,
+                 outputSymbols=None,
+                 _id=uuid.uuid4(),
+                 name=None):
         """Constructor of a Transition.
 
         :param startState: initial state of the transition
@@ -95,6 +103,8 @@ class Transition(AbstractTransition):
 
         """
         super(Transition, self).__init__(Transition.TYPE, startState, endState, _id, name, priority=10)
+        super(Transition, self).__init__(
+            Transition.TYPE, startState, endState, _id, name, priority=10)
 
         if outputSymbols is None:
             outputSymbols = []
@@ -135,6 +145,9 @@ class Transition(AbstractTransition):
         except Exception as e:
             self.active = False
             self._logger.warning("An error occured while executing the transition {} as an initiator: {}".format(self.name, e))
+            self._logger.warning(
+                "An error occured while executing the transition {} as an initiator: {}".
+                format(self.name, e))
             raise e
 
         # Computes the next state following the received symbol
@@ -142,6 +155,8 @@ class Transition(AbstractTransition):
         # if not it raises an exception
         for outputSymbol in self.outputSymbols:
             self._logger.debug("Possible output symbol: '{0}' (id={1}).".format(outputSymbol.name, outputSymbol.id))
+            self._logger.debug("Possible output symbol: '{0}' (id={1}).".
+                               format(outputSymbol.name, outputSymbol.id))
 
         if receivedSymbol in self.outputSymbols:
             self.active = False
@@ -149,6 +164,8 @@ class Transition(AbstractTransition):
         else:
             self.active = False
             errorMessage = "Received symbol '{}' was unexpected.".format(receivedSymbol.name)
+            errorMessage = "Received symbol '{}' was unexpected.".format(
+                receivedSymbol.name)
             self._logger.warning(errorMessage)
             raise Exception(errorMessage)
 
@@ -172,6 +189,9 @@ class Transition(AbstractTransition):
         pickedSymbol = self.__pickOutputSymbol()
         if pickedSymbol is None:
             self._logger.debug("No output symbol to send, we pick an EmptySymbol as output symbol.")
+            self._logger.debug(
+                "No output symbol to send, we pick an EmptySymbol as output symbol."
+            )
             pickedSymbol = EmptySymbol()
 
         # Sleep before emiting the symbol (if equired)
@@ -208,6 +228,8 @@ class Transition(AbstractTransition):
 
         if totalProbability > 100.0:
             raise ValueError("The sum of output symbol's probability if above 100%")
+            raise ValueError(
+                "The sum of output symbol's probability if above 100%")
 
         remainProbability = 100.0 - totalProbability
 
@@ -221,6 +243,16 @@ class Transition(AbstractTransition):
 
         # pick the good output symbol following the probability
         distribution = [outputSymbol for inner in [[k] * int(v) for k, v in list(outputSymbolsWithProbability.items())] for outputSymbolsWithNoProbability in inner]
+                outputSymbolsWithProbability[
+                    outputSymbol] = probabilityPerSymbolWithNoExplicitProbability
+
+        # pick the good output symbol following the probability
+        distribution = [
+            outputSymbol
+            for inner in [[k] * int(v) for k, v in list(
+                outputSymbolsWithProbability.items())]
+            for outputSymbolsWithNoProbability in inner
+        ]
 
         return random.choice(distribution)
 
@@ -290,3 +322,5 @@ class Transition(AbstractTransition):
                 desc.append(str(outputSymbol.name))
             return self.name + " (" + str(self.inputSymbol.name) + ";{" + ",".join(desc) + "})"
 
+            return self.name + " (" + str(
+                self.inputSymbol.name) + ";{" + ",".join(desc) + "})"
