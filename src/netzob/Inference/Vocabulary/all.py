@@ -35,5 +35,6 @@ from netzob.Inference.Vocabulary.RelationFinder import RelationFinder
 from netzob.Inference.Vocabulary.CorrelationFinder import CorrelationFinder
 from netzob.Inference.Vocabulary.EntropyMeasurement import EntropyMeasurement
 from netzob.Inference.Vocabulary.CRCFinder import CRCFinder
-from netzob.Inference.Vocabulary.IPSeeker import IPSeeker
+from netzob.Inference.Vocabulary.IPFinder import IPFinder
+from netzob.Inference.Vocabulary.SizeFinder import SizeFinder
 from netzob.Inference.Vocabulary.headerDetector import headerDetector

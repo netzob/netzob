@@ -60,7 +60,7 @@ from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 
 @NetzobLogger
 class Size(AbstractRelationVariableLeaf):
-    """A size relation between one variable and a the value of a field
+    """A size relation between a variable and the value of a field
 
     In the following example, a size field is declared after its field.
 

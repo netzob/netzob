@@ -61,8 +61,7 @@ from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import Speciali
 
 @NetzobLogger
 class CRC32(AbstractRelationVariableLeaf):
-    """A crc32 relaton as specified in RFC 1071 (https://www.ietf.org/rfc/rfc1071.txt).
-    This checksum is used by ICMP, UDP, IP, TCP protocols.
+    """A crc32 relaton between a variable and the value of one or several other fields.
 
 
     The following example, illustrates the creation of an ICMP Echo request packet

@@ -18,7 +18,7 @@ from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
 
 @NetzobLogger
 class CRCFinder(object):
-    """Provides multiple algorithms to find CRC in messages.
+    """Provides multiple algorithms to find CRC in messages of a symbol (searches inside fields).
 
     >>> import binascii
     >>> from netzob.all import *
@@ -69,6 +69,7 @@ class CRCFinder(object):
             results = collections.namedtuple('Results', ['CRC_be', 'CRC_le', 'CRC_mid_be', 'CRC_mid_le'])
             field_results = collections.namedtuple('Results', ['CRC_be', 'CRC_le', 'CRC_mid_be', 'CRC_mid_le'])
             searched_string = message.data
+            #TODO add right to left search (here is only left to right => Not found if it's CRC of header)
             results.CRC_be, results.CRC_le = self._search_CRC(searched_string)
             results.CRC_mid_be, results.CRC_mid_le = self._search_mid_CRC(searched_string)
             self._logger.debug("Found the following results:")
