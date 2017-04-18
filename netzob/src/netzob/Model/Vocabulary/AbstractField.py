@@ -83,10 +83,9 @@ class AbstractionException(Exception):
 class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
     """Represents all the different classes which participates in fields definitions of a message format."""
 
-    def __init__(self, name=None, layer=False):
+    def __init__(self, name=None):
         self.id = uuid.uuid4()
         self.name = name
-        self.layer = layer
         self.description = ""
 
         self.__fields = TypedList(AbstractField)
@@ -747,23 +746,6 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
     @typeCheck(str)
     def name(self, name):
         self.__name = name
-
-    @property
-    def layer(self):
-        """Flag describing if element is a layer.
-
-        :type: :class:`bool`
-        :raises: :class:`TypeError`
-        """
-
-        return self.__layer
-
-    @layer.setter
-    @typeCheck(bool)
-    def layer(self, layer):
-        if layer is None:
-            layer = False
-        self.__layer = layer
 
     @property
     def description(self):
