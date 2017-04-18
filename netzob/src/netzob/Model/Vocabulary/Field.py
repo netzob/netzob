@@ -62,11 +62,8 @@ class Field(AbstractField):
 
     Fields have either a fixed or variable size.
     A field can similarly be composed of sub-elements (such as a payload field).
-    Therefore, by considering the concept of protocol layer as a kind of particular field,
-    it is possible to retrieve the protocol stack (e.g. TCP encapsulated in IP, itself encapsulated in
-    Ethernet) each layer having its own vocabulary and grammar.
 
-    To model this, a field is part of a tree which root is field’s symbol and made of leaf of layer fields.
+    To model this, a field is part of a tree which root is field’s symbol and made of leaf fields.
     Hence, a field always has a parent which can be another field or a symbol if its the root. A field can optionally have children.
 
     The value that can take the field is defined by its definition domain.
@@ -124,19 +121,17 @@ class Field(AbstractField):
 
     """
 
-    def __init__(self, domain=None, name="Field", layer=False, isPseudoField=False):
+    def __init__(self, domain=None, name="Field", isPseudoField=False):
         """
         :keyword domain: the definition domain of the field (see domain property to get more information)
         :type domain: a :class:`list` of :class:`object`, default is Raw(None)
         :keyword name: the name of the field
         :type name: :class:`str`
-        :keyword layer: a flag indicating if field is a layer
-        :type layer: :class:`bool`
         :keyword isPseudoField: a flag indicating if field is a pseudo field, meaning it is used internally but does not produce data
         :type isPseudoField: :class:`bool`
 
         """
-        super(Field, self).__init__(name, layer)
+        super(Field, self).__init__(name)
         if domain is None:
             domain = Raw(None)
         self.domain = domain
