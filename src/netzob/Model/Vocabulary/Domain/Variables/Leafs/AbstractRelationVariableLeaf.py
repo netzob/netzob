@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -46,6 +46,7 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
+from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 
 
 @NetzobLogger
@@ -54,8 +55,11 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
 
     """
 
+    def __init__(self, varType, fieldDependencies=None, name=None,svas = SVAS.VOLATILE ):
+        super(AbstractRelationVariableLeaf, self).__init__(varType, name, svas=svas)
     def __init__(self, varType, fieldDependencies=None, name=None):
-        super(AbstractRelationVariableLeaf, self).__init__(varType, name, svas=SVAS.VOLATILE)
+        super(AbstractRelationVariableLeaf, self).__init__(
+            varType, name, svas=SVAS.VOLATILE)
         if fieldDependencies is None:
             fieldDependencies = []
         self.fieldDependencies = fieldDependencies
@@ -79,3 +83,25 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         self.__fieldDependencies = []
         for f in fields:
             self.__fieldDependencies.extend(f._getLeafFields())
+
+    @typeCheck(SpecializingPath)
+    def regenerateAndMemorize(self, variableSpecializerPath, acceptCallBack=True):
+        """This method participates in the specialization process.
+        It memorizes the value present in the path of the variable
+        """
+
+        self._logger.debug("RegenerateAndMemorize Variable {0}".format(self))
+
+        if variableSpecializerPath is None:
+            raise Exception("VariableSpecializerPath cannot be None")
+
+        if variableSpecializerPath.memory.hasValue(self):
+            old_value = variableSpecializerPath.memory.getValue(self)
+            newValue = self.generate(oldValue = old_value)
+        else:
+            newValue = self.generate()
+        variableSpecializerPath.memory.memorize(self, newValue)
+
+        variableSpecializerPath.addResult(self, newValue)
+
+        return [variableSpecializerPath]

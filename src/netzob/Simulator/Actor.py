@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -117,6 +117,7 @@ class Actor(threading.Thread):
 
     def run(self):
         """Entry point of an actor executed when the thread is started."""        
+        """Entry point of an actor executed when the thread is started."""
 
         currentState = self.automata.initialState
         while not self.__stopEvent.isSet():
@@ -138,6 +139,27 @@ class Actor(threading.Thread):
                 self.stop()
 
         self._logger.debug("Actor {0} has finished to execute".format(self.name))
+                    currentState = currentState.executeAsInitiator(
+                        self.abstractionLayer)
+                else:
+                    currentState = currentState.executeAsNotInitiator(
+                        self.abstractionLayer)
+
+                if currentState is None:
+                    self._logger.warning(
+                        "The execution of transition did not returned a state")
+                    self.stop()
+
+            except Exception as e:
+                self._logger.warning(
+                    "Exception raised when on the execution of state {0}.".
+                    format(currentState.name))
+                self._logger.warning("Exception error: {0}".format(str(e)))
+
+                self.stop()
+
+        self._logger.debug(
+            "Actor {0} has finished to execute".format(self.name))
 
     def stop(self):
         """Stop the current thread.

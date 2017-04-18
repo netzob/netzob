@@ -2,7 +2,7 @@ Authors
 -------
  
   * Georges Bossert
-  * Frédéric Guihéry
+  * Frédéric Guihéry  
 
 Contributors
 ------------

@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -123,6 +123,13 @@ class FieldOperations(object):
 
         if field1.parent is not field2.parent:
             raise ValueError("Specified fields don't have the same parent, only fields with same parents can be merged.")
+        self._logger.debug("Merging field {0} with field {1}".format(
+            field1.name, field2.name))
+
+        if field1.parent is not field2.parent:
+            raise ValueError(
+                "Specified fields don't have the same parent, only fields with same parents can be merged."
+            )
 
         # retrieve indexes of specified fields
         iField1 = None
@@ -139,6 +146,15 @@ class FieldOperations(object):
             raise ValueError("Cannot retrieve position of field2 in its parent fields")
         if iField2 != iField1 + 1:
             raise ValueError("Field1 must be directly on the left of field2 (iField1={0}, iField2={1})".format(iField1, iField2))
+            raise ValueError(
+                "Cannot retrieve position of field1 in its parent fields")
+        if iField2 is None:
+            raise ValueError(
+                "Cannot retrieve position of field2 in its parent fields")
+        if iField2 != iField1 + 1:
+            raise ValueError(
+                "Field1 must be directly on the left of field2 (iField1={0}, iField2={1})".
+                format(iField1, iField2))
 
         # build a new field domain
         newDomain = Agg([field1.domain, field2.domain])

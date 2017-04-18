@@ -6,7 +6,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -30,3 +30,5 @@
 # see docs.python.org/2/tutorial/modules.html
 from netzob.Model.Vocabulary.Functions.EncodingFunctions.DomainEncodingFunction import DomainEncodingFunction
 from netzob.Model.Vocabulary.Functions.EncodingFunctions.TypeEncodingFunction import TypeEncodingFunction
+from netzob.Model.Vocabulary.Functions.EncodingFunctions.ZLibEncodingFunction import ZLibEncodingFunction
+from netzob.Model.Vocabulary.Functions.EncodingFunctions.Base64EncodingFunction import Base64EncodingFunction

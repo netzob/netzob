@@ -1,0 +1,4 @@
+ignore-patterns:
+  - (^|/)all\.py$
+python-targets:
+  - 3

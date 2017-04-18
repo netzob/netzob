@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -57,7 +57,7 @@ class FieldSplitDelimiter(object):
     @staticmethod
     @typeCheck(AbstractField, AbstractType)
     def split(field, delimiter):
-        """Split a field (or symbol) with a specific delimiter. The
+        r"""Split a field (or symbol) with a specific delimiter. The
         delimiter can be passed either as an ASCII, a Raw, an
         HexaString, or any objects that inherit from AbstractType.
 
@@ -81,37 +81,39 @@ class FieldSplitDelimiter(object):
         >>> symbol.encodingFunctions.add(TypeEncodingFunction(ASCII))  # Change visualization to hexastring
         >>> Format.splitDelimiter(symbol, ASCII("#"))
         >>> print(symbol)
-        Field-0         | Field-sep-23 | Field-2              | Field-sep-23 | Field-4
-        --------------- | ------------ | -------------------- | ------------ | -------
-        'CMDidentify'   | '#'          | '....fred'           | ''           | ''     
-        'RESidentify'   | '#'          | '........'           | ''           | ''     
-        'CMDinfo'       | '#'          | '....'               | ''           | ''     
-        'RESinfo'       | '#'          | '........info'       | ''           | ''     
-        'CMDstats'      | '#'          | '....'               | ''           | ''     
-        'RESstats'      | '#'          | '........stats'      | ''           | ''     
-        'CMDauthentify' | '#'          | '....myPasswd!'      | ''           | ''     
-        'RESauthentify' | '#'          | '........'           | ''           | ''     
-        'CMDencrypt'    | '#'          | '....123456test'     | ''           | ''     
-        'RESencrypt'    | '#'          | "........spqvwt6'16" | ''           | ''     
-        'CMDdecrypt'    | '#'          | "....spqvwt6'16"     | ''           | ''     
-        'RESdecrypt'    | '#'          | '........123456test' | ''           | ''     
-        'CMDbye'        | '#'          | '....'               | ''           | ''     
-        'RESbye'        | '#'          | '........'           | ''           | ''     
-        'CMDidentify'   | '#'          | '....Roberto'        | ''           | ''     
-        'RESidentify'   | '#'          | '........'           | ''           | ''     
-        'CMDinfo'       | '#'          | '....'               | ''           | ''     
-        'RESinfo'       | '#'          | '........info'       | ''           | ''     
-        'CMDstats'      | '#'          | '....'               | ''           | ''     
-        'RESstats'      | '#'          | '........stats'      | ''           | ''     
-        'CMDauthentify' | '#'          | '....aStrongPwd'     | ''           | ''     
-        'RESauthentify' | '#'          | '........'           | ''           | ''     
-        'CMDencrypt'    | '#'          | '....abcdef'         | ''           | ''     
-        'RESencrypt'    | '#'          | '........'           | '#'          | " !&'$"
-        'CMDdecrypt'    | '#'          | '....'               | '#'          | " !&'$"
-        'RESdecrypt'    | '#'          | '........abcdef'     | ''           | ''     
-        'CMDbye'        | '#'          | '....'               | ''           | ''     
-        'RESbye'        | '#'          | '........'           | ''           | ''     
-        --------------- | ------------ | -------------------- | ------------ | -------
+        Field-0         | Field-sep-23 | Field-2                                    | Field-sep-23 | Field-4
+        --------------- | ------------ | ------------------------------------------ | ------------ | -------
+        'CMDidentify'   | '#'          | '\x04\x00\x00\x00fred'                     | ''           | ''
+        'RESidentify'   | '#'          | '\x00\x00\x00\x00\x00\x00\x00\x00'         | ''           | ''
+        'CMDinfo'       | '#'          | '\x00\x00\x00\x00'                         | ''           | ''
+        'RESinfo'       | '#'          | '\x00\x00\x00\x00\x04\x00\x00\x00info'     | ''           | ''
+        'CMDstats'      | '#'          | '\x00\x00\x00\x00'                         | ''           | ''
+        'RESstats'      | '#'          | '\x00\x00\x00\x00\x05\x00\x00\x00stats'    | ''           | ''
+        'CMDauthentify' | '#'          | '\t\x00\x00\x00myPasswd!'                  | ''           | ''
+        'RESauthentify' | '#'          | '\x00\x00\x00\x00\x00\x00\x00\x00'         | ''           | ''
+        'CMDencrypt'    | '#'          | '\n\x00\x00\x00123456test'                 | ''           | ''
+        'RESencrypt'    | '#'          | "\x00\x00\x00\x00\n\x00\x00\x00spqvwt6'16" | ''           | ''
+        'CMDdecrypt'    | '#'          | "\n\x00\x00\x00spqvwt6'16"                 | ''           | ''
+        'RESdecrypt'    | '#'          | '\x00\x00\x00\x00\n\x00\x00\x00123456test' | ''           | ''
+        'CMDbye'        | '#'          | '\x00\x00\x00\x00'                         | ''           | ''
+        'RESbye'        | '#'          | '\x00\x00\x00\x00\x00\x00\x00\x00'         | ''           | ''
+        'CMDidentify'   | '#'          | '\x07\x00\x00\x00Roberto'                  | ''           | ''
+        'RESidentify'   | '#'          | '\x00\x00\x00\x00\x00\x00\x00\x00'         | ''           | ''
+        'CMDinfo'       | '#'          | '\x00\x00\x00\x00'                         | ''           | ''
+        'RESinfo'       | '#'          | '\x00\x00\x00\x00\x04\x00\x00\x00info'     | ''           | ''
+        'CMDstats'      | '#'          | '\x00\x00\x00\x00'                         | ''           | ''
+        'RESstats'      | '#'          | '\x00\x00\x00\x00\x05\x00\x00\x00stats'    | ''           | ''
+        'CMDauthentify' | '#'          | '\n\x00\x00\x00aStrongPwd'                 | ''           | ''
+        'RESauthentify' | '#'          | '\x00\x00\x00\x00\x00\x00\x00\x00'         | ''           | ''
+        'CMDencrypt'    | '#'          | '\x06\x00\x00\x00abcdef'                   | ''           | ''
+        'RESencrypt'    | '#'          | '\x00\x00\x00\x00\x06\x00\x00\x00'         | '#'          | " !&'$"
+        'CMDdecrypt'    | '#'          | '\x06\x00\x00\x00'                         | '#'          | " !&'$"
+        'RESdecrypt'    | '#'          | '\x00\x00\x00\x00\x06\x00\x00\x00abcdef'   | ''           | ''
+        'CMDbye'        | '#'          | '\x00\x00\x00\x00'                         | ''           | ''
+        'RESbye'        | '#'          | '\x00\x00\x00\x00\x00\x00\x00\x00'         | ''           | ''
+        --------------- | ------------ | ------------------------------------------ | ------------ | -------
+
+
         >>> print(symbol.fields[0]._str_debug())
         Field-0
         |--   Alt
@@ -139,12 +141,13 @@ class FieldSplitDelimiter(object):
         >>> symbol = Symbol(messages=messages)
         >>> Format.splitDelimiter(symbol, Raw(b"\\xff"))
         >>> print(symbol)
-        Field-0        | Field-sep-ff | Field-2                | Field-sep-ff | Field-4   
-        -------------- | ------------ | ---------------------- | ------------ | ----------
-        '\\x01\\x02\\x03' | b'\\xff'      | '\\x04\\x05'             | b'\\xff'      | '\\x06\\x07'
-        '\\x01\\x02'     | b'\\xff'      | '\\x03\\x04\\x05\\x06'     | b'\\xff'      | '\\x07'    
-        '\\x01'         | b'\\xff'      | '\\x02\\x03\\x04\\x05\\x06' | ''           | ''        
-        -------------- | ------------ | ---------------------- | ------------ | ----------
+        Field-0           | Field-sep-5c786666 | Field-2                     | Field-sep-5c786666 | Field-4
+        ----------------- | ------------------ | --------------------------- | ------------------ | ------------
+        '\\x01\\x02\\x03' | '\\xff'            | '\\x04\\x05'                | '\\xff'            | '\\x06\\x07'
+        '\\x01\\x02'      | '\\xff'            | '\\x03\\x04\\x05\\x06'      | '\\xff'            | '\\x07'
+        '\\x01'           | '\\xff'            | '\\x02\\x03\\x04\\x05\\x06' | ''                 | ''
+        ----------------- | ------------------ | --------------------------- | ------------------ | ------------
+
 
 
         :param field : the field to consider when spliting
@@ -160,7 +163,8 @@ class FieldSplitDelimiter(object):
             raise TypeError("Field cannot be None.")
 
         if len(field.messages) < 1:
-            raise ValueError("The associated symbol does not contain any message.")
+            raise ValueError(
+                "The associated symbol does not contain any message.")
 
         # Find message substrings after applying delimiter
         splittedMessages = []
@@ -172,7 +176,7 @@ class FieldSplitDelimiter(object):
         import itertools
         # Inverse the array, so that columns contains observed values for each field
         splittedMessages = list(itertools.zip_longest(*splittedMessages))
-        
+
         # If the delimiter does not create splitted fields
         if len(splittedMessages) <= 1:
             return
@@ -182,19 +186,19 @@ class FieldSplitDelimiter(object):
         iField = -1
         for i in range(len(splittedMessages)):
             iField += 1
-            
+
             fieldDomain = list()
-            
+
             # temporary set that hosts all the observed values to prevent useless duplicate ones
             observedValues = set()
             has_inserted_empty_value = False
-            
+
             isEmptyField = True  # To avoid adding an empty field            
             for v in splittedMessages[i]:
                 if v != "" and v is not None:
                     isEmptyField = False
-                
-                    if v not in observedValues:                    
+
+                    if v not in observedValues:
                         fieldDomain.append(Raw(v))
                         observedValues.add(v)
                 else:
@@ -203,15 +207,20 @@ class FieldSplitDelimiter(object):
                         has_inserted_empty_value = True
 
             if not isEmptyField:
-                newField = Field(domain=DomainFactory.normalizeDomain(fieldDomain), name="Field-"+str(iField))
-                newField.encodingFunctions = list(field.encodingFunctions.values())
+                newField = Field(
+                    domain=DomainFactory.normalizeDomain(fieldDomain),
+                    name="Field-" + str(iField))
+                newField.encodingFunctions = list(
+                    field.encodingFunctions.values())
                 newFields.append(newField)
                 iField += 1
 
-            str_delimiter = TypeConverter.convert(delimiter.value, BitArray, HexaString).decode('utf-8')
+            str_delimiter = TypeConverter.convert(delimiter.value, BitArray,
+                                                  HexaString).decode('utf-8')
             fieldName = "Field-sep-{}".format(str_delimiter)
 
-            newFields.append(Field(domain=Alt([delimiter, Raw(nbBytes=0)]), name=fieldName))
+            newFields.append(
+                Field(domain=Alt([delimiter, Raw(nbBytes=0)]), name=fieldName))
 
         newFields.pop()
 

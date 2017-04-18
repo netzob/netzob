@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -189,12 +189,16 @@ class FieldParser():
         It returns the parsing paths
         """
     
+
         # we retrieve the field definition domain
         domain = self.field.domain
 
         # and check it exists
         if domain is None:
             raise Exception("No definition domain specified for field '{0}', cannnot parse the content against it.".format(self.field.name))
+            raise Exception(
+                "No definition domain specified for field '{0}', cannnot parse the content against it.".
+                format(self.field.name))
 
         # check we have something to parse
         data = parsingPath.getDataAssignedToField(self.field)
@@ -203,6 +207,11 @@ class FieldParser():
 
         # we assign this data to the field's variable
         parsingPath.assignDataToVariable(data.copy(), self.field.domain)                
+        self._logger.debug("Parses '{0}' with field '{1}' specifications".
+                           format(data, self.field.name))
+
+        # we assign this data to the field's variable
+        parsingPath.assignDataToVariable(data.copy(), self.field.domain)
 
         # we create a first VariableParser and uses it to parse the domain
         variableParser = VariableParser(domain)
@@ -215,6 +224,20 @@ class FieldParser():
                 except Exception as e:
                     self._logger.debug("An error occurred while parsing variable : {}".format(e))
     
+        for resultParsingPath in variableParser.parse(
+                parsingPath, carnivorous=self.lastField):
+            if resultParsingPath.isDataAvailableForVariable(self.field.domain):
+                try:
+                    resultParsingPath.addResultToField(
+                        self.field,
+                        resultParsingPath.getDataAssignedToVariable(
+                            self.field.domain))
+                    yield resultParsingPath
+                except Exception as e:
+                    self._logger.debug(
+                        "An error occurred while parsing variable : {}".format(
+                            e))
+
     @property
     def field(self):
         """The field that will be use to parse some content

@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -43,7 +43,8 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Utils.TypedList import TypedList
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
@@ -173,7 +174,8 @@ class Symbol(AbstractField):
         spePath = msg.specializeSymbol(self)
 
         if spePath is not None:
-            return TypeConverter.convert(spePath.generatedContent, BitArray, Raw)
+            return TypeConverter.convert(spePath.generatedContent, BitArray, 
+					 Raw)
 
     def clearMessages(self):
         """Delete all the messages attached to the current symbol"""
@@ -182,23 +184,33 @@ class Symbol(AbstractField):
 
     def getFieldFromIndex(self, index):
         """
-        Get the field in which the index of a value in a message belongs
+        This method tries to return the Field an index from a message belongs to.
 
-        :param index:
-        :return field,field_index_in_symbol:
+        :param index: An int. The index of a value in a message belonging to a symbol
+        :param symbol: The symbol we are working on
+        :return: Field object
         """
-        for field_index_in_symbol,field in enumerate(self.fields):
+        # field_dict = dict()
+        totalSize = 0
+        for field in self.fields:
+            # Check if normal or Alt field:
             try:
-                for i,val in enumerate(field.getValues()):
-                    if rebuilt_messages[i]:
-                        rebuilt_messages[i] += val
-                        if len(rebuilt_messages[i]) - 1 == index:
-                            return field,field_index_in_symbol
-                    else:
-                        rebuilt_messages.append(val)
+                # If Alt field we get the min and max size for each children
+                minSize, maxSize = (0, 0)
+                for child in field.domain.children:
+                    if child.dataType.size[1] > maxSize:
+                        maxSize = child.dataType.size[1]
+                    if child.dataType.size[0] < minSize or minSize == 0:
+                        minSize = child.dataType.size[0]
             except:
-                raise "Field has no values or something else is preventing the search"
-
+                minSize, maxSize = field.domain.dataType.size
+            totalSize += maxSize
+            if index < (totalSize / 8):
+                # Compute the index of the CRC relative to the field
+                field_index = totalSize - (8 * index)
+                field_index = totalSize - field_index
+                crcIndexInField = (8 * index) - field_index
+                return field
 
     # Properties
 
@@ -218,7 +230,9 @@ class Symbol(AbstractField):
         # First it checks the specified messages are all AbstractMessages
         for msg in messages:
             if not isinstance(msg, AbstractMessage):
-                raise TypeError("Cannot add messages of type {0} in the session, only AbstractMessages are allowed.".format(type(msg)))
+                raise TypeError(
+                    "Cannot add messages of type {0} in the session, only AbstractMessages are allowed.".
+                    format(type(msg)))
 
         self.clearMessages()
         for msg in messages:
@@ -226,4 +240,3 @@ class Symbol(AbstractField):
 
     def __repr__(self):
         return self.name
-

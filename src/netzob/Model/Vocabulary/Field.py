@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -49,7 +49,9 @@ from netzob.Model.Types.Raw import Raw
 from netzob.Model.Types.BitArray import BitArray
 from netzob.Model.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Domain.DomainFactory import DomainFactory
+from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
+
 
 class InvalidDomainException(Exception):
     pass
@@ -139,7 +141,10 @@ class Field(AbstractField):
 
     """
 
-    def __init__(self, domain=None, name="Field", layer=False,messages = []):
+    def __init__(self, domain=None, name="Field", layer=False,messages = [],specializingPaths = None):
+    """
+
+    def __init__(self, domain=None, name="Field", layer=False):
         """
         :keyword domain: the definition domain of the field (see domain property to get more information)
         :type domain: a :class:`list` of :class:`object`, default is Raw(None)
@@ -154,6 +159,7 @@ class Field(AbstractField):
             domain = Raw(None)
         self.domain = domain
         self.__messages = messages
+        self.specializingPaths = specializingPaths
 
     def specialize(self):
         """Specialize the current field to build a raw data that
@@ -188,8 +194,14 @@ class Field(AbstractField):
             
         from netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
         fs = FieldSpecializer(self)
-        specializingPaths = fs.specialize()
-
+        if self.domain.svas == SVAS.PERSISTENT:
+            if isinstance(self.specializingPaths,list):
+                self.specializingPaths = fs.specialize(specializingPath=self.specializingPaths[0])
+            else:
+                self.specializingPaths = fs.specialize(specializingPath=self.specializingPaths)
+            specializingPaths = self.specializingPaths
+        else:
+            specializingPaths = fs.specialize()
         if len(specializingPaths) < 1:
             raise Exception("Cannot specialize this field")
             
@@ -200,6 +212,26 @@ class Field(AbstractField):
             raise Exception("The specialization of the field {0} returned no result.".format(self.name))
 
         return TypeConverter.convert(specializingPath.getDataAssignedToVariable(self.domain), BitArray, Raw)
+
+        from netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
+        fs = FieldSpecializer(self)
+        specializingPaths = fs.specialize()
+
+        if len(specializingPaths) < 1:
+            raise Exception("Cannot specialize this field")
+
+        specializingPath = specializingPaths[0]
+
+        self._logger.debug(
+            "field specializing done: {0}".format(specializingPath))
+        if specializingPath is None:
+            raise Exception(
+                "The specialization of the field {0} returned no result.".
+                format(self.name))
+
+        return TypeConverter.convert(
+            specializingPath.getDataAssignedToVariable(self.domain), BitArray,
+            Raw)
 
     @property
     def domain(self):
@@ -257,3 +289,25 @@ class Field(AbstractField):
                 self._logger.debug("Could not add a message to Field: {0}".format(e))
         else:
             self.__messages = message
+
+    @property
+    def specializingPaths(self):
+        """Defines the specializingPaths of a field"""
+        return self.__specializingPaths
+
+    @specializingPaths.setter
+    def specializingPaths(self, value):
+        self.__specializingPaths = value
+        In reality, a field doesn't have messages, it just returns the messages of its symbol
+
+        :type : a :class:`list` of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+        """
+        messages = []
+        try:
+            messages.extend(self.getSymbol().messages)
+        except Exception as e:
+            self._logger.warning(
+                "The field is attached to no symbol and so it has no messages: {0}".
+                format(e))
+
+        return messages

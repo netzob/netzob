@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -68,6 +68,18 @@ class RelationFinder(object):
     ...     print(rel["relation_type"] + " between fields " + str([x.name for x in rel["x_fields"]]) + ":" + rel["x_attribute"] + \
             " and fields " + str([y.name for y in rel["y_fields"]]) + ":" + rel["y_attribute"])
     SizeRelation between fields ['Field-1']:value and fields ['Field-3']:size
+
+     >>> samples = ["Adrien > my name is Adrien", "Zoby > my name is Zoby"]
+     >>> messages = [RawMessage(sample) for sample in samples]
+     >>> symbol = Symbol(messages=messages)
+     >>> Format.splitAligned(symbol)
+     >>> results = RelationFinder.findOnSymbol(symbol)
+     >>> len(results)
+     1
+     >>> print(results[0]['relation_type'])
+     DataRelation
+     >>> results[0]['x_fields'][0].getValues()
+     [b'Adrien', b'Zoby']
 
     """
 
@@ -148,6 +160,8 @@ class RelationFinder(object):
         """
 
         (attributeValues_headers, attributeValues) = self._generateAttributeValuesForSymbol(symbol)
+        (attributeValues_headers,
+         attributeValues) = self._generateAttributeValuesForSymbol(symbol)
         results = []
 
         for i, x_values in enumerate(attributeValues[:-1]):
@@ -168,15 +182,30 @@ class RelationFinder(object):
                     # The relation should not apply on the same field
                     if len(x_fields) == 1 and len(y_fields) == 1 and x_fields[0].id == y_fields[0].id:
                         continue
-                    relation_type = self._findRelationType(x_attribute, y_attribute)
+                    relation_type = self._findRelationType(x_attribute, y_attribute,x_fields,y_fields)
+                    if len(x_fields) == 1 and len(y_fields) == 1 and x_fields[
+                            0].id == y_fields[0].id:
+                        continue
+                    relation_type = self._findRelationType(x_attribute,
+                                                           y_attribute)
                     # We do not consider unqualified relation (for example, the size of a field is linked to the size of another field)
                     if relation_type == self.REL_UNKNOWN:
                         continue
                     # DataRelation should produce an empty intersection between related fields
                     if relation_type == self.REL_DATA and len(set(x_fields).intersection(set(y_fields))) > 0:
+                    if relation_type == self.REL_DATA and len(
+                            set(x_fields).intersection(set(y_fields))) > 0:
                         continue
                     # SizeRelation should a size field composed of multiple fields
                     if relation_type == self.REL_SIZE:
+                        if x_attribute == self.ATTR_VALUE:
+                            if len(x_fields) > 1:
+                                continue
+                        elif y_attribute == self.ATTR_VALUE:
+                            if len(y_fields) > 1:
+                                continue
+                    # EqualityRelation should a field be equal to another field composed of multiple fields
+                    if relation_type == self.REL_EQUALITY:
                         if x_attribute == self.ATTR_VALUE:
                             if len(x_fields) > 1:
                                 continue
@@ -195,6 +224,26 @@ class RelationFinder(object):
 
     @typeCheck(AbstractField, AbstractField, str, str)
     def executeOnFields(self, x_field, y_field, x_attribute=None, y_attribute=None):
+                    self._logger.debug("Relation found between '" + str(
+                        x_fields) + ":" + x_attribute + "' and '" + str(
+                            y_fields) + ":" + y_attribute + "'")
+                    id_relation = str(uuid.uuid4())
+                    results.append({
+                        'id': id_relation,
+                        "relation_type": relation_type,
+                        'x_fields': x_fields,
+                        'x_attribute': x_attribute,
+                        'y_fields': y_fields,
+                        'y_attribute': y_attribute
+                    })
+        return results
+
+    @typeCheck(AbstractField, AbstractField, str, str)
+    def executeOnFields(self,
+                        x_field,
+                        y_field,
+                        x_attribute=None,
+                        y_attribute=None):
         """Find exact relations between fields according to their
         optional selected attributes.
         """
@@ -219,6 +268,8 @@ class RelationFinder(object):
 
         # Try to find a relation that matches each cell
         relation_fcts = {}
+        relation_fcts[self.REL_SIZE] = self._sizeRelation(x_attribute,y_attribute)
+        #TODO Pass correct parameters to equalRelation
         relation_fcts[self.REL_SIZE] = self._sizeRelation
         relation_fcts[self.REL_EQUALITY] = self._equalRelation
 
@@ -242,11 +293,62 @@ class RelationFinder(object):
                                         'y_attribute': y_attribute})
         return results
 
-    def _findRelationType(self, x_attribute, y_attribute):
+    def _findRelationType(self, x_attribute, y_attribute,x_fields,y_fields):
         typeRelation = self.REL_UNKNOWN
         if (x_attribute == self.ATTR_VALUE and y_attribute == self.ATTR_SIZE) or (x_attribute == self.ATTR_SIZE and y_attribute == self.ATTR_VALUE):
             typeRelation = self.REL_SIZE
         elif x_attribute == y_attribute == self.ATTR_VALUE:
+            typeRelation = self.REL_DATA
+        elif self._checkEqualityRelation(x_fields,y_fields):
+            typeRelation = self.REL_EQUALITY
+        return typeRelation
+
+    def _checkEqualityRelation(self,x_fields,y_fields):
+        x_values = []
+        for x_field in x_fields:
+            x_values += x_field.getValues(encoded=False, styled=False)
+        y_values = []
+        for y_field in y_fields:
+                y_values += y_field.getValues(encoded=False, styled=False)
+        if set(x_values) == set(y_values):
+            return True
+        else:
+            return False
+
+
+    def _equalRelation(self, x, y):
+                for (relation_name,
+                     relation_fct) in list(relation_fcts.items()):
+                    isRelation = True
+                    for i in range(len(x_values)):
+                        if not relation_fct(x_values[i], x_attribute,
+                                            y_values[i], y_attribute):
+                            isRelation = False
+                            break
+                    if isRelation:
+                        self._logger.debug(
+                            "Relation found between '" + x_attribute + ":" +
+                            str(x_field.name) + "' and '" + y_attribute + ":" +
+                            str(y_field.name) + "'")
+                        self._logger.debug("  Relation: " + relation_name)
+                        id_relation = str(uuid.uuid4())
+                        results.append({
+                            'id': id_relation,
+                            "relation_type": relation_name,
+                            'x_field': x_field,
+                            'x_attribute': x_attribute,
+                            'y_field': y_field,
+                            'y_attribute': y_attribute
+                        })
+        return results
+
+    def _findRelationType(self, x_attribute, y_attribute):
+        typeRelation = self.REL_UNKNOWN
+        if (x_attribute == self.ATTR_VALUE and y_attribute == self.ATTR_SIZE
+            ) or (x_attribute == self.ATTR_SIZE and
+                  y_attribute == self.ATTR_VALUE):
+            typeRelation = self.REL_SIZE
+        elif x_attribute == x_attribute == self.ATTR_VALUE:
             typeRelation = self.REL_DATA
         return typeRelation
 
@@ -290,6 +392,7 @@ class RelationFinder(object):
         # Compute the table of concatenation of values
         for i in range(len(fieldsValues[:])):
             for j in range(i+1, len(fieldsValues)+1):
+            for j in range(i + 1, len(fieldsValues) + 1):
                 # We generate the data
                 concatCellsData = self._generateConcatData(fieldsValues[i:j])
 
@@ -354,6 +457,13 @@ class RelationFinder(object):
                 unitSize = int(AbstractType.UNITSIZE_8) * len(data)
                 unitSize = int(pow(2, math.ceil(math.log(unitSize, 2))))  # Round to the nearest upper power of 2
                 result.append(Integer.encode(data, endianness=AbstractType.ENDIAN_BIG, unitSize=str(unitSize)))
+                unitSize = int(pow(2, math.ceil(math.log(
+                    unitSize, 2))))  # Round to the nearest upper power of 2
+                result.append(
+                    Integer.encode(
+                        data,
+                        endianness=AbstractType.ENDIAN_BIG,
+                        unitSize=str(unitSize)))
             else:
                 result.append(0)
         return result

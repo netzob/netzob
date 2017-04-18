@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -64,6 +64,11 @@ class DomainEncodingFunction(EncodingFunction):
     >>> s = Symbol(fields=[f], messages=[m], name="Symbol")
     >>> s.addEncodingFunction(TypeEncodingFunction(ASCII))
     >>> print(s)
+    f0
+    -------------------------
+    'There are \\n solutions.'
+    -------------------------
+
     f0                      
     ------------------------
     'There are . solutions.'
@@ -85,6 +90,10 @@ class DomainEncodingFunction(EncodingFunction):
         if variable.varType == "Data" or variable.varType == "Size" or variable.varType == "InternetChecksum" or variable.varType == "CRC32":
             val = readingToken.getValueForVariable(variable)
             encodedVal = TypeConverter.convert(val, BitArray, variable.dataType.__class__)
+        if variable.varType == "Data" or variable.varType == "Size" or variable.varType == "InternetChecksum":
+            val = readingToken.getValueForVariable(variable)
+            encodedVal = TypeConverter.convert(val, BitArray,
+                                               variable.dataType.__class__)
             result.append(str(encodedVal))
         elif variable.varType == "Agg" or variable.varType == "Alt":
             for child in variable.children:
@@ -94,6 +103,8 @@ class DomainEncodingFunction(EncodingFunction):
             pass
         else:
             raise Exception("Unknown type of variable: {0}".format(variable.varType))
+            raise Exception(
+                "Unknown type of variable: {0}".format(variable.varType))
 
         if len(result) == 0:
             return ''

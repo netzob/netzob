@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -55,6 +55,7 @@ from netzob.Inference.Vocabulary.FormatOperations.ClusterByAlignment import Clus
 from netzob.Inference.Vocabulary.FormatOperations.ClusterByKeyField import ClusterByKeyField
 from netzob.Inference.Vocabulary.FormatOperations.ClusterByApplicativeData import ClusterByApplicativeData
 from netzob.Inference.Vocabulary.FormatOperations.ClusterBySize import ClusterBySize
+from netzob.Inference.Vocabulary.FormatOperations.ClusterByCRC import ClusterByCRC
 from netzob.Inference.Vocabulary.FormatOperations.FindKeyFields import FindKeyFields
 
 
@@ -92,6 +93,10 @@ class Format(object):
     @staticmethod
     @typeCheck(AbstractField, str)
     def splitStatic(field, unitSize=AbstractType.UNITSIZE_8, mergeAdjacentStaticFields=True, mergeAdjacentDynamicFields=True):
+    def splitStatic(field,
+                    unitSize=AbstractType.UNITSIZE_8,
+                    mergeAdjacentStaticFields=True,
+                    mergeAdjacentDynamicFields=True):
         """Split the portion of the message matching the specified fields
         following their variations of each unitsize.
         This method returns nothing, it upgrades the field structure
@@ -186,6 +191,11 @@ class Format(object):
             raise ValueError("The associated symbol does not contain any message.")
 
         FieldSplitStatic.split(field, unitSize, mergeAdjacentStaticFields, mergeAdjacentDynamicFields)
+            raise ValueError(
+                "The associated symbol does not contain any message.")
+
+        FieldSplitStatic.split(field, unitSize, mergeAdjacentStaticFields,
+                               mergeAdjacentDynamicFields)
 
     @staticmethod
     @typeCheck(AbstractField, AbstractType)
@@ -246,6 +256,8 @@ class Format(object):
 
         if len(field.messages) < 1:
             raise ValueError("The associated symbol does not contain any message.")
+            raise ValueError(
+                "The associated symbol does not contain any message.")
 
         FieldSplitDelimiter.split(field, delimiter)
 
@@ -287,6 +299,8 @@ class Format(object):
         """
         if field is None:
             raise TypeError("The field to reset must be specified and cannot be None")
+            raise TypeError(
+                "The field to reset must be specified and cannot be None")
 
         fr = FieldReseter()
         fr.reset(field)
@@ -359,6 +373,8 @@ class Format(object):
         and used to regroup messages and symbols into equivalent cluster.
         """
         clustering = ClusterByAlignment(minEquivalence=minEquivalence, internalSlick=internalSlick)
+        clustering = ClusterByAlignment(
+            minEquivalence=minEquivalence, internalSlick=internalSlick)
         return clustering.cluster(messages)
 
     @staticmethod
@@ -411,6 +427,9 @@ class Format(object):
 
         if len(appDatas) == 0:
             raise ValueError("There are no applicative data attached to the session from which the specified messages come from.")
+            raise ValueError(
+                "There are no applicative data attached to the session from which the specified messages come from."
+            )
 
         cluster = ClusterByApplicativeData()
         return cluster.cluster(messages, appDatas)
@@ -531,6 +550,17 @@ class Format(object):
         '00aaaa1100abcd'
         '00bbbb1100abcd'
         ----------------
+        [symbol_5]
+        Field       
+        ------------
+        '001100abcd'
+        '001100ffff'
+        ------------
+        [symbol_9]
+        Field               
+        --------------------
+        '00ffffffff1100abcd'
+        --------------------
 
         :param messages: the messages to cluster.
         :type messages: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
@@ -545,3 +575,19 @@ class Format(object):
         clustering = ClusterBySize()
         return clustering.cluster(messages)
 
+    @staticmethod
+    def clusterByCRC(messages):
+        """This clustering process regroups messages or symbols from a message depending on wether they have a CRC or not
+        and on the type of the CRC.
+
+        :param messages: the messages to cluster. Or a symbol containing messages (Typecheck is done in the cluster method)
+        :return: a list of symbol representing all the computed clusters
+        :rtype: a list of :class:`netzob.Model.Vocabulary.Symbol.Symbol`
+        """
+
+        # Safe checks
+        if messages is None:
+            raise TypeError("'messages' should not be None")
+
+        clustering = ClusterByCRC()
+        return clustering.cluster(messages)

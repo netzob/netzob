@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -61,6 +61,8 @@ class MQCache():
 
     def cacheResult(self, mq, result):
         self.log.debug("Cache the following : " + str(mq) + " == " + str(result))
+        self.log.debug("Cache the following : " + str(mq) + " == " + str(
+            result))
         self.cache[mq] = result
 
     def dumpCache(self):
@@ -91,6 +93,7 @@ class MQCache():
             if symbol is not None:
                 symbolsResult.append(symbol)
         self.cacheResult(mq, symbolsResult)
+
 
 #
 #        (DOWNLOAD,) > [UnknownSymbol, EmptySymbol, EmptySymbol]

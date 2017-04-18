@@ -6,7 +6,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -35,3 +35,6 @@ from netzob.Inference.Vocabulary.RelationFinder import RelationFinder
 from netzob.Inference.Vocabulary.CorrelationFinder import CorrelationFinder
 from netzob.Inference.Vocabulary.EntropyMeasurement import EntropyMeasurement
 from netzob.Inference.Vocabulary.CRCFinder import CRCFinder
+from netzob.Inference.Vocabulary.IPFinder import IPFinder
+from netzob.Inference.Vocabulary.SizeFinder import SizeFinder
+from netzob.Inference.Vocabulary.headerDetector import headerDetector

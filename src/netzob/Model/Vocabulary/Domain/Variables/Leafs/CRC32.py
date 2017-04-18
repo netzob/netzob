@@ -5,7 +5,6 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -61,8 +60,7 @@ from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import Speciali
 
 @NetzobLogger
 class CRC32(AbstractRelationVariableLeaf):
-    """A crc32 relaton as specified in RFC 1071 (https://www.ietf.org/rfc/rfc1071.txt).
-    This checksum is used by ICMP, UDP, IP, TCP protocols.
+    """A crc32 relaton between a variable and the value of one or several other fields.
 
 
     The following example, illustrates the creation of an ICMP Echo request packet
@@ -110,7 +108,7 @@ class CRC32(AbstractRelationVariableLeaf):
     def __init__(self, fields, dataType=None, name=None, endianness = AbstractType.defaultEndianness()):
         if isinstance(fields, AbstractField):
             fields = [fields]
-        super(CRC32, self).__init__("CRC32", fieldDependencies=fields, name=name)
+        super(CRC32, self).__init__(varType="CRC32", fieldDependencies=fields, name=name)
         if dataType is None:
             dataType = Raw(nbBytes=4)
         self.dataType = dataType

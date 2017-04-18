@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -63,6 +63,7 @@ class SortedTypedList(object):
     >>> msg3 = RawMessage(b"msg3", date=1456487548.0)
     >>> l = SortedTypedList(RawMessage, [msg2, msg3, msg1])
     >>> print(list(l.values())[0])
+    [0;32m[2.0 [0;m[1;32mNone[1;m[0;32m->[0;m[1;32mNone[1;m[0;32m][0;m b'msg2'
     [0;32m[2.0 [0;m[1;32mNone[1;m[0;32m->[0;m[1;32mNone[1;m[0;32m][0;m 'msg2'
 
     >>> msg4 = RawMessage(b"msg4", date=145548.0)
@@ -71,6 +72,7 @@ class SortedTypedList(object):
     >>> msg6 = RawMessage(b"msg6", date=1745645548.0)
     >>> l.addAll([msg5, msg6])
     >>> print(list(l.values())[5])
+    [0;32m[1745645548.0 [0;m[1;32mNone[1;m[0;32m->[0;m[1;32mNone[1;m[0;32m][0;m b'msg6'
     [0;32m[1745645548.0 [0;m[1;32mNone[1;m[0;32m->[0;m[1;32mNone[1;m[0;32m][0;m 'msg6'
     >>> print(len(l))
     6
@@ -146,6 +148,13 @@ class SortedTypedList(object):
             raise TypeError("Invalid type for argument, expecting: {0}, received : {1}".format(self.membersTypes, v.__class__.__name__))
         if not isinstance(v, SortableObject):
             raise TypeError("Objects inserted in a SortedTypedList must inherits from SortableObject class")
+            raise TypeError(
+                "Invalid type for argument, expecting: {0}, received : {1}".
+                format(self.membersTypes, v.__class__.__name__))
+        if not isinstance(v, SortableObject):
+            raise TypeError(
+                "Objects inserted in a SortedTypedList must inherits from SortableObject class"
+            )
 
     def __len__(self):
         """Returns the number of elements in the sorted list which takes

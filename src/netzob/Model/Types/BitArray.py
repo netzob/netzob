@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -46,7 +46,7 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Types.AbstractType import AbstractType
-
+from netzob.Model.Types.Raw import Raw
 
 @NetzobLogger
 class BitArray(AbstractType):
@@ -65,7 +65,11 @@ class BitArray(AbstractType):
     def __init__(self, value=None, nbBits=(None, None)):
         super(BitArray, self).__init__(self.__class__.__name__, value, nbBits)
 
-    def canParse(self, data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+    def canParse(self,
+                 data,
+                 unitSize=AbstractType.defaultUnitSize(),
+                 endianness=AbstractType.defaultEndianness(),
+                 sign=AbstractType.defaultSign()):
         """For the moment its always true because we consider
         the decimal type to be very similar to the raw type.
 
@@ -92,7 +96,8 @@ class BitArray(AbstractType):
             raise TypeError("data cannot be None")
 
         if not isinstance(data, bitarray):
-            raise TypeError("Data should be a python raw ({0}:{1})".format(data, type(data)))
+            raise TypeError("Data should be a python raw ({0}:{1})".format(
+                data, type(data)))
 
         if len(data) == 0:
             return False
@@ -125,7 +130,10 @@ class BitArray(AbstractType):
 
     @staticmethod
     @typeCheck(bitarray)
-    def decode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
+    def decode(data,
+               unitSize=AbstractType.defaultUnitSize(),
+               endianness=AbstractType.defaultEndianness(),
+               sign=AbstractType.defaultSign()):
         """This method convert the specified data in python raw format.
 
         >>> from netzob.all import *
@@ -167,6 +175,7 @@ class BitArray(AbstractType):
     @staticmethod
     def encode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
         """This method convert the python raw data to the BitArray.
+        It also converts python Raw to a BitArray
 
         >>> from netzob.all import *
         >>> from netzob.Model.Types.BitArray import BitArray
@@ -195,11 +204,13 @@ class BitArray(AbstractType):
             endian = 'little'
         else:
             raise ValueError("Invalid endianness value")
-        
+
         if isinstance(data, bytes):
             norm_data = data
         elif isinstance(data, str):
             norm_data = bytes(data, "utf-8")
+        elif isinstance(data, Raw):
+            return data.value
             
         b = bitarray(endian=endian)
         b.frombytes(norm_data)

@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -557,6 +557,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
         for field in fields:
             try:                
+            try:
                 DataAlignment.align([data], field, encoded=False)
                 return field
             except:
@@ -566,6 +567,9 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
         unknown_symbol = UnknownSymbol(RawMessage(data))
         logging.error("Impossible to abstract the message in one of the specified symbols, we create an unknown symbol for it: '%s'", unknown_symbol)
+        logging.error(
+            "Impossible to abstract the message in one of the specified symbols, we create an unknown symbol for it: '%s'",
+            unknown_symbol)
 
         return unknown_symbol
 
@@ -586,6 +590,8 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
             return self.parent.getSymbol()
         else:
             raise NoSymbolException("Impossible to retrieve the symbol attached to this element")
+            raise NoSymbolException(
+                "Impossible to retrieve the symbol attached to this element")
 
     def _getLeafFields(self, depth=None, currentDepth=0):
         """Extract the leaf fields to consider regarding the specified depth
@@ -636,6 +642,8 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         for fields in self.fields:
             if fields is not None:
                 leafFields.extend(fields._getLeafFields(depth, currentDepth + 1))
+                leafFields.extend(
+                    fields._getLeafFields(depth, currentDepth + 1))
 
         return leafFields
 
@@ -651,6 +659,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         """Remove all the children attached to the current element"""
 
         while(len(self.__fields) > 0):
+        while (len(self.__fields) > 0):
             self.__fields.pop()
 
     def clearEncodingFunctions(self):
@@ -663,12 +672,14 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         """Remove all the visualization functions attached to the current element"""
 
         while(len(self.__visualizationFunctions) > 0):
+        while (len(self.__visualizationFunctions) > 0):
             self.__visualizationFunctions.pop()
 
     def clearTransformationFunctions(self):
         """Remove all the transformation functions attached to the current element"""
 
         while(len(self.__transformationFunctions) > 0):
+        while (len(self.__transformationFunctions) > 0):
             self.__transformationFunctions.pop()
 
     # Standard methods
@@ -832,6 +843,9 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
             for c in fields:
                 if not isinstance(c, Field):
                     raise TypeError("Cannot edit the fields because at least one specified element is not an AbstractField its a {0}.".format(type(c)))
+                    raise TypeError(
+                        "Cannot edit the fields because at least one specified element is not an AbstractField its a {0}.".
+                        format(type(c)))
 
         self.clearFields()
         if fields is not None:
@@ -855,6 +869,9 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
     def parent(self, parent):
         if not isinstance(parent, AbstractField):
             raise TypeError("Specified parent must be an AbstractField and not an {0}".format(type(parent)))
+            raise TypeError(
+                "Specified parent must be an AbstractField and not an {0}".
+                format(type(parent)))
         self.__parent = parent
 
     def storeInMemento(self):

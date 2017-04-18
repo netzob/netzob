@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -48,11 +48,6 @@ from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import 
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 
-from netzob.Model.Types.TypeConverter import TypeConverter
-from netzob.Model.Types.BitArray import BitArray
-from netzob.Model.Types.Raw import Raw
-
-from bitarray import bitarray
 
 @NetzobLogger
 class Alt(AbstractVariableNode):
@@ -119,6 +114,7 @@ class Alt(AbstractVariableNode):
         if len(self.children) == 0:
             raise Exception("Cannot parse data if ALT has no children")
     
+
         dataToParse = parsingPath.getDataAssignedToVariable(self)
         self._logger.debug("Parse '{0}' with '{1}'".format(dataToParse, self))
 
@@ -127,6 +123,9 @@ class Alt(AbstractVariableNode):
         
         # create a path for each child
         if len(self.children)>1:
+
+        # create a path for each child
+        if len(self.children) > 1:
             for child in self.children[1:]:
                 newParsingPath = parsingPath.duplicate()
                 newParsingPath.assignDataToVariable(dataToParse.copy(), child)
@@ -136,6 +135,8 @@ class Alt(AbstractVariableNode):
         for i_child, child in enumerate(self.children):
             parsingPath = parserPaths[i_child]
             self._logger.debug("ALT Parse of {0}/{1} with {2}".format(i_child+1, len(self.children), parsingPath))
+            self._logger.debug("ALT Parse of {0}/{1} with {2}".format(
+                i_child + 1, len(self.children), parsingPath))
 
             childParsingPaths = child.parse(parsingPath)
             for childParsingPath in childParsingPaths:
@@ -145,6 +146,12 @@ class Alt(AbstractVariableNode):
 
 
     @typeCheck(SpecializingPath)        
+                    childParsingPath.addResult(
+                        self,
+                        childParsingPath.getDataAssignedToVariable(child))
+                    yield childParsingPath
+
+    @typeCheck(SpecializingPath)
     def specialize(self, specializingPath):
         """Specializes an Alt"""
 
@@ -173,6 +180,32 @@ class Alt(AbstractVariableNode):
 
         if len(specializingPaths) == 0:
             self._logger.debug("No children of {0} successfuly specialized".format(self))
+
+        specializingPaths = []
+
+        # parse each child according to its definition
+        for i_child, child in enumerate(self.children):
+            newSpecializingPath = specializingPath.duplicate()
+            self._logger.debug("ALT Specialize of {0}/{1} with {2}".format(
+                i_child + 1, len(self.children), newSpecializingPath))
+
+            childSpecializingPaths = child.specialize(newSpecializingPath)
+            if len(childSpecializingPaths) == 0:
+                self._logger.debug("Path {0} on child {1} didn't succeed.".
+                                   format(newSpecializingPath, child))
+            else:
+                self._logger.debug("Path {0} on child {1} succeed.".format(
+                    newSpecializingPath, child))
+                for childSpecializingPath in childSpecializingPaths:
+                    childSpecializingPath.addResult(
+                        self,
+                        childSpecializingPath.getDataAssignedToVariable(child))
+
+                specializingPaths.extend(childSpecializingPaths)
+
+        if len(specializingPaths) == 0:
+            self._logger.debug(
+                "No children of {0} successfuly specialized".format(self))
 
         # lets shuffle this ( :) ) >>> by default we only consider the first valid parsing path.
         random.shuffle(specializingPaths)

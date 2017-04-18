@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -38,6 +38,11 @@
 #+----------------------------------------------
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Inference.Grammar.lstar.ObservationTable import ObservationTable
+
+from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Inference.Grammar.lstar.ObservationTable import ObservationTable
+
 
 @NetzobLogger
 class MealyLSTAR(object):
@@ -141,6 +146,9 @@ class MealyLSTAR(object):
 
     def refineHypothesis(self, counterExample):
         self._logger.debug("Refining the current hypothesis according to counter example : {}".format(counterExample))
+        self._logger.debug(
+            "Refining the current hypothesis according to counter example : {}".
+            format(counterExample))
 
     def startLearning(self):
         self._logger.debug("Starting the MealyLSTAR inference process.")
@@ -163,6 +171,7 @@ class MealyLSTAR(object):
 
     
         
+
 #         # create logger with the given configuration
 #         self.log = logging.getLogger('netzob.Inference.Grammar.MealyLSTAR.py')
 
@@ -269,18 +278,14 @@ class MealyLSTAR(object):
 
 #         while (not self.isClosed() or not self.isConsistent()):
 #             if not self.isClosed():
-#                 self.log.info("#================================================")
 #                 self.log.info("The table is not closed")
-#                 self.log.info("#================================================")
 #                 self.closeTable()
 #                 self.displayObservationTable()
 #             else:
 #                 self.log.info("Table is closed !")
 
 #             if not self.isConsistent():
-#                 self.log.info("#================================================")
 #                 self.log.info("The table is not consistent")
-#                 self.log.info("#================================================")
 #                 self.makesTableConsistent()
 #                 self.displayObservationTable()
 #             else:
@@ -570,7 +575,6 @@ class MealyLSTAR(object):
 #         self.log.info(self.observationTable)
 
 #         horizontal = "---------------------------------------------------------------------------------"
-#         horizontal2 = "================================================================================="
 #         self.log.info(horizontal)
 #         line = []
 #         for letter in self.D:

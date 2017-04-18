@@ -5,7 +5,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -67,6 +67,7 @@ class ParallelDataAlignment(object):
     >>> import random
     >>> import time
     >>> import logging
+    >>> import os
 
     >>> # Temporary raise log level of certain impacting loggers on alignment process
     >>> old_logging_level = logging.getLogger(Symbol.__name__).level
@@ -96,6 +97,8 @@ class ParallelDataAlignment(object):
     1000
     >>> autoThreadDuration <= oneThreadDuration
     True
+    >>> if ('NETZOB_TEST_NO_PERFORMANCE' not in os.environ.keys() or os.environ['NETZOB_TEST_NO_PERFORMANCE'] != "yes") and autoThreadDuration >= oneThreadDuration:
+    ...     print("Error, multi-thread version slower ({}) than single threaded execution ({})".format(autoThreadDuration, oneThreadDuration))
 
     >>> # Reset log level of certain impacting loggers on alignment process
     >>> logging.getLogger(Data.__name__).setLevel(old_logging_level)
@@ -104,7 +107,12 @@ class ParallelDataAlignment(object):
 
     """
 
-    def __init__(self, field, depth=None, nbThread=None, encoded=False, styled=False):
+    def __init__(self,
+                 field,
+                 depth=None,
+                 nbThread=None,
+                 encoded=False,
+                 styled=False):
         """Constructor.
 
         :param field: the format definition that will be user
@@ -171,7 +179,13 @@ class ParallelDataAlignment(object):
         pool = multiprocessing.Pool(self.nbThread)
 
         # Execute Data Alignment
-        pool.map_async(_executeDataAlignment, list(zip(noDuplicateData, [self.field] * len(noDuplicateData), [self.encoded] * len(noDuplicateData), [self.styled] * len(noDuplicateData))), callback=self.__collectResults_cb)
+        pool.map_async(
+            _executeDataAlignment,
+            list(
+                zip(noDuplicateData, [self.field] * len(noDuplicateData),
+                    [self.encoded] * len(noDuplicateData), [self.styled] * len(
+                        noDuplicateData))),
+            callback=self.__collectResults_cb)
 
         # Waits all alignment tasks finish
         pool.close()
@@ -188,19 +202,29 @@ class ParallelDataAlignment(object):
     
         for d in data:
             if d not in list(self.asyncResult.keys()):
-                raise Exception("At least one data ({0}) has not been successfully computed by the alignment".format(repr(d)))
+                raise Exception(
+                    "At least one data ({0}) has not been successfully computed by the alignment".
+                    format(repr(d)))
             result.extend(self.asyncResult[d])
 
         # check the number of computed alignment
         if len(result) != len(data):
-            raise Exception("There are not the same number of alignment ({0}) than the number of data ({1})".format(len(result), len(data)))
+            raise Exception(
+                "There are not the same number of alignment ({0}) than the number of data ({1})".
+                format(len(result), len(data)))
 
-        self._logger.debug("Alignment of {0} data took {1}s with {2} threads.".format(len(data), end - start, self.nbThread))
+        self._logger.debug("Alignment of {0} data took {1}s with {2} threads.".
+                           format(len(data), end - start, self.nbThread))
         return result
 
     # Static method
     @staticmethod
-    def align(data, field, depth=None, nbThread=None, encoded=False, styled=False):
+    def align(data,
+              field,
+              depth=None,
+              nbThread=None,
+              encoded=False,
+              styled=False):
         """Execute an alignment of specified data with provided field.
         The alignment will be perfomed in parallel
         Data must be provided as a list of hexastring.
@@ -221,7 +245,8 @@ class ParallelDataAlignment(object):
         :return: the aligned data
         :rtype: :class:`netzob.Common.Utils.MatrixList.MatrixList`
         """
-        pAlignment = ParallelDataAlignment(field, depth, nbThread, encoded, styled)
+        pAlignment = ParallelDataAlignment(field, depth, nbThread, encoded,
+                                           styled)
         return pAlignment.execute(data)
 
     # Properties
@@ -257,7 +282,8 @@ class ParallelDataAlignment(object):
     @typeCheck(int)
     def depth(self, depth):
         if depth is not None and depth < 0:
-            raise ValueError("Depth cannot be <0, use None to specify unlimited depth")
+            raise ValueError(
+                "Depth cannot be <0, use None to specify unlimited depth")
 
         self.__depth = depth
 
@@ -280,7 +306,8 @@ class ParallelDataAlignment(object):
             nbThread = multiprocessing.cpu_count()
 
         if nbThread < 0:
-            raise ValueError("NbThread cannot be <0, use None to specify you don't know.")
+            raise ValueError(
+                "NbThread cannot be <0, use None to specify you don't know.")
 
         self.__nbThread = nbThread
 
@@ -315,4 +342,3 @@ class ParallelDataAlignment(object):
             raise ValueError("Styled cannot be None")
 
         self.__styled = styled
-
