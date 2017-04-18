@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -44,6 +44,7 @@
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import NetzobLogger
 
+
 @NetzobLogger
 class MatrixList(list):
     """This type of list has been created to represent it as matrix
@@ -55,6 +56,10 @@ class MatrixList(list):
     def __init__(self):
         self.headers = []
     
+
+    def __init__(self):
+        self.headers = []
+
     @property
     def headers(self):
         """A list of sorted strings. Each string will be displayed as a column header"""
@@ -70,6 +75,11 @@ class MatrixList(list):
         # Prepare data to be returned
         r_repr = []
         
+
+    def __repr__(self):
+        # Prepare data to be returned
+        r_repr = []
+
         if len(self) > 0:
             nb_col = len(self[0])
             if self.headers is not None and len(self.headers) == nb_col:
@@ -94,6 +104,7 @@ class MatrixList(list):
         cs = list(zip(*r_repr))
         c_ws = [max(len(value) for value in c) for c in cs]
         line = ["-"*w for w in c_ws]
+        line = ["-" * w for w in c_ws]
         r_repr.insert(1, line)
         r_repr.append(line)
         format = ' | '.join(['%%-%ds' % w for w in c_ws])

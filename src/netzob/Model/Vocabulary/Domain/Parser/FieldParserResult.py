@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -45,6 +45,11 @@
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Field import Field
 
+from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Model.Vocabulary.Field import Field
+
+
 @NetzobLogger
 class FieldParserResult():
     """This class denotes one parsing result of a field against a specified content
@@ -58,3 +63,5 @@ class FieldParserResult():
 
     def __str__(self):
         return "FieldParserResult (consumed={0}, remaining={1})".format(self.consumedData, self.remainingData)
+        return "FieldParserResult (consumed={0}, remaining={1})".format(
+            self.consumedData, self.remainingData)

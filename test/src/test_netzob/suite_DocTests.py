@@ -6,7 +6,7 @@
 # |                                                                           |
 # |               Netzob : Inferring communication protocols                  |
 # +---------------------------------------------------------------------------+
-# | Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+# | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 # | This program is free software: you can redistribute it and/or modify      |
 # | it under the terms of the GNU General Public License as published by      |
 # | the Free Software Foundation, either version 3 of the License, or         |
@@ -118,6 +118,7 @@ def getSuite():
         L2NetworkMessage.__module__,
         L3NetworkMessage.__module__,
         L4NetworkMessage.__module__,
+        FileMessage.__module__,
         FieldOperations,
         CorrelationFinder.__module__,
         RelationFinder.__module__,
@@ -127,6 +128,8 @@ def getSuite():
         ApplicativeData.__module__,
         DomainEncodingFunction.__module__,
         TypeEncodingFunction.__module__,
+        ZLibEncodingFunction.__module__,
+        Base64EncodingFunction.__module__,
         SearchEngine.__module__,
         SearchTask,
         SearchResult,
@@ -174,6 +177,7 @@ def getSuite():
         # Modules related to the import
         # -----------------------------
         PCAPImporter.__module__,
+        FileImporter.__module__
 
         # Other
         # -----

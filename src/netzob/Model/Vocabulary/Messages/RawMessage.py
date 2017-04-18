@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -67,6 +67,8 @@ class RawMessage(AbstractMessage):
         :type data: a :class:`object`
         """
         super(RawMessage, self).__init__(data=data, date=date, source=source, destination=destination)
+        super(RawMessage, self).__init__(
+            data=data, date=date, source=source, destination=destination)
 
     def priority(self):
         """Return the value that will be used to represent the current message when sorted

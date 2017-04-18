@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -74,6 +74,11 @@ class UnknownSymbol(Symbol):
         
         super(UnknownSymbol, self).__init__(fields=None, name="Unknown Symbol {}".format(name_suffix), messages=[self.message])
 
+        super(UnknownSymbol, self).__init__(
+            fields=None,
+            name="Unknown Symbol {}".format(name_suffix),
+            messages=[self.message])
+
     def __repr__(self):
         return self.name
 
@@ -97,3 +102,5 @@ class UnknownSymbol(Symbol):
         
         self.__message = message
 
+
+        self.__message = message

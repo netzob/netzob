@@ -14,7 +14,6 @@
 #  Aureliano Calvo
 
 from netzob.Import.PCAPImporter import ImpactPacket
-
 """Classes to convert from raw packets into a hierarchy of
 ImpactPacket derived objects.
 
@@ -38,18 +37,18 @@ class Decoder:
         while protocol:
             if protocol.__class__ == aprotocol:
                 break
-            protocol=protocol.child()
+            protocol = protocol.child()
         return protocol
 
     def __str__(self):
         protocol = self.__decoded_protocol
-        i=0
-        out=''
+        i = 0
+        out = ''
         while protocol:
-            tabline=' '*i+'+-'+str(protocol.__class__)
-            out+="%s"%tabline+'\n'
-            protocol=protocol.child()
-            i+=1
+            tabline = ' ' * i + '+-' + str(protocol.__class__)
+            out += "%s" % tabline + '\n'
+            protocol = protocol.child()
+            i += 1
         return out
 
 class EthDecoder(Decoder):
@@ -58,14 +57,14 @@ class EthDecoder(Decoder):
 
     def decode(self, aBuffer):
         e = ImpactPacket.Ethernet(aBuffer)
-        self.set_decoded_protocol( e )
+        self.set_decoded_protocol(e)
         off = e.get_header_size()
         if e.get_ether_type() == ImpactPacket.IP.ethertype:
             self.ip_decoder = IPDecoder()
             packet = self.ip_decoder.decode(aBuffer[off:])
-        #elif e.get_ether_type() == ImpactPacket.ARP.ethertype:
-        #    self.arp_decoder = ARPDecoder()
-        #    packet = self.arp_decoder.decode(aBuffer[off:])
+        elif e.get_ether_type() == ImpactPacket.ARP.ethertype:
+            self.arp_decoder = ARPDecoder()
+            packet = self.arp_decoder.decode(aBuffer[off:])
         else:
             self.data_decoder = DataDecoder()
             packet = self.data_decoder.decode(aBuffer[off:])
@@ -81,7 +80,7 @@ class LinuxSLLDecoder(Decoder):
 
     def decode(self, aBuffer):
         e = ImpactPacket.LinuxSLL(aBuffer)
-        self.set_decoded_protocol( e )
+        self.set_decoded_protocol(e)
         off = 16
         if e.get_ether_type() == ImpactPacket.IP.ethertype:
             self.ip_decoder = IPDecoder()
@@ -102,7 +101,7 @@ class IPDecoder(Decoder):
 
     def decode(self, aBuffer):
         i = ImpactPacket.IP(aBuffer)
-        self.set_decoded_protocol ( i )
+        self.set_decoded_protocol(i)
         off = i.get_header_size()
         end = i.get_ip_len()
         if i.get_ip_p() == ImpactPacket.UDP.protocol:
@@ -126,7 +125,7 @@ class UDPDecoder(Decoder):
 
     def decode(self, aBuffer):
         u = ImpactPacket.UDP(aBuffer)
-        self.set_decoded_protocol( u )
+        self.set_decoded_protocol(u)
         off = u.get_header_size()
         self.data_decoder = DataDecoder()
         packet = self.data_decoder.decode(aBuffer[off:])
@@ -139,7 +138,7 @@ class TCPDecoder(Decoder):
 
     def decode(self, aBuffer):
         t = ImpactPacket.TCP(aBuffer)
-        self.set_decoded_protocol( t )
+        self.set_decoded_protocol(t)
         off = t.get_header_size()
         self.data_decoder = DataDecoder()
         packet = self.data_decoder.decode(aBuffer[off:])
@@ -155,7 +154,7 @@ class IPDecoderForICMP(Decoder):
 
     def decode(self, aBuffer):
         i = ImpactPacket.IP(aBuffer)
-        self.set_decoded_protocol( i )
+        self.set_decoded_protocol(i)
         off = i.get_header_size()
         if i.get_ip_p() == ImpactPacket.UDP.protocol:
             self.udp_decoder = UDPDecoder()
@@ -172,7 +171,7 @@ class ICMPDecoder(Decoder):
 
     def decode(self, aBuffer):
         ic = ImpactPacket.ICMP(aBuffer)
-        self.set_decoded_protocol( ic )
+        self.set_decoded_protocol(ic)
         off = ic.get_header_size()
         if ic.get_icmp_type() == ImpactPacket.ICMP.ICMP_UNREACH:
             self.ip_decoder = IPDecoderForICMP()
@@ -186,11 +185,11 @@ class ICMPDecoder(Decoder):
 class DataDecoder(Decoder):
     def decode(self, aBuffer):
         d = ImpactPacket.Data(aBuffer)
-        self.set_decoded_protocol( d )
+        self.set_decoded_protocol(d)
         return d
 
-class BaseDecoder(Decoder):
 
+class BaseDecoder(Decoder):
     def decode(self, buff):
 
         packet = self.klass(buff)

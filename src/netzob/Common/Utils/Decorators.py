@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -86,6 +86,8 @@ try:
                     self.stream.write(message)
                 else:
                     self.stream.write(self.colours[record.levelname] + message + Style.RESET_ALL)
+                    self.stream.write(self.colours[record.levelname] + message
+                                      + Style.RESET_ALL)
                 self.stream.write(getattr(self, 'terminator', '\n'))
                 self.flush()
             except (KeyboardInterrupt, SystemExit):
@@ -118,6 +120,8 @@ def NetzobLogger(klass):
         except:
             pass
         handler = ColourStreamHandler() if has_colour else logging.StreamHandler()
+        handler = ColourStreamHandler(
+        ) if has_colour else logging.StreamHandler()
         fmt = '%(relativeCreated)d: [%(levelname)s] %(module)s:%(funcName)s: %(message)s'
         handler.setFormatter(logging.Formatter(fmt))
         klass._logger.addHandler(handler)
@@ -163,6 +167,7 @@ def typeCheck(*types):
     .. warning:: if argument is None, the type checking is not executed on it.
 
     """
+
     def _typeCheck_(func):
         def wrapped_f(*args, **kwargs):
             arguments = args[1:]
@@ -180,4 +185,14 @@ def typeCheck(*types):
                         raise TypeError("Invalid type for arguments, expecting: {0} and received {1}".format(', '.join([t.__name__ for t in final_types]), argument.__class__.__name__))
             return func(*args, **kwargs)
         return wraps(func)(wrapped_f)
+                    if argument is not None and not isinstance(argument,
+                                                               final_types[i]):
+                        raise TypeError(
+                            "Invalid type for arguments, expecting: {0} and received {1}".
+                            format(', '.join([t.__name__ for t in final_types
+                                              ]), argument.__class__.__name__))
+            return func(*args, **kwargs)
+
+        return wraps(func)(wrapped_f)
+
     return _typeCheck_

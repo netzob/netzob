@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -100,6 +100,7 @@ class Memory(object):
         """
         return self.memory[variable]
     
+
     @typeCheck(AbstractVariable)
     def forget(self, variable):
         """Forgets any memorized value of the provided variable
@@ -152,6 +153,13 @@ class Memory(object):
         return '\n'.join(result)
         
 
+    def __str__(self):
+        result = []
+        for var, value in list(self.memory.items()):
+            result.append("{0}: {1}".format(
+                var, TypeConverter.convert(value, BitArray, Raw)))
+        return '\n'.join(result)
+
     @property
     def memory(self):
         """The content of the memory is stored in this dict().
@@ -165,6 +173,7 @@ class Memory(object):
         self.__memory = dict()
         for k, v in list(memory.items()):
             self.__memory[k] = v
+
 
 # #+---------------------------------------------------------------------------+
 # #| Functions on memories                                                     |
@@ -306,3 +315,15 @@ class Memory(object):
     # def memoryAccessCB(self, memoryAccessCB):
     #     self.__memoryAccessCB = memoryAccessCB
 
+# @property
+# def memoryAccessCB(self):
+#     """Callback to execute after a memory access.
+
+#     :type: function
+#     :raise: `TypeError` if parameter's type is not valid
+#     """
+#     return self.__memoryAccessCB
+
+# @memoryAccessCB.setter
+# def memoryAccessCB(self, memoryAccessCB):
+#     self.__memoryAccessCB = memoryAccessCB

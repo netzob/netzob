@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -44,6 +44,10 @@ appname = name
 #+---------------------------------------------------------------------------+
 version = "1.1.dev0"
 versionName = "Unnamed"
+#|    postfixed by .dev0
+#+---------------------------------------------------------------------------+
+version = "1.1.dev0"
+versionName = "StompingFrilledShark"
 
 #+---------------------------------------------------------------------------+
 #| Copyright mentions
@@ -86,6 +90,21 @@ contributors = ["Georges Bossert <gbossert@miskin.fr>",
                 "Eric asselin",
                 "Tammo Krueger"                
                 ]
+contributors = [
+    "Georges Bossert <gbossert@miskin.fr>",
+    "Frédéric Guihéry <frederic.guihery@amossys.fr>",
+    "Olivier Tétard <olivier.tetard@amossys.fr>",
+    "Goulven Guiheux <goulven.guiheux@amossys.fr>",
+    "Maxime Olivier <maxime@miskin.fr>",
+    "Alexandre Pigné <alex@freesenses.net>",
+    "Franck Roland <franck.l.roland@gmail.com>",
+    "Fabien André <fabien.andre@insa-rennes.fr>",
+    "Quentin Heyler <quentin.heyler@etudiant.univ-rennes1.fr>",
+    "Benjamin Dufour <benjamin.dufour@amossys.fr>",
+    "Giuseppe Massaro <n3mes1s.oxoo@gmail.com>",
+    "Timo Juhani <timo.lindfors@iki.fi>", "winnie", "Remy Delion",
+    "Bertus Kruger", "Eric asselin", "Tammo Krueger"
+]
 
 #+---------------------------------------------------------------------------+
 #| Email to contact authors
@@ -111,6 +130,10 @@ translator_credits = ""
 #| Keywords to describe the application
 #+---------------------------------------------------------------------------+
 keywords = ["Protocol", "Inference", "Networking", "Reverse Engineering", "Fuzzing", "Security"]
+keywords = [
+    "Protocol", "Inference", "Networking", "Reverse Engineering", "Fuzzing",
+    "Security"
+]
 
 #+---------------------------------------------------------------------------+
 #| Long description

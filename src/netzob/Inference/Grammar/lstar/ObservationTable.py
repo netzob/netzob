@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -37,6 +37,8 @@
 #| Local application imports
 #+----------------------------------------------
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck
 
 
 @NetzobLogger
@@ -71,6 +73,18 @@ class ObservationTable(object):
         
         
         
+
+    def initialize(self, initialSuffixes, mqOracle):
+        if len(self.__allRows) > 0:
+            raise Exception(
+                "Called initialize, but there are already rows present")
+
+        len(initialSuffixes)
+        self.__suffixes.extend(initialSuffixes)
+
+        numLps = len(self.alphabet)
+        1 + numLps
+
 
     @property
     def alphabet(self):

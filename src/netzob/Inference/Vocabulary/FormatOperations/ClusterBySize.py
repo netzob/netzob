@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2016 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -34,6 +34,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+from collections import OrderedDict
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -91,6 +92,17 @@ class ClusterBySize(object):
         '00aaaa1100abcd'
         '00bbbb1100abcd'
         ----------------
+        [symbol_5]
+        Field       
+        ------------
+        '001100abcd'
+        '001100ffff'
+        ------------
+        [symbol_9]
+        Field               
+        --------------------
+        '00ffffffff1100abcd'
+        --------------------
 
         :param messages: the messages to cluster.
         :type messages: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
@@ -103,6 +115,7 @@ class ClusterBySize(object):
 
         # Cluster messages by size
         messagesByLen = {}
+        messagesByLen = OrderedDict()
         for msg in messages:
             l = len(msg.data)
             if not l in list(messagesByLen.keys()):
