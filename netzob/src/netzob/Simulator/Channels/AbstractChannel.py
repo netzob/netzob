@@ -147,7 +147,7 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         to listen and will create an instance for each different client.
 
         :keyword timeout: the maximum time to wait for a client to connect
-        :type timout:
+        :type timeout: :class:`float`
         """
 
     @abc.abstractmethod
