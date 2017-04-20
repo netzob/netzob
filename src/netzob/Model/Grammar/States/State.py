@@ -102,7 +102,6 @@ class State(AbstractState):
         if abstractionLayer is None:
             raise TypeError("AbstractionLayer cannot be None")
 
-        self._logger.debug("Execute state {0} as an initiator".format(self.name))
         self._logger.debug(
             "Execute state {0} as an initiator".format(self.name))
 
@@ -119,7 +118,6 @@ class State(AbstractState):
         # Execute picked transition as an initiator
         try:
             nextState = nextTransition.executeAsInitiator(abstractionLayer)
-            self._logger.debug("Transition '{0}' leads to state: {1}.".format(str(nextTransition), str(nextState)))
             self._logger.debug("Transition '{0}' leads to state: {1}.".format(
                 str(nextTransition), str(nextState)))
         except Exception as e:
@@ -128,7 +126,6 @@ class State(AbstractState):
 
         if nextState is None:
             self.active = False
-            raise Exception("The execution of transition {0} on state {1} did not return the next state.".format(str(nextTransition), self.name))
             raise Exception(
                 "The execution of transition {0} on state {1} did not return the next state.".
                 format(str(nextTransition), self.name))
@@ -150,7 +147,6 @@ class State(AbstractState):
         if abstractionLayer is None:
             raise TypeError("AbstractionLayer cannot be None")
 
-        self._logger.debug("Execute state {0} as a non-initiator".format(self.name))
         self._logger.debug(
             "Execute state {0} as a non-initiator".format(self.name))
 
@@ -158,7 +154,6 @@ class State(AbstractState):
 
         # if no transition exists we quit
         if len(self.transitions) == 0:
-            self._logger.warn("The current state has no transitions available.")
             self._logger.warn(
                 "The current state has no transitions available.")
             self.active = False
@@ -174,15 +169,6 @@ class State(AbstractState):
 
         # Else, execute the closing transition, if it is the last one remaining
         if nextTransition is None:
-            if len(self.transitions) == 1 and self.transitions[0].TYPE == CloseChannelTransition.TYPE:
-                nextTransition = self.transitions[0]
-            
-        if nextTransition is not None:
-            nextState = nextTransition.executeAsNotInitiator(abstractionLayer)
-            self._logger.debug("Transition '{0}' leads to state: {1}.".format(str(nextTransition), str(nextState)))
-            if nextState is None:
-                self.active = False
-                raise Exception("The execution of transition {0} on state {1} did not return the next state.".format(nextTransition.name, self.name))
             if len(self.transitions) == 1 and self.transitions[
                     0].TYPE == CloseChannelTransition.TYPE:
                 nextTransition = self.transitions[0]
@@ -202,7 +188,6 @@ class State(AbstractState):
         try:
             (receivedSymbol, receivedMessage) = abstractionLayer.readSymbol()
             if receivedSymbol is None:
-                raise Exception("The abstraction layer returned a None received symbol")
                 raise Exception(
                     "The abstraction layer returned a None received symbol")
             self._logger.debug("Input symbol: " + str(receivedSymbol.name))
@@ -216,16 +201,6 @@ class State(AbstractState):
 
             if nextTransition is None:
                 self._logger.debug("The received symbol did not match any of the registered transition, we stay in place.")
-                nextState = self
-            else:
-                nextState = nextTransition.executeAsNotInitiator(abstractionLayer)
-                self._logger.debug("Transition '{0}' leads to state: {1}.".format(str(nextTransition), str(nextState)))
-
-        except Exception as e:
-            self._logger.warning("An exception occured when receiving a symbol from the abstraction layer.")
-                self._logger.debug(
-                    "The received symbol did not match any of the registered transition, we stay in place."
-                )
                 nextState = self
             else:
                 nextState = nextTransition.executeAsNotInitiator(
@@ -265,7 +240,6 @@ class State(AbstractState):
             else:
                 prioritizedTransitions[transition.priority] = [transition]
 
-        possibleTransitions = prioritizedTransitions[sorted(prioritizedTransitions.keys())[0]]
         possibleTransitions = prioritizedTransitions[sorted(
             prioritizedTransitions.keys())[0]]
 
@@ -287,7 +261,6 @@ class State(AbstractState):
 
         """
         if transition not in self.__transitions:
-            raise ValueError("The transition is not associated to the current state so cannot be removed.")
             raise ValueError(
                 "The transition is not associated to the current state so cannot be removed."
             )

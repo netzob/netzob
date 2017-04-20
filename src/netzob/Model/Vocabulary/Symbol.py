@@ -174,7 +174,7 @@ class Symbol(AbstractField):
         spePath = msg.specializeSymbol(self)
 
         if spePath is not None:
-            return TypeConverter.convert(spePath.generatedContent, BitArray, 
+            return TypeConverter.convert(spePath.generatedContent, BitArray,
 					 Raw)
 
     def clearMessages(self):

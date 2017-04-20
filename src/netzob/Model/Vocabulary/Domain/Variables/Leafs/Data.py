@@ -486,7 +486,7 @@ class Data(AbstractVariableLeaf):
             
     @typeCheck(SpecializingPath)
     def use(self, variableSpecializerPath, acceptCallBack=True):
-        """This method participates in the specialization proces.
+        """This method participates in the specialization process.
         It creates a VariableSpecializerResult in the provided path that either
         contains the memorized value or the predefined value of the variable"""
         
@@ -506,9 +506,10 @@ class Data(AbstractVariableLeaf):
 
         return result
 
+
     @typeCheck(SpecializingPath)
     def regenerate(self, variableSpecializerPath, acceptCallBack=True):
-        """This method participates in the specialization proces.
+        """This method participates in the specialization process.
         It creates a VariableSpecializerResult in the provided path that
         contains a generated value that follows the definition of the Data
         """
@@ -526,7 +527,7 @@ class Data(AbstractVariableLeaf):
     def regenerateAndMemorize(self,
                               variableSpecializerPath,
                               acceptCallBack=True):
-        """This method participates in the specialization proces.
+        """This method participates in the specialization process.
         It memorizes the value present in the path of the variable
         """
 

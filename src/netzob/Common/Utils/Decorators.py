@@ -181,10 +181,6 @@ def typeCheck(*types):
                         final_types.append(type)
 
                 for i, argument in enumerate(arguments):
-                    if argument is not None and not isinstance(argument, final_types[i]):
-                        raise TypeError("Invalid type for arguments, expecting: {0} and received {1}".format(', '.join([t.__name__ for t in final_types]), argument.__class__.__name__))
-            return func(*args, **kwargs)
-        return wraps(func)(wrapped_f)
                     if argument is not None and not isinstance(argument,
                                                                final_types[i]):
                         raise TypeError(

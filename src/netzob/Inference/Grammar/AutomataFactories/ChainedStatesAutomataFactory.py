@@ -57,8 +57,6 @@ class ChainedStatesAutomataFactory(object):
 
         if len(abstractSession) < 1:
             return
-        (client, server, symbol) = abstractSession[0]  # We expect that the first message/symbol is emitted by the client.
-                                                       # So we consider it as the initiator of the session.
         (client, server, symbol) = abstractSession[
             0]  # We expect that the first message/symbol is emitted by the client.
         # So we consider it as the initiator of the session.
@@ -67,7 +65,6 @@ class ChainedStatesAutomataFactory(object):
         sA = State(name="State " + str(idx_states))
         sB = None
         sEnd = State(name="End state")
-        openTransition = OpenChannelTransition(startState=sStart, endState=sA, name="Open")
         openTransition = OpenChannelTransition(
             startState=sStart, endState=sA, name="Open")
         it = iter(abstractSession)
@@ -86,7 +83,6 @@ class ChainedStatesAutomataFactory(object):
                 if inputSymbol is not None and outputSymbols is not None:
                     idx_states += 1
                     sB = State(name="State " + str(idx_states))
-                    mainTransition = Transition(startState=sA, endState=sB, inputSymbol=inputSymbol, outputSymbols=outputSymbols, name="Transition")
                     mainTransition = Transition(
                         startState=sA,
                         endState=sB,
@@ -100,9 +96,6 @@ class ChainedStatesAutomataFactory(object):
                 break
 
         if sB is not None:
-            closeTransition = CloseChannelTransition(startState=sB, endState=sEnd, name="Close")
-        else:
-            closeTransition = CloseChannelTransition(startState=sA, endState=sEnd, name="Close")
             closeTransition = CloseChannelTransition(
                 startState=sB, endState=sEnd, name="Close")
         else:

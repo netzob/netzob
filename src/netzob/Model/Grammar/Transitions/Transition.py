@@ -78,7 +78,6 @@ class Transition(AbstractTransition):
 
     TYPE = "Transition"
 
-    def __init__(self, startState, endState, inputSymbol=None, outputSymbols=None, _id=uuid.uuid4(), name=None):
     def __init__(self,
                  startState,
                  endState,
@@ -102,7 +101,6 @@ class Transition(AbstractTransition):
         :param name: :class:`str`
 
         """
-        super(Transition, self).__init__(Transition.TYPE, startState, endState, _id, name, priority=10)
         super(Transition, self).__init__(
             Transition.TYPE, startState, endState, _id, name, priority=10)
 
@@ -144,7 +142,6 @@ class Transition(AbstractTransition):
 
         except Exception as e:
             self.active = False
-            self._logger.warning("An error occured while executing the transition {} as an initiator: {}".format(self.name, e))
             self._logger.warning(
                 "An error occured while executing the transition {} as an initiator: {}".
                 format(self.name, e))
@@ -154,7 +151,6 @@ class Transition(AbstractTransition):
         # if its an expected one, it returns the endState of the transition
         # if not it raises an exception
         for outputSymbol in self.outputSymbols:
-            self._logger.debug("Possible output symbol: '{0}' (id={1}).".format(outputSymbol.name, outputSymbol.id))
             self._logger.debug("Possible output symbol: '{0}' (id={1}).".
                                format(outputSymbol.name, outputSymbol.id))
 
@@ -163,7 +159,6 @@ class Transition(AbstractTransition):
             return self.endState
         else:
             self.active = False
-            errorMessage = "Received symbol '{}' was unexpected.".format(receivedSymbol.name)
             errorMessage = "Received symbol '{}' was unexpected.".format(
                 receivedSymbol.name)
             self._logger.warning(errorMessage)
@@ -188,7 +183,6 @@ class Transition(AbstractTransition):
         # Pick the output symbol to emit
         pickedSymbol = self.__pickOutputSymbol()
         if pickedSymbol is None:
-            self._logger.debug("No output symbol to send, we pick an EmptySymbol as output symbol.")
             self._logger.debug(
                 "No output symbol to send, we pick an EmptySymbol as output symbol."
             )
@@ -227,7 +221,6 @@ class Transition(AbstractTransition):
             outputSymbolsWithProbability[outputSymbol] = probability
 
         if totalProbability > 100.0:
-            raise ValueError("The sum of output symbol's probability if above 100%")
             raise ValueError(
                 "The sum of output symbol's probability if above 100%")
 
@@ -240,11 +233,6 @@ class Transition(AbstractTransition):
         for outputSymbol in self.outputSymbols:
             if outputSymbolsWithProbability[outputSymbol] is None:
                 outputSymbolsWithProbability[outputSymbol] = probabilityPerSymbolWithNoExplicitProbability
-
-        # pick the good output symbol following the probability
-        distribution = [outputSymbol for inner in [[k] * int(v) for k, v in list(outputSymbolsWithProbability.items())] for outputSymbolsWithNoProbability in inner]
-                outputSymbolsWithProbability[
-                    outputSymbol] = probabilityPerSymbolWithNoExplicitProbability
 
         # pick the good output symbol following the probability
         distribution = [
@@ -320,7 +308,5 @@ class Transition(AbstractTransition):
             desc = []
             for outputSymbol in self.outputSymbols:
                 desc.append(str(outputSymbol.name))
-            return self.name + " (" + str(self.inputSymbol.name) + ";{" + ",".join(desc) + "})"
-
             return self.name + " (" + str(
                 self.inputSymbol.name) + ";{" + ",".join(desc) + "})"

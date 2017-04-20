@@ -86,7 +86,6 @@ class TCPClient(AbstractChannel):
 
     """
 
-    def __init__(self, remoteIP, remotePort, localIP=None, localPort=None, timeout=5):
     def __init__(self,
                  remoteIP,
                  remotePort,
@@ -108,7 +107,6 @@ class TCPClient(AbstractChannel):
         """
 
         if self.isOpen:
-            raise RuntimeError("The channel is already open, cannot open it again")
             raise RuntimeError(
                 "The channel is already open, cannot open it again")
 
@@ -118,7 +116,6 @@ class TCPClient(AbstractChannel):
         self.__socket.settimeout(self.timeout)
         if self.localIP is not None and self.localPort is not None:
             self.__socket.bind((self.localIP, self.localPort))
-        self._logger.debug("Connect to the TCP server to {0}:{1}".format(self.remoteIP, self.remotePort))
         self._logger.debug("Connect to the TCP server to {0}:{1}".format(
             self.remoteIP, self.remotePort))
         self.__socket.connect((self.remoteIP, self.remotePort))

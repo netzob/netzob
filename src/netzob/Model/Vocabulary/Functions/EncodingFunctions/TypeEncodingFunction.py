@@ -96,34 +96,33 @@ class TypeEncodingFunction(EncodingFunction):
     >>> f1=Field(Raw("\x68\x65\x6c\x6c\x6f"))
     >>> f2=Field(Integer(unitSize=AbstractType.UNITSIZE_32))
     >>> s = Symbol(fields=[f1,f2], messages=[m])
-    >>> print(s)
+    >>> print(s)# doctest: +NORMALIZE_WHITESPACE
     Field   | Field
     ------- | ------------------
     'hello' | '\x00\x00\x00\x01'
     ------- | ------------------
 
     >>> f1.addEncodingFunction(TypeEncodingFunction(ASCII))
-    >>> print(s)
+    >>> print(s)# doctest: +NORMALIZE_WHITESPACE
     Field   | Field
     ------- | ------------------
     'hello' | '\x00\x00\x00\x01'
     ------- | ------------------
 
     >>> f1.clearEncodingFunctions()
-    >>> print(s)
+    >>> print(s)# doctest: +NORMALIZE_WHITESPACE
     Field   | Field
     ------- | ------------------
     'hello' | '\x00\x00\x00\x01'
     ------- | ------------------
 
     >>> f1.addEncodingFunction(TypeEncodingFunction(ASCII))
-    >>> print(s)
+    >>> print(s)# doctest: +NORMALIZE_WHITESPACE
     Field   | Field
     ------- | ------------------
     'hello' | '\x00\x00\x00\x01'
     ------- | ------------------
 
-    """
     """
 
     def __init__(self, _type, unitSize=None, endianness=None, sign=None):
@@ -155,7 +154,6 @@ class TypeEncodingFunction(EncodingFunction):
 
     def encode(self, data):
         self._logger.debug(data)
-        return TypeConverter.convert(data, BitArray, self.type, dst_unitSize=self.unitSize, dst_endianness=self.endianness, dst_sign=self.sign)
         return TypeConverter.convert(
             data,
             BitArray,
@@ -177,7 +175,6 @@ class TypeEncodingFunction(EncodingFunction):
         if _type is None:
             raise TypeError("Type cannot be None")
         if _type not in AbstractType.supportedTypes():
-            raise TypeError("The type is not supported, please refer to the list of supported type in AbstractType.supportedTypes()")
             raise TypeError(
                 "The type is not supported, please refer to the list of supported type in AbstractType.supportedTypes()"
             )
@@ -192,7 +189,6 @@ class TypeEncodingFunction(EncodingFunction):
         if unitSize is None:
             raise TypeError("Unitsize cannot be None.")
         if unitSize not in AbstractType.supportedUnitSizes():
-            raise ValueError("This unitSize is not supported, please refer to the list of supported type in AbstractType.supportedUnitSizes()")
             raise ValueError(
                 "This unitSize is not supported, please refer to the list of supported type in AbstractType.supportedUnitSizes()"
             )
@@ -207,7 +203,6 @@ class TypeEncodingFunction(EncodingFunction):
         if endianness is None:
             raise TypeError("Endianness cannot be None.")
         if endianness not in AbstractType.supportedEndianness():
-            raise ValueError("This endianness is not supported, please refer to the list of supported type in AbstractType.supportedEndianness()")
             raise ValueError(
                 "This endianness is not supported, please refer to the list of supported type in AbstractType.supportedEndianness()"
             )
@@ -222,9 +217,6 @@ class TypeEncodingFunction(EncodingFunction):
         if sign is None:
             raise TypeError("Sign cannot be None.")
         if sign not in AbstractType.supportedSign():
-            raise ValueError("This sign is not supported, please refer to the list of supported type in AbstractType.supportedSign()")
-        self.__sign = sign
-
             raise ValueError(
                 "This sign is not supported, please refer to the list of supported type in AbstractType.supportedSign()"
             )

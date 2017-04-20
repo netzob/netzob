@@ -92,7 +92,6 @@ class Format(object):
 
     @staticmethod
     @typeCheck(AbstractField, str)
-    def splitStatic(field, unitSize=AbstractType.UNITSIZE_8, mergeAdjacentStaticFields=True, mergeAdjacentDynamicFields=True):
     def splitStatic(field,
                     unitSize=AbstractType.UNITSIZE_8,
                     mergeAdjacentStaticFields=True,
@@ -188,9 +187,6 @@ class Format(object):
             raise TypeError("Unitsize cannot be None")
 
         if len(field.messages) < 1:
-            raise ValueError("The associated symbol does not contain any message.")
-
-        FieldSplitStatic.split(field, unitSize, mergeAdjacentStaticFields, mergeAdjacentDynamicFields)
             raise ValueError(
                 "The associated symbol does not contain any message.")
 
@@ -255,7 +251,6 @@ class Format(object):
             raise TypeError("Field cannot be None")
 
         if len(field.messages) < 1:
-            raise ValueError("The associated symbol does not contain any message.")
             raise ValueError(
                 "The associated symbol does not contain any message.")
 
@@ -298,7 +293,6 @@ class Format(object):
         :raise Exception if something bad happens
         """
         if field is None:
-            raise TypeError("The field to reset must be specified and cannot be None")
             raise TypeError(
                 "The field to reset must be specified and cannot be None")
 
@@ -372,7 +366,6 @@ class Format(object):
         When processing, the matrix of scores is computed by the C extensions (L{_libScoreComputation}
         and used to regroup messages and symbols into equivalent cluster.
         """
-        clustering = ClusterByAlignment(minEquivalence=minEquivalence, internalSlick=internalSlick)
         clustering = ClusterByAlignment(
             minEquivalence=minEquivalence, internalSlick=internalSlick)
         return clustering.cluster(messages)
@@ -426,7 +419,6 @@ class Format(object):
             appDatas.extend(session.applicativeData)
 
         if len(appDatas) == 0:
-            raise ValueError("There are no applicative data attached to the session from which the specified messages come from.")
             raise ValueError(
                 "There are no applicative data attached to the session from which the specified messages come from."
             )
@@ -532,17 +524,6 @@ class Format(object):
         ...     print("[" + sym.name + "]")
         ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
         ...     print(sym)
-        [symbol_9]
-        Field               
-        --------------------
-        '00ffffffff1100abcd'
-        --------------------
-        [symbol_5]
-        Field       
-        ------------
-        '001100abcd'
-        '001100ffff'
-        ------------
         [symbol_7]
         Field           
         ----------------

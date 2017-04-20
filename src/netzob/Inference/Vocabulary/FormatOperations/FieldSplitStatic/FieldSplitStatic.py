@@ -64,9 +64,6 @@ class FieldSplitStatic(object):
     >>> for i,sample in enumerate(samples): samples[i] = binascii.unhexlify(sample)
     >>> messages = [RawMessage(data=sample) for sample in samples]
     >>> symbol = Symbol(messages=messages)
-        >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
-    >>> symbol = Symbol(messages=messages)
     >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> print(symbol)
     Field           
@@ -211,10 +208,6 @@ class FieldSplitStatic(object):
     ----------------
 
     """
-
-    SUPPORTED_UNITSIZE = [AbstractType.UNITSIZE_8, AbstractType.UNITSIZE_16, AbstractType.UNITSIZE_32, AbstractType.UNITSIZE_64]
-
-    def __init__(self, unitSize=AbstractType.UNITSIZE_8, mergeAdjacentStaticFields=True, mergeAdjacentDynamicFields=True):
     SUPPORTED_UNITSIZE = [
         AbstractType.UNITSIZE_8, AbstractType.UNITSIZE_16,
         AbstractType.UNITSIZE_32, AbstractType.UNITSIZE_64
@@ -250,7 +243,6 @@ class FieldSplitStatic(object):
 
         if field is None:
             raise TypeError("The field cannot be None")
-        fieldValues = [TypeConverter.convert(data, Raw, HexaString) for data in field.getValues(encoded=False)]
         fieldValues = [
             TypeConverter.convert(data, Raw, HexaString)
             for data in field.getValues(encoded=False)
@@ -271,7 +263,6 @@ class FieldSplitStatic(object):
             currentIndexValue = []
             for fieldValue in fieldValues:
                 if i < len(fieldValue):
-                    currentIndexValue.append(fieldValue[i:min(len(fieldValue), i + stepUnitsize)])
                     currentIndexValue.append(
                         fieldValue[i:min(len(fieldValue), i + stepUnitsize)])
                 else:
@@ -310,7 +301,6 @@ class FieldSplitStatic(object):
                         dynValues = zip(*dynamicSequences)
                         tmp_result = []
                         for d in dynValues:
-                            tmp_result.append(b''.join([x if x is not None else b'' for x in d]))
                             tmp_result.append(b''.join(
                                 [x if x is not None else b'' for x in d]))
                         result.append(tmp_result)
@@ -320,7 +310,6 @@ class FieldSplitStatic(object):
                 dynValues = zip(*dynamicSequences)
                 tmp_result = []
                 for d in dynValues:
-                    tmp_result.append(b''.join([x if x is not None else b'' for x in d]))
                     tmp_result.append(
                         b''.join([x if x is not None else b'' for x in d]))
                 result.append(tmp_result)
@@ -330,8 +319,6 @@ class FieldSplitStatic(object):
         # Create a field for each entry
         newFields = []
         for (i, val) in enumerate(indexedValues):
-            fName = "Field-{0}".format(i)            
-            fDomain = DomainFactory.normalizeDomain([Raw(TypeConverter.convert(v, HexaString, BitArray)) for v in set(val)])
             fName = "Field-{0}".format(i)
             fDomain = DomainFactory.normalizeDomain([
                 Raw(TypeConverter.convert(v, HexaString, BitArray))
@@ -369,7 +356,6 @@ class FieldSplitStatic(object):
 
     # Static method
     @staticmethod
-    def split(field, unitSize=AbstractType.UNITSIZE_8, mergeAdjacentStaticFields=True, mergeAdjacentDynamicFields=True):
     def split(field,
               unitSize=AbstractType.UNITSIZE_8,
               mergeAdjacentStaticFields=True,
@@ -394,9 +380,6 @@ class FieldSplitStatic(object):
             raise TypeError("Unitsize cannot be None.")
 
         if len(field.messages) < 1:
-            raise ValueError("The associated symbol does not contain any message.")
-
-        pSplit = FieldSplitStatic(unitSize, mergeAdjacentStaticFields, mergeAdjacentDynamicFields)
             raise ValueError(
                 "The associated symbol does not contain any message.")
 

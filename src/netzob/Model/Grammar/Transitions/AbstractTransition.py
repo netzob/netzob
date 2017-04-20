@@ -50,7 +50,6 @@ from netzob.Model.Grammar.States.AbstractState import AbstractState
 
 class AbstractTransition(object, metaclass=abc.ABCMeta):
 
-    def __init__(self, _type, startState, endState, _id=uuid.uuid4(), name=None, priority=10, description=None):
     def __init__(self,
                  _type,
                  startState,
@@ -75,9 +74,6 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         :type priority: :class:`int`
 
         """
-        self.__startState = None
-        self.__endState = None
-
         self.__startState = None
         self.__endState = None
 
@@ -209,7 +205,6 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         if priority is None:
             raise TypeError("Priority cannot be None")
         if priority < 0 or priority > 100:
-            raise TypeError("The priority must respect range : 0<=priority<100")
             raise TypeError(
                 "The priority must respect range : 0<=priority<100")
 

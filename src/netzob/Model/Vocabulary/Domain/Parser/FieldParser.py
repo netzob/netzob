@@ -195,7 +195,6 @@ class FieldParser():
 
         # and check it exists
         if domain is None:
-            raise Exception("No definition domain specified for field '{0}', cannnot parse the content against it.".format(self.field.name))
             raise Exception(
                 "No definition domain specified for field '{0}', cannnot parse the content against it.".
                 format(self.field.name))
@@ -203,10 +202,6 @@ class FieldParser():
         # check we have something to parse
         data = parsingPath.getDataAssignedToField(self.field)
 
-        self._logger.debug("Parses '{0}' with field '{1}' specifications".format(data, self.field.name))
-
-        # we assign this data to the field's variable
-        parsingPath.assignDataToVariable(data.copy(), self.field.domain)                
         self._logger.debug("Parses '{0}' with field '{1}' specifications".
                            format(data, self.field.name))
 
@@ -215,14 +210,6 @@ class FieldParser():
 
         # we create a first VariableParser and uses it to parse the domain
         variableParser = VariableParser(domain)
-
-        for resultParsingPath in variableParser.parse(parsingPath, carnivorous=self.lastField):
-            if resultParsingPath.isDataAvailableForVariable(self.field.domain):
-                try:
-                    resultParsingPath.addResultToField(self.field, resultParsingPath.getDataAssignedToVariable(self.field.domain))
-                    yield resultParsingPath
-                except Exception as e:
-                    self._logger.debug("An error occurred while parsing variable : {}".format(e))
     
         for resultParsingPath in variableParser.parse(
                 parsingPath, carnivorous=self.lastField):

@@ -80,7 +80,7 @@ class FieldSplitDelimiter(object):
         >>> symbol = Symbol(messages=messages)
         >>> symbol.encodingFunctions.add(TypeEncodingFunction(ASCII))  # Change visualization to hexastring
         >>> Format.splitDelimiter(symbol, ASCII("#"))
-        >>> print(symbol)
+        >>> print(symbol)# doctest: +NORMALIZE_WHITESPACE
         Field-0         | Field-sep-23 | Field-2                                    | Field-sep-23 | Field-4
         --------------- | ------------ | ------------------------------------------ | ------------ | -------
         'CMDidentify'   | '#'          | '\x04\x00\x00\x00fred'                     | ''           | ''
@@ -113,7 +113,6 @@ class FieldSplitDelimiter(object):
         'RESbye'        | '#'          | '\x00\x00\x00\x00\x00\x00\x00\x00'         | ''           | ''
         --------------- | ------------ | ------------------------------------------ | ------------ | -------
 
-
         >>> print(symbol.fields[0]._str_debug())
         Field-0
         |--   Alt
@@ -140,7 +139,7 @@ class FieldSplitDelimiter(object):
         >>> messages = [RawMessage(data=sample) for sample in samples]
         >>> symbol = Symbol(messages=messages)
         >>> Format.splitDelimiter(symbol, Raw(b"\\xff"))
-        >>> print(symbol)
+        >>> print(symbol)# doctest: +NORMALIZE_WHITESPACE
         Field-0           | Field-sep-5c786666 | Field-2                     | Field-sep-5c786666 | Field-4
         ----------------- | ------------------ | --------------------------- | ------------------ | ------------
         '\\x01\\x02\\x03' | '\\xff'            | '\\x04\\x05'                | '\\xff'            | '\\x06\\x07'

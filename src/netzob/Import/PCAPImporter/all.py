@@ -36,7 +36,6 @@ try:
     import pcapy
     pcapy_available = True
 except ImportError:    
-except ImportError:
     pass
 
 # try:
@@ -46,6 +45,5 @@ except ImportError:
 #     pass
 
     
-if pcapy_available:# and impacket_available:
 if pcapy_available:  # and impacket_available:
     from netzob.Import.PCAPImporter.PCAPImporter import PCAPImporter

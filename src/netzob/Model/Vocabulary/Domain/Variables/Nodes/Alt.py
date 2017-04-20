@@ -120,9 +120,6 @@ class Alt(AbstractVariableNode):
 
         parserPaths = [parsingPath]
         parsingPath.assignDataToVariable(dataToParse.copy(), self.children[0])
-        
-        # create a path for each child
-        if len(self.children)>1:
 
         # create a path for each child
         if len(self.children) > 1:
@@ -141,11 +138,6 @@ class Alt(AbstractVariableNode):
             childParsingPaths = child.parse(parsingPath)
             for childParsingPath in childParsingPaths:
                 if childParsingPath.ok():
-                    childParsingPath.addResult(self, childParsingPath.getDataAssignedToVariable(child))
-                    yield childParsingPath
-
-
-    @typeCheck(SpecializingPath)        
                     childParsingPath.addResult(
                         self,
                         childParsingPath.getDataAssignedToVariable(child))

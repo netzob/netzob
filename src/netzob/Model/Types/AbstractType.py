@@ -122,7 +122,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
             AbstractType.UNITSIZE_8,
             AbstractType.UNITSIZE_16,
             AbstractType.UNITSIZE_32,
-            AbstractType.UNITSIZE_64
+            AbstractType.UNITSIZE_64,
             AbstractType.UNITSIZE_1, AbstractType.UNITSIZE_4,
             AbstractType.UNITSIZE_8, AbstractType.UNITSIZE_16,
             AbstractType.UNITSIZE_32, AbstractType.UNITSIZE_64
@@ -135,7 +135,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
             AbstractType.ENDIAN_BIG,
             AbstractType.ENDIAN_LITTLE
         ]
-        return [AbstractType.ENDIAN_BIG, AbstractType.ENDIAN_LITTLE]
 
     @staticmethod
     def supportedSign():
@@ -144,7 +143,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
             AbstractType.SIGN_SIGNED,
             AbstractType.SIGN_UNSIGNED
         ]
-        return [AbstractType.SIGN_SIGNED, AbstractType.SIGN_UNSIGNED]
 
     @staticmethod
     def defaultUnitSize():
@@ -173,7 +171,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         """
         return AbstractType.SIGN_SIGNED
 
-    def __init__(self, typeName, value, size=(None, None), unitSize=None, endianness=None, sign=None):
     def __init__(self,
                  typeName,
                  value,
@@ -216,7 +213,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         from netzob.Model.Types.TypeConverter import TypeConverter
         from netzob.Model.Types.BitArray import BitArray
         if self.value is not None:
-            return "{0}={1} ({2})".format(self.typeName, TypeConverter.convert(self.value, BitArray, self.__class__), self.size)
             return "{0}={1} ({2})".format(
                 self.typeName,
                 TypeConverter.convert(self.value, BitArray,
@@ -228,7 +224,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         if self.value != None:
             from netzob.Model.Types.TypeConverter import TypeConverter
             from netzob.Model.Types.BitArray import BitArray
-            return str(TypeConverter.convert(self.value, BitArray, self.__class__))
             return str(
                 TypeConverter.convert(self.value, BitArray, self.__class__))
         else:
@@ -236,7 +231,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
     def __key(self):
         # Note: as bitarray objects cannot be hashed in Python3 (because bitarray objects are mutable), we cast a bitarray object in a tuple (which is immutable)
-        return (self.typeName, tuple(self.value), self.size, self.unitSize, self.endianness, self.sign)
         return (self.typeName, tuple(self.value), self.size, self.unitSize,
                 self.endianness, self.sign)
 
@@ -247,7 +241,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         return hash(self.__key())
 
     @typeCheck(type)
-    def convertValue(self, typeClass, dst_unitSize=None, dst_endianness=None, dst_sign=None):
     def convertValue(self,
                      typeClass,
                      dst_unitSize=None,
@@ -270,7 +263,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         if typeClass is None:
             raise TypeError("TypeClass cannot be None")
         if typeClass not in AbstractType.supportedTypes():
-            raise TypeError("Requested typeClass ({0}) is not supported.".format(typeClass))
             raise TypeError("Requested typeClass ({0}) is not supported.".
                             format(typeClass))
 
@@ -290,7 +282,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
         from netzob.Model.Types.TypeConverter import TypeConverter
         from netzob.Model.Types.BitArray import BitArray
-        return typeClass(TypeConverter.convert(self.value, BitArray, typeClass, src_unitSize=self.unitSize, src_endianness=self.endianness, src_sign=self.sign, dst_unitSize=dst_unitSize, dst_endianness=dst_endianness, dst_sign=dst_sign), unitSize=dst_unitSize, endianness=dst_endianness, sign=dst_sign)
         return typeClass(
             TypeConverter.convert(
                 self.value,
@@ -376,16 +367,11 @@ class AbstractType(object, metaclass=abc.ABCMeta):
             mutations["{0}bits(bigEndian)".format(prefixDescription)] = bigEndianValue
         else:
             mutations["{0}bits(bigEndian)".format(prefixDescription)] = val
-            littleEndianValue = bitarray(val, endian=AbstractType.ENDIAN_LITTLE)
-            mutations["{0}bits(littleEndian)".format(prefixDescription)] = littleEndianValue
-            mutations["{0}bits(bigEndian)".format(
-                prefixDescription)] = bigEndianValue
-        else:
-            mutations["{0}bits(bigEndian)".format(prefixDescription)] = val
             littleEndianValue = bitarray(
                 val, endian=AbstractType.ENDIAN_LITTLE)
             mutations["{0}bits(littleEndian)".format(
                 prefixDescription)] = littleEndianValue
+
 
         return mutations
 
@@ -407,7 +393,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         :rtype: python raw
         :raise: TypeError if parameters are not valid.
         """
-        raise NotImplementedError("Internal Error: 'decode' method not implemented")
         raise NotImplementedError(
             "Internal Error: 'decode' method not implemented")
 
@@ -429,7 +414,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         :rtype: python raw
         :raise: TypeError if parameters are not valid.
         """
-        raise NotImplementedError("Internal Error: 'encode' method not implemented")
         raise NotImplementedError(
             "Internal Error: 'encode' method not implemented")
 
@@ -443,7 +427,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         :return: True if the data can be parsed will the curren type
         :rtype: bool
         """
-        raise NotImplementedError("Internal Error: 'canParse' method not implemented")
         raise NotImplementedError(
             "Internal Error: 'canParse' method not implemented")
 
@@ -513,13 +496,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
             if minSize < 0:
                 raise ValueError("Minimum size must be greater than 0")
             if maxSize is not None and maxSize < minSize:
-                raise ValueError("Maximum must be greater or equals to the minimum")
-            if maxSize is not None and maxSize > AbstractType.MAXIMUM_GENERATED_DATA_SIZE:
-                raise ValueError("Maximum size supported for a variable is {0}.".format(AbstractType.MAXIMUM_GENERATED_DATA_SIZE))
-
-            self.__size = (minSize, maxSize)
-        else:
-            raise TypeError("Size must be defined by a tuple an int or with None")
                 raise ValueError(
                     "Maximum must be greater or equals to the minimum")
             if maxSize is not None and maxSize > AbstractType.MAXIMUM_GENERATED_DATA_SIZE:
@@ -568,7 +544,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
             normalizedData = ASCII(value=data)
 
         if normalizedData is None:
-            raise TypeError("Not a valid data ({0}), impossible to normalize it.", type(data))
             raise TypeError(
                 "Not a valid data ({0}), impossible to normalize it.",
                 type(data))
@@ -658,7 +633,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         if unitSize is None:
             raise TypeError("UnitSize cannot be None")
         if not unitSize in AbstractType.supportedUnitSizes():
-            raise TypeError("Specified UnitSize is not supported, please refer to the list in AbstractType.supportedUnitSize().")
             raise TypeError(
                 "Specified UnitSize is not supported, please refer to the list in AbstractType.supportedUnitSize()."
             )
@@ -681,7 +655,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         if endianness is None:
             raise TypeError("Endianness cannot be None")
         if not endianness in AbstractType.supportedEndianness():
-            raise TypeError("Specified Endianness is not supported, please refer to the list in AbstractType.supportedEndianness().")
             raise TypeError(
                 "Specified Endianness is not supported, please refer to the list in AbstractType.supportedEndianness()."
             )
@@ -707,9 +680,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         if sign is None:
             raise TypeError("Sign cannot be None")
         if not sign in AbstractType.supportedSign():
-            raise TypeError("Specified Sign is not supported, please refer to the list in AbstractType.supportedSign().")
-        self.__sign = sign
-
             raise TypeError(
                 "Specified Sign is not supported, please refer to the list in AbstractType.supportedSign()."
             )

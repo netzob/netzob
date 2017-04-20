@@ -77,7 +77,6 @@ class RawIPClient(AbstractChannel):
     ETH_P_IP = 0x0800
 
     @typeCheck(str, int)
-    def __init__(self, remoteIP, localIP=None, upperProtocol=socket.IPPROTO_TCP, interface="eth0", timeout=5):
     def __init__(self,
                  remoteIP,
                  localIP=None,
@@ -99,9 +98,6 @@ class RawIPClient(AbstractChannel):
         """
 
         if self.isOpen:
-            raise RuntimeError("The channel is already open, cannot open it again")
-
-        self.__socket = socket.socket(socket.AF_PACKET, socket.SOCK_DGRAM, socket.htons(RawIPClient.ETH_P_IP))
             raise RuntimeError(
                 "The channel is already open, cannot open it again")
 
@@ -136,7 +132,6 @@ class RawIPClient(AbstractChannel):
         """
         if self.__socket is not None:
             packet = self.buildPacket(data)
-            self.__socket.sendto(packet, (self.interface, RawIPClient.ETH_P_IP))
             self.__socket.sendto(packet,
                                  (self.interface, RawIPClient.ETH_P_IP))
         else:

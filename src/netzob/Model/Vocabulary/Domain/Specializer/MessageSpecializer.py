@@ -165,9 +165,8 @@ class MessageSpecializer(object):
 
         retainedPath.generatedContent = generatedContent
 
-       self._logger.debug("Specialized message: {0}".format(
-            TypeConverter.convert(retainedPath.generatedContent, BitArray,
-                                  ASCII)))
+        self._logger.debug("Specialized message: {0}".format(
+           TypeConverter.convert(retainedPath.generatedContent, BitArray,ASCII)))
         self.memory = retainedPath.memory
 
         return retainedPath

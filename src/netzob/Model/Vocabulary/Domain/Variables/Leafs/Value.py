@@ -55,12 +55,11 @@ from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import Speciali
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
-from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 
 
 @NetzobLogger
 class Value(AbstractRelationVariableLeaf):
-    """A value relation between one variable and the value of a field
+    r"""A value relation between one variable and the value of a field
 
     >>> from netzob.all import *
     >>> msg = RawMessage("netzob;netzob!")
@@ -73,7 +72,7 @@ class Value(AbstractRelationVariableLeaf):
     >>> print(mp.parseMessage(msg, s))
     [bitarray('011011100110010101110100011110100110111101100010'), bitarray('00111011'), bitarray('011011100110010101110100011110100110111101100010'), bitarray('00100001')]
 
-    # lets try another way of expressing such a relation
+    Lets try another way of expressing such a relation
 
     >>> from netzob.all import *
     >>> msg = RawMessage("netzob;netzob!")
@@ -117,14 +116,14 @@ class Value(AbstractRelationVariableLeaf):
     >>> f2 = Field(Value(f0, operation = lambda x: TypeConverter.convert(TypeConverter.convert(x, BitArray, Integer) + 1, Integer, BitArray)), name="f2")
     >>> s = Symbol([f0, f1, f2])
     >>> print(s.specialize())
-    b'\\x01:\\x02'
+    b'\x01:\x02'
     >>> m1 = RawMessage(s.specialize())
     >>> s.messages = [m1]
-    >>> print(s)
-    f0     | f1  | f2
-    ------ | --- | ------
-   '\\x01' | ':' | '\\x02'
-    ------ | --- | ------
+    >>> print(s)# doctest: +NORMALIZE_WHITESPACE
+     f0     | f1  | f2
+     ------ | --- | ------
+     '\x01' | ':' | '\x02'
+     ------ | --- | ------
 
     Netgoblin fork: This checks for an issue that the Value Relation had with Alt fields.
 
@@ -148,7 +147,7 @@ class Value(AbstractRelationVariableLeaf):
     >>> from netzob.Model.Types.BitArray import BitArray
     >>> from netzob.Model.Types.Raw import Raw
     >>> from netzob.Model.Types.TypeConverter import TypeConverter
-    >>>initValue = Raw(b"\x00")
+    >>> initValue = Raw(b"\x00")
     >>> f0 = Field(name="incField")
     >>> f0 = Field(Value(f0, operation = lambda x: TypeConverter.convert(TypeConverter.convert(x, BitArray, Integer) + 1, Integer, BitArray),initValue=TypeConverter.convert(initValue,Raw,BitArray)))
     >>> mess1 = [RawMessage(b"\x01")]
@@ -157,7 +156,7 @@ class Value(AbstractRelationVariableLeaf):
     >>> mess4 = [RawMessage(b"\x04")]
     >>> messages = mess1 + mess2 + mess3 + mess4
     >>> symbol = Symbol(messages = messages, fields=[f0])
-    >>> print(symbol)
+    >>> print(symbol)# doctest: +NORMALIZE_WHITESPACE
     Field
     ------
     '\x01'
@@ -190,14 +189,6 @@ class Value(AbstractRelationVariableLeaf):
         super(Value, self).__init__("Value", fieldDependencies=[field], name=name,svas = svas)
         self.operation = operation
         self.initValue = initValue
-    
-    """
-
-    def __init__(self, field, name=None):
-        if not isinstance(field, AbstractField):
-            raise Exception("Expecting a field")
-        super(Value, self).__init__(
-            "Value", fieldDependencies=[field], name=name)
 
     @typeCheck(GenericPath)
     def isDefined(self, path):
@@ -236,7 +227,6 @@ class Value(AbstractRelationVariableLeaf):
         # we verify we have access to the expected value
         expectedValue = self._computeExpectedValue(parsingPath)
 
-        self._logger.debug("Expected value to parse: {0}".format(expectedValue))
         self._logger.debug(
             "Expected value to parse: {0}".format(expectedValue))
 
@@ -254,7 +244,9 @@ class Value(AbstractRelationVariableLeaf):
                     if minSizeDep > child.dataType.size[0] or (minSizeDep == 0 and child.dataType.size[0] != 0):
                         minSizeDep = child.dataType.size[0]
             if minSizeDep > len(content):
-                self._logger.debug("Size of the content to parse is smallest than the min expected size of the dependency field")
+                self._logger.debug(
+                    "Size of the content to parse is smallest than the min expected size of the dependency field"
+                )
                 return results
             try:
                 minVal = min(maxSizeDep, len(content))
@@ -263,35 +255,16 @@ class Value(AbstractRelationVariableLeaf):
             for size in range(minVal, minSizeDep -1, -1):
                 # we create a new parsing path and returns it
                 newParsingPath = parsingPath.duplicate()
-                newParsingPath.addResult(self, content[:size].copy())        
-                self._addCallBacksOnUndefinedFields(newParsingPath)
-                results.append(newParsingPath)           
-        else:
-            if content[:len(expectedValue)] == expectedValue:
-                self._logger.debug("add result: {0}".format( expectedValue.copy()))
-            (minSizeDep, maxSizeDep) = fieldDep.domain.dataType.size
-            if minSizeDep > len(content):
-                self._logger.debug(
-                    "Size of the content to parse is smallest than the min expected size of the dependency field"
-                )
-                return results
-
-            for size in range(
-                    min(maxSizeDep, len(content)), minSizeDep - 1, -1):
-                # we create a new parsing path and returns it
-                newParsingPath = parsingPath.duplicate()
                 newParsingPath.addResult(self, content[:size].copy())
                 self._addCallBacksOnUndefinedFields(newParsingPath)
                 results.append(newParsingPath)
         else:
             if content[:len(expectedValue)] == expectedValue:
                 self._logger.debug(
-                    "add result: {0}".format(expectedValue.copy()))
-                parsingPath.addResult(self, expectedValue.copy())
-                results.append(parsingPath)
-
+                    "add result: {0}".format( expectedValue.copy()))
+            parsingPath.addResult(self, expectedValue.copy())
+            results.append(parsingPath)
         return results
-            
 
     @typeCheck(ParsingPath)
     def learn(self, parsingPath, acceptCallBack=True, carnivorous=False):
@@ -328,8 +301,56 @@ class Value(AbstractRelationVariableLeaf):
             return None
         else:
             return self._applyOperation(parsingPath.getDataAssignedToField(fieldDep))
-            
-            return parsingPath.getDataAssignedToField(fieldDep)
+
+    def generate(self, generationStrategy=None,oldValue=None):
+        """Generates a value that respects the requested size and domain constraints.
+
+        """
+        output = bitarray()
+        if self.operation is None:
+            if oldValue is None:
+                if self.initValue is None:
+                    if self.fieldDependencies:
+                        try:
+                            for fieldDepend in self.fieldDependencies:
+                                output += fieldDepend.domain.currentValue
+                        except:
+                            pass
+                else:
+                    output = self.initValue
+            else:
+                output = oldValue
+        else:
+            if oldValue is None:
+                oldValue = self.initValue
+            output = self._applyOperation(oldValue)
+
+        return output
+
+    @typeCheck(SpecializingPath)
+    def use(self, variableSpecializerPath, acceptCallBack=True):
+        """This method participates in the specialization process.
+        It creates a VariableSpecializerResult in the provided path that either
+        contains the memorized value or the predefined value of the variable"""
+
+        if variableSpecializerPath is None:
+            raise Exception("VariableSpecializerPath cannot be None")
+
+        memory = variableSpecializerPath.memory
+
+        result = []
+
+        if memory.hasValue(self):
+            newValue = self._applyOperation(memory.getValue(self))
+            variableSpecializerPath.addResult(self, newValue)
+            if self.svas == SVAS.PERSISTENT:
+                variableSpecializerPath.memory.memorize(self, newValue)
+            result.append(variableSpecializerPath)
+        elif self.currentValue is not None:
+            variableSpecializerPath.addResult(self, self._applyOperation(self.currentValue))
+            result.append(variableSpecializerPath)
+
+        return result
 
     @typeCheck(SpecializingPath)
     def regenerate(self, variableSpecializerPath, moreCallBackAccepted=True):
@@ -344,31 +365,11 @@ class Value(AbstractRelationVariableLeaf):
 
         try:
             newValue = self._computeExpectedValue(variableSpecializerPath)
-
             variableSpecializerPath.addResult(self, newValue)
         except Exception as e:
-            self._logger.debug("Cannot specialize since no value is available for the value dependencies, we create a callback function in case it can be computed later: {0}".format(e))
-            
-            pendingValue = TypeConverter.convert("PENDING VALUE", ASCII, BitArray)
-            variableSpecializerPath.addResult(self, pendingValue)
-            if moreCallBackAccepted:
-                variableSpecializerPath.registerFieldCallBack(self.fieldDependencies, self, parsingCB=False)
-            else:
-                raise e
-            
-        return [variableSpecializerPath]
-
-    def _applyOperation(self, data):
-        """This method can be use to apply the specified operation function to the data parameter.
-        If no operation function is known, the data parameter is returned"""
-
-        if self.__operation is None:
-            return data
-
-        return self.__operation(data)
             self._logger.debug(
                 "Cannot specialize since no value is available for the value dependencies, we create a callback function in case it can be computed later: {0}".
-                format(e))
+                    format(e))
 
             pendingValue = TypeConverter.convert("PENDING VALUE", ASCII,
                                                  BitArray)
@@ -380,6 +381,38 @@ class Value(AbstractRelationVariableLeaf):
                 raise e
 
         return [variableSpecializerPath]
+
+    @typeCheck(SpecializingPath)
+    def regenerateAndMemorize(self, variableSpecializerPath, acceptCallBack=True):
+        """This method participates in the specialization process.
+        It memorizes the value present in the path of the variable
+        """
+
+        self._logger.debug("RegenerateAndMemorize Variable {0}".format(self))
+
+        if variableSpecializerPath is None:
+            raise Exception("VariableSpecializerPath cannot be None")
+
+        if variableSpecializerPath.memory.hasValue(self):
+            old_value = variableSpecializerPath.memory.getValue(self)
+            newValue = self.generate(oldValue = old_value)
+        else:
+            newValue = self.generate()
+        variableSpecializerPath.memory.memorize(self, newValue)
+
+        variableSpecializerPath.addResult(self, newValue)
+
+        return [variableSpecializerPath]
+
+    def _applyOperation(self, data):
+        """This method can be use to apply the specified operation function to the data parameter.
+        If no operation function is known, the data parameter is returned"""
+
+        if self.__operation is None:
+            return data
+
+        return self.__operation(data)
+
 
     # def getValue(self, processingToken):
     #     """Return the current value of targeted field.
@@ -413,31 +446,6 @@ class Value(AbstractRelationVariableLeaf):
     #             b.insert(0, False)
 
     #         return b
-
-    def generate(self, generationStrategy=None,oldValue=None):
-        """Generates a value that respects the requested size and domain constraints.
-
-        """
-        output = bitarray()
-        if self.operation is None:
-            if oldValue is None:
-                if self.initValue is None:
-                    if self.fieldDependencies:
-                        try:
-                            for fieldDepend in self.fieldDependencies:
-                                output += fieldDepend.domain.currentValue
-                        except:
-                            pass
-                else:
-                    output = self.initValue
-            else:
-                output = oldValue
-        else:
-            if oldValue is None:
-                oldValue = self.initValue
-            output = self._applyOperation(oldValue)
-
-        return output
             
     def __str__(self):
         """The str method."""
@@ -459,7 +467,6 @@ class Value(AbstractRelationVariableLeaf):
             raise TypeError("Datatype cannot be None")
         (minSize, maxSize) = dataType.size
         if maxSize is None:
-            raise ValueError("The datatype of a size field must declare its length")
             raise ValueError(
                 "The datatype of a size field must declare its length")
         self.__dataType = dataType
@@ -486,7 +493,8 @@ class Value(AbstractRelationVariableLeaf):
     @typeCheck(int)
     def offset(self, offset):
         if offset is None:
-            raise TypeError("Offset cannot be None, use 0 if no offset should be applied.")
+            raise TypeError(
+                "Offset cannot be None, use 0 if no offset should be applied.")
         self.__offset = offset
 
     @property
@@ -509,6 +517,4 @@ class Value(AbstractRelationVariableLeaf):
     @initValue.setter
     def initValue(self, value):
         self.__initValue = value
-            raise TypeError(
-                "Offset cannot be None, use 0 if no offset should be applied.")
-        self.__offset = offset
+
