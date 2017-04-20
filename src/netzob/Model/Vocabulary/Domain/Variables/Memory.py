@@ -145,13 +145,6 @@ class Memory(object):
         for k in list(self.memory.keys()):
             duplicatedMemory.memory[k] = self.memory[k].copy()
         return duplicatedMemory
-        
-    def __str__(self):
-        result = []
-        for var, value in list(self.memory.items()):
-            result.append("{0}: {1}".format(var, TypeConverter.convert(value, BitArray, Raw)))
-        return '\n'.join(result)
-        
 
     def __str__(self):
         result = []

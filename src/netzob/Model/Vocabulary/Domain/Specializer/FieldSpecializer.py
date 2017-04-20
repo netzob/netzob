@@ -136,7 +136,7 @@ class FieldSpecializer(object):
             specializingPath.addResultToField(self.field, self.arbitraryValue)
             return [specializingPath]
 
-        # does current field has children
+        # does current field have children
         if len(self.field.fields) > 0:
             return self._specializeFieldWithChildren(specializingPath)
         else:

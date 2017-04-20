@@ -74,9 +74,9 @@ class SizeFinder(object):
         #Delete all values that are under the base index
         results_LR = self.__delete_before_baseIndex(results_LR,baseIndex)
         results_RL = self.__delete_before_baseIndex(results_RL,baseIndex)
-        self._logger.debug("Results : \n")
-        self._logger.debug("[Left to right search] : " + str(results_LR) + "\n")
-        self._logger.debug("[Right to left search] : " + str(results_RL) + "\n")
+        self._logger.critical("Results : \n")
+        self._logger.critical("[Left to right search] : " + str(results_LR) + "\n")
+        self._logger.critical("[Right to left search] : " + str(results_RL) + "\n")
         if create_fields:
             if results_LR:
                 self.__create_fields(symbol,results_LR)

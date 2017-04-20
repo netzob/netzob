@@ -109,10 +109,6 @@ class EntropyMeasurement(object):
             raise Exception("Messages cannot be None")
         if len(messages) < 2:
             raise Exception("At least two messages must be provided")
-    
-        values = [m.data for m in messages]
-        return EntropyMeasurement.measure_values_entropy(values)
-            
 
         values = [m.data for m in messages]
         return EntropyMeasurement.measure_values_entropy(values)
@@ -136,14 +132,12 @@ class EntropyMeasurement(object):
 
         if values is None:
             raise Exception("values cannot be None")
-        if len(values) < 1 :
         if len(values) < 1:
             raise Exception("At least one value must be provided")
 
         # computes longuest message
         longuest = max([len(value) for value in values])
 
-        for i_byte in range(longuest):            
         for i_byte in range(longuest):
 
             dataset = []
@@ -161,17 +155,6 @@ class EntropyMeasurement(object):
     def __measure_entropy(values):
         if values is None:
             raise Exception("values cannot be None")
-        if len(values) < 1 :
-            raise Exception("At least one value must be provided")
-
-        entropy = 0
-        for x in range(256):            
-            p_x = float(values.count(x))/len(values)
-            if p_x > 0:
-                entropy += - p_x*math.log(p_x, 2)
-                
-        return entropy
-                    
         if len(values) < 1:
             raise Exception("At least one value must be provided")
 

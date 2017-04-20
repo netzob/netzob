@@ -60,7 +60,6 @@ from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 
 @NetzobLogger
 class Size(AbstractRelationVariableLeaf):
-    """A size relation between a variable and the value of a field
     """A size relation between one variable and a the value of a field
 
     In the following example, a size field is declared after its field.
@@ -160,7 +159,6 @@ class Size(AbstractRelationVariableLeaf):
 
     """
 
-    def __init__(self, fields, dataType=None, factor=1/float(8), offset=0, name=None):
     def __init__(self,
                  fields,
                  dataType=None,
@@ -190,7 +188,6 @@ class Size(AbstractRelationVariableLeaf):
         return hash(self.__key())
 
     @typeCheck(GenericPath)
-    def isDefined(self, parsingPath):        
     def isDefined(self, parsingPath):
         # we retrieve the memory of the current path
         memory = parsingPath.memory
@@ -204,12 +201,6 @@ class Size(AbstractRelationVariableLeaf):
 
         sizeOfPossibleValue = self.dataType.size()
         if sizeOfPossibleValue[0] != sizeOfPossibleValue[1]:
-            raise Exception("Impossible to abstract messages if a size field has a dynamic size")
-
-        content = parsingPath.getDataAssignedToVariable(self)
-        possibleValue = content[:sizeOfPossibleValue[1]]
-        self._logger.warn("Possible value of size field: {0}".format(possibleValue))
-        
             raise Exception(
                 "Impossible to abstract messages if a size field has a dynamic size"
             )
@@ -245,21 +236,6 @@ class Size(AbstractRelationVariableLeaf):
         It creates a VariableSpecializerResult in the provided path if
         the remainingData (or some if it) follows the type definition"""
 
-
-        results = []
-        self._logger.debug("domainCMP executed on {0} by a size domain".format(parsingPath))
-
-        minSize, maxSize = self.dataType.size
-        if minSize != maxSize:
-            raise Exception("Impossible to abstract messages if a size field has a dynamic size")
-
-        content = parsingPath.getDataAssignedToVariable(self)
-        possibleValue = content[:maxSize]
-        
-        expectedValue = None
-        try:
-            expectedValue = self._computeExpectedValue(parsingPath)
-        
         results = []
         self._logger.debug(
             "domainCMP executed on {0} by a size domain".format(parsingPath))
@@ -312,14 +288,12 @@ class Size(AbstractRelationVariableLeaf):
         # first checks the pointed fields all have a value
         hasValue = True
         for field in self.fieldDependencies:
-            if field.domain != self and not parsingPath.isDataAvailableForVariable(field.domain):
             if field.domain != self and not parsingPath.isDataAvailableForVariable(
                     field.domain):
                 self._logger.debug("Field : {0} has no value".format(field.id))
                 hasValue = False
 
         if not hasValue:
-            raise Exception("Expected value cannot be computed, some dependencies are missing for domain {0}".format(self))
             raise Exception(
                 "Expected value cannot be computed, some dependencies are missing for domain {0}".
                 format(self))
@@ -338,7 +312,6 @@ class Size(AbstractRelationVariableLeaf):
                     break
 
                 # Retrieve length of field value
-                if fieldValue == TypeConverter.convert("PENDING VALUE", ASCII, BitArray):
                 if fieldValue == TypeConverter.convert("PENDING VALUE", ASCII,
                                                        BitArray):
                     # Handle case where field value is not currently known.
@@ -351,17 +324,6 @@ class Size(AbstractRelationVariableLeaf):
                     tmpLen = len(fieldValue)
                 size += tmpLen
 
-
-            size = int(size * self.factor + self.offset)
-            size_raw = TypeConverter.convert(size, Integer, Raw, src_unitSize=self.dataType.unitSize)
-            b = TypeConverter.convert(size_raw, Raw, BitArray)
-            
-            # add heading '0'
-            while len(b)<self.dataType.size[0]:
-                b.insert(0, False)
-
-            # in some cases (when unitSize and size are not equal), it may require to delete some '0' in front
-            while len(b)>self.dataType.size[0]:
             size = int(size * self.factor + self.offset)
             size_raw = TypeConverter.convert(
                 size, Integer, Raw, src_unitSize=self.dataType.unitSize)
@@ -392,21 +354,6 @@ class Size(AbstractRelationVariableLeaf):
             newValue = self._computeExpectedValue(variableSpecializerPath)
             variableSpecializerPath.addResult(self, newValue)
         except Exception as e:
-            self._logger.debug("Cannot specialize since no value is available for the size dependencies, we create a callback function in case it can be computed later: {0}".format(e))
-            pendingValue = TypeConverter.convert("PENDING VALUE", ASCII, BitArray)
-            variableSpecializerPath.addResult(self, pendingValue)
-            if moreCallBackAccepted:
-#                for field in self.fields:
-                variableSpecializerPath.registerFieldCallBack(self.fields, self, parsingCB=False)
-
-            else:
-                raise e
-            
-        return [variableSpecializerPath]
-            
-    def __str__(self):
-        """The str method."""
-        return "Size({0}) - Type:{1}".format(str([f.name for f in self.fields]), self.dataType)
             self._logger.debug(
                 "Cannot specialize since no value is available for the size dependencies, we create a callback function in case it can be computed later: {0}".
                 format(e))
@@ -444,7 +391,6 @@ class Size(AbstractRelationVariableLeaf):
             raise TypeError("Datatype cannot be None")
         (minSize, maxSize) = dataType.size
         if maxSize is None:
-            raise ValueError("The datatype of a size field must declare its length")
             raise ValueError(
                 "The datatype of a size field must declare its length")
         self.__dataType = dataType
@@ -471,9 +417,6 @@ class Size(AbstractRelationVariableLeaf):
     @typeCheck(int)
     def offset(self, offset):
         if offset is None:
-            raise TypeError("Offset cannot be None, use 0 if no offset should be applied.")
-        self.__offset = offset
-
             raise TypeError(
                 "Offset cannot be None, use 0 if no offset should be applied.")
         self.__offset = offset

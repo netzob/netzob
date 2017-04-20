@@ -51,13 +51,6 @@ class L2NetworkMessage(RawMessage):
     >>> print(msg.destination)
     00:02:3f:a8:bf:21
     >>> print(msg)
-    [0;32m[1352293417.28 [0;m[1;32m00:02:7b:00:bf:33[1;m[0;32m->[0;m[1;32m00:02:3f:a8:bf:21[1;m[0;32m][0;m b'090002300202f000'
-
-    """
-
-    def __init__(self, data, date=None, l2Protocol=None, l2SourceAddress=None,
-                 l2DestinationAddress=None):
-        super(L2NetworkMessage, self).__init__(data, date=date, source=l2SourceAddress, destination=l2DestinationAddress)
     [0;32m[1352293417.28 [0;m[1;32m00:02:7b:00:bf:33[1;m[0;32m->[0;m[1;32m00:02:3f:a8:bf:21[1;m[0;32m][0;m '090002300202f000'
 
     """

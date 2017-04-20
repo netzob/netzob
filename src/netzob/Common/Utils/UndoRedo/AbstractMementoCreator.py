@@ -52,19 +52,6 @@ class AbstractMementoCreator(object, metaclass=abc.ABCMeta):
     These objects have to provide two methods, storeInMemento and restoreFromMemento both used to save and restore current state of the object."""
 
     @abc.abstractmethod
-    def storeInMemento(self):
-        """This method creates a memento to represent the current state of object.
-        
-        This memento should be stored in the UndoRedo action stack and might be used as a parameter of the restoreFromMemento method.
-        
-        :returns: the created memento representing current object
-        :rtype: netzob.Common.Utils.UndoRedo.AbstractMemento.AbstractMemento
-        
-        """        
-        """
-        return
-
-    @abc.abstractmethod
     def restoreFromMemento(self, memento):
         """This method restores current object internals with provided memento.
 

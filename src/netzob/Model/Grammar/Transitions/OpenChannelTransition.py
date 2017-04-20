@@ -81,7 +81,6 @@ class OpenChannelTransition(AbstractTransition):
         :param name: :class:`str`
 
         """
-        super(OpenChannelTransition, self).__init__(OpenChannelTransition.TYPE, startState, endState, _id, name, priority=0)
         super(OpenChannelTransition, self).__init__(
             OpenChannelTransition.TYPE,
             startState,
@@ -134,7 +133,6 @@ class OpenChannelTransition(AbstractTransition):
         try:
             abstractionLayer.openChannel()
         except Exception as e:
-            self._logger.warning("An error occured which prevented the good execution of the open channel transition")
             self._logger.warning(
                 "An error occured which prevented the good execution of the open channel transition"
             )

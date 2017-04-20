@@ -45,6 +45,7 @@
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
 from netzob.Model.Types.Raw import Raw
 from netzob.Model.Types.BitArray import BitArray
 from netzob.Model.Types.TypeConverter import TypeConverter
@@ -141,10 +142,7 @@ class Field(AbstractField):
 
     """
 
-    def __init__(self, domain=None, name="Field", layer=False,messages = [],specializingPaths = None):
-    """
-
-    def __init__(self, domain=None, name="Field", layer=False):
+    def __init__(self, domain=None, name="Field", layer=False,messages = None,specializingPaths = None):
         """
         :keyword domain: the definition domain of the field (see domain property to get more information)
         :type domain: a :class:`list` of :class:`object`, default is Raw(None)
@@ -158,7 +156,9 @@ class Field(AbstractField):
         if domain is None:
             domain = Raw(None)
         self.domain = domain
-        self.__messages = messages
+        if messages is None:
+            messages = []
+        self.messages = messages
         self.specializingPaths = specializingPaths
 
     def specialize(self):
@@ -213,26 +213,6 @@ class Field(AbstractField):
 
         return TypeConverter.convert(specializingPath.getDataAssignedToVariable(self.domain), BitArray, Raw)
 
-        from netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
-        fs = FieldSpecializer(self)
-        specializingPaths = fs.specialize()
-
-        if len(specializingPaths) < 1:
-            raise Exception("Cannot specialize this field")
-
-        specializingPath = specializingPaths[0]
-
-        self._logger.debug(
-            "field specializing done: {0}".format(specializingPath))
-        if specializingPath is None:
-            raise Exception(
-                "The specialization of the field {0} returned no result.".
-                format(self.name))
-
-        return TypeConverter.convert(
-            specializingPath.getDataAssignedToVariable(self.domain), BitArray,
-            Raw)
-
     @property
     def domain(self):
         """This defines the definition domain of a field.
@@ -261,11 +241,9 @@ class Field(AbstractField):
         :type : a :class:`list` of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
         """
 
-        #if(self.__messages and not self.getSymbol().messages):
-        #    return self.__messages
-        #else:
         try:
-            self.getSymbol().messages
+            self.__messages.extend(self.getSymbol().messages)
+            #Small hack to prevent a bug
             self.__messages = []
             self.__messages.extend(self.getSymbol().messages)
         except Exception as e:
@@ -282,13 +260,23 @@ class Field(AbstractField):
         :param message:
         :return:
         """
+        if message is None:
+            message = []
         if not isinstance(message,list):
             try:
                 self.__messages.append(message)
             except Exception as e:
                 self._logger.debug("Could not add a message to Field: {0}".format(e))
         else:
-            self.__messages = message
+            # First it checks the specified messages are all AbstractMessages
+            for msg in message:
+                if not isinstance(msg, AbstractMessage):
+                    raise TypeError(
+                        "Cannot add messages of type {0} in the session, only AbstractMessages are allowed.".
+                            format(type(msg)))
+            self.__messages = []
+            for msg in message:
+               self.__messages.append(msg)
 
     @property
     def specializingPaths(self):
@@ -298,16 +286,3 @@ class Field(AbstractField):
     @specializingPaths.setter
     def specializingPaths(self, value):
         self.__specializingPaths = value
-        In reality, a field doesn't have messages, it just returns the messages of its symbol
-
-        :type : a :class:`list` of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
-        """
-        messages = []
-        try:
-            messages.extend(self.getSymbol().messages)
-        except Exception as e:
-            self._logger.warning(
-                "The field is attached to no symbol and so it has no messages: {0}".
-                format(e))
-
-        return messages

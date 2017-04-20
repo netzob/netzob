@@ -51,16 +51,6 @@ class L4NetworkMessage(L3NetworkMessage):
     >>> print(msg.destination)
     192.168.10.245:80
     >>> print(msg)
-    [0;32m[1352293417.28 [0;m[1;32m192.168.10.100:2049[1;m[0;32m->[0;m[1;32m192.168.10.245:80[1;m[0;32m][0;m b'090002300202f000'
-
-    """
-
-    def __init__(self, data, date=None, l2Protocol=None, l2SourceAddress=None,
-                 l2DestinationAddress=None, l3Protocol=None, l3SourceAddress=None,
-                 l3DestinationAddress=None, l4Protocol=None, l4SourceAddress=None, l4DestinationAddress=None):
-        super(L4NetworkMessage, self).__init__(data, date, l2Protocol, l2SourceAddress,
-                                               l2DestinationAddress, l3Protocol, l3SourceAddress,
-                                               l3DestinationAddress)
     [0;32m[1352293417.28 [0;m[1;32m192.168.10.100:2049[1;m[0;32m->[0;m[1;32m192.168.10.245:80[1;m[0;32m][0;m '090002300202f000'
 
     """

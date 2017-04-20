@@ -46,8 +46,6 @@ class NetzobImportException(NetzobException):
 
     def __init__(self, source, message, statusCode=None, subCode=None):
         super(NetzobImportException, self).__init__(
-            "Error while importing data from source {0}: {1}".format(
-                source, message))
             "Error while importing data from source {0}: {1}".format(source,
                                                                      message))
         self.message = message

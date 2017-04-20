@@ -60,7 +60,7 @@ from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import Speciali
 
 @NetzobLogger
 class InternetChecksum(AbstractRelationVariableLeaf):
-    """An internet checksum relaton as specified in RFC 1071 (https://www.ietf.org/rfc/rfc1071.txt).
+    r"""An internet checksum relaton as specified in RFC 1071 (https://www.ietf.org/rfc/rfc1071.txt).
     This checksum is used by ICMP, UDP, IP, TCP protocols.
 
 
@@ -69,15 +69,15 @@ class InternetChecksum(AbstractRelationVariableLeaf):
 
     
     >>> from netzob.all import *
-    >>> typeField = Field(name="Type", domain=Raw(b'\\x08'))
-    >>> codeField = Field(name="Code", domain=Raw(b'\\x00'))
+    >>> typeField = Field(name="Type", domain=Raw(b'\x08'))
+    >>> codeField = Field(name="Code", domain=Raw(b'\x00'))
     >>> chksumField = Field(name="Checksum")
-    >>> identField = Field(name="Identifier", domain=Raw(b'\\x1d\\x22'))
-    >>> seqField = Field(name="Sequence Number", domain=Raw(b'\\x00\\x07'))
-    >>> timeField = Field(name="Timestamp", domain=Raw(b'\\xa8\\xf3\\xf6\\x53\\x00\\x00\\x00\\x00'))
+    >>> identField = Field(name="Identifier", domain=Raw(b'\x1d\x22'))
+    >>> seqField = Field(name="Sequence Number", domain=Raw(b'\x00\x07'))
+    >>> timeField = Field(name="Timestamp", domain=Raw(b'\xa8\xf3\xf6\x53\x00\x00\x00\x00'))
     >>> headerField = Field(name="header")
     >>> headerField.fields = [typeField, codeField, chksumField, identField, seqField, timeField]
-    >>> dataField = Field(name="Payload", domain=Raw(b'\\x60\\xb5\\x06\\x00\\x00\\x00\\x00\\x00\\x10\\x11\\x12\\x13\\x14\\x15\\x16\\x17\\x18\\x19\\x1a\\x1b\\x1c\\x1d\\x1e\\x1f\\x20\\x21\\x22\\x23\\x24\\x25\\x26\\x27\\x28\\x29\\x2a\\x2b\\x2c\\x2d\\x2e\\x2f\\x30\\x31\\x32\\x33\\x34\\x35\\x36\\x37'))
+    >>> dataField = Field(name="Payload", domain=Raw(b'\x60\xb5\x06\x00\x00\x00\x00\x00\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x24\x25\x26\x27\x28\x29\x2a\x2b\x2c\x2d\x2e\x2f\x30\x31\x32\x33\x34\x35\x36\x37'))
 
     >>> chksumField.domain = InternetChecksum([headerField, dataField], dataType=Raw(nbBytes=2))
     >>> s = Symbol(fields = [headerField, dataField])
@@ -85,7 +85,6 @@ class InternetChecksum(AbstractRelationVariableLeaf):
     >>> s.messages = msgs
     >>> s.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> print(s)
-    Type | Code | Checksum | Identifier | Sequence Number | Timestamp          | Payload
     Type | Code | Checksum | Identifier | Sequence Number | Timestamp          | Payload                                                                                           
     ---- | ---- | -------- | ---------- | --------------- | ------------------ | --------------------------------------------------------------------------------------------------
     '08' | '00' | '0716'   | '1d22'     | '0007'          | 'a8f3f65300000000' | '60b5060000000000101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f3031323334353637'
@@ -99,7 +98,7 @@ class InternetChecksum(AbstractRelationVariableLeaf):
     >>> field2 = Field(name="afterstat", domain=Raw(b'\x0c\x00\x01'))
     >>> fieldCS = Field(name="CS",domain=InternetChecksum([field1,field2]))
     >>> sym = Symbol(messages=[messageCS,messageCS2],fields=[fieldCS,field1,field2])
-    >>> print(sym)
+    >>> print(sym)# doctest: +NORMALIZE_WHITESPACE
     CS       | aftermut | afterstat
     -------- | -------- | --------------
     b'2\x9d' | b'U\xcd' | '\x0c\x00\x01'
@@ -111,13 +110,10 @@ class InternetChecksum(AbstractRelationVariableLeaf):
     def __init__(self, fields, dataType=None, name=None):
         if isinstance(fields, AbstractField):
             fields = [fields]
-        super(InternetChecksum, self).__init__("InternetChecksum", fieldDependencies=fields, name=name)
-        if dataType is None:
-            dataType = Raw(nbBytes=2)
         super(InternetChecksum, self).__init__(
             "InternetChecksum", fieldDependencies=fields, name=name)
         if dataType is None:
-            dataType = Raw(nbBytes=1)
+            dataType = Raw(nbBytes=2)
         self.dataType = dataType
 
     def __key(self):
@@ -223,7 +219,6 @@ class InternetChecksum(AbstractRelationVariableLeaf):
                 parsingPath.addResult(self, expectedValue.copy())
                 results.append(parsingPath)
             else:
-               self._logger.debug("Executed callback has failed.")
                 self._logger.debug("Executed callback has failed.")
         except Exception as e:
             # the expected value cannot be computed
@@ -247,14 +242,14 @@ class InternetChecksum(AbstractRelationVariableLeaf):
 
     @typeCheck(GenericPath)
     def _computeExpectedValue(self, parsingPath):
-        self._logger.debug("compute expected value for Internet checksum field")
         self._logger.debug(
             "compute expected value for Internet checksum field")
 
         # first checks the pointed fields all have a value
         hasValue = True
         for field in self.fieldDependencies:
-            if field.domain != self and not parsingPath.isDataAvailableForVariable(field.domain):
+            if field.domain != self and not parsingPath.isDataAvailableForVariable(
+                    field.domain):
                 try:
                     field.domain.children
                     for child in field.domain.children:
@@ -264,25 +259,9 @@ class InternetChecksum(AbstractRelationVariableLeaf):
                     hasValue = False
 
         if not hasValue:
-            raise Exception("Expected value cannot be computed, some dependencies are missing for domain {0}".format(self))
-        else:
-            fieldValues = []
-            for field in self.fieldDependencies:
-                # Retrieve field value
-                if field.domain is self:
-                    fieldSize = random.randint(field.domain.dataType.size[0], field.domain.dataType.size[1])
-                    fieldValue = b"\x00" * int(fieldSize / 8)
-                else:
-                    fieldValue = TypeConverter.convert(parsingPath.getDataAssignedToVariable(field.domain), BitArray, Raw)
-            if field.domain != self and not parsingPath.isDataAvailableForVariable(
-                    field.domain):
-                self._logger.debug("Field : {0} has no value".format(field.id))
-                hasValue = False
-
-        if not hasValue:
             raise Exception(
                 "Expected value cannot be computed, some dependencies are missing for domain {0}".
-                format(self))
+                    format(self))
         else:
             fieldValues = []
             for field in self.fieldDependencies:
@@ -302,7 +281,6 @@ class InternetChecksum(AbstractRelationVariableLeaf):
             fieldValues = b''.join(fieldValues)
             # compute the checksum of this value
             chsum = self.__checksum(fieldValues)
-            b = TypeConverter.convert(chsum, Integer, BitArray, src_unitSize=AbstractType.UNITSIZE_16, src_sign = AbstractType.SIGN_UNSIGNED)
             b = TypeConverter.convert(
                 chsum,
                 Integer,
@@ -326,34 +304,22 @@ class InternetChecksum(AbstractRelationVariableLeaf):
             newValue = self._computeExpectedValue(variableSpecializerPath)
             variableSpecializerPath.addResult(self, newValue.copy())
         except Exception as e:
-            self._logger.debug("Cannot specialize since no value is available for the Internet checksum dependencies, we create a callback function in case it can be computed later: {0}".format(e))
-            pendingValue = TypeConverter.convert("PENDING VALUE", ASCII, BitArray)
-            variableSpecializerPath.addResult(self, pendingValue)
-
-            if moreCallBackAccepted:
-#                for field in self.fields:
                 variableSpecializerPath.registerFieldCallBack(self.fieldDependencies, self, parsingCB=False)
-            self._logger.debug(
-                "Cannot specialize since no value is available for the Internet checksum dependencies, we create a callback function in case it can be computed later: {0}".
-                format(e))
-            pendingValue = TypeConverter.convert("PENDING VALUE", ASCII,
+                self._logger.debug(
+                "Cannot specialize since no value is available for the Internet checksum dependencies, we create a callback function in case it can be computed later: {0}".format(e))
+                pendingValue = TypeConverter.convert("PENDING VALUE", ASCII,
                                                  BitArray)
-            variableSpecializerPath.addResult(self, pendingValue)
+                variableSpecializerPath.addResult(self, pendingValue)
 
-            if moreCallBackAccepted:
+                if moreCallBackAccepted:
                 #                for field in self.fields:
-                variableSpecializerPath.registerFieldCallBack(
-                    self.fieldDependencies, self, parsingCB=False)
-            else:
-                raise e
+                    variableSpecializerPath.registerFieldCallBack(
+                        self.fieldDependencies, self, parsingCB=False)
+                else:
+                    raise e
 
         return [variableSpecializerPath]
 
-
-
-    def __checksum(self, msg):
-
-        self._logger.debug("Computing checksum of {0}, {1}".format(TypeConverter.convert(msg, Raw, HexaString), len(msg)))
     def __checksum(self, msg):
         self._logger.debug("Computing checksum of {0}, {1}".format(
             TypeConverter.convert(msg, Raw, HexaString), len(msg)))
@@ -367,7 +333,6 @@ class InternetChecksum(AbstractRelationVariableLeaf):
             if i + 1 >= len(msg):
                 w = msg[i] & 0xFF
             else:
-                w = msg[i] + (msg[i+1] << 8)
                 w = msg[i] + (msg[i + 1] << 8)
             s = carry_around_add(s, w)
         res = ~s & 0xffff
@@ -375,7 +340,6 @@ class InternetChecksum(AbstractRelationVariableLeaf):
 
     def __str__(self):
         """The str method."""
-        return "InternetChecksum({0}) - Type:{1}".format(str([f.name for f in self.fieldDependencies]), self.dataType)
         return "InternetChecksum({0}) - Type:{1}".format(
             str([f.name for f in self.fieldDependencies]), self.dataType)
 
@@ -395,10 +359,6 @@ class InternetChecksum(AbstractRelationVariableLeaf):
             raise TypeError("Datatype cannot be None")
         (minSize, maxSize) = dataType.size
         if maxSize is None:
-            raise ValueError("The datatype of a checksum field must declare its length")
-        self.__dataType = dataType
-
-
             raise ValueError(
                 "The datatype of a checksum field must declare its length")
         self.__dataType = dataType

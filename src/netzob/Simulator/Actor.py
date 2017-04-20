@@ -117,28 +117,12 @@ class Actor(threading.Thread):
 
     def run(self):
         """Entry point of an actor executed when the thread is started."""        
-        """Entry point of an actor executed when the thread is started."""
 
         currentState = self.automata.initialState
         while not self.__stopEvent.isSet():
             try:
                 self._logger.debug("Current state: {0}.".format(currentState))
                 if self.initiator:
-                    currentState = currentState.executeAsInitiator(self.abstractionLayer)
-                else:
-                    currentState = currentState.executeAsNotInitiator(self.abstractionLayer)
-
-                if currentState is None:
-                    self._logger.warning("The execution of transition did not returned a state")
-                    self.stop()
-
-            except Exception as e:
-                self._logger.warning("Exception raised when on the execution of state {0}.".format(currentState.name))
-                self._logger.warning("Exception error: {0}".format(str(e)))
-                
-                self.stop()
-
-        self._logger.debug("Actor {0} has finished to execute".format(self.name))
                     currentState = currentState.executeAsInitiator(
                         self.abstractionLayer)
                 else:

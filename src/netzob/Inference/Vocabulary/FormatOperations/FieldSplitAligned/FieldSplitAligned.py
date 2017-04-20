@@ -164,7 +164,6 @@ class FieldSplitAligned(object):
 
     """
 
-    def __init__(self, unitSize=AbstractType.UNITSIZE_8, doInternalSlick=False):
     def __init__(self, unitSize=AbstractType.UNITSIZE_8,
                  doInternalSlick=False):
         """Constructor.
@@ -196,7 +195,6 @@ class FieldSplitAligned(object):
         # Semantic tags (a.k.a applicative data)
         semanticTags = None
         if useSemantic:
-            semanticTags = [self.__searchApplicativeDataInMessage(message) for message, values in list(messageValues.items())]
             semanticTags = [
                 self.__searchApplicativeDataInMessage(message)
                 for message, values in list(messageValues.items())
@@ -205,12 +203,6 @@ class FieldSplitAligned(object):
         if len(list(messageValues.values())) == 0:
             return
 
-        # Execute the alignement
-        (alignment, semanticTags, score) = self._alignData(list(messageValues.values()), semanticTags)
-
-        # Check the results
-        if alignment is None:
-            raise ValueError("Impossible to compute an alignment for the specifed data")
         (alignment, semanticTags, score) = self._alignData(
             list(messageValues.values()), semanticTags)
 
@@ -260,7 +252,6 @@ class FieldSplitAligned(object):
             if entryDyn:
                 newField = Field(Raw(nbBytes=(0, int(len(entryVal) / 2))))
             else:
-                newField = Field(Raw(TypeConverter.convert(entryVal, HexaString, Raw)))
                 newField = Field(
                     Raw(TypeConverter.convert(entryVal, HexaString, Raw)))
             step1Fields.append(newField)
@@ -303,7 +294,6 @@ class FieldSplitAligned(object):
         if len(align) == 1:
             return ([[chr(align[0]), chr(align[0]) == "-"]], [])
         elif len(align) == 2:
-            return ([[chr(align[0]), chr(align[0]) == "-"]], [[chr(align[1]), chr(align[1]) == "-"]])
             return ([[chr(align[0]), chr(align[0]) == "-"]],
                     [[chr(align[1]), chr(align[1]) == "-"]])
 
@@ -321,8 +311,6 @@ class FieldSplitAligned(object):
         return (mergedLeftAlign, mergedRightAlign)
 
     def _mergeAlign(self, leftAlign, rightAlign):
-        if len(leftAlign) == 0:
-            return rightAlign
         if len(rightAlign) == 0:
             return leftAlign
         if leftAlign[-1][1] == rightAlign[0][1]:
@@ -385,7 +373,6 @@ class FieldSplitAligned(object):
 
         for val in values:
             if val is None or not isinstance(val, bytes):
-                raise TypeError("At least one value is None or not an str which is not authorized.")
                 raise TypeError(
                     "At least one value is None or not an str which is not authorized."
                 )
@@ -394,10 +381,6 @@ class FieldSplitAligned(object):
             semanticTags = [OrderedDict() for v in values]
 
         if len(semanticTags) != len(values):
-            raise TypeError("There should be a list of semantic tags for each value")
-
-        # Prepare the argument to send to the C wrapper
-        toSend = [(values[iValue], semanticTags[iValue]) for iValue in range(len(values))]
             raise TypeError(
                 "There should be a list of semantic tags for each value")
 
@@ -409,7 +392,6 @@ class FieldSplitAligned(object):
         wrapper.typeList[wrapper.function](toSend)
 
         debug = False
-        (score1, score2, score3, regex, mask, semanticTags) = _libNeedleman.alignMessages(self.doInternalSlick, self._cb_executionStatus, debug, wrapper)
         (score1, score2, score3, regex, mask,
          semanticTags) = _libNeedleman.alignMessages(
              self.doInternalSlick, self._cb_executionStatus, debug, wrapper)
@@ -417,7 +399,6 @@ class FieldSplitAligned(object):
 
         # Deserialize returned info
         alignment = self._deserializeAlignment(regex, mask, self.unitSize)
-        semanticTags = self._deserializeSemanticTags(semanticTags, self.unitSize)
         semanticTags = self._deserializeSemanticTags(semanticTags,
                                                      self.unitSize)
         return (alignment, semanticTags, scores)
@@ -445,14 +426,6 @@ class FieldSplitAligned(object):
             for applicativeD in message.session.applicativeData:
                 appValues[applicativeD.value] = applicativeD.name
         else:
-            self._logger.debug("Message is not attached to a session, so no applicative data will be considered while computing the alignment.")
-
-        if len(appValues) > 0:
-            searchResults = SearchEngine.searchInMessage(list(appValues.keys()), message, addTags=False)
-            for searchResult in searchResults:
-                for (startResultRange, endResultRange) in searchResult.ranges:
-                    appDataName = appValues[searchResult.searchTask.properties["data"]]
-                    for pos in range(int(startResultRange/4), int(endResultRange/4)):
             self._logger.debug(
                 "Message is not attached to a session, so no applicative data will be considered while computing the alignment."
             )
@@ -472,7 +445,6 @@ class FieldSplitAligned(object):
         return results
 
     @typeCheck(AbstractField, str, dict)
-    def _createSubFieldsFollowingSemanticTags(self, rootField, align, semanticTags):
     def _createSubFieldsFollowingSemanticTags(self, rootField, align,
                                               semanticTags):
         """Searches for subfields which should be created because of identified semantic boundaries.
@@ -491,12 +463,6 @@ class FieldSplitAligned(object):
 
         if len(originalFields) == 1 and rootField == originalFields[0]:
             # We are dealing with a specific field
-            self._logger.debug("Analyze sub fields for {0}".format(rootField.regex))
-
-            if len(set(rootField.getValues())) == 1:
-                self._createSubFieldsForAStaticField(rootField, align, semanticTags)
-            else:
-                self._createSubFieldsForADynamicField(rootField, align, semanticTags)
             self._logger.debug(
                 "Analyze sub fields for {0}".format(rootField.regex))
 
@@ -514,7 +480,6 @@ class FieldSplitAligned(object):
             currentIndex = 0
 
             for field in originalFields:
-                self._logger.debug("field regex = {0} (maxSize={1})".format(field.regex, field.domain.maxSize()))
                 self._logger.debug("field regex = {0} (maxSize={1})".format(
                     field.regex, field.domain.maxSize()))
 
@@ -522,11 +487,6 @@ class FieldSplitAligned(object):
                 lengthField = (int(field.domain.maxSize() / 4))
 
                 # Find semantic tags related to the current section
-                sectionSemanticTags = OrderedDict((k, semanticTags[k]) for k in range(currentIndex, currentIndex + lengthField))
-
-                # reccursive call
-                self._logger.debug("Working on field : {0}".format(field.name))
-                self._createSubFieldsFollowingSemanticTags(field, align[currentIndex:currentIndex + lengthField], sectionSemanticTags)
                 sectionSemanticTags = OrderedDict(
                     (k, semanticTags[k])
                     for k in range(currentIndex, currentIndex + lengthField))
@@ -543,10 +503,6 @@ class FieldSplitAligned(object):
         """createSubFieldsForAStaticField:
         Analyzes the static field provided and create sub fields following
         the provided semantic tags."""
-        self._logger.debug("Create subfields for static field {0} : {1}".format(field.getName(), align))
-
-        if len(field.getLocalFields()) > 0:
-            self._logger.warning("Impossible to create sub fields for this field since its not cleaned")
         self._logger.debug("Create subfields for static field {0} : {1}".
                            format(field.getName(), align))
 
@@ -577,7 +533,6 @@ class FieldSplitAligned(object):
 
         if len(subFields) > 1:
             for iSubField, subFieldValue in enumerate(subFields):
-                subField = Field(b"{0}_{1}".format(field.getName(), iSubField), b"({0})".format(subFieldValue), field.getSymbol())
                 subField = Field(b"{0}_{1}".format(field.getName(), iSubField),
                                  b"({0})".format(subFieldValue),
                                  field.getSymbol())
@@ -594,7 +549,6 @@ class FieldSplitAligned(object):
         if semanticTags is None:
             raise TypeError("SemanticTags cannot be None")
 
-        self._logger.debug("Create subfields for dynamic field {0} : {1}".format(field.name, field.regex))
         self._logger.debug("Create subfields for dynamic field {0} : {1}".
                            format(field.name, field.regex))
 
@@ -609,7 +563,6 @@ class FieldSplitAligned(object):
             if tag != currentTag:
                 # Create a sub field
                 if currentTagLength > 0:
-                    values = self._getFieldValuesWithTag(field, semanticTagsForEachMessage, currentTag)
                     values = self._getFieldValuesWithTag(
                         field, semanticTagsForEachMessage, currentTag)
                     subFields.append((currentTag, values))
@@ -617,7 +570,6 @@ class FieldSplitAligned(object):
             currentTag = tag
             currentTagLength += 1
         if currentTagLength > 0:
-            values = self._getFieldValuesWithTag(field, semanticTagsForEachMessage, currentTag)
             values = self._getFieldValuesWithTag(
                 field, semanticTagsForEachMessage, currentTag)
             subFields.append((currentTag, values))
@@ -634,7 +586,6 @@ class FieldSplitAligned(object):
                             minValue = len(v)
                         if maxValue is None or len(v) > maxValue:
                             maxValue = len(v)
-                    subField = Field(b"{0}_{1}".format(field.getName(), iSubField), b"(.{" + str(minValue) + b"," + str(maxValue) + b"})", field.getSymbol())
                     subField = Field(
                         b"{0}_{1}".format(field.getName(), iSubField),
                         b"(.{" + str(minValue) + b"," + str(maxValue) + b"})",
@@ -645,7 +596,6 @@ class FieldSplitAligned(object):
                     # create regex based on unique values
                     newRegex = '|'.join(list(set(values)))
                     newRegex = b"({0})".format(newRegex)
-                    subField = Field(b"{0}_{1}".format(field.getName(), iSubField), newRegex, field.getSymbol())
                     subField = Field(b"{0}_{1}".format(field.getName(),
                                                        iSubField), newRegex,
                                      field.getSymbol())
@@ -683,7 +633,6 @@ class FieldSplitAligned(object):
                 for i in range(initial, end):
                     del tagsInMessage[i]
 
-        if b"" not in values and len(list(semanticTagsForEachMessage.keys())) > len(values):
         if b"" not in values and len(
                 list(semanticTagsForEachMessage.keys())) > len(values):
             values.append(b"")
@@ -706,13 +655,6 @@ class FieldSplitAligned(object):
         j = 0
         for iTag, tag in enumerate(arTags):
             if tag != b"None":
-                result[j]=tag[2:-2]
-            else:
-                result[j]=tag
-
-            if unitSize == AbstractType.UNITSIZE_8:
-                j = j + 1
-                result[j] = result[j-1]
                 result[j] = tag[2:-2]
             else:
                 result[j] = tag
@@ -727,7 +669,6 @@ class FieldSplitAligned(object):
 
         return result
 
-    def _deserializeAlignment(self, regex, mask, unitSize=AbstractType.UNITSIZE_8):
     def _deserializeAlignment(self,
                               regex,
                               mask,
@@ -740,8 +681,6 @@ class FieldSplitAligned(object):
         @param unitSize the unitSize
         @returns the python alignment
         """
-        if not (unitSize == AbstractType.UNITSIZE_8 or unitSize == AbstractType.UNITSIZE_4):
-            raise ValueError("Deserializing with unitSize {0} not yet implemented, only 4 and 8 supported.".format(unitSize))
         if not (unitSize == AbstractType.UNITSIZE_8 or
                 unitSize == AbstractType.UNITSIZE_4):
             raise ValueError(
@@ -758,9 +697,6 @@ class FieldSplitAligned(object):
                         align += b"-"
                 else:
                     if unitSize == AbstractType.UNITSIZE_8:
-                        align += TypeConverter.convert(regex[i:i + 1], Raw, HexaString)
-                    elif unitSize == AbstractType.UNITSIZE_4:
-                        align += TypeConverter.convert(regex[i:i + 1], Raw, HexaString)[1:]
                         align += TypeConverter.convert(regex[i:i + 1], Raw,
                                                        HexaString)
                     elif unitSize == AbstractType.UNITSIZE_4:
@@ -789,9 +725,6 @@ class FieldSplitAligned(object):
         if unitSize is None:
             raise TypeError("Unitsize cannot be None")
         if unitSize not in AbstractType.supportedUnitSizes():
-            raise TypeError("Specified unitsize is not supported, refers to AbstractType.supportedUnitSizes() for the list.")
-        self.__unitSize = unitSize
-
             raise TypeError(
                 "Specified unitsize is not supported, refers to AbstractType.supportedUnitSizes() for the list."
             )

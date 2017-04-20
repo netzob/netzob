@@ -239,7 +239,7 @@ class ProtocolPacket(ProtocolLayer):
     def __init__(self, header_size, tail_size):
         self.__HEADER_SIZE = header_size
         self.__TAIL_SIZE = tail_size
-       self.__header = PacketBuffer(self.__HEADER_SIZE)
+        self.__header = PacketBuffer(self.__HEADER_SIZE)
         self.__body = PacketBuffer()
         self.__tail = PacketBuffer(self.__TAIL_SIZE)
 
@@ -564,7 +564,7 @@ class Ethernet(Header):
 
     def set_ether_type(self, aValue):
         "Set ethernet data type field to 'aValue'"
-       self.set_word(12 + 4 * self.tag_cnt, aValue)
+        self.set_word(12 + 4 * self.tag_cnt, aValue)
 
     def get_ether_type(self):
         "Return ethernet data type field"
@@ -770,7 +770,7 @@ class IP(Header):
         self.set_ip_hl(5)
         self.set_ip_ttl(255)
         self.__option_list = []
-       if (aBuffer):
+        if (aBuffer):
             # When decoding, checksum shouldn't be modified
             self.auto_checksum = 0
             self.load_header(aBuffer)
@@ -1225,7 +1225,7 @@ class IPOption(PacketBuffer):
         else:
             tmp_str += "Code: %d " % op
 
-       if op == IPOption.IPOPT_RR or op == IPOption.IPOPT_LSRR or op == IPOption.IPOPT_SSRR:
+        if op == IPOption.IPOPT_RR or op == IPOption.IPOPT_LSRR or op == IPOption.IPOPT_SSRR:
             tmp_str += self.print_addresses()
 
         return tmp_str

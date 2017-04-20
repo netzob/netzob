@@ -149,7 +149,6 @@ class AbstractVariable(object):
             raise ValueError("name cannot be None")
         name = name.strip()
         if len(name) == 0:
-            raise ValueError("name must be defined even after being trimmed (len>0)")
             raise ValueError(
                 "name must be defined even after being trimmed (len>0)")
         self.__name = name

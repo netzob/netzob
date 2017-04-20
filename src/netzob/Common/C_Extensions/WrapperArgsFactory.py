@@ -43,13 +43,6 @@ class WrapperArgsFactory(object):
 
     def __init__(self, function):
         self.typeList = {
-            "_libScoreComputation.computeSimilarityMatrix": self.computeSimilarityMatrix,
-            "_libNeedleman.alignMessages": self.alignMessages}
-
-        if(function in list(self.typeList.keys())):
-            self.function = function
-        else:
-            raise NetzobException("Function " + str(function) + " not implemented")
             "_libScoreComputation.computeSimilarityMatrix":
             self.computeSimilarityMatrix,
             "_libNeedleman.alignMessages":

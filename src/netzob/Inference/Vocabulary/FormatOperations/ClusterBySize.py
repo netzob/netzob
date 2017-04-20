@@ -74,17 +74,6 @@ class ClusterBySize(object):
         ...     print("[" + sym.name + "]")
         ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
         ...     print(sym)
-        [symbol_9]
-        Field               
-        --------------------
-        '00ffffffff1100abcd'
-        --------------------
-        [symbol_5]
-        Field       
-        ------------
-        '001100abcd'
-        '001100ffff'
-        ------------
         [symbol_7]
         Field           
         ----------------

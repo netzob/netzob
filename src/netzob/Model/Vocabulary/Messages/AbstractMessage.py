@@ -55,7 +55,6 @@ from netzob.Model.Vocabulary.Functions.VisualizationFunction import Visualizatio
 class AbstractMessage(SortableObject):
     """Every message must inherits from this class"""
 
-    def __init__(self, data, _id=None, session=None, date=None, source=None, destination=None):
     def __init__(self,
                  data,
                  _id=None,
@@ -160,7 +159,6 @@ class AbstractMessage(SortableObject):
     def clearVisualizationFunctions(self):
         """Remove all the visualization functions attached to the current element"""
 
-        while(len(self.__visualizationFunctions) > 0):
         while (len(self.__visualizationFunctions) > 0):
             self.__visualizationFunctions.pop()
 
@@ -189,14 +187,16 @@ class AbstractMessage(SortableObject):
             tmpData = b"".join(functionTable.getResult())
         except:
             tmpData = "".join(functionTable.getResult())
-        tmpData = b"".join(functionTable.getResult()).decode('utf-8')
+        try:
+            tmpData = b"".join(functionTable.getResult()).decode('utf-8')
+        except:
+            tmpData = b"".join(functionTable.getResult()).decode('iso-8859-1')
 
         # Add header in front of the data
         HLS1 = "\033[0;32m"
         HLE1 = "\033[0;m"
         HLS2 = "\033[1;32m"
         HLE2 = "\033[1;m"
-        header = HLS1 + "[{0} {1}{2}{3}->{4}{5}{6}]".format(self.date, HLE1 + HLS2, self.source, HLE2 + HLS1, HLE1 + HLS2, self.destination, HLE2 + HLS1) + HLE1
         header = HLS1 + "[{0} {1}{2}{3}->{4}{5}{6}]".format(
             self.date, HLE1 + HLS2, self.source, HLE2 + HLS1, HLE1 + HLS2,
             self.destination, HLE2 + HLS1) + HLE1

@@ -121,7 +121,6 @@ class HexaString(AbstractType):
 
     @staticmethod
     @typeCheck(str)
-    def decode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
     def decode(data,
                unitSize=AbstractType.defaultUnitSize(),
                endianness=AbstractType.defaultEndianness(),
@@ -164,7 +163,6 @@ class HexaString(AbstractType):
         return binascii.unhexlify(data)
 
     @staticmethod
-    def encode(data, unitSize=AbstractType.defaultUnitSize(), endianness=AbstractType.defaultEndianness(), sign=AbstractType.defaultSign()):
     def encode(data,
                unitSize=AbstractType.defaultUnitSize(),
                endianness=AbstractType.defaultEndianness(),

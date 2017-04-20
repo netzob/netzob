@@ -556,7 +556,6 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         """
         from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
         for field in fields:
-            try:                
             try:
                 DataAlignment.align([data], field, encoded=False)
                 return field
@@ -566,7 +565,6 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         from netzob.Model.Vocabulary.UnknownSymbol import UnknownSymbol
         from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
         unknown_symbol = UnknownSymbol(RawMessage(data))
-        logging.error("Impossible to abstract the message in one of the specified symbols, we create an unknown symbol for it: '%s'", unknown_symbol)
         logging.error(
             "Impossible to abstract the message in one of the specified symbols, we create an unknown symbol for it: '%s'",
             unknown_symbol)
@@ -589,7 +587,6 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         elif self.hasParent():
             return self.parent.getSymbol()
         else:
-            raise NoSymbolException("Impossible to retrieve the symbol attached to this element")
             raise NoSymbolException(
                 "Impossible to retrieve the symbol attached to this element")
 
@@ -641,7 +638,6 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         leafFields = []
         for fields in self.fields:
             if fields is not None:
-                leafFields.extend(fields._getLeafFields(depth, currentDepth + 1))
                 leafFields.extend(
                     fields._getLeafFields(depth, currentDepth + 1))
 
@@ -658,7 +654,6 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
     def clearFields(self):
         """Remove all the children attached to the current element"""
 
-        while(len(self.__fields) > 0):
         while (len(self.__fields) > 0):
             self.__fields.pop()
 
@@ -671,14 +666,12 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
     def clearVisualizationFunctions(self):
         """Remove all the visualization functions attached to the current element"""
 
-        while(len(self.__visualizationFunctions) > 0):
         while (len(self.__visualizationFunctions) > 0):
             self.__visualizationFunctions.pop()
 
     def clearTransformationFunctions(self):
         """Remove all the transformation functions attached to the current element"""
 
-        while(len(self.__transformationFunctions) > 0):
         while (len(self.__transformationFunctions) > 0):
             self.__transformationFunctions.pop()
 
@@ -842,7 +835,6 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         if fields is not None:
             for c in fields:
                 if not isinstance(c, Field):
-                    raise TypeError("Cannot edit the fields because at least one specified element is not an AbstractField its a {0}.".format(type(c)))
                     raise TypeError(
                         "Cannot edit the fields because at least one specified element is not an AbstractField its a {0}.".
                         format(type(c)))
@@ -868,7 +860,6 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
     @parent.setter
     def parent(self, parent):
         if not isinstance(parent, AbstractField):
-            raise TypeError("Specified parent must be an AbstractField and not an {0}".format(type(parent)))
             raise TypeError(
                 "Specified parent must be an AbstractField and not an {0}".
                 format(type(parent)))

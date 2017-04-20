@@ -63,16 +63,12 @@ class DomainEncodingFunction(EncodingFunction):
     >>> m = RawMessage(b"There are " + TypeConverter.convert(10, Integer, Raw) + b" solutions.")
     >>> s = Symbol(fields=[f], messages=[m], name="Symbol")
     >>> s.addEncodingFunction(TypeEncodingFunction(ASCII))
-    >>> print(s)
+    >>> print(s)# doctest: +NORMALIZE_WHITESPACE
     f0
     -------------------------
     'There are \\n solutions.'
     -------------------------
 
-    f0                      
-    ------------------------
-    'There are . solutions.'
-    ------------------------
     """
 
     def encode(self, field, readingToken):

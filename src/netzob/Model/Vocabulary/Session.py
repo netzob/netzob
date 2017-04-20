@@ -68,7 +68,6 @@ class Session(object):
 
     """
 
-    def __init__(self, messages=None, _id=None, applicativeData=None, name="Session"):
     def __init__(self,
                  messages=None,
                  _id=None,
@@ -134,7 +133,6 @@ class Session(object):
         # First it checks the specified messages are all AbstractMessages
         for msg in messages:
             if not isinstance(msg, AbstractMessage):
-                raise TypeError("Cannot add messages of type {0} in the session, only AbstractMessages are allowed.".format(type(msg)))
                 raise TypeError(
                     "Cannot add messages of type {0} in the session, only AbstractMessages are allowed.".
                     format(type(msg)))
@@ -167,7 +165,6 @@ class Session(object):
         return self.__applicativeData
 
     def clearApplicativeData(self):
-        while(len(self.__applicativeData) > 0):
         while (len(self.__applicativeData) > 0):
             self.__applicativeData.pop()
 
@@ -175,7 +172,6 @@ class Session(object):
     def applicativeData(self, applicativeData):
         for app in applicativeData:
             if not isinstance(app, ApplicativeData):
-                raise TypeError("Cannot add an applicative data with type {0}, only ApplicativeData accepted.".format(type(app)))
                 raise TypeError(
                     "Cannot add an applicative data with type {0}, only ApplicativeData accepted.".
                     format(type(app)))
@@ -219,7 +215,6 @@ class Session(object):
             dst = message.destination
             endpoints1 = (src, dst)
             endpoints2 = (dst, src)
-            if (not endpoints1 in endpointsList) and (not endpoints2 in endpointsList):
             if (not endpoints1 in endpointsList) and (
                     not endpoints2 in endpointsList):
                 endpointsList.append(endpoints1)
@@ -262,7 +257,6 @@ class Session(object):
                         src = message.source
                     if dst is None:
                         dst = message.destination
-            trueSession = Session(messages=trueSessionMessages, applicativeData=self.applicativeData, name="Session: '" + str(src) + "' - '" + str(dst) + "'")
             trueSession = Session(
                 messages=trueSessionMessages,
                 applicativeData=self.applicativeData,
@@ -324,13 +318,6 @@ class Session(object):
 
         abstractSession = []
         if not self.isTrueSession():
-            self._logger.warn("The current session cannot be abstracted as it not a true session (i.e. it may contain inner true sessions).")
-            return abstractSession
-        for message in list(self.messages.values()):
-            symbol = AbstractField.abstract(message.data, symbolList)
-            abstractSession.append((message.source, message.destination, symbol))
-        return abstractSession
-
             self._logger.warn(
                 "The current session cannot be abstracted as it not a true session (i.e. it may contain inner true sessions)."
             )
