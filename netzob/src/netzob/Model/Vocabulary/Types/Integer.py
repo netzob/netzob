@@ -82,8 +82,8 @@ class Integer(AbstractType):
     >>> print(raw)
     Raw=b'\\n' ((0, 8))
 
-    Its not possible to convert if the object has not value
-    >>> a = Integer(nbUnits=3)
+    It is not possible to convert if the object has not value
+    >>> a = Integer()
     >>> a.convertValue(Raw)
     Traceback (most recent call last):
     ...
@@ -94,7 +94,6 @@ class Integer(AbstractType):
     def __init__(self,
                  value=None,
                  interval=None,
-                 nbUnits=None,
                  unitSize=AbstractType.defaultUnitSize(),
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign()):
@@ -119,8 +118,6 @@ class Integer(AbstractType):
             nbBits = int(
                 self._computeNbUnitSizeForInterval(interval, unitSize,
                                                    sign)) * int(unitSize)
-        elif nbUnits is not None:
-            nbBits = nbUnits * int(unitSize)
         else:
             nbBits = int(unitSize)
 
