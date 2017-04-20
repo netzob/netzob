@@ -48,8 +48,15 @@ from netzob.Common.Utils.Decorators import typeCheck
 
 
 class AbstractState(object, metaclass=abc.ABCMeta):
-    """Implementation of the abstract state. Every kind of state usable
-    in the grammar of a protocol should inherit from this abstract class.
+    """This class represents the interface of the abstract state. Every
+    kind of state usable in the grammar of a protocol should inherit
+    from this abstract class.
+
+    The AbstractState constructor expects some parameters:
+
+    :param name: The name of the state. The default value is `None`.
+    :type name: :class:`str`, optional
+
     """
 
     def __init__(self, name=None):

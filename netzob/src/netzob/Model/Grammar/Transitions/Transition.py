@@ -54,12 +54,35 @@ from netzob.Simulator.AbstractionLayer import AbstractionLayer
 
 @NetzobLogger
 class Transition(AbstractTransition):
-    """Represents a transition between two states.
+    """This class represents a transition between two states (an initial
+    state and an end state) in an automaton. The initial state and the
+    end state can be the same.
+
+    The Transition constructor expects some parameters:
+
+    :param startState: The initial state of the transition.
+    :param endState: The end state of the transition
+    :param inputSymbol: The input symbol which triggers the execution of the transition. The default value is `None`
+    :param outputSymbols: A list of output symbols that can be generated when the current transition is executed. The default value is `None`
+    :param _id: The unique identifier of the transition. The default value is a randomly generated UUID.
+    :param name: The name of the transition. The default value is `None`
+    :type startState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`, required
+    :type endState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`, required
+    :type inputSymbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`, optional
+    :type outputSymbols: a :class:`list` of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`, optional
+    :type _id: :class:`uuid.UUID`, optional
+    :type name: :class:`str`, optional
+
+    The following example shows the definition of a transition `t` between
+    two states `s0` and `s1`:
 
     >>> from netzob.all import *
     >>> s0 = State()
     >>> s1 = State()
     >>> t = Transition(s0, s1)
+
+    The following code shows access to attributes of a Transition:
+
     >>> print(t.name)
     None
     >>> print(s0 == t.startState)
@@ -67,7 +90,9 @@ class Transition(AbstractTransition):
     >>> print(s1 == t.endState)
     True
 
-    Additionnal informations can be attached to a transition
+    The following example shows the definition of a named Transition
+    that accepts a specific input symbol and produces an output
+    symbol from a list that contains one symbol element:
 
     >>> t = Transition(State(), State(), name="testTransition")
     >>> t.inputSymbol = Symbol()
@@ -84,22 +109,6 @@ class Transition(AbstractTransition):
                  outputSymbols=None,
                  _id=uuid.uuid4(),
                  name=None):
-        """Constructor of a Transition.
-
-        :param startState: initial state of the transition
-        :type startState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
-        :param endState: end state of the transition
-        :type endState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
-        :keyword inputSymbol: the symbol which triggers the execution of the transition
-        :type inputSymbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
-        :keyword outputSymbols: a list of output Symbols
-        :type outputSymbols: list of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
-        :keyword _id: the unique identifier of the transition
-        :param _id: :class:`uuid.UUID`
-        :keyword name: the name of the transition
-        :param name: :class:`str`
-
-        """
         super(Transition, self).__init__(
             Transition.TYPE, startState, endState, _id, name, priority=10)
 
@@ -114,18 +123,22 @@ class Transition(AbstractTransition):
     @typeCheck(AbstractionLayer)
     def executeAsInitiator(self, abstractionLayer):
         """Execute the current transition as an initiator.
-        Being an initiator means it will send the input symbol attached to the transition
-        and wait for the reception of the output symbols.
 
-        If the received symbol is part of the expected symbols (included in the list of output symbols)
-        it returns the endState of the transition. On the contrary if the received symbol is not expected
-        it raises an exception.
-
-        :param abstractionLayer: the abstraction layer which allows to access to the channel
+        :param abstractionLayer: The abstraction layer which allows to access to the channel.
         :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
-        :return: the end state of the transition if not exception is raised
+        :return: The end state of the transition if no exception is raised.
         :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         :raise: TypeError if parameter are not valid and Exception if an error occurs whil executing the transition.
+
+        Being an initiator means it will send the input symbol
+        attached to the transition and then wait for the reception of
+        one of the permitted output symbols.
+
+        If the received symbol is part of the expected symbols
+        (included in the list of output symbols) it returns the
+        endState State of the transition. On the contrary, if the
+        received symbol is not expected, it raises an exception.
+
         """
         if abstractionLayer is None:
             raise TypeError("Abstraction layer cannot be None")
@@ -166,13 +179,15 @@ class Transition(AbstractTransition):
     @typeCheck(AbstractionLayer)
     def executeAsNotInitiator(self, abstractionLayer):
         """Execute the current transition as a not initiator.
+
+        :param abstractionLayer: The abstraction layer which allows to access to the channel.
+        :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
+        :return: The end state of the transition if not exception is raised.
+        :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
+
         Being not an initiator means the startState has already received the input symbol which made it
         choose this transition. We only have to pick an output symbol and emit it.
 
-        :param abstractionLayer: the abstraction layer which allows to access to the channel
-        :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
-        :return: the end state of the transition if not exception is raised
-        :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         """
         if abstractionLayer is None:
             raise TypeError("Abstraction layer cannot be None")

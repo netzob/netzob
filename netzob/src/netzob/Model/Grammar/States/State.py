@@ -54,7 +54,14 @@ from netzob.Model.Grammar.Transitions.CloseChannelTransition import CloseChannel
 
 @NetzobLogger
 class State(AbstractState):
-    """A state in the grammar of the protocol.
+    """This class represents a state in an automaton.
+
+    The State constructor expects some parameters:
+
+    :param name: The name of the state. The default value is `None`.
+    :type name: :class:`str`, optional
+
+    The following example shows the definition of a state `s0` and a state `s1`:
 
     >>> from netzob.all import *
     >>> s0 = State()
@@ -64,6 +71,9 @@ class State(AbstractState):
     >>> s1 = State(name="S1")
     >>> print(s1.name)
     S1
+
+    The following example shows the definition of a transition `t`
+    between a state `s0` and a state `s1`:
 
     >>> t = Transition(s0, s1, None, None)
     >>> print(t.startState.name)
@@ -80,23 +90,15 @@ class State(AbstractState):
     """
 
     def __init__(self, name=None):
-        """
-        :keyword _id: the unique identifier of the state
-        :type _id: :class:`uuid.UUID`
-        :keyword name: the name of the state
-        :type name: :class:`str`
-        """
         super(State, self).__init__(name=name)
         self.__transitions = []
 
     @typeCheck(AbstractionLayer)
     def executeAsInitiator(self, abstractionLayer):
-        """This method pick the next available transition and execute it.
-        The abstraction layer that will be used is specified as a parameter.
+        """This method picks the next available transition and executes it.
 
-        :parameter abstractionLayer: the abstraction layer that will be used to access to the channel
+        :parameter abstractionLayer: The abstraction layer that will be used to access to the channel.
         :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
-        :raise Exceptions if an error occurs somewhere (sorry this is be vague i known @todo)
         """
         if abstractionLayer is None:
             raise TypeError("AbstractionLayer cannot be None")
@@ -134,14 +136,16 @@ class State(AbstractState):
 
     @typeCheck(AbstractionLayer)
     def executeAsNotInitiator(self, abstractionLayer):
-        """Execute the current state as not an initiator which means
-        it will wait for a maximum amount of time the reception of a symbol and will try
-        to select the appropriate transition which would be triggered by received symbol.
-        At the end if no exception occur, it returns the next state.
+        """This method executes the current state as not an initiator. 
 
-        :param abstractionLayer: the abstraction layer from which it receives messages
+        :param abstractionLayer: The abstraction layer from which it receives messages.
         :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
-        :raise Exception if something goes bad (sorry for the lack of detail) @todo
+
+        This method will wait for a maximum amount of time the
+        reception of a symbol and will try to select the appropriate
+        transition which would be triggered by received symbol. At
+        the end, if no exception occurs, it returns the next state.
+
         """
         if abstractionLayer is None:
             raise TypeError("AbstractionLayer cannot be None")

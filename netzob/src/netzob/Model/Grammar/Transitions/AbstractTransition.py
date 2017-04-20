@@ -49,6 +49,23 @@ from netzob.Model.Grammar.States.AbstractState import AbstractState
 
 
 class AbstractTransition(object, metaclass=abc.ABCMeta):
+    """Constructor of a Transition.
+
+    The AbstractTransition constructor expects some parameters:
+
+    :param str _type: the type of the transition
+    :param startState: The initial state of the transition.
+    :param endState: The end state of the transition
+    :param _id: The unique identifier of the transition.
+    :param str name: The name of the transition
+    :param int priority: the priority of the transition
+    :type startState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
+    :type endState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
+    :type _id: :class:`uuid.UUID`
+
+    """
+
+
     def __init__(self,
                  _type,
                  startState,
@@ -57,22 +74,6 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
                  name=None,
                  priority=10,
                  description=None):
-        """Constructor of a Transition.
-
-        :param _type: the type of the transition
-        :type _type: :class:`str`
-        :param startState: initial state of the transition
-        :type startState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
-        :param endState: end state of the transition
-        :type endState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
-        :keyword _id: the unique identifier of the transition
-        :type _id: :class:`uuid.UUID`
-        :keyword name: the name of the transition
-        :type name: :class:`str`
-        :keyword priority: the priority of the transition
-        :type priority: :class:`int`
-
-        """
         self.__startState = None
         self.__endState = None
 

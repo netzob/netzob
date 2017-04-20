@@ -50,8 +50,23 @@ from netzob.Simulator.AbstractionLayer import AbstractionLayer
 
 @NetzobLogger
 class CloseChannelTransition(AbstractTransition):
-    """Represents a transition which when executed request to close
-   the current channel
+    """This class represents a transition which, when executed, requests
+    to close the current underlying communication channel.
+
+    The CloseChannelTransition expects some parameters:
+
+    :param startState: The initial state of the transition.
+    :param endState: The end state of the transition
+    :param _id: The unique identifier of the transition. The default value is a randomly generated UUID.
+    :param name: The name of the transition. The default value is `None`
+    :type startState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`, required
+    :type endState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`, required
+    :type _id: :class:`uuid.UUID`, optional
+    :type name: :class:`str`, optional
+
+
+    The following example shows the creation of an
+    CloseChannelTransition transition:
 
     >>> from netzob.all import *
     >>> s0 = State()
@@ -69,18 +84,6 @@ class CloseChannelTransition(AbstractTransition):
     TYPE = "CloseChannelTransition"
 
     def __init__(self, startState, endState, _id=uuid.uuid4(), name=None):
-        """Constructor of a CloseChannelTransition.
-
-        :param startState: initial state of the transition
-        :type startState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
-        :param endState: end state of the transition
-        :type endState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
-        :keyword _id: the unique identifier of the transition
-        :param _id: :class:`uuid.UUID`
-        :keyword name: the name of the transition
-        :param name: :class:`str`
-
-        """
         super(CloseChannelTransition, self).__init__(
             CloseChannelTransition.TYPE,
             startState,

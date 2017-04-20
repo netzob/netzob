@@ -45,11 +45,27 @@ from netzob.Inference.Grammar.AutomataFactories.PTAAutomataFactory import PTAAut
 
 @NetzobLogger
 class Automata(object):
-    """Class which describes an automata (of a grammar) in the form of
-    an SMMDT (i.e. Stochastic Mealy Machine with Deterministic
-    Transitions).
+    """Class which describes an automaton (of a grammar) of a protocol.
 
-    >>> # Create some states and transitions
+    The Automata constructor expects some parameters:
+
+    :param initialState: The initial state of the automaton.
+    :param vocabulary: The list of permitted symbols for every transitions of the automaton.
+    :type initialState: :class:`netzob.Model.Grammar.States.AbstractState.AbstractState`, required
+    :type vocabulary: a :class:`list` of :class:`netzob.Model.Vocabulary.Symbol.Symbol`, required
+
+    The underlying structure of the automaton in the form of an SMMDT
+    (i.e. Stochastic Mealy Machine with Deterministic Transitions),
+    which is a Mealy machine (cf. https://en.wikipedia.org/wiki/Mealy_machine).
+
+    The following exmple shows the definition of an automaton with
+    three states `s0`, `s1`, `s2`, an opening transition between the
+    states `s0` and `s1`, a standard transition within the same state
+    `s1` which accept the input symbol `inputSymbol` and generate the
+    output symbol `outputSymbol`, and a closing transition between the
+    states `s1` and `s2`.
+
+    >>> # Creation of some states and transitions
     >>> from netzob.all import *
     >>> s0 = State(name="S0")
     >>> s1 = State(name="S1")
@@ -59,8 +75,7 @@ class Automata(object):
     >>> outputSymbol = Symbol()
     >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=inputSymbol, outputSymbols=[outputSymbol], name="hello")
     >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2, name="Close")
-
-    >>> # Create the automata
+    >>> # Creation of the automata
     >>> automata = Automata(s0, [inputSymbol, outputSymbol])
 
     """
