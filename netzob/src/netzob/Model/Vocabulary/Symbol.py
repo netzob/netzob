@@ -71,7 +71,7 @@ class Symbol(AbstractField):
                    identification).
     :param messages: The messages that are associated with the
                      symbol. May be None, especially when
-                     modelling a protocol from scratch (i.e. the
+                     modeling a protocol from scratch (i.e. the
                      fields are already known).
     :param str name: The name of the symbol. If not specified, the
                      default name will be "Symbol".
@@ -79,7 +79,7 @@ class Symbol(AbstractField):
     :type messages: a :class:`list` of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
 
 
-    **Usage of Symbol for protocol modelling**
+    **Usage of Symbol for protocol modeling**
 
     The Symbol class may be used to model a protocol from scratch, by
     specifying its structure in terms of fields:
