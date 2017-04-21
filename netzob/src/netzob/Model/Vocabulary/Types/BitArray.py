@@ -59,8 +59,8 @@ class BitArray(AbstractType):
 
     :param value: The current value of the type instance.
     :param nbBits: The size in bits that this value can take.
-    :type value: :class:`bitarray.bitarray`
-    :type nbBits: an :class:`int` or a tupple with the min and the max size specified as :class:`int`
+    :type value: :class:`bitarray.bitarray`, optional
+    :type nbBits: an :class:`int` or a tupple with the min and the max size specified as :class:`int`, optional
 
 
     The following example shows how to define a bitfield of 1 bit, 47

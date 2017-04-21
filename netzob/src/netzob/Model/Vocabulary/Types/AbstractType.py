@@ -66,32 +66,36 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
     The constructor for an AbstractType expects some parameters:
 
-    :param str typeName: The name of the type (we highly recommand the use of __class__.__name__).
+    :param typeName: The name of the type (we highly recommand the use of __class__.__name__).
     :param value: The current value of the type instance.
     :param size: The size in bits that this value takes.
-    :param str unitSize: The unitsize of the current value. Values must be one of AbstractType.UNITSIZE_*. If None, the value is the default one.
-    :param str endianness: The endianness of the current value. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE. If None, the value is the default one.
-    :param str sign: The sign of the current value. Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED. If None, the value is the default one.
-    :type value: :class:`bitarray.bitarray`
-    :type size: a tupple with the min and the max size specified as :class:`int`
+    :param unitSize: The unitsize of the current value. Values must be one of AbstractType.UNITSIZE_*. If None, the value is the default one.
+    :param endianness: The endianness of the current value. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE. If None, the value is the default one.
+    :param sign: The sign of the current value. Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED. If None, the value is the default one.
+    :type typeName: :class:`str`, optional
+    :type value: :class:`bitarray.bitarray`, required
+    :type size: a tupple with the min and the max size specified as :class:`int`, optional
+    :type unitSize: :class:`str`, optional
+    :type endianness: :class:`str`, optional
+    :type sign: :class:`str`, optional
 
     Netzob support the following unit sizes:
 
     * AbstractType.UNITSIZE_1
     * AbstractType.UNITSIZE_4
-    * AbstractType.UNITSIZE_8
+    * AbstractType.UNITSIZE_8 (default value)
     * AbstractType.UNITSIZE_16
     * AbstractType.UNITSIZE_32
     * AbstractType.UNITSIZE_64
 
     Netzob support the following endianness:
 
-    * AbstractType.ENDIAN_BIG,
+    * AbstractType.ENDIAN_BIG (default value)
     * AbstractType.ENDIAN_LITTLE
 
     Netzob support the following signs:
 
-    * AbstractType.SIGN_SIGNED,
+    * AbstractType.SIGN_SIGNED (default value)
     * AbstractType.SIGN_UNSIGNED
 
 

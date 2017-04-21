@@ -63,11 +63,11 @@ class Repeat(AbstractVariableNode):
     :param child: The variable element that will be repeated.
     :param nbRepeat: The minimum and maximum of repetitions of the element.
     :param delimitor: The delimitor used to separate the repeated element.
-    :type child: :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`
+    :type child: :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
     :type nbRepeat: a :class:`int` describing the number of
                     repetitions, or a tuple of :class:`int` describing
-                    the min,max of repetitions
-    :type delimitor: :class:`BitArray <netzob.Model.Vocabulary.Types.BitArray>`
+                    the min,max of repetitions, required
+    :type delimitor: :class:`BitArray <netzob.Model.Vocabulary.Types.BitArray>`, optional
 
 
     The following example shows a repeat variable where the repeated

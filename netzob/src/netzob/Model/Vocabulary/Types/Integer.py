@@ -59,30 +59,33 @@ class Integer(AbstractType):
 
     :param value: The current value of the type instance.
     :param interval: The interval of permitted values for the Integer. This information will be used to compute the size of the Integer.
-    :param int nbUnits: The amount of permitted repetitions of the unit size of the Integer.
-    :param unitSize: The unitsize of the current value. Values must be one of AbstractType.UNITSIZE_*. If None, the value is the default one.
+    :param nbUnits: The amount of permitted repetitions of the unit size of the Integer.
+    :param unitSize: The unitsize of the current value. Values must be one of AbstractType.UNITSIZE_* (see below for supported unit sizes). If None, the value is the default one.
     :param endianness: The endianness of the current value. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE. If None, the value is the default one.
     :param sign: The sign of the current value. Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED. If None, the value is the default one.
-    :type value: :class:`bitarray.bitarray`
-    :type interval: an :class:`int` or a tupple with the min and the max values specified as :class:`int`
+    :type value: :class:`bitarray.bitarray`, optional
+    :type interval: an :class:`int` or a tupple with the min and the max values specified as :class:`int`, optional
+    :type unitSize: :class:`str`, optional
+    :type endianness: :class:`str`, optional
+    :type sign: :class:`str`, optional
 
     Netzob support the following unit sizes:
 
     * AbstractType.UNITSIZE_1
     * AbstractType.UNITSIZE_4
-    * AbstractType.UNITSIZE_8
+    * AbstractType.UNITSIZE_8 (default unit size)
     * AbstractType.UNITSIZE_16
     * AbstractType.UNITSIZE_32
     * AbstractType.UNITSIZE_64
 
     Netzob support the following endianness:
 
-    * AbstractType.ENDIAN_BIG,
+    * AbstractType.ENDIAN_BIG (default endianness)
     * AbstractType.ENDIAN_LITTLE
 
     Netzob support the following signs:
 
-    * AbstractType.SIGN_SIGNED,
+    * AbstractType.SIGN_SIGNED (default sign)
     * AbstractType.SIGN_UNSIGNED
 
     **Examples of Integer objects instantiations**

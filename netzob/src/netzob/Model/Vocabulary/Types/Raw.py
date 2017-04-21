@@ -59,9 +59,12 @@ class Raw(AbstractType):
     :param value: The current value of the type instance.
     :param nbBytes: The size in bytes that this value can take.
     :param alphabet: The alphabet can be use to limit the bytes that can participate in the domain value.
-    :type value: :class:`bitarray.bitarray`
-    :type nbBytes: an :class:`int` or a tupple with the min and the max size specified as :class:`int`
-    :type alphabet: a :class:`list` of :class:`object`
+    :param unitSize: Not implemented.
+    :param endianness: Not implemented.
+    :param sign: Not implemented.
+    :type value: :class:`bitarray.bitarray`, optional
+    :type nbBytes: an :class:`int` or a tupple with the min and the max size specified as :class:`int`, optional
+    :type alphabet: a :class:`list` of :class:`object`, optional
 
     The following example shows how to define a six bytes long raw
     field, and the used of the specialization method to generate a

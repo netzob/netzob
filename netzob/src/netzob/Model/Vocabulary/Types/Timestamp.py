@@ -63,11 +63,18 @@ class Timestamp(AbstractType):
     :param value: The raw value of the timestamp.
     :param epoch: The initial date expressed in UTC from which
                   timestamp is measured. Default value is EPOCH_UNIX.
-    :param int unity: specifies the unity of the timestamp (seconds,
+    :param unity: specifies the unity of the timestamp (seconds,
                       milliseconds, nanoseconds). Default value is
                       UNITY_SECOND.
-    :type value: :class:`int` or a :class:`BitArray <netzob.Model.Types.BitArray>`
-    :type epoch: :class:`datetime.datetime`
+    :param unitSize: The unitsize of the current value. Values must be one of AbstractType.UNITSIZE_* (see below for supported unit sizes). If None, the value is the default one.
+    :param endianness: The endianness of the current value. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE. If None, the value is the default one.
+    :param sign: The sign of the current value. Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED. If None, the value is the default one.
+    :type value: :class:`int` or a :class:`BitArray <netzob.Model.Types.BitArray>`, optional
+    :type epoch: :class:`datetime.datetime`, optional
+    :type unity: :class:`int`, optional
+    :type unitSize: :class:`str`, optional
+    :type endianness: :class:`str`, optional
+    :type sign: :class:`str`, optional
 
     Available values for `epoch` parameter are:
 

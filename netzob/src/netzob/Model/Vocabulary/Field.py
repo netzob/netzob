@@ -77,10 +77,10 @@ class Field(AbstractField):
                           internally to help for the computation
                           of the value of another field, but does
                           not directly produce data.
-    :type domain: a :class:`list` of :class:`object`
-    :type name: :class:`str`
-    :type layer: :class:`bool`
-    :type isPseudoField: :class:`bool`
+    :type domain: a :class:`list` of :class:`object`, optional
+    :type name: :class:`str`, optional
+    :type layer: :class:`bool`, optional
+    :type isPseudoField: :class:`bool`, optional
 
 
     **Fields hierarchy**

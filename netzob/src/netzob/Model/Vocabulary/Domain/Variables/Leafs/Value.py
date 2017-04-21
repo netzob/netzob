@@ -66,12 +66,13 @@ class Value(AbstractRelationVariableLeaf):
     The Value constructor expects some parameters:
 
     :param field: The targeted field of the relationship.
-    :param str name: The name of the Value variable. If None, the name
+    :param name: The name of the Value variable. If None, the name
                      will be generated.
     :param operation: An optional transformation operation to be
                       applied on the targeted data.
-    :type field: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`
-    :type operation: :class:`Callable <collections.abc.Callable>`
+    :type field: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`, required
+    :type name: :class:`str`, optional
+    :type operation: :class:`Callable <collections.abc.Callable>`, optional
 
 
     The following example shows how to define a field with a copy of

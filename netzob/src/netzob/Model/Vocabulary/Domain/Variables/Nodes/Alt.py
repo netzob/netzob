@@ -62,9 +62,11 @@ class Alt(AbstractVariableNode):
 
     :param children: The set of variable elements permitted in the
                      alternative.
-    :param str svas: The SVAS strategy defining how the Alternate
+    :param svas: The SVAS strategy defining how the Alternate
                      behaves during abstraction and specialization.
-    :type children: a :class:`dict` of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`
+    :type children: a :class:`dict` of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
+    :type svas: :class:`str`, optional
+
 
     For example, the following code denotes a field accepts either
     "filename1.txt" or "filename2.txt":

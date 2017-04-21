@@ -73,10 +73,11 @@ class Symbol(AbstractField):
                      symbol. May be None, especially when
                      modeling a protocol from scratch (i.e. the
                      fields are already known).
-    :param str name: The name of the symbol. If not specified, the
-                     default name will be "Symbol".
-    :type fields: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`
-    :type messages: a :class:`list` of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage>`
+    :param name: The name of the symbol. If not specified, the
+                 default name will be "Symbol".
+    :type fields: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, optional
+    :type messages: a :class:`list` of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage>`, optional
+    :type name: :class:`str`, optional
 
 
     **Usage of Symbol for protocol modeling**

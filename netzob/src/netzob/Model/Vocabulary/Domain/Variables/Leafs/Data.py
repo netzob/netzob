@@ -65,12 +65,14 @@ class Data(AbstractVariableLeaf):
                      Raw, ASCII, ...).
     :param originalValue: The original value of the data (can be
                           None).
-    :param str name: The name of the data (if None, the name will
+    :param name: The name of the data (if None, the name will
                      be generated).
-    :param str svas: The SVAS strategy defining how the Data value is
+    :param svas: The SVAS strategy defining how the Data value is
                      used for abstracting and specializing.
-    :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`
-    :type originalValue: :class:`BitArray <netzob.Model.Vocabulary.Types.BitArray>`
+    :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, required
+    :type originalValue: :class:`BitArray <netzob.Model.Vocabulary.Types.BitArray>`, optional
+    :type name: :class:`str`, optional
+    :type svas: :class:`str`, optional
 
 
     The following example shows the definition of the Data `pseudo`

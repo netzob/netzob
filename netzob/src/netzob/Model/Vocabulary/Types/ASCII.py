@@ -62,8 +62,11 @@ class ASCII(AbstractType):
 
     :param value: The current value of the type instance.
     :param nbChars: The amount of permitted ASCII characters.
-    :type value: :class:`bitarray.bitarray`
-    :type nbChars: an :class:`int` or a tupple with the min and the max size specified as :class:`int`
+    :param unitSize: Not implemented.
+    :param endianness: Not implemented.
+    :param sign: Not implemented.
+    :type value: :class:`bitarray.bitarray`, optional
+    :type nbChars: an :class:`int` or a tupple with the min and the max size specified as :class:`int`, optional
 
     Netzob allows to describe a field that contains an ASCII
     string. ASCII strings can be either static or dynamic with fixed

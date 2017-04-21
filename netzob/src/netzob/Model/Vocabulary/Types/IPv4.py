@@ -64,9 +64,12 @@ class IPv4(AbstractType):
                           (ex: "192.168.0.10").
     :parameter network: A network address expressed in standard
                             dot notation (ex: "192.168.0.0/24").
-    :type value: :class:`str` or :class:`netaddr.IPAddress`
-    :type network: :class:`str` or :class:`netaddr.IPNetwork`
-
+    :param endianness: The endianness of the current value. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE. If None, the value is the default one.
+    :param unitSize: Not implemented.
+    :param sign: Not implemented.
+    :type value: :class:`str` or :class:`netaddr.IPAddress`, optional
+    :type network: :class:`str` or :class:`netaddr.IPNetwork`, optional
+    :type endianness: :class:`str`, optional
 
     The following examples show the use of an IPv4 type for the
     definition domain of a field:

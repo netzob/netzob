@@ -71,16 +71,19 @@ class Size(AbstractRelationVariableLeaf):
     :param fields: The targeted fields of the relationship.
     :param dataType: Specify that the produced value should be
                      represented according to this dataType.
-    :param int factor: Specify that the initial size value (always
+    :param factor: Specify that the initial size value (always
                        expressed in bits) should be divided by this
                        factor. For example, to express a size in bytes,
                        the factor should be 1/8.
-    :param int offset: Specify that the final size value
+    :param offset: Specify that the final size value
                        should be shifted according to the offset value.
-    :param str name: The name of the Value variable. If None, the name
+    :param name: The name of the Value variable. If None, the name
                      will be generated.
-    :type fields: a :class:`list` of :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`
-    :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`
+    :type fields: a :class:`list` of :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`, required
+    :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, optional
+    :type factor: :class:`int`, optional
+    :type offset: :class:`int`, optional
+    :type name: :class:`str`, optional
 
 
     The following example shows how to define a size field with an
