@@ -78,7 +78,7 @@ class Mutator(object):
     def field(self):
         """The field to which the mutation is applied
 
-        :type: :class:`netzob.Model.Vocabulary.AbstractField`
+        :type: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`
         """
         return self._field
 
@@ -95,6 +95,6 @@ class Mutator(object):
 
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
-        :raises: :class:`netzob.Fuzzing.Mutator.NotImplementedMutatorError`
+        :raises: :class:`NotImplementedMutatorError <netzob.Fuzzing.Mutator.NotImplementedMutatorError>`
         """
         raise NotImplementedError("mutate() is not implemented yet")

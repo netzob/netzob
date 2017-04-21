@@ -83,7 +83,7 @@ class StringMutator(Mutator):
         """The mutator used to generate the string length, between
         minLength and maxLength.
 
-        :type: :class:`netzob.Fuzzing.PseudoRandomIntegerMutator`
+        :type: :class:`PseudoRandomIntegerMutator <netzob.Fuzzing.PseudoRandomIntegerMutator>`
         """
         return self._lengthMutator
 

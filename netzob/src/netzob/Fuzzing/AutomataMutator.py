@@ -70,7 +70,7 @@ class AutomataMutator(Mutator):
     def inputAutomata(self):
         """The automata to mutate
 
-        :type: :class:`netzob.Model.Grammar.Automata`
+        :type: :class:`Automata <netzob.Model.Grammar.Automata>`
         """
         return self._inputAutomata
 
@@ -83,7 +83,7 @@ class AutomataMutator(Mutator):
         """This is the mutation method of the automata.
 
         :return: a mutated Automata object
-        :rtype: :class:`netzob.Model.Grammar.Automata`
+        :rtype: :class:`Automata <netzob.Model.Grammar.Automata>`
         """
         # TODO : implement the Automata random generator
         return super().mutate()

@@ -85,10 +85,10 @@ class AlternativeMutator(Mutator):
         """Associate a mutator to the given type (domain) of field.
 
         :parameter domain: the type of the field
-        :type domain: :class:`netzob.Model.Vocabulary.Types.AbstractType`
+        :type domain: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`
 
         :parameter mutator: the mutator to use with the given domain
-        :type mutator: :class:`netzob.Fuzzing.Mutator`
+        :type mutator: :class:`Mutator <netzob.Fuzzing.Mutator>`
         """
         self._typesMutators[domain] = mutator
 
@@ -116,7 +116,7 @@ class AlternativeMutator(Mutator):
 
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
-        :raises: :class:`netzob.Fuzzing.AlternativeMutator.RecursivityMutatorError`
+        :raises: :class:`RecursivityMutatorError <netzob.Fuzzing.AlternativeMutator.RecursivityMutatorError>`
         """
         depth = 0
         if depth > self._maxDepth:

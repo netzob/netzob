@@ -81,7 +81,7 @@ class SequenceMutator(Mutator):
         """The mutator used to generate the sequence length, between
         minLength and maxLength.
 
-        :type: :class:`netzob.Fuzzing.PseudoRandomIntegerMutator`
+        :type: :class:`PseudoRandomIntegerMutator <netzob.Fuzzing.PseudoRandomIntegerMutator>`
         """
         return self._lengthMutator
 
@@ -90,7 +90,7 @@ class SequenceMutator(Mutator):
         """Used to mutate each element of the sequence.
         This mutator depends on the type of the field.
 
-        :type: :class:`netzob.Fuzzing.Mutator`
+        :type: :class:`Mutator <netzob.Fuzzing.Mutator>`
         """
         return self._elementMutator
 
