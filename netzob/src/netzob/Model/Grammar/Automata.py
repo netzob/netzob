@@ -51,8 +51,8 @@ class Automata(object):
 
     :param initialState: The initial state of the automaton.
     :param vocabulary: The list of permitted symbols for every transitions of the automaton.
-    :type initialState: :class:`netzob.Model.Grammar.States.AbstractState.AbstractState`, required
-    :type vocabulary: a :class:`list` of :class:`netzob.Model.Vocabulary.Symbol.Symbol`, required
+    :type initialState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`, required
+    :type vocabulary: a :class:`list` of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`, required
 
     The underlying structure of the automaton in the form of an SMMDT
     (i.e. Stochastic Mealy Machine with Deterministic Transitions),

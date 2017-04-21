@@ -98,7 +98,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     **Internal representation of Type objects**
 
     Regarding the internal representation of variables in Netzob, the
-    Python module :class:`bitarray` is used, thus allowing to specify
+    Python module :class:`bitarray.bitarray` is used, thus allowing to specify
     fields at the bit granularity. As an example, the following code
     show how to access the internal representation of the value of an
     Integer object::

@@ -79,7 +79,7 @@ class Size(AbstractRelationVariableLeaf):
                        should be shifted according to the offset value.
     :param str name: The name of the Value variable. If None, the name
                      will be generated.
-    :type fields: a :class:`list` of :class:`netzob.Model.Vocabulary.AbstractField`
+    :type fields: a :class:`list` of :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`
     :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`
 
 

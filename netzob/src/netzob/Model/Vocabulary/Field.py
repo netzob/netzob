@@ -323,7 +323,7 @@ class Field(AbstractField):
         This definition domain is made of a list of typed values which can optionally have a static value.
         More information on the available types and their specificities are available on their documentations.
 
-        :type: a :class:`list` of :class:`object <object>` -- By object we refer to a primitive object (:class:`int`, :class:`str`, :class:`hex <hex>`, :class:`binary <binary>`) and netzob types objects inherited from :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
+        :type: a :class:`list` of :class:`object` -- By object we refer to a primitive object (:class:`int`, :class:`str`, :class:`hex`, :class:`binary`) and netzob types objects inherited from :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
         :raises: :class:`InvalidDomainException <netzob.Model.Vocabulary.Field.InvalidDomainException>` if domain invalid.
         """
 

@@ -66,7 +66,7 @@ class Timestamp(AbstractType):
     :param int unity: specifies the unity of the timestamp (seconds,
                       milliseconds, nanoseconds). Default value is
                       UNITY_SECOND.
-    :type value: :class:`int` or a :class:`BitArray`
+    :type value: :class:`int` or a :class:`BitArray <netzob.Model.Types.BitArray>`
     :type epoch: :class:`datetime.datetime`
 
     Available values for `epoch` parameter are:

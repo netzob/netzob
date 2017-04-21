@@ -71,7 +71,7 @@ class Value(AbstractRelationVariableLeaf):
     :param operation: An optional transformation operation to be
                       applied on the targeted data.
     :type field: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`
-    :type operation: :class:`func`
+    :type operation: :class:`Callable <collections.abc.Callable>`
 
 
     The following example shows how to define a field with a copy of

@@ -336,7 +336,7 @@ class Data(AbstractVariableLeaf):
     def currentValue(self):
         """The current value of the data.
 
-        :type: :class:`bitarray`
+        :type: :class:`bitarray.bitarray`
         """
         if self.__currentValue is not None:
             return self.__currentValue.copy()
