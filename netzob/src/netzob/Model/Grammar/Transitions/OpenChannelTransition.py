@@ -72,9 +72,9 @@ class OpenChannelTransition(AbstractTransition):
         """Constructor of an OpenChannelTransition.
 
         :param startState: initial state of the transition
-        :type startState: :class:`netzob.Model.Grammar.States.AbstractState.AbstractState`
+        :type startState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         :param endState: end state of the transition
-        :type endState: :class:`netzob.Model.Grammar.States.AbstractState.AbstractState`
+        :type endState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         :keyword _id: the unique identifier of the transition
         :param _id: :class:`uuid.UUID`
         :keyword name: the name of the transition
@@ -95,9 +95,9 @@ class OpenChannelTransition(AbstractTransition):
         changes nothing from the open channel transition point of view.
 
         :param abstractionLayer: the abstraction layer which allows to access to the channel
-        :type abstractionLayer: :class:`netzob.Simulator.AbstractionLayer.AbstractionLayer`
+        :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
         :return: the end state of the transition if not exception is raised
-        :rtype: :class:`netzob.Model.Grammar.States.AbstractState.AbstractState`
+        :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         """
         return self.__execute(abstractionLayer)
 
@@ -107,9 +107,9 @@ class OpenChannelTransition(AbstractTransition):
         changes nothing from the open channel transition point of view.
 
         :param abstractionLayer: the abstraction layer which allows to access to the channel
-        :type abstractionLayer: :class:`netzob.Simulator.AbstractionLayer.AbstractionLayer`
+        :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
         :return: the end state of the transition if not exception is raised
-        :rtype: :class:`netzob.Model.Grammar.States.AbstractState.AbstractState`
+        :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         """
         return self.__execute(abstractionLayer)
 
@@ -119,9 +119,9 @@ class OpenChannelTransition(AbstractTransition):
         changes nothing from the open channel transition point of view.
 
         :param abstractionLayer: the abstraction layer which allows to access to the channel
-        :type abstractionLayer: :class:`netzob.Simulator.AbstractionLayer.AbstractionLayer`
+        :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
         :return: the end state of the transition if not exception is raised
-        :rtype: :class:`netzob.Model.Grammar.States.AbstractState.AbstractState`
+        :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         """
 
         if abstractionLayer is None:

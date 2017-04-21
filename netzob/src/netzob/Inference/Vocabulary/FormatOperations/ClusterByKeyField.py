@@ -94,9 +94,9 @@ class ClusterByKeyField(object):
 
 
         :param field: the field we want to split in new symbols
-        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :param keyField: the field used as a key during the splitting operation
-        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :raise Exception if something bad happens
         """
 

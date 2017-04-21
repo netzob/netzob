@@ -101,11 +101,11 @@ class Actor(threading.Thread):
         Constructor of an actor
 
         :parameter automata: the automata the actor will visit
-        :type automata: :class:`netzob.Model.Grammar.Automata.Automata`
+        :type automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
         :parameter initiator: indicates if the actor initiates the communication and emits the input symbol
         :type name: :class:`boolean`
         :parameter abstractionLayer: the abstractionLayer used to abstract and specialize symbols
-        :type abstractionLayer: :class:`netzob.Simulator.AbstractionLayer`
+        :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer>`
 
         """
         super(Actor, self).__init__()
@@ -170,7 +170,7 @@ class Actor(threading.Thread):
     def automata(self):
         """The initial state where the actor starts in the grammar.
 
-        :type: :class:`netzob.Model.Grammar.States.AbstractState.AbstractState`
+        :type: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         """
         return self.__automata
 

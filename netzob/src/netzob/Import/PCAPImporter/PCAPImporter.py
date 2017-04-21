@@ -407,7 +407,7 @@ class PCAPImporter(object):
         :param mergePacketsInFlow: if True, consecutive packets with same source and destination ar merged (i.e. to mimic a flow) 
         :type mergePacketsInFlow: :class:`bool`
         :return: a list of captured messages
-        :rtype: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
+        :rtype: a list of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage>`
         """
 
         # Verify the existence of input files
@@ -478,7 +478,7 @@ class PCAPImporter(object):
         :param mergePacketsInFlow: if True, consecutive packets with same source and destination ar merged (i.e. to mimic a flow) 
         :type mergePacketsInFlow: :class:`bool`        
         :return: a list of captured messages
-        :rtype: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
+        :rtype: a list of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage>`
         """
 
         importer = PCAPImporter()
@@ -507,7 +507,7 @@ class PCAPImporter(object):
         :param mergePacketsInFlow: if True, consecutive packets with same source and destination ar merged (i.e. to mimic a flow) 
         :type mergePacketsInFlow: :class:`bool`
         :return: a list of captured messages
-        :rtype: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
+        :rtype: a list of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage>`
         """
 
         importer = PCAPImporter()

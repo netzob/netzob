@@ -87,7 +87,7 @@ class CorrelationFinder(object):
         parse the results.
 
         :param symbol: the symbol in which we are looking for correlations
-        :type symbol: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type symbol: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :param minMic: the minimum correlation score 
         :type minMic: :class:`float`
         """
@@ -112,7 +112,7 @@ class CorrelationFinder(object):
     def execute(self, symbol):
         """
         :param symbol: the symbol in which we are looking for correlations
-        :type symbol: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type symbol: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         """
 
         (attributeValues_headers,

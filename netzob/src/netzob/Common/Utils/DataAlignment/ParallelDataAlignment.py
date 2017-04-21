@@ -114,7 +114,7 @@ class ParallelDataAlignment(object):
         """Constructor.
 
         :param field: the format definition that will be user
-        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :keyword depth: the limit in depth in the format (use None for not limit)
         :type depth: :class:`int`
         :keyword nbThread: the maximum number of thread that will be used.
@@ -161,7 +161,7 @@ class ParallelDataAlignment(object):
         :param data: the list of data that will be aligned
         :type data: a :class:`list` of data to align
         :return: a list of aligned data sorted in order to respect the provided order of data.
-        :rtype: a :class:`netzob.Common.Utils.MatrixList.MatrixList`
+        :rtype: a :class:`MatrixList <netzob.Common.Utils.MatrixList.MatrixList>`
         """
 
         # Create a list of data removed from duplicate entry
@@ -229,7 +229,7 @@ class ParallelDataAlignment(object):
         :param data: the data to align as a list of hexastring
         :type data: :class:`list`
         :param field : the field to consider when aligning
-        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :keyword depth: maximum field depth to consider (similar to layer depth)
         :type depth: :class:`int`.
         :keyword nbThread: the number of thread to use when parallelizing
@@ -240,7 +240,7 @@ class ParallelDataAlignment(object):
         :type styled: :class:`bool`
 
         :return: the aligned data
-        :rtype: :class:`netzob.Common.Utils.MatrixList.MatrixList`
+        :rtype: :class:`MatrixList <netzob.Common.Utils.MatrixList.MatrixList>`
         """
         pAlignment = ParallelDataAlignment(field, depth, nbThread, encoded,
                                            styled)
@@ -253,7 +253,7 @@ class ParallelDataAlignment(object):
         """The field that contains the definition domain used
         to align data
 
-        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         """
         return self.__field
 

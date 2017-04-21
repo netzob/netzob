@@ -99,7 +99,7 @@ class FileImporter(object):
         :param delimitor: the delimitor used to find messages in the same file
         :type delimitor: :class:`str`
         :return: a sorted list of messages
-        :rtype: a :class:`netzob.Common.Utils.SortedTypedList.SortedTypedList` of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
+        :rtype: a :class:`SortedTypedList <netzob.Common.Utils.SortedTypedList.SortedTypedList>` of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage>`
         """
         # Verify the existence of input files
         errorMessageList = []
@@ -155,7 +155,7 @@ class FileImporter(object):
         :param delimitor: the delimitor.
         :type delimitor: :class:`str`
         :return: a list of captured messages
-        :rtype: a :class:`netzob.Common.Utils.SortedTypedList.SortedTypedList` of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
+        :rtype: a :class:`SortedTypedList <netzob.Common.Utils.SortedTypedList.SortedTypedList>` of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage>`
         """
         importer = FileImporter()
         return importer.readMessages(filePathList, delimitor = delimitor)
@@ -171,7 +171,7 @@ class FileImporter(object):
         :param delimitor: the delimitor used to find messages in the specified file
         :type delimitor: :class:`str`
         :return: a list of captured messages
-        :rtype: a :class:`netzob.Common.Utils.SortedTypedList.SortedTypedList` of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
+        :rtype: a :class:`SortedTypedList <netzob.Common.Utils.SortedTypedList.SortedTypedList>` of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage>`
         """
         importer = FileImporter()        
         return importer.readFiles([filePath], delimitor = delimitor)

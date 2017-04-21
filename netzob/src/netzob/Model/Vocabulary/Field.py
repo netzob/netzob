@@ -290,7 +290,7 @@ class Field(AbstractField):
 
         :return: a generated content represented with an hexastring
         :rtype: :class:`str``
-        :raises: :class:`netzob.Model.Vocabulary.AbstractField.GenerationException` if an error occurs while generating a message
+        :raises: :class:`GenerationException <netzob.Model.Vocabulary.AbstractField.GenerationException>` if an error occurs while generating a message
         """
         self._logger.debug("Specializes field {0}".format(self.name))
         if self.__domain is None:
@@ -323,8 +323,8 @@ class Field(AbstractField):
         This definition domain is made of a list of typed values which can optionally have a static value.
         More information on the available types and their specificities are available on their documentations.
 
-        :type: a :class:`list` of :class:`object` -- By object we refer to a primitive object (:class:`int`, :class:`str`, :class:`hex`, :class:`binary`) and netzob types objects inherited from :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
-        :raises: :class:`netzob.Model.Vocabulary.Field.InvalidDomainException` if domain invalid.
+        :type: a :class:`list` of :class:`object <object>` -- By object we refer to a primitive object (:class:`int`, :class:`str`, :class:`hex <hex>`, :class:`binary <binary>`) and netzob types objects inherited from :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
+        :raises: :class:`InvalidDomainException <netzob.Model.Vocabulary.Field.InvalidDomainException>` if domain invalid.
         """
 
         return self.__domain
@@ -339,7 +339,7 @@ class Field(AbstractField):
         """A list containing all the messages that the parents of this field have.
         In reality, a field doesn't have messages, it just returns the messages of its symbol
 
-        :type: a :class:`list` of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+        :type: a :class:`list` of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage>`
         """
         messages = []
         try:

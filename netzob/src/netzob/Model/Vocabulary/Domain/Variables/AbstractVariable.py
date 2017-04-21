@@ -250,7 +250,7 @@ class AbstractVariable(object):
     #     >>> len(d1.boundedVariables)
     #     2
 
-    #     :type: list of :class:`netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
+    #     :type: list of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
     #     :raise: TypeError if parameter is not valid
     #     """
     #     return self.__boundedVariables

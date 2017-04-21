@@ -313,7 +313,7 @@ class InternetChecksum(AbstractRelationVariableLeaf):
     def dataType(self):
         """The datatype used to encode the result of the computed Internet Checksum.
 
-        :type: :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
+        :type: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
         """
 
         return self.__dataType

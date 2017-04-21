@@ -62,9 +62,9 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         :param _type: the type of the transition
         :type _type: :class:`str`
         :param startState: initial state of the transition
-        :type startState: :class:`netzob.Model.Grammar.States.AbstractState.AbstractState`
+        :type startState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         :param endState: end state of the transition
-        :type endState: :class:`netzob.Model.Grammar.States.AbstractState.AbstractState`
+        :type endState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         :keyword _id: the unique identifier of the transition
         :type _id: :class:`uuid.UUID`
         :keyword name: the name of the transition
@@ -140,7 +140,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         >>> print(len(s0.transitions))
         0
 
-        :type: :class:`netzob.Model.Grammar.State.AbstractState.AbstractState`
+        :type: :class:`AbstractState <netzob.Model.Grammar.State.AbstractState.AbstractState>`
         :raise: TypeError if type of param is not valid
         """
         return self.__startState
@@ -167,7 +167,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         >>> print(t.endState.name)
         S1
 
-        :type: :class:`netzob.Model.Grammar.State.AbstractState.AbstractState`
+        :type: :class:`AbstractState <netzob.Model.Grammar.State.AbstractState.AbstractState>`
         :raise: TypeError if type of param is not valid
         """
         return self.__endState

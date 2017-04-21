@@ -74,7 +74,7 @@ class VariableParser(object):
     def variable(self):
         """The variable that will be use to parse some content
 
-        :type: :class:`netzob.Model.Vocabulary.Domaoin.Variables.AbstractVariable.AbstractVariable`
+        :type: :class:`AbstractVariable <netzob.Model.Vocabulary.Domaoin.Variables.AbstractVariable.AbstractVariable>`
         """
         return self.__variable
 

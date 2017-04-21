@@ -222,7 +222,7 @@ class Automata(object):
         }
 
         :return: an automata with one sequence of chained states.
-        :rtype: a :class:`netzob.Model.Grammar.Automata.Automata`
+        :rtype: a :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
 
         """
         return ChainedStatesAutomataFactory.generate(abstractSession,
@@ -264,7 +264,7 @@ class Automata(object):
         }
 
         :return: an automata with one main state.
-        :rtype: a :class:`netzob.Model.Grammar.Automata.Automata`
+        :rtype: a :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
 
         """
         return OneStateAutomataFactory.generate(abstractSession, symbolList)
@@ -338,7 +338,7 @@ class Automata(object):
         }
 
         :return: an automata based on a PTA (Prefix Tree Acceptator).
-        :rtype: a :class:`netzob.Model.Grammar.Automata.Automata`
+        :rtype: a :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
 
         """
         return PTAAutomataFactory.generate(abstractSessions, symbolList)

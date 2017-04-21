@@ -105,7 +105,7 @@ class RelationFinder(object):
         symbol/field.
 
         :param symbol: the symbol in which we are looking for relations
-        :type symbol: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type symbol: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         """
 
         rf = RelationFinder()
@@ -126,7 +126,7 @@ class RelationFinder(object):
     # def executeOnSymbol(self, symbol):
     #     """
     #     :param symbol: the symbol in which we are looking for relations
-    #     :type symbol: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+    #     :type symbol: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
     #     """
 
     #     cells = [field.getValues(encoded=False, styled=False)

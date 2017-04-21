@@ -167,11 +167,11 @@ class HexaString(AbstractType):
         :param data: the data encoded in hexaString (str) which will be decoded in raw
         :type data: str
         :keyword unitSize: the unit size of the specified data
-        :type unitSize: :class:`netzob.Model.Vocabulary.Types.UnitSize.UnitSize`
+        :type unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.UnitSize.UnitSize>`
         :keyword endianness: the endianness of the specified data
-        :type endianness: :class:`netzob.Model.Vocabulary.Types.Endianness.Endianness`
+        :type endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.Endianness.Endianness>`
         :keyword sign: the sign of the specified data
-        :type sign: :class:`netzob.Model.Vocabulary.Types.Sign.Sign`
+        :type sign: :class:`Sign <netzob.Model.Vocabulary.Types.Sign.Sign>`
 
         :return: data encoded in python raw
         :rtype: python raw

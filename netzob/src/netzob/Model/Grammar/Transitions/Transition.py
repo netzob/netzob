@@ -87,13 +87,13 @@ class Transition(AbstractTransition):
         """Constructor of a Transition.
 
         :param startState: initial state of the transition
-        :type startState: :class:`netzob.Model.Grammar.States.AbstractState.AbstractState`
+        :type startState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         :param endState: end state of the transition
-        :type endState: :class:`netzob.Model.Grammar.States.AbstractState.AbstractState`
+        :type endState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         :keyword inputSymbol: the symbol which triggers the execution of the transition
-        :type inputSymbol: :class:`netzob.Model.Vocabulary.Symbol.Symbol`
+        :type inputSymbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
         :keyword outputSymbols: a list of output Symbols
-        :type outputSymbols: list of :class:`netzob.Model.Vocabulary.Symbol.Symbol`
+        :type outputSymbols: list of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
         :keyword _id: the unique identifier of the transition
         :param _id: :class:`uuid.UUID`
         :keyword name: the name of the transition
@@ -122,9 +122,9 @@ class Transition(AbstractTransition):
         it raises an exception.
 
         :param abstractionLayer: the abstraction layer which allows to access to the channel
-        :type abstractionLayer: :class:`netzob.Simulator.AbstractionLayer.AbstractionLayer`
+        :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
         :return: the end state of the transition if not exception is raised
-        :rtype: :class:`netzob.Model.Grammar.States.AbstractState.AbstractState`
+        :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         :raise: TypeError if parameter are not valid and Exception if an error occurs whil executing the transition.
         """
         if abstractionLayer is None:
@@ -170,9 +170,9 @@ class Transition(AbstractTransition):
         choose this transition. We only have to pick an output symbol and emit it.
 
         :param abstractionLayer: the abstraction layer which allows to access to the channel
-        :type abstractionLayer: :class:`netzob.Simulator.AbstractionLayer.AbstractionLayer`
+        :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
         :return: the end state of the transition if not exception is raised
-        :rtype: :class:`netzob.Model.Grammar.States.AbstractState.AbstractState`
+        :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         """
         if abstractionLayer is None:
             raise TypeError("Abstraction layer cannot be None")
@@ -205,7 +205,7 @@ class Transition(AbstractTransition):
         spliting the remaining available probability given by others.
 
         :return: the output symbol following their probability.
-        :rtype: :class:`netzob.Model.Vocabulary.Symbol.Symbol`
+        :rtype: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
         """
         outputSymbolsWithProbability = dict()
         nbSymbolWithNoExplicitProbability = 0
@@ -251,7 +251,7 @@ class Transition(AbstractTransition):
         """The input symbol is the symbol which triggers the execution
         of the transition.
 
-        :type: :class:`netzob.Model.Vocabulary.Symbol.Symbol`
+        :type: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
         :raise: TypeError if not valid
         """
         return self.__inputSymbol
@@ -282,7 +282,7 @@ class Transition(AbstractTransition):
         >>> print(len(transition.outputSymbols))
         0
 
-        :type: list of :class:`netzob.Model.Vocabulary.Symbol.Symbol`
+        :type: list of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
         :raise: TypeError if not valid.
         """
         return self.__outputSymbols

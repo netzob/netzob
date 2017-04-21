@@ -115,7 +115,7 @@ class AbstractionLayer(object):
         after specializing it into a contextualized message.
 
         :param symbol: the symbol to write on the channel
-        :type symbol: :class:`netzob.Model.Vocabulary.Symbol.Symbol`
+        :type symbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
 
         :param rate: specifies the bandwidth in octets to respect during traffic emission (should be used with duration= parameter)
         :type rate: int
@@ -181,7 +181,7 @@ class AbstractionLayer(object):
         specializing it into a contextualized message.
 
         :param symbol: the symbol to write on the channel
-        :type symbol: :class:`netzob.Model.Vocabulary.Symbol.Symbol`
+        :type symbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
 
         :param presets: specifies how to parameterize the emitted symbol
         :type presets: dict
@@ -210,10 +210,10 @@ class AbstractionLayer(object):
         """Read from the abstraction layer a flow and abstract it with one or more consecutive symbols
         
         The timeout parameter represents the amount of time (in millisecond) above which
-        no reception of a message triggers the reception of an  :class:`netzob.Model.Vocabulary.EmptySymbol.EmptySymbol`. If timeout set to None
+        no reception of a message triggers the reception of an  :class:`EmptySymbol <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`. If timeout set to None
         or to a negative value means it always wait for the reception of a message.
 
-        :keyword timeout: the time above which no reception of message triggers the reception of an :class:`netzob.Model.Vocabulary.EmptySymbol.EmptySymbol`
+        :keyword timeout: the time above which no reception of message triggers the reception of an :class:`EmptySymbol <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`
         :type timeout: :class:`int`
         :raise TypeError if the parameter is not valid and Exception if an error occurs.
         """
@@ -251,10 +251,10 @@ class AbstractionLayer(object):
         """Read from the abstraction layer a message and abstract it
         into a message.
         The timeout parameter represents the amount of time (in millisecond) above which
-        no reception of a message triggers the reception of an  :class:`netzob.Model.Vocabulary.EmptySymbol.EmptySymbol`. If timeout set to None
+        no reception of a message triggers the reception of an  :class:`EmptySymbol <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`. If timeout set to None
         or to a negative value means it always wait for the reception of a message.
 
-        :keyword timeout: the time above which no reception of message triggers the reception of an :class:`netzob.Model.Vocabulary.EmptySymbol.EmptySymbol`
+        :keyword timeout: the time above which no reception of message triggers the reception of an :class:`EmptySymbol <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`
         :type timeout: :class:`int`
         :raise TypeError if the parameter is not valid and Exception if an error occurs.
         """

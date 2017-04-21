@@ -70,7 +70,7 @@ class Value(AbstractRelationVariableLeaf):
                      will be generated.
     :param operation: An optional transformation operation to be
                       applied on the targeted data.
-    :type field: :class:`netzob.Model.Vocabulary.AbstractField`
+    :type field: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`
     :type operation: :class:`func`
 
 
@@ -170,7 +170,7 @@ class Value(AbstractRelationVariableLeaf):
         """Checks if a value is available either in data's definition or in memory
 
         :parameter path: the current path used either to abstract and specializa this data
-        :type path: :class:`netzob.Model.Vocabulary.Domain.GenericPath.GenericPath`
+        :type path: :class:`GenericPath <netzob.Model.Vocabulary.Domain.GenericPath.GenericPath>`
         :return: a boolean that indicates if a value is available for this data
         :rtype: :class:`bool`
     
@@ -345,7 +345,7 @@ class Value(AbstractRelationVariableLeaf):
     def dataType(self):
         """The datatype used to encode the result of the computed size.
 
-        :type: :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
+        :type: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
         """
 
         return self.__dataType

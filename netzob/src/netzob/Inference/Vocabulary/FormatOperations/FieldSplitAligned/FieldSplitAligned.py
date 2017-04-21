@@ -177,7 +177,7 @@ class FieldSplitAligned(object):
         """Execute the alignement on the specified field.
 
         :parameter field: the field that will be aligned
-        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         """
         if field is None:
             raise TypeError("Field cannot be None")
@@ -366,7 +366,7 @@ class FieldSplitAligned(object):
         :parameter values: values to align
         :type values: a list of hexastring.
         :keyword semanticTags: semantic tags to consider when aligning
-        :type semanticTags: a dict of :class:`netzob.Model.Vocabulary.SemanticTag.SemanticTag`
+        :type semanticTags: a dict of :class:`SemanticTag <netzob.Model.Vocabulary.SemanticTag.SemanticTag>`
         :return: the alignment, its score and the semantic tags
         :rtype: a tupple (alignement, semanticTags, score)
         """
@@ -412,7 +412,7 @@ class FieldSplitAligned(object):
         of the applicative data identified.
 
         :parameter message: the message in which we search any applicative data
-        :type message: :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+        :type message: :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage>`
         :return: a dict that describes the position of identified applicative data
         :rtype: :class:`dict`
         """

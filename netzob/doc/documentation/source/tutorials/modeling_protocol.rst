@@ -60,7 +60,7 @@ A definition domain describes the set of values its field accepts. To support co
 
 A *Data Variables* describes a data which value is of a given type. Various types are provided with Netzob:
 
-* *ASCII* : an ASCII string (see class :class:`netzob.Common.Models.Types.ASCII`)
+* *ASCII* : an ASCII string (see class :class:`ASCII <netzob.Common.Models.Types.ASCII>`)
   
   Example of a field that only accepts the "netzob" ASCII string::
 
@@ -83,7 +83,7 @@ A *Data Variables* describes a data which value is of a given type. Various type
     nckrphjj
 
   
-* *Decimal* : a decimal number (see class :class:`netzob.Common.Models.Types.Decimal`)
+* *Decimal* : a decimal number (see class :class:`Decimal <netzob.Common.Models.Types.Decimal>`)
 
   Similarly to the ASCII type, a Decimal data can be constrained by a specific value::
 
@@ -99,7 +99,7 @@ A *Data Variables* describes a data which value is of a given type. Various type
     >>> field.specialize()
     '\xd6\xca'
 
-* *Raw* : a sequence of bytes (see class :class:`netzob.Common.Models.Types.Raw`)
+* *Raw* : a sequence of bytes (see class :class:`Raw <netzob.Common.Models.Types.Raw>`)
 
   Example of a field that accepts a specific sequence of bytes::
   
@@ -113,7 +113,7 @@ A *Data Variables* describes a data which value is of a given type. Various type
     >>> field.specialize()
     't)\x99\x8a\x02>\xd1\x91y\x9b'
     
-* *BitArray* : a sequence of bits (see class :class:`netzob.Common.Models.Types.BitArray`)
+* *BitArray* : a sequence of bits (see class :class:`BitArray <netzob.Common.Models.Types.BitArray>`)
 
   Example of a field that accepts 3 to 10 bits::
   
@@ -121,7 +121,7 @@ A *Data Variables* describes a data which value is of a given type. Various type
     >>> field.specialize()
     '\xbe@'
   
-* *IPv4* : an IPv4 raw address (see class :class:`netzob.Common.Models.Types.IPv4`)
+* *IPv4* : an IPv4 raw address (see class :class:`IPv4 <netzob.Common.Models.Types.IPv4>`)
 
   Example of a field that only accepts an IPv4 address::
 
@@ -167,7 +167,7 @@ Along with Data variables, the definition domain of a field can embed the defini
     >>> s.specialize()
     '\x07\xfb+K\xf4N\x99' # size = 6 + 1 (offset)
 
-  More details and examples of Size relationships can be found in its API doc :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Size`.
+  More details and examples of Size relationships can be found in its API doc :class:`Size <netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Size>`.
     
 * A *Value Relationship* is very similar to the size relationship except that the relationship applies on the value of the targeted field.
 
@@ -182,7 +182,7 @@ Along with Data variables, the definition domain of a field can embed the defini
     >>> s.specialize()
     '6H\xf9\x84\xc4:6H\xf9\x84\xc4'
 
-  More details and examples of Value relationships can be found in its API doc :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Size`.
+  More details and examples of Value relationships can be found in its API doc :class:`Size <netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Size>`.
     
 * An *InternetChecksum Variable* describes a data whose value is the IP checksum of one or more other fields.
 
@@ -207,7 +207,7 @@ Along with Data variables, the definition domain of a field can embed the defini
 
 * The *Aggregation Node Variable* can be used to model a succession of variables.
 
-  For example, a field that accepts an ASCII string of 10 characters followed by 2 bytes (see :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Agg`)::
+  For example, a field that accepts an ASCII string of 10 characters followed by 2 bytes (see :class:`Agg <netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Agg>`)::
   
     >>> domainOfField = Agg([ ASCII(nbChars=10), Raw(nbBytes=2) ])
     >>> field = Field(domainOfField)
@@ -216,7 +216,7 @@ Along with Data variables, the definition domain of a field can embed the defini
 
 * The *Alternate Node Variable* can be used to model an alternative of multiple variables (OR).
 
-  For example, in the following models a field either accepts the ASCII value "hello" or any ASCII string of 10 to 15 characters (see :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Alt`) ::
+  For example, in the following models a field either accepts the ASCII value "hello" or any ASCII string of 10 to 15 characters (see :class:`Alt <netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Alt>`) ::
 
     >>> field = Field(Alt([ ASCII("hello"), ASCII(nbChars=(10, 15)) ]))
     >>> repr(field.specialize())
@@ -226,7 +226,7 @@ Along with Data variables, the definition domain of a field can embed the defini
 
 * The *Repeat Node Variable* can be used to model a repetition of a variable.
   
-  For example, in the following models a field accepts between 1 and 4 repetitions of the ASCII string "netzob" (see :class:`netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Repeat`) ::::
+  For example, in the following models a field accepts between 1 and 4 repetitions of the ASCII string "netzob" (see :class:`Repeat <netzob.Common.Models.Vocabulary.Domain.Variables.Nodes.Repeat>`) ::::
 
     >>> field = Field(Repeat(ASCII("netzob"), nbRepeat=(1, 4)))
     >>> repr(field.specialize())

@@ -190,7 +190,7 @@ class MessageSpecializer(object):
     def memory(self):
         """Memory used while specializing current symbol.
 
-        :type: :class:`netzob.Model.Vocabulary.Domain.Variables.Memory.Memory`
+        :type: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`
         :raises: :class:`TypeError`, :class:`ValueError`
         """
         return self.__memory

@@ -95,7 +95,7 @@ class State(AbstractState):
         The abstraction layer that will be used is specified as a parameter.
 
         :parameter abstractionLayer: the abstraction layer that will be used to access to the channel
-        :type abstractionLayer: :class:`netzob.Simulator.AbstractionLayer.AbstractionLayer`
+        :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
         :raise Exceptions if an error occurs somewhere (sorry this is be vague i known @todo)
         """
         if abstractionLayer is None:
@@ -140,7 +140,7 @@ class State(AbstractState):
         At the end if no exception occur, it returns the next state.
 
         :param abstractionLayer: the abstraction layer from which it receives messages
-        :type abstractionLayer: :class:`netzob.Simulator.AbstractionLayer.AbstractionLayer`
+        :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
         :raise Exception if something goes bad (sorry for the lack of detail) @todo
         """
         if abstractionLayer is None:
@@ -227,7 +227,7 @@ class State(AbstractState):
         It can return None.
 
         :return: the next transition or None if no transition available
-        :rtype: :class:`netzob.Model.Grammar.Transition.AbstractTransition.AbstractTransition`
+        :rtype: :class:`AbstractTransition <netzob.Model.Grammar.Transition.AbstractTransition.AbstractTransition>`
         """
 
         if len(self.transitions) == 0:
@@ -256,7 +256,7 @@ class State(AbstractState):
         of transition which starts on the current state.
 
         :param transition: the transition to remove
-        :type transition: :class:`netzob.Model.Grammar.Transitions.AbstractTransition`
+        :type transition: :class:`AbstractTransition <netzob.Model.Grammar.Transitions.AbstractTransition>`
         :raise: TypeError if param is not an Abstractransition and a ValueError if the transition
         is not registered
 

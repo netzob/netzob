@@ -69,7 +69,7 @@ class AbstractMessage(SortableObject):
         :parameter _id: the unique identifier of the message
         :type _id: :class:`uuid.UUID`
         :keyword session: the session in which the message was captures
-        :type session: :class:`netzob.Model.Vocabulary.Session.Session`
+        :type session: :class:`Session <netzob.Model.Vocabulary.Session.Session>`
         :parameter date: the timestamp of the message
         :type date: a :class:`int`
         :parameter source: the optional source address of the message
@@ -115,7 +115,7 @@ class AbstractMessage(SortableObject):
         False
 
         :parameter field: the current message will be parsed with this field
-        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :return: a boolean indicating if the current message can be parsed with the specified field
         :rtype: :class:`bool`
 
@@ -317,7 +317,7 @@ class AbstractMessage(SortableObject):
     def visualizationFunctions(self):
         """Sorted list of visualization function to attach on message.
 
-        :type: a list of :class:`netzob.Model.Vocabulary.Functions.VisualizationFunction`
+        :type: a list of :class:`VisualizationFunction <netzob.Model.Vocabulary.Functions.VisualizationFunction>`
         :raises: :class:`TypeError`
 
         .. warning:: Setting this value with a list copies its members and not the list itself.
@@ -350,7 +350,7 @@ class AbstractMessage(SortableObject):
     def session(self):
         """The session from which message comes from.
 
-        :type: :class:`netzob.Model.Vocabulary.Session.Session`
+        :type: :class:`Session <netzob.Model.Vocabulary.Session.Session>`
         """
 
         return self.__session

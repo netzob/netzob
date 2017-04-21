@@ -256,8 +256,8 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         :type transposed: :class:`bool`
 
         :return: a matrix representing the aligned messages following fields definitions.
-        :rtype: a :class:`netzob.Common.Utils.MatrixList.MatrixList`
-        :raises: :class:`netzob.Model.Vocabulary.AbstractField.AlignmentException` if an error occurs while aligning messages
+        :rtype: a :class:`MatrixList <netzob.Common.Utils.MatrixList.MatrixList>`
+        :raises: :class:`AlignmentException <netzob.Model.Vocabulary.AbstractField.AlignmentException>` if an error occurs while aligning messages
         """
 
         if len(self.messages) < 1:
@@ -342,7 +342,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         :return: a list detailling all the values current element takes.
         :rtype: a :class:`list` of :class:`str`
-        :raises: :class:`netzob.Model.Vocabulary.AbstractField.AlignmentException` if an error occurs while aligning messages
+        :raises: :class:`AlignmentException <netzob.Model.Vocabulary.AbstractField.AlignmentException>` if an error occurs while aligning messages
         """
         cells = self.getCells(encoded=encoded, styled=styled)
         values = []
@@ -490,7 +490,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
     #     :parameter value: a Raw value
     #     :type value: :class:`object`
     #     :return: a list of messages
-    #     :rtype: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+    #     :rtype: a list of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage>`
     #     """
 
     #     if value is None:
@@ -509,11 +509,11 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         follows the fields definitions attached to current element.
 
         :keyword mutator: if set, the mutator will be used to mutate the fields definitions
-        :type mutator: :class:`netzob.Fuzzing.Mutator`
+        :type mutator: :class:`Mutator <netzob.Fuzzing.Mutator>`
 
         :return: a generated content represented with an hexastring
         :rtype: :class:`str`
-        :raises: :class:`netzob.Model.Vocabulary.AbstractField.GenerationException` if an error occurs while generating a message
+        :raises: :class:`GenerationException <netzob.Model.Vocabulary.AbstractField.GenerationException>` if an error occurs while generating a message
         """
         return
 
@@ -527,7 +527,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         :param bytes data: The concrete message to abstract in symbol.
         :param fields: A list of symbol to consider during abstraction.
-        :type fields: a :class:`list` of :class:`netzob.Model.Vocabulary.Symbol`
+        :type fields: a :class:`list` of :class:`Symbol <netzob.Model.Vocabulary.Symbol>`
 
 
         >>> from netzob.all import *
@@ -561,11 +561,11 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         :parameter data: the data that should be abstracted in symbol
         :type data: :class:`str`
         :parameter fields: a list of fields/symbols targeted during the abstraction process
-        :type fields: :class:`list` of :class:`netzob.Model.Vocabulary.AbstractField`
+        :type fields: :class:`list` of :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`
 
         :return: a field/symbol and the structured received message
-        :rtype: a tuple (:class:`netzob.Model.Vocabulary.AbstractField`, dict)
-        :raises: :class:`netzob.Model.Vocabulary.AbstractField.AbstractionException` if an error occurs while abstracting the data
+        :rtype: a tuple (:class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`, dict)
+        :raises: :class:`AbstractionException <netzob.Model.Vocabulary.AbstractField.AbstractionException>` if an error occurs while abstracting the data
         """
         from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
         for field in fields:
@@ -594,11 +594,11 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         """Computes the symbol to which this field is attached.
 
         To retrieve it, this method recursively call the parent of the current object until the root is found.
-        If the last root is not a :class:`netzob.Model.Vocabulary.Symbol`, it raises an Exception.
+        If the last root is not a :class:`Symbol <netzob.Model.Vocabulary.Symbol>`, it raises an Exception.
 
         :returns: the symbol if available
-        :type: :class:`netzob.Model.Vocabulary.Symbol`
-        :raises: :class:`netzob.Model.Vocabulary.AbstractField.NoSymbolException`
+        :type: :class:`Symbol <netzob.Model.Vocabulary.Symbol>`
+        :raises: :class:`NoSymbolException <netzob.Model.Vocabulary.AbstractField.NoSymbolException>`
         """
         from netzob.Model.Vocabulary.Symbol import Symbol
         if isinstance(self, Symbol):
@@ -643,7 +643,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         ['L0_header', 'L1', 'L0_footer']
 
         :return: the list of leaf fields
-        :rtype: :class:`list` of :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`.
+        :rtype: :class:`list` of :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`.
         """
         if currentDepth is None:
             currentDepth = 0
@@ -775,9 +775,9 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
     def encodingFunctions(self):
         """Sorted typed list of encoding function to attach on field.
 
-        .. note:: list implemented as a :class:`netzob.Common.Utils.TypedList.TypedList`
+        .. note:: list implemented as a :class:`TypedList <netzob.Common.Utils.TypedList.TypedList>`
 
-        :type: a list of :class:`netzob.Model.Vocabulary.Functions.EncodingFunction`
+        :type: a list of :class:`EncodingFunction <netzob.Model.Vocabulary.Functions.EncodingFunction>`
         :raises: :class:`TypeError`
 
         .. warning:: Setting this value with a list copies its members and not the list itself.
@@ -799,7 +799,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
     def visualizationFunctions(self):
         """Sorted list of visualization function to attach on field.
 
-        :type: a list of :class:`netzob.Model.Vocabulary.Functions.VisualizationFunction`
+        :type: a list of :class:`VisualizationFunction <netzob.Model.Vocabulary.Functions.VisualizationFunction>`
         :raises: :class:`TypeError`
 
         .. warning:: Setting this value with a list copies its members and not the list itself.
@@ -816,7 +816,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
     def transformationFunctions(self):
         """Sorted list of transformation function to attach on field.
 
-        :type: a list of :class:`netzob.Model.Vocabulary.Functions.TransformationFunction`
+        :type: a list of :class:`TransformationFunction <netzob.Model.Vocabulary.Functions.TransformationFunction>`
         :raises: :class:`TypeError`
 
         .. warning:: Setting this value with a list copies its members and not the list itself.
@@ -858,7 +858,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         If current element has no parent, its value is **None**.
 
-        :type: a :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type: a :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :raises: :class:`TypeError`
         """
 

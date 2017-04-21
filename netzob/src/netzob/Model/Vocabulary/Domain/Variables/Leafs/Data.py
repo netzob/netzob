@@ -69,8 +69,8 @@ class Data(AbstractVariableLeaf):
                      be generated).
     :param str svas: The SVAS strategy defining how the Data value is
                      used for abstracting and specializing.
-    :type dataType: :class:`netzob.Model.Vocabulary.Types.AbstractType`
-    :type originalValue: :class:`netzob.Model.Vocabulary.Types.BitArray`
+    :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`
+    :type originalValue: :class:`BitArray <netzob.Model.Vocabulary.Types.BitArray>`
 
 
     The following example shows the definition of the Data `pseudo`
@@ -123,7 +123,7 @@ class Data(AbstractVariableLeaf):
         """Checks if a value is available either in data's definition or in memory
 
         :parameter path: the current path used either to abstract and specializa this data
-        :type path: :class:`netzob.Model.Vocabulary.Domain.GenericPath.GenericPath`
+        :type path: :class:`GenericPath <netzob.Model.Vocabulary.Domain.GenericPath.GenericPath>`
         :return: a boolean that indicates if a value is available for this data
         :rtype: :class:`bool`
     

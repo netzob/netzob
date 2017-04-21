@@ -228,7 +228,7 @@ class FieldParser():
     def field(self):
         """The field that will be use to parse some content
 
-        :type: :class:`netzob.Model.Vocabulary.Field.Field`
+        :type: :class:`Field <netzob.Model.Vocabulary.Field.Field>`
         """
         return self.__field
 

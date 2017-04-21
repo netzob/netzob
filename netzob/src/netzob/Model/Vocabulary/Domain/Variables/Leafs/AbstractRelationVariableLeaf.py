@@ -66,7 +66,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
     def fieldDependencies(self):
         """A list of fields that are required before computing the value of this relation
 
-        :type: a list of :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type: a list of :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         """
         return self.__fieldDependencies
 

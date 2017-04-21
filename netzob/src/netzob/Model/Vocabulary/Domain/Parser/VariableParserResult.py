@@ -81,7 +81,7 @@ class VariableParserResult():
     def variable(self):
         """The variable that will be use to parse some content
 
-        :type: :class:`netzob.Model.Vocabulary.Domain.Variables.AbstractVariable`
+        :type: :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`
         """
         return self.__variable
 

@@ -93,7 +93,7 @@ class FieldReseter(object):
 
 
         :param field: the field we want to reset
-        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :raise Exception if something bad happens
         """
 

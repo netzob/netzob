@@ -107,14 +107,14 @@ class SearchEngine(object):
         it but also under various format.
 
         :parameter data: the data to search after. This data must be provided with its netzob type.
-        :type data: an :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`.
+        :type data: an :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`.
         :parameter message: the message in which the search will take place
-        :type message: :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
+        :type message: :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage>`
         :keyword addTags: if set to True, visualization functions are added to the message to highlights found results.
         :type addTags: :class:`bool`
         :return: a search results detailling where and how occurrences where found. Occurences are also
         identified in the message through dedicated visualization functions automaticaly added to the message.
-        :rtype: :class:`netzob.Inference.Vocabulary.SearchEngine.SearchResults.SearchResults`
+        :rtype: :class:`SearchResults <netzob.Inference.Vocabulary.SearchEngine.SearchResults.SearchResults>`
 
         """
         if data is None:
@@ -178,9 +178,9 @@ class SearchEngine(object):
         25 occurence(s) found.
 
         :parameter data: a list of data to search after. Each data must be provided with its netzob type.
-        :type data: a list of :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`.
+        :type data: a list of :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`.
         :parameter messages: the messages in which the search will take place
-        :type message: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
+        :type message: a list of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage>`
         :keyword addTags: if set to True, visualization functions are added to the message to highlights found results.
         :type addTags: :class:`bool`
         :keyword inParallel: if set to True, the search will be executed in parallel.
@@ -190,7 +190,7 @@ class SearchEngine(object):
 
         :return: a list of search results detailling where and how occurrences where found. Occurences are also
         identified in the message through dedicated visualization functions automaticaly added to the message.
-        :rtype: a list of :class:`netzob.Inference.Vocabulary.SearchEngine.SearchResults.SearchResults`
+        :rtype: a list of :class:`SearchResults <netzob.Inference.Vocabulary.SearchEngine.SearchResults.SearchResults>`
 
         """
 
@@ -274,9 +274,9 @@ class SearchEngine(object):
 
 
         :parameter data: the data to search after. Data must be provided with their netzob type.
-        :type data: a list of :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`.
+        :type data: a list of :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`.
         :parameter message: the message in which the search will take place
-        :type message: :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
+        :type message: :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage>`
         :keyword addTags: if set to True, visualization functions are added to the message to highlights found results.
         :type addTags: :class:`bool`
         :keyword dataLabels: an optionnal dict to attach to each data a label to simplify search results identification
@@ -284,7 +284,7 @@ class SearchEngine(object):
 
         :return: a search results detailling where and how occurrences where found. Occurences are also
         identified in the message through dedicated visualization functions automaticaly added to the message.
-        :rtype: :class:`netzob.Inference.Vocabulary.SearchEngine.SearchResults.SearchResults`
+        :rtype: :class:`SearchResults <netzob.Inference.Vocabulary.SearchEngine.SearchResults.SearchResults>`
 
         """
 
@@ -328,10 +328,10 @@ class SearchEngine(object):
         """Execute the different search cases and build
         search results that will be returned.
 
-        :parameter searchCases: an iterable of tupple (bitarray, :class:`netzob.Inference.Vocabulary.Search.SearchTask.SearchTask`)
+        :parameter searchCases: an iterable of tupple (bitarray, :class:`SearchTask <netzob.Inference.Vocabulary.Search.SearchTask.SearchTask>`)
         :type searchCases: a list
         :return: the obtained results
-        :rtype: a list of :class:`netzob.Inference.Vocabulary.Search.SearchResult.SearchResult`
+        :rtype: a list of :class:`SearchResult <netzob.Inference.Vocabulary.Search.SearchResult.SearchResult>`
 
         """
         if searchCases is None:
@@ -363,11 +363,11 @@ class SearchEngine(object):
         specified data.
 
         :parameter data: the data from wich it must create search tasks
-        :type data: :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
+        :type data: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
         :keyword properties: a dict of properties {name, value} to attach to each built searchTask
         :type properties: a dict
         :return: a list of search tasks
-        :rtype: a :class:`list` of :class:`netzob.Inference.Vocabulary.SearchEngine.SearchTask.SearchTask`
+        :rtype: a :class:`list` of :class:`SearchTask <netzob.Inference.Vocabulary.SearchEngine.SearchTask.SearchTask>`
         """
         if data is None:
             raise TypeError("The data cannot be None")

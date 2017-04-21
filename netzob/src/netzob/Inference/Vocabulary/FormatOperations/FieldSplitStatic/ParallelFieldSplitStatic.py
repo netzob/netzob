@@ -65,7 +65,7 @@ class ParallelFieldSplitStatic(object):
         """Constructor.
 
         :param field : the field to consider when spliting
-        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :keyword unitSize: the required size of static element to create a static field
         :type unitSize: :class:`int`.
         :keyword nbThread: the number of thread to use when spliting
@@ -129,7 +129,7 @@ class ParallelFieldSplitStatic(object):
         following the value variation every unitSize
 
         :param field : the field to consider when spliting
-        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :keyword unitSize: the required size of static element to create a static field
         :type unitSize: :class:`int`.
         :keyword nbThread: the number of thread to use when spliting
@@ -145,7 +145,7 @@ class ParallelFieldSplitStatic(object):
         """The field that contains the definition domain used
         to align data
 
-        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         """
         return self.__field
 

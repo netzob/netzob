@@ -179,11 +179,11 @@ class BitArray(AbstractType):
         :param data: the data encoded in BitArray which will be decoded in raw
         :type data: bitarray
         :keyword unitSize: the unit size of the specified data
-        :type unitSize: :class:`netzob.Model.Vocabulary.Types.UnitSize.UnitSize`
+        :type unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.UnitSize.UnitSize>`
         :keyword endianness: the endianness of the specified data
-        :type endianness: :class:`netzob.Model.Vocabulary.Types.Endianness.Endianness`
+        :type endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.Endianness.Endianness>`
         :keyword sign: the sign of the specified data
-        :type sign: :class:`netzob.Model.Vocabulary.Types.Sign.Sign`
+        :type sign: :class:`Sign <netzob.Model.Vocabulary.Types.Sign.Sign>`
 
         :return: data encoded in python raw
         :rtype: python raw
@@ -215,7 +215,7 @@ class BitArray(AbstractType):
         :type sign: str
 
         :return: data encoded in BitArray
-        :rtype: :class:`netzob.Model.Vocabulary.Types.BitArray.BitArray`
+        :rtype: :class:`BitArray <netzob.Model.Vocabulary.Types.BitArray.BitArray>`
         :raise: TypeError if parameters are not valid.
         """
         if data is None:

@@ -226,7 +226,7 @@ class FieldSplitStatic(object):
         Children of the specified field will be replaced with new fields.
 
         :param field: the format definition that will be user
-        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :raise Exception: if something bad happens
         """
 
@@ -352,7 +352,7 @@ class FieldSplitStatic(object):
         following the value variation every unitSize
 
         :param field : the field to consider when spliting
-        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :keyword mergeAdjacentStaticFields: if set to true, adjacent static fields are merged in a single field
         :type mergeAdjacentStaticFields: :class:`bool`
         :keyword mergeAdjacentDynamicFields: if set to true, adjacent dynamic fields are merged in a single field

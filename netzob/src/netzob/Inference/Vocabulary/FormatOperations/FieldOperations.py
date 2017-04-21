@@ -106,9 +106,9 @@ class FieldOperations(object):
         --------------
         
         :param field1: the left field to merge
-        :type field1: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type field1: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :param field2: the right field to merge
-        :type field2: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type field2: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
 
         :raise Exception if something bad happens
         """

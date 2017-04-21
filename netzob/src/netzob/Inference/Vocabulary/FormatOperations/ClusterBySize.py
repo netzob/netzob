@@ -94,7 +94,7 @@ class ClusterBySize(object):
         --------------------
 
         :param messages: the messages to cluster.
-        :type messages: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+        :type messages: a list of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage>`
         :raise Exception if something bad happens
         """
 

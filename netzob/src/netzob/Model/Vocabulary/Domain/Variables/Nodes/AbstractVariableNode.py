@@ -49,8 +49,8 @@ from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVa
 class AbstractVariableNode(AbstractVariable):
     """Represents a node in the variable definition of a field.
 
-    A node is a variable which accepts children, such as Alternate (:class:`netzob.Model.Vocabulary.Variables.Nodes.Alt.Alt`)
-    and Aggregate (:class:`netzob.Model.Vocabulary.Variables.Nodes.Agg.Agg`).
+    A node is a variable which accepts children, such as Alternate (:class:`Alt <netzob.Model.Vocabulary.Variables.Nodes.Alt.Alt>`)
+    and Aggregate (:class:`Agg <netzob.Model.Vocabulary.Variables.Nodes.Agg.Agg>`).
     Thus, both of them inherits from this class.
 
     """
@@ -66,7 +66,7 @@ class AbstractVariableNode(AbstractVariable):
         """Sorted typed list of children attached to the variable node.
         .. warning:: Setting this value with a list copies its members and not the list itself.
 
-        :type: a list of :class:`netzob.Model.Vocabulary.Variables.Variable`
+        :type: a list of :class:`Variable <netzob.Model.Vocabulary.Variables.Variable>`
 
         """
         return self._children

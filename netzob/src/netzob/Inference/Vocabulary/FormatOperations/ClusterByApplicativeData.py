@@ -54,7 +54,7 @@ class ClusterByApplicativeData(object):
     """This operations cluster messages in symbols following
     their embedded applicative data.
 
-    The clustering by applicative data use the :class:`netzob.Inference.Search.SearchEngine.SearchEngine` to
+    The clustering by applicative data use the :class:`SearchEngine <netzob.Inference.Search.SearchEngine.SearchEngine>` to
     search applicative data in messages and cluster together message with the same applicative data.
     In the example below, we generate two types of messages. The first,
     contains the pseudo and the city of the user: two applicative datas. While the second

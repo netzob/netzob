@@ -76,10 +76,10 @@ class Session(object):
                  name="Session"):
         """
         :parameter messages: the messages exchanged in the current session
-        :type data: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+        :type data: a list of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage>`
         :parameter _id: the unique identifier of the session
         :type _id: :class:`uuid.UUID`
-        :keyword applicativeData: a list of :class:`netzob.Model.Vocabulary.ApplicaticeData.ApplicativeData`
+        :keyword applicativeData: a list of :class:`ApplicativeData <netzob.Model.Vocabulary.ApplicaticeData.ApplicativeData>`
         """
         self.__messages = SortedTypedList(AbstractMessage)
         self.__applicativeData = TypedList(ApplicativeData)
@@ -115,7 +115,7 @@ class Session(object):
         """The messages exchanged in the current session.
         Messages are sorted.
 
-        :type: a :class:`netzob.Common.Utils.TypedList.TypedList` of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+        :type: a :class:`TypedList <netzob.Common.Utils.TypedList.TypedList>` of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage>`
         """
         return self.__messages
 
@@ -161,7 +161,7 @@ class Session(object):
         >>> print(session.applicativeData[1])
         Applicative Data: test2=ASCII=helloworld ((0, 80)))
 
-        :type: a list of :class:`netzob.Model.Vocabulary.ApplicativeData.ApplicativeData`.
+        :type: a list of :class:`ApplicativeData <netzob.Model.Vocabulary.ApplicativeData.ApplicativeData>`.
         """
         return self.__applicativeData
 

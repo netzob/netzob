@@ -53,8 +53,8 @@ class AbstractVariableLeaf(AbstractVariable):
     """Represents a leaf in the variable definition of a field.
 
     A leaf is a variable with no children. Most of of leaf variables
-    are :class:`netzob.Model.Vocabulary.Domain.Variables.Leafs.Data.Data` variables and
-    :class:`netzob.Model.Vocabulary.Domain.Variables.Leafs.Relations.AbstractRelation.AbstractRelation`.
+    are :class:`Data <netzob.Model.Vocabulary.Domain.Variables.Leafs.Data.Data>` variables and
+    :class:`AbstractRelation <netzob.Model.Vocabulary.Domain.Variables.Leafs.Relations.AbstractRelation.AbstractRelation>`.
 
     """
 

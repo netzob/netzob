@@ -75,8 +75,8 @@ class Symbol(AbstractField):
                      fields are already known).
     :param str name: The name of the symbol. If not specified, the
                      default name will be "Symbol".
-    :type fields: a :class:`list` of :class:`netzob.Model.Vocabulary.Field`
-    :type messages: a :class:`list` of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
+    :type fields: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`
+    :type messages: a :class:`list` of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage>`
 
 
     **Usage of Symbol for protocol modeling**
@@ -197,7 +197,7 @@ class Symbol(AbstractField):
                         specialization. Values in this dictionary will
                         override any fields definition, constraints or
                         relationship dependencies.
-        :type memory: :class:`netzob.Model.Vocabulary.Domain.Variables.Memory`
+        :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory>`
         :type presets: :class:`dict`
 
         The following example shows the specialize() method used for a
@@ -260,7 +260,7 @@ class Symbol(AbstractField):
     def messages(self):
         """A list containing all the messages that this symbol represent.
 
-        :type : a :class:`list` of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+        :type : a :class:`list` of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage>`
         """
         return self.__messages
 

@@ -121,7 +121,7 @@ class DataAlignment(object):
         :param data: the list of data that will be aligned, data must be encoded in HexaString
         :type data: a :class:`list` of data to align
         :param field: the format definition that will be user
-        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :keyword depth: the limit in depth in the format (use None for not limit)
         :type depth: :class:`int`
         :keyword encoded: indicates if the result should be encoded following field definition
@@ -192,7 +192,7 @@ class DataAlignment(object):
     #     :param data: the data to split must be encoded in hexastring
     #     :type data: :class:`str`
     #     :param fields: the list of fields to use to parse the specified data
-    #     :type fields: a list of :class:`netzob.Model.Vocabulary.Field.Field`
+    #     :type fields: a list of :class:`Field <netzob.Model.Vocabulary.Field.Field>`
     #     """
 
     #     if data is None:
@@ -247,13 +247,13 @@ class DataAlignment(object):
         :param data: the data to align as a list of hexastring
         :type data: :class:`list`
         :param field : the field to consider when aligning
-        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :keyword depth: maximum field depth to consider (similar to layer depth)
         :type depth: :class:`int`.
         :keyword encoded: set to True if you want the returned result to follow the encoding functions
         :type encoded: :class:`boolean`
         :return: the aligned data
-        :rtype: :class:`netzob.Common.Utils.MatrixList.MatrixList`
+        :rtype: :class:`MatrixList <netzob.Common.Utils.MatrixList.MatrixList>`
         """
 
         dAlignment = DataAlignment(data, field, depth, encoded=encoded)
@@ -287,7 +287,7 @@ class DataAlignment(object):
         """The field that contains the definition domain used
         to align data
 
-        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         """
         return self.__field
 

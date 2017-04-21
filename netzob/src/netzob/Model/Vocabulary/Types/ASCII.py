@@ -223,7 +223,7 @@ class ASCII(AbstractType):
         :keyword prefixDescription: prefix to attach to the description of the generated mutation.
         :type prefixDescription: :class:`str`
         :return: a dict of computed mutations having the same types than the initial one.
-        :rtype: :class:`dict`<str>=:class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
+        :rtype: :class:`dict`<str>=:class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
         """
         if prefixDescription is None:
             prefixDescription = ""

@@ -145,7 +145,7 @@ class Memory(object):
         bitarray('01100100')
 
         :return: a new memory containing the same entries than current one
-        :rtype: :class:`netzob.Model.Vocabulary.Domain.Variables.Memory`
+        :rtype: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory>`
         """
         duplicatedMemory = Memory()
         for k in list(self.memory.keys()):
@@ -220,7 +220,7 @@ class Memory(object):
 #         """Check if a variable is in the temporary memory.
 
 #         :param variable: the given variable we search in memory.
-#         :type variable: :class:`netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
+#         :type variable: :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
 #         :return: True if the variable has been found in the memory.
 #         :rtype: :class:`bool`
 #         :raise: :class:`TypeError` if parameter is not valid
@@ -235,7 +235,7 @@ class Memory(object):
 #         """Copy back the value of a variable from the real memory in the temporary memory.
 
 #         :param variable: the given variable, the value of which we want to restore.
-#         :type variable: :class:`netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
+#         :type variable: :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
 #         :raise: :class:`TypeError` if parameter is not valid
 #         """
 #         if variable is None:
@@ -252,7 +252,7 @@ class Memory(object):
 #         """Save the current value of a variable in memory.
 
 #         :param variable: the given variable, the value of which we want to save.
-#         :type variable: :class:`netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
+#         :type variable: :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
 #         :raise: :class:`TypeError` if parameter is not valid
 #         """
 #         if variable is None:
@@ -269,7 +269,7 @@ class Memory(object):
 #         """Remove a variable and its value from the temporary memory.
 
 #         :param variable: the given variable, the value of which we want to forget.
-#         :type variable: :class:`netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
+#         :type variable: :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
 #         :raise: :class:`TypeError` if parameter is not valid
 #         """
 #         if variable is None:
@@ -285,7 +285,7 @@ class Memory(object):
 #         """Return the value of one variable store in the temporary memory.
 
 #         :param variable: the given variable, the value of which we are searching.
-#         :type variable: :class:`netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
+#         :type variable: :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
 #         :return: the value of the given variable in the temporary memory or None is not available
 #         :rtype: :class:`bitarray`
 #         :raise: :class:`TypeError` if parameter is not valid

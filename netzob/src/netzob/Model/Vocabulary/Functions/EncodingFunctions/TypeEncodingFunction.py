@@ -97,7 +97,7 @@ class TypeEncodingFunction(EncodingFunction):
     def __init__(self, _type, unitSize=None, endianness=None, sign=None):
         """Creates a new encoding function that will encode
         the data with the specified types and following its attributes. If an attribute
-        is not specified (or set to None), it takes its default value defined in :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`.
+        is not specified (or set to None), it takes its default value defined in :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`.
 
         :parameter _type: the type that will be used to encode
         :type _type: :class:`type`

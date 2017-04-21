@@ -273,7 +273,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         :keyword dst_sign: the sign of the destination. Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED. if None, the value is the default one.
         :type dst_sign: str
         :return: the converted current value in the specified netzob type
-        :rtype: :class:`netzob.Model.AbstractType.AbstractType`
+        :rtype: :class:`AbstractType <netzob.Model.AbstractType.AbstractType>`
         """
         if typeClass is None:
             raise TypeError("TypeClass cannot be None")
@@ -361,7 +361,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         :keyword prefixDescription: prefix to attach to the description of the generated mutation.
         :type prefixDescription: :class:`str`
         :return: a dict of computed mutations having the same types than the initial one.
-        :rtype: :class:`dict`<str>=:class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
+        :rtype: :class:`dict`<str>=:class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
         """
         if prefixDescription is None:
             prefixDescription = ""
@@ -398,11 +398,11 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         :param data: the data encoded in current type which will be decoded in raw
         :type data: the current type
         :keyword unitSize: the unit size of the specified data
-        :type unitSize: :class:`netzob.Model.Vocabulary.Types.UnitSize.UnitSize`
+        :type unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.UnitSize.UnitSize>`
         :keyword endianness: the endianness of the specified data
-        :type endianness: :class:`netzob.Model.Vocabulary.Types.Endianness.Endianness`
+        :type endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.Endianness.Endianness>`
         :keyword sign: the sign of the specified data
-        :type sign: :class:`netzob.Model.Vocabulary.Types.Sign.Sign`
+        :type sign: :class:`Sign <netzob.Model.Vocabulary.Types.Sign.Sign>`
 
         :return: data encoded in python raw
         :rtype: python raw
@@ -419,11 +419,11 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         :param data: the data encoded in python raw which will be encoded in current type
         :type data: python raw
         :keyword unitSize: the unit size of the specified data
-        :type unitSize: :class:`netzob.Model.Vocabulary.Types.UnitSize.UnitSize`
+        :type unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.UnitSize.UnitSize>`
         :keyword endianness: the endianness of the specified data
-        :type endianness: :class:`netzob.Model.Vocabulary.Types.Endianness.Endianness`
+        :type endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.Endianness.Endianness>`
         :keyword sign: the sign of the specified data
-        :type sign: :class:`netzob.Model.Vocabulary.Types.Sign.Sign`
+        :type sign: :class:`Sign <netzob.Model.Vocabulary.Types.Sign.Sign>`
 
         :return: data encoded in python raw
         :rtype: python raw
@@ -450,7 +450,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         """The current value of the instance. This value is represented
         under BitArray format
 
-        :type: :class:`netzob.Model.Vocabulary.Types.BitArray.BitArray`
+        :type: :class:`BitArray <netzob.Model.Vocabulary.Types.BitArray.BitArray>`
         """
 
         return self.__value
@@ -531,7 +531,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         :parameter data: the data to normalize
         :type data: :class:`object`
         :return: an abstractType which value is data
-        :rtype: :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
+        :rtype: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
 
         >>> from netzob.all import *
         >>> normalizedData = AbstractType.normalize("netzob")
@@ -566,7 +566,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         return normalizedData
 
     def buildDataRepresentation(self):
-        """It creates a :class:`netzob.Model.Vocabulary.Domain.Variables.Leafs.Data.Data` following the specified type.
+        """It creates a :class:`Data <netzob.Model.Vocabulary.Domain.Variables.Leafs.Data.Data>` following the specified type.
 
         for instance, user can specify a domain with its type which is much more simple than creating a Data with the type
 
@@ -581,7 +581,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         ASCII=hello netzob ! ((0, 112))
 
         :return: a Data of the current type
-        :rtype: :class:`netzob.Model.Vocabulary.Domain.Variables.Leads.Data.Data`
+        :rtype: :class:`Data <netzob.Model.Vocabulary.Domain.Variables.Leads.Data.Data>`
 
         """
         from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
