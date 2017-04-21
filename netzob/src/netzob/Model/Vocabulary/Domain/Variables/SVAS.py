@@ -64,7 +64,7 @@ class SVAS(object):
     The available SVAS strategies for a variable are:
 
     * SVAS.CONSTANT
-    * SVAS.EPHEMERAL
+    * SVAS.EPHEMERAL (the default strategy for variables)
     * SVAS.VOLATILE
     * SVAS.PERSISTENT
 
