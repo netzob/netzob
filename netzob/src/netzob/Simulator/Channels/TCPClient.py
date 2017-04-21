@@ -91,7 +91,23 @@ class TCPClient(AbstractChannel):
                  remotePort,
                  localIP=None,
                  localPort=None,
-                 timeout=5):
+                 timeout=5.):
+        """
+        Constructor of TCPClient channel.
+
+        :keyword remoteIP: the remote IP address to connect
+        :type remoteIP: :class:`str`
+        :keyword remotePort: the remote IP port
+        :type remotePort: :class:`int`
+        :keyword localIP: the local IP address
+        :type localIP: :class:`str`
+        :keyword localPort: the local IP port
+        :type localPort: :class:`int`
+        :keyword timeout: the default timeout of the channel for opening
+                          connection and waiting for a message. Default value
+                          is 5s.
+        :type timeout: :class:`float`
+        """
         super(TCPClient, self).__init__(isServer=False)
         self.remoteIP = remoteIP
         self.remotePort = remotePort
@@ -102,8 +118,11 @@ class TCPClient(AbstractChannel):
         self.__socket = None
 
     def open(self, timeout=None):
-        """Open the communication channel. If the channel is a client, it starts to connect
-        to the specified server.
+        """Open the communication channel. If the channel is a client, it
+        starts to connect to the specified server.
+
+        :keyword timeout: the maximum time in seconds to wait for connection
+        :type timeout: :class:`float`
         """
 
         if self.isOpen:
@@ -131,9 +150,8 @@ class TCPClient(AbstractChannel):
         """Reads the next message on the communication channel.
         Continues to read while it receives something.
 
-
-        @keyword timeout: the maximum time in millisecond to wait before a message can be reached
-        @type timeout: :class:`int`
+        :keyword timeout: the maximum time in seconds to wait for a message
+        :type timeout: :class:`float`
         """
         reading_seg_size = 1024
 
@@ -158,7 +176,7 @@ class TCPClient(AbstractChannel):
         """Write on the communication channel the specified data
 
         :parameter data: the data to write on the channel
-        :type data: binary object
+        :type data: :class:`bytes`
         """
         if self.__socket is not None:
             try:
@@ -175,6 +193,8 @@ class TCPClient(AbstractChannel):
         """Write on the communication channel the specified data and returns
         the corresponding response.
 
+        :keyword timeout: the maximum time in seconds to wait for a response
+        :type timeout: :class:`float`
         """
 
         raise NotImplementedError("Not yet implemented")

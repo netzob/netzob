@@ -50,8 +50,9 @@ from netzob.Simulator.Channels.AbstractChannel import AbstractChannel, ChannelDo
 
 @NetzobLogger
 class SSLClient(AbstractChannel):
-    """An SSLClient is a communication channel that relies on SSL. It allows to create client connecting
-    to a specific IP:Port server over a TCP/SSL socket.
+    """An SSLClient is a communication channel that relies on SSL. It allows
+    to create client connecting to a specific IP:Port server over a TCP/SSL
+    socket.
 
     When the actor execute an OpenChannelTransition, it calls the open
     method on the ssl client which connects to the server.
@@ -63,9 +64,29 @@ class SSLClient(AbstractChannel):
                  remotePort,
                  localIP=None,
                  localPort=None,
-                 timeout=2,
+                 timeout=2.,
                  server_cert_file=None,
                  alpn_protocols=None):
+        """
+        Constructor of SSLClient channel.
+
+        :keyword remoteIP: the remote IP address to connect
+        :type remoteIP: :class:`str`
+        :keyword remotePort: the remote IP port
+        :type remotePort: :class:`int`
+        :keyword localIP: the local IP address
+        :type localIP: :class:`str`
+        :keyword localPort: the local IP port
+        :type localPort: :class:`int`
+        :keyword timeout: the default timeout of the channel for opening
+                          connection and waiting for a message. Default value
+                          is 2s.
+        :type timeout: :class:`float`
+        :keyword server_cert_file: the certificate file
+        :type server_cert_file: :class:`str`
+        :keyword alpn_protocols: list of ALPN protocols
+        :type alpn_protocols: :class:`list`
+        """
         super(SSLClient, self).__init__(isServer=False)
         self.remoteIP = remoteIP
         self.remotePort = remotePort
@@ -81,6 +102,9 @@ class SSLClient(AbstractChannel):
     def open(self, timeout=None):
         """Open the communication channel. If the channel is a client, it starts to connect
         to the specified server.
+
+        :keyword timeout: the maximum time in seconds to wait for connection
+        :type timeout: :class:`float`
         """
 
         if self.isOpen:
@@ -128,8 +152,8 @@ class SSLClient(AbstractChannel):
     def read(self, timeout=None):
         """Read the next message on the communication channel.
 
-        @keyword timeout: the maximum time in millisecond to wait before a message can be reached
-        @type timeout: :class:`int`
+        :keyword timeout: the maximum time in seconds to wait for a message
+        :type timeout: :class:`float`
         """
         reading_seg_size = 1024
 
@@ -154,7 +178,7 @@ class SSLClient(AbstractChannel):
         """Write on the communication channel the specified data
 
         :parameter data: the data to write on the channel
-        :type data: binary object
+        :type data: :class:`bytes`
         """
         if self.__socket is not None:
             try:
@@ -171,6 +195,10 @@ class SSLClient(AbstractChannel):
         """Write on the communication channel the specified data and returns
         the corresponding response.
 
+        :keyword data: the data to write on the channel
+        :type data: :class:`bytes`
+        :keyword timeout: the maximum time in seconds to wait for a response
+        :type timeout: :class:`float`
         """
 
         raise NotImplementedError("Not yet implemented")

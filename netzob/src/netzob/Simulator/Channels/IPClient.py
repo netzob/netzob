@@ -68,7 +68,26 @@ class IPClient(AbstractChannel):
                  localIP=None,
                  upperProtocol=socket.IPPROTO_TCP,
                  interface="eth0",
-                 timeout=5):
+                 timeout=5.):
+        """
+        Constructor of IPClient channel.
+
+        :keyword remoteIP: the remote IP address to connect
+        :type remoteIP: :class:`str`
+        :keyword localIP: the local IP address
+        :type localIP: :class:`str`
+        :keyword upperProtocol: the protocol following IP in the stack.
+                                Default value is socket.IPPROTO_TCP.
+        :type upperProtocol: :class:`int`
+        :keyword interface: the network interface to use. It is linked with
+                            the local IP address to use (localIP).
+                            Default value is 'eth0'.
+        :type interface: :class:`str`
+        :keyword timeout: the default timeout of the channel for opening
+                          connection and waiting for a message. Default value
+                          is 5s.
+        :type timeout: :class:`float`
+        """
         super(IPClient, self).__init__(isServer=False)
         self.remoteIP = remoteIP
         self.localIP = localIP
@@ -79,8 +98,11 @@ class IPClient(AbstractChannel):
         self.__socket = None
 
     def open(self, timeout=None):
-        """Open the communication channel. If the channel is a client, it starts to connect
-        to the specified server.
+        """Open the communication channel. If the channel is a client, it
+        starts to connect to the specified server.
+
+        :keyword timeout: the maximum time in seconds to wait for connection
+        :type timeout: :class:`float`
         """
 
         if self.isOpen:
@@ -102,8 +124,8 @@ class IPClient(AbstractChannel):
     def read(self, timeout=None):
         """Read the next message on the communication channel.
 
-        @keyword timeout: the maximum time in millisecond to wait before a message can be reached
-        @type timeout: :class:`int`
+        :keyword timeout: the maximum time in seconds to wait for a message
+        :type timeout: :class:`float`
         """
         # TODO: handle timeout
         if self.__socket is not None:
@@ -116,8 +138,8 @@ class IPClient(AbstractChannel):
     def writePacket(self, data):
         """Write on the communication channel the specified data
 
-        :parameter data: the data to write on the channel
-        :type data: binary object
+        :keyword data: the data to write on the channel
+        :type data: :class:`bytes`
         """
         if self.__socket is not None:
             len_data = self.__socket.sendto(data, (self.remoteIP, 0))
@@ -129,9 +151,10 @@ class IPClient(AbstractChannel):
         """Write on the communication channel the specified data and returns
         the corresponding response.
 
-        :parameter data: the data to write on the channel
-        :type data: binary object
-        @type timeout: :class:`int`
+        :keyword data: the data to write on the channel
+        :type data: :class:`bytes`
+        :keyword timeout: the maximum time in seconds to wait for a response
+        :type timeout: :class:`float`
 
         """
         if self.__socket is not None:

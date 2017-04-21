@@ -90,7 +90,18 @@ class UDPServer(AbstractChannel):
     """
 
     @typeCheck(str, int)
-    def __init__(self, localIP, localPort, timeout=5):
+    def __init__(self, localIP, localPort, timeout=5.):
+        """
+        Constructor of UDPServer channel.
+
+        :keyword localIP: the local IP address
+        :type localIP: :class:`str`
+        :keyword localPort: the local IP port
+        :type localPort: :class:`int`
+        :keyword timeout: the default timeout of the channel for waiting a
+                          client message. Default value is 5s.
+        :type timeout: :class:`float`
+        """
         super(UDPServer, self).__init__(isServer=False)
         self.localIP = localIP
         self.localPort = localPort
@@ -102,6 +113,9 @@ class UDPServer(AbstractChannel):
     def open(self, timeout=None):
         """Open the communication channel. This will open a UDP socket
         that listen for incomming messages.
+
+        :keyword timeout: Not used, set to None.
+        :type timeout: :class:`float`
         """
 
         if self.isOpen:
@@ -124,8 +138,8 @@ class UDPServer(AbstractChannel):
     def read(self, timeout=None):
         """Read the next message on the communication channel.
 
-        @keyword timeout: the maximum time in millisecond to wait before a message can be reached
-        @type timeout: :class:`int`
+        :keyword timeout: the maximum time in seconds to wait for a message
+        :type timeout: :class:`float`
         """
         # TODO: handle timeout
         if self.__socket is not None:
@@ -138,7 +152,7 @@ class UDPServer(AbstractChannel):
         """Write on the communication channel the specified data
 
         :parameter data: the data to write on the channel
-        :type data: binary object
+        :type data: :class:`bytes`
         """
         if self.__socket is not None and self.__remoteAddr is not None:
             len_data = self.__socket.sendto(data, self.__remoteAddr)
@@ -152,8 +166,9 @@ class UDPServer(AbstractChannel):
         """Write on the communication channel the specified data and returns
         the corresponding response.
 
+        :keyword timeout: the maximum time in seconds to wait for a message
+        :type timeout: :class:`float`
         """
-
         raise NotImplementedError("Not yet implemented")
 
     # Management methods

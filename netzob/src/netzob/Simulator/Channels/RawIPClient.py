@@ -64,7 +64,8 @@ class RawIPClient(AbstractChannel):
     """A RawIPClient is a communication channel allowing to send IP
     payloads. This channel is responsible for building the IP layer.
 
-    Interesting link: http://www.offensivepython.com/2014/09/packet-injection-capturing-response.html
+    Interesting link:
+    http://www.offensivepython.com/2014/09/packet-injection-capturing-response.html
 
     >>> from netzob.all import *
     >>> client = RawIPClient(remoteIP='127.0.0.1')
@@ -81,7 +82,26 @@ class RawIPClient(AbstractChannel):
                  localIP=None,
                  upperProtocol=socket.IPPROTO_TCP,
                  interface="eth0",
-                 timeout=5):
+                 timeout=5.):
+        """
+        Constructor of RawIPClient channel.
+
+        :keyword remoteIP: the remote IP address to connect
+        :type remoteIP: :class:`str`
+        :keyword localIP: the local IP address
+        :type localIP: :class:`str`
+        :keyword upperProtocol: the protocol following IP in the stack.
+                                Default value is socket.IPPROTO_TCP.
+        :type upperProtocol: :class:`int`
+        :keyword interface: the network interface to use. It is linked with
+                            the local IP address to use (localIP).
+                            Default value is 'eth0'.
+        :type interface: :class:`str`
+        :keyword timeout: the default timeout of the channel for opening
+                          connection and waiting for a message. Default value
+                          is 5s.
+        :type timeout: :class:`float`
+        """
         super(RawIPClient, self).__init__(isServer=False)
         self.remoteIP = remoteIP
         if localIP is None:
@@ -99,8 +119,11 @@ class RawIPClient(AbstractChannel):
         self.initHeader()
 
     def open(self, timeout=None):
-        """Open the communication channel. If the channel is a client, it starts to connect
-        to the specified server.
+        """Open the communication channel. If the channel is a client, it
+        starts to connect to the specified server.
+
+        :keyword timeout: the maximum time in seconds to wait for connection
+        :type timeout: :class:`float`
         """
 
         if self.isOpen:
@@ -121,8 +144,8 @@ class RawIPClient(AbstractChannel):
     def read(self, timeout=None):
         """Read the next message on the communication channel.
 
-        @keyword timeout: the maximum time in millisecond to wait before a message can be reached
-        @type timeout: :class:`int`
+        :keyword timeout: the maximum time in seconds to wait for a message
+        :type timeout: :class:`float`
         """
         # TODO: handle timeout
         if self.__socket is not None:
@@ -137,10 +160,10 @@ class RawIPClient(AbstractChannel):
             raise Exception("socket is not available")
 
     def writePacket(self, data):
-        """Write on the communication channel the specified data
+        """Write on the communication channel the specified data.
 
-        :parameter data: the data to write on the channel
-        :type data: binary object
+        :keyword data: the data to write on the channel
+        :type data: :class:`bytes`
         """
 
         self.header_presets['ip.payload'] = data
@@ -150,11 +173,13 @@ class RawIPClient(AbstractChannel):
 
     @typeCheck(bytes)
     def sendReceive(self, data, timeout=None):
-        """Write on the communication channel the specified data and returns the corresponding response
+        """Write on the communication channel the specified data and returns
+        the corresponding response.
 
-        :parameter data: the data to write on the channel
-        :type data: binary object
-        @type timeout: :class:`int`
+        :keyword data: the data to write on the channel
+        :type data: :class:`bytes`
+        :keyword timeout: the maximum time in seconds to wait for a response
+        :type timeout: :class:`float`
         """
         if self.__socket is not None:
             # get the ports from message to identify the good response (in TCP or UDP)
@@ -179,7 +204,6 @@ class RawIPClient(AbstractChannel):
 
     def initHeader(self):
         """Initialize the IP header according to the IP format definition.
-
         """
 
         ip_ver = Field(

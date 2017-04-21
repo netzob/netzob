@@ -87,7 +87,18 @@ class TCPServer(AbstractChannel):
 
     """
 
-    def __init__(self, localIP, localPort, timeout=5):
+    def __init__(self, localIP, localPort, timeout=5.):
+        """
+        Constructor of TCPServer channel.
+
+        :keyword localIP: the local IP address
+        :type localIP: :class:`str`
+        :keyword localPort: the local IP port
+        :type localPort: :class:`int`
+        :keyword timeout: the default timeout of the channel for waiting a
+                          client message. Default value is 5s.
+        :type timeout: :class:`float`
+        """
         super(TCPServer, self).__init__(isServer=True)
         self.localIP = localIP
         self.localPort = localPort
@@ -97,8 +108,12 @@ class TCPServer(AbstractChannel):
         self.__clientSocket = None
 
     def open(self, timeout=None):
-        """Open the communication channel. If the channel is a server, it starts to listen
-        and will create an instance for each different client"""
+        """Open the communication channel. If the channel is a server, it
+        starts to listen and will create an instance for each different client
+
+        :keyword timeout: Not used. Set to None.
+        :type timeout: :class:`float`
+        """
         if self.isOpen:
             raise RuntimeError(
                 "The channel is already open, cannot open it again")
@@ -128,8 +143,8 @@ class TCPServer(AbstractChannel):
     def read(self, timeout=None):
         """Read the next message on the communication channel.
 
-        @keyword timeout: the maximum time in millisecond to wait before a message can be reached
-        @type timeout: :class:`int`
+        :keyword timeout: the maximum time in seconds to wait for a message
+        :type timeout: :class:`float`
         """
         reading_seg_size = 1024
 
@@ -154,7 +169,7 @@ class TCPServer(AbstractChannel):
         """Write on the communication channel the specified data
 
         :parameter data: the data to write on the channel
-        :type data: binary object
+        :type data: :class:`bytes`
         """
         if self.__clientSocket is not None:
             self.__clientSocket.sendall(data)
@@ -167,6 +182,8 @@ class TCPServer(AbstractChannel):
         """Write on the communication channel the specified data and returns
         the corresponding response.
 
+        :keyword timeout: the maximum time in seconds to wait for a response
+        :type timeout: :class:`float`
         """
 
         raise NotImplementedError("Not yet implemented")

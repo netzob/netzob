@@ -58,6 +58,14 @@ class ChannelDownException(Exception):
 
 
 class AbstractChannel(object, metaclass=abc.ABCMeta):
+    """The AbstractChannel is the parent class of all communication channels.
+
+    :keyword isServer: indicates if the channel is a server or not
+    :type isServer: :class:`bool`
+    :keyword _id: the unique identifier of the channel
+    :type _id: :class:`uuid.UUID`
+    :raise TypeError if parameters are not valid
+    """
 
     TYPE_UNDEFINED = 0
     TYPE_RAWIPCLIENT = 1
@@ -72,15 +80,6 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
     DEFAULT_WRITE_COUNTER_MAX = -1
 
     def __init__(self, isServer, _id=uuid.uuid4()):
-        """Constructor for an Abstract Channel
-
-        :parameter isServer: indicates if the channel is a server or not
-        :type isServer: :class:`bool`
-        :keyword _id: the unique identifier of the channel
-        :type _id: :class:`uuid.UUID`
-        :raise TypeError if parameters are not valid
-        """
-
         self.isServer = isServer
         self.id = _id
         self.isOpened = False
@@ -104,8 +103,12 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
 
     @staticmethod
     def getLocalInterface(localIP):
-        """Retrieve the network interface name associated with a specific IP
+        """
+        Retrieve the network interface name associated with a specific IP
         address.
+
+        :keyword localIP: the local IP address
+        :type localIP: :class:`str`
         """
 
         def getIPFromIfname(ifname):
@@ -131,6 +134,9 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
     def getLocalIP(remoteIP):
         """Retrieve the source IP address which will be used to connect to the
         destination IP address.
+
+        :keyword remoteIP: the remote IP address
+        :type localIP: :class:`str`
         """
 
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -146,8 +152,8 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         """Open the communication channel. If the channel is a server, it starts
         to listen and will create an instance for each different client.
 
-        :keyword timeout: the maximum time to wait for a client to connect
-        :type timeout: :class:`float`
+        :keyword timeout: the maximum time in seconds to wait for connection
+        :type timeout: :class:`int`
         """
 
     @abc.abstractmethod
@@ -156,10 +162,10 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def read(self, timeout=None):
-        """Read the next message on the communication channel.
+        """Read the next message from the communication channel.
 
-        @keyword timeout: the maximum time in millisecond to wait before a message can be reached
-        @type timeout: :class:`int`
+        :keyword timeout: the maximum time in seconds to wait for a message
+        :type timeout: :class:`int`
         """
 
     def setWriteCounterMax(self, maxValue):
@@ -168,32 +174,28 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         clearWriteCounter() is called.
         if maxValue==-1, the sending limit is deactivated.
 
-        :parameter maxValue: the new max value
-        :type maxValue: int
+        :keyword maxValue: the new max value
+        :type maxValue: :class:`int`
         """
         self.writeCounterMax = maxValue
 
     def clearWriteCounter(self):
-        """Reset the writings counters.
+        """Reset the writing counters.
         """
         self.writeCounter = 0
         self.writeCounterMax = AbstractChannel.DEFAULT_WRITE_COUNTER_MAX
 
     def write(self, data, rate=None, duration=None):
-        """Write on the communication channel the specified data
+        """Write to the communication channel the specified data.
 
-        :parameter data: the data to write on the channel
-        :type data: bytes object
-
-        :param rate: specifies the bandwidth in octets to respect during traffic emission (should be used with duration= parameter)
-        :type rate: int
-
-        :param duration: tells how much seconds the symbol is continuously written on the channel
-        :type duration: int
-
-        :param duration: tells how much time the symbol is written on the channel
-        :type duration: int
-
+        :keyword data: the data to write on the channel
+        :type data: :class:`bytes`
+        :keyword rate: specifies the bandwidth in octets to respect during
+                     traffic emission (should be used with duration= parameter)
+        :type rate: :class:`int`
+        :keyword duration: tells how much seconds the symbol is continuously
+                         written on the channel
+        :type duration: :class:`int`
         """
 
         if ((self.writeCounterMax > 0) and
@@ -246,26 +248,28 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def writePacket(self, data):
-        """Write on the communication channel the specified data
+        """Write on the communication channel the specified data.
 
-        :parameter data: the data to write on the channel
-        :type data: binary object
+        :keyword data: the data to write on the channel
+        :type data: :class:`bytes`
         """
 
     @abc.abstractmethod
     def sendReceive(self, data, timeout=None):
-        """Write on the communication channel the specified data and returns the corresponding response
+        """Write to the communication channel the specified data and return
+        the corresponding response.
 
-        :parameter data: the data to write on the channel
-        :type data: binary object
-        @type timeout: :class:`int`
+        :keyword data: the data to write on the channel
+        :type data: :class:`bytes`
+        :keyword timeout: the maximum time in seconds to wait for a response
+        :type timeout: :class:`int`
         """
 
     # Management methods
 
     @property
     def isOpen(self):
-        """Returns if the communication channel is open
+        """Returns if the communication channel is open.
 
         :return: the status of the communication channel
         :type: :class:`bool`
@@ -281,7 +285,7 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
 
     @property
     def channelType(self):
-        """Returns if the communication channel type
+        """Returns if the communication channel type.
 
         :return: the type of the communication channel
         :type: :class:`int`
@@ -305,7 +309,7 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
 
     @property
     def id(self):
-        """the unique identifier of the channel
+        """The unique identifier of the channel.
 
         :type: :class:`uuid.UUID`
         """
