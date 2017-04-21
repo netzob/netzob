@@ -509,7 +509,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         follows the fields definitions attached to current element.
 
         :keyword mutator: if set, the mutator will be used to mutate the fields definitions
-        :type mutator: :class:`netzob.Model.Mutators.AbstractMutator`
+        :type mutator: :class:`netzob.Fuzzing.Mutator`
 
         :return: a generated content represented with an hexastring
         :rtype: :class:`str`
