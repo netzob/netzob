@@ -92,7 +92,7 @@ class Integer(AbstractType):
 
     The following example shows how to define an integer encoded in
     sequences of 8 bits and with a default value of 12 (thus producing
-    `\x0c`):
+    ``\x0c``):
 
     >>> from netzob.all import *
     >>> f = Field(Integer(value=12, unitSize=AbstractType.UNITSIZE_8))
@@ -101,7 +101,7 @@ class Integer(AbstractType):
 
     The following example shows how to define an integer encoded in
     sequences of 32 bits and with a default value of 12 (thus
-    producing `\x00\x00\x00\x0c`):
+    producing ``\x00\x00\x00\x0c``):
 
     >>> f = Field(Integer(value=12, unitSize=AbstractType.UNITSIZE_32))
     >>> f.specialize()
@@ -109,7 +109,7 @@ class Integer(AbstractType):
 
     The following example shows how to define an integer encoded in
     sequences of 32 bits in little endian with a default value of 12
-    (thus producing `\x0c\x00\x00\x00`):
+    (thus producing ``\x0c\x00\x00\x00``):
 
     >>> f = Field(Integer(value=12, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_LITTLE))
     >>> f.specialize()
@@ -117,7 +117,7 @@ class Integer(AbstractType):
 
     The following example shows how to define a signed integer
     encoded in sequences of 16 bits with a default value of -12 (thus
-    producing `\xff\xf4`):
+    producing ``\xff\xf4``):
 
     >>> f = Field(Integer(value=-12, sign=AbstractType.SIGN_SIGNED, unitSize=AbstractType.UNITSIZE_16))
     >>> f.specialize()
