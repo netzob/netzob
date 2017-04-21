@@ -35,7 +35,6 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
-import abc
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -44,57 +43,47 @@ import abc
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
+from netzob.Fuzzing.Mutator import Mutator
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Grammar.Automata import Automata
 
 
-class Mutator(object):
-    """The model of any mutator.
+class AutomataMutator(Mutator):
+    """The mutator of a protocol state machine. This mutator is a particular case :
+    it does not use Mutator.field and the return value of mutate() has not the
+    same type as the other mutators : it returns here an Automata object.
 
-    It provides the common properties and API to all inherited mutators.
+    >>> from netzob.all import *
+    >>> mutator = StateMachineMutator()
+    >>> mutator.seed = 10
+    >>> # getProcolAutomata() mechanism is specific to the test case
+    >>> # -> it has to be implemented for each protocol to test.
+    >>> automata = getProtocolAutomata("TCP")
+    >>> mutator.inputAutomata = automata
+    >>> mutatedAutomata = mutator.mutate()
     """
 
-    # Constants
-    SEED_DEFAULT = 0
-
     def __init__(self):
-        self._seed = Mutator.SEED_DEFAULT
-        self._field = None
+        self._inputAutomata = None
 
     @property
-    def seed(self):
-        """The seed used in pseudo-random generator
+    def inputAutomata(self):
+        """The automata to mutate
 
-        :type: :class:`int`
+        :type: :class:`netzob.Model.Grammar.Automata`
         """
-        return self._seed
+        return self._inputAutomata
 
-    @seed.setter
-    @typeCheck(int)
-    def seed(self, seedValue):
-        self._seed = seedValue
+    @inputAutomata.setter
+    @typeCheck(Automata)
+    def inputAutomata(self, automata):
+        self._inputAutomata = automata
 
-    @property
-    def field(self):
-        """The field to which the mutation is applied
-
-        :type: :class:`netzob.Model.Vocabulary.AbstractField`
-        """
-        return self._field
-
-    @field.setter
-    @typeCheck(AbstractField)
-    def field(self, abstractField):
-        self._field = abstractField
-
-    @abc.abstractmethod
     def mutate(self):
-        """This is the mutation method of the field. It has to be overrided by
-        all the inherited mutators. Raises NotImplementedMutatorError if the
-        inherited mutator has not overrided this method.
+        """This is the mutation method of the automata.
 
-        :return: a generated content represented with bytes
-        :rtype: :class:`bytes`
-        :raises: :class:`netzob.Fuzzing.Mutator.NotImplementedMutatorError`
+        :return: a mutated Automata object
+        :rtype: :class:`netzob.Model.Grammar.Automata`
         """
-        raise NotImplementedError("mutate() is not implemented yet")
+        # TODO : implement the Automata random generator
+        return super().mutate()

@@ -35,7 +35,6 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
-import abc
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -44,57 +43,85 @@ import abc
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
+from netzob.Fuzzing.Mutator import Mutator
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 
-class Mutator(object):
-    """The model of any mutator.
+class RecursivityMutatorError(Exception):
+    pass
 
-    It provides the common properties and API to all inherited mutators.
+
+class AlternativeMutator(Mutator):
+    """The alternative mutator.
+
+    >>> from netzob.all import *
+    >>> altField = Field(name="Integer or container of Integer")
+    >>> altField.domain = Alt( [Integer(1234),
+    >>>                         Ref(altField.domain)] )
+    >>> mutator = AlternativeMutator()
+    >>> mutator.seed = 10
+    >>> mutator.field = altField
+    >>> dataHex = mutator.mutate()
+
     """
 
-    # Constants
-    SEED_DEFAULT = 0
+    DEFAULT_MAX_DEPTH = 10
 
     def __init__(self):
-        self._seed = Mutator.SEED_DEFAULT
-        self._field = None
+        self._maxDepth = AlternativeMutator.DEFAULT_MAX_DEPTH
+        self._typesMutators = {}
 
     @property
-    def seed(self):
-        """The seed used in pseudo-random generator
+    def typesMutators(self):
+        """The list of mutators corresponding to types of fields.
+
+        :type: :class:`dict`
+        """
+        return self._typesMutators
+
+    @typeCheck(AbstractType, Mutator)
+    def setTypeMutator(self, domain, mutator):
+        """Associate a mutator to the given type (domain) of field.
+
+        :parameter domain: the type of the field
+        :type domain: :class:`netzob.Model.Vocabulary.Types.AbstractType`
+
+        :parameter mutator: the mutator to use with the given domain
+        :type mutator: :class:`netzob.Fuzzing.Mutator`
+        """
+        self._typesMutators[domain] = mutator
+
+    @property
+    def maxDepth(self):
+        """The depth limit when recursivity occurs.
 
         :type: :class:`int`
         """
-        return self._seed
+        return self._maxDepth
 
-    @seed.setter
+    @maxDepth.setter
     @typeCheck(int)
-    def seed(self, seedValue):
-        self._seed = seedValue
+    def maxDepth(self, depth):
+        self._maxDepth = depth
 
-    @property
-    def field(self):
-        """The field to which the mutation is applied
-
-        :type: :class:`netzob.Model.Vocabulary.AbstractField`
-        """
-        return self._field
-
-    @field.setter
-    @typeCheck(AbstractField)
-    def field(self, abstractField):
-        self._field = abstractField
-
-    @abc.abstractmethod
     def mutate(self):
-        """This is the mutation method of the field. It has to be overrided by
-        all the inherited mutators. Raises NotImplementedMutatorError if the
-        inherited mutator has not overrided this method.
+        """This is the mutation method of the alternative field.
+        For each type, we produce the value with the associated mutator
+        from typesMutators.
+        If no mutator is set, the default value of the type is used.
+        If the mutation encounters recursivity, infinite loop is avoided by
+        controlling the number of iterations with maxDepth.
+        If it exceeds maxDepth, a RecursivityMutatorError is raised.
 
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
-        :raises: :class:`netzob.Fuzzing.Mutator.NotImplementedMutatorError`
+        :raises: :class:`netzob.Fuzzing.AlternativeMutator.RecursivityMutatorError`
         """
-        raise NotImplementedError("mutate() is not implemented yet")
+        depth = 0
+        if depth > self._maxDepth:
+            raise RecursivityMutatorError(
+                "{}.mutate() : max depth reached".format(self._type()))
+
+        # TODO : implement the sequence generator, which uses generatedLength
+        return super().mutate()

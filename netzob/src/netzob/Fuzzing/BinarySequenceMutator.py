@@ -35,7 +35,6 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
-import abc
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -44,57 +43,76 @@ import abc
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
+from netzob.Fuzzing.Mutator import Mutator
+from netzob.Fuzzing.PseudoRandomIntegerMutator import (
+    PseudoRandomIntegerMutator)
+from netzob.Model.Vocabulary.Types.Integer import uint32le
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Model.Vocabulary.AbstractField import AbstractField
 
 
-class Mutator(object):
-    """The model of any mutator.
+class BinarySequenceMutator(Mutator):
+    """The binary sequence mutator, using pseudo-random generator.
+    The generated sequence shall not be longer than 2^32 bits.
 
-    It provides the common properties and API to all inherited mutators.
+    >>> from netzob.all import *
+    >>> mutator = BinarySequenceMutator()
+    >>> mutator.seed = 10
+    >>> binaryField = Field(domain=BitArray())
+    >>> mutator.field = binaryField
+    >>> dataHex = mutator.mutate()
+
     """
 
-    # Constants
-    SEED_DEFAULT = 0
+    MIN_LENGTH = 0
+    DEFAULT_MAX_LENGTH = 100
 
     def __init__(self):
-        self._seed = Mutator.SEED_DEFAULT
-        self._field = None
+        super().__init__()
+        self._maxLength = BinarySequenceMutator.DEFAULT_MAX_LENGTH
+        self._sequenceLength = uint32le()
+        self._lengthMutator = PseudoRandomIntegerMutator(
+            minValue=BinarySequenceMutator.MIN_LENGTH,
+            maxValue=self.maxLength)
+        self._lengthMutator.field = self._sequenceLength
 
     @property
-    def seed(self):
-        """The seed used in pseudo-random generator
+    def lengthMutator(self):
+        """The mutator used to generate the sequence length, between
+        MIN_LENGTH and maxLength.
+
+        :type: :class:`netzob.Fuzzing.PseudoRandomIntegerMutator`
+        """
+        return self._lengthMutator
+
+    @property
+    def maxLength(self):
+        """The max length of the binary sequence. Default value is DEFAULT_MAX_LENGTH.
 
         :type: :class:`int`
         """
-        return self._seed
+        return self._maxLength
 
-    @seed.setter
+    @maxLength.setter
     @typeCheck(int)
-    def seed(self, seedValue):
-        self._seed = seedValue
+    def maxLength(self, length_max):
+        self._maxLength = length_max
 
-    @property
-    def field(self):
-        """The field to which the mutation is applied
+    def getLength(self):
+        """The length of the last generated sequence.
 
-        :type: :class:`netzob.Model.Vocabulary.AbstractField`
+        :rtype: :class:`int`
         """
-        return self._field
+        return self._sequenceLength.value
 
-    @field.setter
-    @typeCheck(AbstractField)
-    def field(self, abstractField):
-        self._field = abstractField
-
-    @abc.abstractmethod
     def mutate(self):
-        """This is the mutation method of the field. It has to be overrided by
-        all the inherited mutators. Raises NotImplementedMutatorError if the
-        inherited mutator has not overrided this method.
+        """This is the mutation method of the binary sequence field.
+        It uses lengthMutator to get a sequence length, then a PRNG to produce
+        the value.
 
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
-        :raises: :class:`netzob.Fuzzing.Mutator.NotImplementedMutatorError`
         """
-        raise NotImplementedError("mutate() is not implemented yet")
+        self._lengthMutator.maxValue = self.maxLength
+        generatedLength = int(self._lengthMutator.mutate(), 16)
+        # TODO : implement the sequence generator, which uses generatedLength
+        return super().mutate()

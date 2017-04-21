@@ -35,7 +35,6 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
-import abc
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -44,57 +43,107 @@ import abc
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
+from netzob.Fuzzing.Mutator import Mutator
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Fuzzing.PseudoRandomIntegerMutator import (
+    PseudoRandomIntegerMutator)
+from netzob.Model.Vocabulary.Types.Integer import uint32le
 
 
-class Mutator(object):
-    """The model of any mutator.
+class StringMutator(Mutator):
+    """The string mutator, using a pseudo-random generator to get a string length.
+    The generated string shall not be longer than 2^32.
 
-    It provides the common properties and API to all inherited mutators.
+    >>> from netzob.all import *
+    >>> mutator = StringMutator()
+    >>> mutator.seed = 10
+    >>> asciiString = ASCII()
+    >>> mutator.field = asciiString
+    >>> dataHex = mutator.mutate()
+
     """
 
-    # Constants
-    SEED_DEFAULT = 0
+    DEFAULT_END_CHAR = '\0'
+    DEFAULT_MIN_LENGTH = 0
+    DEFAULT_MAX_LENGTH = 10
 
     def __init__(self):
-        self._seed = Mutator.SEED_DEFAULT
-        self._field = None
+        super().__init__()
+        self._endChar = StringMutator.DEFAULT_END_CHAR
+        self._minLength = StringMutator.DEFAULT_MIN_LENGTH
+        self._maxLength = StringMutator.DEFAULT_MAX_LENGTH
+        self._stringLength = uint32le()
+        self._lengthMutator = PseudoRandomIntegerMutator(
+            minValue=self._minLength,
+            maxValue=self.maxLength)
+        self._lengthMutator.field = self._stringLength
 
     @property
-    def seed(self):
-        """The seed used in pseudo-random generator
+    def lengthMutator(self):
+        """The mutator used to generate the string length, between
+        minLength and maxLength.
+
+        :type: :class:`netzob.Fuzzing.PseudoRandomIntegerMutator`
+        """
+        return self._lengthMutator
+
+    @property
+    def minLength(self):
+        """The min length of the string. Default value is DEFAULT_MIN_LENGTH.
 
         :type: :class:`int`
         """
-        return self._seed
+        return self._minLength
 
-    @seed.setter
+    @minLength.setter
     @typeCheck(int)
-    def seed(self, seedValue):
-        self._seed = seedValue
+    def minLength(self, length_min):
+        self._minLength = length_min
 
     @property
-    def field(self):
-        """The field to which the mutation is applied
+    def maxLength(self):
+        """The max length of the string. Default value is DEFAULT_MAX_LENGTH.
 
-        :type: :class:`netzob.Model.Vocabulary.AbstractField`
+        :type: :class:`int`
+        """
+        return self._maxLength
+
+    @maxLength.setter
+    @typeCheck(int)
+    def maxLength(self, length_max):
+        self._maxLength = length_max
+
+    @property
+    def endChar(self):
+        """The character defining the end of the string. Default value is
+        DEFAULT_END_CHAR.
+
+        :type: :class:`str`
         """
         return self._field
 
-    @field.setter
-    @typeCheck(AbstractField)
-    def field(self, abstractField):
-        self._field = abstractField
+    @endChar.setter
+    @typeCheck(str)
+    def endChar(self, char):
+        self._endChar = char
 
-    @abc.abstractmethod
+    def getLength(self):
+        """The length of the last generated string.
+
+        :rtype: :class:`int`
+        """
+        return self._stringLength.value
+
     def mutate(self):
-        """This is the mutation method of the field. It has to be overrided by
-        all the inherited mutators. Raises NotImplementedMutatorError if the
-        inherited mutator has not overrided this method.
+        """This is the mutation method of the string field.
+        It uses lengthMutator, then a random generator to produce the value.
 
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
-        :raises: :class:`netzob.Fuzzing.Mutator.NotImplementedMutatorError`
         """
-        raise NotImplementedError("mutate() is not implemented yet")
+
+        self._lengthMutator.minValue = self.minLength
+        self._lengthMutator.maxValue = self.maxLength
+        generatedLength = int(self._lengthMutator.mutate(), 16)
+        # TODO : implement the string generator, which uses generatedLength
+        return super().mutate()

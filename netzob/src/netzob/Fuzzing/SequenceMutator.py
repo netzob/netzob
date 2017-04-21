@@ -35,7 +35,6 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
-import abc
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -44,57 +43,106 @@ import abc
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
+from netzob.Fuzzing.Mutator import Mutator
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Fuzzing.PseudoRandomIntegerMutator import (
+    PseudoRandomIntegerMutator)
+from netzob.Model.Vocabulary.Types.Integer import uint32le
 
 
-class Mutator(object):
-    """The model of any mutator.
+class SequenceMutator(Mutator):
+    """The sequence mutator, using a pseudo-random generator to get a sequence
+    length.
 
-    It provides the common properties and API to all inherited mutators.
+    >>> from netzob.all import *
+    >>> sequenceField = Field(Repeat(ASCII("this is a string"), nbRepeat=2))
+    >>> mutator = SequenceMutator()
+    >>> mutator.seed = 10
+    >>> mutator.field = sequenceField
+    >>> dataHex = mutator.mutate()
+
     """
 
-    # Constants
-    SEED_DEFAULT = 0
+    DEFAULT_MIN_LENGTH = 0
+    DEFAULT_MAX_LENGTH = 1
 
     def __init__(self):
-        self._seed = Mutator.SEED_DEFAULT
-        self._field = None
+        self._elementMutator = None
+        self._minLength = SequenceMutator.DEFAULT_MIN_LENGTH
+        self._maxLength = SequenceMutator.DEFAULT_MAX_LENGTH
+        self._elementLength = uint32le()
+        self._lengthMutator = PseudoRandomIntegerMutator(
+            minValue=self._minLength,
+            maxValue=self.maxLength)
+        self._lengthMutator.field = self._elementLength
 
     @property
-    def seed(self):
-        """The seed used in pseudo-random generator
+    def lengthMutator(self):
+        """The mutator used to generate the sequence length, between
+        minLength and maxLength.
+
+        :type: :class:`netzob.Fuzzing.PseudoRandomIntegerMutator`
+        """
+        return self._lengthMutator
+
+    @property
+    def elementMutator(self):
+        """Used to mutate each element of the sequence.
+        This mutator depends on the type of the field.
+
+        :type: :class:`netzob.Fuzzing.Mutator`
+        """
+        return self._elementMutator
+
+    @elementMutator.setter
+    @typeCheck(Mutator)
+    def elementMutator(self, mutator):
+        self._elementMutator = mutator
+
+    @property
+    def minLength(self):
+        """The min length of an element of the sequence.
+        Default value is DEFAULT_MIN_LENGTH.
 
         :type: :class:`int`
         """
-        return self._seed
+        return self._minLength
 
-    @seed.setter
+    @minLength.setter
     @typeCheck(int)
-    def seed(self, seedValue):
-        self._seed = seedValue
+    def minLength(self, length_min):
+        self._minLength = length_min
 
     @property
-    def field(self):
-        """The field to which the mutation is applied
+    def maxLength(self):
+        """The max length of an element of the sequence.
+        Default value is DEFAULT_MAX_LENGTH.
 
-        :type: :class:`netzob.Model.Vocabulary.AbstractField`
+        :type: :class:`int`
         """
-        return self._field
+        return self._maxLength
 
-    @field.setter
-    @typeCheck(AbstractField)
-    def field(self, abstractField):
-        self._field = abstractField
+    @maxLength.setter
+    @typeCheck(int)
+    def maxLength(self, length_max):
+        self._maxLength = length_max
 
-    @abc.abstractmethod
+    def getLength(self):
+        """The length of the last generated elements of the sequence.
+
+        :rtype: int
+        """
+        return self._elementLength.value
+
     def mutate(self):
-        """This is the mutation method of the field. It has to be overrided by
-        all the inherited mutators. Raises NotImplementedMutatorError if the
-        inherited mutator has not overrided this method.
+        """This is the mutation method of the sequence field.
+        It uses lengthMutator and elementMutator.
 
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
-        :raises: :class:`netzob.Fuzzing.Mutator.NotImplementedMutatorError`
         """
-        raise NotImplementedError("mutate() is not implemented yet")
+        self._lengthMutator.minValue = self.minLength
+        self._lengthMutator.maxValue = self.maxLength
+        generatedLength = int(self._lengthMutator.mutate(), 16)
+        # TODO : implement the sequence generator, which uses generatedLength
+        return super().mutate()
