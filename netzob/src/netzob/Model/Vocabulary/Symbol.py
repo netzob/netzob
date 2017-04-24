@@ -136,9 +136,11 @@ class Symbol(AbstractField):
     **Usage of Symbol for traffic generation**
 
     A Symbol class may be used to generate concrete messages according
-    to its fields definition, through the `specialize()` method, and
+    to its fields definition, through the
+    :meth:`~netzob.Model.Vocabulary.Symbol.specialize` method, and
     may also be used to abstract a concrete message into its
-    associated symbol through the `abstract()` method:
+    associated symbol through the
+    :meth:`~netzob.Model.Vocabulary.Symbol.abstract` method:
 
     >>> f0 = Field("aaaa")
     >>> f1 = Field(" # ")
@@ -186,7 +188,7 @@ class Symbol(AbstractField):
 
     @typeCheck(Memory, object)
     def specialize(self, memory=None, presets=None):
-        """The method specialize() generates a :class:`bytes` sequence whose
+        r"""The method specialize() generates a :class:`bytes` sequence whose
         content follows the field or symbol definition.
 
         The specialize() method expects some parameters:
@@ -214,21 +216,79 @@ class Symbol(AbstractField):
         >>> print(len(result))
         6
 
-        **Presets of fields values**
+        **Parameterized specialization of fields values (presets)**
 
-        The following example shows the use of the presets parameter
-        for some variables included in the symbol definition.
+        It is possible to preset (parameterize) fields during symbol
+        specialization, through a dict passed in the ``presets=``
+        parameter of the :meth:`~netzob.Model.Vocabulary.Symbol.specialize`
+        method. Values in this dictionary will override any fields
+        definition, constraints or relationship dependencies.
 
-        >>> from netzob.all import *
-        >>> f1 = Field(domain=ASCII("hello "))
-        >>> f2 = Field(domain=ASCII(nbChars=(1,10)))
-        >>> s = Symbol(fields = [f1, f2])
-        >>> presetValues = dict()
-        >>> presetValues[f2] = TypeConverter.convert("antoine", ASCII, BitArray)
-        >>> print(s.specialize(presets = presetValues))
-        b'hello antoine'
+        The presets dictionnary accepts a sequence of keys and values,
+        where keys correspond to the fields in the symbol that we want
+        to override, and values correspond to the overriding
+        content. Keys are either expressed as :class:`Field
+        <netzob.Model.Vocabulary.Field.Field>` objects or strings
+        containing field accessors when field names are used (such as
+        in ``f = Field(name="udp.dport")``). Values are either
+        expressed as :class:`BitArray
+        <netzob.Model.Vocabulary.Types.BitArray.BitArray>` (as it is
+        the internal type for variables in Netzob) or in the type of
+        the overriden field variable.
 
-        A preseted valued bypasses all the constraints checks on your field definition.
+        The following code shows the definition of a simplified UDP
+        header that will be latter used as base example. This UDP
+        header is made of one named field containing a destination
+        port, and a named field containing a payload:
+
+        >>> f_dport   = Field(name="udp.dport", domain=Integer(unitSize=AbstractType.UNITSIZE_16))
+        >>> f_payload = Field(name="udp.payload", domain=Raw())
+        >>> symbol_udp  = Symbol(name="udp", fields=[f_dport, f_payload])
+
+        The three following codes show the same way to express the
+        parameterized **values** during specialization of the fields
+        ``udp_dport`` and ``udp_payload``:
+
+        >>> presets = {}
+        >>> presets["udp.dport"] = 11              # udp.dport expects an int or an Integer
+        >>> presets["udp.payload"] = b"\xaa\xbb"   # udp.payload expects a bytes object or a Raw object
+        >>> symbol_udp.specialize(presets=presets)
+        b'\x00\x0b\xaa\xbb'
+
+        >>> presets = {}
+        >>> self.presets["udp.dport"] = Integer(42)        # udp.dport expects an int or an Integer
+        >>> self.presets["udp.payload"] = Raw(b"\xaa\xbb") # udp.payload expects a bytes object or a Raw object
+        >>> symbol_udp.specialize(presets=presets)
+        b'\x00\x0b\xaa\xbb'
+
+        >>> presets = {}
+        >>> self.presets["udp.dport"] = TypeConverter(11, Integer, BitArray)
+        >>> self.presets["udp.payload"] = TypeConverter(b"\xaa\xbb", Raw, Bitarray)
+        >>> symbol_udp.specialize(presets=presets)
+        b'\x00\x0b\xaa\xbb'
+
+        The previous example shows the use of BitArray as dict
+        values. BitArray are always permitted for any parameterized
+        field, as it is the internal type for variables in Netzob.
+
+        The two following codes show the same way to express the
+        parameterized **keys** during specialization of the fields
+        ``udp_dport`` and ``udp_payload``:
+
+        >>> presets = {}
+        >>> presets[f_dport] = 11
+        >>> presets[f_payload] = b"\xaa\xbb"
+        >>> symbol_udp.specialize(presets=presets)
+        b'\x00\x0b\xaa\xbb'
+
+        >>> presets = {}
+        >>> presets["udp.dport"] = 11
+        >>> presets["udp.payload"] = b"\xaa\xbb"
+        >>> symbol_udp.specialize(presets=presets)
+        b'\x00\x0b\xaa\xbb'
+
+
+        A preset value bypasses all the constraints checks on your field definition.
         For example, in the following example it can be use to bypass a size field definition.
 
         >>> from netzob.all import *
