@@ -57,6 +57,38 @@ class SSLClient(AbstractChannel):
     When the actor execute an OpenChannelTransition, it calls the open
     method on the ssl client which connects to the server.
 
+    The SSLClient constructor expects some parameters:
+
+    :param remoteIP: The remote IP address to connect to.
+    :param remotePort: The remote IP port.
+    :param localIP: The local IP address. Default value is the local
+                    IP address corresponding to the interface that
+                    will be used to send the packet.
+    :param localPort: The local IP port. Default value in a random
+                     valid integer choosed by the kernel.
+    :param timeout: The default timeout of the channel for opening
+                    connection and waiting for a message. Default value
+                    is 2.0 seconds.
+    :param server_cert_file: The path to a single file in PEM format
+                             containing the certificate as well as any
+                             number of CA certificates needed to
+                             establish the certificate’s
+                             authenticity. Default value is None,
+                             meaning that no verification is made on
+                             the certificate given by the peer.
+    :param alpn_protocols: Specify which protocols the socket should
+                           advertise during the SSL/TLS handshake. It
+                           should be a list of ASCII strings, like
+                           ['http/1.1', 'spdy/2'], ordered by
+                           preference. Default value is None.
+    :type remoteIP: :class:`str`, required
+    :type remotePort: :class:`int`, required
+    :type localIP: :class:`str`, optional
+    :type localPort: :class:`int`, optional
+    :type timeout: :class:`float`, optional
+    :type server_cert_file: :class:`str`, optional
+    :type alpn_protocols: :class:`list`, optional
+
     """
 
     def __init__(self,
@@ -67,26 +99,6 @@ class SSLClient(AbstractChannel):
                  timeout=2.,
                  server_cert_file=None,
                  alpn_protocols=None):
-        """
-        Constructor of SSLClient channel.
-
-        :keyword remoteIP: the remote IP address to connect
-        :type remoteIP: :class:`str`
-        :keyword remotePort: the remote IP port
-        :type remotePort: :class:`int`
-        :keyword localIP: the local IP address
-        :type localIP: :class:`str`
-        :keyword localPort: the local IP port
-        :type localPort: :class:`int`
-        :keyword timeout: the default timeout of the channel for opening
-                          connection and waiting for a message. Default value
-                          is 2s.
-        :type timeout: :class:`float`
-        :keyword server_cert_file: the certificate file
-        :type server_cert_file: :class:`str`
-        :keyword alpn_protocols: list of ALPN protocols
-        :type alpn_protocols: :class:`list`
-        """
         super(SSLClient, self).__init__(isServer=False)
         self.remoteIP = remoteIP
         self.remotePort = remotePort
@@ -103,7 +115,7 @@ class SSLClient(AbstractChannel):
         """Open the communication channel. If the channel is a client, it starts to connect
         to the specified server.
 
-        :keyword timeout: the maximum time in seconds to wait for connection
+        :param timeout: the maximum time in seconds to wait for connection
         :type timeout: :class:`float`
         """
 
@@ -152,7 +164,7 @@ class SSLClient(AbstractChannel):
     def read(self, timeout=None):
         """Read the next message on the communication channel.
 
-        :keyword timeout: the maximum time in seconds to wait for a message
+        :param timeout: the maximum time in seconds to wait for a message
         :type timeout: :class:`float`
         """
         reading_seg_size = 1024
@@ -195,9 +207,9 @@ class SSLClient(AbstractChannel):
         """Write on the communication channel the specified data and returns
         the corresponding response.
 
-        :keyword data: the data to write on the channel
+        :param data: the data to write on the channel
         :type data: :class:`bytes`
-        :keyword timeout: the maximum time in seconds to wait for a response
+        :param timeout: the maximum time in seconds to wait for a response
         :type timeout: :class:`float`
         """
 
@@ -276,5 +288,6 @@ class SSLClient(AbstractChannel):
         return self.__timeout
 
     @timeout.setter
+    @typeCheck(float)
     def timeout(self, timeout):
         self.__timeout = timeout

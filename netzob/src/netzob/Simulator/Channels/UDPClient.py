@@ -56,6 +56,27 @@ class UDPClient(AbstractChannel):
     When the actor executes an OpenChannelTransition, it calls the
     open method on the UDP client which connects to the server.
 
+    The UDPClient constructor expects some parameters:
+
+    :param remoteIP: The remote IP address to connect to.
+    :param remotePort: The remote IP port.
+    :param localIP: The local IP address. Default value is the local
+                    IP address corresponding to the interface that
+                    will be used to send the packet.
+    :param localPort: The local IP port. Default value in a random
+                      valid integer choosed by the kernel.
+    :param timeout: The default timeout of the channel for opening
+                    connection and waiting for a message. Default value
+                    is 5.0 seconds.
+    :type remoteIP: :class:`str`, required
+    :type remotePort: :class:`int`, required
+    :type localIP: :class:`str`, optional
+    :type localPort: :class:`int`, optional
+    :type timeout: :class:`float`, optional
+
+
+    The following code shows the use of a UDPClient channel:
+
     >>> from netzob.all import *
     >>> import time
     >>> client = UDPClient(remoteIP='127.0.0.1', remotePort=9999)
@@ -95,22 +116,6 @@ class UDPClient(AbstractChannel):
                  localIP=None,
                  localPort=None,
                  timeout=5.):
-        """
-        Constructor of UDPClient channel.
-
-        :keyword remoteIP: the remote IP address to connect
-        :type remoteIP: :class:`str`
-        :keyword remotePort: the remote IP port
-        :type remotePort: :class:`int`
-        :keyword localIP: the local IP address
-        :type localIP: :class:`str`
-        :keyword localPort: the local IP port
-        :type localPort: :class:`int`
-        :keyword timeout: the default timeout of the channel for opening
-                          connection and waiting for a message. Default value
-                          is 5s.
-        :type timeout: :class:`float`
-        """
         super(UDPClient, self).__init__(isServer=False)
         self.remoteIP = remoteIP
         self.remotePort = remotePort
@@ -124,7 +129,7 @@ class UDPClient(AbstractChannel):
         """Open the communication channel. If the channel is a client, it
         starts to connect to the specified server.
 
-        :keyword timeout: the maximum time in seconds to wait for connection
+        :param timeout: the maximum time in seconds to wait for connection
         :type timeout: :class:`float`
         """
 
@@ -149,7 +154,7 @@ class UDPClient(AbstractChannel):
     def read(self, timeout=None):
         """Read the next message on the communication channel.
 
-        :keyword timeout: the maximum time in seconds to wait for a message
+        :param timeout: the maximum time in seconds to wait for a message
         :type timeout: :class:`float`
         """
         # TODO: handle timeout
@@ -176,7 +181,7 @@ class UDPClient(AbstractChannel):
         """Write on the communication channel the specified data and returns
         the corresponding response.
 
-        :keyword timeout: the maximum time in seconds to wait for a response
+        :param timeout: the maximum time in seconds to wait for a response
         :type timeout: :class:`float`
         """
 
@@ -254,6 +259,6 @@ class UDPClient(AbstractChannel):
         return self.__timeout
 
     @timeout.setter
-    @typeCheck(int)
+    @typeCheck(float)
     def timeout(self, timeout):
         self.__timeout = timeout

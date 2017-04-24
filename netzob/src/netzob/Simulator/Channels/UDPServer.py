@@ -57,11 +57,27 @@ class UDPServer(AbstractChannel):
     open method on the UDP server which makes it to listen for
     incomming messages.
 
+    The UDPServer constructor expects some parameters:
+
+    :param localIP: The local IP address.
+    :param localPort: The local IP port.
+    :param timeout: The default timeout of the channel for waiting a
+                    client message. Default value is 5.0 seconds.
+    :type localIP: :class:`str`, required
+    :type localPort: :class:`int`, required
+    :type timeout: :class:`float`, optional
+
+
+    The following code shows the use of a UDPServer channel:
+
     >>> from netzob.all import *
     >>> import time
     >>> server = UDPServer(localIP='127.0.0.1', localPort=9999)
     >>> server.open()
     >>> server.close()
+
+    The following code shows a complete example of a communication
+    between a client and a server in UDP:
 
     >>> symbol = Symbol([Field("Hello everyone!")])
     >>> s0 = State()
@@ -71,18 +87,18 @@ class UDPServer(AbstractChannel):
     >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol])
     >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
     >>> automata = Automata(s0, [symbol])
-
+    >>>
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8884)
     >>> abstractionLayer = AbstractionLayer(channel, [symbol])
     >>> server = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
-
+    >>>
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8884)
     >>> abstractionLayer = AbstractionLayer(channel, [symbol])
     >>> client = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
-
+    >>>
     >>> server.start()
     >>> client.start()
-
+    >>>
     >>> time.sleep(1)
     >>> client.stop()
     >>> server.stop()
@@ -91,17 +107,6 @@ class UDPServer(AbstractChannel):
 
     @typeCheck(str, int)
     def __init__(self, localIP, localPort, timeout=5.):
-        """
-        Constructor of UDPServer channel.
-
-        :keyword localIP: the local IP address
-        :type localIP: :class:`str`
-        :keyword localPort: the local IP port
-        :type localPort: :class:`int`
-        :keyword timeout: the default timeout of the channel for waiting a
-                          client message. Default value is 5s.
-        :type timeout: :class:`float`
-        """
         super(UDPServer, self).__init__(isServer=False)
         self.localIP = localIP
         self.localPort = localPort
@@ -114,7 +119,7 @@ class UDPServer(AbstractChannel):
         """Open the communication channel. This will open a UDP socket
         that listen for incomming messages.
 
-        :keyword timeout: Not used, set to None.
+        :param timeout: Not used, set to None.
         :type timeout: :class:`float`
         """
 
@@ -138,7 +143,7 @@ class UDPServer(AbstractChannel):
     def read(self, timeout=None):
         """Read the next message on the communication channel.
 
-        :keyword timeout: the maximum time in seconds to wait for a message
+        :param timeout: the maximum time in seconds to wait for a message
         :type timeout: :class:`float`
         """
         # TODO: handle timeout
@@ -166,7 +171,7 @@ class UDPServer(AbstractChannel):
         """Write on the communication channel the specified data and returns
         the corresponding response.
 
-        :keyword timeout: the maximum time in seconds to wait for a message
+        :param timeout: the maximum time in seconds to wait for a message
         :type timeout: :class:`float`
         """
         raise NotImplementedError("Not yet implemented")
@@ -216,6 +221,6 @@ class UDPServer(AbstractChannel):
         return self.__timeout
 
     @timeout.setter
-    @typeCheck(int)
+    @typeCheck(float)
     def timeout(self, timeout):
         self.__timeout = timeout

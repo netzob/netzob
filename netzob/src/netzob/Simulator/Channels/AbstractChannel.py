@@ -60,11 +60,17 @@ class ChannelDownException(Exception):
 class AbstractChannel(object, metaclass=abc.ABCMeta):
     """The AbstractChannel is the parent class of all communication channels.
 
-    :keyword isServer: indicates if the channel is a server or not
-    :type isServer: :class:`bool`
-    :keyword _id: the unique identifier of the channel
-    :type _id: :class:`uuid.UUID`
+    The AbstractChannel exposes an interface that should be
+    implemented by channel classes that inherits from it.
+
+    The AbstractChannel constructor expects some parameters:
+
+    :param isServer: This flag indicates if the channel is a server or not.
+    :param _id: The unique identifier of the channel.
+    :type isServer: :class:`bool`, required
+    :type _id: :class:`uuid.UUID`, optional
     :raise: TypeError if parameters are not valid
+
     """
 
     TYPE_UNDEFINED = 0
@@ -107,7 +113,7 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         Retrieve the network interface name associated with a specific IP
         address.
 
-        :keyword localIP: the local IP address
+        :param localIP: the local IP address
         :type localIP: :class:`str`
         """
 
@@ -135,7 +141,7 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         """Retrieve the source IP address which will be used to connect to the
         destination IP address.
 
-        :keyword remoteIP: the remote IP address
+        :param remoteIP: the remote IP address
         :type localIP: :class:`str`
         """
 
@@ -152,7 +158,7 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         """Open the communication channel. If the channel is a server, it starts
         to listen and will create an instance for each different client.
 
-        :keyword timeout: the maximum time in seconds to wait for connection
+        :param timeout: the maximum time in seconds to wait for connection
         :type timeout: :class:`int`
         """
 
@@ -164,7 +170,7 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
     def read(self, timeout=None):
         """Read the next message from the communication channel.
 
-        :keyword timeout: the maximum time in seconds to wait for a message
+        :param timeout: the maximum time in seconds to wait for a message
         :type timeout: :class:`int`
         """
 
@@ -174,7 +180,7 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         clearWriteCounter() is called.
         if maxValue==-1, the sending limit is deactivated.
 
-        :keyword maxValue: the new max value
+        :param maxValue: the new max value
         :type maxValue: :class:`int`
         """
         self.writeCounterMax = maxValue
@@ -188,12 +194,12 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
     def write(self, data, rate=None, duration=None):
         """Write to the communication channel the specified data.
 
-        :keyword data: the data to write on the channel
+        :param data: the data to write on the channel
         :type data: :class:`bytes`
-        :keyword rate: specifies the bandwidth in octets to respect during
+        :param rate: specifies the bandwidth in octets to respect during
                      traffic emission (should be used with duration= parameter)
         :type rate: :class:`int`
-        :keyword duration: tells how much seconds the symbol is continuously
+        :param duration: tells how much seconds the symbol is continuously
                          written on the channel
         :type duration: :class:`int`
         """
@@ -250,7 +256,7 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
     def writePacket(self, data):
         """Write on the communication channel the specified data.
 
-        :keyword data: the data to write on the channel
+        :param data: the data to write on the channel
         :type data: :class:`bytes`
         """
 
@@ -259,9 +265,9 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         """Write to the communication channel the specified data and return
         the corresponding response.
 
-        :keyword data: the data to write on the channel
+        :param data: the data to write on the channel
         :type data: :class:`bytes`
-        :keyword timeout: the maximum time in seconds to wait for a response
+        :param timeout: the maximum time in seconds to wait for a response
         :type timeout: :class:`int`
         """
 

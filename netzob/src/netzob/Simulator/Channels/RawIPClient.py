@@ -62,10 +62,30 @@ from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
 @NetzobLogger
 class RawIPClient(AbstractChannel):
     """A RawIPClient is a communication channel allowing to send IP
-    payloads. This channel is responsible for building the IP layer.
+    payloads. This channel is responsible to build the IP header.
 
-    Interesting link:
-    http://www.offensivepython.com/2014/09/packet-injection-capturing-response.html
+    The RawIPClient constructor expects some parameters:
+
+    :param remoteIP: The remote IP address to connect to.
+    :param localIP: The local IP address. Default value is the local
+                    IP address corresponding to the interface that
+                    will be used to send the packet.
+    :param upperProtocol: The protocol following IP in the stack.
+                          Default value is socket.IPPROTO_TCP (6).
+    :param interface: The network interface to use. This value is linked with
+                      the local IP address to use (`localIP` parameter).
+                      Default value is 'eth0'.
+    :param timeout: The default timeout of the channel for opening
+                    connection and waiting for a message. Default value
+                    is 5.0 seconds.
+    :type remoteIP: :class:`str`, required
+    :type localIP: :class:`str`, optional
+    :type upperProtocol: :class:`int`, optional
+    :type interface: :class:`str`, optional
+    :type timeout: :class:`float`, optional
+
+    
+    The following code shows the use of a RawIPClient channel:
 
     >>> from netzob.all import *
     >>> client = RawIPClient(remoteIP='127.0.0.1')
@@ -83,25 +103,6 @@ class RawIPClient(AbstractChannel):
                  upperProtocol=socket.IPPROTO_TCP,
                  interface="eth0",
                  timeout=5.):
-        """
-        Constructor of RawIPClient channel.
-
-        :keyword remoteIP: the remote IP address to connect
-        :type remoteIP: :class:`str`
-        :keyword localIP: the local IP address
-        :type localIP: :class:`str`
-        :keyword upperProtocol: the protocol following IP in the stack.
-                                Default value is socket.IPPROTO_TCP.
-        :type upperProtocol: :class:`int`
-        :keyword interface: the network interface to use. It is linked with
-                            the local IP address to use (localIP).
-                            Default value is 'eth0'.
-        :type interface: :class:`str`
-        :keyword timeout: the default timeout of the channel for opening
-                          connection and waiting for a message. Default value
-                          is 5s.
-        :type timeout: :class:`float`
-        """
         super(RawIPClient, self).__init__(isServer=False)
         self.remoteIP = remoteIP
         if localIP is None:
@@ -122,7 +123,7 @@ class RawIPClient(AbstractChannel):
         """Open the communication channel. If the channel is a client, it
         starts to connect to the specified server.
 
-        :keyword timeout: the maximum time in seconds to wait for connection
+        :param timeout: the maximum time in seconds to wait for connection
         :type timeout: :class:`float`
         """
 
@@ -144,7 +145,7 @@ class RawIPClient(AbstractChannel):
     def read(self, timeout=None):
         """Read the next message on the communication channel.
 
-        :keyword timeout: the maximum time in seconds to wait for a message
+        :param timeout: the maximum time in seconds to wait for a message
         :type timeout: :class:`float`
         """
         # TODO: handle timeout
@@ -162,7 +163,7 @@ class RawIPClient(AbstractChannel):
     def writePacket(self, data):
         """Write on the communication channel the specified data.
 
-        :keyword data: the data to write on the channel
+        :param data: the data to write on the channel
         :type data: :class:`bytes`
         """
 
@@ -176,9 +177,9 @@ class RawIPClient(AbstractChannel):
         """Write on the communication channel the specified data and returns
         the corresponding response.
 
-        :keyword data: the data to write on the channel
+        :param data: the data to write on the channel
         :type data: :class:`bytes`
-        :keyword timeout: the maximum time in seconds to wait for a response
+        :param timeout: the maximum time in seconds to wait for a response
         :type timeout: :class:`float`
         """
         if self.__socket is not None:
@@ -349,6 +350,6 @@ class RawIPClient(AbstractChannel):
         return self.__timeout
 
     @timeout.setter
-    @typeCheck(int)
+    @typeCheck(float)
     def timeout(self, timeout):
         self.__timeout = timeout

@@ -57,9 +57,25 @@ class TCPServer(AbstractChannel):
     method on the tcp server which starts the server. The objective of
     the server is to wait for the client to connect.
 
+    The TCPServer constructor expects some parameters:
+
+    :param localIP: The local IP address.
+    :param localPort: The local IP port.
+    :param timeout: The default timeout of the channel for waiting a
+                    client message. Default value is 5.0 seconds.
+    :type localIP: :class:`str`, required
+    :type localPort: :class:`int`, required
+    :type timeout: :class:`float`, optional
+
+
+    The following code shows the use of a TCPServer channel:
+
     >>> from netzob.all import *
     >>> import time
     >>> server = TCPServer(localIP='127.0.0.1', localPort=9999)
+
+    The following code shows a complete example of a communication
+    between a client and a server in TCP:
 
     >>> symbol = Symbol([Field("Hello everyone!")])
     >>> s0 = State()
@@ -88,17 +104,6 @@ class TCPServer(AbstractChannel):
     """
 
     def __init__(self, localIP, localPort, timeout=5.):
-        """
-        Constructor of TCPServer channel.
-
-        :keyword localIP: the local IP address
-        :type localIP: :class:`str`
-        :keyword localPort: the local IP port
-        :type localPort: :class:`int`
-        :keyword timeout: the default timeout of the channel for waiting a
-                          client message. Default value is 5s.
-        :type timeout: :class:`float`
-        """
         super(TCPServer, self).__init__(isServer=True)
         self.localIP = localIP
         self.localPort = localPort
@@ -111,7 +116,7 @@ class TCPServer(AbstractChannel):
         """Open the communication channel. If the channel is a server, it
         starts to listen and will create an instance for each different client
 
-        :keyword timeout: Not used. Set to None.
+        :param timeout: Not used. Set to None.
         :type timeout: :class:`float`
         """
         if self.isOpen:
@@ -143,7 +148,7 @@ class TCPServer(AbstractChannel):
     def read(self, timeout=None):
         """Read the next message on the communication channel.
 
-        :keyword timeout: the maximum time in seconds to wait for a message
+        :param timeout: the maximum time in seconds to wait for a message
         :type timeout: :class:`float`
         """
         reading_seg_size = 1024
@@ -182,7 +187,7 @@ class TCPServer(AbstractChannel):
         """Write on the communication channel the specified data and returns
         the corresponding response.
 
-        :keyword timeout: the maximum time in seconds to wait for a response
+        :param timeout: the maximum time in seconds to wait for a response
         :type timeout: :class:`float`
         """
 
@@ -233,6 +238,6 @@ class TCPServer(AbstractChannel):
         return self.__timeout
 
     @timeout.setter
-    @typeCheck(int)
+    @typeCheck(float)
     def timeout(self, timeout):
         self.__timeout = timeout
