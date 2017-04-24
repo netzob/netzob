@@ -64,7 +64,7 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
     :type isServer: :class:`bool`
     :keyword _id: the unique identifier of the channel
     :type _id: :class:`uuid.UUID`
-    :raise TypeError if parameters are not valid
+    :raise: TypeError if parameters are not valid
     """
 
     TYPE_UNDEFINED = 0
