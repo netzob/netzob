@@ -108,7 +108,19 @@ class PCAPImporter(object):
     >>> print(repr(messages[0].data))
     b'GET / HTTP/1.1\\r\\nHost: www.free.fr\\r\\nUser-Agent: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa(bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb)ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\\r\\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\\r\\nAccept-Language: en-US,en;q=0.5\\r\\nAccept-Encoding: gzip, deflate\\r\\nConnection: keep-alive\\r\\n\\r\\n'
 
+    Parameter `mergePacketsInFlow` can be use to merge consecutive messages that share the same source and destination (mimic a TCP flow). In practice, this parameter was introduced for L5 network messages to support TCP flows but it can be use for any level of network messages.
 
+    >>> from netzob.all import *
+    >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_http_flow.pcap", mergePacketsInFlow=False).values()
+    >>> print(len(messages))
+    4
+    >>> print(len(messages[1].data))
+    1228
+    >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_http_flow.pcap", mergePacketsInFlow=True).values()
+    >>> print(len(messages))
+    2
+    >>> print(len(messages[1].data))
+    3224
     """
 
     INVALID_BPF_FILTER = 0
@@ -272,7 +284,7 @@ class PCAPImporter(object):
             l5Message = L4NetworkMessage(
                 l4Payload, epoch, l2Proto, l2SrcAddr, l2DstAddr, l3Proto,
                 l3SrcAddr, l3DstAddr, l4Proto, l4SrcPort, l4DstPort)
-
+            
             self.messages.add(l5Message)
 
     def __decodeLayer2(self, header, payload):
@@ -367,12 +379,14 @@ class PCAPImporter(object):
             raise NetzobImportException("PCAP", warnMessage,
                                         self.INVALID_LAYER4)
 
-    @typeCheck(list, str, int, int)
+    @typeCheck(list, str, int, int, bool)
     def readMessages(self,
                      filePathList,
                      bpfFilter="",
                      importLayer=5,
-                     nbPackets=0):
+                     nbPackets=0,
+                     mergePacketsInFlow=False,
+                    ):
         """Read all messages from a list of PCAP files. A BPF filter
         can be set to limit the captured packets. The layer of import
         can also be specified:
@@ -390,6 +404,8 @@ class PCAPImporter(object):
         :type importLayer: :class:`int`
         :param nbPackets: the number of packets to import
         :type nbPackets: :class:`int`
+        :param mergePacketsInFlow: if True, consecutive packets with same source and destination ar merged (i.e. to mimic a flow) 
+        :type mergePacketsInFlow: :class:`bool`
         :return: a list of captured messages
         :rtype: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
         """
@@ -424,19 +440,32 @@ class PCAPImporter(object):
         self.messages = SortedTypedList(AbstractMessage)
         for filePath in filePathList:
             self.__readMessagesFromFile(filePath, bpfFilter, nbPackets)
+        
+        # if requested, we merge consecutive messages that share same source and destination
+        if mergePacketsInFlow:
+            mergedMessages = SortedTypedList(AbstractMessage)
+            previousMessage = None
+            for message in self.messages.values():
+                if previousMessage is not None and message.source == previousMessage.source and message.destination == previousMessage.destination:
+                    previousMessage.data += message.data
+                else:
+                    mergedMessages.add(message)
+                    previousMessage = message
+            self.messages = mergedMessages
+            
         return self.messages
 
     @staticmethod
-    @typeCheck(list, str, int, int)
-    def readFiles(filePathList, bpfFilter="", importLayer=5, nbPackets=0):
+    @typeCheck(list, str, int, int, bool)
+    def readFiles(filePathList, bpfFilter="", importLayer=5, nbPackets=0, mergePacketsInFlow=False):
         """Read all messages from a list of PCAP files. A BPF filter
         can be set to limit the captured packets. The layer of import
         can also be specified:
           - When layer={1, 2}, it means we want to capture a raw layer (such as Ethernet).
           - If layer=3, we capture at the network level (such as IP).
           - If layer=4, we capture at the transport layer (such as TCP or UDP).
-          - If layer=5, we capture at the applicative layer (such as the TCP or UDP payload).
-         Finally, the number of packets to capture can be specified.
+          - If layer=5, we capture at the applicative layer (such as the TCP or UDP payload)
+         The number of packets to capture can be specified.
 
         :param filePathList: a list of pcap files to read
         :type filePathList: a list of :class:`str`
@@ -446,24 +475,25 @@ class PCAPImporter(object):
         :type importLayer: :class:`int`
         :param nbPackets: the number of packets to import
         :type nbPackets: :class:`int`
+        :param mergePacketsInFlow: if True, consecutive packets with same source and destination ar merged (i.e. to mimic a flow) 
+        :type mergePacketsInFlow: :class:`bool`        
         :return: a list of captured messages
         :rtype: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
         """
 
         importer = PCAPImporter()
-        return importer.readMessages(filePathList, bpfFilter, importLayer,
-                                     nbPackets)
+        return importer.readMessages(filePathList,bpfFilter, importLayer, nbPackets, mergePacketsInFlow)
 
     @staticmethod
-    @typeCheck(str, str, int, int)
-    def readFile(filePath, bpfFilter="", importLayer=5, nbPackets=0):
+    @typeCheck(str, str, int, int, bool)
+    def readFile(filePath, bpfFilter="", importLayer=5, nbPackets=0, mergePacketsInFlow=False):
         """Read all messages from the specified PCAP file. A BPF filter
         can be set to limit the captured packets. The layer of import
         can also be specified:
           - When layer={1, 2}, it means we want to capture a raw layer (such as Ethernet).
           - If layer=3, we capture at the network level (such as IP).
           - If layer=4, we capture at the transport layer (such as TCP or UDP).
-          - If layer=5, we capture at the applicative layer (such as the TCP or UDP payload).
+          - If layer=5, we capture at the applicative layer (such as the TCP or UDP payload) and merge consecutive messages with same source and destination.
          Finally, the number of packets to capture can be specified.
 
         :param filePath: the pcap path
@@ -474,13 +504,15 @@ class PCAPImporter(object):
         :type importLayer: :class:`int`
         :param nbPackets: the number of packets to import
         :type nbPackets: :class:`int`
+        :param mergePacketsInFlow: if True, consecutive packets with same source and destination ar merged (i.e. to mimic a flow) 
+        :type mergePacketsInFlow: :class:`bool`
         :return: a list of captured messages
         :rtype: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
         """
 
         importer = PCAPImporter()
         return importer.readFiles([filePath], bpfFilter, importLayer,
-                                  nbPackets)
+                                  nbPackets, mergePacketsInFlow)
 
     @staticmethod
     @typeCheck(L2NetworkMessage)
