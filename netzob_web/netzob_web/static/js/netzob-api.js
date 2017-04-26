@@ -76,11 +76,11 @@ function patch_symbol_description(sid, description, function_cb) {
 }
 
 
-function delete_symbol(sid, function_cb) {
+function delete_symbol(sid) {
     
     var client = APIClient.getInstance();
     
-    client.symbols.del(sid).done(function_cb);
+    return client.symbols.del(sid).done();
 }
 
 function put_message_in_symbol(sid, mid, function_cb) {    
@@ -104,10 +104,13 @@ function get_symbol_cells(sid, function_cb) {
     
     client.symbols.cells.read(sid).done(function_cb);
 }
-function symbol_split_align(sid, function_cb) {
-    var client = APIClient.getInstance();
+function symbol_split_align(sid) {
+
     
-    client.symbols.split_align.read(sid).done(function_cb);
+    var deferred = new $.Deferred();
+    var client = APIClient.getInstance();
+    return client.symbols.split_align.read(sid).done();
+	
 }
 
 function get_captures(function_cb) {
@@ -122,8 +125,8 @@ function parse_raw(raw_filename, raw_file_content, delimiter, function_cb) {
     client.misc.create("parse_raw", {"filename": raw_filename, "delimiter": delimiter, "raw": raw_file_content}).done(function_cb);
 }
 
-function parse_pcap(pcap_filename, pcap_file_content, layer, bpf_filter, function_cb) {
+function parse_pcap(pcap_filename, pcap_file_content, layer, bpf_filter) {
     var client = APIClient.getInstance();
 
-    client.misc.create("parse_pcap", {"filename": pcap_filename, "layer": layer, "bpf": bpf_filter, "pcap": pcap_file_content}).done(function_cb);
+    return client.misc.create("parse_pcap", {"filename": pcap_filename, "layer": layer, "bpf": bpf_filter, "pcap": pcap_file_content}).done();
 }

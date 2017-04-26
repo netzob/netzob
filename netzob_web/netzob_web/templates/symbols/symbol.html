@@ -110,18 +110,20 @@
 	 $("button#symbol_split_align").click(function(e) {
 	     e.preventDefault();
 
-	     symbol_split_align("{{ sid }}", function () {
-		 location.reload();
-	     });
+	     start_job(symbol_split_align("{{ sid }}")).then(
+		 function() {
+		     location.reload();
+		 });
 	     
 	 });
 
 	 $("button#symbol_delete").click(function(e) {
 	     e.preventDefault();
 
-	     delete_symbol("{{ sid }}", function () {
-		 window.location.href = "/symbols";
-	     });
+	     start_job(delete_symbol("{{ sid }}")).then(
+		 function () {
+		     window.location.href = "/symbols";
+		 });
 	     
 	 });
 

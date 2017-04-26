@@ -20,10 +20,18 @@ textarea {
   resize: vertical;
 }
 
-.container-narrow{
-  margin: 0 auto;
-  max-width: 700px;
+#nav {
+    height:42px;
+    margin-bottom: 0px;
 }
+
+.progress{
+    width: 100%;
+    margin:0px;
+    height:5px;
+}
+
+
 
 /* Forms */
 
