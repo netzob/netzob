@@ -69,15 +69,14 @@
 	 reader.onload = function(e) {
 	     var pcap_filename = pcap_file.name;
 	     var pcap_file_content = reader.result;
-	     
-	     parse_pcap(pcap_filename, pcap_file_content, layer, bpf_filter, function(messages) {
 
-		 for (var i_msg = 0; i_msg < messages.length; i_msg ++) {		     
-		     register_message(table, messages[i_msg]);
+	     start_job(parse_pcap(pcap_filename, pcap_file_content, layer, bpf_filter)).then(
+		 messages => {
+		     for (var i_msg = 0; i_msg < messages.length; i_msg ++) {		     
+			 register_message(table, messages[i_msg]);
+		     }
 		 }
-		 
-	     })
-	     
+	     );
 	 }
 	 reader.readAsDataURL(pcap_file);
      }
