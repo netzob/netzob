@@ -755,8 +755,13 @@ def typeSpecifier(klass: Callable[..., Any],
     # build the partial functions (with their name)
     types = {}
     for kwargs in kw_prod:
+        # process leave tuples (value, name) to generate type descriptions
+
+        # type name: generate a unique name based on user's type specification
         kw_names = {k: name for (k, (_, name)) in kwargs.items()}
         name = name_pattern.format(**kw_names)
+
+        # type values: create a default value structure from user's type spec
         kw_values = {k: v for (k, (v, _)) in kwargs.items()}
         types[name] = partial(create_klass, **kw_values)
     return types
