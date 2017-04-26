@@ -2,8 +2,44 @@ function initialize_nav(current_sid) {
     refresh_nav(current_sid);
 
     initialize_new_symbol_form();
-    
+
+    reset_job_progress_bar();    
 }
+
+/** 
+ * start - JOB PROGRESS BAR
+ */
+
+function reset_job_progress_bar() {
+    set_job_progress_bar_value(0);
+}
+
+function set_job_progress_bar_value(value) {
+    $("#job_progress_bar").css('width',value+'%').attr('aria-valuenow', value);
+}
+
+function start_job(job) {
+    set_job_progress_bar_value(10);
+    
+    job.then(() => {
+	
+	set_job_progress_bar_value(100);
+
+	new Promise(resolve => setTimeout(resolve, 2000)).then(
+	    () => {
+		reset_job_progress_bar();
+	    }
+	);
+	
+    });    
+
+    return job
+}
+
+/** 
+ * end - JOB PROGRESS BAR
+ */
+
 
 function initialize_new_symbol_form() {
     $("#new_symbol_button").click(function() {

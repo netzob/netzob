@@ -80,6 +80,30 @@
 	 ]
      ).draw( false );     
  }
+
+ function create_symbol_with_messages(symbol_name, retained_messages) {
+
+     // creates the symbol
+     create_symbol(symbol_name, function(symbol) {
+	 sid = symbol.id;
+
+	 // creates the capture
+	 create_capture(symbol_name, function(capture) {
+	     cid = capture.id;
+
+	     
+	     for (var iMsg=0; iMsg < retained_messages.length; iMsg ++) {
+		 create_message(cid, retained_messages[iMsg], function(message) {
+		     mid = message.id
+		     put_message_in_symbol(sid, mid, function(data) {})	
+		 });
+	     }
+	 })
+     })
+
+
+ }
+ 
  $(function() {
 
      configure_import_file_raw_form();
@@ -113,32 +137,13 @@
 
 	     window.location = "/symbols/"+sid;
 	 });
-	 
-	 // creates the symbol
-	 create_symbol(capture_name, function(symbol) {
-	     console.log("Symbol ("+symbol.id+") created");
-	     sid = symbol.id;
 
-	     // creates the capture
-	     create_capture(capture_name, function(capture) {
-		 console.log("Capture ("+capture.id+") created (sid="+sid+")");
-		 cid = capture.id;
 
-		 
-		 for (var iMsg=0; iMsg < retained_messages.length; iMsg ++) {
-		     create_message(cid, retained_messages[iMsg], function(message) {
-			 console.log("Message created: "+message.id);
-			 console.log("Putting message "+message.id+" in "+sid);
-			 mid = message.id
-
-			 put_message_in_symbol(sid, mid, function(data) {
-			     console.log("Message added to symbol :)  "+message.id);
-			 })	
-		     });
-		 }
-	     })
-	 })
-
+	 start_job(create_symbol_with_messages(capture_name, retained_messages).then(
+	     symbol => {
+		 console.log("Symbol ("+symbol.id+") created");
+	     }
+	 ));
 	 
      };
      
