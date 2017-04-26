@@ -57,6 +57,7 @@ install:
   - python3 setup.py build
   - python3 setup.py install
   - python3 -m pip install coveralls
+  - python3 -m pip install codecov
 
 # Executing unit-tests and measure coverages
 
