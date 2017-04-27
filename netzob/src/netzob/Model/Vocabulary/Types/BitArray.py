@@ -50,7 +50,7 @@ from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 @NetzobLogger
 class BitArray(AbstractType):
-    """This class defines a BitArray type.
+    r"""This class defines a BitArray type.
 
     The BitArray type allows to describe a field that contains a
     sequence of bits of arbitrary sizes.
@@ -63,11 +63,24 @@ class BitArray(AbstractType):
     :type nbBits: an :class:`int` or a tupple with the min and the max size specified as :class:`int`, optional
 
 
+    The two following examples show how to define a field with a
+    BitArray. Both examples are equivalent. The second one is just
+    more concise.
+
+    >>> from netzob.all import *  
+    >>> f1 = Field(BitArray(bitarray('00001111')))
+    >>> f1.specialize()
+    b'\x0f'
+
+    >>> f1 = Field(bitarray('00001111'))
+    >>> f1.specialize()
+    b'\x0f'
+
+
     The following example shows how to define a bitfield of 1 bit, 47
     bits, 64 bits and then a field that accept a bitfield of variable
     size between 13 and 128 bits:
 
-    >>> from netzob.all import *  
     >>> f1 = Field(BitArray(nbBits=1))
     >>> print(len(f1.domain.dataType.generate()))
     1
@@ -232,7 +245,9 @@ class BitArray(AbstractType):
             norm_data = data
         elif isinstance(data, str):
             norm_data = bytes(data, "utf-8")
-
+        else:
+            raise TypeError("Invalid type for: '{}'. Expected bytes or str, and got '{}'".format(data, type(data)))
+            
         b = bitarray(endian=endian)
         b.frombytes(norm_data)
         return b

@@ -45,6 +45,7 @@ from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.ASCII import ASCII
@@ -245,13 +246,16 @@ class MessageSpecializer(object):
                 if isinstance(v, bitarray):
                     continue
                 elif hasattr(k.domain, "dataType"):
-                    self.presets[k] = TypeConverter.convert(v, k.domain.dataType.__class__, BitArray,
-                                                            src_unitSize=k.domain.dataType.unitSize,
-                                                            dst_unitSize=k.domain.dataType.unitSize,
-                                                            src_sign=k.domain.dataType.sign,
-                                                            dst_sign=k.domain.dataType.sign,
-                                                            src_endianness=k.domain.dataType.endianness,
-                                                            dst_endianness=k.domain.dataType.endianness)
+                    if isinstance(v, AbstractType):
+                        self.presets[k] = v.value
+                    else:  # v should be basic python type, such as an int, str, ...
+                        self.presets[k] = TypeConverter.convert(v, k.domain.dataType.__class__, BitArray,
+                                                                src_unitSize=k.domain.dataType.unitSize,
+                                                                dst_unitSize=k.domain.dataType.unitSize,
+                                                                src_sign=k.domain.dataType.sign,
+                                                                dst_sign=k.domain.dataType.sign,
+                                                                src_endianness=k.domain.dataType.endianness,
+                                                                dst_endianness=k.domain.dataType.endianness)
                 else:
                     raise Exception("Cannot find the default dataType for field '{}'".format(k))
 
@@ -265,13 +269,16 @@ class MessageSpecializer(object):
                             new_keys[f] = v
                             old_keys.append(k)
                         elif hasattr(f.domain, "dataType"):
-                            new_keys[f] = TypeConverter.convert(v, f.domain.dataType.__class__, BitArray,
-                                                                src_unitSize=f.domain.dataType.unitSize,
-                                                                dst_unitSize=f.domain.dataType.unitSize,
-                                                                src_sign=f.domain.dataType.sign,
-                                                                dst_sign=f.domain.dataType.sign,
-                                                                src_endianness=f.domain.dataType.endianness,
-                                                                dst_endianness=f.domain.dataType.endianness)
+                            if isinstance(v, AbstractType):
+                                new_keys[f] = v.value
+                            else:  # v should be basic python type, such as an int, str, ...
+                                new_keys[f] = TypeConverter.convert(v, f.domain.dataType.__class__, BitArray,
+                                                                    src_unitSize=f.domain.dataType.unitSize,
+                                                                    dst_unitSize=f.domain.dataType.unitSize,
+                                                                    src_sign=f.domain.dataType.sign,
+                                                                    dst_sign=f.domain.dataType.sign,
+                                                                    src_endianness=f.domain.dataType.endianness,
+                                                                    dst_endianness=f.domain.dataType.endianness)
                             old_keys.append(k)
                         else:
                             raise Exception("Cannot find the default dataType for field '{}'".format(f))

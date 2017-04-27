@@ -224,7 +224,7 @@ class Symbol(AbstractField):
         method. Values in this dictionary will override any fields
         definition, constraints or relationship dependencies.
 
-        The presets dictionnary accepts a sequence of keys and values,
+        The presets dictionary accepts a sequence of keys and values,
         where keys correspond to the fields in the symbol that we want
         to override, and values correspond to the overriding
         content. Keys are either expressed as :class:`Field
@@ -241,9 +241,9 @@ class Symbol(AbstractField):
         header is made of one named field containing a destination
         port, and a named field containing a payload:
 
-        >>> f_dport   = Field(name="udp.dport", domain=Integer(unitSize=AbstractType.UNITSIZE_16))
-        >>> f_payload = Field(name="udp.payload", domain=Raw())
-        >>> symbol_udp  = Symbol(name="udp", fields=[f_dport, f_payload])
+        >>> f_dport = Field(name="udp.dport", domain=Integer(unitSize=AbstractType.UNITSIZE_8))
+        >>> f_payload = Field(name="udp.payload", domain=Raw(nbBytes=2))
+        >>> symbol_udp = Symbol(name="udp", fields=[f_dport, f_payload])
 
         The three following codes show the same way to express the
         parameterized **values** during specialization of the fields
@@ -253,19 +253,19 @@ class Symbol(AbstractField):
         >>> presets["udp.dport"] = 11              # udp.dport expects an int or an Integer
         >>> presets["udp.payload"] = b"\xaa\xbb"   # udp.payload expects a bytes object or a Raw object
         >>> symbol_udp.specialize(presets=presets)
-        b'\x00\x0b\xaa\xbb'
+        b'\x0b\xaa\xbb'
 
         >>> presets = {}
-        >>> self.presets["udp.dport"] = Integer(42)        # udp.dport expects an int or an Integer
-        >>> self.presets["udp.payload"] = Raw(b"\xaa\xbb") # udp.payload expects a bytes object or a Raw object
+        >>> presets["udp.dport"] = Integer(11)        # udp.dport expects an int or an Integer
+        >>> presets["udp.payload"] = Raw(b"\xaa\xbb") # udp.payload expects a bytes object or a Raw object
         >>> symbol_udp.specialize(presets=presets)
-        b'\x00\x0b\xaa\xbb'
+        b'\x0b\xaa\xbb'
 
         >>> presets = {}
-        >>> self.presets["udp.dport"] = TypeConverter(11, Integer, BitArray)
-        >>> self.presets["udp.payload"] = TypeConverter(b"\xaa\xbb", Raw, Bitarray)
+        >>> presets["udp.dport"] = TypeConverter.convert(11, Integer, BitArray)
+        >>> presets["udp.payload"] = TypeConverter.convert(b"\xaa\xbb", Raw, BitArray)
         >>> symbol_udp.specialize(presets=presets)
-        b'\x00\x0b\xaa\xbb'
+        b'\x0b\xaa\xbb'
 
         The previous example shows the use of BitArray as dict
         values. BitArray are always permitted for any parameterized
@@ -279,13 +279,13 @@ class Symbol(AbstractField):
         >>> presets[f_dport] = 11
         >>> presets[f_payload] = b"\xaa\xbb"
         >>> symbol_udp.specialize(presets=presets)
-        b'\x00\x0b\xaa\xbb'
+        b'\x0b\xaa\xbb'
 
         >>> presets = {}
         >>> presets["udp.dport"] = 11
         >>> presets["udp.payload"] = b"\xaa\xbb"
         >>> symbol_udp.specialize(presets=presets)
-        b'\x00\x0b\xaa\xbb'
+        b'\x0b\xaa\xbb'
 
 
         A preset value bypasses all the constraints checks on your field definition.

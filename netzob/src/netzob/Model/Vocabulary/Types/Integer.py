@@ -348,7 +348,7 @@ class Integer(AbstractType):
                unitSize=AbstractType.defaultUnitSize(),
                endianness=AbstractType.defaultEndianness(),
                sign=AbstractType.defaultSign()):
-        """This method convert the python raw data to the Integer.
+        """This method converts a python raw data to an Integer.
 
         >>> from netzob.all import *
 

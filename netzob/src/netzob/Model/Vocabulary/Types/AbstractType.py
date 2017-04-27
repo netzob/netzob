@@ -564,6 +564,9 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         elif isinstance(data, str):
             from netzob.Model.Vocabulary.Types.ASCII import ASCII
             normalizedData = ASCII(value=data)
+        elif isinstance(data, bitarray):
+            from netzob.Model.Vocabulary.Types.BitArray import BitArray
+            normalizedData = BitArray(value=data)
 
         if normalizedData is None:
             raise TypeError(
