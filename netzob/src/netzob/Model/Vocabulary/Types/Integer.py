@@ -45,7 +45,8 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, typeSpecifier
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType,\
+    partialtype
 
 
 class Integer(AbstractType):
@@ -475,26 +476,19 @@ class Integer(AbstractType):
         return endianFormat + unitFormat
 
 
-subtypes = typeSpecifier(Integer, "{sign}int{unitSize}{endianness}", {
-    'unitSize': [
-        # (AbstractType.defaultUnitSize(), ''),
-        (AbstractType.UNITSIZE_8, '8'),
-        (AbstractType.UNITSIZE_16, '16'),
-        (AbstractType.UNITSIZE_32, '32'),
-        (AbstractType.UNITSIZE_64, '64')
-    ],
-    'sign': [
-        # (AbstractType.defaultSign(), ''),
-        (AbstractType.SIGN_SIGNED, ''),
-        (AbstractType.SIGN_UNSIGNED, 'u')
-    ],
-    'endianness': [
-        # (AbstractType.defaultEndianness(), ''),
-        (AbstractType.ENDIAN_BIG, 'be'),
-        (AbstractType.ENDIAN_LITTLE, 'le')
-    ]
-})
-
-globals().update(subtypes)
-
-__all__ = ["Integer"] + list(subtypes)
+int8be = partialtype(Integer, unitSize='8', sign='signed', endianness='big')
+int8le = partialtype(Integer, unitSize='8', sign='signed', endianness='little')
+uint8be = partialtype(Integer, unitSize='8', sign='unsigned', endianness='big')
+uint8le = partialtype(Integer, unitSize='8', sign='unsigned', endianness='little')
+int16be = partialtype(Integer, unitSize='16', sign='signed', endianness='big')
+int16le = partialtype(Integer, unitSize='16', sign='signed', endianness='little')
+uint16be = partialtype(Integer, unitSize='16', sign='unsigned', endianness='big')
+uint16le = partialtype(Integer, unitSize='16', sign='unsigned', endianness='little')
+int32be = partialtype(Integer, unitSize='32', sign='signed', endianness='big')
+int32le = partialtype(Integer, unitSize='32', sign='signed', endianness='little')
+uint32be = partialtype(Integer, unitSize='32', sign='unsigned', endianness='big')
+uint32le = partialtype(Integer, unitSize='32', sign='unsigned', endianness='little')
+int64be = partialtype(Integer, unitSize='64', sign='signed', endianness='big')
+int64le = partialtype(Integer, unitSize='64', sign='signed', endianness='little')
+uint64be = partialtype(Integer, unitSize='64', sign='unsigned', endianness='big')
+uint64le = partialtype(Integer, unitSize='64', sign='unsigned', endianness='little')

@@ -710,6 +710,19 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         self.__sign = sign
 
 
+def partialtype(klass, *args, **keywords):
+    """partialtype(klass, *args, **keywords) - new type with partial
+    application of the given arguments and keywords.
+    """
+
+    # wrapper used to instanciate classes with `partial`
+    @wraps(klass)
+    def create_klass(*args, **keywords):
+        return klass(*args, **keywords)
+
+    return partial(create_klass, *args, **keywords)
+
+
 def typeSpecifier(klass: Callable[..., Any],
                   name_pattern: str,
                   defaults: Mapping[str, Iterable[Tuple[Any, str]]]):
@@ -739,11 +752,6 @@ def typeSpecifier(klass: Callable[..., Any],
     True
     """
 
-    # wrapper used to instanciate classes with `partial`
-    @wraps(klass)
-    def create_klass(*args, **kwargs):
-        return klass(*args, **kwargs)
-
     # build the list of all named presets
     kw_pairs = []
     for key, values in defaults.items():
@@ -763,5 +771,5 @@ def typeSpecifier(klass: Callable[..., Any],
 
         # type values: create a default value structure from user's type spec
         kw_values = {k: v for (k, (v, _)) in kwargs.items()}
-        types[name] = partial(create_klass, **kw_values)
+        types[name] = partialtype(klass, **kw_values)
     return types
