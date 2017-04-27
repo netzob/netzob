@@ -147,6 +147,57 @@ class Integer(AbstractType):
     (16, 16)
 
 
+    **Examples of specific Integer types**
+
+    By convenience, common specific integer types are also available, with
+    pre-defined values of :attr:`unitSize`, :attr:`sign` and :attr:`endianness`
+    attributes. They are used to shorten calls of singular definitions.
+
+    By example, a *16-bit little-endian unsigned* Integer is classicaly defined
+    like this:
+
+    >>> f1 = Integer(42,
+    ...              unitSize=AbstractType.UNITSIZE_16,
+    ...              sign=AbstractType.SIGN_UNSIGNED,
+    ...              endianness=AbstractType.ENDIAN_LITTLE)
+
+    Could also be called in an equivalent form:
+
+    >>> f2 = uint16le(42)
+
+    There is an equivalence between these two fields, for every internal value
+    of the type:
+
+    >>> f1 = Integer(42,
+    ...              unitSize=AbstractType.UNITSIZE_16,
+    ...              sign=AbstractType.SIGN_UNSIGNED,
+    ...              endianness=AbstractType.ENDIAN_LITTLE)
+    >>> f2 = uint16le(42)
+    >>> f1, f2
+    (42, 42)
+    >>> f1 == f2
+    True
+
+    But a comparison between two specific integers of different kind will
+    always fail, even if their value looks equivalent:
+
+    >>> f2 = uint16le(42)
+    >>> f3 = uint32le(42)
+    >>> f2 == f3
+    False
+
+    And even when the concrete value seems identical, fields are not:
+
+    >>> f2 = uint16le(42)
+    >>> f4 = int16le(42)
+    >>> f2, f4
+    (42, 42)
+    >>> print(f2, f4)
+    Integer=42 ((16, 16)) Integer=42 ((16, 16))
+    >>> f2 == f4
+    False
+
+
     **Examples of conversions between Integer type objects**
 
     Conversion methods allows to transform encoded representation of
@@ -476,21 +527,69 @@ class Integer(AbstractType):
         return endianFormat + unitFormat
 
 
-int8be = partialtype(Integer, unitSize='8', sign='signed', endianness='big')
-int8le = partialtype(Integer, unitSize='8', sign='signed', endianness='little')
-uint8be = partialtype(Integer, unitSize='8', sign='unsigned', endianness='big')
-uint8le = partialtype(Integer, unitSize='8', sign='unsigned', endianness='little')
-int16be = partialtype(Integer, unitSize='16', sign='signed', endianness='big')
-int16le = partialtype(Integer, unitSize='16', sign='signed', endianness='little')
-uint16be = partialtype(Integer, unitSize='16', sign='unsigned', endianness='big')
-uint16le = partialtype(Integer, unitSize='16', sign='unsigned', endianness='little')
-int32be = partialtype(Integer, unitSize='32', sign='signed', endianness='big')
-int32le = partialtype(Integer, unitSize='32', sign='signed', endianness='little')
-uint32be = partialtype(Integer, unitSize='32', sign='unsigned', endianness='big')
-uint32le = partialtype(Integer, unitSize='32', sign='unsigned', endianness='little')
-int64be = partialtype(Integer, unitSize='64', sign='signed', endianness='big')
-int64le = partialtype(Integer, unitSize='64', sign='signed', endianness='little')
-uint64be = partialtype(Integer, unitSize='64', sign='unsigned', endianness='big')
-uint64le = partialtype(Integer, unitSize='64', sign='unsigned', endianness='little')
+int8be   = partialtype(Integer,
+                       unitSize=AbstractType.UNITSIZE_8,
+                       sign=AbstractType.SIGN_SIGNED,
+                       endianness=AbstractType.ENDIAN_BIG)
+int8le   = partialtype(Integer,
+                       unitSize=AbstractType.UNITSIZE_8,
+                       sign=AbstractType.SIGN_SIGNED,
+                       endianness=AbstractType.ENDIAN_LITTLE)
+uint8be  = partialtype(Integer,
+                       unitSize=AbstractType.UNITSIZE_8,
+                       sign=AbstractType.SIGN_UNSIGNED,
+                       endianness=AbstractType.ENDIAN_BIG)
+uint8le  = partialtype(Integer,
+                       unitSize=AbstractType.UNITSIZE_8,
+                       sign=AbstractType.SIGN_UNSIGNED,
+                       endianness=AbstractType.ENDIAN_LITTLE)
+int16be  = partialtype(Integer,
+                       unitSize=AbstractType.UNITSIZE_16,
+                       sign=AbstractType.SIGN_SIGNED,
+                       endianness=AbstractType.ENDIAN_BIG)
+int16le  = partialtype(Integer,
+                       unitSize=AbstractType.UNITSIZE_16,
+                       sign=AbstractType.SIGN_SIGNED,
+                       endianness=AbstractType.ENDIAN_LITTLE)
+uint16be = partialtype(Integer,
+                       unitSize=AbstractType.UNITSIZE_16,
+                       sign=AbstractType.SIGN_UNSIGNED,
+                       endianness=AbstractType.ENDIAN_BIG)
+uint16le = partialtype(Integer,
+                       unitSize=AbstractType.UNITSIZE_16,
+                       sign=AbstractType.SIGN_UNSIGNED,
+                       endianness=AbstractType.ENDIAN_LITTLE)
+int32be  = partialtype(Integer,
+                       unitSize=AbstractType.UNITSIZE_32,
+                       sign=AbstractType.SIGN_SIGNED,
+                       endianness=AbstractType.ENDIAN_BIG)
+int32le  = partialtype(Integer,
+                       unitSize=AbstractType.UNITSIZE_32,
+                       sign=AbstractType.SIGN_SIGNED,
+                       endianness=AbstractType.ENDIAN_LITTLE)
+uint32be = partialtype(Integer,
+                       unitSize=AbstractType.UNITSIZE_32,
+                       sign=AbstractType.SIGN_UNSIGNED,
+                       endianness=AbstractType.ENDIAN_BIG)
+uint32le = partialtype(Integer,
+                       unitSize=AbstractType.UNITSIZE_32,
+                       sign=AbstractType.SIGN_UNSIGNED,
+                       endianness=AbstractType.ENDIAN_LITTLE)
+int64be  = partialtype(Integer,
+                       unitSize=AbstractType.UNITSIZE_64,
+                       sign=AbstractType.SIGN_SIGNED,
+                       endianness=AbstractType.ENDIAN_BIG)
+int64le  = partialtype(Integer,
+                       unitSize=AbstractType.UNITSIZE_64,
+                       sign=AbstractType.SIGN_SIGNED,
+                       endianness=AbstractType.ENDIAN_LITTLE)
+uint64be = partialtype(Integer,
+                       unitSize=AbstractType.UNITSIZE_64,
+                       sign=AbstractType.SIGN_UNSIGNED,
+                       endianness=AbstractType.ENDIAN_BIG)
+uint64le = partialtype(Integer,
+                       unitSize=AbstractType.UNITSIZE_64,
+                       sign=AbstractType.SIGN_UNSIGNED,
+                       endianness=AbstractType.ENDIAN_LITTLE)
 int8, int16, int32, int64 = int8be, int16be, int32be, int64be
 uint8, uint16, uint32, uint64 = uint8be, uint16be, uint32be, uint64be

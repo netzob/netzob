@@ -125,7 +125,7 @@ class TypeConverter(object):
         if sourceType not in TypeConverter.supportedTypes():
             raise TypeError(
                 "The source type ({0}) is not supported".format(sourceType))
-        if destinationType not in TypeConverter.supportedTypes():
+        if not issubclass(destinationType, tuple(TypeConverter.supportedTypes())):
             raise TypeError("The destination type ({0}) is not supported".
                             format(destinationType))
         if data is None:

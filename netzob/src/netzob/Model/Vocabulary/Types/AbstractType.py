@@ -710,17 +710,19 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         self.__sign = sign
 
 
-def partialtype(klass, *args, **keywords):
+def partialtype(klass: AbstractType,
+                *args, **keywords) -> AbstractType:
     """partialtype(klass, *args, **keywords) - new type with partial
     application of the given arguments and keywords.
     """
+    def init_klass(self, *fargs, **fkeywords):
+        kwargs = keywords.copy()
+        kwargs.update(fkeywords)
+        klass.__init__(self, *args, *fargs, **kwargs)
 
-    # wrapper used to instanciate classes with `partial`
-    @wraps(klass)
-    def create_klass(*args, **keywords):
-        return klass(*args, **keywords)
-
-    return partial(create_klass, *args, **keywords)
+    klass_dict = klass.__dict__.copy()
+    klass_dict['__init__'] = init_klass
+    return type(klass.__name__, (klass,), klass_dict)
 
 
 def typeSpecifier(klass: Callable[..., Any],
