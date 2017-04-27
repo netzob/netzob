@@ -492,3 +492,5 @@ int64be = partialtype(Integer, unitSize='64', sign='signed', endianness='big')
 int64le = partialtype(Integer, unitSize='64', sign='signed', endianness='little')
 uint64be = partialtype(Integer, unitSize='64', sign='unsigned', endianness='big')
 uint64le = partialtype(Integer, unitSize='64', sign='unsigned', endianness='little')
+int8, int16, int32, int64 = int8be, int16be, int32be, int64be
+uint8, uint16, uint32, uint64 = uint8be, uint16be, uint32be, uint64be
