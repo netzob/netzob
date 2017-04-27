@@ -718,7 +718,7 @@ def partialtype(klass: AbstractType,
     def init_klass(self, *fargs, **fkeywords):
         kwargs = keywords.copy()
         kwargs.update(fkeywords)
-        klass.__init__(self, *args, *fargs, **kwargs)
+        klass.__init__(self, *(args + fargs), **kwargs)
 
     klass_dict = klass.__dict__.copy()
     klass_dict['__init__'] = init_klass
