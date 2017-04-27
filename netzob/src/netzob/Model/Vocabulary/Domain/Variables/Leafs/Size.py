@@ -74,7 +74,7 @@ class Size(AbstractRelationVariableLeaf):
     :param factor: Specify that the initial size value (always
                        expressed in bits) should be divided by this
                        factor. For example, to express a size in bytes,
-                       the factor should be 1/8.
+                       the factor should be 1./8.
     :param offset: Specify that the final size value
                        should be shifted according to the offset value.
     :param name: The name of the Value variable. If None, the name
@@ -92,7 +92,7 @@ class Size(AbstractRelationVariableLeaf):
     >>> from netzob.all import *
     >>> f0 = Field(ASCII(nbChars=(1,10)))
     >>> f1 = Field(ASCII(";"))
-    >>> f2 = Field(Size([f0, f1], dataType=ASCII(nbChars=2), factor=1/8, offset=16))
+    >>> f2 = Field(Size([f0, f1], dataType=ASCII(nbChars=2), factor=1./8, offset=16))
     >>> s  = Symbol(fields=[f0, f1, f2])
 
     In this example, the field *f2* is a size field where its value is
@@ -206,8 +206,8 @@ class Size(AbstractRelationVariableLeaf):
     >>> ip_saddr = Field(name='Source address', domain=IPv4("127.0.0.1"))
     >>> ip_daddr = Field(name='Destination address', domain=IPv4("127.0.0.1"))
     >>> ip_payload = Field(name='Payload', domain=BitArray(bitarray('0000000000000000')))
-    >>> ip_ihl.domain = Size([ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags, ip_frag_off, ip_ttl, ip_proto, ip_checksum, ip_saddr, ip_daddr], dataType=BitArray(nbBits=4), factor=1/float(32))
-    >>> ip_tot_len.domain = Size([ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags, ip_frag_off, ip_ttl, ip_proto, ip_checksum, ip_saddr, ip_daddr, ip_payload], dataType=Raw(nbBytes=2), factor=1/float(8))        
+    >>> ip_ihl.domain = Size([ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags, ip_frag_off, ip_ttl, ip_proto, ip_checksum, ip_saddr, ip_daddr], dataType=BitArray(nbBits=4), factor=1./32)
+    >>> ip_tot_len.domain = Size([ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags, ip_frag_off, ip_ttl, ip_proto, ip_checksum, ip_saddr, ip_daddr, ip_payload], dataType=Raw(nbBytes=2), factor=1./8)        
     >>> packet = Symbol(name='IP layer', fields=[ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags, ip_frag_off, ip_ttl, ip_proto, ip_checksum, ip_saddr, ip_daddr, ip_payload])
     >>> data = packet.specialize()
     >>> repr(hex(data[0]))  # This corresponds to the first octect of the IP layer. '5' means 5*32 bits, which is the size of the default IP header.
@@ -220,7 +220,7 @@ class Size(AbstractRelationVariableLeaf):
     def __init__(self,
                  fields,
                  dataType=None,
-                 factor=1 / float(8),
+                 factor=1./8,
                  offset=0,
                  name=None):
         if isinstance(fields, AbstractField):
