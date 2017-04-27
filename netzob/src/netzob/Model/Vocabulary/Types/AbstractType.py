@@ -726,7 +726,7 @@ def typeSpecifier(klass: Callable[..., Any],
     >>> from netzob.all import *
     >>> (v1, v2) = (uint8be(0x80), int8be(-0x80))
     >>> v1, v2
-    (-128, -128)
+    (128, -128)
     >>> v1 == v2
     False
     >>> Field(v1).specialize() == Field(v2).specialize()
