@@ -244,7 +244,10 @@ class AbstractType(object, metaclass=abc.ABCMeta):
             from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
             from netzob.Model.Vocabulary.Types.BitArray import BitArray
             return str(
-                TypeConverter.convert(self.value, BitArray, self.__class__))
+                TypeConverter.convert(self.value, BitArray, self.__class__,
+                                      dst_unitSize=self.unitSize,
+                                      dst_endianness=self.endianness,
+                                      dst_sign=self.sign))
         else:
             return str(self.value)
 
