@@ -70,11 +70,11 @@ class TypeEncodingFunction(EncodingFunction):
     >>> f1=Field(ASCII("hello"))
     >>> f2=Field(Integer(unitSize=AbstractType.UNITSIZE_32))
     >>> s = Symbol(fields=[f1,f2], messages=[m])
-    >>> print(s)
-    Field   | Field             
-    ------- | ------------------
-    'hello' | '\x00\x00\x00\x01'
-    ------- | ------------------
+    >>> print(s)# doctest: +NORMALIZE_WHITESPACE
+    Source | Destination | Field   | Field
+    ------ | ----------- | ------- | ------------------
+    None   | None        | 'hello' | '\x00\x00\x00\x01'
+    ------ | ----------- | ------- | ------------------
 
     >>> f2.addEncodingFunction(TypeEncodingFunction(Integer, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_LITTLE))
     >>> print(s)
@@ -97,10 +97,10 @@ class TypeEncodingFunction(EncodingFunction):
     >>> f2=Field(Integer(unitSize=AbstractType.UNITSIZE_32))
     >>> s = Symbol(fields=[f1,f2], messages=[m])
     >>> print(s)# doctest: +NORMALIZE_WHITESPACE
-    Field   | Field
-    ------- | ------------------
-    'hello' | '\x00\x00\x00\x01'
-    ------- | ------------------
+    Source | Destination | Field   | Field
+    ------ | ----------- | ------- | ------------------
+    None   | None        | 'hello' | '\x00\x00\x00\x01'
+    ------ | ----------- | ------- | ------------------
 
     >>> f1.addEncodingFunction(TypeEncodingFunction(ASCII))
     >>> print(s)# doctest: +NORMALIZE_WHITESPACE
@@ -111,10 +111,10 @@ class TypeEncodingFunction(EncodingFunction):
 
     >>> f1.clearEncodingFunctions()
     >>> print(s)# doctest: +NORMALIZE_WHITESPACE
-    Field   | Field
-    ------- | ------------------
-    'hello' | '\x00\x00\x00\x01'
-    ------- | ------------------
+    Source | Destination | Field   | Field
+    ------ | ----------- | ------- | ------------------
+    None   | None        | 'hello' | '\x00\x00\x00\x01'
+    ------ | ----------- | ------- | ------------------
 
     >>> f1.addEncodingFunction(TypeEncodingFunction(ASCII))
     >>> print(s)# doctest: +NORMALIZE_WHITESPACE

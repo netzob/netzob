@@ -53,7 +53,7 @@ from netzob.Model.Types.Integer import Integer
 
 @NetzobLogger
 class Timestamp(AbstractType):
-    """This class supports the definition of a Timestamp in Netzob.
+    r"""This class supports the definition of a Timestamp in Netzob.
     It can be customized to follow various timestamp definitions (Windows, Unix, MacOSX).
 
     In the following example, a Timestamp data is created with a specific value '1444492442'.
@@ -77,15 +77,16 @@ class Timestamp(AbstractType):
     >>> f2 = Field(Raw("00"), name="End")
     >>> s = Symbol(fields=[f0, f1, f2])
     >>> s.messages = [RawMessage(s.specialize()) for x in range(5)]
-    >>> print(s)
-    Start | Timestamp     | End 
-    ----- | ------------- | ----
-    '00'  | b'V\\x1c\\xf15' | '00'
-    '00'  | b'V\\x1c\\xf15' | '00'
-    '00'  | b'V\\x1c\\xf15' | '00'
-    '00'  | b'V\\x1c\\xf15' | '00'
-    '00'  | b'V\\x1c\\xf15' | '00'
-    ----- | ------------- | ----
+    >>> print(s)# doctest: +NORMALIZE_WHITESPACE
+    Source | Destination | Start | Timestamp | End
+    ------ | ----------- | ----- | --------- | ----
+    None   | None        | '00'  | 'V\x1cñ5' | '00'
+    None   | None        | '00'  | 'V\x1cñ5' | '00'
+    None   | None        | '00'  | 'V\x1cñ5' | '00'
+    None   | None        | '00'  | 'V\x1cñ5' | '00'
+    None   | None        | '00'  | 'V\x1cñ5' | '00'
+    ------ | ----------- | ----- | --------- | ----
+
     >>> s.fields[1].addEncodingFunction(TypeEncodingFunction(Timestamp))
     >>> print(s)
     Start | Timestamp                  | End 

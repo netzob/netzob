@@ -60,33 +60,20 @@ from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import Speciali
 
 @NetzobLogger
 class CRC32(AbstractRelationVariableLeaf):
-    """A crc32 relaton between a variable and the value of one or several other fields.
-
-
-    The following example, illustrates the creation of an ICMP Echo request packet
-    with a valid checksum computed on-the-fly.
+    r"""A crc32 relaton between a variable and the value of one or several other fields.
 
     >>> from netzob.all import *
-    >>> typeField = Field(name="Type", domain=Raw(b'\\x08'))
-    >>> codeField = Field(name="Code", domain=Raw(b'\\x00'))
-    >>> chksumField = Field(name="Checksum")
-    >>> identField = Field(name="Identifier", domain=Raw(b'\\x1d\\x22'))
-    >>> seqField = Field(name="Sequence Number", domain=Raw(b'\\x00\\x07'))
-    >>> timeField = Field(name="Timestamp", domain=Raw(b'\\xa8\\xf3\\xf6\\x53\\x00\\x00\\x00\\x00'))
-    >>> headerField = Field(name="header")
-    >>> headerField.fields = [typeField, codeField, chksumField, identField, seqField, timeField]
-    >>> dataField = Field(name="Payload", domain=Raw(b'\\x60\\xb5\\x06\\x00\\x00\\x00\\x00\\x00\\x10\\x11\\x12\\x13\\x14\\x15\\x16\\x17\\x18\\x19\\x1a\\x1b\\x1c\\x1d\\x1e\\x1f\\x20\\x21\\x22\\x23\\x24\\x25\\x26\\x27\\x28\\x29\\x2a\\x2b\\x2c\\x2d\\x2e\\x2f\\x30\\x31\\x32\\x33\\x34\\x35\\x36\\x37'))
-
-    >>> chksumField.domain = CRC32([headerField, dataField], dataType=Raw(nbBytes=2))
-    >>> s = Symbol(fields = [headerField, dataField])
-    >>> msgs = [RawMessage(s.specialize()) for i in range(1)]
-    >>> s.messages = msgs
+    >>> messageCRC_LE = RawMessage(b'\xc5k@@\x003\x00\n|\xd9\x80\x04\x00\n|\n\x90\x00\x00\x00\x01\x81x\x00\x03\x00\x00\x00\x02\x00\x00\x00\x18\x00\x00\x00\x8f\xf1f\x0fU\xcd\x0c\x00\x01\x00\x03\x00\xcf\x03\xa7\xc4\x08\x00\x00\x00\x01\x84\x80\x00\xcf\x03\xa7\xc4')
+    >>> headerField = Field(domain=Raw(b'\xc5k@@\x003\x00\n|\xd9\x80\x04\x00\n|\n\x90\x00\x00\x00\x01\x81x\x00\x03\x00\x00\x00\x02\x00\x00\x00\x18\x00\x00\x00'))
+    >>> dataField = Field(domain=Raw(b'U\xcd\x0c\x00\x01\x00\x03\x00\xcf\x03\xa7\xc4\x08\x00\x00\x00\x01\x84\x80\x00\xcf\x03\xa7\xc4'))
+    >>> chksumField = Field(domain = CRC32([dataField],endianness=AbstractType.ENDIAN_LITTLE))
+    >>> s = Symbol(fields = [headerField,chksumField, dataField],messages=[messageCRC_LE])
     >>> s.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print(s)
-    Type | Code | Checksum | Identifier | Sequence Number | Timestamp          | Payload
-    ---- | ---- | -------- | ---------- | --------------- | ------------------ | --------------------------------------------------------------------------------------------------
-    '08' | '00' | '0716'   | '1d22'     | '0007'          | 'a8f3f65300000000' | '60b5060000000000101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f3031323334353637'
-    ---- | ---- | -------- | ---------- | --------------- | ------------------ | --------------------------------------------------------------------------------------------------
+    >>> print(s)# doctest: +NORMALIZE_WHITESPACE
+    Field                                                                      | Field      | Field
+    -------------------------------------------------------------------------- | ---------- | --------------------------------------------------
+    'c56b40400033000a7cd98004000a7c0a9000000001817800030000000200000018000000' | '8ff1660f' | '55cd0c0001000300cf03a7c40800000001848000cf03a7c4'
+    -------------------------------------------------------------------------- | ---------- | --------------------------------------------------
 
     Fixed an issue with Alt Field
 
@@ -94,14 +81,14 @@ class CRC32(AbstractRelationVariableLeaf):
     >>> messageCRC2 = RawMessage(b'\xb5\x44\x72\x9e\x58\xcf\x0c\x00\x01')
     >>> field1 = Field(name="aftermut", domain=Alt([Raw(b'\x55\xcd'), Raw(b'\x58\xcf')]))
     >>> field2 = Field(name="afterstat", domain=Raw(b'\x0c\x00\x01'))
-    >>> fieldCS = Field(name="CRC", domain=CRC32([field1, field2],endiannendianness='little'))
+    >>> fieldCS = Field(name="CRC", domain=CRC32([field1, field2],endianness='little'))
     >>> sym = Symbol(messages=[messageCRC, messageCRC2], fields=[fieldCS, field1, field2])
-    >>> print(sym)
-    CRC              | aftermut | afterstat
-    ---------------- | -------- | --------------
-    b'\x8fH\xeb\xcc' | b'U\xcd' | '\x0c\x00\x01'
-    b'\xb5Dr\x9e'    | b'X\xcf' | '\x0c\x00\x01'
-    ---------------- | -------- | --------------
+    >>> print(sym)# doctest: +NORMALIZE_WHITESPACE
+    Source | Destination | CRC       | aftermut | afterstat
+    ------ | ----------- | --------- | -------- | --------------
+    None   | None        | '\x8fHëÌ' | 'UÍ'     | '\x0c\x00\x01'
+    None   | None        | 'µDr\x9e' | 'XÏ'     | '\x0c\x00\x01'
+    ------ | ----------- | --------- | -------- | --------------
 
     """
 

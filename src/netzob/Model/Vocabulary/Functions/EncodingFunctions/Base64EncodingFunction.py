@@ -60,13 +60,14 @@ class Base64EncodingFunction(EncodingFunction):
     >>> f2 = Field(name="f2", domain=ASCII("Content"))
     >>> s = Symbol(fields=[f0, f1, f2])
     >>> s.messages = [RawMessage(s.specialize())]*3
-    >>> print(s)
-    f0           | f1     | f2       
-    ------------ | ------ | ---------
-    'Helloworld' | 'Data' | 'Content'
-    'Helloworld' | 'Data' | 'Content'
-    'Helloworld' | 'Data' | 'Content'
-    ------------ | ------ | ---------
+    >>> print(s)# doctest: +NORMALIZE_WHITESPACE
+    Source | Destination | f0           | f1     | f2
+    ------ | ----------- | ------------ | ------ | ---------
+    None   | None        | 'Helloworld' | 'Data' | 'Content'
+    None   | None        | 'Helloworld' | 'Data' | 'Content'
+    None   | None        | 'Helloworld' | 'Data' | 'Content'
+    ------ | ----------- | ------------ | ------ | ---------
+
     >>> f1.addEncodingFunction(Base64EncodingFunction())
     >>> print(s)
     f0           | f1         | f2       

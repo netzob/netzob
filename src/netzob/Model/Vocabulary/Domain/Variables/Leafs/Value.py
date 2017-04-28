@@ -120,10 +120,10 @@ class Value(AbstractRelationVariableLeaf):
     >>> m1 = RawMessage(s.specialize())
     >>> s.messages = [m1]
     >>> print(s)# doctest: +NORMALIZE_WHITESPACE
-     f0     | f1  | f2
-     ------ | --- | ------
-     '\x01' | ':' | '\x02'
-     ------ | --- | ------
+    Source | Destination | f0     | f1  | f2
+    ------ | ----------- | ------ | --- | ------
+    None   | None        | '\x01' | ':' | '\x02'
+    ------ | ----------- | ------ | --- | ------
 
     Netgoblin fork: This checks for an issue that the Value Relation had with Alt fields.
 
@@ -134,12 +134,12 @@ class Value(AbstractRelationVariableLeaf):
     >>> field2 = Field(name="f2", domain=Raw(b'\x0c\x00\x01'))
     >>> fieldValue = Field(name="value", domain=Value(field1))
     >>> sym = Symbol(messages=[messagevalue, messagevaluetwo], fields=[fieldValue, field1, field2])
-
-    value    | f1       | f2
-    -------- | -------- | --------------
-    b'U\xcd' | b'U\xcd' | '\x0c\x00\x01'
-    b'X\xcf' | b'X\xcf' | '\x0c\x00\x01'
-    -------- | -------- | --------------
+    >>> print(sym)# doctest: +NORMALIZE_WHITESPACE
+    Source | Destination | value | f1   | f2
+    ------ | ----------- | ----- | ---- | --------------
+    None   | None        | 'UÍ'  | 'UÍ' | '\x0c\x00\x01'
+    None   | None        | 'XÏ'  | 'XÏ' | '\x0c\x00\x01'
+    ------ | ----------- | ----- | ---- | --------------
 
     Netgoblin fork: This tests the operation method to parse an incremental message.
 
@@ -157,13 +157,13 @@ class Value(AbstractRelationVariableLeaf):
     >>> messages = mess1 + mess2 + mess3 + mess4
     >>> symbol = Symbol(messages = messages, fields=[f0])
     >>> print(symbol)# doctest: +NORMALIZE_WHITESPACE
-    Field
-    ------
-    '\x01'
-    '\x02'
-    '\x03'
-    '\x04'
-    ------
+    Source | Destination | Field
+    ------ | ----------- | ------
+    None   | None        | '\x01'
+    None   | None        | '\x02'
+    None   | None        | '\x03'
+    None   | None        | '\x04'
+    ------ | ----------- | ------
 
     >>> from netzob.all import *
     >>> from netzob.Model.Types.BitArray import BitArray

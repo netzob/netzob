@@ -106,21 +106,21 @@ class Raw(AbstractType):
             return "{0}={1} ({2})".format(self.typeName, self.value, self.size)
 
     def __repr__(self):
-        """
+        r"""
         >>> from netzob.all import *
-        >>> f = Field(Raw("\\x01\\x02\\x03\\x04"))
+        >>> f = Field(Raw(b"\x01\x02\x03\x04"))
         >>> s = Symbol(fields=[f])
         >>> messages = [RawMessage(s.specialize()) for x in range(5)]
         >>> s.messages = messages
-        >>> print(s)
-        Field             
-        ------------------
-        '\\x01\\x02\\x03\\x04'
-        '\\x01\\x02\\x03\\x04'
-        '\\x01\\x02\\x03\\x04'
-        '\\x01\\x02\\x03\\x04'
-        '\\x01\\x02\\x03\\x04'
-        ------------------
+        >>> print(s)# doctest: +NORMALIZE_WHITESPACE
+        Source | Destination | Field
+        ------ | ----------- | ------------------
+        None   | None        | '\x01\x02\x03\x04'
+        None   | None        | '\x01\x02\x03\x04'
+        None   | None        | '\x01\x02\x03\x04'
+        None   | None        | '\x01\x02\x03\x04'
+        None   | None        | '\x01\x02\x03\x04'
+        ------ | ----------- | ------------------
 
         """
         if self.value is not None:

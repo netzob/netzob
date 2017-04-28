@@ -60,21 +60,22 @@ class ZLibEncodingFunction(EncodingFunction):
     >>> f2 = Field(name="f2", domain=ASCII("Content"))
     >>> s = Symbol(fields=[f0, f1, f2])
     >>> s.messages = [RawMessage(s.specialize())]*3
-    >>> print(s)
-    f0           | f1     | f2       
-    ------------ | ------ | ---------
-    'Helloworld' | 'Data' | 'Content'
-    'Helloworld' | 'Data' | 'Content'
-    'Helloworld' | 'Data' | 'Content'
-    ------------ | ------ | ---------
+    >>> print(s)# doctest: +NORMALIZE_WHITESPACE
+    Source | Destination | f0           | f1     | f2
+    ------ | ----------- | ------------ | ------ | ---------
+    None   | None        | 'Helloworld' | 'Data' | 'Content'
+    None   | None        | 'Helloworld' | 'Data' | 'Content'
+    None   | None        | 'Helloworld' | 'Data' | 'Content'
+    ------ | ----------- | ------------ | ------ | ---------
+
     >>> f1.addEncodingFunction(ZLibEncodingFunction())
-    >>> print(s)
-    f0           | f1                                | f2       
-    ------------ | --------------------------------- | ---------
-    'Helloworld' | b'x\x9csI,I\x04\x00\x03\x80\x01{' | 'Content'
-    'Helloworld' | b'x\x9csI,I\x04\x00\x03\x80\x01{' | 'Content'
-    'Helloworld' | b'x\x9csI,I\x04\x00\x03\x80\x01{' | 'Content'
-    ------------ | --------------------------------- | ---------
+    >>> print(s)# doctest: +NORMALIZE_WHITESPACE
+    f0           | f1                               | f2
+    ------------ | -------------------------------- | ---------
+    'Helloworld' | 'x\x9csI,I\x04\x00\x03\x80\x01{' | 'Content'
+    'Helloworld' | 'x\x9csI,I\x04\x00\x03\x80\x01{' | 'Content'
+    'Helloworld' | 'x\x9csI,I\x04\x00\x03\x80\x01{' | 'Content'
+    ------------ | -------------------------------- | ---------
 
     This function can also be use to display the uncompress version of a zlib field
 
@@ -83,11 +84,12 @@ class ZLibEncodingFunction(EncodingFunction):
     >>> f1 = Field(name="f1", domain=Raw(nbBytes=(0, 30)))
     >>> f2 = Field(name="f2", domain=ASCII(" !"))
     >>> s = Symbol(fields = [f0, f1, f2], messages = [RawMessage(m1)])
-    >>> print(s)
-    f0       | f1                                       | f2  
-    -------- | ---------------------------------------- | ----
-    'hello ' | b'x\x9csI,I\xe4\x02\x00\x05\x05\x01\x85' | ' !'
-    -------- | ---------------------------------------- | ----
+    >>> print(s)# doctest: +NORMALIZE_WHITESPACE
+    Source | Destination | f0       | f1                                   | f2
+    ------ | ----------- | -------- | ------------------------------------ | ----
+    None   | None        | 'hello ' | 'x\x9csI,Iä\x02\x00\x05\x05\x01\x85' | ' !'
+    ------ | ----------- | -------- | ------------------------------------ | ----
+
     >>> f1.addEncodingFunction(ZLibEncodingFunction(compress_data = False))
     >>> print(s)
     f0       | f1       | f2  

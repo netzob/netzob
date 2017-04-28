@@ -99,11 +99,11 @@ class InternetChecksum(AbstractRelationVariableLeaf):
     >>> fieldCS = Field(name="CS",domain=InternetChecksum([field1,field2]))
     >>> sym = Symbol(messages=[messageCS,messageCS2],fields=[fieldCS,field1,field2])
     >>> print(sym)# doctest: +NORMALIZE_WHITESPACE
-    CS       | aftermut | afterstat
-    -------- | -------- | --------------
-    b'2\x9d' | b'U\xcd' | '\x0c\x00\x01'
-    b'0\x9a' | b'X\xcf' | '\x0c\x00\x01'
-    -------- | -------- | --------------
+    Source | Destination | CS      | aftermut | afterstat
+    ------ | ----------- | ------- | -------- | --------------
+    None   | None        | '2\x9d' | 'UÍ'     | '\x0c\x00\x01'
+    None   | None        | '0\x9a' | 'XÏ'     | '\x0c\x00\x01'
+    ------ | ----------- | ------- | -------- | --------------
 
     """
 

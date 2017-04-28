@@ -93,47 +93,47 @@ class FieldSplitAligned(object):
     >>> samples = [b"hello toto, what's up in France ?", b"hello netzob, what's up in UK ?", b"hello sygus, what's up in Germany ?"]
     >>> messages = [RawMessage(data=sample) for sample in samples]
     >>> symbol = Symbol(messages=messages)
-    >>> print(symbol)
-    Field                                
-    -------------------------------------
-    "hello toto, what's up in France ?"  
-    "hello netzob, what's up in UK ?"    
-    "hello sygus, what's up in Germany ?"
-    -------------------------------------
+    >>> print(symbol)# doctest: +NORMALIZE_WHITESPACE
+    Source | Destination | Field
+    ------ | ----------- | -------------------------------------
+    None   | None        | "hello toto, what's up in France ?"
+    None   | None        | "hello netzob, what's up in UK ?"
+    None   | None        | "hello sygus, what's up in Germany ?"
+    ------ | ----------- | -------------------------------------
 
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol, useSemantic = False)
-    >>> print(symbol)
-    Field    | Field    | Field             | Field     | Field
-    -------- | -------- | ----------------- | --------- | -----
-    'hello ' | 'toto'   | ", what's up in " | 'France'  | ' ?' 
-    'hello ' | 'netzob' | ", what's up in " | 'UK'      | ' ?' 
-    'hello ' | 'sygus'  | ", what's up in " | 'Germany' | ' ?' 
-    -------- | -------- | ----------------- | --------- | -----
+    >>> print(symbol)# doctest: +NORMALIZE_WHITESPACE
+    Source | Destination | Field    | Field    | Field             | Field     | Field
+    ------ | ----------- | -------- | -------- | ----------------- | --------- | -----
+    None   | None        | 'hello ' | 'toto'   | ", what's up in " | 'France'  | ' ?'
+    None   | None        | 'hello ' | 'netzob' | ", what's up in " | 'UK'      | ' ?'
+    None   | None        | 'hello ' | 'sygus'  | ", what's up in " | 'Germany' | ' ?'
+    ------ | ----------- | -------- | -------- | ----------------- | --------- | -----
 
     # Let's illustrate the use of semantic constrained sequence alignment with a simple example
 
     >>> samples = [b"John-0108030405--john.doe@gmail.com", b"Mathieu-0908070605-31 rue de Paris, 75000 Paris, France-mat@yahoo.fr", b"Olivia-0348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hotmail.fr"]
     >>> messages = [RawMessage(data=sample) for sample in samples]
     >>> symbol = Symbol(messages=messages)
-    >>> print(symbol)
-    Field                                                                                      
-    -------------------------------------------------------------------------------------------
-    'John-0108030405--john.doe@gmail.com'                                                      
-    'Mathieu-0908070605-31 rue de Paris, 75000 Paris, France-mat@yahoo.fr'                     
-    'Olivia-0348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hotmail.fr'
-    -------------------------------------------------------------------------------------------
+    >>> print(symbol)# doctest: +NORMALIZE_WHITESPACE
+    Source | Destination | Field
+    ------ | ----------- | -------------------------------------------------------------------------------------------
+    None   | None        | 'John-0108030405--john.doe@gmail.com'
+    None   | None        | 'Mathieu-0908070605-31 rue de Paris, 75000 Paris, France-mat@yahoo.fr'
+    None   | None        | 'Olivia-0348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hotmail.fr'
+    ------ | ----------- | -------------------------------------------------------------------------------------------
 
     >>> fs = FieldSplitAligned(doInternalSlick=True)
     >>> fs.execute(symbol, useSemantic = False)
-    >>> print(symbol)
-    Field     | Field | Field                                                                              
-    --------- | ----- | -----------------------------------------------------------------------------------
-    'John'    | '-0'  | '108030405--john.doe@gmail.com'                                                    
-    'Mathieu' | '-0'  | '908070605-31 rue de Paris, 75000 Paris, France-mat@yahoo.fr'                      
-    'Olivia'  | '-0'  | '348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hotmail.fr'
-    --------- | ----- | -----------------------------------------------------------------------------------
-    
+    >>> print(symbol)# doctest: +NORMALIZE_WHITESPACE
+    Source | Destination | Field     | Field | Field
+    ------ | ----------- | --------- | ----- | -----------------------------------------------------------------------------------
+    None   | None        | 'John'    | '-0'  | '108030405--john.doe@gmail.com'
+    None   | None        | 'Mathieu' | '-0'  | '908070605-31 rue de Paris, 75000 Paris, France-mat@yahoo.fr'
+    None   | None        | 'Olivia'  | '-0'  | '348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hotmail.fr'
+    ------ | ----------- | --------- | ----- | -----------------------------------------------------------------------------------
+
     >>> applicativeDatas = []
     >>> applicativeDatas.append(ApplicativeData("Firstname", ASCII("John")))
     >>> applicativeDatas.append(ApplicativeData("Firstname", ASCII("Mathieu")))
@@ -153,14 +153,13 @@ class FieldSplitAligned(object):
 
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol, useSemantic=True)
-    >>> print(symbol)
-    Field     | Field | Field | Field | Field    | Field | Field                                            | Field | Field                     
-    --------- | ----- | ----- | ----- | -------- | ----- | ------------------------------------------------ | ----- | --------------------------
-    'John'    | '-0'  | '10'  | '8'   | '030405' | '-'   | ''                                               | '-'   | 'john.doe@gmail.com'      
-    'Mathieu' | '-0'  | '90'  | '8'   | '070605' | '-'   | '31 rue de Paris, 75000 Paris, France'           | '-'   | 'mat@yahoo.fr'            
-    'Olivia'  | '-0'  | '34'  | '8'   | '234556' | '-'   | '7 allee des peupliers, 13000 Marseille, France' | '-'   | 'olivia.tortue@hotmail.fr'
-    --------- | ----- | ----- | ----- | -------- | ----- | ------------------------------------------------ | ----- | --------------------------
-
+    >>> print(symbol)# doctest: +NORMALIZE_WHITESPACE
+    Source | Destination | Field     | Field | Field | Field | Field    | Field | Field                                            | Field | Field
+    ------ | ----------- | --------- | ----- | ----- | ----- | -------- | ----- | ------------------------------------------------ | ----- | --------------------------
+    None   | None        | 'John'    | '-0'  | '10'  | '8'   | '030405' | '-'   | ''                                               | '-'   | 'john.doe@gmail.com'
+    None   | None        | 'Mathieu' | '-0'  | '90'  | '8'   | '070605' | '-'   | '31 rue de Paris, 75000 Paris, France'           | '-'   | 'mat@yahoo.fr'
+    None   | None        | 'Olivia'  | '-0'  | '34'  | '8'   | '234556' | '-'   | '7 allee des peupliers, 13000 Marseille, France' | '-'   | 'olivia.tortue@hotmail.fr'
+    ------ | ----------- | --------- | ----- | ----- | ----- | -------- | ----- | ------------------------------------------------ | ----- | --------------------------
 
     """
 

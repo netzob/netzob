@@ -143,6 +143,7 @@ def getSuite():
         Size.__module__,
         Value.__module__,        
         InternetChecksum.__module__,
+        CRC32.__module__,
         FieldParser.__module__,
         GenericPath.__module__,
         VariableSpecializer.__module__,

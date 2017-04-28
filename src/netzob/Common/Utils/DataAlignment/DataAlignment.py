@@ -79,8 +79,8 @@ class DataAlignment(object):
     >>> alignedData = DataAlignment.align(data, symbol)
     >>> print(len(alignedData))
     5
-    >>> print(alignedData)
-    f1       | f2       | f3         
+    >>> print(alignedData)# doctest: +NORMALIZE_WHITESPACE
+     f1       | f2       | f3
     -------- | -------- | -----------
     'hello ' | 'tototo' | ', welcome'
     'hello ' | 'tototo' | ', welcome'
@@ -104,11 +104,11 @@ class DataAlignment(object):
 
     >>> symbol = Symbol(fields=headerFields+bodyFields)
     >>> alignedData2 = DataAlignment.align(messages, symbol)
-    >>> print(alignedData2)
-    f1      | f2    | f3         | f4   | f5         
+    >>> print(alignedData2)# doctest: +NORMALIZE_WHITESPACE
+    f1      | f2    | f3         | f4   | f5
     ------- | ----- | ---------- | ---- | -----------
-    'hello' | 'PUT' | 'toto'     | 'PA' | '343'      
-    'hello' | 'GET' | 'tototo'   | 'PA' | ''         
+    'hello' | 'PUT' | 'toto'     | 'PA' | '343'
+    'hello' | 'GET' | 'tototo'   | 'PA' | ''
     'hello' | 'PUT' | 'totototo' | 'PA' | 'dqs4qsd33'
     ------- | ----- | ---------- | ---- | -----------
 

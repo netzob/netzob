@@ -53,9 +53,6 @@ class MatrixList(list):
     The __str__ method has been redefined to propose
     a nice representation of its content.
     """
-    def __init__(self):
-        self.headers = []
-    
 
     def __init__(self):
         self.headers = []
@@ -70,11 +67,6 @@ class MatrixList(list):
         self.__headers = []
         for h in headers:
             self.__headers.append(str(h))
-        
-    def __repr__(self):
-        # Prepare data to be returned
-        r_repr = []
-        
 
     def __repr__(self):
         # Prepare data to be returned
@@ -85,17 +77,19 @@ class MatrixList(list):
             if self.headers is not None and len(self.headers) == nb_col:
                 r_repr.append(self.headers)
             else:
-                r_repr.append(["Field"] * nb_col)
-
+                header_list = []
+                for i in range(len(self[0])):
+                   header_list.append("Field-"+str(i))
+                r_repr.append(header_list)
 
         for r in self:
             r1_repr = []
             for r1 in r:
                 if isinstance(r1, bytes):
                     try:
-                        r1 = r1.decode('utf-8')
+                       r1 = r1.decode('iso-8859-1')
                     except UnicodeDecodeError:
-                        pass
+                       pass
                 r1 = repr(r1)
                 r1_repr.append(r1)
             r_repr.append(r1_repr)
@@ -103,7 +97,6 @@ class MatrixList(list):
         # Prepare format
         cs = list(zip(*r_repr))
         c_ws = [max(len(value) for value in c) for c in cs]
-        line = ["-"*w for w in c_ws]
         line = ["-" * w for w in c_ws]
         r_repr.insert(1, line)
         r_repr.append(line)

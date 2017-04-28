@@ -99,7 +99,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         self._variable = None
 
     @typeCheck(bool, bool, bool)
-    def getCells(self, encoded=True, styled=True, transposed=False):
+    def getCells(self, encoded=True, styled=True, transposed=False,meta=True):
         """Returns a matrix with a different line for each messages attached to the symbol of the current element.
 
         The matrix includes a different column for each leaf children of the current element.
@@ -151,22 +151,22 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         '68656c6c6f20' | 'lapy'   | ", what's up in " | '4e65772d596f726b' | ' ?'
         -------------- | -------- | ----------------- | ------------------ | ----
 
-        >>> print(fheader.getCells()) 
-        Field          | Field   
+        >>> print(fheader.getCells())# doctest: +NORMALIZE_WHITESPACE
+        Field-0        | Field-1
         -------------- | --------
         '68656c6c6f20' | 'netzob'
         '68656c6c6f20' | 'netzob'
         '68656c6c6f20' | 'netzob'
-        '68656c6c6f20' | 'zoby'  
-        '68656c6c6f20' | 'zoby'  
-        '68656c6c6f20' | 'zoby'  
-        '68656c6c6f20' | 'lapy'  
-        '68656c6c6f20' | 'lapy'  
-        '68656c6c6f20' | 'lapy'  
+        '68656c6c6f20' | 'zoby'
+        '68656c6c6f20' | 'zoby'
+        '68656c6c6f20' | 'zoby'
+        '68656c6c6f20' | 'lapy'
+        '68656c6c6f20' | 'lapy'
+        '68656c6c6f20' | 'lapy'
         -------------- | --------
 
-        >>> print(fh1.getCells())
-        Field         
+        >>> print(fh1.getCells())# doctest: +NORMALIZE_WHITESPACE
+        Field-0
         --------------
         '68656c6c6f20'
         '68656c6c6f20'
@@ -179,36 +179,37 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         '68656c6c6f20'
         --------------
 
-        >>> print(fh2.getCells())
-        Field   
+        >>> print(fh2.getCells())# doctest: +NORMALIZE_WHITESPACE
+        Field-0
         --------
         'netzob'
         'netzob'
         'netzob'
-        'zoby'  
-        'zoby'  
-        'zoby'  
-        'lapy'  
-        'lapy'  
-        'lapy'  
+        'zoby'
+        'zoby'
+        'zoby'
+        'lapy'
+        'lapy'
+        'lapy'
         --------
 
-        >>> print(fbody.getCells())
-        Field             | Field              | Field
-        ----------------- | ------------------ | -----
-        ", what's up in " | '5061726973'       | ' ?' 
-        ", what's up in " | '4265726c696e'     | ' ?' 
-        ", what's up in " | '4e65772d596f726b' | ' ?' 
-        ", what's up in " | '5061726973'       | ' ?' 
-        ", what's up in " | '4265726c696e'     | ' ?' 
-        ", what's up in " | '4e65772d596f726b' | ' ?' 
-        ", what's up in " | '5061726973'       | ' ?' 
-        ", what's up in " | '4265726c696e'     | ' ?' 
-        ", what's up in " | '4e65772d596f726b' | ' ?' 
-        ----------------- | ------------------ | -----
+        >>> print(fbody.getCells())# doctest: +NORMALIZE_WHITESPACE
+        Field-0           | Field-1            | Field-2
+        ----------------- | ------------------ | -------
+        ", what's up in " | '5061726973'       | ' ?'
+        ", what's up in " | '4265726c696e'     | ' ?'
+        ", what's up in " | '4e65772d596f726b' | ' ?'
+        ", what's up in " | '5061726973'       | ' ?'
+        ", what's up in " | '4265726c696e'     | ' ?'
+        ", what's up in " | '4e65772d596f726b' | ' ?'
+        ", what's up in " | '5061726973'       | ' ?'
+        ", what's up in " | '4265726c696e'     | ' ?'
+        ", what's up in " | '4e65772d596f726b' | ' ?'
+        ----------------- | ------------------ | -------
 
-        >>> print(fb1.getCells())
-        Field            
+
+        >>> print(fb1.getCells())# doctest: +NORMALIZE_WHITESPACE
+        Field-0
         -----------------
         ", what's up in "
         ", what's up in "
@@ -221,8 +222,8 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         ", what's up in "
         -----------------
 
-        >>> print(fb2.getCells())
-        Field             
+        >>> print(fb2.getCells())# doctest: +NORMALIZE_WHITESPACE
+        Field-0
         ------------------
         '5061726973'      
         '4265726c696e'    
@@ -235,19 +236,19 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         '4e65772d596f726b'
         ------------------
 
-        >>> print(fb3.getCells())
-        Field
-        -----
-        ' ?' 
-        ' ?' 
-        ' ?' 
-        ' ?' 
-        ' ?' 
-        ' ?' 
-        ' ?' 
-        ' ?' 
-        ' ?' 
-        -----
+        >>> print(fb3.getCells())# doctest: +NORMALIZE_WHITESPACE
+        Field-0
+        -------
+        ' ?'
+        ' ?'
+        ' ?'
+        ' ?'
+        ' ?'
+        ' ?'
+        ' ?'
+        ' ?'
+        ' ?'
+        -------
 
         :keyword encoded: if set to True, encoding functions are applied on returned cells
         :type encoded: :class:`bool`
@@ -273,11 +274,33 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         if useParallelAlignment:
             # Execute a parallel alignment
             from netzob.Common.Utils.DataAlignment.ParallelDataAlignment import ParallelDataAlignment
-            return ParallelDataAlignment.align(data, self, encoded=encoded)
+            matrix = ParallelDataAlignment.align(data, self, encoded=encoded)
         else:
             # Execute a sequential alignment
             from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
-            return DataAlignment.align(data, self, encoded=encoded)
+            matrix = DataAlignment.align(data, self, encoded=encoded)
+        if meta:
+            #Add IP, Timestamp, PCAP etc to matrix
+            for split_message in matrix:
+                message1 = b''
+                for part in split_message:
+                    try:
+                        message1 += part
+                    except:
+                        pass
+                first = True
+                for message2 in self.messages:
+                    if message1 == message2.data and first:
+                        split_message.insert(0,message2.destination)
+                        split_message.insert(0, message2.source)
+                        #split_message.insert(0, str(message2.date))
+                        first = False
+            if not first:
+                #Add IP, Timestamp, PCAP etc to matrix headers
+                matrix.headers.insert(0,'Destination')
+                matrix.headers.insert(0,'Source')
+                #matrix.headers.insert(0, 'Time')
+        return matrix
 
     @typeCheck(bool, bool)
     def getValues(self, encoded=True, styled=True):
@@ -348,7 +371,15 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         cells = self.getCells(encoded=encoded, styled=styled)
         values = []
         for line in cells:
-            values.append(b''.join(line))
+            #Remove all that is not data:
+            dataLine = []
+            for fieldValue in line:
+                if isinstance(fieldValue,bytes):
+                    dataLine.append(fieldValue)
+            try:
+                values.append(b''.join(dataLine))
+            except:
+                pass
         return values
 
     @typeCheck(bool, bool)

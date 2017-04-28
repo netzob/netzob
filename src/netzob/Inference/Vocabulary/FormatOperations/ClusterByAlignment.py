@@ -76,34 +76,34 @@ class ClusterByAlignment(object):
     >>> symbols = clustering.cluster(messages)
     >>> len(symbols)
     3
-    >>> print(symbols[0])
-    Field               | Field | Field | Field | Field | Field | Field | Field | Field | Field
-    ------------------- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | -----
-    'My ip address is ' | '78'  | '.1'  | '67'  | '.'   | '23'  | '.'   | ''    | '1'   | '0'  
-    'My ip address is ' | '192' | '.1'  | '68'  | '.'   | '0'   | '.'   | ''    | '1'   | '0'  
-    'My ip address is ' | '10'  | '.1'  | '20'  | '.'   | '121' | '.'   | '2'   | '1'   | '2'  
-    ------------------- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | -----
+    >>> print(symbols[0])# doctest: +NORMALIZE_WHITESPACE
+    Source | Destination | Field               | Field | Field | Field | Field | Field | Field | Field | Field | Field
+    ------ | ----------- | ------------------- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | -----
+    None   | None        | 'My ip address is ' | '78'  | '.1'  | '67'  | '.'   | '23'  | '.'   | ''    | '1'   | '0'
+    None   | None        | 'My ip address is ' | '192' | '.1'  | '68'  | '.'   | '0'   | '.'   | ''    | '1'   | '0'
+    None   | None        | 'My ip address is ' | '10'  | '.1'  | '20'  | '.'   | '121' | '.'   | '2'   | '1'   | '2'
+    ------ | ----------- | ------------------- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | -----
 
-    >>> print(symbols[2])
-    Field    | Field     | Field             | Field       | Field
-    -------- | --------- | ----------------- | ----------- | -----
-    'hello ' | 'carlito' | ", what's up in " | 'Munich'    | ' ?' 
-    'hello ' | 'carlito' | ", what's up in " | 'Paris'     | ' ?' 
-    'hello ' | 'ditrich' | ", what's up in " | 'Munich'    | ' ?' 
-    'hello ' | 'ditrich' | ", what's up in " | 'Paris'     | ' ?' 
-    'hello ' | 'carlito' | ", what's up in " | 'Vienne'    | ' ?' 
-    'hello ' | 'ditrich' | ", what's up in " | 'Vienne'    | ' ?' 
-    'hello ' | 'toto'    | ", what's up in " | 'Paris'     | ' ?' 
-    'hello ' | 'zoby'    | ", what's up in " | 'Paris'     | ' ?' 
-    'hello ' | 'toto'    | ", what's up in " | 'Munich'    | ' ?' 
-    'hello ' | 'zoby'    | ", what's up in " | 'Munich'    | ' ?' 
-    'hello ' | 'toto'    | ", what's up in " | 'Vienne'    | ' ?' 
-    'hello ' | 'zoby'    | ", what's up in " | 'Vienne'    | ' ?' 
-    'hello ' | 'carlito' | ", what's up in " | 'Barcelone' | ' ?' 
-    'hello ' | 'ditrich' | ", what's up in " | 'Barcelone' | ' ?' 
-    'hello ' | 'toto'    | ", what's up in " | 'Barcelone' | ' ?' 
-    'hello ' | 'zoby'    | ", what's up in " | 'Barcelone' | ' ?' 
-    -------- | --------- | ----------------- | ----------- | -----
+    >>> print(symbols[2])# doctest: +NORMALIZE_WHITESPACE
+    Source | Destination | Field    | Field     | Field             | Field       | Field
+    ------ | ----------- | -------- | --------- | ----------------- | ----------- | -----
+    None   | None        | 'hello ' | 'carlito' | ", what's up in " | 'Munich'    | ' ?'
+    None   | None        | 'hello ' | 'carlito' | ", what's up in " | 'Paris'     | ' ?'
+    None   | None        | 'hello ' | 'ditrich' | ", what's up in " | 'Munich'    | ' ?'
+    None   | None        | 'hello ' | 'ditrich' | ", what's up in " | 'Paris'     | ' ?'
+    None   | None        | 'hello ' | 'carlito' | ", what's up in " | 'Vienne'    | ' ?'
+    None   | None        | 'hello ' | 'ditrich' | ", what's up in " | 'Vienne'    | ' ?'
+    None   | None        | 'hello ' | 'toto'    | ", what's up in " | 'Paris'     | ' ?'
+    None   | None        | 'hello ' | 'zoby'    | ", what's up in " | 'Paris'     | ' ?'
+    None   | None        | 'hello ' | 'toto'    | ", what's up in " | 'Munich'    | ' ?'
+    None   | None        | 'hello ' | 'zoby'    | ", what's up in " | 'Munich'    | ' ?'
+    None   | None        | 'hello ' | 'toto'    | ", what's up in " | 'Vienne'    | ' ?'
+    None   | None        | 'hello ' | 'zoby'    | ", what's up in " | 'Vienne'    | ' ?'
+    None   | None        | 'hello ' | 'carlito' | ", what's up in " | 'Barcelone' | ' ?'
+    None   | None        | 'hello ' | 'ditrich' | ", what's up in " | 'Barcelone' | ' ?'
+    None   | None        | 'hello ' | 'toto'    | ", what's up in " | 'Barcelone' | ' ?'
+    None   | None        | 'hello ' | 'zoby'    | ", what's up in " | 'Barcelone' | ' ?'
+    ------ | ----------- | -------- | --------- | ----------------- | ----------- | -----
 
     """
 

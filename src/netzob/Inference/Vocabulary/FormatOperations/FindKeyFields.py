@@ -95,7 +95,7 @@ class FindKeyFields(object):
             return []
 
         results = []
-        cells = field.getCells(encoded=False, styled=False, transposed=False)
+        cells = field.getCells(encoded=False, styled=False, transposed=False,meta=False)
         columns = list(zip(*cells))
 
         # Retrieve dynamic fields with fixed size

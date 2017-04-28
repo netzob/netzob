@@ -142,43 +142,45 @@ class FieldParser():
      ...
     StopIteration
 
-
-    Below are few tests 
-
-    >>> from netzob.all import *
-    >>> message = RawMessage(b"\\xaa\\x00\\xbb")
-    >>> f1 = Field(Raw(nbBytes=(0,1)), name="f1")
-    >>> f2 = Field(b"\\x00", name="f2")
-    >>> f3 = Field(Raw(nbBytes=(0, 2)), name="f3")
-    >>> s = Symbol([f1, f2, f3], messages=[message])
-    >>> print(s)
-    f1      | f2     | f3     
-    ------- | ------ | -------
-    b'\\xaa' | '\\x00' | b'\\xbb'
-    ------- | ------ | -------
-
-
-    >>> msg1 = b'\\n\\x00aStrongPwd'
-    >>> msg2 = b'\\t\\x00myPasswd!'
-    >>> messages = [RawMessage(data=sample) for sample in [msg1, msg2]]
-    >>> f1 = Field(Raw(nbBytes=(0,1)), name="f1")
-    >>> f2 = Field(b"\\x00", name="f2")
-    >>> f3 = Field(Raw(nbBytes=(0,11)), name="f3")
-    >>> f4 = Field(b"wd", name="f4")
-    >>> f5 = Field(Raw(nbBytes=(0,1)), name="f5")
-    >>> s = Symbol([f1, f2, f3, f4, f5], messages = messages)
-    >>> print(s)
-    f1   | f2     | f3         | f4   | f5 
-    ---- | ------ | ---------- | ---- | ---
-    '\\n' | '\\x00' | 'aStrongP' | 'wd' | '' 
-    '\\t' | '\\x00' | 'myPass'   | 'wd' | '!'
-    ---- | ------ | ---------- | ---- | ---
-
-    
-
     """
 
     def __init__(self, field, lastField=False):
+        r"""
+
+        Args:
+            field:
+            lastField:
+
+        Below are few tests
+
+        >>> from netzob.all import *
+        >>> message = RawMessage(b"\xaa\x00\xbb")
+        >>> f1 = Field(Raw(nbBytes=(0,1)), name="f1")
+        >>> f2 = Field(b"\x00", name="f2")
+        >>> f3 = Field(Raw(nbBytes=(0, 2)), name="f3")
+        >>> s = Symbol([f1, f2, f3], messages=[message])
+        >>> print(s)# doctest: +NORMALIZE_WHITESPACE
+        Source | Destination | f1  | f2     | f3
+        ------ | ----------- | --- | ------ | ---
+        None   | None        | 'ª' | '\x00' | '»'
+        ------ | ----------- | --- | ------ | ---
+
+        >>> msg1 = b'\n\x00aStrongPwd'
+        >>> msg2 = b'\t\x00myPasswd!'
+        >>> messages = [RawMessage(data=sample) for sample in [msg1, msg2]]
+        >>> f1 = Field(Raw(nbBytes=(0,1)), name="f1")
+        >>> f2 = Field(b"\x00", name="f2")
+        >>> f3 = Field(Raw(nbBytes=(0,11)), name="f3")
+        >>> f4 = Field(b"wd", name="f4")
+        >>> f5 = Field(Raw(nbBytes=(0,1)), name="f5")
+        >>> s = Symbol([f1, f2, f3, f4, f5], messages = messages)
+        >>> print(s)# doctest: +NORMALIZE_WHITESPACE
+        Source | Destination | f1   | f2     | f3         | f4   | f5
+        ------ | ----------- | ---- | ------ | ---------- | ---- | ---
+        None   | None        | '\n' | '\x00' | 'aStrongP' | 'wd' | ''
+        None   | None        | '\t' | '\x00' | 'myPass'   | 'wd' | '!'
+        ------ | ----------- | ---- | ------ | ---------- | ---- | ---
+        """
         self.field = field
         self.lastField = lastField
 
