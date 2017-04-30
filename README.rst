@@ -31,9 +31,36 @@ About
 
 Welcome to the official repository of Netzob.
 
-Netzob is a tool that can be use to **reverse engineer**, **fuzz** and **model** communication protocols. It is made of two components:
+Netzob is a tool that can be use to **reverse engineer**, **model** and **fuzz** communication protocols. It is made of two components:
 
-* **netzob** a python project that exposes all the features of netzob (except GUI) you can import in your own tool,
+* **netzob** a python project that exposes all the features of netzob (except GUI) you can import in your own tool or use in CLI,
 * **netzob_web** a graphical interface that leverages web technologies. 
  
-Source codes, documentations and resources are available for each component. Please visit their dedicated directories.
+Source codes, documentations and resources are available for each component, please visit their dedicated directories.
+
+General Information
+----------------
+
+:Email: `contact@netzob.org <contact@netzob.org>`_
+:Mailing list: Two lists are available, use the `SYMPA web interface <https://lists.netzob.org/wws>`_ to register.
+:IRC: You can hang-out with us on Freenode's IRC channel #netzob @ freenode.org.
+:Twitter: Follow Netzob's official accounts (@Netzob)
+
+Authors, Contributors and Sponsors
+==================================
+
+See the top distribution file ``AUTHORS.txt`` in each component for the detailed and updated list
+of their authors, contributors and sponsors.
+
+
+Extra
+=====
+
+.. figure:: https://raw.githubusercontent.com/netzob/netzob/next/netzob/doc/documentation/source/zoby.png
+   :width: 200 px
+   :alt: Zoby, the official mascot of Netzob
+   :align: center
+
+   Zoby, the official mascot of Netzob.
+	  
+
