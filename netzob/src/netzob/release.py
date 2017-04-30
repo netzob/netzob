@@ -53,7 +53,7 @@ copyright = "Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry"
 #+---------------------------------------------------------------------------+
 #| Description of the application
 #+---------------------------------------------------------------------------+
-description = "Inferring communication protocols"
+description = "Protocol Reverse Engineering, Modeling and Fuzzing"
 
 #+---------------------------------------------------------------------------+
 #| Platforms on which the application can be executed
