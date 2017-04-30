@@ -1,6 +1,44 @@
 NEWS
 ====
 
+v1.0.2 -- 2016-04-30
+--------------------
+
+:Version name: StompingFrilledShark
+
+* major improvement
+    * global improvement of code architecture and organization
+    * enable custom operations on fields values
+    * a list of valid bytes can be specified to specify a subset of values a domain accepts
+    * add SendReceived() method in all channels to simplify trafic generation
+    * add traffic rate and duration constraints in channels and abstraction layer
+    * new channel 'RawEthernetClient' to send raw Ethernet frames
+    * new channel 'IPClient' to send raw IP frames
+    * the Protocol class can load ZDL format and automata files
+    * introduces Pseudo Field: a field used in the computation of another field but dont produce real content
+
+* minor improvement
+    * pcap importer can merge consecutives messages with same source and destination to mimic a flow
+    * improve unit-tests on relationship finder
+    * an AbstractMessage stores the type of message
+    * remove typechecking in channel write() methods to allow better performances
+    * presets can be used when using AbstractionLayer
+    * increase default maximum data size to 65535 * 8 (i.e. 65535 bytes)
+
+* major bug fix
+    * fix symbol display when messages includes exotic encoded bytes
+    * fix InternetChecksum computation
+    * fix size field computation to allow payload of size > 23535 bytes
+    * fix size field computation that depends on Repeat variable
+    * fix InternetChecksum CRC computation to support bitarrays structures
+
+* minor bug fix
+    * remove nbUnits from Integer class
+    * remove the layer attribute of Fields
+    * fix the identification of data-type relationships
+    * convert snippets in the documentation to python3
+
+
 v1.0.1 -- 2017-03-05
 --------------------
 
