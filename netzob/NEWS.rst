@@ -1,7 +1,7 @@
 NEWS
 ====
 
-v1.0.2 -- 2016-04-30
+v1.0.2 -- 2017-04-30
 --------------------
 
 :Version name: StompingFrilledShark
