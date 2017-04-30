@@ -1,6 +1,6 @@
-==========================================
-Netzob : Inferring Communication Protocols
-==========================================
+===========================================================
+Netzob : Protocol Reverse Engineering, Modeling and Fuzzing
+===========================================================
 
 .. image:: https://travis-ci.org/netzob/netzob.svg?branch=next
     :target: https://travis-ci.org/netzob/netzob
