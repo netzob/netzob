@@ -214,7 +214,7 @@ The documentation is under the CC-BY-SA licence.
 Extra
 =====
 
-.. figure:: http://www.netzob.org/img/logo.png
+.. figure:: https://raw.githubusercontent.com/netzob/netzob/next/netzob/doc/documentation/source/zoby.png
    :width: 200 px
    :alt: Zoby, the official mascot of Netzob
    :align: center
