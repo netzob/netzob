@@ -85,9 +85,9 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
 
     DEFAULT_WRITE_COUNTER_MAX = -1
 
-    def __init__(self, isServer, _id=uuid.uuid4()):
+    def __init__(self, isServer, _id=None):
         self.isServer = isServer
-        self.id = _id
+        self.id = uuid.uuid4() if _id is None else _id
         self.isOpened = False
         self.type = AbstractChannel.TYPE_UNDEFINED
         self.writeCounter = 0

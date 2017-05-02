@@ -83,7 +83,7 @@ class CloseChannelTransition(AbstractTransition):
 
     TYPE = "CloseChannelTransition"
 
-    def __init__(self, startState, endState, _id=uuid.uuid4(), name=None):
+    def __init__(self, startState, endState, _id=None, name=None):
         super(CloseChannelTransition, self).__init__(
             CloseChannelTransition.TYPE,
             startState,

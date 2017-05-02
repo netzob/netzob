@@ -70,7 +70,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
                  _type,
                  startState,
                  endState,
-                 _id=uuid.uuid4(),
+                 _id=None,
                  name=None,
                  priority=10,
                  description=None):
@@ -83,7 +83,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         self.type = _type
         self.startState = startState
         self.endState = endState
-        self.id = _id
+        self.id = uuid.uuid4() if _id is None else _id
         self.name = name
         self.priority = priority
         self._description = description

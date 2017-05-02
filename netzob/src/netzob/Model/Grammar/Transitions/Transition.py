@@ -107,7 +107,7 @@ class Transition(AbstractTransition):
                  endState,
                  inputSymbol=None,
                  outputSymbols=None,
-                 _id=uuid.uuid4(),
+                 _id=None,
                  name=None):
         super(Transition, self).__init__(
             Transition.TYPE, startState, endState, _id, name, priority=10)
