@@ -122,7 +122,7 @@ class TypeConverter(object):
 
         """
         # is the two formats supported ?
-        if sourceType not in TypeConverter.supportedTypes():
+        if not issubclass(sourceType, tuple(TypeConverter.supportedTypes())):
             raise TypeError(
                 "The source type ({0}) is not supported".format(sourceType))
         if not issubclass(destinationType, tuple(TypeConverter.supportedTypes())):
