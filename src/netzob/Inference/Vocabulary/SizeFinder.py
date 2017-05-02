@@ -1,6 +1,5 @@
 import binascii
 import collections
-import socket
 import io
 import sys
 
@@ -11,6 +10,7 @@ import sys
 
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Types.Raw import Raw
+from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Size import Size
@@ -74,9 +74,9 @@ class SizeFinder(object):
         #Delete all values that are under the base index
         results_LR = self.__delete_before_baseIndex(results_LR,baseIndex)
         results_RL = self.__delete_before_baseIndex(results_RL,baseIndex)
-        self._logger.critical("Results : \n")
-        self._logger.critical("[Left to right search] : " + str(results_LR) + "\n")
-        self._logger.critical("[Right to left search] : " + str(results_RL) + "\n")
+        self._logger.debug("Results : \n")
+        self._logger.debug("[Left to right search] : " + str(results_LR) + "\n")
+        self._logger.debug("[Right to left search] : " + str(results_RL) + "\n")
         if create_fields:
             if results_LR:
                 self.__create_fields(symbol,results_LR)
@@ -98,6 +98,30 @@ class SizeFinder(object):
             field_to_split,maxSize,indexInField = self.__getFieldFromIndex(result[0],symbol)
             self._logger.debug("[Field to split] : " + field_to_split.name + "\n")
             first_field_dep ,maxSizefd, indexInFieldfd = self.__getFieldFromIndex(result[1],symbol)
+            if indexInFieldfd != 0:
+                #Create a subfield in the first_field_dependency
+                values_first_field_dep = first_field_dep.getValues()
+                if len(set(values_first_field_dep)) > 1:
+                    #Alt field
+                    values_first_field_dep_before = []
+                    values_first_field_dep_after = []
+                    for value in values_first_field_dep:
+                        values_first_field_dep_before.append(value[:int(indexInFieldfd/8)])
+                        values_first_field_dep_after.append(value[int(indexInFieldfd/8):])
+                    first_field_dep_before = Field(domain = Alt(values_first_field_dep_before),
+                                                   name = first_field_dep.name + "-0")
+                    first_field_dep_after = Field(domain = Alt(values_first_field_dep_after),
+                                                  name = first_field_dep.name + "-1")
+                else:
+                    #Static field
+                    value = values_first_field_dep[0]
+                    value_first_field_dep_before = value[:indexInFieldfd]
+                    value_first_field_dep_after = value[indexInFieldfd:]
+                    first_field_dep_before = Field(domain = Raw(value_first_field_dep_before),
+                                               name = first_field_dep.name + "-0")
+                    first_field_dep_after = Field(domain = Raw(value_first_field_dep_after),
+                                              name = first_field_dep.name + "-1")
+                first_field_dep.fields = [first_field_dep_before, first_field_dep_after]
             self._logger.debug("[First field dependency] : " + first_field_dep.name + "\n")
             field_dep = self.__get_field_dep(symbol,first_field_dep)
             #Check if static or Alt:
@@ -110,17 +134,17 @@ class SizeFinder(object):
                     values_before.append(value[:int(indexInField/8)])
                     values_after.append(value[int(indexInField/8)+size_of_size:])
                 #AltField before =>
-                altField_before_Size = Field(domain=Alt(values_before),name= field_to_split.name + "-Before_SizeF")
-                altField_after_Size = Field(domain=Alt(values_after),name= field_to_split.name + "-After_Size")
-                sizeField = Field(domain = Size(field_dep),name= field_to_split.name + "-Size")
+                altField_before_Size = Field(domain = Alt(values_before),name = field_to_split.name + "-Before_SizeF")
+                altField_after_Size = Field(domain = Alt(values_after),name = field_to_split.name + "-After_Size")
+                sizeField = Field(domain = Size(field_dep),name = field_to_split.name + "-Size")
                 field_to_split.fields = [altField_before_Size,sizeField,altField_after_Size]
             else:
                 #Static field
                 value_before = field_to_split_values[0][:int(indexInField/8)]
                 value_after = field_to_split_values[0][int(indexInField/8)+size_of_size:]
-                staticField_before_Size = Field(domain=Raw(value_before), name=field_to_split.name + "-Before_SizeF")
-                staticField_after_Size = Field(domain=Raw(value_after), name=field_to_split.name + "-After_Size")
-                sizeField = Field(domain=Size(field_dep), name=field_to_split.name + "-Size")
+                staticField_before_Size = Field(domain = Raw(value_before), name = field_to_split.name + "-Before_SizeF")
+                staticField_after_Size = Field(domain = Raw(value_after), name = field_to_split.name + "-After_Size")
+                sizeField = Field(domain = Size(field_dep), name = field_to_split.name + "-Size")
                 field_to_split.fields = [staticField_before_Size, sizeField, staticField_after_Size]
 
     def __get_field_dep(self,symbol,first_field):
@@ -128,9 +152,15 @@ class SizeFinder(object):
         afterff = False
         for field in symbol.fields:
             if field == first_field:
+                if field.fields:
+                    subfields = True
                 afterff = True
             if afterff:
-                field_dep.append(field)
+                if subfields:
+                    field_dep.append(field.fields[1])
+                    subfields = False
+                else:
+                    field_dep.append(field)
         return field_dep
 
     @typeCheck(dict)
@@ -250,6 +280,8 @@ class SizeFinder(object):
                         minSize = child.dataType.size[0]
             except:
                 minSize, maxSize = field.domain.dataType.size
+            if maxSize is None:
+                maxSize = 0
             totalSize += maxSize
             if index < (totalSize / 8):
                 indexInField = (index * 8 ) - (totalSize-maxSize)
