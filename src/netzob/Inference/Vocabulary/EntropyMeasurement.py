@@ -56,7 +56,7 @@ class EntropyMeasurement(object):
 
     
     In the following example, 1000 messages are generated under a simple specification.
-    In the specification, 5 bytes are randomly generated. This specificity can easily be spoited by
+    In the specification, 5 bytes are randomly generated. This specificity can easily be spoted by
     the entropy measurement as illustred below.
     
     

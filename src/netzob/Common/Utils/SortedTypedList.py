@@ -143,9 +143,6 @@ class SortedTypedList(object):
 
     def _check(self, v):
         if not isinstance(v, self.membersTypes):
-            raise TypeError("Invalid type for argument, expecting: {0}, received : {1}".format(self.membersTypes, v.__class__.__name__))
-        if not isinstance(v, SortableObject):
-            raise TypeError("Objects inserted in a SortedTypedList must inherits from SortableObject class")
             raise TypeError(
                 "Invalid type for argument, expecting: {0}, received : {1}".
                 format(self.membersTypes, v.__class__.__name__))

@@ -53,6 +53,7 @@ from netzob.Model.Types.Raw import Raw
 from netzob.Model.Types.HexaString import HexaString
 from netzob.Model.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
+from netzob.Model.Vocabulary.Session import Session
 from netzob.Model.Vocabulary.Messages.L2NetworkMessage import L2NetworkMessage
 from netzob.Model.Vocabulary.Messages.L3NetworkMessage import L3NetworkMessage
 from netzob.Model.Vocabulary.Messages.L4NetworkMessage import L4NetworkMessage
@@ -437,6 +438,10 @@ class PCAPImporter(object):
         self.messages = SortedTypedList(AbstractMessage)
         for filePath in filePathList:
             self.__readMessagesFromFile(filePath, bpfFilter, nbPackets)
+            #Create a session and attribute it to messages:
+            session = Session(list(self.messages.values()),name=filePath)
+            for message in self.messages.values():
+                message.session = session
         return self.messages
 
     @staticmethod
