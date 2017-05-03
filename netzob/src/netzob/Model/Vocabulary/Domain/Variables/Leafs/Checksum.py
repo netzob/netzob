@@ -154,19 +154,23 @@ class Checksum(AbstractRelationVariableLeaf):
     >>> seqField = Field(name="Sequence Number", domain=Raw(b'\x00\x07'))
     >>> timeField = Field(name="Timestamp", domain=Raw(b'\xa8\xf3\xf6\x53\x00\x00\x00\x00'))
     >>> headerField = Field(name="header")
-    >>> headerField.fields = [typeField, codeField, chksumField, identField, seqField, timeField]
-    >>> dataField = Field(name="Payload", domain=Raw(b'\x60\xb5\x06\x00\x00\x00\x00\x00\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x24\x25\x26\x27\x28\x29\x2a\x2b\x2c\x2d\x2e\x2f\x30\x31\x32\x33\x34\x35\x36\x37'))
+    >>> headerField.fields = [typeField, codeField, chksumField,
+    ...                       identField, seqField, timeField]
+    >>> dataField = Field(name="Payload", domain=Raw(b'\x60\xb5\x06\x00\x00\x00\x00\x00\x10\
+    ... \x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x24\x25\
+    ... \x26\x27\x28\x29\x2a\x2b\x2c\x2d\x2e\x2f\x30\x31\x32\x33\x34\x35\x36\x37'))
 
-    >>> chksumField.domain = Checksum([headerField, dataField], 'InternetChecksum', dataType=Raw(nbBytes=2))
+    >>> chksumField.domain = Checksum([headerField, dataField], 'InternetChecksum',
+    ...                               dataType=Raw(nbBytes=2))
     >>> s = Symbol(fields = [headerField, dataField])
     >>> msgs = [RawMessage(s.specialize()) for i in range(1)]
     >>> s.messages = msgs
     >>> s.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print(s)
-    Type | Code | Checksum | Identifier | Sequence Number | Timestamp          | Payload                                                                                           
-    ---- | ---- | -------- | ---------- | --------------- | ------------------ | --------------------------------------------------------------------------------------------------
-    '08' | '00' | '1607'   | '1d22'     | '0007'          | 'a8f3f65300000000' | '60b5060000000000101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f3031323334353637'
-    ---- | ---- | -------- | ---------- | --------------- | ------------------ | --------------------------------------------------------------------------------------------------
+    >>> print(s)  # doctest: +ELLIPSIS
+    Type | Code | Checksum | Identifier | Sequence Number | Timestamp          | Payload    ...
+    ---- | ---- | -------- | ---------- | --------------- | ------------------ | -----------...
+    '08' | '00' | '1607'   | '1d22'     | '0007'          | 'a8f3f65300000000' | '60b5060000...
+    ---- | ---- | -------- | ---------- | --------------- | ------------------ | -----------...
 
     """
 

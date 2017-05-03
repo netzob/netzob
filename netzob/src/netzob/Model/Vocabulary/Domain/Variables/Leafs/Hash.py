@@ -123,13 +123,13 @@ class Hash(AbstractRelationVariableLeaf):
 
     >>> f2 = Field(Hash([f1], 'sha384'))
     >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())
-    b'aabb0f12c407a97010b974d7e08e4b1e452f5336c14eea305c0c84a41d1810c9b1cb1f71b24eb154b6152a0ae2d4fe571d58'
+    >>> binascii.hexlify(s.specialize())  # doctest: +ELLIPSIS
+    b'aabb0f12c407a97010b974d7e08e4b1e452f5336c14eea305c0c84a41d1810c9b1cb1...'
 
     >>> f2 = Field(Hash([f1], 'sha512'))
     >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())
-    b'aabb13868e66e10c8825be2054b8fa56faf06938a2c6a7e8e3830f0c274777b0431f195e001e680b85c51616c3758e86ad3ffee8816061b1a26fb00c5a3c8827f26f'
+    >>> binascii.hexlify(s.specialize())  # doctest: +ELLIPSIS
+    b'aabb13868e66e10c8825be2054b8fa56faf06938a2c6a7e8e3830f0c274777b0431f1...'
 
     """
 
