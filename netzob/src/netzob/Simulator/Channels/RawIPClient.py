@@ -63,8 +63,8 @@ from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
 class RawIPClient(AbstractChannel):
     """A RawIPClient is a communication channel allowing to send IP
     payloads. This **channel** is responsible to build the IP header. It is
-    similar to IPClient channel, except that with IPClient this is the OS
-    kernel which build the IP header. So with RawIPclient we **can** modify or
+    similar to IPClient channel, except that with IPClient the OS
+    kernel builds the IP header. Therefore, with RawIPclient, we **can** modify or
     fuzz the IP header fields.
 
     The RawIPClient constructor expects some parameters:
