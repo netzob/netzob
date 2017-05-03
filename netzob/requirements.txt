@@ -7,3 +7,4 @@ colorama==0.3.3
 bintrees==2.0.0
 minepy==1.0.0
 arpreq==0.3.1
+PyCRC==1.21
