@@ -184,7 +184,7 @@ Along with Data variables, the definition domain of a field can embed the defini
 
   More details and examples of Value relationships can be found in its API doc :class:`Size <netzob.Common.Models.Vocabulary.Domain.Variables.Leafs.Size>`.
     
-* An *InternetChecksum Variable* describes a data whose value is the IP checksum of one or more other fields.
+* A *Checksum Variable* describes a data whose value is the IP checksum of one or more other fields.
 
   The following example, illustrates the creation of an ICMP Echo request packet with a valid checksum represented on two bytes computed on-the-fly::
     
@@ -198,7 +198,7 @@ Along with Data variables, the definition domain of a field can embed the defini
     >>> headerField.fields = [typeField, codeField, chksumField, identField, seqField, timeField]
     >>> dataField = Field(name="Payload", domain=Raw(nbBytes=(5, 10)))
 
-    >>> chksumField.domain = InternetChecksum([headerField, dataField], dataType=Raw(nbBytes=2))
+    >>> chksumField.domain = Checksum([headerField, dataField], "InternetChecksum", dataType=Raw(nbBytes=2))
     >>> s = Symbol(fields = [headerField, dataField])
     >>> s.specialize()
     '\\x08\\x00\x9d\xda\\x1d\\x22\\x00\\x07\\xa8\\xf3\\xf6\\x53\\x00\\x00\\x00\\x00\xec6\xf4\x98\xee' # checksum = \\xda\\x1d
