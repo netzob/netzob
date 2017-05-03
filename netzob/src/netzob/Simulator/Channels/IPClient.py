@@ -51,7 +51,10 @@ from netzob.Simulator.Channels.AbstractChannel import AbstractChannel
 @NetzobLogger
 class IPClient(AbstractChannel):
     """An IPClient is a communication channel allowing to send IP
-    payloads. The kernel is responsible to build the IP header.
+    payloads. The **kernel** is responsible to build the IP header. It is
+    similar to RawIPClient channel, except that with RawIPClient this is the
+    channel which build the IP header. So with IPclient we **can not** modify
+    or fuzz the IP header fields.
 
     The IPClient constructor expects some parameters:
 
