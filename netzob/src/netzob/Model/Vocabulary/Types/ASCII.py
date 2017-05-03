@@ -111,12 +111,14 @@ class ASCII(AbstractType):
     ...
     TypeError: Impossible encode b'hello' into an IPv4 data (unpack requires a bytes object of length 4)
 
-    The type can be used to specify constraints over the domain
+    The type can be used to specify constraints over the domain:
+
     >>> a = ASCII(nbChars=10)
     >>> print(a.value)
     None
 
-    Its not possible to convert if the object has not value
+    Its not possible to convert if the object has not value:
+
     >>> a.convertValue(Raw)
     Traceback (most recent call last):
     ...
