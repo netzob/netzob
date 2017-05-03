@@ -293,12 +293,14 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
                     if message1 == message2.data and first:
                         split_message.insert(0,message2.destination)
                         split_message.insert(0, message2.source)
+                        split_message.insert(0,message2.session.name)
                         #split_message.insert(0, str(message2.date))
                         first = False
             if not first:
                 #Add IP, Timestamp, PCAP etc to matrix headers
                 matrix.headers.insert(0,'Destination')
                 matrix.headers.insert(0,'Source')
+                matrix.headers.insert(0, 'Session')
                 #matrix.headers.insert(0, 'Time')
         return matrix
 
