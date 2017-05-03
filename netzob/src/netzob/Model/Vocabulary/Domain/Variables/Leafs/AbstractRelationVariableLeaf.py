@@ -35,10 +35,12 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
@@ -47,6 +49,16 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
+from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
+from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
+from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
+from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+from netzob.Model.Vocabulary.Types.ASCII import ASCII
+from netzob.Model.Vocabulary.Types.BitArray import BitArray
+from netzob.Model.Vocabulary.Types.Raw import Raw
+from netzob.Model.Vocabulary.Types.HexaString import HexaString
+from netzob.Model.Vocabulary.Types.Integer import Integer
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 
 @NetzobLogger
@@ -55,12 +67,218 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
 
     """
 
-    def __init__(self, varType, fieldDependencies=None, name=None):
+    def __init__(self, varType, dataType=None, fieldDependencies=None, name=None):
         super(AbstractRelationVariableLeaf, self).__init__(
             varType, name, svas=SVAS.VOLATILE)
+
+        # Handle fieldDependencies
         if fieldDependencies is None:
             fieldDependencies = []
+        elif isinstance(fieldDependencies, AbstractField):
+            fieldDependencies = [fieldDependencies]
         self.fieldDependencies = fieldDependencies
+
+        # Handle dataType
+        if dataType is None:
+            dataType = Raw(nbBytes=1)
+        self.dataType = dataType
+
+    def __key(self):
+        return (self.dataType)
+
+    def __eq__(x, y):
+        try:
+            return x.__key() == y.__key()
+        except:
+            return False
+
+    def __hash__(self):
+        return hash(self.__key())
+
+    def __str__(self):
+        """The str method."""
+        return "Relation({0}) - Type:{1}".format(
+            str([f.name for f in self.fieldDependencies]), self.dataType)
+
+    @typeCheck(GenericPath)
+    def isDefined(self, path):
+        """Checks if a value is available either in data's definition or in memory
+
+        :parameter path: the current path used either to abstract and specializa this data
+        :type path: :class:`GenericPath <netzob.Model.Vocabulary.Domain.GenericPath.GenericPath>`
+        :return: a boolean that indicates if a value is available for this data
+        :rtype: :class:`bool`
+    
+        """
+        if path is None:
+            raise Exception("Path cannot be None")
+
+        # we check if memory referenced its value (memory is priority)
+        memory = path.memory
+
+        if memory is None:
+            raise Exception("Provided path has no memory attached.")
+
+        return memory.hasValue(self)
+
+    @typeCheck(ParsingPath)
+    def valueCMP(self, parsingPath, carnivorous=False):
+        results = []
+        if parsingPath is None:
+            raise Exception("ParsingPath cannot be None")
+
+        sizeOfPossibleValue = self.dataType.size()
+        if sizeOfPossibleValue[0] != sizeOfPossibleValue[1]:
+            raise Exception(
+                "Impossible to abstract messages if a size field has a dynamic size"
+            )
+
+        content = parsingPath.getDataAssignedToVariable(self)
+        possibleValue = content[:sizeOfPossibleValue[1]]
+        self._logger.debug("Possible value of relation field: {0}".
+                           format(possibleValue))
+
+        expectedValue = self._computeExpectedValue(parsingPath)
+        if expectedValue is None:
+            # the expected value cannot be computed
+            # we add a callback
+            self._addCallBacksOnUndefinedFields(parsingPath)
+        else:
+            if possibleValue[:len(expectedValue)] == expectedValue:
+                parsingPath.addResult(self, expectedValue.copy())
+            results.append(parsingPath)
+
+    @typeCheck(ParsingPath)
+    def learn(self, parsingPath, carnivours=False):
+        raise Exception("not implemented")
+        self._logger.debug("RELATION LEARN")
+        if parsingPath is None:
+            raise Exception("VariableParserPath cannot be None")
+        return []
+
+    @typeCheck(ParsingPath)
+    def domainCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
+        """This method participates in the abstraction process.
+
+        It creates a VariableSpecializerResult in the provided path if
+        the remainingData (or some if it) follows the type definition"""
+
+        results = []
+        self._logger.debug(
+            "domainCMP executed on {0} by a relation domain".format(
+                parsingPath))
+
+        minSize, maxSize = self.dataType.size
+        if minSize != maxSize:
+            raise Exception(
+                "Impossible to abstract messages if a size field has a dynamic size"
+            )
+
+        content = parsingPath.getDataAssignedToVariable(self)
+        possibleValue = content[:maxSize]
+
+        expectedValue = None
+        try:
+            expectedValue = self._computeExpectedValue(parsingPath)
+            if possibleValue[:len(expectedValue)] == expectedValue:
+                self._logger.debug("Callback executed with success")
+                parsingPath.addResult(self, expectedValue.copy())
+                results.append(parsingPath)
+            else:
+                self._logger.debug("Executed callback has failed.")
+        except Exception as e:
+            # the expected value cannot be computed
+            if acceptCallBack:
+                # we add a callback
+                self._addCallBacksOnUndefinedFields(parsingPath)
+                # register the remaining data
+                parsingPath.addResult(self, possibleValue.copy())
+                results.append(parsingPath)
+            else:
+                raise Exception("no more callback accepted.")
+
+        return results
+
+    @typeCheck(GenericPath)
+    def _addCallBacksOnUndefinedFields(self, parsingPath):
+        """Identify each dependency field that is not yet defined and register a
+        callback to try to recompute the value """
+
+        parsingPath.registerFieldCallBack(self.fieldDependencies, self)
+
+    @typeCheck(GenericPath)
+    def _computeExpectedValue(self, parsingPath):
+        self._logger.debug(
+            "compute expected value for relation field")
+
+        # first checks the pointed fields all have a value
+        hasValue = True
+        for field in self.fieldDependencies:
+            if field.domain is not self and not parsingPath.isDataAvailableForVariable(field.domain):
+                self._logger.debug("The following field domain has no value: '{0}'".format(field.domain))
+                hasValue = False
+
+        if not hasValue:
+            raise Exception(
+                "Expected value cannot be computed, some dependencies are missing for domain {0}".
+                format(self))
+        else:
+            fieldValues = []
+            for field in self.fieldDependencies:
+                if field.domain is self:
+                    fieldSize = random.randint(field.domain.dataType.size[0], field.domain.dataType.size[1])
+                    fieldValue = TypeConverter.convert(b"\x00" * int(fieldSize / 8), Raw, BitArray)
+                else:
+                    fieldValue = parsingPath.getDataAssignedToVariable(field.domain)
+
+                if fieldValue is None:
+                    break
+                elif fieldValue.tobytes() == TypeConverter.convert("PENDING VALUE", ASCII, BitArray).tobytes():
+                    # Handle case where field value is not currently known.
+                    raise Exception("Expected value cannot be computed, some dependencies are missing for domain {0}".format(self))
+                else:
+                    fieldValues.append(fieldValue)
+
+            # Aggregate all field value in a uniq bitarray object
+            concatFieldValues = bitarray('')
+            for f in fieldValues:
+                concatFieldValues += f
+
+            # Compute the relation result
+            result = self.relationOperation(concatFieldValues)
+
+            return result
+
+    @typeCheck(SpecializingPath)
+    def regenerate(self, variableSpecializerPath, moreCallBackAccepted=True):
+        """This method participates in the specialization proces.
+
+        It creates a VariableSpecializerResult in the provided path that
+        contains a generated value that follows the definition of the Data
+        """
+        self._logger.debug("Regenerate relation domain {0}".format(self))
+        if variableSpecializerPath is None:
+            raise Exception("VariableSpecializerPath cannot be None")
+
+        try:
+            newValue = self._computeExpectedValue(variableSpecializerPath)
+            variableSpecializerPath.addResult(self, newValue.copy())
+        except Exception as e:
+            self._logger.debug(
+                "Cannot specialize since no value is available for the relation dependencies, we create a callback function in case it can be computed later: {0}".
+                format(e))
+            pendingValue = TypeConverter.convert("PENDING VALUE", ASCII,
+                                                 BitArray)
+            variableSpecializerPath.addResult(self, pendingValue)
+
+            if moreCallBackAccepted:
+                #                for field in self.fields:
+                variableSpecializerPath.registerFieldCallBack(
+                    self.fieldDependencies, self, parsingCB=False)
+            else:
+                raise e
+
+        return [variableSpecializerPath]
 
     @property
     def fieldDependencies(self):
@@ -81,3 +299,23 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         self.__fieldDependencies = []
         for f in fields:
             self.__fieldDependencies.extend(f.getLeafFields())
+
+    @property
+    def dataType(self):
+        """The datatype used to encode the result of the computed relation field.
+
+        :type: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
+        """
+
+        return self.__dataType
+
+    @dataType.setter
+    @typeCheck(AbstractType)
+    def dataType(self, dataType):
+        if dataType is None:
+            raise TypeError("Datatype cannot be None")
+        (minSize, maxSize) = dataType.size
+        if maxSize is None:
+            raise ValueError(
+                "The datatype of a relation field must declare its length")
+        self.__dataType = dataType

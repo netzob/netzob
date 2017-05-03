@@ -170,7 +170,7 @@ class Value(AbstractRelationVariableLeaf):
         if not isinstance(field, AbstractField):
             raise Exception("Expecting a field")
         super(Value, self).__init__(
-            "Value", fieldDependencies=[field], name=name)
+            self.__class__.__name__, fieldDependencies=[field], name=name)
         self.operation = operation
 
     @typeCheck(GenericPath)

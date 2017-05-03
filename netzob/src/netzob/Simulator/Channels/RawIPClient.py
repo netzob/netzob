@@ -55,7 +55,7 @@ from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Size import Size
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.InternetChecksum import InternetChecksum
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksum import Checksum
 from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
 
 
@@ -256,18 +256,18 @@ class RawIPClient(AbstractChannel):
                                   ip_saddr,
                                   ip_daddr,
                                   ip_payload], dataType=Integer(unitSize=AbstractType.UNITSIZE_16, sign=AbstractType.SIGN_UNSIGNED), factor=1/float(8))
-        ip_checksum.domain = InternetChecksum(fields=[ip_ver,
-                                                      ip_ihl,
-                                                      ip_tos,
-                                                      ip_tot_len,
-                                                      ip_id,
-                                                      ip_flags,
-                                                      ip_frag_off,
-                                                      ip_ttl,
-                                                      ip_proto,
-                                                      ip_checksum,
-                                                      ip_saddr,
-                                                      ip_daddr], dataType=Raw(nbBytes=2, unitSize=AbstractType.UNITSIZE_16))
+        ip_checksum.domain = Checksum(fields=[ip_ver,
+                                              ip_ihl,
+                                              ip_tos,
+                                              ip_tot_len,
+                                              ip_id,
+                                              ip_flags,
+                                              ip_frag_off,
+                                              ip_ttl,
+                                              ip_proto,
+                                              ip_checksum,
+                                              ip_saddr,
+                                              ip_daddr], checksumName='InternetChecksum', dataType=Raw(nbBytes=2, unitSize=AbstractType.UNITSIZE_16))
 
         self.header = Symbol(name='IP layer', fields=[ip_ver,
                                                       ip_ihl,

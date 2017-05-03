@@ -247,7 +247,7 @@ class Size(AbstractRelationVariableLeaf):
                  name=None):
         if isinstance(fields, AbstractField):
             fields = [fields]
-        super(Size, self).__init__("Size", fieldDependencies=fields, name=name)
+        super(Size, self).__init__(self.__class__.__name__, fieldDependencies=fields, name=name)
         self.fields = fields
         if dataType is None:
             dataType = Raw(nbBytes=1)

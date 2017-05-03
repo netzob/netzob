@@ -76,6 +76,7 @@ class Integer(AbstractType):
     * AbstractType.UNITSIZE_4
     * AbstractType.UNITSIZE_8 (default unit size)
     * AbstractType.UNITSIZE_16
+    * AbstractType.UNITSIZE_24
     * AbstractType.UNITSIZE_32
     * AbstractType.UNITSIZE_64
 
