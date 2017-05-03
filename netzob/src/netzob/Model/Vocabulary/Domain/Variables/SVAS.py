@@ -103,10 +103,10 @@ class SVAS(object):
 
       >>> msg2 = RawMessage("netzab")
       >>> mp = MessageParser()
-      >>> print(mp.parseMessage(msg2, s))
+      >>> print(mp.parseMessage(msg2, s))  # doctest: +IGNORE_EXCEPTION_DETAIL
       Traceback (most recent call last):
         ...
-      netzob.Model.Vocabulary.Domain.Parser.MessageParser.InvalidParsingPathException: No parsing path returned while parsing 'b'netzab''
+      InvalidParsingPathException: No parsing path returned while parsing 'b'netzab''
 
 
       The following example shows the **specialization of a constant
@@ -170,10 +170,10 @@ class SVAS(object):
       that does not correspond to the expected model:
 
       >>> msg3 = RawMessage("netzab")
-      >>> print(mp.parseMessage(msg3, s))
+      >>> print(mp.parseMessage(msg3, s))  # doctest: +IGNORE_EXCEPTION_DETAIL
       Traceback (most recent call last):
         ...
-      netzob.Model.Vocabulary.Domain.Parser.MessageParser.InvalidParsingPathException: No parsing path returned while parsing 'b'netzab''
+      InvalidParsingPathException: No parsing path returned while parsing 'b'netzab''
 
 
       The following examples show the **specialization of a persistent

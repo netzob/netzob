@@ -84,13 +84,16 @@ class Repeat(AbstractVariableNode):
     We can specify a delimitor between each repeated element, as
     depicted in the following example:
 
-    >>> f1 = Field(Repeat(Alt([ASCII("netzob"), ASCII("zoby")]), nbRepeat=(1, 4), delimitor=TypeConverter.convert(";", Raw, BitArray)))
+    >>> f1 = Field(Repeat(Alt([ASCII("netzob"), ASCII("zoby")]), nbRepeat=(1, 4),
+    ...            delimitor=TypeConverter.convert(";", Raw, BitArray)))
     >>> f2 = Field(ASCII("zoby"))
     >>> s = Symbol([f1, f2])
     >>> msg1 = RawMessage("netzob;zoby;netzobzoby")
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg1, s))
-    [bitarray('011011100110010101110100011110100110111101100010001110110111101001101111011000100111100100111011011011100110010101110100011110100110111101100010'), bitarray('01111010011011110110001001111001')]
+    ... # doctest: +ELLIPSIS, +NORMALIZE_WHITESPACE
+    [bitarray('011011100110010101110100011110100110111101100010001110110111...,
+     bitarray('01111010011011110110001001111001')]
 
 
     **Abstraction of repeat variables**
@@ -105,12 +108,15 @@ class Repeat(AbstractVariableNode):
     >>> msg1 = RawMessage("netzobnetzobzoby")
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg1, s))
-    [bitarray('011011100110010101110100011110100110111101100010011011100110010101110100011110100110111101100010'), bitarray('01111010011011110110001001111001')]
+    ... # doctest: +ELLIPSIS, +NORMALIZE_WHITESPACE
+    [bitarray('011011100110010101110100011110100110111101100010011011100110...,
+     bitarray('01111010011011110110001001111001')]
 
     >>> msg2 = RawMessage("netzobzoby")
     >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg2, s))
-    [bitarray('011011100110010101110100011110100110111101100010'), bitarray('01111010011011110110001001111001')]
+    >>> print(mp.parseMessage(msg2, s))  # doctest: +NORMALIZE_WHITESPACE
+    [bitarray('011011100110010101110100011110100110111101100010'),
+     bitarray('01111010011011110110001001111001')]
 
     >>> msg4 = RawMessage("zoby")
     >>> mp = MessageParser()
@@ -129,7 +135,8 @@ class Repeat(AbstractVariableNode):
     b'netzobnetzob'
 
     >>> from netzob.all import *
-    >>> f1 = Field(Repeat(IPv4(), nbRepeat=3, delimitor=TypeConverter.convert(";", Raw, BitArray)))
+    >>> f1 = Field(Repeat(IPv4(), nbRepeat=3,
+    ...           delimitor=TypeConverter.convert(";", Raw, BitArray)))
     >>> s = Symbol([f1])
     >>> gen = s.specialize()
     >>> len(gen) == 14
@@ -139,7 +146,8 @@ class Repeat(AbstractVariableNode):
 
     >>> from netzob.all import *
     >>> child = Data(dataType=ASCII(nbChars=(5)), svas=SVAS.PERSISTENT)
-    >>> f1 = Field(Repeat(child, nbRepeat=3, delimitor=TypeConverter.convert(";", Raw, BitArray)))
+    >>> f1 = Field(Repeat(child, nbRepeat=3,
+    ...            delimitor=TypeConverter.convert(";", Raw, BitArray)))
     >>> s = Symbol([f1])
     >>> gen = s.specialize()
     >>> gen == gen[:5]+b";"+gen[:5]+b";"+gen[:5]

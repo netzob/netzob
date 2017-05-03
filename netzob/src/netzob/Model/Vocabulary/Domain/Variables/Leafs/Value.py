@@ -95,8 +95,11 @@ class Value(AbstractRelationVariableLeaf):
     >>> f4 = Field(ASCII("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
     >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg, s))
-    [bitarray('011011100110010101110100011110100110111101100010'), bitarray('00111011'), bitarray('011011100110010101110100011110100110111101100010'), bitarray('00100001')]
+    >>> print(mp.parseMessage(msg, s))  # doctest: +NORMALIZE_WHITESPACE
+    [bitarray('011011100110010101110100011110100110111101100010'),
+     bitarray('00111011'),
+     bitarray('011011100110010101110100011110100110111101100010'),
+     bitarray('00100001')]
 
     The following example shows another way to define a field with a
     copy of another field value:
@@ -109,8 +112,11 @@ class Value(AbstractRelationVariableLeaf):
     >>> f4 = Field(ASCII("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
     >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg, s))
-    [bitarray('011011100110010101110100011110100110111101100010'), bitarray('00111011'), bitarray('011011100110010101110100011110100110111101100010'), bitarray('00100001')]
+    >>> print(mp.parseMessage(msg, s))  # doctest: +NORMALIZE_WHITESPACE
+    [bitarray('011011100110010101110100011110100110111101100010'),
+     bitarray('00111011'),
+     bitarray('011011100110010101110100011110100110111101100010'),
+     bitarray('00100001')]
 
 
     **Specialization of Value objects**
@@ -145,7 +151,8 @@ class Value(AbstractRelationVariableLeaf):
     >>> from netzob.all import *
     >>> f0 = Field(1, name="f0")
     >>> f1 = Field(ASCII(":"), name="f1")
-    >>> f2 = Field(Value(f0, operation = lambda x: TypeConverter.convert(TypeConverter.convert(x, BitArray, Integer) + 1, Integer, BitArray)), name="f2")
+    >>> f2 = Field(Value(f0, operation = lambda x: TypeConverter.convert(
+    ... TypeConverter.convert(x, BitArray, Integer) + 1, Integer, BitArray)), name="f2")
     >>> s = Symbol([f0, f1, f2])
     >>> print(s.specialize())
     b'\x01:\x02'

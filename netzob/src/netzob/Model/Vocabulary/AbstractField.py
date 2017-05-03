@@ -531,7 +531,9 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
 
         >>> from netzob.all import *
-        >>> messages = ["{0}, what's up in {1} ?".format(pseudo, city) for pseudo in ['netzob', 'zoby'] for city in ['Paris', 'Berlin']]
+        >>> messages = ["{0}, what's up in {1} ?".format(pseudo, city)
+        ...             for pseudo in ['netzob', 'zoby']
+        ...             for city in ['Paris', 'Berlin']]
 
         >>> f1a = Field(name="name", domain="netzob")
         >>> f2a = Field(name="question", domain=", what's up in ")
@@ -548,14 +550,18 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> for m in messages:
         ...    (abstractedSymbol, structured_data) = AbstractField.abstract(m, [s1, s2])
         ...    print(structured_data)
-        ...    print(abstractedSymbol.name)
-        OrderedDict([('name', b'netzob'), ('question', b", what's up in "), ('city', b'Paris'), ('mark', b' ?')])
+        ...    print(abstractedSymbol.name)  # doctest: +NORMALIZE_WHITESPACE
+        OrderedDict([('name', b'netzob'), ('question', b", what's up in "),
+                     ('city', b'Paris'), ('mark', b' ?')])
         Symbol-netzob
-        OrderedDict([('name', b'netzob'), ('question', b", what's up in "), ('city', b'Berlin'), ('mark', b' ?')])
+        OrderedDict([('name', b'netzob'), ('question', b", what's up in "),
+                     ('city', b'Berlin'), ('mark', b' ?')])
         Symbol-netzob
-        OrderedDict([('name', b'zoby'), ('question', b", what's up in "), ('city', b'Paris'), ('mark', b' ?')])
+        OrderedDict([('name', b'zoby'), ('question', b", what's up in "),
+                     ('city', b'Paris'), ('mark', b' ?')])
         Symbol-zoby
-        OrderedDict([('name', b'zoby'), ('question', b", what's up in "), ('city', b'Berlin'), ('mark', b' ?')])
+        OrderedDict([('name', b'zoby'), ('question', b", what's up in "),
+                     ('city', b'Berlin'), ('mark', b' ?')])
         Symbol-zoby
 
         :parameter data: the data that should be abstracted in symbol

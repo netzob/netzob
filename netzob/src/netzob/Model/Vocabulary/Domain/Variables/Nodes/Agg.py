@@ -117,8 +117,9 @@ class Agg(AbstractVariableNode):
     >>> s = Symbol([f0, f1])
     >>> msg1 = RawMessage("netzob.txt!")
     >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg1, s))
-    [bitarray('01101110011001010111010001111010011011110110001000101110011101000111100001110100'), bitarray('00100001')]
+    >>> print(mp.parseMessage(msg1, s))  # doctest: +ELLIPSIS, +NORMALIZE_WHITESPACE
+    [bitarray('011011100110010101110100011110100110111101100010001011100111...,
+     bitarray('00100001')]
 
     In the following example, a Aggregate variable is defined. A
     message that does not correspond to the expected model is then
@@ -126,10 +127,10 @@ class Agg(AbstractVariableNode):
 
     >>> msg2 = RawMessage("netzobtxt!")
     >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg2, s))
+    >>> print(mp.parseMessage(msg2, s))  # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
       ...
-    netzob.Model.Vocabulary.Domain.Parser.MessageParser.InvalidParsingPathException: No parsing path returned while parsing 'b'netzobtxt!''
+    InvalidParsingPathException: No parsing path returned while parsing 'b'netzobtxt!''
 
 
     **Specialization of aggregate variables**

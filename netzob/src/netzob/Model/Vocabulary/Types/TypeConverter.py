@@ -108,16 +108,20 @@ class TypeConverter(object):
         53
         >>> print(TypeConverter.convert("zoby", ASCII, Integer))
         2036494202
-        >>> print(TypeConverter.convert("zoby", ASCII, Integer, dst_unitSize=AbstractType.UNITSIZE_32))
+        >>> print(TypeConverter.convert("zoby", ASCII, Integer,
+        ...                             dst_unitSize=AbstractType.UNITSIZE_32))
         2054120057
 
         It also works for 'semantic' data like IPv4:
 
-        >>> TypeConverter.convert("192.168.0.10", IPv4, Integer, dst_sign=AbstractType.SIGN_UNSIGNED)
+        >>> TypeConverter.convert("192.168.0.10", IPv4, Integer,
+        ...                       dst_sign=AbstractType.SIGN_UNSIGNED)
         167815360
         >>> TypeConverter.convert("127.0.0.1", IPv4, BitArray)
         bitarray('01111111000000000000000000000001')
-        >>> TypeConverter.convert(167815360, Integer, IPv4, src_unitSize=AbstractType.UNITSIZE_32, src_sign=AbstractType.SIGN_UNSIGNED)
+        >>> TypeConverter.convert(167815360, Integer, IPv4,
+        ...                       src_unitSize=AbstractType.UNITSIZE_32,
+        ...                       src_sign=AbstractType.SIGN_UNSIGNED)
         IPAddress('10.0.168.192')
 
         """
