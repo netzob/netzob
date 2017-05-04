@@ -51,7 +51,9 @@ from netzob.Model.Vocabulary.AbstractField import AbstractField
 class Mutator(object):
     """The model of any mutator.
 
-    It provides the common properties and API to all inherited mutators.
+    This class provides the common properties and API to all inherited mutators.
+
+    ** Mutators for message formats fuzzing **
 
     Mutators may be used during symbol specialization process, in
     order to fuzz targeted fields. Mutators are specified in the
@@ -64,12 +66,12 @@ class Mutator(object):
     a string and an integer, and the fuzzing request during the
     specialization process:
 
-      >>> f1 = Field(String())
-      >>> f2 = Field(Integer())
-      >>> symbol = Symbol(fields=[f1, f2])
-      >>> mutators = {f1: StringMutator,
-      ...             f2: (PseudoRandomIntegerMutator, minValue=12, maxValue=20)}
-      >>> symbol.specialize(mutators=mutators)
+    >>> f1 = Field(String())
+    >>> f2 = Field(Integer())
+    >>> symbol = Symbol(fields=[f1, f2])
+    >>> mutators = {f1: StringMutator,
+    ...             f2: (PseudoRandomIntegerMutator, minValue=12, maxValue=20)}
+    >>> symbol.specialize(mutators=mutators)
 
     """
 
@@ -79,6 +81,7 @@ class Mutator(object):
     def __init__(self):
         self._seed = Mutator.SEED_DEFAULT
         self._field = None
+        self._automata = None
         self._currentState = 0
         self._counterMax = 0
         self._currentCounter = 0
@@ -143,7 +146,7 @@ class Mutator(object):
 
     @property
     def field(self):
-        """The field to which the mutation is applied
+        """The field to which the mutation is applied.
 
         :type: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`
         """
@@ -153,6 +156,19 @@ class Mutator(object):
     @typeCheck(AbstractField)
     def field(self, abstractField):
         self._field = abstractField
+
+    @property
+    def automata(self):
+        """The automata to which the mutation is applied.
+
+        :type: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
+        """
+        return self._automata
+
+    @automata.setter
+    @typeCheck(Automata)
+    def automata(self, automata):
+        self._automata = automata
 
     @abc.abstractmethod
     def mutate(self):
