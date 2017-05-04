@@ -97,10 +97,10 @@ class String(AbstractType):
     value is not valid, with the definition of an String String where
     the associated value contains a non-String element:
 
-    >>> Field(String("Paris €", encoding='ascii')).specialize()  # doctest: +IGNORE_EXCEPTION_DETAIL
+    >>> Field(String("Paris in €", encoding='ascii')).specialize()  # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
     ...
-    ValueError: Input value for the following string is incorrect: 'Paris €'...
+    ValueError: Input value for the following string is incorrect: 'Paris in €'...
 
     The following example shows how to define an String string with a
     fixed size and a dynamic content:

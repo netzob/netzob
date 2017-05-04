@@ -1,0 +1,20 @@
+# -*- coding: utf-8 -*-
+from netzob.all import (Automata, OpenChannelTransition,
+                        Protocol, State)
+
+symbols = Protocol.definitions["UDP"][Protocol.SYMBOLS]
+
+# Specify the states
+s0 = State(name="Initial state")
+s1 = State(name="Channel opened")
+# s2 = State(name="Channel closed")
+
+# Specify the transitions
+openTransition = OpenChannelTransition(startState=s0, endState=s1, name="Open")
+
+# closeTransition = CloseChannelTransition(startState=s1,
+#                                          endState=s2,
+#                                          name="Closed")
+
+# Specify the main automata structure
+automata = Automata(s0, list(symbols.values()))

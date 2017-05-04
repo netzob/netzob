@@ -50,13 +50,65 @@ from netzob.Model.Grammar.Automata import Automata
 
 
 class Protocol(object):
-    """The model of a protocol.
+    """The Protocol class provides a wrapper for the state machine model
+    and the format messages model (i.e. the permitted symbols) of a
+    protocol.
 
-    It regroups both a vocabulary and a grammar.
+    The Protocol constructor expects some parameters:
+
+    :param name: The name of the protocol.
+    :param path_zdl: The path containg the .zdl file of the format messages and the automata.
+    :type name: an :class:`str`, required
+    :type path_zdl: an :class:`str`, optional
+
+    If .zdl files are provided, they should follow a specific
+    convention to export the defined symbols and automaton:
+
+    * The .zdl file for the format messages should be named
+      ``{PROTOCOL_NAME}'_format.zdl``, and should contains a variable
+      named ``symbols`` that contains a list of :class:`Symbol
+      <netzob.Model.Vocabulary.Symbol.Symbol>`.
+    * The .zdl file for the automaton should be named
+      ``{PROTOCOL_NAME}'_automata.zdl``, and should export a variable
+      named automata that contains an :class:`Automata
+      <netzob.Model.Grammar.Automata.Automata>`.
+
+    The following code describes the instanciation of a new Protocol,
+    without .zdl files:
 
     >>> icmp = Protocol("ICMP")
     >>> icmp.name
     'ICMP'
+
+    The following code describes the instanciation of a new Protocol
+    with provided protocol definition in .zdl files:
+
+    >>> udp = Protocol("UDP", path_zdl="test/resources/files/UDP_example/")
+    >>> udp.name
+    'UDP'
+
+    >>> udp.symbols
+    {'udp': udp}
+
+    >>> dot_code = udp.automata.generateDotCode()
+    >>> print(dot_code)  # doctest: +ELLIPSIS
+    digraph G {
+    "Initial state" [shape=doubleoctagon, style=filled, fillcolor=white, URL="..."];
+    "Channel opened" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
+    "Initial state" -> "Channel opened" [fontsize=5, label="OpenChannelTransition", URL="..."];
+    }
+
+    For visualization purpose, the following lines permit to generate
+    a PNG file with the dot representation of the automaton::
+
+      fd = open("/tmp/dotcode.dot", "w")
+      fd.write(dotCode)
+      fd.close()
+
+    And then in a shell::
+ 
+      $ dot -Tpng -o /tmp/dotcode.png /tmp/dotcode.dot
+      $ eog /tmp/dotcode.png
 
     """
 
@@ -68,10 +120,6 @@ class Protocol(object):
     definitions = {}
 
     def __init__(self, name, path_zdl=None):
-        """
-        :keyword name: the name of the protocol
-        :type name: an :class:`str`
-        """
         self.__name = name
         self.definition = [{}, None]
 
@@ -126,10 +174,9 @@ class Protocol(object):
     @property
     def name(self):
         """
-        The name of the protocol ("icmp", "http", ...)
+        The name of the protocol (ex: "ICMP", "HTTP", ...)
 
-        :type: a :class:`str`
-        :raises: :class:`TypeError`
+        :type: a :class:`str`, read-only
         """
         return self.__name
 
@@ -137,6 +184,11 @@ class Protocol(object):
 
     @property
     def symbols(self):
+        """
+        The dict of defined symbols for the protocol.
+
+        :type: a :class:`dict` where keys are symbol string names and values are :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
+        """
         if self.name in Protocol.definitions:
             if Protocol.definitions[self.name][Protocol.SYMBOLS] is not None:
                 return Protocol.definitions[self.name][Protocol.SYMBOLS]
@@ -152,6 +204,11 @@ class Protocol(object):
 
     @property
     def automata(self):
+        """
+        The Automata object defined for the protocol.
+
+        :type: an :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
+        """
         if self.name in Protocol.definitions:
             return Protocol.definitions[self.name][Protocol.AUTOMATA]
         else:
