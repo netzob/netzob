@@ -64,12 +64,12 @@ class Mutator(object):
     a string and an integer, and the fuzzing request during the
     specialization process:
 
-      f1 = Field(String())
-      f2 = Field(Integer())
-      symbol = Symbol(fields=[f1, f2])
-      mutators = {f1: StringMutator,
-                  f2: (PseudoRandomIntegerMutator, minValue=12, maxValue=20)}
-      symbol.specialize(mutators=mutators)
+      >>> f1 = Field(String())
+      >>> f2 = Field(Integer())
+      >>> symbol = Symbol(fields=[f1, f2])
+      >>> mutators = {f1: StringMutator,
+      ...             f2: (PseudoRandomIntegerMutator, minValue=12, maxValue=20)}
+      >>> symbol.specialize(mutators=mutators)
 
     """
 
