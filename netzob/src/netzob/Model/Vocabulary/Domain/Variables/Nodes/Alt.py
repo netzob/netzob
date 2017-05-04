@@ -107,7 +107,7 @@ class Alt(AbstractVariableNode):
     >>> print(mp.parseMessage(msg2, s))
     [bitarray('01111010011011110110001001111001')]
 
-    In the following example, a Alternate variable is defined. A
+    In the following example, an Alternate variable is defined. A
     message that does not correspond to the expected model is then
     parsed, thus creating an exception:
 
