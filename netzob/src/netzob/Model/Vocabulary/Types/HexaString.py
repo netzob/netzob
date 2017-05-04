@@ -53,7 +53,7 @@ from netzob.Model.Vocabulary.Types.ASCII import ASCII
 class HexaString(AbstractType):
     """This class defines an HexaString type.
 
-    The HexaString type allows to describe a sequence of bytes of
+    The HexaString type allows describing a sequence of bytes of
     arbitrary sizes with the hexastring notation (i.e. 'aabbcc'
     instead of the raw notation '\xaa\xbb\xcc').
 
