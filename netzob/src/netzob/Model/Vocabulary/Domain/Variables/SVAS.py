@@ -150,7 +150,7 @@ class SVAS(object):
       we compare the received field value against the memorized one.
 
 
-      The following example shows the **abstraction of a persitent
+      The following example shows the **abstraction of a persistent
       data**:
 
       >>> from netzob.all import *
