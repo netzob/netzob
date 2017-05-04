@@ -113,7 +113,7 @@ class SearchEngine(object):
         :keyword addTags: if set to True, visualization functions are added to the message to highlights found results.
         :type addTags: :class:`bool`
         :return: a search results detailling where and how occurrences where found. Occurences are also
-        identified in the message through dedicated visualization functions automaticaly added to the message.
+        identified in the message through dedicated visualization functions automatically added to the message.
         :rtype: :class:`SearchResults <netzob.Inference.Vocabulary.SearchEngine.SearchResults.SearchResults>`
 
         """
@@ -189,7 +189,7 @@ class SearchEngine(object):
         :type dataLabels: dict
 
         :return: a list of search results detailling where and how occurrences where found. Occurences are also
-        identified in the message through dedicated visualization functions automaticaly added to the message.
+        identified in the message through dedicated visualization functions automatically added to the message.
         :rtype: a list of :class:`SearchResults <netzob.Inference.Vocabulary.SearchEngine.SearchResults.SearchResults>`
 
         """
@@ -283,7 +283,7 @@ class SearchEngine(object):
         :type dataLabels: dict
 
         :return: a search results detailling where and how occurrences where found. Occurences are also
-        identified in the message through dedicated visualization functions automaticaly added to the message.
+        identified in the message through dedicated visualization functions automatically added to the message.
         :rtype: :class:`SearchResults <netzob.Inference.Vocabulary.SearchEngine.SearchResults.SearchResults>`
 
         """

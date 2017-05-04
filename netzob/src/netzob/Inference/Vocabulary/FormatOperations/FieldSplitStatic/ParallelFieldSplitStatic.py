@@ -161,7 +161,7 @@ class ParallelFieldSplitStatic(object):
         """The nbThread represents the maximum number of trhead that will be started
         in the same time to compute the alignment.
 
-        If set to None, the number of thread will be automaticaly set to 2 times the number
+        If set to None, the number of thread will be automatically set to 2 times the number
         of available cpu.
 
         :type: :class:`int`

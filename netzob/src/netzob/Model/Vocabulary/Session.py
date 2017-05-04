@@ -49,7 +49,7 @@ from netzob.Model.Vocabulary.AbstractField import AbstractField
 @NetzobLogger
 class Session(object):
     """A session includes messages exchanged in the same session. Messages
-    are automaticaly sorted.
+    are automatically sorted.
     Applicative data can be attached to sessions.
 
 

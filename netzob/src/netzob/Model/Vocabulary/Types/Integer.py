@@ -137,7 +137,7 @@ class Integer(AbstractType):
     >>> print(cDec.value)
     bitarray('00010100')
 
-    The required size in bits is automaticaly computed following the specifications:
+    The required size in bits is automatically computed following the specifications:
 
     >>> dec = Integer(10)
     >>> print(dec.size)

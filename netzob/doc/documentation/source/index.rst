@@ -20,7 +20,7 @@ The main :ref:`features<overview>` of Netzob are:
 **Protocol Grammar Modeling and Inference**
   The state machine of a protocol (aka its grammar) defines the valid
   sequences of exchanged messages. Netzob allows to learn it
-  semi-automaticaly using specific algorithms.
+  semi-automatically using specific algorithms.
 
 **Protocol Simulation**
   To support the inferring process, a dynamic analysis is perfomed
