@@ -131,8 +131,8 @@ class Hmac(AbstractRelationVariableLeaf):
 
     >>> f2 = Field(Hmac([f1], key=b'1234', hashName='sha512'))
     >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())
-    b'aabb76ef5cd30cf5dcd93cb8b5c6f65f894e4453b51fc055d7cb05746f342f561b4c486736bba8bf68b36ba83c4bd281bddf8da6f5ae31f5c4d51bfa5b5596798f97'
+    >>> binascii.hexlify(s.specialize())  # doctest: +ELLIPSIS
+    b'aabb76ef5cd30cf5dcd93cb8b5c6f65f894e4453b51fc055d7cb05746f342f561b4c4...'
 
     """
 
