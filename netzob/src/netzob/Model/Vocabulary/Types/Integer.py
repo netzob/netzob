@@ -154,7 +154,7 @@ class Integer(AbstractType):
     pre-defined values of :attr:`unitSize`, :attr:`sign` and :attr:`endianness`
     attributes. They are used to shorten calls of singular definitions.
 
-    By example, a *16-bit little-endian unsigned* Integer is classicaly defined
+    By example, a *16-bit little-endian unsigned* Integer is classically defined
     like this:
 
     >>> f1 = Integer(42,
