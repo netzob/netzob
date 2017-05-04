@@ -107,7 +107,7 @@ class BitArray(AbstractType):
     automatically accessible by predifined named constants ('item_0'
     and 'item_1'):
     
-    >>> f1 = Field(BitArray(nbBits=2))
+    >>> f1 = Field(bitarray('00'))
     >>> f1.domain.dataType.constants
     ['item_0', 'item_1']
 
@@ -139,18 +139,10 @@ class BitArray(AbstractType):
         super(BitArray, self).__init__(self.__class__.__name__, value, nbBits)
         self.constants = None  # A list of named constant used to access the bitarray elements
 
-        # In order to access bitarray elements by named constants, a list of named constants is built only if the bitarray is of fixed length
-        nbBits_min = None
-        nbBits_max = None
-        if nbBits is not None and isinstance(nbBits, tuple):
-            (nbBits_min, nbBits_max) = nbBits
-        elif nbBits is not None and isinstance(nbBits, int):
-            nbBits_min = nbBits
-            nbBits_max = nbBits
-        if nbBits_min is not None and nbBits_max is not None and nbBits_min == nbBits_max:
-            self.value = nbBits_min * bitarray('0')
+        # When value is not None, we can access each element of the bitarray with named constants
+        if value is not None:
             self.constants = []
-            for i in range(nbBits_min):
+            for i in range(len(value)):
                 self.constants.append("item_{}".format(i))
 
     def __getitem__(self, key):
