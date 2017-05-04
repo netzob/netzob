@@ -68,7 +68,7 @@ class ASCII(AbstractType):
     :type value: :class:`bitarray.bitarray`, optional
     :type nbChars: an :class:`int` or a tupple with the min and the max size specified as :class:`int`, optional
 
-    Netzob allows to describe a field that contains an ASCII
+    Netzob allows describing a field that contains an ASCII
     string. ASCII strings can be either static or dynamic with fixed
     sizes or even dynamic with variable sizes.
 
