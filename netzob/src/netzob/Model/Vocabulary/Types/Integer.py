@@ -201,7 +201,7 @@ class Integer(AbstractType):
 
     **Examples of conversions between Integer type objects**
 
-    Conversion methods allows to transform encoded representation of
+    Conversion methods allows transforming encoded representation of
     objects from a source type to a destination type. The following
     examples show how to convert an integer respectively to 16 bits
     little endian, to 16 bits big endian, to 32 bits little endian and
