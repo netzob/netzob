@@ -263,9 +263,9 @@ class Checksum(AbstractRelationVariableLeaf):
 
 
 CRC16            = partialclass(Checksum, checksumName="CRC16")
-# CRC16DNP         = partialclass(Checksum, checksumName="CRC16DNP")
-# CRC16Kermit      = partialclass(Checksum, checksumName="CRC16Kermit")
-# CRC16Sick        = partialclass(Checksum, checksumName="CRC16Sick")
-# CRC32            = partialclass(Checksum, checksumName="CRC32")
-# CRCCCITT         = partialclass(Checksum, checksumName="CRCCCITT")
-# InternetChecksum = partialclass(Checksum, checksumName="InternetChecksum")
+CRC16DNP         = partialclass(Checksum, checksumName="CRC16DNP")
+CRC16Kermit      = partialclass(Checksum, checksumName="CRC16Kermit")
+CRC16Sick        = partialclass(Checksum, checksumName="CRC16Sick")
+CRC32            = partialclass(Checksum, checksumName="CRC32")
+CRCCCITT         = partialclass(Checksum, checksumName="CRCCCITT")
+InternetChecksum = partialclass(Checksum, checksumName="InternetChecksum")
