@@ -46,6 +46,7 @@ import binascii
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Model.Vocabulary import partialclass
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Types.HexaString import HexaString
@@ -186,3 +187,12 @@ class Hash(AbstractRelationVariableLeaf):
             raise ValueError(
                 "The hashName must be one of: '{}'".format(hashlib.algorithms_guaranteed))
         self.__hashName = hashName
+
+
+hash_md5     = partialclass(Hash, hashName="md5")
+hash_sha1    = partialclass(Hash, hashName="sha1")
+hash_sha1_96 = partialclass(Hash, hashName="sha1-96")
+hash_sha224  = partialclass(Hash, hashName="sha224")
+hash_sha256  = partialclass(Hash, hashName="sha256")
+hash_sha384  = partialclass(Hash, hashName="sha384")
+hash_sha512  = partialclass(Hash, hashName="sha512")

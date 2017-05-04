@@ -47,6 +47,7 @@ import binascii
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Model.Vocabulary import partialclass
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Types.HexaString import HexaString
@@ -205,3 +206,12 @@ class Hmac(AbstractRelationVariableLeaf):
         if key is None:
             raise TypeError("key cannot be None")
         self.__key = key
+
+
+hmac_md5     = partialclass(Hmac, hashName="md5")
+hmac_sha1    = partialclass(Hmac, hashName="sha1")
+hmac_sha1_96 = partialclass(Hmac, hashName="sha1-96")
+hmac_sha224  = partialclass(Hmac, hashName="sha224")
+hmac_sha256  = partialclass(Hmac, hashName="sha256")
+hmac_sha384  = partialclass(Hmac, hashName="sha384")
+hmac_sha512  = partialclass(Hmac, hashName="sha512")

@@ -52,6 +52,7 @@ import binascii
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Model.Vocabulary import partialclass
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Types.HexaString import HexaString
@@ -257,3 +258,12 @@ class Checksum(AbstractRelationVariableLeaf):
         if checksumName is None:
             raise TypeError("checksumName cannot be None")
         self.__checksumName = checksumName
+
+
+CRC16            = partialclass(Checksum, checksumName="CRC16")
+CRC16DNP         = partialclass(Checksum, checksumName="CRC16DNP")
+CRC16Kermit      = partialclass(Checksum, checksumName="CRC16Kermit")
+CRC16Sick        = partialclass(Checksum, checksumName="CRC16Sick")
+CRC32            = partialclass(Checksum, checksumName="CRC32")
+CRCCCITT         = partialclass(Checksum, checksumName="CRCCCITT")
+InternetChecksum = partialclass(Checksum, checksumName="InternetChecksum")

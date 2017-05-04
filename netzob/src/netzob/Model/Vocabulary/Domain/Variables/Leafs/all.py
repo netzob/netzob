@@ -31,7 +31,7 @@
 
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Size import Size
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hash import Hash
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmac import Hmac
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksum import Checksum
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hash import *
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmac import *
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksum import *
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Value import Value
