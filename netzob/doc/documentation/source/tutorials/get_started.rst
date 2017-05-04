@@ -116,7 +116,7 @@ The main window shows each message in raw hexadecimal format. You can
 play with visualization attributes : right click on the symbol, then
 select Visualization and the attribute you want to change (hex, decimal
 or even string format, the unit size and potentially the sign and
-endianess).
+endianness).
 
 The following picture shows the rendering of the messages in hex format
 (on the left) and string format (on the right). You can then see that

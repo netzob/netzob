@@ -54,7 +54,7 @@ class Integer(AbstractType):
 
     The type Integer is a wrapper for the Python :class:`int` object
     with the capability to express more constraints regarding to the
-    sign, endianess and unit size.
+    sign, endianness and unit size.
 
     The Integer constructor expects some parameters:
 

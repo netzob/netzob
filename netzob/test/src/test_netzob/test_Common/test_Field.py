@@ -58,7 +58,7 @@ class test_Field(unittest.TestCase):
         self.assertEqual(f.name, "Default")
 
 
-    ## Encoding (format, unitsize, sign and endianess)
+    ## Encoding (format, unitsize, sign and endianness)
     def test_format(self):
         f = Field()
         f.encodingFunctions.add(TypeEncodingFunction(ASCII))
