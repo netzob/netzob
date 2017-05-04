@@ -121,7 +121,7 @@ class Agg(AbstractVariableNode):
     [bitarray('011011100110010101110100011110100110111101100010001011100111...,
      bitarray('00100001')]
 
-    In the following example, a Aggregate variable is defined. A
+    In the following example, an Aggregate variable is defined. A
     message that does not correspond to the expected model is then
     parsed, thus creating an exception:
 
