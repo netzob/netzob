@@ -55,7 +55,7 @@ class SequenceMutator(Mutator):
     length.
 
     >>> from netzob.all import *
-    >>> sequenceField = Field(Repeat(ASCII("this is a string"), nbRepeat=2))
+    >>> sequenceField = Field(Repeat(String("this is a string"), nbRepeat=2))
     >>> mutator = SequenceMutator()
     >>> mutator.seed = 10
     >>> mutator.field = sequenceField

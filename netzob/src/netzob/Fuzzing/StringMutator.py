@@ -57,7 +57,7 @@ class StringMutator(Mutator):
     >>> from netzob.all import *
     >>> mutator = StringMutator()
     >>> mutator.seed = 10
-    >>> asciiString = ASCII()
+    >>> asciiString = String()
     >>> mutator.field = asciiString
     >>> dataHex = mutator.mutate()
 
