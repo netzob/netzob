@@ -289,7 +289,7 @@ class Symbol(AbstractField):
 
 
         A preset value bypasses all the constraints checks on your field definition.
-        For example, in the following example it can be use to bypass a size field definition.
+        For example, in the following example it can be used to bypass a size field definition.
 
         >>> from netzob.all import *
         >>> f1 = Field()

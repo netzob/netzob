@@ -58,7 +58,7 @@ class Raw(AbstractType):
 
     :param value: The current value of the type instance.
     :param nbBytes: The size in bytes that this value can take.
-    :param alphabet: The alphabet can be use to limit the bytes that can participate in the domain value.
+    :param alphabet: The alphabet can be used to limit the bytes that can participate in the domain value.
     :param unitSize: Not implemented.
     :param endianness: Not implemented.
     :param sign: Not implemented.
@@ -87,7 +87,7 @@ class Raw(AbstractType):
     >>> print(f.domain.dataType)
     Raw=b'\\x01\\x02\\x03' ((0, 24))
 
-    The alphabet optional argument can be use to limit the bytes that
+    The alphabet optional argument can be used to limit the bytes that
     can participate in the domain value:
 
     >>> f = Field(Raw(nbBytes=100, alphabet=["t", "o"]))

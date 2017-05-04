@@ -83,7 +83,7 @@ class GenericPath(object):
             self._dataAssignedToVariable = dataAssignedToVariable
 
     def addResult(self, variable, result):
-        """This method can be use to register the bitarray obtained after having parsed a variable
+        """This method can be used to register the bitarray obtained after having parsed a variable
 
         >>> from netzob.all import *
         >>> path = GenericPath()
@@ -101,7 +101,7 @@ class GenericPath(object):
         self.assignDataToVariable(result, variable)
 
     def addResultToField(self, field, result):
-        """This method can be use to register the bitarray obtained after having parsed a field (i.e. multiple variables)
+        """This method can be used to register the bitarray obtained after having parsed a field (i.e. multiple variables)
 
         >>> from netzob.all import *
         >>> path = GenericPath()

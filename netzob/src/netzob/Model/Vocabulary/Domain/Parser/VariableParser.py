@@ -49,7 +49,7 @@ from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 
 @NetzobLogger
 class VariableParser(object):
-    """This class can be use to parse some data against the specification of a domain
+    """This class can be used to parse some data against the specification of a domain
 
     """
 
@@ -72,7 +72,7 @@ class VariableParser(object):
 
     @property
     def variable(self):
-        """The variable that will be use to parse some content
+        """The variable that will be used to parse some content
 
         :type: :class:`AbstractVariable <netzob.Model.Vocabulary.Domaoin.Variables.AbstractVariable.AbstractVariable>`
         """

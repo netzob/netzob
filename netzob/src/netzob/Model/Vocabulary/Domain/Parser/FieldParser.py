@@ -51,7 +51,7 @@ from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 @NetzobLogger
 class FieldParser():
     """Main entry point for the vocabulary parser.
-    This class can be use to parse some data against the specification of a field
+    This class can be used to parse some data against the specification of a field
 
     >>> from netzob.all import *
     >>> f1 = Field(name="f1", domain=String(nbChars=(1,10)))
@@ -226,7 +226,7 @@ class FieldParser():
 
     @property
     def field(self):
-        """The field that will be use to parse some content
+        """The field that will be used to parse some content
 
         :type: :class:`Field <netzob.Model.Vocabulary.Field.Field>`
         """

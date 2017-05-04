@@ -78,7 +78,7 @@ class VariableSpecializerResult():
 
     @property
     def variable(self):
-        """The variable that will be use to parse some content
+        """The variable that will be used to parse some content
 
         :type: :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`
         """

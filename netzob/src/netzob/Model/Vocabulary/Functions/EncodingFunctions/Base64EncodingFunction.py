@@ -52,7 +52,7 @@ from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 @NetzobLogger
 class Base64EncodingFunction(EncodingFunction):
-    r"""This encoding function can be use to encode or decode data in base64.
+    r"""This encoding function can be used to encode or decode data in base64.
 
     >>> from netzob.all import *
     >>> f0 = Field(name="f0", domain=String("Helloworld"))
@@ -76,7 +76,7 @@ class Base64EncodingFunction(EncodingFunction):
     'Helloworld' | 'RGF0YQ==' | 'Content'
     ------------ | ---------- | ---------
 
-    This function can also be use to display the decoded version of a base64 field
+    This function can also be used to display the decoded version of a base64 field
 
     >>> m1 = "hello YWxs !"
     >>> m2 = "hello bXkgbG9yZA== !"    

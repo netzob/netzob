@@ -52,7 +52,7 @@ from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 @NetzobLogger
 class ZLibEncodingFunction(EncodingFunction):
-    r"""This encoding function can be use to compress or decompress data in zlib.
+    r"""This encoding function can be used to compress or decompress data in zlib.
 
     >>> from netzob.all import *
     >>> f0 = Field(name="f0", domain=String("Helloworld"))
@@ -76,7 +76,7 @@ class ZLibEncodingFunction(EncodingFunction):
     'Helloworld' | b'x\x9csI,I\x04\x00\x03\x80\x01{' | 'Content'
     ------------ | --------------------------------- | ---------
 
-    This function can also be use to display the uncompress version of a zlib field
+    This function can also be used to display the uncompress version of a zlib field
 
     >>> m1 = b"hello x\x9csI,I\xe4\x02\x00\x05\x05\x01\x85 !"
     >>> f0 = Field(name="f0", domain=String("hello "))
