@@ -35,6 +35,7 @@
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
 import random
+from collections import OrderedDict
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -58,14 +59,15 @@ class BitArray(AbstractType):
     The BitArray constructor expects some parameters:
 
     :param value: The current value of the type instance.
-    :param nbBits: The size in bits that this value can take.
+    :param nbBits: The size in bits that this value can take. In such
+                   case, default bitarray elements value is False.
     :type value: :class:`bitarray.bitarray`, optional
     :type nbBits: an :class:`int` or a tupple with the min and the max size specified as :class:`int`, optional
 
 
     The two following examples show how to define a field with a
-    BitArray. Both examples are equivalent. The second one is just
-    more concise.
+    BitArray containing a fixed constant. Both examples are
+    equivalent. The second one is just more concise.
 
     >>> from netzob.all import *  
     >>> f1 = Field(BitArray(bitarray('00001111')))
@@ -77,8 +79,10 @@ class BitArray(AbstractType):
     b'\x0f'
 
 
-    The following example shows how to define a bitfield of 1 bit, 47
-    bits, 64 bits and then a field that accept a bitfield of variable
+    ** Bitarray of fixed and dynamic sizes **
+
+    The following example shows how to define a bitarray of 1 bit, 47
+    bits, 64 bits and then a field that accept a bitarray of variable
     size between 13 and 128 bits:
 
     >>> f1 = Field(BitArray(nbBits=1))
@@ -95,17 +99,83 @@ class BitArray(AbstractType):
 
     >>> f4 = Field(BitArray(nbBits=(13, 128)))
 
-    The following example shows how to specify a constant bitfield:
 
-    >>> from bitarray import bitarray
-    >>> b = BitArray(value = bitarray('00000000'))
-    >>> print(b.generate())
-    bitarray('00000000')
+    ** Accessing bitarray elements by named constant **
+    
+    In the following example, we define a bitarray with two
+    elements. As this bitarray has a fixed length, element are
+    automatically accessible by predifined named constants ('item_0'
+    and 'item_1'):
+    
+    >>> f1 = Field(BitArray(nbBits=2))
+    >>> f1.domain.dataType.constants
+    ['item_0', 'item_1']
+
+    Bitarray element names can be changed:
+
+    >>> f1.domain.dataType.constants[0] = 'Urgent flag'
+    >>> f1.domain.dataType.constants[1] = 'Data flag'
+    >>> f1.domain.dataType.constants
+    ['Urgent flag', 'Data flag']
+
+    Bitarray element can be accessed in read or write mode:
+
+    >>> f1.domain.dataType['Urgent flag']
+    False
+
+    >>> f1.domain.dataType['Urgent flag'] = True
+    >>> f1.domain.dataType['Urgent flag']
+    True
+
+    Bitarray element can be used with binary operators:
+
+    >>> f1.domain.dataType['Urgent flag'] |= f1.domain.dataType['Data flag']
+    >>> f1.domain.dataType['Urgent flag']
+    True
 
     """
 
     def __init__(self, value=None, nbBits=(None, None)):
         super(BitArray, self).__init__(self.__class__.__name__, value, nbBits)
+        self.constants = None  # A list of named constant used to access the bitarray elements
+
+        # In order to access bitarray elements by named constants, a list of named constants is built only if the bitarray is of fixed length
+        nbBits_min = None
+        nbBits_max = None
+        if nbBits is not None and isinstance(nbBits, tuple):
+            (nbBits_min, nbBits_max) = nbBits
+        elif nbBits is not None and isinstance(nbBits, int):
+            nbBits_min = nbBits
+            nbBits_max = nbBits
+        if nbBits_min is not None and nbBits_max is not None and nbBits_min == nbBits_max:
+            self.value = nbBits_min * bitarray('0')
+            self.constants = []
+            for i in range(nbBits_min):
+                self.constants.append("item_{}".format(i))
+
+    def __getitem__(self, key):
+        if isinstance(key, int):
+            if self.value is not None:
+                return self.value[key]
+            else:
+                raise ValueError("Cannot access internal bitarray value, as it does not exist.")
+        else:
+            if self.constants is not None:
+                return self.value[self.constants.index(key)]
+            else:
+                raise ValueError("Named constant access to bitarray elements is not possible, as bitarray is not of fixed length.")
+
+    def __setitem__(self, key, value):
+        if isinstance(key, int):
+            if self.value is not None:
+                self.value[key] = value
+            else:
+                raise ValueError("Cannot access internal bitarray value, as it does not exist.")
+        else:
+            if self.constants is not None:
+                self.value[self.constants.index(key)] = value
+            else:
+                raise ValueError("Named constant access to bitarray elements is not possible, as bitarray is not of fixed length.")
 
     def canParse(self,
                  data,
@@ -117,7 +187,7 @@ class BitArray(AbstractType):
 
         >>> from netzob.all import *
 
-        >>> BitArray().canParse(TypeConverter.convert("hello netzob", ASCII, BitArray))
+        >>> BitArray().canParse(TypeConverter.convert("hello netzob", String, BitArray))
         True
 
         >>> b = BitArray(nbBits=8)
@@ -180,7 +250,7 @@ class BitArray(AbstractType):
 
         >>> from netzob.all import *
         >>> from netzob.Model.Vocabulary.Types.BitArray import BitArray
-        >>> d = ASCII.decode("hello netzob")
+        >>> d = String.decode("hello netzob")
         >>> r = BitArray.encode(d)
         >>> print(r.to01())
         011010000110010101101100011011000110111100100000011011100110010101110100011110100110111101100010
