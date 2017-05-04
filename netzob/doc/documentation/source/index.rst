@@ -8,7 +8,7 @@ Netzob documentation
 generation and fuzzing of communication protocols. It can be used to infer
 the message format and the state machine of a protocol through passive
 and active processes. The model can afterward be used to simulate
-realistic and controllable trafic.
+realistic and controllable traffic.
 
 The main :ref:`features<overview>` of Netzob are:
 
