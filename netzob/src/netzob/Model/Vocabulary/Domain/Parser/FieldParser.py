@@ -54,11 +54,11 @@ class FieldParser():
     This class can be use to parse some data against the specification of a field
 
     >>> from netzob.all import *
-    >>> f1 = Field(name="f1", domain=ASCII(nbChars=(1,10)))
+    >>> f1 = Field(name="f1", domain=String(nbChars=(1,10)))
     >>> print(f1.domain.svas)
     Ephemeral SVAS
     
-    >>> content = TypeConverter.convert("toto", ASCII, BitArray)
+    >>> content = TypeConverter.convert("toto", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignDataToField(content, f1)
@@ -69,8 +69,8 @@ class FieldParser():
     to
     t
 
-    >>> f1 = Field(name="f1", domain=Agg([ASCII(nbChars=(1,4)), ASCII(".txt")]))
-    >>> content = TypeConverter.convert("toto.txt", ASCII, BitArray)
+    >>> f1 = Field(name="f1", domain=Agg([String(nbChars=(1,4)), String(".txt")]))
+    >>> content = TypeConverter.convert("toto.txt", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignDataToField(content, f1)
@@ -78,8 +78,8 @@ class FieldParser():
     >>> print(b'\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
     toto.txt
     
-    >>> f1 = Field(name="f1", domain=Agg([ASCII("toto"), ASCII(" "), ASCII("tata")]))
-    >>> content = TypeConverter.convert("toto tata", ASCII, BitArray)
+    >>> f1 = Field(name="f1", domain=Agg([String("toto"), String(" "), String("tata")]))
+    >>> content = TypeConverter.convert("toto tata", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignDataToField(content, f1)
@@ -87,8 +87,8 @@ class FieldParser():
     >>> print(b'\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
     toto tata
 
-    >>> f1 = Field(name="f1", domain=Alt([ASCII("toto"), ("tata")]))
-    >>> content = TypeConverter.convert("toto", ASCII, BitArray)
+    >>> f1 = Field(name="f1", domain=Alt([String("toto"), ("tata")]))
+    >>> content = TypeConverter.convert("toto", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignDataToField(content, f1)
@@ -98,8 +98,8 @@ class FieldParser():
 
     # # Let's illustrate that our parser support multiple results
 
-    >>> f1 = Field(name="f1", domain=Alt([ASCII("toto"), ("to")]))
-    >>> content = TypeConverter.convert("toto", ASCII, BitArray)
+    >>> f1 = Field(name="f1", domain=Alt([String("toto"), ("to")]))
+    >>> content = TypeConverter.convert("toto", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignDataToField(content, f1)
@@ -111,7 +111,7 @@ class FieldParser():
     # Yes, the following example is (mostly) the reason for this last year's development :)
 
     >>> f1 = Field(name="f1", domain=Agg([Alt(["to", "toto"]), Alt(["to", "toto"])]))
-    >>> content = TypeConverter.convert("tototo", ASCII, BitArray)
+    >>> content = TypeConverter.convert("tototo", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignDataToField(content, f1)
@@ -121,8 +121,8 @@ class FieldParser():
     tototo
     tototo
 
-    >>> f1 = Field(name="f1", domain=Agg([ASCII(nbChars=(1,10)), ASCII(".txt")]))
-    >>> content = TypeConverter.convert("helloword.txt", ASCII, BitArray)
+    >>> f1 = Field(name="f1", domain=Agg([String(nbChars=(1,10)), String(".txt")]))
+    >>> content = TypeConverter.convert("helloword.txt", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignDataToField(content, f1)
@@ -130,8 +130,8 @@ class FieldParser():
     >>> print(b'\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
     helloword.txt
 
-    >>> f1 = Field(name="f1", domain=Agg([ASCII(nbChars=(1,10)), ASCII(".txt")]))
-    >>> content = TypeConverter.convert("helloword.tot", ASCII, BitArray)
+    >>> f1 = Field(name="f1", domain=Agg([String(nbChars=(1,10)), String(".txt")]))
+    >>> content = TypeConverter.convert("helloword.tot", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())

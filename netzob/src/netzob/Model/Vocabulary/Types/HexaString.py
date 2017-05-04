@@ -47,7 +47,7 @@ from bitarray import bitarray
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Model.Vocabulary.Types.Raw import Raw
-from netzob.Model.Vocabulary.Types.ASCII import ASCII
+from netzob.Model.Vocabulary.Types.String import String
 
 
 class HexaString(AbstractType):
@@ -88,9 +88,9 @@ class HexaString(AbstractType):
         """It verifies the value is a string which only includes hexadecimal values.
 
         >>> from netzob.all import *
-        >>> HexaString().canParse(TypeConverter.convert("0001020304050607080910", ASCII, Raw))
+        >>> HexaString().canParse(TypeConverter.convert("0001020304050607080910", String, Raw))
         True
-        >>> HexaString().canParse(TypeConverter.convert("hello", ASCII, Raw))
+        >>> HexaString().canParse(TypeConverter.convert("hello", String, Raw))
         False
 
         Let's generate random binary raw data, convert it to HexaString
@@ -123,12 +123,12 @@ class HexaString(AbstractType):
 
         # logger.warn("PAF: {0}".format(data))
 
-        # if not ASCII().canParse(data):
+        # if not String().canParse(data):
         #     logger.warn("OUPS: {0}".format(data))
         #     return False
 
         # try:
-        #     value = ASCII.encode(data)
+        #     value = String.encode(data)
         # except:
         #     return False
 

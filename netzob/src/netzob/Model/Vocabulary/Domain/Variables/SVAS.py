@@ -89,8 +89,8 @@ class SVAS(object):
 
       >>> from netzob.all import *
       >>> f = Field()
-      >>> value = TypeConverter.convert("netzob", ASCII, BitArray)
-      >>> f.domain = Data(dataType=ASCII(), originalValue=value, svas=SVAS.CONSTANT)
+      >>> value = TypeConverter.convert("netzob", String, BitArray)
+      >>> f.domain = Data(dataType=String(), originalValue=value, svas=SVAS.CONSTANT)
       >>> s = Symbol(name="S0", fields=[f])
       >>> msg1 = RawMessage("netzob")
       >>> mp = MessageParser()
@@ -114,8 +114,8 @@ class SVAS(object):
   
       >>> from netzob.all import *
       >>> f = Field()
-      >>> value = TypeConverter.convert("netzob", ASCII, BitArray)
-      >>> f.domain = Data(dataType=ASCII(), originalValue=value, svas=SVAS.CONSTANT)
+      >>> value = TypeConverter.convert("netzob", String, BitArray)
+      >>> f.domain = Data(dataType=String(), originalValue=value, svas=SVAS.CONSTANT)
       >>> s = Symbol(name="S0", fields=[f])
       >>> ms = MessageSpecializer()
       >>> print(ms.specializeSymbol(s).generatedContent)
@@ -131,7 +131,7 @@ class SVAS(object):
       
       >>> from netzob.all import *
       >>> f = Field()
-      >>> f.domain = Data(dataType=ASCII(nbChars=(5, 10)), svas=SVAS.CONSTANT)
+      >>> f.domain = Data(dataType=String(nbChars=(5, 10)), svas=SVAS.CONSTANT)
       >>> s = Symbol(name="S0", fields=[f])
       >>> ms = MessageSpecializer()
       >>> print(ms.specializeSymbol(s).generatedContent)
@@ -155,7 +155,7 @@ class SVAS(object):
 
       >>> from netzob.all import *
       >>> f = Field()
-      >>> f.domain = Data(dataType=ASCII(nbChars=(5, 10)), svas=SVAS.PERSISTENT)
+      >>> f.domain = Data(dataType=String(nbChars=(5, 10)), svas=SVAS.PERSISTENT)
       >>> s = Symbol(name="S0", fields=[f])
       >>> msg1 = RawMessage("netzob")
       >>> msg2 = RawMessage("netzob")
@@ -181,8 +181,8 @@ class SVAS(object):
 
       >>> from netzob.all import *
       >>> f = Field()
-      >>> value = TypeConverter.convert("netzob", ASCII, BitArray)
-      >>> f.domain = Data(dataType=ASCII(), originalValue=value, svas=SVAS.PERSISTENT)
+      >>> value = TypeConverter.convert("netzob", String, BitArray)
+      >>> f.domain = Data(dataType=String(), originalValue=value, svas=SVAS.PERSISTENT)
       >>> s = Symbol(name="S0", fields=[f])
       >>> ms = MessageSpecializer()
       >>> print(ms.specializeSymbol(s).generatedContent)
@@ -192,7 +192,7 @@ class SVAS(object):
 
       >>> from netzob.all import *
       >>> f = Field()
-      >>> f.domain = Data(dataType=ASCII(nbChars=5), svas=SVAS.PERSISTENT)
+      >>> f.domain = Data(dataType=String(nbChars=5), svas=SVAS.PERSISTENT)
       >>> s = Symbol(name="S0", fields=[f])
       >>> ms = MessageSpecializer()
       >>> generated1 = ms.specializeSymbol(s).generatedContent
@@ -223,7 +223,7 @@ class SVAS(object):
   
       >>> from netzob.all import *
       >>> f = Field()
-      >>> f.domain = Data(dataType=ASCII(nbChars=(5, 10)), svas=SVAS.EPHEMERAL)
+      >>> f.domain = Data(dataType=String(nbChars=(5, 10)), svas=SVAS.EPHEMERAL)
       >>> s = Symbol(name="S0", fields=[f])
       >>> msg1 = RawMessage("netzob")
       >>> msg2 = RawMessage("netzob")
@@ -232,15 +232,15 @@ class SVAS(object):
       >>> print(mp.parseMessage(msg1, s))
       [bitarray('011011100110010101110100011110100110111101100010')]
       >>> print(mp.memory)
-      Data (ASCII=None ((40, 80))): b'netzob'
+      Data (String=None ((40, 80))): b'netzob'
       >>> print(mp.parseMessage(msg2, s))
       [bitarray('011011100110010101110100011110100110111101100010')]
       >>> print(mp.memory)
-      Data (ASCII=None ((40, 80))): b'netzob'
+      Data (String=None ((40, 80))): b'netzob'
       >>> print(mp.parseMessage(msg3, s))
       [bitarray('011011100110010101110100011110100110000101100010')]
       >>> print(mp.memory)
-      Data (ASCII=None ((40, 80))): b'netzab'
+      Data (String=None ((40, 80))): b'netzab'
 
 
       The following examples show the **specialization of an ephemeral
@@ -248,8 +248,8 @@ class SVAS(object):
 
       >>> from netzob.all import *
       >>> f = Field()
-      >>> value = TypeConverter.convert("netzob", ASCII, BitArray)
-      >>> f.domain = Data(dataType=ASCII(), originalValue=value, svas=SVAS.EPHEMERAL)
+      >>> value = TypeConverter.convert("netzob", String, BitArray)
+      >>> f.domain = Data(dataType=String(), originalValue=value, svas=SVAS.EPHEMERAL)
       >>> s = Symbol(name="S0", fields=[f])
       >>> ms = MessageSpecializer()
       >>> print(ms.memory.hasValue(f.domain))
@@ -265,7 +265,7 @@ class SVAS(object):
   
       >>> from netzob.all import *
       >>> f = Field()
-      >>> f.domain = Data(dataType=ASCII(nbChars=(5, 10)), svas=SVAS.EPHEMERAL)
+      >>> f.domain = Data(dataType=String(nbChars=(5, 10)), svas=SVAS.EPHEMERAL)
       >>> s = Symbol(name="S0", fields=[f])
       >>> ms = MessageSpecializer()
       >>> print(ms.memory.hasValue(f.domain))
@@ -294,7 +294,7 @@ class SVAS(object):
   
       >>> from netzob.all import *
       >>> f = Field()
-      >>> f.domain = Data(dataType=ASCII(nbChars=(5, 10)), svas=SVAS.VOLATILE)
+      >>> f.domain = Data(dataType=String(nbChars=(5, 10)), svas=SVAS.VOLATILE)
       >>> s = Symbol(name="S0", fields=[f])
       >>> msg1 = RawMessage("netzob")
       >>> msg2 = RawMessage("netzob")
@@ -319,7 +319,7 @@ class SVAS(object):
 
       >>> from netzob.all import *
       >>> f = Field()
-      >>> f.domain = Data(dataType=ASCII(nbChars=(5,10)), svas=SVAS.VOLATILE)
+      >>> f.domain = Data(dataType=String(nbChars=(5,10)), svas=SVAS.VOLATILE)
       >>> s = Symbol(name="S0", fields=[f])
       >>> ms = MessageSpecializer()
       >>> print(ms.memory.hasValue(f.domain))

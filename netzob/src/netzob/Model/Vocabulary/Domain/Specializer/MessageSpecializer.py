@@ -48,7 +48,7 @@ from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import Speciali
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
-from netzob.Model.Vocabulary.Types.ASCII import ASCII
+from netzob.Model.Vocabulary.Types.String import String
 from netzob.Model.Vocabulary.Field import Field
 
 
@@ -61,7 +61,7 @@ class MessageSpecializer(object):
     >>> f1 = Field()
     >>> f2 = Field(Raw(nbBytes=(2, 100)))
     >>> f1.domain = Size(f2)
-    >>> f3 = Field(ASCII(';'))
+    >>> f3 = Field(String(';'))
     >>> f4 = Field(Value(f2))
     >>> s = Symbol(fields=[f0, f1, f2, f3, f4])
     >>> msgs = [RawMessage(s.specialize()) for i in range(1)]
@@ -76,22 +76,22 @@ class MessageSpecializer(object):
     >>> valueInTab[2] == valueInTab[4]
     True
 
-    >>> f11 = Field(domain=ASCII("hello"), name="F11")
-    >>> f12 = Field(domain=ASCII(";"), name="F12")
-    >>> f13 = Field(domain=ASCII(nbChars=(5,10)), name="F13")
+    >>> f11 = Field(domain=String("hello"), name="F11")
+    >>> f12 = Field(domain=String(";"), name="F12")
+    >>> f13 = Field(domain=String(nbChars=(5,10)), name="F13")
     >>> s1 = Symbol(fields=[f11, f12, f13], name="S1")
 
-    >>> f21 = Field(domain=ASCII("master"), name="F21")
-    >>> f22 = Field(domain=ASCII(">"), name="F22")
+    >>> f21 = Field(domain=String("master"), name="F21")
+    >>> f22 = Field(domain=String(">"), name="F22")
     >>> f23 = Field(domain=Value(f13), name="F23")
     >>> s2 = Symbol(fields=[f21, f22, f23])
 
     >>> ms = MessageSpecializer()
-    >>> m1 = TypeConverter.convert(ms.specializeSymbol(s1).generatedContent, BitArray, ASCII)
+    >>> m1 = TypeConverter.convert(ms.specializeSymbol(s1).generatedContent, BitArray, String)
     >>> m1.startswith("hello;")
     True
 
-    >>> m2 = TypeConverter.convert(ms.specializeSymbol(s2).generatedContent, BitArray, ASCII)
+    >>> m2 = TypeConverter.convert(ms.specializeSymbol(s2).generatedContent, BitArray, String)
     >>> m2.startswith("master>")
     True
 
@@ -182,7 +182,7 @@ class MessageSpecializer(object):
 
         self._logger.debug("Specialized message: {0}".format(
             TypeConverter.convert(retainedPath.generatedContent, BitArray,
-                                  ASCII)))
+                                  String)))
         self.memory = retainedPath.memory
 
         return retainedPath

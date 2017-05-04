@@ -92,11 +92,11 @@ class Symbol(AbstractField):
     >>> print(symbol._str_debug())
     Symbol
     |--  Field
-         |--   Data (ASCII=aaaa ((0, 32)))
+         |--   Data (String=aaaa ((0, 32)))
     |--  Field
-         |--   Data (ASCII= #  ((0, 24)))
+         |--   Data (String= #  ((0, 24)))
     |--  Field
-         |--   Data (ASCII=bbbbbb ((0, 48)))
+         |--   Data (String=bbbbbb ((0, 48)))
 
     **Usage of Symbol for protocol dissecting**
 
@@ -105,7 +105,7 @@ class Symbol(AbstractField):
 
     >>> from netzob.all import *
     >>> f0 = Field("hello", name="f0")
-    >>> f1 = Field(ASCII(nbChars=(0, 10)), name="f1")
+    >>> f1 = Field(String(nbChars=(0, 10)), name="f1")
     >>> m1 = RawMessage("hello world")
     >>> m2 = RawMessage("hello earth")
     >>> symbol = Symbol(fields=[f0, f1], messages=[m1, m2])
@@ -204,10 +204,10 @@ class Symbol(AbstractField):
         :type presets: :class:`dict`
 
         The following example shows the specialize() method used for a
-        field which contains an ASCII and a Size fields.
+        field which contains an String and a Size fields.
 
         >>> from netzob.all import *
-        >>> f1 = Field(domain=ASCII(nbChars=5))
+        >>> f1 = Field(domain=String(nbChars=5))
         >>> f0 = Field(domain=Size(f1))
         >>> s = Symbol(fields=[f0, f1])
         >>> result = s.specialize()

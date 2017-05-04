@@ -67,12 +67,12 @@ class Agg(AbstractVariableNode):
 
 
     For example, the following code represents a field which
-    accepts values that are made of an ASCII of 3 to 20 random
+    accepts values that are made of an String of 3 to 20 random
     characters followed by a ".txt" extension:
 
     >>> from netzob.all import *
-    >>> t1 = ASCII(nbChars=(3,20))
-    >>> t2 = ASCII(".txt")
+    >>> t1 = String(nbChars=(3,20))
+    >>> t2 = String(".txt")
     >>> f = Field(Agg([t1, t2]))
 
     The following example shows an aggregate between BitArray
@@ -89,13 +89,13 @@ class Agg(AbstractVariableNode):
 
     **Examples of Agg internal attributes access**
 
-    >>> domain = Agg([Raw(), ASCII()])
+    >>> domain = Agg([Raw(), String()])
     >>> print(domain.varType)
     Agg
     >>> print(domain.children[0].dataType)
     Raw=None ((0, None))
     >>> print(domain.children[1].dataType)
-    ASCII=None ((0, None))
+    String=None ((0, None))
     >>> domain.children.append(Agg([10, 20, 30]))
     >>> print(len(domain.children))
     3
@@ -110,10 +110,10 @@ class Agg(AbstractVariableNode):
     variable:
 
     >>> from netzob.all import *
-    >>> v1 = ASCII(nbChars=(1, 10))
-    >>> v2 = ASCII(".txt")
+    >>> v1 = String(nbChars=(1, 10))
+    >>> v2 = String(".txt")
     >>> f0 = Field(Agg([v1, v2]), name="f0")
-    >>> f1 = Field(ASCII("!"))
+    >>> f1 = Field(String("!"))
     >>> s = Symbol([f0, f1])
     >>> msg1 = RawMessage("netzob.txt!")
     >>> mp = MessageParser()
@@ -139,8 +139,8 @@ class Agg(AbstractVariableNode):
     variable:
 
     >>> from netzob.all import *
-    >>> d1 = ASCII("hello")
-    >>> d2 = ASCII(" netzob")
+    >>> d1 = String("hello")
+    >>> d2 = String(" netzob")
     >>> f = Field(Agg([d1, d2]))
     >>> s = Symbol(fields=[f])
     >>> print(s.specialize())

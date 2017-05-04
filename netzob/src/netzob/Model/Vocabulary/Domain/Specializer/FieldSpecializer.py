@@ -63,47 +63,47 @@ class FieldSpecializer(object):
     >>> print(TypeConverter.convert(fs.specialize()[0].getDataAssignedToField(f), BitArray, Raw))
     b'Hello'
 
-    >>> f = Field(ASCII(nbChars=10))
+    >>> f = Field(String(nbChars=10))
     >>> fs = FieldSpecializer(f)
     >>> print(len(fs.specialize()[0].getDataAssignedToField(f)))
     80
 
-    >>> f = Field(ASCII(nbChars=(4, 10)))
+    >>> f = Field(String(nbChars=(4, 10)))
     >>> fs = FieldSpecializer(f)
     >>> print(32<=len(fs.specialize()[0].getDataAssignedToField(f))<=80)
     True
 
-    >>> d = Alt([ASCII("netzob"), ASCII("zoby")])
+    >>> d = Alt([String("netzob"), String("zoby")])
     >>> f = Field(d)
     >>> fs = FieldSpecializer(f)
-    >>> val = set([TypeConverter.convert(fs.specialize()[0].getDataAssignedToField(f), BitArray, ASCII) for x in range(100)])
+    >>> val = set([TypeConverter.convert(fs.specialize()[0].getDataAssignedToField(f), BitArray, String) for x in range(100)])
     >>> print(sorted(val))
     ['netzob', 'zoby']
 
-    >>> d = Agg([ASCII("hello"), ASCII(" "), Alt([ASCII("netzob"), ASCII("zoby")])])
+    >>> d = Agg([String("hello"), String(" "), Alt([String("netzob"), String("zoby")])])
     >>> f = Field(d)
     >>> fs = FieldSpecializer(f)
-    >>> val = set([TypeConverter.convert(fs.specialize()[0].getDataAssignedToField(f), BitArray, ASCII) for x in range(100)])
+    >>> val = set([TypeConverter.convert(fs.specialize()[0].getDataAssignedToField(f), BitArray, String) for x in range(100)])
     >>> print(sorted(val))
     ['hello netzob', 'hello zoby']
 
     >>> fpayload = Field()
-    >>> f1 = Field(ASCII("hello "), name="f1")
-    >>> f2 = Field(ASCII("zoby!"), name="f2")
+    >>> f1 = Field(String("hello "), name="f1")
+    >>> f2 = Field(String("zoby!"), name="f2")
     >>> fpayload.fields = [f1, f2]
     >>> print(fpayload._str_debug())
     Field
     |--  f1
-         |--   Data (ASCII=hello  ((0, 48)))
+         |--   Data (String=hello  ((0, 48)))
     |--  f2
-         |--   Data (ASCII=zoby! ((0, 40)))
+         |--   Data (String=zoby! ((0, 40)))
     >>> fs = FieldSpecializer(fpayload)
     >>> result = fs.specialize()[0]
-    >>> TypeConverter.convert(result.getDataAssignedToField(fpayload), BitArray, ASCII)
+    >>> TypeConverter.convert(result.getDataAssignedToField(fpayload), BitArray, String)
     'hello zoby!'
-    >>> TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, ASCII)
+    >>> TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, String)
     'hello '
-    >>> TypeConverter.convert(result.getDataAssignedToField(f2), BitArray, ASCII)
+    >>> TypeConverter.convert(result.getDataAssignedToField(f2), BitArray, String)
     'zoby!'
 
     """

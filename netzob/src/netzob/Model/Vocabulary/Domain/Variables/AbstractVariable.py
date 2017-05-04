@@ -236,7 +236,7 @@ class AbstractVariable(object):
     #     """A list containing all variables which value is bind to the value of this variable.
 
     #     >>> from netzob.all import *
-    #     >>> d1 = Data(ASCII())
+    #     >>> d1 = Data(String())
     #     >>> len(d1.boundedVariables)
     #     0
     #     >>> d2 = Data(Integer())

@@ -236,7 +236,7 @@ class Raw(AbstractType):
         """Computes if specified data can be parsed as raw which is always the case if the data is at least 1 length and aligned on a byte.
 
         >>> from netzob.all import *
-        >>> Raw().canParse(TypeConverter.convert("hello netzob", ASCII, BitArray))
+        >>> Raw().canParse(TypeConverter.convert("hello netzob", String, BitArray))
         True
 
         The ascii table is defined from 0 to 127:

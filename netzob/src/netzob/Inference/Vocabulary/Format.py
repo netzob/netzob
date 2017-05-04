@@ -196,14 +196,14 @@ class Format(object):
     @typeCheck(AbstractField, AbstractType)
     def splitDelimiter(field, delimiter):
         """Split a field (or symbol) with a specific delimiter. The
-        delimiter can be passed either as an ASCII, a Raw, an
+        delimiter can be passed either as an String, a Raw, an
         HexaString, or any objects that inherit from AbstractType.
 
         >>> from netzob.all import *
         >>> samples = ["aaaaff000000ff10",	"bbff110010ff00000011",	"ccccccccfffe1f000000ff12"]
         >>> messages = [RawMessage(data=sample) for sample in samples]
         >>> symbol = Symbol(messages=messages[:3])
-        >>> Format.splitDelimiter(symbol, ASCII("ff"))
+        >>> Format.splitDelimiter(symbol, String("ff"))
         >>> print(symbol)
         Field-0    | Field-sep-6666 | Field-2      | Field-sep-6666 | Field-4   
         ---------- | -------------- | ------------ | -------------- | ----------
@@ -222,7 +222,7 @@ class Format(object):
         8
         >>> symbol = Symbol(messages=[RawMessage(TypeConverter.convert(sample, HexaString, Raw)) for sample in samples])
         >>> symbol.encodingFunctions.add(TypeEncodingFunction(HexaString))
-        >>> Format.splitDelimiter(symbol, ASCII('#'))
+        >>> Format.splitDelimiter(symbol, String('#'))
         >>> print(symbol)
         Field-0                      | Field-sep-23 | Field-2                     
         ---------------------------- | ------------ | ----------------------------
@@ -388,8 +388,8 @@ class Format(object):
         ...     time.sleep(0.2)
         >>> session = Session(messages=messages)
         >>> appDatas = []
-        >>> appDatas.append(ApplicativeData("ACK", ASCII("ack")))
-        >>> appDatas.append(ApplicativeData("SYN", ASCII("syn")))
+        >>> appDatas.append(ApplicativeData("ACK", String("ack")))
+        >>> appDatas.append(ApplicativeData("SYN", String("syn")))
         >>> session.applicativeData = appDatas
         >>> symbols = Format.clusterByApplicativeData(messages)
         >>> for symbol in sorted(symbols, key=operator.attrgetter("name")):

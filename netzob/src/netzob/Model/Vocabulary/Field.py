@@ -115,7 +115,7 @@ class Field(AbstractField):
 
     The value that can take a field is defined by its definition
     domain. The definition domain of a field can take multiple forms,
-    in order to easily express basic types (such as Integer or ASCII
+    in order to easily express basic types (such as Integer or String
     strings) or to model complex data structures (such has
     alternatives, repetitions or sequences).
 
@@ -151,11 +151,11 @@ class Field(AbstractField):
     field. Such relationships may be specified in Netzob through
     specific domain objects, such as Size or Value classes.
 
-    The following example describes a size relationship with an ASCII
+    The following example describes a size relationship with an String
     field:
     
     >>> from netzob.all import *
-    >>> f0 = Field(ASCII("test"))
+    >>> f0 = Field(String("test"))
     >>> f1 = Field(Size(f0))
     >>> symbol = Symbol(fields=[f0, f1])
     >>> print(symbol.specialize())
@@ -193,8 +193,8 @@ class Field(AbstractField):
     >>> m2 = "hello bXkgbG9yZA=="
     >>> m3 = "hello d29ybGQ="
     >>> messages = [RawMessage(m1), RawMessage(m2), RawMessage(m3)]
-    >>> f0 = Field(name="f0", domain=ASCII("hello "))
-    >>> f1 = Field(name="f1", domain=ASCII(nbChars=(0, 20)))
+    >>> f0 = Field(name="f0", domain=String("hello "))
+    >>> f1 = Field(name="f1", domain=String(nbChars=(0, 20)))
     >>> s = Symbol(fields=[f0, f1], messages=messages)
     >>> print(s)
     f0       | f1            
@@ -236,25 +236,25 @@ class Field(AbstractField):
 
       >>> f = Field(IPv4())
 
-    * a field representing a random ASCII of 6 characters length:
+    * a field representing a random String of 6 characters length:
 
-      >>> f = Field(ASCII(nbChars=6))
+      >>> f = Field(String(nbChars=6))
 
-    * a field representing a random ASCII with between 5 and 20 characters:
+    * a field representing a random String with between 5 and 20 characters:
 
-      >>> payloadField = Field(ASCII(nbChars=(5, 20)))
+      >>> payloadField = Field(String(nbChars=(5, 20)))
 
     * a field whose value is the size of the payloadField:
 
       >>> f = Field([Size(payloadField)])
 
-    * a field representing an alternative between two differents ASCII strings, either "netzob" or "zoby":
+    * a field representing an alternative between two differents String strings, either "netzob" or "zoby":
 
       >>> f = Field(["netzob", "zoby"])
 
-    * a field representing a decimal (10) or an ASCII of 16 chars:
+    * a field representing a decimal (10) or an String of 16 chars:
 
-      >>> f = Field([10, ASCII(nbChars=(16))])
+      >>> f = Field([10, String(nbChars=(16))])
 
     """
 

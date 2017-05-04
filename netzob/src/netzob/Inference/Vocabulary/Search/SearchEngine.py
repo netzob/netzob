@@ -156,7 +156,7 @@ class SearchEngine(object):
         >>> tools = ["Netzob", "zoby", "toto", "your hand", "a knive"]
         >>> places = ["my office", "school", "your bedroom", "your car", "hell"]
         >>> msgs = [ RawMessage("Reversing {0} with {1} in {2} !".format(s, w, p).encode('utf-8')) for s in stuff for w in tools for p in places]
-        >>> sData = [ ASCII("protocol"), ASCII("Reversed"), Integer(10)]
+        >>> sData = [ String("protocol"), String("Reversed"), Integer(10)]
         >>> se = SearchEngine()
         >>> results = se.searchDataInMessages(sData, msgs, inParallel=False)
         >>> print(results)
@@ -171,7 +171,7 @@ class SearchEngine(object):
         >>> msgs = [ RawMessage("Reversing {0} with {1} in {2}!".format(s, w, p)) for s in stuff for w in tools for p in places]
         >>> print(len(msgs))
         150
-        >>> sData = [ASCII("protocol"), ASCII("Reversed"), Integer(10)]
+        >>> sData = [String("protocol"), String("Reversed"), Integer(10)]
         >>> se = SearchEngine()
         >>> results = se.searchDataInMessages(sData, msgs, inParallel=True)
         >>> print(results)
@@ -261,7 +261,7 @@ class SearchEngine(object):
 
         >>> from netzob.all import *
         >>> message = RawMessage(b"Reversing protocols with Netzob")
-        >>> sData = [ASCII("protocol")]
+        >>> sData = [String("protocol")]
         >>> se = SearchEngine()
         >>> results = se.searchDataInMessage(sData, message)
         >>> print(results)

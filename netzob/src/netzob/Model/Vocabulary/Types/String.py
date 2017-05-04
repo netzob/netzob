@@ -51,50 +51,76 @@ from netzob.Common.Utils.Decorators import NetzobLogger, typeCheck
 
 
 @NetzobLogger
-class ASCII(AbstractType):
-    """This class defines an ASCII type.
+class String(AbstractType):
+    """This class defines a String type, in order to represent String or
+    Unicode characters.
 
-    The type ASCII is a wrapper for the Python :class:`str` object
+    The type String is a wrapper for the Python :class:`str` object
     with the capability to express more constraints on the permitted
     strings values.
 
-    The ASCII constructor expects some parameters:
+    The String constructor expects some parameters:
 
     :param value: The current value of the type instance.
-    :param nbChars: The amount of permitted ASCII characters.
+    :param nbChars: The amount of permitted String characters.
+    :param encoding: The encoding of the string, such as 'ascii' or 'utf-8'. Default value is 'utf-8'.
     :param unitSize: Not implemented.
     :param endianness: Not implemented.
     :param sign: Not implemented.
     :type value: :class:`bitarray.bitarray`, optional
     :type nbChars: an :class:`int` or a tupple with the min and the max size specified as :class:`int`, optional
+    :type encoding: :class:`str`, optional
 
-    Netzob allows describing a field that contains an ASCII
-    string. ASCII strings can be either static or dynamic with fixed
+    
+    Supported encodings are available on the Python reference documentation:
+
+    .. _Python Standard Encodings: https://docs.python.org/3.4/library/codecs.html#standard-encodings
+
+
+    Netzob allows to describe a field that contains an String
+    string. String strings can be either static or dynamic with fixed
     sizes or even dynamic with variable sizes.
 
-    The following example shows how to define a static ASCII string:
+    The following examples show how to define a static string in UTF-8:
 
     >>> from netzob.all import *
-    >>> f = Field(ASCII("Paris"))
+    >>> Field(String("Paris")).specialize()
+    b'Paris'
 
-    The following example shows how to define an ASCII string with a
+    >>> Field(String("Paris in Euro: €")).specialize()
+    b'Paris in Euro: \xe2\x82\xac'
+
+    >>> Field(String("Paris in Euro: €", encoding='utf-8')).specialize()
+    b'Paris in Euro: \xe2\x82\xac'
+
+    The following example shows the raising of an exception if input
+    value is not valid, with the definition of an String String where
+    the associated value contains a non-String element:
+
+    >>> Field(String("Paris €", encoding='ascii')).specialize()  # doctest: +IGNORE_EXCEPTION_DETAIL
+    Traceback (most recent call last):
+    ...
+    ValueError: Input value for the following string is incorrect: 'Paris €'...
+
+    The following example shows how to define an String string with a
     fixed size and a dynamic content:
 
-    >>> f = Field(ASCII(nbChars=10))
+    >>> f = Field(String(nbChars=10))
 
-    The following example shows how to define an ASCII string with a
+    The following example shows how to define an String string with a
     variable size and a dynamic content:
 
-    >>> f = Field(ASCII(nbChars=(10, 32)))
+    >>> f = Field(String(nbChars=(10, 32)))
 
-    **Examples of ASCII internal attributes access**
+
+    **Examples of String internal attributes access**
 
     >>> from netzob.all import *
-    >>> cAscii = ASCII("hello")
+    >>> cAscii = String("hello")
     >>> print(cAscii)
-    ASCII=hello ((0, 40))
+    String=hello ((0, 40))
     >>> print(cAscii.typeName)
-    ASCII
+    String
     >>> print(cAscii.value)
     bitarray('0110100001100101011011000110110001101111')
 
@@ -109,11 +135,11 @@ class ASCII(AbstractType):
     >>> ip = cAscii.convertValue(IPv4)
     Traceback (most recent call last):
     ...
-    TypeError: Impossible encode b'hello' into an IPv4 data (unpack requires a bytes object of length 4)
+    TypeError: Impossible to encode b'hello' into an IPv4 data (unpack requires a bytes object of length 4)
 
     The type can be used to specify constraints over the domain:
 
-    >>> a = ASCII(nbChars=10)
+    >>> a = String(nbChars=10)
     >>> print(a.value)
     None
 
@@ -129,15 +155,33 @@ class ASCII(AbstractType):
     def __init__(self,
                  value=None,
                  nbChars=(None, None),
+                 encoding='utf-8',
                  unitSize=AbstractType.defaultUnitSize(),
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign()):
+        self.encoding = encoding
         if value is not None and not isinstance(value, bitarray):
+
+            # Check if value is correct, and normalize it in str object
+            if isinstance(value, bytes):
+                try:
+                    value = value.decode(self.encoding)
+                except Exception as e:
+                    raise ValueError("Input value for the following string is incorrect: '{}'. Error: '{}'".format(value, e))
+            elif isinstance(value, str):
+                try:
+                    value.encode(self.encoding)
+                except Exception as e:
+                    raise ValueError("Input value for the following string is incorrect: '{}'. Error: '{}'".format(value, e))
+            else:
+                raise ValueError("Unsupported input format for value: '{}', type: '{}'".format(value, type(value)))
+
+            # Convert value to bitarray
             from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
             from netzob.Model.Vocabulary.Types.BitArray import BitArray
             value = TypeConverter.convert(
                 value,
-                ASCII,
+                String,
                 BitArray,
                 src_unitSize=unitSize,
                 src_endianness=endianness,
@@ -151,7 +195,7 @@ class ASCII(AbstractType):
         self.nbChars = nbChars
         nbBits = self._convertNbCharsInNbBits(self.nbChars)
 
-        super(ASCII, self).__init__(
+        super(String, self).__init__(
             self.__class__.__name__,
             value,
             nbBits,
@@ -174,15 +218,15 @@ class ASCII(AbstractType):
         return (nbMinBit, nbMaxBit)
 
     def generate(self, generationStrategy=None):
-        """Generates a random ASCII that respects the requested size.
+        """Generates a random String that respects the requested size.
 
         >>> from netzob.all import *
-        >>> a = ASCII(nbChars=10)
+        >>> a = String(nbChars=10)
         >>> gen = a.generate()
         >>> len(gen)/8
         10.0
 
-        >>> b = ASCII("netzob")
+        >>> b = String("netzob")
         >>> gen = b.generate()
         >>> print(len(gen)>0)
         True
@@ -199,25 +243,25 @@ class ASCII(AbstractType):
 
         generatedSize = random.randint(minSize, maxSize)
         randomContent = ''.join([
-            random.choice(string.ascii_letters + string.digits)
+            random.choice(string.printable)
             for i in range(generatedSize)
         ])
-        return TypeConverter.convert(randomContent, ASCII, BitArray)
+        return TypeConverter.convert(randomContent, String, BitArray)
 
     @typeCheck(str)
     def mutate(self, prefixDescription=None):
-        """Generate various mutations of the current ASCII value.
+        """Generate various mutations of the current String value.
 
-        Mutations are first applied on the ASCII value than, each obtained mutations generates
+        Mutations are first applied on the String value than, each obtained mutations generates
         new bitarray mutations.
-        ASCII mutations are:
+        String mutations are:
 
         * Original Version
         * Original Version in Upper case
         * Original Version in Lower case
 
         >>> from netzob.all import *
-        >>> t = ASCII("helloworld")
+        >>> t = String("helloworld")
         >>> values = t.mutate()
         >>> print(values['ascii(upper)-bits(littleEndian)'])
         bitarray('00010010101000100011001000110010111100101110101011110010010010100011001000100010')
@@ -243,7 +287,7 @@ class ASCII(AbstractType):
         else:
             val = self.value
 
-        strValue = TypeConverter.convert(val, BitArray, ASCII)
+        strValue = TypeConverter.convert(val, BitArray, String)
 
         mutations = collections.OrderedDict()
 
@@ -264,7 +308,7 @@ class ASCII(AbstractType):
         results = collections.OrderedDict()
         for mutationName, mutationValue in list(mutations.items()):
             ba = BitArray(
-                TypeConverter.convert(mutationValue, ASCII, BitArray))
+                TypeConverter.convert(mutationValue, String, BitArray))
             results.update(ba.mutate(mutationName))
 
         return results
@@ -274,31 +318,31 @@ class ASCII(AbstractType):
                  unitSize=AbstractType.defaultUnitSize(),
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign()):
-        """This method returns True if data is an ASCII (utf-8)
+        """This method returns True if data is an String (utf-8)
 
         >>> from netzob.all import *
-        >>> ASCII().canParse(TypeConverter.convert("hello netzob", ASCII, BitArray))
+        >>> String().canParse(TypeConverter.convert("hello netzob", String, BitArray))
         True
 
         The ascii table is defined from 0 to 127:
-        >>> ASCII().canParse(TypeConverter.convert(128, Integer, BitArray, src_sign=AbstractType.SIGN_UNSIGNED))
+        >>> String().canParse(TypeConverter.convert(128, Integer, BitArray, src_sign=AbstractType.SIGN_UNSIGNED))
         False
 
-        >>> a = ASCII(nbChars=10)
-        >>> a.canParse(TypeConverter.convert("hellohello", ASCII, BitArray))
+        >>> a = String(nbChars=10)
+        >>> a.canParse(TypeConverter.convert("hellohello", String, BitArray))
         True
-        >>> a.canParse(TypeConverter.convert("hello hello", ASCII, BitArray))
+        >>> a.canParse(TypeConverter.convert("hello hello", String, BitArray))
         False
 
-        >>> a = ASCII(nbChars=(2,20))
-        >>> a.canParse(TypeConverter.convert("Netzob", ASCII, BitArray))
+        >>> a = String(nbChars=(2,20))
+        >>> a.canParse(TypeConverter.convert("Netzob", String, BitArray))
         True
-        >>> a.canParse(TypeConverter.convert("Hello netzob, what's up ?", ASCII, BitArray))
+        >>> a.canParse(TypeConverter.convert("Hello netzob, what's up ?", String, BitArray))
         False
 
         :param data: the data to check
         :type data: python raw
-        :return: True if data can be parsed as an ASCII
+        :return: True if data can be parsed as an String
         :rtype: bool
         :raise: TypeError if the data is None
         """
@@ -316,7 +360,7 @@ class ASCII(AbstractType):
         rawData = data.tobytes()
 
         try:
-            rawData.decode('utf-8')
+            rawData.decode(self.encoding)
         except:
             return False
 
@@ -366,14 +410,14 @@ class ASCII(AbstractType):
         """This method convert the specified data in python raw format.
 
         >>> from netzob.all import *
-        >>> ASCII.decode("hello")
+        >>> String.decode("hello")
         b'hello'
-        >>> ASCII.decode('\x5a\x6f\x62\x79\x20\x69\x73\x20\x64\x61\x20\x70\x6c\x61\x63\x65\x20\x21')
-        b'Zoby is da place !'
-        >>> ASCII.decode(1021)
+        >>> String.decode('\x4a\x6f\x68\x6e\x20\x69\x73\x20\x69\x6e\x20\x74\x68\x65\x20\x6b\x69\x74\x63\x68\x65\x6e\x21')
+        b'John is in the kitchen!'
+        >>> String.decode(1021)
         b'1021'
 
-        :param data: the data encoded in ASCII which will be decoded in raw
+        :param data: the data encoded in String which will be decoded in raw
         :type data: the current type
         :keyword unitSize: the unitsize to consider while encoding. Values must be one of AbstractType.UNITSIZE_*
         :type unitSize: str
@@ -396,12 +440,12 @@ class ASCII(AbstractType):
                unitSize=AbstractType.defaultUnitSize(),
                endianness=AbstractType.defaultEndianness(),
                sign=AbstractType.defaultSign()):
-        """This method convert the python raw data to the ASCII.
+        """This method convert the python raw data to the String.
 
         >>> from netzob.all import *
-        >>> raw = ASCII.decode("hello zoby!")
-        >>> print(ASCII.encode(raw))
-        hello zoby!
+        >>> raw = String.decode("hello john!")
+        >>> print(String.encode(raw))
+        hello john!
 
         :param data: the data encoded in python raw which will be encoded in current type
         :type data: python raw
@@ -427,3 +471,20 @@ class ASCII(AbstractType):
                 res += "."
 
         return res
+
+    @property
+    def encoding(self):
+        """The encoding of the current value, such as 'ascii' or 'utf-8'.
+
+        :type: `str`
+        :raises: :class: `TypeError` if encoding is not a str object.
+
+        """
+        return self.__encoding
+
+    @encoding.setter
+    @typeCheck(str)
+    def encoding(self, encoding):
+        if encoding is None:
+            raise TypeError("Encoding cannot be None")
+        self.__encoding = encoding

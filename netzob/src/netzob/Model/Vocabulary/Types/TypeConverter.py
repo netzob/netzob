@@ -55,7 +55,7 @@ class TypeConverter(object):
     @staticmethod
     def __directEncoding():
         return {
-            # (ASCII,bitarray):TypeConverter.__encodeASCIIToBitarray,
+            # (String, bitarray):TypeConverter.__encodeStringToBitarray,
         }
 
     @staticmethod
@@ -83,32 +83,32 @@ class TypeConverter(object):
         :raise: TypeError if parameters are not valid
 
 
-        For example, to convert an ASCII to a binary (BitArray) representation:
+        For example, to convert an String to a binary (BitArray) representation:
 
         >>> from netzob.all import *
         >>> data = "hello"
-        >>> bin = TypeConverter.convert(data, ASCII, BitArray)
+        >>> bin = TypeConverter.convert(data, String, BitArray)
         >>> print(bin)
         bitarray('0110100001100101011011000110110001101111')
-        >>> data == TypeConverter.convert(bin, BitArray, ASCII)
+        >>> data == TypeConverter.convert(bin, BitArray, String)
         True
 
-        To convert a raw data to an integer representation and then to an ASCII representation:
+        To convert a raw data to an integer representation and then to an String representation:
 
         >>> data = b'\\x23'
         >>> decData = TypeConverter.convert(data, Raw, Integer)
         >>> print(decData)
         35
-        >>> print(TypeConverter.convert(decData, Integer, ASCII))
+        >>> print(TypeConverter.convert(decData, Integer, String))
         #
 
-        You can also modify the unitSize to convert multiple ASCII to a single high value integer:
+        You can also modify the unitSize to convert multiple String to a single high value integer:
 
-        >>> TypeConverter.convert("5", ASCII, Integer)
+        >>> TypeConverter.convert("5", String, Integer)
         53
-        >>> print(TypeConverter.convert("zoby", ASCII, Integer))
+        >>> print(TypeConverter.convert("zoby", String, Integer))
         2036494202
-        >>> print(TypeConverter.convert("zoby", ASCII, Integer,
+        >>> print(TypeConverter.convert("zoby", String, Integer,
         ...                             dst_unitSize=AbstractType.UNITSIZE_32))
         2054120057
 

@@ -53,7 +53,7 @@ from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-from netzob.Model.Vocabulary.Types.ASCII import ASCII
+from netzob.Model.Vocabulary.Types.String import String
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Types.HexaString import HexaString
@@ -233,7 +233,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
 
                 if fieldValue is None:
                     break
-                elif fieldValue.tobytes() == TypeConverter.convert("PENDING VALUE", ASCII, BitArray).tobytes():
+                elif fieldValue.tobytes() == TypeConverter.convert("PENDING VALUE", String, BitArray).tobytes():
                     # Handle case where field value is not currently known.
                     raise Exception("Expected value cannot be computed, some dependencies are missing for domain {0}".format(self))
                 else:
@@ -267,7 +267,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             self._logger.debug(
                 "Cannot specialize since no value is available for the relation dependencies, we create a callback function in case it can be computed later: {0}".
                 format(e))
-            pendingValue = TypeConverter.convert("PENDING VALUE", ASCII,
+            pendingValue = TypeConverter.convert("PENDING VALUE", String,
                                                  BitArray)
             variableSpecializerPath.addResult(self, pendingValue)
 

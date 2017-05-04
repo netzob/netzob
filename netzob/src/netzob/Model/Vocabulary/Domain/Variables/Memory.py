@@ -67,11 +67,11 @@ class Memory(object):
         """Memorizes the provided variable value.
 
         >>> from netzob.all import *
-        >>> variable = Data(ASCII(), name="var1")
+        >>> variable = Data(String(), name="var1")
         >>> memory = Memory()
-        >>> memory.memorize(variable, TypeConverter.convert("hello", ASCII, BitArray))
+        >>> memory.memorize(variable, TypeConverter.convert("hello", String, BitArray))
         >>> print(memory)
-        Data (ASCII=None ((0, None))): b'hello'
+        Data (String=None ((0, None))): b'hello'
         
         """
         self.memory[variable] = value
@@ -81,12 +81,12 @@ class Memory(object):
         """Returns true if memory contains a value for the provided variable
 
         >>> from netzob.all import *
-        >>> variable = Data(ASCII(), name="var1")
+        >>> variable = Data(String(), name="var1")
         >>> memory = Memory()
-        >>> memory.memorize(variable, TypeConverter.convert("hello", ASCII, BitArray))
+        >>> memory.memorize(variable, TypeConverter.convert("hello", String, BitArray))
         >>> memory.hasValue(variable)
         True
-        >>> variable2 = Data(ASCII(), name="var2")
+        >>> variable2 = Data(String(), name="var2")
         >>> memory.hasValue(variable2)
         False
 
@@ -98,9 +98,9 @@ class Memory(object):
         """Returns the value memorized for the provided variable
 
         >>> from netzob.all import *
-        >>> variable = Data(ASCII(), name="var1")
+        >>> variable = Data(String(), name="var1")
         >>> memory = Memory()
-        >>> memory.memorize(variable, TypeConverter.convert("hello", ASCII, BitArray))
+        >>> memory.memorize(variable, TypeConverter.convert("hello", String, BitArray))
         >>> print(TypeConverter.convert(memory.getValue(variable), BitArray, Raw))
         b'hello'
 
@@ -112,9 +112,9 @@ class Memory(object):
         """Forgets any memorized value of the provided variable
 
         >>> from netzob.all import *
-        >>> variable = Data(ASCII(), name="var1")
+        >>> variable = Data(String(), name="var1")
         >>> memory = Memory()
-        >>> memory.memorize(variable, TypeConverter.convert("hello", ASCII, BitArray))
+        >>> memory.memorize(variable, TypeConverter.convert("hello", String, BitArray))
         >>> memory.hasValue(variable)
         True
         >>> memory.forget(variable)
@@ -129,10 +129,10 @@ class Memory(object):
 
         >>> from netzob.all import *
         >>> d1 = Data(Integer)
-        >>> d2 = Data(ASCII)
+        >>> d2 = Data(String)
         >>> m = Memory()
         >>> m.memorize(d1, TypeConverter.convert(100, Integer, BitArray))
-        >>> m.memorize(d2, TypeConverter.convert("hello", ASCII, BitArray))
+        >>> m.memorize(d2, TypeConverter.convert("hello", String, BitArray))
         >>> m.getValue(d1)
         bitarray('01100100')
         >>> m2 = m.duplicate()

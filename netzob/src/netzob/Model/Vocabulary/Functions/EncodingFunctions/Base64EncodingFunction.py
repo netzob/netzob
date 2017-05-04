@@ -55,9 +55,9 @@ class Base64EncodingFunction(EncodingFunction):
     r"""This encoding function can be use to encode or decode data in base64.
 
     >>> from netzob.all import *
-    >>> f0 = Field(name="f0", domain=ASCII("Helloworld"))
-    >>> f1 = Field(name="f1", domain=ASCII("Data"))
-    >>> f2 = Field(name="f2", domain=ASCII("Content"))
+    >>> f0 = Field(name="f0", domain=String("Helloworld"))
+    >>> f1 = Field(name="f1", domain=String("Data"))
+    >>> f2 = Field(name="f2", domain=String("Content"))
     >>> s = Symbol(fields=[f0, f1, f2])
     >>> s.messages = [RawMessage(s.specialize())]*3
     >>> print(s)
@@ -81,9 +81,9 @@ class Base64EncodingFunction(EncodingFunction):
     >>> m1 = "hello YWxs !"
     >>> m2 = "hello bXkgbG9yZA== !"    
     >>> m3 = "hello d29ybGQ= !"
-    >>> f0 = Field(name="f0", domain=ASCII("hello "))
-    >>> f1 = Field(name="f1", domain=ASCII(nbChars=(0, 20)))
-    >>> f2 = Field(name="f2", domain=ASCII(" !"))
+    >>> f0 = Field(name="f0", domain=String("hello "))
+    >>> f1 = Field(name="f1", domain=String(nbChars=(0, 20)))
+    >>> f2 = Field(name="f2", domain=String(" !"))
     >>> s = Symbol(fields = [f0, f1, f2], messages = [RawMessage(m1), RawMessage(m2), RawMessage(m3)])
     >>> print(s)
     f0       | f1             | f2  

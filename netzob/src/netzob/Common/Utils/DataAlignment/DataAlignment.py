@@ -66,7 +66,7 @@ class DataAlignment(object):
     >>> import string
 
     >>> contents = ['hello {0} hello'.format(''.join([random.choice(string.ascii_letters) for y in range(random.randint(5,10))])) for x in range(10)]
-    >>> fields = [Field("hello ", name="f0"), Field(ASCII(nbChars=(5,10)), name="f1"), Field(" hello", name="f2")]
+    >>> fields = [Field("hello ", name="f0"), Field(String(nbChars=(5,10)), name="f1"), Field(" hello", name="f2")]
     >>> symbol = Symbol(fields=fields)
     >>> alignedData = DataAlignment.align(contents, symbol, encoded=True)
     >>> print(len(alignedData))
@@ -75,7 +75,7 @@ class DataAlignment(object):
     >>> # one more fun test case
     >>> data = ['hello tototo, welcome' for  x in range(5)]
     >>> # Now we create a symbol with its field structure to represent this type of message
-    >>> fields = [Field(ASCII('hello '), name="f1"), Field(Agg([Alt([ASCII("toto"), ASCII("to")]), Alt([ASCII("to"), ASCII("toto")])]), name="f2"), Field(ASCII(', welcome'), name="f3")]
+    >>> fields = [Field(String('hello '), name="f1"), Field(Agg([Alt([String("toto"), String("to")]), Alt([String("to"), String("toto")])]), name="f2"), Field(String(', welcome'), name="f3")]
     >>> symbol = Symbol(fields=fields)
     >>> alignedData = DataAlignment.align(data, symbol)
     >>> print(len(alignedData))
@@ -96,9 +96,9 @@ class DataAlignment(object):
     >>> msg3 = "helloPUTtotototoPAdqs4qsd33"
     >>> messages = [msg1, msg2, msg3]
     >>> fh1 = Field("hello", name="f1")
-    >>> fh2 = Field(ASCII(nbChars=(3)), name="f2")
+    >>> fh2 = Field(String(nbChars=(3)), name="f2")
     >>> fh3 = Field(Agg([Alt(["toto", "to"]), Alt(["to", "toto"])]), name="f3")
-    >>> fb1 = Field(ASCII("PA"), name="f4")
+    >>> fb1 = Field(String("PA"), name="f4")
     >>> fb2 = Field(Raw(nbBytes=(0,10)), name="f5")
     >>> headerFields = [fh1, fh2, fh3]
     >>> bodyFields = [fb1, fb2]

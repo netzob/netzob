@@ -109,11 +109,11 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         >>> from netzob.all import *
         >>> messages = [RawMessage("hello {0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'zoby', 'lapy'] for city in ['Paris', 'Berlin', 'New-York']]
-        >>> fh1 = Field(ASCII("hello "), name="hello")
-        >>> fh2 = Field(Alt([ASCII("netzob"), ASCII("zoby"), ASCII("lapy"), ASCII("sygus")]), name="pseudo")
+        >>> fh1 = Field(String("hello "), name="hello")
+        >>> fh2 = Field(Alt([String("netzob"), String("zoby"), String("lapy"), String("sygus")]), name="pseudo")
         >>> fheader = Field(name="header")
         >>> fheader.fields = [fh1, fh2]
-        >>> fb1 = Field(ASCII(", what's up in "), name="whatsup")
+        >>> fb1 = Field(String(", what's up in "), name="whatsup")
         >>> fb2 = Field(["Paris", "Berlin", "New-York"], name="city")
         >>> fb3 = Field(" ?", name="end")
         >>> fbody = Field(name="body")

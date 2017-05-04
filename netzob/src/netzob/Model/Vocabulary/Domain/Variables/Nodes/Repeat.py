@@ -71,10 +71,10 @@ class Repeat(AbstractVariableNode):
 
 
     The following example shows a repeat variable where the repeated
-    element is an aggregate of ASCII characters:
+    element is an aggregate of String characters:
 
     >>> from netzob.all import *
-    >>> f1 = Field(Repeat(Agg([ASCII("A"), ASCII("B"), ASCII("C")]), nbRepeat=16))
+    >>> f1 = Field(Repeat(Agg([String("A"), String("B"), String("C")]), nbRepeat=16))
     >>> print(f1.specialize())
     b'ABCABCABCABCABCABCABCABCABCABCABCABCABCABCABCABC'
 
@@ -84,9 +84,9 @@ class Repeat(AbstractVariableNode):
     We can specify a delimitor between each repeated element, as
     depicted in the following example:
 
-    >>> f1 = Field(Repeat(Alt([ASCII("netzob"), ASCII("zoby")]), nbRepeat=(1, 4),
+    >>> f1 = Field(Repeat(Alt([String("netzob"), String("zoby")]), nbRepeat=(1, 4),
     ...            delimitor=TypeConverter.convert(";", Raw, BitArray)))
-    >>> f2 = Field(ASCII("zoby"))
+    >>> f2 = Field(String("zoby"))
     >>> s = Symbol([f1, f2])
     >>> msg1 = RawMessage("netzob;zoby;netzobzoby")
     >>> mp = MessageParser()
@@ -101,8 +101,8 @@ class Repeat(AbstractVariableNode):
     The following examples show how repeat variable can be parsed:
 
     >>> from netzob.all import *
-    >>> f1 = Field(Repeat(ASCII("netzob"), nbRepeat=(0,3)))
-    >>> f2 = Field(ASCII("zoby"))
+    >>> f1 = Field(Repeat(String("netzob"), nbRepeat=(0,3)))
+    >>> f2 = Field(String("zoby"))
     >>> s = Symbol([f1, f2])
 
     >>> msg1 = RawMessage("netzobnetzobzoby")
@@ -129,7 +129,7 @@ class Repeat(AbstractVariableNode):
     The following examples show how repeat variable can be specialized:
 
     >>> from netzob.all import *
-    >>> f1 = Field(Repeat(ASCII("netzob"), nbRepeat=2))
+    >>> f1 = Field(Repeat(String("netzob"), nbRepeat=2))
     >>> s = Symbol([f1])
     >>> print(s.specialize())
     b'netzobnetzob'
@@ -145,7 +145,7 @@ class Repeat(AbstractVariableNode):
     True
 
     >>> from netzob.all import *
-    >>> child = Data(dataType=ASCII(nbChars=(5)), svas=SVAS.PERSISTENT)
+    >>> child = Data(dataType=String(nbChars=(5)), svas=SVAS.PERSISTENT)
     >>> f1 = Field(Repeat(child, nbRepeat=3,
     ...            delimitor=TypeConverter.convert(";", Raw, BitArray)))
     >>> s = Symbol([f1])

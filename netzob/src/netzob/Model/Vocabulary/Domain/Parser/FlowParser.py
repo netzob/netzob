@@ -63,8 +63,8 @@ class FlowParser(object):
     >>> payload1 = "aabb"
     >>> payload2 = "ccdd"
     >>> message = RawMessage(payload1 + payload2)
-    >>> s1 = Symbol(fields=[Field(ASCII("aabb"))], name="s1")
-    >>> s2 = Symbol(fields=[Field(ASCII("ccdd"))], name="s2")
+    >>> s1 = Symbol(fields=[Field(String("aabb"))], name="s1")
+    >>> s2 = Symbol(fields=[Field(String("ccdd"))], name="s2")
     >>> mp = FlowParser()
     >>> result = mp.parseFlow(message, [s1, s2])
     >>> print([(s.name, values) for (s, values) in result])
@@ -75,8 +75,8 @@ class FlowParser(object):
     >>> payload1 = "hello netzob"
     >>> payload2 = "hello zoby"
     >>> message = RawMessage(payload1 + payload2)
-    >>> f1 = Field(ASCII("hello "), name="f0")
-    >>> f2 = Field(ASCII(nbChars=(1, 10)), name="f1")
+    >>> f1 = Field(String("hello "), name="f0")
+    >>> f2 = Field(String(nbChars=(1, 10)), name="f1")
     >>> s1 = Symbol(fields=[f1, f2], name="s1")
     >>> fp = FlowParser()
     >>> result = fp.parseFlow(message, [s1])
@@ -87,9 +87,9 @@ class FlowParser(object):
     >>> from netzob.all import *
     >>> content = "hello netzob" * 100
     >>> message = RawMessage(content)
-    >>> f1 = Field(ASCII("hello"), name="f1")
-    >>> f2 = Field(ASCII(" "), name="f2")
-    >>> f3 = Field(ASCII("netzob"), name="f3")
+    >>> f1 = Field(String("hello"), name="f1")
+    >>> f2 = Field(String(" "), name="f2")
+    >>> f3 = Field(String("netzob"), name="f3")
     >>> s1 = Symbol(fields = [f1, f2, f3], name="s1")
     >>> s2 = Symbol(fields = [Field("nawak")], name="s2")
     >>> fp = FlowParser()
@@ -112,8 +112,8 @@ class FlowParser(object):
     >>> SWITCHING_PROTOCOLS_HTTP = Symbol(name = "Switching_protocols_http")
     >>> f00 = Field("HTTP/1.1 101 Switching Protocols\\r\\n")
     >>> f01 = Field(Raw(nbBytes=(0,150)), name="VARIOUS")
-    >>> f02 = Field(ASCII("Connection: upgrade\\r\\n"))
-    >>> f03 = Field(ASCII("upgrade: h2c\\r\\n\\r\\n"))
+    >>> f02 = Field(String("Connection: upgrade\\r\\n"))
+    >>> f03 = Field(String("upgrade: h2c\\r\\n\\r\\n"))
     >>> SWITCHING_PROTOCOLS_HTTP.fields = [f00, f01, f02, f03]
     >>> fp = FlowParser()
     >>> fp.parseFlow(msg1, [SWITCHING_PROTOCOLS_HTTP])

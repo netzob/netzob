@@ -203,9 +203,9 @@ class Timestamp(AbstractType):
         >>> time.canParse(TypeConverter.convert(1444494130, Integer, BitArray, src_unitSize=AbstractType.UNITSIZE_32))
         True
         >>> # A timestamp is nothing else than 32bits parsed as an unsigned long
-        >>> time.canParse(TypeConverter.convert("test", ASCII, BitArray))
+        >>> time.canParse(TypeConverter.convert("test", String, BitArray))
         True
-        >>> time.canParse(TypeConverter.convert("te", ASCII, BitArray))
+        >>> time.canParse(TypeConverter.convert("te", String, BitArray))
         False
         
         However, some constrains over the definition of the Timestamp can be set to restrain the accepted values
@@ -213,7 +213,7 @@ class Timestamp(AbstractType):
         >>> from netzob.all import *
         >>> time = Timestamp(epoch=Timestamp.EPOCH_WINDOWS, unity=Timestamp.UNITY_NANOSECOND, unitSize = AbstractType.UNITSIZE_64)
         >>> # the returned year is < 1900
-        >>> time.canParse(TypeConverter.convert("test", ASCII, BitArray))
+        >>> time.canParse(TypeConverter.convert("test", String, BitArray))
         False
 
         """

@@ -47,7 +47,7 @@ from bitarray import bitarray
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
 from netzob.Model.Vocabulary.AbstractField import AbstractField
-from netzob.Model.Vocabulary.Types.ASCII import ASCII
+from netzob.Model.Vocabulary.Types.String import String
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
@@ -87,18 +87,18 @@ class Size(AbstractRelationVariableLeaf):
 
 
     The following example shows how to define a size field with an
-    ASCII dataType:
+    String dataType:
 
     >>> from netzob.all import *
-    >>> f0 = Field(ASCII(nbChars=(1,10)))
-    >>> f1 = Field(ASCII(";"))
-    >>> f2 = Field(Size([f0, f1], dataType=ASCII(nbChars=2), factor=1./8, offset=16))
+    >>> f0 = Field(String(nbChars=(1,10)))
+    >>> f1 = Field(String(";"))
+    >>> f2 = Field(Size([f0, f1], dataType=String(nbChars=2), factor=1./8, offset=16))
     >>> s  = Symbol(fields=[f0, f1, f2])
 
     In this example, the field *f2* is a size field where its value is
     equal to the size of the concatenated values of fields *f0* and
     *f1*. The *dataType* parameter specifies that the produced value
-    should be represented as an ASCII string. The *factor* parameter
+    should be represented as an String string. The *factor* parameter
     specifies that the initial size value (always expressed in bits)
     should be divided by 8 (in order to retrieve the amount of
     bytes). The *offset* parameter specifies that the final size value
@@ -107,9 +107,9 @@ class Size(AbstractRelationVariableLeaf):
     The following example shows how to define a size field so that its
     value depends on a list of non-consecutive fields:
 
-    >>> f1 = Field(ASCII("="))
-    >>> f2 = Field(ASCII("#"))
-    >>> f4 = Field(ASCII("%"))
+    >>> f1 = Field(String("="))
+    >>> f2 = Field(String("#"))
+    >>> f4 = Field(String("%"))
     >>> f5 = Field(Raw("_"))
     >>> f3 = Field(Size([f1, f2, f4, f5]))
     >>> s  = Symbol(fields=[f1, f2, f3, f4, f5])
@@ -118,8 +118,8 @@ class Size(AbstractRelationVariableLeaf):
 
     In the following example, a size field is declared after its field.
 
-    >>> f0 = Field(ASCII(nbChars=(1,10)))
-    >>> f1 = Field(ASCII(";"))
+    >>> f0 = Field(String(nbChars=(1,10)))
+    >>> f1 = Field(String(";"))
     >>> f2 = Field(Size(f0))
     >>> s  = Symbol(fields=[f0, f1, f2])
     >>> msg1  = RawMessage(b"netzob;\x06")
@@ -142,8 +142,8 @@ class Size(AbstractRelationVariableLeaf):
     In the following example, a size field is declared before the
     targeted field:
 
-    >>> f2 = Field(ASCII(nbChars=(1,10)), name="f2")
-    >>> f1 = Field(ASCII(";"), name="f1", )
+    >>> f2 = Field(String(nbChars=(1,10)), name="f2")
+    >>> f1 = Field(String(";"), name="f1", )
     >>> f0 = Field(Size(f2), name="f0")
     >>> s  = Symbol(fields=[f0, f1, f2])
     >>> msg1  = RawMessage(b"\x06;netzob")
@@ -168,16 +168,16 @@ class Size(AbstractRelationVariableLeaf):
     The following examples show the specialization process of a Size
     field:
     
-    >>> f0 = Field(ASCII(nbChars=20))
-    >>> f1 = Field(ASCII(";"))
+    >>> f0 = Field(String(nbChars=20))
+    >>> f1 = Field(String(";"))
     >>> f2 = Field(Size(f0))
     >>> s = Symbol(fields=[f0, f1, f2])
     >>> res = s.specialize()
     >>> b'\x14' in res
     True
 
-    >>> f0 = Field(ASCII("CMDauthentify"), name="f0")
-    >>> f1 = Field(ASCII('#'), name="sep")
+    >>> f0 = Field(String("CMDauthentify"), name="f0")
+    >>> f1 = Field(String('#'), name="sep")
     >>> f2 = Field(name="f2")
     >>> f3 = Field(name="size field")
     >>> f4 = Field(Raw(b"\x00\x00\x00\x00"), name="f4")
@@ -445,7 +445,7 @@ class Size(AbstractRelationVariableLeaf):
             self._logger.debug(
                 "Cannot specialize since no value is available for the size dependencies, we create a callback function in case it can be computed later: {0}".
                 format(e))
-            pendingValue = TypeConverter.convert("PENDING VALUE", ASCII,
+            pendingValue = TypeConverter.convert("PENDING VALUE", String,
                                                  BitArray)
             variableSpecializerPath.addResult(self, pendingValue)
             if moreCallBackAccepted:

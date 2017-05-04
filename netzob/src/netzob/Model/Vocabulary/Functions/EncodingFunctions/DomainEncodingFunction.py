@@ -62,7 +62,7 @@ class DomainEncodingFunction(EncodingFunction):
     >>> f = Field(name="f0", domain=Agg(["There are ", Integer(10), " solutions."]))
     >>> m = RawMessage(b"There are " + TypeConverter.convert(10, Integer, Raw) + b" solutions.")
     >>> s = Symbol(fields=[f], messages=[m], name="Symbol")
-    >>> s.addEncodingFunction(TypeEncodingFunction(ASCII))
+    >>> s.addEncodingFunction(TypeEncodingFunction(String))
     >>> print(s)
     f0                      
     ------------------------

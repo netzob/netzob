@@ -62,7 +62,7 @@ class Data(AbstractVariableLeaf):
     The Data constructor expects some parameters:
 
     :param dataType: The type of the data (for example Integer,
-                     Raw, ASCII, ...).
+                     Raw, String, ...).
     :param originalValue: The original value of the data (can be
                           None).
     :param name: The name of the data (if None, the name will
@@ -76,20 +76,20 @@ class Data(AbstractVariableLeaf):
 
 
     The following example shows the definition of the Data `pseudo`
-    with a type ASCII and a default value `"hello"`. This means that
-    this Data object accepts any ASCII string, and the current value
+    with a type String and a default value `"hello"`. This means that
+    this Data object accepts any String string, and the current value
     of this object is `"hello"`.
 
     >>> from netzob.all import *
     >>> f = Field()
-    >>> value = TypeConverter.convert("hello", ASCII, BitArray)
-    >>> f.domain = Data(dataType=ASCII(), originalValue=value, name="pseudo")
+    >>> value = TypeConverter.convert("hello", String, BitArray)
+    >>> f.domain = Data(dataType=String(), originalValue=value, name="pseudo")
     >>> print(f.domain.varType)
     Data
     >>> print(TypeConverter.convert(f.domain.currentValue, BitArray, Raw))
     b'hello'
     >>> print(f.domain.dataType)
-    ASCII=None ((0, None))
+    String=None ((0, None))
     >>> print(f.domain.name)
     pseudo
 
@@ -98,10 +98,10 @@ class Data(AbstractVariableLeaf):
     the following example:
 
     >>> from netzob.all import *
-    >>> f = Field(ASCII("hello"))
+    >>> f = Field(String("hello"))
     >>> print(f.domain.varType)
     Data
-    >>> print(TypeConverter.convert(f.domain.currentValue, BitArray, ASCII))
+    >>> print(TypeConverter.convert(f.domain.currentValue, BitArray, String))
     hello
 
     """

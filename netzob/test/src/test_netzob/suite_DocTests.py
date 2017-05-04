@@ -81,7 +81,7 @@ def getSuite():
 
         # Modules related to common types and data structures
         # ---------------------------------------------------
-        ASCII.__module__,
+        String.__module__,
         Integer.__module__,
         BitArray.__module__,
         Raw.__module__,
@@ -183,8 +183,8 @@ def getSuite():
 
         # Other
         # -----
-        # # # JSONSerializator.__module__,
-        # # # TCPServer.__module__,
+        # JSONSerializator.__module__,
+        # TCPServer.__module__,
 
     ]
 

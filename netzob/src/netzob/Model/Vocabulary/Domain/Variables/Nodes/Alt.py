@@ -72,20 +72,20 @@ class Alt(AbstractVariableNode):
     "filename1.txt" or "filename2.txt":
 
     >>> from netzob.all import *
-    >>> t1 = ASCII("filename1.txt")
-    >>> t2 = ASCII("filename2.txt")
+    >>> t1 = String("filename1.txt")
+    >>> t2 = String("filename2.txt")
     >>> f = Field(Alt([t1, t2]))
 
 
     **Examples of Alt internal attributes access**
 
-    >>> domain = Alt([Raw(), ASCII()])
+    >>> domain = Alt([Raw(), String()])
     >>> print(domain.varType)
     Alt
     >>> print(domain.children[0].dataType)
     Raw=None ((0, None))
     >>> print(domain.children[1].dataType)
-    ASCII=None ((0, None))
+    String=None ((0, None))
 
 
     **Abstraction of alternate variables**
@@ -94,8 +94,8 @@ class Alt(AbstractVariableNode):
     variable:
 
     >>> from netzob.all import *
-    >>> v0 = ASCII("netzob")
-    >>> v1 = ASCII("zoby")
+    >>> v0 = String("netzob")
+    >>> v1 = String("zoby")
     >>> f0 = Field(Alt([v0, v1]))
     >>> s = Symbol([f0])
     >>> msg1 = RawMessage("netzob")

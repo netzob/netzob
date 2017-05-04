@@ -206,10 +206,10 @@ class Automata(object):
         chain.
 
         >>> from netzob.all import *
-        >>> symbolSYN = Symbol([Field(ASCII("SYN"))], name="Symbol_SYN")
-        >>> symbolSYNACK = Symbol([Field(ASCII("SYN/ACK"))], name="Symbol_SYNACK")
-        >>> symbolACK = Symbol([Field(ASCII("ACK"))], name="Symbol_ACK")
-        >>> symbolPUSH = Symbol([Field(ASCII("PUSH"))], name="Symbol_PUSH")
+        >>> symbolSYN = Symbol([Field(String("SYN"))], name="Symbol_SYN")
+        >>> symbolSYNACK = Symbol([Field(String("SYN/ACK"))], name="Symbol_SYNACK")
+        >>> symbolACK = Symbol([Field(String("ACK"))], name="Symbol_ACK")
+        >>> symbolPUSH = Symbol([Field(String("PUSH"))], name="Symbol_PUSH")
         >>> symbolList = [symbolSYN, symbolSYNACK, symbolACK, symbolPUSH]
 
         >>> msg1 = RawMessage("SYN", source="A", destination="B")
@@ -251,10 +251,10 @@ class Automata(object):
         couples are permitted.
 
         >>> from netzob.all import *
-        >>> symbolSYN = Symbol([Field(ASCII("SYN"))], name="Symbol_SYN")
-        >>> symbolSYNACK = Symbol([Field(ASCII("SYN/ACK"))], name="Symbol_SYNACK")
-        >>> symbolACK = Symbol([Field(ASCII("ACK"))], name="Symbol_ACK")
-        >>> symbolPUSH = Symbol([Field(ASCII("PUSH"))], name="Symbol_PUSH")
+        >>> symbolSYN = Symbol([Field(String("SYN"))], name="Symbol_SYN")
+        >>> symbolSYNACK = Symbol([Field(String("SYN/ACK"))], name="Symbol_SYNACK")
+        >>> symbolACK = Symbol([Field(String("ACK"))], name="Symbol_ACK")
+        >>> symbolPUSH = Symbol([Field(String("PUSH"))], name="Symbol_PUSH")
         >>> symbolList = [symbolSYN, symbolSYNACK, symbolACK, symbolPUSH]
 
         >>> msg1 = RawMessage("SYN", source="A", destination="B")
@@ -290,10 +290,10 @@ class Automata(object):
         """Generate 
 
         >>> from netzob.all import *
-        >>> symbolSYN = Symbol([Field(ASCII("SYN"))], name="Symbol_SYN")
-        >>> symbolSYNACK = Symbol([Field(ASCII("SYN/ACK"))], name="Symbol_SYNACK")
-        >>> symbolACK = Symbol([Field(ASCII("ACK"))], name="Symbol_ACK")
-        >>> symbolPUSH = Symbol([Field(ASCII("PUSH"))], name="Symbol_PUSH")
+        >>> symbolSYN = Symbol([Field(String("SYN"))], name="Symbol_SYN")
+        >>> symbolSYNACK = Symbol([Field(String("SYN/ACK"))], name="Symbol_SYNACK")
+        >>> symbolACK = Symbol([Field(String("ACK"))], name="Symbol_ACK")
+        >>> symbolPUSH = Symbol([Field(String("PUSH"))], name="Symbol_PUSH")
         >>> symbolList = [symbolSYN, symbolSYNACK, symbolACK, symbolPUSH]
 
         >>> msg1 = RawMessage("SYN", source="A", destination="B")

@@ -46,7 +46,7 @@ from bitarray import bitarray
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
 from netzob.Model.Vocabulary.AbstractField import AbstractField
-from netzob.Model.Vocabulary.Types.ASCII import ASCII
+from netzob.Model.Vocabulary.Types.String import String
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
@@ -79,7 +79,7 @@ class Value(AbstractRelationVariableLeaf):
     another field value:
 
     >>> from netzob.all import *
-    >>> f0 = Field(ASCII("abcd"))
+    >>> f0 = Field(String("abcd"))
     >>> f1 = Field(Value(f0))
     >>> s  = Symbol(fields=[f0, f1])
     >>> print(s.specialize())
@@ -89,10 +89,10 @@ class Value(AbstractRelationVariableLeaf):
     another field value:
 
     >>> msg = RawMessage("netzob;netzob!")
-    >>> f1 = Field(ASCII(nbChars=(2, 8)), name="f1")
-    >>> f2 = Field(ASCII(";"), name="f2")
+    >>> f1 = Field(String(nbChars=(2, 8)), name="f1")
+    >>> f2 = Field(String(";"), name="f2")
     >>> f3 = Field(Value(f1), name="f3")
-    >>> f4 = Field(ASCII("!"), name="f4")
+    >>> f4 = Field(String("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg, s))  # doctest: +NORMALIZE_WHITESPACE
@@ -106,10 +106,10 @@ class Value(AbstractRelationVariableLeaf):
 
     >>> from netzob.all import *
     >>> msg = RawMessage("netzob;netzob!")
-    >>> f3 = Field(ASCII(nbChars=6), name="f3")
+    >>> f3 = Field(String(nbChars=6), name="f3")
     >>> f1 = Field(Value(f3), name="f1")
-    >>> f2 = Field(ASCII(";"), name="f2")
-    >>> f4 = Field(ASCII("!"), name="f4")
+    >>> f2 = Field(String(";"), name="f2")
+    >>> f4 = Field(String("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg, s))  # doctest: +NORMALIZE_WHITESPACE
@@ -125,19 +125,19 @@ class Value(AbstractRelationVariableLeaf):
     objects:
 
     >>> from netzob.all import *
-    >>> f1 = Field(ASCII("netzob"), name="f1")
-    >>> f2 = Field(ASCII(";"), name="f2")
+    >>> f1 = Field(String("netzob"), name="f1")
+    >>> f2 = Field(String(";"), name="f2")
     >>> f3 = Field(Value(f1), name="f3")
-    >>> f4 = Field(ASCII("!"), name="f4")
+    >>> f4 = Field(String("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
     >>> print(s.specialize())
     b'netzob;netzob!'
     
     >>> from netzob.all import *
-    >>> f3 = Field(ASCII("netzob"), name="f3")
-    >>> f2 = Field(ASCII(";"), name="f2")
+    >>> f3 = Field(String("netzob"), name="f3")
+    >>> f2 = Field(String(";"), name="f2")
     >>> f1 = Field(Value(f3), name="f1")
-    >>> f4 = Field(ASCII("!"), name="f4")
+    >>> f4 = Field(String("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
     >>> print(s.specialize())
     b'netzob;netzob!'
@@ -150,7 +150,7 @@ class Value(AbstractRelationVariableLeaf):
 
     >>> from netzob.all import *
     >>> f0 = Field(1, name="f0")
-    >>> f1 = Field(ASCII(":"), name="f1")
+    >>> f1 = Field(String(":"), name="f1")
     >>> f2 = Field(Value(f0, operation = lambda x: TypeConverter.convert(
     ... TypeConverter.convert(x, BitArray, Integer) + 1, Integer, BitArray)), name="f2")
     >>> s = Symbol([f0, f1, f2])
@@ -293,7 +293,7 @@ class Value(AbstractRelationVariableLeaf):
                 "Cannot specialize since no value is available for the value dependencies, we create a callback function in case it can be computed later: {0}".
                 format(e))
 
-            pendingValue = TypeConverter.convert("PENDING VALUE", ASCII,
+            pendingValue = TypeConverter.convert("PENDING VALUE", String,
                                                  BitArray)
             variableSpecializerPath.addResult(self, pendingValue)
             if moreCallBackAccepted:

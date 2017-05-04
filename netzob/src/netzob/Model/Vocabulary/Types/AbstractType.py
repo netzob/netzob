@@ -133,7 +133,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     @staticmethod
     def supportedTypes():
         """Official list of supported types"""
-        from netzob.Model.Vocabulary.Types.ASCII import ASCII
+        from netzob.Model.Vocabulary.Types.String import String
         from netzob.Model.Vocabulary.Types.Raw import Raw
         from netzob.Model.Vocabulary.Types.BitArray import BitArray
         from netzob.Model.Vocabulary.Types.Integer import Integer
@@ -147,7 +147,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
             # original python way of encoding data, raw data
             Raw,
             # string data
-            ASCII,
+            String,
             # integer
             Integer,
             # hexstring
@@ -321,7 +321,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         This is the minimal generation strategy, some types extends this.
 
         >>> from netzob.all import *
-        >>> a = ASCII(nbChars=20)
+        >>> a = String(nbChars=20)
         >>> l = a.generate()
         >>> print(len(l))
         160
@@ -349,7 +349,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         * Inversed bytes in big endian
 
         >>> from netzob.all import *
-        >>> t = ASCII("helloworld")
+        >>> t = String("helloworld")
         >>> print(t.mutate())
         OrderedDict([('ascii-bits(bigEndian)', bitarray('01101000011001010110110001101100011011110111011101101111011100100110110001100100')), ('ascii-bits(littleEndian)', bitarray('00010110101001100011011000110110111101101110111011110110010011100011011000100110')), ('ascii(inversed)-bits(bigEndian)', bitarray('01100100011011000111001001101111011101110110111101101100011011000110010101101000')), ('ascii(inversed)-bits(littleEndian)', bitarray('00100110001101100100111011110110111011101111011000110110001101101010011000010110')), ('ascii(upper)-bits(bigEndian)', bitarray('01001000010001010100110001001100010011110101011101001111010100100100110001000100')), ('ascii(upper)-bits(littleEndian)', bitarray('00010010101000100011001000110010111100101110101011110010010010100011001000100010')), ('ascii(inversed-upper)-bits(bigEndian)', bitarray('01000100010011000101001001001111010101110100111101001100010011000100010101001000')), ('ascii(inversed-upper)-bits(littleEndian)', bitarray('00100010001100100100101011110010111010101111001000110010001100101010001000010010'))])
 
@@ -472,10 +472,10 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
          The value 'None' can be set for min and/or max to represent no limitations.
 
-         For instance, to create an ASCII field of at least 10 chars:
+         For instance, to create an String field of at least 10 chars:
 
          >>> from netzob.all import *
-         >>> f = Field(ASCII(nbChars=(10,None)))
+         >>> f = Field(String(nbChars=(10,None)))
          >>> f.domain.dataType.size
          (80, None)
 
@@ -540,7 +540,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         >>> from netzob.all import *
         >>> normalizedData = AbstractType.normalize("netzob")
         >>> print(normalizedData.__class__)
-        <class 'netzob.Model.Vocabulary.Types.ASCII.ASCII'>
+        <class 'netzob.Model.Vocabulary.Types.String.String'>
         >>> print(normalizedData.value)
         bitarray('011011100110010101110100011110100110111101100010')
         """
@@ -559,8 +559,8 @@ class AbstractType(object, metaclass=abc.ABCMeta):
             from netzob.Model.Vocabulary.Types.Raw import Raw
             normalizedData = Raw(value=data)
         elif isinstance(data, str):
-            from netzob.Model.Vocabulary.Types.ASCII import ASCII
-            normalizedData = ASCII(value=data)
+            from netzob.Model.Vocabulary.Types.String import String
+            normalizedData = String(value=data)
         elif isinstance(data, bitarray):
             from netzob.Model.Vocabulary.Types.BitArray import BitArray
             normalizedData = BitArray(value=data)
@@ -578,14 +578,14 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         for instance, user can specify a domain with its type which is much more simple than creating a Data with the type
 
         >>> from netzob.all import *
-        >>> ascii = ASCII("hello netzob !")
+        >>> ascii = String("hello netzob !")
         >>> print(ascii.typeName)
-        ASCII
+        String
         >>> data = ascii.buildDataRepresentation()
-        >>> print(TypeConverter.convert(data.currentValue, BitArray, ASCII))
+        >>> print(TypeConverter.convert(data.currentValue, BitArray, String))
         hello netzob !
         >>> print(data.dataType)
-        ASCII=hello netzob ! ((0, 112))
+        String=hello netzob ! ((0, 112))
 
         :return: a Data of the current type
         :rtype: :class:`Data <netzob.Model.Vocabulary.Domain.Variables.Leads.Data.Data>`

@@ -319,7 +319,7 @@ class Integer(AbstractType):
         the integer type to be very similar to the raw type.
 
         >>> from netzob.all import *
-        >>> Integer().canParse(TypeConverter.convert("hello netzob", ASCII, Raw))
+        >>> Integer().canParse(TypeConverter.convert("hello netzob", String, Raw))
         True
 
         :param data: the data to check

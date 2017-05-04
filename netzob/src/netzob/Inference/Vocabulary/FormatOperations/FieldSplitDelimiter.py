@@ -58,7 +58,7 @@ class FieldSplitDelimiter(object):
     @typeCheck(AbstractField, AbstractType)
     def split(field, delimiter):
         """Split a field (or symbol) with a specific delimiter. The
-        delimiter can be passed either as an ASCII, a Raw, an
+        delimiter can be passed either as an String, a Raw, an
         HexaString, or any objects that inherit from AbstractType.
 
 
@@ -66,7 +66,7 @@ class FieldSplitDelimiter(object):
         >>> samples = [b"aaaaff000000ff10", b"bbff110010ff00000011", b"ccccccccfffe1f000000ff12"]
         >>> messages = [RawMessage(data=sample) for sample in samples]
         >>> symbol = Symbol(messages=messages[:3])
-        >>> Format.splitDelimiter(symbol, ASCII("ff"))
+        >>> Format.splitDelimiter(symbol, String("ff"))
         >>> print(symbol)
         Field-0    | Field-sep-6666 | Field-2      | Field-sep-6666 | Field-4   
         ---------- | -------------- | ------------ | -------------- | ----------
@@ -78,8 +78,8 @@ class FieldSplitDelimiter(object):
         >>> samples = [b"434d446964656e74696679230400000066726564", b"5245536964656e74696679230000000000000000", b"434d44696e666f2300000000", b"524553696e666f230000000004000000696e666f", b"434d4473746174732300000000", b"52455373746174732300000000050000007374617473", b"434d4461757468656e7469667923090000006d7950617373776421", b"52455361757468656e74696679230000000000000000", b"434d44656e6372797074230a00000031323334353674657374", b"524553656e637279707423000000000a00000073707176777436273136", b"434d4464656372797074230a00000073707176777436273136", b"5245536465637279707423000000000a00000031323334353674657374", b"434d446279652300000000", b"524553627965230000000000000000", b"434d446964656e746966792307000000526f626572746f", b"5245536964656e74696679230000000000000000", b"434d44696e666f2300000000", b"524553696e666f230000000004000000696e666f", b"434d4473746174732300000000", b"52455373746174732300000000050000007374617473", b"434d4461757468656e74696679230a000000615374726f6e67507764", b"52455361757468656e74696679230000000000000000", b"434d44656e63727970742306000000616263646566", b"524553656e6372797074230000000006000000232021262724", b"434d44646563727970742306000000232021262724", b"52455364656372797074230000000006000000616263646566", b"434d446279652300000000", b"524553627965230000000000000000"]
         >>> messages = [RawMessage(data=TypeConverter.convert(sample, HexaString, Raw)) for sample in samples]
         >>> symbol = Symbol(messages=messages)
-        >>> symbol.encodingFunctions.add(TypeEncodingFunction(ASCII))  # Change visualization to hexastring
-        >>> Format.splitDelimiter(symbol, ASCII("#"))
+        >>> symbol.encodingFunctions.add(TypeEncodingFunction(String))  # Change visualization to hexastring
+        >>> Format.splitDelimiter(symbol, String("#"))
         >>> print(symbol)
         Field-0         | Field-sep-23 | Field-2              | Field-sep-23 | Field-4
         --------------- | ------------ | -------------------- | ------------ | -------

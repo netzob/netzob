@@ -152,14 +152,14 @@ class Session(object):
         >>> session = Session(applicativeData=[appData])
         >>> print(len(session.applicativeData))
         1
-        >>> appData2 = ApplicativeData("test2", ASCII("helloworld"))
+        >>> appData2 = ApplicativeData("test2", String("helloworld"))
         >>> session.applicativeData.append(appData2)
         >>> print(len(session.applicativeData))
         2
         >>> print(session.applicativeData[0])
         Applicative Data: test=Integer=20 ((8, 8)))
         >>> print(session.applicativeData[1])
-        Applicative Data: test2=ASCII=helloworld ((0, 80)))
+        Applicative Data: test2=String=helloworld ((0, 80)))
 
         :type: a list of :class:`ApplicativeData <netzob.Model.Vocabulary.ApplicativeData.ApplicativeData>`.
         """
@@ -295,9 +295,9 @@ class Session(object):
         parameter.
 
         >>> from netzob.all import *
-        >>> symbolSYN = Symbol([Field(ASCII("SYN"))], name="Symbol_SYN")
-        >>> symbolSYNACK = Symbol([Field(ASCII("SYN/ACK"))], name="Symbol_SYNACK")
-        >>> symbolACK = Symbol([Field(ASCII("ACK"))], name="Symbol_ACK")
+        >>> symbolSYN = Symbol([Field(String("SYN"))], name="Symbol_SYN")
+        >>> symbolSYNACK = Symbol([Field(String("SYN/ACK"))], name="Symbol_SYNACK")
+        >>> symbolACK = Symbol([Field(String("ACK"))], name="Symbol_ACK")
         >>> symbolList = [symbolSYN, symbolSYNACK, symbolACK]
 
         >>> msg1 = RawMessage("SYN", source="A", destination="B")

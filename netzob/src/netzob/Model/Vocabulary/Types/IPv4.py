@@ -369,5 +369,5 @@ class IPv4(AbstractType):
             if ip is not None and ip.version == 4 and not ip.is_netmask():
                 return ip
         except Exception as e:
-            raise TypeError("Impossible encode {0} into an IPv4 data ({1})".
+            raise TypeError("Impossible to encode {0} into an IPv4 data ({1})".
                             format(data, e))

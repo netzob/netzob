@@ -48,13 +48,13 @@ class ApplicativeData(object):
 
     An applicative data can be created out of any information.
     >>> from netzob.all import *
-    >>> app = ApplicativeData("Username", ASCII("toto"))
+    >>> app = ApplicativeData("Username", String("toto"))
     >>> print(app.name)
     Username
 
-    >>> app1 = ApplicativeData("Email", ASCII("contact@netzob.org"))
+    >>> app1 = ApplicativeData("Email", String("contact@netzob.org"))
     >>> print(app1.value)
-    ASCII=contact@netzob.org ((0, 144))
+    String=contact@netzob.org ((0, 144))
 
     """
 

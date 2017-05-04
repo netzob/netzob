@@ -49,7 +49,7 @@ from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.HexaString import HexaString
-from netzob.Model.Vocabulary.Types.ASCII import ASCII
+from netzob.Model.Vocabulary.Types.String import String
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
@@ -115,19 +115,19 @@ class ClusterByKeyField(object):
         newSymbolsSplittedMessages = {}
 
         # we identify what would be the best type of the key field
-        keyFieldType = ASCII
+        keyFieldType = String
         for message, keyFieldValue in list(keyFieldMessageValues.items()):
-            # If the value cannot be parsed as ASCII, we convert it to HexaString
-            if not ASCII().canParse(
+            # If the value cannot be parsed as String, we convert it to HexaString
+            if not String().canParse(
                     TypeConverter.convert(keyFieldValue, Raw, BitArray)):
                 keyFieldType = HexaString
                 break
 
-            # Even if the value is theoritically parsable as ASCII, some caracters cannot be encoded, so we double check
-            tmp_value = TypeConverter.convert(keyFieldValue, Raw, ASCII)
-            tmp2_value = TypeConverter.convert(tmp_value, ASCII, Raw)
+            # Even if the value is theoritically parsable as String, some caracters cannot be encoded, so we double check
+            tmp_value = TypeConverter.convert(keyFieldValue, Raw, String)
+            tmp2_value = TypeConverter.convert(tmp_value, String, Raw)
             if keyFieldValue != tmp2_value:
-                # This means we cannot retrieve the original value by encoding and then decoding in ASCII
+                # This means we cannot retrieve the original value by encoding and then decoding in String
                 keyFieldType = HexaString
                 break
 

@@ -55,9 +55,9 @@ class ZLibEncodingFunction(EncodingFunction):
     r"""This encoding function can be use to compress or decompress data in zlib.
 
     >>> from netzob.all import *
-    >>> f0 = Field(name="f0", domain=ASCII("Helloworld"))
-    >>> f1 = Field(name="f1", domain=ASCII("Data"))
-    >>> f2 = Field(name="f2", domain=ASCII("Content"))
+    >>> f0 = Field(name="f0", domain=String("Helloworld"))
+    >>> f1 = Field(name="f1", domain=String("Data"))
+    >>> f2 = Field(name="f2", domain=String("Content"))
     >>> s = Symbol(fields=[f0, f1, f2])
     >>> s.messages = [RawMessage(s.specialize())]*3
     >>> print(s)
@@ -79,9 +79,9 @@ class ZLibEncodingFunction(EncodingFunction):
     This function can also be use to display the uncompress version of a zlib field
 
     >>> m1 = b"hello x\x9csI,I\xe4\x02\x00\x05\x05\x01\x85 !"
-    >>> f0 = Field(name="f0", domain=ASCII("hello "))
+    >>> f0 = Field(name="f0", domain=String("hello "))
     >>> f1 = Field(name="f1", domain=Raw(nbBytes=(0, 30)))
-    >>> f2 = Field(name="f2", domain=ASCII(" !"))
+    >>> f2 = Field(name="f2", domain=String(" !"))
     >>> s = Symbol(fields = [f0, f1, f2], messages = [RawMessage(m1)])
     >>> print(s)
     f0       | f1                                       | f2  

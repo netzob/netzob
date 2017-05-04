@@ -54,7 +54,7 @@ class SearchTask(object):
 
 
     >>> from netzob.all import *
-    >>> data = TypeConverter.convert("netzob", ASCII, BitArray)
+    >>> data = TypeConverter.convert("netzob", String, BitArray)
     >>> searchTask = SearchTask(data, "original version")
     >>> print(searchTask.description)
     original version

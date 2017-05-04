@@ -67,7 +67,7 @@ class TypeEncodingFunction(EncodingFunction):
     ----------------------------------------------
 
     >>> m=RawMessage(b'hello\x00\x00\x00\x01')
-    >>> f1=Field(ASCII("hello"))
+    >>> f1=Field(String("hello"))
     >>> f2=Field(Integer(unitSize=AbstractType.UNITSIZE_32))
     >>> s = Symbol(fields=[f1,f2], messages=[m])
     >>> print(s)
