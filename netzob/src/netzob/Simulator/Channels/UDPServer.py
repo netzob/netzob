@@ -50,8 +50,8 @@ from netzob.Simulator.Channels.AbstractChannel import AbstractChannel
 
 @NetzobLogger
 class UDPServer(AbstractChannel):
-    """A UDPServer is a communication channel. It allows to create a
-    server that listen to a specific IP:Port over a UDP socket.
+    """A UDPServer is a communication channel. It allows a
+    server to listen to a specific IP:Port over a UDP socket.
 
     When the actor executes an OpenChannelTransition, it calls the
     open method on the UDP server which makes it to listen for
