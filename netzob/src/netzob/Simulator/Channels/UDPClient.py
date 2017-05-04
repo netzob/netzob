@@ -50,7 +50,7 @@ from netzob.Simulator.Channels.AbstractChannel import AbstractChannel
 
 @NetzobLogger
 class UDPClient(AbstractChannel):
-    """A UDPClient is a communication channel. It allows to create client connecting
+    """A UDPClient is a communication channel. It allows a client connection
     to a specific IP:Port server over a UDP socket.
 
     When the actor executes an OpenChannelTransition, it calls the
