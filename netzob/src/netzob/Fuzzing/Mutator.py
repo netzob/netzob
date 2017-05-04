@@ -60,6 +60,9 @@ class Mutator(object):
     def __init__(self):
         self._seed = Mutator.SEED_DEFAULT
         self._field = None
+        self._currentState = 0
+        self._counterMax = 0
+        self._currentCounter = 0
 
     @property
     def seed(self):
@@ -73,6 +76,51 @@ class Mutator(object):
     @typeCheck(int)
     def seed(self, seedValue):
         self._seed = seedValue
+
+    @property
+    def currentState(self):
+        """The current state of the pseudo-random generator.
+        the generator can reproduce a value by using this state.
+
+        :type: :class:`int`
+        """
+        return self._currentState
+
+    @currentState.setter
+    @typeCheck(int)
+    def currentState(self, stateValue):
+        self._currentState = stateValue
+
+    @property
+    def counterMax(self):
+        """The max number of values that the generator has to produce.
+        When this limit is reached, mutate() returns None.
+
+        :type: :class:`int`
+        """
+        return self._counterMax
+
+    @counterMax.setter
+    @typeCheck(int)
+    def counterMax(self, counterMaxValue):
+        self._counterMax = counterMaxValue
+
+    @property
+    def currentCounter(self):
+        """The counter of mutate() calls.
+        In mutate(), this value is compared to counterMax, to determine if the
+        limit of mutation is reached.
+
+        :type: :class:`int`
+        """
+        return self._currentCounter
+
+    def resetCurrentCounter(self):
+        """Reset the current counter of mutate().
+
+        :type: :class:`int`
+        """
+        self._currentCounter = 0
 
     @property
     def field(self):
@@ -89,9 +137,13 @@ class Mutator(object):
 
     @abc.abstractmethod
     def mutate(self):
-        """This is the mutation method of the field. It has to be overrided by
-        all the inherited mutators. Raises NotImplementedMutatorError if the
-        inherited mutator has not overrided this method.
+        """This is the mutation method of the field. It has to be overridden by
+        all the inherited mutators which call the generator function.
+
+        If the currentCounter reached counterMax, mutate() returns None.
+
+        Raises NotImplementedMutatorError if the inherited mutator has not
+        overridden this method.
 
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
