@@ -234,7 +234,7 @@ class Symbol(AbstractField):
         expressed as :class:`BitArray
         <netzob.Model.Vocabulary.Types.BitArray.BitArray>` (as it is
         the internal type for variables in Netzob) or in the type of
-        the overriden field variable.
+        the overridden field variable.
 
         The following code shows the definition of a simplified UDP
         header that will be latter used as base example. This UDP
