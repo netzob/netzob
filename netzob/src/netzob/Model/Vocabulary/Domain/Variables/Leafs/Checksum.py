@@ -35,12 +35,12 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import random
-from PyCRC.CRC16 import CRC16
-from PyCRC.CRC16DNP import CRC16DNP
-from PyCRC.CRC16Kermit import CRC16Kermit
-from PyCRC.CRC16SICK import CRC16SICK
-from PyCRC.CRC32 import CRC32
-from PyCRC.CRCCCITT import CRCCCITT
+from PyCRC.CRC16 import CRC16 as _CRC16
+from PyCRC.CRC16DNP import CRC16DNP as _CRC16DNP
+from PyCRC.CRC16Kermit import CRC16Kermit as _CRC16Kermit
+from PyCRC.CRC16SICK import CRC16SICK as _CRC16SICK
+from PyCRC.CRC32 import CRC32 as _CRC32
+from PyCRC.CRCCCITT import CRCCCITT as _CRCCCITT
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -192,17 +192,17 @@ class Checksum(AbstractRelationVariableLeaf):
             TypeConverter.convert(msg, Raw, HexaString)))
 
         if self.checksumName == "CRC16":
-            result = CRC16().calculate(msg)
+            result = _CRC16().calculate(msg)
         elif self.checksumName == "CRC16DNP":
-            result = CRC16DNP().calculate(msg)
+            result = _CRC16DNP().calculate(msg)
         elif self.checksumName == "CRC16Kermit":
-            result = CRC16Kermit().calculate(msg)
+            result = _CRC16Kermit().calculate(msg)
         elif self.checksumName == "CRC16SICK":
-            result = CRC16SICK().calculate(msg)
+            result = _CRC16SICK().calculate(msg)
         elif self.checksumName == "CRC32":
-            result = CRC32().calculate(msg)
+            result = _CRC32().calculate(msg)
         elif self.checksumName == "CRCCCITT":
-            result = CRCCCITT().calculate(msg)
+            result = _CRCCCITT().calculate(msg)
         elif self.checksumName == "InternetChecksum":
 
             def carry_around_add(a, b):
