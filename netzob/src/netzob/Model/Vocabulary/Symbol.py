@@ -187,7 +187,7 @@ class Symbol(AbstractField):
         return hash(frozenset(self.name))
 
     @typeCheck(Memory, object)
-    def specialize(self, memory=None, presets=None):
+    def specialize(self, memory=None, presets=None, mutators=None):
         r"""The method specialize() generates a :class:`bytes` sequence whose
         content follows the field or symbol definition.
 
@@ -200,8 +200,21 @@ class Symbol(AbstractField):
                         specialization. Values in this dictionary will
                         override any fields definition, constraints or
                         relationship dependencies.
+        :param mutators: A dictionary of keys:values used for fuzzing
+                         purpose during the specialization
+                         process. This parameter is handled the same
+                         way as the ``presets`` parameter (i.e. a
+                         mutator can be defined for each field we want
+                         to fuzz). Values in this dictionary will
+                         override any fields definition, constraints,
+                         relationship dependencies or parameterized
+                         fields. See :class:`Mutator
+                         <netzob.Fuzzing.Mutator.Mutator>` for a
+                         complete explanation of its use for fuzzing
+                         purpose.
         :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory>`
         :type presets: :class:`dict`
+        :type mutators: :class:`dict`
 
         The following example shows the specialize() method used for a
         field which contains an String and a Size fields.

@@ -52,6 +52,25 @@ class Mutator(object):
     """The model of any mutator.
 
     It provides the common properties and API to all inherited mutators.
+
+    Mutators may be used during symbol specialization process, in
+    order to fuzz targeted fields. Mutators are specified in the
+    ``symbol.specialize()`` through the ``mutators=`` parameter. This
+    parameter expects a dict containing fields objects for its keys
+    and Mutators objects for its values. We can provide parameters to
+    mutators by using tuple as values of the dict.
+
+    The following code shows the instanciation of a symbol composed of
+    a string and an integer, and the fuzzing request during the
+    specialization process:
+
+      f1 = Field(String())
+      f2 = Field(Integer())
+      symbol = Symbol(fields=[f1, f2])
+      mutators = {f1: StringMutator,
+                  f2: (PseudoRandomIntegerMutator, minValue=12, maxValue=20)}
+      symbol.specialize(mutators=mutators)
+
     """
 
     # Constants
