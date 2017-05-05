@@ -94,7 +94,7 @@ class EmptySymbol(Symbol):
 
     @property
     def receptionTimeout(self):
-        """This timeout represent how many milliseconds of no activity
+        """This timeout represent how many seconds of no activity
         represents the reception of an empty symbol.
 
         :type: class:`float`
@@ -106,7 +106,7 @@ class EmptySymbol(Symbol):
     def receptionTimeout(self, receptionTimeout):
         if receptionTimeout is None:
             raise TypeError("Reception timeout cannot be None")
-        if receptionTimeout < 0:
+        if receptionTimeout < 0.0:
             raise ValueError("Reception timeout must be positive")
 
         self.__receptionTimeout = receptionTimeout
@@ -116,7 +116,7 @@ class EmptySymbol(Symbol):
         """Returns the default reception timeout representing
         an empty symbol.
 
-        :return: the default reception timeout in milliseconds
+        :return: the default reception timeout in seconds
         :rtype: :class:`float`
         """
         return 5000.
