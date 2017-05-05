@@ -159,7 +159,7 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         to listen and will create an instance for each different client.
 
         :param timeout: the maximum time in seconds to wait for connection
-        :type timeout: :class:`int`
+        :type timeout: :class:`float`
         """
 
     @abc.abstractmethod
@@ -171,7 +171,7 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         """Read the next message from the communication channel.
 
         :param timeout: the maximum time in seconds to wait for a message
-        :type timeout: :class:`int`
+        :type timeout: :class:`float`
         """
 
     def setWriteCounterMax(self, maxValue):
@@ -268,7 +268,7 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         :param data: the data to write on the channel
         :type data: :class:`bytes`
         :param timeout: the maximum time in seconds to wait for a response
-        :type timeout: :class:`int`
+        :type timeout: :class:`float`
         """
 
     # Management methods
