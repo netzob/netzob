@@ -46,6 +46,7 @@ import abc
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Grammar.Automata import Automata
 
 
 class Mutator(object):
