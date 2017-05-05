@@ -234,7 +234,7 @@ class AbstractionLayer(object):
         :raise: :class:`TypeError` if the parameter is not valid and Exception if an
                          error occurs.
 
-        The timeout parameter represents the amount of time (in seconds) above
+        The timeout parameter represents the amount of time (in milliseconds) above
         which no reception of a message triggers the reception of an
         :class:`EmptySymbol <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`.
         
