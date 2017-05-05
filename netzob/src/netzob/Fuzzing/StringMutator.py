@@ -46,7 +46,7 @@
 from netzob.Fuzzing.Mutator import Mutator
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Fuzzing.DeterministIntegerMutator import (
-    PseudoRandomIntegerMutator)
+    DeterministIntegerMutator)
 from netzob.Model.Vocabulary.Types.Integer import uint32le
 
 
