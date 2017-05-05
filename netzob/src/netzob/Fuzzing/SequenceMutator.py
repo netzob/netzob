@@ -45,13 +45,13 @@
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Mutator import Mutator
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Fuzzing.PseudoRandomIntegerMutator import (
-    PseudoRandomIntegerMutator)
+from netzob.Fuzzing.DeterministIntegerMutator import (
+    DeterministIntegerMutator)
 from netzob.Model.Vocabulary.Types.Integer import uint32le
 
 
 class SequenceMutator(Mutator):
-    """The sequence mutator, using a pseudo-random generator to get a sequence
+    """The sequence mutator, using a determinist generator to get a sequence
     length.
 
     >>> from netzob.all import *
@@ -71,7 +71,7 @@ class SequenceMutator(Mutator):
         self._minLength = SequenceMutator.DEFAULT_MIN_LENGTH
         self._maxLength = SequenceMutator.DEFAULT_MAX_LENGTH
         self._elementLength = uint32le()
-        self._lengthMutator = PseudoRandomIntegerMutator(
+        self._lengthMutator = DeterministIntegerMutator(
             minValue=self._minLength,
             maxValue=self.maxLength)
         self._lengthMutator.field = self._elementLength
@@ -81,7 +81,7 @@ class SequenceMutator(Mutator):
         """The mutator used to generate the sequence length, between
         minLength and maxLength.
 
-        :type: :class:`PseudoRandomIntegerMutator <netzob.Fuzzing.PseudoRandomIntegerMutator>`
+        :type: :class:`DeterministIntegerMutator <netzob.Fuzzing.DeterministIntegerMutator>`
         """
         return self._lengthMutator
 
