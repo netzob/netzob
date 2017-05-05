@@ -44,8 +44,8 @@
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Mutator import Mutator
-from netzob.Fuzzing.PseudoRandomIntegerMutator import (
-    PseudoRandomIntegerMutator)
+from netzob.Fuzzing.DeterministIntegerMutator import (
+    DeterministIntegerMutator)
 from netzob.Model.Vocabulary.Types.Integer import uint32le
 from netzob.Common.Utils.Decorators import typeCheck
 
@@ -70,7 +70,7 @@ class BinarySequenceMutator(Mutator):
         super().__init__()
         self._maxLength = BinarySequenceMutator.DEFAULT_MAX_LENGTH
         self._sequenceLength = uint32le()
-        self._lengthMutator = PseudoRandomIntegerMutator(
+        self._lengthMutator = DeterministIntegerMutator(
             minValue=BinarySequenceMutator.MIN_LENGTH,
             maxValue=self.maxLength)
         self._lengthMutator.field = self._sequenceLength
@@ -80,7 +80,7 @@ class BinarySequenceMutator(Mutator):
         """The mutator used to generate the sequence length, between
         MIN_LENGTH and maxLength.
 
-        :type: :class:`PseudoRandomIntegerMutator <netzob.Fuzzing.PseudoRandomIntegerMutator>`
+        :type: :class:`DeterministIntegerMutator <netzob.Fuzzing.DeterministIntegerMutator>`
         """
         return self._lengthMutator
 
