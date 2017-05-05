@@ -120,4 +120,4 @@ have nothing to send.
         :return: the default reception timeout in seconds
         :rtype: :class:`float`
         """
-        return 5000.
+        return 5.0.
