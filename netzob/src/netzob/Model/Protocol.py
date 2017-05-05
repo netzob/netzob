@@ -57,7 +57,7 @@ class Protocol(object):
     The Protocol constructor expects some parameters:
 
     :param name: The name of the protocol.
-    :param path_zdl: The path containg the .zdl file of the format messages and the automata.
+    :param path_zdl: The path containg the .zdl file of the format messages and the automaton.
     :type name: an :class:`str`, required
     :type path_zdl: an :class:`str`, optional
 

@@ -16,5 +16,5 @@ openTransition = OpenChannelTransition(startState=s0, endState=s1, name="Open")
 #                                          endState=s2,
 #                                          name="Closed")
 
-# Specify the main automata structure
+# Specify the main automaton structure
 automata = Automata(s0, list(symbols.values()))
