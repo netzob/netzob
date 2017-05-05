@@ -50,7 +50,13 @@ from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
 
 @NetzobLogger
 class UnknownSymbol(Symbol):
-    """An unknown symbol is a special type of symbol that is returned to represent a message that cannot be abstracted
+    """An unknown symbol is a special type of symbol that is returned to
+    represent a message that cannot be abstracted.
+
+    The UnknownSymbol constructor expects some parameters:
+
+    :param message: The raw message that cannot be abstracted into a symbol.
+    :type message: :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`, optional
 
     >>> from netzob.all import *
     >>> u = UnknownSymbol()

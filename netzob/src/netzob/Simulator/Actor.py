@@ -51,18 +51,39 @@ from netzob.Simulator.AbstractionLayer import AbstractionLayer
 
 @NetzobLogger
 class Actor(threading.Thread):
-    """An actor is an instance of a traffic generator which given a grammar and a vocabular
-    can generate and parse messages from a specified abstraction layer.
+    """An actor is an instance of a traffic generator which, given a
+    grammar and a vocabular, can visit the underlying automaton, and
+    generate and parse messages from a specified abstraction layer.
 
-    For instance we can create two very simple network Actors which communicate together through
-    a TCP channel and exchanges their names until one stops.
-    The two actors are Alice and Bob. Alice is the initiator of the communication meaning she sends the input symbols
-    while Bob answers with the output symbols of the grammar.
-    The grammar is very simple, we first open the channel, and allow Alice to send random time "alice> hello". Bob answers everytime "bob> hello".
-    It's Alice which decide to stop the communication.
+    The Actor constructor expects some parameters:
+
+    :param automata: The automaton the actor will visit.
+    :param initiator: This flag indicates if the actor initiates the
+                      communication and emits the input symbol, or
+                      wait for another peer to initiate the
+                      connection. Default value is True.
+    :param abstractionLayer: The underlying abstraction layer used to abstract and specialize symbols.
+    :type automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`, required
+    :type initiator: :class:`boolean`, required
+    :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`, required
+
+
+    **Complete example**
+
+    For instance we can create two very simple network Actors which
+    communicate together through a TCP channel and exchanges their
+    names until one stops.
+
+    The two actors are Alice and Bob. Alice is the initiator of the
+    communication meaning she sends the input symbols while Bob
+    answers with the output symbols of the grammar. The grammar is
+    very simple, we first open the channel, and allow Alice to send
+    random time "alice> hello". Bob answers everytime "bob> hello".
+    It's Alice who decides to stop the communication.
 
     >>> from netzob.all import *
     >>> import time
+
     >>> # First we create the symbols
     >>> aliceSymbol = Symbol(name="Alice-Hello", fields=[Field("alice>hello")])
     >>> bobSymbol = Symbol(name="Bob-Hello", fields=[Field("bob>hello")])
@@ -73,7 +94,10 @@ class Actor(threading.Thread):
     >>> s1 = State(name="S1")
     >>> s2 = State(name="S2")
     >>> openTransition = OpenChannelTransition(startState=s0, endState=s1, name="Open")
-    >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=aliceSymbol, outputSymbols=[bobSymbol], name="hello")
+    >>> mainTransition = Transition(startState=s1,
+    ...                             endState=s1,
+    ...                             inputSymbol=aliceSymbol,
+    ...                             outputSymbols=[bobSymbol], name="hello")
     >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2, name="Close")
     >>> automata = Automata(s0, symbolList)
 
@@ -97,17 +121,6 @@ class Actor(threading.Thread):
     """
 
     def __init__(self, automata, initiator, abstractionLayer):
-        """
-        Constructor of an actor
-
-        :parameter automata: the automata the actor will visit
-        :type automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
-        :parameter initiator: indicates if the actor initiates the communication and emits the input symbol
-        :type name: :class:`boolean`
-        :parameter abstractionLayer: the abstractionLayer used to abstract and specialize symbols
-        :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer>`
-
-        """
         super(Actor, self).__init__()
         self.automata = automata
         self.initiator = initiator
@@ -115,7 +128,7 @@ class Actor(threading.Thread):
         self.__stopEvent = threading.Event()
 
     def run(self):
-        """Entry point of an actor executed when the thread is started."""
+        """Start the visit of the automaton from its initial state."""
 
         currentState = self.automata.initialState
         while not self.__stopEvent.isSet():
@@ -145,7 +158,7 @@ class Actor(threading.Thread):
             "Actor {0} has finished to execute".format(self.name))
 
     def stop(self):
-        """Stop the current thread.
+        """Stop the visit of the automaton.
 
         This operation is not immediate because we try to stop the
         thread as cleanly as possible.
@@ -158,20 +171,16 @@ class Actor(threading.Thread):
             self._logger.error(e)
 
     def isActive(self):
-        """Computes if the current actor is active i.e. the grammar
-        didn't stop to execute.
+        """Tell if the current actor is active (i.e. if the automaton
+        visit is still processing).
 
-        :return: True is the actor has not finished
+        :return: True is the actor has not finished.
         :rtype: :class:`bool`
         """
         return not self.__stopEvent.is_set()
 
     @property
     def automata(self):
-        """The initial state where the actor starts in the grammar.
-
-        :type: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
-        """
         return self.__automata
 
     @automata.setter
@@ -183,11 +192,6 @@ class Actor(threading.Thread):
 
     @property
     def initiator(self):
-        """The actor is initiator means it starts to communicate
-        and emits the input symbol registered on the transitions
-
-        :type: :class:`bool`
-        """
         return self.__initiator
 
     @initiator.setter

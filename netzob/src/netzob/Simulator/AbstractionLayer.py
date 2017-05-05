@@ -63,8 +63,20 @@ from netzob.Simulator.Channels.AbstractChannel import ChannelDownException
 @NetzobLogger
 class AbstractionLayer(object):
     """An abstraction layer specializes a symbol into a message before
-    emitting it and on the other way, abstracts a received message
+    emitting it and, on the other way, abstracts a received message
     into a symbol.
+
+    The AbstractionLayer constructor expects some parameters:
+
+    :param channel: The underlying communication channel (such as IPClient, UDPCLient, ...).
+    :param symbols: The list of permitted symbols during translation from/to concrete messages.
+    :type channel: :class:`AbstractChannel <netzob.Model.Simuator.Channels.AbstractChannel.AbstractChannel>`, required
+    :type symbols: :class:`Symbol <netzob.Model.Vocabular.Symbol.Symbol>`, required
+
+    
+    The following code shows a usage of the abstraction layer class,
+    where two UDP channels (client and server) are built and transport
+    juste one permitted symbol:
 
     >>> from netzob.all import *
     >>> symbol = Symbol([Field(b"Hello Zoby !")], name = "Symbol_Hello")
@@ -82,7 +94,9 @@ class AbstractionLayer(object):
     >>> print(receivedMessage)
     b'Hello Zoby !'
 
-    The abstraction layer can also handle a message flow.
+
+    The following example demonstrates that the abstraction layer can
+    also handle a message flow:
 
     >>> symbolflow = Symbol([Field(b"Hello Zoby !Whats up ?")], name = "Symbol Flow")
     >>> symbol1 = Symbol([Field(b"Hello Zoby !")], name = "Symbol_Hello")
@@ -114,19 +128,24 @@ class AbstractionLayer(object):
         """Write the specified symbol on the communication channel
         after specializing it into a contextualized message.
 
-        :param symbol: the symbol to write on the channel
-        :type symbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
-
-        :param rate: specifies the bandwidth in octets to respect during traffic emission (should be used with duration= parameter)
-        :type rate: int
-
-        :param duration: tells how much seconds the symbol is continuously written on the channel
-        :type duration: int
-
-        :param presets: specifies how to parameterize the emitted symbol
-        :type presets: dict
-
-        :raise TypeError if parameter is not valid and Exception if an exception occurs.
+        :param symbol: The symbol to write on the channel.
+        :param rate: This specifies the bandwidth in octets to respect
+                     during traffic emission (should be used with
+                     duration= parameter). Default value is None (no
+                     rate).
+        :param duration: This tells how much seconds the symbol is
+                         continuously written on the channel. Default
+                         value is None (write only once).
+        :param presets: This specifies how to parameterize the emitted
+                        symbol. The expected content of this dict is
+                        specified is the method ``specialize()`` of
+                        the class :class:`Symbol
+                        <netzob.Model.Vocabulary.Symbol.Symbol>`.
+        :type symbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`, required
+        :type rate: :class:`int`, optional
+        :type duration: :class:`int`, optional
+        :type presets: :class:`dict`, optional
+        :raise: :class:`TypeError` if parameter is not valid and Exception if an exception occurs.
 
         """
 
@@ -180,13 +199,11 @@ class AbstractionLayer(object):
         """Write the specified symbol on the communication channel after
         specializing it into a contextualized message.
 
-        :param symbol: the symbol to write on the channel
+        :param symbol: The symbol to write on the channel.
+        :param presets: This specifies how to parameterize the emitted symbol.
         :type symbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
-
-        :param presets: specifies how to parameterize the emitted symbol
-        :type presets: dict
-
-        :raise TypeError if parameter is not valid and Exception if an exception occurs.
+        :type presets: :clasl:`dict`
+        :raise: :class:`TypeError` if parameter is not valid and Exception if an exception occurs.
 
         """
 
@@ -207,21 +224,23 @@ class AbstractionLayer(object):
 
     @typeCheck(int)
     def readSymbols(self, timeout=EmptySymbol.defaultReceptionTimeout()):
-        """Read from the abstraction layer a flow and abstract it with one or
+        """Read a flow from the abstraction layer and abstract it in one or
         more consecutive symbols.
+
+        :param timeout: The time above which no reception of message triggers
+                          the reception of an
+                          :class:`EmptySymbol <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`. Default value is 5000. ms.
+        :type timeout: :class:`float`, optional
+        :raise: :class:`TypeError` if the parameter is not valid and Exception if an
+                         error occurs.
 
         The timeout parameter represents the amount of time (in seconds) above
         which no reception of a message triggers the reception of an
         :class:`EmptySymbol <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`.
-        If timeout is set to None or to a negative value means it always wait
+        
+        If timeout is set to None or to a negative value, it means we always wait
         for the reception of a message.
 
-        :keyword timeout: the time above which no reception of message triggers
-                          the reception of a
-                          :class:`EmptySymbol <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`
-        :type timeout: :class:`float`
-        :raise TypeError if the parameter is not valid and Exception if an
-                         error occurs.
         """
 
         self._logger.debug("Reading data from communication channel...")
@@ -254,20 +273,23 @@ class AbstractionLayer(object):
 
     @typeCheck(int)
     def readSymbol(self, timeout=EmptySymbol.defaultReceptionTimeout()):
-        """Read from the abstraction layer a message and abstract it
-        into a message.
+        """Read a message from the abstraction layer and abstract it
+        into a symbol.
+
+        :keyword timeout: The time above which no reception of message triggers
+                          the reception of an
+                          :class:`EmptySymbol <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`. Default value is 5000. ms.
+        :type timeout: :class:`float`, optional
+        :raise: :class:`TypeError` if the parameter is not valid and Exception if an
+                         error occurs.
+
         The timeout parameter represents the amount of time (in seconds) above
         which no reception of a message triggers the reception of an
         :class:`EmptySymbol <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`.
-        If timeout is set to None or to a negative value, it means it always
-        wait for the reception of a message.
+        
+        If timeout is set to None or to a negative value, it means we always wait
+        for the reception of a message.
 
-        :keyword timeout: the time above which no reception of message triggers
-                          the reception of an
-                          :class:`EmptySymbol <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`
-        :type timeout: :class:`float`
-        :raise TypeError if the parameter is not valid and Exception if an
-                         error occurs.
         """
 
         self._logger.debug("Reading data from communication channel...")
@@ -297,14 +319,26 @@ class AbstractionLayer(object):
         return (symbol, data)
 
     def openChannel(self):
+        """Open the underlying communication channel.
+
+        """
+
         self.channel.open()
         self._logger.debug("Communication channel opened.")
 
     def closeChannel(self):
+        """Close the underlying communication channel.
+
+        """
+
         self.channel.close()
         self._logger.debug("Communication channel close.")
 
     def reset(self):
+        """Reset the abstraction layer (i.e. its internal memory as well as the internal parsers).
+
+        """
+
         self._logger.debug("Reseting abstraction layer")
         self.memory = Memory()
         self.specializer = MessageSpecializer(memory=self.memory)

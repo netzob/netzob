@@ -51,6 +51,18 @@ class EmptySymbol(Symbol):
     """An empty symbol is a special type of symbol principaly used by the simulator.
     It represents the fact of having nothing received or to have nothing to send.
 
+    The EmptySymbol constructor expects some parameters:
+
+    :param receptionTimeout: The time above which no reception of
+                             message triggers the reception of an
+                             :class:`EmptySymbol
+                             <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`. Default
+                             value is 5000. ms.
+    :type receptionTimeout: a :class:`float`, optional
+
+
+    Basic usage:
+
     >>> from netzob.all import *
     >>> e = EmptySymbol()
 
@@ -83,14 +95,14 @@ class EmptySymbol(Symbol):
     @property
     def receptionTimeout(self):
         """This timeout represent how many milliseconds of no activity
-        represents the reception of an empty symbol
+        represents the reception of an empty symbol.
 
-        :type: class:`int`
+        :type: class:`float`
         """
         return self.__receptionTimeout
 
     @receptionTimeout.setter
-    @typeCheck(int)
+    @typeCheck(float)
     def receptionTimeout(self, receptionTimeout):
         if receptionTimeout is None:
             raise TypeError("Reception timeout cannot be None")
@@ -102,9 +114,9 @@ class EmptySymbol(Symbol):
     @staticmethod
     def defaultReceptionTimeout():
         """Returns the default reception timeout representing
-        an empty symbol
+        an empty symbol.
 
         :return: the default reception timeout in milliseconds
-        :rtype: :class:`int`
+        :rtype: :class:`float`
         """
-        return 5000
+        return 5000.
