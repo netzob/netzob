@@ -108,7 +108,7 @@ class Protocol(object):
     And then in a shell::
  
       $ dot -Tpng -o /tmp/dotcode.png /tmp/dotcode.dot
-      $ eog /tmp/dotcode.png
+      $ xdg-open /tmp/dotcode.png
 
     """
 
