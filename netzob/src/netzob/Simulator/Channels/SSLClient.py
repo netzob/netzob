@@ -54,7 +54,7 @@ class SSLClient(AbstractChannel):
     a client to connect to a specific IP:Port server over a TCP/SSL
     socket.
 
-    When the actor execute an OpenChannelTransition, it calls the open
+    When the actor executes an OpenChannelTransition, it calls the open
     method on the ssl client which connects to the server.
 
     The SSLClient constructor expects some parameters:
@@ -72,7 +72,7 @@ class SSLClient(AbstractChannel):
     :param server_cert_file: The path to a single file in PEM format
                              containing the certificate as well as any
                              number of CA certificates needed to
-                             establish the certificate’s
+                             establish the certificate's
                              authenticity. Default value is None,
                              meaning that no verification is made on
                              the certificate given by the peer.

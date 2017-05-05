@@ -76,7 +76,7 @@ class AbstractionLayer(object):
     
     The following code shows a usage of the abstraction layer class,
     where two UDP channels (client and server) are built and transport
-    juste one permitted symbol:
+    just one permitted symbol:
 
     >>> from netzob.all import *
     >>> symbol = Symbol([Field(b"Hello Zoby !")], name = "Symbol_Hello")

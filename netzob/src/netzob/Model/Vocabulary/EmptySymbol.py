@@ -48,8 +48,9 @@ from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
 
 
 class EmptySymbol(Symbol):
-    """An empty symbol is a special type of symbol principaly used by the simulator.
-    It represents the fact of having nothing received or to have nothing to send.
+    """An empty symbol is a special type of symbol used by the
+simulator. It represents the fact of having nothing received or to
+have nothing to send.
 
     The EmptySymbol constructor expects some parameters:
 

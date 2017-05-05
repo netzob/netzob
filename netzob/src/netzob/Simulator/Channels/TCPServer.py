@@ -53,7 +53,7 @@ class TCPServer(AbstractChannel):
     """A TCPServer is a communication channel. It allows a
     server to listen to a specified IP:Port over a TCP socket.
 
-    When the actor execute an OpenChannelTransition, it calls the open
+    When the actor executes an OpenChannelTransition, it calls the open
     method on the tcp server which starts the server. The objective of
     the server is to wait for the client to connect.
 

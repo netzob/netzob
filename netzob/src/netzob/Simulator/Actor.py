@@ -60,7 +60,7 @@ class Actor(threading.Thread):
     :param automata: The automaton the actor will visit.
     :param initiator: This flag indicates if the actor initiates the
                       communication and emits the input symbol, or
-                      wait for another peer to initiate the
+                      waits for another peer to initiate the
                       connection. Default value is True.
     :param abstractionLayer: The underlying abstraction layer used to abstract and specialize symbols.
     :type automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`, required
@@ -71,7 +71,7 @@ class Actor(threading.Thread):
     **Complete example**
 
     For instance we can create two very simple network Actors which
-    communicate together through a TCP channel and exchanges their
+    communicate together through a TCP channel and exchange their
     names until one stops.
 
     The two actors are Alice and Bob. Alice is the initiator of the
