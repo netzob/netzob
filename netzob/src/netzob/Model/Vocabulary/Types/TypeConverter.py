@@ -83,7 +83,7 @@ class TypeConverter(object):
         :raise: TypeError if parameters are not valid
 
 
-        For example, to convert an String to a binary (BitArray) representation:
+        For example, to convert a String to a binary (BitArray) representation:
 
         >>> from netzob.all import *
         >>> data = "hello"
@@ -93,7 +93,7 @@ class TypeConverter(object):
         >>> data == TypeConverter.convert(bin, BitArray, String)
         True
 
-        To convert a raw data to an integer representation and then to an String representation:
+        To convert a raw data to an integer representation and then to a String representation:
 
         >>> data = b'\\x23'
         >>> decData = TypeConverter.convert(data, Raw, Integer)

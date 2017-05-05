@@ -54,7 +54,7 @@ class Mutator(object):
 
     This class provides the common properties and API to all inherited mutators.
 
-    ** Mutators for message formats fuzzing **
+    **Mutators for message formats fuzzing**
 
     Mutators may be used during symbol specialization process, in
     order to fuzz targeted fields. Mutators are specified in the

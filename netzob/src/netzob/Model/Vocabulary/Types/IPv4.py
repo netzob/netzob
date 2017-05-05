@@ -88,7 +88,7 @@ class IPv4(AbstractType):
     >>> print(len(msgs))
     10
 
-    It is also possible to specify a field that accept a range of IP
+    It is also possible to specify a field that accepts a range of IP
     addresses, through the `network=` parameter, as shown on the
     following example:
 

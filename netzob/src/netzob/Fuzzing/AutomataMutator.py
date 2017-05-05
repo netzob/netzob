@@ -54,7 +54,7 @@ class AutomataMutator(Mutator):
     same type as the other mutators : it returns here an Automata object.
 
 
-    ** Mutators for automata fuzzing **
+    **Mutators for automata fuzzing**
 
     Mutators may be used in order to create fuzzed/mutated automaton.
 
@@ -69,7 +69,7 @@ class AutomataMutator(Mutator):
     >>> mutatedAutomata = mutator.mutate()
 
 
-    ** Combining message formats and automata fuzzing **
+    **Combining message formats and automata fuzzing**
 
     By combining message formats and automata fuzzing, it is possible
     to fuzz specific message formats at specific states in the

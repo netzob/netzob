@@ -217,7 +217,7 @@ class Symbol(AbstractField):
         :type mutators: :class:`dict`
 
         The following example shows the specialize() method used for a
-        field which contains an String and a Size fields.
+        field which contains a String and a Size fields.
 
         >>> from netzob.all import *
         >>> f1 = Field(domain=String(nbChars=5))

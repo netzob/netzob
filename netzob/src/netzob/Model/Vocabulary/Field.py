@@ -151,7 +151,7 @@ class Field(AbstractField):
     field. Such relationships may be specified in Netzob through
     specific domain objects, such as Size or Value classes.
 
-    The following example describes a size relationship with an String
+    The following example describes a size relationship with a String
     field:
     
     >>> from netzob.all import *
@@ -184,7 +184,7 @@ class Field(AbstractField):
 
     **Encoding functions applied on fields**
 
-    Encoding functions represents functions which apply to modify the
+    Encoding functions represent functions which apply to modify the
     encoding of a data. The following example shows the use of the
     Base64EncodingFunction function to automatically decode base64
     strings in the `f1` field:
@@ -252,7 +252,7 @@ class Field(AbstractField):
 
       >>> f = Field(["netzob", "zoby"])
 
-    * a field representing a decimal (10) or an String of 16 chars:
+    * a field representing a decimal (10) or a String of 16 chars:
 
       >>> f = Field([10, String(nbChars=(16))])
 

@@ -472,7 +472,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
          The value 'None' can be set for min and/or max to represent no limitations.
 
-         For instance, to create an String field of at least 10 chars:
+         For instance, to create a String field of at least 10 chars:
 
          >>> from netzob.all import *
          >>> f = Field(String(nbChars=(10,None)))
@@ -627,7 +627,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         to set this value with the name of :  Type.__class__.__name__.
 
         :type: `str`
-        :raises: :class: `TypeError` if typeName is not an str
+        :raises: :class: `TypeError` if typeName is not a string
         """
         return self.__typeName
 
@@ -643,7 +643,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         """The unitSize of the current value.
 
         :type: `str`
-        :raises: :class: `TypeError` if unitSize is not an str and not a supported value.
+        :raises: :class: `TypeError` if unitSize is not a string and not a supported value.
 
         """
         return self.__unitSize
@@ -665,7 +665,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         The endianness definition is synchronized with the bitarray value.
 
         :type: `str`
-        :raises: :class: `TypeError` if endianness is not an str and not a supported value.
+        :raises: :class: `TypeError` if endianness is not a string and not a supported value.
 
         """
         return self.__endianness
@@ -690,7 +690,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         """The sign of the current value.
 
         :type: `str`
-        :raises: :class: `TypeError` if sign is not an str and not a supported value.
+        :raises: :class: `TypeError` if sign is not a string and not a supported value.
 
         """
         return self.__sign

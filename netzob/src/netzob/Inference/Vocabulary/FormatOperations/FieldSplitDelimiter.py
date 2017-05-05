@@ -58,7 +58,7 @@ class FieldSplitDelimiter(object):
     @typeCheck(AbstractField, AbstractType)
     def split(field, delimiter):
         """Split a field (or symbol) with a specific delimiter. The
-        delimiter can be passed either as an String, a Raw, an
+        delimiter can be passed either as a String, a Raw, an
         HexaString, or any objects that inherit from AbstractType.
 
 

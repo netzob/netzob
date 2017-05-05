@@ -62,12 +62,12 @@ class Repeat(AbstractVariableNode):
 
     :param child: The variable element that will be repeated.
     :param nbRepeat: The minimum and maximum of repetitions of the element.
-    :param delimitor: The delimitor used to separate the repeated element.
+    :param delimiter: The delimiter used to separate the repeated element.
     :type child: :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
     :type nbRepeat: a :class:`int` describing the number of
                     repetitions, or a tuple of :class:`int` describing
                     the min,max of repetitions, required
-    :type delimitor: :class:`BitArray <netzob.Model.Vocabulary.Types.BitArray>`, optional
+    :type delimiter: :class:`BitArray <netzob.Model.Vocabulary.Types.BitArray>`, optional
 
 
     The following example shows a repeat variable where the repeated
@@ -79,13 +79,13 @@ class Repeat(AbstractVariableNode):
     b'ABCABCABCABCABCABCABCABCABCABCABCABCABCABCABCABC'
 
     
-    **Usage of a delimitor**
+    **Usage of a delimiter**
 
-    We can specify a delimitor between each repeated element, as
+    We can specify a delimiter between each repeated element, as
     depicted in the following example:
 
     >>> f1 = Field(Repeat(Alt([String("netzob"), String("zoby")]), nbRepeat=(1, 4),
-    ...            delimitor=TypeConverter.convert(";", Raw, BitArray)))
+    ...            delimiter=TypeConverter.convert(";", Raw, BitArray)))
     >>> f2 = Field(String("zoby"))
     >>> s = Symbol([f1, f2])
     >>> msg1 = RawMessage("netzob;zoby;netzobzoby")
@@ -136,7 +136,7 @@ class Repeat(AbstractVariableNode):
 
     >>> from netzob.all import *
     >>> f1 = Field(Repeat(IPv4(), nbRepeat=3,
-    ...           delimitor=TypeConverter.convert(";", Raw, BitArray)))
+    ...           delimiter=TypeConverter.convert(";", Raw, BitArray)))
     >>> s = Symbol([f1])
     >>> gen = s.specialize()
     >>> len(gen) == 14
@@ -147,7 +147,7 @@ class Repeat(AbstractVariableNode):
     >>> from netzob.all import *
     >>> child = Data(dataType=String(nbChars=(5)), svas=SVAS.PERSISTENT)
     >>> f1 = Field(Repeat(child, nbRepeat=3,
-    ...            delimitor=TypeConverter.convert(";", Raw, BitArray)))
+    ...            delimiter=TypeConverter.convert(";", Raw, BitArray)))
     >>> s = Symbol([f1])
     >>> gen = s.specialize()
     >>> gen == gen[:5]+b";"+gen[:5]+b";"+gen[:5]
@@ -155,10 +155,10 @@ class Repeat(AbstractVariableNode):
 
     """
 
-    def __init__(self, child, nbRepeat, delimitor=None):
+    def __init__(self, child, nbRepeat, delimiter=None):
         super(Repeat, self).__init__(self.__class__.__name__, [child])
         self.nbRepeat = nbRepeat
-        self.delimitor = delimitor
+        self.delimiter = delimiter
 
     @typeCheck(ParsingPath)
     def parse(self, parsingPath, carnivorous=False):
@@ -211,16 +211,16 @@ class Repeat(AbstractVariableNode):
                             dataToParse.copy()[len(newResult):],
                             self.children[0])
 
-                        # apply delimitor
-                        if self.delimitor is not None:
+                        # apply delimiter
+                        if self.delimiter is not None:
                             if i_repeat < nb_repeat - 1:
-                                # check the delimitor is available
+                                # check the delimiter is available
                                 toParse = childParsingPath.getDataAssignedToVariable(
                                     self.children[0]).copy()
                                 if toParse[:len(
-                                        self.delimitor)] == self.delimitor:
+                                        self.delimiter)] == self.delimiter:
                                     newResult = childParsingPath.getDataAssignedToVariable(
-                                        self).copy() + self.delimitor
+                                        self).copy() + self.delimiter
                                     childParsingPath.addResult(self, newResult)
                                     childParsingPath.assignDataToVariable(
                                         dataToParse.copy()[len(newResult):],
@@ -257,8 +257,8 @@ class Repeat(AbstractVariableNode):
                         if path.isDataAvailableForVariable(self):
                             newResult = path.getDataAssignedToVariable(
                                 self).copy()
-                            if self.delimitor is not None:
-                                newResult += self.delimitor
+                            if self.delimiter is not None:
+                                newResult += self.delimiter
                             newResult += path.getDataAssignedToVariable(
                                 self.children[0])
                         else:
@@ -312,10 +312,10 @@ class Repeat(AbstractVariableNode):
         self.__nbRepeat = (minNbRepeat, maxNbRepeat)
 
     @property
-    def delimitor(self):
-        return self.__delimitor
+    def delimiter(self):
+        return self.__delimiter
 
-    @delimitor.setter
+    @delimiter.setter
     @typeCheck(bitarray)
-    def delimitor(self, delimitor):
-        self.__delimitor = delimitor
+    def delimiter(self, delimiter):
+        self.__delimiter = delimiter

@@ -79,10 +79,10 @@ class BitArray(AbstractType):
     b'\x0f'
 
 
-    ** Bitarray of fixed and dynamic sizes **
+    **Bitarray of fixed and dynamic sizes**
 
     The following example shows how to define a bitarray of 1 bit, 47
-    bits, 64 bits and then a field that accept a bitarray of variable
+    bits, 64 bits and then a field that accepts a bitarray of variable
     size between 13 and 128 bits:
 
     >>> f1 = Field(BitArray(nbBits=1))
@@ -100,11 +100,11 @@ class BitArray(AbstractType):
     >>> f4 = Field(BitArray(nbBits=(13, 128)))
 
 
-    ** Accessing bitarray elements by named constant **
+    **Accessing bitarray elements by named constant**
     
     In the following example, we define a bitarray with two
     elements. As this bitarray has a fixed length, element are
-    automatically accessible by predifined named constants ('item_0'
+    automatically accessible by predefined named constants ('item_0'
     and 'item_1'):
     
     >>> f1 = Field(bitarray('00'))

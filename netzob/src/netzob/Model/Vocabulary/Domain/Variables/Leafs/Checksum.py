@@ -138,21 +138,21 @@ class Checksum(AbstractRelationVariableLeaf):
     b'\xaa\xbbUD'
 
 
-    ** Checksum shortcut definitions **
+    **Checksum shortcut definitions**
 
     This class also provides shortcuts to define checksum
     relationships. The following shortcuts are available:
 
-    CRC16(fields)            -> Checksum(fields, checksumName='CRC16')
-    CRC16DNP(fields)         -> Checksum(fields, checksumName='CRC16DNP')
-    CRC16Kermit(fields)      -> Checksum(fields, checksumName='CRC16Kermit')
-    CRC16Sick(fields)        -> Checksum(fields, checksumName='CRC16Sick')
-    CRC32(fields)            -> Checksum(fields, checksumName='CRC32')
-    CRCCCITT(fields)         -> Checksum(fields, checksumName='CRCCCITT')
-    InternetChecksum(fields) -> Checksum(fields, checksumName='InternetChecksum')
+    * CRC16(fields)            -> Checksum(fields, checksumName='CRC16')
+    * CRC16DNP(fields)         -> Checksum(fields, checksumName='CRC16DNP')
+    * CRC16Kermit(fields)      -> Checksum(fields, checksumName='CRC16Kermit')
+    * CRC16Sick(fields)        -> Checksum(fields, checksumName='CRC16Sick')
+    * CRC32(fields)            -> Checksum(fields, checksumName='CRC32')
+    * CRCCCITT(fields)         -> Checksum(fields, checksumName='CRCCCITT')
+    * InternetChecksum(fields) -> Checksum(fields, checksumName='InternetChecksum')
 
 
-    ** Complete example with ICMP **
+    **Complete example with ICMP**
 
     The following example illustrates the creation of an ICMP Echo request packet
     with a valid checksum computed on-the-fly.

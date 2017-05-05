@@ -67,7 +67,7 @@ class Agg(AbstractVariableNode):
 
 
     For example, the following code represents a field which
-    accepts values that are made of an String of 3 to 20 random
+    accepts values that are made of a String of 3 to 20 random
     characters followed by a ".txt" extension:
 
     >>> from netzob.all import *
