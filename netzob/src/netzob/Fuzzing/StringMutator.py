@@ -45,13 +45,13 @@
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Mutator import Mutator
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Fuzzing.PseudoRandomIntegerMutator import (
+from netzob.Fuzzing.DeterministIntegerMutator import (
     PseudoRandomIntegerMutator)
 from netzob.Model.Vocabulary.Types.Integer import uint32le
 
 
 class StringMutator(Mutator):
-    """The string mutator, using a pseudo-random generator to get a string length.
+    """The string mutator, using a determinist generator to get a string length.
     The generated string shall not be longer than 2^32.
 
     >>> from netzob.all import *
@@ -73,7 +73,7 @@ class StringMutator(Mutator):
         self._minLength = StringMutator.DEFAULT_MIN_LENGTH
         self._maxLength = StringMutator.DEFAULT_MAX_LENGTH
         self._stringLength = uint32le()
-        self._lengthMutator = PseudoRandomIntegerMutator(
+        self._lengthMutator = DeterministIntegerMutator(
             minValue=self._minLength,
             maxValue=self.maxLength)
         self._lengthMutator.field = self._stringLength
@@ -83,7 +83,7 @@ class StringMutator(Mutator):
         """The mutator used to generate the string length, between
         minLength and maxLength.
 
-        :type: :class:`PseudoRandomIntegerMutator <netzob.Fuzzing.PseudoRandomIntegerMutator>`
+        :type: :class:`DeterministIntegerMutator <netzob.Fuzzing.DeterministIntegerMutator>`
         """
         return self._lengthMutator
 
