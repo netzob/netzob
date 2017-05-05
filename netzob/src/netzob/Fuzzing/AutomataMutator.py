@@ -114,8 +114,8 @@ class AutomataMutator(Mutator):
         pass
 
     def mutate(self, strategy='random', startingState=None, endingState=None):
-        """This is the mutation method of the automata. This methods returns a
-        new automaton that may be used for fuzzing purpose.
+        """This is the mutation method of the automaton. This methods returns
+        a new automaton that may be used for fuzzing purpose.
 
         The mutate method expects some parameters:
 
@@ -124,11 +124,11 @@ class AutomataMutator(Mutator):
         :param startingState: The state in the automaton from which to
                               start the fuzzing of message formats
                               (i.e. symbols). By default, no
-                              startingStarting is defined.
+                              startingState is defined.
         :param endingState: The state in the automaton from which to
                             end the fuzzing of message formats
                             (i.e. symbols). By default, no
-                            endingStarting is defined.
+                            endingState is defined.
         :type strategy: a :class:`str`, optional
         :type startingState: :class:`State <netzob.Model.Grammar.State.State>`, optional
         :type endingState: :class:`State <netzob.Model.Grammar.State.State>`, optional
