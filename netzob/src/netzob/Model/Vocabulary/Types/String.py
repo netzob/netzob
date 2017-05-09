@@ -52,7 +52,7 @@ from netzob.Common.Utils.Decorators import NetzobLogger, typeCheck
 
 @NetzobLogger
 class String(AbstractType):
-    """This class defines a String type, in order to represent String or
+    r"""This class defines a String type, in order to represent String or
     Unicode characters.
 
     The type String is a wrapper for the Python :class:`str` object
