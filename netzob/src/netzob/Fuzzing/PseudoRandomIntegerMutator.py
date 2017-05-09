@@ -45,6 +45,8 @@
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Mutator import Mutator
 from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Fuzzing.Xorshift128plus import Xorshift128plus
+from netzob.Model.Vocabulary.Types.Integer import Integer
 
 
 class PseudoRandomIntegerMutator(Mutator):
@@ -63,6 +65,7 @@ class PseudoRandomIntegerMutator(Mutator):
         super().__init__()
         self._minValue = minValue
         self._maxValue = maxValue
+        self._prng = Xorshift128plus(self.seed)
 
     @property
     def minValue(self):
@@ -71,7 +74,11 @@ class PseudoRandomIntegerMutator(Mutator):
 
         :type: :class:`int`
         """
-        return self._minValue
+        if self._minValue is not None:
+            return self._minValue
+        # else:
+        #     if isinstance(self.field, Integer):
+        #         self.field.
 
     @minValue.setter
     @typeCheck(int)
@@ -99,5 +106,10 @@ class PseudoRandomIntegerMutator(Mutator):
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
         """
-        # TODO : implement the PRNG
-        return super().mutate()
+
+        if self.currentCounter == 0:
+            if self.seed is not None:
+                self._prng.seed = self.seed
+        self._currentCounter += 1
+        return int(self._prng.getNew0To1Value()*(self.maxValue - self.minValue)
+                   + self.minValue)

@@ -77,7 +77,7 @@ class Mutator(object):
     """
 
     # Constants
-    SEED_DEFAULT = 0
+    SEED_DEFAULT = 10
 
     def __init__(self):
         self._seed = Mutator.SEED_DEFAULT
