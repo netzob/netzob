@@ -36,7 +36,9 @@
 # +---------------------------------------------------------------------------+
 import struct
 import math
+import random
 from bitarray import bitarray
+from typing import Iterable
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -255,6 +257,11 @@ class Integer(AbstractType):
         if value is not None and not isinstance(value, bitarray):
             from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
             from netzob.Model.Vocabulary.Types.BitArray import BitArray
+            if isinstance(interval, Iterable) and len(interval) == 2:
+                low, high = interval
+                if not (low <= value <= high):
+                    raise ValueError("value ({}) must be included in interval {}"
+                                     .format(value, interval))
             interval = value
             value = TypeConverter.convert(
                 value,
@@ -284,6 +291,8 @@ class Integer(AbstractType):
             endianness=endianness,
             sign=sign)
 
+        self.interval = interval
+
     def _computeNbUnitSizeForInterval(self, interval, unitSize, sign):
         if isinstance(interval, int):
             # the interval is a single value
@@ -301,6 +310,8 @@ class Integer(AbstractType):
     def _computeNbUnitSizeForVal(self, val, unitSize, sign):
         # the interval is a single value
         # bspec = ⌊log2(n)⌋ + 1 (+1 for signed)
+        if val == 0:
+            return 1
         val = abs(val)
         if sign == AbstractType.SIGN_UNSIGNED:
             return math.floor(
@@ -526,6 +537,27 @@ class Integer(AbstractType):
             unitFormat = unitFormat.upper()
 
         return endianFormat + unitFormat
+
+    def generate(self, *args, **kwds):
+        """Generates a random integer inside the given interval.
+
+        >>> from netzob.all import *
+        >>> v1 = Integer(interval=(-10, -1)).generate()
+        >>> assert v1[0] is True  # sign bit (MSB) is set
+        >>> v2 = Integer(42, sign=AbstractType.SIGN_UNSIGNED)
+        >>> v2.generate()
+        bitarray('00101010')
+        >>> v3 = uint16be(0xff00)
+        >>> v3.generate()
+        bitarray('1111111100000000')
+        """
+        if isinstance(self.interval, Iterable) and len(self.interval) == 2:
+            val = random.randint(min(self.interval), max(self.interval))
+        else:
+            val = self.interval
+
+        return Integer(val, sign=self.sign, endianness=self.endianness,
+                       unitSize=self.unitSize).value
 
 
 int8be   = partialclass(Integer,
