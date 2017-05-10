@@ -538,7 +538,7 @@ class Integer(AbstractType):
 
         return endianFormat + unitFormat
 
-    def generate(self, *args, **kwds):
+    def generate(self):
         """Generates a random integer inside the given interval.
 
         >>> from netzob.all import *
