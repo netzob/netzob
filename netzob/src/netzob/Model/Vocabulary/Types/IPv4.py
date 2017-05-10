@@ -52,11 +52,24 @@ from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 @NetzobLogger
 class IPv4(AbstractType):
-    """This class supports the definition of type IPv4 in Netzob.
-    it defines how to encode a python raw in an IPv4 representation or in the other way, to
-    decode an IPv4 into a Raw.
+    """This class defines an IPv4 type.
 
-    This type can be used to define which IPv4 is expected as a domain:
+    The IPv4 type allows to encode a :class:`bytes` object in an IPv4
+    representation, and conversely to decode an IPv4 into a raw
+    object.
+
+    The IPv4 constructor expects some parameters:
+
+    :parameter value: An IP value expressed in standard dot notation
+                          (ex: "192.168.0.10").
+    :parameter network: A network address expressed in standard
+                            dot notation (ex: "192.168.0.0/24").
+    :type value: :class:`str` or :class:`netaddr.IPAddress`
+    :type network: :class:`str` or :class:`netaddr.IPNetwork`
+
+
+    The following examples show the use of an IPv4 type for the
+    definition domain of a field:
 
     >>> from netzob.all import *
     >>> ip = IPv4("192.168.0.10")
@@ -72,21 +85,22 @@ class IPv4(AbstractType):
     >>> print(len(msgs))
     10
 
+    It is also possible to specify a field that accept a range of IP
+    addresses, through the `network=` parameter, as shown on the
+    following example:
+
+    >>> f = Field(IPv4(network="10.10.10.0/24"))
+    >>> TypeConverter.convert(f.specialize(), Raw, IPv4) in IPNetwork("10.10.10.0/24")
+    True
+
     """
 
     def __init__(self,
                  value=None,
                  network=None,
-                 unitSize=AbstractType.defaultUnitSize(),
+                 unitSize=AbstractType.UNITSIZE_32,
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign()):
-        """Builds an IPv4 domain with optional constraints.
-
-        :parameter value: specify a constraints over the expected value.
-        :type value: an str, an IPAddress or an int which can be parsed as an IPv4 (ex. "192.168.0.10")
-        :parameter network: if no value is specified (None), a constraints over the network the parsed IP belongs can be specified with this parameter (ex. "192.168.0.0/24")
-        :type network: an str or an IPAddress which can be parsed as a network IPv4
-        """
 
         if value is not None and not isinstance(value, bitarray):
             from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
@@ -108,9 +122,9 @@ class IPv4(AbstractType):
             self.__class__.__name__,
             value,
             32,
-            unitSize=unitSize,
-            endianness=endianness,
-            sign=sign)
+            unitSize=AbstractType.UNITSIZE_32,
+            endianness=AbstractType.defaultEndianness(),
+            sign=AbstractType.defaultSign())
 
     def generate(self, generationStrategy=None):
         """Generates a random IPv4 which follows the constraints.

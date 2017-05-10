@@ -117,7 +117,7 @@ class AbstractionLayer(object):
         :param symbol: the symbol to write on the channel
         :type symbol: :class:`netzob.Model.Vocabulary.Symbol.Symbol`
 
-        :param rate: specifies the bandwidth in octets to respect durring traffic emission (should be used with duration= parameter)
+        :param rate: specifies the bandwidth in octets to respect during traffic emission (should be used with duration= parameter)
         :type rate: int
 
         :param duration: tells how much seconds the symbol is continuously written on the channel

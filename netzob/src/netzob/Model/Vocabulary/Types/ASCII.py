@@ -52,25 +52,61 @@ from netzob.Common.Utils.Decorators import NetzobLogger, typeCheck
 
 @NetzobLogger
 class ASCII(AbstractType):
-    """The netzob type ASCII, a wrapper for the "string" object (encoded in utf-8)
+    """This class defines an ASCII type.
+
+    The type ASCII is a wrapper for the Python :class:`str` object
+    with the capability to express more constraints on the permitted
+    strings values.
+
+    The ASCII constructor expects some parameters:
+
+    :param value: The current value of the type instance.
+    :param nbChars: The amount of permitted ASCII characters.
+    :type value: :class:`bitarray.bitarray`
+    :type nbChars: an :class:`int` or a tupple with the min and the max size specified as :class:`int`
+
+    Netzob allows to describe a field that contains an ASCII
+    string. ASCII strings can be either static or dynamic with fixed
+    sizes or even dynamic with variable sizes.
+
+    The following example shows how to define a static ASCII string:
 
     >>> from netzob.all import *
-    >>> cAscii = ASCII("constante value")
+    >>> f = Field(ASCII("Paris"))
+
+    The following example shows how to define an ASCII string with a
+    fixed size and a dynamic content:
+
+    >>> f = Field(ASCII(nbChars=10))
+
+    The following example shows how to define an ASCII string with a
+    variable size and a dynamic content:
+
+    >>> f = Field(ASCII(nbChars=(10, 32)))
+
+    **Examples of ASCII internal attributes access**
+
+    >>> from netzob.all import *
+    >>> cAscii = ASCII("hello")
     >>> print(cAscii)
-    ASCII=constante value ((0, 120))
+    ASCII=hello ((0, 40))
     >>> print(cAscii.typeName)
     ASCII
     >>> print(cAscii.value)
-    bitarray('011000110110111101101110011100110111010001100001011011100111010001100101001000000111011001100001011011000111010101100101')
+    bitarray('0110100001100101011011000110110001101111')
 
-    Use the convert function to convert the current type to any other netzob type
+    **Examples of conversions**
+
+    The following example shows how to convert the
+    current type to any other Netzob type:
+
     >>> raw = cAscii.convertValue(Raw)
     >>> print(repr(raw))
-    b'constante value'
+    b'hello'
     >>> ip = cAscii.convertValue(IPv4)
     Traceback (most recent call last):
     ...
-    TypeError: Impossible encode b'constante value' into an IPv4 data (unpack requires a bytes object of length 4)
+    TypeError: Impossible encode b'hello' into an IPv4 data (unpack requires a bytes object of length 4)
 
     The type can be used to specify constraints over the domain
     >>> a = ASCII(nbChars=10)

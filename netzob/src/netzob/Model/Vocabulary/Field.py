@@ -57,80 +57,208 @@ class InvalidDomainException(Exception):
 
 
 class Field(AbstractField):
-    r"""A symbol structure follows a format that specifies a sequence of expected fields:
-    e.g. TCP segments contains expected fields as sequence number and checksum.
+    r"""The Field class is used in the definition of a Symbol structure.
 
-    Fields have either a fixed or variable size.
-    A field can similarly be composed of sub-elements (such as a payload field).
+    A Field describes a chunk of a Symbol and is specified by a
+    definition domain, representing the set of values the field
+    accepts.
 
-    To model this, a field is part of a tree which root is field’s symbol and made of leaf fields.
-    Hence, a field always has a parent which can be another field or a symbol if its the root. A field can optionally have children.
+    The Field constructor expects some parameters:
 
-    The value that can take the field is defined by its definition domain.
-    It can be a simple static value such an ASCII or a decimal but also more complex such as including transformation or encoding filters and relations.
+    :param domain: The definition domain of the field (i.e. the
+                   set of values the field accepts). If not
+                   specified, the default definition domain will
+                   be Raw(), meaning it accepts any values.
+    :param name: The name of the field. If not specified, the
+                 default name will be "Field".
+    :param layer: A flag indicating if the field is a layer.
+    :param isPseudoField: A flag indicating if the field is a
+                          pseudo field, meaning it is used
+                          internally to help for the computation
+                          of the value of another field, but does
+                          not directly produce data.
+    :type domain: a :class:`list` of :class:`object`
+    :type name: :class:`str`
+    :type layer: :class:`bool`
+    :type isPseudoField: :class:`bool`
 
-    Here are few examples of 'simple' fields:
 
-    a field containing the decimal value 100
+    **Fields hierarchy**
+
+    A field can be composed of sub-fields. This is useful for example
+    to separate a header, composed of multiple fields, from its
+    payload:
 
     >>> from netzob.all import *
-    >>> f = Field(100)
+    >>> fh0 = Field()
+    >>> fh1 = Field()
+    >>> fheader = Field()
+    >>> fheader.fields = [fh0, fh1]
+    >>> fpayload = Field()
+    >>> symbol = Symbol(fields=[fheader, fpayload])
+    >>> print(symbol._str_debug())
+    Symbol
+    |--  Field
+    |--  |--  Field
+              |--   Data (Raw=None ((0, None)))
+    |--  |--  Field
+              |--   Data (Raw=None ((0, None)))
+    |--  Field
+         |--   Data (Raw=None ((0, None)))
 
-    a field containing a specific binary: '1000' = 8 in decimal
+    More generally, a field is part of a tree whose root is a symbol
+    and whose all other nodes of the tree are fields. Hence, a field
+    always has a parent which can be another field or a symbol if it
+    is the root.
 
-    >>> f = Field(0b1000)
-    >>> f.specialize()
-    b'\x08'
+    **Field definition domain**
 
-    a field containing a raw value of 8 bits (1 byte)
+    The value that can take a field is defined by its definition
+    domain. The definition domain of a field can take multiple forms,
+    in order to easily express basic types (such as Integer or ASCII
+    strings) or to model complex data structures (such has
+    alternatives, repetitions or sequences).
 
-    >>> f = Field(Raw(nbBytes=(8, 9)))
+    The following examples present the different forms that are
+    authorized by Netzob to express the same field content (i.e. an
+    Integer with a constant value of 10):
 
-    a field with a specific raw value
+    >>> f = Field(10)
+    >>> f = Field(Integer(10))
+    >>> f = Field(Data(Integer(10)))
+    >>> f = Field(domain=Data(Integer(10)))
 
-    >>> f = Field(Raw('\x00\x01\x02\x03'))
-    >>> f.specialize()
-    b'\x00\x01\x02\x03'
+    If these fields are equivalent, this is because the first
+    parameter of the Field constructor is *domain=*, thus its name can
+    be omitted. Besides, the domain parameter will be parsed by a
+    factory, which accepts either the canonical form of a definition
+    domain (such as `domain=Data(Integer(10))`) or a shortened form
+    (such as `domain=Integer(10)`, or even `domain=10`).
+
+    A domain may be composed of basic types, or complex data
+    structures. The following examples show how to express data
+    structures composed of 1) an alternative between the integers `10`
+    and `20`, 2) a repetition of the string `a`, and 3) an aggregate
+    (or concatenation) of the strings `aa` and `bb`:
+
+    >>> f = Field(Alt([10, 20]))
+    >>> f = Field(Repeat("a", nbRepeat=(4,8)))
+    >>> f = Field(Agg(["aa", "bb"]))
+
+    **Relationships between fields**
+
+    A field can have its value related to the content of another
+    field. Such relationships may be specified in Netzob through
+    specific domain objects, such as Size or Value classes.
+
+    The following example describes a size relationship with an ASCII
+    field:
     
-    a field representing a random IPv4
+    >>> from netzob.all import *
+    >>> f0 = Field(ASCII("test"))
+    >>> f1 = Field(Size(f0))
+    >>> symbol = Symbol(fields=[f0, f1])
+    >>> print(symbol.specialize())
+    b'test\x04'
 
-    >>> f = Field(IPv4())
+    **Pseudo fields**
 
-    a field representing a random ASCII of 6 characters length
+    Sometimes, a specific field can be needed to express a complex
+    data structure that depends on external data. This is the purpose
+    of the `isPseudoField` flag. This flag indicates that the current
+    field is only used for the computation of the value of another
+    field, but does not produce real content during
+    specialization. The following example shows a pseudo field that
+    contains an external data, and a real field whose content is the
+    size of the external data:
 
-    >>> f = Field(ASCII(nbChars=(6, 7)))
+    >>> from netzob.all import *
+    >>> f_pseudo = Field(domain="An external data", isPseudoField=True)
+    >>> f_real = Field(domain=Size(f_pseudo))
+    >>> symbol = Symbol(fields=[f_pseudo, f_real])
+    >>> print(symbol.specialize())
+    b'\x10'
 
-    a field representing a random ASCII with between 5 and 20 characters
+    A real example of a pseudo field is found in the UDP checksum,
+    which relies on a pseudo IP header for its computation.
 
-    >>> payloadField = Field(ASCII(nbChars=(5, 20)))
+    **Encoding functions applied on fields**
 
-    a field which value is the size of the payloadField
+    Encoding functions represents functions which apply to modify the
+    encoding of a data. The following example shows the use of the
+    Base64EncodingFunction function to automatically decode base64
+    strings in the `f1` field:
 
-    >>> f = Field([Size(payloadField)])
+    >>> m1 = "hello YWxs"
+    >>> m2 = "hello bXkgbG9yZA=="
+    >>> m3 = "hello d29ybGQ="
+    >>> messages = [RawMessage(m1), RawMessage(m2), RawMessage(m3)]
+    >>> f0 = Field(name="f0", domain=ASCII("hello "))
+    >>> f1 = Field(name="f1", domain=ASCII(nbChars=(0, 20)))
+    >>> s = Symbol(fields=[f0, f1], messages=messages)
+    >>> print(s)
+    f0       | f1            
+    -------- | --------------
+    'hello ' | 'YWxs'        
+    'hello ' | 'bXkgbG9yZA=='
+    'hello ' | 'd29ybGQ='    
+    -------- | --------------
+    >>> f1.addEncodingFunction(Base64EncodingFunction(encode_data = False))
+    >>> print(s)
+    f0       | f1       
+    -------- | ---------
+    'hello ' | 'all'    
+    'hello ' | 'my lord'
+    'hello ' | 'world'  
+    -------- | ---------
 
+    **Fields examples**
 
-    Here are few examples of 'alternative' fields:
+    Here are examples of fields:
 
-    a field representing two differents ASCII, "netzob" or "zoby"
+    * a field containing the integer value 100
 
-    >>> f = Field(["netzob", "zoby"])
+      >>> f = Field(100)
 
-    a field representing a decimal (10) or an ASCII of 10 chars,
+    * a field containing a specific binary: '1000' = 8 in decimal
 
-    >>> f = Field([10, ASCII(nbChars=(10, 11))])
+      >>> f = Field(0b1000)
+
+    * a field containing a raw value of 8 bits (1 byte)
+
+      >>> f = Field(Raw(nbBytes=8))
+
+    * a field with a specific raw value
+
+      >>> f = Field(Raw('\x00\x01\x02\x03'))
+    
+    * a field representing a random IPv4:
+
+      >>> f = Field(IPv4())
+
+    * a field representing a random ASCII of 6 characters length:
+
+      >>> f = Field(ASCII(nbChars=6))
+
+    * a field representing a random ASCII with between 5 and 20 characters:
+
+      >>> payloadField = Field(ASCII(nbChars=(5, 20)))
+
+    * a field whose value is the size of the payloadField:
+
+      >>> f = Field([Size(payloadField)])
+
+    * a field representing an alternative between two differents ASCII strings, either "netzob" or "zoby":
+
+      >>> f = Field(["netzob", "zoby"])
+
+    * a field representing a decimal (10) or an ASCII of 16 chars:
+
+      >>> f = Field([10, ASCII(nbChars=(16))])
 
     """
 
     def __init__(self, domain=None, name="Field", isPseudoField=False):
-        """
-        :keyword domain: the definition domain of the field (see domain property to get more information)
-        :type domain: a :class:`list` of :class:`object`, default is Raw(None)
-        :keyword name: the name of the field
-        :type name: :class:`str`
-        :keyword isPseudoField: a flag indicating if field is a pseudo field, meaning it is used internally but does not produce data
-        :type isPseudoField: :class:`bool`
-
-        """
         super(Field, self).__init__(name)
         if domain is None:
             domain = Raw(None)

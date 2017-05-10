@@ -51,11 +51,32 @@ from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import Speciali
 
 @NetzobLogger
 class Alt(AbstractVariableNode):
-    """Represents an Alternative (OR) in the domain definition
+    """The Alt class is a node variable that represents an alternative of variables.
 
-    To create an alternative:
+    A definition domain can take the form of a combination of
+    permitted values/types/domains. This combination is represented by
+    an alternate node. It can be seen as an OR operator between two or
+    more children nodes.
+
+    The Alt constructor expects some parameters:
+
+    :param children: The set of variable elements permitted in the
+                     alternative.
+    :param str svas: The SVAS strategy defining how the Alternate
+                     behaves during abstraction and specialization.
+    :type children: a :class:`dict` of :class:`netzob.Model.Vocabulary.Domain.Variables.AbstractVariable`
+
+    For example, the following code denotes a field accepts either
+    "filename1.txt" or "filename2.txt":
 
     >>> from netzob.all import *
+    >>> t1 = ASCII("filename1.txt")
+    >>> t2 = ASCII("filename2.txt")
+    >>> f = Field(Alt([t1, t2]))
+
+
+    **Examples of Alt internal attributes access**
+
     >>> domain = Alt([Raw(), ASCII()])
     >>> print(domain.varType)
     Alt
@@ -64,7 +85,11 @@ class Alt(AbstractVariableNode):
     >>> print(domain.children[1].dataType)
     ASCII=None ((0, None))
 
-    Let's see how we can abstract an ALTERNATE
+
+    **Abstraction of alternate variables**
+
+    This example shows the abstraction process of an Alternate
+    variable:
 
     >>> from netzob.all import *
     >>> v0 = ASCII("netzob")
@@ -79,6 +104,11 @@ class Alt(AbstractVariableNode):
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg2, s))
     [bitarray('01111010011011110110001001111001')]
+
+    In the following example, a Alternate variable is defined. A
+    message that does not correspond to the expected model is then
+    parsed, thus creating an exception:
+
     >>> msg3 = RawMessage("nothing")
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg3, s))
@@ -99,6 +129,7 @@ class Alt(AbstractVariableNode):
     ---- | ------
     '22' | '0044'
     ---- | ------
+
     """
 
     def __init__(self, children=None, svas=None):

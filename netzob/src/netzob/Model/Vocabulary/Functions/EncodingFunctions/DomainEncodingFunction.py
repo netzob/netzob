@@ -56,7 +56,7 @@ class DomainEncodingFunction(EncodingFunction):
     its encoding.
 
     Lets take a typical example of domain encoding, a field
-    which domains is based on the aggregation of two other variables.
+    whose domains is based on the aggregation of two other variables.
 
     >>> from netzob.all import *
     >>> f = Field(name="f0", domain=Agg(["There are ", Integer(10), " solutions."]))

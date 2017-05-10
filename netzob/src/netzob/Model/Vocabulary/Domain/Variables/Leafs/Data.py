@@ -48,263 +48,63 @@ from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import 
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
+from netzob.Model.Vocabulary.Types.BitArray import BitArray
 
 
 @NetzobLogger
 class Data(AbstractVariableLeaf):
-    """Represents a data, meaning a portion of content in the final
-    message. This representation is achieved using a definition domain.
-    So the Data stores at least two things: 1) the definition domain and constraints over it and 2) its current value
+    """The Data class is a variable with concrete content associated with constraints.
 
-    For instance:
+    A Data object stores at least two things: 1) the definition domain
+    and the constraints over it, through a Type object, and 2) the
+    current value of the variable.
+
+    The Data constructor expects some parameters:
+
+    :param dataType: The type of the data (for example Integer,
+                     Raw, ASCII, ...).
+    :param originalValue: The original value of the data (can be
+                          None).
+    :param str name: The name of the data (if None, the name will
+                     be generated).
+    :param str svas: The SVAS strategy defining how the Data value is
+                     used for abstracting and specializing.
+    :type dataType: :class:`netzob.Model.Vocabulary.Types.AbstractType`
+    :type originalValue: :class:`netzob.Model.Vocabulary.Types.BitArray`
+
+
+    The following example shows the definition of the Data `pseudo`
+    with a type ASCII and a default value `"hello"`. This means that
+    this Data object accepts any ASCII string, and the current value
+    of this object is `"hello"`.
 
     >>> from netzob.all import *
     >>> f = Field()
-    >>> f.domain = Data(dataType=ASCII(), originalValue=TypeConverter.convert("zoby", ASCII, BitArray), name="pseudo")
+    >>> value = TypeConverter.convert("hello", ASCII, BitArray)
+    >>> f.domain = Data(dataType=ASCII(), originalValue=value, name="pseudo")
     >>> print(f.domain.varType)
     Data
     >>> print(TypeConverter.convert(f.domain.currentValue, BitArray, Raw))
-    b'zoby'
+    b'hello'
     >>> print(f.domain.dataType)
     ASCII=None ((0, None))
     >>> print(f.domain.name)
     pseudo
 
-    >>> f = Field(ASCII("hello zoby"))
+    Besides, the Data object is the default Variable when we create a
+    Field without explicitly specifying the Data domain, as shown on
+    the following example:
+
+    >>> from netzob.all import *
+    >>> f = Field(ASCII("hello"))
     >>> print(f.domain.varType)
     Data
     >>> print(TypeConverter.convert(f.domain.currentValue, BitArray, ASCII))
-    hello zoby
+    hello
 
-
-    Below are more unit tests that aims at testing that a Data variable is correctly handled in all cases
-    of abstraction and specialization.
-
-    Let's begin with abstraction. We must consider the following cases:
-    * CONSTANT
-    * PERSISTENT
-    * EPHEMERAL
-    * VOLATILE
-
-    Case 1: Abstraction of a constant data
-
-    >>> from netzob.all import *
-    >>> f0 = Field(domain=Data(dataType=ASCII(), originalValue=TypeConverter.convert("netzob", ASCII, BitArray), name="netzob", svas=SVAS.CONSTANT))
-    >>> s = Symbol(name="S0", fields=[f0])
-    >>> msg1 = RawMessage("netzob")
-    >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg1, s))
-    [bitarray('011011100110010101110100011110100110111101100010')]
-
-    >>> msg2 = RawMessage("netzab")
-    >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg2, s))
-    Traceback (most recent call last):
-      ...
-    netzob.Model.Vocabulary.Domain.Parser.MessageParser.InvalidParsingPathException: No parsing path returned while parsing 'b'netzab''
-
-
-    Case 2: Abstraction of a persitent data
-
-    >>> from netzob.all import *
-    >>> f0 = Field(domain=Data(dataType=ASCII(nbChars=(5, 10)), name="netzob", svas=SVAS.PERSISTENT))
-    >>> s = Symbol(name="S0", fields=[f0])
-    >>> msg1 = RawMessage("netzob")
-    >>> msg2 = RawMessage("netzob")
-    >>> msg3 = RawMessage("netzab")
-    >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg1, s))
-    [bitarray('011011100110010101110100011110100110111101100010')]
-    >>> print(mp.parseMessage(msg2, s))
-    [bitarray('011011100110010101110100011110100110111101100010')]
-    >>> print(mp.parseMessage(msg3, s))
-    Traceback (most recent call last):
-      ...
-    netzob.Model.Vocabulary.Domain.Parser.MessageParser.InvalidParsingPathException: No parsing path returned while parsing 'b'netzab''
-
-
-    >>> f0 = Field(domain=Data(dataType=ASCII(), originalValue=TypeConverter.convert("netzob", ASCII, BitArray), name="netzob", svas=SVAS.PERSISTENT))
-    >>> s = Symbol(name="S0", fields=[f0])
-    >>> msg1 = RawMessage("netzab")
-    >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg1, s))
-    Traceback (most recent call last):
-      ...
-    netzob.Model.Vocabulary.Domain.Parser.MessageParser.InvalidParsingPathException: No parsing path returned while parsing 'b'netzab''
-
-
-    Case 3: Abstraction of an ephemeral data
-
-    >>> from netzob.all import *
-    >>> f0 = Field(domain=Data(dataType=ASCII(nbChars=(5, 10)), name="netzob", svas=SVAS.EPHEMERAL))
-    >>> s = Symbol(name="S0", fields=[f0])
-    >>> msg1 = RawMessage("netzob")
-    >>> msg2 = RawMessage("netzob")
-    >>> msg3 = RawMessage("netzab")
-    >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg1, s))
-    [bitarray('011011100110010101110100011110100110111101100010')]
-    >>> print(mp.memory)
-    Data (ASCII=None ((40, 80))): b'netzob'
-
-    >>> print(mp.parseMessage(msg2, s))
-    [bitarray('011011100110010101110100011110100110111101100010')]
-    >>> print(mp.memory)
-    Data (ASCII=None ((40, 80))): b'netzob'
-    
-    >>> print(mp.parseMessage(msg3, s))
-    [bitarray('011011100110010101110100011110100110000101100010')]
-    >>> print(mp.memory)
-    Data (ASCII=None ((40, 80))): b'netzab'
-
-
-    Case 4: Abstraction of a volatile data
-
-    >>> from netzob.all import *
-    >>> f0 = Field(domain=Data(dataType=ASCII(nbChars=(5, 10)), name="netzob", svas=SVAS.VOLATILE))
-    >>> s = Symbol(name="S0", fields=[f0])
-    >>> msg1 = RawMessage("netzob")
-    >>> msg2 = RawMessage("netzob")
-    >>> msg3 = RawMessage("netzab")
-    >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg1, s))
-    [bitarray('011011100110010101110100011110100110111101100010')]
-    >>> print(len(str(mp.memory)))
-    0
-
-    >>> print(mp.parseMessage(msg2, s))
-    [bitarray('011011100110010101110100011110100110111101100010')]
-    >>> print(len(str(mp.memory)))
-    0
-    
-    >>> print(mp.parseMessage(msg3, s))
-    [bitarray('011011100110010101110100011110100110000101100010')]
-    >>> print(len(str(mp.memory)))
-    0
-
-    
-    Now, let's focus on the specialization of a data field
-
-    Case 1: Specialization of a constant data
-
-    >>> from netzob.all import *
-    >>> f0 = Field(domain=Data(dataType=ASCII(), originalValue=TypeConverter.convert("netzob", ASCII, BitArray), name="netzob", svas=SVAS.CONSTANT))
-    >>> s = Symbol(name="S0", fields=[f0])
-    >>> ms = MessageSpecializer()
-    >>> print(ms.specializeSymbol(s).generatedContent)
-    bitarray('011011100110010101110100011110100110111101100010')
-    >>> print(ms.specializeSymbol(s).generatedContent)
-    bitarray('011011100110010101110100011110100110111101100010')
-    >>> print(len(str(ms.memory)))
-    0
-
-    >>> f0 = Field(domain=Data(dataType=ASCII(nbChars=(5, 10)), name="netzob", svas=SVAS.CONSTANT))
-    >>> s = Symbol(name="S0", fields=[f0])
-    >>> ms = MessageSpecializer()
-    >>> print(ms.specializeSymbol(s).generatedContent)
-    Traceback (most recent call last):
-      ...
-    Exception: Cannot specialize this symbol.
-
-
-    Case 2: Specialization of a persistent data
-
-    >>> from netzob.all import *
-    >>> f0 = Field(domain=Data(dataType=ASCII(), originalValue=TypeConverter.convert("netzob", ASCII, BitArray), name="netzob", svas=SVAS.PERSISTENT))
-    >>> s = Symbol(name="S0", fields=[f0])
-    >>> ms = MessageSpecializer()
-    >>> print(ms.specializeSymbol(s).generatedContent)
-    bitarray('011011100110010101110100011110100110111101100010')
-    >>> print(len(str(ms.memory)))
-    0
-
-    >>> f0 = Field(domain=Data(dataType=ASCII(nbChars=5), name="netzob", svas=SVAS.PERSISTENT))
-    >>> s = Symbol(name="S0", fields=[f0])
-    >>> ms = MessageSpecializer()
-    >>> generated1 = ms.specializeSymbol(s).generatedContent
-    >>> print(len(generated1))
-    40
-    >>> print(ms.memory.hasValue(f0.domain))
-    True
-    >>> generated2 = ms.specializeSymbol(s).generatedContent
-    >>> print(len(generated2))
-    40
-    >>> generated1 == generated2
-    True
-
-    Case 3: Specialization of an ephemeral data
-
-
-    >>> from netzob.all import *
-    >>> f0 = Field(domain=Data(dataType=ASCII(), originalValue=TypeConverter.convert("netzob", ASCII, BitArray), name="netzob", svas=SVAS.EPHEMERAL))
-    >>> s = Symbol(name="S0", fields=[f0])
-    >>> ms = MessageSpecializer()
-    >>> print(ms.memory.hasValue(f0.domain))
-    False
-    >>> generated1 = ms.specializeSymbol(s).generatedContent
-    >>> print(ms.memory.hasValue(f0.domain))
-    True
-    >>> generated2 = ms.specializeSymbol(s).generatedContent
-    >>> generated2 == ms.memory.getValue(f0.domain)
-    True
-    >>> generated1 == generated2
-    False
-
-    
-    >>> from netzob.all import *
-    >>> f0 = Field(domain=Data(dataType=ASCII(nbChars=(5, 10)), name="netzob", svas=SVAS.EPHEMERAL))
-    >>> s = Symbol(name="S0", fields=[f0])
-    >>> ms = MessageSpecializer()
-    >>> print(ms.memory.hasValue(f0.domain))
-    False
-    >>> generated1 = ms.specializeSymbol(s).generatedContent
-    >>> print(ms.memory.hasValue(f0.domain))
-    True
-    >>> generated2 = ms.specializeSymbol(s).generatedContent
-    >>> generated2 == ms.memory.getValue(f0.domain)
-    True
-    >>> generated1 == generated2
-    False
-
-    
-    Case 4: Specialization of a volatile data
-
-
-    >>> from netzob.all import *
-    >>> f0 = Field(domain=Data(dataType=ASCII(nbChars=(5,10)), name="netzob", svas=SVAS.VOLATILE))
-    >>> s = Symbol(name="S0", fields=[f0])
-    >>> ms = MessageSpecializer()
-    >>> print(ms.memory.hasValue(f0.domain))
-    False
-    >>> generated1 = ms.specializeSymbol(s).generatedContent
-    >>> print(ms.memory.hasValue(f0.domain))
-    False
-    >>> generated2 = ms.specializeSymbol(s).generatedContent
-    >>> generated2 == ms.memory.hasValue(f0.domain)
-    False
-    >>> generated1 == generated2
-    False
-    
-        
     """
 
     def __init__(self, dataType, originalValue=None, name=None, svas=None):
-        """The constructor of a data variable
-
-        :param dataType: the definition domain of the data.
-        :type dataType: :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
-        :keyword originalValue: the value of the data (can be None)
-        :type originalValue: :class:`object`
-        :keyword name: the name of the data, if None name will be generated
-        :type name: :class:`str`
-        :keyword learnable: a flag stating if the current value of the data can be overwritten following with parsed data
-        :type learnable: :class:`bool`
-        :keyword mutable: a flag stating if the current value can changes with the parsing process
-        :type mutable: :class:`bool`
-
-        :raises: :class:`TypeError` or :class:`ValueError` if parameters are not valid.
-        """
-
         super(Data, self).__init__(
             self.__class__.__name__, name=name, svas=svas)
 

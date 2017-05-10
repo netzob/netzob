@@ -51,6 +51,31 @@ from netzob.Model.Vocabulary.Types.ASCII import ASCII
 
 
 class HexaString(AbstractType):
+    """This class defines an HexaString type.
+
+    The HexaString type allows to describe a sequence of bytes of
+    arbitrary sizes with the hexastring notation (i.e. 'aabbcc'
+    instead of the raw notation '\xaa\xbb\xcc').
+
+    The HexaString constructor expects some parameters:
+
+    :param value: The current value of the type instance.
+    :param size: The size in bytes that this value can take.
+    :type value: :class:`bitarray.bitarray`
+    :type size: an :class:`int` or a tupple with the min and the max size specified as :class:`int`
+
+
+    The following example shows how to define an hexastring field with
+    a constant value, and the used of the specialization method:
+
+    >>> from netzob.all import *
+    >>> f = Field(HexaString("aabbcc"))
+    >>> print(f.specialize())
+    b'\xaa\xbb\xcc'
+
+    """
+
+
     def __init__(self, value=None, size=(None, None)):
         if value is not None and not isinstance(value, bitarray):
             from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter

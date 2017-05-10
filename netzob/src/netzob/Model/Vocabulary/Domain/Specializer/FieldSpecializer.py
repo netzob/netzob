@@ -93,7 +93,6 @@ class FieldSpecializer(object):
     >>> fpayload.fields = [f1, f2]
     >>> print(fpayload._str_debug())
     Field
-    |--   Data (Raw=None ((0, None)))
     |--  f1
          |--   Data (ASCII=hello  ((0, 48)))
     |--  f2

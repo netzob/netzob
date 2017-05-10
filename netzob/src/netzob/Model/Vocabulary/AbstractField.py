@@ -505,7 +505,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def specialize(self, mutator=None):
-        """Specialize and generate a :class:`netzob.Model.Vocabulary.Messages.RawMessage` which content
+        """Specialize and generate a :class:`bytes` object which content
         follows the fields definitions attached to current element.
 
         :keyword mutator: if set, the mutator will be used to mutate the fields definitions
@@ -519,7 +519,16 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
     @staticmethod
     def abstract(data, fields):
-        """Search in the fields/symbols the first one that can abstract the data.
+        """The method AbstractField.abstract() is used to retrieve the
+        corresponding symbol according to a concrete :class:`bytes`
+        message.
+
+        The abstract() static method expects some parameters:
+
+        :param bytes data: The concrete message to abstract in symbol.
+        :param fields: A list of symbol to consider during abstraction.
+        :type fields: a :class:`list` of :class:`netzob.Model.Vocabulary.Symbol`
+
 
         >>> from netzob.all import *
         >>> messages = ["{0}, what's up in {1} ?".format(pseudo, city) for pseudo in ['netzob', 'zoby'] for city in ['Paris', 'Berlin']]
@@ -705,7 +714,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         tab.append(str(self.name))
         lines = [''.join(tab)]
         from netzob.Model.Vocabulary.Field import Field
-        if isinstance(self, Field):
+        if isinstance(self, Field) and len(self.fields) == 0:
             lines.append(self.domain._str_debug(deepness + 1))
         for f in self.fields:
             lines.append(f._str_debug(deepness + 1))
@@ -829,12 +838,12 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
     @fields.setter
     def fields(self, fields):
         from netzob.Model.Vocabulary.Field import Field
-        # First it checks the specified children are abstractfiled
+        # First it checks the specified children are abstractField
         if fields is not None:
             for c in fields:
                 if not isinstance(c, Field):
                     raise TypeError(
-                        "Cannot edit the fields because at least one specified element is not an AbstractField its a {0}.".
+                        "Cannot edit the fields because at least one specified element is not an AbstractField; it's a {0}.".
                         format(type(c)))
 
         self.clearFields()

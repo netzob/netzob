@@ -53,12 +53,49 @@ from netzob.Model.Vocabulary.Types.Integer import Integer
 
 @NetzobLogger
 class Timestamp(AbstractType):
-    """This class supports the definition of a Timestamp in Netzob.
-    It can be customized to follow various timestamp definitions (Windows, Unix, MacOSX).
+    """This class defines a Timestamp type.
 
-    In the following example, a Timestamp data is created with a specific value '1444492442'.
-    As shown below, this data is represented by 32 bits
-    
+    The Timestamp type allows to define dates in a specific format
+    (such as Windows, Unix or MacOSX formats).
+
+    The Timestamp constructor expects some parameters:
+
+    :param value: The raw value of the timestamp.
+    :param epoch: The initial date expressed in UTC from which
+                  timestamp is measured. Default value is EPOCH_UNIX.
+    :param int unity: specifies the unity of the timestamp (seconds,
+                      milliseconds, nanoseconds). Default value is
+                      UNITY_SECOND.
+    :type value: :class:`int` or a :class:`BitArray`
+    :type epoch: :class:`datetime.datetime`
+
+    Available values for `epoch` parameter are:
+
+    * EPOCH_WINDOWS = datetime(1601, 1, 1)
+    * EPOCH_MUMPS = datetime(1840, 12, 31)
+    * EPOCH_VMS = datetime(1858, 11, 17)
+    * EPOCH_EXCEL = datetime(1899, 12, 31)
+    * EPOCH_NTP = datetime(1900, 1, 1)
+    * EPOCH_MACOS_9 = datetime(1904, 1, 1)
+    * EPOCH_PICKOS = datetime(1967, 12, 31)
+    * EPOCH_UNIX = datetime(1970, 1, 1)
+    * EPOCH_FAT = datetime(1980, 1, 1)
+    * EPOCH_GPS = datetime(1980, 1, 6)
+    * EPOCH_ZIGBEE = datetime(2000, 1, 1)
+    * EPOCH_COCOA = datetime(2001, 1, 1)
+
+    Available values for `unity` parameter are:
+
+    * UNITY_SECOND = 1
+    * UNITY_DECISECOND = 10
+    * UNITY_CENTISECOND = 100
+    * UNITY_MILLISECOND = 1000
+    * UNITY_MICROSECOND = 1000000
+    * UNITY_NANOSECOND = 10000000000
+
+    In the following example, a Timestamp data is created with a
+    specific value '1444492442' and represented as 32 bits:
+
     >>> from netzob.all import *
     >>> time = Timestamp(1444492442)
     >>> time.size
@@ -96,7 +133,7 @@ class Timestamp(AbstractType):
     '00'  | 'Tue Oct 13 11:55:33 2015' | '00'
     '00'  | 'Tue Oct 13 11:55:33 2015' | '00'
     ----- | -------------------------- | ----
-   
+
     """
 
     EPOCH_WINDOWS = datetime(1601, 1, 1)
@@ -126,15 +163,6 @@ class Timestamp(AbstractType):
                  unitSize=AbstractType.UNITSIZE_32,
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.SIGN_UNSIGNED):
-        """Builds a Timestamp domain with optional constraints.
-
-        :param value: specifies the value of the timestamp.
-        :type value: an int, a long or a bitarray
-        :param epoch: the initial date expressed in UTC from which timestamp is measured. Default value is the UNIX Epoch.
-        :type datetime.datetime
-        :param unity: specifies the unity of the timestamp (seconds, milliseconds, nanoseconds). Default value is SECOND.
-        :type unity: int
-        """
         if value is not None and not isinstance(value, bitarray):
             # converts the specified value in bitarray
             value = TypeConverter.convert(

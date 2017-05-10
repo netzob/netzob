@@ -50,11 +50,44 @@ from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import Speciali
 
 @NetzobLogger
 class Agg(AbstractVariableNode):
-    """Represents an Aggregate (AND) in the domain definition
+    """The Agg class is a node variable that represents a concatenation of variables.
 
-    To create an aggregate:
+    An Aggregate node concatenates the values that are accepted by
+    its children nodes. It can be used to specify a succession of
+    tokens.
+
+    The Agg constructor expects some parameters:
+
+    :param children: The sequence of variable elements contained in
+                     the aggregate.
+    :param str svas: The SVAS strategy defining how the Agggregate
+                     behaves during abstraction and specialization.
+    :type children: a :class:`dict` of :class:`netzob.Model.Vocabulary.Domain.Variables.AbstractVariable`
+
+
+    For example, the following code represents a field which
+    accepts values that are made of an ASCII of 3 to 20 random
+    characters followed by a ".txt" extension:
 
     >>> from netzob.all import *
+    >>> t1 = ASCII(nbChars=(3,20))
+    >>> t2 = ASCII(".txt")
+    >>> f = Field(Agg([t1, t2]))
+
+    The following example shows an aggregate between BitArray
+    variables:
+
+    >>> from netzob.all import *
+    >>> from bitarray import bitarray
+    >>> f0 = Field(Agg([BitArray(bitarray('01101001')), BitArray(nbBits=3), BitArray(nbBits=5)]))
+    >>> s = Symbol(fields=[f0])
+    >>> t = s.specialize()
+    >>> print(len(t))
+    2
+
+
+    **Examples of Agg internal attributes access**
+
     >>> domain = Agg([Raw(), ASCII()])
     >>> print(domain.varType)
     Agg
@@ -69,17 +102,11 @@ class Agg(AbstractVariableNode):
     >>> print(len(domain.children))
     2
 
-    Another example of an aggregate
 
-    >>> from netzob.all import *
-    >>> from bitarray import bitarray
-    >>> f0 = Field(Agg([BitArray(bitarray('01101001')), BitArray(nbBits=3), BitArray(nbBits=5)]))
-    >>> s = Symbol(fields=[f0])
-    >>> t = s.specialize()
-    >>> print(len(t))
-    2
+    **Abstraction of aggregate variables**
 
-    Let's see the abstraction process of an AGGREGATE
+    This example shows the abstraction process of an Aggregate
+    variable:
 
     >>> from netzob.all import *
     >>> v1 = ASCII(nbChars=(1, 10))
@@ -92,6 +119,10 @@ class Agg(AbstractVariableNode):
     >>> print(mp.parseMessage(msg1, s))
     [bitarray('01101110011001010111010001111010011011110110001000101110011101000111100001110100'), bitarray('00100001')]
 
+    In the following example, a Aggregate variable is defined. A
+    message that does not correspond to the expected model is then
+    parsed, thus creating an exception:
+
     >>> msg2 = RawMessage("netzobtxt!")
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg2, s))
@@ -100,7 +131,10 @@ class Agg(AbstractVariableNode):
     netzob.Model.Vocabulary.Domain.Parser.MessageParser.InvalidParsingPathException: No parsing path returned while parsing 'b'netzobtxt!''
 
 
-    Let's see the specializing process of an AGGREGATE
+    **Specialization of aggregate variables**
+
+    This example shows the specialization process of an Aggregate
+    variable:
 
     >>> from netzob.all import *
     >>> d1 = ASCII("hello")

@@ -49,14 +49,79 @@ from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, typeSpecifi
 
 
 class Integer(AbstractType):
-    """The netzob type Integer, a wrapper for the "int" object (with unitSize).
-    Some constraints can be defined and they participate in the definition of the size.
+    r"""This class defines an Integer type.
 
-    The following constraints can be defined:
-    - a static value (for instance 20) with a specific unitSize and a sign definition
-    - an interval of value (positive and/or negative), this way the size is automaticaly computed in terms of
-    number of unitSize required given the sign
-    - a number of unitSize
+    The type Integer is a wrapper for the Python :class:`int` object
+    with the capability to express more constraints regarding to the
+    sign, endianess and unit size.
+
+    The Integer constructor expects some parameters:
+
+    :param value: The current value of the type instance.
+    :param interval: The interval of permitted values for the Integer. This information will be used to compute the size of the Integer.
+    :param int nbUnits: The amount of permitted repetitions of the unit size of the Integer.
+    :param unitSize: The unitsize of the current value. Values must be one of AbstractType.UNITSIZE_*. If None, the value is the default one.
+    :param endianness: The endianness of the current value. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE. If None, the value is the default one.
+    :param sign: The sign of the current value. Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED. If None, the value is the default one.
+    :type value: :class:`bitarray.bitarray`
+    :type interval: an :class:`int` or a tupple with the min and the max values specified as :class:`int`
+
+    Netzob support the following unit sizes:
+
+    * AbstractType.UNITSIZE_1
+    * AbstractType.UNITSIZE_4
+    * AbstractType.UNITSIZE_8
+    * AbstractType.UNITSIZE_16
+    * AbstractType.UNITSIZE_32
+    * AbstractType.UNITSIZE_64
+
+    Netzob support the following endianness:
+
+    * AbstractType.ENDIAN_BIG,
+    * AbstractType.ENDIAN_LITTLE
+
+    Netzob support the following signs:
+
+    * AbstractType.SIGN_SIGNED,
+    * AbstractType.SIGN_UNSIGNED
+
+    **Examples of Integer objects instantiations**
+
+    The following example shows how to define an integer encoded in
+    sequences of 8 bits and with a default value of 12 (thus producing
+    `\x0c`):
+
+    >>> from netzob.all import *
+    >>> f = Field(Integer(value=12, unitSize=AbstractType.UNITSIZE_8))
+    >>> f.specialize()
+    b'\x0c'
+
+    The following example shows how to define an integer encoded in
+    sequences of 32 bits and with a default value of 12 (thus
+    producing `\x00\x00\x00\x0c`):
+
+    >>> f = Field(Integer(value=12, unitSize=AbstractType.UNITSIZE_32))
+    >>> f.specialize()
+    b'\x00\x00\x00\x0c'
+
+    The following example shows how to define an integer encoded in
+    sequences of 32 bits in little endian with a default value of 12
+    (thus producing `\x0c\x00\x00\x00`):
+
+    >>> f = Field(Integer(value=12, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_LITTLE))
+    >>> f.specialize()
+    b'\x0c\x00\x00\x00'
+
+    The following example shows how to define a signed integer
+    encoded in sequences of 16 bits with a default value of -12 (thus
+    producing `\xff\xf4`):
+
+    >>> f = Field(Integer(value=-12, sign=AbstractType.SIGN_SIGNED, unitSize=AbstractType.UNITSIZE_16))
+    >>> f.specialize()
+    b'\xff\xf4'
+
+
+    **Examples of Integer internal attributes access**
 
     >>> from netzob.all import *
     >>> cDec = Integer(20)
@@ -68,6 +133,7 @@ class Integer(AbstractType):
     bitarray('00010100')
 
     The required size in bits is automaticaly computed following the specifications:
+
     >>> dec = Integer(10)
     >>> print(dec.size)
     (8, 8)
@@ -76,18 +142,51 @@ class Integer(AbstractType):
     >>> print(dec.size)
     (16, 16)
 
-    Use the convert function to convert the current type to any other netzob type
-    >>> dec = Integer(10)
-    >>> raw = dec.convertValue(Raw, dst_endianness=AbstractType.ENDIAN_BIG)
-    >>> print(raw)
-    Raw=b'\\n' ((0, 8))
 
-    It is not possible to convert if the object has not value
-    >>> a = Integer()
-    >>> a.convertValue(Raw)
-    Traceback (most recent call last):
-    ...
-    TypeError: Data cannot be None
+    **Examples of conversions between Integer type objects**
+
+    Conversion methods allows to transform encoded representation of
+    objects from a source type to a destination type. The following
+    examples show how to convert an integer respectively to 16 bits
+    little endian, to 16 bits big endian, to 32 bits little endian and
+    to 32 bits big endian:
+
+    >>> Integer.decode(1234, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE)
+    b'\xd2\x04'
+    >>> Integer.decode(1234, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG)
+    b'\x04\xd2'
+    >>> Integer.decode(1234, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_LITTLE)
+    b'\xd2\x04\x00\x00'
+    >>> Integer.decode(1234, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_BIG)
+    b'\x00\x00\x04\xd2'
+
+
+    **Representation of Integer type objects**
+
+    The following examples show the representation of Integer objects
+    with and without default value.
+
+    >>> data = Integer(value=12, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_LITTLE)
+    >>> str(data)
+    'Integer=12 ((32, 32))'
+
+    >>> data = Integer(unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE)
+    >>> str(data)
+    'Integer=None ((16, 16))'
+
+
+    **Encoding of Integer type objects**
+
+    The following examples show the encoding of Integer objects with
+    and without default value.
+
+    >>> data = Integer(value=12, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_LITTLE)
+    >>> repr(data)
+    '12'
+
+    >>> data = Integer(unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE)
+    >>> repr(data)
+    'None'
 
     """
 

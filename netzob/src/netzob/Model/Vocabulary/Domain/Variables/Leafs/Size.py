@@ -60,76 +60,135 @@ from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 
 @NetzobLogger
 class Size(AbstractRelationVariableLeaf):
-    """A size relation between one variable and a the value of a field
+    r"""The Size class is a variable which content is the size of another field value.
 
-    In the following example, a size field is declared after its field.
+    Netzob allows to define a field so that its value is equal to the
+    size of another field, or group of fields (potentially including
+    itself).
+
+    The Size constructor expects some parameters:
+
+    :param fields: The targeted fields of the relationship.
+    :param dataType: Specify that the produced value should be
+                     represented according to this dataType.
+    :param int factor: Specify that the initial size value (always
+                       expressed in bits) should be divided by this
+                       factor. For example, to express a size in bytes,
+                       the factor should be 1/8.
+    :param int offset: Specify that the final size value
+                       should be shifted according to the offset value.
+    :param str name: The name of the Value variable. If None, the name
+                     will be generated.
+    :type fields: a :class:`list` of :class:`netzob.Model.Vocabulary.AbstractField`
+    :type dataType: :class:`netzob.Model.Vocabulary.Types.AbstractType`
+
+
+    The following example shows how to define a size field with an
+    ASCII dataType:
 
     >>> from netzob.all import *
+    >>> f0 = Field(ASCII(nbChars=(1,10)))
+    >>> f1 = Field(ASCII(";"))
+    >>> f2 = Field(Size([f0, f1], dataType=ASCII(nbChars=2), factor=1/8, offset=16))
+    >>> s  = Symbol(fields=[f0, f1, f2])
+
+    In this example, the field *f2* is a size field where its value is
+    equal to the size of the concatenated values of fields *f0* and
+    *f1*. The *dataType* parameter specifies that the produced value
+    should be represented as an ASCII string. The *factor* parameter
+    specifies that the initial size value (always expressed in bits)
+    should be divided by 8 (in order to retrieve the amount of
+    bytes). The *offset* parameter specifies that the final size value
+    should be computed minus 16 bytes.
+
+    The following example shows how to define a size field so that its
+    value depends on a list of non-consecutive fields:
+
+    >>> f1 = Field(ASCII("="))
+    >>> f2 = Field(ASCII("#"))
+    >>> f4 = Field(ASCII("%"))
+    >>> f5 = Field(Raw("_"))
+    >>> f3 = Field(Size([f1, f2, f4, f5]))
+    >>> s  = Symbol(fields=[f1, f2, f3, f4, f5])
+    >>> print(repr(s.specialize()))
+    b'=#\x04%_'
+
+    In the following example, a size field is declared after its field.
 
     >>> f0 = Field(ASCII(nbChars=(1,10)))
     >>> f1 = Field(ASCII(";"))
     >>> f2 = Field(Size(f0))
     >>> s  = Symbol(fields=[f0, f1, f2])
-    >>> msg1  = RawMessage(b"netzob;\\x06")
+    >>> msg1  = RawMessage(b"netzob;\x06")
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg1, s))
     [bitarray('011011100110010101110100011110100110111101100010'), bitarray('00111011'), bitarray('00000110')]
-    >>> msg2  = RawMessage(b"netzob;\\x03")
+
+    In the following example, a size field is declared after its
+    targeted field. A message that does not correspond to the expected
+    model is then parsed, thus creating an exception:
+
+    >>> msg2  = RawMessage(b"netzob;\x03")
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg2, s))
     Traceback (most recent call last):
       ...
-    netzob.Model.Vocabulary.Domain.Parser.MessageParser.InvalidParsingPathException: No parsing path returned while parsing 'b'netzob;\\x03''
+    netzob.Model.Vocabulary.Domain.Parser.MessageParser.InvalidParsingPathException: No parsing path returned while parsing 'b'netzob;\x03''
 
-    
-    # While next demo, illustrates a size field declared before its target field
+
+    In the following example, a size field is declared before the
+    targeted field:
 
     >>> f2 = Field(ASCII(nbChars=(1,10)), name="f2")
     >>> f1 = Field(ASCII(";"), name="f1", )
     >>> f0 = Field(Size(f2), name="f0")
     >>> s  = Symbol(fields=[f0, f1, f2])
-    >>> msg1  = RawMessage(b"\\x06;netzob")
+    >>> msg1  = RawMessage(b"\x06;netzob")
     >>> mp = MessageParser()
-
     >>> print(mp.parseMessage(msg1, s))
     [bitarray('00000110'), bitarray('00111011'), bitarray('011011100110010101110100011110100110111101100010')]
 
-    >>> msg2  = RawMessage(b"\\x03;netzob")
+    In the following example, a size field is declared before its
+    targeted field. A message that does not correspond to the expected model is
+    then parsed, thus creating an exception:
+
+    >>> msg2  = RawMessage(b"\x03;netzob")
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg2, s))
     Traceback (most recent call last):
       ...
-    netzob.Model.Vocabulary.Domain.Parser.MessageParser.InvalidParsingPathException: No parsing path returned while parsing 'b'\\x03;netzob''
+    netzob.Model.Vocabulary.Domain.Parser.MessageParser.InvalidParsingPathException: No parsing path returned while parsing 'b'\x03;netzob''
 
-    # Let's see what happen with specialization of a Size field
+
+    **Size field specialization**
+
+    The following examples show the specialization process of a Size
+    field:
     
     >>> f0 = Field(ASCII(nbChars=20))
     >>> f1 = Field(ASCII(";"))
     >>> f2 = Field(Size(f0))
-    >>> s  = Symbol(fields=[f0, f1, f2])
-    >>> ms = MessageSpecializer()
-    >>> res= TypeConverter.convert(ms.specializeSymbol(s).generatedContent, BitArray, Raw)
-    >>> b'\\x14' in res
+    >>> s = Symbol(fields=[f0, f1, f2])
+    >>> res = s.specialize()
+    >>> b'\x14' in res
     True
-
-    Another set of examples (and tests)
 
     >>> f0 = Field(ASCII("CMDauthentify"), name="f0")
     >>> f1 = Field(ASCII('#'), name="sep")
     >>> f2 = Field(name="f2")
     >>> f3 = Field(name="size field")
-    >>> f4 = Field(Raw(b"\\x00\\x00\\x00\\x00"), name="f4")
+    >>> f4 = Field(Raw(b"\x00\x00\x00\x00"), name="f4")
     >>> f5 = Field(Raw(nbBytes=11))
     >>> f6 = Field(Raw(b'wd'), name="f6")
     >>> f7 = Field(Raw(nbBytes=(0, 1)))
     >>> f3.domain = Size([f4, f5, f6])
     >>> f2.fields = [f3, f4, f5, f6, f7]
     >>> s = Symbol(fields=[f0, f1, f2])
-    >>> ms = MessageSpecializer()
-    >>> b"CMDauthentify#\\x11" in TypeConverter.convert(ms.specializeSymbol(s).generatedContent, BitArray, Raw)
+    >>> b"CMDauthentify#\x11" in s.specialize()
     True
 
-    A more real world example with an IP header with two Size fields
+    The following example shows a real example with an IP header with
+    two Size fields:
 
     >>> ip_ver = Field(name='Version', domain=BitArray(value=bitarray('0100')))
     >>> ip_ihl = Field(name='Header length', domain=BitArray(bitarray('0000')))
@@ -144,18 +203,14 @@ class Size(AbstractRelationVariableLeaf):
     >>> ip_saddr = Field(name='Source address', domain=IPv4("127.0.0.1"))
     >>> ip_daddr = Field(name='Destination address', domain=IPv4("127.0.0.1"))
     >>> ip_payload = Field(name='Payload', domain=BitArray(bitarray('0000000000000000')))
-
     >>> ip_ihl.domain = Size([ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags, ip_frag_off, ip_ttl, ip_proto, ip_checksum, ip_saddr, ip_daddr], dataType=BitArray(nbBits=4), factor=1/float(32))
-    >>> ip_tot_len.domain = Size([ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags, ip_frag_off, ip_ttl, ip_proto, ip_checksum, ip_saddr, ip_daddr, ip_payload], dataType=Raw(nbBytes=2), factor=1/float(8))
-        
+    >>> ip_tot_len.domain = Size([ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags, ip_frag_off, ip_ttl, ip_proto, ip_checksum, ip_saddr, ip_daddr, ip_payload], dataType=Raw(nbBytes=2), factor=1/float(8))        
     >>> packet = Symbol(name='IP layer', fields=[ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags, ip_frag_off, ip_ttl, ip_proto, ip_checksum, ip_saddr, ip_daddr, ip_payload])
     >>> data = packet.specialize()
     >>> repr(hex(data[0]))  # This corresponds to the first octect of the IP layer. '5' means 5*32 bits, which is the size of the default IP header.
     "'0x45'"
-
     >>> repr(hex(data[3]))  # This corresponds to the third octect of the IP layer. '0x16' means 22 octets, which is the size of the default IP header + 2 octets of payload.
     "'0x16'"
-
 
     """
 

@@ -49,24 +49,43 @@ from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 
 class Raw(AbstractType):
-    """Raw netzob data type expressed in bytes.
+    """This class defines a Raw type.
 
-    For instance, we can use this type to parse any raw field of 2 bytes:
+    The Raw type allows to describe a sequence of bytes of arbitrary
+    sizes.
+
+    The Raw constructor expects some parameters:
+
+    :param value: The current value of the type instance.
+    :param nbBytes: The size in bytes that this value can take.
+    :param alphabet: The alphabet can be use to limit the bytes that can participate in the domain value.
+    :type value: :class:`bitarray.bitarray`
+    :type nbBytes: an :class:`int` or a tupple with the min and the max size specified as :class:`int`
+    :type alphabet: a :class:`list` of :class:`object`
+
+    The following example shows how to define a six bytes long raw
+    field, and the used of the specialization method to generate a
+    value:
 
     >>> from netzob.all import *
-    >>> f = Field(Raw(nbBytes=2))
+    >>> f = Field(Raw(nbBytes=6))
+    >>> print(len(f.specialize()))
+    6
 
-    or with a specific value (default is little endianness)
+    Netzob allows to define a range regarding the valid size of the
+    raw field:
+
+    >>> f = Field(Raw(nbBytes = (2, 20)))
+
+    The following example show the specification of a constant for a
+    field:
 
     >>> f = Field(Raw('\\x01\\x02\\x03'))
     >>> print(f.domain.dataType)
     Raw=b'\\x01\\x02\\x03' ((0, 24))
 
-    >>> f.domain.dataType.endianness = AbstractType.ENDIAN_BIG
-    >>> print(f.domain.dataType)
-    Raw=b'\\x01\\x02\\x03' ((0, 24))
-
-    The alphabet optional argument can be use to limit the bytes that can participate in the domain value
+    The alphabet optional argument can be use to limit the bytes that
+    can participate in the domain value:
 
     >>> f = Field(Raw(nbBytes=100, alphabet=["t", "o"]))
     >>> data = f.specialize()

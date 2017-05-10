@@ -46,7 +46,14 @@ from netzob.Model.Vocabulary.Types.Raw import Raw
 
 @NetzobLogger
 class Memory(object):
-    """Definition of a memory, used to store variable values (in bitarray) in a persisting and independent way.
+    """This class provides a memory, used to store variable values (in bitarray) in a persisting and independent way.
+
+    To compute or verify the constraints and relationships that
+    participate in the definition of the fields, Netzob relies on a
+    memory. This memory stores the values of previously captured or
+    emitted fields. More precisely, the Memory contains all the fields
+    variables that are needed according to the field definition
+    during the abstraction and specialization processes.
 
     """
 

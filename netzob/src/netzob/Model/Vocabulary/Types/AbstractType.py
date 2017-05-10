@@ -58,18 +58,58 @@ from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
 @NetzobLogger
 class AbstractType(object, metaclass=abc.ABCMeta):
     """AbstractType is the abstract class of all the classes that represents netzob types.
-    In Netzob, a type defines a definition domain as a unique value or specified with specific rules.
-    For instance, an integer under a specific interval, a string with a number of chars and an IPv4 of a specific
-    netmask.
 
-    Every types store their current value (if they have one) as a :class:`bitarray.bitarray`.
+    In Netzob, a type defines a definition domain as a unique value or
+    specified with specific rules.  For instance, an integer under a
+    specific interval, a string with a number of chars and an IPv4 of
+    a specific netmask.
+
+    The constructor for an AbstractType expects some parameters:
+
+    :param str typeName: The name of the type (we highly recommand the use of __class__.__name__).
+    :param value: The current value of the type instance.
+    :param size: The size in bits that this value takes.
+    :param str unitSize: The unitsize of the current value. Values must be one of AbstractType.UNITSIZE_*. If None, the value is the default one.
+    :param str endianness: The endianness of the current value. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE. If None, the value is the default one.
+    :param str sign: The sign of the current value. Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED. If None, the value is the default one.
+    :type value: :class:`bitarray.bitarray`
+    :type size: a tupple with the min and the max size specified as :class:`int`
+
+    Netzob support the following unit sizes:
+
+    * AbstractType.UNITSIZE_1
+    * AbstractType.UNITSIZE_4
+    * AbstractType.UNITSIZE_8
+    * AbstractType.UNITSIZE_16
+    * AbstractType.UNITSIZE_32
+    * AbstractType.UNITSIZE_64
+
+    Netzob support the following endianness:
+
+    * AbstractType.ENDIAN_BIG,
+    * AbstractType.ENDIAN_LITTLE
+
+    Netzob support the following signs:
+
+    * AbstractType.SIGN_SIGNED,
+    * AbstractType.SIGN_UNSIGNED
+
+
+    **Internal representation of Type objects**
+
+    Regarding the internal representation of variables in Netzob, the
+    Python module :class:`bitarray` is used, thus allowing to specify
+    fields at the bit granularity. As an example, the following code
+    show how to access the internal representation of the value of an
+    Integer object::
 
     >>> from netzob.all import *
-    >>> t = ASCII("netzob")
-    >>> t.value
-    bitarray('011011100110010101110100011110100110111101100010')
-    >>> print(t.endianness)
-    big
+    >>> f = Field(Integer(20))
+    >>> print(f.domain.dataType)
+    Integer=20 ((8, 8))
+    >>> print(f.domain.dataType.value)
+    bitarray('00010100')
+
     """
 
     # FEW KEY ELEMENTS
@@ -170,23 +210,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
                  unitSize=None,
                  endianness=None,
                  sign=None):
-        """Constructor for an AbstractType, an abstract class.
-        This constructor must only be called by inheriting classes.
-
-        :parameter typeName: the name of the type (highly recommand the use of __class__.__name__.
-        :type typeName: :class:`str`
-        :parameter value: the current value of the instance (specified in bitarray)
-        :type value: :class:`bitarray.bitarray`
-        :parameter size: the size in bits that this value takes (to build the appropriate regex)
-        :type size: a tupple with the min and the max size specified as integers
-        :keyword unitSize: the unitsize of the current value. Values must be one of AbstractType.UNITSIZE_*. if None, the value is the default one.
-        :type unitSize: str
-        :keyword endianness: the endianness of the current value. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE. if None, the value is the default one.
-        :type endianness: str
-        :keyword sign: the sign pf tje current value. Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED. if None, the value is the default one.
-        :type sign: str
-        """
-
         self.id = uuid.uuid4()
         self.typeName = typeName
         self.value = value
@@ -213,7 +236,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
             return "{0}={1} ({2})".format(self.typeName, self.value, self.size)
 
     def __repr__(self):
-        if self.value != None:
+        if self.value is not None:
             from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
             from netzob.Model.Vocabulary.Types.BitArray import BitArray
             return str(

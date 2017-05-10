@@ -50,16 +50,45 @@ from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 @NetzobLogger
 class BitArray(AbstractType):
-    """A bitarray netzob type.
+    """This class defines a BitArray type.
 
-    It represents a set of bits with possible constraints.
+    The BitArray type allows to describe a field that contains a
+    sequence of bits of arbitrary sizes.
 
-    >>> from netzob.all import *
+    The BitArray constructor expects some parameters:
+
+    :param value: The current value of the type instance.
+    :param nbBits: The size in bits that this value can take.
+    :type value: :class:`bitarray.bitarray`
+    :type nbBits: an :class:`int` or a tupple with the min and the max size specified as :class:`int`
+
+
+    The following example shows how to define a bitfield of 1 bit, 47
+    bits, 64 bits and then a field that accept a bitfield of variable
+    size between 13 and 128 bits:
+
+    >>> from netzob.all import *  
+    >>> f1 = Field(BitArray(nbBits=1))
+    >>> print(len(f1.domain.dataType.generate()))
+    1
+
+    >>> f2 = Field(BitArray(nbBits=47))
+    >>> print(len(f2.domain.dataType.generate()))
+    47
+
+    >>> f3 = Field(BitArray(nbBits=64))
+    >>> print(len(f3.domain.dataType.generate()))
+    64
+
+    >>> f4 = Field(BitArray(nbBits=(13, 128)))
+
+    The following example shows how to specify a constant bitfield:
+
     >>> from bitarray import bitarray
     >>> b = BitArray(value = bitarray('00000000'))
     >>> print(b.generate())
     bitarray('00000000')
-    
+
     """
 
     def __init__(self, value=None, nbBits=(None, None)):

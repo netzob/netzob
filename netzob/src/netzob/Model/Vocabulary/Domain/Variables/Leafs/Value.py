@@ -57,9 +57,36 @@ from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 
 @NetzobLogger
 class Value(AbstractRelationVariableLeaf):
-    """A value relation between one variable and the value of a field
+    r"""The Value class is a variable which content is the value of another field.
+
+    Netzob allows to define a field so that its value is equal to the
+    value of another field, on which a transformation operation can be
+    realized.
+
+    The Value constructor expects some parameters:
+
+    :param field: The targeted field of the relationship.
+    :param str name: The name of the Value variable. If None, the name
+                     will be generated.
+    :param operation: An optional transformation operation to be
+                      applied on the targeted data.
+    :type field: :class:`netzob.Model.Vocabulary.AbstractField`
+    :type operation: :class:`func`
+
+
+    The following example shows how to define a field with a copy of
+    another field value:
 
     >>> from netzob.all import *
+    >>> f0 = Field(ASCII("abcd"))
+    >>> f1 = Field(Value(f0))
+    >>> s  = Symbol(fields=[f0, f1])
+    >>> print(s.specialize())
+    b'abcdabcd'
+
+    The following example shows how to define a field with a copy of
+    another field value:
+
     >>> msg = RawMessage("netzob;netzob!")
     >>> f1 = Field(ASCII(nbChars=(2, 8)), name="f1")
     >>> f2 = Field(ASCII(";"), name="f2")
@@ -70,7 +97,8 @@ class Value(AbstractRelationVariableLeaf):
     >>> print(mp.parseMessage(msg, s))
     [bitarray('011011100110010101110100011110100110111101100010'), bitarray('00111011'), bitarray('011011100110010101110100011110100110111101100010'), bitarray('00100001')]
 
-    # lets try another way of expressing such a relation
+    The following example shows another way to define a field with a
+    copy of another field value:
 
     >>> from netzob.all import *
     >>> msg = RawMessage("netzob;netzob!")
@@ -84,7 +112,10 @@ class Value(AbstractRelationVariableLeaf):
     [bitarray('011011100110010101110100011110100110111101100010'), bitarray('00111011'), bitarray('011011100110010101110100011110100110111101100010'), bitarray('00100001')]
 
 
-    Lets see what happen when we specialize a Value field
+    **Specialization of Value objects**
+
+    The following examples show the specialization process of Value
+    objects:
 
     >>> from netzob.all import *
     >>> f1 = Field(ASCII("netzob"), name="f1")
@@ -92,8 +123,7 @@ class Value(AbstractRelationVariableLeaf):
     >>> f3 = Field(Value(f1), name="f3")
     >>> f4 = Field(ASCII("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
-    >>> ms = MessageSpecializer()
-    >>> print(TypeConverter.convert(ms.specializeSymbol(s).generatedContent, BitArray, Raw))
+    >>> print(s.specialize())
     b'netzob;netzob!'
     
     >>> from netzob.all import *
@@ -102,11 +132,14 @@ class Value(AbstractRelationVariableLeaf):
     >>> f1 = Field(Value(f3), name="f1")
     >>> f4 = Field(ASCII("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
-    >>> ms = MessageSpecializer()
-    >>> print(TypeConverter.convert(ms.specializeSymbol(s).generatedContent, BitArray, Raw))
+    >>> print(s.specialize())
     b'netzob;netzob!'
 
-    A value relationship also accepts custom operations
+
+    **Transformation operation on targeted field value**
+
+    A value relationship also accepts custom operations, as shown on
+    the following example:
 
     >>> from netzob.all import *
     >>> f0 = Field(1, name="f0")
@@ -114,15 +147,14 @@ class Value(AbstractRelationVariableLeaf):
     >>> f2 = Field(Value(f0, operation = lambda x: TypeConverter.convert(TypeConverter.convert(x, BitArray, Integer) + 1, Integer, BitArray)), name="f2")
     >>> s = Symbol([f0, f1, f2])
     >>> print(s.specialize())
-    b'\\x01:\\x02'
+    b'\x01:\x02'
     >>> m1 = RawMessage(s.specialize())
     >>> s.messages = [m1]
     >>> print(s)
     f0     | f1  | f2    
     ------ | --- | ------
-    '\\x01' | ':' | '\\x02'
+    '\x01' | ':' | '\x02'
     ------ | --- | ------
-    
 
     """
 
@@ -295,7 +327,7 @@ class Value(AbstractRelationVariableLeaf):
     #             else:
     #                 tmpLen = len(fieldValue)
     #                 tmpLen = int(math.ceil(tmpLen / 8.0) * 8)  # Round to the upper closest multiple of 8 (the size of a byte),
-    #                                                            # because this is what will be considered durring field specialization
+    #                                                            # because this is what will be considered during field specialization
     #                 size += tmpLen
     #         size = size * self.factor + self.offset
     #         b = TypeConverter.convert(size, Integer, BitArray)

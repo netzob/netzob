@@ -57,44 +57,102 @@ from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 
 
 class Symbol(AbstractField):
-    """A symbol represents a common abstraction for all its messages.
+    """The Symbol class is a main component of the Netzob protocol model.
 
-    For example, we can create a symbol based on two raw messages
+    A symbol represents an abstraction of all messages of the same
+    type from a protocol perspective. A symbol structure is made of
+    fields.
+
+    The Symbol constructor expects some parameters:
+
+    :param fields: The fields that participate in the symbol
+                   definition.  May be None, especially when using
+                   Symbols for reverse engineering (i.e. fields
+                   identification).
+    :param messages: The messages that are associated with the
+                     symbol. May be None, especially when
+                     modelling a protocol from scratch (i.e. the
+                     fields are already known).
+    :param str name: The name of the symbol. If not specified, the
+                     default name will be "Symbol".
+    :type fields: a :class:`list` of :class:`netzob.Model.Vocabulary.Field`
+    :type messages: a :class:`list` of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
+
+
+    **Usage of Symbol for protocol modelling**
+
+    The Symbol class may be used to model a protocol from scratch, by
+    specifying its structure in terms of fields:
+
+    >>> f0 = Field("aaaa")
+    >>> f1 = Field(" # ")
+    >>> f2 = Field("bbbbbb")
+    >>> symbol = Symbol(fields=[f0, f1, f2])
+    >>> print(symbol._str_debug())
+    Symbol
+    |--  Field
+         |--   Data (ASCII=aaaa ((0, 32)))
+    |--  Field
+         |--   Data (ASCII= #  ((0, 24)))
+    |--  Field
+         |--   Data (ASCII=bbbbbb ((0, 48)))
+
+    **Usage of Symbol for protocol dissecting**
+
+    The Symbol class may be used to dissect a list of messages
+    according to the fields structure:
 
     >>> from netzob.all import *
+    >>> f0 = Field("hello", name="f0")
+    >>> f1 = Field(ASCII(nbChars=(0, 10)), name="f1")
     >>> m1 = RawMessage("hello world")
     >>> m2 = RawMessage("hello earth")
-    >>> fields = [Field("hello ", name="f0"), Field(["world", "earth"], name="f1")]
-    >>> symbol = Symbol(fields, messages=[m1, m2])
+    >>> symbol = Symbol(fields=[f0, f1], messages=[m1, m2])
     >>> print(symbol)
-    f0       | f1     
+    f0      | f1      
+    ------- | --------
+    'hello' | ' world'
+    'hello' | ' earth'
+    ------- | --------
+
+    **Usage of Symbol for protocol reverse engineering**
+
+    The Symbol class may be used is to do reverse engineering on a
+    list of captured messages of unknown/undocumented protocols:
+
+    >>> from netzob.all import *
+    >>> m1 = RawMessage("hello aaaa")
+    >>> m2 = RawMessage("hello bbbb")
+    >>> symbol = Symbol(messages=[m1, m2])
+    >>> Format.splitStatic(symbol)
+    >>> print(symbol)
+    Field-0  | Field-1
     -------- | -------
-    'hello ' | 'world'
-    'hello ' | 'earth'
+    'hello ' | 'aaaa' 
+    'hello ' | 'bbbb' 
     -------- | -------
 
-    Another example
-    
-    >>> from netzob.all import *
-    >>> s = Symbol([Field("hello ", name="f0"), Field(ASCII(nbChars=(0, 10)), name="f1")])
-    >>> s.messages.append(RawMessage("hello toto"))
-    >>> print(s)
-    f0       | f1    
-    -------- | ------
-    'hello ' | 'toto'
-    -------- | ------
+    **Usage of Symbol for traffic generation**
+
+    A Symbol class may be used to generate concrete messages according
+    to its fields definition, through the `specialize()` method, and
+    may also be used to abstract a concrete message into its
+    associated symbol through the `abstract()` method:
+
+    >>> f0 = Field("aaaa")
+    >>> f1 = Field(" # ")
+    >>> f2 = Field("bbbbbb")
+    >>> symbol = Symbol(fields=[f0, f1, f2])
+    >>> concrete_message = symbol.specialize()
+    >>> print(concrete_message)
+    b'aaaa # bbbbbb'
+    >>> (abstracted_symbol, structured_data) = AbstractField.abstract(concrete_message, [symbol])
+    >>> print(abstracted_symbol == symbol)
+    True
 
     """
 
     def __init__(self, fields=None, messages=None, name="Symbol"):
-        """
-        :keyword fields: the fields which participate in symbol definition
-        :type fields: a :class:`list` of :class:`netzob.Model.Vocabulary.Field`
-        :keyword messages: the message that represent the symbol
-        :type messages: a :class:`list` of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
-        :keyword name: the name of the symbol
-        :type name: :class:`str`
-        """
         super(Symbol, self).__init__(name)
         self.__messages = TypedList(AbstractMessage)
         if messages is None:
@@ -126,9 +184,24 @@ class Symbol(AbstractField):
         return hash(frozenset(self.name))
 
     @typeCheck(Memory, object)
-    def specialize(self, memory=None, generationStrategy=None, presets=None):
-        """Specialize and generate an hexastring which content
-        follows the fields definitions attached to the field of the symbol.
+    def specialize(self, memory=None, presets=None):
+        """The method specialize() generates a :class:`bytes` sequence whose
+        content follows the field or symbol definition.
+
+        The specialize() method expects some parameters:
+
+        :param memory: A memory used to store variables values during
+                       specialization and abstraction of sequence of symbols.
+        :param presets: A dictionary of keys:values used to preset
+                        (parameterize) fields during symbol
+                        specialization. Values in this dictionary will
+                        override any fields definition, constraints or
+                        relationship dependencies.
+        :type memory: :class:`netzob.Model.Vocabulary.Domain.Variables.Memory`
+        :type presets: :class:`dict`
+
+        The following example shows the specialize() method used for a
+        field which contains an ASCII and a Size fields.
 
         >>> from netzob.all import *
         >>> f1 = Field(domain=ASCII(nbChars=5))
@@ -140,7 +213,10 @@ class Symbol(AbstractField):
         >>> print(len(result))
         6
 
-        You can also preset the value of some variables included in the symbol definition.
+        **Presets of fields values**
+
+        The following example shows the use of the presets parameter
+        for some variables included in the symbol definition.
 
         >>> from netzob.all import *
         >>> f1 = Field(domain=ASCII("hello "))
@@ -163,12 +239,6 @@ class Symbol(AbstractField):
         >>> print(s.specialize(presets = presetValues)[0])
         195
 
-        :keyword generationStrategy: if set, the strategy will be used to generate the fields definitions
-        :type generaionrStrategy: :class:``
-
-        :return: a generated content represented as a Raw
-        :rtype: :class:`str``
-        :raises: :class:`netzob.Model.Vocabulary.AbstractField.GenerationException` if an error occurs while generating a message
         """
 
         from netzob.Model.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer

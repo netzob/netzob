@@ -41,7 +41,7 @@ from netzob.Model.Vocabulary.Types.Raw import Raw
 
 
 class TypeConverter(object):
-    """A type converter class which provide the convert method.
+    """The TypeConverter class provides a conversion function between types.
     """
 
     @staticmethod
@@ -68,19 +68,32 @@ class TypeConverter(object):
                 dst_unitSize=AbstractType.defaultUnitSize(),
                 dst_endianness=AbstractType.defaultEndianness(),
                 dst_sign=AbstractType.defaultSign()):
-        """Encode data provided as a sourceType to a destinationType.
+        """This function allows to encode data from a sourceType to a destinationType.
 
-        To convert an ASCII to its binary (bitarray) representation
+        :param sourceType: The data source type
+        :param destinationType: The destination type
+        :keyword str src_unitSize: The unitsize to consider while encoding. Value must be one of AbstractType.UNITSIZE_*
+        :keyword str src_endianness: The endianness to consider while encoding. Value must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE
+        :keyword str src_sign: The sign to consider while encoding. Value must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED
+        :keyword str dst_unitSize: The unitsize of the expected result. Value must be one of AbstractType.UNITSIZE_*
+        :keyword str dst_endianness: The endianness of the expected result. Value must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE
+        :keyword str dst_sign: The sign of the expected result. Value must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED
+        :type sourceType: :class:`type`
+        :type destinationType: :class:`type`
+        :raise: TypeError if parameters are not valid
+
+
+        For example, to convert an ASCII to a binary (BitArray) representation:
 
         >>> from netzob.all import *
-        >>> data = "That's an helloworld!"
+        >>> data = "hello"
         >>> bin = TypeConverter.convert(data, ASCII, BitArray)
         >>> print(bin)
-        bitarray('010101000110100001100001011101000010011101110011001000000110000101101110001000000110100001100101011011000110110001101111011101110110111101110010011011000110010000100001')
+        bitarray('0110100001100101011011000110110001101111')
         >>> data == TypeConverter.convert(bin, BitArray, ASCII)
         True
 
-        To convert a raw data to its decimal representation and then to its ASCII representation
+        To convert a raw data to an integer representation and then to an ASCII representation:
 
         >>> data = b'\\x23'
         >>> decData = TypeConverter.convert(data, Raw, Integer)
@@ -89,7 +102,7 @@ class TypeConverter(object):
         >>> print(TypeConverter.convert(decData, Integer, ASCII))
         #
 
-        You can also play with the unitSize to convert multiple ascii in a single high value decimal
+        You can also modify the unitSize to convert multiple ASCII to a single high value integer:
 
         >>> TypeConverter.convert("5", ASCII, Integer)
         53
@@ -98,7 +111,7 @@ class TypeConverter(object):
         >>> print(TypeConverter.convert("zoby", ASCII, Integer, dst_unitSize=AbstractType.UNITSIZE_32))
         2054120057
 
-        It also works for 'semantic' data like IPv4s
+        It also works for 'semantic' data like IPv4:
 
         >>> TypeConverter.convert("192.168.0.10", IPv4, Integer, dst_sign=AbstractType.SIGN_UNSIGNED)
         167815360
@@ -106,25 +119,6 @@ class TypeConverter(object):
         bitarray('01111111000000000000000000000001')
         >>> TypeConverter.convert(167815360, Integer, IPv4, src_unitSize=AbstractType.UNITSIZE_32, src_sign=AbstractType.SIGN_UNSIGNED)
         IPAddress('10.0.168.192')
-
-        :param sourceType: the data source type
-        :type sourceType: :class:`type`
-        :param destinationType: the destination type
-        :type destinationType: :class:`type`
-        :keyword src_unitSize: the unitsize to consider while encoding. Values must be one of AbstractType.UNITSIZE_*
-        :type src_unitSize: str
-        :keyword src_endianness: the endianness to consider while encoding. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE
-        :type src_endianness: str
-        :keyword src_sign: the sign to consider while encoding Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED
-        :type src_sign: str
-        :keyword dst_unitSize: the unitsize of the expected result. Values must be one of AbstractType.UNITSIZE_*
-        :type dst_unitSize: str
-        :keyword dst_endianness: the endianness of the expected result. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE
-        :type dst_endianness: str
-        :keyword dst_sign: the sign of the expected result. Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED
-        :type dst_sign: str
-
-        :raise: TypeError if parameter not valid
 
         """
         # is the two formats supported ?

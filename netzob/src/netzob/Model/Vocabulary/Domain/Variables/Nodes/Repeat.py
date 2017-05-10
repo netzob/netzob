@@ -52,10 +52,50 @@ from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import Speciali
 
 @NetzobLogger
 class Repeat(AbstractVariableNode):
-    """Represents a Repeat in the domain definition
+    """The Repeat class is a node variable that represents a sequence of the same variable.
+
+    A field can be defined under a repetition form of one or multiple
+    tokens with a repeat node. This denotes an n-time repetition of a
+    variable, which can be a terminal leaf or a non-terminal node.
+
+    The Repeat constructor expects some parameters:
+
+    :param child: The variable element that will be repeated.
+    :param nbRepeat: The minimum and maximum of repetitions of the element.
+    :param delimitor: The delimitor used to separate the repeated element.
+    :type child: :class:`netzob.Model.Vocabulary.Domain.Variables.AbstractVariable`
+    :type nbRepeat: a :class:`int` describing the number of
+                    repetitions, or a tuple of :class:`int` describing
+                    the min,max of repetitions
+    :type delimitor: :class:`netzob.Model.Vocabulary.Types.BitArray`
 
 
-    Let's see how a repeat domain can be parsed
+    The following example shows a repeat variable where the repeated
+    element is an aggregate of ASCII characters:
+
+    >>> from netzob.all import *
+    >>> f1 = Field(Repeat(Agg([ASCII("A"), ASCII("B"), ASCII("C")]), nbRepeat=16))
+    >>> print(f1.specialize())
+    b'ABCABCABCABCABCABCABCABCABCABCABCABCABCABCABCABC'
+
+    
+    **Usage of a delimitor**
+
+    We can specify a delimitor between each repeated element, as
+    depicted in the following example:
+
+    >>> f1 = Field(Repeat(Alt([ASCII("netzob"), ASCII("zoby")]), nbRepeat=(1, 4), delimitor=TypeConverter.convert(";", Raw, BitArray)))
+    >>> f2 = Field(ASCII("zoby"))
+    >>> s = Symbol([f1, f2])
+    >>> msg1 = RawMessage("netzob;zoby;netzobzoby")
+    >>> mp = MessageParser()
+    >>> print(mp.parseMessage(msg1, s))
+    [bitarray('011011100110010101110100011110100110111101100010001110110111101001101111011000100111100100111011011011100110010101110100011110100110111101100010'), bitarray('01111010011011110110001001111001')]
+
+
+    **Abstraction of repeat variables**
+
+    The following examples show how repeat variable can be parsed:
 
     >>> from netzob.all import *
     >>> f1 = Field(Repeat(ASCII("netzob"), nbRepeat=(0,3)))
@@ -76,21 +116,11 @@ class Repeat(AbstractVariableNode):
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg4, s))
     [bitarray(), bitarray('01111010011011110110001001111001')]
-    
-
-    You can also specify a delimitor between each repeated element
-
-    >>> from netzob.all import *
-    >>> f1 = Field(Repeat(Alt([ASCII("netzob"), ASCII("zoby")]), nbRepeat=(1, 4), delimitor=TypeConverter.convert(";", Raw, BitArray)))
-    >>> f2 = Field(ASCII("zoby"))
-    >>> s = Symbol([f1, f2])
-    >>> msg1 = RawMessage("netzob;zoby;netzobzoby")
-    >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg1, s))
-    [bitarray('011011100110010101110100011110100110111101100010001110110111101001101111011000100111100100111011011011100110010101110100011110100110111101100010'), bitarray('01111010011011110110001001111001')]
 
 
-    Let's illustrate the specialization of a repeat:
+    **Specialization of repeat variables**
+
+    The following examples show how repeat variable can be specialized:
 
     >>> from netzob.all import *
     >>> f1 = Field(Repeat(ASCII("netzob"), nbRepeat=2))
