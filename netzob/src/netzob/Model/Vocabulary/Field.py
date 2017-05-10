@@ -260,9 +260,26 @@ class Field(AbstractField):
 
     def __init__(self, domain=None, name="Field", isPseudoField=False):
         super(Field, self).__init__(name)
-        if domain is None:
-            domain = Raw(None)
-        self.domain = domain
+
+        # Handle each possibility for the domain parameter
+        if domain is None:  # Check if domain is not defined
+            self.domain = Raw(None)
+        elif isinstance(domain, list):  # Check if domain is a list of fields
+
+            # Check if each domain element is of type Field
+            is_domain_list_of_fields = True
+            for elt in domain:
+                if not isinstance(elt, Field):
+                    is_domain_list_of_fields = False
+                    break
+            if is_domain_list_of_fields:
+                self.fields = domain
+                self.domain = None
+            else:
+                self.domain = domain  # Domain will be normalized is such case
+        else:
+            self.domain = domain  # Domain will be normalized is such case
+
         self.isPseudoField = isPseudoField
 
     def specialize(self):
