@@ -63,7 +63,7 @@ class Raw(AbstractType):
     :param endianness: Not implemented.
     :param sign: Not implemented.
     :type value: :class:`bitarray.bitarray`, optional
-    :type nbBytes: an :class:`int` or a tupple with the min and the max size specified as :class:`int`, optional
+    :type nbBytes: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
     :type alphabet: a :class:`list` of :class:`object`, optional
 
     The following example shows how to define a six bytes long raw

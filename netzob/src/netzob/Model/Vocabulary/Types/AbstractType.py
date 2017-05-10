@@ -71,7 +71,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     :param sign: The sign of the current value. Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED. If None, the value is the default one.
     :type typeName: :class:`str`, optional
     :type value: :class:`bitarray.bitarray`, required
-    :type size: a tupple with the min and the max size specified as :class:`int`, optional
+    :type size: a tuple with the min and the max size specified as :class:`int`, optional
     :type unitSize: :class:`str`, optional
     :type endianness: :class:`str`, optional
     :type sign: :class:`str`, optional

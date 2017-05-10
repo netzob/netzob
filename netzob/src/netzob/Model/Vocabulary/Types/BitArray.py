@@ -62,7 +62,7 @@ class BitArray(AbstractType):
     :param nbBits: The size in bits that this value can take. In such
                    case, default bitarray elements value is False.
     :type value: :class:`bitarray.bitarray`, optional
-    :type nbBits: an :class:`int` or a tupple with the min and the max size specified as :class:`int`, optional
+    :type nbBits: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
 
 
     The two following examples show how to define a field with a

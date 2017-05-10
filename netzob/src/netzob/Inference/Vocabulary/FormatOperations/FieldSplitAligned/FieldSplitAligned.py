@@ -368,7 +368,7 @@ class FieldSplitAligned(object):
         :keyword semanticTags: semantic tags to consider when aligning
         :type semanticTags: a dict of :class:`SemanticTag <netzob.Model.Vocabulary.SemanticTag.SemanticTag>`
         :return: the alignment, its score and the semantic tags
-        :rtype: a tupple (alignement, semanticTags, score)
+        :rtype: a tuple (alignement, semanticTags, score)
         """
         if values is None or len(values) == 0:
             raise TypeError("At least one value must be provided.")

@@ -328,7 +328,7 @@ class SearchEngine(object):
         """Execute the different search cases and build
         search results that will be returned.
 
-        :parameter searchCases: an iterable of tupple (bitarray, :class:`SearchTask <netzob.Inference.Vocabulary.Search.SearchTask.SearchTask>`)
+        :parameter searchCases: an iterable of tuple (bitarray, :class:`SearchTask <netzob.Inference.Vocabulary.Search.SearchTask.SearchTask>`)
         :type searchCases: a list
         :return: the obtained results
         :rtype: a list of :class:`SearchResult <netzob.Inference.Vocabulary.Search.SearchResult.SearchResult>`
@@ -343,7 +343,7 @@ class SearchEngine(object):
                     target, bitarray) or searchTask is None or not isinstance(
                         searchTask, SearchTask):
                 raise TypeError(
-                    "Each search case must a tupple made of a bitarray and a SearchTask instance"
+                    "Each search case must a tuple made of a bitarray and a SearchTask instance"
                 )
 
             ranges = []

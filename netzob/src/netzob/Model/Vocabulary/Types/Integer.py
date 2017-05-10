@@ -65,7 +65,7 @@ class Integer(AbstractType):
     :param endianness: The endianness of the current value. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE. If None, the value is the default one.
     :param sign: The sign of the current value. Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED. If None, the value is the default one.
     :type value: :class:`bitarray.bitarray`, optional
-    :type interval: an :class:`int` or a tupple with the min and the max values specified as :class:`int`, optional
+    :type interval: an :class:`int` or a tuple with the min and the max values specified as :class:`int`, optional
     :type unitSize: :class:`str`, optional
     :type endianness: :class:`str`, optional
     :type sign: :class:`str`, optional

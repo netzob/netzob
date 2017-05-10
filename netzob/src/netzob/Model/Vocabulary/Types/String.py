@@ -68,7 +68,7 @@ class String(AbstractType):
     :param endianness: Not implemented.
     :param sign: Not implemented.
     :type value: :class:`bitarray.bitarray`, optional
-    :type nbChars: an :class:`int` or a tupple with the min and the max size specified as :class:`int`, optional
+    :type nbChars: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
     :type encoding: :class:`str`, optional
 
     
@@ -390,13 +390,13 @@ class String(AbstractType):
                 if nbChars[0] is not None:
                     if not isinstance(nbChars[0], int):
                         raise TypeError(
-                            "First element of the tupple of the nbChars must be an int if defined."
+                            "First element of the tuple of the nbChars must be an int if defined."
                         )
                     nbMinChar = nbChars[0]
                 if nbChars[1] is not None:
                     if not isinstance(nbChars[1], int):
                         raise TypeError(
-                            "Second element of the tupple of the nbChars must be an int if defined."
+                            "Second element of the tuple of the nbChars must be an int if defined."
                         )
                     nbMaxChar = nbChars[1]
 

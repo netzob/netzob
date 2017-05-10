@@ -171,7 +171,7 @@ class FlowParser(object):
     def parseFlow(self, message, symbols):
         """This method parses the specified message against the specification of one or multiple consecutive
         symbol. It returns a list of tuples, one tuple for each consecutive symbol that participate in the flow.
-        A tupple is made of the symbol's and its alignment of the message part it applies on.
+        A tuple is made of the symbol's and its alignment of the message part it applies on.
         If an error occurs, an Exception is raised."""
 
         if message is None:

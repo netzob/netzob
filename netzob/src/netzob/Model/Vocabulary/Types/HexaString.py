@@ -62,7 +62,7 @@ class HexaString(AbstractType):
     :param value: The current value of the type instance.
     :param size: The size in bytes that this value can take.
     :type value: :class:`bitarray.bitarray`, optional
-    :type size: an :class:`int` or a tupple with the min and the max size specified as :class:`int`, optional
+    :type size: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
 
 
     The following example shows how to define an hexastring field with
