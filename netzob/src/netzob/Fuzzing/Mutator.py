@@ -78,13 +78,14 @@ class Mutator(object):
 
     # Constants
     SEED_DEFAULT = 10
+    COUNTER_MAX_DEFAULT = 2**16
 
     def __init__(self):
         self._seed = Mutator.SEED_DEFAULT
         self._field = None
         self._automata = None
         self._currentState = 0
-        self._counterMax = 0
+        self._counterMax = Mutator.COUNTER_MAX_DEFAULT
         self._currentCounter = 0
 
     @property
@@ -172,6 +173,16 @@ class Mutator(object):
         self._automata = automata
 
     @abc.abstractmethod
+    def reset(self):
+        """Reset environment of the mutator.
+        Raises NotImplementedMutatorError if the inherited mutator has not
+        overridden this method.
+
+        :raises: :class:`NotImplementedError`
+        """
+        raise NotImplementedError("reset() is not implemented yet")
+
+    @abc.abstractmethod
     def mutate(self):
         """This is the mutation method of the field. It has to be overridden by
         all the inherited mutators which call the generator function.
@@ -183,6 +194,6 @@ class Mutator(object):
 
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
-        :raises: :class:`NotImplementedMutatorError <netzob.Fuzzing.Mutator.NotImplementedMutatorError>`
+        :raises: :class:`NotImplementedError`
         """
         raise NotImplementedError("mutate() is not implemented yet")

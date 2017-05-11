@@ -44,7 +44,12 @@
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Mutator import Mutator
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Fuzzing.DeterministGenerator import DeterministGenerator
+from netzob.Model.Vocabulary.Types.Integer import Integer
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.AbstractField import AbstractField
+
+from typing import Iterable
 
 
 class DeterministIntegerMutator(Mutator):
@@ -52,7 +57,6 @@ class DeterministIntegerMutator(Mutator):
 
     >>> from netzob.all import *
     >>> mutator = DeterministIntegerMutator()
-    >>> mutator.seed = 10
     >>> intField = uint16le()
     >>> mutator.field = intField
     >>> dataHex = mutator.mutate()
@@ -61,44 +65,107 @@ class DeterministIntegerMutator(Mutator):
 
     def __init__(self, minValue=None, maxValue=None):
         super().__init__()
+        self._field = None
         self._minValue = minValue
         self._maxValue = maxValue
+        self._ng = DeterministGenerator()
 
     @property
-    def minValue(self):
-        """The min value of the integer to generate. If not defined, it uses
-        the field domain information.
+    def field(self):
+        """The field to which the mutation is applied.
+        When setting the field, the determinist values are generated.
 
-        :type: :class:`int`
+        :type: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`
         """
-        return self._minValue
+        return self._field
 
-    @minValue.setter
-    @typeCheck(int)
-    def minValue(self, minValue):
-        self._minValue = minValue
+    @field.setter
+    def field(self, abstractField):
+        self._field = abstractField
+        if abstractField is None:
+            raise Exception("Field is None")
+        if not isinstance(abstractField.domain.dataType, Integer):
+            raise Exception("Field does not correspond to an Integer")
 
-    @property
-    def maxValue(self):
-        """The max value of the integer to generate. If not defined, it uses
-        the field domain information.
+        # Retrieve the min and max values from the field properties
+        fieldType = abstractField.domain.dataType
+        interval = fieldType.interval
+        if interval is not None:
+            if isinstance(interval, Iterable) and len(interval) == 2:
+                low, high = interval
+                if self._minValue is None or low > self._minValue:
+                    self._minValue = low
+                if self._maxValue is None or high < self._maxValue:
+                    self._maxValue = high
 
-        :type: :class:`int`
+        if (fieldType.unitSize == AbstractType.UNITSIZE_1 or
+            fieldType.unitSize == AbstractType.UNITSIZE_4 or
+            fieldType.unitSize == AbstractType.UNITSIZE_8 or
+            fieldType.unitSize == AbstractType.UNITSIZE_16 or
+            fieldType.unitSize == AbstractType.UNITSIZE_32 or
+            fieldType.unitSize == AbstractType.UNITSIZE_64):
+
+            if fieldType.sign == AbstractType.SIGN_UNSIGNED:
+                if self._minValue is None or self._minValue < 0:
+                    self._minValue = 0
+                if self._maxValue is None:
+                    self._maxValue = 2**int(fieldType.unitSize) - 1
+            else:
+                low = -int((2**int(fieldType.unitSize))/2)
+                high = -low - 1
+                if self._minValue is None or self._minValue < low:
+                    self._minValue = low
+                if self._maxValue is None or self._maxValue > high:
+                    self._maxValue = high
+        if isinstance(self._ng, DeterministGenerator):
+            self._ng.createValues(self._minValue,
+                                  self._maxValue,
+                                  int(fieldType.unitSize))
+
+    def reset(self):
+        self._ng.reset()
+        self.resetCurrentCounter()
+
+    def getValueAt(self, position):
+        """Returns the value at the given position in the list of determinist values.
+        if **position** is outside of the list, it returns **None**.
+
+        :return: the value at the given position
+        :rtype: :class:`int`
         """
-        return self._maxValue
+        if self.field is not None:
+            value = self._ng.getValueAt(position)
+            return Integer.decode(value,
+                                  unitSize=self.field.domain.dataType.unitSize,
+                                  endianness=self.field.domain.dataType.endianness,
+                                  sign=self.field.domain.dataType.sign)
+        else:
+            raise Exception("Field to mutate not set")
 
-    @maxValue.setter
-    @typeCheck(int)
-    def maxValue(self, maxValue):
-        self._maxValue = maxValue
+    def getNbValues(self):
+        """Returns the number of determinist values generated for the field.
+
+        :return: the number of determinist values
+        :rtype: :class:`int`
+        """
+        return len(self._ng.values)
 
     def mutate(self):
         """This is the mutation method of the integer field.
-        It uses a determinist generator to produce the value between minValue
-        and maxValue.
+        It uses a determinist generator to produce the value.
 
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
         """
-        # TODO : implement the determinist generator
-        return super().mutate()
+        if self.field is not None:
+            if self._currentCounter < self.counterMax:
+                self._currentCounter += 1
+                value = self._ng.getNewValue()
+                return Integer.decode(value,
+                                      unitSize=self.field.domain.dataType.unitSize,
+                                      endianness=self.field.domain.dataType.endianness,
+                                      sign=self.field.domain.dataType.sign)
+            else:
+                raise Exception("Max mutation counter reached")
+        else:
+            raise Exception("Field to mutate not set")

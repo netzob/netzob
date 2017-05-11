@@ -43,85 +43,96 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutator import Mutator
-from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Fuzzing.Xorshift128plus import Xorshift128plus
-from netzob.Model.Vocabulary.Types.Integer import Integer
 
 
-class PseudoRandomIntegerMutator(Mutator):
-    """The integer mutator, using pseudo-random generator.
+class DeterministGenerator(object):
+    """Generates integer values from a list determined with the size of an
+    Integer field.
 
     >>> from netzob.all import *
-    >>> mutator = PseudoRandomIntegerMutator()
-    >>> mutator.seed = 10
-    >>> intField = uint16le()
-    >>> mutator.field = intField
-    >>> dataHex = mutator.mutate()
-
+    >>> seed = 10
+    >>> genObject = DeterministGenerator(seed)
+    >>> result = genObject.getNewValue()
     """
 
-    def __init__(self, minValue=None, maxValue=None):
-        super().__init__()
+    DEFAULT_MIN_VALUE = 0
+    DEFAULT_BITSIZE = 32
+    DEFAULT_MAX_VALUE = 2**DEFAULT_BITSIZE
+
+    def __init__(self):
+        self._currentPos = 0
+        self._minValue = 0
+        self._maxValue = 0
+        self._bitSize = 0
+        self._values = list()
+
+    def createValues(self,
+                     minValue,
+                     maxValue,
+                     bitSize):
+        self._currentPos = 0
         self._minValue = minValue
         self._maxValue = maxValue
-        self._prng = Xorshift128plus(self.seed)
+        self._bitSize = bitSize
 
-    @property
-    def minValue(self):
-        """The min value of the integer to generate. If not defined, it uses
-        the field domain information.
+        self._values = list()
+        self._values.append(minValue)  # P
+        self._values.append(maxValue)  # Q
+        if (minValue-1) & 2**bitSize == minValue-1:
+            self._values.append(minValue-1)  # P-1
+        self._values.append(maxValue-1)  # Q-1
+        self._values.append(minValue+1)  # P+1
+        if (maxValue+1) & 2**bitSize == maxValue+1:
+            self._values.append(maxValue+1)  # Q+1
+        self._values.append(0)  # 0
+        self._values.append(-1)  # -1
+        self._values.append(1)  # 1
 
-        :type: :class:`int`
-        """
-        if self._minValue is not None:
-            return self._minValue
-        # else:
-        #     if isinstance(self.field, Integer):
-        #         self.field.
+        for k in range(0, self._bitSize-2):  # k in [0..N-2]
+            self._values.append(-2**k)  # -2^k
+            self._values.append(-2**k - 1)  # -2^k - 1
+            self._values.append(-2**k + 1)  # -2^k + 1
 
-    @minValue.setter
-    @typeCheck(int)
-    def minValue(self, minValue):
-        self._minValue = minValue
-
-    @property
-    def maxValue(self):
-        """The max value of the integer to generate. If not defined, it uses
-        the field domain information.
-
-        :type: :class:`int`
-        """
-        return self._maxValue
-
-    @maxValue.setter
-    @typeCheck(int)
-    def maxValue(self, maxValue):
-        self._maxValue = maxValue
+            self._values.append(2**k)  # 2^k
+            self._values.append(2**k - 1)  # 2^k - 1
+            self._values.append(2**k + 1)  # 2^k + 1
 
     def reset(self):
-        self._prng.reset()
-        self.resetCurrentCounter()
+        """Reset the current position in the list.
 
-    def mutate(self):
-        """This is the mutation method of the integer field.
-        It uses a PRNG to produce the value between minValue and maxValue.
-
-        :return: a generated content represented with bytes
-        :rtype: :class:`bytes`
+        :type: :class:`set`
         """
+        self._currentPos = 0
 
-        if self.currentCounter == 0:
-            if self.seed is not None:
-                self._prng.seed = self.seed
-        if self.currentCounter < self.counterMax:
-            self._currentCounter += 1
-            value = int(self._prng.getNew0To1Value()
-                        * (self.maxValue - self.minValue)
-                        + self.minValue)
-            return Integer.decode(value,
-                                  unitSize=self.field.domain.dataType.unitSize,
-                                  endianness=self.field.domain.dataType.endianness,
-                                  sign=self.field.domain.dataType.sign)
+    @property
+    def values(self):
+        """The list of available values.
+
+        :type: :class:`set`
+        """
+        return self._values
+
+    def getNewValue(self):
+        """This is the method to get the next value in the generated list.
+        To obtain the previous values again, call reset() then getNewValue()
+        or use accessor getValueAt().
+
+        :return: a generated int value
+        :rtype: :class:`int`
+        """
+        if self._currentPos >= len(self._values):
+            self.reset()
+        value = self._values[self._currentPos]
+        self._currentPos += 1
+        return value
+
+    def getValueAt(self, pos):
+        """Returns the value set at postion 'pos' from the generated list.
+
+        :return: a generated int value
+        :rtype: :class:`int`
+        """
+        if pos < len(self._values):
+            return self._values(pos)
         else:
-            raise Exception("Max mutation counter reached")
+            return None

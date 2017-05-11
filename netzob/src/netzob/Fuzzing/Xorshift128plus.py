@@ -96,7 +96,7 @@ class Xorshift128plus(object):
     def getNew64bitsValue(self):
         """This is the method to generate a pseudo-random value from the seed.
         Each time this method is called, it produces a different value.
-        To obtain the previous values again, call resetSeed().
+        To obtain the previous values again, call reset().
 
         :return: a generated int value on 64bits, initially based on the seed
         :rtype: :class:`int`

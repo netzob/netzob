@@ -26,12 +26,22 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
+#+---------------------------------------------------------------------------+
+#| File contributors :                                                       |
+#|       - Georges Bossert <gbossert (a) miskin.fr>                          |
+#+---------------------------------------------------------------------------+
+
+
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
 
-from . import release
-
-from netzob.Common.all import *
-from netzob.Fuzzing.all import *
-from netzob.Inference.all import *
-from netzob.Import.all import *
+from netzob.Fuzzing.AlternativeMutator import AlternativeMutator
+from netzob.Fuzzing.AutomataMutator import AutomataMutator
+from netzob.Fuzzing.BinarySequenceMutator import BinarySequenceMutator
+from netzob.Fuzzing.DeterministGenerator import DeterministGenerator
+from netzob.Fuzzing.DeterministIntegerMutator import DeterministIntegerMutator
+from netzob.Fuzzing.Mutator import Mutator
+from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
+from netzob.Fuzzing.SequenceMutator import SequenceMutator
+from netzob.Fuzzing.StringMutator import StringMutator
+from netzob.Fuzzing.Xorshift128plus import Xorshift128plus
