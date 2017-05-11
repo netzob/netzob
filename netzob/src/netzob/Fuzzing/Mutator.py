@@ -194,6 +194,6 @@ class Mutator(object):
 
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
-        :raises: :class:`NotImplementedMutatorError <netzob.Fuzzing.Mutator.NotImplementedMutatorError>`
+        :raises: :class:`NotImplementedError`
         """
         raise NotImplementedError("mutate() is not implemented yet")
