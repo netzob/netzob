@@ -67,7 +67,7 @@ class UDPClient(AbstractChannel):
                       valid integer choosed by the kernel.
     :param timeout: The default timeout of the channel for opening
                     connection and waiting for a message. Default value
-                    is 5.0 seconds.
+                    is 5.0 seconds. To specify no timeout, None value is expected.
     :type remoteIP: :class:`str`, required
     :type remotePort: :class:`int`, required
     :type localIP: :class:`str`, optional
@@ -125,12 +125,9 @@ class UDPClient(AbstractChannel):
         self.type = AbstractChannel.TYPE_UDPCLIENT
         self.__socket = None
 
-    def open(self, timeout=None):
+    def open(self):
         """Open the communication channel. If the channel is a client, it
         starts to connect to the specified server.
-
-        :param timeout: the maximum time in seconds to wait for connection
-        :type timeout: :class:`float`
         """
 
         if self.isOpen:
@@ -151,13 +148,9 @@ class UDPClient(AbstractChannel):
             self.__socket.close()
         self.isOpen = False
 
-    def read(self, timeout=None):
+    def read(self):
         """Read the next message on the communication channel.
-
-        :param timeout: the maximum time in seconds to wait for a message
-        :type timeout: :class:`float`
         """
-        # TODO: handle timeout
         if self.__socket is not None:
             (data, remoteAddr) = self.__socket.recvfrom(1024)
             return data
@@ -177,12 +170,9 @@ class UDPClient(AbstractChannel):
             raise Exception("socket is not available")
 
     @typeCheck(bytes)
-    def sendReceive(self, data, timeout=None):
+    def sendReceive(self, data):
         """Write on the communication channel the specified data and returns
         the corresponding response.
-
-        :param timeout: the maximum time in seconds to wait for a response
-        :type timeout: :class:`float`
         """
 
         raise NotImplementedError("Not yet implemented")
@@ -256,9 +246,18 @@ class UDPClient(AbstractChannel):
 
     @property
     def timeout(self):
+        """The default timeout of the channel for opening connection and
+        waiting for a message. Default value is 5.0 seconds. To
+        specify no timeout, None value is expected.
+
+        :rtype: :class:`float` or None
+        """
         return self.__timeout
 
     @timeout.setter
     @typeCheck(float)
     def timeout(self, timeout):
+        """
+        :type timeout: :class:`float`, optional
+        """
         self.__timeout = timeout

@@ -49,18 +49,8 @@ from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
 
 class EmptySymbol(Symbol):
     """An empty symbol is a special type of symbol used by the
-simulator. It represents the fact of having nothing received or to
-have nothing to send.
-
-    The EmptySymbol constructor expects some parameters:
-
-    :param receptionTimeout: The time above which no reception of
-                             message triggers the reception of an
-                             :class:`EmptySymbol
-                             <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`. Default
-                             value is 5000. ms.
-    :type receptionTimeout: a :class:`float`, optional
-
+    simulator. It represents the fact of having nothing received or to
+    have nothing to send.
 
     Basic usage:
 
@@ -69,13 +59,9 @@ have nothing to send.
 
     """
 
-    def __init__(self, receptionTimeout=None):
+    def __init__(self):
         super(EmptySymbol, self).__init__(
             fields=None, name="Empty Symbol", messages=[RawMessage()])
-        if receptionTimeout is None:
-            receptionTimeout = EmptySymbol.defaultReceptionTimeout()
-
-        self.receptionTimeout = receptionTimeout
 
     def __eq__(self, other):
         if other is None:
@@ -92,32 +78,3 @@ have nothing to send.
 
     def __str__(self):
         return "Empty Symbol"
-
-    @property
-    def receptionTimeout(self):
-        """This timeout represent how many seconds of no activity
-        represents the reception of an empty symbol.
-
-        :type: class:`float`
-        """
-        return self.__receptionTimeout
-
-    @receptionTimeout.setter
-    @typeCheck(float)
-    def receptionTimeout(self, receptionTimeout):
-        if receptionTimeout is None:
-            raise TypeError("Reception timeout cannot be None")
-        if receptionTimeout < 0.0:
-            raise ValueError("Reception timeout must be positive")
-
-        self.__receptionTimeout = receptionTimeout
-
-    @staticmethod
-    def defaultReceptionTimeout():
-        """Returns the default reception timeout representing
-        an empty symbol.
-
-        :return: the default reception timeout in seconds
-        :rtype: :class:`float`
-        """
-        return 5.0

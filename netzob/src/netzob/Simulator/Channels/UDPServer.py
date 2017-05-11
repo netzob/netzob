@@ -62,7 +62,8 @@ class UDPServer(AbstractChannel):
     :param localIP: The local IP address.
     :param localPort: The local IP port.
     :param timeout: The default timeout of the channel for waiting a
-                    client message. Default value is 5.0 seconds.
+                    client message. Default value is 5.0 seconds. To
+                    specify no timeout, None value is expected.
     :type localIP: :class:`str`, required
     :type localPort: :class:`int`, required
     :type timeout: :class:`float`, optional
@@ -115,12 +116,9 @@ class UDPServer(AbstractChannel):
         self.__socket = None
         self.__remoteAddr = None
 
-    def open(self, timeout=None):
+    def open(self):
         """Open the communication channel. This will open a UDP socket
         that listen for incomming messages.
-
-        :param timeout: Not used, set to None.
-        :type timeout: :class:`float`
         """
 
         if self.isOpen:
@@ -140,13 +138,9 @@ class UDPServer(AbstractChannel):
             self.__socket.close()
         self.isOpen = False
 
-    def read(self, timeout=None):
+    def read(self):
         """Read the next message on the communication channel.
-
-        :param timeout: the maximum time in seconds to wait for a message
-        :type timeout: :class:`float`
         """
-        # TODO: handle timeout
         if self.__socket is not None:
             (data, self.__remoteAddr) = self.__socket.recvfrom(1024)
             return data
@@ -167,12 +161,9 @@ class UDPServer(AbstractChannel):
                 "Socket is not available or remote address is not known.")
 
     @typeCheck(bytes)
-    def sendReceive(self, data, timeout=None):
+    def sendReceive(self, data):
         """Write on the communication channel the specified data and returns
         the corresponding response.
-
-        :param timeout: the maximum time in seconds to wait for a message
-        :type timeout: :class:`float`
         """
         raise NotImplementedError("Not yet implemented")
 
@@ -218,9 +209,18 @@ class UDPServer(AbstractChannel):
 
     @property
     def timeout(self):
+        """The default timeout of the channel for opening connection and
+        waiting for a message. Default value is 5.0 seconds. To
+        specify no timeout, None value is expected.
+
+        :rtype: :class:`float` or None
+        """
         return self.__timeout
 
     @timeout.setter
     @typeCheck(float)
     def timeout(self, timeout):
+        """
+        :type timeout: :class:`float`, optional
+        """
         self.__timeout = timeout

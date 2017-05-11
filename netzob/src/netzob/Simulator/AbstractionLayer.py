@@ -223,28 +223,20 @@ class AbstractionLayer(object):
         return len_data
 
     @typeCheck(int)
-    def readSymbols(self, timeout=EmptySymbol.defaultReceptionTimeout()):
+    def readSymbols(self):
         """Read a flow from the abstraction layer and abstract it in one or
         more consecutive symbols.
 
-        :param timeout: The time above which no reception of message triggers
-                          the reception of an
-                          :class:`EmptySymbol <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`. Default value is 5000. ms.
-        :type timeout: :class:`float`, optional
-        :raise: :class:`TypeError` if the parameter is not valid and Exception if an
-                         error occurs.
-
-        The timeout parameter represents the amount of time (in milliseconds) above
-        which no reception of a message triggers the reception of an
-        :class:`EmptySymbol <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`.
-        
-        If timeout is set to None or to a negative value, it means we always wait
-        for the reception of a message.
+        The timeout attribute of the underlying channel is important
+        as it represents the amount of time (in seconds) above which
+        no reception of a message triggers the reception of an
+        :class:`EmptySymbol
+        <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`.
 
         """
 
         self._logger.debug("Reading data from communication channel...")
-        data = self.channel.read(timeout=timeout)
+        data = self.channel.read()
         self._logger.debug("Received : {}".format(repr(data)))
 
         symbols = []
@@ -272,28 +264,19 @@ class AbstractionLayer(object):
         return (symbols, data)
 
     @typeCheck(int)
-    def readSymbol(self, timeout=EmptySymbol.defaultReceptionTimeout()):
+    def readSymbol(self):
         """Read a message from the abstraction layer and abstract it
         into a symbol.
 
-        :keyword timeout: The time above which no reception of message triggers
-                          the reception of an
-                          :class:`EmptySymbol <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`. Default value is 5000. ms.
-        :type timeout: :class:`float`, optional
-        :raise: :class:`TypeError` if the parameter is not valid and Exception if an
-                         error occurs.
-
-        The timeout parameter represents the amount of time (in milliseconds) above
-        which no reception of a message triggers the reception of an
-        :class:`EmptySymbol <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`.
-        
-        If timeout is set to None or to a negative value, it means we always wait
-        for the reception of a message.
-
+        The timeout attribute of the underlying channel is important
+        as it represents the amount of time (in seconds) above which
+        no reception of a message triggers the reception of an
+        :class:`EmptySymbol
+        <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`.
         """
 
         self._logger.debug("Reading data from communication channel...")
-        data = self.channel.read(timeout=timeout)
+        data = self.channel.read()
         self._logger.debug("Received : {}".format(repr(data)))
 
         symbol = None

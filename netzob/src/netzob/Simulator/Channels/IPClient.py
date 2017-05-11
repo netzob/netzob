@@ -69,7 +69,7 @@ class IPClient(AbstractChannel):
                       Default value is 'eth0'.
     :param timeout: The default timeout of the channel for opening
                     connection and waiting for a message. Default value
-                    is 5.0 seconds.
+                    is 5.0 seconds. To specify no timeout, None value is expected.
     :type remoteIP: :class:`str`, required
     :type localIP: :class:`str`, optional
     :type upperProtocol: :class:`int`, optional
@@ -104,12 +104,9 @@ class IPClient(AbstractChannel):
         self.type = AbstractChannel.TYPE_IPCLIENT
         self.__socket = None
 
-    def open(self, timeout=None):
+    def open(self):
         """Open the communication channel. If the channel is a client, it
         starts to connect to the specified server.
-
-        :param timeout: the maximum time in seconds to wait for connection
-        :type timeout: :class:`float`
         """
 
         if self.isOpen:
@@ -128,13 +125,9 @@ class IPClient(AbstractChannel):
             self.__socket.close()
         self.isOpen = False
 
-    def read(self, timeout=None):
+    def read(self):
         """Read the next message on the communication channel.
-
-        :param timeout: the maximum time in seconds to wait for a message
-        :type timeout: :class:`float`
         """
-        # TODO: handle timeout
         if self.__socket is not None:
             (data, _) = self.__socket.recvfrom(65535)
 
@@ -154,14 +147,12 @@ class IPClient(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
-    def sendReceive(self, data, timeout=None):
+    def sendReceive(self, data):
         """Write on the communication channel the specified data and returns
         the corresponding response.
 
         :param data: the data to write on the channel
         :type data: :class:`bytes`
-        :param timeout: the maximum time in seconds to wait for a response
-        :type timeout: :class:`float`
 
         """
         if self.__socket is not None:
@@ -175,8 +166,7 @@ class IPClient(AbstractChannel):
             stopWaitingResponse = False
             self.write(data)
             while stopWaitingResponse is False:
-                # TODO: handle timeout
-                dataReceived = self.read(timeout)
+                dataReceived = self.read()
 
                 # IHL = (Bitwise AND 00001111) x 4bytes
                 ipHeaderLen = (dataReceived[0] & 15) * 4
@@ -261,9 +251,18 @@ class IPClient(AbstractChannel):
 
     @property
     def timeout(self):
+        """The default timeout of the channel for opening connection and
+        waiting for a message. Default value is 5.0 seconds. To
+        specify no timeout, None value is expected.
+
+        :rtype: :class:`float` or None
+        """
         return self.__timeout
 
     @timeout.setter
     @typeCheck(float)
     def timeout(self, timeout):
+        """
+        :type timeout: :class:`float`, optional
+        """
         self.__timeout = timeout

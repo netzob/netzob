@@ -61,8 +61,9 @@ class TCPServer(AbstractChannel):
 
     :param localIP: The local IP address.
     :param localPort: The local IP port.
-    :param timeout: The default timeout of the channel for waiting a
-                    client message. Default value is 5.0 seconds.
+    :param timeout: The default timeout of the channel for opening the
+                    connection/reading a message. Default value is 5.0
+                    seconds. To specify no timeout, None value is expected.
     :type localIP: :class:`str`, required
     :type localPort: :class:`int`, required
     :type timeout: :class:`float`, optional
@@ -112,20 +113,17 @@ class TCPServer(AbstractChannel):
         self.__socket = None
         self.__clientSocket = None
 
-    def open(self, timeout=None):
+    def open(self):
         """Open the communication channel. If the channel is a server, it
-        starts to listen and will create an instance for each different client
+        starts to listen and will create an instance for each different client.
 
-        :param timeout: Not used. Set to None.
-        :type timeout: :class:`float`
         """
         if self.isOpen:
             raise RuntimeError(
                 "The channel is already open, cannot open it again")
 
         self.__socket = socket.socket()
-        # Reuse the connection
-        self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # Reuse the connection
         self.__socket.settimeout(self.timeout)
         self._logger.debug("Bind the TCP server to {0}:{1}".format(
             self.localIP, self.localPort))
@@ -145,14 +143,12 @@ class TCPServer(AbstractChannel):
         self.isOpen = False
         self._logger.info("TCPServer has closed its socket")
 
-    def read(self, timeout=None):
+    def read(self):
         """Read the next message on the communication channel.
-
-        :param timeout: the maximum time in seconds to wait for a message
-        :type timeout: :class:`float`
         """
         reading_seg_size = 1024
 
+        # Read loop
         if self.__clientSocket is not None:
             data = b""
             finish = False
@@ -183,12 +179,9 @@ class TCPServer(AbstractChannel):
             raise Exception("socket is not available")
 
     @typeCheck(bytes)
-    def sendReceive(self, data, timeout=None):
+    def sendReceive(self, data):
         """Write on the communication channel the specified data and returns
         the corresponding response.
-
-        :param timeout: the maximum time in seconds to wait for a response
-        :type timeout: :class:`float`
         """
 
         raise NotImplementedError("Not yet implemented")
@@ -235,9 +228,18 @@ class TCPServer(AbstractChannel):
 
     @property
     def timeout(self):
+        """The default timeout of the channel for opening connection and
+        waiting for a message. Default value is 5.0 seconds. To
+        specify no timeout, None value is expected.
+
+        :type timeout: :class:`float`, optional
+        """
         return self.__timeout
 
     @timeout.setter
     @typeCheck(float)
     def timeout(self, timeout):
+        """
+        :type timeout: :class:`float`, optional
+        """
         self.__timeout = timeout

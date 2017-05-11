@@ -194,14 +194,16 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
     def write(self, data, rate=None, duration=None):
         """Write to the communication channel the specified data.
 
-        :param data: the data to write on the channel
-        :type data: :class:`bytes`
-        :param rate: specifies the bandwidth in octets to respect during
-                     traffic emission (should be used with duration= parameter)
-        :type rate: :class:`int`
-        :param duration: tells how much seconds the symbol is continuously
-                         written on the channel
-        :type duration: :class:`int`
+        :param data: The data to write on the channel.
+        :param rate: This specifies the bandwidth in octets to respect during
+                     traffic emission (should be used with duration= parameter).
+        :param duration: This tells how much seconds the symbol is continuously
+                         written on the channel.
+        :type data: :class:`bytes`, required
+        :type rate: :class:`int`, optional
+        :type duration: :class:`int`, optional
+        :return: The amount of written data, in bytes.
+        :rtype: :class:`int`
         """
 
         if ((self.writeCounterMax > 0) and

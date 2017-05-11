@@ -68,7 +68,7 @@ class SSLClient(AbstractChannel):
                      valid integer choosed by the kernel.
     :param timeout: The default timeout of the channel for opening
                     connection and waiting for a message. Default value
-                    is 2.0 seconds.
+                    is 5.0 seconds. To specify no timeout, None value is expected.
     :param server_cert_file: The path to a single file in PEM format
                              containing the certificate as well as any
                              number of CA certificates needed to
@@ -96,7 +96,7 @@ class SSLClient(AbstractChannel):
                  remotePort,
                  localIP=None,
                  localPort=None,
-                 timeout=2.,
+                 timeout=5.,
                  server_cert_file=None,
                  alpn_protocols=None):
         super(SSLClient, self).__init__(isServer=False)
@@ -111,12 +111,9 @@ class SSLClient(AbstractChannel):
         self.server_cert_file = server_cert_file
         self.alpn_protocols = alpn_protocols
 
-    def open(self, timeout=None):
+    def open(self):
         """Open the communication channel. If the channel is a client, it starts to connect
         to the specified server.
-
-        :param timeout: the maximum time in seconds to wait for connection
-        :type timeout: :class:`float`
         """
 
         if self.isOpen:
@@ -161,11 +158,8 @@ class SSLClient(AbstractChannel):
             self.__socket.close()
         self.isOpen = False
 
-    def read(self, timeout=None):
+    def read(self):
         """Read the next message on the communication channel.
-
-        :param timeout: the maximum time in seconds to wait for a message
-        :type timeout: :class:`float`
         """
         reading_seg_size = 1024
 
@@ -203,14 +197,12 @@ class SSLClient(AbstractChannel):
             raise Exception("socket is not available")
 
     @typeCheck(bytes)
-    def sendReceive(self, data, timeout=None):
+    def sendReceive(self, data):
         """Write on the communication channel the specified data and returns
         the corresponding response.
 
         :param data: the data to write on the channel
         :type data: :class:`bytes`
-        :param timeout: the maximum time in seconds to wait for a response
-        :type timeout: :class:`float`
         """
 
         raise NotImplementedError("Not yet implemented")
@@ -285,9 +277,18 @@ class SSLClient(AbstractChannel):
 
     @property
     def timeout(self):
+        """The default timeout of the channel for opening connection and
+        waiting for a message. Default value is 5.0 seconds. To
+        specify no timeout, None value is expected.
+
+        :rtype: :class:`float` or None
+        """
         return self.__timeout
 
     @timeout.setter
     @typeCheck(float)
     def timeout(self, timeout):
+        """
+        :type timeout: :class:`float`, optional
+        """
         self.__timeout = timeout
