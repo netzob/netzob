@@ -30,6 +30,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import uuid
+from collections.abc import ValuesView
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -288,7 +289,7 @@ class Session(object):
         else:
             return False
 
-    @typeCheck(list)
+    @typeCheck(ValuesView)
     def abstract(self, symbolList):
         """This method abstract each message of the current session
         into symbols according to a list of symbols given as

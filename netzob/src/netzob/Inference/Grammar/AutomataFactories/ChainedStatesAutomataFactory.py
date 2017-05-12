@@ -28,6 +28,7 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
+from collections.abc import ValuesView
 
 #+----------------------------------------------
 #| Related third party imports
@@ -46,7 +47,7 @@ from netzob.Model.Grammar.Transitions.CloseChannelTransition import CloseChannel
 @NetzobLogger
 class ChainedStatesAutomataFactory(object):
     @staticmethod
-    @typeCheck(list, list)
+    @typeCheck(list, ValuesView)
     def generate(abstractSession, symbolList):
         """Generate an automata that contains as many states and
         transitions as the number of request-response couples in the
