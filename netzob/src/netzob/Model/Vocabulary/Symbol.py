@@ -357,7 +357,7 @@ class Symbol(AbstractField):
     def __repr__(self):
         return self.name
 
-    def __getitem__(self, field_name):
+    def getField(self, field_name):
         """
         Get a field from its name in the field database.
 
@@ -367,5 +367,17 @@ class Symbol(AbstractField):
         for field in self.fields:
             if field_name == field.name:
                 return field
-        raise KeyError("Field {} has not been found in {}"
-                       .format(field_name, self))
+
+    def __getitem__(self, field_name):
+        """
+        Get a field from its name in the field database.
+
+        :param field_name: the name of the :class:`Field <netzob.Model.Vocabulary.Field.Field>` object
+        :type field_name: :class:`str`
+        :raise KeyError: when the field has not been found
+        """
+        field = self.getField(field_name)
+        if field is None:
+            raise KeyError("Field {} has not been found in {}"
+                           .format(field_name, self))
+        return field
