@@ -722,7 +722,13 @@ class Integer(AbstractType):
 
             # Size is interpreted here as an interval
             val = random.randint(min(self.size), max(self.size))
-            return TypeConverter.convert(val, Integer, BitArray)
+            return TypeConverter.convert(val, Integer, BitArray,
+                                         src_sign=self.sign,
+                                         src_unitSize=self.unitSize,
+                                         src_endianness=self.endianness,
+                                         dst_sign=self.sign,
+                                         dst_unitSize=self.unitSize,
+                                         dst_endianness=self.endianness)
         else:
             raise Exception("Cannot generate integer value, as nor constant value or interval is defined")
 
