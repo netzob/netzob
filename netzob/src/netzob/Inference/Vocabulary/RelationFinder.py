@@ -384,14 +384,14 @@ class RelationFinder(object):
         for data in cellsData:
             if len(data) > 0:
                 data = data[:8]  # We take at most 8 bytes
-                unitSize = int(AbstractType.UNITSIZE_8) * len(data)
+                unitSize = AbstractType.UNITSIZE_8 * len(data)
                 unitSize = int(pow(2, math.ceil(math.log(
                     unitSize, 2))))  # Round to the nearest upper power of 2
                 result.append(
                     Integer.encode(
                         data,
                         endianness=AbstractType.ENDIAN_BIG,
-                        unitSize=str(unitSize)))
+                        unitSize=unitSize))
             else:
                 result.append(0)
         return result

@@ -89,7 +89,7 @@ class Data(AbstractVariableLeaf):
     >>> print(TypeConverter.convert(f.domain.currentValue, BitArray, Raw))
     b'hello'
     >>> print(f.domain.dataType)
-    String=None ((0, None))
+    String=None ((None, None))
     >>> print(f.domain.name)
     pseudo
 

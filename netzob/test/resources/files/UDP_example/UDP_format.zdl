@@ -21,7 +21,7 @@ udp_length.domain = Size(udp_header, dataType=uint16(), factor=1./8)
 # Pseudo IP header to compute the UDP checksum
 pseudo_ip_src = Field(IPv4(), "udp.pseudoIP.saddr")
 pseudo_ip_dst = Field(IPv4(), "udp.pseudoIP.daddr")
-pseudo_ip_proto = Field(Raw('\x00\x11'), "udp.pseudoIP.proto")
+pseudo_ip_proto = Field(Raw(b'\x00\x11'), "udp.pseudoIP.proto")
 pseudo_ip_length = Field(Size(udp_header, dataType=uint16(), factor=1./8), "udp.pseudoIP.length")
 
 pseudo_ip_header = Field(name="udp.pseudoIP", isPseudoField=True)

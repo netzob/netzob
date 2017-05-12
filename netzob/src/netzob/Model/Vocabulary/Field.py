@@ -100,11 +100,11 @@ class Field(AbstractField):
     Symbol
     |--  Field
     |--  |--  Field
-              |--   Data (Raw=None ((0, None)))
+              |--   Data (Raw=None ((0, 524280)))
     |--  |--  Field
-              |--   Data (Raw=None ((0, None)))
+              |--   Data (Raw=None ((0, 524280)))
     |--  Field
-         |--   Data (Raw=None ((0, None)))
+         |--   Data (Raw=None ((0, 524280)))
 
     More generally, a field is part of a tree whose root is a symbol
     and whose all other nodes of the tree are fields. Hence, a field
@@ -230,7 +230,7 @@ class Field(AbstractField):
 
     * a field with a specific raw value
 
-      >>> f = Field(Raw('\x00\x01\x02\x03'))
+      >>> f = Field(Raw(b'\x00\x01\x02\x03'))
     
     * a field representing a random IPv4:
 
@@ -283,14 +283,14 @@ class Field(AbstractField):
         self.isPseudoField = isPseudoField
 
     def specialize(self):
-        """Specialize the current field to build a raw data that
+        r"""Specialize the current field to build a raw data that
         follows the fields definitions attached to current element.
 
         This method allows to generate some content following the field definition:
 
         >>> from netzob.all import *
         >>> f = Field("hello")
-        >>> print('\\n'.join([str(f.specialize()) for x in range(3)]))
+        >>> print('\n'.join([str(f.specialize()) for x in range(3)]))
         b'hello'
         b'hello'
         b'hello'
@@ -300,7 +300,7 @@ class Field(AbstractField):
         >>> fHello = Field("hello ")
         >>> fName = Field("zoby")
         >>> s = Symbol([fHello, fName])
-        >>> print('\\n'.join([str(s.specialize()) for x in range(3)]))
+        >>> print('\n'.join([str(s.specialize()) for x in range(3)]))
         b'hello zoby'
         b'hello zoby'
         b'hello zoby'

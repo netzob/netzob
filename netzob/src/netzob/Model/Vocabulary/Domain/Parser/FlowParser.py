@@ -55,7 +55,7 @@ from netzob.Model.Vocabulary.Domain.Parser.FieldParser import FieldParser
 
 @NetzobLogger
 class FlowParser(object):
-    """    In some cases, a message can also represent multiple consecutive messages. For instance, TCP flows embeds
+    r"""    In some cases, a message can also represent multiple consecutive messages. For instance, TCP flows embeds
     consecutive payloads with no delimiter. To deal with such case, the `class:MessageParser` can be parametrized to
     enable multiple consecutive symbols to abstract a single message.
 
@@ -110,20 +110,20 @@ class FlowParser(object):
     >>> msg4 = RawMessage(binascii.unhexlify(hex_content)[134+27+100:])
     >>> # symbols definitions
     >>> SWITCHING_PROTOCOLS_HTTP = Symbol(name = "Switching_protocols_http")
-    >>> f00 = Field("HTTP/1.1 101 Switching Protocols\\r\\n")
+    >>> f00 = Field("HTTP/1.1 101 Switching Protocols\r\n")
     >>> f01 = Field(Raw(nbBytes=(0,150)), name="VARIOUS")
-    >>> f02 = Field(String("Connection: upgrade\\r\\n"))
-    >>> f03 = Field(String("upgrade: h2c\\r\\n\\r\\n"))
+    >>> f02 = Field(String("Connection: upgrade\r\n"))
+    >>> f03 = Field(String("upgrade: h2c\r\n\r\n"))
     >>> SWITCHING_PROTOCOLS_HTTP.fields = [f00, f01, f02, f03]
     >>> fp = FlowParser()
     >>> fp.parseFlow(msg1, [SWITCHING_PROTOCOLS_HTTP])
     [(Switching_protocols_http, [bitarray('01001000010101000101010001010000001011110011000100101110001100010010000000110001001100000011000100100000010100110111011101101001011101000110001101101000011010010110111001100111001000000101000001110010011011110111010001101111011000110110111101101100011100110000110100001010'), bitarray('010001000110000101110100011001010011101000100000010011010110111101101110001011000010000000110010001110000010000001000100011001010110001100100000001100100011000000110001001101010010000000110001001100100011101000110011001100110011101000110011001101000010000001000111010011010101010000001101000010100101001101100101011100100111011001100101011100100011101000100000011010000011001001101111001011110011000100101110001101000010111000110010001011010110000101101100011100000110100001100001001100010000110100001010'), bitarray('010000110110111101101110011011100110010101100011011101000110100101101111011011100011101000100000011101010111000001100111011100100110000101100100011001010000110100001010'), bitarray('01110101011100000110011101110010011000010110010001100101001110100010000001101000001100100110001100001101000010100000110100001010')])]
     >>> SETTINGS_WITH_PARAMETERS = Symbol(name = "Settings_small_max_header_list_size")    
     >>> f10 = Field(name="Length")
-    >>> f11 = Field(name="Type", domain=Raw('\\x04'))
-    >>> f12 = Field(name="Flags", domain=Raw('\\x00'))
-    >>> f13 = Field(name="Stream Identifier", domain=Raw("\\x00\\x00\\x00\\x00"))
-    >>> f14 = Field(name="Settings", domain = Repeat(Agg( [ Alt( [ Raw("\\x00\\x01"), Raw("\\x00\\x02"), Raw("\\x00\\x03"), Raw("\\x00\\x04"), Raw("\\x00\\x05"), Raw("\\x00\\x06"),] ), Raw(nbBytes=4)] ), nbRepeat = (1,10) ) )
+    >>> f11 = Field(name="Type", domain=Raw(b'\x04'))
+    >>> f12 = Field(name="Flags", domain=Raw(b'\x00'))
+    >>> f13 = Field(name="Stream Identifier", domain=Raw(b"\x00\x00\x00\x00"))
+    >>> f14 = Field(name="Settings", domain = Repeat(Agg( [ Alt( [ Raw(b"\x00\x01"), Raw(b"\x00\x02"), Raw(b"\x00\x03"), Raw(b"\x00\x04"), Raw(b"\x00\x05"), Raw(b"\x00\x06"),] ), Raw(nbBytes=4)] ), nbRepeat = (1,10) ) )
     >>> f10.domain = Size([f14], dataType = Raw(nbBytes=3, unitSize=AbstractType.UNITSIZE_32))
     >>> SETTINGS_WITH_PARAMETERS.fields = [f10, f11, f12, f13, f14]
     >>> fp.parseFlow(msg2, [SETTINGS_WITH_PARAMETERS])
@@ -131,9 +131,9 @@ class FlowParser(object):
 
     >>> HEADERS_STREAM_OPEN_STREAM_1_END_HEADERS = Symbol(name = "Headers_stream")
     >>> f20 = Field(name="Length")
-    >>> f21 = Field(name="Type", domain=Raw('\\x01'))
-    >>> f22 = Field(name="Flags", domain=Raw('\\x04'))
-    >>> f23 = Field(name="Stream Identifier", domain=Raw('\\x00\\x00\\x00\\x01'))
+    >>> f21 = Field(name="Type", domain=Raw(b'\x01'))
+    >>> f22 = Field(name="Flags", domain=Raw(b'\x04'))
+    >>> f23 = Field(name="Stream Identifier", domain=Raw(b'\x00\x00\x00\x01'))
     >>> f24 = Field(domain=Raw(nbBytes=(0,1000)))
     >>> f20.domain = Size(f24, dataType = Raw(nbBytes=3, unitSize=AbstractType.UNITSIZE_32))
     >>> HEADERS_STREAM_OPEN_STREAM_1_END_HEADERS.fields = [f20, f21, f22, f23, f24]
@@ -142,9 +142,9 @@ class FlowParser(object):
 
     >>> DATA_END_STREAM_STREAM_1 = Symbol(name = "Data")
     >>> f30 = Field(name="Length", domain=Raw(nbBytes=3))
-    >>> f31 = Field(name="Type", domain=Raw('\\x00'))
-    >>> f32 = Field(name="Flags", domain=Raw('\\x01'))
-    >>> f33 = Field(name="Stream Identifier", domain=Raw('\\x00\\x00\\x00\\x01'))
+    >>> f31 = Field(name="Type", domain=Raw(b'\x00'))
+    >>> f32 = Field(name="Flags", domain=Raw(b'\x01'))
+    >>> f33 = Field(name="Stream Identifier", domain=Raw(b'\x00\x00\x00\x01'))
     >>> f34 = Field(domain=Raw(nbBytes=(0,1000)))
     >>> f30.domain = Size(f34, dataType = Raw(nbBytes=3, unitSize=AbstractType.UNITSIZE_32))
     >>> DATA_END_STREAM_STREAM_1.fields = [f30, f31, f32, f33, f34]

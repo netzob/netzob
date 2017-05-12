@@ -45,7 +45,7 @@ from netzob.Common.NetzobException import NetzobImportException
 
 @NetzobLogger
 class FileImporter(object):
-    """An Importer than can extracts messages out of files.
+    r"""An Importer than can extracts messages out of files.
     We recommend to use static methods such as
     - FileImporter.readFiles(...)
     - Fileimporter.readFile(...)
@@ -74,13 +74,13 @@ class FileImporter(object):
     >>> from netzob.all import *
     >>> file1 = "./test/resources/files/test_import_raw_message1.dat"
     >>> file2 = "./test/resources/files/test_import_raw_message2.dat"
-    >>> messages = FileImporter.readFiles([file1, file2], delimitor=b"\\x00\\x00").values()
+    >>> messages = FileImporter.readFiles([file1, file2], delimitor=b"\x00\x00").values()
     >>> print(len(messages))
     802
     >>> print(messages[10].data)
-    b'\\xbdq75\\x18'
+    b'\xbdq75\x18'
     >>> print(messages[797].data)
-    b'\\xfcJ\\xd1\\xbf\\xff\\xd90\\x98m\\xeb'
+    b'\xfcJ\xd1\xbf\xff\xd90\x98m\xeb'
     >>> print(messages[797].file_path)
     ./test/resources/files/test_import_raw_message2.dat
     >>> print(messages[707].file_message_number)

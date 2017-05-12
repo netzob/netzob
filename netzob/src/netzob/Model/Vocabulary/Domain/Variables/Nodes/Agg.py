@@ -93,9 +93,9 @@ class Agg(AbstractVariableNode):
     >>> print(domain.varType)
     Agg
     >>> print(domain.children[0].dataType)
-    Raw=None ((0, None))
+    Raw=None ((0, 524280))
     >>> print(domain.children[1].dataType)
-    String=None ((0, None))
+    String=None ((None, None))
     >>> domain.children.append(Agg([10, 20, 30]))
     >>> print(len(domain.children))
     3

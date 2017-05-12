@@ -720,7 +720,7 @@ class FieldSplitAligned(object):
         return self.__unitSize
 
     @unitSize.setter
-    @typeCheck(str)
+    @typeCheck(int)
     def unitSize(self, unitSize):
         if unitSize is None:
             raise TypeError("Unitsize cannot be None")

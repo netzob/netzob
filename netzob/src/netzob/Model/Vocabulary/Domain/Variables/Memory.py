@@ -71,8 +71,8 @@ class Memory(object):
         >>> memory = Memory()
         >>> memory.memorize(variable, TypeConverter.convert("hello", String, BitArray))
         >>> print(memory)
-        Data (String=None ((0, None))): b'hello'
-        
+        Data (String=None ((None, None))): b'hello'
+
         """
         self.memory[variable] = value
 

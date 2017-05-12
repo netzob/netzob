@@ -92,11 +92,11 @@ class Symbol(AbstractField):
     >>> print(symbol._str_debug())
     Symbol
     |--  Field
-         |--   Data (String=aaaa ((0, 32)))
+         |--   Data (String=aaaa ((None, None)))
     |--  Field
-         |--   Data (String= #  ((0, 24)))
+         |--   Data (String= #  ((None, None)))
     |--  Field
-         |--   Data (String=bbbbbb ((0, 48)))
+         |--   Data (String=bbbbbb ((None, None)))
 
     **Usage of Symbol for protocol dissecting**
 
@@ -312,6 +312,22 @@ class Symbol(AbstractField):
         >>> presetValues = {f1: TypeConverter.convert("\xff", Raw, BitArray)}        
         >>> print(s.specialize(presets = presetValues)[0])
         195
+
+
+        **Fuzzing of fields**
+
+        It is possible to fuzz fields during symbol specialization,
+        through a dict passed in the ``mutators=`` parameter of the
+        :meth:`~netzob.Model.Vocabulary.Symbol.specialize`
+        method. Values in this dictionary will override any fields
+        definition, constraints, relationship dependencies or
+        parameterized values.
+
+        >>> from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
+        >>> mutators = {}
+        >>> mutators["udp.dport"] = PseudoRandomIntegerMutator
+        >>> #symbol_udp.specialize()#mutators=mutators)
+        #b'\x0b\xaa\xbb'
 
         """
 

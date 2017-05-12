@@ -81,6 +81,7 @@ def getSuite():
 
         # Modules related to common types and data structures
         # ---------------------------------------------------
+        AbstractType.__module__,
         String.__module__,
         Integer.__module__,
         BitArray.__module__,
@@ -136,7 +137,6 @@ def getSuite():
         ClusterByApplicativeData,
         ClusterByAlignment,
         ClusterBySize,
-        AbstractType.__module__,
         Memory.__module__,
         TypeConverter.__module__,
         AbstractVariable,

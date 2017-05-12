@@ -110,7 +110,7 @@ class Size(AbstractRelationVariableLeaf):
     >>> f1 = Field(String("="))
     >>> f2 = Field(String("#"))
     >>> f4 = Field(String("%"))
-    >>> f5 = Field(Raw("_"))
+    >>> f5 = Field(Raw(b"_"))
     >>> f3 = Field(Size([f1, f2, f4, f5]))
     >>> s  = Symbol(fields=[f1, f2, f3, f4, f5])
     >>> print(repr(s.specialize()))

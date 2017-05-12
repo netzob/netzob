@@ -61,9 +61,9 @@ class DomainFactory(object):
     >>> print(domain.varType)
     Alt
     >>> print(domain.children[0].dataType)
-    Raw=None ((0, None))
+    Raw=None ((0, 524280))
     >>> print(domain.children[1].dataType)
-    Integer=10 ((8, 8))
+    Integer=10 ((None, None))
 
     >>> domain = DomainFactory.normalizeDomain(Agg([Alt(["toto", 20]), String("!")]))
     >>> print(domain.varType)
@@ -71,18 +71,18 @@ class DomainFactory(object):
     >>> print(domain.children[0].varType)
     Alt
     >>> print(domain.children[0].children[1].dataType)
-    Integer=20 ((8, 8))
+    Integer=20 ((None, None))
     >>> print(domain.children[1].dataType)
-    String=! ((0, 8))
+    String=! ((None, None))
 
     >>> f = Field(domain=Agg([String("hello"), ["netzob", "zoby"]]))
     >>> print(f._str_debug())
     Field
     |--   Agg
-          |--   Data (String=hello ((0, 40)))
+          |--   Data (String=hello ((None, None)))
           |--   Alt
-               |--   Data (String=netzob ((0, 48)))
-               |--   Data (String=zoby ((0, 32)))
+               |--   Data (String=netzob ((None, None)))
+               |--   Data (String=zoby ((None, None)))
     """
 
     @staticmethod

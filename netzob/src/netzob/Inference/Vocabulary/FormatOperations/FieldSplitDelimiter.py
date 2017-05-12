@@ -57,7 +57,7 @@ class FieldSplitDelimiter(object):
     @staticmethod
     @typeCheck(AbstractField, AbstractType)
     def split(field, delimiter):
-        """Split a field (or symbol) with a specific delimiter. The
+        r"""Split a field (or symbol) with a specific delimiter. The
         delimiter can be passed either as a String, a Raw, an
         HexaString, or any objects that inherit from AbstractType.
 
@@ -115,35 +115,35 @@ class FieldSplitDelimiter(object):
         >>> print(symbol.fields[0]._str_debug())
         Field-0
         |--   Alt
-              |--   Data (Raw=b'CMDidentify' ((0, 88)))
-              |--   Data (Raw=b'RESidentify' ((0, 88)))
-              |--   Data (Raw=b'CMDinfo' ((0, 56)))
-              |--   Data (Raw=b'RESinfo' ((0, 56)))
-              |--   Data (Raw=b'CMDstats' ((0, 64)))
-              |--   Data (Raw=b'RESstats' ((0, 64)))
-              |--   Data (Raw=b'CMDauthentify' ((0, 104)))
-              |--   Data (Raw=b'RESauthentify' ((0, 104)))
-              |--   Data (Raw=b'CMDencrypt' ((0, 80)))
-              |--   Data (Raw=b'RESencrypt' ((0, 80)))
-              |--   Data (Raw=b'CMDdecrypt' ((0, 80)))
-              |--   Data (Raw=b'RESdecrypt' ((0, 80)))
-              |--   Data (Raw=b'CMDbye' ((0, 48)))
-              |--   Data (Raw=b'RESbye' ((0, 48)))
+              |--   Data (Raw=b'CMDidentify' ((None, None)))
+              |--   Data (Raw=b'RESidentify' ((None, None)))
+              |--   Data (Raw=b'CMDinfo' ((None, None)))
+              |--   Data (Raw=b'RESinfo' ((None, None)))
+              |--   Data (Raw=b'CMDstats' ((None, None)))
+              |--   Data (Raw=b'RESstats' ((None, None)))
+              |--   Data (Raw=b'CMDauthentify' ((None, None)))
+              |--   Data (Raw=b'RESauthentify' ((None, None)))
+              |--   Data (Raw=b'CMDencrypt' ((None, None)))
+              |--   Data (Raw=b'RESencrypt' ((None, None)))
+              |--   Data (Raw=b'CMDdecrypt' ((None, None)))
+              |--   Data (Raw=b'RESdecrypt' ((None, None)))
+              |--   Data (Raw=b'CMDbye' ((None, None)))
+              |--   Data (Raw=b'RESbye' ((None, None)))
 
         Below is another example of the FieldSplitDelimiter usage: it splits fields based on a Raw string.
 
 
         >>> from netzob.all import *
-        >>> samples = [b"\\x01\\x02\\x03\\xff\\x04\\x05\\xff\\x06\\x07", b"\\x01\\x02\\xff\\x03\\x04\\x05\\x06\\xff\\x07", b"\\x01\\xff\\x02\\x03\\x04\\x05\\x06"]
+        >>> samples = [b"\x01\x02\x03\xff\x04\x05\xff\x06\x07", b"\x01\x02\xff\x03\x04\x05\x06\xff\x07", b"\x01\xff\x02\x03\x04\x05\x06"]
         >>> messages = [RawMessage(data=sample) for sample in samples]
         >>> symbol = Symbol(messages=messages)
-        >>> Format.splitDelimiter(symbol, Raw(b"\\xff"))
+        >>> Format.splitDelimiter(symbol, Raw(b"\xff"))
         >>> print(symbol)
         Field-0        | Field-sep-ff | Field-2                | Field-sep-ff | Field-4   
         -------------- | ------------ | ---------------------- | ------------ | ----------
-        '\\x01\\x02\\x03' | b'\\xff'      | '\\x04\\x05'             | b'\\xff'      | '\\x06\\x07'
-        '\\x01\\x02'     | b'\\xff'      | '\\x03\\x04\\x05\\x06'     | b'\\xff'      | '\\x07'    
-        '\\x01'         | b'\\xff'      | '\\x02\\x03\\x04\\x05\\x06' | ''           | ''        
+        '\x01\x02\x03' | b'\xff'      | '\x04\x05'             | b'\xff'      | '\x06\x07'
+        '\x01\x02'     | b'\xff'      | '\x03\x04\x05\x06'     | b'\xff'      | '\x07'    
+        '\x01'         | b'\xff'      | '\x02\x03\x04\x05\x06' | ''           | ''        
         -------------- | ------------ | ---------------------- | ------------ | ----------
 
 

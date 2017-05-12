@@ -94,9 +94,9 @@ class FieldSpecializer(object):
     >>> print(fpayload._str_debug())
     Field
     |--  f1
-         |--   Data (String=hello  ((0, 48)))
+         |--   Data (String=hello  ((None, None)))
     |--  f2
-         |--   Data (String=zoby! ((0, 40)))
+         |--   Data (String=zoby! ((None, None)))
     >>> fs = FieldSpecializer(fpayload)
     >>> result = fs.specialize()[0]
     >>> TypeConverter.convert(result.getDataAssignedToField(fpayload), BitArray, String)
