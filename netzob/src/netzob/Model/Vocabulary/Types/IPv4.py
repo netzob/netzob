@@ -77,7 +77,7 @@ class IPv4(AbstractType):
     >>> from netzob.all import *
     >>> ip = IPv4("192.168.0.10")
     >>> ip.size
-    (32, 32)
+    (None, None)
     >>> ip.value
     bitarray('11000000101010000000000000001010')
 
@@ -124,7 +124,7 @@ class IPv4(AbstractType):
         super(IPv4, self).__init__(
             self.__class__.__name__,
             value,
-            32,
+            (None, None),
             unitSize=AbstractType.UNITSIZE_32,
             endianness=AbstractType.defaultEndianness(),
             sign=AbstractType.defaultSign())
@@ -318,11 +318,11 @@ class IPv4(AbstractType):
                unitSize=AbstractType.defaultUnitSize(),
                endianness=AbstractType.defaultEndianness(),
                sign=AbstractType.defaultSign()):
-        """Decode the specified IPv4 data into its raw representation.
+        r"""Decode the specified IPv4 data into its raw representation.
 
         >>> from netzob.all import *
         >>> print(IPv4.decode("127.0.0.1"))
-        b'\\x7f\\x00\\x00\\x01'
+        b'\x7f\x00\x00\x01'
 
         """
 

@@ -54,43 +54,88 @@ class HexaString(AbstractType):
     """This class defines an HexaString type.
 
     The HexaString type allows describing a sequence of bytes of
-    arbitrary sizes with the hexastring notation (i.e. 'aabbcc'
-    instead of the raw notation '\xaa\xbb\xcc').
+    arbitrary sizes with the hexastring notation (i.e. b'aabbcc'
+    instead of the raw notation b'\xaa\xbb\xcc').
 
     The HexaString constructor expects some parameters:
 
     :param value: The current value of the type instance.
-    :param size: The size in bytes that this value can take.
+    :param nbBytes: The size in bytes that this value can take.
     :type value: :class:`bitarray.bitarray`, optional
-    :type size: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
+    :type nbBytes: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
 
 
     The following example shows how to define an hexastring field with
     a constant value, and the used of the specialization method:
 
     >>> from netzob.all import *
-    >>> f = Field(HexaString("aabbcc"))
+    >>> f = Field(HexaString(b"aabbcc"))
     >>> print(f.specialize())
     b'\xaa\xbb\xcc'
 
     """
 
 
-    def __init__(self, value=None, size=(None, None)):
+    def __init__(self, value=None, nbBytes=(None, None)):
         if value is not None and not isinstance(value, bitarray):
-            from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-            from netzob.Model.Vocabulary.Types.BitArray import BitArray
-            value = TypeConverter.convert(value, HexaString, BitArray)
+            if isinstance(value, bytes):
+                from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+                from netzob.Model.Vocabulary.Types.BitArray import BitArray
+                value = TypeConverter.convert(value, HexaString, BitArray)
+            else:
+                raise ValueError("Unsupported input format for value: '{}', type is: '{}', expected type is 'bitarray' or 'bytes'".format(value, type(value)))
 
-        super(HexaString, self).__init__(self.__class__.__name__, value, size)
+        # Handle data size if value is None
+        if value is None:
+            nbBits = self._convertNbBytesinNbBits(nbBytes)
+        else:
+            nbBits = (None, None)
+
+        super(HexaString, self).__init__(self.__class__.__name__, value, nbBits)
+
+    def _convertNbBytesinNbBits(self, nbBytes):
+        nbMinBit = None
+        nbMaxBit = None
+        if nbBytes is not None:
+            if isinstance(nbBytes, int):
+                nbMinBit = nbBytes * 8
+                nbMaxBit = nbMinBit
+            else:
+                if nbBytes[0] is not None:
+                    nbMinBit = nbBytes[0] * 8
+                if nbBytes[1] is not None:
+                    nbMaxBit = nbBytes[1] * 8
+        return (nbMinBit, nbMaxBit)
 
     def canParse(self, data):
-        """It verifies the value is a string which only includes hexadecimal values.
+        """It verifies the value is a string which only includes hexadecimal
+        values.
+
+        :param data: the data to check
+        :type data: python raw
+        :return: True if data can be parsed as an hexastring
+        :rtype: bool
+        :raise: TypeError if the data is None
 
         >>> from netzob.all import *
-        >>> HexaString().canParse(TypeConverter.convert("0001020304050607080910", String, Raw))
+        >>> HexaString(b"aabbccdd").canParse(b"aabbccdd")
         True
-        >>> HexaString().canParse(TypeConverter.convert("hello", String, Raw))
+
+        >>> HexaString(b"aabbccdd").canParse(b"aabbccddee")
+        False
+
+        >>> HexaString().canParse(b"aa")
+        True
+
+        >>> HexaString().canParse(b"aab")
+        Traceback (most recent call last):
+        ...
+        Exception: The data 'b'aab'' should be aligned on the octet
+
+        >>> HexaString(nbBytes=4).canParse(b"aabbccdd")
+        True
+
+        >>> HexaString(nbBytes=4).canParse(b"aa")
         False
 
         Let's generate random binary raw data, convert it to HexaString
@@ -105,11 +150,6 @@ class HexaString(AbstractType):
         >>> print(HexaString().canParse(hex))
         True
 
-        :param data: the data to check
-        :type data: python raw
-        :return: True if data can be parsed as an hexastring
-        :rtype: bool
-        :raise: TypeError if the data is None
         """
 
         if data is None:
@@ -118,26 +158,37 @@ class HexaString(AbstractType):
         if len(data) == 0:
             return False
 
-        # import logging
-        # logger = logging.getLogger(__name__)
+        # Check if data is in bytes and normalize it in bitarray
+        if not isinstance(data, bitarray):
+            if isinstance(data, bytes):
+                from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+                from netzob.Model.Vocabulary.Types.BitArray import BitArray
+                bits_data = TypeConverter.convert(data, HexaString, BitArray)
+            else:
+                raise ValueError("Unsupported input format for data: '{}', type: '{}'".format(data, type(data)))
 
-        # logger.warn("PAF: {0}".format(data))
+        # Compare with self.value if it is defined
+        if self.value is not None:
+            if self.value == bits_data:
+                return True
+            else:
+                return False
 
-        # if not String().canParse(data):
-        #     logger.warn("OUPS: {0}".format(data))
-        #     return False
+        # Else, compare with expected size
+        (minBits, maxBits) = self.size
+        if minBits is not None:
+            if len(data) < (minBits/4):
+                return False
+        if maxBits is not None:
+            if len(data) > (maxBits/4):
+                return False
 
-        # try:
-        #     value = String.encode(data)
-        # except:
-        #     return False
-
+        # And verify if content matches the expected hexastring permitted characters
         allowedValues = [str(i) for i in range(0, 10)]
         allowedValues.extend(["a", "b", "c", "d", "e", "f"])
 
-        str_data = data.decode('utf-8')
         for i in range(0, len(data)):
-            if not str_data[i] in allowedValues:
+            if not chr(data[i]) in allowedValues:
                 return False
 
         return True
@@ -148,16 +199,19 @@ class HexaString(AbstractType):
                unitSize=AbstractType.defaultUnitSize(),
                endianness=AbstractType.defaultEndianness(),
                sign=AbstractType.defaultSign()):
-        """This method convert the specified data in python raw format.
+        """This method convert the specified data in hexastring format.
 
         >>> from netzob.all import *
         >>> import os
+
         >>> # Generate 1024 random bytes
         >>> randomData = os.urandom(1024)
+
         >>> # Convert to hexastring
         >>> hex = TypeConverter.convert(randomData, Raw, HexaString)
         >>> print(len(hex))
         2048
+
         >>> # Convert back to byte and verify we didn't lost anything
         >>> raw = TypeConverter.convert(hex, HexaString, Raw)
         >>> print(raw == randomData)
@@ -180,8 +234,8 @@ class HexaString(AbstractType):
         if data is None:
             raise TypeError("data cannot be None")
 
-        if len(data) % 2 == 1:
-            data = '0' + data
+        if len(data) % 2 != 0:
+            raise Exception("The data '{}' should be aligned on the octet".format(data))
 
         return binascii.unhexlify(data)
 

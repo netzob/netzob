@@ -72,7 +72,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     :type typeName: :class:`str`, optional
     :type value: :class:`bitarray.bitarray`, required
     :type size: a tuple with the min and the max size specified as :class:`int`, optional
-    :type unitSize: :class:`str`, optional
+    :type unitSize: :class:`int`, optional
     :type endianness: :class:`str`, optional
     :type sign: :class:`str`, optional
 
@@ -82,6 +82,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     * AbstractType.UNITSIZE_4
     * AbstractType.UNITSIZE_8 (default value)
     * AbstractType.UNITSIZE_16
+    * AbstractType.UNITSIZE_24
     * AbstractType.UNITSIZE_32
     * AbstractType.UNITSIZE_64
 
@@ -107,7 +108,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     >>> from netzob.all import *
     >>> f = Field(Integer(20))
     >>> print(f.domain.dataType)
-    Integer=20 ((8, 8))
+    Integer=20 ((None, None))
     >>> print(f.domain.dataType.value)
     bitarray('00010100')
 
@@ -118,12 +119,13 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     ENDIAN_LITTLE = 'little'
     SIGN_SIGNED = 'signed'
     SIGN_UNSIGNED = 'unsigned'
-    UNITSIZE_1 = '1'
-    UNITSIZE_4 = '4'
-    UNITSIZE_8 = '8'
-    UNITSIZE_16 = '16'
-    UNITSIZE_32 = '32'
-    UNITSIZE_64 = '64'
+    UNITSIZE_1 = 1
+    UNITSIZE_4 = 4
+    UNITSIZE_8 = 8
+    UNITSIZE_16 = 16
+    UNITSIZE_24 = 24
+    UNITSIZE_32 = 32
+    UNITSIZE_64 = 64
 
     # This value will be used if generate() method is called
     # without any upper size limit
@@ -164,7 +166,8 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         return [
             AbstractType.UNITSIZE_1, AbstractType.UNITSIZE_4,
             AbstractType.UNITSIZE_8, AbstractType.UNITSIZE_16,
-            AbstractType.UNITSIZE_32, AbstractType.UNITSIZE_64
+            AbstractType.UNITSIZE_24, AbstractType.UNITSIZE_32,
+            AbstractType.UNITSIZE_64
         ]
 
     @staticmethod
@@ -182,7 +185,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         """Return the default unit size
 
         :return: the default unit size
-        :rtype: str
+        :rtype: :class:`int`
         """
         return AbstractType.UNITSIZE_8
 
@@ -213,8 +216,16 @@ class AbstractType(object, metaclass=abc.ABCMeta):
                  sign=None):
         self.id = uuid.uuid4()
         self.typeName = typeName
+
+        # If 'value' is defined, 'size' should not
+        if value is not None:
+            if not( isinstance(size, tuple) and len(size) == 2 and size[0] is None and size[1] is None ):
+                raise Exception("'value' and 'size' parameter cannot be defined at the same time for a type: value={}, size={}".format(value, size))
+
         self.value = value
         self.size = size
+
+        # Handle encoding attributes
         if unitSize is None:
             unitSize = AbstractType.defaultUnitSize()
         self.unitSize = unitSize
@@ -268,16 +279,28 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         """Convert the current data in the netzob type
         specified in parameter.
 
-        :parameter typeClass: the netzob class to which the current data must be converted
+        :param typeClass: The netzob class to which the current data
+                          must be converted.
+        :param dst_unitSize: The unitsize of the destination
+                             value. Values must be one of
+                             AbstractType.UNITSIZE_*. If None, the
+                             value is the default one.
+        :param dst_endianness: The endianness of the destination
+                               value. Values must be
+                               AbstractType.ENDIAN_BIG or
+                               AbstractType.ENDIAN_LITTLE. if None,
+                               the value is the default one.
+        :param dst_sign: The sign of the destination. Values must be
+                         AbstractType.SIGN_SIGNED or
+                         AbstractType.SIGN_UNSIGNED. if None, the
+                         value is the default one.
         :type typeClass: type
-        :keyword dst_unitSize: the unitsize of the destination value. Values must be one of AbstractType.UNITSIZE_*. if None, the value is the default one.
-        :type dst_unitSize: str
-        :keyword dst_endianness: the endianness of the destination value. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE. if None, the value is the default one.
-        :type dst_endianness: str
-        :keyword dst_sign: the sign of the destination. Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED. if None, the value is the default one.
-        :type dst_sign: str
+        :type dst_unitSize: :class:`int`
+        :type dst_endianness: :class:`str`
+        :type dst_sign: :class:`str`
         :return: the converted current value in the specified netzob type
         :rtype: :class:`AbstractType <netzob.Model.AbstractType.AbstractType>`
+
         """
         if typeClass is None:
             raise TypeError("TypeClass cannot be None")
@@ -293,11 +316,11 @@ class AbstractType(object, metaclass=abc.ABCMeta):
             dst_sign = AbstractType.defaultSign()
 
         if dst_unitSize not in AbstractType.supportedUnitSizes():
-            raise TypeError("Dst_unitsize is not supported.")
+            raise TypeError("dst_unitsize is not supported.")
         if dst_endianness not in AbstractType.supportedEndianness():
-            raise TypeError("Dst_endianness is not supported.")
+            raise TypeError("dst_endianness is not supported.")
         if dst_sign not in AbstractType.supportedSign():
-            raise TypeError("Sign is not supported.")
+            raise TypeError("sign is not supported.")
 
         from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
         from netzob.Model.Vocabulary.Types.BitArray import BitArray
@@ -325,8 +348,23 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         >>> l = a.generate()
         >>> print(len(l))
         160
+
+        >>> a = HexaString(nbBytes=20)
+        >>> l = a.generate()
+        >>> print(len(l))
+        160
+
+        >>> a = HexaString(b"aabbccdd")
+        >>> a.generate()
+        bitarray('10101010101110111100110011011101')
+
         """
 
+        # Return the self.value in priority if it is defined
+        if self.value is not None:
+            return self.value
+
+        # Else, generate a data that respects the permitted min and max sizes
         minSize, maxSize = self.size
         if maxSize is None:
             maxSize = AbstractType.MAXIMUM_GENERATED_DATA_SIZE
@@ -399,14 +437,14 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     def decode(data, unitSize=None, endianness=None, sign=None):
         """This method convert the specified data in python raw format.
 
-        :param data: the data encoded in current type which will be decoded in raw
+        :param data: The data encoded in current type which will be decoded in raw.
+        :param unitSize: The unit size of the specified data.
+        :param endianness: The endianness of the specified data.
+        :param sign: The sign of the specified data.
         :type data: the current type
-        :keyword unitSize: the unit size of the specified data
-        :type unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.UnitSize.UnitSize>`
-        :keyword endianness: the endianness of the specified data
-        :type endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.Endianness.Endianness>`
-        :keyword sign: the sign of the specified data
-        :type sign: :class:`Sign <netzob.Model.Vocabulary.Types.Sign.Sign>`
+        :type unitSize: :class:`int`
+        :type endianness: :class:`str`
+        :type sign: :class:`str`
 
         :return: data encoded in python raw
         :rtype: python raw
@@ -420,15 +458,14 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     def encode(data, unitSize=None, endianness=None, sign=None):
         """This method convert the python raw data to the current type.
 
-        :param data: the data encoded in python raw which will be encoded in current type
+        :param data: The data encoded in python raw which will be encoded in current type.
+        :param unitSize: The unit size of the specified data.
+        :param endianness: The endianness of the specified data.
+        :param sign: The sign of the specified data.
         :type data: python raw
-        :keyword unitSize: the unit size of the specified data
-        :type unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.UnitSize.UnitSize>`
-        :keyword endianness: the endianness of the specified data
-        :type endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.Endianness.Endianness>`
-        :keyword sign: the sign of the specified data
-        :type sign: :class:`Sign <netzob.Model.Vocabulary.Types.Sign.Sign>`
-
+        :type unitSize: :class:`int`
+        :type endianness: :class:`str`
+        :type sign: :class:`str`
         :return: data encoded in python raw
         :rtype: python raw
         :raise: TypeError if parameters are not valid.
@@ -495,7 +532,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
         if size is None:
             size = (None, None)
-        if isinstance(size, int):
+        elif isinstance(size, int):
             size = (size, size)
 
         if isinstance(size, tuple):
@@ -503,24 +540,9 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
             if minSize is not None and not isinstance(minSize, int):
                 raise TypeError("Size must be defined with a tuple of int")
+
             if maxSize is not None and not isinstance(maxSize, int):
                 raise TypeError("Size must be defined with a tuple of int")
-
-            if minSize is None:
-                minSize = 0
-
-            if maxSize is None and self.value is not None:
-                maxSize = len(self.value)
-
-            if minSize < 0:
-                raise ValueError("Minimum size must be greater than 0")
-            if maxSize is not None and maxSize < minSize:
-                raise ValueError(
-                    "Maximum must be greater or equals to the minimum")
-            if maxSize is not None and maxSize > AbstractType.MAXIMUM_GENERATED_DATA_SIZE:
-                raise ValueError(
-                    "Maximum size supported for a variable is {0}.".format(
-                        AbstractType.MAXIMUM_GENERATED_DATA_SIZE))
 
             self.__size = (minSize, maxSize)
         else:
@@ -585,7 +607,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         >>> print(TypeConverter.convert(data.currentValue, BitArray, String))
         hello netzob !
         >>> print(data.dataType)
-        String=hello netzob ! ((0, 112))
+        String=hello netzob ! ((None, None))
 
         :return: a Data of the current type
         :rtype: :class:`Data <netzob.Model.Vocabulary.Domain.Variables.Leads.Data.Data>`
@@ -649,7 +671,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         return self.__unitSize
 
     @unitSize.setter
-    @typeCheck(str)
+    @typeCheck(int)
     def unitSize(self, unitSize):
         if unitSize is None:
             raise TypeError("UnitSize cannot be None")

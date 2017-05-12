@@ -118,7 +118,7 @@ class String(AbstractType):
     >>> from netzob.all import *
     >>> cAscii = String("hello")
     >>> print(cAscii)
-    String=hello ((0, 40))
+    String=hello ((None, None))
     >>> print(cAscii.typeName)
     String
     >>> print(cAscii.value)
@@ -160,9 +160,11 @@ class String(AbstractType):
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign()):
         self.encoding = encoding
+
+        # Convert value to bitarray
         if value is not None and not isinstance(value, bitarray):
 
-            # Check if value is correct, and normalize it in str object
+            # Check if value is correct, and normalize it in str object, and then bitarray
             if isinstance(value, bytes):
                 try:
                     value = value.decode(self.encoding)
@@ -176,7 +178,6 @@ class String(AbstractType):
             else:
                 raise ValueError("Unsupported input format for value: '{}', type: '{}'".format(value, type(value)))
 
-            # Convert value to bitarray
             from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
             from netzob.Model.Vocabulary.Types.BitArray import BitArray
             value = TypeConverter.convert(
@@ -189,11 +190,12 @@ class String(AbstractType):
                 dst_unitSize=unitSize,
                 dst_endianness=endianness,
                 dst_sign=sign)
-        else:
-            value = None
 
-        self.nbChars = nbChars
-        nbBits = self._convertNbCharsInNbBits(self.nbChars)
+        # Handle string size if value is None
+        if value is None:
+            nbBits = self._normalizeNbChars(nbChars)
+        else:
+            nbBits = (None, None)
 
         super(String, self).__init__(
             self.__class__.__name__,
@@ -203,19 +205,28 @@ class String(AbstractType):
             endianness=endianness,
             sign=sign)
 
-    def _convertNbCharsInNbBits(self, nbChars):
-        nbMinBit = None
-        nbMaxBit = None
+    def _normalizeNbChars(self, nbChars):
+        nbMinBits = None
+        nbMaxBits = None
         if nbChars is not None:
             if isinstance(nbChars, int):
-                nbMinBit = nbChars * 8
-                nbMaxBit = nbMinBit
+                nbMinBits = nbChars * 8
+                nbMaxBits = nbChars * 8
             else:
                 if nbChars[0] is not None:
-                    nbMinBit = nbChars[0] * 8
+                    if not isinstance(nbChars[0], int):
+                        raise TypeError(
+                            "First element of the tuple of the nbChars must be an int if defined."
+                        )
+                    nbMinBits = nbChars[0] * 8
                 if nbChars[1] is not None:
-                    nbMaxBit = nbChars[1] * 8
-        return (nbMinBit, nbMaxBit)
+                    if not isinstance(nbChars[1], int):
+                        raise TypeError(
+                            "Second element of the tuple of the nbChars must be an int if defined."
+                        )
+                    nbMaxBits = nbChars[1] * 8
+
+        return (nbMinBits, nbMaxBits)
 
     def generate(self, generationStrategy=None):
         """Generates a random String that respects the requested size.
@@ -227,21 +238,24 @@ class String(AbstractType):
         10.0
 
         >>> b = String("netzob")
-        >>> gen = b.generate()
-        >>> print(len(gen)>0)
+        >>> b.generate() == TypeConverter.convert("netzob", String, BitArray)
         True
 
         """
+
+        if self.value is not None:
+            return self.value
+
         from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
         from netzob.Model.Vocabulary.Types.BitArray import BitArray
 
-        minSize, maxSize = self.nbChars
+        minSize, maxSize = self.size
         if maxSize is None:
             maxSize = AbstractType.MAXIMUM_GENERATED_DATA_SIZE
         if minSize is None:
             minSize = 0
 
-        generatedSize = random.randint(minSize, maxSize)
+        generatedSize = random.randint(minSize / 8, maxSize / 8)
         randomContent = ''.join([
             random.choice(string.printable)
             for i in range(generatedSize)
@@ -320,12 +334,14 @@ class String(AbstractType):
                  sign=AbstractType.defaultSign()):
         """This method returns True if data is a String (utf-8)
 
+        **Some examples with bitarray as input**
+
         >>> from netzob.all import *
         >>> String().canParse(TypeConverter.convert("hello netzob", String, BitArray))
         True
 
         The ascii table is defined from 0 to 127:
-        >>> String().canParse(TypeConverter.convert(128, Integer, BitArray, src_sign=AbstractType.SIGN_UNSIGNED))
+        >>> String(encoding='ascii').canParse(TypeConverter.convert(128, Integer, BitArray, src_sign=AbstractType.SIGN_UNSIGNED))
         False
 
         >>> a = String(nbChars=10)
@@ -340,6 +356,21 @@ class String(AbstractType):
         >>> a.canParse(TypeConverter.convert("Hello netzob, what's up ?", String, BitArray))
         False
 
+        >>> String("hello").canParse(TypeConverter.convert("hello", String, BitArray))
+        True
+
+
+        **Some examples with string (ascii, unicode, ...) as input**
+
+        >>> String("hello").canParse("hello")
+        True
+
+        >>> String("hello").canParse("helloo")
+        False
+
+        >>> String().canParse("helloo")
+        True
+
         :param data: the data to check
         :type data: python raw
         :return: True if data can be parsed as a String
@@ -353,10 +384,46 @@ class String(AbstractType):
         if len(data) == 0:
             return False
 
-        # Ascii must be 8 bits modulo length
-        if len(data) % 8 != 0:
+        # Check if data is correct, and normalize it in str object, and then bitarray
+        if not isinstance(data, bitarray):
+            if isinstance(data, bytes):
+                try:
+                    data = data.decode(self.encoding)
+                except Exception as e:
+                    raise ValueError("Input data for the following string is incorrect: '{}'. Error: '{}'".format(data, e))
+            elif isinstance(data, str):
+                try:
+                    data.encode(self.encoding)
+                except Exception as e:
+                    raise ValueError("Input data for the following string is incorrect: '{}'. Error: '{}'".format(data, e))
+            else:
+                raise ValueError("Unsupported input format for data: '{}', type: '{}'".format(data, type(data)))
+
+            from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+            from netzob.Model.Vocabulary.Types.BitArray import BitArray
+            data = TypeConverter.convert(
+                data,
+                String,
+                BitArray,
+                src_unitSize=self.unitSize,
+                src_endianness=self.endianness,
+                src_sign=self.sign,
+                dst_unitSize=self.unitSize,
+                dst_endianness=self.endianness,
+                dst_sign=self.sign)
+
+        # Compare with self.value if it is defined
+        if self.value is not None:
+            if self.value == data:
+                return True
+            else:
+                return False
+
+        # Else, compare with expected size
+        if len(data) % 8 != 0:  # Ascii must be 8 bits modulo length
             return False
 
+        # At this time, data is a bitarray
         rawData = data.tobytes()
 
         try:
@@ -364,43 +431,15 @@ class String(AbstractType):
         except:
             return False
 
-        (minChar, maxChar) = self.nbChars
+        (minChar, maxChar) = self.size
         if minChar is not None:
-            if len(rawData) < minChar:
+            if len(rawData) < (minChar/8):
                 return False
         if maxChar is not None:
-            if len(rawData) > maxChar:
+            if len(rawData) > (maxChar/8):
                 return False
 
         return True
-
-    @property
-    def nbChars(self):
-        return self.__nbChars
-
-    @nbChars.setter
-    def nbChars(self, nbChars):
-        nbMinChar = None
-        nbMaxChar = None
-        if nbChars is not None:
-            if isinstance(nbChars, int):
-                nbMinChar = nbChars
-                nbMaxChar = nbMinChar
-            else:
-                if nbChars[0] is not None:
-                    if not isinstance(nbChars[0], int):
-                        raise TypeError(
-                            "First element of the tuple of the nbChars must be an int if defined."
-                        )
-                    nbMinChar = nbChars[0]
-                if nbChars[1] is not None:
-                    if not isinstance(nbChars[1], int):
-                        raise TypeError(
-                            "Second element of the tuple of the nbChars must be an int if defined."
-                        )
-                    nbMaxChar = nbChars[1]
-
-        self.__nbChars = (nbMinChar, nbMaxChar)
 
     @staticmethod
     def decode(data,

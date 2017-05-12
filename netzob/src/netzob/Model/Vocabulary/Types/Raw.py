@@ -49,7 +49,7 @@ from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 
 class Raw(AbstractType):
-    """This class defines a Raw type.
+    r"""This class defines a Raw type.
 
     The Raw type allows describing a sequence of bytes of arbitrary
     sizes.
@@ -83,9 +83,9 @@ class Raw(AbstractType):
     The following example show the specification of a constant for a
     field:
 
-    >>> f = Field(Raw('\\x01\\x02\\x03'))
+    >>> f = Field(Raw(b'\x01\x02\x03'))
     >>> print(f.domain.dataType)
-    Raw=b'\\x01\\x02\\x03' ((0, 24))
+    Raw=b'\x01\x02\x03' ((None, None))
 
     The alphabet optional argument can be used to limit the bytes that
     can participate in the domain value:
@@ -105,16 +105,20 @@ class Raw(AbstractType):
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign(),
                  alphabet=None):
-        if value is not None and not isinstance(value, bitarray):
-            from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-            from netzob.Model.Vocabulary.Types.BitArray import BitArray
-            if isinstance(value, str):
-                value = TypeConverter.convert(
-                    bytes(value, "utf-8"), Raw, BitArray)
-            elif isinstance(value, bytes):
-                value = TypeConverter.convert(value, Raw, BitArray)
 
-        nbBits = self._convertNbBytesinNbBits(nbBytes)
+        if value is not None and not isinstance(value, bitarray):
+            if isinstance(value, bytes):
+                tmp_value = value
+                value = bitarray(endian='big')
+                value.frombytes(tmp_value)
+            else:
+                raise ValueError("Unsupported input format for value: '{}', type is: '{}', expected type is 'bitarray' or 'bytes'".format(value, type(value)))
+
+        # Handle raw data size if value is None
+        if value is None:
+            nbBits = self._convertNbBytesinNbBits(nbBytes)
+        else:
+            nbBits = (None, None)
 
         self.alphabet = alphabet
         
@@ -139,20 +143,20 @@ class Raw(AbstractType):
             return "{0}={1} ({2})".format(self.typeName, self.value, self.size)
 
     def __repr__(self):
-        """
+        r"""
         >>> from netzob.all import *
-        >>> f = Field(Raw("\\x01\\x02\\x03\\x04"))
+        >>> f = Field(Raw(b"\x01\x02\x03\x04"))
         >>> s = Symbol(fields=[f])
         >>> messages = [RawMessage(s.specialize()) for x in range(5)]
         >>> s.messages = messages
         >>> print(s)
         Field             
         ------------------
-        '\\x01\\x02\\x03\\x04'
-        '\\x01\\x02\\x03\\x04'
-        '\\x01\\x02\\x03\\x04'
-        '\\x01\\x02\\x03\\x04'
-        '\\x01\\x02\\x03\\x04'
+        '\x01\x02\x03\x04'
+        '\x01\x02\x03\x04'
+        '\x01\x02\x03\x04'
+        '\x01\x02\x03\x04'
+        '\x01\x02\x03\x04'
         ------------------
 
         """
@@ -165,8 +169,8 @@ class Raw(AbstractType):
             return str(self.value)
 
     def _convertNbBytesinNbBits(self, nbBytes):
-        nbMinBit = None
-        nbMaxBit = None
+        nbMinBit = 0
+        nbMaxBit = AbstractType.MAXIMUM_GENERATED_DATA_SIZE
         if nbBytes is not None:
             if isinstance(nbBytes, int):
                 nbMinBit = nbBytes * 8
@@ -176,10 +180,12 @@ class Raw(AbstractType):
                     nbMinBit = nbBytes[0] * 8
                 if nbBytes[1] is not None:
                     nbMaxBit = nbBytes[1] * 8
+
         return (nbMinBit, nbMaxBit)
 
     def generate(self, generationStrategy=None):
-        """Generates a random Raw that respects the requested size.
+        """Generates a random Raw that respects the requested size or the
+        predefined value.
 
         >>> from netzob.all import *
         >>> a = Raw(nbBytes=(10))
@@ -187,15 +193,24 @@ class Raw(AbstractType):
         >>> print(len(gen))
         80
 
-        >>> from netzob.all import *
         >>> a = Raw(nbBytes=(10, 20))
         >>> gen = a.generate()
         >>> print(10<=len(gen) and 20<=len(gen))
         True
 
+        >>> a = Raw(b"a")
+        >>> a.generate()
+        bitarray('01100001')
 
+        >>> a = Raw(b"\x01")
+        >>> a.generate()
+        bitarray('00000001')
 
         """
+
+        if self.value is not None:
+            return self.value
+
         from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
         from netzob.Model.Vocabulary.Types.BitArray import BitArray
 
@@ -233,21 +248,40 @@ class Raw(AbstractType):
                  unitSize=AbstractType.defaultUnitSize(),
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign()):
-        """Computes if specified data can be parsed as raw which is always the case if the data is at least 1 length and aligned on a byte.
-
-        >>> from netzob.all import *
-        >>> Raw().canParse(TypeConverter.convert("hello netzob", String, BitArray))
-        True
-
-        The ascii table is defined from 0 to 127:
-        >>> Raw().canParse(TypeConverter.convert(128, Integer, BitArray, src_sign=AbstractType.SIGN_UNSIGNED))
-        True
+        """Computes if specified data can be parsed as raw which is always the
+        case if the data is at least 1 length and aligned on a byte.
 
         :param data: the data to check
         :type data: python raw
         :return: True if data can be parsed as a Raw which is always the case (if len(data)>0)
         :rtype: bool
         :raise: TypeError if the data is None
+
+        >>> from netzob.all import *
+        >>> Raw().canParse(TypeConverter.convert("hello netzob", String, BitArray))
+        True
+
+        >>> Raw().canParse(b"hello netzob")
+        True
+
+        >>> Raw(b"hello").canParse(b"hello")
+        True
+
+        >>> Raw(b"hello").canParse(b"hello!")
+        False
+
+        >>> Raw(nbBytes=10).canParse(b"1234567890")
+        True
+
+        >>> Raw(nbBytes=10).canParse(b"123456789")
+        False
+
+        >>> Raw(nbBytes=(10, 1234)).canParse(b"123456789012345")
+        True
+
+        >>> Raw(nbBytes=(10, 1234)).canParse(b"aaaa")
+        False
+
         """
 
         if data is None:
@@ -256,8 +290,36 @@ class Raw(AbstractType):
         if len(data) == 0:
             return False
 
+        # Check if data is in bytes and normalize it in bitarray
+        if not isinstance(data, bitarray):
+            if isinstance(data, bytes):
+                tmp_data = data
+                data = bitarray(endian='big')
+                data.frombytes(tmp_data)
+            else:
+                raise ValueError("Unsupported input format for data: '{}', type: '{}'".format(data, type(data)))
+
+        # Compare with self.value if it is defined
+        if self.value is not None:
+            if self.value == data:
+                return True
+            else:
+                return False
+
+        # Else, compare with expected size
         if len(data) % 8 != 0:
             return False
+
+        # At this time, data is a bitarray
+        rawData = data.tobytes()
+
+        (minBits, maxBits) = self.size
+        if minBits is not None:
+            if len(rawData) < (minBits/8):
+                return False
+        if maxBits is not None:
+            if len(rawData) > (maxBits/8):
+                return False
 
         if self.alphabet is not None:
             data_set = set(data)

@@ -143,11 +143,11 @@ class Integer(AbstractType):
 
     >>> dec = Integer(10)
     >>> print(dec.size)
-    (8, 8)
+    (None, None)
 
     >>> dec = Integer(interval=(-120, 10))
     >>> print(dec.size)
-    (16, 16)
+    (-120, 10)
 
 
     **Examples of specific Integer types**
@@ -196,7 +196,7 @@ class Integer(AbstractType):
     >>> f2, f4
     (42, 42)
     >>> print(f2, f4)
-    Integer=42 ((16, 16)) Integer=42 ((16, 16))
+    Integer=42 ((None, None)) Integer=42 ((None, None))
     >>> f2 == f4
     False
 
@@ -226,11 +226,11 @@ class Integer(AbstractType):
 
     >>> data = Integer(value=12, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_LITTLE)
     >>> str(data)
-    'Integer=12 ((32, 32))'
+    'Integer=12 ((None, None))'
 
     >>> data = Integer(unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE)
     >>> str(data)
-    'Integer=None ((16, 16))'
+    'Integer=None ((-32768, 32767))'
 
 
     **Encoding of Integer type objects**
@@ -254,15 +254,16 @@ class Integer(AbstractType):
                  unitSize=AbstractType.defaultUnitSize(),
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign()):
+
+        # Convert value to bitarray
         if value is not None and not isinstance(value, bitarray):
             from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
             from netzob.Model.Vocabulary.Types.BitArray import BitArray
-            if isinstance(interval, Iterable) and len(interval) == 2:
-                low, high = interval
-                if not (low <= value <= high):
-                    raise ValueError("value ({}) must be included in interval {}"
-                                     .format(value, interval))
-            interval = value
+
+            # Check if value is correct
+            if not isinstance(value, int):
+                raise ValueError("Input value shoud be a integer. Value received: '{}'".format(value))
+
             value = TypeConverter.convert(
                 value,
                 Integer,
@@ -273,52 +274,147 @@ class Integer(AbstractType):
                 dst_unitSize=unitSize,
                 dst_endianness=endianness,
                 dst_sign=sign)
-        else:
-            value = None
 
-        if interval is not None:
-            nbBits = int(
-                self._computeNbUnitSizeForInterval(interval, unitSize,
-                                                   sign)) * int(unitSize)
+        if value is None:
+            interval = self._normalizeInterval(interval, unitSize, sign)
         else:
-            nbBits = int(unitSize)
+            interval = (None, None)
 
         super().__init__(
             self.__class__.__name__,
             value,
-            nbBits,
+            interval,
             unitSize=unitSize,
             endianness=endianness,
             sign=sign)
 
-        self.interval = interval
+    def _normalizeInterval(self, interval, unitSize, sign):
 
-    def _computeNbUnitSizeForInterval(self, interval, unitSize, sign):
-        if isinstance(interval, int):
-            # the interval is a single value
-            # bspec = ⌊log2(n)⌋ + 1 (+1 for signed)
-            return self._computeNbUnitSizeForVal(interval, unitSize, sign)
-        elif len(interval) == 2:
-            minVal = min(interval[0], interval[1])
-            maxVal = max(interval[0], interval[1])
+        min_interval = None
+        max_interval = None
 
-            minNbUnit = self._computeNbUnitSizeForVal(minVal, unitSize, sign)
-            maxNbUnit = self._computeNbUnitSizeForVal(maxVal, unitSize, sign)
+        if interval is None:
+            interval = (None, None)
 
-            return max(minNbUnit, maxNbUnit)
+        if not (isinstance(interval, tuple) and len(interval) == 2):
+            raise ValueError("Input interval shoud be a tuple of two integers. Value received: '{}'".format(interval))
 
-    def _computeNbUnitSizeForVal(self, val, unitSize, sign):
-        # the interval is a single value
-        # bspec = ⌊log2(n)⌋ + 1 (+1 for signed)
-        if val == 0:
-            return 1
-        val = abs(val)
-        if sign == AbstractType.SIGN_UNSIGNED:
-            return math.floor(
-                (math.floor(math.log(val, 2)) + 1) / int(unitSize)) + 1
-        else:
-            return math.floor(
-                (math.floor(math.log(val, 2)) + 2) / int(unitSize)) + 1
+        # Handle min and max value if None is used in interval
+        if unitSize == AbstractType.UNITSIZE_1:
+            if interval[0] is not None and interval[0] < 0:
+                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+            if interval[1] is not None and interval[1] > 1:
+                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+            if interval[0] is None:
+                min_interval = 0
+            if interval[1] is None:
+                max_interval = 1
+        elif unitSize == AbstractType.UNITSIZE_4:
+            if interval[0] is not None and interval[0] < 0:
+                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+            if interval[1] is not None and interval[1] > 15:
+                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+            if interval[0] is None:
+                min_interval = 0
+            if interval[1] is None:
+                max_interval = 15
+        elif unitSize == AbstractType.UNITSIZE_8 and sign == AbstractType.SIGN_SIGNED:
+            if interval[0] is not None and interval[0] < -128:
+                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+            if interval[1] is not None and interval[1] > 127:
+                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+            if interval[0] is None:
+                min_interval = -128
+            if interval[1] is None:
+                max_interval = 127
+        elif unitSize == AbstractType.UNITSIZE_8 and sign == AbstractType.SIGN_UNSIGNED:
+            if interval[0] is not None and interval[0] < 0:
+                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+            if interval[1] is not None and interval[1] > 255:
+                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+            if interval[0] is None:
+                min_interval = 0
+            if interval[1] is None:
+                max_interval = 255
+        elif unitSize == AbstractType.UNITSIZE_16 and sign == AbstractType.SIGN_SIGNED:
+            if interval[0] is not None and interval[0] < -32767:
+                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+            if interval[1] is not None and interval[1] > 32767:
+                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+            if interval[0] is None:
+                min_interval = -32768
+            if interval[1] is None:
+                max_interval = 32767
+        elif unitSize == AbstractType.UNITSIZE_16 and sign == AbstractType.SIGN_UNSIGNED:
+            if interval[0] is not None and interval[0] < 0:
+                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+            if interval[1] is not None and interval[1] > 65535:
+                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+            if interval[0] is None:
+                min_interval = 0
+            if interval[1] is None:
+                max_interval = 65535
+        elif unitSize == AbstractType.UNITSIZE_24 and sign == AbstractType.SIGN_SIGNED:
+            if interval[0] is not None and interval[0] < -8388608:
+                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+            if interval[1] is not None and interval[1] > 8388607:
+                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+            if interval[0] is None:
+                min_interval = -8388608
+            if interval[1] is None:
+                max_interval = 8388607
+        elif unitSize == AbstractType.UNITSIZE_24 and sign == AbstractType.SIGN_UNSIGNED:
+            if interval[0] is not None and interval[0] < 0:
+                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+            if interval[1] is not None and interval[1] > 16777215:
+                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+            if interval[0] is None:
+                min_interval = 0
+            if interval[1] is None:
+                max_interval = 16777215
+        elif unitSize == AbstractType.UNITSIZE_32 and sign == AbstractType.SIGN_SIGNED:
+            if interval[0] is not None and interval[0] < -2147483648:
+                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+            if interval[1] is not None and interval[1] > 2147483647:
+                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+            if interval[0] is None:
+                min_interval = -2147483648
+            if interval[1] is None:
+                max_interval = 2147483647
+        elif unitSize == AbstractType.UNITSIZE_32 and sign == AbstractType.SIGN_UNSIGNED:
+            if interval[0] is not None and interval[0] < 0:
+                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+            if interval[1] is not None and interval[1] > 4294967295:
+                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+            if interval[0] is None:
+                min_interval = 0
+            if interval[1] is None:
+                max_interval = 4294967295
+        elif unitSize == AbstractType.UNITSIZE_64 and sign == AbstractType.SIGN_SIGNED:
+            if interval[0] is not None and interval[0] < -9223372036854775808:
+                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+            if interval[1] is not None and interval[1] > 9223372036854775807:
+                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+            if interval[0] is None:
+                min_interval = -9223372036854775808
+            if interval[1] is None:
+                max_interval = 9223372036854775807
+        elif unitSize == AbstractType.UNITSIZE_64 and sign == AbstractType.SIGN_UNSIGNED:
+            if interval[0] is not None and interval[0] < 0:
+                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+            if interval[1] is not None and interval[1] > 18446744073709551615:
+                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+            if interval[0] is None:
+                min_interval = 0
+            if interval[1] is None:
+                max_interval = 18446744073709551615
+
+        if min_interval is None:
+            min_interval = interval[0]
+        if max_interval is None:
+            max_interval = interval[1]
+
+        return (min_interval, max_interval)
 
     def canParse(self,
                  data,
@@ -329,35 +425,100 @@ class Integer(AbstractType):
         For the moment its always true because we consider
         the integer type to be very similar to the raw type.
 
-        >>> from netzob.all import *
-        >>> Integer().canParse(TypeConverter.convert("hello netzob", String, Raw))
-        True
-
         :param data: the data to check
         :type data: python raw
         :return: True if data is can be parsed as a Integer
         :rtype: bool
         :raise: TypeError if the data is None
+
+
+        >>> from netzob.all import *
+        >>> Integer().canParse(10)
+        True
+
+        >>> Integer().canParse(TypeConverter.convert(10, Integer, BitArray))
+        True
+
+        >>> Integer(10).canParse(11)
+        False
+
+        By default, an Integer() with no parameter has a storage size
+        of 8 bits:
+
+        >>> Integer().canParse(-128)
+        True
+
+        >>> Integer().canParse(-129)
+        Traceback (most recent call last):
+        ...
+        struct.error: byte format requires -128 <= number <= 127
+
+        To specify a bigger storage, the unitSize should be used:
+
+        >>> Integer(unitSize=AbstractType.UNITSIZE_16).canParse(-129)
+        True
+
         """
 
         if data is None:
             raise TypeError("data cannot be None")
 
-        if len(data) == 0:
+        if not isinstance(data, int) and len(data) == 0:  # data cannot be an empty string
             return False
 
-        return True
+        # Convert data to bitarray
+        if data is not None and not isinstance(data, bitarray):
+            from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+            from netzob.Model.Vocabulary.Types.BitArray import BitArray
+
+            # Check if data is correct
+            if not isinstance(data, int):
+                raise ValueError("Input data shoud be a integer. Data received: '{}'".format(data))
+
+            data = TypeConverter.convert(
+                data,
+                Integer,
+                BitArray,
+                src_unitSize=self.unitSize,
+                src_endianness=self.endianness,
+                src_sign=self.sign,
+                dst_unitSize=self.unitSize,
+                dst_endianness=self.endianness,
+                dst_sign=self.sign)
+
+        # Compare with self.value if it is defined
+        if self.value is not None:
+            if self.value == data:
+                return True
+            else:
+                return False
+
+        # Else, compare with expected size
+        if self.size is not None and isinstance(self.size, Iterable) and len(self.size) == 2:
+            minSize = min(self.size)
+            maxSize = max(self.size)
+
+            from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+            from netzob.Model.Vocabulary.Types.BitArray import BitArray
+            data = TypeConverter.convert(data, BitArray, Integer, dst_unitSize=self.unitSize, dst_endianness=self.endianness, dst_sign=self.sign)
+
+            if minSize <= data <= maxSize:
+                return True
+            else:
+                return False
+        else:
+            raise Exception("Cannot parse this data '{}' because no domain is expected.".format(data))
 
     @staticmethod
     def decode(data,
                unitSize=AbstractType.defaultUnitSize(),
                endianness=AbstractType.defaultEndianness(),
                sign=AbstractType.defaultSign()):
-        """This method convert the specified data in python raw format.
+        r"""This method convert the specified data in python raw format.
 
         >>> from netzob.all import *
         >>> print(Integer.decode(23))
-        b'\\x17'
+        b'\x17'
 
         >>> print(Integer.decode(-1, sign=AbstractType.SIGN_UNSIGNED))
         Traceback (most recent call last):
@@ -365,7 +526,7 @@ class Integer(AbstractType):
         struct.error: ubyte format requires 0 <= number <= 255
 
         >>> print(Integer.decode(-1, sign=AbstractType.SIGN_SIGNED))
-        b'\\xff'
+        b'\xff'
 
         >>> print(Integer.decode(2000000000000000))
         Traceback (most recent call last):
@@ -373,12 +534,12 @@ class Integer(AbstractType):
         struct.error: byte format requires -128 <= number <= 127
 
         >>> print(Integer.decode(2000000000000000, unitSize=AbstractType.UNITSIZE_64))
-        b'\\x00\\x07\\x1a\\xfdI\\x8d\\x00\\x00'
+        b'\x00\x07\x1a\xfdI\x8d\x00\x00'
 
         >>> print(Integer.decode(25, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE))
-        b'\\x19\\x00'
+        b'\x19\x00'
         >>> print(Integer.decode(25, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG))
-        b'\\x00\\x19'
+        b'\x00\x19'
 
         >>> val = 167749568
         >>> a = Integer.decode(val, unitSize=AbstractType.UNITSIZE_32)
@@ -412,7 +573,7 @@ class Integer(AbstractType):
                unitSize=AbstractType.defaultUnitSize(),
                endianness=AbstractType.defaultEndianness(),
                sign=AbstractType.defaultSign()):
-        """This method converts a python raw data to an Integer.
+        r"""This method converts a python raw data to an Integer.
 
         >>> from netzob.all import *
 
@@ -430,10 +591,10 @@ class Integer(AbstractType):
         >>> print(repr(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE)))
         25
 
-        >>> print(Integer.encode(b'\\xcc\\xac\\x9c\\x0c\\x1c\\xacL\\x1c,\\xac', unitSize=AbstractType.UNITSIZE_8))
+        >>> print(Integer.encode(b'\xcc\xac\x9c\x0c\x1c\xacL\x1c,\xac', unitSize=AbstractType.UNITSIZE_8))
         -395865088909314208584756
 
-        >>> raw = b'\\xcc\\xac\\x9c'
+        >>> raw = b'\xcc\xac\x9c'
         >>> print(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG))
         10210476
 
@@ -544,21 +705,26 @@ class Integer(AbstractType):
         >>> from netzob.all import *
         >>> v1 = Integer(interval=(-10, -1)).generate()
         >>> assert v1[0] is True  # sign bit (MSB) is set
+
         >>> v2 = Integer(42, sign=AbstractType.SIGN_UNSIGNED)
         >>> v2.generate()
         bitarray('00101010')
+
         >>> v3 = uint16be(0xff00)
         >>> v3.generate()
         bitarray('1111111100000000')
         """
-        if isinstance(self.interval, Iterable) and len(self.interval) == 2:
-            val = random.randint(min(self.interval), max(self.interval))
+        if self.value is not None:
+            return self.value
+        elif self.size is not None and isinstance(self.size, Iterable) and len(self.size) == 2:
+            from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+            from netzob.Model.Vocabulary.Types.BitArray import BitArray
+
+            # Size is interpreted here as an interval
+            val = random.randint(min(self.size), max(self.size))
+            return TypeConverter.convert(val, Integer, BitArray)
         else:
-            val = self.interval
-
-        return Integer(val, sign=self.sign, endianness=self.endianness,
-                       unitSize=self.unitSize).value
-
+            raise Exception("Cannot generate integer value, as nor constant value or interval is defined")
 
 int8be   = partialclass(Integer,
                         unitSize=AbstractType.UNITSIZE_8,

@@ -68,7 +68,7 @@ class TypeConverter(object):
                 dst_unitSize=AbstractType.defaultUnitSize(),
                 dst_endianness=AbstractType.defaultEndianness(),
                 dst_sign=AbstractType.defaultSign()):
-        """This function allows encoding data from a sourceType to a destinationType.
+        r"""This function allows encoding data from a sourceType to a destinationType.
 
         :param sourceType: The data source type
         :param destinationType: The destination type
@@ -95,7 +95,7 @@ class TypeConverter(object):
 
         To convert a raw data to an integer representation and then to a String representation:
 
-        >>> data = b'\\x23'
+        >>> data = b'\x23'
         >>> decData = TypeConverter.convert(data, Raw, Integer)
         >>> print(decData)
         35

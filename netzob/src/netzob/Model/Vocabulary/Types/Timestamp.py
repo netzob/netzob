@@ -53,7 +53,7 @@ from netzob.Model.Vocabulary.Types.Integer import Integer
 
 @NetzobLogger
 class Timestamp(AbstractType):
-    """This class defines a Timestamp type.
+    r"""This class defines a Timestamp type.
 
     The Timestamp type allows defining dates in a specific format
     (such as Windows, Unix or MacOSX formats).
@@ -106,7 +106,7 @@ class Timestamp(AbstractType):
     >>> from netzob.all import *
     >>> time = Timestamp(1444492442)
     >>> time.size
-    (32, 32)
+    (None, None)
     >>> time.value
     bitarray('01010110000110010011010010011010')
     >>> time.sign
@@ -116,19 +116,19 @@ class Timestamp(AbstractType):
 
 
     >>> from netzob.all import *
-    >>> f0 = Field(Raw("00"), name="Start")    
+    >>> f0 = Field(Raw(b"00"), name="Start")    
     >>> f1 = Field(Timestamp(1444737333), name="Timestamp")
-    >>> f2 = Field(Raw("00"), name="End")
+    >>> f2 = Field(Raw(b"00"), name="End")
     >>> s = Symbol(fields=[f0, f1, f2])
     >>> s.messages = [RawMessage(s.specialize()) for x in range(5)]
     >>> print(s)
     Start | Timestamp     | End 
     ----- | ------------- | ----
-    '00'  | b'V\\x1c\\xf15' | '00'
-    '00'  | b'V\\x1c\\xf15' | '00'
-    '00'  | b'V\\x1c\\xf15' | '00'
-    '00'  | b'V\\x1c\\xf15' | '00'
-    '00'  | b'V\\x1c\\xf15' | '00'
+    '00'  | b'V\x1c\xf15' | '00'
+    '00'  | b'V\x1c\xf15' | '00'
+    '00'  | b'V\x1c\xf15' | '00'
+    '00'  | b'V\x1c\xf15' | '00'
+    '00'  | b'V\x1c\xf15' | '00'
     ----- | ------------- | ----
     >>> s.fields[1].addEncodingFunction(TypeEncodingFunction(Timestamp))
     >>> print(s)
@@ -183,10 +183,16 @@ class Timestamp(AbstractType):
         self.epoch = epoch
         self.unity = unity
 
+        # Handle data size if value is None
+        if value is None:
+            nbBits = (unitSize, unitSize)
+        else:
+            nbBits = (None, None)
+
         super(Timestamp, self).__init__(
             self.__class__.__name__,
             value,
-            32,
+            nbBits,
             unitSize=unitSize,
             endianness=endianness,
             sign=sign)

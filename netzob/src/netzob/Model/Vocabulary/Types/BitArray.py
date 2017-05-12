@@ -177,23 +177,27 @@ class BitArray(AbstractType):
         """For the moment its always true because we consider
         the decimal type to be very similar to the raw type.
 
-        >>> from netzob.all import *
-
-        >>> BitArray().canParse(TypeConverter.convert("hello netzob", String, BitArray))
-        True
-
-        >>> b = BitArray(nbBits=8)
-        >>> b.canParse(bitarray('01010101'))
-        True
-
-        >>> b.canParse(bitarray('010101011'))
-        False
-
         :param data: the data to check
         :type data: python raw
         :return: True if data can be parsed as a BitArray
         :rtype: bool
         :raise: TypeError if the data is None
+
+
+        >>> from netzob.all import *
+
+        >>> BitArray().canParse(TypeConverter.convert("hello netzob", String, BitArray))
+        True
+
+        >>> BitArray(nbBits=8).canParse(bitarray('01010101'))
+        True
+
+        >>> BitArray(nbBits=8).canParse(bitarray('010101011'))
+        False
+
+        >>> BitArray(bitarray('11110101')).canParse(bitarray('11110101'))
+        True
+
         """
 
         if data is None:
@@ -206,6 +210,12 @@ class BitArray(AbstractType):
         if len(data) == 0:
             return False
 
+        # Firtly, check if self.value matches the data
+        if self.value is not None:
+            if self.value == data:
+                return True
+
+        # Else, check if the data is comprised between the expected sizes
         (nbMinBits, nbMaxBits) = self.size
 
         nbBitsData = len(data)
