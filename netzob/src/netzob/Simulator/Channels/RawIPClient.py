@@ -245,7 +245,7 @@ class RawIPClient(AbstractChannel):
                                   ip_checksum,
                                   ip_saddr,
                                   ip_daddr,
-                                  ip_payload], dataType=Integer(unitSize=AbstractType.UNITSIZE_16, sign=AbstractType.SIGN_UNSIGNED), factor=1/float(8))
+                                  ip_payload], dataType=Raw(nbBytes=2, unitSize=AbstractType.UNITSIZE_16), factor=1/float(8))
         ip_checksum.domain = Checksum(fields=[ip_ver,
                                               ip_ihl,
                                               ip_tos,
