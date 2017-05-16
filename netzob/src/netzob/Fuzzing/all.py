@@ -43,5 +43,6 @@ from netzob.Fuzzing.DeterministIntegerMutator import DeterministIntegerMutator
 from netzob.Fuzzing.Mutator import Mutator
 from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
 from netzob.Fuzzing.SequenceMutator import SequenceMutator
+from netzob.Fuzzing.StringPaddedGenerator import StringPaddedGenerator
 from netzob.Fuzzing.StringMutator import StringMutator
 from netzob.Fuzzing.Xorshift128plus import Xorshift128plus

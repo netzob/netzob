@@ -120,7 +120,8 @@ class DeterministIntegerMutator(Mutator):
         if isinstance(self._ng, DeterministGenerator):
             self._ng.createValues(self._minValue,
                                   self._maxValue,
-                                  int(fieldType.unitSize))
+                                  int(fieldType.unitSize),
+                                  fieldType.sign == AbstractType.SIGN_SIGNED)
 
     def reset(self):
         self._ng.reset()

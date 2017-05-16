@@ -45,73 +45,19 @@
 # +---------------------------------------------------------------------------+
 
 
-class DeterministGenerator(object):
-    """Generates integer values from a list determined with the size of an
-    Integer field.
+class StringPaddedGenerator(object):
+    """Generates string values.
 
     >>> from netzob.all import *
-    >>> seed = 10
-    >>> genObject = DeterministGenerator(seed)
+    >>> seed = 1234
+    >>> genObject = StringGenerator(seed)
     >>> result = genObject.getNewValue()
     """
 
-    DEFAULT_MIN_VALUE = 0
-    DEFAULT_BITSIZE = 16
-    DEFAULT_MAX_VALUE = 2**DEFAULT_BITSIZE
-    DEFAULT_SIGNED = False
-
-    def __init__(self):
+    def __init__(self, lengthMutator, stringsList):
         self._currentPos = 0
-        self._minValue = DeterministGenerator.DEFAULT_MIN_VALUE
-        self._maxValue = DeterministGenerator.DEFAULT_MAX_VALUE
-        self._bitSize = DeterministGenerator.DEFAULT_BITSIZE
-        self._values = list()
-        self._signed = DeterministGenerator.DEFAULT_SIGNED
-
-    def createValues(self,
-                     minValue,
-                     maxValue,
-                     bitSize,
-                     signed):
-        self._currentPos = 0
-        self._minValue = minValue
-        self._maxValue = maxValue
-        self._bitSize = bitSize
-        signedShift = 0
-        if not signed:
-            # on 8 bits : -1 = 0b11111111 = 255 = -1 + 2^8
-            signedShift = 2**self._bitSize
-
-        self._values = list()
-        self._values.append(minValue)  # P
-        self._values.append(maxValue)  # Q
-        if (minValue-1) & 2**bitSize == minValue-1:
-            self._values.append(minValue-1)  # P-1
-        self._values.append(maxValue-1)  # Q-1
-        self._values.append(minValue+1)  # P+1
-        if (maxValue+1) & 2**bitSize == maxValue+1:
-            self._values.append(maxValue+1)  # Q+1
-        self._values.append(0)  # 0
-        self._values.append(-1 + signedShift)  # -1
-        self._values.append(1)  # 1
-
-        self._values.append(-1 + signedShift)  # -2^0 = -1
-        self._values.append(-2 + signedShift)  # -2^0 - 1 = -2
-        self._values.append(0)  # -2^0 + 1 = 0
-        self._values.append(1)  # 2^0 = 1
-        self._values.append(0)  # 2^0 - 1 = 0
-        self._values.append(2)  # 2^0 + 1 = 2
-        for k in range(1, self._bitSize-2):  # k in [0..N-2]
-            self._values.append(-2**k + signedShift)  # -2^k
-            self._values.append(-2**k - 1 + signedShift)  # -2^k - 1
-            self._values.append(-2**k + 1 + signedShift)  # -2^k + 1
-
-            self._values.append(2**k)  # 2^k
-            self._values.append(2**k - 1)  # 2^k - 1
-            self._values.append(2**k + 1)  # 2^k + 1
-        # Removing duplicates
-        setValues = set(self._values)
-        self._values = sorted(setValues)
+        self._lengthMutator = lengthMutator
+        self._values = stringsList
 
     def reset(self):
         """Reset the current position in the list.
@@ -128,27 +74,26 @@ class DeterministGenerator(object):
         """
         return self._values
 
-    def getNewValue(self):
-        """This is the method to get the next value in the generated list.
-        To obtain the previous values again, call reset() then getNewValue()
-        or use accessor getValueAt().
+    def getNewValue(self, endChar):
+        """This is the method to get a new string value from the list.
 
-        :return: a generated int value
-        :rtype: :class:`int`
+        :return: a generated str value
+        :rtype: :class:`str`
         """
         if self._currentPos >= len(self._values):
             self.reset()
-        value = self._values[self._currentPos]
+        value = self._values[self._currentPos] + endChar
         self._currentPos += 1
-        return value
-
-    def getValueAt(self, pos):
-        """Returns the value set at postion 'pos' from the generated list.
-
-        :return: a generated int value
-        :rtype: :class:`int`
-        """
-        if pos < len(self._values):
-            return self._values(pos)
+        length = int.from_bytes(self._lengthMutator.mutate(),
+                                self._lengthMutator.field.domain.dataType.endianness)
+        if length > 0:
+            if length > len(value):
+                # Complete the string with padding characters to have the good
+                # length
+                value = value + (" " * (length - len(value)))
+            else:
+                # truncate the too long string value to length characters
+                value = value[:length-1] + endChar
         else:
-            return None
+            value = ""
+        return value
