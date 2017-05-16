@@ -81,8 +81,11 @@ class AbstractVariable(object):
             svas = SVAS.EPHEMERAL
         self.svas = svas
 
+        # field attribute allows access to the parent field
+        self.field = None
+
     @abc.abstractmethod
-    def specialize(self, originalSpecializingPath, mutate=False):
+    def specialize(self, originalSpecializingPath, mutators=None):
         """Specializes the current variable."""
         raise NotImplementedError("Method specialize() is not implemented")
 
@@ -159,3 +162,11 @@ class AbstractVariable(object):
         if svas is None:
             raise ValueError("svas cannot be None")
         self.__svas = svas
+
+    @property
+    def field(self):
+        return self.__field
+
+    @field.setter
+    def field(self, field):
+        self.__field = field

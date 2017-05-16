@@ -348,7 +348,12 @@ class Field(AbstractField):
 
     @domain.setter
     def domain(self, domain):
+        # Normalize the domain
         normalizedDomain = DomainFactory.normalizeDomain(domain)
+
+        # Link the domain variables with the current field
+        normalizedDomain.field = self
+
         self.__domain = normalizedDomain
 
     @property

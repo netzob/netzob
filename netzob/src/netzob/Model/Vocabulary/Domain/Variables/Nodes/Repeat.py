@@ -237,7 +237,7 @@ class Repeat(AbstractVariableNode):
                 yield result
 
     @typeCheck(SpecializingPath)
-    def specialize(self, originalSpecializingPath):
+    def specialize(self, originalSpecializingPath, mutators=None):
         """Specializes a Repeat"""
 
         if originalSpecializingPath is None:
@@ -253,7 +253,8 @@ class Repeat(AbstractVariableNode):
                 childSpecializingPaths = []
                 for newSpecializingPath in newSpecializingPaths:
                     for path in self.children[0].specialize(
-                            newSpecializingPath):
+                            newSpecializingPath,
+                            mutators=mutators):
                         if path.isDataAvailableForVariable(self):
                             newResult = path.getDataAssignedToVariable(
                                 self).copy()

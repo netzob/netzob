@@ -35,6 +35,7 @@
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
 import abc
+from bitarray import bitarray
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -113,31 +114,71 @@ class AbstractVariableLeaf(AbstractVariable):
     def learn(self, parsingPath, acceptCallBack, carnivorous):
         raise NotImplementedError("method learn is not implemented")
 
-    def specialize(self, parsingPath, acceptCallBack=True):
+    def specialize(self, parsingPath, mutators=None, acceptCallBack=True):
         """@toto TO BE DOCUMENTED"""
+
+        # Fuzzing has priority over generating a legitimate value
+        from netzob.Fuzzing.Mutator import Mutator
+        if mutators is not None and self.field is not None and self.field in mutators.keys() and mutators[self.field].mode == Mutator.GENERATE:
+
+            # Retrieve the mutator
+            mutator = mutators[self.field]
+
+            # Mutate a value according to the current field attributes
+            mutated_value = mutator.generate(self)
+
+            # Convert the return bytes into bitarray
+            value = bitarray(endian='big')
+            value.frombytes(mutated_value)
+            arbitraryValue = value
+
+            # Associate the mutate value to the current variable
+            newParsingPaths = []
+            parsingPath.addResult(self, arbitraryValue)
+            newParsingPaths.append(parsingPath)
+            return newParsingPaths
 
         if self.svas is None:
             raise Exception(
                 "Cannot specialize if the variable has no assigned SVAS.")
+
+        newParsingPaths = []
         if self.isDefined(parsingPath):
             if self.svas == SVAS.CONSTANT or self.svas == SVAS.PERSISTENT:
-                return self.use(parsingPath, acceptCallBack)
+                newParsingPaths = self.use(parsingPath, acceptCallBack)
             elif self.svas == SVAS.EPHEMERAL:
-                return self.regenerateAndMemorize(parsingPath, acceptCallBack)
+                newParsingPaths = self.regenerateAndMemorize(parsingPath, acceptCallBack)
             elif self.svas == SVAS.VOLATILE:
-                return self.regenerate(parsingPath, acceptCallBack)
+                newParsingPaths = self.regenerate(parsingPath, acceptCallBack)
         else:
             if self.svas == SVAS.CONSTANT:
                 self._logger.debug(
                     "Cannot specialize '{0}' as svas is CONSTANT and no value is available.".
                     format(self))
-                return []
+                newParsingPaths = []
             elif self.svas == SVAS.EPHEMERAL or self.svas == SVAS.PERSISTENT:
-                return self.regenerateAndMemorize(parsingPath, acceptCallBack)
+                newParsingPaths = self.regenerateAndMemorize(parsingPath, acceptCallBack)
             elif self.svas == SVAS.VOLATILE:
-                return self.regenerate(parsingPath, acceptCallBack)
+                newParsingPaths = self.regenerate(parsingPath, acceptCallBack)
 
-        raise Exception("Not yet implemented.")
+        if mutators is not None and self.field is not None and self.field in mutators.keys() and mutators[self.field].mode == Mutator.MUTATE:
+
+            if len(newParsingPaths) == 0:
+                self._logger.warn("No data generated for the field: '{}'".format(self.field))
+            else:
+                # We only consider the first specialized path, as it is the usual behavior of Netzob (see MessageSpecializer)
+                generatedData = newParsingPaths[0].getDataAssignedToVariable(self)
+
+                # Retrieve the mutator
+                mutator = mutators[self.field]
+
+                # Mutate a value according to the current field attributes
+                mutated_value = mutator.mutate(generatedData)
+
+                # Replace the legitimate value with the mutated value
+                newParsingPaths[0].assignDataToVariable(mutated_value, self)
+
+        return newParsingPaths
 
     def _str_debug(self, deepness=0):
         """Returns a string which denotes

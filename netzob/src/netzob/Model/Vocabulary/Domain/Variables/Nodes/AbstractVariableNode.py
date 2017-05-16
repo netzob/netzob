@@ -56,10 +56,13 @@ class AbstractVariableNode(AbstractVariable):
     """
 
     def __init__(self, varType, children=None, svas=None):
-        super(AbstractVariableNode, self).__init__(varType, svas=svas)
+        # First, normalize the children
         self._children = []
         if children is not None:
             self.children = children
+
+        # Then, call the parent init
+        super(AbstractVariableNode, self).__init__(varType, svas=svas)
 
     @property
     def children(self):
@@ -90,3 +93,13 @@ class AbstractVariableNode(AbstractVariable):
         for f in self.children:
             lines.append(" " + f._str_debug(deepness + 1))
         return '\n'.join(lines)
+
+    @property
+    def field(self):
+        return self.__field
+
+    @field.setter
+    def field(self, field):
+        self.__field = field
+        for child in self.children:
+            child.field = field

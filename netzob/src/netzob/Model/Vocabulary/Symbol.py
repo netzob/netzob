@@ -323,16 +323,76 @@ class Symbol(AbstractField):
         definition, constraints, relationship dependencies or
         parameterized values.
 
+
+        Fuzzing example of a field that contains an integer:
+
         >>> from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
         >>> mutators = {}
-        >>> mutators["udp.dport"] = PseudoRandomIntegerMutator
-        >>> #symbol_udp.specialize()#mutators=mutators)
-        #b'\x0b\xaa\xbb'
+        >>> f_data = Field(name="data", domain=Integer(interval=(1, 4), unitSize=AbstractType.UNITSIZE_16))
+        >>> symbol = Symbol(name="sym", fields=[f_data])
+        >>> mutators["data"] = PseudoRandomIntegerMutator(minValue=20, maxValue=32000)
+        >>> symbol.specialize(mutators=mutators)
+        b'\x02\x84'
+
+
+        Fuzzing example of a field that contains an aggregate of variables:
+
+        >>> f_agg = Field(name="agg", domain=Agg([Integer(interval=(1, 4), unitSize=AbstractType.UNITSIZE_16),
+        ...                                       Integer(interval=(5, 8), unitSize=AbstractType.UNITSIZE_16)]))
+        >>> symbol = Symbol(name="sym", fields=[f_agg])
+        >>> mutators["agg"] = PseudoRandomIntegerMutator(minValue=20, maxValue=32000)
+        >>> symbol.specialize(mutators=mutators)
+        b'\x02\x84\x04\xf5'
+
+
+        Fuzzing example of a field that contains an alternate of variables:
+
+        >>> f_alt = Field(name="alt", domain=Alt([Integer(interval=(1, 4), unitSize=AbstractType.UNITSIZE_16),
+        ...                                           Integer(interval=(5, 8), unitSize=AbstractType.UNITSIZE_16)]))
+        >>> symbol = Symbol(name="sym", fields=[f_alt])
+        >>> mutators["alt"] = PseudoRandomIntegerMutator(minValue=20, maxValue=32000)
+        >>> res = symbol.specialize(mutators=mutators)
+        >>> res == b'\x02\x84' or res == b'\x04\xf5'
+        True
+
+
+        Fuzzing example of a field that contains a repeat of a variable:
+
+        >>> f_rep = Field(name="rep", domain=Repeat(Integer(interval=(1, 4), unitSize=AbstractType.UNITSIZE_16),
+        ...                                             2))
+        >>> symbol = Symbol(name="sym", fields=[f_rep])
+        >>> mutators["rep"] = PseudoRandomIntegerMutator(minValue=20, maxValue=32000)
+        >>> symbol.specialize(mutators=mutators)
+        b'\x02\x84\x04\xf5'
+
+
+        Fuzzing example of a field that contains a size relationship with another field:
+
+        >>> f_data = Field(name="data", domain=Integer(3, unitSize=AbstractType.UNITSIZE_16))
+        >>> f_size = Field(name="size", domain=Size([f_data], Integer(unitSize=AbstractType.UNITSIZE_16)))
+        >>> symbol = Symbol(name="sym", fields=[f_data, f_size])
+        >>> mutators["size"] = PseudoRandomIntegerMutator(minValue=20, maxValue=32000)
+        >>> symbol.specialize(mutators=mutators)
+        b'\x00\x03\x02\x84'
+
+
+        Fuzzing example in mutation mode of a field that contains an integer:
+
+        >>> from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
+        >>> mutators = {}
+        >>> f_data = Field(name="data", domain=Integer(2, unitSize=AbstractType.UNITSIZE_16))
+        >>> symbol = Symbol(name="sym", fields=[f_data])
+        >>> mutators["data"] = PseudoRandomIntegerMutator(minValue=20, maxValue=32000)
+        >>> mutators["data"].mode = Mutator.MUTATE
+        >>> res = symbol.specialize(mutators=mutators)
+        >>> res != b'\x00\x02'
+        True
+
 
         """
 
         from netzob.Model.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
-        msg = MessageSpecializer(memory=memory, presets=presets)
+        msg = MessageSpecializer(memory=memory, presets=presets, mutators=mutators)
         spePath = msg.specializeSymbol(self)
 
         if spePath is not None:

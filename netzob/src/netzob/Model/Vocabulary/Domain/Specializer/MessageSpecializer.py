@@ -100,11 +100,12 @@ class MessageSpecializer(object):
 
     """
 
-    def __init__(self, memory=None, presets=None):
+    def __init__(self, memory=None, presets=None, mutators=None):
         if memory is None:
             memory = Memory()
         self.memory = memory
         self.presets = presets
+        self.mutators = mutators
 
     @typeCheck(Symbol)
     def specializeSymbol(self, symbol):
@@ -114,7 +115,17 @@ class MessageSpecializer(object):
 
         self._logger.debug("Specifies symbol '{0}'.".format(symbol.name))
 
-        self._update_presets(symbol)
+        # Normalize presets definition: fields described with field
+        # name are converted into field object, and preseting values
+        # are converted into bitarray.
+        self._normalize_presets(symbol)
+
+        # Normalize mutators definition: fields described with field
+        # name are converted into field object.
+        self._normalize_mutators(symbol)
+
+        # Remove preseted fields when they are concerned with mutators
+        self._filterPresetsWithMutators(symbol)
 
         # this variable host all the specialization path
         specializingPaths = [SpecializingPath(memory=self.memory)]
@@ -128,7 +139,7 @@ class MessageSpecializer(object):
                     "Cannot specialize field '{0}' since it defines no domain".
                     format(fieldDomain))
 
-            fs = FieldSpecializer(field, presets=self.presets)
+            fs = FieldSpecializer(field, presets=self.presets, mutators=self.mutators)
 
             newSpecializingPaths = []
             for specializingPath in specializingPaths:
@@ -219,18 +230,21 @@ class MessageSpecializer(object):
         if presets is None:
             presets = dict()
 
-        for k, v in list(presets.items()):
+        for k, v in presets.items():
             if not isinstance(k, (Field, str)):
                 raise Exception("Preset's keys must be of Field or string types")
 
         self.__presets = dict()
 
-        for k, v in list(presets.items()):
+        for k, v in presets.items():
             self.__presets[k] = v
 
     @typeCheck(Symbol)
-    def _update_presets(self, symbol):
+    def _normalize_presets(self, symbol):
         """Update the presets dict, according to the symbol definition.
+
+        Fields described with field name are converted into field
+        object, and preseting values are converted into bitarray.
 
         """
 
@@ -239,7 +253,7 @@ class MessageSpecializer(object):
 
         new_keys = {}
         old_keys = []
-        for k, v in list(self.presets.items()):
+        for k, v in self.presets.items():
 
             # Handle case where k is a Field
             if isinstance(k, Field):
@@ -290,3 +304,55 @@ class MessageSpecializer(object):
         for old_key in old_keys:
             self.presets.pop(old_key)
         self.presets.update(new_keys)
+
+    @typeCheck(Symbol)
+    def _normalize_mutators(self, symbol):
+        """Update the mutators dict, according to the symbol definition.
+
+        Fields described with field name are converted into field
+        object.
+
+        """
+
+        if self.mutators is None:
+            return
+
+        new_keys = {}
+        old_keys = []
+        for k, v in self.mutators.items():
+
+            # Handle case where k is a string
+            if isinstance(k, Field):
+                pass
+            elif isinstance(k, str):
+
+                # Retrieve associated Field based on its string name
+                for f in symbol.getLeafFields(includePseudoFields=True):
+                    if f.name == k:
+                        new_keys[f] = v
+                        old_keys.append(k)
+            else:
+                raise Exception("Mutators's keys must be of Field or string types")
+
+        # Replace string keys by their equivalent Field keys
+        for old_key in old_keys:
+            self.mutators.pop(old_key)
+        self.mutators.update(new_keys)
+
+    @typeCheck(Symbol)
+    def _filterPresetsWithMutators(self, symbol):
+        """Remove preseted fields when they are concerned with mutators,
+        because mutation has priority over preseting values.
+
+        """
+
+        if self.presets is None:
+            return
+
+        if self.mutators is None:
+            return
+
+        for (mutator_k, mutator_v) in self.mutators.items():
+            if mutator_k in self.presets.keys():
+                self._logger.debug("Removing preseted key '{0}' in self.presets as it is already used in self.mutators.".format(mutator_k))
+                self.presets.pop(mutator_k)

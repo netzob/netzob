@@ -48,6 +48,7 @@ from netzob.Model.Vocabulary.Domain.Specializer.VariableSpecializer import Varia
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
+from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 
 
 @NetzobLogger
@@ -108,14 +109,14 @@ class FieldSpecializer(object):
 
     """
 
-    def __init__(self, field, presets=None):
+    def __init__(self, field, presets=None, mutators=None):
         self._logger.debug("Creating a new FieldSpecializer.")
 
         self.field = field
         self.presets = presets
+        self.mutators = mutators
 
-        if self.presets is not None and self.field in list(
-                self.presets.keys()):
+        if self.presets is not None and self.field in self.presets.keys():
             self.arbitraryValue = self.presets[self.field]
         else:
             self.arbitraryValue = None
@@ -129,17 +130,21 @@ class FieldSpecializer(object):
 
         self._logger.debug("Specialize field {0}".format(self.field.name))
 
-        # does an arbitrary value is specified ?
+        # We look at where to retrieve the data used for specializing the current field
+        specializingPaths = []
         if self.arbitraryValue is not None:
+            # In case an arbitrary value is specified, we consider it for field specialization
             specializingPath.addResult(self.field.domain, self.arbitraryValue)
             specializingPath.addResultToField(self.field, self.arbitraryValue)
-            return [specializingPath]
-
-        # does current field has children
-        if len(self.field.fields) > 0:
-            return self._specializeFieldWithChildren(specializingPath)
+            specializingPaths = [specializingPath]
+        elif len(self.field.fields) > 0:
+            # If no arbitrary value is specified, we specialize the sub-fields if there are any
+            specializingPaths = self._specializeFieldWithChildren(specializingPath)
         else:
-            return self._specializeField(specializingPath)
+            # Else, we specialize the current field
+            specializingPaths = self._specializeField(specializingPath)
+
+        return specializingPaths
 
     @typeCheck(SpecializingPath)
     def _specializeFieldWithChildren(self, specializingPath=None):
@@ -149,7 +154,7 @@ class FieldSpecializer(object):
 
         resultPaths = [specializingPath]
         for child in self.field.fields:
-            fs = FieldSpecializer(child, presets=self.presets)
+            fs = FieldSpecializer(child, presets=self.presets, mutators=self.mutators)
 
             tmpResultPaths = []
             for path in resultPaths:
@@ -187,23 +192,20 @@ class FieldSpecializer(object):
                 format(self.field.name))
 
         # we create a first VariableParser and uses it to parse the domain
-        variableSpecializer = VariableSpecializer(domain)
-        resultSpecializingPaths = variableSpecializer.specialize(
-            specializingPath)
+        variableSpecializer = VariableSpecializer(domain, mutators=self.mutators)
+        resultSpecializingPaths = variableSpecializer.specialize(specializingPath)
 
         for resultSpecializingPath in resultSpecializingPaths:
 
             assignedData = bitarray('')
-            if resultSpecializingPath.isDataAvailableForVariable(
-                    self.field.domain):
-                assignedData = resultSpecializingPath.getDataAssignedToVariable(
-                    self.field.domain)
+            if resultSpecializingPath.isDataAvailableForVariable(self.field.domain):
+                assignedData = resultSpecializingPath.getDataAssignedToVariable(self.field.domain)
             else:
-                resultSpecializingPath.addResult(self.field.domain,
-                                                 assignedData)
+                resultSpecializingPath.addResult(self.field.domain, assignedData)
 
             self._logger.debug(
                 "FieldSpecializer Result: {0}".format(assignedData))
+
             resultSpecializingPath.addResultToField(self.field, assignedData)
 
         return resultSpecializingPaths
