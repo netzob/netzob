@@ -156,12 +156,9 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
     # OPEN, CLOSE, READ and WRITE methods
 
     @abc.abstractmethod
-    def open(self, timeout=None):
+    def open(self):
         """Open the communication channel. If the channel is a server, it starts
         to listen and will create an instance for each different client.
-
-        :param timeout: the maximum time in seconds to wait for connection
-        :type timeout: :class:`float`
         """
 
     @abc.abstractmethod
@@ -169,11 +166,8 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         """Close the communication channel."""
 
     @abc.abstractmethod
-    def read(self, timeout=None):
+    def read(self):
         """Read the next message from the communication channel.
-
-        :param timeout: the maximum time in seconds to wait for a message
-        :type timeout: :class:`float`
         """
 
     def setWriteCounterMax(self, maxValue):
@@ -265,14 +259,12 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def sendReceive(self, data, timeout=None):
+    def sendReceive(self, data):
         """Write to the communication channel the specified data and return
         the corresponding response.
 
         :param data: the data to write on the channel
         :type data: :class:`bytes`
-        :param timeout: the maximum time in seconds to wait for a response
-        :type timeout: :class:`float`
         """
 
     # Management methods
