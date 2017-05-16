@@ -35,6 +35,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import uuid
+import abc
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -79,12 +80,11 @@ class AbstractVariable(object):
         if svas is None:
             svas = SVAS.EPHEMERAL
         self.svas = svas
-        # A list containing all variables which value is bind to the value of this variable.
-        self.__boundedVariables = []
-        # An integer list which contain the index of each segment this variable is responsible for (they have been created from its)
-        self.__tokenChoppedIndexes = []
-        # The variables just above the current variable in the tree representation.
-        self.__fathers = []
+
+    @abc.abstractmethod
+    def specialize(self, originalSpecializingPath, mutate=False):
+        """Specializes the current variable."""
+        raise NotImplementedError("Method specialize() is not implemented")
 
     #+---------------------------------------------------------------------------+
     #| Special Functions                                                         |
@@ -101,11 +101,6 @@ class AbstractVariable(object):
     def __str__(self):
         """The str method, mostly for debugging purpose."""
         return "{0}".format(self.varType)
-
-    # @abc.abstractmethod
-    # def _str_debug(self, deepness=0):
-    #     """Returns a string which denotes
-    #     the current domain definition using a tree display"""
 
     #+---------------------------------------------------------------------------+
     #| Properties                                                                |
@@ -164,137 +159,3 @@ class AbstractVariable(object):
         if svas is None:
             raise ValueError("svas cannot be None")
         self.__svas = svas
-
-    # @property
-    # def learnable(self):
-    #     """tells if the variable can learned a value, initialized itself or not.
-
-    #     >>> from netzob.all import *
-    #     >>> alt = Alt()
-    #     >>> alt.learnable
-    #     False
-    #     >>> alt.learnable = True
-    #     >>> alt.learnable
-    #     True
-    #     >>> alt.learnable = "dqsqdsq"
-    #     Traceback (most recent call last):
-    #     ...
-    #     TypeError: Invalid type for arguments, expecting: bool and received str
-    #     >>> alt.learnable = None
-    #     Traceback (most recent call last):
-    #     ...
-    #     TypeError: Learnable cannot be None
-    #     >>> alt.learnable
-    #     True
-
-    #     :type:bool
-    #     """
-    #     return self.__learnable
-
-    # @learnable.setter
-    # @typeCheck(bool)
-    # def learnable(self, learnable):
-    #     if learnable is None:
-    #         raise TypeError("Learnable cannot be None")
-    #     self.__learnable = learnable
-
-    # @property
-    # def mutable(self):
-    #     """Tells if the variable can be modified or not.
-
-    #     >>> from netzob.all import *
-    #     >>> agg = Agg()
-    #     >>> agg.mutable
-    #     False
-    #     >>> agg.mutable = True
-    #     >>> agg.mutable
-    #     True
-    #     >>> agg.mutable = "dqsqdsq"
-    #     Traceback (most recent call last):
-    #     ...
-    #     TypeError: Invalid type for arguments, expecting: bool and received str
-    #     >>> agg.mutable = None
-    #     Traceback (most recent call last):
-    #     ...
-    #     TypeError: Mutable cannot be None
-    #     >>> agg.mutable
-    #     True
-
-    #     :type:bool
-    #     """
-    #     return self.__mutable
-
-    # @mutable.setter
-    # @typeCheck(bool)
-    # def mutable(self, mutable):
-    #     if mutable is None:
-    #         raise TypeError("Mutable cannot be None")
-    #     self.__mutable = mutable
-
-    # @property
-    # def boundedVariables(self):
-    #     """A list containing all variables which value is bind to the value of this variable.
-
-    #     >>> from netzob.all import *
-    #     >>> d1 = Data(String())
-    #     >>> len(d1.boundedVariables)
-    #     0
-    #     >>> d2 = Data(Integer())
-    #     >>> len(d2.boundedVariables)
-    #     0
-    #     >>> d3 = Data(Raw())
-    #     >>> len(d3.boundedVariables)
-    #     0
-    #     >>> d1.boundedVariables.append(d2)
-    #     >>> d1.boundedVariables.append(d3)
-    #     >>> len(d1.boundedVariables)
-    #     2
-
-    #     :type: list of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
-    #     :raise: TypeError if parameter is not valid
-    #     """
-    #     return self.__boundedVariables
-
-    # @boundedVariables.setter
-    # def boundedVariables(self, boundedVariables):
-    #     for bound in boundedVariables:
-    #         if not isinstance(bound, AbstractVariable):
-    #             raise TypeError("BoundedVariables must be AbstractVariables")
-
-    #     self.__boundedVariables = []
-    #     for bound in boundedVariables:
-    #         self.__boundedVariables.append(bound)
-
-    # @property
-    # def tokenChoppedIndex(self):
-    #     """An integer list which contain the index of each segment
-    #     this variable is responsible for (they have been created from its)
-
-    #     .. warning:: use the method addTokenChoppedIndex() to add an index.
-
-    #     :type: list of int
-    #     """
-    #     return self.__tokenChoppedIndexes
-
-    # @tokenChoppedIndex.setter
-    # def tokenChoppedIndex(self, tokenChoppedIndex):
-    #     for index in tokenChoppedIndex:
-    #         if not isinstance(index, int):
-    #             raise TypeError("tokenChoppedIndex must be a list of int")
-    #     self.__tokenChoppedIndexes = []
-    #     for index in tokenChoppedIndex:
-    #         self.__tokenChoppedIndexes.append(index)
-
-    # @property
-    # def fathers(self):
-    #     """ The variables just above the current variable in the tree representation.
-
-    #     :type: list of :class:`netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariables
-    #     """
-    #     return self.__fathers
-
-    # @fathers.setter
-    # def fathers(self, fathers):
-    #     self.__fathers = []
-    #     for father in fathers:
-    #         self.__fathers.append(father)
