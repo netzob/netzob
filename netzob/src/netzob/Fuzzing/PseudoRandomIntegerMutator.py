@@ -103,8 +103,8 @@ class PseudoRandomIntegerMutator(Mutator):
         self._prng.reset()
         self.resetCurrentCounter()
 
-    def mutate(self):
-        """This is the mutation method of the integer field.
+    def generate(self):
+        """This is the fuzz generation method of the integer field.
         It uses a PRNG to produce the value between minValue and maxValue.
 
         :return: a generated content represented with bytes

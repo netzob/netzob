@@ -105,8 +105,8 @@ class AlternativeMutator(Mutator):
     def maxDepth(self, depth):
         self._maxDepth = depth
 
-    def mutate(self):
-        """This is the mutation method of the alternative field.
+    def generate(self):
+        """This is the fuzz generation method of the alternative field.
         For each type, we produce the value with the associated mutator
         from typesMutators.
         If no mutator is set, the default value of the type is used.
@@ -124,4 +124,4 @@ class AlternativeMutator(Mutator):
                 "{}.mutate() : max depth reached".format(self._type()))
 
         # TODO : implement the sequence generator, which uses generatedLength
-        return super().mutate()
+        return super().generate()

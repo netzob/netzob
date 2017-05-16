@@ -89,7 +89,7 @@ class DeterministIntegerMutator(Mutator):
 
         # Retrieve the min and max values from the field properties
         fieldType = abstractField.domain.dataType
-        interval = fieldType.interval
+        interval = fieldType.size
         if interval is not None:
             if isinstance(interval, Iterable) and len(interval) == 2:
                 low, high = interval
@@ -151,8 +151,8 @@ class DeterministIntegerMutator(Mutator):
         """
         return len(self._ng.values)
 
-    def mutate(self):
-        """This is the mutation method of the integer field.
+    def generate(self):
+        """This is the fuzz generation method of the integer field.
         It uses a determinist generator to produce the value.
 
         :return: a generated content represented with bytes

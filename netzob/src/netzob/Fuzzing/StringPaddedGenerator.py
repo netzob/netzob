@@ -84,7 +84,7 @@ class StringPaddedGenerator(object):
             self.reset()
         value = self._values[self._currentPos] + endChar
         self._currentPos += 1
-        length = int.from_bytes(self._lengthMutator.mutate(),
+        length = int.from_bytes(self._lengthMutator.generate(),
                                 self._lengthMutator.field.domain.dataType.endianness)
         if length > 0:
             if length > len(value):

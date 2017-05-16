@@ -188,8 +188,8 @@ class StringMutator(Mutator):
     def naughtyStrings(self, testStrings):
         self._naughtyStrings = testStrings
 
-    def mutate(self):
-        """This is the mutation method of the string field.
+    def generate(self):
+        """This is the fuzz generation method of the string field.
         It uses lengthMutator, then a random generator to produce the value.
 
         :return: a generated content represented with bytes

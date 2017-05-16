@@ -183,6 +183,23 @@ class Mutator(object):
         raise NotImplementedError("reset() is not implemented yet")
 
     @abc.abstractmethod
+    def generate(self):
+        """This is the fuzz generation method of the field. It has to be
+        overridden by all the inherited mutators which call the generator
+        function.
+
+        If the currentCounter reached counterMax, mutate() returns None.
+
+        Raises NotImplementedMutatorError if the inherited mutator has not
+        overridden this method.
+
+        :return: a generated content represented with bytes
+        :rtype: :class:`bytes`
+        :raises: :class:`NotImplementedError`
+        """
+        raise NotImplementedError("mutate() is not implemented yet")
+
+    @abc.abstractmethod
     def mutate(self):
         """This is the mutation method of the field. It has to be overridden by
         all the inherited mutators which call the generator function.

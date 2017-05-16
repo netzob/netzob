@@ -134,8 +134,8 @@ class SequenceMutator(Mutator):
         """
         return self._elementLength.value
 
-    def mutate(self):
-        """This is the mutation method of the sequence field.
+    def generate(self):
+        """This is the fuzz generation method of the sequence field.
         It uses lengthMutator and elementMutator.
 
         :return: a generated content represented with bytes
@@ -145,4 +145,4 @@ class SequenceMutator(Mutator):
         self._lengthMutator.maxValue = self.maxLength
         generatedLength = int(self._lengthMutator.mutate(), 16)
         # TODO : implement the sequence generator, which uses generatedLength
-        return super().mutate()
+        return super().generate()

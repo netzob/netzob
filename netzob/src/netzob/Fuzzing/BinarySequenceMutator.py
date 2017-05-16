@@ -104,8 +104,8 @@ class BinarySequenceMutator(Mutator):
         """
         return self._sequenceLength.value
 
-    def mutate(self):
-        """This is the mutation method of the binary sequence field.
+    def generate(self):
+        """This is the fuzz generation method of the binary sequence field.
         It uses lengthMutator to get a sequence length, then a PRNG to produce
         the value.
 
@@ -115,4 +115,4 @@ class BinarySequenceMutator(Mutator):
         self._lengthMutator.maxValue = self.maxLength
         generatedLength = int(self._lengthMutator.mutate(), 16)
         # TODO : implement the sequence generator, which uses generatedLength
-        return super().mutate()
+        return super().generate()
