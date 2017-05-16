@@ -421,7 +421,7 @@ class Size(AbstractRelationVariableLeaf):
             b.insert(0, False)
 
         # in some cases (when unitSize and size are not equal), it may require to delete some '0' in front
-        while len(b) > self.dataType.size[0]:
+        while len(b) > self.dataType.size[1]:
             b.remove(0)
 
         self._logger.debug("computed value for Size field: '{}'".format(b))

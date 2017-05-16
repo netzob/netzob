@@ -213,15 +213,17 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
 
         # first checks the pointed fields all have a value
         hasValue = True
+        errorMessage = ""
         for field in self.fieldDependencies:
             if field.domain is not self and not parsingPath.isDataAvailableForVariable(field.domain):
-                self._logger.debug("The following field domain has no value: '{0}'".format(field.domain))
+                errorMessage = "The following field domain has no value: '{0}'".format(field.domain)
+                self._logger.debug(errorMessage)
                 hasValue = False
 
         if not hasValue:
             raise Exception(
-                "Expected value cannot be computed, some dependencies are missing for domain {0}".
-                format(self))
+                "Expected value cannot be computed, some dependencies are missing for domain {0}. Error: '{}'".
+                format(self, errorMessage))
         else:
             fieldValues = []
             for field in self.fieldDependencies:
@@ -235,7 +237,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
                     break
                 elif fieldValue.tobytes() == TypeConverter.convert("PENDING VALUE", String, BitArray).tobytes():
                     # Handle case where field value is not currently known.
-                    raise Exception("Expected value cannot be computed, some dependencies are missing for domain {0}".format(self))
+                    raise Exception("Target field '{}' has a pending value".format(field.name))
                 else:
                     fieldValues.append(fieldValue)
 
