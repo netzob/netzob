@@ -52,10 +52,12 @@ addons:
 # Installation process
 
 install:
+  - cd netzob
   - python3 -m pip install -r requirements.txt
   - python3 setup.py build
   - python3 setup.py install
   - python3 -m pip install coveralls
+  - python3 -m pip install codecov
 
 # Executing unit-tests and measure coverages
 
@@ -64,4 +66,4 @@ script:
   - python3 -m coverage run --source=src/netzob setup.py test
 after_success:
   - coveralls
-
+  - codecov

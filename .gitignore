@@ -43,4 +43,4 @@ include/python*
 lib/python*
 lib64
 *.log
-
+dist/
