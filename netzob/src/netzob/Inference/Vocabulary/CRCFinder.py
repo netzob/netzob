@@ -11,29 +11,44 @@ from netzob.Model.Vocabulary.Domain.Variables.Leafs.CRC32 import CRC32
 
 @NetzobLogger
 class CRCFinder(object):
-    """Provides multiple algorithms to find CRC in messages of a symbol (searches inside fields).
+    r"""Provides multiple algorithms to find CRC in messages of a symbol (searches inside fields).
 
-    >>> import binascii
+    CRC32 Little endian of all the fields that follow
     >>> from netzob.all import *
-    >>> samples = [b"0007ff2f000000000000", b"0011ffaaaaaaaaaaaaaabbcc0010000000000000", b"0012ffddddddddddddddddddddfe1f000000000000"]
-    >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
+    >>> message1 = RawMessage(data=b'\xc5k@@\x003\x00\n|\xd9\x80\x04\x00\n|\n\x90\x00\x00\x00\x01\x81\x8c\x00\x1b\x00\x00\x00\x16\x00\x00\x00\x18\x00\x00\x00JK\x98\x9eU\xcd\x10\x00\x01\x00\x03\x00\xfc\xf7\xe1\x82\x04\x00\x00\x00\x1a\x10\x00\x00\x15\x02\x00\x01')
+    >>> message2 = RawMessage(data=b'\xc5k@@\x003\x00\n|\xd9\x80\x04\x00\n|\n\x90\x00\x00\x00\x01\x81\x8c\x00\xa8\x00\x00\x00)\x00\x00\x00\x18\x00\x00\x00\xbe=\xcd\xd8U\xcd\x0c\x00\x01\x00\x03\x00\xfc\xf7\xe1\x82\x08\x00\x00\x00\x01\x84\x80\x00\xfc\xf7\xe1\x82')
+    >>> message3 = RawMessage(data=b'\xc5k@@\x003\x00\n|\xd9\x80\x04\x00\n|\n\x90\x00\x00\x00\x01\x81\x84\x00\xae\x00\x00\x00.\x00\x00\x00\x18\x00\x00\x00\xd6j\xc4aU\xcd\x0c\x00\x01\x00\x03\x00\xd9?\x91\xa8\x08\x00\x00\x00\x01\x84\x80\x00\xd9?\x91\xa8')
+    >>> messages = [message1,message2,message3]
     >>> symbol = Symbol(messages=messages)
     >>> Format.splitStatic(symbol)
-    >>> rels = RelationFinder.findOnFields(symbol.fields[1], symbol.fields[3])
-    >>> print(len(rels))
-    1
-    >>> for rel in rels:
-    ...     print(rel["relation_type"] + " between " + rel["x_field"].name + ":" + rel["x_attribute"] + \
-            " and " + rel["y_field"].name + ":" + rel["y_attribute"])
-    SizeRelation between Field-1:value and Field-3:size
+    >>> seeker = CRCFinder()
+    >>> seeker.findOnSymbol(symbol=symbol,create_fields=True)
+    >>> print(symbol)
+    Source | Destination | Field-0                                                      | Field-1 | Field-2 | Field-3 | Field-4        | Field-5 | Field-6                        | CRC32_LE36   | Field-8 | Field-9 | Field-10               | Field-11      | Field-12       | Field-13       | Field-14 | Field-15
+    ------ | ----------- | ------------------------------------------------------------ | ------- | ------- | ------- | -------------- | ------- | ------------------------------ | ------------ | ------- | ------- | ---------------------- | ------------- | -------------- | -------------- | -------- | ------------------
+    None   | None        | 'Åk@@\x003\x00\n|Ù\x80\x04\x00\n|\n\x90\x00\x00\x00\x01\x81' | '\x8c'  | '\x00'  | '\x1b'  | '\x00\x00\x00' | '\x16'  | '\x00\x00\x00\x18\x00\x00\x00' | 'JK\x98\x9e' | 'UÍ'    | '\x10'  | '\x00\x01\x00\x03\x00' | 'ü÷á\x82\x04' | '\x00\x00\x00' | '\x1a\x10\x00' | '\x00'   | '\x15\x02\x00\x01'
+    None   | None        | 'Åk@@\x003\x00\n|Ù\x80\x04\x00\n|\n\x90\x00\x00\x00\x01\x81' | '\x8c'  | '\x00'  | '¨'     | '\x00\x00\x00' | ')'     | '\x00\x00\x00\x18\x00\x00\x00' | '¾=ÍØ'       | 'UÍ'    | '\x0c'  | '\x00\x01\x00\x03\x00' | 'ü÷á\x82\x08' | '\x00\x00\x00' | '\x01\x84\x80' | '\x00'   | 'ü÷á\x82'
+    None   | None        | 'Åk@@\x003\x00\n|Ù\x80\x04\x00\n|\n\x90\x00\x00\x00\x01\x81' | '\x84'  | '\x00'  | '®'     | '\x00\x00\x00' | '.'     | '\x00\x00\x00\x18\x00\x00\x00' | 'ÖjÄa'       | 'UÍ'    | '\x0c'  | '\x00\x01\x00\x03\x00' | 'Ù?\x91¨\x08' | '\x00\x00\x00' | '\x01\x84\x80' | '\x00'   | 'Ù?\x91¨'
+    ------ | ----------- | ------------------------------------------------------------ | ------- | ------- | ------- | -------------- | ------- | ------------------------------ | ------------ | ------- | ------- | ---------------------- | ------------- | -------------- | -------------- | -------- | ------------------
 
-    >>> rels = RelationFinder.findOnSymbol(symbol)
-    >>> print(len(rels))
-    1
-    >>> for rel in rels:
-    ...     print(rel["relation_type"] + " between fields " + str([x.name for x in rel["x_fields"]]) + ":" + rel["x_attribute"] + \
-            " and fields " + str([y.name for y in rel["y_fields"]]) + ":" + rel["y_attribute"])
-    SizeRelation between fields ['Field-1']:value and fields ['Field-3']:size
+    CRC32 Little endian of the form cafebabe0000deadbeef where 0000 is then replaced by CRC
+
+    >>> from netzob.all import *
+    >>> message1 = RawMessage(data=b'\xc5k@@\x003\x00\n|\xd9\x80\x04\x00\n|\n\x90\x00\x00\x00\xc4\x00\x01\x01\x0e\xd2E~x\x00\x00\x00')
+    >>> message2 = RawMessage(data=b'\xc5k@@\x003\x00\n|\xd9\x80\x04\x00\n|\n\x90\x00\x00\x00\xc4\x00\x01\x01\xf7\x15\xc6\xad\t\x00\x00\x00')
+    >>> message3 = RawMessage(data=b'\xc5k@@\x003\x00\n|\xd9\x80\x04\x00\n|\n\x90\x00\x00\x00\xc4\x00\x01\x01\x87jk8\x11\x00\x00\x00')
+    >>> messages = [message1,message2,message3]
+    >>> symbol = Symbol(messages=messages)
+    >>> Format.splitStatic(symbol)
+    >>> seeker = CRCFinder()
+    >>> seeker.findOnSymbol(symbol=symbol,create_fields=True)
+    >>> print(symbol)
+    Source | Destination | Field-0                                                           | CRC32_mid_LE24 | Field-1 | Field-2
+    ------ | ----------- | ----------------------------------------------------------------- | -------------- | ------- | --------------
+    None   | None        | 'Åk@@\x003\x00\n|Ù\x80\x04\x00\n|\n\x90\x00\x00\x00Ä\x00\x01\x01' | '\x0eÒE~'      | 'x'     | '\x00\x00\x00'
+    None   | None        | 'Åk@@\x003\x00\n|Ù\x80\x04\x00\n|\n\x90\x00\x00\x00Ä\x00\x01\x01' | '÷\x15Æ\xad'   | '\t'    | '\x00\x00\x00'
+    None   | None        | 'Åk@@\x003\x00\n|Ù\x80\x04\x00\n|\n\x90\x00\x00\x00Ä\x00\x01\x01' | '\x87jk8'      | '\x11'  | '\x00\x00\x00'
+    ------ | ----------- | ----------------------------------------------------------------- | -------------- | ------- | --------------
 
     """
 
