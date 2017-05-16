@@ -8,44 +8,15 @@ import sys
 #+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
-from netzob import _libRelation
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Model.Types.TypeConverter import TypeConverter
-from netzob.Model.Types.AbstractType import AbstractType
-from netzob.Model.Types.Raw import Raw
-from netzob.Model.Types.Integer import Integer
-from netzob.Model.Vocabulary.AbstractField import AbstractField
-from  netzob.Model.Vocabulary.Domain.Variables.Leafs.CRC32 import CRC32
 
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Model.Vocabulary.Types.Raw import Raw
+from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Field import Field
-from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
 
 @NetzobLogger
-class IPSeeker(object):
-    """Provides multiple algorithms to find IP in messages.
-
-    >>> import binascii
-    >>> from netzob.all import *
-    >>> samples = [b"0007ff2f000000000000", b"0011ffaaaaaaaaaaaaaabbcc0010000000000000", b"0012ffddddddddddddddddddddfe1f000000000000"]
-    >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
-    >>> symbol = Symbol(messages=messages)
-    >>> Format.splitStatic(symbol)
-    >>> rels = RelationFinder.findOnFields(symbol.fields[1], symbol.fields[3])
-    >>> print(len(rels))
-    1
-    >>> for rel in rels:
-    ...     print(rel["relation_type"] + " between " + rel["x_field"].name + ":" + rel["x_attribute"] + \
-            " and " + rel["y_field"].name + ":" + rel["y_attribute"])
-    SizeRelation between Field-1:value and Field-3:size
-
-    >>> rels = RelationFinder.findOnSymbol(symbol)
-    >>> print(len(rels))
-    1
-    >>> for rel in rels:
-    ...     print(rel["relation_type"] + " between fields " + str([x.name for x in rel["x_fields"]]) + ":" + rel["x_attribute"] + \
-            " and fields " + str([y.name for y in rel["y_fields"]]) + ":" + rel["y_attribute"])
-    SizeRelation between fields ['Field-1']:value and fields ['Field-3']:size
-
+class IPFinder(object):
+    """Provides multiple algorithms to find IP in messages of a symbol (searches inside fields).
     """
 
     def __init__(self):
@@ -61,7 +32,7 @@ class IPSeeker(object):
         :type symbol: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
         """
 
-        cf = IPSeeker()
+        cf = IPFinder()
         return cf.executeOnSymbol(symbol,create_fields,two_terms)
 
 
@@ -285,7 +256,7 @@ class IPSeeker(object):
             # One match, looking for next match
             # STORE INDEX IN LIST
             if index_list:
-                # List not empty, already has and index
+                # List not empty, already has an index
                 index_list.append(index_list[-1] + res_index + add_length)
             else:
                 index_list.append(res_index+add_length)
@@ -319,10 +290,5 @@ class IPSeeker(object):
                 minSize, maxSize = field.domain.dataType.size
             totalSize += maxSize
             if index < (totalSize / 8):
-                # Compute the index of the CRC relative to the field
-                #field_index = totalSize - (8 * index)
-                #field_index = totalSize - field_index
-                #indexInField = (8 * index) - field_index
-                field_index = totalSize - maxSize
                 indexInField = (index * 8 ) - (totalSize-maxSize)
                 return field, maxSize, indexInField

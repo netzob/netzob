@@ -155,12 +155,12 @@ class FieldSplitAligned(object):
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol, useSemantic=True)
     >>> print(symbol)# doctest: +NORMALIZE_WHITESPACE
-    Source | Destination | Field     | Field | Field | Field | Field    | Field | Field                                            | Field | Field
-    ------ | ----------- | --------- | ----- | ----- | ----- | -------- | ----- | ------------------------------------------------ | ----- | --------------------------
-    None   | None        | 'John'    | '-0'  | '10'  | '8'   | '030405' | '-'   | ''                                               | '-'   | 'john.doe@gmail.com'
-    None   | None        | 'Mathieu' | '-0'  | '90'  | '8'   | '070605' | '-'   | '31 rue de Paris, 75000 Paris, France'           | '-'   | 'mat@yahoo.fr'
-    None   | None        | 'Olivia'  | '-0'  | '34'  | '8'   | '234556' | '-'   | '7 allee des peupliers, 13000 Marseille, France' | '-'   | 'olivia.tortue@hotmail.fr'
-    ------ | ----------- | --------- | ----- | ----- | ----- | -------- | ----- | ------------------------------------------------ | ----- | --------------------------
+    Session   | Source | Destination | Field     | Field | Field | Field | Field    | Field | Field                                            | Field | Field
+    --------- | ------ | ----------- | --------- | ----- | ----- | ----- | -------- | ----- | ------------------------------------------------ | ----- | --------------------------
+    'Session' | None   | None        | 'John'    | '-0'  | '10'  | '8'   | '030405' | '-'   | ''                                               | '-'   | 'john.doe@gmail.com'
+    'Session' | None   | None        | 'Mathieu' | '-0'  | '90'  | '8'   | '070605' | '-'   | '31 rue de Paris, 75000 Paris, France'           | '-'   | 'mat@yahoo.fr'
+    'Session' | None   | None        | 'Olivia'  | '-0'  | '34'  | '8'   | '234556' | '-'   | '7 allee des peupliers, 13000 Marseille, France' | '-'   | 'olivia.tortue@hotmail.fr'
+    --------- | ------ | ----------- | --------- | ----- | ----- | ----- | -------- | ----- | ------------------------------------------------ | ----- | --------------------------
 
     """
 

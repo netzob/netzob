@@ -88,7 +88,7 @@ class InternetChecksum(AbstractRelationVariableLeaf):
     >>> print(s)
     Type | Code | Checksum | Identifier | Sequence Number | Timestamp          | Payload                                                                                           
     ---- | ---- | -------- | ---------- | --------------- | ------------------ | --------------------------------------------------------------------------------------------------
-    '08' | '00' | '1607'   | '1d22'     | '0007'          | 'a8f3f65300000000' | '60b5060000000000101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f3031323334353637'
+    '08' | '00' | '0716'   | '1d22'     | '0007'          | 'a8f3f65300000000' | '60b5060000000000101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f3031323334353637'
     ---- | ---- | -------- | ---------- | --------------- | ------------------ | --------------------------------------------------------------------------------------------------
 
     Fixed an issue with Alt field
@@ -249,13 +249,16 @@ class InternetChecksum(AbstractRelationVariableLeaf):
         # first checks the pointed fields all have a value
         hasValue = True
         for field in self.fieldDependencies:
+            try:
+                parsingPath.getDataAssignedToVariable(field.domain)
+            except:
+                pass
             if field.domain is not self and not parsingPath.isDataAvailableForVariable(
                     field.domain):
-                try:
-                    field.domain.children
+                if hasattr(field.domain,'children'):
                     for child in field.domain.children:
                         parsingPath.assignDataToVariable(parsingPath.getDataAssignedToVariable(child),field.domain)
-                except:
+                else:
                     self._logger.debug("The following field domain has no value: '{0}'".format(field.domain))
                     hasValue = False
 
@@ -291,8 +294,6 @@ class InternetChecksum(AbstractRelationVariableLeaf):
             # compute the checksum of this value
             chsum = self.__checksum(concatFieldValues)
             b = TypeConverter.convert(chsum, Integer, BitArray,
-                                      src_endianness=AbstractType.ENDIAN_LITTLE,
-                                      dst_endianness=self.dataType.endianness,
                                       src_unitSize=AbstractType.UNITSIZE_16,
                                       src_sign = AbstractType.SIGN_UNSIGNED)
             return b
@@ -320,7 +321,6 @@ class InternetChecksum(AbstractRelationVariableLeaf):
                 variableSpecializerPath.addResult(self, pendingValue)
 
                 if moreCallBackAccepted:
-                #                for field in self.fields:
                     variableSpecializerPath.registerFieldCallBack(
                         self.fieldDependencies, self, parsingCB=False)
                 else:

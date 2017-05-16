@@ -47,9 +47,9 @@
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
-from netzob.Model.Types.Raw import Raw
-from netzob.Model.Types.BitArray import BitArray
-from netzob.Model.Types.TypeConverter import TypeConverter
+from netzob.Model.Vocabulary.Types.Raw import Raw
+from netzob.Model.Vocabulary.Types.BitArray import BitArray
+from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Domain.DomainFactory import DomainFactory
 from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
@@ -285,7 +285,6 @@ class Field(AbstractField):
     @specializingPaths.setter
     def specializingPaths(self, value):
         self.__specializingPaths = value
-        return messages
 
     @property
     def isPseudoField(self):

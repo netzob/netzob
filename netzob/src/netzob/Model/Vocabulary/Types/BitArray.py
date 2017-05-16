@@ -45,8 +45,8 @@ from bitarray import bitarray
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Model.Types.AbstractType import AbstractType
-from netzob.Model.Types.Raw import Raw
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.Raw import Raw
 
 @NetzobLogger
 class BitArray(AbstractType):

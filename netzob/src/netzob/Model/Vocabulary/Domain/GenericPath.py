@@ -211,9 +211,9 @@ class GenericPath(object):
             raise Exception("Variable cannot be None")
         if variable.id not in self._dataAssignedToVariable:
             #if variable.currentValue is not None:
-            #     self._dataAssignedToVariable[variable.id] = variable.currentValue
+             #    self._dataAssignedToVariable[variable.id] = variable.currentValue
             #else:
-            raise Exception("No data is assigned to variable '{0}'".format(variable.name))
+                raise Exception("No data is assigned to variable '{0}'".format(variable.name))
 
         return self._dataAssignedToVariable[variable.id]
 

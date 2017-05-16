@@ -144,9 +144,9 @@ class Value(AbstractRelationVariableLeaf):
     Netgoblin fork: This tests the operation method to parse an incremental message.
 
     >>> from netzob.all import *
-    >>> from netzob.Model.Types.BitArray import BitArray
-    >>> from netzob.Model.Types.Raw import Raw
-    >>> from netzob.Model.Types.TypeConverter import TypeConverter
+    >>> from netzob.Model.Vocabulary.Types.BitArray import BitArray
+    >>> from netzob.Model.Vocabulary.Types.Raw import Raw
+    >>> from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
     >>> initValue = Raw(b"\x00")
     >>> f0 = Field(name="incField")
     >>> f0 = Field(Value(f0, operation = lambda x: TypeConverter.convert(TypeConverter.convert(x, BitArray, Integer) + 1, Integer, BitArray),initValue=TypeConverter.convert(initValue,Raw,BitArray)))
@@ -166,9 +166,9 @@ class Value(AbstractRelationVariableLeaf):
     ------ | ----------- | ------
 
     >>> from netzob.all import *
-    >>> from netzob.Model.Types.BitArray import BitArray
-    >>> from netzob.Model.Types.Raw import Raw
-    >>> from netzob.Model.Types.TypeConverter import TypeConverter
+    >>> from netzob.Model.Vocabulary.Types.BitArray import BitArray
+    >>> from netzob.Model.Vocabulary.Types.Raw import Raw
+    >>> from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
     >>> initValue = Raw(b"\x00")
     >>> f0 = Field(name="incField")
     >>> f0 = Field(Value(f0, operation = lambda x: TypeConverter.convert(TypeConverter.convert(x, BitArray, Integer) + 1, Integer, BitArray),initValue=TypeConverter.convert(initValue,Raw,BitArray),svas=SVAS.PERSISTENT))
