@@ -103,8 +103,8 @@ class PseudoRandomIntegerMutator(Mutator):
         self._prng.reset()
         self.resetCurrentCounter()
 
-    def generate(self):
-        """This is the fuzz generation method of the integer field.
+    def generate(self, domain):
+        """This is the mutation method of the integer type.
         It uses a PRNG to produce the value between minValue and maxValue.
 
         :return: a generated content represented with bytes
@@ -120,8 +120,8 @@ class PseudoRandomIntegerMutator(Mutator):
                         * (self.maxValue - self.minValue)
                         + self.minValue)
             return Integer.decode(value,
-                                  unitSize=self.field.domain.dataType.unitSize,
-                                  endianness=self.field.domain.dataType.endianness,
-                                  sign=self.field.domain.dataType.sign)
+                                  unitSize=domain.dataType.unitSize,
+                                  endianness=domain.dataType.endianness,
+                                  sign=domain.dataType.sign)
         else:
             raise Exception("Max mutation counter reached")
