@@ -36,6 +36,7 @@
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
 import abc
+import random
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -80,6 +81,10 @@ class Mutator(object):
     SEED_DEFAULT = 10
     COUNTER_MAX_DEFAULT = 2**16
 
+    # Fuzzing modes
+    MUTATE = 0
+    GENERATE = 1
+
     def __init__(self):
         self._seed = Mutator.SEED_DEFAULT
         self._field = None
@@ -87,6 +92,7 @@ class Mutator(object):
         self._currentState = 0
         self._counterMax = Mutator.COUNTER_MAX_DEFAULT
         self._currentCounter = 0
+        self._mode = Mutator.GENERATE
 
     @property
     def seed(self):
@@ -185,7 +191,7 @@ class Mutator(object):
     @abc.abstractmethod
     def generate(self):
         """This is the fuzz generation method of the field. It has to be
-        overridden by all the inherited mutators which call the generator
+        overridden by all the inherited mutators which call the generate()
         function.
 
         If the currentCounter reached counterMax, mutate() returns None.
@@ -200,17 +206,39 @@ class Mutator(object):
         raise NotImplementedError("mutate() is not implemented yet")
 
     @abc.abstractmethod
-    def mutate(self):
+    def mutate(self, data):
         """This is the mutation method of the field. It has to be overridden by
-        all the inherited mutators which call the generator function.
+        all the inherited mutators which call the mutate() function.
 
         If the currentCounter reached counterMax, mutate() returns None.
 
         Raises NotImplementedMutatorError if the inherited mutator has not
         overridden this method.
 
+        :param data: The data to mutate.
+        :type data: :class:`bitarray.bitarray`
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
         :raises: :class:`NotImplementedError`
         """
-        raise NotImplementedError("mutate() is not implemented yet")
+
+        if data is None or len(data) == 0:
+            return data
+
+        # The current implementation makes a bitflip at a random position
+        idx = random.randint(0, len(data))
+        data[idx] = not data[idx]
+        return data
+
+    @property
+    def mode(self):
+        """The fuzzing mode: either Mutator.MUTATE or Mutator.GENERATE.
+
+        :type: :class:`int`
+        """
+        return self._mode
+
+    @mode.setter
+    @typeCheck(int)
+    def mode(self, mode):
+        self._mode = mode
