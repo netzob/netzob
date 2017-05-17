@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
 #|                                                                           |
@@ -23,47 +26,14 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| File contributors :                                                       |
-#|       - Georges Bossert <gbossert (a) miskin.fr>                          |
-#|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
-#+---------------------------------------------------------------------------+
-
-#
-# TRAVIS Continuous Integration Definition file
-#
-
-# Definition of the environment
-env:
-  - NETZOB_TEST_NO_PERFORMANCE=yes
-language: python
-sudo: required
-python:
-  - 3.3
-  - 3.4
-  - 3.5
-  - 3.6
-addons:
-  apt:
-    packages:
-    - libpcap-dev
-    - python3
-
-# Installation process
-
-install:
-  - cd netzob
-  - python3 -m pip install -r requirements.txt
-  - python3 setup.py build
-  - python3 setup.py install
-  - python3 -m pip install coveralls
-  - python3 -m pip install codecov
-
-# Executing unit-tests and measure coverages
-
-script:
-  - python3 setup.py test
-  - python3 -m coverage run --source=src/netzob setup.py test
-after_success:
-  - coveralls
-  - codecov
+# List subpackages to import with the current one
+# see docs.python.org/2/tutorial/modules.html
+from netzob.Model.Vocabulary.Types.Raw import Raw
+from netzob.Model.Vocabulary.Types.ASCII import ASCII
+from netzob.Model.Vocabulary.Types.Integer import Integer
+from netzob.Model.Vocabulary.Types.BitArray import BitArray
+from netzob.Model.Vocabulary.Types.HexaString import HexaString
+from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.IPv4 import IPv4
+from netzob.Model.Vocabulary.Types.Timestamp import Timestamp

@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
 #|                                                                           |
@@ -21,49 +24,18 @@
 #| @contact  : contact@netzob.org                                            |
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+#|             ANSSI,   https://www.ssi.gouv.fr                              |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| File contributors :                                                       |
-#|       - Georges Bossert <gbossert (a) miskin.fr>                          |
-#|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
-#+---------------------------------------------------------------------------+
+# List subpackages to import with the current one
+# see docs.python.org/2/tutorial/modules.html
 
-#
-# TRAVIS Continuous Integration Definition file
-#
-
-# Definition of the environment
-env:
-  - NETZOB_TEST_NO_PERFORMANCE=yes
-language: python
-sudo: required
-python:
-  - 3.3
-  - 3.4
-  - 3.5
-  - 3.6
-addons:
-  apt:
-    packages:
-    - libpcap-dev
-    - python3
-
-# Installation process
-
-install:
-  - cd netzob
-  - python3 -m pip install -r requirements.txt
-  - python3 setup.py build
-  - python3 setup.py install
-  - python3 -m pip install coveralls
-  - python3 -m pip install codecov
-
-# Executing unit-tests and measure coverages
-
-script:
-  - python3 setup.py test
-  - python3 -m coverage run --source=src/netzob setup.py test
-after_success:
-  - coveralls
-  - codecov
+from netzob.Simulator.Channels.AbstractChannel import AbstractChannel
+from netzob.Simulator.Channels.TCPServer import TCPServer
+from netzob.Simulator.Channels.TCPClient import TCPClient
+from netzob.Simulator.Channels.UDPClient import UDPClient
+from netzob.Simulator.Channels.UDPServer import UDPServer
+from netzob.Simulator.Channels.SSLClient import SSLClient
+from netzob.Simulator.Channels.IPClient import IPClient
+from netzob.Simulator.Channels.RawIPClient import RawIPClient
+from netzob.Simulator.Channels.RawEthernetClient import RawEthernetClient

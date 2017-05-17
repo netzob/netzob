@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
 #|                                                                           |
@@ -24,46 +26,55 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| File contributors :                                                       |
-#|       - Georges Bossert <gbossert (a) miskin.fr>                          |
-#|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
+#| Standard library imports
+#+---------------------------------------------------------------------------+
+import time
+
+#+---------------------------------------------------------------------------+
+#| Related third party imports
 #+---------------------------------------------------------------------------+
 
-#
-# TRAVIS Continuous Integration Definition file
-#
+#+---------------------------------------------------------------------------+
+#| Local application imports
+#+---------------------------------------------------------------------------+
+from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
 
-# Definition of the environment
-env:
-  - NETZOB_TEST_NO_PERFORMANCE=yes
-language: python
-sudo: required
-python:
-  - 3.3
-  - 3.4
-  - 3.5
-  - 3.6
-addons:
-  apt:
-    packages:
-    - libpcap-dev
-    - python3
 
-# Installation process
+class RawMessage(AbstractMessage):
+    """Represents a raw Message which is a single message with some content and very few meta-data.
 
-install:
-  - cd netzob
-  - python3 -m pip install -r requirements.txt
-  - python3 setup.py build
-  - python3 setup.py install
-  - python3 -m pip install coveralls
-  - python3 -m pip install codecov
+    >>> msg = RawMessage(b"That's a simple message")
+    >>> print(msg.data)
+    b"That's a simple message"
 
-# Executing unit-tests and measure coverages
+    >>> msg = RawMessage(b"hello everyone", source="server", destination="client")
+    >>> print(msg.source)
+    server
+    >>> print(msg.destination)
+    client
+    >>> print(msg.metadata)
+    OrderedDict()
+    >>> msg.metadata["metadata1"]="value"
+    >>> print(msg.metadata)
+    OrderedDict([('metadata1', 'value')])
 
-script:
-  - python3 setup.py test
-  - python3 -m coverage run --source=src/netzob setup.py test
-after_success:
-  - coveralls
-  - codecov
+    """
+
+    def __init__(self, data=None, date=None, source=None, destination=None, messageType="Raw"):
+        """
+        :parameter data: the content of the message
+        :type data: a :class:`object`
+        """
+        super(RawMessage, self).__init__(data=data, date=date, source=source, destination=destination)
+        super(RawMessage, self).__init__(
+            data=data, date=date, source=source, destination=destination, messageType = messageType)
+
+    def priority(self):
+        """Return the value that will be used to represent the current message when sorted
+        with the others.
+
+        :type: int
+        """
+        return int(self.date * 1000)
+
