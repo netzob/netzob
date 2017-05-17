@@ -10,6 +10,15 @@ build
 #Useless XML stuff#
 *.xml
 
+#Doc
+doc/*
+
+#lib
+lib/*
+
+#Manifest
+Manifest.*
+
 #.ignore#
 .idea
 *~
