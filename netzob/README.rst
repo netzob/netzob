@@ -1,25 +1,6 @@
-==========================================
-NetGoblin : A netzob fork taylored for scada and TAPIRE
-==========================================
-Added functionalities:
-=====================
-* Several bugs corrected when it comes to TypeEncodingFunctions (refer to https://github.com/warsang/netzob/commit/09ae2ddd97cabb65ef65ee2b67c2fd86566140b8)
-* CRC32 domain implemented in fields
-* CRC32 Seeker
-* IP seeker
-
-TODO:
-====
-* CRC16 and other hash functions
-* Implement or perfect intraRelations such as packet incrementation
-* Perfect EntropyMeasuremnt method to find ciphered data
-* Doctest and Docstring for new classes and methods
-* Heaps of other stuff!!!
-
-
-==========================================
-Netzob : Inferring Communication Protocols
-==========================================
+===========================================================
+Netzob : Protocol Reverse Engineering, Modeling and Fuzzing
+===========================================================
 
 .. image:: https://travis-ci.org/netzob/netzob.svg?branch=next
     :target: https://travis-ci.org/netzob/netzob
@@ -233,7 +214,7 @@ The documentation is under the CC-BY-SA licence.
 Extra
 =====
 
-.. figure:: http://www.netzob.org/img/logo.png
+.. figure:: https://raw.githubusercontent.com/netzob/netzob/next/netzob/doc/documentation/source/zoby.png
    :width: 200 px
    :alt: Zoby, the official mascot of Netzob
    :align: center

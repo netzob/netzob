@@ -22,7 +22,7 @@ Contributors
   * Bertus Kruger
   * Eric asselin
   * Tammo Krueger
-  * Theodore Riera (warsang)
+  * Théodore Riera (warsang)
 
 Sponsors
 --------

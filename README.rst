@@ -29,22 +29,22 @@ Netzob : Protocol Reverse Engineering, Modeling and Fuzzing
 About
 =====
 
-Hello, this is not the netzob official repository. This is the Netgoblin fork which includes several features which are not in Netzob for protocol reverse engineering.
+Welcome to the official repository of Netzob.
 
 Netzob is a tool that can be use to **reverse engineer**, **model** and **fuzz** communication protocols. It is made of two components:
 
 * **netzob** a python project that exposes all the features of netzob (except GUI) you can import in your own tool or use in CLI,
 * **netzob_web** a graphical interface that leverages web technologies. 
 
-Netgoblin modifiations concern netzob. Netgoblin works great with TAPIRE a Conix not open-sourced(yet) CLI made to RE protocols.
-
 Source codes, documentations and resources are available for each component, please visit their dedicated directories.
 
 General Information
 ----------------
 
-:Email: `theodore.riera@gmail.com <theodore.riera@gmail.com>`_
-:IRC: I am always connected on Freenode's IRC channel #netzob @ freenode.org my username being warsang
+:Email: `contact@netzob.org <contact@netzob.org>`_
+:Mailing list: Two lists are available, use the `SYMPA web interface <https://lists.netzob.org/wws>`_ to register.
+:IRC: You can hang-out with us on Freenode's IRC channel #netzob @ freenode.org.
+:Twitter: Follow Netzob's official accounts (@Netzob)
 
 Authors, Contributors and Sponsors
 ==================================
@@ -63,4 +63,5 @@ Extra
 
    Zoby, the official mascot of Netzob.
 	  
+
 
