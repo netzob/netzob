@@ -23,7 +23,7 @@ class CRCFinder(object):
     >>> Format.splitStatic(symbol)
     >>> seeker = CRCFinder()
     >>> seeker.findOnSymbol(symbol=symbol,create_fields=True)
-    >>> print(symbol)
+    >>> print(symbol)# doctest: +NORMALIZE_WHITESPACE
     Source | Destination | Field-0                                                      | Field-1 | Field-2 | Field-3 | Field-4        | Field-5 | Field-6                        | CRC32_LE36   | Field-8 | Field-9 | Field-10               | Field-11      | Field-12       | Field-13       | Field-14 | Field-15
     ------ | ----------- | ------------------------------------------------------------ | ------- | ------- | ------- | -------------- | ------- | ------------------------------ | ------------ | ------- | ------- | ---------------------- | ------------- | -------------- | -------------- | -------- | ------------------
     None   | None        | 'Åk@@\x003\x00\n|Ù\x80\x04\x00\n|\n\x90\x00\x00\x00\x01\x81' | '\x8c'  | '\x00'  | '\x1b'  | '\x00\x00\x00' | '\x16'  | '\x00\x00\x00\x18\x00\x00\x00' | 'JK\x98\x9e' | 'UÍ'    | '\x10'  | '\x00\x01\x00\x03\x00' | 'ü÷á\x82\x04' | '\x00\x00\x00' | '\x1a\x10\x00' | '\x00'   | '\x15\x02\x00\x01'
@@ -42,7 +42,7 @@ class CRCFinder(object):
     >>> Format.splitStatic(symbol)
     >>> seeker = CRCFinder()
     >>> seeker.findOnSymbol(symbol=symbol,create_fields=True)
-    >>> print(symbol)
+    >>> print(symbol)# doctest: +NORMALIZE_WHITESPACE
     Source | Destination | Field-0                                                           | CRC32_mid_LE24 | Field-1 | Field-2
     ------ | ----------- | ----------------------------------------------------------------- | -------------- | ------- | --------------
     None   | None        | 'Åk@@\x003\x00\n|Ù\x80\x04\x00\n|\n\x90\x00\x00\x00Ä\x00\x01\x01' | '\x0eÒE~'      | 'x'     | '\x00\x00\x00'

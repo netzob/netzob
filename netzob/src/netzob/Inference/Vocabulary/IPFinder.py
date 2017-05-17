@@ -16,7 +16,25 @@ from netzob.Model.Vocabulary.Field import Field
 
 @NetzobLogger
 class IPFinder(object):
-    """Provides multiple algorithms to find IP in messages of a symbol (searches inside fields).
+    r"""Provides multiple algorithms to find IP in messages of a symbol (searches inside fields).
+
+    >>> from netzob.all import *
+    >>> message1 = RawMessage(data=b'\xc5k@@\x003\x00\n|\xd9\x80\x04\x00\n|\n\x90\x00\x00\x00\xc4\x00\x01\x01\x0e\xd2E~x\x00\x00\x00',source='10.10.124.10:1740',destination='10.10.124.217:1740')
+    >>> message2 = RawMessage(data=b'\xc5k@@\x003\x00\n|\xd9\x80\x04\x00\n|\n\x90\x00\x00\x00\xc4\x00\x01\x01\xf7\x15\xc6\xad\t\x00\x00\x00',source='10.10.124.10:1740',destination='10.10.124.217:1740')
+    >>> message3 = RawMessage(data=b"\xc5k@@\x003\x00\n|\xd9\x80\x04\x00\n|\n\x90\x00\x00\x00\xc4\x00\x01\x01YE'\xf1|\x00\x00\x00",source='10.10.124.10:1740',destination='10.10.124.217:1740')
+    >>> messages = [message1,message2,message3]
+    >>> symbol = Symbol(messages=messages)
+    >>> Format.splitStatic(symbol)
+    >>> seeker = IPFinder()
+    >>> seeker.executeOnSymbol(symbol=symbol, create_fields=True, two_terms=False)
+    >>> print(symbol)# doctest: +NORMALIZE_WHITESPACE
+    Source              | Destination          | Field0          | ThreeTIpBe7 | FieldBeforeIp13 | ThreeTIpBe13 | FieldAfterIp13                  | Field-1        | Field-2
+    ------------------- | -------------------- | --------------- | ----------- | --------------- | ------------ | ------------------------------- | -------------- | --------------
+    '10.10.124.10:1740' | '10.10.124.217:1740' | 'Åk@@\x003\x00' | '\n|Ù'      | '\x80\x04\x00'  | '\n|\n'      | '\x90\x00\x00\x00Ä\x00\x01\x01' | '\x0eÒE~x'     | '\x00\x00\x00'
+    '10.10.124.10:1740' | '10.10.124.217:1740' | 'Åk@@\x003\x00' | '\n|Ù'      | '\x80\x04\x00'  | '\n|\n'      | '\x90\x00\x00\x00Ä\x00\x01\x01' | '÷\x15Æ\xad\t' | '\x00\x00\x00'
+    '10.10.124.10:1740' | '10.10.124.217:1740' | 'Åk@@\x003\x00' | '\n|Ù'      | '\x80\x04\x00'  | '\n|\n'      | '\x90\x00\x00\x00Ä\x00\x01\x01' | "YE'ñ|"        | '\x00\x00\x00'
+    ------------------- | -------------------- | --------------- | ----------- | --------------- | ------------ | ------------------------------- | -------------- | --------------
+
     """
 
     def __init__(self):
@@ -40,9 +58,11 @@ class IPFinder(object):
     def executeOnSymbol(self,symbol,create_fields=False,two_terms=False):
         """Find IP fields of the provided symbol. Symbol must have messages to extract IP's from layer 3
         """
-        ip = symbol.messages[0].l3DestinationAddress
+        #ip = symbol.messages[0].l3DestinationAddress
+        ip = symbol.messages[0].destination[:-5]
         self.__seek_ip(ip,symbol,create_fields,two_terms)
-        ip = symbol.messages[0].l3SourceAddress
+        #ip = symbol.messages[0].l3SourceAddress
+        ip = symbol.messages[0].source[:-5]
         self.__seek_ip(ip, symbol, create_fields,two_terms)
 
 
@@ -69,7 +89,6 @@ class IPFinder(object):
             self._logger.debug("[Whole IP Little Endian] : " + str(results.full_le) + "\n"  )
             self._logger.debug("[Three last terms of IP Little Endian] : " + str(results.one_less_le) + "\n" )
             self._logger.debug("[Two last terms of IP Little Endian] : " + str(results.two_less_le) + "\n" )
-            print('\n')
             if create_fields:
                 self._logger.debug("Attempting to create new fields")
                 if symbol.fields:
@@ -189,6 +208,14 @@ class IPFinder(object):
         results = collections.namedtuple('Results',
                                          ['full_be', 'one_less_be', 'two_less_be', 'full_le', 'one_less_le', 'two_less_le',
                                           'total_length'])
+        #Initialize structure:########
+        results.full_be = []
+        results.one_less_be = []
+        results.two_less_be = []
+        results.full_le = []
+        results.one_less_le = []
+        results.two_less_le = []
+        ##############################
         results.full_be = self.__recursive_find(message, index_list, hexipstring)
         index_list = []
         results.one_less_be = self.__recursive_find(message, index_list, hexipstring[1:])

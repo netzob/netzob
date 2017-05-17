@@ -26,7 +26,7 @@ class headerDetector(object):
         >>> field_separator = "CRC32"
         >>> header_seeker = headerDetector(field=True,fieldType=field_separator)
         >>> header_seeker.findOnSymbols([symbol])
-        >>> print(symbol)
+        >>> print(symbol)# doctest: +NORMALIZE_WHITESPACE
         Source | Destination | Field-0_HEADER                                               | Field-1_HEADER | Field-2_HEADER | Field-3_HEADER | Field-4_HEADER | Field-5_HEADER | Field-6_HEADER                 | CRC32_LE36   | Field-8 | Field-9 | Field-10               | Field-11      | Field-12       | Field-13       | Field-14 | Field-15
         ------ | ----------- | ------------------------------------------------------------ | -------------- | -------------- | -------------- | -------------- | -------------- | ------------------------------ | ------------ | ------- | ------- | ---------------------- | ------------- | -------------- | -------------- | -------- | ------------------
         None   | None        | 'Åk@@\x003\x00\n|Ù\x80\x04\x00\n|\n\x90\x00\x00\x00\x01\x81' | '\x8c'         | '\x00'         | '\x1b'         | '\x00\x00\x00' | '\x16'         | '\x00\x00\x00\x18\x00\x00\x00' | 'JK\x98\x9e' | 'UÍ'    | '\x10'  | '\x00\x01\x00\x03\x00' | 'ü÷á\x82\x04' | '\x00\x00\x00' | '\x1a\x10\x00' | '\x00'   | '\x15\x02\x00\x01'
@@ -40,11 +40,11 @@ class headerDetector(object):
         >>> message2 = RawMessage(data=b'CMDencrypt#\n\x00\x00\x00123456test')
         >>> messages = [message1,message2]
         >>> symbol = Symbol(messages=messages)
-        >>> Format.splitDelimiter(ASCII("#"))
+        >>> Format.splitDelimiter(symbol,ASCII("#"))
         >>> separator_field = Field(domain=ASCII("#"))
         >>> seeker = headerDetector(separator=True,separatorValue=separator_field)
-        >>> seeker.findOnSymbol([symbol])
-        >>> print(symbol)
+        >>> seeker.findOnSymbols([symbol])
+        >>> print(symbol)# doctest: +NORMALIZE_WHITESPACE
         Source | Destination | Field-0_HEADER | Field-sep-23 | Field-2
         ------ | ----------- | -------------- | ------------ | --------------------------
         None   | None        | 'CMDencrypt'   | '#'          | '\x06\x00\x00\x00abcdef'

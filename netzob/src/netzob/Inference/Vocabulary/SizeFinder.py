@@ -17,7 +17,26 @@ from netzob.Model.Vocabulary.Domain.Variables.Leafs.Size import Size
 
 @NetzobLogger
 class SizeFinder(object):
-    """Provides multiple algorithms to find Size Relation in messages of a symbol (searches inside fields).
+    r"""Provides multiple algorithms to find Size Relation in messages of a symbol (searches inside fields).
+    >>> from netzob.all import *
+    >>> message1 = RawMessage(data=b'\xc5c@@\x003\x00\n|\n\x90\x00\x00\n|\xd9\x80\x04\x00\x00\x83\x00\x01\x01\x8b`~\xc6+\xcb\xa8g\x00\x00\x8c\x00$v\x01\x00\x00\x07\xb3\x02')
+    >>> message2 = RawMessage(data=b'\xc5c@@\x003\x00\n|\n\x90\x00\x00\n|\xd9\x80\x04\x00\x00\x83\x00\x01\x01\xb9\x1a\xb0\xf6%\xcb\xa8g\x00\x00|\x00$v\x01\x00\x00\x07\xb3\x02')
+    >>> message3 = RawMessage(data=b"\xc5c@@\x003\x00\n|\n\x90\x00\x00\n|\xd9\x80\x04\x00\x00\x83\x00\x01\x01\xcdS`{'\xcb\xa8g\x00\x00\x80\x00$v\x01\00\x00\x07\xb3\x02")
+    >>> message4 = RawMessage(data=b'\xc5c@@\x003\x00\n|\n\x90\x00\x00\n|\xd9\x80\x04\x00\x00\x83\x00\x01\x01\xa7\x9b\xd2\x0f,\xcb\xa8g\x00\x00\x11\x00$v\x01\x00\x00\x07\xb3\x02')
+    >>> messages = [message1,message2,message3,message4]
+    >>> symbol = Symbol(messages = messages)
+    >>> Format.splitStatic(symbol)
+    >>> seeker = SizeFinder()
+    >>> seeker.findOnSymbol(symbol=symbol,create_fields=True,baseIndex=5)
+    >>> print(symbol)# doctest: +NORMALIZE_WHITESPACE
+    Source | Destination | Field-0-0                                                            | Field-0-1 | Field-1       | Field-2       | Field-3 | Field-4-Before_SizeF | Field-4-Size | Field-4-After_Size
+    ------ | ----------- | -------------------------------------------------------------------- | --------- | ------------- | ------------- | ------- | -------------------- | ------------ | ------------------------
+    None   | None        | 'Åc@@\x003\x00\n|\n\x90\x00\x00\n|Ù\x80\x04\x00\x00\x83\x00\x01\x01' | ''        | '\x8b`~Æ+'    | 'Ë¨g\x00\x00' | '\x8c'  | '\x00'               | '$'          | 'v\x01\x00\x00\x07³\x02'
+    None   | None        | 'Åc@@\x003\x00\n|\n\x90\x00\x00\n|Ù\x80\x04\x00\x00\x83\x00\x01\x01' | ''        | '¹\x1a°ö%'    | 'Ë¨g\x00\x00' | '|'     | '\x00'               | '$'          | 'v\x01\x00\x00\x07³\x02'
+    None   | None        | 'Åc@@\x003\x00\n|\n\x90\x00\x00\n|Ù\x80\x04\x00\x00\x83\x00\x01\x01' | ''        | "ÍS`{'"       | 'Ë¨g\x00\x00' | '\x80'  | '\x00'               | '$'          | 'v\x01\x00\x00\x07³\x02'
+    None   | None        | 'Åc@@\x003\x00\n|\n\x90\x00\x00\n|Ù\x80\x04\x00\x00\x83\x00\x01\x01' | ''        | '§\x9bÒ\x0f,' | 'Ë¨g\x00\x00' | '\x11'  | '\x00'               | '$'          | 'v\x01\x00\x00\x07³\x02'
+    ------ | ----------- | -------------------------------------------------------------------- | --------- | ------------- | ------------- | ------- | -------------------- | ------------ | ------------------------
+
     """
 
     def __init__(self):
@@ -58,7 +77,6 @@ class SizeFinder(object):
             self._logger.debug("Result indexes in message: \n ")
             self._logger.debug("[Left to right search] : " + str(results.SizeLR) + "\n")
             self._logger.debug("[Right to left search] : " + str(results.SizeRL) + "\n")
-            print('\n')
             message_relation_dict[str(key)] = results
         lengthLR = 0
         lengthRL = 0
@@ -150,6 +168,7 @@ class SizeFinder(object):
     def __get_field_dep(self,symbol,first_field):
         field_dep = []
         afterff = False
+        subfields = False
         for field in symbol.fields:
             if field == first_field:
                 if field.fields:
