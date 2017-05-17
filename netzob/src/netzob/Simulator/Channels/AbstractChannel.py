@@ -90,6 +90,8 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         self.id = uuid.uuid4() if _id is None else _id
         self.isOpened = False
         self.type = AbstractChannel.TYPE_UNDEFINED
+        self.header = None  # The IP header symbol format
+        self.header_presets = {}  # Dict used to parameterize IP header fields
         self.writeCounter = 0
         self.writeCounterMax = AbstractChannel.DEFAULT_WRITE_COUNTER_MAX
 

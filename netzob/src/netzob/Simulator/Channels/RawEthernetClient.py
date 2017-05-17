@@ -117,8 +117,6 @@ class RawEthernetClient(AbstractChannel):
         self.interface = interface
         self.timeout = timeout
         self.__socket = None
-        self.header = None  # The IP header symbol format
-        self.header_presets = {}  # Dict used to parameterize IP header fields
         self.type = AbstractChannel.TYPE_RAWETHERNETCLIENT
 
         # Header initialization
