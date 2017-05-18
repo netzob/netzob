@@ -477,10 +477,10 @@ class Size(AbstractRelationVariableLeaf):
     def dataType(self, dataType):
         if dataType is None:
             raise TypeError("Datatype cannot be None")
-        (minSize, maxSize) = dataType.size
-        if maxSize is None:
+        size = dataType.unitSize
+        if size is None:
             raise ValueError(
-                "The datatype of a size field must declare its length")
+                "The datatype of a size field must declare its unitSize")
         self.__dataType = dataType
 
     @property

@@ -36,6 +36,7 @@
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
 from bitarray import bitarray
+import inspect
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -100,12 +101,12 @@ class MessageSpecializer(object):
 
     """
 
-    def __init__(self, memory=None, presets=None, mutators=None):
+    def __init__(self, memory=None, presets=None, fuzz=None):
         if memory is None:
             memory = Memory()
         self.memory = memory
         self.presets = presets
-        self.mutators = mutators
+        self.fuzz = fuzz
 
     @typeCheck(Symbol)
     def specializeSymbol(self, symbol):
@@ -120,12 +121,12 @@ class MessageSpecializer(object):
         # are converted into bitarray.
         self._normalize_presets(symbol)
 
-        # Normalize mutators definition: fields described with field
+        # Normalize fuzzing definition: fields described with field
         # name are converted into field object.
-        self._normalize_mutators(symbol)
+        self._normalize_fuzz(symbol)
 
-        # Remove preseted fields when they are concerned with mutators
-        self._filterPresetsWithMutators(symbol)
+        # Remove preseted fields when they are concerned with fuzzing
+        self._filterPresetsWithFuzz(symbol)
 
         # this variable host all the specialization path
         specializingPaths = [SpecializingPath(memory=self.memory)]
@@ -139,7 +140,7 @@ class MessageSpecializer(object):
                     "Cannot specialize field '{0}' since it defines no domain".
                     format(fieldDomain))
 
-            fs = FieldSpecializer(field, presets=self.presets, mutators=self.mutators)
+            fs = FieldSpecializer(field, presets=self.presets, fuzz=self.fuzz)
 
             newSpecializingPaths = []
             for specializingPath in specializingPaths:
@@ -306,42 +307,73 @@ class MessageSpecializer(object):
         self.presets.update(new_keys)
 
     @typeCheck(Symbol)
-    def _normalize_mutators(self, symbol):
-        """Update the mutators dict, according to the symbol definition.
+    def _normalize_fuzz(self, symbol):
+        """Update the fuzz dict, according to the symbol definition.
 
         Fields described with field name are converted into field
         object.
 
         """
 
-        if self.mutators is None:
+        if self.fuzz is None:
             return
 
+        # Normalize fuzzin keys
         new_keys = {}
-        old_keys = []
-        for k, v in self.mutators.items():
+        keys_to_remove = []
+        for k, v in self.fuzz.mappingFieldsMutators.items():
 
-            # Handle case where k is a string
+            # Handle case where k is a Field -> nothing to do
             if isinstance(k, Field):
                 pass
-            elif isinstance(k, str):
-
-                # Retrieve associated Field based on its string name
-                for f in symbol.getLeafFields(includePseudoFields=True):
-                    if f.name == k:
+            # Handle case where k is a Symbol -> we retrieve all its sub-fields
+            elif isinstance(k, Symbol):
+                subfields = k.getLeafFields(includePseudoFields=True)
+                keys_to_remove.append(k)
+                for f in subfields:
+                    # We check if the field is not already present in the fields to mutate
+                    if f not in self.fuzz.mappingFieldsMutators.keys():
                         new_keys[f] = v
-                        old_keys.append(k)
             else:
-                raise Exception("Mutators's keys must be of Field or string types")
+                raise Exception("Fuzz's keys must be a Symbol or a "
+                                "Field, but not a '{}'".format(type(k)))
 
-        # Replace string keys by their equivalent Field keys
-        for old_key in old_keys:
-            self.mutators.pop(old_key)
-        self.mutators.update(new_keys)
+        # Update keys
+        for old_key in keys_to_remove:
+            self.fuzz.mappingFieldsMutators.pop(old_key)
+        self.fuzz.mappingFieldsMutators.update(new_keys)
+
+        # Normalize fuzzing values
+        keys_to_remove = []
+        from netzob.Fuzzing.Fuzz import Fuzz
+        from netzob.Fuzzing.Mutator import Mutator
+        for k, v in self.fuzz.mappingFieldsMutators.items():
+            if not isinstance(v, tuple):
+                raise Exception("Value should be a tuple. Got: '{}'".format(v))
+            (v_m, v_kwargs) = v
+            if inspect.isclass(v_m) and issubclass(v_m, Mutator):
+                # We instanciate the mutator
+                v_m_instance = v_m(domain=k.domain, **v_kwargs)
+                # We replace the mutator class by the mutate instance in the main dict
+                self.fuzz.set(k, v_m_instance)
+            elif isinstance(v_m, Mutator):
+                pass
+            elif v_m == Mutator.NONE:
+                keys_to_remove.append(k)
+            elif v_m in [Mutator.GENERATE, Mutator.MUTATE]:
+                mutator_instance = Fuzz.defaultMutator(k.domain, **v_kwargs)
+                mutator_instance.mode = v_m
+                self.fuzz.set(k, mutator_instance)
+            else:
+                raise Exception("Fuzz's value '{} (type: {})' must be a Mutator instance or Mutator.(GENERATE|MUTATE|NONE)".format(v, type(v)))
+
+        # Update keys
+        for old_key in keys_to_remove:
+            self.fuzz.mappingFieldsMutators.pop(old_key)
 
     @typeCheck(Symbol)
-    def _filterPresetsWithMutators(self, symbol):
-        """Remove preseted fields when they are concerned with mutators,
+    def _filterPresetsWithFuzz(self, symbol):
+        """Remove preseted fields when they are concerned with fuzzing,
         because mutation has priority over preseting values.
 
         """
@@ -349,10 +381,10 @@ class MessageSpecializer(object):
         if self.presets is None:
             return
 
-        if self.mutators is None:
+        if self.fuzz is None:
             return
 
-        for (mutator_k, mutator_v) in self.mutators.items():
-            if mutator_k in self.presets.keys():
-                self._logger.debug("Removing preseted key '{0}' in self.presets as it is already used in self.mutators.".format(mutator_k))
-                self.presets.pop(mutator_k)
+        for (fuzz_k, fuzz_v) in self.fuzz.mappingFieldsMutators.items():
+            if fuzz_k in self.presets.keys():
+                self._logger.debug("Removing preseted key '{0}' in self.presets as it is already used in self.fuzz.".format(fuzz_k))
+                self.presets.pop(fuzz_k)

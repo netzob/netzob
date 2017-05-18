@@ -28,19 +28,21 @@
 
 #+---------------------------------------------------------------------------+
 #| File contributors :                                                       |
-#|       - Georges Bossert <gbossert (a) miskin.fr>                          |
+#|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
+#|       - Rémy Delion <remy.delion (a) amossys.fr>                          |
 #+---------------------------------------------------------------------------+
 
 
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
 
+from netzob.Fuzzing.Fuzz import Fuzz
+from netzob.Fuzzing.Mutator import Mutator
 from netzob.Fuzzing.AlternativeMutator import AlternativeMutator
 from netzob.Fuzzing.AutomataMutator import AutomataMutator
 from netzob.Fuzzing.BinarySequenceMutator import BinarySequenceMutator
 from netzob.Fuzzing.DeterministGenerator import DeterministGenerator
 from netzob.Fuzzing.DeterministIntegerMutator import DeterministIntegerMutator
-from netzob.Fuzzing.Mutator import Mutator
 from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
 from netzob.Fuzzing.SequenceMutator import SequenceMutator
 from netzob.Fuzzing.StringPaddedGenerator import StringPaddedGenerator

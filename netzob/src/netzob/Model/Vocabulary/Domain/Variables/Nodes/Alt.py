@@ -175,7 +175,7 @@ class Alt(AbstractVariableNode):
                     yield childParsingPath
 
     @typeCheck(SpecializingPath)
-    def specialize(self, specializingPath, mutators=None):
+    def specialize(self, specializingPath, fuzz=None):
         """Specializes an Alt"""
 
         if specializingPath is None:
@@ -192,7 +192,7 @@ class Alt(AbstractVariableNode):
             self._logger.debug("ALT Specialize of {0}/{1} with {2}".format(
                 i_child + 1, len(self.children), newSpecializingPath))
 
-            childSpecializingPaths = child.specialize(newSpecializingPath, mutators=mutators)
+            childSpecializingPaths = child.specialize(newSpecializingPath, fuzz=fuzz)
             if len(childSpecializingPaths) == 0:
                 self._logger.debug("Path {0} on child {1} didn't succeed.".
                                    format(newSpecializingPath, child))

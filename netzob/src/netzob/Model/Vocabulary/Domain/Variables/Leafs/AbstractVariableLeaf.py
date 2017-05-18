@@ -114,25 +114,25 @@ class AbstractVariableLeaf(AbstractVariable):
     def learn(self, parsingPath, acceptCallBack, carnivorous):
         raise NotImplementedError("method learn is not implemented")
 
-    def specialize(self, parsingPath, mutators=None, acceptCallBack=True):
+    def specialize(self, parsingPath, fuzz=None, acceptCallBack=True):
         """@toto TO BE DOCUMENTED"""
 
         # Fuzzing has priority over generating a legitimate value
         from netzob.Fuzzing.Mutator import Mutator
-        if mutators is not None and self.field is not None and self.field in mutators.keys() and mutators[self.field].mode == Mutator.GENERATE:
+        if fuzz is not None and fuzz.get(self.field) is not None and fuzz.get(self.field).mode == Mutator.GENERATE:
 
             # Retrieve the mutator
-            mutator = mutators[self.field]
+            mutator = fuzz.get(self.field)
 
             # Mutate a value according to the current field attributes
-            mutated_value = mutator.generate(self)
+            generated_value = mutator.generate(self)
 
             # Convert the return bytes into bitarray
             value = bitarray(endian='big')
-            value.frombytes(mutated_value)
+            value.frombytes(generated_value)
             arbitraryValue = value
 
-            # Associate the mutate value to the current variable
+            # Associate the generated value to the current variable
             newParsingPaths = []
             parsingPath.addResult(self, arbitraryValue)
             newParsingPaths.append(parsingPath)
@@ -161,7 +161,7 @@ class AbstractVariableLeaf(AbstractVariable):
             elif self.svas == SVAS.VOLATILE:
                 newParsingPaths = self.regenerate(parsingPath, acceptCallBack)
 
-        if mutators is not None and self.field is not None and self.field in mutators.keys() and mutators[self.field].mode == Mutator.MUTATE:
+        if fuzz is not None and fuzz.get(self.field) is not None and fuzz.get(self.field).mode == Mutator.MUTATE:
 
             if len(newParsingPaths) == 0:
                 self._logger.warn("No data generated for the field: '{}'".format(self.field))
@@ -170,7 +170,7 @@ class AbstractVariableLeaf(AbstractVariable):
                 generatedData = newParsingPaths[0].getDataAssignedToVariable(self)
 
                 # Retrieve the mutator
-                mutator = mutators[self.field]
+                mutator = fuzz.get(self.field)
 
                 # Mutate a value according to the current field attributes
                 mutated_value = mutator.mutate(generatedData)

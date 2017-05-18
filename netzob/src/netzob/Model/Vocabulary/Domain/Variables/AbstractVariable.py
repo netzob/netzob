@@ -85,7 +85,7 @@ class AbstractVariable(object):
         self.field = None
 
     @abc.abstractmethod
-    def specialize(self, originalSpecializingPath, mutators=None):
+    def specialize(self, originalSpecializingPath, fuzz=None):
         """Specializes the current variable."""
         raise NotImplementedError("Method specialize() is not implemented")
 

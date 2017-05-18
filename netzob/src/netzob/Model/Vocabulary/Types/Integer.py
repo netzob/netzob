@@ -414,7 +414,35 @@ class Integer(AbstractType):
         if max_interval is None:
             max_interval = interval[1]
 
-        return (min_interval, max_interval)
+        return min_interval, max_interval
+
+    def getMinValue(self):
+        if self.value is None:
+            return self.size[0]
+        else:
+            from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+            from netzob.Model.Vocabulary.Types.BitArray import BitArray
+            return TypeConverter.convert(self.value, BitArray, Integer, dst_unitSize=self.unitSize, dst_endianness=self.endianness, dst_sign=self.sign)
+
+    def getMaxValue(self):
+        if self.value is None:
+            return self.size[1]
+        else:
+            from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+            from netzob.Model.Vocabulary.Types.BitArray import BitArray
+            return TypeConverter.convert(self.value, BitArray, Integer, dst_unitSize=self.unitSize, dst_endianness=self.endianness, dst_sign=self.sign)
+
+    def getMinStorageValue(self):
+        if self.sign == AbstractType.SIGN_UNSIGNED:
+            return 0
+        else:
+            return -int((2**int(self.unitSize))/2)
+
+    def getMaxStorageValue(self):
+        if self.sign == AbstractType.SIGN_UNSIGNED:
+            return 2**self.unitSize - 1
+        else:
+            return int((2**self.unitSize)/2) - 1
 
     def canParse(self,
                  data,

@@ -109,12 +109,12 @@ class FieldSpecializer(object):
 
     """
 
-    def __init__(self, field, presets=None, mutators=None):
+    def __init__(self, field, presets=None, fuzz=None):
         self._logger.debug("Creating a new FieldSpecializer.")
 
         self.field = field
         self.presets = presets
-        self.mutators = mutators
+        self.fuzz = fuzz
 
         if self.presets is not None and self.field in self.presets.keys():
             self.arbitraryValue = self.presets[self.field]
@@ -154,7 +154,7 @@ class FieldSpecializer(object):
 
         resultPaths = [specializingPath]
         for child in self.field.fields:
-            fs = FieldSpecializer(child, presets=self.presets, mutators=self.mutators)
+            fs = FieldSpecializer(child, presets=self.presets, fuzz=self.fuzz)
 
             tmpResultPaths = []
             for path in resultPaths:
@@ -192,7 +192,7 @@ class FieldSpecializer(object):
                 format(self.field.name))
 
         # we create a first VariableParser and uses it to parse the domain
-        variableSpecializer = VariableSpecializer(domain, mutators=self.mutators)
+        variableSpecializer = VariableSpecializer(domain, fuzz=self.fuzz)
         resultSpecializingPaths = variableSpecializer.specialize(specializingPath)
 
         for resultSpecializingPath in resultSpecializingPaths:

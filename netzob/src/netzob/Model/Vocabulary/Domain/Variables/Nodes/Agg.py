@@ -220,7 +220,7 @@ class Agg(AbstractVariableNode):
         return parsingPaths
 
     @typeCheck(SpecializingPath)
-    def specialize(self, originalSpecializingPath, mutators=None):
+    def specialize(self, originalSpecializingPath, fuzz=None):
         """Specializes an Agg"""
 
         # initialy, there is a unique path to specialize (the provided one)
@@ -237,7 +237,7 @@ class Agg(AbstractVariableNode):
                 self._logger.debug(
                     "Spcialize {0} with {1}".format(child, specializingPath))
 
-                childSpecializingPaths = child.specialize(specializingPath, mutators=mutators)
+                childSpecializingPaths = child.specialize(specializingPath, fuzz=fuzz)
 
                 if len(childSpecializingPaths) > 0:
                     # at least one child path managed to specialize, we save the valid paths it produced

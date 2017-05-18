@@ -28,13 +28,14 @@
 
 # +---------------------------------------------------------------------------+
 # | File contributors :                                                       |
-# |       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
 # |       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
+# |       - Rémy Delion <remy.delion (a) amossys.fr>                          |
 # +---------------------------------------------------------------------------+
 
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
+from typing import Iterable
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -48,8 +49,7 @@ from netzob.Fuzzing.DeterministGenerator import DeterministGenerator
 from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Model.Vocabulary.AbstractField import AbstractField
-
-from typing import Iterable
+from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 
 
 class DeterministIntegerMutator(Mutator):
@@ -58,70 +58,48 @@ class DeterministIntegerMutator(Mutator):
     >>> from netzob.all import *
     >>> mutator = DeterministIntegerMutator()
     >>> intField = uint16le()
-    >>> mutator.field = intField
-    >>> dataHex = mutator.mutate()
+    >>> dataHex = mutator.mutate(intField.domain)
 
     """
 
-    def __init__(self, minValue=None, maxValue=None):
-        super().__init__()
-        self._field = None
+    def __init__(self, domain, interval=None, mode=None):
+        # Sanity checks
+        if domain is None:
+            raise Exception("Domain should be known to initialize a mutator")
+        if not isinstance(domain, AbstractVariable):
+            raise Exception("Mutator domain should be of type AbstractVariable. Received object: '{}'".format(domain))
+        if not hasattr(domain, 'dataType'):
+            raise Exception("Mutator domain should have a dataType Integer")
+        if not isinstance(domain.dataType, Integer):
+            raise Exception("Mutator domain dataType should be an Integer, not '{}'".format(type(domain.dataType)))
+
+        # Find min and max potential values for interval
+        minValue = 0
+        maxValue = 0
+        if isinstance(interval, tuple) and len(interval) == 2 and isinstance(interval[0], int) and isinstance(interval[1], int):
+            # Handle desired interval according to the storage space of the domain dataType
+            minValue = max(interval[0], domain.dataType.getMinStorageValue())
+            maxValue = min(interval[1], domain.dataType.getMinStorageValue())
+        elif (interval == Mutator.DEFAULT_INTERVAL or interval is None) and hasattr(domain, 'dataType'):
+            minValue = domain.dataType.getMinValue()
+            maxValue = domain.dataType.getMaxValue()
+        elif interval == Mutator.FULL_INTERVAL and hasattr(domain, 'dataType'):
+            minValue = domain.dataType.getMinStorageValue()
+            maxValue = domain.dataType.getMaxStorageValue()
+        else:
+            raise Exception("Not enough information to generate the mutated data")
         self._minValue = minValue
         self._maxValue = maxValue
+
+        # Call parent init
+        super().__init__(domain=domain, mode=mode)
+        
+        # Initialize values to generate
         self._ng = DeterministGenerator()
-
-    @property
-    def field(self):
-        """The field to which the mutation is applied.
-        When setting the field, the determinist values are generated.
-
-        :type: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`
-        """
-        return self._field
-
-    @field.setter
-    def field(self, abstractField):
-        self._field = abstractField
-        if abstractField is None:
-            raise Exception("Field is None")
-        if not isinstance(abstractField.domain.dataType, Integer):
-            raise Exception("Field does not correspond to an Integer")
-
-        # Retrieve the min and max values from the field properties
-        fieldType = abstractField.domain.dataType
-        interval = fieldType.size
-        if interval is not None:
-            if isinstance(interval, Iterable) and len(interval) == 2:
-                low, high = interval
-                if self._minValue is None or low > self._minValue:
-                    self._minValue = low
-                if self._maxValue is None or high < self._maxValue:
-                    self._maxValue = high
-
-        if (fieldType.unitSize == AbstractType.UNITSIZE_1 or
-            fieldType.unitSize == AbstractType.UNITSIZE_4 or
-            fieldType.unitSize == AbstractType.UNITSIZE_8 or
-            fieldType.unitSize == AbstractType.UNITSIZE_16 or
-            fieldType.unitSize == AbstractType.UNITSIZE_32 or
-            fieldType.unitSize == AbstractType.UNITSIZE_64):
-
-            if fieldType.sign == AbstractType.SIGN_UNSIGNED:
-                if self._minValue is None or self._minValue < 0:
-                    self._minValue = 0
-                if self._maxValue is None:
-                    self._maxValue = 2**int(fieldType.unitSize) - 1
-            else:
-                low = -int((2**int(fieldType.unitSize))/2)
-                high = -low - 1
-                if self._minValue is None or self._minValue < low:
-                    self._minValue = low
-                if self._maxValue is None or self._maxValue > high:
-                    self._maxValue = high
-        if isinstance(self._ng, DeterministGenerator):
-            self._ng.createValues(self._minValue,
-                                  self._maxValue,
-                                  int(fieldType.unitSize),
-                                  fieldType.sign == AbstractType.SIGN_SIGNED)
+        self._ng.createValues(self._minValue,
+                              self._maxValue,
+                              domain.dataType.unitSize,
+                              domain.dataType.sign == AbstractType.SIGN_SIGNED)
 
     def reset(self):
         self._ng.reset()
@@ -134,39 +112,33 @@ class DeterministIntegerMutator(Mutator):
         :return: the value at the given position
         :rtype: :class:`int`
         """
-        if self.field is not None:
-            value = self._ng.getValueAt(position)
-            return Integer.decode(value,
-                                  unitSize=self.field.domain.dataType.unitSize,
-                                  endianness=self.field.domain.dataType.endianness,
-                                  sign=self.field.domain.dataType.sign)
-        else:
-            raise Exception("Field to mutate not set")
+        value = self._ng.getValueAt(position)
+        return Integer.decode(value,
+                              unitSize=self.field.domain.dataType.unitSize,
+                              endianness=self.field.domain.dataType.endianness,
+                              sign=self.field.domain.dataType.sign)
 
     def getNbValues(self):
-        """Returns the number of determinist values generated for the field.
+        """Returns the number of determinist values generated for the field domain.
 
         :return: the number of determinist values
         :rtype: :class:`int`
         """
         return len(self._ng.values)
 
-    def generate(self):
-        """This is the fuzz generation method of the integer field.
+    def generate(self, domain):
+        """This is the fuzz generation method of the integer field domain.
         It uses a determinist generator to produce the value.
 
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
         """
-        if self.field is not None:
-            if self._currentCounter < self.counterMax:
-                self._currentCounter += 1
-                value = self._ng.getNewValue()
-                return Integer.decode(value,
-                                      unitSize=self.field.domain.dataType.unitSize,
-                                      endianness=self.field.domain.dataType.endianness,
-                                      sign=self.field.domain.dataType.sign)
-            else:
-                raise Exception("Max mutation counter reached")
+        if self._currentCounter < self.counterMax:
+            self._currentCounter += 1
+            value = self._ng.getNewValue()
+            return Integer.decode(value,
+                                  unitSize=domain.dataType.unitSize,
+                                  endianness=domain.dataType.endianness,
+                                  sign=domain.dataType.sign)
         else:
-            raise Exception("Field to mutate not set")
+            raise Exception("Max mutation counter reached")
