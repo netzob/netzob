@@ -173,8 +173,8 @@ class Fuzz(object):
         from netzob.Fuzzing.Fuzz import Fuzz
         from netzob.Fuzzing.Mutator import Mutator
         for k, v in self.mappingFieldsMutators.items():
-            if v is None or not isinstance(v, tuple):
-                raise Exception("Value should be a tuple. Got: '{}'".format(v))
+            if not isinstance(v, tuple):
+                raise TypeError("Value should be a tuple. Got: '{}'".format(v))
             (v_m, v_kwargs) = v
             if inspect.isclass(v_m) and issubclass(v_m, Mutator):
                 # We instanciate the mutator
