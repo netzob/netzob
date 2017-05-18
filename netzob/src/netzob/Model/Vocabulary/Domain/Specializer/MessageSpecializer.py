@@ -36,7 +36,6 @@
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
 from bitarray import bitarray
-import inspect
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -123,7 +122,7 @@ class MessageSpecializer(object):
 
         # Normalize fuzzing definition: fields described with field
         # name are converted into field object.
-        self._normalize_fuzz(symbol)
+        #self._normalize_fuzz(symbol)
 
         # Remove preseted fields when they are concerned with fuzzing
         self._filterPresetsWithFuzz(symbol)
@@ -305,71 +304,6 @@ class MessageSpecializer(object):
         for old_key in old_keys:
             self.presets.pop(old_key)
         self.presets.update(new_keys)
-
-    @typeCheck(Symbol)
-    def _normalize_fuzz(self, symbol):
-        """Update the fuzz dict, according to the symbol definition.
-
-        Fields described with field name are converted into field
-        object.
-
-        """
-
-        if self.fuzz is None:
-            return
-
-        # Normalize fuzzin keys
-        new_keys = {}
-        keys_to_remove = []
-        for k, v in self.fuzz.mappingFieldsMutators.items():
-
-            # Handle case where k is a Field -> nothing to do
-            if isinstance(k, Field):
-                pass
-            # Handle case where k is a Symbol -> we retrieve all its sub-fields
-            elif isinstance(k, Symbol):
-                subfields = k.getLeafFields(includePseudoFields=True)
-                keys_to_remove.append(k)
-                for f in subfields:
-                    # We check if the field is not already present in the fields to mutate
-                    if f not in self.fuzz.mappingFieldsMutators.keys():
-                        new_keys[f] = v
-            else:
-                raise Exception("Fuzz's keys must be a Symbol or a "
-                                "Field, but not a '{}'".format(type(k)))
-
-        # Update keys
-        for old_key in keys_to_remove:
-            self.fuzz.mappingFieldsMutators.pop(old_key)
-        self.fuzz.mappingFieldsMutators.update(new_keys)
-
-        # Normalize fuzzing values
-        keys_to_remove = []
-        from netzob.Fuzzing.Fuzz import Fuzz
-        from netzob.Fuzzing.Mutator import Mutator
-        for k, v in self.fuzz.mappingFieldsMutators.items():
-            if not isinstance(v, tuple):
-                raise Exception("Value should be a tuple. Got: '{}'".format(v))
-            (v_m, v_kwargs) = v
-            if inspect.isclass(v_m) and issubclass(v_m, Mutator):
-                # We instanciate the mutator
-                v_m_instance = v_m(domain=k.domain, **v_kwargs)
-                # We replace the mutator class by the mutate instance in the main dict
-                self.fuzz.set(k, v_m_instance)
-            elif isinstance(v_m, Mutator):
-                pass
-            elif v_m == Mutator.NONE:
-                keys_to_remove.append(k)
-            elif v_m in [Mutator.GENERATE, Mutator.MUTATE]:
-                mutator_instance = Fuzz.defaultMutator(k.domain, **v_kwargs)
-                mutator_instance.mode = v_m
-                self.fuzz.set(k, mutator_instance)
-            else:
-                raise Exception("Fuzz's value '{} (type: {})' must be a Mutator instance or Mutator.(GENERATE|MUTATE|NONE)".format(v, type(v)))
-
-        # Update keys
-        for old_key in keys_to_remove:
-            self.fuzz.mappingFieldsMutators.pop(old_key)
 
     @typeCheck(Symbol)
     def _filterPresetsWithFuzz(self, symbol):

@@ -37,6 +37,7 @@
 # +---------------------------------------------------------------------------+
 import abc
 import random
+import inspect
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -45,8 +46,10 @@ import random
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
+from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Model.Vocabulary.Types.String import String
 from netzob.Model.Vocabulary.Types.Raw import Raw
@@ -93,6 +96,7 @@ class Fuzz(object):
             self.mappingTypesMutators[key] = value
         elif isinstance(key, AbstractField) or isinstance(key, str):
             self.mappingFieldsMutators[key] = (value, kwargs)
+            self._normalize_mappingFieldsMutators()
         else:
             raise TypeError("Unsupported type for key: '{}'".format(type(key)))
 
@@ -130,3 +134,65 @@ class Fuzz(object):
         mutatorInstance = mutator(domain=domain, **kwargs)
 
         return mutatorInstance
+
+    def _normalize_mappingFieldsMutators(self):
+        """Normalize the fuzz structure.
+
+        Fields described with field name are converted into field
+        object.
+
+        """
+
+        # Normalize fuzzin keys
+        new_keys = {}
+        keys_to_remove = []
+        for k, v in self.mappingFieldsMutators.items():
+
+            # Handle case where k is a Field -> nothing to do
+            if isinstance(k, Field):
+                pass
+            # Handle case where k is a Symbol -> we retrieve all its sub-fields
+            elif isinstance(k, Symbol):
+                subfields = k.getLeafFields(includePseudoFields=True)
+                keys_to_remove.append(k)
+                for f in subfields:
+                    # We check if the field is not already present in the fields to mutate
+                    if f not in self.mappingFieldsMutators.keys():
+                        new_keys[f] = v
+            else:
+                raise Exception("Fuzz's keys must be a Symbol or a "
+                                "Field, but not a '{}'".format(type(k)))
+
+        # Update keys
+        for old_key in keys_to_remove:
+            self.mappingFieldsMutators.pop(old_key)
+        self.mappingFieldsMutators.update(new_keys)
+
+        # Normalize fuzzing values
+        keys_to_remove = []
+        from netzob.Fuzzing.Fuzz import Fuzz
+        from netzob.Fuzzing.Mutator import Mutator
+        for k, v in self.mappingFieldsMutators.items():
+            if not isinstance(v, tuple):
+                raise Exception("Value should be a tuple. Got: '{}'".format(v))
+            (v_m, v_kwargs) = v
+            if inspect.isclass(v_m) and issubclass(v_m, Mutator):
+                # We instanciate the mutator
+                v_m_instance = v_m(domain=k.domain, **v_kwargs)
+                # We replace the mutator class by the mutate instance in the main dict
+                self.set(k, v_m_instance)
+            elif isinstance(v_m, Mutator):
+                pass
+            elif v_m == Mutator.NONE:
+                keys_to_remove.append(k)
+            elif v_m in [Mutator.GENERATE, Mutator.MUTATE]:
+                mutator_instance = Fuzz.defaultMutator(k.domain, **v_kwargs)
+                mutator_instance.mode = v_m
+                self.set(k, mutator_instance)
+            else:
+                raise Exception("Fuzz's value '{} (type: {})' must be a Mutator instance or Mutator.(GENERATE|MUTATE|NONE)".format(v, type(v)))
+
+        # Update keys
+        for old_key in keys_to_remove:
+            self.mappingFieldsMutators.pop(old_key)
+
