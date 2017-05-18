@@ -120,10 +120,6 @@ class MessageSpecializer(object):
         # are converted into bitarray.
         self._normalize_presets(symbol)
 
-        # Normalize fuzzing definition: fields described with field
-        # name are converted into field object.
-        #self._normalize_fuzz(symbol)
-
         # Remove preseted fields when they are concerned with fuzzing
         self._filterPresetsWithFuzz(symbol)
 
