@@ -128,7 +128,7 @@ class PseudoRandomIntegerMutator(Mutator):
         self._prng.reset()
         self.resetCurrentCounter()
 
-    def generate(self, domain):
+    def generate(self):
         """This is the mutation method of the integer type.
         It uses a PRNG to produce the value between minValue and maxValue.
 
@@ -148,8 +148,8 @@ class PseudoRandomIntegerMutator(Mutator):
                         * (self.maxValue - self.minValue)
                         + self.minValue)
             return Integer.decode(value,
-                                  unitSize=domain.dataType.unitSize,
-                                  endianness=domain.dataType.endianness,
-                                  sign=domain.dataType.sign)
+                                  unitSize=self.domain.dataType.unitSize,
+                                  endianness=self.domain.dataType.endianness,
+                                  sign=self.domain.dataType.sign)
         else:
             raise Exception("Max mutation counter reached")

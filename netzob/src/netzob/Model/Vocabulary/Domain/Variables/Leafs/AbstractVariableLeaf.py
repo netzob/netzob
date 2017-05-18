@@ -125,7 +125,7 @@ class AbstractVariableLeaf(AbstractVariable):
             mutator = fuzz.get(self.field)
 
             # Mutate a value according to the current field attributes
-            generated_value = mutator.generate(self)
+            generated_value = mutator.generate()
 
             # Convert the return bytes into bitarray
             value = bitarray(endian='big')

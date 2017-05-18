@@ -114,9 +114,9 @@ class DeterministIntegerMutator(Mutator):
         """
         value = self._ng.getValueAt(position)
         return Integer.decode(value,
-                              unitSize=self.field.domain.dataType.unitSize,
-                              endianness=self.field.domain.dataType.endianness,
-                              sign=self.field.domain.dataType.sign)
+                              unitSize=self.domain.dataType.unitSize,
+                              endianness=self.domain.dataType.endianness,
+                              sign=self.domain.dataType.sign)
 
     def getNbValues(self):
         """Returns the number of determinist values generated for the field domain.
@@ -126,7 +126,7 @@ class DeterministIntegerMutator(Mutator):
         """
         return len(self._ng.values)
 
-    def generate(self, domain):
+    def generate(self):
         """This is the fuzz generation method of the integer field domain.
         It uses a determinist generator to produce the value.
 
@@ -137,8 +137,8 @@ class DeterministIntegerMutator(Mutator):
             self._currentCounter += 1
             value = self._ng.getNewValue()
             return Integer.decode(value,
-                                  unitSize=domain.dataType.unitSize,
-                                  endianness=domain.dataType.endianness,
-                                  sign=domain.dataType.sign)
+                                  unitSize=self.domain.dataType.unitSize,
+                                  endianness=self.domain.dataType.endianness,
+                                  sign=self.domain.dataType.sign)
         else:
             raise Exception("Max mutation counter reached")
