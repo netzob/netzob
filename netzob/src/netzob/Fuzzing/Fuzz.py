@@ -94,7 +94,7 @@ class Fuzz(object):
         if isinstance(key, type):
             # kwargs are useless here
             self.mappingTypesMutators[key] = value
-        elif isinstance(key, AbstractField) or isinstance(key, str):
+        elif isinstance(key, AbstractField):
             self.mappingFieldsMutators[key] = (value, kwargs)
             self._normalize_mappingFieldsMutators()
         else:
@@ -125,7 +125,7 @@ class Fuzz(object):
         
         # Retrieve the default mutator for the domain dataType
         mutator = None
-        if hasattr(domain, 'dataType') and domain.dataType is not None and type(domain.dataType) in Fuzz.mappingTypesMutators:
+        if type(getattr(domain, 'dataType', None)) in  Fuzz.mappingTypesMutators:
             mutator = Fuzz.mappingTypesMutators[type(domain.dataType)]
         else:
             raise Exception("The domain '{}' has no configured dataType. Cannot find a default Mutator without information regarding the domain type.")
@@ -173,7 +173,7 @@ class Fuzz(object):
         from netzob.Fuzzing.Fuzz import Fuzz
         from netzob.Fuzzing.Mutator import Mutator
         for k, v in self.mappingFieldsMutators.items():
-            if not isinstance(v, tuple):
+            if v is None or not isinstance(v, tuple):
                 raise Exception("Value should be a tuple. Got: '{}'".format(v))
             (v_m, v_kwargs) = v
             if inspect.isclass(v_m) and issubclass(v_m, Mutator):
