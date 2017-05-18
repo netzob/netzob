@@ -45,11 +45,11 @@
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Mutator import Mutator
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Fuzzing.all import (DeterministIntegerMutator,
-                                StringPaddedGenerator)
+from netzob.Fuzzing.DeterministIntegerMutator import DeterministIntegerMutator
+from netzob.Fuzzing.StringPaddedGenerator import StringPaddedGenerator
 from netzob.Model.Vocabulary.Types.Integer import uint16le
 from netzob.Model.Vocabulary.Types.String import String
-from netzob.all import Field
+from netzob.Model.Vocabulary.Field import Field
 
 
 class StringMutator(Mutator):
