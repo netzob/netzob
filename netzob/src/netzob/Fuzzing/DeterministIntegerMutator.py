@@ -79,7 +79,7 @@ class DeterministIntegerMutator(Mutator):
         if isinstance(interval, tuple) and len(interval) == 2 and isinstance(interval[0], int) and isinstance(interval[1], int):
             # Handle desired interval according to the storage space of the domain dataType
             minValue = max(interval[0], domain.dataType.getMinStorageValue())
-            maxValue = min(interval[1], domain.dataType.getMinStorageValue())
+            maxValue = min(interval[1], domain.dataType.getMaxStorageValue())
         elif (interval == Mutator.DEFAULT_INTERVAL or interval is None) and hasattr(domain, 'dataType'):
             minValue = domain.dataType.getMinValue()
             maxValue = domain.dataType.getMaxValue()
@@ -93,7 +93,7 @@ class DeterministIntegerMutator(Mutator):
 
         # Call parent init
         super().__init__(domain=domain, mode=mode)
-        
+
         # Initialize values to generate
         self._ng = DeterministGenerator()
         self._ng.createValues(self._minValue,

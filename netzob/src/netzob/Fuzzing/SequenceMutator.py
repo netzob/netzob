@@ -48,6 +48,7 @@ from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Fuzzing.DeterministIntegerMutator import (
     DeterministIntegerMutator)
 from netzob.Model.Vocabulary.Types.Integer import uint32le
+from netzob.Model.Vocabulary.Field import Field
 
 
 class SequenceMutator(Mutator):
@@ -70,7 +71,7 @@ class SequenceMutator(Mutator):
         self._elementMutator = None
         self._minLength = SequenceMutator.DEFAULT_MIN_LENGTH
         self._maxLength = SequenceMutator.DEFAULT_MAX_LENGTH
-        self._elementLength = uint32le()
+        self._elementLength = Field(uint32le())
         self._lengthMutator = DeterministIntegerMutator(
             minValue=self._minLength,
             maxValue=self.maxLength)

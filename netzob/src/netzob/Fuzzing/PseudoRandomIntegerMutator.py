@@ -144,7 +144,7 @@ class PseudoRandomIntegerMutator(Mutator):
         # Generate and return a random value in the interval
         if self.currentCounter < self.counterMax:
             self._currentCounter += 1
-            value = int(self._prng.getNew0To1Value()
+            value = int(self._prng.getNew0To1Value32Bits()
                         * (self.maxValue - self.minValue)
                         + self.minValue)
             return Integer.decode(value,

@@ -112,9 +112,8 @@ class StringMutator(Mutator):
 
         self._stringLength = Field(uint16le())
         self._lengthMutator = DeterministIntegerMutator(
-            minValue=self._minLength,
-            maxValue=self.maxLength)
-        self._lengthMutator.field = self._stringLength
+            domain=self._stringLength.domain,
+            interval=(self._minLength, self.maxLength))
 
         self._sg = StringPaddedGenerator(self._lengthMutator,
                                          self._naughtyStrings)

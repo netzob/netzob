@@ -118,9 +118,9 @@ class Xorshift128plus(object):
         """
         return self.getNew64bitsValue() & Xorshift128plus.MASK_32BITS
 
-    def getNew0To1Value(self):
+    def getNew0To1Value32Bits(self):
         """This is the method to generate a pseudo-random value between 0 and
-        1, from the seed.
+        1, from the seed, with 32bits resolution.
         Each time this method is called, it produces a different value.
         To obtain the previous values again, call resetSeed().
 
@@ -130,6 +130,19 @@ class Xorshift128plus(object):
         """
         return (float(self.getNew64bitsValue() & Xorshift128plus.MASK_32BITS)
                 / 2 ** 32)
+
+    def getNew0To1Value64Bits(self):
+        """This is the method to generate a pseudo-random value between 0 and
+        1, from the seed, with 64bits resolution.
+        Each time this method is called, it produces a different value.
+        To obtain the previous values again, call resetSeed().
+
+        :return: a generated float value between 0 and 1, initially based on
+            the seed
+        :rtype: :class:`float`
+        """
+        return (float(self.getNew64bitsValue())
+                / 2 ** 64)
 
     def getNew16bitsValue(self):
         """Same method as getNew64bitsValue(), but with a 16bits mask.

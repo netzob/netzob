@@ -46,8 +46,14 @@
 from netzob.Fuzzing.Mutator import Mutator
 from netzob.Fuzzing.DeterministIntegerMutator import (
     DeterministIntegerMutator)
-from netzob.Model.Vocabulary.Types.Integer import uint32le
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Model.Vocabulary.Types.Integer import uint16le
+from netzob.Model.Vocabulary.Types.Integer import Integer
+from netzob.Model.Vocabulary.Field import Field
+from netzob.Fuzzing.Xorshift128plus import Xorshift128plus
+from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+from netzob.Model.Vocabulary.Types.BitArray import BitArray
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from bitarray import bitarray
 
 
 class BinarySequenceMutator(Mutator):
@@ -56,7 +62,6 @@ class BinarySequenceMutator(Mutator):
 
     >>> from netzob.all import *
     >>> mutator = BinarySequenceMutator()
-    >>> mutator.seed = 10
     >>> binaryField = Field(domain=BitArray())
     >>> mutator.field = binaryField
     >>> dataHex = mutator.mutate()
@@ -66,14 +71,19 @@ class BinarySequenceMutator(Mutator):
     MIN_LENGTH = 0
     DEFAULT_MAX_LENGTH = 100
 
-    def __init__(self):
+    def __init__(self,
+                 maxLength=None):
         super().__init__()
-        self._maxLength = BinarySequenceMutator.DEFAULT_MAX_LENGTH
-        self._sequenceLength = uint32le()
+        if maxLength is None:
+            self._maxLength = BinarySequenceMutator.DEFAULT_MAX_LENGTH
+        else:
+            self._maxLength = maxLength
+        self._sequenceLength = Field(uint16le())
         self._lengthMutator = DeterministIntegerMutator(
-            minValue=BinarySequenceMutator.MIN_LENGTH,
-            maxValue=self.maxLength)
+            domain=self._sequenceLength.domain,
+            interval=(BinarySequenceMutator.MIN_LENGTH, self.maxLength))
         self._lengthMutator.field = self._sequenceLength
+        self._prng = Xorshift128plus(self.seed)
 
     @property
     def lengthMutator(self):
@@ -92,11 +102,6 @@ class BinarySequenceMutator(Mutator):
         """
         return self._maxLength
 
-    @maxLength.setter
-    @typeCheck(int)
-    def maxLength(self, length_max):
-        self._maxLength = length_max
-
     def getLength(self):
         """The length of the last generated sequence.
 
@@ -113,6 +118,22 @@ class BinarySequenceMutator(Mutator):
         :rtype: :class:`bytes`
         """
         self._lengthMutator.maxValue = self.maxLength
-        generatedLength = int(self._lengthMutator.mutate(), 16)
-        # TODO : implement the sequence generator, which uses generatedLength
-        return super().generate()
+
+        length = int.from_bytes(self._lengthMutator.generate(),
+                                self._lengthMutator.field.domain.dataType.endianness)
+
+        valueBits = bitarray()
+        if length == 0:
+            return valueBits
+        while True:
+            valueInt = self._prng.getNew64bitsValue()
+            bits = TypeConverter.convert(data=valueInt,
+                                         sourceType=Integer,
+                                         destinationType=BitArray,
+                                         src_unitSize=AbstractType.UNITSIZE_64,
+                                         src_sign=AbstractType.SIGN_UNSIGNED,
+                                         dst_sign=AbstractType.SIGN_UNSIGNED)
+            valueBits += bits
+            if len(valueBits) >= length:
+                break
+        return valueBits[:length]
