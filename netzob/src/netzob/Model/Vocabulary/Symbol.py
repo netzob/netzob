@@ -86,7 +86,7 @@ class Symbol(AbstractField):
 
     """
 
-    def __init__(self, fields=None, messages=None, name="Symbol"):
+    def __init__(self, fields=None, messages=None, name="Symbol", meta=False):
         """
         :keyword fields: the fields which participate in symbol definition
         :type fields: a :class:`list` of :class:`netzob.Model.Vocabulary.Field`
@@ -95,7 +95,7 @@ class Symbol(AbstractField):
         :keyword name: the name of the symbol
         :type name: :class:`str`
         """
-        super(Symbol, self).__init__(name)
+        super(Symbol, self).__init__(name,meta)
         self.__messages = TypedList(AbstractMessage)
         if messages is None:
             messages = []

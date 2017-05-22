@@ -83,9 +83,10 @@ class AbstractionException(Exception):
 class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
     """Represents all the different classes which participates in fields definitions of a message format."""
 
-    def __init__(self, name=None):
+    def __init__(self, name=None, meta = False):
         self.id = uuid.uuid4()
         self.name = name
+        self.meta = meta
         self.description = ""
 
         self.__fields = TypedList(AbstractField)
@@ -694,6 +695,33 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
     # Standard methods
     def __str__(self):
         result = self.getCells(encoded=True)
+        if self.meta:
+            for split_message in result:
+                message1 = b''
+                for part in split_message:
+                    try:
+                        message1 += part
+                    except:
+                        pass
+                first = True
+                for message2 in self.messages:
+                    if message1 == message2.data and first:
+                        split_message.insert(0, message2.destination)
+                        split_message.insert(0, message2.source)
+                        try:
+                            split_message.insert(0, message2.session.name)
+                            session_present = True
+                        except:
+                            session_present = False
+                        # split_message.insert(0, str(message2.date))
+                        first = False
+            if not first:
+                # Add IP, Timestamp, PCAP etc to matrix headers
+                result.headers.insert(0, 'Destination')
+                result.headers.insert(0, 'Source')
+                if session_present:
+                    result.headers.insert(0, 'Session')
+                    # matrix.headers.insert(0, 'Time')
         return str(result)
 
     @typeCheck(int)
@@ -746,6 +774,21 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
     @typeCheck(str)
     def name(self, name):
         self.__name = name
+
+    @property
+    def meta(self):
+        """Meta boolean to print metadata,default is False
+
+        :type: :class:`bool`
+        :raises: :class:`TypeError`
+        """
+
+        return self.__meta
+
+    @meta.setter
+    @typeCheck(bool)
+    def meta(self, meta):
+        self.__meta = meta
 
     @property
     def description(self):
