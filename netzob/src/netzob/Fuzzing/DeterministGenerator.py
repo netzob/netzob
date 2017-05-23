@@ -67,6 +67,7 @@ class DeterministGenerator(object):
         self._bitSize = DeterministGenerator.DEFAULT_BITSIZE
         self._values = list()
         self._signed = DeterministGenerator.DEFAULT_SIGNED
+        self._seed = 0
 
     def createValues(self,
                      minValue,
@@ -113,13 +114,6 @@ class DeterministGenerator(object):
         setValues = set(self._values)
         self._values = sorted(setValues)
 
-    def reset(self):
-        """Reset the current position in the list.
-
-        :type: :class:`set`
-        """
-        self._currentPos = 0
-
     @property
     def values(self):
         """The list of available values.
@@ -127,6 +121,27 @@ class DeterministGenerator(object):
         :type: :class:`set`
         """
         return self._values
+
+    @property
+    def seed(self):
+        """ The seed in this generator gives the 1st position of the int to
+        return from the values list (modulo len(values)).
+
+        :type: :class:`int`
+        """
+        return self._seed
+
+    @seed.setter
+    def seed(self, seedValue):
+        self._seed = seedValue % len(self._values)
+        self.reset()
+
+    def reset(self):
+        """Reset the current position in the list.
+
+        :type: :class:`set`
+        """
+        self._currentPos = self._seed
 
     def getNewValue(self):
         """This is the method to get the next value in the generated list.

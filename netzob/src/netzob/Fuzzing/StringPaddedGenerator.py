@@ -44,6 +44,8 @@
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 
+from netzob.Common.Utils.Decorators import typeCheck
+
 
 class StringPaddedGenerator(object):
     """Generates string values.
@@ -55,7 +57,7 @@ class StringPaddedGenerator(object):
     """
 
     def __init__(self, lengthMutator, stringsList):
-        self._currentPos = 0
+        self._seed = 0
         self._lengthMutator = lengthMutator
         self._values = stringsList
 
@@ -64,7 +66,7 @@ class StringPaddedGenerator(object):
 
         :type: :class:`set`
         """
-        self._currentPos = 0
+        self._seed = 0
 
     @property
     def values(self):
@@ -74,16 +76,28 @@ class StringPaddedGenerator(object):
         """
         return self._values
 
+    @property
+    def seed(self):
+        """ The seed in this generator gives the position of the string to
+        return from the values list (modulo len(values)).
+
+        :type: :class:`int`
+        """
+    @seed.setter
+    @typeCheck(int)
+    def seed(self, seedValue):
+        self._seed = seedValue % len(self._values)
+
     def getNewValue(self, endChar):
         """This is the method to get a new string value from the list.
 
         :return: a generated str value
         :rtype: :class:`str`
         """
-        if self._currentPos >= len(self._values):
+        if self._seed >= len(self._values):
             self.reset()
-        value = self._values[self._currentPos] + endChar
-        self._currentPos += 1
+        value = self._values[self._seed] + endChar
+        self._seed += 1
         length = int.from_bytes(self._lengthMutator.generate(),
                                 self._lengthMutator.domain.dataType.endianness)
         if length > 0:

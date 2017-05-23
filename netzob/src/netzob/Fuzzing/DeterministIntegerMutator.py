@@ -45,6 +45,7 @@ from typing import Iterable
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Mutator import Mutator
+from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Fuzzing.DeterministGenerator import DeterministGenerator
 from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
@@ -54,11 +55,38 @@ from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVa
 
 class DeterministIntegerMutator(Mutator):
     """The integer mutator, using determinist generator.
+    The seed is an arbitrary value used to set the position of the next
+    integer to return from the values list, when calling generate().
+    This position is the seed modulo the number of elements in the list of
+    generated values.
+
+    The following example shows how to generate an 8bits integer in [-128, +127]
+    interval:
 
     >>> from netzob.all import *
-    >>> mutator = DeterministIntegerMutator()
-    >>> intField = uint16le()
-    >>> dataHex = mutator.mutate(intField.domain)
+    >>> fieldInt1 = Field(Integer())
+    >>> mutator1 = DeterministIntegerMutator(fieldInt1.domain)
+    >>> mutator1.seed=52
+    >>> mutator1.generate()
+    b'\x03'
+
+    The following example shows how to generate an 8bits integer in [-10, +5]
+    interval:
+
+    >>> fieldInt2 = Field(Integer(interval=(-10, 5)))
+    >>> mutator2 = DeterministIntegerMutator(fieldInt2.domain)
+    >>> mutator2.seed=42
+    >>> mutator2.generate()
+    b'\xfd'
+
+    The following example shows how to generate an 8bits integer in
+    [-32768, +32767] interval:
+
+    >>> fieldInt3 = Field(Integer(unitSize=AbstractType.UNITSIZE_16))
+    >>> mutator3 = DeterministIntegerMutator(fieldInt3.domain)
+    >>> mutator3.seed=430
+    >>> mutator3.generate()
+    b'\xff\xc1'
 
     """
 
@@ -100,6 +128,21 @@ class DeterministIntegerMutator(Mutator):
                               self._maxValue,
                               domain.dataType.unitSize,
                               domain.dataType.sign == AbstractType.SIGN_SIGNED)
+
+    @property
+    def seed(self):
+        """The seed initializes the position of the value to return
+        from the list of generated integer values, mudulo the number of values.
+
+        :type: :class:`int`
+        """
+        return self._seed
+
+    @seed.setter
+    @typeCheck(int)
+    def seed(self, seedValue):
+        self._seed = seedValue
+        self._ng.seed = self._seed
 
     def reset(self):
         self._ng.reset()

@@ -50,17 +50,23 @@ from netzob.Fuzzing.StringPaddedGenerator import StringPaddedGenerator
 from netzob.Model.Vocabulary.Types.Integer import uint16le
 from netzob.Model.Vocabulary.Types.String import String
 from netzob.Model.Vocabulary.Field import Field
+from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 
 
 class StringMutator(Mutator):
     """The string mutator, using a determinist generator to get a string length.
     The generated string shall not be longer than 2^16 bytes.
 
+    The following example shows how to generate a string with a length in
+    [35, 60] interval, the smaller one between the field domain and the length
+    given to the constructor of StringMutator:
+
     >>> from netzob.all import *
-    >>> mutator = StringMutator()
-    >>> asciiString = String()
-    >>> mutator.field = asciiString
-    >>> dataHex = mutator.mutate()
+    >>> fieldString = Field(String(nbChars=(35, 60)))
+    >>> mutator = StringMutator(fieldString.domain, length=(10,600))
+    >>> mutator.seed = 10
+    >>> mutator.generate()
+    b'`ls -al /`\x00     '
 
     """
 
@@ -81,34 +87,47 @@ class StringMutator(Mutator):
     METHOD_CONCATENATE = 1
 
     def __init__(self,
-                 endChar=None,
-                 minLength=None,
-                 maxLength=None,
-                 naughtyStrings=None,
-                 method=None):
-        super().__init__()
+                 domain,
+                 endChar=DEFAULT_END_CHAR,
+                 length=(None, None),
+                 naughtyStrings=DEFAULT_NAUGHTY_STRINGS,
+                 method=METHOD_PADDING_TRUNCATE):
+        # Sanity checks
+        if domain is None:
+            raise Exception("Domain should be known to initialize a mutator")
+        if not isinstance(domain, AbstractVariable):
+            raise Exception("Mutator domain should be of type AbstractVariable. Received object: '{}'".format(domain))
+        if not hasattr(domain, 'dataType'):
+            raise Exception("Mutator domain should have a dataType")
+        if not isinstance(domain.dataType, String):
+            raise Exception("Mutator domain dataType should be an Integer, not '{}'".format(type(domain.dataType)))
 
-        if endChar is None:
-            self._endChar = StringMutator.DEFAULT_END_CHAR
-        else:
-            self._endChar = endChar
-        if minLength is None:
+        super().__init__(domain=domain)
+
+        self._endChar = endChar
+
+        if isinstance(length, tuple) and \
+           len(length) == 2 and \
+           isinstance(length[0], int) and \
+           isinstance(length[1], int):
+            self._minLength = length[0]
+            self._maxLength = length[1]
+        if isinstance(domain.dataType.size, tuple) and \
+           len(domain.dataType.size) == 2 and \
+           isinstance(domain.dataType.size[0], int) \
+           and isinstance(domain.dataType.size[1], int):
+            # Handle desired interval according to the storage space of the domain dataType
+            self._minLength = max(self._minLength, int(domain.dataType.size[0]/8))
+            self._maxLength = min(self._maxLength, int(domain.dataType.size[1]/8))
+        if self._minLength is None or self._maxLength is None:
             self._minLength = StringMutator.DEFAULT_MIN_LENGTH
-        else:
-            self._minLength = minLength
-        if maxLength is None:
             self._maxLength = StringMutator.DEFAULT_MAX_LENGTH
-        else:
-            self._maxLength = maxLength
-        if naughtyStrings is None or not isinstance(naughtyStrings, list):
+
+        if not isinstance(naughtyStrings, list):
             self._naughtyStrings = StringMutator.DEFAULT_NAUGHTY_STRINGS
         else:
             self._naughtyStrings = naughtyStrings
-        if method is None or (method != StringMutator.METHOD_PADDING_TRUNCATE
-                              and method != StringMutator.METHOD_CONCATENATE):
-            self._method = StringMutator.METHOD_PADDING_TRUNCATE
-        else:
-            self._method = method
+        self._method = method
 
         self._stringLength = Field(uint16le())
         self._lengthMutator = DeterministIntegerMutator(
@@ -117,6 +136,22 @@ class StringMutator(Mutator):
 
         self._sg = StringPaddedGenerator(self._lengthMutator,
                                          self._naughtyStrings)
+        self.seed = 0
+
+    @property
+    def seed(self):
+        """The seed used in pseudo-random generator
+
+        :type: :class:`int`
+        """
+        return self._seed
+
+    @seed.setter
+    @typeCheck(int)
+    def seed(self, seedValue):
+        self._seed = seedValue
+        self._lengthMutator.seed = self._seed
+        self._sg.seed = self._seed
 
     @property
     def lengthMutator(self):
@@ -135,11 +170,6 @@ class StringMutator(Mutator):
         """
         return self._minLength
 
-    @minLength.setter
-    @typeCheck(int)
-    def minLength(self, length_min):
-        self._minLength = length_min
-
     @property
     def maxLength(self):
         """The max length of the string. Default value is DEFAULT_MAX_LENGTH.
@@ -147,11 +177,6 @@ class StringMutator(Mutator):
         :type: :class:`int`
         """
         return self._maxLength
-
-    @maxLength.setter
-    @typeCheck(int)
-    def maxLength(self, length_max):
-        self._maxLength = length_max
 
     @property
     def endChar(self):
@@ -194,14 +219,14 @@ class StringMutator(Mutator):
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
         """
-        if self.field is not None:
+        if self.domain is not None:
             if self._currentCounter < self.counterMax:
                 self._currentCounter += 1
                 value = self._sg.getNewValue(self.endChar)
                 return String.decode(value,
-                                     unitSize=self.field.domain.dataType.unitSize,
-                                     endianness=self.field.domain.dataType.endianness,
-                                     sign=self.field.domain.dataType.sign)
+                                     unitSize=self.domain.dataType.unitSize,
+                                     endianness=self.domain.dataType.endianness,
+                                     sign=self.domain.dataType.sign)
             else:
                 raise Exception("Max mutation counter reached")
         else:
