@@ -65,9 +65,9 @@ class EthDecoder(Decoder):
         if e.get_ether_type() == ImpactPacket.IP.ethertype:
             self.ip_decoder = IPDecoder()
             packet = self.ip_decoder.decode(aBuffer[off:])
-        elif e.get_ether_type() == ImpactPacket.ARP.ethertype:
-            self.arp_decoder = ARPDecoder()
-            packet = self.arp_decoder.decode(aBuffer[off:])
+        # elif e.get_ether_type() == ImpactPacket.ARP.ethertype:
+        #     self.arp_decoder = ARPDecoder()
+        #     packet = self.arp_decoder.decode(aBuffer[off:])
         else:
             self.data_decoder = DataDecoder()
             packet = self.data_decoder.decode(aBuffer[off:])

@@ -614,7 +614,7 @@ class Ethernet(Header):
     def load_header(self, aBuffer):
         self.tag_cnt = 0
         while aBuffer[12 + 4 * self.tag_cnt:14 + 4 * self.tag_cnt] in (
-                '\x81\x00', '\x88\xa8', '\x91\x00'):
+                b'\x81\x00', b'\x88\xa8', b'\x91\x00'):
             self.tag_cnt += 1
 
         hdr_len = self.get_header_size()
