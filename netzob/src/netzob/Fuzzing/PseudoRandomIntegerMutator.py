@@ -51,7 +51,7 @@ from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVa
 
 
 class PseudoRandomIntegerMutator(Mutator):
-    """The integer mutator, using pseudo-random generator.
+    r"""The integer mutator, using pseudo-random generator.
 
     The following example shows how to generate an 8bits integer in [10, 20]
     interval, with an arbitrary seed of 4321:

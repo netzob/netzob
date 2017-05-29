@@ -51,7 +51,7 @@ from netzob.Model.Vocabulary.Types.String import String
 
 
 class HexaString(AbstractType):
-    """This class defines an HexaString type.
+    r"""This class defines an HexaString type.
 
     The HexaString type allows describing a sequence of bytes of
     arbitrary sizes with the hexastring notation (i.e. b'aabbcc'

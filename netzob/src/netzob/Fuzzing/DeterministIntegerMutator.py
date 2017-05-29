@@ -54,7 +54,7 @@ from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVa
 
 
 class DeterministIntegerMutator(Mutator):
-    """The integer mutator, using determinist generator.
+    r"""The integer mutator, using determinist generator.
     The seed is an arbitrary value used to set the position of the next
     integer to return from the values list, when calling generate().
     This position is the seed modulo the number of elements in the list of
