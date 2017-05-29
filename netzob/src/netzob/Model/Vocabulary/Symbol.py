@@ -333,39 +333,40 @@ class Symbol(AbstractField):
         >>> symbol.specialize(fuzz=fuzz)
         b'\x02\x84'
 
+        .. todo::
 
-        Fuzzing example of a field that contains an aggregate of variables:
+            Fuzzing example of a field that contains an aggregate of variables:
 
-        # >>> fuzz = Fuzz()
-        # >>> f_agg = Field(name="agg", domain=Agg([Integer(interval=(1, 4), unitSize=AbstractType.UNITSIZE_16),
-        # ...                                       Integer(interval=(5, 8), unitSize=AbstractType.UNITSIZE_16)]))
-        # >>> symbol = Symbol(name="sym", fields=[f_agg])
-        # >>> fuzz.set(f_agg, PseudoRandomIntegerMutator, interval=(20, 32000))
-        # >>> symbol.specialize(fuzz=fuzz)
-        # b'\x02\x84\x04\xf5'
-
-
-        # Fuzzing example of a field that contains an alternate of variables:
-
-        # >>> fuzz = Fuzz()
-        # >>> f_alt = Field(name="alt", domain=Alt([Integer(interval=(1, 4), unitSize=AbstractType.UNITSIZE_16),
-        # ...                                           Integer(interval=(5, 8), unitSize=AbstractType.UNITSIZE_16)]))
-        # >>> symbol = Symbol(name="sym", fields=[f_alt])
-        # >>> fuzz.set(f_alt, PseudoRandomIntegerMutator, interval=(20, 32000))
-        # >>> res = symbol.specialize(fuzz=fuzz)
-        # >>> res == b'\x02\x84' or res == b'\x04\xf5'
-        # True
+            # >>> fuzz = Fuzz()
+            # >>> f_agg = Field(name="agg", domain=Agg([Integer(interval=(1, 4), unitSize=AbstractType.UNITSIZE_16),
+            # ...                                       Integer(interval=(5, 8), unitSize=AbstractType.UNITSIZE_16)]))
+            # >>> symbol = Symbol(name="sym", fields=[f_agg])
+            # >>> fuzz.set(f_agg, PseudoRandomIntegerMutator, interval=(20, 32000))
+            # >>> symbol.specialize(fuzz=fuzz)
+            # b'\x02\x84\x04\xf5'
 
 
-        # Fuzzing example of a field that contains a repeat of a variable:
+            # Fuzzing example of a field that contains an alternate of variables:
 
-        # >>> fuzz = Fuzz()
-        # >>> f_rep = Field(name="rep", domain=Repeat(Integer(interval=(1, 4), unitSize=AbstractType.UNITSIZE_16),
-        # ...                                             2))
-        # >>> symbol = Symbol(name="sym", fields=[f_rep])
-        # >>> fuzz.set(f_rep, PseudoRandomIntegerMutator, interval=(20, 32000))
-        # >>> symbol.specialize(fuzz=fuzz)
-        # b'\x02\x84\x04\xf5'
+            # >>> fuzz = Fuzz()
+            # >>> f_alt = Field(name="alt", domain=Alt([Integer(interval=(1, 4), unitSize=AbstractType.UNITSIZE_16),
+            # ...                                           Integer(interval=(5, 8), unitSize=AbstractType.UNITSIZE_16)]))
+            # >>> symbol = Symbol(name="sym", fields=[f_alt])
+            # >>> fuzz.set(f_alt, PseudoRandomIntegerMutator, interval=(20, 32000))
+            # >>> res = symbol.specialize(fuzz=fuzz)
+            # >>> res == b'\x02\x84' or res == b'\x04\xf5'
+            # True
+
+
+            # Fuzzing example of a field that contains a repeat of a variable:
+
+            # >>> fuzz = Fuzz()
+            # >>> f_rep = Field(name="rep", domain=Repeat(Integer(interval=(1, 4), unitSize=AbstractType.UNITSIZE_16),
+            # ...                                             2))
+            # >>> symbol = Symbol(name="sym", fields=[f_rep])
+            # >>> fuzz.set(f_rep, PseudoRandomIntegerMutator, interval=(20, 32000))
+            # >>> symbol.specialize(fuzz=fuzz)
+            # b'\x02\x84\x04\xf5'
 
 
         Fuzzing example of a field that contains a size relationship with another field:
