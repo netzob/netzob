@@ -89,7 +89,7 @@ class ClusterByApplicativeData(object):
         pass
 
     @typeCheck(list, list)
-    def cluster(self, messages, appDatas):
+    def cluster(self, messages, appDatas, meta=False):
         if messages is None:
             raise TypeError("Messages cannot be None")
         if appDatas is None:
@@ -156,7 +156,7 @@ class ClusterByApplicativeData(object):
 
         # Build Symbols
         symbols = [
-            Symbol(name=strAppDatas, messages=msgs)
+            Symbol(name=strAppDatas, messages=msgs, meta=meta)
             for strAppDatas, msgs in list(clusters.items())
         ]
 
