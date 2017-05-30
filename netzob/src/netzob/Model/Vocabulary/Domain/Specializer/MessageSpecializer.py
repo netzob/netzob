@@ -48,6 +48,7 @@ from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import Speciali
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.ASCII import ASCII
+from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Field import Field
 
 
@@ -253,7 +254,8 @@ class MessageSpecializer(object):
                                                             src_endianness=k.domain.dataType.endianness,
                                                             dst_endianness=k.domain.dataType.endianness)
                 else:
-                    raise Exception("Cannot find the default dataType for field '{}'".format(k))
+                    # we believe the provided value is a Raw
+                    self.presets[k] = TypeConverter.convert(v, Raw, BitArray)
 
             # Handle case where k is a string
             elif isinstance(k, str):
@@ -274,7 +276,9 @@ class MessageSpecializer(object):
                                                                 dst_endianness=f.domain.dataType.endianness)
                             old_keys.append(k)
                         else:
-                            raise Exception("Cannot find the default dataType for field '{}'".format(f.name))
+                            # we believe the provided value is a Raw
+                            new_keys[f] =  TypeConverter.convert(v, Raw, BitArray)
+                            old_keys.append(k)
                         break
             else:
                 raise Exception("Preset's keys must be of Field or string types")
