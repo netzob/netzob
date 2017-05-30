@@ -146,9 +146,8 @@ class Value(AbstractRelationVariableLeaf):
     **Transformation operation on targeted field value**
 
     A value relationship also accepts custom operations, as shown on
-    the following example:
+    the following example with a lamba function:
 
-    >>> from netzob.all import *
     >>> f0 = Field(1, name="f0")
     >>> f1 = Field(String(":"), name="f1")
     >>> f2 = Field(Value(f0, operation = lambda x: TypeConverter.convert(
@@ -163,6 +162,25 @@ class Value(AbstractRelationVariableLeaf):
     ------ | --- | ------
     '\x01' | ':' | '\x02'
     ------ | --- | ------
+
+
+    A named callback function can also be used to specify a more
+    complex relationship. The following example shows a relationships
+    where the computed value corresponds to the reversed bits of the
+    targeted field. The ``data`` parameter of the ``cbk`` function
+    contains a bitarray object of the targeted fields. The ``cbk``
+    function returns a bitarray object.
+
+    >>> def cbk(data):
+    ...    ret = data.copy()
+    ...    ret.reverse()
+    ...    return ret
+    >>> f0 = Field(Raw(b'\x01'))
+    >>> f1 = Field(Value(f0, operation = cbk))
+    >>> s = Symbol([f0, f1])
+    >>> print(s.specialize())
+    b'\x01\x80'
+
 
     """
 

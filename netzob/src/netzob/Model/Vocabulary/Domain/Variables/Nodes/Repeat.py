@@ -61,14 +61,18 @@ class Repeat(AbstractVariableNode):
     The Repeat constructor expects some parameters:
 
     :param child: The variable element that will be repeated.
-    :param nbRepeat: The minimum and maximum of repetitions of the element.
+    :param nbRepeat: The number of repetitions of the element. This value can be a fixed integer, a tuple of integers defining the minimum and maximum of permitted repetitions, a constant from the calling script, a value present in another field, or can be identified by calling a callback function. In the latter case, the callback function should return a boolean telling if the expected number of repetitions is reached.
     :param delimiter: The delimiter used to separate the repeated element.
     :type child: :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
     :type nbRepeat: a :class:`int` describing the number of
                     repetitions, or a tuple of :class:`int` describing
                     the min,max of repetitions, required
     :type delimiter: :class:`BitArray <netzob.Model.Vocabulary.Types.BitArray>`, optional
-
+    :type eof: an :class:`int` or a :class:`tuple` of :class:`int` or
+               a Python variable containing an :class:`int` or a
+               :class:`AbstractField
+               <netzob.Model.Vocabulary.AbstractField>` or a
+               :class:`func` method, optional
 
     The following example shows a repeat variable where the repeated
     element is an aggregate of String characters:
@@ -94,6 +98,56 @@ class Repeat(AbstractVariableNode):
     ... # doctest: +ELLIPSIS, +NORMALIZE_WHITESPACE
     [bitarray('011011100110010101110100011110100110111101100010001110110111...,
      bitarray('01111010011011110110001001111001')]
+
+
+    **Limiting the number of repetitions with an integer**
+
+    The following examples show how to create a Repeat variable whose
+    number of repetitions is limited by an integer:
+
+    >>> f1 = Field(Repeat(String("netzob"), nbRepeat=3))
+
+
+    **Limiting the number of repetitions with a interval of integers**
+
+    The following examples show how to create a Repeat variable whose
+    number of repetitions is limited by a interval of integers:
+
+    >>> f1 = Field(Repeat(String("netzob"), nbRepeat=(2,5)))
+
+
+    **Limiting the number of repetitions with a Python integer variable**
+
+    The following examples show how to create a Repeat variable whose
+    number of repetitions is limited by a Python integer
+    variable. Such variable is typically managed by the calling script:
+
+    >>> var = 3
+    >>> f1 = Field(Repeat(String("netzob"), nbRepeat=var))
+
+
+    **Limiting the number of repetitions with the value of another field**
+
+    The following examples show how to create a Repeat variable whose
+    number of repetitions is limited by the value of another field:
+
+    >>> f_end = Field(Integer(interval=(2, 5)))
+    >>> f1 = Field(Repeat(String("netzob"), nbRepeat=f_end))
+
+
+    **Limiting the number of repetitions by calling a callback function**
+
+    The following examples show how to create a Repeat variable whose
+    number of repetitions is handled by calling a callback function
+    which returns a boolean telling if the expected number of
+    repetitions is reached:
+
+    >>> def cbk(current_nb_repetitions):
+    ...     if len(current_nb_repetitions) == 5:
+    ...         return True
+    ...     else:
+    ...         return False
+    >>> f1 = Field(Repeat(String("netzob"), nbRepeat=cbk))
 
 
     **Abstraction of repeat variables**

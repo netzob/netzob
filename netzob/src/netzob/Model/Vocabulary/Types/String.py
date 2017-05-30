@@ -63,13 +63,20 @@ class String(AbstractType):
 
     :param value: The current value of the type instance.
     :param nbChars: The amount of permitted String characters.
-    :param encoding: The encoding of the string, such as 'ascii' or 'utf-8'. Default value is 'utf-8'.
+    :param encoding: The encoding of the string, such as 'ascii' or
+                    'utf-8'. Default value is 'utf-8'.
+    :param eof: A list defining the potential terminal characters for
+                the string, with either specific constants or pointers
+                to other fields containing the permitted terminal
+                values. Default value is an empty list, meaning there
+                is no terminal character.
     :param unitSize: Not implemented.
     :param endianness: Not implemented.
     :param sign: Not implemented.
     :type value: :class:`bitarray.bitarray`, optional
     :type nbChars: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
     :type encoding: :class:`str`, optional
+    :type eof: a :class:`list` of :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>` or a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, optional
 
     
     Supported encodings are available on the Python reference documentation:
@@ -111,6 +118,21 @@ class String(AbstractType):
     variable size and a dynamic content:
 
     >>> f = Field(String(nbChars=(10, 32)))
+
+
+    **String with terminal character**
+
+    Netzob supports strings with a terminal delimiter. Its usage is as
+    follows:
+
+    >>> f_eof    = Field(String('\t'))
+    >>> f_string = Field(String(eof=[String('\n'), Raw('\x00'), f_eof]))
+
+    The ``eof`` attribute specifies a list of values that is used as
+    potential terminal characters. Terminal characters can either be
+    defined as constants (such as ``String('\n')`` and ``Raw('\x00')``
+    in the previous example) or defined as specific fields (such as
+    ``f_eof`` in the previous example).
 
 
     **Examples of String internal attributes access**
