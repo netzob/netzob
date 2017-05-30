@@ -232,6 +232,23 @@ class MessageSpecializer(object):
     def _update_presets(self, symbol):
         """Update the presets dict, according to the symbol definition.
 
+        >>> from netzob.all import *
+        >>> f0 = Field(name="test", domain = Raw(nbBytes=10))
+        >>> s = Symbol(fields= [ f0 ])
+        >>> mspe = MessageSpecializer(presets = { "test": "helloworld" })
+        >>> path = mspe.specializeSymbol(s)
+        >>> print(TypeConverter.convert(path.generatedContent, BitArray, Raw))
+        b'helloworld'
+
+        >>> from netzob.all import *
+        >>> f0 = Field(name="test", domain = Repeat(Raw(nbBytes=10), nbRepeat=(0, 10)))
+        >>> s = Symbol(fields= [ f0 ])
+        >>> mspe = MessageSpecializer(presets = { "test": "this value replace a repeat" })
+        >>> path = mspe.specializeSymbol(s)
+        >>> print(TypeConverter.convert(path.generatedContent, BitArray, Raw))
+        b'this value replace a repeat'
+
+
         """
 
         if self.presets is None:
