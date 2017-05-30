@@ -274,7 +274,7 @@ class MessageSpecializer(object):
                                                                 dst_endianness=f.domain.dataType.endianness)
                             old_keys.append(k)
                         else:
-                            raise Exception("Cannot find the default dataType for field '{}'".format(f))
+                            raise Exception("Cannot find the default dataType for field '{}'".format(f.name))
                         break
             else:
                 raise Exception("Preset's keys must be of Field or string types")
