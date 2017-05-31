@@ -108,7 +108,25 @@ class MessageSpecializer(object):
 
     @typeCheck(Symbol)
     def specializeSymbol(self, symbol):
-        """This method generates a message based on the provided symbol definition."""
+        """This method generates a message based on the provided symbol definition.
+        It also leverages the specified presets to force the value of a field
+
+        >>> from netzob.all import *
+        >>> f0 = Field(name="Type", domain=Raw("\x01"))
+        >>> f2 = Field(name="Value", domain=Raw(nbBytes=10))
+        >>> f1 = Field(name="Length", domain = Size(f2, dataType = Raw(nbBytes=3, unitSize = AbstractType.UNITSIZE_32)))
+        >>> s = Symbol(fields = [f0, f1, f2])
+        >>> generated_data = TypeConverter.convert(MessageSpecializer().specializeSymbol(s).generatedContent, BitArray, Raw)
+        >>> len(generated_data) > 4
+        True
+
+        # we can use presets to arbitrary fix the value of one field
+        >>> presets = { "Value": "hello" }
+        >>> TypeConverter.convert(MessageSpecializer(presets = presets).specializeSymbol(s).generatedContent, BitArray, Raw)
+        b'\\x01\\x00\\x00\\x05hello'
+
+
+        """
         if symbol is None:
             raise Exception("Specified symbol is None")
 
