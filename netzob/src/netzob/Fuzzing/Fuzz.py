@@ -143,7 +143,7 @@ class Fuzz(object):
 
         """
 
-        # Normalize fuzzin keys
+        # Normalize fuzzing keys
         new_keys = {}
         keys_to_remove = []
         for k, v in self.mappingFieldsMutators.items():
