@@ -67,7 +67,7 @@ class Actor(threading.Thread):
     :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`, required
 
 
-    **Complete example**
+    **Example with a common automaton for a client and a server**
 
     For instance we can create two very simple network Actors which
     communicate together through a TCP channel and exchange their
@@ -109,6 +109,71 @@ class Actor(threading.Thread):
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
     >>> bob = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
+
+    >>> alice.start()
+    >>> bob.start()
+
+    >>> time.sleep(2)
+
+    >>> bob.stop()
+    >>> alice.stop()
+
+
+    **Example with a dedicated automaton for a client and a server**
+
+    The two actors are Alice and Bob. Alice is the initiator of the
+    communication meaning she sends the input symbols while Bob
+    answers with the output symbols of the grammar. The grammar is
+    very simple, and different for each actor. We first open the
+    channel, and allow Alice to send random time "alice> hello". Bob
+    answers everytime "bob> hello". It's Alice who decides to stop the
+    communication.
+
+    >>> from netzob.all import *
+    >>> import time
+
+    >>> # First we create the symbols
+    >>> symbol = Symbol(name="Main-symbol", fields=[Field("hello")])
+    >>> symbolList = [symbol, symbol]
+
+    >>> # Create Bob's automaton
+    >>> bob_s0 = State(name="S0")
+    >>> bob_s1 = State(name="S1")
+    >>> bob_s2 = State(name="S2")
+    >>> bob_s3 = State(name="S3")
+    >>> bob_openTransition = OpenChannelTransition(startState=bob_s0, endState=bob_s1, name="Open")
+    >>> bob_firstTransition = Transition(startState=bob_s1,
+    ...                                  endState=bob_s2,
+    ...                                  inputSymbol=symbol,
+    ...                                  outputSymbols=[symbol], name="hello")
+    >>> bob_secondTransition = Transition(startState=bob_s2,
+    ...                                   endState=bob_s2,
+    ...                                   inputSymbol=symbol,
+    ...                                   outputSymbols=[symbol], name="hello")
+    >>> bob_closeTransition = CloseChannelTransition(startState=bob_s2, endState=bob_s2, name="Close")
+    >>> bob_automata = Automata(bob_s0, symbolList)
+
+    >>> # Create Alice's automaton
+    >>> alice_s0 = State(name="S0")
+    >>> alice_s1 = State(name="S1")
+    >>> alice_s2 = State(name="S2")
+    >>> alice_openTransition = OpenChannelTransition(startState=alice_s0, endState=alice_s1, name="Open")
+    >>> alice_mainTransition = Transition(startState=alice_s1,
+    ...                                   endState=alice_s1,
+    ...                                   inputSymbol=symbol,
+    ...                                   outputSymbols=[symbol], name="hello")
+    >>> alice_closeTransition = CloseChannelTransition(startState=alice_s1, endState=alice_s2, name="Close")
+    >>> alice_automata = Automata(alice_s0, symbolList)
+
+    >>> # Create Bob actor (a client)
+    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887)
+    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
+    >>> bob = Actor(automata = bob_automata, initiator = True, abstractionLayer=abstractionLayer)
+
+    >>> # Create Alice actor (a server)
+    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887)
+    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
+    >>> alice = Actor(automata = alice_automata, initiator = False, abstractionLayer=abstractionLayer)
 
     >>> alice.start()
     >>> bob.start()
