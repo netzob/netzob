@@ -249,7 +249,6 @@ class Size(AbstractRelationVariableLeaf):
         if isinstance(fields, AbstractField):
             fields = [fields]
         super(Size, self).__init__(self.__class__.__name__, fieldDependencies=fields, name=name)
-        self.fields = fields
         if dataType is None:
             dataType = Raw(nbBytes=1)
         self.dataType = dataType
@@ -269,99 +268,7 @@ class Size(AbstractRelationVariableLeaf):
         return hash(self.__key())
 
     @typeCheck(GenericPath)
-    def isDefined(self, parsingPath):
-        # we retrieve the memory of the current path
-        memory = parsingPath.memory
-        return memory.hasValue(self)
-
-    @typeCheck(ParsingPath)
-    def valueCMP(self, parsingPath, carnivorous=False):
-        results = []
-        if parsingPath is None:
-            raise Exception("ParsingPath cannot be None")
-
-        sizeOfPossibleValue = self.dataType.size()
-        if sizeOfPossibleValue[0] != sizeOfPossibleValue[1]:
-            raise Exception(
-                "Impossible to abstract messages if a size field has a dynamic size"
-            )
-
-        content = parsingPath.getDataAssignedToVariable(self)
-        possibleValue = content[:sizeOfPossibleValue[1]]
-        self._logger.warn(
-            "Possible value of size field: {0}".format(possibleValue))
-
-        expectedValue = self._computeExpectedValue(parsingPath)
-        if expectedValue is None:
-            # the expected value cannot be computed
-            # we add a callback
-            self._addCallBacksOnUndefinedFields(parsingPath)
-        else:
-            if possibleValue[:len(expectedValue)] == expectedValue:
-                parsingPath.addResult(self, expectedValue.copy())
-            results.append(parsingPath)
-
-    @typeCheck(ParsingPath)
-    def learn(self, parsingPath, carnivours=False):
-        raise Exception("not implemented")
-        self._logger.warn("SIZE LEARN")
-        if parsingPath is None:
-            raise Exception("VariableParserPath cannot be None")
-        return []
-
-    @typeCheck(ParsingPath)
-    def domainCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
-        """This method participates in the abstraction process.
-
-        It creates a VariableSpecializerResult in the provided path if
-        the remainingData (or some if it) follows the type definition"""
-
-        results = []
-        self._logger.debug(
-            "domainCMP executed on {0} by a size domain".format(parsingPath))
-
-        minSize, maxSize = self.dataType.size
-        if minSize != maxSize:
-            raise Exception(
-                "Impossible to abstract messages if a size field has a dynamic size"
-            )
-
-        content = parsingPath.getDataAssignedToVariable(self)
-        possibleValue = content[:maxSize]
-
-        expectedValue = None
-        try:
-            expectedValue = self._computeExpectedValue(parsingPath)
-
-            if possibleValue[:len(expectedValue)] == expectedValue:
-                parsingPath.addResult(self, expectedValue.copy())
-                results.append(parsingPath)
-            else:
-                self._logger.debug("Executed callback has failed.")
-        except Exception as e:
-            # the expected value cannot be computed
-            if acceptCallBack:
-                # we add a callback
-                self._addCallBacksOnUndefinedFields(parsingPath)
-                # register the remaining data
-                parsingPath.addResult(self, possibleValue.copy())
-                results.append(parsingPath)
-            else:
-                raise Exception("no more callback accepted.")
-
-        return results
-
-    @typeCheck(GenericPath)
-    def _addCallBacksOnUndefinedFields(self, parsingPath):
-        """Identify each dependency field that is not yet defined and register a
-        callback to try to recompute the value """
-
-        parsingPath.registerFieldCallBack(self.fieldDependencies, self)
-        # for field in self.fieldDependencies:
-        #     if field.domain != self and not parsingPath.isDataAvailableForField(field):
-
-    @typeCheck(GenericPath)
-    def _computeExpectedValue(self, parsingPath):
+    def computeExpectedValue(self, parsingPath):
         self._logger.debug("compute expected value for Size field")
 
         # first checks the pointed fields all have a value
@@ -395,20 +302,20 @@ class Size(AbstractRelationVariableLeaf):
 
         if not hasNeededData:
             raise Exception("Expected value cannot be computed, some dependencies are missing for domain {0}".format(self))
-        else:
-            for field in remainingFields:
 
-                # Retrieve field value
-                if field.domain is self:
-                    fieldValue = self.dataType.generate()
-                else:
-                    fieldValue = parsingPath.getDataAssignedToVariable(
-                        field.domain)
-                if fieldValue is None:
-                    break
+        for field in remainingFields:
 
-                # Retrieve length of field value
-                size += len(fieldValue)
+            # Retrieve field value
+            if field.domain is self:
+                fieldValue = self.dataType.generate()
+            else:
+                fieldValue = parsingPath.getDataAssignedToVariable(
+                    field.domain)
+            if fieldValue is None:
+                break
+
+            # Retrieve length of field value
+            size += len(fieldValue)
 
         size = int(size * self.factor + self.offset)
         size_raw = TypeConverter.convert(size,
@@ -431,41 +338,10 @@ class Size(AbstractRelationVariableLeaf):
         self._logger.debug("computed value for Size field: '{}'".format(b))
         return b
 
-    @typeCheck(SpecializingPath)
-    def regenerate(self, variableSpecializerPath, moreCallBackAccepted=True):
-        """This method participates in the specialization proces.
-
-        It creates a VariableSpecializerResult in the provided path that
-        contains a generated value that follows the definition of the Data
-        """
-        self._logger.debug("Regenerate size {0}".format(self))
-        if variableSpecializerPath is None:
-            raise Exception("VariableSpecializerPath cannot be None")
-
-        try:
-            newValue = self._computeExpectedValue(variableSpecializerPath)
-            variableSpecializerPath.addResult(self, newValue)
-        except Exception as e:
-            self._logger.debug(
-                "Cannot specialize since no value is available for the size dependencies, we create a callback function in case it can be computed later: {0}".
-                format(e))
-            pendingValue = TypeConverter.convert("PENDING VALUE", String,
-                                                 BitArray)
-            variableSpecializerPath.addResult(self, pendingValue)
-            if moreCallBackAccepted:
-                #                for field in self.fields:
-                variableSpecializerPath.registerFieldCallBack(
-                    self.fields, self, parsingCB=False)
-
-            else:
-                raise e
-
-        return [variableSpecializerPath]
-
     def __str__(self):
         """The str method."""
         return "Size({0}) - Type:{1}".format(
-            str([f.name for f in self.fields]), self.dataType)
+            str([f.name for f in self.fieldDependencies]), self.dataType)
 
     @property
     def dataType(self):

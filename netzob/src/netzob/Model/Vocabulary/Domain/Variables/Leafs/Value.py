@@ -192,27 +192,6 @@ class Value(AbstractRelationVariableLeaf):
         self.operation = operation
 
     @typeCheck(GenericPath)
-    def isDefined(self, path):
-        """Checks if a value is available either in data's definition or in memory
-
-        :parameter path: the current path used either to abstract and specializa this data
-        :type path: :class:`GenericPath <netzob.Model.Vocabulary.Domain.GenericPath.GenericPath>`
-        :return: a boolean that indicates if a value is available for this data
-        :rtype: :class:`bool`
-    
-        """
-        if path is None:
-            raise Exception("Path cannot be None")
-
-        # we check if memory referenced its value (memory is priority)
-        memory = path.memory
-
-        if memory is None:
-            raise Exception("Provided path has no memory attached.")
-
-        return memory.hasValue(self)
-
-    @typeCheck(GenericPath)
     def valueCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
         self._logger.debug("ValueCMP")
         results = []
@@ -224,7 +203,7 @@ class Value(AbstractRelationVariableLeaf):
             raise Exception("No data assigned.")
 
         # we verify we have access to the expected value
-        expectedValue = self._computeExpectedValue(parsingPath)
+        expectedValue = self.computeExpectedValue(parsingPath)
         
         self._logger.debug(
             "Expected value to parse: {0}".format(expectedValue))
@@ -257,14 +236,6 @@ class Value(AbstractRelationVariableLeaf):
         return results
 
     @typeCheck(ParsingPath)
-    def learn(self, parsingPath, acceptCallBack=True, carnivorous=False):
-        self._logger.warn("Value LEARN")
-        if parsingPath is None:
-            raise Exception("VariableParserPath cannot be None")
-        raise Exception("Not Implemented")
-        return []
-
-    @typeCheck(ParsingPath)
     def domainCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
         """This method participates in the abstraction process.
 
@@ -273,13 +244,7 @@ class Value(AbstractRelationVariableLeaf):
 
         return self.valueCMP(parsingPath, acceptCallBack)
 
-    @typeCheck(ParsingPath)
-    def _addCallBacksOnUndefinedFields(self, parsingPath):
-        """Identify each dependency field that is not yet defined and register a
-        callback to try to recompute the value """
-        parsingPath.registerFieldCallBack(self.fieldDependencies, self)
-
-    def _computeExpectedValue(self, parsingPath):
+    def computeExpectedValue(self, parsingPath):
         self._logger.debug("compute expected value for Value field")
 
         fieldDep = self.fieldDependencies[0]
@@ -291,37 +256,6 @@ class Value(AbstractRelationVariableLeaf):
         else:
             return self._applyOperation(parsingPath.getDataAssignedToField(fieldDep))
 
-    @typeCheck(SpecializingPath)
-    def regenerate(self, variableSpecializerPath, moreCallBackAccepted=True):
-        """This method participates in the specialization proces.
-
-        It creates a VariableSpecializerResult in the provided path that
-        contains a generated value that follows the definition of the Data
-        """
-        self._logger.debug("Regenerate value {0}".format(self))
-        if variableSpecializerPath is None:
-            raise Exception("VariableSpecializerPath cannot be None")
-
-        try:
-            newValue = self._computeExpectedValue(variableSpecializerPath)
-
-            variableSpecializerPath.addResult(self, newValue)
-        except Exception as e:
-            self._logger.debug(
-                "Cannot specialize since no value is available for the value dependencies, we create a callback function in case it can be computed later: {0}".
-                format(e))
-
-            pendingValue = TypeConverter.convert("PENDING VALUE", String,
-                                                 BitArray)
-            variableSpecializerPath.addResult(self, pendingValue)
-            if moreCallBackAccepted:
-                variableSpecializerPath.registerFieldCallBack(
-                    self.fieldDependencies, self, parsingCB=False)
-            else:
-                raise e
-
-        return [variableSpecializerPath]
-
     def _applyOperation(self, data):
         """This method can be used to apply the specified operation function to the data parameter.
         If no operation function is known, the data parameter is returned"""
@@ -330,62 +264,9 @@ class Value(AbstractRelationVariableLeaf):
 
         return self.__operation(data)
 
-    # def getValue(self, processingToken):
-    #     """Return the current value of targeted field.
-    #     """
-    #     # first checks the pointed fields all have a value
-    #     hasValue = True
-    #     for field in self.fields:
-    #         if field.domain != self and not processingToken.isValueForVariableAvailable(field.domain):
-    #             hasValue = False
-
-    #     if not hasValue:
-    #         raise Exception("Impossible to compute the value (getValue) of the current Size field since some of its dependencies have no value")
-    #     else:
-    #         size = 0
-    #         for field in self.fields:
-    #             if field.domain is self:
-    #                 fieldValue = self.dataType.generate()
-    #             else:
-    #                 fieldValue = processingToken.getValueForVariable(field.domain)
-    #             if fieldValue is None:
-    #                 break
-    #             else:
-    #                 tmpLen = len(fieldValue)
-    #                 tmpLen = int(math.ceil(tmpLen / 8.0) * 8)  # Round to the upper closest multiple of 8 (the size of a byte),
-    #                                                            # because this is what will be considered during field specialization
-    #                 size += tmpLen
-    #         size = size * self.factor + self.offset
-    #         b = TypeConverter.convert(size, Integer, BitArray)
-
-    #         while len(b)<self.dataType.size[0]:
-    #             b.insert(0, False)
-
-    #         return b
-
     def __str__(self):
         """The str method."""
         return "Value({0})".format(str(self.fieldDependencies[0].name))
-
-    @property
-    def dataType(self):
-        """The datatype used to encode the result of the computed size.
-
-        :type: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
-        """
-
-        return self.__dataType
-
-    @dataType.setter
-    @typeCheck(AbstractType)
-    def dataType(self, dataType):
-        if dataType is None:
-            raise TypeError("Datatype cannot be None")
-        (minSize, maxSize) = dataType.size
-        if maxSize is None:
-            raise ValueError(
-                "The datatype of a size field must declare its length")
-        self.__dataType = dataType
 
     @property
     def factor(self):

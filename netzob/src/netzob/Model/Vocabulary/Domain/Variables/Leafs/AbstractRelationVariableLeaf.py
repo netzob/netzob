@@ -36,6 +36,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import random
+import abc
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -127,18 +128,25 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         if parsingPath is None:
             raise Exception("ParsingPath cannot be None")
 
-        sizeOfPossibleValue = self.dataType.size()
-        if sizeOfPossibleValue[0] != sizeOfPossibleValue[1]:
-            raise Exception(
-                "Impossible to abstract messages if a size field has a dynamic size"
-            )
+        if isinstance(self.dataType, Integer):
+            expectedSize = self.dataType.unitSize
+        else:
+            minValue, maxValue = self.dataType.size
+            if minValue != maxValue:
+                raise Exception(
+                    "Impossible to abstract messages if a size field has a dynamic size"
+                )
+            expectedSize = maxValue
 
         content = parsingPath.getDataAssignedToVariable(self)
-        possibleValue = content[:sizeOfPossibleValue[1]]
+        if content is None:
+            raise Exception("No data assigned.")
+
+        possibleValue = content[:expectedValue]
         self._logger.debug("Possible value of relation field: {0}".
                            format(possibleValue))
 
-        expectedValue = self._computeExpectedValue(parsingPath)
+        expectedValue = self.computeExpectedValue(parsingPath)
         if expectedValue is None:
             # the expected value cannot be computed
             # we add a callback
@@ -168,18 +176,25 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             "domainCMP executed on {0} by a relation domain".format(
                 parsingPath))
 
-        minSize, maxSize = self.dataType.size
-        if minSize != maxSize:
-            raise Exception(
-                "Impossible to abstract messages if a size field has a dynamic size"
-            )
+        if isinstance(self.dataType, Integer):
+            expectedSize = self.dataType.unitSize
+        else:
+            minValue, maxValue = self.dataType.size
+            if minValue != maxValue:
+                raise Exception(
+                    "Impossible to abstract messages if a size field has a dynamic size"
+                )
+            expectedSize = maxValue
 
         content = parsingPath.getDataAssignedToVariable(self)
-        possibleValue = content[:maxSize]
+        if content is None:
+            raise Exception("No data assigned.")
+
+        possibleValue = content[:expectedSize]
 
         expectedValue = None
         try:
-            expectedValue = self._computeExpectedValue(parsingPath)
+            expectedValue = self.computeExpectedValue(parsingPath)
             if possibleValue[:len(expectedValue)] == expectedValue:
                 self._logger.debug("Callback executed with success")
                 parsingPath.addResult(self, expectedValue.copy())
@@ -187,6 +202,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             else:
                 self._logger.debug("Executed callback has failed.")
         except Exception as e:
+            self._logger.debug("The expected value cannot be computed. Reason: '{}'".format(e))
             # the expected value cannot be computed
             if acceptCallBack:
                 # we add a callback
@@ -207,7 +223,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         parsingPath.registerFieldCallBack(self.fieldDependencies, self)
 
     @typeCheck(GenericPath)
-    def _computeExpectedValue(self, parsingPath):
+    def computeExpectedValue(self, parsingPath):
         self._logger.debug(
             "compute expected value for relation field")
 
@@ -224,32 +240,35 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             raise Exception(
                 "Expected value cannot be computed, some dependencies are missing for domain {0}. Error: '{}'".
                 format(self, errorMessage))
-        else:
-            fieldValues = []
-            for field in self.fieldDependencies:
-                if field.domain is self:
-                    fieldSize = random.randint(field.domain.dataType.size[0], field.domain.dataType.size[1])
-                    fieldValue = TypeConverter.convert(b"\x00" * int(fieldSize / 8), Raw, BitArray)
-                else:
-                    fieldValue = parsingPath.getDataAssignedToVariable(field.domain)
 
-                if fieldValue is None:
-                    break
-                elif fieldValue.tobytes() == TypeConverter.convert("PENDING VALUE", String, BitArray).tobytes():
-                    # Handle case where field value is not currently known.
-                    raise Exception("Target field '{}' has a pending value".format(field.name))
-                else:
-                    fieldValues.append(fieldValue)
+        fieldValues = []
+        for field in self.fieldDependencies:
+            if field.domain is self:
+                #fieldValue = self.dataType.generate()
+                fieldSize = random.randint(field.domain.dataType.size[0], field.domain.dataType.size[1])
+                fieldValue = TypeConverter.convert(b"\x00" * int(fieldSize / 8), Raw, BitArray)
+            else:
+                fieldValue = parsingPath.getDataAssignedToVariable(field.domain)
 
-            # Aggregate all field value in a uniq bitarray object
-            concatFieldValues = bitarray('')
-            for f in fieldValues:
-                concatFieldValues += f
+            if fieldValue is None:
+                raise Exception("Cannot generate value for field: '{}'".format(field.name))
 
-            # Compute the relation result
-            result = self.relationOperation(concatFieldValues)
+            if fieldValue.tobytes() == TypeConverter.convert("PENDING VALUE", String, BitArray).tobytes():
+                # Handle case where field value is not currently known.
+                raise Exception("Target field '{}' has a pending value".format(field.name))
+            else:
+                fieldValues.append(fieldValue)
 
-            return result
+        # Aggregate all field value in a uniq bitarray object
+        concatFieldValues = bitarray('')
+        for f in fieldValues:
+            concatFieldValues += f
+
+        # Compute the relation result
+        result = self.relationOperation(concatFieldValues)
+
+        self._logger.debug("Computed value for relation field: '{}'".format(result))
+        return result
 
     @typeCheck(SpecializingPath)
     def regenerate(self, variableSpecializerPath, moreCallBackAccepted=True):
@@ -263,7 +282,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             raise Exception("VariableSpecializerPath cannot be None")
 
         try:
-            newValue = self._computeExpectedValue(variableSpecializerPath)
+            newValue = self.computeExpectedValue(variableSpecializerPath)
             variableSpecializerPath.addResult(self, newValue.copy())
         except Exception as e:
             self._logger.debug(
@@ -281,6 +300,11 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
                 raise e
 
         return [variableSpecializerPath]
+
+    @abc.abstractmethod
+    def relationOperation(self, data):
+        """Compute the relation result."""
+        raise NotImplementedError("Method relationOperation() has to be implemented in sub-classes")
 
     @property
     def fieldDependencies(self):
