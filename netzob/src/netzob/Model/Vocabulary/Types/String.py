@@ -125,8 +125,10 @@ class String(AbstractType):
     Netzob supports strings with a terminal delimiter. Its usage is as
     follows:
 
-    >>> f_eof    = Field(String('\t'))
-    >>> f_string = Field(String(eof=[String('\n'), Raw('\x00'), f_eof]))
+    .. todo::
+
+        # >>> f_eof    = Field(String('\t'))
+        # >>> f_string = Field(String(eof=[String('\n'), Raw(b'\x00'), f_eof]))
 
     The ``eof`` attribute specifies a list of values that is used as
     potential terminal characters. Terminal characters can either be
