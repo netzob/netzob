@@ -109,7 +109,23 @@ class MessageSpecializer(object):
 
     @typeCheck(Symbol)
     def specializeSymbol(self, symbol):
-        """This method generates a message based on the provided symbol definition."""
+        """This method generates a message based on the provided symbol definition.
+
+        >>> from netzob.all import *
+        >>> f0 = Field(name="Type", domain=Raw(b"\x01"))
+        >>> f2 = Field(name="Value", domain=Raw(nbBytes=10))
+        >>> f1 = Field(name="Length", domain = Size(f2, dataType = Raw(nbBytes=3, unitSize = AbstractType.UNITSIZE_32)))
+        >>> s = Symbol(fields = [f0, f1, f2])
+        >>> generated_data = TypeConverter.convert(MessageSpecializer().specializeSymbol(s).generatedContent, BitArray, Raw)
+        >>> len(generated_data) > 4
+        True
+
+        # we can use presets to arbitrary fix the value of one field
+        >>> presets = { "Value": "hello" }
+        >>> TypeConverter.convert(MessageSpecializer(presets = presets).specializeSymbol(s).generatedContent, BitArray, Raw)
+        b'\\x01\\x00\\x00\\x05hello'
+
+        """
         if symbol is None:
             raise Exception("Specified symbol is None")
 
@@ -123,9 +139,26 @@ class MessageSpecializer(object):
         # Remove preseted fields when they are concerned with fuzzing
         self._filterPresetsWithFuzz(symbol)
 
-        # this variable host all the specialization path
+        # This variable host all the specialization paths
         specializingPaths = [SpecializingPath(memory=self.memory)]
 
+        # First, we specialize the fields for which we have parameterized values (presets)
+        for field in symbol.fields:
+            self._logger.debug("Specializing field {0} with potential preset value".format(field.name))
+
+            fieldDomain = field.domain
+            if fieldDomain is None:
+                raise Exception(
+                    "Cannot specialize field '{0}' since it defines no domain".
+                    format(fieldDomain))
+
+            if self.presets is not None and field in self.presets.keys():
+
+                for specializingPath in specializingPaths:
+                    specializingPath.addResult(field.domain, self.presets[field])
+                    specializingPath.addResultToField(field, self.presets[field])
+
+        # Then, we specialize the other fields (no presets)
         for field in symbol.fields:
             self._logger.debug("Specializing field {0}".format(field.name))
 
@@ -135,13 +168,18 @@ class MessageSpecializer(object):
                     "Cannot specialize field '{0}' since it defines no domain".
                     format(fieldDomain))
 
-            fs = FieldSpecializer(field, presets=self.presets, fuzz=self.fuzz)
-
             newSpecializingPaths = []
-            for specializingPath in specializingPaths:
-                newSpecializingPaths.extend(fs.specialize(specializingPath))
 
-            specializingPaths = newSpecializingPaths
+            if self.presets is not None and field in self.presets.keys():
+                pass
+            else:
+
+                fs = FieldSpecializer(field, presets=self.presets, fuzz=self.fuzz)
+
+                for specializingPath in specializingPaths:
+                    newSpecializingPaths.extend(fs.specialize(specializingPath))
+
+                    specializingPaths = newSpecializingPaths
 
         if len(specializingPaths) > 1:
             self._logger.info(

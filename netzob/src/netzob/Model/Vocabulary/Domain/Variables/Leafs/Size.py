@@ -53,6 +53,7 @@ from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Types.Integer import Integer
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
@@ -374,12 +375,15 @@ class Size(AbstractRelationVariableLeaf):
                 remainingFields.append(field)
             else:
 
-                # Retrieve the size of the targeted field, if it has a fixed size
-                if hasattr(field.domain, "dataType"):
-                    minSize, maxSize = field.domain.dataType.size
-                    if maxSize is not None and minSize == maxSize:
-                        size += minSize
-                        continue
+                # Retrieve the size of the targeted field, if it not a Data and has a fixed size
+                if not isinstance(field.domain, Data):
+                    if hasattr(field.domain, "dataType"):
+                        minSize, maxSize = field.domain.dataType.size
+                        if maxSize is not None and minSize == maxSize:
+                            size += minSize
+                            continue
+                        else:
+                            raise Exception("The following targeted field must have a fixed size: {0}".format(field.name))
 
                 # Else, retrieve its value if it exists
                 if parsingPath.isDataAvailableForVariable(field.domain):
