@@ -195,7 +195,9 @@ class PCAPImporter(object):
         if self.datalink not in list(PCAPImporter.SUPPORTED_DATALINKS.keys()):
             self._logger.debug("Unkown datalinks")
 
-        if self.importLayer > 1 and self.datalink != pcapy.DLT_EN10MB and self.datalink != pcapy.DLT_LINUX_SLL and self.datalink != PCAPImporter.PROTOCOL201:
+        if self.importLayer > 1 and self.datalink != pcapy.DLT_EN10MB and self.datalink != pcapy.DLT_LINUX_SLL \
+                and self.datalink != pcapy.DLT_RAW and self.datalink != PCAPImporter.PROTOCOL201:
+            self._logger.debug('Datalink: ' + str(self.datalink))
             errorMessage = _("This pcap cannot be imported since the " +
                              "layer 2 is not supported ({0})").format(
                                  str(self.datalink))
@@ -336,6 +338,12 @@ class PCAPImporter(object):
             l2DstAddr = None
             l2Payload = payload[8:]
             etherType = payload[4:6]
+        elif self.datalink == pcapy.DLT_RAW:
+            l2Proto = None
+            l2SrcAddr = None
+            l2DstAddr = None
+            l2Payload = payload
+            etherType = 0x0800
 
         return (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType)
 
