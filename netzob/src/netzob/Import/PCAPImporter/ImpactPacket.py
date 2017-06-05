@@ -1814,3 +1814,118 @@ class ICMP(Header):
 
     def get_packet(self):
         return Header.get_packet(self)
+
+class ARP(Header):
+    ethertype = 0x806
+    def __init__(self, aBuffer = None):
+        Header.__init__(self, 7)
+        if aBuffer:
+            self.load_header(aBuffer)
+
+    def get_ar_hrd(self):
+        return self.get_word(0)
+
+    def set_ar_hrd(self, aValue):
+        self.set_word(0, aValue)
+
+    def get_ar_pro(self):
+        return self.get_word(2)
+
+    def set_ar_pro(self, aValue):
+        self.set_word(2, aValue)
+
+    def get_ar_hln(self):
+        return self.get_byte(4)
+
+    def set_ar_hln(self, aValue):
+        self.set_byte(4, aValue)
+
+    def get_ar_pln(self):
+        return self.get_byte(5)
+
+    def set_ar_pln(self, aValue):
+        self.set_byte(5, aValue)
+
+    def get_ar_op(self):
+        return self.get_word(6)
+
+    def set_ar_op(self, aValue):
+        self.set_word(6, aValue)
+
+    def get_ar_sha(self):
+        tmp_size = self.get_ar_hln()
+        return self.get_bytes().tolist()[8: 8 + tmp_size]
+
+    def set_ar_sha(self, aValue):
+        for i in range(0, self.get_ar_hln()):
+            self.set_byte(i + 8, aValue[i])
+
+    def get_ar_spa(self):
+        tmp_size = self.get_ar_pln()
+        return self.get_bytes().tolist()[8 + self.get_ar_hln(): 8 + self.get_ar_hln() + tmp_size]
+
+    def set_ar_spa(self, aValue):
+        for i in range(0, self.get_ar_pln()):
+            self.set_byte(i + 8 + self.get_ar_hln(), aValue[i])
+
+    def get_ar_tha(self):
+        tmp_size = self.get_ar_hln()
+        tmp_from = 8 + self.get_ar_hln() + self.get_ar_pln()
+        return self.get_bytes().tolist()[tmp_from: tmp_from + tmp_size]
+
+    def set_ar_tha(self, aValue):
+        tmp_from = 8 + self.get_ar_hln() + self.get_ar_pln()
+        for i in range(0, self.get_ar_hln()):
+            self.set_byte(i + tmp_from, aValue[i])
+
+    def get_ar_tpa(self):
+        tmp_size = self.get_ar_pln()
+        tmp_from = 8 + ( 2 * self.get_ar_hln()) + self.get_ar_pln()
+        return self.get_bytes().tolist()[tmp_from: tmp_from + tmp_size]
+
+    def set_ar_tpa(self, aValue):
+        tmp_from = 8 + (2 * self.get_ar_hln()) + self.get_ar_pln()
+        for i in range(0, self.get_ar_pln()):
+            self.set_byte(i + tmp_from, aValue[i])
+
+    def get_header_size(self):
+        return 8 + (2 * self.get_ar_hln()) + (2 * self.get_ar_pln())
+
+    def get_op_name(self, ar_op):
+        tmp_dict = {1:'REQUEST', 2:'REPLY', 3:'REVREQUEST', 4:'REVREPLY', 8:'INVREQUEST', 9:'INVREPLY'}
+        answer = tmp_dict.get(ar_op, 'UNKNOWN')
+        return answer
+
+    def get_hrd_name(self, ar_hrd):
+        tmp_dict = { 1:'ARPHRD ETHER', 6:'ARPHRD IEEE802', 15:'ARPHRD FRELAY'}
+        answer = tmp_dict.get(ar_hrd, 'UNKNOWN')
+        return answer
+
+
+    def as_hrd(self, anArray):
+        if not anArray:
+            return ''
+        tmp_str = '%x' % anArray[0]
+        for i in range(1, len(anArray)):
+            tmp_str += ':%x' % anArray[i]
+        return tmp_str
+
+    def as_pro(self, anArray):
+        if not anArray:
+            return ''
+        tmp_str = '%d' % anArray[0]
+        for i in range(1, len(anArray)):
+            tmp_str += '.%d' % anArray[i]
+        return tmp_str
+
+    def __str__(self):
+        tmp_op = self.get_ar_op()
+        tmp_str = 'ARP format: ' + self.get_hrd_name(self.get_ar_hrd()) + ' '
+        tmp_str += 'opcode: ' + self.get_op_name(tmp_op)
+        tmp_str += '\n' + self.as_hrd(self.get_ar_sha()) + ' -> '
+        tmp_str += self.as_hrd(self.get_ar_tha())
+        tmp_str += '\n' + self.as_pro(self.get_ar_spa()) + ' -> '
+        tmp_str += self.as_pro(self.get_ar_tpa())
+        if self.child():
+            tmp_str += '\n' + str(self.child())
+        return tmp_strirc.pcap
