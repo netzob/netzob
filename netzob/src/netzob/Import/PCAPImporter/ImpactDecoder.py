@@ -124,6 +124,18 @@ class IPDecoder(Decoder):
         i.contains(packet)
         return i
 
+class ARPDecoder(Decoder):
+    def __init__(self):
+        pass
+
+    def decode(self, aBuffer):
+        arp = ImpactPacket.ARP(aBuffer)
+        self.set_decoded_protocol( arp )
+        off = arp.get_header_size()
+        self.data_decoder = DataDecoder()
+        packet = self.data_decoder.decode(aBuffer[off:])
+        arp.contains(packet)
+        return arp
 
 class UDPDecoder(Decoder):
     def __init__(self):
