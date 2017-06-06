@@ -47,8 +47,10 @@ from netzob.Fuzzing.Mutator import Mutator
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Fuzzing.DeterministIntegerMutator import (
     DeterministIntegerMutator)
-from netzob.Model.Vocabulary.Types.Integer import uint32le
+from netzob.Model.Vocabulary.Types.Integer import uint16le
 from netzob.Model.Vocabulary.Field import Field
+from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
+from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
 
 
 class SequenceMutator(Mutator):
@@ -60,22 +62,52 @@ class SequenceMutator(Mutator):
     >>> mutator = SequenceMutator()
     >>> mutator.seed = 10
     >>> mutator.field = sequenceField
-    >>> dataHex = mutator.mutate()
+    >>> dataHex = mutator.generate()
 
     """
 
     DEFAULT_MIN_LENGTH = 0
-    DEFAULT_MAX_LENGTH = 1
+    DEFAULT_MAX_LENGTH = 10
 
-    def __init__(self):
-        self._elementMutator = None
-        self._minLength = SequenceMutator.DEFAULT_MIN_LENGTH
-        self._maxLength = SequenceMutator.DEFAULT_MAX_LENGTH
-        self._elementLength = Field(uint32le())
+    def __init__(self,
+                 domain,
+                 elementMutator=None,
+                 mode=None,
+                 length=(None, None),
+                 lengthBitSize=None):
+        # Sanity checks
+        if domain is None:
+            raise Exception("Domain should be known to initialize a mutator")
+        if not isinstance(domain, Repeat):
+            raise Exception("Mutator domain should be of type Repeat. Received object: '{}'".format(domain))
+
+        # Call parent init
+        super().__init__(domain=domain, mode=mode)
+
+        if isinstance(length, tuple) and \
+           len(length) == 2 and \
+           isinstance(length[0], int) and \
+           isinstance(length[1], int):
+            self._minLength = length[0]
+            self._maxLength = length[1]
+        if isinstance(domain.nbRepeat, tuple):
+            # Handle desired length according to the domain information
+            self._minLength = max(self._minLength, int(domain.nbRepeat[0]))
+            self._maxLength = min(self._maxLength, int(domain.nbRepeat[1]))
+        if self._minLength is None or self._maxLength is None:
+            self._minLength = SequenceMutator.DEFAULT_MIN_LENGTH
+            self._maxLength = SequenceMutator.DEFAULT_MAX_LENGTH
+
+        if elementMutator is not None and not isinstance(elementMutator, Mutator):
+            raise ValueError("{} is not a valid Mutator".format(type(elementMutator)))
+        self._elementMutator = elementMutator
+
+        self._sequenceLength = Field(uint16le())
         self._lengthMutator = DeterministIntegerMutator(
-            minValue=self._minLength,
-            maxValue=self.maxLength)
-        self._lengthMutator.field = self._elementLength
+            domain=self._sequenceLength.domain,
+            mode=mode,
+            interval=(self._minLength, self.maxLength),
+            bitsize=lengthBitSize)
 
     @property
     def lengthMutator(self):
@@ -94,11 +126,6 @@ class SequenceMutator(Mutator):
         :type: :class:`Mutator <netzob.Fuzzing.Mutator>`
         """
         return self._elementMutator
-
-    @elementMutator.setter
-    @typeCheck(Mutator)
-    def elementMutator(self, mutator):
-        self._elementMutator = mutator
 
     @property
     def minLength(self):
@@ -129,7 +156,7 @@ class SequenceMutator(Mutator):
         self._maxLength = length_max
 
     def getLength(self):
-        """The length of the last generated elements of the sequence.
+        """The last generated length of the sequence.
 
         :rtype: int
         """
@@ -144,6 +171,16 @@ class SequenceMutator(Mutator):
         """
         self._lengthMutator.minValue = self.minLength
         self._lengthMutator.maxValue = self.maxLength
-        generatedLength = int(self._lengthMutator.mutate(), 16)
-        # TODO : implement the sequence generator, which uses generatedLength
-        return super().generate()
+        length = int.from_bytes(self._lengthMutator.generate(),
+                                self._lengthMutator.domain.dataType.endianness)
+        self.domain.nbRepeat = length
+
+        elementValue = self.domain.children[0].dataType.value.tobytes()
+        if self._elementMutator is not None:
+            elementValue = self._elementMutator.generate()
+
+        value = b''
+        if elementValue is not None:
+            for _ in range(0, length):
+                value = value + elementValue
+        return value

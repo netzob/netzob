@@ -80,7 +80,9 @@ class BinarySequenceMutator(Mutator):
 
     def __init__(self,
                  domain,
-                 length=(None, None)):
+                 mode=None,
+                 length=(None, None),
+                 lengthBitSize=None):
         # Sanity checks
         if domain is None:
             raise Exception("Domain should be known to initialize a mutator")
@@ -91,7 +93,8 @@ class BinarySequenceMutator(Mutator):
         if not isinstance(domain.dataType, BitArray):
             raise Exception("Mutator domain dataType should be an Integer, not '{}'".format(type(domain.dataType)))
 
-        super().__init__(domain=domain)
+        # Call parent init
+        super().__init__(domain=domain, mode=mode)
 
         if isinstance(length, tuple) and \
            len(length) == 2 and \
@@ -113,8 +116,9 @@ class BinarySequenceMutator(Mutator):
         self._sequenceLength = Field(uint16le())
         self._lengthMutator = DeterministIntegerMutator(
             domain=self._sequenceLength.domain,
-            interval=(self._minLength, self.maxLength))
-        self._lengthMutator.field = self._sequenceLength
+            mode=mode,
+            interval=(self._minLength, self.maxLength),
+            bitsize=lengthBitSize)
         self._prng = Xorshift128plus(self.seed)
 
     @property

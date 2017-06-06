@@ -88,8 +88,10 @@ class StringMutator(Mutator):
 
     def __init__(self,
                  domain,
+                 mode=None,
                  endChar=DEFAULT_END_CHAR,
                  length=(None, None),
+                 lengthBitSize=None,
                  naughtyStrings=DEFAULT_NAUGHTY_STRINGS,
                  method=METHOD_PADDING_TRUNCATE):
         # Sanity checks
@@ -102,7 +104,8 @@ class StringMutator(Mutator):
         if not isinstance(domain.dataType, String):
             raise Exception("Mutator domain dataType should be an Integer, not '{}'".format(type(domain.dataType)))
 
-        super().__init__(domain=domain)
+        # Call parent init
+        super().__init__(domain=domain, mode=mode)
 
         self._endChar = endChar
 
@@ -132,7 +135,9 @@ class StringMutator(Mutator):
         self._stringLength = Field(uint16le())
         self._lengthMutator = DeterministIntegerMutator(
             domain=self._stringLength.domain,
-            interval=(self._minLength, self.maxLength))
+            mode=mode,
+            interval=(self._minLength, self.maxLength),
+            bitsize=lengthBitSize)
 
         self._sg = StringPaddedGenerator(self._lengthMutator,
                                          self._naughtyStrings)

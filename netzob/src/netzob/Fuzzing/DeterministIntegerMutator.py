@@ -90,7 +90,7 @@ class DeterministIntegerMutator(Mutator):
 
     """
 
-    def __init__(self, domain, interval=None, mode=None):
+    def __init__(self, domain, interval=None, bitsize=None, mode=None):
         # Sanity checks
         if domain is None:
             raise Exception("Domain should be known to initialize a mutator")
@@ -100,6 +100,9 @@ class DeterministIntegerMutator(Mutator):
             raise Exception("Mutator domain should have a dataType Integer")
         if not isinstance(domain.dataType, Integer):
             raise Exception("Mutator domain dataType should be an Integer, not '{}'".format(type(domain.dataType)))
+
+        # Call parent init
+        super().__init__(domain=domain, mode=mode)
 
         # Find min and max potential values for interval
         minValue = 0
@@ -119,14 +122,26 @@ class DeterministIntegerMutator(Mutator):
         self._minValue = minValue
         self._maxValue = maxValue
 
-        # Call parent init
-        super().__init__(domain=domain, mode=mode)
+        if bitsize is not None:
+            if not isinstance(bitsize, int) or bitsize <=0:
+                raise ValueError("{} is not a valid bitsize value".format(bitsize))
+        self._bitsize = bitsize
+        if self._bitsize is None:
+            self._bitsize = domain.dataType.unitSize
+        if self._minValue >= 0:
+            if self._maxValue > 2**self._bitsize - 1:
+                raise ValueError("The upper bound {} is too large and cannot be encoded on {} bits".format(self._maxValue, self._bitsize))
+        else:
+            if self._maxValue > 2**(self._bitsize - 1) - 1:
+                raise ValueError("The upper bound {} is too large and cannot be encoded on {} bits".format(self._maxValue, self._bitsize))
+            if self._minValue < -2**(self._bitsize - 1):
+                raise ValueError("The lower bound {} is too small and cannot be encoded on {} bits".format(self._minValue, self._bitsize))
 
         # Initialize values to generate
         self._ng = DeterministGenerator()
         self._ng.createValues(self._minValue,
                               self._maxValue,
-                              domain.dataType.unitSize,
+                              self._bitsize,
                               domain.dataType.sign == AbstractType.SIGN_SIGNED)
 
     @property
