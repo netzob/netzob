@@ -45,27 +45,70 @@
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Mutator import Mutator
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Fuzzing.Xorshift128plus import Xorshift128plus
+# from netzob.Fuzzing.Xorshift128plus import Xorshift128plus
 from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
+from randomstate.prng import *
 
 
 class PseudoRandomIntegerMutator(Mutator):
     r"""The integer mutator, using pseudo-random generator.
+
+    The PseudoRandomIntegerMutator constructor expects some parameters:
+
+    :param domain: The domain of the field to mutate.
+    :param interval: The scope of values to generate.
+        If set to **Mutator.DEFAULT_INTERVAL**, the values will be generate
+        between the min and max values of the domain.
+        If set to **Mutator.FULL_INTERVAL**, the values will be generate in
+        [0, 2^N-1], where N is the bitsize (storage) of the field.
+        If it is an tuple of integers (min, max), the values will be generate
+        between min and max.
+        Default value is **Mutator.DEFAULT_INTERVAL**.
+    :param mode: If set to **Mutator.GENERATE**, the generate() method will be
+        used to produce the value.
+        If set to **Mutator.MUTATE**, the mutate() method will be used to
+        produce the value (not implemented).
+        Default value is **Mutator.GENERATE**.
+    :param generator_type: The name of the generator to use, among those
+        available in :mod:`randomstate.prng`.
+        Default value is **PRNG_mt19937**.
+    :param seed: The seed used in pseudo-random generator
+        Default value is **Mutator.SEED_DEFAULT**.
+    :type domain: :class:`AbstractVariable
+        <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
+    :type interval: :class:`int` or :class:`tuple`, optional
+    :type mode: :class:`int`, optional
+    :type generator_type: :class:`str`, optional
+    :type seed: :class:`int`, optional
 
     The following example shows how to generate an 8bits integer in [10, 20]
     interval, with an arbitrary seed of 4321:
 
     >>> from netzob.all import *
     >>> fieldInt = Field(Integer())
-    >>> mutator = PseudoRandomIntegerMutator(domain=fieldInt.domain, interval=(10, 20))
-    >>> mutator.seed = 4321
+    >>> mutator = PseudoRandomIntegerMutator(domain=fieldInt.domain, interval=(10, 20), seed=4321)
     >>> mutator.generate()
-    b'\x0e'
-
+    b'\n'
     """
 
-    def __init__(self, domain, interval=None, mode=None):
+    # Types of PRNG in RandomState module
+    PRNG_mt19937 = 'mt19937'
+    PRNG_mlfg_1279_861 = 'mlfg_1279_861'
+    PRNG_mrg32k3a = 'mrg32k3a'
+    PRNG_pcg32 = 'pcg32'
+    PRNG_pcg64 = 'pcg64'
+    PRNG_xorshift128 = 'xorshift128'
+    PRNG_xoroshiro128plus = 'xoroshiro128plus'
+    PRNG_xorshift1024 = 'xorshift1024'
+    PRNG_dsfmt = 'dsfmt'
+
+    def __init__(self,
+                 domain,
+                 interval=Mutator.DEFAULT_INTERVAL,
+                 mode=Mutator.GENERATE,
+                 generator_type='mt19937',
+                 seed=Mutator.SEED_DEFAULT):
         # Sanity checks
         if domain is None:
             raise Exception("Domain should be known to initialize a mutator")
@@ -86,7 +129,7 @@ class PseudoRandomIntegerMutator(Mutator):
             # Handle desired interval according to the storage space of the domain dataType
             minValue = max(interval[0], domain.dataType.getMinStorageValue())
             maxValue = min(interval[1], domain.dataType.getMaxStorageValue())
-        elif interval == Mutator.DEFAULT_INTERVAL or interval is None:
+        elif interval == Mutator.DEFAULT_INTERVAL:
             minValue = domain.dataType.getMinValue()
             maxValue = domain.dataType.getMaxValue()
         elif interval == Mutator.FULL_INTERVAL:
@@ -98,7 +141,46 @@ class PseudoRandomIntegerMutator(Mutator):
         self._maxValue = maxValue
 
         # Initialize RNG
-        self._prng = Xorshift128plus(self.seed)
+        self.__initializeGenerator(generator_type, seed)
+        # self._prng = Xorshift128plus(self.seed)
+
+    def __initializeGenerator(self, generator_type, seed):
+        self._seed = seed
+        if generator_type == 'mt19937':
+            self._prng = mt19937.RandomState(seed=self._seed)
+        elif generator_type == 'mlfg_1279_861':
+            self._prng = mlfg_1279_861.RandomState(seed=self._seed)
+        elif generator_type == 'mrg32k3a':
+            self._prng = mrg32k3a.RandomState(seed=self._seed)
+        elif generator_type == 'pcg32':
+            self._prng = pcg32.RandomState(seed=self._seed)
+        elif generator_type == 'pcg64':
+            self._prng = pcg64.RandomState(seed=self._seed)
+        elif generator_type == 'xorshift128':
+            self._prng = xorshift128.RandomState(seed=self._seed)
+        elif generator_type == 'xoroshiro128plus':
+            self._prng = xoroshiro128plus.RandomState(seed=self._seed)
+        elif generator_type == 'xorshift1024':
+            self._prng = xorshift1024.RandomState(seed=self._seed)
+        elif generator_type == 'dsfmt':
+            self._prng = dsfmt.RandomState(seed=self._seed)
+        else:
+            raise ValueError(str(generator_type) +
+                             ' is not a valid PRNG module.')
+        self._generatorType = generator_type
+
+    @property
+    def seed(self):
+        """The seed used in pseudo-random generator
+
+        :type: :class:`int`
+        """
+        return self._seed
+
+    @seed.setter
+    @typeCheck(int)
+    def seed(self, seedValue):
+        self.__initializeGenerator(self._generatorType, seedValue)
 
     @property
     def minValue(self):
@@ -129,31 +211,36 @@ class PseudoRandomIntegerMutator(Mutator):
         self._maxValue = maxValue
 
     def reset(self):
-        self._prng.reset()
+        self.__initializeGenerator(self._generatorType, self._seed)
         self.resetCurrentCounter()
 
     def generate(self):
         """This is the mutation method of the integer type.
         It uses a PRNG to produce the value between minValue and maxValue.
 
-        :return: a generated content represented with bytes
+        :return: the generated content represented with bytes
         :rtype: :class:`bytes`
         """
-
-        # If necessary, initialize the PRNG
-        if self.currentCounter == 0:
-            if self.seed is not None:
-                self._prng.seed = self.seed
 
         # Generate and return a random value in the interval
         if self.currentCounter < self.counterMax:
             self._currentCounter += 1
-            value = int(self._prng.getNew0To1Value32Bits()
-                        * (self.maxValue - self.minValue)
-                        + self.minValue)
-            return Integer.decode(value,
+            return Integer.decode(self.generateInt(),
                                   unitSize=self.domain.dataType.unitSize,
                                   endianness=self.domain.dataType.endianness,
                                   sign=self.domain.dataType.sign)
         else:
             raise Exception("Max mutation counter reached")
+
+    def generateInt(self):
+        """This is the mutation method of the integer type.
+        It uses a PRNG to produce the value between minValue and maxValue.
+
+        :return: the generated int value
+        :rtype: :class:`int`
+        """
+
+        # Generate and return a random value in the interval
+        return int(self._prng.random_sample()
+                   * (self.maxValue - self.minValue)
+                   + self.minValue)

@@ -91,14 +91,11 @@ class Mutator(object):
     FULL_INTERVAL = 1      # We cover the whole storage space of the domain (ex: DeterminitMutator(interval=Mutator.FULL)
     # else, we consider the tuple passed as parameter to override the domain interval (ex: DeterminitMutator(interval=(10, 42))
 
-    def __init__(self, domain=None, automata=None, mode=None):
+    def __init__(self, domain=None, automata=None, mode=GENERATE):
         # Handle parameters
         self._domain = domain
         self._automata = automata
-        if mode is None:
-            self._mode = Mutator.GENERATE
-        else:
-            self._mode = mode
+        self._mode = mode
 
         # Handle class variables
         self._seed = Mutator.SEED_DEFAULT
