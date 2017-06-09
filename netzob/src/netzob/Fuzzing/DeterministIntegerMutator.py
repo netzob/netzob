@@ -60,6 +60,30 @@ class DeterministIntegerMutator(Mutator):
     This position is the seed modulo the number of elements in the list of
     generated values.
 
+    The DeterministIntegerMutator constructor expects some parameters:
+
+    :param domain: The domain of the field to mutate.
+    :param interval: The scope of values to generate.
+        If set to **Mutator.DEFAULT_INTERVAL**, the values will be generate
+        between the min and max values of the domain.
+        If set to **Mutator.FULL_INTERVAL**, the values will be generate in
+        [0, 2^N-1], where N is the bitsize (storage) of the field.
+        If it is an tuple of integers (min, max), the values will be generate
+        between min and max.
+        Default value is **Mutator.DEFAULT_INTERVAL**.
+    :param mode: If set to **Mutator.GENERATE**, the generate() method will be
+        used to produce the value.
+        If set to **Mutator.MUTATE**, the mutate() method will be used to
+        produce the value (not implemented).
+        Default value is **Mutator.GENERATE**.
+    :param bitsize: The size in bits of the memory on which the generated
+        values have to be encoded.
+    :type domain: :class:`AbstractVariable
+        <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
+    :type interval: :class:`int` or :class:`tuple`, optional
+    :type mode: :class:`int`, optional
+    :type bitsize: :class:`int`, optional
+
     The following example shows how to generate an 8bits integer in [-128, +127]
     interval:
 
@@ -90,7 +114,11 @@ class DeterministIntegerMutator(Mutator):
 
     """
 
-    def __init__(self, domain, interval=None, bitsize=None, mode=None):
+    def __init__(self,
+                 domain,
+                 interval=Mutator.DEFAULT_INTERVAL,
+                 mode=Mutator.GENERATE,
+                 bitsize=None):
         # Sanity checks
         if domain is None:
             raise Exception("Domain should be known to initialize a mutator")
@@ -111,7 +139,7 @@ class DeterministIntegerMutator(Mutator):
             # Handle desired interval according to the storage space of the domain dataType
             minValue = max(interval[0], domain.dataType.getMinStorageValue())
             maxValue = min(interval[1], domain.dataType.getMaxStorageValue())
-        elif (interval == Mutator.DEFAULT_INTERVAL or interval is None) and hasattr(domain, 'dataType'):
+        elif interval == Mutator.DEFAULT_INTERVAL and hasattr(domain, 'dataType'):
             minValue = domain.dataType.getMinValue()
             maxValue = domain.dataType.getMaxValue()
         elif interval == Mutator.FULL_INTERVAL and hasattr(domain, 'dataType'):
@@ -160,6 +188,9 @@ class DeterministIntegerMutator(Mutator):
         self._ng.seed = self._seed
 
     def reset(self):
+        """Reset the position in the generated list and set the mutation
+        counter to 0
+        """
         self._ng.reset()
         self.resetCurrentCounter()
 
@@ -184,6 +215,14 @@ class DeterministIntegerMutator(Mutator):
         """
         return len(self._ng.values)
 
+    def generateInt(self):
+        """This method returns an integer value produced by a determinist generator.
+
+        :return: the generated integer value
+        :rtype: :class:`int`
+        """
+        return self._ng.getNewValue()
+
     def generate(self):
         """This is the fuzz generation method of the integer field domain.
         It uses a determinist generator to produce the value.
@@ -193,8 +232,7 @@ class DeterministIntegerMutator(Mutator):
         """
         if self._currentCounter < self.counterMax:
             self._currentCounter += 1
-            value = self._ng.getNewValue()
-            return Integer.decode(value,
+            return Integer.decode(self.generateInt(),
                                   unitSize=self.domain.dataType.unitSize,
                                   endianness=self.domain.dataType.endianness,
                                   sign=self.domain.dataType.sign)

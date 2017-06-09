@@ -64,6 +64,22 @@ class Mutator(object):
     for its keys and Mutators objects for its values. We can provide
     parameters to mutators by using tuple as values of the dict.
 
+    The DeterministIntegerMutator constructor expects some parameters:
+
+    :param domain: The domain of the field to mutate, in case of a data
+        mutator.
+    :param automata: The automata to mutate, in case of an automata mutator.
+    :param mode: If set to **Mutator.GENERATE**, the generate() method will be
+        used to produce the value.
+        If set to **Mutator.MUTATE**, the mutate() method will be used to
+        produce the value (not implemented).
+        Default value is **Mutator.GENERATE**.
+    :type domain: :class:`AbstractVariable
+        <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
+    :type automata: :class:`Automata
+        <netzob.Model.Grammar.Automata>`, optional
+    :type mode: :class:`int`, optional
+
     The following code shows the instanciation of a symbol composed of
     a string and an integer, and the fuzzing request during the
     specialization process:
@@ -240,7 +256,6 @@ class Mutator(object):
         :type data: :class:`bitarray.bitarray`
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
-        :raises: :class:`NotImplementedError`
 
         """
 

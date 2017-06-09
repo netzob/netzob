@@ -141,11 +141,12 @@ class StringMutator(Mutator):
 
         self._sg = StringPaddedGenerator(self._lengthMutator,
                                          self._naughtyStrings)
-        self.seed = 0
+        self._seed = 0
 
     @property
     def seed(self):
-        """The seed used in pseudo-random generator
+        """The seed used in generator
+        Default value is 0.
 
         :type: :class:`int`
         """
@@ -211,11 +212,6 @@ class StringMutator(Mutator):
         :type: :class:`list`
         """
         return self._naughtyStrings
-
-    @naughtyStrings.setter
-    @typeCheck(int)
-    def naughtyStrings(self, testStrings):
-        self._naughtyStrings = testStrings
 
     def generate(self):
         """This is the fuzz generation method of the string field.

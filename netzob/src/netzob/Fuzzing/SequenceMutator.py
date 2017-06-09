@@ -71,7 +71,7 @@ class SequenceMutator(Mutator):
 
     def __init__(self,
                  domain,
-                 elementMutator=None,
+                 mutateChild=False,
                  mode=None,
                  length=(None, None),
                  lengthBitSize=None):
@@ -98,9 +98,7 @@ class SequenceMutator(Mutator):
             self._minLength = SequenceMutator.DEFAULT_MIN_LENGTH
             self._maxLength = SequenceMutator.DEFAULT_MAX_LENGTH
 
-        if elementMutator is not None and not isinstance(elementMutator, Mutator):
-            raise ValueError("{} is not a valid Mutator".format(type(elementMutator)))
-        self._elementMutator = elementMutator
+        self._mutateChild = mutateChild
 
         self._sequenceLength = Field(uint16le())
         self._lengthMutator = DeterministIntegerMutator(
@@ -108,6 +106,23 @@ class SequenceMutator(Mutator):
             mode=mode,
             interval=(self._minLength, self.maxLength),
             bitsize=lengthBitSize)
+
+        self._seed = 0
+
+    @property
+    def seed(self):
+        """The seed used in generator
+        Default value is 0.
+
+        :type: :class:`int`
+        """
+        return self._seed
+
+    @seed.setter
+    @typeCheck(int)
+    def seed(self, seedValue):
+        self._seed = seedValue
+        self._lengthMutator.seed = self._seed
 
     @property
     def lengthMutator(self):
@@ -119,15 +134,6 @@ class SequenceMutator(Mutator):
         return self._lengthMutator
 
     @property
-    def elementMutator(self):
-        """Used to mutate each element of the sequence.
-        This mutator depends on the type of the field.
-
-        :type: :class:`Mutator <netzob.Fuzzing.Mutator>`
-        """
-        return self._elementMutator
-
-    @property
     def minLength(self):
         """The min length of an element of the sequence.
         Default value is DEFAULT_MIN_LENGTH.
@@ -135,11 +141,6 @@ class SequenceMutator(Mutator):
         :type: :class:`int`
         """
         return self._minLength
-
-    @minLength.setter
-    @typeCheck(int)
-    def minLength(self, length_min):
-        self._minLength = length_min
 
     @property
     def maxLength(self):
@@ -150,37 +151,20 @@ class SequenceMutator(Mutator):
         """
         return self._maxLength
 
-    @maxLength.setter
-    @typeCheck(int)
-    def maxLength(self, length_max):
-        self._maxLength = length_max
-
     def getLength(self):
         """The last generated length of the sequence.
 
         :rtype: int
         """
-        return self._elementLength.value
+        return self._sequenceLength.value
 
     def generate(self):
         """This is the fuzz generation method of the sequence field.
-        It uses lengthMutator and elementMutator.
+        It generates a sequence length by using lengthMutator.
+        To access this length value, use **getLength()**.
 
-        :return: a generated content represented with bytes
-        :rtype: :class:`bytes`
+        :return: None
+        :rtype: :class:`None`
         """
-        self._lengthMutator.minValue = self.minLength
-        self._lengthMutator.maxValue = self.maxLength
-        length = int.from_bytes(self._lengthMutator.generate(),
-                                self._lengthMutator.domain.dataType.endianness)
-        self.domain.nbRepeat = length
-
-        elementValue = self.domain.children[0].dataType.value.tobytes()
-        if self._elementMutator is not None:
-            elementValue = self._elementMutator.generate()
-
-        value = b''
-        if elementValue is not None:
-            for _ in range(0, length):
-                value = value + elementValue
-        return value
+        self._lengthMutator.generateInt()
+        return None

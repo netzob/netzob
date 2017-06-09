@@ -177,7 +177,7 @@ class BinarySequenceMutator(Mutator):
         :rtype: :class:`bytes`
         """
         length = int.from_bytes(self._lengthMutator.generate(),
-                                self._lengthMutator.field.domain.dataType.endianness)
+                                self._lengthMutator.domain.dataType.endianness)
 
         valueBits = bitarray()
         if length == 0:
