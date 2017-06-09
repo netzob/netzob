@@ -63,8 +63,27 @@ class BinarySequenceMutator(Mutator):
     """The binary sequence mutator, using pseudo-random generator.
     The generated sequence shall not be longer than 2^32 bits.
 
-    The following example shows how to generate a binary sequence with a length in
-    [0, 30] interval:
+    The BinarySequenceMutator constructor expects some parameters:
+
+    :param domain: The domain of the field to mutate.
+    :param mode: If set to **Mutator.GENERATE**, the generate() method will be
+        used to produce the value.
+        If set to **Mutator.MUTATE**, the mutate() method will be used to
+        produce the value (not implemented).
+        Default value is **Mutator.GENERATE**.
+    :param length: The scope of sequence length to generate. If set to
+        (min, max), the values will be generate between min and max.
+        Default value is **(None, None)**.
+    :param lengthBitSize: The size in bits of the memory on which the generated
+        length will be encoded.
+    :type domain: :class:`AbstractVariable
+        <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
+    :type mode: :class:`int`, optional
+    :type length: :class:`tuple`, optional
+    :type lengthBitSize: :class:`int`, optional
+
+    The following example shows how to generate a binary sequence with a length
+    in [0, 30] interval:
 
     >>> from netzob.all import *
     >>> fieldBits = Field(BitArray())

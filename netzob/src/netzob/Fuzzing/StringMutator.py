@@ -57,6 +57,31 @@ class StringMutator(Mutator):
     """The string mutator, using a determinist generator to get a string length.
     The generated string shall not be longer than 2^16 bytes.
 
+    The StringMutator constructor expects some parameters:
+
+    :param domain: The domain of the field to mutate.
+    :param mode: If set to **Mutator.GENERATE**, the generate() method will be
+        used to produce the value.
+        If set to **Mutator.MUTATE**, the mutate() method will be used to
+        produce the value (not implemented).
+        Default value is **Mutator.GENERATE**.
+    :param endChar: The character(s) ending the string.
+        Default value is **DEFAULT_END_CHAR**.
+    :param length: The scope of string length to generate. If set to
+        (min, max), the values will be generate between min and max.
+        Default value is **(None, None)**.
+    :param lengthBitSize: The size in bits of the memory on which the generated
+        length will be encoded.
+    :param naughtyStrings: The list of potentially dangerous strings.
+        Default value is **DEFAULT_NAUGHTY_STRINGS**.
+    :type domain: :class:`AbstractVariable
+        <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
+    :type mode: :class:`int`, optional
+    :type endChar: :class:`str`, optional
+    :type length: :class:`tuple`, optional
+    :type lengthBitSize: :class:`int`, optional
+    :type naughtyStrings: :class:`list` of :class:`str`, optional
+
     The following example shows how to generate a string with a length in
     [35, 60] interval, the smaller one between the field domain and the length
     given to the constructor of StringMutator:
@@ -83,8 +108,6 @@ class StringMutator(Mutator):
                                "%d",
                                "%s"]
     PADDING_CHAR = ' '
-    METHOD_PADDING_TRUNCATE = 0
-    METHOD_CONCATENATE = 1
 
     def __init__(self,
                  domain,
@@ -92,8 +115,7 @@ class StringMutator(Mutator):
                  endChar=DEFAULT_END_CHAR,
                  length=(None, None),
                  lengthBitSize=None,
-                 naughtyStrings=DEFAULT_NAUGHTY_STRINGS,
-                 method=METHOD_PADDING_TRUNCATE):
+                 naughtyStrings=None):
         # Sanity checks
         if domain is None:
             raise Exception("Domain should be known to initialize a mutator")

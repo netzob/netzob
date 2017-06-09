@@ -57,6 +57,28 @@ class SequenceMutator(Mutator):
     """The sequence mutator, using a determinist generator to get a sequence
     length.
 
+    The SequenceMutator constructor expects some parameters:
+
+    :param domain: The domain of the field to mutate.
+    :param mode: If set to **Mutator.GENERATE**, the generate() method will be
+        used to produce the value.
+        If set to **Mutator.MUTATE**, the mutate() method will be used to
+        produce the value (not implemented).
+        Default value is **Mutator.GENERATE**.
+    :param mutateChild: If true, sub-field has to be mutated.
+        Default value is **False**.
+    :param length: The scope of sequence length to generate. If set to
+        (min, max), the values will be generate between min and max.
+        Default value is **(None, None)**.
+    :param lengthBitSize: The size in bits of the memory on which the generated
+        length will be encoded.
+    :type domain: :class:`AbstractVariable
+        <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
+    :type mode: :class:`int`, optional
+    :type mutateChild: :class:`bool`, optional
+    :type length: :class:`tuple`, optional
+    :type lengthBitSize: :class:`int`, optional
+
     >>> from netzob.all import *
     >>> sequenceField = Field(Repeat(String("this is a string"), nbRepeat=2))
     >>> mutator = SequenceMutator()
@@ -71,8 +93,8 @@ class SequenceMutator(Mutator):
 
     def __init__(self,
                  domain,
-                 mutateChild=False,
                  mode=None,
+                 mutateChild=False,
                  length=(None, None),
                  lengthBitSize=None):
         # Sanity checks
@@ -150,6 +172,15 @@ class SequenceMutator(Mutator):
         :type: :class:`int`
         """
         return self._maxLength
+
+    @property
+    def mutateChild(self):
+        """If true, the sub-field has to be mutated.
+        Default value is False.
+
+        :type: :class:`bool`
+        """
+        return self._mutateChild
 
     def getLength(self):
         """The last generated length of the sequence.

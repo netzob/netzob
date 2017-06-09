@@ -64,7 +64,7 @@ class Mutator(object):
     for its keys and Mutators objects for its values. We can provide
     parameters to mutators by using tuple as values of the dict.
 
-    The DeterministIntegerMutator constructor expects some parameters:
+    The Mutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate, in case of a data
         mutator.
