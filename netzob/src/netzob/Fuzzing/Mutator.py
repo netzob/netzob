@@ -69,9 +69,9 @@ class Mutator(object):
     :param domain: The domain of the field to mutate, in case of a data
         mutator.
     :param automata: The automata to mutate, in case of an automata mutator.
-    :param mode: If set to **Mutator.GENERATE**, the generate() method will be
+    :param mode: If set to **Mutator.GENERATE**, **generate()** will be
         used to produce the value.
-        If set to **Mutator.MUTATE**, the mutate() method will be used to
+        If set to **Mutator.MUTATE**, **mutate()** will be used to
         produce the value (not implemented).
         Default value is **Mutator.GENERATE**.
     :type domain: :class:`AbstractVariable
@@ -80,7 +80,7 @@ class Mutator(object):
         <netzob.Model.Grammar.Automata>`, optional
     :type mode: :class:`int`, optional
 
-    The following code shows the instanciation of a symbol composed of
+    The following code shows the instantiation of a symbol composed of
     a string and an integer, and the fuzzing request during the
     specialization process:
 
@@ -181,7 +181,8 @@ class Mutator(object):
     def domain(self):
         """The domain to which the mutation is applied.
 
-        :type: :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
+        :type: :class:`AbstractVariable \
+<netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
         """
         return self._domain
 
@@ -219,12 +220,8 @@ class Mutator(object):
     @abc.abstractmethod
     def reset(self):
         """Reset environment of the mutator.
-        Raises NotImplementedMutatorError if the inherited mutator has not
-        overridden this method.
-
-        :raises: :class:`NotImplementedError`
         """
-        raise NotImplementedError("reset() is not implemented yet")
+        self._currentCounter = 0
 
     @abc.abstractmethod
     def generate(self):
@@ -232,17 +229,14 @@ class Mutator(object):
         be overridden by all the inherited mutators which call the
         generate() function.
 
-        If the currentCounter reached counterMax, mutate() returns None.
-
-        Raises NotImplementedMutatorError if the inherited mutator has not
-        overridden this method.
-
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
-        :raises: :class:`NotImplementedError`
-
+        :raises: :class:`Exception` when **currentCounter** reaches \
+**counterMax**.
         """
-        raise NotImplementedError("mutate() is not implemented yet")
+        if self._currentCounter >= self.counterMax:
+            raise Exception("Max mutation counter reached")
+        self._currentCounter += 1
 
     @abc.abstractmethod
     def mutate(self, data):

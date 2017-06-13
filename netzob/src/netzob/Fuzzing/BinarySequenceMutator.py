@@ -195,6 +195,9 @@ class BinarySequenceMutator(Mutator):
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
         """
+        # Call parent generate() method
+        super().generate()
+
         length = int.from_bytes(self._lengthMutator.generate(),
                                 self._lengthMutator.domain.dataType.endianness.value)
 

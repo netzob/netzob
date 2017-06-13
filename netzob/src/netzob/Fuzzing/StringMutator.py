@@ -152,7 +152,6 @@ class StringMutator(Mutator):
             self._naughtyStrings = StringMutator.DEFAULT_NAUGHTY_STRINGS
         else:
             self._naughtyStrings = naughtyStrings
-        self._method = method
 
         self._stringLength = Field(uint16le())
         self._lengthMutator = DeterministIntegerMutator(
@@ -242,15 +241,11 @@ class StringMutator(Mutator):
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
         """
-        if self.domain is not None:
-            if self._currentCounter < self.counterMax:
-                self._currentCounter += 1
-                value = self._sg.getNewValue(self.endChar)
-                return String.decode(value,
-                                     unitSize=self.domain.dataType.unitSize,
-                                     endianness=self.domain.dataType.endianness,
-                                     sign=self.domain.dataType.sign)
-            else:
-                raise Exception("Max mutation counter reached")
-        else:
-            raise Exception("Field to mutate not set")
+        # Call parent generate() method
+        super().generate()
+
+        value = self._sg.getNewValue(self.endChar)
+        return String.decode(value,
+                             unitSize=self.domain.dataType.unitSize,
+                             endianness=self.domain.dataType.endianness,
+                             sign=self.domain.dataType.sign)

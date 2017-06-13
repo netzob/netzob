@@ -221,18 +221,16 @@ class PseudoRandomIntegerMutator(Mutator):
         :return: the generated content represented with bytes
         :rtype: :class:`bytes`
         """
+        # Call parent generate() method
+        super().generate()
 
         # Generate and return a random value in the interval
-        if self.currentCounter < self.counterMax:
-            self._currentCounter += 1
-            return Integer.decode(self.generateInt(),
-                                  unitSize=self.domain.dataType.unitSize,
-                                  endianness=self.domain.dataType.endianness,
-                                  sign=self.domain.dataType.sign)
-        else:
-            raise Exception("Max mutation counter reached")
+        return Integer.decode(self.generateInt(),
+                              unitSize=self.domain.dataType.unitSize,
+                              endianness=self.domain.dataType.endianness,
+                              sign=self.domain.dataType.sign)
 
-    def generateInt(self):
+    def generateInt(self, interval=None):
         """This is the mutation method of the integer type.
         It uses a PRNG to produce the value between minValue and maxValue.
 
@@ -241,6 +239,16 @@ class PseudoRandomIntegerMutator(Mutator):
         """
 
         # Generate and return a random value in the interval
-        return int(self._prng.random_sample()
-                   * (self.maxValue - self.minValue)
-                   + self.minValue)
+        if interval is None:
+            return int(self._prng.random_sample()
+                       * (self.maxValue - self.minValue)
+                       + self.minValue)
+        elif (isinstance(interval, tuple) and
+              len(interval) == 2 and
+              isinstance(interval[0], int)
+              and isinstance(interval[1], int)):
+            minValue = interval[0]
+            maxValue = interval[1]
+            return int(self._prng.random_sample()
+                       * (maxValue - minValue)
+                       + minValue)

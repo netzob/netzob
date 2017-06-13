@@ -80,11 +80,19 @@ class SequenceMutator(Mutator):
     :type lengthBitSize: :class:`int`, optional
 
     >>> from netzob.all import *
-    >>> sequenceField = Field(Repeat(String("this is a string"), nbRepeat=2))
-    >>> mutator = SequenceMutator()
+    >>> child = Data(dataType=String("abc"), svas=SVAS.PERSISTENT)
+    >>> fieldRepeat = Field(Repeat(child, nbRepeat=3))
+    >>> mutator = SequenceMutator(fieldRepeat.domain, length=(0, 30))
     >>> mutator.seed = 10
-    >>> mutator.field = sequenceField
-    >>> dataHex = mutator.generate()
+    >>> mutator.generate()
+    >>> mutator.sequenceLength
+    16
+    >>> mutator.generate()
+    >>> mutator.sequenceLength
+    17
+    >>> mutator.generate()
+    >>> mutator.sequenceLength
+    31
 
     """
 
@@ -122,12 +130,13 @@ class SequenceMutator(Mutator):
 
         self._mutateChild = mutateChild
 
-        self._sequenceLength = Field(uint16le())
+        self._sequenceLengthField = Field(uint16le())
         self._lengthMutator = DeterministIntegerMutator(
-            domain=self._sequenceLength.domain,
+            domain=self._sequenceLengthField.domain,
             mode=mode,
             interval=(self._minLength, self.maxLength),
             bitsize=lengthBitSize)
+        self._sequenceLength = None
 
         self._seed = 0
 
@@ -182,20 +191,28 @@ class SequenceMutator(Mutator):
         """
         return self._mutateChild
 
-    def getLength(self):
+    @property
+    def sequenceLength(self):
         """The last generated length of the sequence.
 
         :rtype: int
+        :raises: :class:`ValueError` if _randomType is None
         """
-        return self._sequenceLength.value
+        if self._sequenceLength is None:
+            raise ValueError("Random type is None : generate() has to be \
+called, first")
+        return self._sequenceLength
 
     def generate(self):
         """This is the fuzz generation method of the sequence field.
         It generates a sequence length by using lengthMutator.
-        To access this length value, use **getLength()**.
+        To access this length value, use **sequenceLength** property.
 
         :return: None
         :rtype: :class:`None`
         """
-        self._lengthMutator.generateInt()
+        # Call parent generate() method
+        super().generate()
+
+        self._sequenceLength = self._lengthMutator.generateInt()
         return None

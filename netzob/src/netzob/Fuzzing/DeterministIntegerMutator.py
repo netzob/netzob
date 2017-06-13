@@ -230,11 +230,10 @@ class DeterministIntegerMutator(Mutator):
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
         """
-        if self._currentCounter < self.counterMax:
-            self._currentCounter += 1
-            return Integer.decode(self.generateInt(),
-                                  unitSize=self.domain.dataType.unitSize,
-                                  endianness=self.domain.dataType.endianness,
-                                  sign=self.domain.dataType.sign)
-        else:
-            raise Exception("Max mutation counter reached")
+        # Call parent generate() method
+        super().generate()
+
+        return Integer.decode(self.generateInt(),
+                              unitSize=self.domain.dataType.unitSize,
+                              endianness=self.domain.dataType.endianness,
+                              sign=self.domain.dataType.sign)

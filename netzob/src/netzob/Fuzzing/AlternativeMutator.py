@@ -45,83 +45,171 @@
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Mutator import Mutator
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
-
-
-class RecursivityMutatorError(Exception):
-    pass
+from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
+from netzob.Fuzzing.PseudoRandomIntegerMutator \
+    import PseudoRandomIntegerMutator
+from netzob.Model.Vocabulary.Field import Field
+from netzob.Model.Vocabulary.Types.Integer import uint8le
 
 
 class AlternativeMutator(Mutator):
     """The alternative mutator.
 
-    >>> from netzob.all import *
-    >>> altField = Field(name="Integer or container of Integer")
-    >>> altField.domain = Alt( [Integer(1234),
-    >>>                         Ref(altField.domain)] )
-    >>> mutator = AlternativeMutator()
-    >>> mutator.seed = 10
-    >>> mutator.field = altField
-    >>> dataHex = mutator.mutate()
+    The SequenceMutator constructor expects some parameters:
 
+    :param domain: The domain of the field to mutate.
+    :param mode: If set to **Mutator.GENERATE**, the generate() method will be
+        used to produce the value.
+        If set to **Mutator.MUTATE**, the mutate() method will be used to
+        produce the value (not implemented).
+        Default value is **Mutator.GENERATE**.
+    :param mutateChild: If **True**, the subfield has to be mutated.
+        Default value is **False**.
+    :type domain: :class:`AbstractVariable
+        <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
+    :type mode: :class:`int`, optional
+    :type mutateChild: :class:`bool`, optional
+    :raises: :class:`Exception` if domain is not valid
+
+    >>> from netzob.all import *
+    >>> subFieldAlt = Field(Alt([Integer(12), String("abc")]))
+    >>> fieldAlt = Field(Alt([Integer(34), subFieldAlt.domain]))
+    >>> mutator = AlternativeMutator(fieldAlt.domain)
+    >>> mutator.seed = 10
+    >>> mutator.generate()
+    >>> mutator.randomType.dataType
+    12
+    >>> mutator.currentDepth
+    2
+    >>> mutator.generate()
+    >>> mutator.randomType.dataType
+    abc
+    >>> mutator.currentDepth
+    2
+    >>> mutator.generate()
+    >>> mutator.randomType.dataType
+    34
+    >>> mutator.currentDepth
+    1
     """
 
-    DEFAULT_MAX_DEPTH = 10
+    DEFAULT_MAX_DEPTH = 20
 
-    def __init__(self):
+    def __init__(self,
+                 domain,
+                 mode=None,
+                 mutateChild=False):
+        # Sanity checks
+        if domain is None:
+            raise Exception("Domain should be known to initialize a mutator")
+        if not isinstance(domain, Alt):
+            raise Exception("Mutator domain should be of type Alt. Received \
+object: '{}'".format(domain))
+        self._mutateChild = mutateChild
+
+        # Call parent init
+        super().__init__(domain=domain, mode=mode)
+
+        position = Field(uint8le())
+        self._positionMutator = \
+            PseudoRandomIntegerMutator(domain=position.domain)
+        self._randomType = None
         self._maxDepth = AlternativeMutator.DEFAULT_MAX_DEPTH
-        self._typesMutators = {}
+        self._currentDepth = None
 
     @property
-    def typesMutators(self):
-        """The list of mutators corresponding to types of fields.
+    def positionMutator(self):
+        """The PRNG mutator used to get the random position of the type in the
+        alternative list.
+        The property allows to change the mutator settings, like the seed.
+        It enables to change the position mutator, but with the condition that
+        the class object inherits **PseudoRandomIntegerMutator**.
 
-        :type: :class:`dict`
+        :rtype: :class:`PseudoRandomIntegerMutator \
+<netzob.Fuzzing.PseudoRandomIntegerMutator>`
         """
-        return self._typesMutators
+        return self._positionMutator
 
-    @typeCheck(AbstractType, Mutator)
-    def setTypeMutator(self, domain, mutator):
-        """Associate a mutator to the given type (domain) of field.
-
-        :parameter domain: the type of the field
-        :type domain: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`
-
-        :parameter mutator: the mutator to use with the given domain
-        :type mutator: :class:`Mutator <netzob.Fuzzing.Mutator>`
-        """
-        self._typesMutators[domain] = mutator
+    @positionMutator.setter
+    def positionMutator(self, posMutator):
+        self._positionMutator = posMutator
 
     @property
     def maxDepth(self):
-        """The depth limit when recursivity occurs.
+        """Recursivity limit in mutating an **Alt** type.
+        When this limit is reached in **generate()** method, an exception is
+        raised.
 
-        :type: :class:`int`
+        :rtype: :class:`int`
         """
         return self._maxDepth
 
     @maxDepth.setter
     @typeCheck(int)
-    def maxDepth(self, depth):
-        self._maxDepth = depth
+    def maxDepth(self, maxDepthValue):
+        self._maxDepth = maxDepthValue
+
+    @property
+    def mutateChild(self):
+        """If true, the sub-field has to be mutated.
+        Default value is False.
+
+        :type: :class:`bool`
+        """
+        return self._mutateChild
+
+    @property
+    def randomType(self):
+        """Return the type randomly retrieved by **generate()**.
+
+        :type: :class:`bool`
+        :raises: :class:`ValueError` if _randomType is None
+        """
+        if self._randomType is None:
+            raise ValueError("Random type is None : generate() has to be \
+called, first")
+        return self._randomType
+
+    @property
+    def currentDepth(self):
+        """Return the current depth in searching a type different of
+        **Alt** in **generate()**.
+
+        :type: :class:`bool`
+        :raises: :class:`RecursionError` if _currentDepth is None
+        """
+        if self._currentDepth is None:
+            raise ValueError("Current depth is None : generate() has to be \
+called, first")
+        return self._currentDepth
 
     def generate(self):
         """This is the fuzz generation method of the alternative field.
-        For each type, we produce the value with the associated mutator
-        from typesMutators.
-        If no mutator is set, the default value of the type is used.
-        If the mutation encounters recursivity, infinite loop is avoided by
-        controlling the number of iterations with maxDepth.
-        If it exceeds maxDepth, a RecursivityMutatorError is raised.
+        It selects randomly the type among the alternative list, by using
+        **positionMutator**, and stores it in **randomType**.
+        If the mutation encounters recursivity (**Alt** containing **Alt**),
+        infinite loop is avoided by controlling the number of iterations
+        **currentDepth** with **maxDepth**.
+        If **currentDepth** exceeds **maxDepth**, a RecursionError is raised.
 
-        :return: a generated content represented with bytes
-        :rtype: :class:`bytes`
-        :raises: :class:`RecursivityMutatorError <netzob.Fuzzing.AlternativeMutator.RecursivityMutatorError>`
+        :return: None
+        :rtype: :class:`None`
+        :raises: :class:`RecursionError`
         """
-        depth = 0
-        if depth > self._maxDepth:
-            raise RecursivityMutatorError(
-                "{}.mutate() : max depth reached".format(self._type()))
+        # Call parent generate() method
+        super().generate()
 
-        # TODO : implement the sequence generator, which uses generatedLength
-        return super().generate()
+        self._currentDepth = 0
+        self._randomType = self.domain
+        while isinstance(self._randomType, Alt):
+            self._currentDepth += 1
+            if self._currentDepth >= self._maxDepth:
+                raise RecursionError("max depth reached ({})"
+                                     .format(self._maxDepth))
+            pos = self._positionMutator.generateInt(
+                interval=(0, len(self.domain.children)))
+            if pos < len(self.domain.children):
+                self._randomType = self._randomType.children[pos]
+            else:
+                raise ValueError("Field position ({}) is bigger than the list \
+size ({})".format(pos, len(self.domain.children)))
