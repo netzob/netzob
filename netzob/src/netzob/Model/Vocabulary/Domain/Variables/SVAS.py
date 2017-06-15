@@ -43,7 +43,6 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import NetzobLogger
-from netzob.Common.Utils.Decorators import typeCheck
 
 
 @NetzobLogger
@@ -54,7 +53,7 @@ class SVAS(object):
     defines how its value is used while abstracting and specializing,
     and therefore impacts the memorization strategy.
 
-    A`SVAS` strategy can be attached to a variable and is used both
+    A `SVAS` strategy can be attached to a variable and is used both
     when abstracting and specializing. A SVAS strategy describes the
     set of memory operations that must be performed each time a
     variable is abstracted or specialized. These operations can be
