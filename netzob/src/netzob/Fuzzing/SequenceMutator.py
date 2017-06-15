@@ -94,6 +94,7 @@ class SequenceMutator(Mutator):
     >>> mutator.sequenceLength
     31
 
+    Constant definitions:
     """
 
     DEFAULT_MIN_LENGTH = 0
@@ -142,7 +143,9 @@ class SequenceMutator(Mutator):
 
     @property
     def seed(self):
-        """The seed used in generator
+        """
+        Property (getter/setter).
+        The seed used in generator
         Default value is 0.
 
         :type: :class:`int`
@@ -157,16 +160,24 @@ class SequenceMutator(Mutator):
 
     @property
     def lengthMutator(self):
-        """The mutator used to generate the sequence length, between
+        """
+        Property (getter/setter).
+        The mutator used to generate the sequence length, between
         minLength and maxLength.
 
         :type: :class:`DeterministIntegerMutator <netzob.Fuzzing.DeterministIntegerMutator>`
         """
         return self._lengthMutator
 
+    @lengthMutator.setter
+    def lengthMutator(self, mutator):
+        self._lengthMutator = mutator
+
     @property
     def minLength(self):
-        """The min length of an element of the sequence.
+        """
+        Property (getter).
+        The min length of an element of the sequence.
         Default value is DEFAULT_MIN_LENGTH.
 
         :type: :class:`int`
@@ -175,7 +186,9 @@ class SequenceMutator(Mutator):
 
     @property
     def maxLength(self):
-        """The max length of an element of the sequence.
+        """
+        Property (getter).
+        The max length of an element of the sequence.
         Default value is DEFAULT_MAX_LENGTH.
 
         :type: :class:`int`
@@ -184,7 +197,9 @@ class SequenceMutator(Mutator):
 
     @property
     def mutateChild(self):
-        """If true, the sub-field has to be mutated.
+        """
+        Property (getter).
+        If true, the sub-field has to be mutated.
         Default value is False.
 
         :type: :class:`bool`
@@ -193,7 +208,9 @@ class SequenceMutator(Mutator):
 
     @property
     def sequenceLength(self):
-        """The last generated length of the sequence.
+        """
+        Property (getter).
+        The last generated length of the sequence.
 
         :rtype: int
         :raises: :class:`ValueError` if _randomType is None

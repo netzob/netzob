@@ -91,9 +91,9 @@ class Mutator(object):
     ...             f2: (PseudoRandomIntegerMutator, minValue=12, maxValue=20)}
     >>> symbol.specialize(mutators=mutators)
 
-    """
 
-    # Constants
+    Constant definitions :
+    """
     SEED_DEFAULT = 10
     COUNTER_MAX_DEFAULT = 2**16
 
@@ -121,7 +121,9 @@ class Mutator(object):
 
     @property
     def seed(self):
-        """The seed used in pseudo-random generator
+        """
+        Property (getter/setter).
+        The seed used in pseudo-random generator
 
         :type: :class:`int`
         """
@@ -134,7 +136,9 @@ class Mutator(object):
 
     @property
     def currentState(self):
-        """The current state of the pseudo-random generator.
+        """
+        Property (getter/setter).
+        The current state of the pseudo-random generator.
         the generator can reproduce a value by using this state.
 
         :type: :class:`int`
@@ -148,7 +152,9 @@ class Mutator(object):
 
     @property
     def counterMax(self):
-        """The max number of values that the generator has to produce.
+        """
+        Property (getter/setter).
+        The max number of values that the generator has to produce.
         When this limit is reached, mutate() returns None.
 
         :type: :class:`int`
@@ -162,7 +168,9 @@ class Mutator(object):
 
     @property
     def currentCounter(self):
-        """The counter of mutate() calls.
+        """
+        Property (getter).
+        The counter of mutate() calls.
         In mutate(), this value is compared to counterMax, to determine if the
         limit of mutation is reached.
 
@@ -179,7 +187,9 @@ class Mutator(object):
 
     @property
     def domain(self):
-        """The domain to which the mutation is applied.
+        """
+        Property (getter/setter).
+        The domain to which the mutation is applied.
 
         :type: :class:`AbstractVariable \
 <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
@@ -193,7 +203,9 @@ class Mutator(object):
 
     @property
     def automata(self):
-        """The automata to which the mutation is applied.
+        """
+        Property (getter/setter).
+        The automata to which the mutation is applied.
 
         :type: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
         """
@@ -206,7 +218,9 @@ class Mutator(object):
 
     @property
     def mode(self):
-        """The fuzzing mode: either Mutator.MUTATE or Mutator.GENERATE.
+        """
+        Property (getter/setter).
+        The fuzzing mode: either Mutator.MUTATE or Mutator.GENERATE.
 
         :type: :class:`int`
         """

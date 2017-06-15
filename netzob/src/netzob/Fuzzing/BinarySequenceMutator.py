@@ -92,6 +92,7 @@ class BinarySequenceMutator(Mutator):
     >>> mutator.generate()
     bitarray('00000000000000000000000000000000000010011000000000000100110100110')
 
+    Constant definitions:
     """
 
     DEFAULT_MIN_LENGTH = 0
@@ -142,7 +143,9 @@ class BinarySequenceMutator(Mutator):
 
     @property
     def seed(self):
-        """The seed used in pseudo-random generator
+        """
+        Property (getter/setter).
+        The seed used in pseudo-random generator
 
         :type: :class:`int`
         """
@@ -157,7 +160,9 @@ class BinarySequenceMutator(Mutator):
 
     @property
     def lengthMutator(self):
-        """The mutator used to generate the sequence length, between
+        """
+        Property (getter).
+        The mutator used to generate the sequence length, between
         MIN_LENGTH and maxLength.
 
         :type: :class:`DeterministIntegerMutator <netzob.Fuzzing.DeterministIntegerMutator>`
@@ -166,7 +171,9 @@ class BinarySequenceMutator(Mutator):
 
     @property
     def minLength(self):
-        """The min length of the binary sequence. Default value is DEFAULT_MIN_LENGTH.
+        """
+        Property (getter).
+        The min length of the binary sequence. Default value is DEFAULT_MIN_LENGTH.
 
         :type: :class:`int`
         """
@@ -174,7 +181,9 @@ class BinarySequenceMutator(Mutator):
 
     @property
     def maxLength(self):
-        """The max length of the binary sequence. Default value is DEFAULT_MAX_LENGTH.
+        """
+        Property (getter).
+        The max length of the binary sequence. Default value is DEFAULT_MAX_LENGTH.
 
         :type: :class:`int`
         """

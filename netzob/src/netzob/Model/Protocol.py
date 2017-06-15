@@ -174,6 +174,7 @@ class Protocol(object):
     @property
     def name(self):
         """
+        Property (getter).
         The name of the protocol (ex: "ICMP", "HTTP", ...)
 
         :type: a :class:`str`, read-only
@@ -185,6 +186,7 @@ class Protocol(object):
     @property
     def symbols(self):
         """
+        Property (getter/setter).
         The dict of defined symbols for the protocol.
 
         :type: a :class:`dict` where keys are symbol string names and values are :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
@@ -205,6 +207,7 @@ class Protocol(object):
     @property
     def automata(self):
         """
+        Property (getter/setter).
         The Automata object defined for the protocol.
 
         :type: an :class:`Automata <netzob.Model.Grammar.Automata.Automata>`

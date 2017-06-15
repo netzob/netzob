@@ -271,7 +271,9 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
 
     @property
     def isOpen(self):
-        """Returns if the communication channel is open.
+        """
+        Property (getter/setter).
+        Returns if the communication channel is open.
 
         :return: the status of the communication channel
         :type: :class:`bool`
@@ -287,7 +289,9 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
 
     @property
     def channelType(self):
-        """Returns if the communication channel type.
+        """
+        Property (getter).
+        Returns if the communication channel type.
 
         :return: the type of the communication channel
         :type: :class:`int`
@@ -296,7 +300,9 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
 
     @property
     def isServer(self):
-        """isServer indicates if this side of the channel plays the role of a server.
+        """
+        Property (getter/setter).
+        isServer indicates if this side of the channel plays the role of a server.
 
         :type: :class:`bool`
         """
@@ -311,7 +317,9 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
 
     @property
     def id(self):
-        """The unique identifier of the channel.
+        """
+        Property (getter/setter).
+        The unique identifier of the channel.
 
         :type: :class:`uuid.UUID`
         """

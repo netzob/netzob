@@ -174,7 +174,9 @@ class DeterministIntegerMutator(Mutator):
 
     @property
     def seed(self):
-        """The seed initializes the position of the value to return
+        """
+        Property (getter/setter).
+        The seed initializes the position of the value to return
         from the list of generated integer values, mudulo the number of values.
 
         :type: :class:`int`

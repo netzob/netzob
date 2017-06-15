@@ -91,6 +91,8 @@ class AlternativeMutator(Mutator):
     34
     >>> mutator.currentDepth
     1
+
+    Constant definitions:
     """
 
     DEFAULT_MAX_DEPTH = 20
@@ -119,7 +121,9 @@ object: '{}'".format(domain))
 
     @property
     def positionMutator(self):
-        """The PRNG mutator used to get the random position of the type in the
+        """
+        Property (getter/setter).
+        The PRNG mutator used to get the random position of the type in the
         alternative list.
         The property allows to change the mutator settings, like the seed.
         It enables to change the position mutator, but with the condition that
@@ -136,7 +140,9 @@ object: '{}'".format(domain))
 
     @property
     def maxDepth(self):
-        """Recursivity limit in mutating an **Alt** type.
+        """
+        Property (getter/setter).
+        Recursivity limit in mutating an **Alt** type.
         When this limit is reached in **generate()** method, an exception is
         raised.
 
@@ -151,7 +157,9 @@ object: '{}'".format(domain))
 
     @property
     def mutateChild(self):
-        """If true, the sub-field has to be mutated.
+        """
+        Property (getter).
+        If true, the sub-field has to be mutated.
         Default value is False.
 
         :type: :class:`bool`
@@ -160,7 +168,9 @@ object: '{}'".format(domain))
 
     @property
     def randomType(self):
-        """Return the type randomly retrieved by **generate()**.
+        """
+        Property (getter).
+        Return the type randomly retrieved by **generate()**.
 
         :type: :class:`bool`
         :raises: :class:`ValueError` if _randomType is None
@@ -172,7 +182,9 @@ called, first")
 
     @property
     def currentDepth(self):
-        """Return the current depth in searching a type different of
+        """
+        Property (getter).
+        Return the current depth in searching a type different of
         **Alt** in **generate()**.
 
         :type: :class:`bool`

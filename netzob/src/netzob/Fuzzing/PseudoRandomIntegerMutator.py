@@ -90,6 +90,8 @@ class PseudoRandomIntegerMutator(Mutator):
     >>> mutator = PseudoRandomIntegerMutator(domain=fieldInt.domain, interval=(10, 20), seed=4321)
     >>> mutator.generate()
     b'\n'
+
+    Constant definitions :
     """
 
     # Types of PRNG in RandomState module
@@ -171,7 +173,9 @@ class PseudoRandomIntegerMutator(Mutator):
 
     @property
     def seed(self):
-        """The seed used in pseudo-random generator
+        """
+        Property (getter/setter).
+        The seed used in pseudo-random generator
 
         :type: :class:`int`
         """
@@ -184,7 +188,9 @@ class PseudoRandomIntegerMutator(Mutator):
 
     @property
     def minValue(self):
-        """The min value of the integer to generate. If not defined, it uses
+        """
+        Property (getter/setter).
+        The min value of the integer to generate. If not defined, it uses
         the field domain information.
 
         :type: :class:`int`
@@ -198,7 +204,9 @@ class PseudoRandomIntegerMutator(Mutator):
 
     @property
     def maxValue(self):
-        """The max value of the integer to generate. If not defined, it uses
+        """
+        Property (getter/setter).
+        The max value of the integer to generate. If not defined, it uses
         the field domain information.
 
         :type: :class:`int`

@@ -93,6 +93,7 @@ class StringMutator(Mutator):
     >>> mutator.generate()
     b'`ls -al /`\x00     '
 
+    Constant definitions:
     """
 
     DEFAULT_END_CHAR = '\0'
@@ -166,7 +167,9 @@ class StringMutator(Mutator):
 
     @property
     def seed(self):
-        """The seed used in generator
+        """
+        Property (getter/setter).
+        The seed used in generator
         Default value is 0.
 
         :type: :class:`int`
@@ -182,7 +185,9 @@ class StringMutator(Mutator):
 
     @property
     def lengthMutator(self):
-        """The mutator used to generate the string length, between
+        """
+        Property (getter).
+        The mutator used to generate the string length, between
         minLength and maxLength.
 
         :type: :class:`DeterministIntegerMutator <netzob.Fuzzing.DeterministIntegerMutator>`
@@ -191,7 +196,9 @@ class StringMutator(Mutator):
 
     @property
     def minLength(self):
-        """The min length of the string. Default value is DEFAULT_MIN_LENGTH.
+        """
+        Property (getter).
+        The min length of the string. Default value is DEFAULT_MIN_LENGTH.
 
         :type: :class:`int`
         """
@@ -199,7 +206,9 @@ class StringMutator(Mutator):
 
     @property
     def maxLength(self):
-        """The max length of the string. Default value is DEFAULT_MAX_LENGTH.
+        """
+        Property (getter).
+        The max length of the string. Default value is DEFAULT_MAX_LENGTH.
 
         :type: :class:`int`
         """
@@ -207,7 +216,9 @@ class StringMutator(Mutator):
 
     @property
     def endChar(self):
-        """The character defining the end of the string. Default value is
+        """
+        Property (getter/setter).
+        The character defining the end of the string. Default value is
         DEFAULT_END_CHAR.
 
         :type: :class:`str`
@@ -228,7 +239,9 @@ class StringMutator(Mutator):
 
     @property
     def naughtyStrings(self):
-        """The string list to use for the mutation.
+        """
+        Property (getter).
+        The string list to use for the mutation.
 
         :type: :class:`list`
         """
