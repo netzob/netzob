@@ -53,7 +53,7 @@ from netzob.Model.Vocabulary.Field import Field
 from netzob.Fuzzing.Xorshift128plus import Xorshift128plus
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Sign, UnitSize
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 
 from bitarray import bitarray
@@ -196,7 +196,7 @@ class BinarySequenceMutator(Mutator):
         :rtype: :class:`bytes`
         """
         length = int.from_bytes(self._lengthMutator.generate(),
-                                self._lengthMutator.domain.dataType.endianness)
+                                self._lengthMutator.domain.dataType.endianness.value)
 
         valueBits = bitarray()
         if length == 0:
@@ -206,9 +206,9 @@ class BinarySequenceMutator(Mutator):
             bits = TypeConverter.convert(data=valueInt,
                                          sourceType=Integer,
                                          destinationType=BitArray,
-                                         src_unitSize=AbstractType.UNITSIZE_64,
-                                         src_sign=AbstractType.SIGN_UNSIGNED,
-                                         dst_sign=AbstractType.SIGN_UNSIGNED)
+                                         src_unitSize=UnitSize.SIZE_64,
+                                         src_sign=Sign.UNSIGNED,
+                                         dst_sign=Sign.UNSIGNED)
             valueBits += bits
             if len(valueBits) >= length:
                 break

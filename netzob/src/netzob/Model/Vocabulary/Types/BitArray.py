@@ -46,7 +46,7 @@ from bitarray import bitarray
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, Sign, UnitSize
 
 
 @NetzobLogger
@@ -292,12 +292,12 @@ class BitArray(AbstractType):
 
         :param data: the data encoded in python raw which will be encoded in current type
         :type data: python raw
-        :keyword unitSize: the unitsize to consider while encoding. Values must be one of AbstractType.UNITSIZE_*
-        :type unitSize: str
-        :keyword endianness: the endianness to consider while encoding. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE
-        :type endianness: str
-        :keyword sign: the sign to consider while encoding Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED
-        :type sign: str
+        :keyword unitSize: the unitsize to consider while encoding. Values must be one of UnitSize.SIZE_*
+        :type unitSize: :class:`Enum`
+        :keyword endianness: the endianness to consider while encoding. Values must be Endianness.BIG or Endianness.LITTLE
+        :type endianness: :class:`Enum`
+        :keyword sign: the sign to consider while encoding Values must be Sign.SIGNED or Sign.UNSIGNED
+        :type sign: :class:`Enum`
 
         :return: data encoded in BitArray
         :rtype: :class:`BitArray <netzob.Model.Vocabulary.Types.BitArray.BitArray>`
@@ -306,9 +306,9 @@ class BitArray(AbstractType):
         if data is None:
             raise TypeError("data cannot be None")
 
-        if endianness == AbstractType.ENDIAN_BIG:
+        if endianness == Endianness.BIG:
             endian = 'big'
-        elif endianness == AbstractType.ENDIAN_LITTLE:
+        elif endianness == Endianness.LITTLE:
             endian = 'little'
         else:
             raise ValueError("Invalid endianness value")
@@ -319,7 +319,7 @@ class BitArray(AbstractType):
             norm_data = bytes(data, "utf-8")
         else:
             raise TypeError("Invalid type for: '{}'. Expected bytes or str, and got '{}'".format(data, type(data)))
-            
+
         b = bitarray(endian=endian)
         b.frombytes(norm_data)
         return b

@@ -43,7 +43,7 @@ from collections import OrderedDict
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Common.C_Extensions.WrapperArgsFactory import WrapperArgsFactory
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, UnitSize
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.HexaString import HexaString
 from netzob.Model.Vocabulary.Types.Raw import Raw
@@ -164,7 +164,7 @@ class FieldSplitAligned(object):
 
     """
 
-    def __init__(self, unitSize=AbstractType.UNITSIZE_8,
+    def __init__(self, unitSize=UnitSize.SIZE_8,
                  doInternalSlick=False):
         """Constructor.
 
@@ -646,7 +646,7 @@ class FieldSplitAligned(object):
         info on the current status.
         """
 
-    def _deserializeSemanticTags(self, tags, unitSize=AbstractType.UNITSIZE_8):
+    def _deserializeSemanticTags(self, tags, unitSize=UnitSize.SIZE_8):
         """Deserialize the information returned from the C library
         and build the semantic tags definitions from it.
         """
@@ -659,7 +659,7 @@ class FieldSplitAligned(object):
             else:
                 result[j] = tag
 
-            if unitSize == AbstractType.UNITSIZE_8:
+            if unitSize == UnitSize.SIZE_8:
                 j = j + 1
                 result[j] = result[j - 1]
             else:
@@ -672,7 +672,7 @@ class FieldSplitAligned(object):
     def _deserializeAlignment(self,
                               regex,
                               mask,
-                              unitSize=AbstractType.UNITSIZE_8):
+                              unitSize=UnitSize.SIZE_8):
         """
         deserializeAlignment: Transforms the C extension results
         in a python readable way
@@ -681,8 +681,8 @@ class FieldSplitAligned(object):
         @param unitSize the unitSize
         @returns the python alignment
         """
-        if not (unitSize == AbstractType.UNITSIZE_8 or
-                unitSize == AbstractType.UNITSIZE_4):
+        if not (unitSize == UnitSize.SIZE_8 or
+                unitSize == UnitSize.SIZE_4):
             raise ValueError(
                 "Deserializing with unitSize {0} not yet implemented, only 4 and 8 supported.".
                 format(unitSize))
@@ -691,15 +691,15 @@ class FieldSplitAligned(object):
         for i, c in enumerate(mask):
             if c != 2:
                 if c == 1:
-                    if unitSize == AbstractType.UNITSIZE_8:
+                    if unitSize == UnitSize.SIZE_8:
                         align += b"--"
-                    elif unitSize == AbstractType.UNITSIZE_4:
+                    elif unitSize == UnitSize.SIZE_4:
                         align += b"-"
                 else:
-                    if unitSize == AbstractType.UNITSIZE_8:
+                    if unitSize == UnitSize.SIZE_8:
                         align += TypeConverter.convert(regex[i:i + 1], Raw,
                                                        HexaString)
-                    elif unitSize == AbstractType.UNITSIZE_4:
+                    elif unitSize == UnitSize.SIZE_4:
                         align += TypeConverter.convert(regex[i:i + 1], Raw,
                                                        HexaString)[1:]
         return align

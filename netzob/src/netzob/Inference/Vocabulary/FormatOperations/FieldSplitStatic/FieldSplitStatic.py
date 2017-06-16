@@ -40,7 +40,7 @@
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.AbstractField import AbstractField
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, UnitSize
 from netzob.Model.Vocabulary.Domain.DomainFactory import DomainFactory
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
@@ -135,7 +135,7 @@ class FieldSplitStatic(object):
 
 
     We can also plays with the unitsize:
-    >>> fs = FieldSplitStatic(AbstractType.UNITSIZE_8, mergeAdjacentDynamicFields=False)
+    >>> fs = FieldSplitStatic(UnitSize.SIZE_8, mergeAdjacentDynamicFields=False)
     >>> fs.execute(symbol)
     >>> print(symbol)
     Field-0 | Field-1 | Field-2 | Field-3  | Field-4
@@ -150,7 +150,7 @@ class FieldSplitStatic(object):
     '00'    | 'fe'    | '1f'    | '000000' | '17'   
     ------- | ------- | ------- | -------- | -------
 
-    >>> fs = FieldSplitStatic(AbstractType.UNITSIZE_16, mergeAdjacentDynamicFields=False)
+    >>> fs = FieldSplitStatic(UnitSize.SIZE_16, mergeAdjacentDynamicFields=False)
     >>> fs.execute(symbol)
     >>> print(symbol)
     Field-0 | Field-1 | Field-2 | Field-3
@@ -165,7 +165,7 @@ class FieldSplitStatic(object):
     '00fe'  | '1f00'  | '0000'  | '17'   
     ------- | ------- | ------- | -------
 
-    >>> fs = FieldSplitStatic(AbstractType.UNITSIZE_32, mergeAdjacentDynamicFields=False)
+    >>> fs = FieldSplitStatic(UnitSize.SIZE_32, mergeAdjacentDynamicFields=False)
     >>> fs.execute(symbol)
     >>> print(symbol)
     Field-0    | Field-1 
@@ -180,7 +180,7 @@ class FieldSplitStatic(object):
     '00fe1f00' | '000017'
     ---------- | --------
 
-    >>> fs = FieldSplitStatic(AbstractType.UNITSIZE_64, mergeAdjacentDynamicFields=False)
+    >>> fs = FieldSplitStatic(UnitSize.SIZE_64, mergeAdjacentDynamicFields=False)
     >>> fs.execute(symbol)
     >>> print(symbol)
     Field-0         
@@ -198,12 +198,12 @@ class FieldSplitStatic(object):
     """
 
     SUPPORTED_UNITSIZE = [
-        AbstractType.UNITSIZE_8, AbstractType.UNITSIZE_16,
-        AbstractType.UNITSIZE_32, AbstractType.UNITSIZE_64
+        UnitSize.SIZE_8, UnitSize.SIZE_16,
+        UnitSize.SIZE_32, UnitSize.SIZE_64
     ]
 
     def __init__(self,
-                 unitSize=AbstractType.UNITSIZE_8,
+                 unitSize=UnitSize.SIZE_8,
                  mergeAdjacentStaticFields=True,
                  mergeAdjacentDynamicFields=True):
         """Constructor.
@@ -328,15 +328,15 @@ class FieldSplitStatic(object):
         :rtype: :class:`int`
         :raise: Exception if unitsize not supported
         """
-        if self.unitSize == AbstractType.UNITSIZE_4:
+        if self.unitSize == UnitSize.SIZE_4:
             return 1
-        elif self.unitSize == AbstractType.UNITSIZE_8:
+        elif self.unitSize == UnitSize.SIZE_8:
             return 2
-        elif self.unitSize == AbstractType.UNITSIZE_16:
+        elif self.unitSize == UnitSize.SIZE_16:
             return 4
-        elif self.unitSize == AbstractType.UNITSIZE_32:
+        elif self.unitSize == UnitSize.SIZE_32:
             return 8
-        elif self.unitSize == AbstractType.UNITSIZE_64:
+        elif self.unitSize == UnitSize.SIZE_64:
             return 16
 
         else:
@@ -345,7 +345,7 @@ class FieldSplitStatic(object):
     # Static method
     @staticmethod
     def split(field,
-              unitSize=AbstractType.UNITSIZE_8,
+              unitSize=UnitSize.SIZE_8,
               mergeAdjacentStaticFields=True,
               mergeAdjacentDynamicFields=True):
         """Split the portion of message in the current field

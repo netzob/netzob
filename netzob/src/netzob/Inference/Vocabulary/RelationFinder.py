@@ -37,7 +37,7 @@ import math
 from netzob import _libRelation
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, UnitSize
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Model.Vocabulary.AbstractField import AbstractField
@@ -384,13 +384,13 @@ class RelationFinder(object):
         for data in cellsData:
             if len(data) > 0:
                 data = data[:8]  # We take at most 8 bytes
-                unitSize = AbstractType.UNITSIZE_8 * len(data)
+                unitSize = UnitSize.SIZE_8 * len(data)
                 unitSize = int(pow(2, math.ceil(math.log(
                     unitSize, 2))))  # Round to the nearest upper power of 2
                 result.append(
                     Integer.encode(
                         data,
-                        endianness=AbstractType.ENDIAN_BIG,
+                        endianness=Endianness.BIG,
                         unitSize=unitSize))
             else:
                 result.append(0)

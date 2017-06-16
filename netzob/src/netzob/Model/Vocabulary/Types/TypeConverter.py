@@ -36,7 +36,7 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, UnitSize
 from netzob.Model.Vocabulary.Types.Raw import Raw
 
 
@@ -72,12 +72,12 @@ class TypeConverter(object):
 
         :param sourceType: The data source type
         :param destinationType: The destination type
-        :keyword str src_unitSize: The unitsize to consider while encoding. Value must be one of AbstractType.UNITSIZE_*
-        :keyword str src_endianness: The endianness to consider while encoding. Value must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE
-        :keyword str src_sign: The sign to consider while encoding. Value must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED
-        :keyword str dst_unitSize: The unitsize of the expected result. Value must be one of AbstractType.UNITSIZE_*
-        :keyword str dst_endianness: The endianness of the expected result. Value must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE
-        :keyword str dst_sign: The sign of the expected result. Value must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED
+        :keyword Enum src_unitSize: The unitsize to consider while encoding. Value must be one of UnitSize.SIZE_*
+        :keyword Enum src_endianness: The endianness to consider while encoding. Value must be Endianness.BIG or Endianness.LITTLE
+        :keyword Enum src_sign: The sign to consider while encoding. Value must be Sign.SIGNED or Sign.UNSIGNED
+        :keyword Enum dst_unitSize: The unitsize of the expected result. Value must be one of UnitSize.SIZE_*
+        :keyword Enum dst_endianness: The endianness of the expected result. Value must be Endianness.BIG or Endianness.LITTLE
+        :keyword Enum dst_sign: The sign of the expected result. Value must be Sign.SIGNED or Sign.UNSIGNED
         :type sourceType: :class:`type`
         :type destinationType: :class:`type`
         :raise: TypeError if parameters are not valid
@@ -109,19 +109,19 @@ class TypeConverter(object):
         >>> print(TypeConverter.convert("zoby", String, Integer))
         2036494202
         >>> print(TypeConverter.convert("zoby", String, Integer,
-        ...                             dst_unitSize=AbstractType.UNITSIZE_32))
+        ...                             dst_unitSize=UnitSize.SIZE_32))
         2054120057
 
         It also works for 'semantic' data like IPv4:
 
         >>> TypeConverter.convert("192.168.0.10", IPv4, Integer,
-        ...                       dst_sign=AbstractType.SIGN_UNSIGNED)
+        ...                       dst_sign=Sign.UNSIGNED)
         167815360
         >>> TypeConverter.convert("127.0.0.1", IPv4, BitArray)
         bitarray('01111111000000000000000000000001')
         >>> TypeConverter.convert(167815360, Integer, IPv4,
-        ...                       src_unitSize=AbstractType.UNITSIZE_32,
-        ...                       src_sign=AbstractType.SIGN_UNSIGNED)
+        ...                       src_unitSize=UnitSize.SIZE_32,
+        ...                       src_sign=Sign.UNSIGNED)
         IPAddress('10.0.168.192')
 
         """

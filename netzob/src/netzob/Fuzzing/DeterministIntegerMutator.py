@@ -48,7 +48,7 @@ from netzob.Fuzzing.Mutator import Mutator
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Fuzzing.DeterministGenerator import DeterministGenerator
 from netzob.Model.Vocabulary.Types.Integer import Integer
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Sign, UnitSize
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 
@@ -106,7 +106,7 @@ class DeterministIntegerMutator(Mutator):
     The following example shows how to generate an 8bits integer in
     [-32768, +32767] interval:
 
-    >>> fieldInt3 = Field(Integer(unitSize=AbstractType.UNITSIZE_16))
+    >>> fieldInt3 = Field(Integer(unitSize=UnitSize.SIZE_16))
     >>> mutator3 = DeterministIntegerMutator(fieldInt3.domain)
     >>> mutator3.seed=430
     >>> mutator3.generate()
@@ -155,7 +155,7 @@ class DeterministIntegerMutator(Mutator):
                 raise ValueError("{} is not a valid bitsize value".format(bitsize))
         self._bitsize = bitsize
         if self._bitsize is None:
-            self._bitsize = domain.dataType.unitSize
+            self._bitsize = domain.dataType.unitSize.value
         if self._minValue >= 0:
             if self._maxValue > 2**self._bitsize - 1:
                 raise ValueError("The upper bound {} is too large and cannot be encoded on {} bits".format(self._maxValue, self._bitsize))
@@ -170,7 +170,7 @@ class DeterministIntegerMutator(Mutator):
         self._ng.createValues(self._minValue,
                               self._maxValue,
                               self._bitsize,
-                              domain.dataType.sign == AbstractType.SIGN_SIGNED)
+                              domain.dataType.sign == Sign.SIGNED)
 
     @property
     def seed(self):

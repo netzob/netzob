@@ -45,7 +45,7 @@ from bitarray import bitarray
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, Sign, UnitSize
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Integer import Integer
@@ -66,15 +66,15 @@ class Timestamp(AbstractType):
     :param unity: specifies the unity of the timestamp (seconds,
                       milliseconds, nanoseconds). Default value is
                       UNITY_SECOND.
-    :param unitSize: The unitsize of the current value. Values must be one of AbstractType.UNITSIZE_* (see below for supported unit sizes). If None, the value is the default one.
-    :param endianness: The endianness of the current value. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE. If None, the value is the default one.
-    :param sign: The sign of the current value. Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED. If None, the value is the default one.
+    :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_* (see below for supported unit sizes). If None, the value is the default one.
+    :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. If None, the value is the default one.
+    :param sign: The sign of the current value. Values must be Sign.SIGNED or Sign.UNSIGNED. If None, the value is the default one.
     :type value: :class:`int` or a :class:`BitArray <netzob.Model.Types.BitArray>`, optional
     :type epoch: :class:`datetime.datetime`, optional
     :type unity: :class:`int`, optional
-    :type unitSize: :class:`str`, optional
-    :type endianness: :class:`str`, optional
-    :type sign: :class:`str`, optional
+    :type unitSize: :class:`Enum`, optional
+    :type endianness: :class:`Enum`, optional
+    :type sign: :class:`Enum`, optional
 
     Available values for `epoch` parameter are:
 
@@ -167,9 +167,9 @@ class Timestamp(AbstractType):
                  value=None,
                  epoch=EPOCH_UNIX,
                  unity=UNITY_SECOND,
-                 unitSize=AbstractType.UNITSIZE_32,
+                 unitSize=UnitSize.SIZE_32,
                  endianness=AbstractType.defaultEndianness(),
-                 sign=AbstractType.SIGN_UNSIGNED):
+                 sign=Sign.UNSIGNED):
         if value is not None and not isinstance(value, bitarray):
             # converts the specified value in bitarray
             value = TypeConverter.convert(
@@ -206,7 +206,7 @@ class Timestamp(AbstractType):
 
         >>> from netzob.all import *
         >>> time = Timestamp()
-        >>> time.canParse(TypeConverter.convert(1444494130, Integer, BitArray, src_unitSize=AbstractType.UNITSIZE_32))
+        >>> time.canParse(TypeConverter.convert(1444494130, Integer, BitArray, src_unitSize=UnitSize.SIZE_32))
         True
         >>> # A timestamp is nothing else than 32bits parsed as an unsigned long
         >>> time.canParse(TypeConverter.convert("test", String, BitArray))
@@ -217,7 +217,7 @@ class Timestamp(AbstractType):
         However, some constrains over the definition of the Timestamp can be set to restrain the accepted values
 
         >>> from netzob.all import *
-        >>> time = Timestamp(epoch=Timestamp.EPOCH_WINDOWS, unity=Timestamp.UNITY_NANOSECOND, unitSize = AbstractType.UNITSIZE_64)
+        >>> time = Timestamp(epoch=Timestamp.EPOCH_WINDOWS, unity=Timestamp.UNITY_NANOSECOND, unitSize=UnitSize.SIZE_64)
         >>> # the returned year is < 1900
         >>> time.canParse(TypeConverter.convert("test", String, BitArray))
         False
@@ -240,8 +240,8 @@ class Timestamp(AbstractType):
                 data[:int(self.unitSize)],
                 BitArray,
                 Integer,
-                dst_unitSize=AbstractType.UNITSIZE_32,
-                dst_sign=AbstractType.SIGN_UNSIGNED)
+                dst_unitSize=UnitSize.SIZE_32,
+                dst_sign=Sign.UNSIGNED)
 
             # convert the value in seconds
             value = value / self.unity
@@ -266,7 +266,7 @@ class Timestamp(AbstractType):
         >>> value = f.specialize()
         >>> print(len(value))
         4
-        >>> f = Field(Timestamp(epoch=Timestamp.EPOCH_WINDOWS, unitSize = AbstractType.UNITSIZE_64))
+        >>> f = Field(Timestamp(epoch=Timestamp.EPOCH_WINDOWS, unitSize=UnitSize.SIZE_64))
         >>> print(len(f.specialize()))
         8
         
@@ -294,16 +294,16 @@ class Timestamp(AbstractType):
             BitArray,
             src_unitSize=self.unitSize,
             src_endianness=self.endianness,
-            src_sign=AbstractType.SIGN_UNSIGNED,
+            src_sign=Sign.UNSIGNED,
             dst_endianness=self.endianness)
 
         return final
 
     @staticmethod
     def decode(data,
-               unitSize=AbstractType.UNITSIZE_32,
+               unitSize=UnitSize.SIZE_32,
                endianness=AbstractType.defaultEndianness(),
-               sign=AbstractType.SIGN_UNSIGNED):
+               sign=Sign.UNSIGNED):
         """Decodes the specified Timestamp data into its raw representation
 
         >>> from netzob.all import *
@@ -321,17 +321,17 @@ class Timestamp(AbstractType):
 
     @staticmethod
     def encode(data,
-               unitSize=AbstractType.UNITSIZE_32,
+               unitSize=UnitSize.SIZE_32,
                endianness=AbstractType.defaultEndianness(),
-               sign=AbstractType.SIGN_UNSIGNED):
+               sign=Sign.UNSIGNED):
         from netzob.Model.Vocabulary.Types.Raw import Raw
 
         intValue = TypeConverter.convert(
             data,
             Raw,
             Integer,
-            dst_unitSize=AbstractType.UNITSIZE_32,
-            dst_sign=AbstractType.SIGN_UNSIGNED)
+            dst_unitSize=UnitSize.SIZE_32,
+            dst_sign=Sign.UNSIGNED)
         parsedTimestamp = datetime.utcfromtimestamp(intValue)
 
         return parsedTimestamp.strftime("%c")

@@ -48,7 +48,7 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Types.String import String
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, Sign, UnitSize
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Raw import Raw
@@ -208,9 +208,9 @@ class Size(AbstractRelationVariableLeaf):
     >>> ip_ttl      = Field(name='TTL', domain=Data(dataType=BitArray(nbBits=8),
     ...                     originalValue=bitarray('10000000'), svas=SVAS.PERSISTENT))
     >>> ip_proto    = Field(name='Protocol',
-    ...                     domain=Integer(value=6, unitSize=AbstractType.UNITSIZE_8,
-    ...                                    endianness=AbstractType.ENDIAN_BIG,
-    ...                                    sign=AbstractType.SIGN_UNSIGNED))
+    ...                     domain=Integer(value=6, unitSize=UnitSize.SIZE_8,
+    ...                                    endianness=Endianness.BIG,
+    ...                                    sign=Sign.UNSIGNED))
     >>> ip_checksum = Field(name='Checksum', domain=BitArray(bitarray('0000000000000000')))
     >>> ip_saddr    = Field(name='Source address', domain=IPv4("127.0.0.1"))
     >>> ip_daddr    = Field(name='Destination address', domain=IPv4("127.0.0.1"))

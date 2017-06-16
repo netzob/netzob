@@ -50,6 +50,30 @@ import collections
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
+from enum import Enum
+
+
+class Endianness(Enum):
+    BIG = 'big'
+    LITTLE = 'little'
+    __repr__ = Enum.__str__
+
+
+class Sign(Enum):
+    SIGNED = 'signed'
+    UNSIGNED = 'unsigned'
+    __repr__ = Enum.__str__
+
+
+class UnitSize(Enum):
+    SIZE_1 = 1
+    SIZE_4 = 4
+    SIZE_8 = 8
+    SIZE_16 = 16
+    SIZE_24 = 24
+    SIZE_32 = 32
+    SIZE_64 = 64
+    __repr__ = Enum.__str__
 
 
 @NetzobLogger
@@ -66,35 +90,35 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     :param typeName: The name of the type (we highly recommand the use of __class__.__name__).
     :param value: The current value of the type instance.
     :param size: The size in bits that this value takes.
-    :param unitSize: The unitsize of the current value. Values must be one of AbstractType.UNITSIZE_*. If None, the value is the default one.
-    :param endianness: The endianness of the current value. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE. If None, the value is the default one.
-    :param sign: The sign of the current value. Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED. If None, the value is the default one.
+    :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_*. If None, the value is the default one.
+    :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. If None, the value is the default one.
+    :param sign: The sign of the current value. Values must be Sign.SIGNED or Sign.UNSIGNED. If None, the value is the default one.
     :type typeName: :class:`str`, optional
     :type value: :class:`bitarray.bitarray`, required
     :type size: a tuple with the min and the max size specified as :class:`int`, optional
-    :type unitSize: :class:`int`, optional
-    :type endianness: :class:`str`, optional
-    :type sign: :class:`str`, optional
+    :type unitSize: :class:`Enum`, optional
+    :type endianness: :class:`Enum`, optional
+    :type sign: :class:`Enum`, optional
 
     Netzob support the following unit sizes:
 
-    * AbstractType.UNITSIZE_1
-    * AbstractType.UNITSIZE_4
-    * AbstractType.UNITSIZE_8 (default value)
-    * AbstractType.UNITSIZE_16
-    * AbstractType.UNITSIZE_24
-    * AbstractType.UNITSIZE_32
-    * AbstractType.UNITSIZE_64
+    * UnitSize.SIZE_1
+    * UnitSize.SIZE_4
+    * UnitSize.SIZE_8 (default value)
+    * UnitSize.SIZE_16
+    * UnitSize.SIZE_24
+    * UnitSize.SIZE_32
+    * UnitSize.SIZE_64
 
     Netzob support the following endianness:
 
-    * AbstractType.ENDIAN_BIG (default value)
-    * AbstractType.ENDIAN_LITTLE
+    * Endianness.BIG (default value)
+    * Endianness.LITTLE
 
     Netzob support the following signs:
 
-    * AbstractType.SIGN_SIGNED (default value)
-    * AbstractType.SIGN_UNSIGNED
+    * Sign.SIGNED (default value)
+    * Sign.UNSIGNED
 
 
     **Internal representation of Type objects**
@@ -113,19 +137,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     bitarray('00010100')
 
     """
-
-    # FEW KEY ELEMENTS
-    ENDIAN_BIG = 'big'
-    ENDIAN_LITTLE = 'little'
-    SIGN_SIGNED = 'signed'
-    SIGN_UNSIGNED = 'unsigned'
-    UNITSIZE_1 = 1
-    UNITSIZE_4 = 4
-    UNITSIZE_8 = 8
-    UNITSIZE_16 = 16
-    UNITSIZE_24 = 24
-    UNITSIZE_32 = 32
-    UNITSIZE_64 = 64
 
     # This value will be used if generate() method is called
     # without any upper size limit
@@ -164,48 +175,48 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     def supportedUnitSizes():
         """Official unit sizes"""
         return [
-            AbstractType.UNITSIZE_1, AbstractType.UNITSIZE_4,
-            AbstractType.UNITSIZE_8, AbstractType.UNITSIZE_16,
-            AbstractType.UNITSIZE_24, AbstractType.UNITSIZE_32,
-            AbstractType.UNITSIZE_64
+            UnitSize.SIZE_1, UnitSize.SIZE_4,
+            UnitSize.SIZE_8, UnitSize.SIZE_16,
+            UnitSize.SIZE_24, UnitSize.SIZE_32,
+            UnitSize.SIZE_64
         ]
 
     @staticmethod
     def supportedEndianness():
         """Official endianness supported"""
-        return [AbstractType.ENDIAN_BIG, AbstractType.ENDIAN_LITTLE]
+        return [Endianness.BIG, Endianness.LITTLE]
 
     @staticmethod
     def supportedSign():
         """Official sign supported"""
-        return [AbstractType.SIGN_SIGNED, AbstractType.SIGN_UNSIGNED]
+        return [Sign.SIGNED, Sign.UNSIGNED]
 
     @staticmethod
     def defaultUnitSize():
         """Return the default unit size
 
         :return: the default unit size
-        :rtype: :class:`int`
+        :rtype: :class:`Enum`
         """
-        return AbstractType.UNITSIZE_8
+        return UnitSize.SIZE_8
 
     @staticmethod
     def defaultEndianness():
         """Return the default endianness
 
         :return: the default endianness
-        :rtype: str
+        :type endianness: :class:`Enum`
         """
-        return AbstractType.ENDIAN_BIG
+        return Endianness.BIG
 
     @staticmethod
     def defaultSign():
         """Return the default sign
 
         :return: the default sign
-        :rtype: str
+        :type sign: :class:`Enum`
         """
-        return AbstractType.SIGN_SIGNED
+        return Sign.SIGNED
 
     def __init__(self,
                  typeName,
@@ -283,21 +294,21 @@ class AbstractType(object, metaclass=abc.ABCMeta):
                           must be converted.
         :param dst_unitSize: The unitsize of the destination
                              value. Values must be one of
-                             AbstractType.UNITSIZE_*. If None, the
+                             UnitSize.SIZE_*. If None, the
                              value is the default one.
         :param dst_endianness: The endianness of the destination
                                value. Values must be
-                               AbstractType.ENDIAN_BIG or
-                               AbstractType.ENDIAN_LITTLE. if None,
+                               Endianness.BIG or
+                               Endianness.LITTLE. if None,
                                the value is the default one.
         :param dst_sign: The sign of the destination. Values must be
-                         AbstractType.SIGN_SIGNED or
-                         AbstractType.SIGN_UNSIGNED. if None, the
+                         Sign.SIGNED or
+                         Sign.UNSIGNED. if None, the
                          value is the default one.
         :type typeClass: type
-        :type dst_unitSize: :class:`int`
-        :type dst_endianness: :class:`str`
-        :type dst_sign: :class:`str`
+        :type dst_unitSize: :class:`Enum`
+        :type dst_endianness: :class:`Enum`
+        :type dst_sign: :class:`Enum`
         :return: the converted current value in the specified netzob type
         :rtype: :class:`AbstractType <netzob.Model.AbstractType.AbstractType>`
 
@@ -418,15 +429,15 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         else:
             val = self.value
 
-        if self.endianness == AbstractType.ENDIAN_LITTLE:
+        if self.endianness == Endianness.LITTLE:
             mutations["{0}bits(littleEndian)".format(prefixDescription)] = val
-            bigEndianValue = bitarray(val, endian=AbstractType.ENDIAN_BIG)
+            bigEndianValue = bitarray(val, endian=Endianness.BIG)
             mutations["{0}bits(bigEndian)".format(
                 prefixDescription)] = bigEndianValue
         else:
             mutations["{0}bits(bigEndian)".format(prefixDescription)] = val
             littleEndianValue = bitarray(
-                val, endian=AbstractType.ENDIAN_LITTLE)
+                val, endian=Endianness.LITTLE)
             mutations["{0}bits(littleEndian)".format(
                 prefixDescription)] = littleEndianValue
 
@@ -671,7 +682,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         return self.__unitSize
 
     @unitSize.setter
-    @typeCheck(int)
+    @typeCheck(UnitSize)
     def unitSize(self, unitSize):
         if unitSize is None:
             raise TypeError("UnitSize cannot be None")
@@ -693,7 +704,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         return self.__endianness
 
     @endianness.setter
-    @typeCheck(str)
+    @typeCheck(Endianness)
     def endianness(self, endianness):
         if endianness is None:
             raise TypeError("Endianness cannot be None")
@@ -705,7 +716,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         self.__endianness = endianness
 
         if self.value is not None and self.value.endian() != self.__endianness:
-            self.value = bitarray(self.value, endian=self.__endianness)
+            self.value = bitarray(self.value, endian=self.__endianness.value)
 
     @property
     def sign(self):
@@ -718,7 +729,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         return self.__sign
 
     @sign.setter
-    @typeCheck(str)
+    @typeCheck(Sign)
     def sign(self, sign):
         if sign is None:
             raise TypeError("Sign cannot be None")

@@ -40,7 +40,7 @@ import multiprocessing
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, UnitSize
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
 
@@ -61,7 +61,7 @@ class ParallelFieldSplitStatic(object):
     its value variation over its messages.
     """
 
-    def __init__(self, field, unitSize=AbstractType.UNITSIZE_4, nbThread=None):
+    def __init__(self, field, unitSize=UnitSize.SIZE_4, nbThread=None):
         """Constructor.
 
         :param field : the field to consider when spliting

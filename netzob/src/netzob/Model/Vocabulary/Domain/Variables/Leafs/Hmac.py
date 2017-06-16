@@ -51,7 +51,7 @@ from netzob.Model.Vocabulary import partialclass
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Types.HexaString import HexaString
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, Sign
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Raw import Raw
@@ -171,12 +171,12 @@ class Hmac(AbstractRelationVariableLeaf):
 
         # The calling function expects a BitArray
         result = TypeConverter.convert(result, Raw, BitArray,
-                                       src_endianness=AbstractType.ENDIAN_LITTLE,
+                                       src_endianness=Endianness.LITTLE,
                                        dst_endianness=self.dataType.endianness,
                                        src_unitSize=self.dataType.unitSize,
                                        dst_unitSize=self.dataType.unitSize,
-                                       src_sign = AbstractType.SIGN_UNSIGNED)
-        
+                                       src_sign=Sign.UNSIGNED)
+
         return result
 
     @property

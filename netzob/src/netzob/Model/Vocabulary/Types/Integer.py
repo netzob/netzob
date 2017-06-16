@@ -48,7 +48,7 @@ from typing import Iterable
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Model.Vocabulary import partialclass
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, Sign, UnitSize
 
 
 class Integer(AbstractType):
@@ -63,34 +63,34 @@ class Integer(AbstractType):
     :param value: The current value of the type instance.
     :param interval: The interval of permitted values for the Integer. This information will be used to compute the size of the Integer.
     :param nbUnits: The amount of permitted repetitions of the unit size of the Integer.
-    :param unitSize: The unitsize of the current value. Values must be one of AbstractType.UNITSIZE_* (see below for supported unit sizes). If None, the value is the default one.
-    :param endianness: The endianness of the current value. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE. If None, the value is the default one.
-    :param sign: The sign of the current value. Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED. If None, the value is the default one.
+    :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_* (see below for supported unit sizes). If None, the value is the default one.
+    :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. If None, the value is the default one.
+    :param sign: The sign of the current value. Values must be Sign.SIGNED or Sign.UNSIGNED. If None, the value is the default one.
     :type value: :class:`bitarray.bitarray`, optional
     :type interval: an :class:`int` or a tuple with the min and the max values specified as :class:`int`, optional
     :type unitSize: :class:`str`, optional
-    :type endianness: :class:`str`, optional
-    :type sign: :class:`str`, optional
+    :type endianness: :class:`Enum`, optional
+    :type sign: :class:`Enum`, optional
 
     Netzob support the following unit sizes:
 
-    * AbstractType.UNITSIZE_1
-    * AbstractType.UNITSIZE_4
-    * AbstractType.UNITSIZE_8 (default unit size)
-    * AbstractType.UNITSIZE_16
-    * AbstractType.UNITSIZE_24
-    * AbstractType.UNITSIZE_32
-    * AbstractType.UNITSIZE_64
+    * UnitSize.SIZE_1
+    * UnitSize.SIZE_4
+    * UnitSize.SIZE_8 (default unit size)
+    * UnitSize.SIZE_16
+    * UnitSize.SIZE_24
+    * UnitSize.SIZE_32
+    * UnitSize.SIZE_64
 
     Netzob support the following endianness:
 
-    * AbstractType.ENDIAN_BIG (default endianness)
-    * AbstractType.ENDIAN_LITTLE
+    * Endianness.BIG (default endianness)
+    * Endianness.LITTLE
 
     Netzob support the following signs:
 
-    * AbstractType.SIGN_SIGNED (default sign)
-    * AbstractType.SIGN_UNSIGNED
+    * Sign.SIGNED (default sign)
+    * Sign.UNSIGNED
 
     **Examples of Integer objects instantiations**
 
@@ -99,7 +99,7 @@ class Integer(AbstractType):
     ``\x0c``):
 
     >>> from netzob.all import *
-    >>> f = Field(Integer(value=12, unitSize=AbstractType.UNITSIZE_8))
+    >>> f = Field(Integer(value=12, unitSize=UnitSize.SIZE_8))
     >>> f.specialize()
     b'\x0c'
 
@@ -107,7 +107,7 @@ class Integer(AbstractType):
     sequences of 32 bits and with a default value of 12 (thus
     producing ``\x00\x00\x00\x0c``):
 
-    >>> f = Field(Integer(value=12, unitSize=AbstractType.UNITSIZE_32))
+    >>> f = Field(Integer(value=12, unitSize=UnitSize.SIZE_32))
     >>> f.specialize()
     b'\x00\x00\x00\x0c'
 
@@ -115,7 +115,7 @@ class Integer(AbstractType):
     sequences of 32 bits in little endian with a default value of 12
     (thus producing ``\x0c\x00\x00\x00``):
 
-    >>> f = Field(Integer(value=12, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_LITTLE))
+    >>> f = Field(Integer(value=12, unitSize=UnitSize.SIZE_32, endianness=Endianness.LITTLE))
     >>> f.specialize()
     b'\x0c\x00\x00\x00'
 
@@ -123,7 +123,7 @@ class Integer(AbstractType):
     encoded in sequences of 16 bits with a default value of -12 (thus
     producing ``\xff\xf4``):
 
-    >>> f = Field(Integer(value=-12, sign=AbstractType.SIGN_SIGNED, unitSize=AbstractType.UNITSIZE_16))
+    >>> f = Field(Integer(value=-12, sign=Sign.SIGNED, unitSize=UnitSize.SIZE_16))
     >>> f.specialize()
     b'\xff\xf4'
 
@@ -160,9 +160,9 @@ class Integer(AbstractType):
     like this:
 
     >>> f1 = Integer(42,
-    ...              unitSize=AbstractType.UNITSIZE_16,
-    ...              sign=AbstractType.SIGN_UNSIGNED,
-    ...              endianness=AbstractType.ENDIAN_LITTLE)
+    ...              unitSize=UnitSize.SIZE_16,
+    ...              sign=Sign.UNSIGNED,
+    ...              endianness=Endianness.LITTLE)
 
     Could also be called in an equivalent form:
 
@@ -172,9 +172,9 @@ class Integer(AbstractType):
     of the type:
 
     >>> f1 = Integer(42,
-    ...              unitSize=AbstractType.UNITSIZE_16,
-    ...              sign=AbstractType.SIGN_UNSIGNED,
-    ...              endianness=AbstractType.ENDIAN_LITTLE)
+    ...              unitSize=UnitSize.SIZE_16,
+    ...              sign=Sign.UNSIGNED,
+    ...              endianness=Endianness.LITTLE)
     >>> f2 = uint16le(42)
     >>> f1, f2
     (42, 42)
@@ -209,13 +209,13 @@ class Integer(AbstractType):
     little endian, to 16 bits big endian, to 32 bits little endian and
     to 32 bits big endian:
 
-    >>> Integer.decode(1234, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE)
+    >>> Integer.decode(1234, unitSize=UnitSize.SIZE_16, endianness=Endianness.LITTLE)
     b'\xd2\x04'
-    >>> Integer.decode(1234, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG)
+    >>> Integer.decode(1234, unitSize=UnitSize.SIZE_16, endianness=Endianness.BIG)
     b'\x04\xd2'
-    >>> Integer.decode(1234, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_LITTLE)
+    >>> Integer.decode(1234, unitSize=UnitSize.SIZE_32, endianness=Endianness.LITTLE)
     b'\xd2\x04\x00\x00'
-    >>> Integer.decode(1234, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_BIG)
+    >>> Integer.decode(1234, unitSize=UnitSize.SIZE_32, endianness=Endianness.BIG)
     b'\x00\x00\x04\xd2'
 
 
@@ -224,11 +224,11 @@ class Integer(AbstractType):
     The following examples show the representation of Integer objects
     with and without default value.
 
-    >>> data = Integer(value=12, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_LITTLE)
+    >>> data = Integer(value=12, unitSize=UnitSize.SIZE_32, endianness=Endianness.LITTLE)
     >>> str(data)
     'Integer=12 ((None, None))'
 
-    >>> data = Integer(unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE)
+    >>> data = Integer(unitSize=UnitSize.SIZE_16, endianness=Endianness.LITTLE)
     >>> str(data)
     'Integer=None ((-32768, 32767))'
 
@@ -238,11 +238,11 @@ class Integer(AbstractType):
     The following examples show the encoding of Integer objects with
     and without default value.
 
-    >>> data = Integer(value=12, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_LITTLE)
+    >>> data = Integer(value=12, unitSize=UnitSize.SIZE_32, endianness=Endianness.LITTLE)
     >>> repr(data)
     '12'
 
-    >>> data = Integer(unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE)
+    >>> data = Integer(unitSize=UnitSize.SIZE_16, endianness=Endianness.LITTLE)
     >>> repr(data)
     'None'
 
@@ -300,7 +300,7 @@ class Integer(AbstractType):
             raise ValueError("Input interval shoud be a tuple of two integers. Value received: '{}'".format(interval))
 
         # Handle min and max value if None is used in interval
-        if unitSize == AbstractType.UNITSIZE_1:
+        if unitSize == UnitSize.SIZE_1:
             if interval[0] is not None and interval[0] < 0:
                 raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
             if interval[1] is not None and interval[1] > 1:
@@ -309,7 +309,7 @@ class Integer(AbstractType):
                 min_interval = 0
             if interval[1] is None:
                 max_interval = 1
-        elif unitSize == AbstractType.UNITSIZE_4:
+        elif unitSize == UnitSize.SIZE_4:
             if interval[0] is not None and interval[0] < 0:
                 raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
             if interval[1] is not None and interval[1] > 15:
@@ -318,7 +318,7 @@ class Integer(AbstractType):
                 min_interval = 0
             if interval[1] is None:
                 max_interval = 15
-        elif unitSize == AbstractType.UNITSIZE_8 and sign == AbstractType.SIGN_SIGNED:
+        elif unitSize == UnitSize.SIZE_8 and sign == Sign.SIGNED:
             if interval[0] is not None and interval[0] < -128:
                 raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
             if interval[1] is not None and interval[1] > 127:
@@ -327,7 +327,7 @@ class Integer(AbstractType):
                 min_interval = -128
             if interval[1] is None:
                 max_interval = 127
-        elif unitSize == AbstractType.UNITSIZE_8 and sign == AbstractType.SIGN_UNSIGNED:
+        elif unitSize == UnitSize.SIZE_8 and sign == Sign.UNSIGNED:
             if interval[0] is not None and interval[0] < 0:
                 raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
             if interval[1] is not None and interval[1] > 255:
@@ -336,7 +336,7 @@ class Integer(AbstractType):
                 min_interval = 0
             if interval[1] is None:
                 max_interval = 255
-        elif unitSize == AbstractType.UNITSIZE_16 and sign == AbstractType.SIGN_SIGNED:
+        elif unitSize == UnitSize.SIZE_16 and sign == Sign.SIGNED:
             if interval[0] is not None and interval[0] < -32767:
                 raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
             if interval[1] is not None and interval[1] > 32767:
@@ -345,7 +345,7 @@ class Integer(AbstractType):
                 min_interval = -32768
             if interval[1] is None:
                 max_interval = 32767
-        elif unitSize == AbstractType.UNITSIZE_16 and sign == AbstractType.SIGN_UNSIGNED:
+        elif unitSize == UnitSize.SIZE_16 and sign == Sign.UNSIGNED:
             if interval[0] is not None and interval[0] < 0:
                 raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
             if interval[1] is not None and interval[1] > 65535:
@@ -354,7 +354,7 @@ class Integer(AbstractType):
                 min_interval = 0
             if interval[1] is None:
                 max_interval = 65535
-        elif unitSize == AbstractType.UNITSIZE_24 and sign == AbstractType.SIGN_SIGNED:
+        elif unitSize == UnitSize.SIZE_24 and sign == Sign.SIGNED:
             if interval[0] is not None and interval[0] < -8388608:
                 raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
             if interval[1] is not None and interval[1] > 8388607:
@@ -363,7 +363,7 @@ class Integer(AbstractType):
                 min_interval = -8388608
             if interval[1] is None:
                 max_interval = 8388607
-        elif unitSize == AbstractType.UNITSIZE_24 and sign == AbstractType.SIGN_UNSIGNED:
+        elif unitSize == UnitSize.SIZE_24 and sign == Sign.UNSIGNED:
             if interval[0] is not None and interval[0] < 0:
                 raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
             if interval[1] is not None and interval[1] > 16777215:
@@ -372,7 +372,7 @@ class Integer(AbstractType):
                 min_interval = 0
             if interval[1] is None:
                 max_interval = 16777215
-        elif unitSize == AbstractType.UNITSIZE_32 and sign == AbstractType.SIGN_SIGNED:
+        elif unitSize == UnitSize.SIZE_32 and sign == Sign.SIGNED:
             if interval[0] is not None and interval[0] < -2147483648:
                 raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
             if interval[1] is not None and interval[1] > 2147483647:
@@ -381,7 +381,7 @@ class Integer(AbstractType):
                 min_interval = -2147483648
             if interval[1] is None:
                 max_interval = 2147483647
-        elif unitSize == AbstractType.UNITSIZE_32 and sign == AbstractType.SIGN_UNSIGNED:
+        elif unitSize == UnitSize.SIZE_32 and sign == Sign.UNSIGNED:
             if interval[0] is not None and interval[0] < 0:
                 raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
             if interval[1] is not None and interval[1] > 4294967295:
@@ -390,7 +390,7 @@ class Integer(AbstractType):
                 min_interval = 0
             if interval[1] is None:
                 max_interval = 4294967295
-        elif unitSize == AbstractType.UNITSIZE_64 and sign == AbstractType.SIGN_SIGNED:
+        elif unitSize == UnitSize.SIZE_64 and sign == Sign.SIGNED:
             if interval[0] is not None and interval[0] < -9223372036854775808:
                 raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
             if interval[1] is not None and interval[1] > 9223372036854775807:
@@ -399,7 +399,7 @@ class Integer(AbstractType):
                 min_interval = -9223372036854775808
             if interval[1] is None:
                 max_interval = 9223372036854775807
-        elif unitSize == AbstractType.UNITSIZE_64 and sign == AbstractType.SIGN_UNSIGNED:
+        elif unitSize == UnitSize.SIZE_64 and sign == Sign.UNSIGNED:
             if interval[0] is not None and interval[0] < 0:
                 raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
             if interval[1] is not None and interval[1] > 18446744073709551615:
@@ -433,16 +433,16 @@ class Integer(AbstractType):
             return TypeConverter.convert(self.value, BitArray, Integer, dst_unitSize=self.unitSize, dst_endianness=self.endianness, dst_sign=self.sign)
 
     def getMinStorageValue(self):
-        if self.sign == AbstractType.SIGN_UNSIGNED:
+        if self.sign == Sign.UNSIGNED:
             return 0
         else:
-            return -int((2**int(self.unitSize))/2)
+            return -int((2**int(self.unitSize.value))/2)
 
     def getMaxStorageValue(self):
-        if self.sign == AbstractType.SIGN_UNSIGNED:
-            return 2**self.unitSize - 1
+        if self.sign == Sign.UNSIGNED:
+            return 2**self.unitSize.value - 1
         else:
-            return int((2**self.unitSize)/2) - 1
+            return int((2**self.unitSize.value)/2) - 1
 
     def canParse(self,
                  data,
@@ -483,7 +483,7 @@ class Integer(AbstractType):
 
         To specify a bigger storage, the unitSize should be used:
 
-        >>> Integer(unitSize=AbstractType.UNITSIZE_16).canParse(-129)
+        >>> Integer(unitSize=UnitSize.SIZE_16).canParse(-129)
         True
 
         """
@@ -548,12 +548,12 @@ class Integer(AbstractType):
         >>> print(Integer.decode(23))
         b'\x17'
 
-        >>> print(Integer.decode(-1, sign=AbstractType.SIGN_UNSIGNED))
+        >>> print(Integer.decode(-1, sign=Sign.UNSIGNED))
         Traceback (most recent call last):
         ...
         struct.error: ubyte format requires 0 <= number <= 255
 
-        >>> print(Integer.decode(-1, sign=AbstractType.SIGN_SIGNED))
+        >>> print(Integer.decode(-1, sign=Sign.SIGNED))
         b'\xff'
 
         >>> print(Integer.decode(2000000000000000))
@@ -561,29 +561,29 @@ class Integer(AbstractType):
         ...
         struct.error: byte format requires -128 <= number <= 127
 
-        >>> print(Integer.decode(2000000000000000, unitSize=AbstractType.UNITSIZE_64))
+        >>> print(Integer.decode(2000000000000000, unitSize=UnitSize.SIZE_64))
         b'\x00\x07\x1a\xfdI\x8d\x00\x00'
 
-        >>> print(Integer.decode(25, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE))
+        >>> print(Integer.decode(25, unitSize=UnitSize.SIZE_16, endianness=Endianness.LITTLE))
         b'\x19\x00'
-        >>> print(Integer.decode(25, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG))
+        >>> print(Integer.decode(25, unitSize=UnitSize.SIZE_16, endianness=Endianness.BIG))
         b'\x00\x19'
 
         >>> val = 167749568
-        >>> a = Integer.decode(val, unitSize=AbstractType.UNITSIZE_32)
-        >>> b = Integer.encode(a, unitSize=AbstractType.UNITSIZE_32)
+        >>> a = Integer.decode(val, unitSize=UnitSize.SIZE_32)
+        >>> b = Integer.encode(a, unitSize=UnitSize.SIZE_32)
         >>> b == val
         True
 
 
         :param data: the data encoded in Integer which will be decoded in raw
         :type data: the current type
-        :keyword unitSize: the unitsize to consider while encoding. Values must be one of AbstractType.UNITSIZE_*
+        :keyword unitSize: the unitsize to consider while encoding. Values must be one of UnitSize.SIZE_*
         :type unitSize: str
-        :keyword endianness: the endianness to consider while encoding. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE
+        :keyword endianness: the endianness to consider while encoding. Values must be Endianness.BIG or Endianness.LITTLE
         :type endianness: str
-        :keyword sign: the sign to consider while encoding Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED
-        :type sign: str
+        :keyword sign: the sign to consider while encoding Values must be Sign.SIGNED or Sign.UNSIGNED
+        :type sign: :class:`Enum`
 
         :return: data encoded in python raw
         :rtype: python raw
@@ -609,37 +609,37 @@ class Integer(AbstractType):
         >>> print(Integer.encode(raw))
         23
 
-        >>> raw = Integer.decode(1200, unitSize=AbstractType.UNITSIZE_16)
-        >>> print(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16))
+        >>> raw = Integer.decode(1200, unitSize=UnitSize.SIZE_16)
+        >>> print(Integer.encode(raw, unitSize=UnitSize.SIZE_16))
         1200
 
-        >>> raw = Integer.decode(25, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE)
-        >>> print(repr(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG)))
+        >>> raw = Integer.decode(25, unitSize=UnitSize.SIZE_16, endianness=Endianness.LITTLE)
+        >>> print(repr(Integer.encode(raw, unitSize=UnitSize.SIZE_16, endianness=Endianness.BIG)))
         6400
-        >>> print(repr(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE)))
+        >>> print(repr(Integer.encode(raw, unitSize=UnitSize.SIZE_16, endianness=Endianness.LITTLE)))
         25
 
-        >>> print(Integer.encode(b'\xcc\xac\x9c\x0c\x1c\xacL\x1c,\xac', unitSize=AbstractType.UNITSIZE_8))
+        >>> print(Integer.encode(b'\xcc\xac\x9c\x0c\x1c\xacL\x1c,\xac', unitSize=UnitSize.SIZE_8))
         -395865088909314208584756
 
         >>> raw = b'\xcc\xac\x9c'
-        >>> print(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG))
+        >>> print(Integer.encode(raw, unitSize=UnitSize.SIZE_16, endianness=Endianness.BIG))
         10210476
 
-        >>> print(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_BIG))
+        >>> print(Integer.encode(raw, unitSize=UnitSize.SIZE_32, endianness=Endianness.BIG))
         13413532
 
-        >>> print(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_LITTLE))
+        >>> print(Integer.encode(raw, unitSize=UnitSize.SIZE_32, endianness=Endianness.LITTLE))
         10267852
 
         :param data: the data encoded in python raw which will be encoded in current type
         :type data: python raw
-        :keyword unitSize: the unitsize to consider while encoding. Values must be one of AbstractType.UNITSIZE_*
-        :type unitSize: str
-        :keyword endianness: the endianness to consider while encoding. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE
-        :type endianness: str
-        :keyword sign: the sign to consider while encoding Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED
-        :type sign: str
+        :keyword unitSize: the unitsize to consider while encoding. Values must be one of UnitSize.SIZE_*
+        :type unitSize: :class:`Enum`
+        :keyword endianness: the endianness to consider while encoding. Values must be Endianness.BIG or Endianness.LITTLE
+        :type endianness: :class:`Enum`
+        :keyword sign: the sign to consider while encoding Values must be Sign.SIGNED or Sign.UNSIGNED
+        :type sign: :class:`Enum`
 
         :return: data encoded in python raw
         :rtype: python raw
@@ -650,15 +650,15 @@ class Integer(AbstractType):
 
         perWordFormat = Integer.computeFormat(unitSize, endianness, sign)
 
-        nbWords = int(len(data) * 8 / int(unitSize))
+        nbWords = int(len(data) * 8 / int(unitSize.value))
 
         # Check whether the input data matches unitSize. If not take 
         # precautions to able to pad it with null bytes later.
         padding_nullbytes = 0
-        rest = (len(data) * 8) % int(unitSize)
+        rest = (len(data) * 8) % int(unitSize.value)
         if rest != 0:
             nbWords += 1
-            padding_nullbytes = (int(unitSize) - rest) / 8
+            padding_nullbytes = (int(unitSize.value) - rest) / 8
 
         finalValue = 0
 
@@ -666,30 +666,30 @@ class Integer(AbstractType):
         start = 0
         end = nbWords
         inc = 1
-        if endianness == AbstractType.ENDIAN_BIG:
+        if endianness == Endianness.BIG:
             end = 0
             start = nbWords
             inc = -1
 
         for i in range(start, end, inc):
             # Extract the portion that represents the current word
-            startPos = int(iWord * int(unitSize) / 8)
-            endPos = int(iWord * int(unitSize) / 8 + int(unitSize) / 8)
+            startPos = int(iWord * int(unitSize.value) / 8)
+            endPos = int(iWord * int(unitSize.value) / 8 + int(unitSize.value) / 8)
 
             wordData = data[startPos:endPos]
 
             # Pad with null bytes to statisfy the unitSize.
             if padding_nullbytes > 0 and i == (end - inc):
-                if endianness == AbstractType.ENDIAN_BIG:
+                if endianness == Endianness.BIG:
                     wordData = b'\x00' * int(padding_nullbytes) + wordData
-                elif endianness == AbstractType.ENDIAN_LITTLE:
+                elif endianness == Endianness.LITTLE:
                     wordData += b'\x00' * int(padding_nullbytes)
                 else:
                     raise ValueError(
                         "Invalid endianness value: {0}".format(endianness))
 
             unpackedWord = struct.unpack(perWordFormat, wordData)[0]
-            unpackedWord = unpackedWord << int(unitSize) * iWord
+            unpackedWord = unpackedWord << int(unitSize.value) * iWord
 
             finalValue = finalValue + unpackedWord
 
@@ -700,29 +700,29 @@ class Integer(AbstractType):
     @staticmethod
     def computeFormat(unitSize, endianness, sign):
         # endian
-        if endianness == AbstractType.ENDIAN_BIG:
+        if endianness == Endianness.BIG:
             endianFormat = '>'
-        elif endianness == AbstractType.ENDIAN_LITTLE:
+        elif endianness == Endianness.LITTLE:
             endianFormat = '<'
         else:
             raise ValueError(
                 "Invalid endianness value: {0}".format(endianness))
 
         # unitSize
-        if unitSize == AbstractType.UNITSIZE_8:
+        if unitSize == UnitSize.SIZE_8:
             unitFormat = 'b'
-        elif unitSize == AbstractType.UNITSIZE_16:
+        elif unitSize == UnitSize.SIZE_16:
             unitFormat = 'h'
-        elif unitSize == AbstractType.UNITSIZE_32:
+        elif unitSize == UnitSize.SIZE_32:
             unitFormat = 'i'
-        elif unitSize == AbstractType.UNITSIZE_64:
+        elif unitSize == UnitSize.SIZE_64:
             unitFormat = 'q'
         else:
             raise ValueError(
                 "Only 8, 16, 32 and 64 bits unitsize are available for integers"
             )
         # sign
-        if sign == AbstractType.SIGN_UNSIGNED:
+        if sign == Sign.UNSIGNED:
             unitFormat = unitFormat.upper()
 
         return endianFormat + unitFormat
@@ -734,7 +734,7 @@ class Integer(AbstractType):
         >>> v1 = Integer(interval=(-10, -1)).generate()
         >>> assert v1[0] is True  # sign bit (MSB) is set
 
-        >>> v2 = Integer(42, sign=AbstractType.SIGN_UNSIGNED)
+        >>> v2 = Integer(42, sign=Sign.UNSIGNED)
         >>> v2.generate()
         bitarray('00101010')
 
@@ -761,68 +761,68 @@ class Integer(AbstractType):
             raise Exception("Cannot generate integer value, as nor constant value or interval is defined")
 
 int8be   = partialclass(Integer,
-                        unitSize=AbstractType.UNITSIZE_8,
-                        sign=AbstractType.SIGN_SIGNED,
-                        endianness=AbstractType.ENDIAN_BIG)
+                        unitSize=UnitSize.SIZE_8,
+                        sign=Sign.SIGNED,
+                        endianness=Endianness.BIG)
 int8le   = partialclass(Integer,
-                        unitSize=AbstractType.UNITSIZE_8,
-                        sign=AbstractType.SIGN_SIGNED,
-                        endianness=AbstractType.ENDIAN_LITTLE)
+                        unitSize=UnitSize.SIZE_8,
+                        sign=Sign.SIGNED,
+                        endianness=Endianness.LITTLE)
 uint8be  = partialclass(Integer,
-                        unitSize=AbstractType.UNITSIZE_8,
-                        sign=AbstractType.SIGN_UNSIGNED,
-                        endianness=AbstractType.ENDIAN_BIG)
+                        unitSize=UnitSize.SIZE_8,
+                        sign=Sign.UNSIGNED,
+                        endianness=Endianness.BIG)
 uint8le  = partialclass(Integer,
-                        unitSize=AbstractType.UNITSIZE_8,
-                        sign=AbstractType.SIGN_UNSIGNED,
-                        endianness=AbstractType.ENDIAN_LITTLE)
+                        unitSize=UnitSize.SIZE_8,
+                        sign=Sign.UNSIGNED,
+                        endianness=Endianness.LITTLE)
 int16be  = partialclass(Integer,
-                        unitSize=AbstractType.UNITSIZE_16,
-                        sign=AbstractType.SIGN_SIGNED,
-                        endianness=AbstractType.ENDIAN_BIG)
+                        unitSize=UnitSize.SIZE_16,
+                        sign=Sign.SIGNED,
+                        endianness=Endianness.BIG)
 int16le  = partialclass(Integer,
-                        unitSize=AbstractType.UNITSIZE_16,
-                        sign=AbstractType.SIGN_SIGNED,
-                        endianness=AbstractType.ENDIAN_LITTLE)
+                        unitSize=UnitSize.SIZE_16,
+                        sign=Sign.SIGNED,
+                        endianness=Endianness.LITTLE)
 uint16be = partialclass(Integer,
-                        unitSize=AbstractType.UNITSIZE_16,
-                        sign=AbstractType.SIGN_UNSIGNED,
-                        endianness=AbstractType.ENDIAN_BIG)
+                        unitSize=UnitSize.SIZE_16,
+                        sign=Sign.UNSIGNED,
+                        endianness=Endianness.BIG)
 uint16le = partialclass(Integer,
-                        unitSize=AbstractType.UNITSIZE_16,
-                        sign=AbstractType.SIGN_UNSIGNED,
-                        endianness=AbstractType.ENDIAN_LITTLE)
+                        unitSize=UnitSize.SIZE_16,
+                        sign=Sign.UNSIGNED,
+                        endianness=Endianness.LITTLE)
 int32be  = partialclass(Integer,
-                        unitSize=AbstractType.UNITSIZE_32,
-                        sign=AbstractType.SIGN_SIGNED,
-                        endianness=AbstractType.ENDIAN_BIG)
+                        unitSize=UnitSize.SIZE_32,
+                        sign=Sign.SIGNED,
+                        endianness=Endianness.BIG)
 int32le  = partialclass(Integer,
-                        unitSize=AbstractType.UNITSIZE_32,
-                        sign=AbstractType.SIGN_SIGNED,
-                        endianness=AbstractType.ENDIAN_LITTLE)
+                        unitSize=UnitSize.SIZE_32,
+                        sign=Sign.SIGNED,
+                        endianness=Endianness.LITTLE)
 uint32be = partialclass(Integer,
-                        unitSize=AbstractType.UNITSIZE_32,
-                        sign=AbstractType.SIGN_UNSIGNED,
-                        endianness=AbstractType.ENDIAN_BIG)
+                        unitSize=UnitSize.SIZE_32,
+                        sign=Sign.UNSIGNED,
+                        endianness=Endianness.BIG)
 uint32le = partialclass(Integer,
-                        unitSize=AbstractType.UNITSIZE_32,
-                        sign=AbstractType.SIGN_UNSIGNED,
-                        endianness=AbstractType.ENDIAN_LITTLE)
+                        unitSize=UnitSize.SIZE_32,
+                        sign=Sign.UNSIGNED,
+                        endianness=Endianness.LITTLE)
 int64be  = partialclass(Integer,
-                        unitSize=AbstractType.UNITSIZE_64,
-                        sign=AbstractType.SIGN_SIGNED,
-                        endianness=AbstractType.ENDIAN_BIG)
+                        unitSize=UnitSize.SIZE_64,
+                        sign=Sign.SIGNED,
+                        endianness=Endianness.BIG)
 int64le  = partialclass(Integer,
-                        unitSize=AbstractType.UNITSIZE_64,
-                        sign=AbstractType.SIGN_SIGNED,
-                        endianness=AbstractType.ENDIAN_LITTLE)
+                        unitSize=UnitSize.SIZE_64,
+                        sign=Sign.SIGNED,
+                        endianness=Endianness.LITTLE)
 uint64be = partialclass(Integer,
-                        unitSize=AbstractType.UNITSIZE_64,
-                        sign=AbstractType.SIGN_UNSIGNED,
-                        endianness=AbstractType.ENDIAN_BIG)
+                        unitSize=UnitSize.SIZE_64,
+                        sign=Sign.UNSIGNED,
+                        endianness=Endianness.BIG)
 uint64le = partialclass(Integer,
-                        unitSize=AbstractType.UNITSIZE_64,
-                        sign=AbstractType.SIGN_UNSIGNED,
-                        endianness=AbstractType.ENDIAN_LITTLE)
+                        unitSize=UnitSize.SIZE_64,
+                        sign=Sign.UNSIGNED,
+                        endianness=Endianness.LITTLE)
 int8, int16, int32, int64 = int8be, int16be, int32be, int64be
 uint8, uint16, uint32, uint64 = uint8be, uint16be, uint32be, uint64be

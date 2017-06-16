@@ -46,7 +46,7 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, Sign, UnitSize
 from netzob.Common.Utils.Decorators import NetzobLogger, typeCheck
 
 
@@ -363,7 +363,7 @@ class String(AbstractType):
         True
 
         The ascii table is defined from 0 to 127:
-        >>> String(encoding='ascii').canParse(TypeConverter.convert(128, Integer, BitArray, src_sign=AbstractType.SIGN_UNSIGNED))
+        >>> String(encoding='ascii').canParse(TypeConverter.convert(128, Integer, BitArray, src_sign=Sign.UNSIGNED))
         False
 
         >>> a = String(nbChars=10)
@@ -480,12 +480,12 @@ class String(AbstractType):
 
         :param data: the data encoded in String which will be decoded in raw
         :type data: the current type
-        :keyword unitSize: the unitsize to consider while encoding. Values must be one of AbstractType.UNITSIZE_*
-        :type unitSize: str
-        :keyword endianness: the endianness to consider while encoding. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE
-        :type endianness: str
-        :keyword sign: the sign to consider while encoding Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED
-        :type sign: str
+        :keyword unitSize: the unitsize to consider while encoding. Values must be one of UnitSize.SIZE_*
+        :type unitSize: :class:`Enum`
+        :keyword endianness: the endianness to consider while encoding. Values must be Endianness.BIG or Endianness.LITTLE
+        :type endianness: :class:`Enum`
+        :keyword sign: the sign to consider while encoding Values must be Sign.SIGNED or Sign.UNSIGNED
+        :type sign: :class:`Enum`
 
         :return: data encoded in python raw
         :rtype: python raw
@@ -510,12 +510,12 @@ class String(AbstractType):
 
         :param data: the data encoded in python raw which will be encoded in current type
         :type data: python raw
-        :keyword unitSize: the unitsize to consider while encoding. Values must be one of AbstractType.UNITSIZE_*
-        :type unitSize: str
-        :keyword endianness: the endianness to consider while encoding. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE
-        :type endianness: str
-        :keyword sign: the sign to consider while encoding Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED
-        :type sign: str
+        :keyword unitSize: the unitsize to consider while encoding. Values must be one of UnitSize.SIZE_*
+        :type unitSize: :class:`Enum`
+        :keyword endianness: the endianness to consider while encoding. Values must be Endianness.BIG or Endianness.LITTLE
+        :type endianness: :class:`Enum`
+        :keyword sign: the sign to consider while encoding Values must be Sign.SIGNED or Sign.UNSIGNED
+        :type sign: :class:`Enum`
 
         :return: data encoded in python raw
         :rtype: python raw

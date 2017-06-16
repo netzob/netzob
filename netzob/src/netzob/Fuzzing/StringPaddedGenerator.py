@@ -99,7 +99,7 @@ class StringPaddedGenerator(object):
         value = self._values[self._seed] + endChar
         self._seed += 1
         length = int.from_bytes(self._lengthMutator.generate(),
-                                self._lengthMutator.domain.dataType.endianness)
+                                self._lengthMutator.domain.dataType.endianness.value)
         if length > 0:
             if length > len(value):
                 # Complete the string with padding characters to have the good

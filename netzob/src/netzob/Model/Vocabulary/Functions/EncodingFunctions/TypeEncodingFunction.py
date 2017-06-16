@@ -46,7 +46,7 @@ from netzob.Common.Utils.Decorators import NetzobLogger
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Functions.EncodingFunction import EncodingFunction
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, Sign, UnitSize
 
 
 @NetzobLogger
@@ -68,7 +68,7 @@ class TypeEncodingFunction(EncodingFunction):
 
     >>> m=RawMessage(b'hello\x00\x00\x00\x01')
     >>> f1=Field(String("hello"))
-    >>> f2=Field(Integer(unitSize=AbstractType.UNITSIZE_32))
+    >>> f2=Field(Integer(unitSize=UnitSize.SIZE_32))
     >>> s = Symbol(fields=[f1,f2], messages=[m])
     >>> print(s)
     Field   | Field             
@@ -76,15 +76,15 @@ class TypeEncodingFunction(EncodingFunction):
     'hello' | '\x00\x00\x00\x01'
     ------- | ------------------
 
-    >>> f2.addEncodingFunction(TypeEncodingFunction(Integer, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_LITTLE))
+    >>> f2.addEncodingFunction(TypeEncodingFunction(Integer, unitSize=UnitSize.SIZE_32, endianness=Endianness.LITTLE))
     >>> print(s)
     Field   | Field   
     ------- | --------
     'hello' | 16777216
     ------- | --------
 
-    >>> f2=Field(Integer(unitSize=AbstractType.UNITSIZE_32))
-    >>> f2.addEncodingFunction(TypeEncodingFunction(Integer, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_BIG))
+    >>> f2=Field(Integer(unitSize=UnitSize.SIZE_32))
+    >>> f2.addEncodingFunction(TypeEncodingFunction(Integer, unitSize=UnitSize.SIZE_32, endianness=Endianness.BIG))
     >>> s = Symbol(fields=[f1,f2], messages=[m])
     >>> print(s)
     Field   | Field
@@ -101,12 +101,12 @@ class TypeEncodingFunction(EncodingFunction):
 
         :parameter _type: the type that will be used to encode
         :type _type: :class:`type`
-        :keyword unitSize: the unitsize of the expected result. Values must be one of AbstractType.UNITSIZE_*
-        :type unitSize: str
-        :keyword endianness: the endianness of the expected result. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE
-        :type endianness: str
-        :keyword sign: the sign of the expected result. Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED
-        :type sign: str
+        :keyword unitSize: the unitsize of the expected result. Values must be one of UnitSize.SIZE_*
+        :type unitSize: :class:`Enum`
+        :keyword endianness: the endianness of the expected result. Values must be Endianness.BIG or Endianness.LITTLE
+        :type endianness: :class:`Enum`
+        :keyword sign: the sign of the expected result. Values must be Sign.SIGNED or Sign.UNSIGNED
+        :type sign: :class:`Enum`
         """
         self.type = _type
         if unitSize is None:

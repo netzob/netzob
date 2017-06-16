@@ -45,7 +45,7 @@
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Symbol import Symbol
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, UnitSize
 from netzob.Inference.Vocabulary.FormatOperations.FieldSplitStatic.FieldSplitStatic import FieldSplitStatic
 from netzob.Inference.Vocabulary.FormatOperations.FieldSplitDelimiter import FieldSplitDelimiter
 from netzob.Inference.Vocabulary.FormatOperations.FieldReseter import FieldReseter
@@ -92,7 +92,7 @@ class Format(object):
     @staticmethod
     @typeCheck(AbstractField, str)
     def splitStatic(field,
-                    unitSize=AbstractType.UNITSIZE_8,
+                    unitSize=UnitSize.SIZE_8,
                     mergeAdjacentStaticFields=True,
                     mergeAdjacentDynamicFields=True):
         """Split the portion of the message matching the specified fields

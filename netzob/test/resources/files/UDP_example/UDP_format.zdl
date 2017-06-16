@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from bitarray import bitarray
-from netzob.all import (AbstractType, BitArray, Field, uint16,
+from netzob.all import (AbstractType, UnitSize, BitArray, Field, uint16,
                         InternetChecksum, IPv4, Raw, Size, Symbol)
 
 # Reference: https://www.ietf.org/rfc/rfc768.txt
@@ -27,7 +27,7 @@ pseudo_ip_length = Field(Size(udp_header, dataType=uint16(), factor=1./8), "udp.
 pseudo_ip_header = Field(name="udp.pseudoIP", isPseudoField=True)
 pseudo_ip_header.fields = [pseudo_ip_src, pseudo_ip_dst, pseudo_ip_proto, pseudo_ip_length]
 
-udp_checksum.domain = InternetChecksum([pseudo_ip_header] + udp_header, dataType=Raw(nbBytes=2, unitSize=AbstractType.UNITSIZE_16))
+udp_checksum.domain = InternetChecksum([pseudo_ip_header] + udp_header, dataType=Raw(nbBytes=2, unitSize=UnitSize.SIZE_16))
 
 # UDP symbol
 symbol_udp = Symbol(name="udp", fields=(udp_header + [pseudo_ip_header]))

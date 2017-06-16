@@ -47,7 +47,7 @@ from bitarray import bitarray
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import NetzobLogger
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, Sign, UnitSize
 
 
 @NetzobLogger
@@ -64,12 +64,12 @@ class IPv4(AbstractType):
                           (ex: "192.168.0.10").
     :parameter network: A network address expressed in standard
                             dot notation (ex: "192.168.0.0/24").
-    :param endianness: The endianness of the current value. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE. If None, the value is the default one.
+    :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. If None, the value is the default one.
     :param unitSize: Not implemented.
     :param sign: Not implemented.
     :type value: :class:`str` or :class:`netaddr.IPAddress`, optional
     :type network: :class:`str` or :class:`netaddr.IPNetwork`, optional
-    :type endianness: :class:`str`, optional
+    :type endianness: :class:`Enum`, optional
 
     The following examples show the use of an IPv4 type for the
     definition domain of a field:
@@ -101,7 +101,7 @@ class IPv4(AbstractType):
     def __init__(self,
                  value=None,
                  network=None,
-                 unitSize=AbstractType.UNITSIZE_32,
+                 unitSize=UnitSize.SIZE_32,
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign()):
 
@@ -125,7 +125,7 @@ class IPv4(AbstractType):
             self.__class__.__name__,
             value,
             (None, None),
-            unitSize=AbstractType.UNITSIZE_32,
+            unitSize=UnitSize.SIZE_32,
             endianness=AbstractType.defaultEndianness(),
             sign=AbstractType.defaultSign())
 
@@ -355,10 +355,10 @@ class IPv4(AbstractType):
         try:
 
             structFormat = ">"
-            if endianness == AbstractType.ENDIAN_BIG:
+            if endianness == Endianness.BIG:
                 structFormat = ">"
 
-            if not sign == AbstractType.SIGN_SIGNED:
+            if not sign == Sign.SIGNED:
                 structFormat += "bbbb"
             else:
                 structFormat += "BBBB"

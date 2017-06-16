@@ -56,7 +56,7 @@ from netzob.Model.Vocabulary import partialclass
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Types.HexaString import HexaString
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, Sign, UnitSize
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Raw import Raw
@@ -234,19 +234,19 @@ class Checksum(AbstractRelationVariableLeaf):
         # Convert the result in a BitArray (be carefull with the src_unitSize)
         if self.checksumName == "CRC32":
             result = TypeConverter.convert(result, Integer, BitArray,
-                                           src_endianness=AbstractType.ENDIAN_LITTLE,
+                                           src_endianness=Endianness.LITTLE,
                                            dst_endianness=self.dataType.endianness,
-                                           src_unitSize=AbstractType.UNITSIZE_32,
+                                           src_unitSize=UnitSize.SIZE_32,
                                            dst_unitSize=self.dataType.unitSize,
-                                           src_sign = AbstractType.SIGN_UNSIGNED)
+                                           src_sign=Sign.UNSIGNED)
 
         else:
             result = TypeConverter.convert(result, Integer, BitArray,
-                                           src_endianness=AbstractType.ENDIAN_LITTLE,
+                                           src_endianness=Endianness.LITTLE,
                                            dst_endianness=self.dataType.endianness,
-                                           src_unitSize=AbstractType.UNITSIZE_16,
+                                           src_unitSize=UnitSize.SIZE_16,
                                            dst_unitSize=self.dataType.unitSize,
-                                           src_sign = AbstractType.SIGN_UNSIGNED)
+                                           src_sign=Sign.UNSIGNED)
 
         return result
 

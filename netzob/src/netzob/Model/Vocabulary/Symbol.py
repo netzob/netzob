@@ -54,7 +54,7 @@ from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-
+from netzob.Model.Vocabulary.Types.AbstractType import UnitSize
 
 class Symbol(AbstractField):
     """The Symbol class is a main component of the Netzob protocol model.
@@ -253,7 +253,7 @@ class Symbol(AbstractField):
         header is made of one named field containing a destination
         port, and a named field containing a payload:
 
-        >>> f_dport = Field(name="udp.dport", domain=Integer(unitSize=AbstractType.UNITSIZE_8))
+        >>> f_dport = Field(name="udp.dport", domain=Integer(unitSize=UnitSize.SIZE_8))
         >>> f_payload = Field(name="udp.payload", domain=Raw(nbBytes=2))
         >>> symbol_udp = Symbol(name="udp", fields=[f_dport, f_payload])
 
@@ -327,7 +327,7 @@ class Symbol(AbstractField):
 
         >>> from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
         >>> fuzz = Fuzz()
-        >>> f_data = Field(name="data", domain=Integer(interval=(1, 4), unitSize=AbstractType.UNITSIZE_16))
+        >>> f_data = Field(name="data", domain=Integer(interval=(1, 4), unitSize=UnitSize.SIZE_16))
         >>> symbol = Symbol(name="sym", fields=[f_data])
         >>> fuzz.set(f_data, PseudoRandomIntegerMutator, interval=(20, 32000))
         >>> symbol.specialize(fuzz=fuzz)
@@ -338,8 +338,8 @@ class Symbol(AbstractField):
             Fuzzing example of a field that contains an aggregate of variables:
 
             # >>> fuzz = Fuzz()
-            # >>> f_agg = Field(name="agg", domain=Agg([Integer(interval=(1, 4), unitSize=AbstractType.UNITSIZE_16),
-            # ...                                       Integer(interval=(5, 8), unitSize=AbstractType.UNITSIZE_16)]))
+            # >>> f_agg = Field(name="agg", domain=Agg([Integer(interval=(1, 4), unitSize=UnitSize.SIZE_16),
+            # ...                                       Integer(interval=(5, 8), unitSize=UnitSize.SIZE_16)]))
             # >>> symbol = Symbol(name="sym", fields=[f_agg])
             # >>> fuzz.set(f_agg, PseudoRandomIntegerMutator, interval=(20, 32000))
             # >>> symbol.specialize(fuzz=fuzz)
@@ -349,8 +349,8 @@ class Symbol(AbstractField):
             # Fuzzing example of a field that contains an alternate of variables:
 
             # >>> fuzz = Fuzz()
-            # >>> f_alt = Field(name="alt", domain=Alt([Integer(interval=(1, 4), unitSize=AbstractType.UNITSIZE_16),
-            # ...                                           Integer(interval=(5, 8), unitSize=AbstractType.UNITSIZE_16)]))
+            # >>> f_alt = Field(name="alt", domain=Alt([Integer(interval=(1, 4), unitSize=UnitSize.SIZE_16),
+            # ...                                           Integer(interval=(5, 8), unitSize=UnitSize.SIZE_16)]))
             # >>> symbol = Symbol(name="sym", fields=[f_alt])
             # >>> fuzz.set(f_alt, PseudoRandomIntegerMutator, interval=(20, 32000))
             # >>> res = symbol.specialize(fuzz=fuzz)
@@ -361,7 +361,7 @@ class Symbol(AbstractField):
             # Fuzzing example of a field that contains a repeat of a variable:
 
             # >>> fuzz = Fuzz()
-            # >>> f_rep = Field(name="rep", domain=Repeat(Integer(interval=(1, 4), unitSize=AbstractType.UNITSIZE_16),
+            # >>> f_rep = Field(name="rep", domain=Repeat(Integer(interval=(1, 4), unitSize=UnitSize.SIZE_16),
             # ...                                             2))
             # >>> symbol = Symbol(name="sym", fields=[f_rep])
             # >>> fuzz.set(f_rep, PseudoRandomIntegerMutator, interval=(20, 32000))
@@ -372,8 +372,8 @@ class Symbol(AbstractField):
         Fuzzing example of a field that contains a size relationship with another field:
 
         >>> fuzz = Fuzz()
-        >>> f_data = Field(name="data", domain=Integer(3, unitSize=AbstractType.UNITSIZE_16))
-        >>> f_size = Field(name="size", domain=Size([f_data], Integer(unitSize=AbstractType.UNITSIZE_16)))
+        >>> f_data = Field(name="data", domain=Integer(3, unitSize=UnitSize.SIZE_16))
+        >>> f_size = Field(name="size", domain=Size([f_data], Integer(unitSize=UnitSize.SIZE_16)))
         >>> symbol = Symbol(name="sym", fields=[f_data, f_size])
         >>> fuzz.set(f_size, PseudoRandomIntegerMutator, interval=(20, 32000))
         >>> symbol.specialize(fuzz=fuzz)
@@ -384,7 +384,7 @@ class Symbol(AbstractField):
 
         >>> from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
         >>> fuzz = Fuzz()
-        >>> f_data = Field(name="data", domain=Integer(2, unitSize=AbstractType.UNITSIZE_16))
+        >>> f_data = Field(name="data", domain=Integer(2, unitSize=UnitSize.SIZE_16))
         >>> symbol = Symbol(name="sym", fields=[f_data])
         >>> fuzz.set(f_data, PseudoRandomIntegerMutator, mode=Mutator.MUTATE, interval=(20, 32000))
         >>> res = symbol.specialize(fuzz=fuzz)
@@ -394,7 +394,7 @@ class Symbol(AbstractField):
         **Fuzzing loop**
 
         >>> fuzz = Fuzz()
-        >>> f_data = Field(name="data", domain=Integer(2, unitSize=AbstractType.UNITSIZE_16))
+        >>> f_data = Field(name="data", domain=Integer(2, unitSize=UnitSize.SIZE_16))
         >>> symbol = Symbol(name="sym", fields=[f_data])
         >>> fuzz.set(f_data, PseudoRandomIntegerMutator, interval=(20, 30000))
         >>> nbFuzz = 1000
