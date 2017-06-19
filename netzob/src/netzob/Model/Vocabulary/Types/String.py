@@ -165,7 +165,7 @@ class String(AbstractType):
     >>> print(a.value)
     None
 
-    Its not possible to convert if the object has not value:
+    It is not possible to convert if the object has not value:
 
     >>> a.convertValue(Raw)
     Traceback (most recent call last):
