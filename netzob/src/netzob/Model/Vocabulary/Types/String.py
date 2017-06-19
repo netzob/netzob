@@ -78,7 +78,7 @@ class String(AbstractType):
     :type encoding: :class:`str`, optional
     :type eof: a :class:`list` of :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>` or a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, optional
 
-    
+
     Supported encodings are available on the Python reference documentation:
 
     .. _Python Standard Encodings: https://docs.python.org/3.4/library/codecs.html#standard-encodings
@@ -120,7 +120,7 @@ class String(AbstractType):
     >>> f = Field(String(nbChars=(10, 32)))
 
 
-    **String with terminal character**
+    **String with Terminal Character**
 
     Netzob supports strings with a terminal delimiter. Its usage is as
     follows:
@@ -135,7 +135,7 @@ class String(AbstractType):
     ``f_eof`` in the previous example).
 
 
-    **Examples of String internal attributes access**
+    **Examples of String Internal Attributes Access**
 
     >>> from netzob.all import *
     >>> cAscii = String("hello")
@@ -146,7 +146,7 @@ class String(AbstractType):
     >>> print(cAscii.value)
     bitarray('0110100001100101011011000110110001101111')
 
-    **Examples of conversions**
+    **Examples of Conversions**
 
     The following example shows how to convert the
     current type to any other Netzob type:
