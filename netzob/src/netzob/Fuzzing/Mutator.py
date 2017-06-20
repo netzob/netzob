@@ -50,7 +50,7 @@ from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVa
 from netzob.Model.Grammar.Automata import Automata
 
 
-class Mutator(object):
+class Mutator(metaclass=abc.ABCMeta):
     """The model of any mutator.
 
     This class provides the common properties and API to all inherited mutators.
@@ -231,13 +231,11 @@ class Mutator(object):
     def mode(self, mode):
         self._mode = mode
 
-    @abc.abstractmethod
     def reset(self):
         """Reset environment of the mutator.
         """
         self._currentCounter = 0
 
-    @abc.abstractmethod
     def generate(self):
         """This is the fuzz generation method of the field domain. It has to
         be overridden by all the inherited mutators which call the
@@ -265,8 +263,8 @@ class Mutator(object):
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
 
+        :meth:`mutate` is an *abstract method* and must be inherited.
         """
-
         if data is None or len(data) == 0:
             return data
 

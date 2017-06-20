@@ -200,6 +200,8 @@ class StringMutator(Mutator):
         Property (getter).
         The min length of the string. Default value is DEFAULT_MIN_LENGTH.
 
+        :meth:`minLength` is a *read-only property*.
+
         :type: :class:`int`
         """
         return self._minLength
@@ -209,6 +211,8 @@ class StringMutator(Mutator):
         """
         Property (getter).
         The max length of the string. Default value is DEFAULT_MAX_LENGTH.
+
+        :meth:`maxLength` is a *read-only property*.
 
         :type: :class:`int`
         """
@@ -220,6 +224,8 @@ class StringMutator(Mutator):
         Property (getter/setter).
         The character defining the end of the string. Default value is
         DEFAULT_END_CHAR.
+
+        :meth:`endChar` is a *read-write property*.
 
         :type: :class:`str`
         """

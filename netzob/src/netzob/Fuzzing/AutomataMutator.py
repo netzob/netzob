@@ -35,6 +35,7 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
+from enum import Enum
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -48,10 +49,20 @@ from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Grammar.Automata import Automata
 
 
+class AutomataMutatorStrategy(Enum):
+    """The :class:`AutomataMutator` strategy enumeration."""
+    __repr__ = Enum.__str__
+    CHAINED = 1  #: Randomly insert and remove transitions between states of the original automaton
+    RANDOM = 2   #: At each state of the automaton, it is possible to reach any states, including the starting state
+    TOTAL = 3    #: Build a chained automaton (or a chaplet), where each state has only one possible transition towards another different state of the protocol, and where all the states of the protocol are covered
+
+
 class AutomataMutator(Mutator):
-    """The mutator of a protocol state machine. This mutator is a particular case :
-    it does not use Mutator.field and the return value of mutate() has not the
-    same type as the other mutators : it returns here an Automata object.
+    """The mutator of a protocol state machine.
+
+    This mutator has a specific behavior as it does not use :attr:`Mutator.field`
+    and the return value of :meth:`mutate` has not the same type as the other mutators
+    (:class:`Automata <netzob.Model.Grammar.Automata.Automata>` instead of :class:`bytes`).
 
 
     **Mutators for automata fuzzing**
@@ -62,11 +73,13 @@ class AutomataMutator(Mutator):
     random transitions between the existing states:
 
     >>> from netzob.all import *
-    >>> automata = Automata()
-    >>> mutator = AutomataMutator(strategy='random')
+    >>> s0 = State()
+    >>> symbol = Symbol([Field(String('abcd'))])
+    >>> automata = Automata(s0, vocabulary=[symbol])
+    >>> mutator = AutomataMutator()
     >>> mutator.seed = 10
     >>> mutator.automata = automata
-    >>> mutatedAutomata = mutator.mutate()
+    >>> mutatedAutomata = mutator.mutate(strategy=AutomataMutatorStrategy.RANDOM)
 
 
     **Combining message formats and automata fuzzing**
@@ -85,42 +98,35 @@ class AutomataMutator(Mutator):
     >>> f2 = Field(Integer())
     >>> symbol = Symbol(fields=[f1, f2])
 
-    >>> # Specification of fuzzed fields
-    >>> mutators = {f1: StringMutator,
-    ...             f2: (PseudoRandomIntegerMutator, minValue=12, maxValue=20)}
-
     >>> # Automaton definition
     >>> s1 = State()
     >>> s2 = State()
-    >>> automata = Automata()
+    >>> automata = Automata(s1, vocabulary=[symbol])
 
     >>> # Creation of a mutated automaton
-    >>> mutator = AutomataMutator(strategy='random', startingState=s1, endingState=s2)
+    >>> mutator = AutomataMutator()
     >>> mutator.seed = 10
     >>> mutator.automata = automata
-    >>> mutatedAutomata = mutator.mutate()
+    >>> mutatedAutomata = mutator.mutate(strategy=AutomataMutatorStrategy.RANDOM, startingState=s1, endingState=s2)
 
     >>> # Creation of an automaton visitor/actor and a channel on which to emit the fuzzed symbol
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887)
     >>> abstractionLayer = AbstractionLayer(channel, [symbol])
-    >>> visitor = Actor(automata = mutatedAutomata, initiator = True, abstractionLayer=abstractionLayer)
+    >>> visitor = Actor(automata=mutatedAutomata, initiator=True, abstractionLayer=abstractionLayer)
 
     >>> # We start the visitor, thus the fuzzing of message formats will be applied when specific states are reached
     >>> visitor.start()
 
     """
 
-    def __init__(self):
-        pass
-
-    def mutate(self, strategy='random', startingState=None, endingState=None):
+    def mutate(self, strategy=AutomataMutatorStrategy.RANDOM, startingState=None, endingState=None):
         """This is the mutation method of the automaton. This methods returns
         a new automaton that may be used for fuzzing purpose.
 
         The mutate method expects some parameters:
 
-        :param strategy: The strategy used to build the new
-                         automaton. Default strategy is 'random'.
+        :param strategy: The strategy used to build the new automaton.
+                         Default strategy is :attr:`AutomataMutatorStrategy.RANDOM`.
         :param startingState: The state in the automaton from which to
                               start the fuzzing of message formats
                               (i.e. symbols). By default, no
@@ -129,23 +135,11 @@ class AutomataMutator(Mutator):
                             end the fuzzing of message formats
                             (i.e. symbols). By default, no
                             endingState is defined.
-        :type strategy: a :class:`str`, optional
+        :type strategy: :class:`AutomataMutatorStrategy`, optional
         :type startingState: :class:`State <netzob.Model.Grammar.State.State>`, optional
         :type endingState: :class:`State <netzob.Model.Grammar.State.State>`, optional
         :return: The mutated automata.
         :rtype: :class:`Automata <netzob.Model.Grammar.Automata>`
-
-        Available automata fuzzing strategies are the following:
-
-        * ``'random'``: randomly insert and remove transitions between
-          states of the original automaton;
-        * ``'total'``: at each state of the automaton, it is possible to
-          reach any states, including the starting state;
-        * ``'chained'``: build a chained automaton (or a chaplet),
-          where each state has only one possible transition towards
-          another different state of the protocol, and where all the
-          states of the protocol are covered.
-
         """
         # TODO : implement the Automata random generator
         return super().mutate()
