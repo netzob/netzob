@@ -100,17 +100,17 @@ class SVAS(object):
       data raises an exception when Netzob tries to parse a message
       that does not correspond to the expected model:
 
-      >>> msg2 = RawMessage("netzab")
+      >>> msg2 = RawMessage("kurt")
       >>> mp = MessageParser()
       >>> print(mp.parseMessage(msg2, s))  # doctest: +IGNORE_EXCEPTION_DETAIL
       Traceback (most recent call last):
         ...
-      InvalidParsingPathException: No parsing path returned while parsing 'b'netzab''
+      InvalidParsingPathException: No parsing path returned while parsing 'b'kurt''
 
 
       The following example shows the **specialization of a constant
       data**:
-  
+
       >>> from netzob.all import *
       >>> f = Field()
       >>> value = TypeConverter.convert("netzob", String, BitArray)
@@ -127,7 +127,7 @@ class SVAS(object):
       The following example shows that the specialization of a
       constant data raises an exception when no value is attached to
       the definition domain of the variable:
-      
+
       >>> from netzob.all import *
       >>> f = Field()
       >>> f.domain = Data(dataType=String(nbChars=(5, 10)), svas=SVAS.CONSTANT)
@@ -168,11 +168,11 @@ class SVAS(object):
       data raises an exception when Netzob tries to parse a message
       that does not correspond to the expected model:
 
-      >>> msg3 = RawMessage("netzab")
+      >>> msg3 = RawMessage("kurt")
       >>> print(mp.parseMessage(msg3, s))  # doctest: +IGNORE_EXCEPTION_DETAIL
       Traceback (most recent call last):
         ...
-      InvalidParsingPathException: No parsing path returned while parsing 'b'netzab''
+      InvalidParsingPathException: No parsing path returned while parsing 'b'kurt''
 
 
       The following examples show the **specialization of a persistent
@@ -226,7 +226,7 @@ class SVAS(object):
       >>> s = Symbol(name="S0", fields=[f])
       >>> msg1 = RawMessage("netzob")
       >>> msg2 = RawMessage("netzob")
-      >>> msg3 = RawMessage("netzab")
+      >>> msg3 = RawMessage("kurt")
       >>> mp = MessageParser()
       >>> print(mp.parseMessage(msg1, s))
       [bitarray('011011100110010101110100011110100110111101100010')]
@@ -239,7 +239,7 @@ class SVAS(object):
       >>> print(mp.parseMessage(msg3, s))
       [bitarray('011011100110010101110100011110100110000101100010')]
       >>> print(mp.memory)
-      Data (String=None ((40, 80))): b'netzab'
+      Data (String=None ((40, 80))): b'kurt'
 
 
       The following examples show the **specialization of an ephemeral
@@ -297,7 +297,7 @@ class SVAS(object):
       >>> s = Symbol(name="S0", fields=[f])
       >>> msg1 = RawMessage("netzob")
       >>> msg2 = RawMessage("netzob")
-      >>> msg3 = RawMessage("netzab")
+      >>> msg3 = RawMessage("kurt")
       >>> mp = MessageParser()
       >>> print(mp.parseMessage(msg1, s))
       [bitarray('011011100110010101110100011110100110111101100010')]
