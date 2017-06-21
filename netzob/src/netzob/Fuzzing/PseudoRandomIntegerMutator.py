@@ -43,33 +43,34 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutator import Mutator
+from netzob.Fuzzing.DomainMutator import DomainMutator, MutatorInterval
 from netzob.Common.Utils.Decorators import typeCheck
 # from netzob.Fuzzing.Xorshift128plus import Xorshift128plus
 from netzob.Model.Vocabulary.Types.Integer import Integer
-from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
-from randomstate.prng import *
+from randomstate.prng import (mt19937, mlfg_1279_861, mrg32k3a, pcg32, pcg64,
+                              xorshift128, xoroshiro128plus, xorshift1024,
+                              dsfmt)
 
 
-class PseudoRandomIntegerMutator(Mutator):
+class PseudoRandomIntegerMutator(DomainMutator):
     r"""The integer mutator, using pseudo-random generator.
 
     The PseudoRandomIntegerMutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate.
     :param interval: The scope of values to generate.
-        If set to **Mutator.DEFAULT_INTERVAL**, the values will be generate
+        If set to **MutatorInterval.DEFAULT_INTERVAL**, the values will be generate
         between the min and max values of the domain.
-        If set to **Mutator.FULL_INTERVAL**, the values will be generate in
+        If set to **MutatorInterval.FULL_INTERVAL**, the values will be generate in
         [0, 2^N-1], where N is the bitsize (storage) of the field.
         If it is an tuple of integers (min, max), the values will be generate
         between min and max.
-        Default value is **Mutator.DEFAULT_INTERVAL**.
-    :param mode: If set to **Mutator.GENERATE**, the generate() method will be
+        Default value is **MutatorInterval.DEFAULT_INTERVAL**.
+    :param mode: If set to **MutatorMode.GENERATE**, the generate() method will be
         used to produce the value.
-        If set to **Mutator.MUTATE**, the mutate() method will be used to
+        If set to **MutatorMode.MUTATE**, the mutate() method will be used to
         produce the value (not implemented).
-        Default value is **Mutator.GENERATE**.
+        Default value is **MutatorMode.GENERATE**.
     :param generator_type: The name of the generator to use, among those
         available in :mod:`randomstate.prng`.
         Default value is **PRNG_mt19937**.
@@ -107,34 +108,27 @@ class PseudoRandomIntegerMutator(Mutator):
 
     def __init__(self,
                  domain,
-                 interval=Mutator.DEFAULT_INTERVAL,
-                 mode=Mutator.GENERATE,
+                 interval=MutatorInterval.DEFAULT_INTERVAL,
                  generator_type='mt19937',
-                 seed=Mutator.SEED_DEFAULT):
+                 **kwargs):
+        # Call parent init
+        super().__init__(domain, **kwargs)
+
         # Sanity checks
-        if domain is None:
-            raise Exception("Domain should be known to initialize a mutator")
-        if not isinstance(domain, AbstractVariable):
-            raise Exception("Mutator domain should be of type AbstractVariable. Received object: '{}'".format(repr(domain)))
-        if not hasattr(domain, 'dataType'):
-            raise Exception("Mutator domain should have a dataType Integer")
         if not isinstance(domain.dataType, Integer):
             raise Exception("Mutator domain dataType should be an Integer, not '{}'".format(type(domain.dataType)))
-
-        # Call parent init
-        super().__init__(domain=domain, mode=mode)
 
         # Find min and max potential values for interval
         minValue = 0
         maxValue = 0
-        if isinstance(interval, tuple) and len(interval) == 2 and isinstance(interval[0], int) and isinstance(interval[1], int):
+        if isinstance(interval, tuple) and len(interval) == 2 and all(isinstance(_, int) for _ in interval):
             # Handle desired interval according to the storage space of the domain dataType
             minValue = max(interval[0], domain.dataType.getMinStorageValue())
             maxValue = min(interval[1], domain.dataType.getMaxStorageValue())
-        elif interval == Mutator.DEFAULT_INTERVAL:
+        elif interval == MutatorInterval.DEFAULT_INTERVAL:
             minValue = domain.dataType.getMinValue()
             maxValue = domain.dataType.getMaxValue()
-        elif interval == Mutator.FULL_INTERVAL:
+        elif interval == MutatorInterval.FULL_INTERVAL:
             minValue = domain.dataType.getMinStorageValue()
             maxValue = domain.dataType.getMaxStorageValue()
         else:
@@ -143,7 +137,7 @@ class PseudoRandomIntegerMutator(Mutator):
         self._maxValue = maxValue
 
         # Initialize RNG
-        self.__initializeGenerator(generator_type, seed)
+        self.__initializeGenerator(generator_type, self._seed)
         # self._prng = Xorshift128plus(self.seed)
 
     def __initializeGenerator(self, generator_type, seed):
@@ -171,52 +165,10 @@ class PseudoRandomIntegerMutator(Mutator):
                              ' is not a valid PRNG module.')
         self._generatorType = generator_type
 
-    @property
-    def seed(self):
-        """
-        Property (getter/setter).
-        The seed used in pseudo-random generator
-
-        :type: :class:`int`
-        """
-        return self._seed
-
-    @seed.setter
     @typeCheck(int)
-    def seed(self, seedValue):
+    def updateSeed(self, seedValue):
+        super().updateSeed(seedValue)
         self.__initializeGenerator(self._generatorType, seedValue)
-
-    @property
-    def minValue(self):
-        """
-        Property (getter/setter).
-        The min value of the integer to generate. If not defined, it uses
-        the field domain information.
-
-        :type: :class:`int`
-        """
-        return self._minValue
-
-    @minValue.setter
-    @typeCheck(int)
-    def minValue(self, minValue):
-        self._minValue = minValue
-
-    @property
-    def maxValue(self):
-        """
-        Property (getter/setter).
-        The max value of the integer to generate. If not defined, it uses
-        the field domain information.
-
-        :type: :class:`int`
-        """
-        return self._maxValue
-
-    @maxValue.setter
-    @typeCheck(int)
-    def maxValue(self, maxValue):
-        self._maxValue = maxValue
 
     def reset(self):
         self.__initializeGenerator(self._generatorType, self._seed)
@@ -233,10 +185,15 @@ class PseudoRandomIntegerMutator(Mutator):
         super().generate()
 
         # Generate and return a random value in the interval
-        return Integer.decode(self.generateInt(),
-                              unitSize=self.domain.dataType.unitSize,
-                              endianness=self.domain.dataType.endianness,
-                              sign=self.domain.dataType.sign)
+        if self.currentCounter < self.counterMax:
+            self._currentCounter += 1
+            dom_type = self.getDomain().dataType
+            return Integer.decode(self.generateInt(),
+                                  unitSize=dom_type.unitSize,
+                                  endianness=dom_type.endianness,
+                                  sign=dom_type.sign)
+        else:
+            raise Exception("Max mutation counter reached")
 
     def generateInt(self, interval=None):
         """This is the mutation method of the integer type.
@@ -248,15 +205,13 @@ class PseudoRandomIntegerMutator(Mutator):
 
         # Generate and return a random value in the interval
         if interval is None:
-            return int(self._prng.random_sample()
-                       * (self.maxValue - self.minValue)
-                       + self.minValue)
+            return int(self._prng.random_sample() *
+                       (self._maxValue - self._minValue) +
+                       self._minValue)
         elif (isinstance(interval, tuple) and
               len(interval) == 2 and
-              isinstance(interval[0], int)
-              and isinstance(interval[1], int)):
-            minValue = interval[0]
-            maxValue = interval[1]
-            return int(self._prng.random_sample()
-                       * (maxValue - minValue)
-                       + minValue)
+              all(isinstance(_, int) for _ in interval)):
+            minValue, maxValue = interval
+            return int(self._prng.random_sample() *
+                       (maxValue - minValue) +
+                       minValue)

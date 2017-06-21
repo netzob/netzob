@@ -35,9 +35,8 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
-import abc
-import random
 import inspect
+from typing import Dict  # noqa: F401
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -46,18 +45,19 @@ import inspect
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
+from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Symbol import Symbol
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType  # noqa: F401
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.AbstractField import AbstractField
-from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Model.Vocabulary.Types.String import String
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Types.HexaString import HexaString
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.IPv4 import IPv4
-from netzob.Model.Vocabulary.Types.Timestamp import Timestamp 
-from netzob.Model.Grammar.Automata import Automata
+from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
+from netzob.Fuzzing.DomainMutator import DomainMutator, MutatorMode  # noqa: F401
 from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
 
 
@@ -69,8 +69,8 @@ class Fuzz(object):
 
     """
 
-    mappingTypesMutators = {}
-    mappingFieldsMutators = {}
+    mappingTypesMutators = {}   # type: Dict[AbstractType, DomainMutator]
+    mappingFieldsMutators = {}  # type: Dict[Field, DomainMutator]
 
     # Initialize mapping of types with their mutators
     @staticmethod
@@ -122,16 +122,16 @@ class Fuzz(object):
         provided domain.
 
         """
-        
+
         # Retrieve the default mutator for the domain dataType
         mutator = None
-        if type(getattr(domain, 'dataType', None)) in  Fuzz.mappingTypesMutators:
+        if type(getattr(domain, 'dataType', None)) in Fuzz.mappingTypesMutators:
             mutator = Fuzz.mappingTypesMutators[type(domain.dataType)]
         else:
             raise Exception("The domain '{}' has no configured dataType. Cannot find a default Mutator without information regarding the domain type.")
 
         # Instanciate the mutator
-        mutatorInstance = mutator(domain=domain, **kwargs)
+        mutatorInstance = mutator(domain, **kwargs)
 
         return mutatorInstance
 
@@ -183,9 +183,9 @@ class Fuzz(object):
                 self.set(k, v_m_instance)
             elif isinstance(v_m, Mutator):
                 pass
-            elif v_m == Mutator.NONE:
+            elif v_m == MutatorMode.NONE:
                 keys_to_remove.append(k)
-            elif v_m in [Mutator.GENERATE, Mutator.MUTATE]:
+            elif v_m in [MutatorMode.GENERATE, MutatorMode.MUTATE]:
                 mutator_instance = Fuzz.defaultMutator(k.domain, **v_kwargs)
                 mutator_instance.mode = v_m
                 self.set(k, mutator_instance)
@@ -195,4 +195,3 @@ class Fuzz(object):
         # Update keys
         for old_key in keys_to_remove:
             self.mappingFieldsMutators.pop(old_key)
-

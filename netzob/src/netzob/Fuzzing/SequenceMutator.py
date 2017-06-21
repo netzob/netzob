@@ -43,28 +43,27 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutator import Mutator
+from netzob.Fuzzing.DomainMutator import DomainMutator
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Fuzzing.DeterministIntegerMutator import (
     DeterministIntegerMutator)
 from netzob.Model.Vocabulary.Types.Integer import uint16le
 from netzob.Model.Vocabulary.Field import Field
-from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
 
 
-class SequenceMutator(Mutator):
+class SequenceMutator(DomainMutator):
     """The sequence mutator, using a determinist generator to get a sequence
     length.
 
     The SequenceMutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate.
-    :param mode: If set to **Mutator.GENERATE**, the generate() method will be
+    :param mode: If set to **MutatorMode.GENERATE**, the generate() method will be
         used to produce the value.
-        If set to **Mutator.MUTATE**, the mutate() method will be used to
+        If set to **MutatorMode.MUTATE**, the mutate() method will be used to
         produce the value (not implemented).
-        Default value is **Mutator.GENERATE**.
+        Default value is **MutatorMode.GENERATE**.
     :param mutateChild: If true, sub-field has to be mutated.
         Default value is **False**.
     :param length: The scope of sequence length to generate. If set to
@@ -82,8 +81,7 @@ class SequenceMutator(Mutator):
     >>> from netzob.all import *
     >>> child = Data(dataType=String("abc"), svas=SVAS.PERSISTENT)
     >>> fieldRepeat = Field(Repeat(child, nbRepeat=3))
-    >>> mutator = SequenceMutator(fieldRepeat.domain, length=(0, 30))
-    >>> mutator.seed = 10
+    >>> mutator = SequenceMutator(fieldRepeat.domain, length=(0, 30), seed=10)
     >>> mutator.generate()
     >>> mutator.sequenceLength
     16
@@ -97,114 +95,49 @@ class SequenceMutator(Mutator):
     Constant definitions:
     """
 
+    # Constants
     DEFAULT_MIN_LENGTH = 0
     DEFAULT_MAX_LENGTH = 10
+    DOMAIN_TYPE = Repeat
 
     def __init__(self,
                  domain,
-                 mode=None,
                  mutateChild=False,
                  length=(None, None),
-                 lengthBitSize=None):
-        # Sanity checks
-        if domain is None:
-            raise Exception("Domain should be known to initialize a mutator")
-        if not isinstance(domain, Repeat):
-            raise Exception("Mutator domain should be of type Repeat. Received object: '{}'".format(domain))
-
+                 lengthBitSize=None,
+                 **kwargs):
         # Call parent init
-        super().__init__(domain=domain, mode=mode)
+        super().__init__(domain, **kwargs)
 
-        if isinstance(length, tuple) and \
-           len(length) == 2 and \
-           isinstance(length[0], int) and \
-           isinstance(length[1], int):
-            self._minLength = length[0]
-            self._maxLength = length[1]
+        if isinstance(length, tuple) and len(length) == 2:
+            if all(isinstance(_, int) for _ in length):
+                self._minLength, self._maxLength = length
+            else:
+                self._minLength, self._maxLength = (0, 0)
         if isinstance(domain.nbRepeat, tuple):
             # Handle desired length according to the domain information
             self._minLength = max(self._minLength, int(domain.nbRepeat[0]))
             self._maxLength = min(self._maxLength, int(domain.nbRepeat[1]))
         if self._minLength is None or self._maxLength is None:
-            self._minLength = SequenceMutator.DEFAULT_MIN_LENGTH
-            self._maxLength = SequenceMutator.DEFAULT_MAX_LENGTH
+            self._minLength = self.DEFAULT_MIN_LENGTH
+            self._maxLength = self.DEFAULT_MAX_LENGTH
 
         self._mutateChild = mutateChild
 
         self._sequenceLengthField = Field(uint16le())
         self._lengthMutator = DeterministIntegerMutator(
             domain=self._sequenceLengthField.domain,
-            mode=mode,
-            interval=(self._minLength, self.maxLength),
-            bitsize=lengthBitSize)
+            interval=(self._minLength, self._maxLength),
+            bitsize=lengthBitSize,
+            **kwargs)
         self._sequenceLength = None
 
         self._seed = 0
 
-    @property
-    def seed(self):
-        """
-        Property (getter/setter).
-        The seed used in generator
-        Default value is 0.
-
-        :type: :class:`int`
-        """
-        return self._seed
-
-    @seed.setter
     @typeCheck(int)
-    def seed(self, seedValue):
-        self._seed = seedValue
-        self._lengthMutator.seed = self._seed
-
-    @property
-    def lengthMutator(self):
-        """
-        Property (getter/setter).
-        The mutator used to generate the sequence length, between
-        minLength and maxLength.
-
-        :type: :class:`DeterministIntegerMutator <netzob.Fuzzing.DeterministIntegerMutator>`
-        """
-        return self._lengthMutator
-
-    @lengthMutator.setter
-    def lengthMutator(self, mutator):
-        self._lengthMutator = mutator
-
-    @property
-    def minLength(self):
-        """
-        Property (getter).
-        The min length of an element of the sequence.
-        Default value is DEFAULT_MIN_LENGTH.
-
-        :type: :class:`int`
-        """
-        return self._minLength
-
-    @property
-    def maxLength(self):
-        """
-        Property (getter).
-        The max length of an element of the sequence.
-        Default value is DEFAULT_MAX_LENGTH.
-
-        :type: :class:`int`
-        """
-        return self._maxLength
-
-    @property
-    def mutateChild(self):
-        """
-        Property (getter).
-        If true, the sub-field has to be mutated.
-        Default value is False.
-
-        :type: :class:`bool`
-        """
-        return self._mutateChild
+    def updateSeed(self, seedValue):
+        super().updateSeed(seedValue)
+        self._lengthMutator.updateSeed(seedValue)
 
     @property
     def sequenceLength(self):
@@ -233,3 +166,6 @@ called, first")
 
         self._sequenceLength = self._lengthMutator.generateInt()
         return None
+
+    def mutate(self, data):
+        raise NotImplementedError

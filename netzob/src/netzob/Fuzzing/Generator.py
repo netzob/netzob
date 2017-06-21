@@ -35,6 +35,7 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
+import abc
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -43,56 +44,34 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Generator import Generator
 from netzob.Common.Utils.Decorators import typeCheck
 
 
-class StringPaddedGenerator(Generator):
-    """Generates string values.
-
-    >>> from netzob.all import *
-    >>> seed = 1234
-    >>> genObject = StringGenerator(seed)
-    >>> result = genObject.getNewValue()
+class Generator(metaclass=abc.ABCMeta):
+    """Generates values. Abstract class.
     """
 
-    def __init__(self, lengthMutator, stringsList):
-        super().__init__(values=stringsList)
-        self._lengthMutator = lengthMutator
+    def __init__(self, values):
+        self._values = values
+        self._seed = 0
 
-    def reset(self):
-        """Reset the current position in the list.
+    @property
+    def values(self):
+        """The list of available values.
 
         :type: :class:`set`
         """
-        self.updateSeed(0)
+        return self._values
 
+    @abc.abstractmethod
+    def getNewValue(self, *args, **kwargs):
+        """
+        This is the method to get a new value.
+        """
+
+    @abc.abstractmethod
     @typeCheck(int)
     def updateSeed(self, seedValue):
-        super().updateSeed(seedValue % len(self._values))
-
-    def getNewValue(self, endChar):
-        """This is the method to get a new string value from the list.
-
-        :return: a generated str value
-        :rtype: :class:`str`
         """
-        if self._seed >= len(self._values):
-            self.reset()
-        value = self._values[self._seed] + endChar
-        self._seed += 1
-        lm = self._lengthMutator
-        lm_dom = lm.getDomain()
-        length = int.from_bytes(lm.generate(),
-                                lm_dom.dataType.endianness.value)
-        if length > 0:
-            if length > len(value):
-                # Complete the string with padding characters to have the good
-                # length
-                value = value + (" " * (length - len(value)))
-            else:
-                # truncate the too long string value to length characters
-                value = value[:length-1] + endChar
-        else:
-            value = ""
-        return value
+        Update the seed value and forward value to all nested generators.
+        """

@@ -47,6 +47,7 @@ from enum import Enum
 from netzob.Fuzzing.Mutator import Mutator
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Grammar.Automata import Automata
+from netzob.Model.Grammar.States.State import State  # noqa: F401
 
 
 class AutomataMutatorStrategy(Enum):
@@ -60,11 +61,6 @@ class AutomataMutatorStrategy(Enum):
 class AutomataMutator(Mutator):
     """The mutator of a protocol state machine.
 
-    This mutator has a specific behavior as it does not use :attr:`Mutator.field`
-    and the return value of :meth:`mutate` has not the same type as the other mutators
-    (:class:`Automata <netzob.Model.Grammar.Automata.Automata>` instead of :class:`bytes`).
-
-
     **Mutators for automata fuzzing**
 
     Mutators may be used in order to create fuzzed/mutated automaton.
@@ -76,9 +72,7 @@ class AutomataMutator(Mutator):
     >>> s0 = State()
     >>> symbol = Symbol([Field(String('abcd'))])
     >>> automata = Automata(s0, vocabulary=[symbol])
-    >>> mutator = AutomataMutator()
-    >>> mutator.seed = 10
-    >>> mutator.automata = automata
+    >>> mutator = AutomataMutator(automata, seed=42)
     >>> mutatedAutomata = mutator.mutate(strategy=AutomataMutatorStrategy.RANDOM)
 
 
@@ -104,10 +98,9 @@ class AutomataMutator(Mutator):
     >>> automata = Automata(s1, vocabulary=[symbol])
 
     >>> # Creation of a mutated automaton
-    >>> mutator = AutomataMutator()
-    >>> mutator.seed = 10
-    >>> mutator.automata = automata
+    >>> mutator = AutomataMutator(automata, seed=42)
     >>> mutatedAutomata = mutator.mutate(strategy=AutomataMutatorStrategy.RANDOM, startingState=s1, endingState=s2)
+    >>> assert isinstance(mutatedAutomata, Automata)
 
     >>> # Creation of an automaton visitor/actor and a channel on which to emit the fuzzed symbol
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887)
@@ -116,10 +109,26 @@ class AutomataMutator(Mutator):
 
     >>> # We start the visitor, thus the fuzzing of message formats will be applied when specific states are reached
     >>> visitor.start()
-
     """
 
-    def mutate(self, strategy=AutomataMutatorStrategy.RANDOM, startingState=None, endingState=None):
+    def __init__(self,
+                 automata,  # type: Automata
+                 **kwargs):
+        super().__init__(**kwargs)
+
+        # Sanity checks
+        if not isinstance(automata, Automata):
+            raise TypeError("Mutator automata should be of type Automata. Received object: '{}'"
+                            .format(automata))
+
+        # Handle parameters
+        self._automata = automata
+
+    def mutate(self,
+               strategy=AutomataMutatorStrategy.RANDOM,  # type: AutomataMutatorStrategy
+               startingState=None,                       # type: State
+               endingState=None                          # type: State
+               ) -> Automata:
         """This is the mutation method of the automaton. This methods returns
         a new automaton that may be used for fuzzing purpose.
 
@@ -141,5 +150,7 @@ class AutomataMutator(Mutator):
         :return: The mutated automata.
         :rtype: :class:`Automata <netzob.Model.Grammar.Automata>`
         """
-        # TODO : implement the Automata random generator
-        return super().mutate()
+        raise NotImplementedError
+
+    def generate(self):
+        raise NotImplementedError

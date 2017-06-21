@@ -35,6 +35,7 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
+from typing import Tuple  # noqa: F401
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -43,34 +44,33 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutator import Mutator
+from netzob.Fuzzing.DomainMutator import DomainMutator
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Fuzzing.DeterministIntegerMutator import (
-    DeterministIntegerMutator)
+from netzob.Fuzzing.DeterministIntegerMutator import DeterministIntegerMutator
 from netzob.Model.Vocabulary.Types.Integer import uint16le
 from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Fuzzing.Xorshift128plus import Xorshift128plus
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Sign, UnitSize
+from netzob.Model.Vocabulary.Types.AbstractType import Sign, UnitSize
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 
 from bitarray import bitarray
 
 
-class BinarySequenceMutator(Mutator):
+class BinarySequenceMutator(DomainMutator):
     """The binary sequence mutator, using pseudo-random generator.
     The generated sequence shall not be longer than 2^32 bits.
 
     The BinarySequenceMutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate.
-    :param mode: If set to **Mutator.GENERATE**, the generate() method will be
+    :param mode: If set to **MutatorMode.GENERATE**, the generate() method will be
         used to produce the value.
-        If set to **Mutator.MUTATE**, the mutate() method will be used to
+        If set to **MutatorMode.MUTATE**, the mutate() method will be used to
         produce the value (not implemented).
-        Default value is **Mutator.GENERATE**.
+        Default value is **MutatorMode.GENERATE**.
     :param length: The scope of sequence length to generate. If set to
         (min, max), the values will be generate between min and max.
         Default value is **(None, None)**.
@@ -87,8 +87,7 @@ class BinarySequenceMutator(Mutator):
 
     >>> from netzob.all import *
     >>> fieldBits = Field(BitArray())
-    >>> mutator = BinarySequenceMutator(fieldBits.domain, length=(0,30))
-    >>> mutator.seed = 19
+    >>> mutator = BinarySequenceMutator(fieldBits.domain, length=(0,30), seed=19)
     >>> mutator.generate()
     bitarray('00000000000000000000000000000000000010011000000000000100110100110')
 
@@ -100,94 +99,43 @@ class BinarySequenceMutator(Mutator):
 
     def __init__(self,
                  domain,
-                 mode=None,
-                 length=(None, None),
-                 lengthBitSize=None):
+                 length=(None, None),  # type: Tuple[int, int]
+                 lengthBitSize=None,
+                 **kwargs):
+        # Call parent init
+        super().__init__(domain, **kwargs)
+
         # Sanity checks
-        if domain is None:
-            raise Exception("Domain should be known to initialize a mutator")
-        if not isinstance(domain, AbstractVariable):
-            raise Exception("Mutator domain should be of type AbstractVariable. Received object: '{}'".format(domain))
-        if not hasattr(domain, 'dataType'):
-            raise Exception("Mutator domain should have a dataType")
         if not isinstance(domain.dataType, BitArray):
             raise Exception("Mutator domain dataType should be an Integer, not '{}'".format(type(domain.dataType)))
 
-        # Call parent init
-        super().__init__(domain=domain, mode=mode)
-
-        if isinstance(length, tuple) and \
-           len(length) == 2 and \
-           isinstance(length[0], int) and \
-           isinstance(length[1], int):
-            self._minLength = length[0]
-            self._maxLength = length[1]
-        if isinstance(domain.dataType.size, tuple) and \
-           len(domain.dataType.size) == 2 and \
-           isinstance(domain.dataType.size[0], int) \
-           and isinstance(domain.dataType.size[1], int):
+        if (isinstance(length, tuple) and len(length) == 2 and
+                all(isinstance(_, int) for _ in length)):
+            self._minLength, self._maxLength = length
+        size = domain.dataType.size
+        if (isinstance(size, tuple) and len(size) == 2 and
+                all(isinstance(_, int) for _ in size)):
             # Handle desired interval according to the storage space of the domain dataType
             self._minLength = max(self._minLength, domain.dataType.size[0])
             self._maxLength = min(self._maxLength, domain.dataType.size[1])
         if self._minLength is None or self._maxLength is None:
-            self._minLength = BinarySequenceMutator.DEFAULT_MIN_LENGTH
-            self._maxLength = BinarySequenceMutator.DEFAULT_MAX_LENGTH
+            self._minLength = self.DEFAULT_MIN_LENGTH
+            self._maxLength = self.DEFAULT_MAX_LENGTH
 
         self._sequenceLength = Field(uint16le())
         self._lengthMutator = DeterministIntegerMutator(
             domain=self._sequenceLength.domain,
-            mode=mode,
-            interval=(self._minLength, self.maxLength),
-            bitsize=lengthBitSize)
-        self._prng = Xorshift128plus(self.seed)
+            interval=(self._minLength, self._maxLength),
+            bitsize=lengthBitSize,
+            **kwargs)
+        self._prng = Xorshift128plus(self._seed)
+        self.updateSeed(self._seed)
 
-    @property
-    def seed(self):
-        """
-        Property (getter/setter).
-        The seed used in pseudo-random generator
-
-        :type: :class:`int`
-        """
-        return self._seed
-
-    @seed.setter
     @typeCheck(int)
-    def seed(self, seedValue):
-        self._seed = seedValue
+    def updateSeed(self, seedValue):
+        super().updateSeed(seedValue)
         self._lengthMutator.seed = self._seed
         self._prng.seed = self._seed
-
-    @property
-    def lengthMutator(self):
-        """
-        Property (getter).
-        The mutator used to generate the sequence length, between
-        MIN_LENGTH and maxLength.
-
-        :type: :class:`DeterministIntegerMutator <netzob.Fuzzing.DeterministIntegerMutator>`
-        """
-        return self._lengthMutator
-
-    @property
-    def minLength(self):
-        """
-        Property (getter).
-        The min length of the binary sequence. Default value is DEFAULT_MIN_LENGTH.
-
-        :type: :class:`int`
-        """
-        return self._minLength
-
-    @property
-    def maxLength(self):
-        """
-        Property (getter).
-        The max length of the binary sequence. Default value is DEFAULT_MAX_LENGTH.
-
-        :type: :class:`int`
-        """
-        return self._maxLength
 
     def getLength(self):
         """The length of the last generated sequence.
@@ -207,8 +155,9 @@ class BinarySequenceMutator(Mutator):
         # Call parent generate() method
         super().generate()
 
-        length = int.from_bytes(self._lengthMutator.generate(),
-                                self._lengthMutator.domain.dataType.endianness.value)
+        lm = self._lengthMutator
+        lm_dom = lm.getDomain()
+        length = int.from_bytes(lm.generate(), lm_dom.dataType.endianness.value)
 
         valueBits = bitarray()
         if length == 0:

@@ -43,9 +43,10 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
+from netzob.Fuzzing.Generator import Generator
 
 
-class DeterministGenerator(object):
+class DeterministGenerator(Generator):
     """Generates integer values from a list determined with the size of an
     Integer field.
 
@@ -57,17 +58,16 @@ class DeterministGenerator(object):
 
     DEFAULT_MIN_VALUE = 0
     DEFAULT_BITSIZE = 16
-    DEFAULT_MAX_VALUE = 2**DEFAULT_BITSIZE
+    DEFAULT_MAX_VALUE = 1 << DEFAULT_BITSIZE
     DEFAULT_SIGNED = False
 
     def __init__(self):
+        super().__init__(values=[])
         self._currentPos = 0
-        self._minValue = DeterministGenerator.DEFAULT_MIN_VALUE
-        self._maxValue = DeterministGenerator.DEFAULT_MAX_VALUE
-        self._bitSize = DeterministGenerator.DEFAULT_BITSIZE
-        self._values = list()
-        self._signed = DeterministGenerator.DEFAULT_SIGNED
-        self._seed = 0
+        self._minValue = self.DEFAULT_MIN_VALUE
+        self._maxValue = self.DEFAULT_MAX_VALUE
+        self._bitSize = self.DEFAULT_BITSIZE
+        self._signed = self.DEFAULT_SIGNED
 
     def createValues(self,
                      minValue,
@@ -114,25 +114,7 @@ class DeterministGenerator(object):
         setValues = set(self._values)
         self._values = sorted(setValues)
 
-    @property
-    def values(self):
-        """The list of available values.
-
-        :type: :class:`set`
-        """
-        return self._values
-
-    @property
-    def seed(self):
-        """ The seed in this generator gives the 1st position of the int to
-        return from the values list (modulo len(values)).
-
-        :type: :class:`int`
-        """
-        return self._seed
-
-    @seed.setter
-    def seed(self, seedValue):
+    def updateSeed(self, seedValue):
         self._seed = seedValue % len(self._values)
         self.reset()
 

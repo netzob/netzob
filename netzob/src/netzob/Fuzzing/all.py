@@ -38,6 +38,7 @@
 
 from netzob.Fuzzing.Fuzz import Fuzz
 from netzob.Fuzzing.Mutator import Mutator
+from netzob.Fuzzing.DomainMutator import DomainMutator
 from netzob.Fuzzing.AlternativeMutator import AlternativeMutator
 from netzob.Fuzzing.AutomataMutator import AutomataMutator
 from netzob.Fuzzing.BinarySequenceMutator import BinarySequenceMutator

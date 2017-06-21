@@ -44,7 +44,6 @@ import threading
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Model.Grammar.States.AbstractState import AbstractState
 from netzob.Model.Grammar.Automata import Automata
 from netzob.Simulator.AbstractionLayer import AbstractionLayer
 
@@ -121,7 +120,11 @@ class Actor(threading.Thread):
 
     """
 
-    def __init__(self, automata, initiator, abstractionLayer):
+    def __init__(self,
+                 automata,         # type: Automata
+                 initiator,        # type: bool
+                 abstractionLayer  # type: AbstractionLayer
+                 ):
         super(Actor, self).__init__()
         self.automata = automata
         self.initiator = initiator

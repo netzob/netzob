@@ -44,7 +44,7 @@ from typing import Dict  # noqa: F401
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutator import Mutator
+from netzob.Fuzzing.DomainMutator import DomainMutator
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
 from netzob.Fuzzing.PseudoRandomIntegerMutator \
@@ -53,7 +53,7 @@ from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Types.Integer import uint8le
 
 
-class AlternativeMutator(Mutator):
+class AlternativeMutator(DomainMutator):
     """The alternative mutator.
 
     The SequenceMutator constructor expects some parameters:
@@ -73,10 +73,9 @@ class AlternativeMutator(Mutator):
     :raises: :class:`Exception` if domain is not valid
 
     >>> from netzob.all import *
-    >>> subFieldAlt = Field(Alt([Integer(12), String("abc")]))
-    >>> fieldAlt = Field(Alt([Integer(34), subFieldAlt.domain]))
-    >>> mutator = AlternativeMutator(fieldAlt.domain)
-    >>> mutator.seed = 10
+    >>> subAlt = Alt([Integer(12), String("abc")])
+    >>> Alt = Alt([Integer(34), subAlt])
+    >>> mutator = AlternativeMutator(Alt, seed=10)
     >>> mutator.generate()
     >>> mutator.randomType.dataType
     12
@@ -100,8 +99,8 @@ class AlternativeMutator(Mutator):
 
     def __init__(self,
                  domain,
-                 mode=None,
-                 mutateChild=False):
+                 mutateChild=False,
+                 **kwargs):
         # Sanity checks
         if domain is None:
             raise Exception("Domain should be known to initialize a mutator")
@@ -111,7 +110,7 @@ object: '{}'".format(domain))
         self._mutateChild = mutateChild
 
         # Call parent init
-        super().__init__(domain=domain, mode=mode)
+        super().__init__(domain, **kwargs)
 
         position = Field(uint8le())
         self._positionMutator = \
@@ -213,16 +212,17 @@ called, first")
         super().generate()
 
         self._currentDepth = 0
-        self._randomType = self.domain
+        self._randomType = self.getDomain()
         while isinstance(self._randomType, Alt):
             self._currentDepth += 1
             if self._currentDepth >= self._maxDepth:
                 raise RecursionError("max depth reached ({})"
                                      .format(self._maxDepth))
+            domain = self.getDomain()
             pos = self._positionMutator.generateInt(
-                interval=(0, len(self.domain.children)))
-            if pos < len(self.domain.children):
+                interval=(0, len(domain.children)))
+            if pos < len(domain.children):
                 self._randomType = self._randomType.children[pos]
             else:
-                raise ValueError("Field position ({}) is bigger than the list \
-size ({})".format(pos, len(self.domain.children)))
+                raise ValueError("Field position ({}) is bigger than the list size ({})"
+                                 .format(pos, len(domain.children)))

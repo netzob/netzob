@@ -35,7 +35,6 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
-from typing import Iterable
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -44,16 +43,14 @@ from typing import Iterable
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutator import Mutator
+from netzob.Fuzzing.DomainMutator import DomainMutator, MutatorInterval
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Fuzzing.DeterministGenerator import DeterministGenerator
 from netzob.Model.Vocabulary.Types.Integer import Integer
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Sign, UnitSize
-from netzob.Model.Vocabulary.AbstractField import AbstractField
-from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
+from netzob.Model.Vocabulary.Types.AbstractType import Sign
 
 
-class DeterministIntegerMutator(Mutator):
+class DeterministIntegerMutator(DomainMutator):
     r"""The integer mutator, using determinist generator.
     The seed is an arbitrary value used to set the position of the next
     integer to return from the values list, when calling generate().
@@ -64,18 +61,18 @@ class DeterministIntegerMutator(Mutator):
 
     :param domain: The domain of the field to mutate.
     :param interval: The scope of values to generate.
-        If set to **Mutator.DEFAULT_INTERVAL**, the values will be generate
+        If set to **MutatorInterval.DEFAULT_INTERVAL**, the values will be generate
         between the min and max values of the domain.
-        If set to **Mutator.FULL_INTERVAL**, the values will be generate in
+        If set to **MutatorInterval.FULL_INTERVAL**, the values will be generate in
         [0, 2^N-1], where N is the bitsize (storage) of the field.
         If it is an tuple of integers (min, max), the values will be generate
         between min and max.
-        Default value is **Mutator.DEFAULT_INTERVAL**.
-    :param mode: If set to **Mutator.GENERATE**, the generate() method will be
+        Default value is **MutatorInterval.DEFAULT_INTERVAL**.
+    :param mode: If set to **MutatorMode.GENERATE**, the generate() method will be
         used to produce the value.
-        If set to **Mutator.MUTATE**, the mutate() method will be used to
+        If set to **MutatorMode.MUTATE**, the mutate() method will be used to
         produce the value (not implemented).
-        Default value is **Mutator.GENERATE**.
+        Default value is **MutatorMode.GENERATE**.
     :param bitsize: The size in bits of the memory on which the generated
         values have to be encoded.
     :type domain: :class:`AbstractVariable
@@ -89,8 +86,7 @@ class DeterministIntegerMutator(Mutator):
 
     >>> from netzob.all import *
     >>> fieldInt1 = Field(Integer())
-    >>> mutator1 = DeterministIntegerMutator(fieldInt1.domain)
-    >>> mutator1.seed=52
+    >>> mutator1 = DeterministIntegerMutator(fieldInt1.domain, seed=52)
     >>> mutator1.generate()
     b'\x03'
 
@@ -98,8 +94,7 @@ class DeterministIntegerMutator(Mutator):
     interval:
 
     >>> fieldInt2 = Field(Integer(interval=(-10, 5)))
-    >>> mutator2 = DeterministIntegerMutator(fieldInt2.domain)
-    >>> mutator2.seed=42
+    >>> mutator2 = DeterministIntegerMutator(fieldInt2.domain, seed=42)
     >>> mutator2.generate()
     b'\xfd'
 
@@ -107,8 +102,7 @@ class DeterministIntegerMutator(Mutator):
     [-32768, +32767] interval:
 
     >>> fieldInt3 = Field(Integer(unitSize=UnitSize.SIZE_16))
-    >>> mutator3 = DeterministIntegerMutator(fieldInt3.domain)
-    >>> mutator3.seed=430
+    >>> mutator3 = DeterministIntegerMutator(fieldInt3.domain, seed=430)
     >>> mutator3.generate()
     b'\xff\xc1'
 
@@ -116,33 +110,28 @@ class DeterministIntegerMutator(Mutator):
 
     def __init__(self,
                  domain,
-                 interval=Mutator.DEFAULT_INTERVAL,
-                 mode=Mutator.GENERATE,
-                 bitsize=None):
+                 interval=MutatorInterval.DEFAULT_INTERVAL,
+                 bitsize=None,
+                 **kwargs):
+        self._ng = DeterministGenerator()
+
+        # Call parent init
+        super().__init__(domain, **kwargs)
+
         # Sanity checks
-        if domain is None:
-            raise Exception("Domain should be known to initialize a mutator")
-        if not isinstance(domain, AbstractVariable):
-            raise Exception("Mutator domain should be of type AbstractVariable. Received object: '{}'".format(domain))
-        if not hasattr(domain, 'dataType'):
-            raise Exception("Mutator domain should have a dataType Integer")
         if not isinstance(domain.dataType, Integer):
             raise Exception("Mutator domain dataType should be an Integer, not '{}'".format(type(domain.dataType)))
 
-        # Call parent init
-        super().__init__(domain=domain, mode=mode)
-
         # Find min and max potential values for interval
-        minValue = 0
-        maxValue = 0
-        if isinstance(interval, tuple) and len(interval) == 2 and isinstance(interval[0], int) and isinstance(interval[1], int):
+        minValue = maxValue = 0
+        if isinstance(interval, tuple) and len(interval) == 2 and all(isinstance(_, int) for _ in interval):
             # Handle desired interval according to the storage space of the domain dataType
             minValue = max(interval[0], domain.dataType.getMinStorageValue())
             maxValue = min(interval[1], domain.dataType.getMaxStorageValue())
-        elif interval == Mutator.DEFAULT_INTERVAL and hasattr(domain, 'dataType'):
+        elif interval == MutatorInterval.DEFAULT_INTERVAL:
             minValue = domain.dataType.getMinValue()
             maxValue = domain.dataType.getMaxValue()
-        elif interval == Mutator.FULL_INTERVAL and hasattr(domain, 'dataType'):
+        elif interval == MutatorInterval.FULL_INTERVAL:
             minValue = domain.dataType.getMinStorageValue()
             maxValue = domain.dataType.getMaxStorageValue()
         else:
@@ -151,7 +140,7 @@ class DeterministIntegerMutator(Mutator):
         self._maxValue = maxValue
 
         if bitsize is not None:
-            if not isinstance(bitsize, int) or bitsize <=0:
+            if not isinstance(bitsize, int) or bitsize <= 0:
                 raise ValueError("{} is not a valid bitsize value".format(bitsize))
         self._bitsize = bitsize
         if self._bitsize is None:
@@ -166,28 +155,17 @@ class DeterministIntegerMutator(Mutator):
                 raise ValueError("The lower bound {} is too small and cannot be encoded on {} bits".format(self._minValue, self._bitsize))
 
         # Initialize values to generate
-        self._ng = DeterministGenerator()
         self._ng.createValues(self._minValue,
                               self._maxValue,
                               self._bitsize,
                               domain.dataType.sign == Sign.SIGNED)
+        self.updateSeed(self._seed)  # forward seed to ng
 
-    @property
-    def seed(self):
-        """
-        Property (getter/setter).
-        The seed initializes the position of the value to return
-        from the list of generated integer values, mudulo the number of values.
-
-        :type: :class:`int`
-        """
-        return self._seed
-
-    @seed.setter
     @typeCheck(int)
-    def seed(self, seedValue):
-        self._seed = seedValue
-        self._ng.seed = self._seed
+    def updateSeed(self, seedValue):
+        super().updateSeed(seedValue)
+        if self._ng.values:
+            self._ng.updateSeed(self._seed)
 
     def reset(self):
         """Reset the position in the generated list and set the mutation
@@ -235,7 +213,8 @@ class DeterministIntegerMutator(Mutator):
         # Call parent generate() method
         super().generate()
 
+        dom_type = self.getDomain().dataType
         return Integer.decode(self.generateInt(),
-                              unitSize=self.domain.dataType.unitSize,
-                              endianness=self.domain.dataType.endianness,
-                              sign=self.domain.dataType.sign)
+                              unitSize=dom_type.unitSize,
+                              endianness=dom_type.endianness,
+                              sign=dom_type.sign)

@@ -35,7 +35,9 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
-import abc
+import random
+from enum import Enum
+from typing import Type  # noqa: F401
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -45,11 +47,27 @@ import abc
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Model.Grammar.Automata import Automata  # noqa: F401
+from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
+from netzob.Fuzzing.Mutator import Mutator
 
 
-class Mutator(metaclass=abc.ABCMeta):
-    """The model of any mutator.
+class MutatorMode(Enum):
+    """Mutator Fuzzing modes"""
+    NONE     = 0  #: No fuzzing
+    MUTATE   = 1  #: Fuzzing by mutation of a legitimate value
+    GENERATE = 2  #: Fuzzing by generation
+
+
+class MutatorInterval(Enum):
+    """Mutator Fuzzing intervals"""
+    DEFAULT_INTERVAL = 0  #: We use the legitimate domain interval (ex: DeterminitMutator(interval=MutatorInterval.DEFAULT_INTERVAL)
+    FULL_INTERVAL    = 1  #: We cover the whole storage space of the domain (ex: DeterminitMutator(interval=MutatorInterval.FULL_INTERVAL)
+    # else, we consider the tuple passed as parameter to override the domain interval (ex: DeterminitMutator(interval=(10, 42))
+
+
+class DomainMutator(Mutator):
+    """The model of domain mutators.
 
     This class provides the common properties and API to all inherited mutators.
 
@@ -66,19 +84,16 @@ class Mutator(metaclass=abc.ABCMeta):
 
     :param domain: The domain of the field to mutate, in case of a data
         mutator.
-    :param automata: The automata to mutate, in case of an automata mutator.
-    :param mode: If set to **MutatorMode.GENERATE**, :meth:`generate` will be
+    :param mode: If set to **MutatorMode.GENERATE**, the generate() method will be
         used to produce the value.
-        If set to **MutatorMode.MUTATE**, :meth:`mutate` will be used to
+        If set to **MutatorMode.MUTATE**, the mutate() method will be used to
         produce the value (not implemented).
         Default value is **MutatorMode.GENERATE**.
     :type domain: :class:`AbstractVariable
         <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
-    :type automata: :class:`Automata
-        <netzob.Model.Grammar.Automata>`, optional
     :type mode: :class:`int`, optional
 
-    The following code shows the instantiation of a symbol composed of
+    The following code shows the instanciation of a symbol composed of
     a string and an integer, and the fuzzing request during the
     specialization process:
 
@@ -90,98 +105,42 @@ class Mutator(metaclass=abc.ABCMeta):
     ...             f2: (PseudoRandomIntegerMutator, minValue=12, maxValue=20)}  # doctest: +SKIP
     >>> symbol.specialize(mutators=mutators)  # doctest: +SKIP
 
-
-    Constant definitions :
     """
+
+    # Constants
     SEED_DEFAULT = 10
-    COUNTER_MAX_DEFAULT = 2**16
+    COUNTER_MAX_DEFAULT = 1 << 16  #: :math:`2^16`
+    DOMAIN_TYPE = AbstractVariable  # type: Type[AbstractVariable]
 
     def __init__(self,
-                 seed=SEED_DEFAULT,
-                 counterMax=COUNTER_MAX_DEFAULT
-                 ):
-        # Handle class variables
-        self._seed = seed
-        self._currentState = 0
-        self._counterMax = counterMax
-        self._currentCounter = 0
+                 domain,
+                 mode=MutatorMode.GENERATE,  # type: MutatorMode
+                 **kwargs):
+        # Call parent init
+        super().__init__(**kwargs)
 
-    @typeCheck(int)
-    def updateSeed(self, seedValue):
-        self._seed = seedValue
+        # Sanity checks
+        if not isinstance(domain, self.DOMAIN_TYPE):
+            raise TypeError("Mutator domain should be of type AbstractRelationVariableLeaf. Received object: '{}'"
+                            .format(domain))
 
-    @property
-    def currentState(self):
+        # Handle parameters
+        assert isinstance(mode, MutatorMode)
+        self._domain = domain
+        self._mode = mode.value
+
+    def getDomain(self):
         """
-        Property (getter/setter).
-        The current state of the pseudo-random generator.
-        the generator can reproduce a value by using this state.
+        Get the domain of the DomainMutator
 
-        :type: :class:`int`
+        :return: the domain of the mutator
+        :raise: ValueError
         """
-        return self._currentState
+        if self._domain is None:
+            raise ValueError("No domain has been set")
+        return self._domain
 
-    @currentState.setter
-    @typeCheck(int)
-    def currentState(self, stateValue):
-        self._currentState = stateValue
-
-    @property
-    def counterMax(self):
-        """
-        Property (getter/setter).
-        The max number of values that the generator has to produce.
-        When this limit is reached, mutate() returns None.
-
-        :type: :class:`int`
-        """
-        return self._counterMax
-
-    @counterMax.setter
-    @typeCheck(int)
-    def counterMax(self, counterMaxValue):
-        self._counterMax = counterMaxValue
-
-    @property
-    def currentCounter(self):
-        """
-        Property (getter).
-        The counter of mutate() calls.
-        In mutate(), this value is compared to counterMax, to determine if the
-        limit of mutation is reached.
-
-        :type: :class:`int`
-        """
-        return self._currentCounter
-
-    def resetCurrentCounter(self):
-        """Reset the current counter of mutate().
-
-        :type: :class:`int`
-        """
-        self._currentCounter = 0
-
-    def reset(self):
-        """Reset environment of the mutator.
-        """
-        self._currentCounter = 0
-
-    def generate(self):
-        """This is the fuzz generation method of the field domain. It has to
-        be overridden by all the inherited mutators which call the
-        generate() function.
-
-        :return: a generated content represented with bytes
-        :rtype: :class:`bytes`
-        :raises: :class:`Exception` when **currentCounter** reaches \
-**counterMax**.
-        """
-        if self._currentCounter >= self.counterMax:
-            raise Exception("Max mutation counter reached")
-        self._currentCounter += 1
-
-    @abc.abstractmethod
-    def mutate(self, *args):
+    def mutate(self, data):
         """This is the mutation method of the field domain. It has to be
         overridden by all the inherited mutators which call the
         mutate() function.
@@ -195,3 +154,10 @@ class Mutator(metaclass=abc.ABCMeta):
 
         :meth:`mutate` is an *abstract method* and must be inherited.
         """
+        if data is None or len(data) == 0:
+            return data
+
+        # The current implementation makes a bitflip at a random position
+        idx = random.randint(0, len(data) - 1)
+        data[idx] = not data[idx]
+        return data

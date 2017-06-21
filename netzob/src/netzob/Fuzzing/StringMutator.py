@@ -35,6 +35,7 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
+from typing import Tuple  # noqa: F401
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -43,28 +44,27 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutator import Mutator
+from netzob.Fuzzing.DomainMutator import DomainMutator
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Fuzzing.DeterministIntegerMutator import DeterministIntegerMutator
 from netzob.Fuzzing.StringPaddedGenerator import StringPaddedGenerator
 from netzob.Model.Vocabulary.Types.Integer import uint16le
 from netzob.Model.Vocabulary.Types.String import String
 from netzob.Model.Vocabulary.Field import Field
-from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 
 
-class StringMutator(Mutator):
+class StringMutator(DomainMutator):
     """The string mutator, using a determinist generator to get a string length.
     The generated string shall not be longer than 2^16 bytes.
 
     The StringMutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate.
-    :param mode: If set to **Mutator.GENERATE**, the generate() method will be
+    :param mode: If set to **MutatorMode.GENERATE**, the generate() method will be
         used to produce the value.
-        If set to **Mutator.MUTATE**, the mutate() method will be used to
+        If set to **MutatorMode.MUTATE**, the mutate() method will be used to
         produce the value (not implemented).
-        Default value is **Mutator.GENERATE**.
+        Default value is **MutatorMode.GENERATE**.
     :param endChar: The character(s) ending the string.
         Default value is **DEFAULT_END_CHAR**.
     :param length: The scope of string length to generate. If set to
@@ -88,9 +88,8 @@ class StringMutator(Mutator):
 
     >>> from netzob.all import *
     >>> fieldString = Field(String(nbChars=(35, 60)))
-    >>> mutator = StringMutator(fieldString.domain, length=(10,600))
-    >>> mutator.seed = 10
-    >>> mutator.generate()
+    >>> mutator = StringMutator(fieldString.domain, length=(10,600), seed=10)
+    >>> mutator.generate()  # doctest: +SKIP
     b'`ls -al /`\x00     '
 
     Constant definitions:
@@ -99,142 +98,68 @@ class StringMutator(Mutator):
     DEFAULT_END_CHAR = '\0'
     DEFAULT_MIN_LENGTH = 2
     DEFAULT_MAX_LENGTH = 10
-    DEFAULT_NAUGHTY_STRINGS = ["System(\"ls -al /\")",
-                               "`ls -al /`",
-                               "Kernel.exec(\"ls -al /\")",
-                               "Kernel.exit(1)",
-                               "%x('ls -al /')",
-                               "<img \\x00src=x onerror=\"alert(1)\">",
-                               "$ENV{'HOME'}",
-                               "%d",
-                               "%s"]
+    DEFAULT_NAUGHTY_STRINGS = """
+    System("ls -al /"),
+    `ls -al /`,
+    Kernel.exec("ls -al /"),
+    Kernel.exit(1),
+    %x('ls -al /'),
+    <img \\x00src=x onerror="alert(1)">,
+    $ENV{'HOME'},
+    %d,
+    %s
+    """.split()
     PADDING_CHAR = ' '
 
     def __init__(self,
                  domain,
-                 mode=None,
-                 endChar=DEFAULT_END_CHAR,
-                 length=(None, None),
+                 endChar=DEFAULT_END_CHAR,  # type: str
+                 length=(None, None),       # type: Tuple[int, int]
                  lengthBitSize=None,
-                 naughtyStrings=None):
+                 naughtyStrings=None,
+                 **kwargs):
         # Sanity checks
-        if domain is None:
-            raise Exception("Domain should be known to initialize a mutator")
-        if not isinstance(domain, AbstractVariable):
-            raise Exception("Mutator domain should be of type AbstractVariable. Received object: '{}'".format(domain))
-        if not hasattr(domain, 'dataType'):
-            raise Exception("Mutator domain should have a dataType")
         if not isinstance(domain.dataType, String):
-            raise Exception("Mutator domain dataType should be an Integer, not '{}'".format(type(domain.dataType)))
+            raise Exception("Mutator domain dataType should be an Integer, not '{}'"
+                            .format(type(domain.dataType)))
 
         # Call parent init
-        super().__init__(domain=domain, mode=mode)
+        super().__init__(domain, **kwargs)
 
         self._endChar = endChar
 
-        if isinstance(length, tuple) and \
-           len(length) == 2 and \
-           isinstance(length[0], int) and \
-           isinstance(length[1], int):
-            self._minLength = length[0]
-            self._maxLength = length[1]
-        if isinstance(domain.dataType.size, tuple) and \
-           len(domain.dataType.size) == 2 and \
-           isinstance(domain.dataType.size[0], int) \
-           and isinstance(domain.dataType.size[1], int):
+        if isinstance(length, tuple) and len(length) == 2 and all(isinstance(_, int) for _ in length):
+            self._minLength, self._maxLength = length
+        dom_size = domain.dataType.size
+        if isinstance(dom_size, tuple) and len(dom_size) == 2 and all(isinstance(_, int) for _ in dom_size):
             # Handle desired interval according to the storage space of the domain dataType
-            self._minLength = max(self._minLength, int(domain.dataType.size[0]/8))
-            self._maxLength = min(self._maxLength, int(domain.dataType.size[1]/8))
+            self._minLength = max(self._minLength, int(dom_size[0] / 8))
+            self._maxLength = min(self._maxLength, int(dom_size[1] / 8))
         if self._minLength is None or self._maxLength is None:
-            self._minLength = StringMutator.DEFAULT_MIN_LENGTH
-            self._maxLength = StringMutator.DEFAULT_MAX_LENGTH
+            self._minLength = self.DEFAULT_MIN_LENGTH
+            self._maxLength = self.DEFAULT_MAX_LENGTH
 
         if not isinstance(naughtyStrings, list):
-            self._naughtyStrings = StringMutator.DEFAULT_NAUGHTY_STRINGS
+            self._naughtyStrings = self.DEFAULT_NAUGHTY_STRINGS
         else:
             self._naughtyStrings = naughtyStrings
 
         self._stringLength = Field(uint16le())
         self._lengthMutator = DeterministIntegerMutator(
             domain=self._stringLength.domain,
-            mode=mode,
-            interval=(self._minLength, self.maxLength),
-            bitsize=lengthBitSize)
+            interval=(self._minLength, self._maxLength),
+            bitsize=lengthBitSize,
+            **kwargs)
 
         self._sg = StringPaddedGenerator(self._lengthMutator,
                                          self._naughtyStrings)
         self._seed = 0
 
-    @property
-    def seed(self):
-        """
-        Property (getter/setter).
-        The seed used in generator
-        Default value is 0.
-
-        :type: :class:`int`
-        """
-        return self._seed
-
-    @seed.setter
     @typeCheck(int)
-    def seed(self, seedValue):
-        self._seed = seedValue
-        self._lengthMutator.seed = self._seed
-        self._sg.seed = self._seed
-
-    @property
-    def lengthMutator(self):
-        """
-        Property (getter).
-        The mutator used to generate the string length, between
-        minLength and maxLength.
-
-        :type: :class:`DeterministIntegerMutator <netzob.Fuzzing.DeterministIntegerMutator>`
-        """
-        return self._lengthMutator
-
-    @property
-    def minLength(self):
-        """
-        Property (getter).
-        The min length of the string. Default value is DEFAULT_MIN_LENGTH.
-
-        :meth:`minLength` is a *read-only property*.
-
-        :type: :class:`int`
-        """
-        return self._minLength
-
-    @property
-    def maxLength(self):
-        """
-        Property (getter).
-        The max length of the string. Default value is DEFAULT_MAX_LENGTH.
-
-        :meth:`maxLength` is a *read-only property*.
-
-        :type: :class:`int`
-        """
-        return self._maxLength
-
-    @property
-    def endChar(self):
-        """
-        Property (getter/setter).
-        The character defining the end of the string. Default value is
-        DEFAULT_END_CHAR.
-
-        :meth:`endChar` is a *read-write property*.
-
-        :type: :class:`str`
-        """
-        return self._endChar
-
-    @endChar.setter
-    @typeCheck(str)
-    def endChar(self, char):
-        self._endChar = char
+    def updateSeed(self, seedValue):
+        super().updateSeed(seedValue)
+        self._lengthMutator.updateSeed(seedValue)
+        self._sg.updateSeed(seedValue)
 
     def getLength(self):
         """The length of the last generated string.
@@ -263,8 +188,13 @@ class StringMutator(Mutator):
         # Call parent generate() method
         super().generate()
 
-        value = self._sg.getNewValue(self.endChar)
+        value = self._sg.getNewValue(self._endChar)
+        value = self._sg.getNewValue(self._endChar)
+        dom_type = self.getDomain().dataType
         return String.decode(value,
-                             unitSize=self.domain.dataType.unitSize,
-                             endianness=self.domain.dataType.endianness,
-                             sign=self.domain.dataType.sign)
+                             unitSize=dom_type.unitSize,
+                             endianness=dom_type.endianness,
+                             sign=dom_type.sign)
+
+    def mutate(self, data):
+        raise NotImplementedError
