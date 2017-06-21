@@ -69,7 +69,7 @@ class Alt(AbstractVariableNode):
 
 
     For example, the following code denotes a field accepts either
-    "filename1.txt" or \n "filename2.txt":
+    "filename1.txt" or "filename2.txt":
 
     >>> from netzob.all import *
     >>> t1 = String("filename1.txt")
