@@ -95,17 +95,17 @@ class Alt(AbstractVariableNode):
 
     >>> from netzob.all import *
     >>> v0 = String("netzob")
-    >>> v1 = String("zoby")
+    >>> v1 = String("kurt")
     >>> f0 = Field(Alt([v0, v1]))
     >>> s = Symbol([f0])
     >>> msg1 = RawMessage("netzob")
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg1, s))
     [bitarray('011011100110010101110100011110100110111101100010')]
-    >>> msg2 = RawMessage("zoby")
+    >>> msg2 = RawMessage("kurt")
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg2, s))
-    [bitarray('01111010011011110110001001111001')]
+    [bitarray('01101011011101010111001001110100')]
 
     In the following example, an Alternate variable is defined. A
     message that does not correspond to the expected model is then
@@ -117,7 +117,7 @@ class Alt(AbstractVariableNode):
     Traceback (most recent call last):
       ...
     InvalidParsingPathException: No parsing path returned while parsing 'b'nothing''
-    
+
 
     That's another simple example that also illustrates rollback mechanisms
 

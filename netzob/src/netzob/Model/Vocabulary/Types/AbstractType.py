@@ -182,6 +182,28 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         ]
 
     @staticmethod
+    def getUnitSizeEnum(size):
+        """Returns the enum value corresponding to the given size.
+        If size is invalid, returns None."""
+        if size == 1:
+            return UnitSize.SIZE_1
+        elif size == 4:
+            return UnitSize.SIZE_1
+        elif size == 4:
+            return UnitSize.SIZE_4
+        elif size == 8:
+            return UnitSize.SIZE_8
+        elif size == 16:
+            return UnitSize.SIZE_16
+        elif size == 24:
+            return UnitSize.SIZE_24
+        elif size == 32:
+            return UnitSize.SIZE_32
+        elif size == 64:
+            return UnitSize.SIZE_64
+        return None
+
+    @staticmethod
     def supportedEndianness():
         """Official endianness supported"""
         return [Endianness.BIG, Endianness.LITTLE]
@@ -431,13 +453,13 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
         if self.endianness == Endianness.LITTLE:
             mutations["{0}bits(littleEndian)".format(prefixDescription)] = val
-            bigEndianValue = bitarray(val, endian=Endianness.BIG)
+            bigEndianValue = bitarray(val, endian=Endianness.BIG.value)
             mutations["{0}bits(bigEndian)".format(
                 prefixDescription)] = bigEndianValue
         else:
             mutations["{0}bits(bigEndian)".format(prefixDescription)] = val
             littleEndianValue = bitarray(
-                val, endian=Endianness.LITTLE)
+                val, endian=Endianness.LITTLE.value)
             mutations["{0}bits(littleEndian)".format(
                 prefixDescription)] = littleEndianValue
 

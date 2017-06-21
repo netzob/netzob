@@ -247,9 +247,9 @@ class Field(AbstractField):
 
       >>> f = Field([Size(payloadField)])
 
-    * a field representing an alternative between two differents String strings, either "netzob" or "zoby":
+    * a field representing an alternative between two differents String strings, either "netzob" or "kurt":
 
-      >>> f = Field(["netzob", "zoby"])
+      >>> f = Field(["netzob", "kurt"])
 
     * a field representing a decimal (10) or a String of 16 chars:
 
@@ -297,12 +297,12 @@ class Field(AbstractField):
         This method also applies on multiple fields using a Symbol
 
         >>> fHello = Field("hello ")
-        >>> fName = Field("zoby")
+        >>> fName = Field("kurt")
         >>> s = Symbol([fHello, fName])
         >>> print('\n'.join([str(s.specialize()) for x in range(3)]))
-        b'hello zoby'
-        b'hello zoby'
-        b'hello zoby'
+        b'hello kurt'
+        b'hello kurt'
+        b'hello kurt'
 
         :return: a generated content represented with an hexastring
         :rtype: :class:`str``

@@ -71,7 +71,7 @@ class RelationFinder(object):
 
     The following illustrates DataRelation
 
-    >>> samples = ["Adrien > my name is Adrien", "Zoby > my name is Zoby"]
+    >>> samples = ["Kurt > my name is Kurt", "Nobody > my name is Nobody"]
     >>> messages = [RawMessage(sample) for sample in samples]
     >>> symbol = Symbol(messages=messages)
     >>> Format.splitAligned(symbol)
@@ -81,7 +81,7 @@ class RelationFinder(object):
     >>> print(results[0]['relation_type'])
     DataRelation
     >>> results[0]['x_fields'][0].getValues()
-    [b'Adrien', b'Zoby']
+    [b'Adrien', b'Kurt']
     """
 
     # Field's attributes
@@ -384,14 +384,15 @@ class RelationFinder(object):
         for data in cellsData:
             if len(data) > 0:
                 data = data[:8]  # We take at most 8 bytes
-                unitSize = UnitSize.SIZE_8 * len(data)
+                unitSize = UnitSize.SIZE_8.value * len(data)
                 unitSize = int(pow(2, math.ceil(math.log(
                     unitSize, 2))))  # Round to the nearest upper power of 2
+                unitSizeEnum = AbstractType.getUnitSizeEnum(unitSize)
                 result.append(
                     Integer.encode(
                         data,
                         endianness=Endianness.BIG,
-                        unitSize=unitSize))
+                        unitSize=unitSizeEnum))
             else:
                 result.append(0)
         return result

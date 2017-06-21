@@ -106,11 +106,11 @@ class TypeConverter(object):
 
         >>> TypeConverter.convert("5", String, Integer)
         53
-        >>> print(TypeConverter.convert("zoby", String, Integer))
-        2036494202
-        >>> print(TypeConverter.convert("zoby", String, Integer,
+        >>> print(TypeConverter.convert("kurt", String, Integer))
+        1953658219
+        >>> print(TypeConverter.convert("kurt", String, Integer,
         ...                             dst_unitSize=UnitSize.SIZE_32))
-        2054120057
+        1802859124
 
         It also works for 'semantic' data like IPv4:
 

@@ -79,7 +79,7 @@ class AbstractionLayer(object):
     just one permitted symbol:
 
     >>> from netzob.all import *
-    >>> symbol = Symbol([Field(b"Hello Zoby !")], name = "Symbol_Hello")
+    >>> symbol = Symbol([Field(b"Hello Kurt !")], name = "Symbol_Hello")
     >>> channelIn = UDPServer(localIP="127.0.0.1", localPort=8889)
     >>> abstractionLayerIn = AbstractionLayer(channelIn, [symbol])
     >>> abstractionLayerIn.openChannel()
@@ -92,14 +92,14 @@ class AbstractionLayer(object):
     >>> print(receivedSymbol.name)
     Symbol_Hello
     >>> print(receivedMessage)
-    b'Hello Zoby !'
+    b'Hello Kurt !'
 
 
     The following example demonstrates that the abstraction layer can
     also handle a message flow:
 
-    >>> symbolflow = Symbol([Field(b"Hello Zoby !Whats up ?")], name = "Symbol Flow")
-    >>> symbol1 = Symbol([Field(b"Hello Zoby !")], name = "Symbol_Hello")
+    >>> symbolflow = Symbol([Field(b"Hello Kurt !Whats up ?")], name = "Symbol Flow")
+    >>> symbol1 = Symbol([Field(b"Hello Kurt !")], name = "Symbol_Hello")
     >>> symbol2 = Symbol([Field(b"Whats up ?")], name = "Symbol_WUP")
     >>> channelIn = UDPServer(localIP="127.0.0.1", localPort=8889)
     >>> abstractionLayerIn = AbstractionLayer(channelIn, [symbol1, symbol2])

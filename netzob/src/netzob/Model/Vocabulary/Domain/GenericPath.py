@@ -199,12 +199,12 @@ class GenericPath(object):
 
         >>> from netzob.all import *
         >>> path = GenericPath()
-        >>> v1 = Data(dataType=String(nbChars=(5, 10)), name="netzob")          
+        >>> v1 = Data(dataType=String(nbChars=(5, 10)), name="netzob")
         >>> print(path.isDataAvailableForVariable(v1))
         False
-        >>> path.assignDataToVariable(TypeConverter.convert("zoby", String, BitArray), v1)
+        >>> path.assignDataToVariable(TypeConverter.convert("kurt", String, BitArray), v1)
         >>> print(path.getDataAssignedToVariable(v1))
-        bitarray('01111010011011110110001001111001')
+        bitarray('01101011011101010111001001110100')
 
         """
 

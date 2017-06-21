@@ -108,9 +108,9 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         If parameter Transposed is set to True, the matrix is built with rows for fields and columns for messages.
 
         >>> from netzob.all import *
-        >>> messages = [RawMessage("hello {0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'zoby', 'lapy'] for city in ['Paris', 'Berlin', 'New-York']]
+        >>> messages = [RawMessage("hello {0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'kurt', 'lapy'] for city in ['Paris', 'Berlin', 'New-York']]
         >>> fh1 = Field(String("hello "), name="hello")
-        >>> fh2 = Field(Alt([String("netzob"), String("zoby"), String("lapy"), String("sygus")]), name="pseudo")
+        >>> fh2 = Field(Alt([String("netzob"), String("kurt"), String("lapy"), String("sygus")]), name="pseudo")
         >>> fheader = Field(name="header")
         >>> fheader.fields = [fh1, fh2]
         >>> fb1 = Field(String(", what's up in "), name="whatsup")
@@ -126,9 +126,9 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         'hello ' | 'netzob' | ", what's up in " | 'Paris'    | ' ?'
         'hello ' | 'netzob' | ", what's up in " | 'Berlin'   | ' ?'
         'hello ' | 'netzob' | ", what's up in " | 'New-York' | ' ?'
-        'hello ' | 'zoby'   | ", what's up in " | 'Paris'    | ' ?'
-        'hello ' | 'zoby'   | ", what's up in " | 'Berlin'   | ' ?'
-        'hello ' | 'zoby'   | ", what's up in " | 'New-York' | ' ?'
+        'hello ' | 'kurt'   | ", what's up in " | 'Paris'    | ' ?'
+        'hello ' | 'kurt'   | ", what's up in " | 'Berlin'   | ' ?'
+        'hello ' | 'kurt'   | ", what's up in " | 'New-York' | ' ?'
         'hello ' | 'lapy'   | ", what's up in " | 'Paris'    | ' ?'
         'hello ' | 'lapy'   | ", what's up in " | 'Berlin'   | ' ?'
         'hello ' | 'lapy'   | ", what's up in " | 'New-York' | ' ?'
@@ -142,9 +142,9 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         '68656c6c6f20' | 'netzob' | ", what's up in " | '5061726973'       | ' ?'
         '68656c6c6f20' | 'netzob' | ", what's up in " | '4265726c696e'     | ' ?'
         '68656c6c6f20' | 'netzob' | ", what's up in " | '4e65772d596f726b' | ' ?'
-        '68656c6c6f20' | 'zoby'   | ", what's up in " | '5061726973'       | ' ?'
-        '68656c6c6f20' | 'zoby'   | ", what's up in " | '4265726c696e'     | ' ?'
-        '68656c6c6f20' | 'zoby'   | ", what's up in " | '4e65772d596f726b' | ' ?'
+        '68656c6c6f20' | 'kurt'   | ", what's up in " | '5061726973'       | ' ?'
+        '68656c6c6f20' | 'kurt'   | ", what's up in " | '4265726c696e'     | ' ?'
+        '68656c6c6f20' | 'kurt'   | ", what's up in " | '4e65772d596f726b' | ' ?'
         '68656c6c6f20' | 'lapy'   | ", what's up in " | '5061726973'       | ' ?'
         '68656c6c6f20' | 'lapy'   | ", what's up in " | '4265726c696e'     | ' ?'
         '68656c6c6f20' | 'lapy'   | ", what's up in " | '4e65772d596f726b' | ' ?'
@@ -156,9 +156,9 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         '68656c6c6f20' | 'netzob'
         '68656c6c6f20' | 'netzob'
         '68656c6c6f20' | 'netzob'
-        '68656c6c6f20' | 'zoby'  
-        '68656c6c6f20' | 'zoby'  
-        '68656c6c6f20' | 'zoby'  
+        '68656c6c6f20' | 'kurt'  
+        '68656c6c6f20' | 'kurt'  
+        '68656c6c6f20' | 'kurt'  
         '68656c6c6f20' | 'lapy'  
         '68656c6c6f20' | 'lapy'  
         '68656c6c6f20' | 'lapy'  
@@ -184,9 +184,9 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         'netzob'
         'netzob'
         'netzob'
-        'zoby'  
-        'zoby'  
-        'zoby'  
+        'kurt'  
+        'kurt'  
+        'kurt'  
         'lapy'  
         'lapy'  
         'lapy'  
@@ -286,9 +286,9 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         In addition, visualizationFunctions are also applied if parameter styled is set to True.
 
         >>> from netzob.all import *
-        >>> messages = [RawMessage("hello {0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'zoby', 'lapy'] for city in ['Paris', 'Berlin', 'New-York']]
+        >>> messages = [RawMessage("hello {0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'kurt', 'lapy'] for city in ['Paris', 'Berlin', 'New-York']]
         >>> f1 = Field("hello ", name="hello")
-        >>> f2 = Field(["netzob", "zoby", "lapy", "sygus"], name="pseudo")
+        >>> f2 = Field(["netzob", "kurt", "lapy", "sygus"], name="pseudo")
         >>> f3 = Field(", what's up in ", name="whatsup")
         >>> f4 = Field(["Paris", "Berlin", "New-York"], name="city")
         >>> f5 = Field(" ?", name="end")
@@ -299,9 +299,9 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         'hello ' | 'netzob' | ", what's up in " | 'Paris'    | ' ?'
         'hello ' | 'netzob' | ", what's up in " | 'Berlin'   | ' ?'
         'hello ' | 'netzob' | ", what's up in " | 'New-York' | ' ?'
-        'hello ' | 'zoby'   | ", what's up in " | 'Paris'    | ' ?'
-        'hello ' | 'zoby'   | ", what's up in " | 'Berlin'   | ' ?'
-        'hello ' | 'zoby'   | ", what's up in " | 'New-York' | ' ?'
+        'hello ' | 'kurt'   | ", what's up in " | 'Paris'    | ' ?'
+        'hello ' | 'kurt'   | ", what's up in " | 'Berlin'   | ' ?'
+        'hello ' | 'kurt'   | ", what's up in " | 'New-York' | ' ?'
         'hello ' | 'lapy'   | ", what's up in " | 'Paris'    | ' ?'
         'hello ' | 'lapy'   | ", what's up in " | 'Berlin'   | ' ?'
         'hello ' | 'lapy'   | ", what's up in " | 'New-York' | ' ?'
@@ -357,8 +357,8 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         per message.
 
         >>> from netzob.all import *
-        >>> messages = [RawMessage("{0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'zoby'] for city in ['Paris', 'Berlin']]
-        >>> f1 = Field(["netzob", "zoby", "lapy", "sygus"], name="pseudo")
+        >>> messages = [RawMessage("{0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'kurt'] for city in ['Paris', 'Berlin']]
+        >>> f1 = Field(["netzob", "kurt", "lapy", "sygus"], name="pseudo")
         >>> f2 = Field(", what's up in ", name="whatsup")
         >>> f3 = Field(["Paris", "Berlin", "New-York"], name="city")
         >>> f4 = Field(" ?", name="end")
@@ -368,8 +368,8 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         -------- | ----------------- | -------- | ----
         'netzob' | ", what's up in " | 'Paris'  | ' ?'
         'netzob' | ", what's up in " | 'Berlin' | ' ?'
-        'zoby'   | ", what's up in " | 'Paris'  | ' ?'
-        'zoby'   | ", what's up in " | 'Berlin' | ' ?'
+        'kurt'   | ", what's up in " | 'Paris'  | ' ?'
+        'kurt'   | ", what's up in " | 'Berlin' | ' ?'
         -------- | ----------------- | -------- | ----
 
         >>> messageCells = symbol.getMessageCells()
@@ -377,8 +377,8 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         ...    print(message.data, messageCells[message])
         netzob, what's up in Paris ? [b'netzob', b", what's up in ", b'Paris', b' ?']
         netzob, what's up in Berlin ? [b'netzob', b", what's up in ", b'Berlin', b' ?']
-        zoby, what's up in Paris ? [b'zoby', b", what's up in ", b'Paris', b' ?']
-        zoby, what's up in Berlin ? [b'zoby', b", what's up in ", b'Berlin', b' ?']
+        kurt, what's up in Paris ? [b'kurt', b", what's up in ", b'Paris', b' ?']
+        kurt, what's up in Berlin ? [b'kurt', b", what's up in ", b'Berlin', b' ?']
 
         :keyword encoded: if set to true, values are encoded
         :type encoded: :class:`bool`
@@ -408,8 +408,8 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         per message.
 
         >>> from netzob.all import *
-        >>> messages = [RawMessage("{0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'zoby'] for city in ['Paris', 'Berlin']]
-        >>> f1 = Field(["netzob", "zoby", "lapy", "sygus"], name="pseudo")
+        >>> messages = [RawMessage("{0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'kurt'] for city in ['Paris', 'Berlin']]
+        >>> f1 = Field(["netzob", "kurt", "lapy", "sygus"], name="pseudo")
         >>> f2 = Field(", what's up in ", name="whatsup")
         >>> f3 = Field(["Paris", "Berlin", "New-York"], name="city")
         >>> f4 = Field(" ?", name="end")
@@ -419,8 +419,8 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         -------- | ----------------- | -------- | ----
         'netzob' | ", what's up in " | 'Paris'  | ' ?'
         'netzob' | ", what's up in " | 'Berlin' | ' ?'
-        'zoby'   | ", what's up in " | 'Paris'  | ' ?'
-        'zoby'   | ", what's up in " | 'Berlin' | ' ?'
+        'kurt'   | ", what's up in " | 'Paris'  | ' ?'
+        'kurt'   | ", what's up in " | 'Berlin' | ' ?'
         -------- | ----------------- | -------- | ----
 
         >>> messageValues = f3.getMessageValues()
@@ -428,8 +428,8 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         ...    print(message.data, messageValues[message])
         netzob, what's up in Paris ? b'Paris'
         netzob, what's up in Berlin ? b'Berlin'
-        zoby, what's up in Paris ? b'Paris'
-        zoby, what's up in Berlin ? b'Berlin'
+        kurt, what's up in Paris ? b'Paris'
+        kurt, what's up in Berlin ? b'Berlin'
 
         :keyword encoded: if set to true, values are encoded
         :type encoded: :class:`bool`
@@ -457,9 +457,9 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
     #     in the current field.
 
     #     >>> from netzob.all import *
-    #     >>> messages = [RawMessage("hello {0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'zoby', 'lapy'] for city in ['Paris', 'Berlin', 'New-York']]
+    #     >>> messages = [RawMessage("hello {0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'kurt', 'lapy'] for city in ['Paris', 'Berlin', 'New-York']]
     #     >>> f1 = Field("hello ", name="hello")
-    #     >>> f2 = Field(["netzob", "zoby", "lapy", "sygus"], name="pseudo")
+    #     >>> f2 = Field(["netzob", "kurt", "lapy", "sygus"], name="pseudo")
     #     >>> f3 = Field(", what's up in ", name="whatsup")
     #     >>> f4 = Field(["Paris", "Berlin", "New-York"], name="city")
     #     >>> f5 = Field(" ?", name="end")
@@ -469,9 +469,9 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
     #     hello  | netzob | , what's up in  | Paris    |  ?
     #     hello  | netzob | , what's up in  | Berlin   |  ?
     #     hello  | netzob | , what's up in  | New-York |  ?
-    #     hello  | zoby   | , what's up in  | Paris    |  ?
-    #     hello  | zoby   | , what's up in  | Berlin   |  ?
-    #     hello  | zoby   | , what's up in  | New-York |  ?
+    #     hello  | kurt   | , what's up in  | Paris    |  ?
+    #     hello  | kurt   | , what's up in  | Berlin   |  ?
+    #     hello  | kurt   | , what's up in  | New-York |  ?
     #     hello  | lapy   | , what's up in  | Paris    |  ?
     #     hello  | lapy   | , what's up in  | Berlin   |  ?
     #     hello  | lapy   | , what's up in  | New-York |  ?
@@ -532,7 +532,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         >>> from netzob.all import *
         >>> messages = ["{0}, what's up in {1} ?".format(pseudo, city)
-        ...             for pseudo in ['netzob', 'zoby']
+        ...             for pseudo in ['netzob', 'kurt']
         ...             for city in ['Paris', 'Berlin']]
 
         >>> f1a = Field(name="name", domain="netzob")
@@ -541,11 +541,11 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> f4a = Field(name="mark", domain=" ?")
         >>> s1 = Symbol([f1a, f2a, f3a, f4a], name="Symbol-netzob")
 
-        >>> f1b = Field(name="name", domain="zoby")
+        >>> f1b = Field(name="name", domain="kurt")
         >>> f2b = Field(name="question", domain=", what's up in ")
         >>> f3b = Field(name="city", domain=Alt(["Paris", "Berlin"]))
         >>> f4b = Field(name="mark", domain=" ?")
-        >>> s2 = Symbol([f1b, f2b, f3b, f4b], name="Symbol-zoby")
+        >>> s2 = Symbol([f1b, f2b, f3b, f4b], name="Symbol-kurt")
 
         >>> for m in messages:
         ...    (abstractedSymbol, structured_data) = AbstractField.abstract(m, [s1, s2])
@@ -557,12 +557,12 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         OrderedDict([('name', b'netzob'), ('question', b", what's up in "),
                      ('city', b'Berlin'), ('mark', b' ?')])
         Symbol-netzob
-        OrderedDict([('name', b'zoby'), ('question', b", what's up in "),
+        OrderedDict([('name', b'kurt'), ('question', b", what's up in "),
                      ('city', b'Paris'), ('mark', b' ?')])
-        Symbol-zoby
-        OrderedDict([('name', b'zoby'), ('question', b", what's up in "),
+        Symbol-kurt
+        OrderedDict([('name', b'kurt'), ('question', b", what's up in "),
                      ('city', b'Berlin'), ('mark', b' ?')])
-        Symbol-zoby
+        Symbol-kurt
 
         :parameter data: the data that should be abstracted in symbol
         :type data: :class:`str`

@@ -64,7 +64,7 @@ class ClusterByAlignment(object):
 
 
     >>> from netzob.all import *
-    >>> pseudos = ["zoby", "ditrich", "toto", "carlito"]
+    >>> pseudos = ["kurt", "ditrich", "toto", "carlito"]
     >>> cities = ["Paris", "Munich", "Barcelone", "Vienne"]
     >>> ips = ["192.168.0.10", "10.120.121.212", "78.167.23.10"]
     >>> # Creation of the different types of message
@@ -93,16 +93,16 @@ class ClusterByAlignment(object):
     'hello ' | 'ditrich' | ", what's up in " | 'Paris'     | ' ?' 
     'hello ' | 'carlito' | ", what's up in " | 'Vienne'    | ' ?' 
     'hello ' | 'ditrich' | ", what's up in " | 'Vienne'    | ' ?' 
-    'hello ' | 'toto'    | ", what's up in " | 'Paris'     | ' ?' 
-    'hello ' | 'zoby'    | ", what's up in " | 'Paris'     | ' ?' 
+    'hello ' | 'kurt'    | ", what's up in " | 'Munich'    | ' ?' 
+    'hello ' | 'kurt'    | ", what's up in " | 'Paris'     | ' ?' 
+    'hello ' | 'kurt'    | ", what's up in " | 'Vienne'    | ' ?' 
     'hello ' | 'toto'    | ", what's up in " | 'Munich'    | ' ?' 
-    'hello ' | 'zoby'    | ", what's up in " | 'Munich'    | ' ?' 
+    'hello ' | 'toto'    | ", what's up in " | 'Paris'     | ' ?' 
     'hello ' | 'toto'    | ", what's up in " | 'Vienne'    | ' ?' 
-    'hello ' | 'zoby'    | ", what's up in " | 'Vienne'    | ' ?' 
     'hello ' | 'carlito' | ", what's up in " | 'Barcelone' | ' ?' 
     'hello ' | 'ditrich' | ", what's up in " | 'Barcelone' | ' ?' 
+    'hello ' | 'kurt'    | ", what's up in " | 'Barcelone' | ' ?' 
     'hello ' | 'toto'    | ", what's up in " | 'Barcelone' | ' ?' 
-    'hello ' | 'zoby'    | ", what's up in " | 'Barcelone' | ' ?' 
     -------- | --------- | ----------------- | ----------- | -----
 
     """

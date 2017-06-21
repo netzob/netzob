@@ -74,38 +74,38 @@ class FieldSpecializer(object):
     >>> print(32<=len(fs.specialize()[0].getDataAssignedToField(f))<=80)
     True
 
-    >>> d = Alt([String("netzob"), String("zoby")])
+    >>> d = Alt([String("netzob"), String("kurt")])
     >>> f = Field(d)
     >>> fs = FieldSpecializer(f)
     >>> val = set([TypeConverter.convert(fs.specialize()[0].getDataAssignedToField(f), BitArray, String) for x in range(100)])
     >>> print(sorted(val))
-    ['netzob', 'zoby']
+    ['kurt', 'netzob']
 
-    >>> d = Agg([String("hello"), String(" "), Alt([String("netzob"), String("zoby")])])
+    >>> d = Agg([String("hello"), String(" "), Alt([String("netzob"), String("kurt")])])
     >>> f = Field(d)
     >>> fs = FieldSpecializer(f)
     >>> val = set([TypeConverter.convert(fs.specialize()[0].getDataAssignedToField(f), BitArray, String) for x in range(100)])
     >>> print(sorted(val))
-    ['hello netzob', 'hello zoby']
+    ['hello kurt', 'hello netzob']
 
     >>> fpayload = Field()
     >>> f1 = Field(String("hello "), name="f1")
-    >>> f2 = Field(String("zoby!"), name="f2")
+    >>> f2 = Field(String("kurt!"), name="f2")
     >>> fpayload.fields = [f1, f2]
     >>> print(fpayload._str_debug())
     Field
     |--  f1
          |--   Data (String=hello  ((None, None)))
     |--  f2
-         |--   Data (String=zoby! ((None, None)))
+         |--   Data (String=kurt! ((None, None)))
     >>> fs = FieldSpecializer(fpayload)
     >>> result = fs.specialize()[0]
     >>> TypeConverter.convert(result.getDataAssignedToField(fpayload), BitArray, String)
-    'hello zoby!'
+    'hello kurt!'
     >>> TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, String)
     'hello '
     >>> TypeConverter.convert(result.getDataAssignedToField(f2), BitArray, String)
-    'zoby!'
+    'kurt!'
 
     """
 

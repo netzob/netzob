@@ -82,22 +82,22 @@ class Repeat(AbstractVariableNode):
     >>> print(f1.specialize())
     b'ABCABCABCABCABCABCABCABCABCABCABCABCABCABCABCABC'
 
-    
+
     **Usage of a delimiter**
 
     We can specify a delimiter between each repeated element, as
     depicted in the following example:
 
-    >>> f1 = Field(Repeat(Alt([String("netzob"), String("zoby")]), nbRepeat=(1, 4),
+    >>> f1 = Field(Repeat(Alt([String("netzob"), String("kurt")]), nbRepeat=(1, 4),
     ...            delimiter=TypeConverter.convert(";", Raw, BitArray)))
-    >>> f2 = Field(String("zoby"))
+    >>> f2 = Field(String("kurt"))
     >>> s = Symbol([f1, f2])
-    >>> msg1 = RawMessage("netzob;zoby;netzobzoby")
+    >>> msg1 = RawMessage("netzob;kurt;netzobkurt")
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg1, s))
     ... # doctest: +ELLIPSIS, +NORMALIZE_WHITESPACE
-    [bitarray('011011100110010101110100011110100110111101100010001110110111...,
-     bitarray('01111010011011110110001001111001')]
+    [bitarray('011011100110010101110100011110100110111101100010001110110110...,
+     bitarray('01101011011101010111001001110100')]
 
 
     **Limiting the number of repetitions with an integer**
@@ -156,26 +156,26 @@ class Repeat(AbstractVariableNode):
 
     >>> from netzob.all import *
     >>> f1 = Field(Repeat(String("netzob"), nbRepeat=(0,3)))
-    >>> f2 = Field(String("zoby"))
+    >>> f2 = Field(String("kurt"))
     >>> s = Symbol([f1, f2])
 
-    >>> msg1 = RawMessage("netzobnetzobzoby")
+    >>> msg1 = RawMessage("netzobnetzobkurt")
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg1, s))
     ... # doctest: +ELLIPSIS, +NORMALIZE_WHITESPACE
     [bitarray('011011100110010101110100011110100110111101100010011011100110...,
-     bitarray('01111010011011110110001001111001')]
+     bitarray('01101011011101010111001001110100')]
 
-    >>> msg2 = RawMessage("netzobzoby")
+    >>> msg2 = RawMessage("netzobkurt")
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg2, s))  # doctest: +NORMALIZE_WHITESPACE
     [bitarray('011011100110010101110100011110100110111101100010'),
-     bitarray('01111010011011110110001001111001')]
+     bitarray('01101011011101010111001001110100')]
 
-    >>> msg4 = RawMessage("zoby")
+    >>> msg4 = RawMessage("kurt")
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg4, s))
-    [bitarray(), bitarray('01111010011011110110001001111001')]
+    [bitarray(), bitarray('01101011011101010111001001110100')]
 
 
     **Specialization of repeat variables**

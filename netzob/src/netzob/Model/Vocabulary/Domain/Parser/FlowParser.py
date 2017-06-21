@@ -73,7 +73,7 @@ class FlowParser(object):
 
     >>> from netzob.all import *
     >>> payload1 = "hello netzob"
-    >>> payload2 = "hello zoby"
+    >>> payload2 = "hello kurt"
     >>> message = RawMessage(payload1 + payload2)
     >>> f1 = Field(String("hello "), name="f0")
     >>> f2 = Field(String(nbChars=(1, 10)), name="f1")
@@ -81,9 +81,9 @@ class FlowParser(object):
     >>> fp = FlowParser()
     >>> result = fp.parseFlow(message, [s1])
     >>> print([(s.name, values) for (s, values) in result])
-    [('s1', [bitarray('011010000110010101101100011011000110111100100000'), bitarray('011011100110010101110100011110100110111101100010')]), ('s1', [bitarray('011010000110010101101100011011000110111100100000'), bitarray('01111010011011110110001001111001')])]
+    [('s1', [bitarray('011010000110010101101100011011000110111100100000'), bitarray('011011100110010101110100011110100110111101100010')]), ('s1', [bitarray('011010000110010101101100011011000110111100100000'), bitarray('01101011011101010111001001110100')])]
 
-    
+
     >>> from netzob.all import *
     >>> content = "hello netzob" * 100
     >>> message = RawMessage(content)

@@ -153,7 +153,7 @@ class SearchEngine(object):
 
         >>> from netzob.all import *
         >>> stuff = ["protocols", "communication", "games", "tools", "crypto", "people :)"]
-        >>> tools = ["Netzob", "zoby", "toto", "your hand", "a knive"]
+        >>> tools = ["Netzob", "kurt", "toto", "your hand", "a knive"]
         >>> places = ["my office", "school", "your bedroom", "your car", "hell"]
         >>> msgs = [ RawMessage("Reversing {0} with {1} in {2} !".format(s, w, p).encode('utf-8')) for s in stuff for w in tools for p in places]
         >>> sData = [ String("protocol"), String("Reversed"), Integer(10)]
@@ -166,7 +166,7 @@ class SearchEngine(object):
 
         >>> from netzob.all import *
         >>> stuff = [b"protocols", b"communication", b"games", b"tools", b"crypto", b"people :)"]
-        >>> tools = [b"Netzob", b"zoby", b"toto", b"your hand", b"a knive"]
+        >>> tools = [b"Netzob", b"kurt", b"toto", b"your hand", b"a knive"]
         >>> places = [b"my office", b"school", b"your bedroom", b"your car", b"hell"]
         >>> msgs = [ RawMessage("Reversing {0} with {1} in {2}!".format(s, w, p)) for s in stuff for w in tools for p in places]
         >>> print(len(msgs))
