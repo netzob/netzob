@@ -132,8 +132,6 @@ class SequenceMutator(DomainMutator):
             **kwargs)
         self._sequenceLength = None
 
-        self._seed = 0
-
     @typeCheck(int)
     def updateSeed(self, seedValue):
         super().updateSeed(seedValue)
