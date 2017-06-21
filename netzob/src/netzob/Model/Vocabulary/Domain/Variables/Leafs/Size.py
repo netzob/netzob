@@ -70,7 +70,8 @@ class Size(AbstractRelationVariableLeaf):
 
     :param fields: The targeted fields of the relationship.
     :param dataType: Specify that the produced value should be
-                     represented according to this dataType.
+                     represented according to this dataType. If None, default
+                     value is Raw(nbBytes=1).
     :param factor: Specify that the initial size value (always
                        expressed in bits) should be divided by this
                        factor. For example, to express a size in bytes,
@@ -127,8 +128,7 @@ class Size(AbstractRelationVariableLeaf):
     >>> print(mp.parseMessage(msg1, s))
     [bitarray('011011100110010101110100011110100110111101100010'), bitarray('00111011'), bitarray('00000110')]
 
-    In the following example, a size field is declared after its
-    targeted field. A message that does not correspond to the expected
+    A message that does not correspond to the expected
     model is then parsed, thus creating an exception:
 
     >>> msg2  = RawMessage(b"netzob;\x03")

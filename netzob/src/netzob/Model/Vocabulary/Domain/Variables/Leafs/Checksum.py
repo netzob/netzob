@@ -75,6 +75,8 @@ class Checksum(AbstractRelationVariableLeaf):
                          value is CRC16.
     :param dataType: Specify that the produced value should be
                      represented according to this dataType.
+                     If None, default value is Raw(nbBytes=2), as generally
+                     the checksum is on 16bits.
     :param name: The name of the Value variable. If None, the name will be generated.
     :type field: a :class:`list` of :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`, required
     :type checksumName: :class:`str`, optional
@@ -138,7 +140,7 @@ class Checksum(AbstractRelationVariableLeaf):
     b'\xaa\xbbUD'
 
 
-    **Checksum shortcut definitions**
+    **Checksum Shortcut Definitions**
 
     This class also provides shortcuts to define checksum
     relationships. The following shortcuts are available:
@@ -152,11 +154,11 @@ class Checksum(AbstractRelationVariableLeaf):
     * InternetChecksum(fields) -> Checksum(fields, checksumName='InternetChecksum')
 
 
-    **Complete example with ICMP**
+    **Complete Example with ICMP**
 
     The following example illustrates the creation of an ICMP Echo request packet
     with a valid checksum computed on-the-fly.
-    
+
     >>> from netzob.all import *
     >>> typeField = Field(name="Type", domain=Raw(b'\x08'))
     >>> codeField = Field(name="Code", domain=Raw(b'\x00'))
@@ -187,7 +189,7 @@ class Checksum(AbstractRelationVariableLeaf):
 
     def __init__(self, fields, checksumName='CRC16', dataType=None, name=None):
         if dataType is None:
-            dataType = Raw(nbBytes=2)  # The computed checksum is generally of 16 bits
+            dataType = Raw(nbBytes=2)  # The computed checksum is generally on 16 bits
         super(Checksum, self).__init__(self.__class__.__name__,
                                    dataType=dataType,
                                    fieldDependencies=fields,
@@ -197,7 +199,7 @@ class Checksum(AbstractRelationVariableLeaf):
     def relationOperation(self, msg):
 
         msg = msg.tobytes()
-        
+
         self._logger.debug("Computing checksum of '{0}'".format(
             TypeConverter.convert(msg, Raw, HexaString)))
 

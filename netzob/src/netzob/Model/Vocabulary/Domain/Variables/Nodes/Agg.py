@@ -60,7 +60,7 @@ class Agg(AbstractVariableNode):
 
     :param children: The sequence of variable elements contained in
                      the aggregate.
-    :param svas: The SVAS strategy defining how the Agggregate
+    :param svas: The SVAS strategy defining how the Aggregate
                      behaves during abstraction and specialization.
     :type children: a :class:`dict` of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
     :type svas: :class:`str`, optional

@@ -69,6 +69,7 @@ class Hash(AbstractRelationVariableLeaf):
                      value is md5.
     :param dataType: Specify that the produced value should be
                      represented according to this dataType.
+                     If None, default value is Raw(nbBytes=1).
     :param name: The name of the Value variable. If None, the name will be generated.
     :type field: a :class:`list` of :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`, required
     :type hashName: :class:`str`, optional

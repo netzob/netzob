@@ -58,10 +58,10 @@ class Actor(threading.Thread):
     The Actor constructor expects some parameters:
 
     :param automata: The automaton the actor will visit.
-    :param initiator: This flag indicates if the actor initiates the
-                      communication and emits the input symbol, or
-                      waits for another peer to initiate the
-                      connection. Default value is True.
+    :param initiator: If True, indicates that the actor initiates the
+                      communication and emits the input symbol.
+                      If False, indicates that the actor waits for another
+                      peer to initiate the connection. Default value is True.
     :param abstractionLayer: The underlying abstraction layer used to abstract and specialize symbols.
     :type automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`, required
     :type initiator: :class:`boolean`, required
@@ -77,8 +77,9 @@ class Actor(threading.Thread):
     The two actors are Alice and Bob. Alice is the initiator of the
     communication meaning she sends the input symbols while Bob
     answers with the output symbols of the grammar. The grammar is
-    very simple, we first open the channel, and allow Alice to send
-    random time "alice> hello". Bob answers everytime "bob> hello".
+    very simple, we first open the channel, and allows Alice to send
+    "alice> hello" asynchronously. At each received message, Bob answers
+    "bob> hello".
     It's Alice who decides to stop the communication.
 
     >>> from netzob.all import *
