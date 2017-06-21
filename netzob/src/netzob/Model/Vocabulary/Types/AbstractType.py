@@ -404,7 +404,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
         generatedSize = random.randint(minSize, maxSize)
         randomContent = [random.randint(0, 1) for i in range(0, generatedSize)]
-        return bitarray(randomContent, endian=self.endianness)
+        return bitarray(randomContent, endian=self.endianness.value)
 
     @typeCheck(str)
     def mutate(self, prefixDescription=None):
