@@ -54,7 +54,6 @@ from netzob.Fuzzing.Xorshift128plus import Xorshift128plus
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.AbstractType import Sign, UnitSize
-from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 
 from bitarray import bitarray
 
@@ -66,11 +65,11 @@ class BinarySequenceMutator(DomainMutator):
     The BinarySequenceMutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate.
-    :param mode: If set to **MutatorMode.GENERATE**, the generate() method will be
+    :param mode: If set to :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`, :meth:`generate` will be
         used to produce the value.
-        If set to **MutatorMode.MUTATE**, the mutate() method will be used to
+        If set to :attr:`MutatorMode.MUTATE <netzob.Fuzzing.DomainMutator.MutatorMode.MUTATE>`, :meth:`mutate` will be used to
         produce the value (not implemented).
-        Default value is **MutatorMode.GENERATE**.
+        Default value is :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`.
     :param length: The scope of sequence length to generate. If set to
         (min, max), the values will be generate between min and max.
         Default value is **(None, None)**.

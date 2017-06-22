@@ -53,48 +53,17 @@ class Mutator(metaclass=abc.ABCMeta):
 
     This class provides the common properties and API to all inherited mutators.
 
-    **Mutators for message formats fuzzing**
-
-    Mutators may be used during symbol specialization process, in
-    order to fuzz targeted fields variables. Mutators are specified in
-    the ``symbol.specialize()`` through the ``mutators=``
-    parameter. This parameter expects a dict containing fields objects
-    for its keys and Mutators objects for its values. We can provide
-    parameters to mutators by using tuple as values of the dict.
-
     The Mutator constructor expects some parameters:
 
-    :param domain: The domain of the field to mutate, in case of a data
-        mutator.
-    :param automata: The automata to mutate, in case of an automata mutator.
-    :param mode: If set to **MutatorMode.GENERATE**, :meth:`generate` will be
-        used to produce the value.
-        If set to **MutatorMode.MUTATE**, :meth:`mutate` will be used to
-        produce the value (not implemented).
-        Default value is **MutatorMode.GENERATE**.
-    :type domain: :class:`AbstractVariable
-        <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
-    :type automata: :class:`Automata
-        <netzob.Model.Grammar.Automata>`, optional
-    :type mode: :class:`int`, optional
-
-    The following code shows the instantiation of a symbol composed of
-    a string and an integer, and the fuzzing request during the
-    specialization process:
-
-    >>> from netzob.all import *
-    >>> f1 = Field(String())
-    >>> f2 = Field(Integer())
-    >>> symbol = Symbol(fields=[f1, f2])
-    >>> mutators = {f1: StringMutator,
-    ...             f2: (PseudoRandomIntegerMutator, minValue=12, maxValue=20)}  # doctest: +SKIP
-    >>> symbol.specialize(mutators=mutators)  # doctest: +SKIP
-
+    :param seed: the initial seed value of the mutator
+    :type seed: :class:`int`, defaults to :attr:`SEED_DEFAULT`
 
     Constant definitions :
     """
-    SEED_DEFAULT = 10
-    COUNTER_MAX_DEFAULT = 2**16
+
+    # Constants
+    SEED_DEFAULT = 10  #: the default seed value
+    COUNTER_MAX_DEFAULT = 2**16  #: the default max counter value
 
     def __init__(self,
                  seed=SEED_DEFAULT,
@@ -107,7 +76,15 @@ class Mutator(metaclass=abc.ABCMeta):
         self._currentCounter = 0
 
     @typeCheck(int)
-    def updateSeed(self, seedValue):
+    def updateSeed(self,
+                   seedValue  # type: int
+                   ):
+        """
+        Update the seed value and forward value to all nested generators.
+
+        :param seedValue: the new seed value
+        :type seedValue: int
+        """
         self._seed = seedValue
 
     @property
@@ -131,7 +108,7 @@ class Mutator(metaclass=abc.ABCMeta):
         """
         Property (getter/setter).
         The max number of values that the generator has to produce.
-        When this limit is reached, mutate() returns None.
+        When this limit is reached, :meth:`mutate` returns None.
 
         :type: :class:`int`
         """
@@ -146,8 +123,8 @@ class Mutator(metaclass=abc.ABCMeta):
     def currentCounter(self):
         """
         Property (getter).
-        The counter of mutate() calls.
-        In mutate(), this value is compared to counterMax, to determine if the
+        The counter of :meth:`mutate` calls.
+        In :meth:`mutate`, this value is compared to counterMax, to determine if the
         limit of mutation is reached.
 
         :type: :class:`int`
@@ -155,7 +132,7 @@ class Mutator(metaclass=abc.ABCMeta):
         return self._currentCounter
 
     def resetCurrentCounter(self):
-        """Reset the current counter of mutate().
+        """Reset the current counter of :meth:`mutate`.
 
         :type: :class:`int`
         """
@@ -169,7 +146,7 @@ class Mutator(metaclass=abc.ABCMeta):
     def generate(self):
         """This is the fuzz generation method of the field domain. It has to
         be overridden by all the inherited mutators which call the
-        generate() function.
+        :meth:`generate` function.
 
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
@@ -184,9 +161,9 @@ class Mutator(metaclass=abc.ABCMeta):
     def mutate(self, *args):
         """This is the mutation method of the field domain. It has to be
         overridden by all the inherited mutators which call the
-        mutate() function.
+        :meth:`mutate` function.
 
-        If the currentCounter reached counterMax, mutate() returns None.
+        If the currentCounter reached counterMax, :meth:`mutate` returns None.
 
         :param data: The data to mutate.
         :type data: :class:`bitarray.bitarray`

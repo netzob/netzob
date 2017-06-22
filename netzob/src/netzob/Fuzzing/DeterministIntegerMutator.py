@@ -53,7 +53,7 @@ from netzob.Model.Vocabulary.Types.AbstractType import Sign
 class DeterministIntegerMutator(DomainMutator):
     r"""The integer mutator, using determinist generator.
     The seed is an arbitrary value used to set the position of the next
-    integer to return from the values list, when calling generate().
+    integer to return from the values list, when calling :meth:`generate`.
     This position is the seed modulo the number of elements in the list of
     generated values.
 
@@ -61,18 +61,18 @@ class DeterministIntegerMutator(DomainMutator):
 
     :param domain: The domain of the field to mutate.
     :param interval: The scope of values to generate.
-        If set to **MutatorInterval.DEFAULT_INTERVAL**, the values will be generate
+        If set to :attr:`MutatorInterval.DEFAULT_INTERVAL <netzob.Fuzzing.DomainMutator.MutatorInterval.DEFAULT_INTERVAL>`, the values will be generate
         between the min and max values of the domain.
-        If set to **MutatorInterval.FULL_INTERVAL**, the values will be generate in
+        If set to :attr:`MutatorInterval.FULL_INTERVAL <netzob.Fuzzing.DomainMutator.MutatorInterval.FULL_INTERVAL>`, the values will be generate in
         [0, 2^N-1], where N is the bitsize (storage) of the field.
         If it is an tuple of integers (min, max), the values will be generate
         between min and max.
-        Default value is **MutatorInterval.DEFAULT_INTERVAL**.
-    :param mode: If set to **MutatorMode.GENERATE**, the generate() method will be
+        Default value is :attr:`MutatorInterval.DEFAULT_INTERVAL <netzob.Fuzzing.DomainMutator.MutatorInterval.DEFAULT_INTERVAL>`.
+    :param mode: If set to :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`, :meth:`generate` will be
         used to produce the value.
-        If set to **MutatorMode.MUTATE**, the mutate() method will be used to
+        If set to :attr:`MutatorMode.MUTATE <netzob.Fuzzing.DomainMutator.MutatorMode.MUTATE>`, :meth:`mutate` will be used to
         produce the value (not implemented).
-        Default value is **MutatorMode.GENERATE**.
+        Default value is :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`.
     :param bitsize: The size in bits of the memory on which the generated
         values have to be encoded.
     :type domain: :class:`AbstractVariable
@@ -176,7 +176,7 @@ class DeterministIntegerMutator(DomainMutator):
 
     def getValueAt(self, position):
         """Returns the value at the given position in the list of determinist values.
-        if **position** is outside of the list, it returns **None**.
+        if :attr:`position` is outside of the list, it returns :const:`None`.
 
         :return: the value at the given position
         :rtype: :class:`int`

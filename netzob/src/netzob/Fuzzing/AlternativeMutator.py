@@ -59,13 +59,13 @@ class AlternativeMutator(DomainMutator):
     The SequenceMutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate.
-    :param mode: If set to **Mutator.GENERATE**, the generate() method will be
+    :param mode: If set to :attr:`MutatorMode.GENERATE`, :meth:`generate` will be
         used to produce the value.
-        If set to **Mutator.MUTATE**, the mutate() method will be used to
-        produce the value (not implemented).
-        Default value is **Mutator.GENERATE**.
-    :param mutateChild: If **True**, the subfield has to be mutated.
-        Default value is **False**.
+        If set to :attr:`MutatorMode.MUTATE <netzob.Fuzzing.DomainMutator.MutatorMode.MUTATE>`,
+        :meth:`mutate` will be used to produce the value.
+        Default value is :attr:`MutatorMode.GENERATE`.
+    :param mutateChild: If :const:`True`, the subfield has to be mutated.
+        Default value is :const:`False`.
     :type domain: :class:`AbstractVariable
         <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
     :type mode: :class:`int`, optional
@@ -127,7 +127,8 @@ object: '{}'".format(domain))
         alternative list.
         The property allows to change the mutator settings, like the seed.
         It enables to change the position mutator, but with the condition that
-        the class object inherits **PseudoRandomIntegerMutator**.
+        the class object inherits
+        :class:`PseudoRandomIntegerMutator <netzob.Fuzzing.PseudoRandomIntegerMutator>`.
 
         :rtype: :class:`PseudoRandomIntegerMutator \
 <netzob.Fuzzing.PseudoRandomIntegerMutator>`
@@ -142,8 +143,8 @@ object: '{}'".format(domain))
     def maxDepth(self):
         """
         Property (getter/setter).
-        Recursivity limit in mutating an **Alt** type.
-        When this limit is reached in **generate()** method, an exception is
+        Recursivity limit in mutating an :class:`Alt <netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt>` type.
+        When this limit is reached in :meth:`generate` method, an exception is
         raised.
 
         :rtype: :class:`int`
@@ -170,7 +171,7 @@ object: '{}'".format(domain))
     def randomType(self):
         """
         Property (getter).
-        Return the type randomly retrieved by **generate()**.
+        Return the type randomly retrieved by :meth:`generate`.
 
         :type: :class:`bool`
         :raises: :class:`ValueError` if _randomType is None
@@ -185,7 +186,7 @@ called, first")
         """
         Property (getter).
         Return the current depth in searching a type different of
-        **Alt** in **generate()**.
+        :class:`Alt <netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt>` in :meth:`generate`.
 
         :type: :class:`bool`
         :raises: :class:`RecursionError` if _currentDepth is None
@@ -198,8 +199,9 @@ called, first")
     def generate(self):
         """This is the fuzz generation method of the alternative field.
         It selects randomly the type among the alternative list, by using
-        **positionMutator**, and stores it in **randomType**.
-        If the mutation encounters recursivity (**Alt** containing **Alt**),
+        :attr:`positionMutator`, and stores it in :attr:`randomType`.
+        If the mutation encounters recursivity (:class:`Alt <netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt>`
+        containing :class:`Alt <netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt>`),
         infinite loop is avoided by controlling the number of iterations
         **currentDepth** with **maxDepth**.
         If **currentDepth** exceeds **maxDepth**, a RecursionError is raised.

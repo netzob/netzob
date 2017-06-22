@@ -60,11 +60,11 @@ class StringMutator(DomainMutator):
     The StringMutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate.
-    :param mode: If set to **MutatorMode.GENERATE**, the generate() method will be
+    :param mode: If set to :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`, :meth:`generate` will be
         used to produce the value.
-        If set to **MutatorMode.MUTATE**, the mutate() method will be used to
+        If set to :attr:`MutatorMode.MUTATE <netzob.Fuzzing.DomainMutator.MutatorMode.MUTATE>`, :meth:`mutate` will be used to
         produce the value (not implemented).
-        Default value is **MutatorMode.GENERATE**.
+        Default value is :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`.
     :param endChar: The character(s) ending the string.
         Default value is **DEFAULT_END_CHAR**.
     :param length: The scope of string length to generate. If set to

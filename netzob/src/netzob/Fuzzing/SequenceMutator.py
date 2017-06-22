@@ -59,13 +59,13 @@ class SequenceMutator(DomainMutator):
     The SequenceMutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate.
-    :param mode: If set to **MutatorMode.GENERATE**, the generate() method will be
+    :param mode: If set to :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`, :meth:`generate` will be
         used to produce the value.
-        If set to **MutatorMode.MUTATE**, the mutate() method will be used to
+        If set to :attr:`MutatorMode.MUTATE <netzob.Fuzzing.DomainMutator.MutatorMode.MUTATE>`, :meth:`mutate` will be used to
         produce the value (not implemented).
-        Default value is **MutatorMode.GENERATE**.
+        Default value is :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`.
     :param mutateChild: If true, sub-field has to be mutated.
-        Default value is **False**.
+        Default value is :const:`False`.
     :param length: The scope of sequence length to generate. If set to
         (min, max), the values will be generate between min and max.
         Default value is **(None, None)**.
@@ -147,14 +147,14 @@ class SequenceMutator(DomainMutator):
         :raises: :class:`ValueError` if _randomType is None
         """
         if self._sequenceLength is None:
-            raise ValueError("Random type is None : generate() has to be \
-called, first")
+            raise ValueError("Random type is None: generate() has to be called"
+                             ", first")
         return self._sequenceLength
 
     def generate(self):
         """This is the fuzz generation method of the sequence field.
         It generates a sequence length by using lengthMutator.
-        To access this length value, use **sequenceLength** property.
+        To access this length value, use :meth:`getLength`.
 
         :return: None
         :rtype: :class:`None`

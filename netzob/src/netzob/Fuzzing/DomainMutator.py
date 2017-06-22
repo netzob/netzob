@@ -80,18 +80,18 @@ class DomainMutator(Mutator):
     for its keys and Mutators objects for its values. We can provide
     parameters to mutators by using tuple as values of the dict.
 
-    The Mutator constructor expects some parameters:
+    The DomainMutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate, in case of a data
         mutator.
-    :param mode: If set to **MutatorMode.GENERATE**, the generate() method will be
+    :param mode: If set to :attr:`MutatorMode.GENERATE`, :meth:`generate` will be
         used to produce the value.
-        If set to **MutatorMode.MUTATE**, the mutate() method will be used to
+        If set to :attr:`MutatorMode.MUTATE`, :meth:`mutate` will be used to
         produce the value (not implemented).
-        Default value is **MutatorMode.GENERATE**.
+        Default value is :attr:`MutatorMode.GENERATE`.
     :type domain: :class:`AbstractVariable
         <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
-    :type mode: :class:`int`, optional
+    :type mode: :class:`MutatorMode`, optional
 
     The following code shows the instanciation of a symbol composed of
     a string and an integer, and the fuzzing request during the
@@ -104,12 +104,9 @@ class DomainMutator(Mutator):
     >>> mutators = {f1: StringMutator,
     ...             f2: (PseudoRandomIntegerMutator, minValue=12, maxValue=20)}  # doctest: +SKIP
     >>> symbol.specialize(mutators=mutators)  # doctest: +SKIP
-
     """
 
     # Constants
-    SEED_DEFAULT = 10
-    COUNTER_MAX_DEFAULT = 1 << 16  #: :math:`2^16`
     DOMAIN_TYPE = AbstractVariable  # type: Type[AbstractVariable]
 
     def __init__(self,
@@ -143,16 +140,14 @@ class DomainMutator(Mutator):
     def mutate(self, data):
         """This is the mutation method of the field domain. It has to be
         overridden by all the inherited mutators which call the
-        mutate() function.
+        :meth:`mutate` function.
 
-        If the currentCounter reached counterMax, mutate() returns None.
+        If the currentCounter reached counterMax, :meth:`mutate` returns None.
 
         :param data: The data to mutate.
         :type data: :class:`bitarray.bitarray`
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
-
-        :meth:`mutate` is an *abstract method* and must be inherited.
         """
         if data is None or len(data) == 0:
             return data

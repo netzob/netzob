@@ -145,8 +145,8 @@ class AutomataMutator(Mutator):
                             (i.e. symbols). By default, no
                             endingState is defined.
         :type strategy: :class:`AutomataMutatorStrategy`, optional
-        :type startingState: :class:`State <netzob.Model.Grammar.State.State>`, optional
-        :type endingState: :class:`State <netzob.Model.Grammar.State.State>`, optional
+        :type startingState: :class:`State <netzob.Model.Grammar.States.State>`, optional
+        :type endingState: :class:`State <netzob.Model.Grammar.States.State>`, optional
         :return: The mutated automata.
         :rtype: :class:`Automata <netzob.Model.Grammar.Automata>`
         """
