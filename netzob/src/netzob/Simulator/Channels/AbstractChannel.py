@@ -42,6 +42,10 @@ import os
 import fcntl
 import struct
 import time
+import arpreq
+import binascii
+from fcntl import ioctl
+import subprocess
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -105,6 +109,45 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         """Exit the runtime channel context.
         """
         self.close()
+
+    @staticmethod
+    def getRemoteMacAddress(remoteIP):
+        """
+        Retrieve remote MAC address from the remote IP address
+        """
+        dstMacAddr = arpreq.arpreq(remoteIP)
+        if dstMacAddr is not None:
+            dstMacAddr = dstMacAddr.replace(':', '')
+            dstMacAddr = binascii.unhexlify(dstMacAddr)
+        else:
+            # Force ARP resolution
+            p = subprocess.Popen(["/bin/ping", "-c1", remoteIP])
+            p.wait()
+            time.sleep(0.1)
+
+            dstMacAddr = arpreq.arpreq(remoteIP)
+            if dstMacAddr is not None:
+                dstMacAddr = dstMacAddr.replace(':', '')
+                dstMacAddr = binascii.unhexlify(dstMacAddr)
+            else:
+                raise Exception("Cannot resolve IP address to a MAC address for IP: '{}'".format(remoteIP))
+        return dstMacAddr
+
+    @staticmethod
+    def getLocalMacAddress(interface):
+        """
+        Retrieve local MAC address from the network interface name
+        """
+        def get_interface_addr(ifname):
+            s = socket.socket()
+            response = ioctl(s,
+                             0x8927,  # SIOCGIFADDR
+                             struct.pack("16s16x", ifname))
+            s.close()
+            return struct.unpack("16xh6s8x", response)
+
+        srcMacAddr = get_interface_addr(bytes(interface, 'utf-8'))[1]
+        return srcMacAddr
 
     # Static methods used to retrieve local network interface
     # and local IP according to a remote IP

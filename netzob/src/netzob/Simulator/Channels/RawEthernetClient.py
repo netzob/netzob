@@ -73,18 +73,18 @@ class RawEthernetClient(AbstractChannel):
 
     The RawEthernetClient constructor expects some parameters:
 
-    :param remoteIP: The remote IP address to connect to.
-    :param localIP: The local IP address.
+    :param remoteMac: The remote MAC address to connect to.
+    :param localMac: The local MAC address.
     :param upperProtocol: The protocol following IP in the stack.
                           Default value is socket.IPPROTO_TCP.
     :param interface: The network interface to use. It is linked with
-                      the local IP address to use (`localIP` parameter).
+                      the local MAC address to use (`localMac` parameter).
                       Default value is 'eth0'.
     :param timeout: The default timeout of the channel for opening
                     connection and waiting for a message. Default value
                     is 5.0 seconds. To specify no timeout, None value is expected.
-    :type remoteIP: :class:`str`, required
-    :type localIP: :class:`str`, optional
+    :type remoteMac: :class:`str`, required
+    :type localMac: :class:`str`, optional
     :type upperProtocol: :class:`int`, optional
     :type interface: :class:`str`, optional
     :type timeout: :class:`float`, optional
@@ -105,22 +105,19 @@ class RawEthernetClient(AbstractChannel):
 
     @typeCheck(str, int)
     def __init__(self,
-                 remoteIP,
-                 localIP=None,
+                 remoteMac,
+                 localMac=None,
                  upperProtocol=socket.IPPROTO_TCP,
                  interface="eth0",
                  timeout=5.):
         super(RawEthernetClient, self).__init__(isServer=False)
-        self.remoteIP = remoteIP
-        self.localIP = localIP
+        self.remoteMac = remoteMac
+        self.localMac = localMac
         self.upperProtocol = upperProtocol
         self.interface = interface
         self.timeout = timeout
         self.__socket = None
         self.type = AbstractChannel.TYPE_RAWETHERNETCLIENT
-
-        # Header initialization
-        self.initHeader()
 
     def open(self):
         """Open the communication channel. If the channel is a client, it
@@ -206,46 +203,25 @@ class RawEthernetClient(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
-    def get_interface_addr(self, ifname):
-        SIOCGIFHWADDR = 0x8927
-        s = socket.socket()
-        response = ioctl(s, SIOCGIFHWADDR, struct.pack("16s16x",ifname))
-        s.close()
-        return struct.unpack("16xh6s8x", response)
-
-    def initHeader(self):
+    def initIPHeader(self, localIP, remoteIP):
         """Initialize the IP header according to the IP format definition.
 
+        :param localIP: the local IP address
+        :param remoteIP: the remote IP address
+        :type localIP: :class:`str`
+        :type remoteIP: :class:`str`
         """
 
         # Ethernet header
 
-        # Retrieve remote MAC address
-        dstMacAddr = arpreq.arpreq(self.remoteIP)
-        if dstMacAddr is not None:
-            dstMacAddr = dstMacAddr.replace(':', '')
-            dstMacAddr = binascii.unhexlify(dstMacAddr)
-        else:
-            # Force ARP resolution
-            p = subprocess.Popen(["/bin/ping", "-c1", self.remoteIP])
-            p.wait()
-            time.sleep(0.1)
-
-            dstMacAddr = arpreq.arpreq(self.remoteIP)
-            if dstMacAddr is not None:
-                dstMacAddr = dstMacAddr.replace(':', '')
-                dstMacAddr = binascii.unhexlify(dstMacAddr)
-            else:
-                raise Exception("Cannot resolve IP address to a MAC address for IP: '{}'".format(self.remoteIP))
-
-        # Retrieve local MAC address
-        srcMacAddr = self.get_interface_addr(bytes(self.interface, 'utf-8'))[1]
-
-        eth_dst = Field(name='eth.dst', domain=Raw(dstMacAddr))
-        eth_src = Field(name='eth.src', domain=Raw(srcMacAddr))
+        eth_dst = Field(name='eth.dst', domain=Raw(self.remoteMac))
+        eth_src = Field(name='eth.src', domain=Raw(self.localMac))
         eth_type = Field(name='eth.type', domain=Raw(b"\x08\x00"))
 
         # IP header
+
+        self.localIP = localIP
+        self.remoteIP = remoteIP
 
         ip_ver = Field(
             name='ip.version', domain=BitArray(
