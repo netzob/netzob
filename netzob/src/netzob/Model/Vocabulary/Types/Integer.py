@@ -72,7 +72,7 @@ class Integer(AbstractType):
     :type endianness: :class:`Enum`, optional
     :type sign: :class:`Enum`, optional
 
-    Netzob support the following unit sizes:
+    Netzob supports the following unit sizes:
 
     * UnitSize.SIZE_1
     * UnitSize.SIZE_4
@@ -82,12 +82,12 @@ class Integer(AbstractType):
     * UnitSize.SIZE_32
     * UnitSize.SIZE_64
 
-    Netzob support the following endianness:
+    Netzob supports the following endianness:
 
     * Endianness.BIG (default endianness)
     * Endianness.LITTLE
 
-    Netzob support the following signs:
+    Netzob supports the following signs:
 
     * Sign.SIGNED (default sign)
     * Sign.UNSIGNED
