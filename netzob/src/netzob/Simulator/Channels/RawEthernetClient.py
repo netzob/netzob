@@ -36,12 +36,6 @@
 #+---------------------------------------------------------------------------+
 import socket
 from bitarray import bitarray
-import struct
-from fcntl import ioctl
-import arpreq
-import subprocess
-import time
-import binascii
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
