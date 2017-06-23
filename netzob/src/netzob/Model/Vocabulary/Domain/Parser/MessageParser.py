@@ -44,6 +44,7 @@ from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Raw import Raw
@@ -182,6 +183,7 @@ class MessageParser(object):
         dataToParse = message.data
 
         fields = symbol.getLeafFields()
+
         return next(self.parseRaw(dataToParse, fields))
 
     @typeCheck(object)
@@ -209,13 +211,18 @@ class MessageParser(object):
         
         """
 
-        self._logger.debug(
-            "New parsing method executed on {}".format(bitArrayToParse))
+        self._logger.debug("New parsing method executed on '{}'".format(bitArrayToParse.tobytes()))
+
+        # We normalize the variables
+        for field in fields:
+            if field.domain is not None and isinstance(field.domain, AbstractRelationVariableLeaf):
+                self._logger.debug("Normalize field targets for field '{}'".format(field.name))
+                field.domain.normalize_targets()
 
         # building a new parsing path
         currentParsingPath = ParsingPath(bitArrayToParse.copy(),
                                          self.memory.duplicate())
-        currentParsingPath.assignDataToField(bitArrayToParse.copy(), fields[0])
+        currentParsingPath.assignDataToVariable(bitArrayToParse.copy(), fields[0].domain)
 
         # field iterator
         i_current_field = 0
@@ -227,9 +234,21 @@ class MessageParser(object):
             must_consume_everything=must_consume_everything)
 
         for parsingResult in parsingResults:
+            if parsingResult.ok is False:
+                self._logger.debug("Parsing status: {}".format(parsingResult.ok))
+                msg = "PAN The parsed data do not match with the field '{}'".format(field.name)
+                self._logger.debug(msg)
+                raise InvalidParsingPathException(msg)
+
             result = []
             for field in fields:
-                result.append(parsingResult.getDataAssignedToField(field))
+                if parsingResult.isDataAvailableForVariable(field.domain):
+                    field_data = parsingResult.getDataAssignedToVariable(field.domain)
+                else:
+                    msg = "The parsed data do not match with the field '{}'".format(field.name)
+                    self._logger.debug(msg)
+                    raise InvalidParsingPathException(msg)
+                result.append(field_data)
 
             self.memory = parsingResult.memory
 
@@ -254,20 +273,25 @@ class MessageParser(object):
             carnivorous_parsing = False
 
         fp = FieldParser(currentField, carnivorous_parsing)
-        value_before_parsing = parsingPath.getDataAssignedToField(
-            currentField).copy()
+        value_before_parsing = parsingPath.getDataAssignedToVariable(
+            currentField.domain).copy()
 
         for newParsingPath in fp.parse(parsingPath):
 
             try:
-                value_after_parsing = newParsingPath.getDataAssignedToField(
-                    currentField)
+                if newParsingPath.isDataAvailableForVariable(currentField.domain):
+                    value_after_parsing = newParsingPath.getDataAssignedToVariable(currentField.domain)
+                else:
+                    msg = "The parsed data do not match with the field '{}'".format(currentField.name)
+                    self._logger.debug(msg)
+                    raise InvalidParsingPathException(msg)
+
                 remainingValue = value_before_parsing[len(
                     value_after_parsing):].copy()
 
                 if i_current_field < len(fields) - 1:
-                    newParsingPath.assignDataToField(
-                        remainingValue, fields[i_current_field + 1])
+                    newParsingPath.assignDataToVariable(
+                        remainingValue, fields[i_current_field + 1].domain)
 
                     if must_consume_everything is False:
                         generator = self._parseBitArrayWithField(

@@ -134,7 +134,7 @@ class Data(AbstractVariableLeaf):
             raise Exception("Path cannot be None")
 
         #  first we check if current value is assigned to the data
-        if not self.currentValue is None:
+        if self.currentValue is not None:
             return True
 
         # we check if memory referenced its value (memory is priority)
@@ -157,8 +157,7 @@ class Data(AbstractVariableLeaf):
 
         content = parsingPath.getDataAssignedToVariable(self)
 
-        self._logger.debug(
-            "DomainCMP {0} with {1}".format(content, self.dataType))
+        self._logger.debug("DomainCMP {0} with {1}".format(content, self.dataType))
 
         (minSize, maxSize) = self.dataType.size
         if maxSize is None:
@@ -238,9 +237,9 @@ class Data(AbstractVariableLeaf):
                 expectedValue)] == expectedValue:
             parsingPath.addResult(self, expectedValue.copy())
             results.append(parsingPath)
+            self._logger.debug("Data '{}' can be parsed with variable {}".format(content.tobytes(), self))
         else:
-            self._logger.debug("{0} cannot be parsed with variable {1}".format(
-                content, self.id))
+            self._logger.debug("Data '{}' cannot be parsed with variable {}".format(content.tobytes(), self))
         return results
 
     @typeCheck(ParsingPath)
@@ -251,7 +250,7 @@ class Data(AbstractVariableLeaf):
 
         content = parsingPath.getDataAssignedToVariable(self)
 
-        self._logger.debug("Learn {0} with {1}".format(content, self.dataType))
+        self._logger.debug("Learn '{0}' with {1}".format(content.tobytes(), self.dataType))
 
         (minSize, maxSize) = self.dataType.size
         if maxSize is None:
@@ -283,6 +282,8 @@ class Data(AbstractVariableLeaf):
         It creates a VariableSpecializerResult in the provided path that either
         contains the memorized value or the predefined value of the variable"""
 
+        self._logger.debug("Use variable {0}".format(self))
+
         if variableSpecializerPath is None:
             raise Exception("VariableSpecializerPath cannot be None")
 
@@ -305,12 +306,14 @@ class Data(AbstractVariableLeaf):
         It creates a VariableSpecializerResult in the provided path that
         contains a generated value that follows the definition of the Data
         """
-        self._logger.debug("Regenerate Variable {0}".format(self))
+        self._logger.debug("Regenerate variable {0}".format(self))
 
         if variableSpecializerPath is None:
             raise Exception("VariableSpecializerPath cannot be None")
 
         newValue = self.dataType.generate()
+
+        self._logger.debug("Generated value for {}: {}".format(self, newValue))
 
         variableSpecializerPath.addResult(self, newValue)
         return [variableSpecializerPath]
@@ -323,12 +326,15 @@ class Data(AbstractVariableLeaf):
         It memorizes the value present in the path of the variable
         """
 
-        self._logger.debug("RegenerateAndMemorize Variable {0}".format(self))
+        self._logger.debug("Regenerate and memorize variable {0}".format(self))
 
         if variableSpecializerPath is None:
             raise Exception("VariableSpecializerPath cannot be None")
 
         newValue = self.dataType.generate()
+
+        self._logger.debug("Generated value for {}: {}".format(self, newValue))
+
         variableSpecializerPath.memory.memorize(self, newValue)
 
         variableSpecializerPath.addResult(self, newValue)

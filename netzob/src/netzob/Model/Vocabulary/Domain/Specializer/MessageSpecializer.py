@@ -42,6 +42,7 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
@@ -142,9 +143,14 @@ class MessageSpecializer(object):
         # This variable host all the specialization paths
         specializingPaths = [SpecializingPath(memory=self.memory)]
 
-        # First, we specialize the fields for which we have parameterized values (presets)
+        # First, we normalize the variables
+        for field in symbol.getLeafFields():
+            if field.domain is not None and isinstance(field.domain, AbstractRelationVariableLeaf):
+                self._logger.debug("Normalize field targets for field '{}'".format(field.name))
+                field.domain.normalize_targets()
+
+        # Second, we specialize the fields for which we have parameterized values (presets)
         for field in symbol.fields:
-            self._logger.debug("Specializing field {0} with potential preset value".format(field.name))
 
             fieldDomain = field.domain
             if fieldDomain is None:
@@ -153,12 +159,13 @@ class MessageSpecializer(object):
                     format(fieldDomain))
 
             if self.presets is not None and field in self.presets.keys():
+                self._logger.debug("Specializing field {0} with preset value".format(field.name))
 
                 for specializingPath in specializingPaths:
                     specializingPath.addResult(field.domain, self.presets[field])
-                    specializingPath.addResultToField(field, self.presets[field])
+                    #specializingPath.addResultToField(field, self.presets[field])
 
-        # Then, we specialize the other fields (no presets)
+        # Third, we specialize the other fields (no presets)
         for field in symbol.fields:
             self._logger.debug("Specializing field {0}".format(field.name))
 

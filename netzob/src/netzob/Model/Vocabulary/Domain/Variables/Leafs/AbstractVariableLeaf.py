@@ -115,7 +115,7 @@ class AbstractVariableLeaf(AbstractVariable):
         raise NotImplementedError("method learn is not implemented")
 
     def specialize(self, parsingPath, fuzz=None, acceptCallBack=True):
-        """@toto TO BE DOCUMENTED"""
+        """@todo TO BE DOCUMENTED"""
 
         # Fuzzing has priority over generating a legitimate value
         from netzob.Fuzzing.Mutator import Mutator

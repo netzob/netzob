@@ -63,7 +63,7 @@ class Hash(AbstractRelationVariableLeaf):
 
     The Hash constructor expects some parameters:
 
-    :param fields: The targeted fields of the relationship.
+    :param targets: The targeted fields of the relationship.
     :param hashName: The underlying hash function (see below
                      for the list of supported functions). Default
                      value is md5.
@@ -71,7 +71,7 @@ class Hash(AbstractRelationVariableLeaf):
                      represented according to this dataType.
                      If None, default value is Raw(nbBytes=1).
     :param name: The name of the Value variable. If None, the name will be generated.
-    :type field: a :class:`list` of :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`, required
+    :type targets: a :class:`list` of :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`, required
     :type hashName: :class:`str`, optional
     :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, optional
     :type name: :class:`str`, optional
@@ -134,10 +134,10 @@ class Hash(AbstractRelationVariableLeaf):
 
     """
 
-    def __init__(self, fields, hashName='md5', dataType=None, name=None):
+    def __init__(self, targets, hashName='md5', dataType=None, name=None):
         super(Hash, self).__init__(self.__class__.__name__,
                                    dataType=dataType,
-                                   fieldDependencies=fields,
+                                   targets=targets,
                                    name=name)
         self.hashName = hashName
 

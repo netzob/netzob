@@ -69,7 +69,7 @@ class Size(AbstractRelationVariableLeaf):
 
     The Size constructor expects some parameters:
 
-    :param fields: The targeted fields of the relationship.
+    :param targets: The targeted fields of the relationship.
     :param dataType: Specify that the produced value should be
                      represented according to this dataType. If None, default
                      value is Raw(nbBytes=1).
@@ -81,7 +81,7 @@ class Size(AbstractRelationVariableLeaf):
                        should be shifted according to the offset value.
     :param name: The name of the Value variable. If None, the name
                      will be generated.
-    :type fields: a :class:`list` of :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`, required
+    :type targets: a :class:`list` of :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`, required
     :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, optional
     :type factor: :class:`int`, optional
     :type offset: :class:`int`, optional
@@ -129,7 +129,8 @@ class Size(AbstractRelationVariableLeaf):
     >>> print(mp.parseMessage(msg1, s))
     [bitarray('011011100110010101110100011110100110111101100010'), bitarray('00111011'), bitarray('00000110')]
 
-    A message that does not correspond to the expected
+    In the following example, a size field is declared after its
+    targeted field. A message that does not correspond to the expected
     model is then parsed, thus creating an exception:
 
     >>> msg2  = RawMessage(b"netzob;\x03")
@@ -147,6 +148,7 @@ class Size(AbstractRelationVariableLeaf):
     >>> f1 = Field(String(";"), name="f1", )
     >>> f0 = Field(Size(f2), name="f0")
     >>> s  = Symbol(fields=[f0, f1, f2])
+
     >>> msg1  = RawMessage(b"\x06;netzob")
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg1, s))
@@ -162,6 +164,30 @@ class Size(AbstractRelationVariableLeaf):
     Traceback (most recent call last):
       ...
     InvalidParsingPathException: No parsing path returned while parsing 'b'\x03;netzob''
+
+
+    **Size field with fields and variables as target**
+
+    The following examples show the specialization process of a Size
+    field whose targets are both fields and variables:
+
+    >>> d = Data(String(nbChars=20))
+    >>> f0 = Field(domain=d)
+    >>> f1 = Field(String(";"))
+    >>> f2 = Field(Size([d, f1]))
+    >>> s = Symbol(fields=[f0, f1, f2])
+    >>> res = s.specialize()
+    >>> b'\x15' in res
+    True
+
+    >>> d = Data(String(nbChars=20))
+    >>> f2 = Field(domain=d)
+    >>> f1 = Field(String(";"))
+    >>> f0 = Field(Size([f1, d]))
+    >>> s = Symbol(fields=[f0, f1, f2])
+    >>> res = s.specialize()
+    >>> b'\x15' in res
+    True
 
 
     **Size field specialization**
@@ -241,14 +267,12 @@ class Size(AbstractRelationVariableLeaf):
     """
 
     def __init__(self,
-                 fields,
+                 targets,
                  dataType=None,
                  factor=1./8,
                  offset=0,
                  name=None):
-        if isinstance(fields, AbstractField):
-            fields = [fields]
-        super(Size, self).__init__(self.__class__.__name__, fieldDependencies=fields, name=name)
+        super(Size, self).__init__(self.__class__.__name__, targets=targets, name=name)
         if dataType is None:
             dataType = Raw(nbBytes=1)
         self.dataType = dataType
@@ -269,53 +293,53 @@ class Size(AbstractRelationVariableLeaf):
 
     @typeCheck(GenericPath)
     def computeExpectedValue(self, parsingPath):
-        self._logger.debug("compute expected value for Size field")
+        self._logger.debug("Compute expected value for Size variable")
 
         # first checks the pointed fields all have a value
         hasNeededData = True
         size = 0
-        remainingFields = []
+        remainingVariables = []
 
-        for field in self.fieldDependencies:
+        for variable in self.targets:
 
-            if field.domain == self:
-                remainingFields.append(field)
+            if variable == self:
+                remainingVariables.append(variable)
             else:
 
-                # Retrieve the size of the targeted field, if it not a Data and has a fixed size
-                if not isinstance(field.domain, Data):
-                    if hasattr(field.domain, "dataType"):
-                        minSize, maxSize = field.domain.dataType.size
+                # Retrieve the size of the targeted variable, if it not a Data and has a fixed size
+                if not isinstance(variable, Data):
+                    if hasattr(variable, "dataType"):
+                        minSize, maxSize = variable.dataType.size
                         if maxSize is not None and minSize == maxSize:
                             size += minSize
                             continue
                         else:
-                            raise Exception("The following targeted field must have a fixed size: {0}".format(field.name))
+                            raise Exception("The following targeted variable must have a fixed size: {0}".format(variable.name))
 
                 # Else, retrieve its value if it exists
-                if parsingPath.isDataAvailableForVariable(field.domain):
-                    remainingFields.append(field)
+                if parsingPath.isDataAvailableForVariable(variable):
+                    remainingVariables.append(variable)
                 else:
-                    self._logger.debug("The following field domain has no value: '{0}'".format(field.domain))
+                    self._logger.debug("Cannot compute the relation, because the following target variable has no value: '{0}'".format(variable))
                     hasNeededData = False
                     break
 
         if not hasNeededData:
             raise Exception("Expected value cannot be computed, some dependencies are missing for domain {0}".format(self))
 
-        for field in remainingFields:
+        for variable in remainingVariables:
 
-            # Retrieve field value
-            if field.domain is self:
-                fieldValue = self.dataType.generate()
+            # Retrieve variable value
+            if variable is self:
+                value = self.dataType.generate()
             else:
-                fieldValue = parsingPath.getDataAssignedToVariable(
-                    field.domain)
-            if fieldValue is None:
+                value = parsingPath.getDataAssignedToVariable(variable)
+
+            if value is None:
                 break
 
-            # Retrieve length of field value
-            size += len(fieldValue)
+            # Retrieve length of variable value
+            size += len(value)
 
         size = int(size * self.factor + self.offset)
         size_raw = TypeConverter.convert(size,
@@ -335,13 +359,13 @@ class Size(AbstractRelationVariableLeaf):
         while len(b) > self.dataType.size[1]:
             b.remove(0)
 
-        self._logger.debug("computed value for Size field: '{}'".format(b))
+        self._logger.debug("Computed value for {}: '{}'".format(self, b.tobytes()))
         return b
 
     def __str__(self):
         """The str method."""
         return "Size({0}) - Type:{1}".format(
-            str([f.name for f in self.fieldDependencies]), self.dataType)
+            str([v.name for v in self.targets]), self.dataType)
 
     @property
     def dataType(self):
@@ -360,7 +384,7 @@ class Size(AbstractRelationVariableLeaf):
         size = dataType.unitSize
         if size is None:
             raise ValueError(
-                "The datatype of a size field must declare its unitSize")
+                "The datatype of a Size field must declare its unitSize")
         self.__dataType = dataType
 
     @property

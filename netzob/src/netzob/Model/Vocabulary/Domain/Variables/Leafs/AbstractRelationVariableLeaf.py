@@ -49,6 +49,7 @@ from bitarray import bitarray
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
 from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
@@ -61,6 +62,8 @@ from netzob.Model.Vocabulary.Types.HexaString import HexaString
 from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
+class RelationException(Exception):
+    pass
 
 @NetzobLogger
 class AbstractRelationVariableLeaf(AbstractVariableLeaf):
@@ -68,16 +71,11 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
 
     """
 
-    def __init__(self, varType, dataType=None, fieldDependencies=None, name=None):
+    def __init__(self, varType, dataType=None, targets=None, name=None):
         super(AbstractRelationVariableLeaf, self).__init__(
             varType, name, svas=SVAS.VOLATILE)
 
-        # Handle fieldDependencies
-        if fieldDependencies is None:
-            fieldDependencies = []
-        elif isinstance(fieldDependencies, AbstractField):
-            fieldDependencies = [fieldDependencies]
-        self.fieldDependencies = fieldDependencies
+        self.targets = targets
 
         # Handle dataType
         if dataType is None:
@@ -99,7 +97,47 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
     def __str__(self):
         """The str method."""
         return "Relation({0}) - Type:{1}".format(
-            str([f.name for f in self.fieldDependencies]), self.dataType)
+            str([v.name for v in self.targets]), self.dataType)
+
+    def normalize_targets(self):
+        # Normalize targets (so that targets now only contain variables)
+        new_targets = []
+        if self.targets is None:
+            new_targets = []
+
+        elif isinstance(self.targets, AbstractField):
+            leafFields = self.targets.getLeafFields()
+            if len(leafFields) > 0:
+                for field in leafFields:
+                    if field.domain is not None:
+                        new_targets.append(field.domain)
+            elif self.targets.domain is not None:
+                new_targets = [self.targets.domain]
+
+        elif isinstance(self.targets, AbstractVariable):
+            new_targets = [self.targets]
+
+        elif isinstance(self.targets, list) and len(self.targets) > 0:
+            for target in self.targets:
+
+                if isinstance(target, AbstractField):
+                    leafFields = target.getLeafFields()
+                    if len(leafFields) > 0:
+                        for field in leafFields:
+                            if field.domain is not None:
+                                new_targets.append(field.domain)
+                    elif target.domain is not None:
+                        new_targets.append(target.domain)
+
+                elif isinstance(target, AbstractVariable):
+                    new_targets.append(target)
+
+                else:
+                    raise Exception("Targeted object '{}' sould be a Field or Variable, not a '{}'".format(repr(target), type(target)))
+        else:
+            raise Exception("Targeted object '{}' sould be a Field or Variable, not a '{}'".format(repr(target), type(target)))
+
+        self.__targets = new_targets
 
     @typeCheck(GenericPath)
     def isDefined(self, path):
@@ -150,7 +188,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         if expectedValue is None:
             # the expected value cannot be computed
             # we add a callback
-            self._addCallBacksOnUndefinedFields(parsingPath)
+            self._addCallBacksOnUndefinedVariables(parsingPath)
         else:
             if possibleValue[:len(expectedValue)] == expectedValue:
                 parsingPath.addResult(self, expectedValue.copy())
@@ -196,43 +234,47 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         try:
             expectedValue = self.computeExpectedValue(parsingPath)
             if possibleValue[:len(expectedValue)] == expectedValue:
-                self._logger.debug("Callback executed with success")
+                self._logger.debug("The target variables contain the expected value '{}'".format(expectedValue.tobytes()))
+                parsingPath.ok = True
                 parsingPath.addResult(self, expectedValue.copy())
                 results.append(parsingPath)
             else:
-                self._logger.debug("Executed callback has failed.")
+                msg = "The current variable data '{}' do not contain the expected value '{}'".format(possibleValue.tobytes(), expectedValue.tobytes())
+                self._logger.debug(msg)
+                raise RelationException()
+        except RelationException as e:
+            parsingPath.ok = False
         except Exception as e:
             self._logger.debug("The expected value cannot be computed. Reason: '{}'".format(e))
             # the expected value cannot be computed
             if acceptCallBack:
                 # we add a callback
-                self._addCallBacksOnUndefinedFields(parsingPath)
+                self._addCallBacksOnUndefinedVariables(parsingPath)
                 # register the remaining data
                 parsingPath.addResult(self, possibleValue.copy())
                 results.append(parsingPath)
             else:
-                raise Exception("no more callback accepted.")
+                raise Exception("No more callback accepted")
 
         return results
 
     @typeCheck(GenericPath)
-    def _addCallBacksOnUndefinedFields(self, parsingPath):
+    def _addCallBacksOnUndefinedVariables(self, parsingPath):
         """Identify each dependency field that is not yet defined and register a
         callback to try to recompute the value """
 
-        parsingPath.registerFieldCallBack(self.fieldDependencies, self)
+        parsingPath.registerVariablesCallBack(self.targets, self)
 
     @typeCheck(GenericPath)
     def computeExpectedValue(self, parsingPath):
-        self._logger.debug(
-            "compute expected value for relation field")
+        self._logger.debug("Compute expected value for relation field")
 
-        # first checks the pointed fields all have a value
+        # first checks the pointed variables all have a value
         hasValue = True
         errorMessage = ""
-        for field in self.fieldDependencies:
-            if field.domain is not self and not parsingPath.isDataAvailableForVariable(field.domain):
-                errorMessage = "The following field domain has no value: '{0}'".format(field.domain)
+        for variable in self.targets:
+            if variable is not self and not parsingPath.isDataAvailableForVariable(variable):
+                errorMessage = "The following variable has no value: '{0}'".format(variable)
                 self._logger.debug(errorMessage)
                 hasValue = False
 
@@ -241,33 +283,32 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
                 "Expected value cannot be computed, some dependencies are missing for domain {0}. Error: '{}'".
                 format(self, errorMessage))
 
-        fieldValues = []
-        for field in self.fieldDependencies:
-            if field.domain is self:
-                #fieldValue = self.dataType.generate()
-                fieldSize = random.randint(field.domain.dataType.size[0], field.domain.dataType.size[1])
-                fieldValue = TypeConverter.convert(b"\x00" * int(fieldSize / 8), Raw, BitArray)
+        values = []
+        for variable in self.targets:
+            if variable is self:
+                size = random.randint(variable.dataType.size[0], variable.dataType.size[1])
+                value = TypeConverter.convert(b"\x00" * int(size / 8), Raw, BitArray)
             else:
-                fieldValue = parsingPath.getDataAssignedToVariable(field.domain)
+                value = parsingPath.getDataAssignedToVariable(variable)
 
-            if fieldValue is None:
-                raise Exception("Cannot generate value for field: '{}'".format(field.name))
+            if value is None:
+                raise Exception("Cannot generate value for variable: '{}'".format(variable.name))
 
-            if fieldValue.tobytes() == TypeConverter.convert("PENDING VALUE", String, BitArray).tobytes():
+            if value.tobytes() == TypeConverter.convert("PENDING VALUE", String, BitArray).tobytes():
                 # Handle case where field value is not currently known.
-                raise Exception("Target field '{}' has a pending value".format(field.name))
+                raise Exception("Target variable '{}' has a pending value".format(variable.name))
             else:
-                fieldValues.append(fieldValue)
+                values.append(value)
 
-        # Aggregate all field value in a uniq bitarray object
-        concatFieldValues = bitarray('')
-        for f in fieldValues:
-            concatFieldValues += f
+        # Aggregate all values in a uniq bitarray object
+        concatValues = bitarray('')
+        for f in values:
+            concatValues += f
 
         # Compute the relation result
-        result = self.relationOperation(concatFieldValues)
+        result = self.relationOperation(concatValues)
 
-        self._logger.debug("Computed value for relation field: '{}'".format(result))
+        self._logger.debug("Computed value for relation variable: '{}'".format(result))
         return result
 
     @typeCheck(SpecializingPath)
@@ -283,7 +324,11 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
 
         try:
             newValue = self.computeExpectedValue(variableSpecializerPath)
-            variableSpecializerPath.addResult(self, newValue.copy())
+
+            if newValue is not None:
+                variableSpecializerPath.addResult(self, newValue.copy())
+            else:
+                raise Exception("Target value is not defined currently")
         except Exception as e:
             self._logger.debug(
                 "Cannot specialize since no value is available for the relation dependencies, we create a callback function in case it can be computed later: {0}".
@@ -294,8 +339,8 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
 
             if moreCallBackAccepted:
                 #                for field in self.fields:
-                variableSpecializerPath.registerFieldCallBack(
-                    self.fieldDependencies, self, parsingCB=False)
+                variableSpecializerPath.registerVariablesCallBack(
+                    self.targets, self, parsingCB=False)
             else:
                 raise e
 
@@ -307,24 +352,20 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         raise NotImplementedError("Method relationOperation() has to be implemented in sub-classes")
 
     @property
-    def fieldDependencies(self):
-        """A list of fields that are required before computing the value of this relation
+    def targets(self):
+        """A list of variables that are required before computing the value of this relation
 
-        :type: a list of :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
+        :type: a list of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
         """
-        return self.__fieldDependencies
+        return self.__targets
 
-    @fieldDependencies.setter
-    @typeCheck(list)
-    def fieldDependencies(self, fields):
-        if fields is None:
-            fields = []
-        for field in fields:
-            if not isinstance(field, AbstractField):
-                raise TypeError("At least one specified field is not a Field.")
-        self.__fieldDependencies = []
-        for f in fields:
-            self.__fieldDependencies.extend(f.getLeafFields())
+    @targets.setter
+    def targets(self, targets):
+        if isinstance(targets, AbstractField):
+            targets = [targets]
+        elif isinstance(targets, AbstractVariable):
+            targets = [targets]
+        self.__targets = targets
 
     @property
     def dataType(self):

@@ -63,14 +63,14 @@ class GenericPath(object):
                  memory=None,
                  dataAssignedToField=None,
                  dataAssignedToVariable=None,
-                 fieldsCallbacks=None):
+                 variablesCallbacks=None):
         self.name = str(uuid.uuid4())
         self.memory = memory
 
-        if fieldsCallbacks is not None:
-            self._fieldsCallbacks = fieldsCallbacks
+        if variablesCallbacks is not None:
+            self._variablesCallbacks = variablesCallbacks
         else:
-            self._fieldsCallbacks = []
+            self._variablesCallbacks = []
 
         if dataAssignedToField is None:
             self._dataAssignedToField = {}
@@ -100,98 +100,9 @@ class GenericPath(object):
 
         self.assignDataToVariable(result, variable)
 
-    def addResultToField(self, field, result):
-        """This method can be used to register the bitarray obtained after having parsed a field (i.e. multiple variables)
-
-        >>> from netzob.all import *
-        >>> path = GenericPath()
-        >>> field = Field(String())
-        >>> print(path.isDataAvailableForField(field))
-        False
-        >>> path.addResultToField(field, TypeConverter.convert("test", String, BitArray))
-        >>> print(path.isDataAvailableForField(field))
-        True
-        >>> print(path.getDataAssignedToField(field))
-        bitarray('01110100011001010111001101110100')
-
-        """
-        self.assignDataToField(result, field)
-
-        if not self._triggerFieldCallbacks(field):
-            raise Exception(
-                "Impossible to assign this result to the field (CB has failed)")
-
-    def getDataAssignedToField(self, field):
-        """Return the value assigned to the specified field
-
-        >>> from netzob.all import *
-        >>> path = GenericPath()
-        >>> f0 = Field(String())
-        >>> print(path.isDataAvailableForField(f0))
-        False
-        >>> path.addResultToField(f0, TypeConverter.convert("test", String, BitArray))
-        >>> print(path.getDataAssignedToField(f0))
-        bitarray('01110100011001010111001101110100')
-        """
-
-        if field is None:
-            raise Exception("Field cannot be None")
-
-        if field.id in self._dataAssignedToField:
-            return self._dataAssignedToField[field.id]
-        elif self.memory is not None and self.memory.hasValue(field.domain):
-            return self.memory.getValue(field.domain)
-
-        raise Exception("No data is assigned to field '{0}'".format(field.id))
-
-    def assignDataToField(self, data, field):
-        """Assign the specified data to the specified field.
-        This method is wrapped by the `getDataAssignedToField` method.
-
-        >>> from netzob.all import *
-        >>> path = GenericPath()
-        >>> f0 = Field(String())
-        >>> print(path.isDataAvailableForField(f0))
-        False
-        >>> path.assignDataToField(TypeConverter.convert("test", String, BitArray), f0)    
-        >>> print(path.getDataAssignedToField(f0))
-        bitarray('01110100011001010111001101110100')
-        """
-        if data is None:
-            raise Exception("Data cannot be None")
-        if field is None:
-            raise Exception("Field cannot be None")
-
-        self._dataAssignedToField[field.id] = data
-
-    def isDataAvailableForField(self, field):
-        if field is None:
-            raise Exception("Field cannot be None")
-        if field.id in self._dataAssignedToField:
-            return True
-        if self.memory is not None:
-            return self.memory.hasValue(field.domain)
-        return False
-
-    def removeAssignedDataToField(self, field):
-        """Remove predefined data assigned to the specified field
-
-        >>> from netzob.all import *
-        >>> path = GenericPath()
-        >>> f0 = Field(String())
-        >>> print(path.isDataAvailableForField(f0))
-        False
-        >>> path.assignDataToField(TypeConverter.convert("netzob", String, BitArray), f0)
-        >>> print(path.isDataAvailableForField(f0))
-        True
-        >>> path.removeAssignedDataToField(f0)
-        >>> print(path.isDataAvailableForField(f0))
-        False
-        """
-
-        if field is None:
-            raise Exception("Field cannot be None")
-        del self._dataAssignedToField[field.id]
+        if not self._triggerVariablesCallbacks(variable):
+            pass
+            #raise Exception("Impossible to assign this result to the variable (CB has failed)")
 
     @typeCheck(AbstractVariable)
     def getDataAssignedToVariable(self, variable):
@@ -210,17 +121,23 @@ class GenericPath(object):
 
         if variable is None:
             raise Exception("Variable cannot be None")
-        if variable.id not in self._dataAssignedToVariable:
-            raise Exception(
-                "No data is assigned to variable '{0}'".format(variable.name))
+        if variable.id in self._dataAssignedToVariable:
+            return self._dataAssignedToVariable[variable.id]
+        elif self.memory is not None and self.memory.hasValue(variable):
+            return self.memory.getValue(variable)
 
-        return self._dataAssignedToVariable[variable.id]
+        raise Exception(
+            "No data is assigned to variable '{0}'".format(variable.name))
 
     @typeCheck(AbstractVariable)
     def isDataAvailableForVariable(self, variable):
         if variable is None:
             raise Exception("Variable cannot be None")
-        return variable.id in self._dataAssignedToVariable
+        if variable.id in self._dataAssignedToVariable:
+            return True
+        if self.memory is not None:
+            return self.memory.hasValue(variable)
+        return False
 
     @typeCheck(bitarray, AbstractVariable)
     def assignDataToVariable(self, data, variable):
@@ -233,28 +150,45 @@ class GenericPath(object):
 
     @typeCheck(AbstractVariable)
     def removeAssignedDataToVariable(self, variable):
+        self._logger.debug("Remove assigned data to variable: {}".format(variable))
         if variable is None:
             raise Exception("Variable cannot be None")
 
         del self._dataAssignedToVariable[variable.id]
 
-    def registerFieldCallBack(self, fields, variable, parsingCB=True):
-        if fields is None:
-            raise Exception("Fields cannot be None")
+    @typeCheck(AbstractVariable)
+    def removeAssignedDataToVariableAndChildren(self, variable):
+        self._logger.debug("Remove assigned data to variable (and its children): {}".format(variable))
         if variable is None:
             raise Exception("Variable cannot be None")
 
-        if len(fields) == 0:
+        if variable.id in self._dataAssignedToVariable:
+            del self._dataAssignedToVariable[variable.id]
+
+        if self.memory is not None and self.memory.hasValue(variable):
+            self.memory.forget(variable)
+
+        if hasattr(variable, 'children'):
+            for child in variable.children:
+                self.removeAssignedDataToVariableAndChildren(child)
+
+    def registerVariablesCallBack(self, targetVariables, currentVariable, parsingCB=True):
+        if targetVariables is None:
+            raise Exception("Target variables cannot be None")
+        if currentVariable is None:
+            raise Exception("Current variable cannot be None")
+
+        if len(targetVariables) == 0:
             raise Exception(
-                "At least one field must be defined in the callback")
+                "At least one target variable must be defined in the callback")
 
-        self._fieldsCallbacks.append((fields, variable, parsingCB))
+        self._variablesCallbacks.append((targetVariables, currentVariable, parsingCB))
 
-    def _triggerFieldCallbacks(self, field):
+    def _triggerVariablesCallbacks(self, triggeringVariable):
 
         moreCallBackFound = True
 
-        # Try n-times to trigger callbacks as there can have deadlocks
+        # Try n-times to trigger callbacks in different orders as there can have deadlocks
         # between mutually linked domain definitions
         for i in range(10):
             if moreCallBackFound is False:
@@ -266,31 +200,35 @@ class GenericPath(object):
             # Mix the callbacks functions, as we want to call them
             # randomly in order to eliminate potential deadlocks due
             # to mutually linked domain definitions
-            shuffle(self._fieldsCallbacks)
+            shuffle(self._variablesCallbacks)
 
-            for (fields, variable, parsingCB) in self._fieldsCallbacks:
-                fieldsHaveValue = True
-                for f in fields:
-                    if not self.isDataAvailableForField(f):
-                        fieldsHaveValue = False
-                if fieldsHaveValue:
-                    self._logger.debug(
-                        "Found a callback that must be able to trigger (all its fields are set)"
-                    )
-                    callBackToExecute = (fields, variable, parsingCB)
+            for (targetVariables, currentVariable, parsingCB) in self._variablesCallbacks:
+
+                if not triggeringVariable in targetVariables:
+                    break
+
+                variablesHaveValue = True
+                for v in targetVariables:
+                    if not self.isDataAvailableForVariable(v):
+                        variablesHaveValue = False
+                if variablesHaveValue:
+                    self._logger.debug("Found a callback that must be able to trigger (all its target variables are set)")
+                    callBackToExecute = (targetVariables, currentVariable, parsingCB)
                     break
 
             if callBackToExecute is not None:
                 moreCallBackFound = True
-                (fields, variable, parsingCB) = callBackToExecute
+                i_cbk = self._variablesCallbacks.index(callBackToExecute)
+                self._variablesCallbacks.pop(i_cbk)
+                (targetVariables, currentVariable, parsingCB) = callBackToExecute
                 if parsingCB:
-                    resultingPaths = variable.parse(self, acceptCallBack=False)
+                    resultingPaths = currentVariable.parse(self, acceptCallBack=False)
                 else:
-                    resultingPaths = variable.specialize(self, acceptCallBack=True)
+                    resultingPaths = currentVariable.specialize(self, acceptCallBack=True)
                 if len(resultingPaths) == 0:
+                    self._variablesCallbacks.insert(i_cbk, callBackToExecute)
                     return False
 
-                self._fieldsCallbacks.remove(callBackToExecute)
         return True
 
     @property

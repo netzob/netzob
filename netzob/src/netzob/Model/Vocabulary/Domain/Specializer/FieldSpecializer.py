@@ -61,30 +61,30 @@ class FieldSpecializer(object):
 
     >>> f = Field("Hello")
     >>> fs = FieldSpecializer(f)
-    >>> print(TypeConverter.convert(fs.specialize()[0].getDataAssignedToField(f), BitArray, Raw))
+    >>> print(TypeConverter.convert(fs.specialize()[0].getDataAssignedToVariable(f.domain), BitArray, Raw))
     b'Hello'
 
     >>> f = Field(String(nbChars=10))
     >>> fs = FieldSpecializer(f)
-    >>> print(len(fs.specialize()[0].getDataAssignedToField(f)))
+    >>> print(len(fs.specialize()[0].getDataAssignedToVariable(f.domain)))
     80
 
     >>> f = Field(String(nbChars=(4, 10)))
     >>> fs = FieldSpecializer(f)
-    >>> print(32<=len(fs.specialize()[0].getDataAssignedToField(f))<=80)
+    >>> print(32<=len(fs.specialize()[0].getDataAssignedToVariable(f.domain))<=80)
     True
 
     >>> d = Alt([String("netzob"), String("kurt")])
     >>> f = Field(d)
     >>> fs = FieldSpecializer(f)
-    >>> val = set([TypeConverter.convert(fs.specialize()[0].getDataAssignedToField(f), BitArray, String) for x in range(100)])
+    >>> val = set([TypeConverter.convert(fs.specialize()[0].getDataAssignedToVariable(f.domain), BitArray, String) for x in range(100)])
     >>> print(sorted(val))
     ['kurt', 'netzob']
 
     >>> d = Agg([String("hello"), String(" "), Alt([String("netzob"), String("kurt")])])
     >>> f = Field(d)
     >>> fs = FieldSpecializer(f)
-    >>> val = set([TypeConverter.convert(fs.specialize()[0].getDataAssignedToField(f), BitArray, String) for x in range(100)])
+    >>> val = set([TypeConverter.convert(fs.specialize()[0].getDataAssignedToVariable(f.domain), BitArray, String) for x in range(100)])
     >>> print(sorted(val))
     ['hello kurt', 'hello netzob']
 
@@ -100,11 +100,11 @@ class FieldSpecializer(object):
          |--   Data (String=kurt! ((None, None)))
     >>> fs = FieldSpecializer(fpayload)
     >>> result = fs.specialize()[0]
-    >>> TypeConverter.convert(result.getDataAssignedToField(fpayload), BitArray, String)
+    >>> TypeConverter.convert(result.getDataAssignedToVariable(fpayload.domain), BitArray, String)
     'hello kurt!'
-    >>> TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, String)
+    >>> TypeConverter.convert(result.getDataAssignedToVariable(f1.domain), BitArray, String)
     'hello '
-    >>> TypeConverter.convert(result.getDataAssignedToField(f2), BitArray, String)
+    >>> TypeConverter.convert(result.getDataAssignedToVariable(f2.domain), BitArray, String)
     'kurt!'
 
     """
@@ -135,7 +135,7 @@ class FieldSpecializer(object):
         if self.arbitraryValue is not None:
             # In case an arbitrary value is specified, we consider it for field specialization
             specializingPath.addResult(self.field.domain, self.arbitraryValue)
-            specializingPath.addResultToField(self.field, self.arbitraryValue)
+            #specializingPath.addResultToField(self.field, self.arbitraryValue)
             specializingPaths = [specializingPath]
         elif len(self.field.fields) > 0:
             # If no arbitrary value is specified, we specialize the sub-fields if there are any
@@ -172,7 +172,7 @@ class FieldSpecializer(object):
                     value += childResult.copy()
 
             resultPath.addResult(self.field.domain, value)
-            resultPath.addResultToField(self.field, value)
+            #resultPath.addResultToField(self.field, value)
 
         return resultPaths
 
@@ -206,7 +206,7 @@ class FieldSpecializer(object):
             self._logger.debug(
                 "FieldSpecializer Result: {0}".format(assignedData))
 
-            resultSpecializingPath.addResultToField(self.field, assignedData)
+            resultSpecializingPath.addResult(self.field.domain, assignedData)
 
         return resultSpecializingPaths
 

@@ -69,7 +69,7 @@ class Checksum(AbstractRelationVariableLeaf):
 
     The Checksum constructor expects some parameters:
 
-    :param fields: The targeted fields of the relationship.
+    :param targets: The targeted fields of the relationship.
     :param checksumName: The underlying checksum function (see below
                          for the list of supported functions). Default
                          value is CRC16.
@@ -78,7 +78,7 @@ class Checksum(AbstractRelationVariableLeaf):
                      If None, default value is Raw(nbBytes=2), as generally
                      the checksum is on 16bits.
     :param name: The name of the Value variable. If None, the name will be generated.
-    :type field: a :class:`list` of :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`, required
+    :type targets: a :class:`list` of :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`, required
     :type checksumName: :class:`str`, optional
     :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, optional
     :type name: :class:`str`, optional
@@ -187,12 +187,12 @@ class Checksum(AbstractRelationVariableLeaf):
 
     """
 
-    def __init__(self, fields, checksumName='CRC16', dataType=None, name=None):
+    def __init__(self, targets, checksumName='CRC16', dataType=None, name=None):
         if dataType is None:
             dataType = Raw(nbBytes=2)  # The computed checksum is generally on 16 bits
         super(Checksum, self).__init__(self.__class__.__name__,
                                    dataType=dataType,
-                                   fieldDependencies=fields,
+                                   targets=targets,
                                    name=name)
         self.checksumName = checksumName
 

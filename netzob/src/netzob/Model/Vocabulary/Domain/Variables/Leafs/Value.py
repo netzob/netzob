@@ -65,12 +65,12 @@ class Value(AbstractRelationVariableLeaf):
 
     The Value constructor expects some parameters:
 
-    :param field: The targeted field of the relationship.
+    :param target: The targeted field of the relationship.
     :param name: The name of the Value variable. If None, the name
                      will be generated.
     :param operation: An optional transformation operation to be
                       applied on the targeted data.
-    :type field: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`, required
+    :type target: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`, required
     :type name: :class:`str`, optional
     :type operation: :class:`Callable <collections.abc.Callable>`, optional
 
@@ -119,12 +119,26 @@ class Value(AbstractRelationVariableLeaf):
      bitarray('00100001')]
 
 
+    **Value field with a variable as a target**
+
+    The following examples show the specialization process of a Value
+    field whose target is a variable:
+
+    >>> d = Data(String("netzob"))
+    >>> f1 = Field(domain=d, name="f1")
+    >>> f2 = Field(String(";"), name="f2")
+    >>> f3 = Field(Value(d), name="f3")
+    >>> f4 = Field(String("!"), name="f4")
+    >>> s = Symbol(fields=[f1, f2, f3, f4])
+    >>> print(s.specialize())
+    b'netzob;netzob!'
+
+
     **Specialization of Value objects**
 
     The following examples show the specialization process of Value
     objects:
 
-    >>> from netzob.all import *
     >>> f1 = Field(String("netzob"), name="f1")
     >>> f2 = Field(String(";"), name="f2")
     >>> f3 = Field(Value(f1), name="f3")
@@ -133,7 +147,6 @@ class Value(AbstractRelationVariableLeaf):
     >>> print(s.specialize())
     b'netzob;netzob!'
     
-    >>> from netzob.all import *
     >>> f3 = Field(String("netzob"), name="f3")
     >>> f2 = Field(String(";"), name="f2")
     >>> f1 = Field(Value(f3), name="f1")
@@ -184,11 +197,9 @@ class Value(AbstractRelationVariableLeaf):
 
     """
 
-    def __init__(self, field, name=None, operation=None):
-        if not isinstance(field, AbstractField):
-            raise Exception("Expecting a field")
+    def __init__(self, target, name=None, operation=None):
         super(Value, self).__init__(
-            self.__class__.__name__, fieldDependencies=[field], name=name)
+            self.__class__.__name__, targets=[target], name=name)
         self.operation = operation
 
     @typeCheck(GenericPath)
@@ -211,8 +222,8 @@ class Value(AbstractRelationVariableLeaf):
         if expectedValue is None:
 
             # lets compute what could be the possible value
-            fieldDep = self.fieldDependencies[0]
-            (minSizeDep, maxSizeDep) = fieldDep.domain.dataType.size
+            variable = self.targets[0]
+            (minSizeDep, maxSizeDep) = variable.dataType.size
             if minSizeDep > len(content):
                 self._logger.debug(
                     "Size of the content to parse is smallest than the min expected size of the dependency field"
@@ -224,7 +235,7 @@ class Value(AbstractRelationVariableLeaf):
                 # we create a new parsing path and returns it
                 newParsingPath = parsingPath.duplicate()
                 newParsingPath.addResult(self, content[:size].copy())
-                self._addCallBacksOnUndefinedFields(newParsingPath)
+                self._addCallBacksOnUndefinedVariables(newParsingPath)
                 results.append(newParsingPath)
         else:
             if content[:len(expectedValue)] == expectedValue:
@@ -245,20 +256,21 @@ class Value(AbstractRelationVariableLeaf):
         return self.valueCMP(parsingPath, acceptCallBack)
 
     def computeExpectedValue(self, parsingPath):
-        self._logger.debug("compute expected value for Value field")
+        self._logger.debug("Compute expected value for Value field")
 
-        fieldDep = self.fieldDependencies[0]
-        if fieldDep is None:
+        variable = self.targets[0]
+        if variable is None:
             raise Exception("No dependency field specified.")
 
-        if not parsingPath.isDataAvailableForField(fieldDep):
+        if not parsingPath.isDataAvailableForVariable(variable):
             return None
         else:
-            return self._applyOperation(parsingPath.getDataAssignedToField(fieldDep))
+            return self._applyOperation(parsingPath.getDataAssignedToVariable(variable))
 
     def _applyOperation(self, data):
         """This method can be used to apply the specified operation function to the data parameter.
         If no operation function is known, the data parameter is returned"""
+
         if self.__operation is None:
             return data
 
@@ -266,7 +278,7 @@ class Value(AbstractRelationVariableLeaf):
 
     def __str__(self):
         """The str method."""
-        return "Value({0})".format(str(self.fieldDependencies[0].name))
+        return "Value({0})".format(str(self.targets[0].name))
 
     @property
     def factor(self):

@@ -64,7 +64,7 @@ class Hmac(AbstractRelationVariableLeaf):
 
     The Hmac constructor expects some parameters:
 
-    :param fields: The targeted fields of the relationship.
+    :param targets: The targeted fields of the relationship.
     :param key: The cryptographic key used in the hmac computation.
     :param hashName: The underlying hash function (see below
                      for the list of supported functions). Default
@@ -73,7 +73,7 @@ class Hmac(AbstractRelationVariableLeaf):
                      represented according to this dataType.
                      If None, default value is Raw(nbBytes=1).
     :param name: The name of the Value variable. If None, the name will be generated.
-    :type field: a :class:`list` of :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`, required
+    :type targets: a :class:`list` of :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`, required
     :type key: :class:`bytes`, required
     :type hashName: :class:`str`, optional
     :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, optional
@@ -137,10 +137,10 @@ class Hmac(AbstractRelationVariableLeaf):
 
     """
 
-    def __init__(self, fields, key, hashName='md5', dataType=None, name=None):
+    def __init__(self, targets, key, hashName='md5', dataType=None, name=None):
         super(Hmac, self).__init__(self.__class__.__name__,
                                    dataType=dataType,
-                                   fieldDependencies=fields,
+                                   targets=targets,
                                    name=name)
         self.key = key
         self.hashName = hashName

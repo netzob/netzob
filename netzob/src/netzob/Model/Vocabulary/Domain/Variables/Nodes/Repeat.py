@@ -208,7 +208,9 @@ class Repeat(AbstractVariableNode):
     ...            delimiter=TypeConverter.convert(";", Raw, BitArray)))
     >>> s = Symbol([f1])
     >>> gen = s.specialize()
-    >>> gen == gen[:5]+b";"+gen[:5]+b";"+gen[:5]
+    >>> len(gen) == 17
+    True
+    >>> gen.count(b";") >= 2
     True
 
     """
@@ -229,6 +231,9 @@ class Repeat(AbstractVariableNode):
         # retrieve the data to parse
         dataToParse = parsingPath.getDataAssignedToVariable(self).copy()
 
+        self._logger.debug("Parse '{}' as {} with parser path '{}'".format(
+            dataToParse.tobytes(), self, parsingPath))
+
         # remove any data assigned to this variable
         parsingPath.removeAssignedDataToVariable(self)
 
@@ -239,8 +244,7 @@ class Repeat(AbstractVariableNode):
 
             # initiate a new parsing path based on the current one
             newParsingPath = parsingPath.duplicate()
-            newParsingPath.assignDataToVariable(dataToParse.copy(),
-                                                self.children[0])
+            newParsingPath.assignDataToVariable(dataToParse.copy(),self.children[0])
             newParsingPaths = [newParsingPath]
 
             # deal with the case no repetition is accepted
@@ -251,38 +255,29 @@ class Repeat(AbstractVariableNode):
             # check we can apply nb_repeat times the child
             for i_repeat in range(nb_repeat):
                 tmp_result = []
+                break_repeat = False
                 for newParsingPath in newParsingPaths:
-                    for childParsingPath in self.children[0].parse(
-                            newParsingPath, carnivorous=carnivorous):
+                    for childParsingPath in self.children[0].parse(newParsingPath, carnivorous=carnivorous):
 
                         if childParsingPath.isDataAvailableForVariable(self):
-                            newResult = childParsingPath.getDataAssignedToVariable(
-                                self).copy()
-                            newResult += childParsingPath.getDataAssignedToVariable(
-                                self.children[0])
+                            newResult = childParsingPath.getDataAssignedToVariable(self).copy()
+                            newResult = newResult + childParsingPath.getDataAssignedToVariable(self.children[0])
                         else:
-                            newResult = childParsingPath.getDataAssignedToVariable(
-                                self.children[0])
+                            newResult = childParsingPath.getDataAssignedToVariable(self.children[0])
 
                         childParsingPath.addResult(self, newResult)
-                        childParsingPath.assignDataToVariable(
-                            dataToParse.copy()[len(newResult):],
-                            self.children[0])
+                        childParsingPath.assignDataToVariable(dataToParse.copy()[len(newResult):], self.children[0])
 
                         # apply delimiter
                         if self.delimiter is not None:
                             if i_repeat < nb_repeat - 1:
                                 # check the delimiter is available
-                                toParse = childParsingPath.getDataAssignedToVariable(
-                                    self.children[0]).copy()
-                                if toParse[:len(
-                                        self.delimiter)] == self.delimiter:
+                                toParse = childParsingPath.getDataAssignedToVariable(self.children[0]).copy()
+                                if toParse[:len(self.delimiter)] == self.delimiter:
                                     newResult = childParsingPath.getDataAssignedToVariable(
                                         self).copy() + self.delimiter
                                     childParsingPath.addResult(self, newResult)
-                                    childParsingPath.assignDataToVariable(
-                                        dataToParse.copy()[len(newResult):],
-                                        self.children[0])
+                                    childParsingPath.assignDataToVariable(dataToParse.copy()[len(newResult):], self.children[0])
                                     tmp_result.append(childParsingPath)
                             else:
                                 tmp_result.append(childParsingPath)
@@ -290,7 +285,14 @@ class Repeat(AbstractVariableNode):
                         else:
                             tmp_result.append(childParsingPath)
 
+                        if len(dataToParse) == len(newResult):
+                            break_repeat = True
+
                 newParsingPaths = tmp_result
+
+                if break_repeat:
+                    break
+
             for result in newParsingPaths:
                 yield result
 
@@ -304,30 +306,34 @@ class Repeat(AbstractVariableNode):
         # initialy, there is a unique path to specialize (the provided one)
         specializingPaths = []
 
-        for i_repeat in range(self.nbRepeat[0], self.nbRepeat[1]):
-            newSpecializingPaths = [originalSpecializingPath.duplicate()]
+        i_repeat = random.randint(self.nbRepeat[0], self.nbRepeat[1])
+        newSpecializingPaths = [originalSpecializingPath.duplicate()]
 
-            for i in range(i_repeat):
-                childSpecializingPaths = []
-                for newSpecializingPath in newSpecializingPaths:
-                    for path in self.children[0].specialize(
-                            newSpecializingPath,
-                            fuzz=fuzz):
-                        if path.isDataAvailableForVariable(self):
-                            newResult = path.getDataAssignedToVariable(
-                                self).copy()
-                            if self.delimiter is not None:
-                                newResult += self.delimiter
-                            newResult += path.getDataAssignedToVariable(
-                                self.children[0])
-                        else:
-                            newResult = path.getDataAssignedToVariable(
-                                self.children[0])
-                        path.addResult(self, newResult)
-                        childSpecializingPaths.append(path)
+        for i in range(i_repeat):
+            childSpecializingPaths = []
+            for newSpecializingPath in newSpecializingPaths:
 
-                newSpecializingPaths = childSpecializingPaths
-            specializingPaths.extend(newSpecializingPaths)
+                child = self.children[0]
+                for path in child.specialize(newSpecializingPath, fuzz=fuzz):
+                    if path.isDataAvailableForVariable(self):
+
+                        newResult = path.getDataAssignedToVariable(self).copy()
+                        if self.delimiter is not None:
+                            newResult = newResult + self.delimiter
+                        newResult = newResult + path.getDataAssignedToVariable(child)
+
+                    else:
+                        newResult = path.getDataAssignedToVariable(child)
+
+                    path.addResult(self, newResult)
+
+                    # We forget the assigned data to the child variable and its children
+                    path.removeAssignedDataToVariableAndChildren(child)
+
+                    childSpecializingPaths.append(path)
+
+            newSpecializingPaths = childSpecializingPaths
+        specializingPaths.extend(newSpecializingPaths)
 
         # lets shuffle this ( :) ) >>> by default we only consider the first valid parsing path.
         random.shuffle(specializingPaths)
@@ -345,7 +351,7 @@ class Repeat(AbstractVariableNode):
         MAX_REPEAT = 1000
 
         if isinstance(nbRepeat, int):
-            nbRepeat = (nbRepeat, nbRepeat + 1)
+            nbRepeat = (nbRepeat, nbRepeat)
 
         if isinstance(nbRepeat, tuple):
             minNbRepeat, maxNbRepeat = nbRepeat

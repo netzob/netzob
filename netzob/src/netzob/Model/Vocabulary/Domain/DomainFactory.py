@@ -107,10 +107,13 @@ class DomainFactory(object):
 
     @staticmethod
     def __normalizeAlternateDomain(domain):
-        result = Alt()
         if isinstance(domain, list):
             if len(domain) == 1:
                 return DomainFactory.__normalizeLeafDomain(domain[0])
+        if isinstance(domain, Alt):
+            result = domain
+        else:
+            result = Alt()
         if isinstance(domain, (list, Alt)):
             # Eliminate duplicate elements
             tmpResult = []
@@ -135,6 +138,7 @@ class DomainFactory(object):
             if len(uniqResult) == 1:
                 return uniqResult[0]
             else:
+                result.children = []
                 for elt in uniqResult:
                     result.children.append(elt)
         else:
@@ -144,14 +148,15 @@ class DomainFactory(object):
 
     @staticmethod
     def __normalizeAggregateDomain(domain):
-        result = Agg()
         if isinstance(domain, Agg):
+            normalized_children = []
             for child in domain.children:
-                result.children.append(DomainFactory.normalizeDomain(child))
+                normalized_children.append(DomainFactory.normalizeDomain(child))
+            domain.children = normalized_children
         else:
             raise TypeError(
                 "Impossible to normalize the provided domain as an aggregate.")
-        return result
+        return domain
 
     @staticmethod
     def __normalizeRepeatDomain(domain):

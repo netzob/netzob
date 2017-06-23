@@ -48,13 +48,13 @@ class SpecializingPath(GenericPath):
                  memory,
                  dataAssignedToField=None,
                  dataAssignedToVariable=None,
-                 fieldsCallbacks=None,
+                 variablesCallbacks=None,
                  ok=None):
         super(SpecializingPath, self).__init__(
             memory,
             dataAssignedToField=dataAssignedToField,
             dataAssignedToVariable=dataAssignedToVariable,
-            fieldsCallbacks=fieldsCallbacks)
+            variablesCallbacks=variablesCallbacks)
 
         if ok is None:
             self.__ok = True
@@ -70,16 +70,21 @@ class SpecializingPath(GenericPath):
         for key, value in list(self._dataAssignedToVariable.items()):
             dVariable[key] = value.copy()
 
-        fCall = [x for x in self._fieldsCallbacks]
+        fCall = [x for x in self._variablesCallbacks]
 
         result = SpecializingPath(
             memory=self.memory.duplicate(),
             dataAssignedToField=dField,
             dataAssignedToVariable=dVariable,
-            fieldsCallbacks=fCall,
-            ok=self.ok())
+            variablesCallbacks=fCall,
+            ok=self.ok)
 
         return result
 
+    @property
     def ok(self):
         return self.__ok
+
+    @ok.setter
+    def ok(self, ok):
+        self.__ok = ok

@@ -65,8 +65,8 @@ class VariableParser(object):
             raise Exception("Variable cannot be None")
 
         dataToParse = parsingPath.getDataAssignedToVariable(self.variable)
-        self._logger.debug("Parse '{0}' with variable '{1}' specifications".
-                           format(dataToParse, self.variable))
+        self._logger.debug("Parse '{}' with variable '{}' specifications".
+                           format(dataToParse.tobytes(), self.variable))
 
         return self.variable.parse(parsingPath, carnivorous=carnivorous)
 

@@ -148,7 +148,7 @@ class Alt(AbstractVariableNode):
             raise Exception("Cannot parse data if ALT has no children")
 
         dataToParse = parsingPath.getDataAssignedToVariable(self)
-        self._logger.debug("Parse '{0}' with '{1}'".format(dataToParse, self))
+        self._logger.debug("Parse '{}' with '{}'".format(dataToParse.tobytes(), self))
 
         parserPaths = [parsingPath]
         parsingPath.assignDataToVariable(dataToParse.copy(), self.children[0])
@@ -168,11 +168,10 @@ class Alt(AbstractVariableNode):
 
             childParsingPaths = child.parse(parsingPath)
             for childParsingPath in childParsingPaths:
-                if childParsingPath.ok():
-                    childParsingPath.addResult(
-                        self,
-                        childParsingPath.getDataAssignedToVariable(child))
-                    yield childParsingPath
+                childParsingPath.addResult(
+                    self,
+                    childParsingPath.getDataAssignedToVariable(child))
+                yield childParsingPath
 
     @typeCheck(SpecializingPath)
     def specialize(self, specializingPath, fuzz=None):
@@ -186,25 +185,22 @@ class Alt(AbstractVariableNode):
 
         specializingPaths = []
 
-        # parse each child according to its definition
-        for i_child, child in enumerate(self.children):
-            newSpecializingPath = specializingPath.duplicate()
-            self._logger.debug("ALT Specialize of {0}/{1} with {2}".format(
-                i_child + 1, len(self.children), newSpecializingPath))
+        child = random.choice(self.children)
+        newSpecializingPath = specializingPath.duplicate()
 
-            childSpecializingPaths = child.specialize(newSpecializingPath, fuzz=fuzz)
-            if len(childSpecializingPaths) == 0:
-                self._logger.debug("Path {0} on child {1} didn't succeed.".
-                                   format(newSpecializingPath, child))
-            else:
-                self._logger.debug("Path {0} on child {1} succeed.".format(
-                    newSpecializingPath, child))
-                for childSpecializingPath in childSpecializingPaths:
-                    childSpecializingPath.addResult(
-                        self,
-                        childSpecializingPath.getDataAssignedToVariable(child))
+        childSpecializingPaths = child.specialize(newSpecializingPath, fuzz=fuzz)
+        if len(childSpecializingPaths) == 0:
+            self._logger.debug("Path {0} on child {1} didn't succeed.".
+                               format(newSpecializingPath, child))
+        else:
+            self._logger.debug("Path {} on child {} succeed ({}).".format(
+                newSpecializingPath, child, self.id))
+            for childSpecializingPath in childSpecializingPaths:
+                value = childSpecializingPath.getDataAssignedToVariable(child)
+                self._logger.debug("Generated value for {}: {} ({})".format(self, value, self.id))
+                childSpecializingPath.addResult(self, value)
 
-                specializingPaths.extend(childSpecializingPaths)
+            specializingPaths.extend(childSpecializingPaths)
 
         if len(specializingPaths) == 0:
             self._logger.debug(
