@@ -74,6 +74,9 @@ from netzob.Inference.Vocabulary import EntropyMeasurement
 from netzob.Inference.Grammar.AutomataFactories.ChainedStatesAutomataFactory import ChainedStatesAutomataFactory
 from netzob.Inference.Grammar.AutomataFactories.PTAAutomataFactory import PTAAutomataFactory
 
+from netzob.Fuzzing.Mutator import Mutator
+from netzob.Fuzzing.Generator import Generator
+
 
 def getSuite():
     # List of modules to include in the list of tests
@@ -165,7 +168,24 @@ def getSuite():
         Transition.__module__,
         AbstractionLayer.__module__,
         Automata.__module__,
-        
+
+        # Modules related to fuzzing
+        # --------------------------
+        Fuzz.__module__,
+        Mutator.__module__,
+        DomainMutator.__module__,
+        AlternativeMutator.__module__,
+        AutomataMutator.__module__,
+        BinarySequenceMutator.__module__,
+        DeterministGenerator.__module__,
+        Generator.__module__,
+        DeterministIntegerMutator.__module__,
+        PseudoRandomIntegerMutator.__module__,
+        SequenceMutator.__module__,
+        StringPaddedGenerator.__module__,
+        StringMutator.__module__,
+        Xorshift128plus.__module__,
+
         # Modules related to the protocol simulation
         # ------------------------------------------
         Actor.__module__,
