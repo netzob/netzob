@@ -48,7 +48,6 @@ from typing import Type  # noqa: F401
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
 from netzob.Fuzzing.Mutator import Mutator
 
 
@@ -156,3 +155,11 @@ class DomainMutator(Mutator):
         idx = random.randint(0, len(data) - 1)
         data[idx] = not data[idx]
         return data
+
+    @property
+    def mode(self):
+        return self._mode
+
+    @mode.setter
+    def mode(self, mode):
+        self._mode = mode

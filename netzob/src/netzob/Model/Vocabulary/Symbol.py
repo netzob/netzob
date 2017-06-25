@@ -313,143 +313,18 @@ class Symbol(AbstractField):
         195
 
 
-        **Fuzzing of fields**
+        **Fuzzing of Fields**
 
         It is possible to fuzz fields during symbol specialization,
-        through a dict passed in the ``fuzz=`` parameter of the
+        through the ``fuzz=`` parameter of the
         :meth:`~netzob.Model.Vocabulary.Symbol.specialize`
-        method. Values in this dictionary will override any fields
+        method. Values in this parameter will override any fields
         definition, constraints, relationship dependencies or
         parameterized values.
 
-
-        Fuzzing example of a field that contains an integer:
-
-        >>> from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
-        >>> fuzz = Fuzz()
-        >>> f_data = Field(name="data", domain=Integer(interval=(1, 4), unitSize=UnitSize.SIZE_16))
-        >>> symbol = Symbol(name="sym", fields=[f_data])
-        >>> fuzz.set(f_data, PseudoRandomIntegerMutator, interval=(20, 32000))
-        >>> symbol.specialize(fuzz=fuzz)
-        b'\x02\x84'
-
-        .. todo::
-
-            Fuzzing example of a field that contains an aggregate of variables:
-
-            # >>> fuzz = Fuzz()
-            # >>> f_agg = Field(name="agg", domain=Agg([Integer(interval=(1, 4), unitSize=UnitSize.SIZE_16),
-            # ...                                       Integer(interval=(5, 8), unitSize=UnitSize.SIZE_16)]))
-            # >>> symbol = Symbol(name="sym", fields=[f_agg])
-            # >>> fuzz.set(f_agg, PseudoRandomIntegerMutator, interval=(20, 32000))
-            # >>> symbol.specialize(fuzz=fuzz)
-            # b'\x02\x84\x04\xf5'
-
-
-            # Fuzzing example of a field that contains an alternate of variables:
-
-            # >>> fuzz = Fuzz()
-            # >>> f_alt = Field(name="alt", domain=Alt([Integer(interval=(1, 4), unitSize=UnitSize.SIZE_16),
-            # ...                                           Integer(interval=(5, 8), unitSize=UnitSize.SIZE_16)]))
-            # >>> symbol = Symbol(name="sym", fields=[f_alt])
-            # >>> fuzz.set(f_alt, PseudoRandomIntegerMutator, interval=(20, 32000))
-            # >>> res = symbol.specialize(fuzz=fuzz)
-            # >>> res == b'\x02\x84' or res == b'\x04\xf5'
-            # True
-
-
-            # Fuzzing example of a field that contains a repeat of a variable:
-
-            # >>> fuzz = Fuzz()
-            # >>> f_rep = Field(name="rep", domain=Repeat(Integer(interval=(1, 4), unitSize=UnitSize.SIZE_16),
-            # ...                                             2))
-            # >>> symbol = Symbol(name="sym", fields=[f_rep])
-            # >>> fuzz.set(f_rep, PseudoRandomIntegerMutator, interval=(20, 32000))
-            # >>> symbol.specialize(fuzz=fuzz)
-            # b'\x02\x84\x04\xf5'
-
-
-        Fuzzing example of a field that contains a size relationship with another field:
-
-        >>> fuzz = Fuzz()
-        >>> f_data = Field(name="data", domain=Integer(3, unitSize=UnitSize.SIZE_16))
-        >>> f_size = Field(name="size", domain=Size([f_data], Integer(unitSize=UnitSize.SIZE_16)))
-        >>> symbol = Symbol(name="sym", fields=[f_data, f_size])
-        >>> fuzz.set(f_size, PseudoRandomIntegerMutator, interval=(20, 32000))
-        >>> symbol.specialize(fuzz=fuzz)
-        b'\x00\x03\x02\x84'
-
-
-        **Fuzzing example in mutation mode of a field that contains an integer**
-
-        >>> from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
-        >>> fuzz = Fuzz()
-        >>> f_data = Field(name="data", domain=Integer(2, unitSize=UnitSize.SIZE_16))
-        >>> symbol = Symbol(name="sym", fields=[f_data])
-        >>> fuzz.set(f_data, PseudoRandomIntegerMutator, mode=Mutator.MUTATE, interval=(20, 32000))
-        >>> res = symbol.specialize(fuzz=fuzz)
-        >>> res != b'\x00\x02'
-        True
-
-        **Fuzzing loop**
-
-        >>> fuzz = Fuzz()
-        >>> f_data = Field(name="data", domain=Integer(2, unitSize=UnitSize.SIZE_16))
-        >>> symbol = Symbol(name="sym", fields=[f_data])
-        >>> fuzz.set(f_data, PseudoRandomIntegerMutator, interval=(20, 30000))
-        >>> nbFuzz = 1000
-        >>> result = set()
-        >>> for i in range(nbFuzz):
-        ...     result.add(symbol.specialize(fuzz=fuzz))
-        >>> print(len(result))
-        980
-
-        **Fuzzing of a whole symbol, and covering all fields storage spaces**
-
-        >>> fuzz = Fuzz()
-        >>> f_data1 = Field(name="data1", domain=Integer(interval=(2, 4)))
-        >>> f_data2 = Field(name="data2", domain=Integer(interval=(5, 8)))
-        >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
-        >>> fuzz.set(symbol, Mutator.GENERATE, interval=Mutator.FULL_INTERVAL)
-        >>> symbol.specialize(fuzz=fuzz)
-        b'\x85\x85'
-
-
-        **Fuzzing of a whole symbol except one field, and covering all fields storage spaces**
-
-        >>> fuzz = Fuzz()
-        >>> f_data1 = Field(name="data1", domain=Integer(2))
-        >>> f_data2 = Field(name="data2", domain=Integer(4))
-        >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
-        >>> fuzz.set(symbol, Mutator.GENERATE, interval=Mutator.FULL_INTERVAL)
-        >>> fuzz.set(f_data2, Mutator.NONE)
-        >>> symbol.specialize(fuzz=fuzz)
-        b'\x85\x04'
-
-
-        **Fuzzing of a field with default mutator, and covering field storage space**
-
-        >>> fuzz = Fuzz()
-        >>> f_data1 = Field(name="data1", domain=Integer(2))
-        >>> f_data2 = Field(name="data2", domain=Integer(4))
-        >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
-        >>> fuzz.set(f_data2, Mutator.GENERATE, interval=Mutator.FULL_INTERVAL)
-        >>> symbol.specialize(fuzz=fuzz)
-        b'\x02\x85'
-
-
-        **Fuzzing and changing the default Mutator for types**
-
-        >>> from netzob.Fuzzing.DeterministIntegerMutator import DeterministIntegerMutator
-        >>> fuzz = Fuzz()
-        >>> f_data1 = Field(name="data1", domain=Integer(2))
-        >>> f_data2 = Field(name="data2", domain=Integer(4))
-        >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
-        >>> fuzz.set(Integer, DeterministIntegerMutator)
-        >>> fuzz.set(f_data2, Mutator.GENERATE)
-        >>> symbol.specialize(fuzz=fuzz)
-        b'\x02\xdf'
-
+        For more information regarding the expected ``fuzz=``
+        parameter content, see the class :class:`Fuzz
+        <netzob.Fuzzing.Fuzz.Fuzz>`.
 
         """
 
