@@ -115,7 +115,7 @@ class MessageSpecializer(object):
         >>> from netzob.all import *
         >>> f0 = Field(name="Type", domain=Raw(b"\x01"))
         >>> f2 = Field(name="Value", domain=Raw(nbBytes=10))
-        >>> f1 = Field(name="Length", domain = Size(f2, dataType = Raw(nbBytes=3, unitSize = AbstractType.UNITSIZE_32)))
+        >>> f1 = Field(name="Length", domain = Size(f2, dataType = Raw(nbBytes=3, unitSize = UnitSize.SIZE_32)))
         >>> s = Symbol(fields = [f0, f1, f2])
         >>> generated_data = TypeConverter.convert(MessageSpecializer().specializeSymbol(s).generatedContent, BitArray, Raw)
         >>> len(generated_data) > 4

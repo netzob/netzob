@@ -81,7 +81,7 @@ class RelationFinder(object):
     >>> print(results[0]['relation_type'])
     DataRelation
     >>> results[0]['x_fields'][0].getValues()
-    [b'Adrien', b'Kurt']
+    [b'Kurt', b'Nobody']
     """
 
     # Field's attributes

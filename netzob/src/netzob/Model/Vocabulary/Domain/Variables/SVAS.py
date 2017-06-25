@@ -222,7 +222,7 @@ class SVAS(object):
   
       >>> from netzob.all import *
       >>> f = Field()
-      >>> f.domain = Data(dataType=String(nbChars=(5, 10)), svas=SVAS.EPHEMERAL)
+      >>> f.domain = Data(dataType=String(nbChars=(4, 10)), svas=SVAS.EPHEMERAL)
       >>> s = Symbol(name="S0", fields=[f])
       >>> msg1 = RawMessage("netzob")
       >>> msg2 = RawMessage("netzob")
@@ -231,15 +231,15 @@ class SVAS(object):
       >>> print(mp.parseMessage(msg1, s))
       [bitarray('011011100110010101110100011110100110111101100010')]
       >>> print(mp.memory)
-      Data (String=None ((40, 80))): b'netzob'
+      Data (String=None ((32, 80))): b'netzob'
       >>> print(mp.parseMessage(msg2, s))
       [bitarray('011011100110010101110100011110100110111101100010')]
       >>> print(mp.memory)
-      Data (String=None ((40, 80))): b'netzob'
+      Data (String=None ((32, 80))): b'netzob'
       >>> print(mp.parseMessage(msg3, s))
-      [bitarray('011011100110010101110100011110100110000101100010')]
+      [bitarray('01101011011101010111001001110100')]
       >>> print(mp.memory)
-      Data (String=None ((40, 80))): b'kurt'
+      Data (String=None ((32, 80))): b'kurt'
 
 
       The following examples show the **specialization of an ephemeral
@@ -293,7 +293,7 @@ class SVAS(object):
   
       >>> from netzob.all import *
       >>> f = Field()
-      >>> f.domain = Data(dataType=String(nbChars=(5, 10)), svas=SVAS.VOLATILE)
+      >>> f.domain = Data(dataType=String(nbChars=(4, 10)), svas=SVAS.VOLATILE)
       >>> s = Symbol(name="S0", fields=[f])
       >>> msg1 = RawMessage("netzob")
       >>> msg2 = RawMessage("netzob")
@@ -308,7 +308,7 @@ class SVAS(object):
       >>> print(len(str(mp.memory)))
       0
       >>> print(mp.parseMessage(msg3, s))
-      [bitarray('011011100110010101110100011110100110000101100010')]
+      [bitarray('01101011011101010111001001110100')]
       >>> print(len(str(mp.memory)))
       0
 

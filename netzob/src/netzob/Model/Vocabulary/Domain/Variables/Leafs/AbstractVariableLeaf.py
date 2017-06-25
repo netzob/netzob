@@ -118,8 +118,8 @@ class AbstractVariableLeaf(AbstractVariable):
         """@todo TO BE DOCUMENTED"""
 
         # Fuzzing has priority over generating a legitimate value
-        from netzob.Fuzzing.Mutator import Mutator
-        if fuzz is not None and fuzz.get(self.field) is not None and fuzz.get(self.field).mode == Mutator.GENERATE:
+        from netzob.Fuzzing.DomainMutator import MutatorMode
+        if fuzz is not None and fuzz.get(self.field) is not None and fuzz.get(self.field).mode == MutatorMode.GENERATE:
 
             # Retrieve the mutator
             mutator = fuzz.get(self.field)
@@ -161,7 +161,7 @@ class AbstractVariableLeaf(AbstractVariable):
             elif self.svas == SVAS.VOLATILE:
                 newParsingPaths = self.regenerate(parsingPath, acceptCallBack)
 
-        if fuzz is not None and fuzz.get(self.field) is not None and fuzz.get(self.field).mode == Mutator.MUTATE:
+        if fuzz is not None and fuzz.get(self.field) is not None and fuzz.get(self.field).mode == MutatorMode.MUTATE:
 
             if len(newParsingPaths) == 0:
                 self._logger.warn("No data generated for the field: '{}'".format(self.field))

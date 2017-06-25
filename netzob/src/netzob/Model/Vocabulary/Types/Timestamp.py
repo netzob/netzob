@@ -110,9 +110,9 @@ class Timestamp(AbstractType):
     >>> time.value
     bitarray('01010110000110010011010010011010')
     >>> time.sign
-    'unsigned'
+    Sign.UNSIGNED
     >>> time.endianness
-    'big'
+    Endianness.BIG
 
 
     >>> from netzob.all import *
@@ -185,7 +185,7 @@ class Timestamp(AbstractType):
 
         # Handle data size if value is None
         if value is None:
-            nbBits = (unitSize, unitSize)
+            nbBits = (unitSize.value, unitSize.value)
         else:
             nbBits = (None, None)
 
@@ -231,13 +231,13 @@ class Timestamp(AbstractType):
         if len(data) % 8 != 0:
             return False
 
-        if len(data) < int(self.unitSize):
+        if len(data) < int(self.unitSize.value):
             return False
 
         try:
 
             value = TypeConverter.convert(
-                data[:int(self.unitSize)],
+                data[:int(self.unitSize.value)],
                 BitArray,
                 Integer,
                 dst_unitSize=UnitSize.SIZE_32,
