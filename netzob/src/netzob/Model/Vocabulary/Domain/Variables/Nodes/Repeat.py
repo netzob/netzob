@@ -131,10 +131,8 @@ class Repeat(AbstractVariableNode):
     The following examples show how to create a Repeat variable whose
     number of repetitions is limited by the value of another field:
 
-    .. todo::
-
-        # >>> f_end = Field(Integer(interval=(2, 5)))
-        # >>> f1 = Field(Repeat(String("netzob"), nbRepeat=f_end))
+    >>> f_end = Field(Integer(interval=(2, 5)))
+    >>> f1 = Field(Repeat(String("netzob"), nbRepeat=f_end)) # doctest: +SKIP
 
 
     **Limiting the number of repetitions by calling a callback function**
@@ -144,14 +142,12 @@ class Repeat(AbstractVariableNode):
     which returns a boolean telling if the expected number of
     repetitions is reached:
 
-    .. todo::
-
-        # >>> def cbk(current_nb_repetitions):
-        # ...     if len(current_nb_repetitions) == 5:
-        # ...         return True
-        # ...     else:
-        # ...         return False
-        # >>> f1 = Field(Repeat(String("netzob"), nbRepeat=cbk))
+    >>> def cbk(current_nb_repetitions):
+    ...     if len(current_nb_repetitions) == 5:
+    ...         return True
+    ...     else:
+    ...         return False
+    >>> f1 = Field(Repeat(String("netzob"), nbRepeat=cbk)) # doctest: +SKIP
 
 
     **Abstraction of repeat variables**

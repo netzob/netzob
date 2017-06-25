@@ -125,10 +125,8 @@ class String(AbstractType):
     Netzob supports strings with a terminal delimiter. Its usage is as
     follows:
 
-    .. todo::
-
-        # >>> f_eos    = Field(String('\t'))
-        # >>> f_string = Field(String(eos=[String('\n'), Raw(b'\x00'), f_eos]))
+    >>> f_eos    = Field(String('\t'))
+    >>> f_string = Field(String(eos=[String('\n'), Raw(b'\x00'), f_eos])) # doctest: +SKIP
 
     The ``eos`` attribute specifies a list of values that is used as
     potential terminal characters. Terminal characters can either be
