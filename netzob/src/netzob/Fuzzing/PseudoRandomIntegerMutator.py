@@ -35,6 +35,9 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
+import inspect
+import typing
+from itertools import repeat, starmap
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -44,12 +47,69 @@
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.DomainMutator import DomainMutator, MutatorInterval
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 # from netzob.Fuzzing.Xorshift128plus import Xorshift128plus
 from netzob.Model.Vocabulary.Types.Integer import Integer
+from randomstate import RandomState
 from randomstate.prng import (mt19937, mlfg_1279_861, mrg32k3a, pcg32, pcg64,
                               xorshift128, xoroshiro128plus, xorshift1024,
                               dsfmt)
+
+
+@NetzobLogger
+class PRNGFactory(object):
+    """
+    the :class:`PRNGFactory` is a factory that creates specific instances of
+    :class:`PseudoRandomIntegerMutator`.
+    """
+
+    @staticmethod
+    def _handleCustomGenerator(generator):
+        if isinstance(generator, typing.Iterable):
+            return iter(generator)
+        elif callable(generator):
+            if inspect.isgeneratorfunction(generator):
+                return generator()
+            else:
+                return repeatfunc(generator)
+        raise ValueError('{} is not a valid PRNG module.'.format(generator))
+
+    @classmethod
+    def buildPRNG(cls, generator, seed):
+        """
+        Provide a generator using either a name
+        (compatible with :class:`randomstate.Randomstate`), an :doc:`iterable`
+        object or a :doc:`generator` function with no argument.
+
+        :param generator: the generator key
+        :type generator: str, callable or generator function
+        """
+        if isinstance(generator, str):
+            if generator == 'mt19937':
+                PRNG = mt19937.RandomState
+            elif generator == 'mlfg_1279_861':
+                PRNG = mlfg_1279_861.RandomState
+            elif generator == 'mrg32k3a':
+                PRNG = mrg32k3a.RandomState
+            elif generator == 'pcg32':
+                PRNG = pcg32.RandomState
+            elif generator == 'pcg64':
+                PRNG = pcg64.RandomState
+            elif generator == 'xorshift128':
+                PRNG = xorshift128.RandomState
+            elif generator == 'xoroshiro128plus':
+                PRNG = xoroshiro128plus.RandomState
+            elif generator == 'xorshift1024':
+                PRNG = xorshift1024.RandomState
+            elif generator == 'dsfmt':
+                PRNG = dsfmt.RandomState
+            assert issubclass(PRNG, RandomState)
+            return repeatfunc(PRNG(seed=seed).random_sample)
+        if seed is not None:
+            cls._logger.warning("the seed must be configured manually, in "
+                                "compliance with the custom generator."
+                                .format(cls.__name__))
+        return cls._handleCustomGenerator(generator)
 
 
 class PseudoRandomIntegerMutator(DomainMutator):
@@ -71,7 +131,7 @@ class PseudoRandomIntegerMutator(DomainMutator):
         If set to :attr:`MutatorMode.MUTATE <netzob.Fuzzing.DomainMutator.MutatorMode.MUTATE>`, :meth:`mutate` will be used to
         produce the value (not implemented).
         Default value is :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`.
-    :param generator_type: The name of the generator to use, among those
+    :param generator: The name of the generator to use, among those
         available in :mod:`randomstate.prng`.
         Default value is :attr:`PRNG_mt19937`.
     :param seed: The seed used in pseudo-random generator
@@ -80,17 +140,66 @@ class PseudoRandomIntegerMutator(DomainMutator):
         <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
     :type interval: :class:`int` or :class:`tuple`, optional
     :type mode: :class:`int`, optional
-    :type generator_type: :class:`str`, optional
+    :type generator: :class:`str`, optional
     :type seed: :class:`int`, optional
+
+    **Internal generator functions**
 
     The following example shows how to generate an 8bits integer in [10, 20]
     interval, with an arbitrary seed of 4321:
 
     >>> from netzob.all import *
     >>> fieldInt = Field(Integer())
-    >>> mutator = PseudoRandomIntegerMutator(domain=fieldInt.domain, interval=(10, 20), seed=4321)
+    >>> mutator = PseudoRandomIntegerMutator(fieldInt.domain, interval=(10, 20), seed=4321)
     >>> mutator.generate()
     b'\n'
+
+    **Custom generators**
+
+    It is also possible to provide a custom :attr:`generator`.
+
+    .. warning::
+       Make sure that each value of the generator is a float between 0.0 and 1.0
+       (like :func:`random.random`).
+
+    .. note::
+       The value returned by the :meth:`generate` method is *not* the float value
+       extracted from the internal state, but a 8-bit binary view in :class:`bytes`.
+
+    This example wraps the :func:`random.random` Python generator (providing
+    values in the expected set) into a valid generator mechanism:
+
+    >>> import random
+    >>> random.seed(4321)
+    >>> mutator2 = PseudoRandomIntegerMutator(fieldInt.domain, generator=repeatfunc(random.random))
+    >>> mutator2.generate()
+    b'\xc1'
+
+    This example uses an iterator object with a finite number of values (3),
+    resulting in an error as soon as the limit is reached:
+
+    >>> mutator3 = PseudoRandomIntegerMutator(fieldInt.domain, generator=(0., 0.5, 1))
+    >>> mutator3.generate()
+    b'\x80'
+    >>> mutator3.generate()
+    b'\x00'
+    >>> mutator3.generate()
+    b'\x7f'
+    >>> mutator3.generate()
+    Traceback (most recent call last):
+    StopIteration
+
+    Note that, it is simple to make an infinite number generator from a finite
+    number of values by using the function :func:`itertools.cycle` of Python:
+
+    >>> from itertools import cycle
+    >>> mutator4 = PseudoRandomIntegerMutator(fieldInt.domain, generator=cycle(range(2)))
+    >>> mutator4.generate()
+    b'\x80'
+    >>> mutator4.generate()
+    b'\x7f'
+    >>> mutator4.generate()
+    b'\x80'
 
     Constant definitions :
     """
@@ -109,7 +218,7 @@ class PseudoRandomIntegerMutator(DomainMutator):
     def __init__(self,
                  domain,
                  interval=MutatorInterval.DEFAULT_INTERVAL,
-                 generator_type='mt19937',
+                 generator='mt19937',
                  **kwargs):
         # Call parent init
         super().__init__(domain, **kwargs)
@@ -137,41 +246,16 @@ class PseudoRandomIntegerMutator(DomainMutator):
         self._maxValue = maxValue
 
         # Initialize RNG
-        self.__initializeGenerator(generator_type, self._seed)
+        self._prng = PRNGFactory.buildPRNG(generator, self._seed)
         # self._prng = Xorshift128plus(self.seed)
-
-    def __initializeGenerator(self, generator_type, seed):
-        self._seed = seed
-        if generator_type == 'mt19937':
-            self._prng = mt19937.RandomState(seed=self._seed)
-        elif generator_type == 'mlfg_1279_861':
-            self._prng = mlfg_1279_861.RandomState(seed=self._seed)
-        elif generator_type == 'mrg32k3a':
-            self._prng = mrg32k3a.RandomState(seed=self._seed)
-        elif generator_type == 'pcg32':
-            self._prng = pcg32.RandomState(seed=self._seed)
-        elif generator_type == 'pcg64':
-            self._prng = pcg64.RandomState(seed=self._seed)
-        elif generator_type == 'xorshift128':
-            self._prng = xorshift128.RandomState(seed=self._seed)
-        elif generator_type == 'xoroshiro128plus':
-            self._prng = xoroshiro128plus.RandomState(seed=self._seed)
-        elif generator_type == 'xorshift1024':
-            self._prng = xorshift1024.RandomState(seed=self._seed)
-        elif generator_type == 'dsfmt':
-            self._prng = dsfmt.RandomState(seed=self._seed)
-        else:
-            raise ValueError(str(generator_type) +
-                             ' is not a valid PRNG module.')
-        self._generatorType = generator_type
 
     @typeCheck(int)
     def updateSeed(self, seedValue):
         super().updateSeed(seedValue)
-        self.__initializeGenerator(self._generatorType, seedValue)
+        self._prng = PRNGFactory.buildPRNG(self._generatorType, seedValue)
 
     def reset(self):
-        self.__initializeGenerator(self._generatorType, self._seed)
+        self._prng = PRNGFactory.buildPRNG(self._generatorType, self._seed)
         self.resetCurrentCounter()
 
     def generate(self):
@@ -201,17 +285,39 @@ class PseudoRandomIntegerMutator(DomainMutator):
 
         :return: the generated int value
         :rtype: :class:`int`
+        :raise: ValueError when the interval format is invalid
         """
 
         # Generate and return a random value in the interval
         if interval is None:
-            return int(self._prng.random_sample() *
-                       (self._maxValue - self._minValue) +
-                       self._minValue)
+            return self._generateInt()
         elif (isinstance(interval, tuple) and
               len(interval) == 2 and
               all(isinstance(_, int) for _ in interval)):
-            minValue, maxValue = interval
-            return int(self._prng.random_sample() *
-                       (maxValue - minValue) +
-                       minValue)
+            return self._generateIntWithInterval(interval)
+        else:
+            raise ValueError("Cannot handle interval: {}".format(interval))
+
+    def _generateInt(self):
+        return center(next(self._prng), self._minValue, self._maxValue)
+
+    def _generateIntWithInterval(self, interval):
+        minValue, maxValue = interval
+        return center(next(self._prng), minValue, maxValue)
+
+
+def center(val, lower, upper):
+    """
+    Center :attr:`val` between :attr:`lower` and :attr:`upper`.
+    """
+    return int(val * (upper - lower) + lower)
+
+
+def repeatfunc(func, times=None, *args):
+    """Repeat calls to func with specified arguments.
+
+    Example:  ``repeatfunc(random.random)``
+    """
+    if times is None:
+        return starmap(func, repeat(args))
+    return starmap(func, repeat(args, times))
