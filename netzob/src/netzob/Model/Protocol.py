@@ -98,7 +98,7 @@ class Protocol(object):
     "Initial state" -> "Channel opened" [fontsize=5, label="OpenChannelTransition", URL="..."];
     }
 
-    For visualization purpose, the following lines permit to generate
+    For visualization purpose, the following lines would generate
     a PNG file with the dot representation of the automaton::
 
       fd = open("/tmp/dotcode.dot", "w")

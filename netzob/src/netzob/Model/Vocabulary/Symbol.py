@@ -39,12 +39,10 @@
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
 # +---------------------------------------------------------------------------+
-from bitarray import bitarray
 
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import NetzobLogger
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Utils.TypedList import TypedList
@@ -54,7 +52,7 @@ from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-from netzob.Model.Vocabulary.Types.AbstractType import UnitSize
+
 
 class Symbol(AbstractField):
     """The Symbol class is a main component of the Netzob protocol model.
@@ -66,17 +64,18 @@ class Symbol(AbstractField):
     The Symbol constructor expects some parameters:
 
     :param fields: The fields that participate in the symbol
-                   definition.  May be None, especially when using
-                   Symbols for reverse engineering (i.e. fields
-                   identification).
+                   definition. May be ``None`` (thus, a generic :class:`Field <netzob.Model.Vocabulary.Field.Field>`
+                   instance would be defined), especially when using Symbols
+                   for reverse engineering (i.e. fields identification).
     :param messages: The messages that are associated with the
-                     symbol. May be None, especially when
+                     symbol. May be ``None`` (thus, an empty :class:`list`
+                     would be defined), especially when
                      modeling a protocol from scratch (i.e. the
                      fields are already known).
     :param name: The name of the symbol. If not specified, the
                  default name will be "Symbol".
-    :type fields: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, optional
-    :type messages: a :class:`list` of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage>`, optional
+    :type fields: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field.Field>`, optional
+    :type messages: a :class:`list` of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage>`, optional
     :type name: :class:`str`, optional
 
 
