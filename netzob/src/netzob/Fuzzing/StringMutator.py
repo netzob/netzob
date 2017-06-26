@@ -66,14 +66,14 @@ class StringMutator(DomainMutator):
         produce the value (not implemented).
         Default value is :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`.
     :param endChar: The character(s) ending the string.
-        Default value is **DEFAULT_END_CHAR**.
+        Default value is :attr:`DEFAULT_END_CHAR`.
     :param length: The scope of string length to generate. If set to
         (min, max), the values will be generate between min and max.
         Default value is **(None, None)**.
     :param lengthBitSize: The size in bits of the memory on which the generated
         length will be encoded.
     :param naughtyStrings: The list of potentially dangerous strings.
-        Default value is **DEFAULT_NAUGHTY_STRINGS**.
+        Default value is :attr:`DEFAULT_NAUGHTY_STRINGS`.
     :type domain: :class:`AbstractVariable
         <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
     :type mode: :class:`int`, optional
