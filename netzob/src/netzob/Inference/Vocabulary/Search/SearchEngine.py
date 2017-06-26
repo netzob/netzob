@@ -75,7 +75,7 @@ def _executeSearch(arg, **kwargs):
 @NetzobLogger
 class SearchEngine(object):
     """This search engine is the entry point for the API of all
-    the search processes. It allows to search for any type of data in messages using
+    the search processes. It provides search means for any type of data in messages using
     specific transformations to support the identification of hidden data.
 
 

@@ -53,9 +53,9 @@ from netzob.Model.Vocabulary.Types.Raw import Raw
 
 @NetzobLogger
 class DataAlignment(object):
-    """This class allows to align data given a field
-    specification. This class inherits from :class:`threading.Thread` which allows
-    to execute it asynchronously but also to execute it in a traditionnal way.
+    """This class enables data alignment, given a field
+    specification. This class inherits from :class:`threading.Thread` which enables
+    the processing to be synchronous or asynchronous.
 
     For instance, below is a very simple example of data alignment executed
     traditionnaly

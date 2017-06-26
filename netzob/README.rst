@@ -33,7 +33,7 @@ Functional Description
 -----------------------
 
 Netzob is an opensource tool for reverse engineering, traffic generation
-and fuzzing of communication protocols. This tool allows to infer the message format (vocabulary)
+and fuzzing of communication protocols. This tool enables inference of the message format (vocabulary)
 and the state machine (grammar) of a protocol through passive and active processes.
 Its objective is to bring state of art academic researches to the operational field,
 by leveraging bio-informatic and grammatical inferring algorithms in a semi-automatic manner.

@@ -87,7 +87,7 @@ class Xorshift128plus(object):
 
     def reset(self):
         """Reset the state of the pseudo-random generator.
-        It allows to produce the same values previously produced with
+        It enables the generation of the same values previously produced with
         getNew64bitsValue().
         """
         self._s = [self._seed, 0]

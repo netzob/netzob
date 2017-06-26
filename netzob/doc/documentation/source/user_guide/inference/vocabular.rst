@@ -160,7 +160,7 @@ Field semantic inference
 Data carving
 ============
 
-Data carving is the process of extracting semantic information from fields or messages. Netzob allows the extraction of the following semantic information :
+Data carving is the process of extracting semantic information from fields or messages. Netzob can extract the following semantic information :
 
 * URL
 * email

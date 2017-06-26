@@ -68,7 +68,7 @@ class TypeConverter(object):
                 dst_unitSize=AbstractType.defaultUnitSize(),
                 dst_endianness=AbstractType.defaultEndianness(),
                 dst_sign=AbstractType.defaultSign()):
-        r"""This function allows encoding data from a sourceType to a destinationType.
+        r"""This function encodes data from a sourceType to a destinationType.
 
         :param sourceType: The data source type
         :param destinationType: The destination type

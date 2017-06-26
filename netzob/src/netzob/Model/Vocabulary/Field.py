@@ -285,7 +285,7 @@ class Field(AbstractField):
         r"""Specialize the current field to build a raw data that
         follows the fields definitions attached to current element.
 
-        This method allows to generate some content following the field definition:
+        This method generates some content, following the field definition:
 
         >>> from netzob.all import *
         >>> f = Field("hello")

@@ -74,7 +74,7 @@ class Actor(threading.Thread):
     names until one stops.
 
     The two actors are Alice and Bob. Alice is the initiator of the
-    communication meaning she sends the input symbols while Bob
+    communication, meaning she sends the input symbols, while Bob
     answers with the output symbols of the grammar. The grammar is
     very simple, we first open the channel, and allows Alice to send
     "alice> hello" asynchronously. At each received message, Bob answers

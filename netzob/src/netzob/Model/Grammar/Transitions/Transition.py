@@ -124,7 +124,7 @@ class Transition(AbstractTransition):
     def executeAsInitiator(self, abstractionLayer):
         """Execute the current transition as an initiator.
 
-        :param abstractionLayer: The abstraction layer which allows to access to the channel.
+        :param abstractionLayer: The abstraction layer which provides access to the channel.
         :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
         :return: The end state of the transition if no exception is raised.
         :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
@@ -180,7 +180,7 @@ class Transition(AbstractTransition):
     def executeAsNotInitiator(self, abstractionLayer):
         """Execute the current transition as a not initiator.
 
-        :param abstractionLayer: The abstraction layer which allows to access to the channel.
+        :param abstractionLayer: The abstraction layer which provides access to the channel.
         :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
         :return: The end state of the transition if not exception is raised.
         :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`

@@ -51,7 +51,7 @@ from netzob.Model.Vocabulary.Types.HexaString import HexaString
 
 @NetzobLogger
 class FieldSplitStatic(object):
-    """This class allows to update a field structure following
+    """This class updates a field structure following
     the static and dynamic portions of data.
 
     >>> import binascii

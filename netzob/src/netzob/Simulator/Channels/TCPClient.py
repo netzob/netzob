@@ -50,8 +50,8 @@ from netzob.Simulator.Channels.AbstractChannel import AbstractChannel, ChannelDo
 
 @NetzobLogger
 class TCPClient(AbstractChannel):
-    """A TCPClient is a communication channel. It allows a client connection
-    to a specific IP:Port server over a TCP socket.
+    """A TCPClient is a communication channel. It provides the connection of a
+    client to a specific IP:Port server over a TCP socket.
 
     When the actor executes an OpenChannelTransition, it calls the open
     method on the TCP client which connects to the server.

@@ -50,8 +50,8 @@ from netzob.Simulator.Channels.AbstractChannel import AbstractChannel, ChannelDo
 
 @NetzobLogger
 class SSLClient(AbstractChannel):
-    """An SSLClient is a communication channel that relies on SSL. It allows
-    a client to connect to a specific IP:Port server over a TCP/SSL
+    """An SSLClient is a communication channel that relies on SSL. It provides
+    the connection of a client to a specific IP:Port server over a TCP/SSL
     socket.
 
     When the actor executes an OpenChannelTransition, it calls the open

@@ -51,7 +51,7 @@ from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness,
 
 @NetzobLogger
 class TypeEncodingFunction(EncodingFunction):
-    r"""This encoding function allows to specify the type and its attributes
+    r"""This encoding function enable the specification of the type and its attributes
     such as the endianness, the sign and the unitsize that will be used to encode
     the specified data.
 

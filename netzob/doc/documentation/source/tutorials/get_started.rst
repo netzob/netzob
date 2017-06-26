@@ -157,10 +157,10 @@ Using the '``#``\ ' string delimiter, you'll have the following result:
    :target: https://dev.netzob.org/attachments/131/tuto_force_part_result.png 
    :alt: 
 
-You may also want to play with Sequence alignment. This partitionment
-allows to align messages according to their common patterns.
+You may also want to play with Sequence alignment. This partitioning
+enables message alignment according to their common patterns.
 
-After playing with the different partitionment available, you are able
+After playing with the different partitioning available, you are able
 to retrieve the different commands associated with the targeted
 protocol, as shown on the following picture.
 
@@ -177,7 +177,7 @@ format, which looks like:
 
     [command]#[dataToEncrypt][padding]
 
-Netzob allows you to indicate that a specific field has a mutable
+Netzob enables you to indicate that a specific field has a mutable
 content, which means its data is not fixed (such as the '#' delimiter)
 nor part of a set of fixed elements (such as the command string).To
 specify the structure of a field and its attributes, right click on a
@@ -222,12 +222,12 @@ we will simply show how to model it in Netzob.
 
 A basic state machine contains states and transitions. In Netzob, we use
 a complex structure to model the grammar of a protocol. This model
-allows to specify information such as the response time between an input
+enables information's specification such as the response time between an input
 symbol and an output symbol, or even the probability of the different
 output messages given an uniq input message. This model is called an
 SMMDT (Stochastic Mealy Machine with Deterministic Transitions).
 
-The grammar perspective interface of Netzob allows you to create:
+The grammar perspective interface of Netzob enables the creation of:
 
 -  states (initial or not);
 -  semi-stochastic transitions (i.e. "normal" transitions);
@@ -266,7 +266,7 @@ Generate traffic
 
 Let's go to the Simulator perspective of Netzob.
 
-The simulator allows you to create either a client, a server or both.
+The simulator provides either client creation, server or both.
 You can tell Netzob to talk with a real client or server implementation,
 or you can just launch a client and a server inside Netzob and let them
 talk together.

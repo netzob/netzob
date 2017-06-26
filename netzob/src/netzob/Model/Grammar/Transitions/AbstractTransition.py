@@ -124,7 +124,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
     @property
     def startState(self):
         """
-        The start state from which the transition allows to go to the end state.
+        The start state of the transition.
 
         When modifying the startState, it removes itself from previous start state
 
@@ -159,7 +159,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
     @property
     def endState(self):
         """
-        The end state from which the transition allows to go from the start state
+        The end state of the transition.
 
         >>> from netzob.all import *
         >>> s0 = State(name="S0")

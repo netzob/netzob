@@ -54,7 +54,7 @@ from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness,
 class IPv4(AbstractType):
     """This class defines an IPv4 type.
 
-    The IPv4 type allows encoding a :class:`bytes` object in an IPv4
+    The IPv4 type encodes a :class:`bytes` object in an IPv4
     representation, and conversely to decode an IPv4 into a raw
     object.
 

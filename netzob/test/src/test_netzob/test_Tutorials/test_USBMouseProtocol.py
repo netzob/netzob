@@ -41,7 +41,7 @@ class test_USBMouseProtocol(NetzobTestCase):
 
     def test_inferUSBMouseProtocol(self):
         """This method illustrates the very short script which
-        allows to give some insights on the over USB protocol used
+        gives some insights on the over USB protocol used
         by a traditionnal mouse."""
 
         # Put samples in an array

@@ -42,8 +42,8 @@ import configparser
 
 
 def singleton(cls, *args, **kwargs):
-    """This decorator allows to implement some kind of Singleton
-    design pattern. In our case, we only allow one instanciation."""
+    """This decorator implements some kind of Singleton
+    design pattern. In our case, we only allow one instantiation."""
 
     instances = {}
 

@@ -13,13 +13,13 @@ realistic and controllable traffic.
 The main :ref:`features<overview>` of Netzob are:
 
 **Protocol Vocabulary Modeling and Inference**
-  Netzob includes a complete model to represents the message format of
+  Netzob includes a complete model to represent the message format of
   a protocol (aka its vocabulary). Using specific algorithms, it
-  allows to learn it from provided traces.
+  can learn it from provided traces.
 
 **Protocol Grammar Modeling and Inference**
   The state machine of a protocol (aka its grammar) defines the valid
-  sequences of exchanged messages. Netzob allows to learn it
+  sequences of exchanged messages. Netzob can learn it
   semi-automatically using specific algorithms.
 
 **Protocol Simulation**

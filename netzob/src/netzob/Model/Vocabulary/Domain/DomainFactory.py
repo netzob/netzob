@@ -52,7 +52,7 @@ from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import 
 
 
 class DomainFactory(object):
-    """This factory allows to manipulate a domain as for example to normalize it.
+    """This factory enables the manipulation of a domain, as for example to normalize it.
 
     For instance, you can normalize domains provided by users
 

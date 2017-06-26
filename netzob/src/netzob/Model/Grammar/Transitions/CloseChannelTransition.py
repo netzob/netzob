@@ -97,7 +97,7 @@ class CloseChannelTransition(AbstractTransition):
         """Execute the current transition and close the communication channel. Being an initiator or not
         changes nothing from the close channel transition point of view.
 
-        :param abstractionLayer: the abstraction layer which allows to access to the channel
+        :param abstractionLayer: the abstraction layer which provides access to the channel
         :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
         :return: the end state of the transition if not exception is raised
         :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
@@ -109,7 +109,7 @@ class CloseChannelTransition(AbstractTransition):
         """Execute the current transition and close the communication channel. Being an initiator or not
         changes nothing from the open close channel transition point of view.
 
-        :param abstractionLayer: the abstraction layer which allows to access to the channel
+        :param abstractionLayer: the abstraction layer which provides access to the channel
         :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
         :return: the end state of the transition if not exception is raised
         :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
@@ -121,7 +121,7 @@ class CloseChannelTransition(AbstractTransition):
         """Execute the current transition and close the communication channel. Being an initiator or not
         changes nothing from the close channel transition point of view.
 
-        :param abstractionLayer: the abstraction layer which allows to access to the channel
+        :param abstractionLayer: the abstraction layer which provides access to the channel
         :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
         :return: the end state of the transition if not exception is raised
         :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`

@@ -84,7 +84,7 @@ class String(AbstractType):
     .. _Python Standard Encodings: https://docs.python.org/3.4/library/codecs.html#standard-encodings
 
 
-    Netzob allows describing a field that contains a String
+    Netzob can describe a field that contains a String
     string. String strings can be either static or dynamic with fixed
     sizes or even dynamic with variable sizes.
 

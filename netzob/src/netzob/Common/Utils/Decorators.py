@@ -146,7 +146,7 @@ def NetzobLogger(klass):
 def typeCheck(*types):
     """Decorator which reduces the amount of code to type-check attributes.
 
-    Its allows to replace the following code:
+    Its enables the following code replace:
     ::
         @id.setter
         def id(self, id):

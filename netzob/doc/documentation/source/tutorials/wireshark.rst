@@ -13,7 +13,7 @@ analyzer able to identify protocols and to highlight fields from the
 data stream. Its main drawback is that it is only usefull on
 documented/standard protocols. Within Netzob, which achieves
 semi-automatic reverse engineering of protocols, we have developed an
-exporter plugin that allows automatic generation of Wireshark dissectors
+exporter plugin that provides automatic generation of Wireshark dissectors
 from proprietary or undocumented protocols. Dissectors are built in
 `LUA <http://wiki.wireshark.org/Lua>`_ programming language.
 

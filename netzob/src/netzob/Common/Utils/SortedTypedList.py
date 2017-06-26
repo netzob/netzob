@@ -49,8 +49,8 @@ from netzob.Common.Utils.SortableObject import SortableObject
 
 @NetzobLogger
 class SortedTypedList(object):
-    """This data structure allows to sort and maintain sorted
-    a list of objects inheriting from :class:`SortableObject <netzob.Common.Utils.SortableObject.SortableObject>`.
+    """This data structure manages a sorted
+    list of objects inheriting from :class:`SortableObject <netzob.Common.Utils.SortableObject.SortableObject>`.
     It uses an AVLTree proposed by :mod:`bintrees` to represent elements in the list.
 
     :TODO: The inner object __tree stores the given element using an AVLTree. Thus

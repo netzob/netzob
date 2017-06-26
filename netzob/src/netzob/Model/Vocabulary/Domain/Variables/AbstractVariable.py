@@ -81,7 +81,7 @@ class AbstractVariable(object):
             svas = SVAS.EPHEMERAL
         self.svas = svas
 
-        # field attribute allows access to the parent field
+        # Parent field
         self.field = None
 
     @abc.abstractmethod

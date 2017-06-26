@@ -51,7 +51,7 @@ from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 class Raw(AbstractType):
     r"""This class defines a Raw type.
 
-    The Raw type allows describing a sequence of bytes of arbitrary
+    The Raw type describes a sequence of bytes of arbitrary
     sizes.
 
     The Raw constructor expects some parameters:
@@ -75,7 +75,7 @@ class Raw(AbstractType):
     >>> print(len(f.specialize()))
     6
 
-    Netzob allows defining a range regarding the valid size of the
+    Netzob can define a range, regarding the valid size of the
     raw field:
 
     >>> f = Field(Raw(nbBytes = (2, 20)))

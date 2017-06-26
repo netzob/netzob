@@ -53,7 +53,7 @@ from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness,
 class BitArray(AbstractType):
     r"""This class defines a BitArray type.
 
-    The BitArray type allows describing a field that contains a
+    The BitArray type describes a field that contains a
     sequence of bits of arbitrary sizes.
 
     The BitArray constructor expects some parameters:

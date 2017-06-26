@@ -125,7 +125,6 @@ object: '{}'".format(domain))
         Property (getter/setter).
         The PRNG mutator used to get the random position of the type in the
         alternative list.
-        The property allows to change the mutator settings, like the seed.
         It enables to change the position mutator, but with the condition that
         the class object inherits
         :class:`PseudoRandomIntegerMutator <netzob.Fuzzing.PseudoRandomIntegerMutator>`.

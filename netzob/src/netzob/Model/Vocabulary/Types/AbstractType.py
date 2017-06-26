@@ -410,7 +410,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     def mutate(self, prefixDescription=None):
         """Generate various mutations of the current types.
 
-        This specific method allows to generate mutations on the bit level.
+        This specific method generates mutations on the bit level.
         If any type accepts bit level mutations, it should call this method. This method
         introduce the following mutations:
 

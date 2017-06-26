@@ -55,7 +55,7 @@ from netzob.Model.Vocabulary.Types.Integer import Integer
 class Timestamp(AbstractType):
     r"""This class defines a Timestamp type.
 
-    The Timestamp type allows defining dates in a specific format
+    The Timestamp type defines dates in a specific format
     (such as Windows, Unix or MacOSX formats).
 
     The Timestamp constructor expects some parameters:
