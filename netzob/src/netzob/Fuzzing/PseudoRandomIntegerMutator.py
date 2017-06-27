@@ -149,7 +149,7 @@ class PseudoRandomIntegerMutator(DomainMutator):
     interval, with an arbitrary seed of 4321:
 
     >>> from netzob.all import *
-    >>> fieldInt = Field(Integer())
+    >>> fieldInt = Field(uint8be())
     >>> mutator = PseudoRandomIntegerMutator(fieldInt.domain, interval=(10, 20), seed=4321)
     >>> mutator.generate()
     b'\n'
@@ -173,18 +173,18 @@ class PseudoRandomIntegerMutator(DomainMutator):
     >>> random.seed(4321)
     >>> mutator2 = PseudoRandomIntegerMutator(fieldInt.domain, generator=repeatfunc(random.random))
     >>> mutator2.generate()
-    b'\xc1'
+    b'@'
 
     This example uses an iterator object with a finite number of values (3),
     resulting in an error as soon as the limit is reached:
 
-    >>> mutator3 = PseudoRandomIntegerMutator(fieldInt.domain, generator=(0., 0.5, 1))
-    >>> mutator3.generate()
-    b'\x80'
+    >>> mutator3 = PseudoRandomIntegerMutator(fieldInt.domain, generator=(0., 0.5, 1.))
     >>> mutator3.generate()
     b'\x00'
     >>> mutator3.generate()
     b'\x7f'
+    >>> mutator3.generate()
+    b'\xff'
     >>> mutator3.generate()
     Traceback (most recent call last):
     StopIteration
@@ -195,11 +195,11 @@ class PseudoRandomIntegerMutator(DomainMutator):
     >>> from itertools import cycle
     >>> mutator4 = PseudoRandomIntegerMutator(fieldInt.domain, generator=cycle(range(2)))
     >>> mutator4.generate()
-    b'\x80'
+    b'\x00'
     >>> mutator4.generate()
-    b'\x7f'
+    b'\xff'
     >>> mutator4.generate()
-    b'\x80'
+    b'\x00'
 
     Constant definitions :
     """
