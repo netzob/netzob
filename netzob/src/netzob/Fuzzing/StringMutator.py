@@ -57,6 +57,18 @@ class StringMutator(DomainMutator):
     """The string mutator, using a determinist generator to get a string length.
     The generated string shall not be longer than 2^16 bytes.
 
+    The fuzzing of strings provides the following capabilities:
+
+    * Data coming from dictionaries of naughty strings will be
+      inserted in strings.
+    * Data coming from dictionaries of malformed code points will be
+      inserted in Unicode strings.
+    * If a string contains a terminal character, this character will be
+      repeated or inserted at regular intervals.
+    * If a string contains a terminal character encoded in multiple
+      bytes, this character will be truncated.
+
+
     The StringMutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate.
@@ -93,6 +105,7 @@ class StringMutator(DomainMutator):
     b'`ls -al /`\x00     '
 
     Constant definitions:
+
     """
 
     DEFAULT_END_CHAR = '\0'
