@@ -335,6 +335,59 @@ class Symbol(AbstractField):
             return TypeConverter.convert(spePath.generatedContent, BitArray,
                                          Raw)
 
+    @typeCheck(Memory, object)
+    def specialize_count(self, memory=None, presets=None, fuzz=None):
+        r"""The method specialize_count() compute the expected number of unique
+        produced messages, considering the initial symbol model, the
+        preseted fields and the fuzzed fields.
+
+        The specialize_dryun() method expects the same parameters as the specialize() method:
+
+        :param memory: A memory used to store variables values during
+                       specialization and abstraction of sequence of symbols.
+        :param presets: A dictionary of keys:values used to preset
+                        (parameterize) fields during symbol
+                        specialization. Values in this dictionary will
+                        override any fields definition, constraints or
+                        relationship dependencies.
+        :param fuzz: A dictionary of keys:values used for fuzzing
+                     purpose during the specialization process. This
+                     parameter is handled the same way as the
+                     ``presets`` parameter (i.e. a mutator can be
+                     defined for each field we want to fuzz). Values
+                     in this dictionary will override any fields
+                     definition, constraints, relationship
+                     dependencies or parameterized fields. See
+                     :class:`Mutator <netzob.Fuzzing.Mutator.Mutator>`
+                     for a complete explanation of its use for fuzzing
+                     purpose.
+        :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory>`
+        :type presets: :class:`dict`
+        :type fuzz: :class:`dict`
+
+        >>> # Symbol definition
+        >>> from netzob.all import *
+        >>> f1 = Field(uint16be(interval=(50, 1000)))
+        >>> f2 = Field(Raw(nbBytes=(10,15)))
+        >>> symbol = Symbol(fields=[f1, f2])
+        >>>
+        >>> # Specify the preseted fields
+        >>> presetValues = {f1: TypeConverter.convert("\xff\xff", Raw, BitArray)}        
+        >>>
+        >>> # Specify the fuzzed fields
+        >>> fuzz = Fuzz()
+        >>> from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
+        >>> fuzz.set(f1, PseudoRandomIntegerMutator, interval=(20, 32000))
+        >>>
+        >>> # Count the expected number of unique produced messages
+        >>> symbol.specialize_count(presets=presetValues, fuzz=fuzz) # doctest: +SKIP
+        42000
+
+        """
+
+        # TODO
+        pass
+
     def clearMessages(self):
         """Delete all the messages attached to the current symbol"""
         while (len(self.__messages) > 0):
