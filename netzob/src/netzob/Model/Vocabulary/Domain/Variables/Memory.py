@@ -55,6 +55,86 @@ class Memory(object):
     variables that are needed according to the field definition
     during the abstraction and specialization processes.
 
+
+    **Relationships between fields of successives messages**
+
+    The following example shows how to define a relationship between a
+    received message and the next message to send.
+
+    >>> from netzob.all import *
+    >>> f1 = Field(domain=String("hello"), name="F1")
+    >>> f2 = Field(domain=String(";"), name="F2")
+    >>> f3 = Field(domain=String(nbChars=(5,10)), name="F3")
+    >>> s1 = Symbol(fields=[f1, f2, f3], name="S1")
+    >>>
+    >>> f4 = Field(domain=String("master"), name="F4")
+    >>> f5 = Field(domain=String(">"), name="F5")
+    >>> f6 = Field(domain=Value(f3), name="F6")
+    >>> s2 = Symbol(fields=[f4, f5, f6])
+    >>>
+    >>> memory = Memory()
+    >>> m1 = s1.specialize(memory=memory)
+    >>> m2 = s2.specialize(memory=memory)
+    >>>
+    >>> m1[6:] == m2[7:]
+    True
+
+
+    **Relationships between a message field and the environment**
+
+    The following example shows how to define a relationship between a
+    message to send a the environment.
+
+    >>> # Environment variables definition
+    >>> memory = Memory()
+    >>> env1 = Data(String(), name="env1")
+    >>> memory.memorize(env1, TypeConverter.convert("John", String, BitArray))
+    >>>
+    >>> # Symbol definition
+    >>> f7 = Field(domain=String("master"), name="F7")
+    >>> f8 = Field(domain=String(">"), name="F8")
+    >>> f9 = Field(domain=Value(env1), name="F9")
+    >>> s3 = Symbol(fields=[f7, f8, f9])
+    >>>
+    >>> # Symbol specialization
+    >>> s3.specialize(memory=memory)
+    b'master>John'
+
+
+    **Memory usage with the abstraction layer**
+
+    The following example shows how to define a relationship between a
+    message to send a the environment, and then how to leverage this
+    relationship when using the abstraction layer.
+
+    >>> # Environment variables definition
+    >>> memory1 = Memory()
+    >>> env1 = Data(String(), name="env1")
+    >>> memory1.memorize(env1, TypeConverter.convert("John", String, BitArray))
+    >>>
+    >>> # Symbol definition
+    >>> f7 = Field(domain=String("master"), name="F7")
+    >>> f8 = Field(domain=String(">"), name="F8")
+    >>> f9 = Field(domain=Value(env1), name="F9")
+    >>> symbol = Symbol(fields=[f7, f8, f9], name="Symbol_Hello")
+    >>>
+    >>> # Creation of channels with dedicated abstraction layer
+    >>> channelIn = UDPServer(localIP="127.0.0.1", localPort=8889)
+    >>> abstractionLayerIn = AbstractionLayer(channelIn, [symbol], memory1)
+    >>> abstractionLayerIn.openChannel()
+    >>> channelOut = UDPClient(remoteIP="127.0.0.1", remotePort=8889)
+    >>> abstractionLayerOut = AbstractionLayer(channelOut, [symbol], memory1)
+    >>> abstractionLayerOut.openChannel()
+    >>>
+    >>> # Sending of a symbol containing a data coming from the environment
+    >>> abstractionLayerOut.writeSymbol(symbol)
+    11
+    >>> (receivedSymbol, receivedMessage) = abstractionLayerIn.readSymbol()
+    >>> print(receivedSymbol.name)
+    Symbol_Hello
+    >>> print(receivedMessage)
+    b'master>John'
+
     """
 
     def __init__(self):
@@ -172,144 +252,3 @@ class Memory(object):
         self.__memory = dict()
         for k, v in list(memory.items()):
             self.__memory[k] = v
-
-
-# #+---------------------------------------------------------------------------+
-# #| Functions on memories                                                     |
-# #+---------------------------------------------------------------------------+
-#     def createMemory(self):
-#         """Reinit the temporary memory and copy all values from the real memory in it.
-#         """
-#         self.__temporaryMemory = dict()
-#         for key in self.memory.keys():
-#             self.__temporaryMemory[key] = self.memory[key]
-
-#     def persistMemory(self):
-#         """Copy all values from the temporary memory into the real memory.
-#         """
-#         self.__memory = dict()
-#         for key in self.__temporaryMemory.keys():
-#             self.memory[key] = self.__temporaryMemory[key]
-
-#     def cleanMemory(self):
-#         """Remove all variables and values from real and temporary memories.
-#         """
-#         # self.memory = dict()  # TODO: impement this change in all calling functions.
-#         self.__temporaryMemory = dict()
-
-#     def recallMemory(self):
-#         """Return all values store in the temporary memory.
-
-#         :return: the value of all variables in the temporary memory.
-#         :rtype: a :class:`dict`
-#         """
-#         return self.__temporaryMemory
-
-#     def printMemory(self):
-#         """Debug functions which print all values in temporary memory.
-#         """
-#         self._logger.debug("Memory map:")
-#         for _id, _val in self.__temporaryMemory.iteritems():
-#             self._logger.debug("> {0}  = {1}".format(_id, _val))
-
-# #+---------------------------------------------------------------------------+
-# #| Functions on temporary memory elements                                    |
-# #+---------------------------------------------------------------------------+
-#     @typeCheck(AbstractVariable)
-#     def hasMemorized(self, variable):
-#         """Check if a variable is in the temporary memory.
-
-#         :param variable: the given variable we search in memory.
-#         :type variable: :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
-#         :return: True if the variable has been found in the memory.
-#         :rtype: :class:`bool`
-#         :raise: :class:`TypeError` if parameter is not valid
-#         """
-#         if variable is None:
-#             raise TypeError("variable cannot be None")
-
-#         return variable.id in self.__temporaryMemory.keys()
-
-#     @typeCheck(AbstractVariable)
-#     def restore(self, variable):
-#         """Copy back the value of a variable from the real memory in the temporary memory.
-
-#         :param variable: the given variable, the value of which we want to restore.
-#         :type variable: :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
-#         :raise: :class:`TypeError` if parameter is not valid
-#         """
-#         if variable is None:
-#             raise TypeError("variable cannot be None")
-
-#         if variable.id in self.memory.keys():
-#             self.__temporaryMemory[variable.id] = self.memory[variable.id]
-#             if self.memoryAccessCB is not None:
-#                 value = variable.currentValue
-#                 self.memoryAccessCB("W", variable, value)
-
-#     @typeCheck(AbstractVariable)
-#     def memorize(self, variable, value):
-#         """Save the current value of a variable in memory.
-
-#         :param variable: the given variable, the value of which we want to save.
-#         :type variable: :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
-#         :raise: :class:`TypeError` if parameter is not valid
-#         """
-#         if variable is None:
-#             raise TypeError("variable cannot be None")
-
-#         if variable.currentValue is not None:
-#             self.__temporaryMemory[variable.id] = variable.currentValue
-#             if self.memoryAccessCB is not None:
-#                 value = variable.currentValue
-#                 self.memoryAccessCB("W", variable, value)
-
-#     @typeCheck(AbstractVariable)
-#     def forget(self, variable):
-#         """Remove a variable and its value from the temporary memory.
-
-#         :param variable: the given variable, the value of which we want to forget.
-#         :type variable: :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
-#         :raise: :class:`TypeError` if parameter is not valid
-#         """
-#         if variable is None:
-#             raise TypeError("variable cannot be None")
-
-#         if self.hasMemorized(variable):
-#             del self.__temporaryMemory[variable.id]
-#             if self.memoryAccessCB is not None:
-#                 self.memoryAccessCB("D", variable, None)
-
-#     @typeCheck(AbstractVariable)
-#     def recall(self, variable):
-#         """Return the value of one variable store in the temporary memory.
-
-#         :param variable: the given variable, the value of which we are searching.
-#         :type variable: :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
-#         :return: the value of the given variable in the temporary memory or None is not available
-#         :rtype: :class:`bitarray`
-#         :raise: :class:`TypeError` if parameter is not valid
-#         """
-#         if variable is None:
-#             raise TypeError("variable cannot be None")
-
-#         if self.hasMemorized(variable):
-#             value = self.__temporaryMemory[variable.id]
-#             if self.memoryAccessCB is not None:
-#                 self.memoryAccessCB("R", variable, value)
-#             return value
-#         else:
-#             return None
-
-# @property
-# def memoryAccessCB(self):
-#     """Callback to execute after a memory access.
-
-#     :type: function
-#     :raise: `TypeError` if parameter's type is not valid
-#     """
-#     return self.__memoryAccessCB
-
-# @memoryAccessCB.setter
-# def memoryAccessCB(self, memoryAccessCB):
-#     self.__memoryAccessCB = memoryAccessCB

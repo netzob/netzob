@@ -70,8 +70,10 @@ class AbstractionLayer(object):
 
     :param channel: The underlying communication channel (such as IPClient, UDPCLient, ...).
     :param symbols: The list of permitted symbols during translation from/to concrete messages.
+    :param memory: A memory object use to make persistent specific variables.
     :type channel: :class:`AbstractChannel <netzob.Model.Simuator.Channels.AbstractChannel.AbstractChannel>`, required
     :type symbols: :class:`Symbol <netzob.Model.Vocabular.Symbol.Symbol>`, required
+    :type memory: :class:`Memory <netzob.Model.Vocabular.Domain.Variables.Memory.Memory>`, optional
 
     
     The following code shows a usage of the abstraction layer class,
@@ -115,10 +117,13 @@ class AbstractionLayer(object):
 
     """
 
-    def __init__(self, channel, symbols):
+    def __init__(self, channel, symbols, memory=None):
         self.channel = channel
         self.symbols = symbols
-        self.memory = Memory()
+        if memory is None:
+            self.memory = Memory()
+        else:
+            self.memory = memory
         self.specializer = MessageSpecializer(memory=self.memory)
         self.parser = MessageParser(memory=self.memory)
         self.flow_parser = FlowParser(memory=self.memory)
