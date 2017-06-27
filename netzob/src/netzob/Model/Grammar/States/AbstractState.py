@@ -63,6 +63,7 @@ class AbstractState(object, metaclass=abc.ABCMeta):
         self.__id = uuid.uuid4()
         self.name = name
         self.active = False
+        self.__cbk = None
 
     def __str__(self):
         return str(self.name)
@@ -128,3 +129,36 @@ class AbstractState(object, metaclass=abc.ABCMeta):
         if active is None:
             raise TypeError("The active info cannot be None")
         self.__active = active
+
+    @property
+    def cbk(self):
+        """Function called during state execution.
+
+        If a callback function is defined, we call it in order to
+        execute an external program that may change the selected
+        transition.
+
+        The callable function should have the following prototype: 
+
+        ``def cbk_function(possibleTransitions, selectedTransitionIndex):``
+
+        Where:
+
+        * ``possibleTransitions`` corresponds to the :class:`list` of possible transitions (:class:`Transition <netzob.Model.Grammar.Transitions.Transition.Transition>`) from the current state.
+        * ``selectedTransitionIndex`` corresponds to the original selected transition index.
+
+        The callback function should return an integer corresponding
+        to the selected transition (that could have changed by the
+        executed program).
+
+        :type: :class:`func`
+        :raise: TypeError if cbk is not a callable function
+
+        """
+        return self.__cbk
+
+    @cbk.setter
+    def cbk(self, cbk):
+        if not callable(cbk):
+            raise TypeError("'cbk' should be a callable function")
+        self.__cbk = cbk

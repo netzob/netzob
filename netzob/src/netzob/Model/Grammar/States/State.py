@@ -87,6 +87,7 @@ class State(AbstractState):
     >>> print(s0.transitions[0].endState.name)
     S1
 
+
     """
 
     def __init__(self, name=None):
@@ -233,7 +234,6 @@ class State(AbstractState):
         :return: the next transition or None if no transition available
         :rtype: :class:`AbstractTransition <netzob.Model.Grammar.Transition.AbstractTransition.AbstractTransition>`
         """
-
         if len(self.transitions) == 0:
             return None
 
@@ -248,10 +248,15 @@ class State(AbstractState):
         possibleTransitions = prioritizedTransitions[sorted(
             prioritizedTransitions.keys())[0]]
 
-        if len(possibleTransitions) == 1:
-            return possibleTransitions[0]
-
         idRandom = random.randint(0, len(possibleTransitions) - 1)
+
+        # If a callback function is defined, we call it in order to
+        # execute an external program that may change the selected
+        # transition
+        if self.cbk is not None:
+            self._logger.debug("A callback function is executed at state '{}'".format(self.name))
+            idRandom = self.cbk(possibleTransitions, idRandom)
+
         return possibleTransitions[idRandom]
 
     @typeCheck(AbstractTransition)
