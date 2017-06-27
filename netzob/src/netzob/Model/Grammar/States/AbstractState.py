@@ -63,7 +63,7 @@ class AbstractState(object, metaclass=abc.ABCMeta):
         self.__id = uuid.uuid4()
         self.name = name
         self.active = False
-        self.__cbk = None
+        self.__cbk_pickNextTransition = None
 
     def __str__(self):
         return str(self.name)
@@ -131,8 +131,9 @@ class AbstractState(object, metaclass=abc.ABCMeta):
         self.__active = active
 
     @property
-    def cbk(self):
-        """Function called during state execution.
+    def cbk_pickNextTransition(self):
+        """Function called during state execution to help chosing the next
+        transition.
 
         If a callback function is defined, we call it in order to
         execute an external program that may change the selected
@@ -144,7 +145,10 @@ class AbstractState(object, metaclass=abc.ABCMeta):
 
         Where:
 
-        * ``possibleTransitions`` corresponds to the :class:`list` of possible transitions (:class:`Transition <netzob.Model.Grammar.Transitions.Transition.Transition>`) from the current state.
+        * ``possibleTransitions`` corresponds to the :class:`list` of
+          possible transitions (:class:`Transition
+          <netzob.Model.Grammar.Transitions.Transition.Transition>`)
+          from the current state.
         * ``selectedTransitionIndex`` corresponds to the original selected transition index.
 
         The callback function should return an integer corresponding
@@ -152,13 +156,13 @@ class AbstractState(object, metaclass=abc.ABCMeta):
         executed program).
 
         :type: :class:`func`
-        :raise: TypeError if cbk is not a callable function
+        :raise: TypeError if cbk_pickNextTransition is not a callable function
 
         """
-        return self.__cbk
+        return self.__cbk_pickNextTransition
 
-    @cbk.setter
-    def cbk(self, cbk):
-        if not callable(cbk):
-            raise TypeError("'cbk' should be a callable function")
-        self.__cbk = cbk
+    @cbk_pickNextTransition.setter
+    def cbk_pickNextTransition(self, cbk_pickNextTransition):
+        if not callable(cbk_pickNextTransition):
+            raise TypeError("'cbk_pickNextTransition' should be a callable function")
+        self.__cbk_pickNextTransition = cbk_pickNextTransition

@@ -253,9 +253,9 @@ class State(AbstractState):
         # If a callback function is defined, we call it in order to
         # execute an external program that may change the selected
         # transition
-        if self.cbk is not None:
+        if self.cbk_pickNextTransition is not None:
             self._logger.debug("A callback function is executed at state '{}'".format(self.name))
-            idRandom = self.cbk(possibleTransitions, idRandom)
+            idRandom = self.cbk_pickNextTransition(possibleTransitions, idRandom)
 
         return possibleTransitions[idRandom]
 

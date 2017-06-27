@@ -222,6 +222,11 @@ class Transition(AbstractTransition):
         :return: the output symbol following their probability.
         :rtype: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
         """
+
+        if self.cbk_pickOutputSymbol is not None:
+            self._logger.debug("A callback function is executed at transition '{}'".format(self.name))
+            return self.cbk_pickOutputSymbol(self.outputSymbols)
+
         outputSymbolsWithProbability = dict()
         nbSymbolWithNoExplicitProbability = 0
         totalProbability = 0

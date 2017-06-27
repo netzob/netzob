@@ -88,6 +88,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         self.priority = priority
         self._description = description
         self.active = False
+        self.__cbk_pickOutputSymbol = None
 
     def __str__(self):
         return str(self.name)
@@ -237,3 +238,37 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
     @typeCheck(str)
     def description(self, description):
         self._description = description
+
+
+    @property
+    def cbk_pickOutputSymbol(self):
+        """Function called during transition execution, to help chosing the
+        output symbol to send.
+
+        If a callback function is defined, we call it in order to
+        execute an external program that may change the sent symbol.
+
+        The callable function should have the following prototype: 
+
+        ``def cbk_function(possibleSymbols):``
+
+        Where:
+
+        * ``possibleSymbols`` corresponds to the :class:`list` of
+          possible Symbols (:class:`Symbol
+          <netzob.Model.Vocabulary.Symbol.Symbol>`) to send.
+
+        The callback function should return a Symbol, that will be
+        then sent.
+
+        :type: :class:`func`
+        :raise: TypeError if cbk_pickOutputSymbol is not a callable function
+
+        """
+        return self.__cbk_pickOutputSymbol
+
+    @cbk_pickOutputSymbol.setter
+    def cbk_pickOutputSymbol(self, cbk_pickOutputSymbol):
+        if not callable(cbk_pickOutputSymbol):
+            raise TypeError("'cbk_pickOutputSymbol' should be a callable function")
+        self.__cbk_pickOutputSymbol = cbk_pickOutputSymbol
