@@ -368,8 +368,9 @@ class Symbol(AbstractField):
         >>> # Symbol definition
         >>> from netzob.all import *
         >>> f1 = Field(uint16be(interval=(50, 1000)))
-        >>> f2 = Field(Raw(nbBytes=(10,15)))
-        >>> symbol = Symbol(fields=[f1, f2])
+        >>> f2 = Field(uint8be())
+        >>> f3 = Field(uint8be())
+        >>> symbol = Symbol(fields=[f1, f2, f3])
         >>>
         >>> # Specify the preseted fields
         >>> presetValues = {f1: TypeConverter.convert("\xff\xff", Raw, BitArray)}        
@@ -377,11 +378,11 @@ class Symbol(AbstractField):
         >>> # Specify the fuzzed fields
         >>> fuzz = Fuzz()
         >>> from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
-        >>> fuzz.set(f1, PseudoRandomIntegerMutator, interval=(20, 32000))
+        >>> fuzz.set(f2, PseudoRandomIntegerMutator, interval=(20, 42))
         >>>
         >>> # Count the expected number of unique produced messages
         >>> symbol.specialize_count(presets=presetValues, fuzz=fuzz) # doctest: +SKIP
-        42000
+        279
 
         """
 
