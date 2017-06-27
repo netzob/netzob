@@ -29,10 +29,10 @@
 #  List subpackages to import with the current one
 #  see docs.python.org/2/tutorial/modules.html
 
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Size import Size
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Value import Value
-
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.all import *
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hashes.all import *
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs.all import *
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.CRC16 import CRC16
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.CRC16DNP import CRC16DNP
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.CRC16Kermit import CRC16Kermit
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.CRC16SICK import CRC16SICK
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.CRCCCITT import CRCCCITT
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.CRC32 import CRC32
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.InternetChecksum import InternetChecksum

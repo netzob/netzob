@@ -55,7 +55,7 @@ from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, Sign, UnitSize
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Size import Size
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksum import Checksum
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.InternetChecksum import InternetChecksum
 from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
 
 
@@ -263,7 +263,7 @@ class RawEthernetClient(AbstractChannel):
                                   ip_saddr,
                                   ip_daddr,
                                   ip_payload], dataType=Integer(unitSize=UnitSize.SIZE_16, sign=Sign.UNSIGNED), factor=1/float(8))
-        ip_checksum.domain = Checksum(fields=[ip_ver,
+        ip_checksum.domain = InternetChecksum(fields=[ip_ver,
                                               ip_ihl,
                                               ip_tos,
                                               ip_tot_len,
@@ -274,7 +274,7 @@ class RawEthernetClient(AbstractChannel):
                                               ip_proto,
                                               ip_checksum,
                                               ip_saddr,
-                                              ip_daddr], checksumName='InternetChecksum', dataType=Raw(nbBytes=2, unitSize=UnitSize.SIZE_16))
+                                              ip_daddr], dataType=Raw(nbBytes=2, unitSize=UnitSize.SIZE_16))
 
         self.header = Symbol(name='Ethernet layer', fields=[eth_dst,
                                                             eth_src,

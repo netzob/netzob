@@ -34,52 +34,41 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import hmac
-import hashlib
+import abc
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-from bitarray import bitarray
-import binascii
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Model.Vocabulary import partialclass
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
-from netzob.Model.Vocabulary.AbstractField import AbstractField
-from netzob.Model.Vocabulary.Types.HexaString import HexaString
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, Sign
+from netzob.Model.Vocabulary.Types.AbstractType import Endianness, Sign
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Raw import Raw
-from netzob.Model.Vocabulary.Types.Integer import Integer
 
 
 @NetzobLogger
-class Hmac(AbstractRelationVariableLeaf):
-    r"""The Hmac class implements a list of hmac relationships between fields.
+class HMAC(AbstractRelationVariableLeaf):
+    r"""The HMAC class implements the HMAC relationships between fields.
 
     The Hmac constructor expects some parameters:
 
     :param targets: The targeted fields of the relationship.
     :param key: The cryptographic key used in the hmac computation.
-    :param hashName: The underlying hash function (see below
-                     for the list of supported functions). Default
-                     value is md5.
     :param dataType: Specify that the produced value should be
                      represented according to this dataType.
                      If None, default value is Raw(nbBytes=1).
     :param name: The name of the Value variable. If None, the name will be generated.
     :type targets: a :class:`list` of :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`, required
     :type key: :class:`bytes`, required
-    :type hashName: :class:`str`, optional
     :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, optional
     :type name: :class:`str`, optional
 
-    Supported hash functions for hmac are:
+    Currently supported hash functions for HMAC are:
 
     * md5
     * sha1
@@ -94,107 +83,59 @@ class Hmac(AbstractRelationVariableLeaf):
     another field, with different hash functions:
 
     >>> from netzob.all import *
+    >>> import binascii
     >>> f1 = Field(Raw(b'\xaa\xbb'))
-    >>> f2 = Field(Hmac([f1], key=b'1234'))
+    >>> f2 = Field(HMAC_MD5([f1], key=b'1234'))
     >>> s = Symbol(fields = [f1, f2])
     >>> binascii.hexlify(s.specialize())
     b'aabbb71c98baa40dc8a49361816d5dc1eb25'
 
-    >>> f2 = Field(Hmac([f1], key=b'1234', hashName='md5'))
-    >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())
-    b'aabbb71c98baa40dc8a49361816d5dc1eb25'
-
-    >>> f2 = Field(Hmac([f1], key=b'1234', hashName='sha1'))
+    >>> f2 = Field(HMAC_SHA1([f1], key=b'1234'))
     >>> s = Symbol(fields = [f1, f2])
     >>> binascii.hexlify(s.specialize())
     b'aabb1c8c88e4ccf41d1b33814bfbb8e487611e97e699'
 
-    >>> f2 = Field(Hmac([f1], key=b'1234', hashName='sha1-96'))
+    >>> f2 = Field(HMAC_SHA1_96([f1], key=b'1234'))
     >>> s = Symbol(fields = [f1, f2])
     >>> binascii.hexlify(s.specialize())
     b'aabb1c8c88e4ccf41d1b33814bfb'
 
-    >>> f2 = Field(Hmac([f1], key=b'1234', hashName='sha224'))
+    >>> f2 = Field(HMAC_SHA2_224([f1], key=b'1234'))
     >>> s = Symbol(fields = [f1, f2])
     >>> binascii.hexlify(s.specialize())
     b'aabb99950845aec2ba54e4c426baa74667d27feb6f55c807a2302f6ceb54'
 
-    >>> f2 = Field(Hmac([f1], key=b'1234', hashName='sha256'))
+    >>> f2 = Field(HMAC_SHA2_256([f1], key=b'1234'))
     >>> s = Symbol(fields = [f1, f2])
     >>> binascii.hexlify(s.specialize())
     b'aabbd798c3319e6f2ad48c313deb0eee1c9a9b704c3964d8195e66b10a47583b9c07'
 
-    >>> f2 = Field(Hmac([f1], key=b'1234', hashName='sha384'))
+    >>> f2 = Field(HMAC_SHA2_384([f1], key=b'1234'))
     >>> s = Symbol(fields = [f1, f2])
     >>> binascii.hexlify(s.specialize())  # doctest: +ELLIPSIS
     b'aabb76b3535033802e3234386d1f45aa74e443d21651a798c194769b9af1808cd29d2...'
 
-    >>> f2 = Field(Hmac([f1], key=b'1234', hashName='sha512'))
+    >>> f2 = Field(HMAC_SHA2_512([f1], key=b'1234'))
     >>> s = Symbol(fields = [f1, f2])
     >>> binascii.hexlify(s.specialize())  # doctest: +ELLIPSIS
     b'aabb76ef5cd30cf5dcd93cb8b5c6f65f894e4453b51fc055d7cb05746f342f561b4c4...'
 
     """
 
-    def __init__(self, targets, key, hashName='md5', dataType=None, name=None):
-        super(Hmac, self).__init__(self.__class__.__name__,
+    def __init__(self, varType, targets, key, dataType=None, name=None):
+        super(HMAC, self).__init__(varType,
                                    dataType=dataType,
                                    targets=targets,
                                    name=name)
         self.key = key
-        self.hashName = hashName
 
+    @abc.abstractmethod
     def relationOperation(self, msg):
+        """The relationOperation receive a bitarray object and should return a
+        bitarray object.
 
-        # The calling function provides a BitArray
-        msg = msg.tobytes()
-
-        self._logger.debug("Computing hash of '{0}'".format(
-            TypeConverter.convert(msg, Raw, HexaString)))
-
-        if self.hashName == "md5":
-            result = hmac.new(self.key, msg=msg, digestmod=hashlib.md5).digest()
-        elif self.hashName == "sha1":
-            result = hmac.new(self.key, msg=msg, digestmod=hashlib.sha1).digest()
-        elif self.hashName == "sha1-96":
-            result = hmac.new(self.key, msg=msg, digestmod=hashlib.sha1).digest()[:int(96/8)]
-        elif self.hashName == "sha224":
-            result = hmac.new(self.key, msg=msg, digestmod=hashlib.sha224).digest()
-        elif self.hashName == "sha256":
-            result = hmac.new(self.key, msg=msg, digestmod=hashlib.sha256).digest()
-        elif self.hashName == "sha384":
-            result = hmac.new(self.key, msg=msg, digestmod=hashlib.sha384).digest()
-        elif self.hashName == "sha512":
-            result = hmac.new(self.key, msg=msg, digestmod=hashlib.sha512).digest()
-        else:
-            raise Exception("Hmac function not implemented: 'hmac-{}'".format(self.hashName))
-
-        # The calling function expects a BitArray
-        result = TypeConverter.convert(result, Raw, BitArray,
-                                       src_endianness=Endianness.LITTLE,
-                                       dst_endianness=self.dataType.endianness,
-                                       src_unitSize=self.dataType.unitSize,
-                                       dst_unitSize=self.dataType.unitSize,
-                                       src_sign=Sign.UNSIGNED)
-
-        return result
-
-    @property
-    def hashName(self):
-        return self.__hashName
-
-    @hashName.setter
-    @typeCheck(str)
-    def hashName(self, hashName):
-        if hashName is None:
-            raise TypeError("hashName cannot be None")
-        algorithms_supported = list(hashlib.algorithms_guaranteed)
-        algorithms_supported.append("sha1-96")
-        if hashName not in algorithms_supported:
-            raise ValueError(
-                "The hashName must be one of: '{}'".format(hashlib.algorithms_guaranteed))
-        self.__hashName = hashName
+        """
+        raise NotImplementedError("Internal Error: 'relationOperation' method not implemented")
 
     @property
     def key(self):
@@ -206,12 +147,3 @@ class Hmac(AbstractRelationVariableLeaf):
         if key is None:
             raise TypeError("key cannot be None")
         self.__key = key
-
-
-hmac_md5     = partialclass(Hmac, hashName="md5")
-hmac_sha1    = partialclass(Hmac, hashName="sha1")
-hmac_sha1_96 = partialclass(Hmac, hashName="sha1-96")
-hmac_sha224  = partialclass(Hmac, hashName="sha224")
-hmac_sha256  = partialclass(Hmac, hashName="sha256")
-hmac_sha384  = partialclass(Hmac, hashName="sha384")
-hmac_sha512  = partialclass(Hmac, hashName="sha512")

@@ -63,6 +63,10 @@ from netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpe
 from netzob.Model.Vocabulary.Domain.Specializer.VariableSpecializer import VariableSpecializer
 from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
 
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksum import Checksum
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hash import Hash
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.HMAC import HMAC
+
 from netzob.Model.Vocabulary.Domain.Parser.MessageParser import MessageParser
 from netzob.Model.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
 from netzob.Model.Vocabulary.Domain.Parser.FlowParser import FlowParser
@@ -144,9 +148,9 @@ def getSuite():
         TypeConverter.__module__,
         AbstractVariable,
         Size.__module__,
-        Hash.__module__,
-        Hmac.__module__,
         Checksum.__module__,
+        Hash.__module__,
+        HMAC.__module__,
         Value.__module__,        
         FieldParser.__module__,
         GenericPath.__module__,

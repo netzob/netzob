@@ -29,10 +29,10 @@
 #  List subpackages to import with the current one
 #  see docs.python.org/2/tutorial/modules.html
 
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Size import Size
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Value import Value
-
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.all import *
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hashes.all import *
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs.all import *
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs.HMAC_MD5 import HMAC_MD5
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs.HMAC_SHA1 import HMAC_SHA1
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs.HMAC_SHA1_96 import HMAC_SHA1_96
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs.HMAC_SHA2_224 import HMAC_SHA2_224
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs.HMAC_SHA2_256 import HMAC_SHA2_256
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs.HMAC_SHA2_384 import HMAC_SHA2_384
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs.HMAC_SHA2_512 import HMAC_SHA2_512
