@@ -78,7 +78,8 @@ class StringMutator(DomainMutator):
         produce the value (not implemented).
         Default value is :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`.
     :param endChar: The character(s) ending the string.
-        Default value is :attr:`DEFAULT_END_CHAR`.
+        Default value is :attr:`DEFAULT_END_CHAR`. It is used to set the eos parameter of :class:`String <netzob.Model.Vocabulary.Types.String>`.
+        This terminal symbol will be mutated by truncating its value if defined on several bytes.
     :param length: The scope of string length to generate. If set to
         (min, max), the values will be generate between min and max.
         Default value is **(None, None)**.
