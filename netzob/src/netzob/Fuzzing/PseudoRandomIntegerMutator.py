@@ -78,8 +78,9 @@ class PRNGFactory(object):
     def buildPRNG(cls, generator, seed):
         """
         Provide a generator using either a name
-        (compatible with :class:`randomstate.Randomstate`), an :doc:`iterable`
-        object or a :doc:`generator` function with no argument.
+        (compatible with :class:`randomstate.Randomstate`), an :class:`Iterable
+        <typing.Iterable>` object or a :class:`Generator <typing.Generator>`
+        function with no argument.
 
         :param generator: the generator key
         :type generator: str, callable or generator function
