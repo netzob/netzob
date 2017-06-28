@@ -62,10 +62,19 @@ from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
 
 
 class Fuzz(object):
-    r"""The root class for fuzzing.
+    r"""The Fuzz class is the entry point for the fuzzing component.
 
-    This class holds the mapping between fields and their mutator, as
-    well as the mapping between types and their default mutator.
+    We can apply fuzzing on symbols, fields, variables and types
+    through the ``set()`` method.
+
+    By default, types have an associated mutator (e.g. :class:`String
+    <netzob.Model.Vocabulary.Types.String.String>` type is associated
+    by default to the :class:`StringMutator
+    <netzob.Model.Fuzzing.StringMutator.StringMutator>`). The
+    ``set()`` method permits to change the default behavior.
+
+    The following examples show the different usages of the fuzzing
+    component.
 
     **Fuzzing example of a field that contains an integer**
 
@@ -135,7 +144,7 @@ class Fuzz(object):
     >>> res != b'\x00\x02'
     True
 
-    **Fuzzing loop**
+    **Multiple fuzzing call on the same symbol**
 
     >>> fuzz = Fuzz()
     >>> f_data = Field(name="data", domain=Integer(2, unitSize=UnitSize.SIZE_16))
@@ -206,7 +215,7 @@ class Fuzz(object):
         Fuzz.mappingFieldsMutators = {}
         Fuzz.mappingTypesMutators = {}
         Fuzz.mappingTypesMutators[Integer] = PseudoRandomIntegerMutator
-        Fuzz.mappingTypesMutators[String] = PseudoRandomIntegerMutator
+        Fuzz.mappingTypesMutators[String] = StringMutator
         Fuzz.mappingTypesMutators[HexaString] = PseudoRandomIntegerMutator
         Fuzz.mappingTypesMutators[Raw] = PseudoRandomIntegerMutator
         Fuzz.mappingTypesMutators[BitArray] = PseudoRandomIntegerMutator
@@ -219,6 +228,38 @@ class Fuzz(object):
         self.mappingFieldsMutators = Fuzz.mappingFieldsMutators
 
     def set(self, key, value, **kwargs):
+        r"""The method set() permits to specify the fuzzing strategy for a
+        symbol, a field, a variable or a type.
+
+        The set() method expects some parameters:
+
+        :param key: the targeted object (either a symbol, a field, a
+                    variable or a type).
+        :param value: the fuzzing strategy (see bellow for available
+                      strategies).
+        :param kwargs: some context dependent parameters.
+        :type key: :class:`AbstractField
+                   <netzob.Model.Vocabulary.AbstractField.AbstractField>`,
+                   or :class:`AbstractVariable
+                   <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`,
+                   or :class:`AbstractType
+                   <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
+
+        The fuzzing strategy is defined by a fuzzing mode and a
+        mutator. The fuzzing mode can be:
+
+        * ``MutatorMode.MUTATE``: in this mode, the specialization process generates a legitimate message from a symbol, then some mutations are applied on it.
+        * ``MutatorMode.GENERATE``: in this mode, the fuzzing component directly produces a random message.
+
+        By default, the ``MutatorMode.GENERATE`` mode is used.
+
+        It is also possible to define a specific mutator for the
+        targeted object. The default mutator depends on the data type
+        of the fuzzed field. It is possible to specify a different
+        behavior for a mutator by passing parameters in ``kwargs``.
+
+        """
+
         if isinstance(key, type):
             # kwargs are useless here
             self.mappingTypesMutators[key] = value
