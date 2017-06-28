@@ -217,7 +217,7 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         """Change the max number of writings.
         When it is reached, no packet can be sent anymore until
         clearWriteCounter() is called.
-        if maxValue==-1, the sending limit is deactivated.
+        If maxValue==-1, the sending limit is deactivated.
 
         :param maxValue: the new max value
         :type maxValue: :class:`int`

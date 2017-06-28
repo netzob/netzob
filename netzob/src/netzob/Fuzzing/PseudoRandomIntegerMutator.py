@@ -123,7 +123,7 @@ class PseudoRandomIntegerMutator(DomainMutator):
         between the min and max values of the domain.
         If set to :attr:`MutatorInterval.FULL_INTERVAL <netzob.Fuzzing.DomainMutator.MutatorInterval.FULL_INTERVAL>`, the values will be generate in
         [0, 2^N-1], where N is the bitsize (storage) of the field.
-        If it is an tuple of integers (min, max), the values will be generate
+        If it is a tuple of integers (min, max), the values will be generate
         between min and max.
         Default value is :attr:`MutatorInterval.DEFAULT_INTERVAL <netzob.Fuzzing.DomainMutator.MutatorInterval.DEFAULT_INTERVAL>`.
     :param mode: If set to :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`, :meth:`generate` will be
@@ -143,7 +143,7 @@ class PseudoRandomIntegerMutator(DomainMutator):
     :type generator: :class:`str`, optional
     :type seed: :class:`int`, optional
 
-    **Internal generator functions**
+    **Internal Generator Functions**
 
     The following example shows how to generate an 8bits integer in [10, 20]
     interval, with an arbitrary seed of 4321:
@@ -154,7 +154,7 @@ class PseudoRandomIntegerMutator(DomainMutator):
     >>> mutator.generate()
     b'\n'
 
-    **Custom generators**
+    **Custom Generators**
 
     It is also possible to provide a custom :attr:`generator`.
 
@@ -201,7 +201,7 @@ class PseudoRandomIntegerMutator(DomainMutator):
     >>> mutator4.generate()
     b'\x00'
 
-    Constant definitions :
+    Constant definitions:
     """
 
     # Types of PRNG in RandomState module

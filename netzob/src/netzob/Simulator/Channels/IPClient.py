@@ -77,7 +77,7 @@ class IPClient(AbstractChannel):
     :type timeout: :class:`float`, optional
 
 
-    The following code shows the use of a IPClient channel:
+    The following code shows the use of an IPClient channel:
 
     >>> from netzob.all import *
     >>> client = IPClient(remoteIP='127.0.0.1')

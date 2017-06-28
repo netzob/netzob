@@ -135,7 +135,7 @@ class String(AbstractType):
     ``f_eos`` in the previous example).
 
 
-    **Examples of String Internal Attributes Access**
+    **Examples of String Internal Attribute Access**
 
     >>> from netzob.all import *
     >>> cAscii = String("hello")

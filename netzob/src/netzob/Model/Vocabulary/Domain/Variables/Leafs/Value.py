@@ -57,7 +57,7 @@ from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 
 @NetzobLogger
 class Value(AbstractRelationVariableLeaf):
-    r"""The Value class is a variable which content is the value of another field.
+    r"""The Value class is a variable whose content is the value of another field.
 
     Netzob can define a field so that its value is equal to the
     value of another field, on which a transformation operation can be
@@ -75,7 +75,7 @@ class Value(AbstractRelationVariableLeaf):
     :type operation: :class:`Callable <collections.abc.Callable>`, optional
 
 
-    The following example shows how to define a field with a copy of
+    The following examples show how to define a field with a copy of
     another field value:
 
     >>> from netzob.all import *
@@ -84,9 +84,6 @@ class Value(AbstractRelationVariableLeaf):
     >>> s  = Symbol(fields=[f0, f1])
     >>> print(s.specialize())
     b'abcdabcd'
-
-    The following example shows how to define a field with a copy of
-    another field value:
 
     >>> msg = RawMessage("netzob;netzob!")
     >>> f1 = Field(String(nbChars=(2, 8)), name="f1")
@@ -121,7 +118,7 @@ class Value(AbstractRelationVariableLeaf):
 
     **Value field with a variable as a target**
 
-    The following examples show the specialization process of a Value
+    The following example shows the specialization process of a Value
     field whose target is a variable:
 
     >>> d = Data(String("netzob"))
@@ -146,7 +143,7 @@ class Value(AbstractRelationVariableLeaf):
     >>> s = Symbol(fields=[f1, f2, f3, f4])
     >>> print(s.specialize())
     b'netzob;netzob!'
-    
+
     >>> f3 = Field(String("netzob"), name="f3")
     >>> f2 = Field(String(";"), name="f2")
     >>> f1 = Field(Value(f3), name="f1")
@@ -159,7 +156,7 @@ class Value(AbstractRelationVariableLeaf):
     **Transformation operation on targeted field value**
 
     A value relationship also accepts custom operations, as shown on
-    the following example with a lamba function:
+    the following example with a lambda function:
 
     >>> f0 = Field(1, name="f0")
     >>> f1 = Field(String(":"), name="f1")

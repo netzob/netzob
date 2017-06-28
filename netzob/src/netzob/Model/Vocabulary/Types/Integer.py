@@ -128,7 +128,7 @@ class Integer(AbstractType):
     b'\xff\xf4'
 
 
-    **Examples of Integer internal attributes access**
+    **Examples of Integer internal attribute access**
 
     >>> from netzob.all import *
     >>> cDec = Integer(20)
@@ -152,11 +152,11 @@ class Integer(AbstractType):
 
     **Examples of specific Integer types**
 
-    By convenience, common specific integer types are also available, with
+    For convenience, common specific integer types are also available, with
     pre-defined values of :attr:`unitSize`, :attr:`sign` and :attr:`endianness`
     attributes. They are used to shorten calls of singular definitions.
 
-    By example, a *16-bit little-endian unsigned* Integer is classically defined
+    For example, a *16-bit little-endian unsigned* Integer is classically defined
     like this:
 
     >>> f1 = Integer(42,

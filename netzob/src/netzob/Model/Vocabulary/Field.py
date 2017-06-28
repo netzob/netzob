@@ -106,7 +106,7 @@ class Field(AbstractField):
          |--   Data (Raw=None ((0, 524280)))
 
     More generally, a field is part of a tree whose root is a symbol
-    and whose all other nodes of the tree are fields. Hence, a field
+    and all other nodes of the tree are fields. Hence, a field
     always has a parent which can be another field or a symbol if it
     is the root.
 
@@ -247,7 +247,7 @@ class Field(AbstractField):
 
       >>> f = Field([Size(payloadField)])
 
-    * a field representing an alternative between two differents String strings, either "netzob" or "kurt":
+    * a field representing an alternative between two different String objects, either "netzob" or "kurt":
 
       >>> f = Field(["netzob", "kurt"])
 
@@ -283,7 +283,7 @@ class Field(AbstractField):
 
     def specialize(self):
         r"""Specialize the current field to build a raw data that
-        follows the fields definitions attached to current element.
+        follows the field definitions attached to current element.
 
         This method generates some content, following the field definition:
 
@@ -304,7 +304,7 @@ class Field(AbstractField):
         b'hello kurt'
         b'hello kurt'
 
-        :return: a generated content represented with an hexastring
+        :return: a generated content represented with a hexastring
         :rtype: :class:`str``
         :raises: :class:`GenerationException <netzob.Model.Vocabulary.AbstractField.GenerationException>` if an error occurs while generating a message
         """

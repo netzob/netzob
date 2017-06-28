@@ -66,7 +66,7 @@ class Repeat(AbstractVariableNode):
     :type child: :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
     :type nbRepeat: a :class:`int` describing the number of
                     repetitions, or a tuple of :class:`int` describing
-                    the min,max of repetitions, required
+                    the (min, max) of repetitions, required
     :type delimiter: :class:`BitArray <netzob.Model.Vocabulary.Types.BitArray>`, optional
     :type eof: an :class:`int` or a :class:`tuple` of :class:`int` or
                a Python variable containing an :class:`int` or a
@@ -108,10 +108,10 @@ class Repeat(AbstractVariableNode):
     >>> f1 = Field(Repeat(String("netzob"), nbRepeat=3))
 
 
-    **Limiting the number of repetitions with a interval of integers**
+    **Limiting the number of repetitions with an interval of integers**
 
     The following examples show how to create a Repeat variable whose
-    number of repetitions is limited by a interval of integers:
+    number of repetitions is limited by an interval of integers:
 
     >>> f1 = Field(Repeat(String("netzob"), nbRepeat=(2,5)))
 

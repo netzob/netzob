@@ -77,7 +77,7 @@ class Alt(AbstractVariableNode):
     >>> f = Field(Alt([t1, t2]))
 
 
-    **Examples of Alt internal attributes access**
+    **Examples of Alt internal attribute access**
 
     >>> domain = Alt([Raw(), String()])
     >>> print(domain.varType)

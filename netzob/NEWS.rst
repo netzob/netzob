@@ -8,7 +8,7 @@ v1.0.2 -- 2017-04-30
 
 * major improvement
     * global improvement of code architecture and organization
-    * enable custom operations on fields values
+    * enable custom operations on field values
     * a list of valid bytes can be specified to specify a subset of values a domain accepts
     * add SendReceived() method in all channels to simplify trafic generation
     * add traffic rate and duration constraints in channels and abstraction layer
@@ -199,7 +199,7 @@ v0.3 -- 2012-01-12
         * Format: hex, string and binary
         * Unit size: bit, 8-bits, 16-bits, 32-bits and 64-bits
         * Sign: signed and unsigned
-        * Endianess: big and little endian
+        * Endianness: big and little endian
     * Add concept of variable :
         * Include Binary Value
         * Include Word Value

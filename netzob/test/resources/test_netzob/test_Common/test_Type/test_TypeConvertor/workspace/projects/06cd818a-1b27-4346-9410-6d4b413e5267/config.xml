@@ -14,7 +14,7 @@
       <netzob:global_format>hex</netzob:global_format>
       <netzob:global_unitsize>none</netzob:global_unitsize>
       <netzob:global_sign>unsigned</netzob:global_sign>
-      <netzob:global_endianess>big-endian</netzob:global_endianess>
+      <netzob:global_endianness>big-endian</netzob:global_endianness>
       <netzob:environmental_dependencies/>
     </netzob:vocabulary_inference>
   </netzob:configuration>

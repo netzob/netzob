@@ -57,7 +57,7 @@ class Protocol(object):
     The Protocol constructor expects some parameters:
 
     :param name: The name of the protocol.
-    :param path_zdl: The path containg the .zdl file of the format messages and the automaton.
+    :param path_zdl: The path contains the .zdl file of the format messages and the automaton.
     :type name: an :class:`str`, required
     :type path_zdl: an :class:`str`, optional
 
@@ -65,22 +65,22 @@ class Protocol(object):
     convention to export the defined symbols and automaton:
 
     * The .zdl file for the format messages should be named
-      ``{PROTOCOL_NAME}'_format.zdl``, and should contains a variable
+      ``{PROTOCOL_NAME}_format.zdl``, and should contains a variable
       named ``symbols`` that contains a list of :class:`Symbol
       <netzob.Model.Vocabulary.Symbol.Symbol>`.
     * The .zdl file for the automaton should be named
-      ``{PROTOCOL_NAME}'_automata.zdl``, and should export a variable
+      ``{PROTOCOL_NAME}_automata.zdl``, and should export a variable
       named automata that contains an :class:`Automata
       <netzob.Model.Grammar.Automata.Automata>`.
 
-    The following code describes the instanciation of a new Protocol,
+    The following code describes the instantiation of a new Protocol,
     without .zdl files:
 
     >>> icmp = Protocol("ICMP")
     >>> icmp.name
     'ICMP'
 
-    The following code describes the instanciation of a new Protocol
+    The following code describes the instantiation of a new Protocol
     with provided protocol definition in .zdl files:
 
     >>> udp = Protocol("UDP", path_zdl="test/resources/files/UDP_example/")

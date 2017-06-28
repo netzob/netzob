@@ -61,7 +61,7 @@ from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 
 @NetzobLogger
 class Size(AbstractRelationVariableLeaf):
-    r"""The Size class is a variable which content is the size of another field value.
+    r"""The Size class is a variable whose content is the size of another field value.
 
     Netzob can define a field so that its value is equal to the
     size of another field, or group of fields (potentially including
@@ -194,7 +194,7 @@ class Size(AbstractRelationVariableLeaf):
 
     The following examples show the specialization process of a Size
     field:
-    
+
     >>> f0 = Field(String(nbChars=20))
     >>> f1 = Field(String(";"))
     >>> f2 = Field(Size(f0))

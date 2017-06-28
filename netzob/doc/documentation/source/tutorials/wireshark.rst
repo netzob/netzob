@@ -24,7 +24,7 @@ the following information:
 -  Name (textual representation)
 -  Format
 -  Size
--  Endianess
+-  Endianness
 -  Signing
 
 All this information is gathered to generate a script including a

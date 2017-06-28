@@ -51,7 +51,7 @@ from netzob.Model.Vocabulary.Types.String import String
 
 
 class HexaString(AbstractType):
-    r"""This class defines an HexaString type.
+    r"""This class defines a HexaString type.
 
     The HexaString type describes a sequence of bytes of
     arbitrary sizes with the hexastring notation (i.e. b'aabbcc'
@@ -65,7 +65,7 @@ class HexaString(AbstractType):
     :type nbBytes: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
 
 
-    The following example shows how to define an hexastring field with
+    The following example shows how to define a hexastring field with
     a constant value, and the used of the specialization method:
 
     >>> from netzob.all import *
@@ -113,7 +113,7 @@ class HexaString(AbstractType):
 
         :param data: the data to check
         :type data: python raw
-        :return: True if data can be parsed as an hexastring
+        :return: True if data can be parsed as a hexastring
         :rtype: bool
         :raise: TypeError if the data is None
 
@@ -244,7 +244,7 @@ class HexaString(AbstractType):
                unitSize=AbstractType.defaultUnitSize(),
                endianness=AbstractType.defaultEndianness(),
                sign=AbstractType.defaultSign()):
-        """This method convert the python raw data to an HexaString
+        """This method convert the python raw data to a HexaString
 
         >>> from netzob.all import *
         >>> import os

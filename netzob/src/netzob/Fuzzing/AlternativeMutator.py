@@ -56,7 +56,7 @@ from netzob.Model.Vocabulary.Types.Integer import uint8le
 class AlternativeMutator(DomainMutator):
     """The alternative mutator.
 
-    The SequenceMutator constructor expects some parameters:
+    The AlternativeMutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate.
     :param mode: If set to :attr:`MutatorMode.GENERATE`, :meth:`generate` will be

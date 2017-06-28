@@ -100,7 +100,7 @@ class Symbol(AbstractField):
     **Usage of Symbol for protocol dissecting**
 
     The Symbol class may be used to dissect a list of messages
-    according to the fields structure:
+    according to the field structure:
 
     >>> from netzob.all import *
     >>> f0 = Field("hello", name="f0")
@@ -135,7 +135,7 @@ class Symbol(AbstractField):
     **Usage of Symbol for traffic generation**
 
     A Symbol class may be used to generate concrete messages according
-    to its fields definition, through the
+    to its field definition, through the
     :meth:`~netzob.Model.Vocabulary.Symbol.specialize` method, and
     may also be used to abstract a concrete message into its
     associated symbol through the
@@ -197,7 +197,7 @@ class Symbol(AbstractField):
         :param presets: A dictionary of keys:values used to preset
                         (parameterize) fields during symbol
                         specialization. Values in this dictionary will
-                        override any fields definition, constraints or
+                        override any field definition, constraints or
                         relationship dependencies.
         :param fuzz: A dictionary of keys:values used for fuzzing
                      purpose during the specialization process. This
@@ -227,12 +227,12 @@ class Symbol(AbstractField):
         >>> print(len(result))
         6
 
-        **Parameterized specialization of fields values (presets)**
+        **Parameterized specialization of field values (presets)**
 
         It is possible to preset (parameterize) fields during symbol
         specialization, through a dict passed in the ``presets=``
         parameter of the :meth:`~netzob.Model.Vocabulary.Symbol.specialize`
-        method. Values in this dictionary will override any fields
+        method. Values in this dictionary will override any field
         definition, constraints or relationship dependencies.
 
         The presets dictionary accepts a sequence of keys and values,

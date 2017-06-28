@@ -58,7 +58,7 @@ class Automata(object):
     (i.e. Stochastic Mealy Machine with Deterministic Transitions),
     which is a Mealy machine (cf. https://en.wikipedia.org/wiki/Mealy_machine).
 
-    The following exmple shows the definition of an automaton with
+    The following example shows the definition of an automaton with
     three states `s0`, `s1`, `s2`, an opening transition between the
     states `s0` and `s1`, a standard transition within the same state
     `s1` which accept the input symbol `inputSymbol` and generate the

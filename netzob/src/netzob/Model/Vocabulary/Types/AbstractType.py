@@ -321,11 +321,11 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         :param dst_endianness: The endianness of the destination
                                value. Values must be
                                Endianness.BIG or
-                               Endianness.LITTLE. if None,
+                               Endianness.LITTLE. If None,
                                the value is the default one.
         :param dst_sign: The sign of the destination. Values must be
                          Sign.SIGNED or
-                         Sign.UNSIGNED. if None, the
+                         Sign.UNSIGNED. If None, the
                          value is the default one.
         :type typeClass: type
         :type dst_unitSize: :class:`Enum`

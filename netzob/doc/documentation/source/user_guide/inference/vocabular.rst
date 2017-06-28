@@ -17,7 +17,7 @@ Options during alignment process
 * "read-only” process (do not require a participation in the
   communication).
 * Identify the fixed and dynamic fields of all the messages.
-* Regroups equivalent messages depending of their fields structures.
+* Regroups equivalent messages depending of their field structures.
 
 
 * Clustering (Regroups equivalent messages using) :

@@ -58,7 +58,7 @@ class Mutator(metaclass=abc.ABCMeta):
     :param seed: the initial seed value of the mutator
     :type seed: :class:`int`, defaults to :attr:`SEED_DEFAULT`
 
-    Constant definitions :
+    Constant definitions:
     """
 
     # Constants

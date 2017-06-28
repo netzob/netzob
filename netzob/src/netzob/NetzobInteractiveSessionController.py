@@ -74,7 +74,7 @@ class NetzobInteractiveSessionController(object):
 
 
 class NetzobIPythonShellController(NetzobInteractiveSessionController):
-    """Execute Netzob in a IPython embedded shell"""
+    """Execute Netzob in an IPython embedded shell"""
 
     def __init__(self):
         import IPython

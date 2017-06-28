@@ -87,7 +87,7 @@ class Agg(AbstractVariableNode):
     2
 
 
-    **Examples of Agg internal attributes access**
+    **Examples of Agg internal attribute access**
 
     >>> domain = Agg([Raw(), String()])
     >>> print(domain.varType)

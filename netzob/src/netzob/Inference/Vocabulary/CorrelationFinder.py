@@ -192,15 +192,15 @@ class CorrelationFinder(object):
                 # We generate the data
                 concatCellsData = self._generateConcatData(valuesTable[i:j])
 
-                # We generate lines and header for fields values
+                # We generate lines and header for field values
                 line_header.append((fields[i:j], self.ATTR_VALUE))
                 lines_data.append(self._generateDataValues(concatCellsData))
 
-                # We generate lines and header for fields values
+                # We generate lines and header for field values
                 line_header.append((fields[i:j], self.ATTR_SIZE))
                 lines_data.append(self._generateSizeValues(concatCellsData))
 
-        # # # Now we generate values for fields sizes
+        # # # Now we generate values for field sizes
         # # (multipleSize_Header, multipleSize_lines) = self._generateSizeFieldFromBeginingOfField(symbol)
         # # line_header.extend(multipleSize_Header)
         # # for i_line in range(0, len(lines)):

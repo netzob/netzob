@@ -81,7 +81,7 @@ class AbstractionException(Exception):
 
 @NetzobLogger
 class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
-    """Represents all the different classes which participates in fields definitions of a message format."""
+    """Represents all the different classes which participates in field definitions of a message format."""
 
     def __init__(self, name=None):
         self.id = uuid.uuid4()
@@ -255,7 +255,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         :keyword transposed: is set to True, the returned matrix is transposed (1 line for each field)
         :type transposed: :class:`bool`
 
-        :return: a matrix representing the aligned messages following fields definitions.
+        :return: a matrix representing the aligned messages following field definitions.
         :rtype: a :class:`MatrixList <netzob.Common.Utils.MatrixList.MatrixList>`
         :raises: :class:`AlignmentException <netzob.Model.Vocabulary.AbstractField.AlignmentException>` if an error occurs while aligning messages
         """
@@ -506,12 +506,12 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def specialize(self, mutator=None):
         """Specialize and generate a :class:`bytes` object which content
-        follows the fields definitions attached to current element.
+        follows the field definitions attached to current element.
 
-        :keyword mutator: if set, the mutator will be used to mutate the fields definitions
+        :keyword mutator: if set, the mutator will be used to mutate the field definitions
         :type mutator: :class:`Mutator <netzob.Fuzzing.Mutator>`
 
-        :return: a generated content represented with an hexastring
+        :return: a generated content represented with a hexastring
         :rtype: :class:`str`
         :raises: :class:`GenerationException <netzob.Model.Vocabulary.AbstractField.GenerationException>` if an error occurs while generating a message
         """

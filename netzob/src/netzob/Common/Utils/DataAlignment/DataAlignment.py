@@ -305,7 +305,7 @@ class DataAlignment(object):
 
     @property
     def depth(self):
-        """The depth represents the maximum deepness in the fields definition
+        """The depth represents the maximum deepness in the field definition
         that will be considered when aligning messages.
 
         If set to None, its no limit.

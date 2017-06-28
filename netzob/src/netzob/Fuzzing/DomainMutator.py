@@ -92,7 +92,7 @@ class DomainMutator(Mutator):
         <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
     :type mode: :class:`MutatorMode`, optional
 
-    The following code shows the instanciation of a symbol composed of
+    The following code shows the instantiation of a symbol composed of
     a string and an integer, and the fuzzing request during the
     specialization process:
 
