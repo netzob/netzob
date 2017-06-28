@@ -35,6 +35,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import socket
+import binascii
 from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
@@ -84,13 +85,25 @@ class RawEthernetClient(AbstractChannel):
     :type timeout: :class:`float`, optional
 
 
-    The following code shows the use of a RawEthernetClient channel:
+    The following code shows the use of a RawEthernetClient channel with a IP upper protocol:
 
     >>> from netzob.all import *
-    >>> client = RawEthernetClient(remoteIP='127.0.0.1')
+    >>> client = RawEthernetClient("00:01:02:03:04:05")
     >>> client.open()
+    >>> client.initIPHeader("127.0.0.1", "127.0.0.1")
     >>> symbol = Symbol([Field("Hello everyone!")])
     >>> client.write(symbol.specialize())
+    73
+    >>> client.close()
+
+    It is also possible to use the RawEthernetClient with other upper protocols:
+
+    >>> client = RawEthernetClient("00:01:02:03:04:05", localMac="00:06:07:08:09:10")
+    >>> client.open()
+    >>> client.initRawHeader(b"\x08\x06")
+    >>> symbol = Symbol([Field("ABC")])
+    >>> client.write(symbol.specialize())
+    17
     >>> client.close()
 
     """
@@ -102,7 +115,7 @@ class RawEthernetClient(AbstractChannel):
                  remoteMac,
                  localMac=None,
                  upperProtocol=socket.IPPROTO_TCP,
-                 interface="eth0",
+                 interface="lo",
                  timeout=5.):
         super(RawEthernetClient, self).__init__(isServer=False)
         self.remoteMac = remoteMac
@@ -110,8 +123,20 @@ class RawEthernetClient(AbstractChannel):
         self.upperProtocol = upperProtocol
         self.interface = interface
         self.timeout = timeout
-        self.__socket = None
         self.type = AbstractChannel.TYPE_RAWETHERNETCLIENT
+        self.__socket = None
+        self.__payload_id = ""
+
+    def initRawHeader(self, upper=b"\x08\00"):
+        eth_dst = Field(name='eth.dst', domain=Raw(self.macToBitarray(self.remoteMac)))
+        eth_src = Field(name='eth.src', domain=Raw(self.macToBitarray(self.localMac)))
+        eth_type = Field(name='eth.type', domain=Raw(upper))
+        eth_payload = Field(name='eth.payload', domain=Raw())
+        self.__payload_id = 'eth.payload'
+        self.header = Symbol(name='Ethernet layer', fields=[eth_dst,
+                                                            eth_src,
+                                                            eth_type,
+                                                            eth_payload])
 
     def open(self):
         """Open the communication channel. If the channel is a client, it
@@ -143,10 +168,12 @@ class RawEthernetClient(AbstractChannel):
             if len(data) > ethHeaderLen:
                 data = data[ethHeaderLen:]
 
-            # Remove IP header from received data
-            ipHeaderLen = (data[0] & 15) * 4  # (Bitwise AND 00001111) x 4bytes --> see RFC-791
-            if len(data) > ipHeaderLen:
-                data = data[ipHeaderLen:]
+            # Remove IP header from received data if necessary
+            if self.__payload_id == "ip.payload":
+                ipHeaderLen = (data[0] & 15) * 4  # (Bitwise AND 00001111) x 4bytes --> see RFC-791
+                if len(data) > ipHeaderLen:
+                    data = data[ipHeaderLen:]
+
             return data
         else:
             raise Exception("socket is not available")
@@ -164,7 +191,7 @@ class RawEthernetClient(AbstractChannel):
         if self.__socket is None:
             raise Exception("socket is not available")
 
-        self.header_presets['ip.payload'] = data
+        self.header_presets[self.__payload_id] = data
         packet = self.header.specialize(presets=self.header_presets)
         len_data = self.__socket.sendto(packet, (self.interface, RawEthernetClient.ETH_P_ALL))
         return len_data
@@ -208,8 +235,8 @@ class RawEthernetClient(AbstractChannel):
 
         # Ethernet header
 
-        eth_dst = Field(name='eth.dst', domain=Raw(self.remoteMac))
-        eth_src = Field(name='eth.src', domain=Raw(self.localMac))
+        eth_dst = Field(name='eth.dst', domain=Raw(self.macToBitarray(self.remoteMac)))
+        eth_src = Field(name='eth.src', domain=Raw(self.macToBitarray(self.localMac)))
         eth_type = Field(name='eth.type', domain=Raw(b"\x08\x00"))
 
         # IP header
@@ -239,6 +266,7 @@ class RawEthernetClient(AbstractChannel):
         ip_daddr = Field(
             name='ip.dst', domain=IPv4(self.remoteIP))
         ip_payload = Field(name='ip.payload', domain=Raw())
+        self.__payload_id = 'ip.payload'
 
         ip_ihl.domain = Size([ip_ver,
                               ip_ihl,
@@ -249,7 +277,7 @@ class RawEthernetClient(AbstractChannel):
                               ip_ttl, ip_proto,
                               ip_checksum,
                               ip_saddr,
-                              ip_daddr], dataType=BitArray(nbBits=4), factor=1/float(32))
+                              ip_daddr], dataType=BitArray(nbBits=4), factor=1 / float(32))
         ip_tot_len.domain = Size([ip_ver,
                                   ip_ihl,
                                   ip_tos,
@@ -262,19 +290,19 @@ class RawEthernetClient(AbstractChannel):
                                   ip_checksum,
                                   ip_saddr,
                                   ip_daddr,
-                                  ip_payload], dataType=Integer(unitSize=UnitSize.SIZE_16, sign=Sign.UNSIGNED), factor=1/float(8))
-        ip_checksum.domain = InternetChecksum(fields=[ip_ver,
-                                              ip_ihl,
-                                              ip_tos,
-                                              ip_tot_len,
-                                              ip_id,
-                                              ip_flags,
-                                              ip_frag_off,
-                                              ip_ttl,
-                                              ip_proto,
-                                              ip_checksum,
-                                              ip_saddr,
-                                              ip_daddr], dataType=Raw(nbBytes=2, unitSize=UnitSize.SIZE_16))
+                                  ip_payload], dataType=Integer(unitSize=UnitSize.SIZE_16, sign=Sign.UNSIGNED), factor=1 / float(8))
+        ip_checksum.domain = InternetChecksum([ip_ver,
+                                               ip_ihl,
+                                               ip_tos,
+                                               ip_tot_len,
+                                               ip_id,
+                                               ip_flags,
+                                               ip_frag_off,
+                                               ip_ttl,
+                                               ip_proto,
+                                               ip_checksum,
+                                               ip_saddr,
+                                               ip_daddr], dataType=Raw(nbBytes=2, unitSize=UnitSize.SIZE_16))
 
         self.header = Symbol(name='Ethernet layer', fields=[eth_dst,
                                                             eth_src,
@@ -292,6 +320,31 @@ class RawEthernetClient(AbstractChannel):
                                                             ip_saddr,
                                                             ip_daddr,
                                                             ip_payload])
+
+    def macToBitarray(self, addr):
+        """Converts a mac address represented as a string to its bitarray value.
+
+        >>> client = RawEthernetClient('00:01:02:03:04:05')
+        >>> client.macToBitarray('00:01:02:03:04:05')
+        bitarray('000000000000000100000010000000110000010000000101')
+        >>> client.macToBitarray(b'\\x00\\x01\\x02\\x03\\x04\\x05')
+        bitarray('000000000000000100000010000000110000010000000101')
+        """
+
+        if addr is None:
+            return bitarray(48)
+
+        if isinstance(addr, bytes):
+            addr = binascii.hexlify(addr).decode()
+
+        numeric = int(addr.replace(":", ""), 16)
+        binary = bin(numeric)[2:]
+        l = len(binary)
+        if l > 48:
+            raise Exception("Binary overflow while converting hexadecimal value")
+
+        binary = "0" * (48 - l) + binary
+        return bitarray(binary)
 
     # Management methods
 
