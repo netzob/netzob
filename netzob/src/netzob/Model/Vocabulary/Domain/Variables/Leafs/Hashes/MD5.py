@@ -39,24 +39,13 @@ import hashlib
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-from bitarray import bitarray
-import binascii
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hash import Hash
-from netzob.Model.Vocabulary.AbstractField import AbstractField
-from netzob.Model.Vocabulary.Types.HexaString import HexaString
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, Sign
-from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-from netzob.Model.Vocabulary.Types.BitArray import BitArray
-from netzob.Model.Vocabulary.Types.Raw import Raw
-from netzob.Model.Vocabulary.Types.Integer import Integer
 
 
-@NetzobLogger
 class MD5(Hash):
     r"""This class implements the MD5 relationships between fields.
 
@@ -75,38 +64,18 @@ class MD5(Hash):
     another field:
 
     >>> from netzob.all import *
+    >>> import binascii
     >>> f1 = Field(Raw(b'\xaa\xbb'))
     >>> f2 = Field(MD5([f1]))
     >>> s = Symbol(fields = [f1, f2])
     >>> binascii.hexlify(s.specialize())
     b'aabb58cea1f6b2b06520613e09af90dc1c47'
-
     """
 
-    def __init__(self, targets, dataType=None, name=None):
-        if dataType is None:
-            dataType = Raw(nbBytes=16)
-        super(MD5, self).__init__(self.__class__.__name__,
-                                   dataType=dataType,
-                                   targets=targets,
-                                   name=name)
-
-    def relationOperation(self, msg):
-
-        # The calling function provides a BitArray
-        msg = msg.tobytes()
-
-        # Compute hash
+    def calculate(self, msg):
         m = hashlib.new("md5")
         m.update(msg)
-        result = m.digest()
+        return m.digest()
 
-        # Convert the result in a BitArray (be carefull with the src_unitSize)
-        result = TypeConverter.convert(result, Raw, BitArray,
-                                       src_endianness=Endianness.LITTLE,
-                                       dst_endianness=self.dataType.endianness,
-                                       src_unitSize=self.dataType.unitSize,
-                                       dst_unitSize=self.dataType.unitSize,
-                                       src_sign=Sign.UNSIGNED)
-
-        return result
+    def getBitSize(self):
+        return 128

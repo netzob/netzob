@@ -43,15 +43,9 @@ import hashlib
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hash import Hash
-from netzob.Model.Vocabulary.Types.AbstractType import Endianness, Sign
-from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-from netzob.Model.Vocabulary.Types.BitArray import BitArray
-from netzob.Model.Vocabulary.Types.Raw import Raw
 
 
-@NetzobLogger
 class SHA1(Hash):
     r"""This class implements the SHA1 relationships between fields.
 
@@ -70,36 +64,16 @@ class SHA1(Hash):
     another field:
 
     >>> from netzob.all import *
+    >>> import binascii
     >>> f1 = Field(Raw(b'\xaa\xbb'))
     >>> f2 = Field(SHA1([f1]))
     >>> s = Symbol(fields = [f1, f2])
     >>> binascii.hexlify(s.specialize())
     b'aabb65b1e351a6cbfeb41c927222bc9ef53aad3396b0'
-
     """
 
-    def __init__(self, targets, dataType=None, name=None):
-        super(SHA1, self).__init__(self.__class__.__name__,
-                                   dataType=dataType,
-                                   targets=targets,
-                                   name=name)
+    def calculate(self, msg):
+        return hashlib.sha1(msg).digest()
 
-    def relationOperation(self, msg):
-
-        # The calling function provides a BitArray
-        msg = msg.tobytes()
-
-        # Compute hash
-        m = hashlib.new("sha1")
-        m.update(msg)
-        result = m.digest()
-
-        # Convert the result in a BitArray (be carefull with the src_unitSize)
-        result = TypeConverter.convert(result, Raw, BitArray,
-                                       src_endianness=Endianness.LITTLE,
-                                       dst_endianness=self.dataType.endianness,
-                                       src_unitSize=self.dataType.unitSize,
-                                       dst_unitSize=self.dataType.unitSize,
-                                       src_sign=Sign.UNSIGNED)
-
-        return result
+    def getBitSize(self):
+        return 160

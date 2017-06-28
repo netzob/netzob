@@ -38,71 +38,28 @@
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-from bitarray import bitarray
-import binascii
 from PyCRC.CRC16SICK import CRC16SICK as _CRC16SICK
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksum import Checksum
-from netzob.Model.Vocabulary.AbstractField import AbstractField
-from netzob.Model.Vocabulary.Types.AbstractType import Endianness, Sign, UnitSize
-from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-from netzob.Model.Vocabulary.Types.BitArray import BitArray
-from netzob.Model.Vocabulary.Types.Raw import Raw
-from netzob.Model.Vocabulary.Types.Integer import Integer
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.CRC16 import CRC16
 
 
-@NetzobLogger
-class CRC16SICK(Checksum):
+class CRC16SICK(CRC16):
     r"""This class implements the CRC16SICK function.
-
-    The constructor expects some parameters:
-
-    :param targets: The targeted fields of the relationship.
-    :param dataType: Specify that the produced value should be
-                     represented according to this dataType.
-                     If None, default value is Raw(nbBytes=2).
-    :type targets: a :class:`list` of :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`, required
-    :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, optional
-
 
     The following examples show how to create a checksum relation with
     another field:
 
     >>> from netzob.all import *
-    >>> f2 = Field(Checksum([f1], 'CRC16SICK'))
+    >>> import binascii
+    >>> f1 = Field(Raw(b'\xaa\xbb'))
+    >>> f2 = Field(CRC16SICK([f1]))
     >>> s = Symbol(fields = [f1, f2])
     >>> binascii.hexlify(s.specialize())
-    b'aabb3ed3'
-
-
+    b'aabbabef'
     """
 
-    def __init__(self, targets, dataType=None, name=None):
-        if dataType is None:
-            dataType = Raw(nbBytes=2)  # The computed checksum is on 16 bits
-        super(CRC16SICK, self).__init__(self.__class__.__name__,
-                                       dataType=dataType,
-                                       targets=targets,
-                                       name=name)
-
-    def relationOperation(self, msg):
-
-        # Convert bitarray input into bytes
-        msg = msg.tobytes()
-
-        # Compute checksum
-        result = _CRC16SICK().calculate(msg)
-
-        # Convert the result in a BitArray (be carefull with the src_unitSize)
-        result = TypeConverter.convert(result, Integer, BitArray,
-                                       src_endianness=Endianness.LITTLE,
-                                       dst_endianness=self.dataType.endianness,
-                                       src_unitSize=UnitSize.SIZE_16,
-                                       dst_unitSize=self.dataType.unitSize,
-                                       src_sign=Sign.UNSIGNED)
-
-        return result
+    def calculate(self, msg):
+        return _CRC16SICK().calculate(msg)

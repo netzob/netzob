@@ -45,6 +45,7 @@ import abc
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hash import Hash
 from netzob.Model.Vocabulary.Types.AbstractType import Endianness, Sign
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
@@ -52,7 +53,7 @@ from netzob.Model.Vocabulary.Types.Raw import Raw
 
 
 @NetzobLogger
-class HMAC(AbstractRelationVariableLeaf):
+class HMAC(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
     r"""The HMAC class implements the HMAC relationships between fields.
 
     The Hmac constructor expects some parameters:
@@ -77,65 +78,35 @@ class HMAC(AbstractRelationVariableLeaf):
     * sha256
     * sha384
     * sha512
-
-
-    The following examples show how to create a hmac relation with
-    another field, with different hash functions:
-
-    >>> from netzob.all import *
-    >>> import binascii
-    >>> f1 = Field(Raw(b'\xaa\xbb'))
-    >>> f2 = Field(HMAC_MD5([f1], key=b'1234'))
-    >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())
-    b'aabbb71c98baa40dc8a49361816d5dc1eb25'
-
-    >>> f2 = Field(HMAC_SHA1([f1], key=b'1234'))
-    >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())
-    b'aabb1c8c88e4ccf41d1b33814bfbb8e487611e97e699'
-
-    >>> f2 = Field(HMAC_SHA1_96([f1], key=b'1234'))
-    >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())
-    b'aabb1c8c88e4ccf41d1b33814bfb'
-
-    >>> f2 = Field(HMAC_SHA2_224([f1], key=b'1234'))
-    >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())
-    b'aabb99950845aec2ba54e4c426baa74667d27feb6f55c807a2302f6ceb54'
-
-    >>> f2 = Field(HMAC_SHA2_256([f1], key=b'1234'))
-    >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())
-    b'aabbd798c3319e6f2ad48c313deb0eee1c9a9b704c3964d8195e66b10a47583b9c07'
-
-    >>> f2 = Field(HMAC_SHA2_384([f1], key=b'1234'))
-    >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())  # doctest: +ELLIPSIS
-    b'aabb76b3535033802e3234386d1f45aa74e443d21651a798c194769b9af1808cd29d2...'
-
-    >>> f2 = Field(HMAC_SHA2_512([f1], key=b'1234'))
-    >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())  # doctest: +ELLIPSIS
-    b'aabb76ef5cd30cf5dcd93cb8b5c6f65f894e4453b51fc055d7cb05746f342f561b4c4...'
-
     """
 
-    def __init__(self, varType, targets, key, dataType=None, name=None):
-        super(HMAC, self).__init__(varType,
+    def __init__(self, targets, key, dataType=None, name=None):
+        super(HMAC, self).__init__(self.__class__.__name__,
                                    dataType=dataType,
                                    targets=targets,
                                    name=name)
         self.key = key
 
-    @abc.abstractmethod
     def relationOperation(self, msg):
         """The relationOperation receive a bitarray object and should return a
         bitarray object.
 
         """
-        raise NotImplementedError("Internal Error: 'relationOperation' method not implemented")
+        # The calling function provides a BitArray
+        msg = msg.tobytes()
+
+        # Compute HMAC
+        result = self.calculate(msg)
+
+        # The calling function expects a BitArray
+        result = TypeConverter.convert(result, Raw, BitArray,
+                                       src_endianness=Endianness.LITTLE,
+                                       dst_endianness=self.dataType.endianness,
+                                       src_unitSize=self.dataType.unitSize,
+                                       dst_unitSize=self.dataType.unitSize,
+                                       src_sign=Sign.UNSIGNED)
+
+        return result
 
     @property
     def key(self):
@@ -147,3 +118,27 @@ class HMAC(AbstractRelationVariableLeaf):
         if key is None:
             raise TypeError("key cannot be None")
         self.__key = key
+
+    @abc.abstractmethod
+    def calculate(self, msg: bytes) -> bytes:
+        """
+        The most-specific computation method taking a :attr:`msg` and returning
+        its hash value.
+
+        :param msg: input message
+        :type msg: :class:`bytes`
+        :return: hash value
+        :rtype: :class:`bytes`
+        """
+
+    @abc.abstractmethod
+    def getBitSize(self) -> int:
+        """
+        Get the bit size of the hash'ed message.
+
+        :return: the output unit size
+        :type: :class:`int`
+        """
+
+    def getByteSize(self):
+        return int(self.getBitSize() / 8)

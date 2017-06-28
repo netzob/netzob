@@ -38,24 +38,15 @@
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-from bitarray import bitarray
-import binascii
 from PyCRC.CRC32 import CRC32 as _CRC32
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksum import Checksum
-from netzob.Model.Vocabulary.AbstractField import AbstractField
-from netzob.Model.Vocabulary.Types.AbstractType import Endianness, Sign, UnitSize
-from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-from netzob.Model.Vocabulary.Types.BitArray import BitArray
-from netzob.Model.Vocabulary.Types.Raw import Raw
-from netzob.Model.Vocabulary.Types.Integer import Integer
+from netzob.Model.Vocabulary.Types.AbstractType import UnitSize
 
 
-@NetzobLogger
 class CRC32(Checksum):
     r"""This class implements the CRC32 function.
 
@@ -73,36 +64,16 @@ class CRC32(Checksum):
     another field:
 
     >>> from netzob.all import *
-    >>> f2 = Field(Checksum([f1], 'CRC32'))
+    >>> import binascii
+    >>> f1 = Field(Raw(b'\xaa\xbb'))
+    >>> f2 = Field(CRC32([f1]))
     >>> s = Symbol(fields = [f1, f2])
     >>> binascii.hexlify(s.specialize())
-    b'aabb3ed3'
-
-
+    b'aabb982c8249'
     """
 
-    def __init__(self, targets, dataType=None, name=None):
-        if dataType is None:
-            dataType = Raw(nbBytes=4)  # The computed checksum is on 32 bits
-        super(CRC32, self).__init__(self.__class__.__name__,
-                                       dataType=dataType,
-                                       targets=targets,
-                                       name=name)
+    def calculate(self, msg):
+        return _CRC32().calculate(msg)
 
-    def relationOperation(self, msg):
-
-        # Convert bitarray input into bytes
-        msg = msg.tobytes()
-
-        # Compute checksum
-        result = _CRC32().calculate(msg)
-
-        # Convert the result in a BitArray (be carefull with the src_unitSize)
-        result = TypeConverter.convert(result, Integer, BitArray,
-                                       src_endianness=Endianness.LITTLE,
-                                       dst_endianness=self.dataType.endianness,
-                                       src_unitSize=UnitSize.SIZE_32,
-                                       dst_unitSize=self.dataType.unitSize,
-                                       src_sign=Sign.UNSIGNED)
-
-        return result
+    def getUnitSize(self):
+        return UnitSize.SIZE_32

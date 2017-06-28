@@ -38,61 +38,29 @@
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-from bitarray import bitarray
-import binascii
-from PyCRC.CRC16 import CRC16 as _CRC16
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksum import Checksum
-from netzob.Model.Vocabulary.AbstractField import AbstractField
-from netzob.Model.Vocabulary.Types.AbstractType import Endianness, Sign, UnitSize
-from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-from netzob.Model.Vocabulary.Types.BitArray import BitArray
-from netzob.Model.Vocabulary.Types.Raw import Raw
-from netzob.Model.Vocabulary.Types.Integer import Integer
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.CRC16 import CRC16
 
 
-@NetzobLogger
-class InternetChecksum(Checksum):
+class InternetChecksum(CRC16):
     r"""This class implements the InternetChecksum function.
-
-    The constructor expects some parameters:
-
-    :param targets: The targeted fields of the relationship.
-    :param dataType: Specify that the produced value should be
-                     represented according to this dataType.
-                     If None, default value is Raw(nbBytes=2).
-    :type targets: a :class:`list` of :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`, required
-    :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, optional
-
 
     The following examples show how to create a checksum relation with
     another field:
 
     >>> from netzob.all import *
-    >>> f2 = Field(InternetCHecksum([f1]))
+    >>> import binascii
+    >>> f1 = Field(Raw(b'\xaa\xbb'))
+    >>> f2 = Field(InternetChecksum([f1]))
     >>> s = Symbol(fields = [f1, f2])
     >>> binascii.hexlify(s.specialize())
-    b'aabb3ed3'
-
-
+    b'aabb5544'
     """
 
-    def __init__(self, targets, dataType=None, name=None):
-        if dataType is None:
-            dataType = Raw(nbBytes=2)  # The computed checksum is on 16 bits
-        super(InternetChecksum, self).__init__(self.__class__.__name__,
-                                       dataType=dataType,
-                                       targets=targets,
-                                       name=name)
-
-    def relationOperation(self, msg):
-
-        # Convert bitarray input into bytes
-        msg = msg.tobytes()
+    def calculate(self, msg):
 
         # Compute checksum
         def carry_around_add(a, b):
@@ -106,14 +74,4 @@ class InternetChecksum(Checksum):
             else:
                 w = msg[i] + (msg[i + 1] << 8)
             s = carry_around_add(s, w)
-        result = ~s & 0xffff
-
-        # Convert the result in a BitArray (be carefull with the src_unitSize)
-        result = TypeConverter.convert(result, Integer, BitArray,
-                                       src_endianness=Endianness.LITTLE,
-                                       dst_endianness=self.dataType.endianness,
-                                       src_unitSize=UnitSize.SIZE_16,
-                                       dst_unitSize=self.dataType.unitSize,
-                                       src_sign=Sign.UNSIGNED)
-
-        return result
+        return ~s & 0xffff

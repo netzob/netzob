@@ -43,15 +43,9 @@ import hashlib
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hash import Hash
-from netzob.Model.Vocabulary.Types.AbstractType import Endianness, Sign
-from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-from netzob.Model.Vocabulary.Types.BitArray import BitArray
-from netzob.Model.Vocabulary.Types.Raw import Raw
 
 
-@NetzobLogger
 class SHA2_224(Hash):
     r"""This class implements the SHA2_224 relationships between fields.
 
@@ -70,36 +64,16 @@ class SHA2_224(Hash):
     another field:
 
     >>> from netzob.all import *
+    >>> import binascii
     >>> f1 = Field(Raw(b'\xaa\xbb'))
-    >>> f2 = Field(Hash([f1], 'sha224'))
+    >>> f2 = Field(SHA2_224([f1]))
     >>> s = Symbol(fields = [f1, f2])
     >>> binascii.hexlify(s.specialize())
     b'aabb6b14a319ec360af5bbc69eea2bfb3a7ef278705e742c5b1dd1c11239'
-
     """
 
-    def __init__(self, targets, dataType=None, name=None):
-        super(SHA2_224, self).__init__(self.__class__.__name__,
-                                   dataType=dataType,
-                                   targets=targets,
-                                   name=name)
+    def calculate(self, msg):
+        return hashlib.sha224(msg).digest()
 
-    def relationOperation(self, msg):
-
-        # The calling function provides a BitArray
-        msg = msg.tobytes()
-
-        # Compute hash
-        m = hashlib.new("sha224")
-        m.update(msg)
-        result = m.digest()
-
-        # Convert the result in a BitArray (be carefull with the src_unitSize)
-        result = TypeConverter.convert(result, Raw, BitArray,
-                                       src_endianness=Endianness.LITTLE,
-                                       dst_endianness=self.dataType.endianness,
-                                       src_unitSize=self.dataType.unitSize,
-                                       dst_unitSize=self.dataType.unitSize,
-                                       src_sign=Sign.UNSIGNED)
-
-        return result
+    def getBitSize(self):
+        return 224

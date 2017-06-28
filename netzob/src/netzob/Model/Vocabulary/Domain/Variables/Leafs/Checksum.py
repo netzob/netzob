@@ -39,25 +39,19 @@ import abc
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-from bitarray import bitarray
-import binascii
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
-from netzob.Model.Vocabulary.AbstractField import AbstractField
-from netzob.Model.Vocabulary.Types.HexaString import HexaString
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, Sign, UnitSize
-from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+from netzob.Model.Vocabulary.Types.AbstractType import Endianness, Sign, UnitSize
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Raw import Raw
+from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.Integer import Integer
 
 
-@NetzobLogger
-class Checksum(AbstractRelationVariableLeaf):
+class Checksum(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
     r"""The Checksum class implements a list of checksum relationships between fields.
 
     The Checksum constructor expects some parameters:
@@ -82,47 +76,6 @@ class Checksum(AbstractRelationVariableLeaf):
     * CRC32
     * CRCCCITT
     * InternetChecksum (this checksum is used in ICMP, UDP, IP, TCP protocols, as specified in RFC 1071)
-
-
-    The following examples show how to create a checksum relation with
-    another field, with different checksum functions:
-
-    >>> from netzob.all import *
-    >>> f1 = Field(Raw(b'\xaa\xbb'))
-    >>> f2 = Field(CRC16([f1]))
-    >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())
-    b'aabb3ed3'
-
-    >>> f2 = Field(CRC16DNP([f1]))
-    >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())
-    b'aabbfb9b'
-
-    >>> f2 = Field(CRC16Kermit([f1]))
-    >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())
-    b'aabb59d7'
-
-    >>> f2 = Field(CRC16SICK([f1]))
-    >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())
-    b'aabbabef'
-
-    >>> f2 = Field(CRC32([f1]))
-    >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())
-    b'aabb982c8249'
-
-    >>> f2 = Field(CRCCCITT([f1]))
-    >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())
-    b'aabb05e4'
-
-    >>> f2 = Field(InternetChecksum([f1]))
-    >>> s = Symbol(fields = [f1, f2])
-    >>> s.specialize()
-    b'\xaa\xbbUD'
 
 
     **Complete Example with ICMP**
@@ -158,18 +111,56 @@ class Checksum(AbstractRelationVariableLeaf):
 
     """
 
-    def __init__(self, varType, targets, dataType=None, name=None):
+    def __init__(self, targets, dataType=None, name=None):
         if dataType is None:
-            dataType = Raw(nbBytes=2)  # The computed checksum is generally on 16 bits
-        super(Checksum, self).__init__(varType,
+            dataType = Raw(nbBytes=self.getByteSize())
+            # The computed checksum is generally on 16 bits
+        super(Checksum, self).__init__(self.__class__.__name__,
                                        dataType=dataType,
                                        targets=targets,
                                        name=name)
 
-    @abc.abstractmethod
     def relationOperation(self, msg):
         """The relationOperation receive a bitarray object and should return a
         bitarray object.
 
         """
-        raise NotImplementedError("Internal Error: 'relationOperation' method not implemented")
+        # Convert bitarray input into bytes
+        msg = msg.tobytes()
+
+        # Compute checksum
+        result = self.calculate(msg)
+
+        # Convert the result in a BitArray (be carefull with the src_unitSize)
+        result = TypeConverter.convert(result, Integer, BitArray,
+                                       src_endianness=Endianness.LITTLE,
+                                       dst_endianness=self.dataType.endianness,
+                                       src_unitSize=self.getUnitSize(),
+                                       dst_unitSize=self.dataType.unitSize,
+                                       src_sign=Sign.UNSIGNED)
+
+        return result
+
+    @abc.abstractmethod
+    def calculate(self, msg: bytes) -> bytes:
+        """
+        The most-specific computation method taking a :attr:`msg` and returning
+        its checksum value.
+
+        :param msg: input message
+        :type msg: :class:`bytes`
+        :return: checksum value
+        :rtype: :class:`bytes`
+        """
+
+    @abc.abstractmethod
+    def getUnitSize(self) -> UnitSize:
+        """
+        Get the unit size of the checksum'ed message.
+
+        :return: the output unit size
+        :type: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`
+        """
+
+    def getByteSize(self):
+        return int(self.getUnitSize().value / 8)

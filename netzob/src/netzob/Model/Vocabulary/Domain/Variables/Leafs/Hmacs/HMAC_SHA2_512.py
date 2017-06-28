@@ -44,15 +44,10 @@ import hashlib
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.HMAC import HMAC
-from netzob.Model.Vocabulary.Types.AbstractType import Endianness, Sign
-from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-from netzob.Model.Vocabulary.Types.BitArray import BitArray
-from netzob.Model.Vocabulary.Types.Raw import Raw
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hashes.SHA2_512 import SHA2_512
 
 
-@NetzobLogger
 class HMAC_SHA2_512(HMAC):
     r"""This class implements the HMAC_SHA2_512.
 
@@ -73,35 +68,15 @@ class HMAC_SHA2_512(HMAC):
     another field:
 
     >>> from netzob.all import *
+    >>> import binascii
     >>> f1 = Field(Raw(b'\xaa\xbb'))
     >>> f2 = Field(HMAC_SHA2_512([f1], key=b'1234'))
     >>> s = Symbol(fields = [f1, f2])
     >>> binascii.hexlify(s.specialize())  # doctest: +ELLIPSIS
     b'aabb76ef5cd30cf5dcd93cb8b5c6f65f894e4453b51fc055d7cb05746f342f561b4c4...'
-
     """
 
-    def __init__(self, targets, key, dataType=None, name=None):
-        super(HMAC_SHA2_512, self).__init__(self.__class__.__name__,
-                                       targets=targets,
-                                       key=key,
-                                       dataType=dataType,
-                                       name=name)
+    def calculate(self, msg):
+        return hmac.new(self.key, msg=msg, digestmod=hashlib.sha512).digest()
 
-    def relationOperation(self, msg):
-
-        # The calling function provides a BitArray
-        msg = msg.tobytes()
-
-        # Compute HMAC
-        result = hmac.new(self.key, msg=msg, digestmod=hashlib.sha512).digest()
-
-        # The calling function expects a BitArray
-        result = TypeConverter.convert(result, Raw, BitArray,
-                                       src_endianness=Endianness.LITTLE,
-                                       dst_endianness=self.dataType.endianness,
-                                       src_unitSize=self.dataType.unitSize,
-                                       dst_unitSize=self.dataType.unitSize,
-                                       src_sign=Sign.UNSIGNED)
-
-        return result
+    getBitSize = SHA2_512.getBitSize

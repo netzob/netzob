@@ -38,28 +38,18 @@
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-from PyCRC.CRCCCITT import CRCCCITT as _CRCCCITT
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.CRC16 import CRC16
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksum import Checksum
 
 
-class CRCCCITT(CRC16):
-    r"""This class implements the CRCCCITT function.
+class ChecksumFactory(object):
 
-    The following examples show how to create a checksum relation with
-    another field:
-
-    >>> from netzob.all import *
-    >>> import binascii
-    >>> f1 = Field(Raw(b'\xaa\xbb'))
-    >>> f2 = Field(CRCCCITT([f1]))
-    >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())
-    b'aabb05e4'
-    """
-
-    def calculate(self, msg):
-        return _CRCCCITT().calculate(msg)
+    @classmethod
+    def create(cls, name, calculate=None, unitSize=None):
+        return type(name, (Checksum,), {
+            'calculate': calculate,
+            'getUnitSize': lambda self: unitSize
+        })
