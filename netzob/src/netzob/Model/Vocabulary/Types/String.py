@@ -85,7 +85,7 @@ class String(AbstractType):
 
 
     Netzob can describe a field that contains a String
-    string. String strings can be either static or dynamic with fixed
+    string. String objects can be either static or dynamic with fixed
     sizes or even dynamic with variable sizes.
 
     The following examples show how to define a static string in UTF-8:
@@ -109,12 +109,12 @@ class String(AbstractType):
     ...
     ValueError: Input value for the following string is incorrect: 'Paris in €'...
 
-    The following example shows how to define a String string with a
+    The following example shows how to define a String object with a
     fixed size and a dynamic content:
 
     >>> f = Field(String(nbChars=10))
 
-    The following example shows how to define a String string with a
+    The following example shows how to define a String object with a
     variable size and a dynamic content:
 
     >>> f = Field(String(nbChars=(10, 32)))

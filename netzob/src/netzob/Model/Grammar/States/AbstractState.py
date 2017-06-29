@@ -132,7 +132,7 @@ class AbstractState(object, metaclass=abc.ABCMeta):
 
     @property
     def cbk_pickNextTransition(self):
-        """Function called during state execution to help chosing the next
+        """Function called during state execution to help choosing the next
         transition.
 
         If a callback function is defined, we call it in order to

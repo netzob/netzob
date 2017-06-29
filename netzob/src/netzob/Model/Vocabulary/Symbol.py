@@ -187,10 +187,10 @@ class Symbol(AbstractField):
 
     @typeCheck(Memory, object)
     def specialize(self, memory=None, presets=None, fuzz=None):
-        r"""The method specialize() generates a :class:`bytes` sequence whose
+        r"""The method :meth:`specialize` generates a :class:`bytes` sequence whose
         content follows the field or symbol definition.
 
-        The specialize() method expects some parameters:
+        The :meth:`specialize` method expects some parameters:
 
         :param memory: A memory used to store variables values during
                        specialization and abstraction of sequence of symbols.
@@ -214,7 +214,7 @@ class Symbol(AbstractField):
         :type presets: :class:`dict`
         :type fuzz: :class:`dict`
 
-        The following example shows the specialize() method used for a
+        The following example shows the :meth:`specialize` method used for a
         field which contains a String and a Size fields.
 
         >>> from netzob.all import *
@@ -337,11 +337,11 @@ class Symbol(AbstractField):
 
     @typeCheck(Memory, object)
     def specialize_count(self, memory=None, presets=None, fuzz=None):
-        r"""The method specialize_count() compute the expected number of unique
+        r"""The method :meth:`specialize_count` compute the expected number of unique
         produced messages, considering the initial symbol model, the
         preseted fields and the fuzzed fields.
 
-        The specialize_dryun() method expects the same parameters as the specialize() method:
+        The :meth:`specialize_dryun` method expects the same parameters as the :meth:`specialize` method:
 
         :param memory: A memory used to store variables values during
                        specialization and abstraction of sequence of symbols.

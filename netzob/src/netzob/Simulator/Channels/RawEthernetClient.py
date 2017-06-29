@@ -85,7 +85,8 @@ class RawEthernetClient(AbstractChannel):
     :type timeout: :class:`float`, optional
 
 
-    The following code shows the use of a RawEthernetClient channel with a IP upper protocol:
+    The following code shows the use of a RawEthernetClient channel with an IP
+    upper protocol:
 
     >>> from netzob.all import *
     >>> client = RawEthernetClient("00:01:02:03:04:05")

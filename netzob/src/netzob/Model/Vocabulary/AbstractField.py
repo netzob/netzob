@@ -519,11 +519,11 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
     @staticmethod
     def abstract(data, fields):
-        """The method AbstractField.abstract() is used to retrieve the
+        """The method :meth:`abstract` is used to retrieve the
         corresponding symbol according to a concrete :class:`bytes`
         message.
 
-        The abstract() static method expects some parameters:
+        The :meth:`abstract` static method expects some parameters:
 
         :param bytes data: The concrete message to abstract in symbol.
         :param fields: A list of symbol to consider during abstraction.

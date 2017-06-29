@@ -35,7 +35,6 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import socket
-from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -53,8 +52,8 @@ class IPClient(AbstractChannel):
     """An IPClient is a communication channel allowing sending IP
     payloads. The **kernel** is responsible to build the IP header. It is
     similar to RawIPClient channel, except that with RawIPClient the
-    channel builds the IP header. Therefore, with IPclient, we **cannot** modify
-    or fuzz the IP header fields.
+    channel builds the IP header. Therefore, with :class:`IPClient <netzob.Simulator.Channels.IPClient.IPClient>`,
+    we **cannot** modify or fuzz the IP header fields.
 
     The IPClient constructor expects some parameters:
 
@@ -69,7 +68,8 @@ class IPClient(AbstractChannel):
                       Default value is 'eth0'.
     :param timeout: The default timeout of the channel for opening
                     connection and waiting for a message. Default value
-                    is 5.0 seconds. To specify no timeout, None value is expected.
+                    is 5.0 seconds. To specify no timeout, None value is
+                    expected.
     :type remoteIP: :class:`str`, required
     :type localIP: :class:`str`, optional
     :type upperProtocol: :class:`int`, optional

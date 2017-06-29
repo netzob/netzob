@@ -51,12 +51,12 @@ class Memory(object):
     To compute or verify the constraints and relationships that
     participate in the definition of the fields, Netzob relies on a
     memory. This memory stores the values of previously captured or
-    emitted fields. More precisely, the Memory contains all the fields
+    emitted fields. More precisely, the Memory contains all the field
     variables that are needed according to the field definition
     during the abstraction and specialization processes.
 
 
-    **Relationships between fields of successives messages**
+    **Relationships between fields of successive messages**
 
     The following example shows how to define a relationship between a
     received message and the next message to send.
@@ -83,7 +83,7 @@ class Memory(object):
     **Relationships between a message field and the environment**
 
     The following example shows how to define a relationship between a
-    message to send a the environment.
+    message to send and the environment variables.
 
     >>> # Environment variables definition
     >>> memory = Memory()
@@ -104,8 +104,8 @@ class Memory(object):
     **Memory usage with the abstraction layer**
 
     The following example shows how to define a relationship between a
-    message to send a the environment, and then how to leverage this
-    relationship when using the abstraction layer.
+    message to send and the environment variables, and then how to leverage
+    this relationship when using the abstraction layer.
 
     >>> # Environment variables definition
     >>> memory1 = Memory()
@@ -241,7 +241,7 @@ class Memory(object):
 
     @property
     def memory(self):
-        """The content of the memory is stored in this dict().
+        """The content of the memory is stored in this :class:`dict` object.
 
         :type: :class:`dict`
         """

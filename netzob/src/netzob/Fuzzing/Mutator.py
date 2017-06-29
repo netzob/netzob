@@ -92,7 +92,7 @@ class Mutator(metaclass=abc.ABCMeta):
         """
         Property (getter/setter).
         The current state of the pseudo-random generator.
-        the generator can reproduce a value by using this state.
+        The generator can reproduce a value by using this state.
 
         :type: :class:`int`
         """
@@ -150,8 +150,8 @@ class Mutator(metaclass=abc.ABCMeta):
 
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
-        :raises: :class:`Exception` when **currentCounter** reaches \
-**counterMax**.
+        :raises: :class:`Exception` when **currentCounter** reaches
+                 :attr:`Mutator.counterMax`.
         """
         if self._currentCounter >= self.counterMax:
             raise Exception("Max mutation counter reached")

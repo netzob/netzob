@@ -242,7 +242,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
 
     @property
     def cbk_pickOutputSymbol(self):
-        """Function called during transition execution, to help chosing the
+        """Function called during transition execution, to help choosing the
         output symbol to send.
 
         If a callback function is defined, we call it in order to
@@ -258,8 +258,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
           possible Symbols (:class:`Symbol
           <netzob.Model.Vocabulary.Symbol.Symbol>`) to send.
 
-        The callback function should return a Symbol, that will be
-        then sent.
+        The callback function should return a Symbol that will be then sent.
 
         :type: :class:`func`
         :raise: TypeError if cbk_pickOutputSymbol is not a callable function

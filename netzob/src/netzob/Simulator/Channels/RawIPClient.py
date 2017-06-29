@@ -52,7 +52,7 @@ from netzob.Model.Vocabulary.Types.IPv4 import IPv4
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Integer import Integer
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, Sign, UnitSize
+from netzob.Model.Vocabulary.Types.AbstractType import Endianness, Sign, UnitSize
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Size import Size
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.InternetChecksum import InternetChecksum
@@ -63,9 +63,9 @@ from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
 class RawIPClient(AbstractChannel):
     """A RawIPClient is a communication channel allowing sending IP
     payloads. This **channel** is responsible to build the IP header. It is
-    similar to IPClient channel, except that with IPClient the OS
-    kernel builds the IP header. Therefore, with RawIPclient, we **can** modify or
-    fuzz the IP header fields.
+    similar to :class:`IPClient <netzob.Simulator.Channels.IPClient.IPClient>`
+    channel, except that with :class:`IPClient` the OS kernel builds the IP header.
+    Therefore, with RawIPclient, we **can** modify or fuzz the IP header fields.
 
     The RawIPClient constructor expects some parameters:
 
@@ -74,10 +74,10 @@ class RawIPClient(AbstractChannel):
                     IP address corresponding to the interface that
                     will be used to send the packet.
     :param upperProtocol: The protocol following IP in the stack.
-                          Default value is socket.IPPROTO_TCP (6).
+                          Default value is :attr:`socket.IPPROTO_TCP` (6).
     :param interface: The network interface to use. This value is linked with
-                      the local IP address to use (`localIP` parameter).
-                      Default value is 'eth0'.
+                      the local IP address to use (:attr:`localIP` parameter).
+                      Default value is :const:`'eth0'`.
     :param timeout: The default timeout of the channel for opening
                     connection and waiting for a message. Default value
                     is 5.0 seconds. To specify no timeout, None value is expected.
@@ -88,7 +88,8 @@ class RawIPClient(AbstractChannel):
     :type timeout: :class:`float`, optional
 
 
-    The following code shows the use of a RawIPClient channel:
+    The following code shows the use of a :class:`RawIPClient <netzob.Simulator.Channels.RawIPClient.RawIPClient>`
+    channel:
 
     >>> from netzob.all import *
     >>> client = RawIPClient(remoteIP='127.0.0.1')

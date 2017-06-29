@@ -65,8 +65,8 @@ class CloseChannelTransition(AbstractTransition):
     :type name: :class:`str`, optional
 
 
-    The following example shows the creation of an
-    CloseChannelTransition transition:
+    The following example shows the creation of a CloseChannelTransition
+    transition:
 
     >>> from netzob.all import *
     >>> s0 = State()

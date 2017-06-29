@@ -67,7 +67,7 @@ class Field(AbstractField):
     :param domain: The definition domain of the field (i.e. the
                    set of values the field accepts). If not
                    specified, the default definition domain will
-                   be Raw(), meaning it accepts any values.
+                   be ``Raw()``, meaning it accepts any values.
     :param name: The name of the field. If not specified, the
                  default name will be "Field".
     :param layer: A flag indicating if the field is a layer.
@@ -185,8 +185,8 @@ class Field(AbstractField):
 
     Encoding functions represent functions which apply to modify the
     encoding of a data. The following example shows the use of the
-    Base64EncodingFunction function to automatically decode base64
-    strings in the `f1` field:
+    :class:`Base64EncodingFunction <netzob.Model.Vocabulary.Functions.EncodingFunctions.Base64EncodingFunction.Base64EncodingFunction>`
+    function to automatically decode base64 strings in the `f1` field:
 
     >>> m1 = "hello YWxs"
     >>> m2 = "hello bXkgbG9yZA=="

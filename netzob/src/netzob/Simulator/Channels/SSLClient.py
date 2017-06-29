@@ -78,7 +78,7 @@ class SSLClient(AbstractChannel):
                              the certificate given by the peer.
     :param alpn_protocols: Specify which protocols the socket should
                            advertise during the SSL/TLS handshake. It
-                           should be a list of String strings, like
+                           should be a list of String objects, like
                            ['http/1.1', 'spdy/2'], ordered by
                            preference. Default value is None.
     :type remoteIP: :class:`str`, required

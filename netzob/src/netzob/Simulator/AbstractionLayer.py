@@ -47,7 +47,6 @@ import time
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.EmptySymbol import EmptySymbol
-from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Model.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
 from netzob.Model.Vocabulary.Domain.Parser.MessageParser import MessageParser
@@ -57,7 +56,6 @@ from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Model.Vocabulary.UnknownSymbol import UnknownSymbol
-from netzob.Simulator.Channels.AbstractChannel import ChannelDownException
 
 
 @NetzobLogger
@@ -68,14 +66,14 @@ class AbstractionLayer(object):
 
     The AbstractionLayer constructor expects some parameters:
 
-    :param channel: The underlying communication channel (such as IPClient, UDPCLient, ...).
+    :param channel: The underlying communication channel (such as IPClient, UDPClient...).
     :param symbols: The list of permitted symbols during translation from/to concrete messages.
     :param memory: A memory object use to make persistent specific variables.
     :type channel: :class:`AbstractChannel <netzob.Model.Simuator.Channels.AbstractChannel.AbstractChannel>`, required
     :type symbols: :class:`Symbol <netzob.Model.Vocabular.Symbol.Symbol>`, required
     :type memory: :class:`Memory <netzob.Model.Vocabular.Domain.Variables.Memory.Memory>`, optional
 
-    
+
     The following code shows a usage of the abstraction layer class,
     where two UDP channels (client and server) are built and transport
     just one permitted symbol:
@@ -143,9 +141,8 @@ class AbstractionLayer(object):
                          value is None (write only once).
         :param presets: This specifies how to parameterize the emitted
                         symbol. The expected content of this dict is
-                        specified is the method ``specialize()`` of
-                        the class :class:`Symbol
-                        <netzob.Model.Vocabulary.Symbol.Symbol>`.
+                        specified in :meth:`Symbol.specialize \
+                        <netzob.Model.Vocabulary.Symbol.Symbol.specialize>`.
         :type symbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`, required
         :type rate: :class:`int`, optional
         :type duration: :class:`int`, optional

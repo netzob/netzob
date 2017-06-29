@@ -105,8 +105,8 @@ class AlternativeMutator(DomainMutator):
         if domain is None:
             raise Exception("Domain should be known to initialize a mutator")
         if not isinstance(domain, Alt):
-            raise Exception("Mutator domain should be of type Alt. Received \
-object: '{}'".format(domain))
+            raise Exception("Mutator domain should be of type Alt. Received "
+                            "object: '{}'".format(domain))
         self._mutateChild = mutateChild
 
         # Call parent init
@@ -130,7 +130,7 @@ object: '{}'".format(domain))
         :class:`PseudoRandomIntegerMutator <netzob.Fuzzing.PseudoRandomIntegerMutator>`.
 
         :rtype: :class:`PseudoRandomIntegerMutator \
-<netzob.Fuzzing.PseudoRandomIntegerMutator>`
+        <netzob.Fuzzing.PseudoRandomIntegerMutator>`
         """
         return self._positionMutator
 

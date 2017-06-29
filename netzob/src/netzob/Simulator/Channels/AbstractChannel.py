@@ -216,8 +216,8 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
     def setWriteCounterMax(self, maxValue):
         """Change the max number of writings.
         When it is reached, no packet can be sent anymore until
-        clearWriteCounter() is called.
-        If maxValue==-1, the sending limit is deactivated.
+        :meth:`clearWriteCounter` is called.
+        If maxValue is -1, the sending limit is deactivated.
 
         :param maxValue: the new max value
         :type maxValue: :class:`int`
@@ -345,7 +345,8 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
     def isServer(self):
         """
         Property (getter/setter).
-        isServer indicates if this side of the channel plays the role of a server.
+        :meth:`isServer` indicates if this side of the channel plays the role
+        of a server.
 
         :type: :class:`bool`
         """

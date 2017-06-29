@@ -51,7 +51,7 @@ from netzob.Simulator.AbstractionLayer import AbstractionLayer
 @NetzobLogger
 class Actor(threading.Thread):
     """An actor is an instance of a traffic generator which, given a
-    grammar and a vocabular, can visit the underlying automaton, and
+    grammar and a vocabulary, can visit the underlying automaton, and
     generate and parse messages from a specified abstraction layer.
 
     The Actor constructor expects some parameters:
@@ -60,10 +60,13 @@ class Actor(threading.Thread):
     :param initiator: If True, indicates that the actor initiates the
                       communication and emits the input symbol.
                       If False, indicates that the actor waits for another
-                      peer to initiate the connection. Default value is True.
-    :param abstractionLayer: The underlying abstraction layer used to abstract and specialize symbols.
-    :type automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`, required
-    :type initiator: :class:`boolean`, required
+                      peer to initiate the connection. Default value is
+                      :const:`True`.
+    :param abstractionLayer: The underlying abstraction layer used to abstract
+                             and specialize symbols.
+    :type automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`,
+                    required
+    :type initiator: :class:`bool`, required
     :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`, required
 
 
@@ -77,8 +80,8 @@ class Actor(threading.Thread):
     communication, meaning she sends the input symbols, while Bob
     answers with the output symbols of the grammar. The grammar is
     very simple, we first open the channel, and allows Alice to send
-    "alice> hello" asynchronously. At each received message, Bob answers
-    "bob> hello".
+    ``"alice> hello"`` asynchronously. At each received message, Bob answers
+    ``"bob> hello"``.
     It's Alice who decides to stop the communication.
 
     >>> from netzob.all import *
@@ -125,8 +128,8 @@ class Actor(threading.Thread):
     communication meaning she sends the input symbols while Bob
     answers with the output symbols of the grammar. The grammar is
     very simple, and different for each actor. We first open the
-    channel, and allow Alice to send random time "alice> hello". Bob
-    answers everytime "bob> hello". It's Alice who decides to stop the
+    channel, and allow Alice to send random time ``"alice> hello"``. Bob
+    answers every time ``"bob> hello"``. It's Alice who decides to stop the
     communication.
 
     >>> from netzob.all import *

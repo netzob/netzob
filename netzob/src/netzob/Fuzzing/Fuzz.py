@@ -48,7 +48,6 @@ from typing import Dict  # noqa: F401
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType  # noqa: F401
-from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Model.Vocabulary.Types.String import String
@@ -59,19 +58,20 @@ from netzob.Model.Vocabulary.Types.IPv4 import IPv4
 from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
 from netzob.Fuzzing.DomainMutator import DomainMutator, MutatorMode  # noqa: F401
 from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
+from netzob.Fuzzing.StringMutator import StringMutator
 
 
 class Fuzz(object):
     r"""The Fuzz class is the entry point for the fuzzing component.
 
     We can apply fuzzing on symbols, fields, variables and types
-    through the ``set()`` method.
+    through the :meth:`set <.Fuzz.set>` method.
 
     By default, types have an associated mutator (e.g. :class:`String
     <netzob.Model.Vocabulary.Types.String.String>` type is associated
     by default to the :class:`StringMutator
-    <netzob.Model.Fuzzing.StringMutator.StringMutator>`). The
-    ``set()`` method permits to change the default behavior.
+    <netzob.Model.Fuzzing.StringMutator.StringMutator>`).
+    The :meth:`set <.Fuzz.set>` method permits to change the default behavior.
 
     The following examples show the different usages of the fuzzing
     component.
@@ -228,10 +228,10 @@ class Fuzz(object):
         self.mappingFieldsMutators = Fuzz.mappingFieldsMutators
 
     def set(self, key, value, **kwargs):
-        r"""The method set() permits to specify the fuzzing strategy for a
-        symbol, a field, a variable or a type.
+        r"""The method :meth:`set <.Fuzz.set>` permits to specify the fuzzing
+        strategy for a symbol, a field, a variable or a type.
 
-        The set() method expects some parameters:
+        The :meth:`set <.Fuzz.set>` method expects some parameters:
 
         :param key: the targeted object (either a symbol, a field, a
                     variable or a type).
