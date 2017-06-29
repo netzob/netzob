@@ -34,6 +34,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+from typing import Callable  # noqa: F401
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -43,13 +44,55 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksum import Checksum
+from netzob.Model.Vocabulary.Types.AbstractType import UnitSize  # noqa: F401
 
 
 class ChecksumFactory(object):
+    """
+    Factory that create :class:`Checksum <netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksum.Checksum>`
+    classes by providing concrete methods as argument.
+    """
 
     @classmethod
-    def create(cls, name, calculate=None, unitSize=None):
+    def create(cls,
+               name,       # type: str
+               calculate,  # type: Callable[[Checksum, bytes], int]
+               bitSize     # type: int
+               ):
+        r"""
+        Given a :attr:`name`, corresponding to the name of the class to create,
+        this method will produce a specific :class:`Checksum <netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksum.Checksum>`
+        class.
+
+        The following attributes are expected:
+
+        - :attr:`calculate`: a function whose prototype respects abstract method \
+          :meth:`Checksum.calculate <netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksum.Checksum.calculate>`
+        - :attr:`bitSize`: an int value, respecting the :meth:`getBitSize <netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksum.Checksum.getBitSize>` \
+          returned value prototype
+
+        :param name: the class name to produce
+        :type name: :class:`str`
+        :param calculate: the calculate method
+        :type calculate: ``Callable[[Checksum, bytes], bytes]``
+        :param bitSize: the bit-size of the checksum value
+        :type bitSize: :class:`int`
+
+
+        >>> from netzob.all import *
+        >>> import binascii
+        >>> def calculate(checksum, msg):
+        ...     return 0x0123456789abcdef
+        >>> MyCRC = ChecksumFactory.create('MyCRC',
+        ...                                calculate=calculate,
+        ...                                bitSize=64)
+        >>> f1 = Field(Raw(b'\xaa\xbb'))
+        >>> f2 = Field(MyCRC([f1]))
+        >>> s = Symbol(fields = [f1, f2])
+        >>> binascii.hexlify(s.specialize())
+        b'aabbefcdab8967452301'
+        """
         return type(name, (Checksum,), {
             'calculate': calculate,
-            'getUnitSize': lambda self: unitSize
+            'getBitSize': lambda self: bitSize
         })

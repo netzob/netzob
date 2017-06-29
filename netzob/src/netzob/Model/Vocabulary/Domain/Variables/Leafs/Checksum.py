@@ -44,7 +44,7 @@ import abc
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
-from netzob.Model.Vocabulary.Types.AbstractType import Endianness, Sign, UnitSize
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, Sign
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
@@ -133,16 +133,16 @@ class Checksum(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
 
         # Convert the result in a BitArray (be carefull with the src_unitSize)
         result = TypeConverter.convert(result, Integer, BitArray,
-                                       src_endianness=Endianness.LITTLE,
-                                       dst_endianness=self.dataType.endianness,
-                                       src_unitSize=self.getUnitSize(),
-                                       dst_unitSize=self.dataType.unitSize,
-                                       src_sign=Sign.UNSIGNED)
+                    src_endianness=Endianness.LITTLE,
+                    dst_endianness=self.dataType.endianness,
+                    src_unitSize=AbstractType.getUnitSizeEnum(self.getBitSize()),
+                    dst_unitSize=self.dataType.unitSize,
+                    src_sign=Sign.UNSIGNED)
 
         return result
 
     @abc.abstractmethod
-    def calculate(self, msg: bytes) -> bytes:
+    def calculate(self, msg: bytes) -> int:
         """
         The most-specific computation method taking a :attr:`msg` and returning
         its checksum value.
@@ -150,17 +150,17 @@ class Checksum(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
         :param msg: input message
         :type msg: :class:`bytes`
         :return: checksum value
-        :rtype: :class:`bytes`
+        :rtype: :class:`int`
         """
 
     @abc.abstractmethod
-    def getUnitSize(self) -> UnitSize:
+    def getBitSize(self) -> int:
         """
         Get the unit size of the checksum'ed message.
 
         :return: the output unit size
-        :type: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`
+        :type: :class:`int`
         """
 
     def getByteSize(self):
-        return int(self.getUnitSize().value / 8)
+        return int(self.getBitSize() / 8)

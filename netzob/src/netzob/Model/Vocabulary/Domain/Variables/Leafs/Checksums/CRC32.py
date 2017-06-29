@@ -75,5 +75,5 @@ class CRC32(Checksum):
     def calculate(self, msg):
         return _CRC32().calculate(msg)
 
-    def getUnitSize(self):
-        return UnitSize.SIZE_32
+    def getBitSize(self):
+        return UnitSize.SIZE_32.value

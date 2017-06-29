@@ -34,6 +34,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+from typing import Callable  # noqa: F401
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -46,10 +47,51 @@ from netzob.Model.Vocabulary.Domain.Variables.Leafs.HMAC import HMAC
 
 
 class HMACFactory(object):
+    """
+    Factory that create :class:`HMAC <netzob.Model.Vocabulary.Domain.Variables.Leafs.HMAC.HMAC>`
+    classes by providing concrete methods as argument.
+    """
 
     @classmethod
-    def create(cls, name, calculate=None, unitSize=None):
+    def create(cls,
+               name,       # type: str
+               calculate,  # type: Callable[[HMAC, bytes], bytes]
+               bitSize     # type: int
+               ):
+        r"""
+        Given a :attr:`name`, corresponding to the name of the class to create,
+        this method will produce a specific :class:`HMAC <netzob.Model.Vocabulary.Domain.Variables.Leafs.HMAC.HMAC>`
+        class.
+
+        The following attributes are expected:
+
+        - :attr:`calculate`: a function whose prototype respects abstract method \
+          :meth:`HMAC.calculate <netzob.Model.Vocabulary.Domain.Variables.Leafs.HMAC.HMAC.calculate>`
+        - :attr:`bitSize`: an :class:`int` value, respecting the :meth:`getBitSize <netzob.Model.Vocabulary.Domain.Variables.Leafs.HMAC.HMAC.getBitSize>` \
+          returned value prototype
+
+        :param name: the class name to produce
+        :type name: :class:`str`
+        :param calculate: the calculate method
+        :type calculate: ``Callable[[Checksum, bytes], bytes]``
+        :param bitSize: the bit-size of the hash value
+        :type bitSize: :class:`int`
+
+
+        >>> from netzob.all import *
+        >>> import binascii
+        >>> def calculate(hash, msg):
+        ...     return b'\x42'
+        >>> MyHMAC = HMACFactory.create('MyHMAC',
+        ...                             calculate=calculate,
+        ...                             bitSize=8)
+        >>> f1 = Field(Raw(b'\xaa\xbb'))
+        >>> f2 = Field(MyHMAC([f1], key=b'1234'))
+        >>> s = Symbol(fields = [f1, f2])
+        >>> binascii.hexlify(s.specialize())
+        b'aabb42'
+        """
         return type(name, (HMAC,), {
             'calculate': calculate,
-            'getUnitSize': lambda self: unitSize
+            'getBitSize': lambda self: bitSize
         })

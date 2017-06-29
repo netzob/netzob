@@ -73,9 +73,7 @@ class MD5(Hash):
     """
 
     def calculate(self, msg):
-        m = hashlib.new("md5")
-        m.update(msg)
-        return m.digest()
+        return hashlib.md5(msg).digest()
 
     def getBitSize(self):
         return 128

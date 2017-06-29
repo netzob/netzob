@@ -45,7 +45,6 @@ import abc
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hash import Hash
 from netzob.Model.Vocabulary.Types.AbstractType import Endianness, Sign
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
@@ -81,6 +80,8 @@ class HMAC(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
     """
 
     def __init__(self, targets, key, dataType=None, name=None):
+        if dataType is None:
+            dataType = Raw(nbBytes=self.getByteSize())
         super(HMAC, self).__init__(self.__class__.__name__,
                                    dataType=dataType,
                                    targets=targets,

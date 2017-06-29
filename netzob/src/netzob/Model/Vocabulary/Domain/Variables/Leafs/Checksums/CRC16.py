@@ -75,5 +75,5 @@ class CRC16(Checksum):
     def calculate(self, msg):
         return _CRC16().calculate(msg)
 
-    def getUnitSize(self):
-        return UnitSize.SIZE_16
+    def getBitSize(self):
+        return UnitSize.SIZE_16.value
