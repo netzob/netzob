@@ -282,7 +282,7 @@ class PseudoRandomIntegerMutator(DomainMutator):
 
     def generateInt(self, interval=None):
         """This is the mutation method of the integer type.
-        It uses a PRNG to produce the value between minValue and maxValue.
+        It uses a PRNG to produce the value in interval.
 
         :return: the generated int value
         :rtype: :class:`int`
