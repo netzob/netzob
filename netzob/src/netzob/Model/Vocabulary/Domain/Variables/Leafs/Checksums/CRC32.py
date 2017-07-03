@@ -60,7 +60,7 @@ class CRC32(Checksum):
     :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, optional
 
 
-    The following examples show how to create a checksum relation with
+    The following example shows how to create a checksum relation with
     another field:
 
     >>> from netzob.all import *

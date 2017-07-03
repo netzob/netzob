@@ -51,8 +51,8 @@ from netzob.Model.Vocabulary.Domain.Parser.VariableParserResult import VariableP
 
 @NetzobLogger
 class VariableParserPath(object):
-    """This class denotes one parsing result of a variable against a specified content
-    
+    """This class denotes one parsing result of a variable with a specified content
+
     """
 
     def __init__(self,

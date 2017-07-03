@@ -73,5 +73,5 @@ class Generator(metaclass=abc.ABCMeta):
     @typeCheck(int)
     def updateSeed(self, seedValue):
         """
-        Update the seed value and forward value to all nested generators.
+        Update the seed value and forward value to all nested mutators.
         """

@@ -526,7 +526,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         The :meth:`abstract` static method expects some parameters:
 
         :param bytes data: The concrete message to abstract in symbol.
-        :param fields: A list of symbol to consider during abstraction.
+        :param fields: A list of symbols to consider during abstraction.
         :type fields: a :class:`list` of :class:`Symbol <netzob.Model.Vocabulary.Symbol>`
 
 

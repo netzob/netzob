@@ -72,7 +72,7 @@ class Fuzz(object):
     <netzob.Model.Vocabulary.Types.String.String>` type is associated
     by default to the :class:`StringMutator
     <netzob.Model.Fuzzing.StringMutator.StringMutator>`).
-    The :meth:`set <.Fuzz.set>` method permits to change the default behavior.
+    The :meth:`set <.Fuzz.set>` method changes the default behavior.
 
     The following examples show the different usages of the fuzzing
     component.
@@ -247,14 +247,14 @@ class Fuzz(object):
         self.mappingFieldsMutators = Fuzz.mappingFieldsMutators
 
     def set(self, key, value, **kwargs):
-        r"""The method :meth:`set <.Fuzz.set>` permits to specify the fuzzing
+        r"""The method :meth:`set <.Fuzz.set>` specifies the fuzzing
         strategy for a symbol, a field, a variable or a type.
 
         The :meth:`set <.Fuzz.set>` method expects some parameters:
 
         :param key: the targeted object (either a symbol, a field, a
                     variable or a type).
-        :param value: the fuzzing strategy (see bellow for available
+        :param value: the fuzzing strategy (see below for available
                       strategies).
         :param kwargs: some context dependent parameters.
         :type key: :class:`AbstractField

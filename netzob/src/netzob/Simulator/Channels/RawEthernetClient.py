@@ -62,7 +62,7 @@ from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
 
 @NetzobLogger
 class RawEthernetClient(AbstractChannel):
-    r"""A RawEthernetClient is a communication channel allowing sending
+    r"""A RawEthernetClient is a communication channel to send
     Ethernet frames. This channel is responsible for building the
     Ethernet layer.
 

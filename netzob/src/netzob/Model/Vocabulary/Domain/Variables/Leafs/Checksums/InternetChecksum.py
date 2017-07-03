@@ -48,7 +48,7 @@ from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.CRC16 import CRC16
 class InternetChecksum(CRC16):
     r"""This class implements the InternetChecksum function.
 
-    The following examples show how to create a checksum relation with
+    The following example shows how to create a checksum relation with
     another field:
 
     >>> from netzob.all import *

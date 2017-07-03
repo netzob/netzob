@@ -96,7 +96,10 @@ class AbstractVariable(object):
         return (self.id)
 
     def __eq__(x, y):
-        return x.__key() == y.__key()
+        try:
+            return x.__key() == y.__key()
+        except Exception as e:
+            raise e
 
     def __hash__(self):
         return hash(self.__key())

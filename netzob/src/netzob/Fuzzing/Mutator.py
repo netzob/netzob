@@ -81,7 +81,7 @@ class Mutator(metaclass=abc.ABCMeta):
                    seedValue  # type: int
                    ):
         """
-        Update the seed value and forward value to all nested generators.
+        Update the seed value and forward value to all nested mutators.
 
         :param seedValue: the new seed value
         :type seedValue: int
@@ -92,8 +92,8 @@ class Mutator(metaclass=abc.ABCMeta):
     def currentState(self):
         """
         Property (getter/setter).
-        The current state of the pseudo-random generator.
-        The generator can reproduce a value by using this state.
+        The current state of the pseudo-random mutator.
+        The mutator can reproduce a value by using this state.
 
         :type: :class:`int`
         """
@@ -106,7 +106,7 @@ class Mutator(metaclass=abc.ABCMeta):
 
     def getCounterMax(self):
         """
-        Get the max number of values that the generator would produce.
+        Get the max number of values that the mutator would produce.
         When this limit is reached, :meth:`mutate` returns None.
 
         :type: :class:`int` (absolute) or :class:`float` (relative)
@@ -116,7 +116,7 @@ class Mutator(metaclass=abc.ABCMeta):
     @typeCheck((int, float), bool)
     def setCounterMax(self, counterMaxValue, relative):
         """
-        Set the max number of values that the generator would produce.
+        Set the max number of values that the mutator would produce.
 
         :param counterMaxValue: the counter max value
         :type counterMaxValue: :class:`int` (absolute) or :class:`float` (relative)

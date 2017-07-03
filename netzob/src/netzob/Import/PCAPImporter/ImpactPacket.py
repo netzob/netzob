@@ -479,7 +479,7 @@ class Data(Header):
     which the protocol details are unknown, and there's a copy of a
     valid packet available.
 
-    For instance, if all that's known about a certain protocol is that
+    For instance, if all that is known about a certain protocol is that
     a UDP packet with its contents set to "HELLO" initiate a new
     session, creating such packet is as simple as in the following code
     fragment:

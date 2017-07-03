@@ -102,7 +102,7 @@ class Repeat(AbstractVariableNode):
 
     **Limiting the number of repetitions with an integer**
 
-    The following examples show how to create a Repeat variable whose
+    The following example shows how to create a Repeat variable whose
     number of repetitions is limited by an integer:
 
     >>> f1 = Field(Repeat(String("netzob"), nbRepeat=3))
@@ -110,7 +110,7 @@ class Repeat(AbstractVariableNode):
 
     **Limiting the number of repetitions with an interval of integers**
 
-    The following examples show how to create a Repeat variable whose
+    The following example shows how to create a Repeat variable whose
     number of repetitions is limited by an interval of integers:
 
     >>> f1 = Field(Repeat(String("netzob"), nbRepeat=(2,5)))
@@ -118,7 +118,7 @@ class Repeat(AbstractVariableNode):
 
     **Limiting the number of repetitions with a Python integer variable**
 
-    The following examples show how to create a Repeat variable whose
+    The following example shows how to create a Repeat variable whose
     number of repetitions is limited by a Python integer
     variable. Such variable is typically managed by the calling script:
 
@@ -128,7 +128,7 @@ class Repeat(AbstractVariableNode):
 
     **Limiting the number of repetitions with the value of another field**
 
-    The following examples show how to create a Repeat variable whose
+    The following example shows how to create a Repeat variable whose
     number of repetitions is limited by the value of another field:
 
     >>> f_end = Field(Integer(interval=(2, 5)))
@@ -137,7 +137,7 @@ class Repeat(AbstractVariableNode):
 
     **Limiting the number of repetitions by calling a callback function**
 
-    The following examples show how to create a Repeat variable whose
+    The following example shows how to create a Repeat variable whose
     number of repetitions is handled by calling a callback function
     which returns a boolean telling if the expected number of
     repetitions is reached:

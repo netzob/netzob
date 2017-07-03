@@ -64,7 +64,7 @@ class HMAC_MD5(HMAC):
     :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, optional
     :type name: :class:`str`, optional
 
-    The following examples show how to create a HMAC relation with
+    The following example shows how to create a HMAC relation with
     another field:
 
     >>> from netzob.all import *

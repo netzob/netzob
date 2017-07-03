@@ -62,12 +62,12 @@ class SequenceMutator(DomainMutator):
     :param mode: If set to :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`, :meth:`generate` will be
         used to produce the value.
         If set to :attr:`MutatorMode.MUTATE <netzob.Fuzzing.DomainMutator.MutatorMode.MUTATE>`, :meth:`mutate` will be used to
-        produce the value (not implemented).
+        produce the value (not used yet).
         Default value is :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`.
     :param mutateChild: If true, sub-field has to be mutated.
         Default value is :const:`False`.
     :param length: The scope of sequence length to generate. If set to
-        (min, max), the values will be generate between min and max.
+        (min, max), the values will be generated between min and max.
         Default value is **(None, None)**.
     :param lengthBitSize: The size in bits of the memory on which the generated
         length will be encoded.
@@ -166,4 +166,5 @@ class SequenceMutator(DomainMutator):
         return None
 
     def mutate(self, data):
+        """Not implemented yet."""
         raise NotImplementedError

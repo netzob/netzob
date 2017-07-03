@@ -80,7 +80,7 @@ class Raw(AbstractType):
 
     >>> f = Field(Raw(nbBytes = (2, 20)))
 
-    The following example show the specification of a constant for a
+    The following example shows the specification of a constant for a
     field:
 
     >>> f = Field(Raw(b'\x01\x02\x03'))

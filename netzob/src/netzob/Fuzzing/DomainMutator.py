@@ -73,10 +73,10 @@ class DomainMutator(Mutator):
     **Mutators for message formats fuzzing**
 
     Mutators may be used during symbol specialization process, in
-    order to fuzz targeted fields variables. Mutators are specified in
-    the :meth:`Symbol.specialize <netzob.Model.Vocabulary.Symbol.Symbol.specialize>`
+    order to fuzz targeted field variables. Mutators are specified in
+    the :meth:`symbol.specialize <netzob.Model.Vocabulary.Symbol.Symbol.specialize>`
     through the ``mutators=`` parameter. This parameter expects a dict containing
-    fields objects for its keys and Mutators objects for its values.
+    field objects for its keys and Mutator objects for its values.
     We can provide parameters to mutators by using tuple as values of the dict.
 
     The DomainMutator constructor expects some parameters:
@@ -86,7 +86,7 @@ class DomainMutator(Mutator):
     :param mode: If set to :attr:`MutatorMode.GENERATE`, :meth:`generate` will be
         used to produce the value.
         If set to :attr:`MutatorMode.MUTATE`, :meth:`mutate` will be used to
-        produce the value (not implemented).
+        produce the value (not used yet).
         Default value is :attr:`MutatorMode.GENERATE`.
     :type domain: :class:`AbstractVariable
         <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
@@ -158,11 +158,6 @@ class DomainMutator(Mutator):
 
     @property
     def mode(self):
-        """
-        Getter/Setter property.
-        The mutator mode among :class:`MutatorMode \
-        <netzob.Fuzzing.DomainMutator.MutatorMode>`
-        """
         return self._mode
 
     @mode.setter

@@ -55,7 +55,7 @@ class UDPServer(AbstractChannel):
 
     When the actor executes an OpenChannelTransition, it calls the
     open method on the UDP server which makes it to listen for
-    incomming messages.
+    incoming messages.
 
     The UDPServer constructor expects some parameters:
 
@@ -118,7 +118,7 @@ class UDPServer(AbstractChannel):
 
     def open(self):
         """Open the communication channel. This will open a UDP socket
-        that listen for incomming messages.
+        that listen for incoming messages.
         """
 
         if self.isOpen:

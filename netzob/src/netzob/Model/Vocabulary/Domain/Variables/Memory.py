@@ -83,7 +83,7 @@ class Memory(object):
     **Relationships between a message field and the environment**
 
     The following example shows how to define a relationship between a
-    message to send and the environment variables.
+    message to send and an environment variable.
 
     >>> # Environment variables definition
     >>> memory = Memory()
@@ -104,8 +104,8 @@ class Memory(object):
     **Memory usage with the abstraction layer**
 
     The following example shows how to define a relationship between a
-    message to send and the environment variables, and then how to leverage
-    this relationship when using the abstraction layer.
+    message to send and an environment variable, then how to leverage this
+    relationship when using the abstraction layer.
 
     >>> # Environment variables definition
     >>> memory1 = Memory()

@@ -304,6 +304,6 @@ to `help you <http://www.netzob.org/community>`_ (see our mailing list
 channel #netzob on Freenode).
 
 If you want to go further and `start
-contributing <http://www.netzob.org/development>`_ to Netzob, that's
+contributing <http://www.netzob.org/development>`_ to Netzob, that is
 perfect. There are many simple or complex tasks everyone can do:
 translation, documentation, bug fix, feature proposal or implementation.

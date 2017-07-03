@@ -175,7 +175,7 @@ class Value(AbstractRelationVariableLeaf):
 
 
     A named callback function can also be used to specify a more
-    complex relationship. The following example shows a relationships
+    complex relationship. The following example shows a relationship
     where the computed value corresponds to the reversed bits of the
     targeted field. The ``data`` parameter of the ``cbk`` function
     contains a bitarray object of the targeted fields. The ``cbk``

@@ -79,7 +79,7 @@ class Actor(threading.Thread):
     The two actors are Alice and Bob. Alice is the initiator of the
     communication, meaning she sends the input symbols, while Bob
     answers with the output symbols of the grammar. The grammar is
-    very simple, we first open the channel, and allows Alice to send
+    very simple, we first open the channel, and allow Alice to send
     ``"alice> hello"`` asynchronously. At each received message, Bob answers
     ``"bob> hello"``.
     It's Alice who decides to stop the communication.
@@ -189,7 +189,7 @@ class Actor(threading.Thread):
 
     **Executing external code when reaching a new state**
 
-    The following example show how to define a callback function that
+    The following example shows how to define a callback function that
     will be executed when the actor reaches a specific state. This
     callback function is then able to execute arbitrary code and
     change the picked output transition from the current state.
@@ -220,7 +220,7 @@ class Actor(threading.Thread):
     ...                             outputSymbols=[bobSymbol], name="hello")
     >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2, name="Close")
     >>> automata = Automata(s0, symbolList)
-
+    >>>
     >>> # We set the callback function on state s1
     >>> s1.cbk_pickNextTransition = cbk_function
 
@@ -246,7 +246,7 @@ class Actor(threading.Thread):
 
     **Executing external code when reaching a new state**
 
-    The following example show how to define a callback function that
+    The following example shows how to define a callback function that
     will be executed when the actor picks a specific transition. This
     callback function is then able to execute arbitrary code and
     change the picked output symbol.

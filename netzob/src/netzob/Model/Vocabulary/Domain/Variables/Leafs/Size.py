@@ -99,7 +99,7 @@ class Size(AbstractRelationVariableLeaf):
     In this example, the field *f2* is a size field where its value is
     equal to the size of the concatenated values of fields *f0* and
     *f1*. The *dataType* parameter specifies that the produced value
-    should be represented as a String object. The *factor* parameter
+    should be represented as a String. The *factor* parameter
     specifies that the initial size value (always expressed in bits)
     should be divided by 8 (in order to retrieve the amount of
     bytes). The *offset* parameter specifies that the final size value

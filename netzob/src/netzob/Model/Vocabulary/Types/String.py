@@ -57,7 +57,7 @@ class String(AbstractType):
 
     The type String is a wrapper for the Python :class:`str` object
     with the capability to express more constraints on the permitted
-    strings values.
+    string values.
 
     The String constructor expects some parameters:
 
@@ -79,13 +79,10 @@ class String(AbstractType):
     :type eos: a :class:`list` of :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>` or a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, optional
 
 
-    Supported encodings are available on the Python reference documentation:
+    Supported encodings are available on the Python reference documentation: `Python Standard Encodings <https://docs.python.org/3.4/library/codecs.html#standard-encodings>`_
 
-    .. _Python Standard Encodings: https://docs.python.org/3.4/library/codecs.html#standard-encodings
-
-
-    Netzob can describe a field that contains a String
-    string. String objects can be either static or dynamic with fixed
+    Netzob can describe a field that contains a String.
+    String objects can be either static or dynamic with fixed
     sizes or even dynamic with variable sizes.
 
     The following examples show how to define a static string in UTF-8:
@@ -101,7 +98,7 @@ class String(AbstractType):
     b'Paris in Euro: \xe2\x82\xac'
 
     The following example shows the raising of an exception if input
-    value is not valid, with the definition of a String String where
+    value is not valid, with the definition of a String where
     the associated value contains a non-String element:
 
     >>> Field(String("Paris in €", encoding='ascii')).specialize()  # doctest: +IGNORE_EXCEPTION_DETAIL
@@ -109,12 +106,12 @@ class String(AbstractType):
     ...
     ValueError: Input value for the following string is incorrect: 'Paris in €'...
 
-    The following example shows how to define a String object with a
+    The following example shows how to define a String with a
     fixed size and a dynamic content:
 
     >>> f = Field(String(nbChars=10))
 
-    The following example shows how to define a String object with a
+    The following example shows how to define a String with a
     variable size and a dynamic content:
 
     >>> f = Field(String(nbChars=(10, 32)))
@@ -186,7 +183,7 @@ class String(AbstractType):
         # Convert value to bitarray
         if value is not None and not isinstance(value, bitarray):
 
-            # Check if value is correct, and normalize it in str object, and then bitarray
+            # Check if value is correct, and normalize it in str object, and then in bitarray
             if isinstance(value, bytes):
                 try:
                     value = value.decode(self.encoding)
@@ -406,7 +403,7 @@ class String(AbstractType):
         if len(data) == 0:
             return False
 
-        # Check if data is correct, and normalize it in str object, and then bitarray
+        # Check if data is correct, and normalize it in str object, and then in bitarray
         if not isinstance(data, bitarray):
             if isinstance(data, bytes):
                 try:

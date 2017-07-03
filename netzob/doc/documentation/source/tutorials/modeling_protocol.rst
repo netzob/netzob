@@ -135,7 +135,7 @@ A *Data Variables* describes a data which value is of a given type. Various type
     >>> field.specialize()
     '\xc0\xa8\x00\x0b'
     
-Along with Data variables, the definition domain of a field can embed the definition of relationships. Two kinds of relationships are supported in Netzob; intra-symbol relationships and inter-symbol relationships. The former denotes a relationship between the size or the value of a variable against another field in the same symbol. The latter one denotes a relationship against a field of another symbol. Currently, three kinds of relationships are supported.
+Along with Data variables, the definition domain of a field can embed the definition of relationships. Two kinds of relationships are supported in Netzob; intra-symbol relationships and inter-symbol relationships. The former denotes a relationship between the size or the value of a variable, and another field in the same symbol. The latter one denotes a relationship with a field of another symbol. Currently, three kinds of relationships are supported.
   
 * A *Size Relationship* that describes a data whose value is the size of another field.
 

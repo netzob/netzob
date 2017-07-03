@@ -60,7 +60,7 @@ class SHA2_384(Hash):
     :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, optional
     :type name: :class:`str`, optional
 
-    The following examples show how to create a hash relation with
+    The following examples shows hows to create a hash relation with
     another field:
 
     >>> from netzob.all import *

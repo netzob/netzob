@@ -119,7 +119,7 @@ class Alt(AbstractVariableNode):
     InvalidParsingPathException: No parsing path returned while parsing 'b'nothing''
 
 
-    That's another simple example that also illustrates rollback mechanisms
+    That is another simple example that also illustrates rollback mechanisms
 
     >>> from netzob.all import *
     >>> m1 = RawMessage("220044")

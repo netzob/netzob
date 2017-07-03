@@ -74,7 +74,7 @@ class SVAS(object):
 
     * **SVAS.CONSTANT**: A constant value denotes a static content
       defined once and for all in the protocol. When abstracting, the
-      concrete value is compared against the symbolic value which is a
+      concrete value is compared with the symbolic value which is a
       constant and succeeds only if it matches. On the other hand, the
       specialization of a constant value does not imply any additional
       operations than just using the value as is. A typical example of

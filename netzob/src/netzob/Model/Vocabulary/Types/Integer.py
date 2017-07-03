@@ -92,7 +92,7 @@ class Integer(AbstractType):
     * Sign.SIGNED (default sign)
     * Sign.UNSIGNED
 
-    **Examples of Integer objects instantiations**
+    **Examples of Integer object instantiations**
 
     The following example shows how to define an integer encoded in
     sequences of 8 bits and with a default value of 12 (thus producing
@@ -203,8 +203,8 @@ class Integer(AbstractType):
 
     **Examples of conversions between Integer type objects**
 
-    Conversion methods allow transforming encoded representation of
-    objects from a source type to a destination type. The following
+    Conversion methods enables the representation of objects to be encoded
+    from a source type to a destination type. The following
     examples show how to convert an integer respectively to 16 bits
     little endian, to 16 bits big endian, to 32 bits little endian and
     to 32 bits big endian:

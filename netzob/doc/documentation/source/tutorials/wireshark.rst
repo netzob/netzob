@@ -36,7 +36,7 @@ Language
 Wireshark can be statically extended with C modules similar to core
 dissectors. Optionally, Wireshark can be configured to embed a
 `Lua <http://www.lua.org/>`_ interpretor.
-For modularity purposes, the Lua engine has been choosed to extend
+For modularity purposes, the Lua engine has been chosen to extend
 Wireshark with Netzob generated dissectors.
 
 Prerequisite

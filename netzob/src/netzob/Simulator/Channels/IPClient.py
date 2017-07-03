@@ -49,7 +49,7 @@ from netzob.Simulator.Channels.AbstractChannel import AbstractChannel
 
 @NetzobLogger
 class IPClient(AbstractChannel):
-    """An IPClient is a communication channel allowing sending IP
+    """An IPClient is a communication channel to send IP
     payloads. The **kernel** is responsible to build the IP header. It is
     similar to RawIPClient channel, except that with RawIPClient the
     channel builds the IP header. Therefore, with :class:`IPClient <netzob.Simulator.Channels.IPClient.IPClient>`,

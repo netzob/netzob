@@ -248,7 +248,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         If a callback function is defined, we call it in order to
         execute an external program that may change the sent symbol.
 
-        The callable function should have the following prototype: 
+        The callable function should have the following prototype:
 
         ``def cbk_function(possibleSymbols):``
 

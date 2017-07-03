@@ -66,7 +66,7 @@ class Symbol(AbstractField):
     :param fields: The fields that participate in the symbol
                    definition. May be ``None`` (thus, a generic :class:`Field <netzob.Model.Vocabulary.Field.Field>`
                    instance would be defined), especially when using Symbols
-                   for reverse engineering (i.e. fields identification).
+                   for reverse engineering (i.e. field identification).
     :param messages: The messages that are associated with the
                      symbol. May be ``None`` (thus, an empty :class:`list`
                      would be defined), especially when
@@ -190,9 +190,9 @@ class Symbol(AbstractField):
         r"""The method :meth:`specialize` generates a :class:`bytes` sequence whose
         content follows the field or symbol definition.
 
-        The :meth:`specialize` method expects some parameters:
+        The specialize() method expects some parameters:
 
-        :param memory: A memory used to store variables values during
+        :param memory: A memory used to store variable values during
                        specialization and abstraction of sequence of symbols.
         :param presets: A dictionary of keys:values used to preset
                         (parameterize) fields during symbol
@@ -201,7 +201,7 @@ class Symbol(AbstractField):
                         relationship dependencies.
         :param fuzz: A dictionary of keys:values used for fuzzing
                      purpose during the specialization process. This
-                     parameter is handled the same way as the
+                     parameter is handled in the same way as the
                      ``presets`` parameter (i.e. a mutator can be
                      defined for each field we want to fuzz). Values
                      in this dictionary will override any fields
@@ -299,7 +299,7 @@ class Symbol(AbstractField):
         b'\x0b\xaa\xbb'
 
 
-        A preset value bypasses all the constraints checks on your field definition.
+        A preset value bypasses all the constraint checks on your field definition.
         For example, in the following example it can be used to bypass a size field definition.
 
         >>> from netzob.all import *
@@ -307,7 +307,7 @@ class Symbol(AbstractField):
         >>> f2 = Field(domain=Raw(nbBytes=(10,15)))
         >>> f1.domain = Size(f2)
         >>> s = Symbol(fields=[f1, f2])
-        >>> presetValues = {f1: TypeConverter.convert("\xff", Raw, BitArray)}        
+        >>> presetValues = {f1: TypeConverter.convert("\xff", Raw, BitArray)}
         >>> print(s.specialize(presets = presetValues)[0])
         195
 
@@ -337,22 +337,22 @@ class Symbol(AbstractField):
 
     @typeCheck(Memory, object)
     def specialize_count(self, memory=None, presets=None, fuzz=None):
-        r"""The method :meth:`specialize_count` compute the expected number of unique
+        r"""The method :meth:`specialize_count` computes the expected number of unique
         produced messages, considering the initial symbol model, the
         preseted fields and the fuzzed fields.
 
         The :meth:`specialize_dryun` method expects the same parameters as the :meth:`specialize` method:
 
-        :param memory: A memory used to store variables values during
+        :param memory: A memory used to store variable values during
                        specialization and abstraction of sequence of symbols.
         :param presets: A dictionary of keys:values used to preset
                         (parameterize) fields during symbol
                         specialization. Values in this dictionary will
-                        override any fields definition, constraints or
+                        override any field definition, constraints or
                         relationship dependencies.
         :param fuzz: A dictionary of keys:values used for fuzzing
                      purpose during the specialization process. This
-                     parameter is handled the same way as the
+                     parameter is handled in the same way as the
                      ``presets`` parameter (i.e. a mutator can be
                      defined for each field we want to fuzz). Values
                      in this dictionary will override any fields

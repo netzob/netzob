@@ -114,8 +114,8 @@ class Field(AbstractField):
 
     The value that can take a field is defined by its definition
     domain. The definition domain of a field can take multiple forms,
-    in order to easily express basic types (such as Integer or String
-    strings) or to model complex data structures (such has
+    in order to easily express basic types (such as Integer or String)
+    or to model complex data structures (such has
     alternatives, repetitions or sequences).
 
     The following examples present the different forms that are
@@ -152,7 +152,7 @@ class Field(AbstractField):
 
     The following example describes a size relationship with a String
     field:
-    
+
     >>> from netzob.all import *
     >>> f0 = Field(String("test"))
     >>> f1 = Field(Size(f0))
@@ -211,7 +211,7 @@ class Field(AbstractField):
     'hello ' | 'world'  
     -------- | ---------
 
-    **Fields examples**
+    **Field examples**
 
     Here are examples of fields:
 
@@ -230,7 +230,7 @@ class Field(AbstractField):
     * a field with a specific raw value
 
       >>> f = Field(Raw(b'\x00\x01\x02\x03'))
-    
+
     * a field representing a random IPv4:
 
       >>> f = Field(IPv4())
@@ -239,7 +239,7 @@ class Field(AbstractField):
 
       >>> f = Field(String(nbChars=6))
 
-    * a field representing a random String with between 5 and 20 characters:
+    * a field representing a random String with length between 5 and 20 characters:
 
       >>> payloadField = Field(String(nbChars=(5, 20)))
 

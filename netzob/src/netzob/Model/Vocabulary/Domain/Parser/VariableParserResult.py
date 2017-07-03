@@ -48,8 +48,8 @@ from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVa
 
 @NetzobLogger
 class VariableParserResult():
-    """This class denotes one parsing result of a variable against a specified content
-    
+    """This class denotes one parsing result of a variable with a specified content
+
     """
 
     def __init__(self, variable, result, consumedData, remainedData):

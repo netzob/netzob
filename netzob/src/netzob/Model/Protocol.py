@@ -65,7 +65,7 @@ class Protocol(object):
     convention to export the defined symbols and automaton:
 
     * The .zdl file for the format messages should be named
-      ``{PROTOCOL_NAME}_format.zdl``, and should contains a variable
+      ``{PROTOCOL_NAME}_format.zdl``, and should contain a variable
       named ``symbols`` that contains a list of :class:`Symbol
       <netzob.Model.Vocabulary.Symbol.Symbol>`.
     * The .zdl file for the automaton should be named

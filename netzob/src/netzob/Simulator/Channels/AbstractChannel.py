@@ -65,7 +65,7 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
     """The AbstractChannel is the parent class of all communication channels.
 
     The AbstractChannel exposes an interface that should be
-    implemented by channel classes that inherits from it.
+    implemented by channel classes that inherit from it.
 
     The AbstractChannel constructor expects some parameters:
 

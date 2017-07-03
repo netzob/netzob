@@ -64,7 +64,7 @@ class UDPClient(AbstractChannel):
                     IP address corresponding to the interface that
                     will be used to send the packet.
     :param localPort: The local IP port. Default value in a random
-                      valid integer choosed by the kernel.
+                      valid integer chosen by the kernel.
     :param timeout: The default timeout of the channel for opening
                     connection and waiting for a message. Default value
                     is 5.0 seconds. To specify no timeout, None value is expected.

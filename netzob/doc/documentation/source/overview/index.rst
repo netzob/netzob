@@ -152,7 +152,7 @@ step consists in determining the characteristics of the fields.
 
 If the size of those fields is fixed, as in TCP and IP headers, it is
 preferable to apply a basic partitioning, also provided by Netzob. Such
-partitioning works by aligning each message by the left, and then
+partitioning works by aligning each message by the left, then
 separating successive fixed columns from successive dynamic columns.
 
 To regroup aligned messages by similarity, the Needleman-Wunsh algorithm

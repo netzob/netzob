@@ -302,7 +302,7 @@ The 'CMDencrypt' symbol structure now looks like this::
           |--   Data (Raw=None ((0, 80)))
   (...)
 
-That's all for the message format inference. Let's now look at the state machine of this toy protocol.
+That is all for the message format inference. Let's now look at the state machine of this toy protocol.
 
 Generate a chained states automaton
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -464,7 +464,7 @@ At first, let's start the server in order to discus with it.::
   $ cd src_v1/
   $ ./server
 
-  Ready to read incomming messages
+  Ready to read incoming messages
 
   (...)
 
@@ -515,7 +515,7 @@ Regarding the real server, we can see that received messages are well formated, 
 
   $ ./server 
 
-  Ready to read incomming messages
+  Ready to read incoming messages
   -> Read: CMDidentify#.
      Command: CMDidentify
      Arg size: 2
@@ -592,7 +592,7 @@ In the server part, we quickly get a segmentation fault, due to a bug in the par
   (gdb) run
   Starting program: /home/fgy/travaux/netzob/git/netzob-resources/experimentations/tutorial_target/src_v1/server 
 
-  Ready to read incomming messages
+  Ready to read incoming messages
   (...)
   -> Read: CMDencrypt#6
      Command: CMDencrypt
