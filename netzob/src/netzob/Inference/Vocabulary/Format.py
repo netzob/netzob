@@ -108,7 +108,7 @@ class Format(object):
         >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
         >>> symbol = Symbol(messages=messages)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         Field         
         --------------
         '00ff2f000000'
@@ -122,7 +122,7 @@ class Format(object):
         --------------
         
         >>> Format.splitStatic(symbol)
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         Field-0 | Field-1 | Field-2 
         ------- | ------- | --------
         '00'    | 'ff2f'  | '000000'
@@ -141,7 +141,7 @@ class Format(object):
         >>> symbol = Symbol(messages=messages)
         >>> symbol.encodingFunctions.add(TypeEncodingFunction(HexaString))
         >>> Format.splitStatic(symbol)
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         Field-0  | Field-1 | Field-2 | Field-3                                                         
         -------- | ------- | ------- | ----------------------------------------------------------------
         '030000' | '25'    | '02f0'  | '80320100003a00000e00060501120a10020002006e840000400004001001ab'
@@ -152,7 +152,7 @@ class Format(object):
         >>> contents = ["hello lapy, what's up in Paris ?", "hello lapy, what's up in Berlin ?", "hello lapy, what's up in New-York ?"]
         >>> messages = [RawMessage(data=m) for m in contents]
         >>> s = Symbol(messages=messages)
-        >>> print(s)
+        >>> print(s.str_data())
         Field                                
         -------------------------------------
         "hello lapy, what's up in Paris ?"   
@@ -160,7 +160,7 @@ class Format(object):
         "hello lapy, what's up in New-York ?"
         -------------------------------------
         >>> Format.splitStatic(s)
-        >>> print(s)
+        >>> print(s.str_data())
         Field-0                     | Field-1     
         --------------------------- | ------------
         "hello lapy, what's up in " | 'Paris ?'   
@@ -204,7 +204,7 @@ class Format(object):
         >>> messages = [RawMessage(data=sample) for sample in samples]
         >>> symbol = Symbol(messages=messages[:3])
         >>> Format.splitDelimiter(symbol, String("ff"))
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         Field-0    | Field-sep-6666 | Field-2      | Field-sep-6666 | Field-4   
         ---------- | -------------- | ------------ | -------------- | ----------
         'aaaa'     | 'ff'           | '000000'     | 'ff'           | '10'      
@@ -223,7 +223,7 @@ class Format(object):
         >>> symbol = Symbol(messages=[RawMessage(TypeConverter.convert(sample, HexaString, Raw)) for sample in samples])
         >>> symbol.encodingFunctions.add(TypeEncodingFunction(HexaString))
         >>> Format.splitDelimiter(symbol, String('#'))
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         Field-0                      | Field-sep-23 | Field-2                     
         ---------------------------- | ------------ | ----------------------------
         '434d446964656e74696679'     | '#'          | '0400000066726564'          
@@ -270,7 +270,7 @@ class Format(object):
         >>> f3 = Field(Raw(nbBytes=3))
         >>> symbol = Symbol([f1, f2, f3], messages=messages)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         Field | Field  | Field   
         ----- | ------ | --------
         '00'  | 'ff2f' | '000000'
@@ -279,7 +279,7 @@ class Format(object):
         ----- | ------ | --------
         >>> Format.resetFormat(symbol)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))        
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         Field         
         --------------
         '00ff2f000000'
@@ -313,7 +313,7 @@ class Format(object):
         >>> f4 = Field(Raw(nbBytes=1), name="f4")
         >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         f1   | f2     | f3     | f4  
         ---- | ------ | ------ | ----
         '00' | 'ff2f' | '0000' | '00'
@@ -321,7 +321,7 @@ class Format(object):
         '00' | 'fe1f' | '0000' | '00'
         ---- | ------ | ------ | ----
         >>> Format.mergeFields(f2, f3)
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         f1   | Merge      | f4  
         ---- | ---------- | ----
         '00' | 'ff2f0000' | '00'
@@ -329,7 +329,7 @@ class Format(object):
         '00' | 'fe1f0000' | '00'
         ---- | ---------- | ----
         >>> Format.mergeFields(symbol.fields[0], symbol.fields[1])
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         Merge        | f4  
         ------------ | ----
         '00ff2f0000' | '00'
@@ -337,7 +337,7 @@ class Format(object):
         '00fe1f0000' | '00'
         ------------ | ----
         >>> Format.mergeFields(symbol.fields[0], symbol.fields[1])
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         Merge         
         --------------
         '00ff2f000000'
@@ -447,7 +447,7 @@ class Format(object):
         >>> for sym in list(newSymbols.values()):
         ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
         ...     print(sym.name + ":")
-        ...     print(sym)
+        ...     print(sym.str_data())
         Symbol_ff2f:
         Field | Field  | Field   
         ----- | ------ | --------
@@ -522,7 +522,7 @@ class Format(object):
         >>> for sym in newSymbols:
         ...     print("[" + sym.name + "]")
         ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
-        ...     print(sym)
+        ...     print(sym.str_data())
         [symbol_7]
         Field           
         ----------------

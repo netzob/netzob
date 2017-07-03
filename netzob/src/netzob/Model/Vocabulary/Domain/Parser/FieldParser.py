@@ -151,7 +151,7 @@ class FieldParser():
     >>> f2 = Field(b"\x00", name="f2")
     >>> f3 = Field(Raw(nbBytes=(0, 2)), name="f3")
     >>> s = Symbol([f1, f2, f3], messages=[message])
-    >>> print(s)
+    >>> print(s.str_data())
     f1      | f2     | f3     
     ------- | ------ | -------
     b'\xaa' | '\x00' | b'\xbb'
@@ -167,7 +167,7 @@ class FieldParser():
     >>> f4 = Field(b"wd", name="f4")
     >>> f5 = Field(Raw(nbBytes=(0,1)), name="f5")
     >>> s = Symbol([f1, f2, f3, f4, f5], messages = messages)
-    >>> print(s)
+    >>> print(s.str_data())
     f1   | f2     | f3         | f4   | f5 
     ---- | ------ | ---------- | ---- | ---
     '\n' | '\x00' | 'aStrongP' | 'wd' | '' 

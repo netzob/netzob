@@ -88,7 +88,8 @@ class Size(AbstractRelationVariableLeaf):
     :type name: :class:`str`, optional
 
 
-    The following example shows how to define a size field with a String dataType:
+    The following example shows how to define a size field with a
+    String dataType:
 
     >>> from netzob.all import *
     >>> f0 = Field(String(nbChars=(1,10)))
@@ -99,7 +100,7 @@ class Size(AbstractRelationVariableLeaf):
     In this example, the field *f2* is a size field where its value is
     equal to the size of the concatenated values of fields *f0* and
     *f1*. The *dataType* parameter specifies that the produced value
-    should be represented as a String. The *factor* parameter
+    should be represented as a string. The *factor* parameter
     specifies that the initial size value (always expressed in bits)
     should be divided by 8 (in order to retrieve the amount of
     bytes). The *offset* parameter specifies that the final size value
@@ -193,7 +194,7 @@ class Size(AbstractRelationVariableLeaf):
 
     The following examples show the specialization process of a Size
     field:
-
+    
     >>> f0 = Field(String(nbChars=20))
     >>> f1 = Field(String(";"))
     >>> f2 = Field(Size(f0))

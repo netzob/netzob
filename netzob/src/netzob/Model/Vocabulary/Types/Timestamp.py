@@ -121,7 +121,7 @@ class Timestamp(AbstractType):
     >>> f2 = Field(Raw(b"00"), name="End")
     >>> s = Symbol(fields=[f0, f1, f2])
     >>> s.messages = [RawMessage(s.specialize()) for x in range(5)]
-    >>> print(s)
+    >>> print(s.str_data())
     Start | Timestamp     | End 
     ----- | ------------- | ----
     '00'  | b'V\x1c\xf15' | '00'
@@ -131,7 +131,7 @@ class Timestamp(AbstractType):
     '00'  | b'V\x1c\xf15' | '00'
     ----- | ------------- | ----
     >>> s.fields[1].addEncodingFunction(TypeEncodingFunction(Timestamp))
-    >>> print(s)
+    >>> print(s.str_data())
     Start | Timestamp                  | End 
     ----- | -------------------------- | ----
     '00'  | 'Tue Oct 13 11:55:33 2015' | '00'

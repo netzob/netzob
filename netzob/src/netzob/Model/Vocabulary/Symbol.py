@@ -66,7 +66,7 @@ class Symbol(AbstractField):
     :param fields: The fields that participate in the symbol
                    definition. May be ``None`` (thus, a generic :class:`Field <netzob.Model.Vocabulary.Field.Field>`
                    instance would be defined), especially when using Symbols
-                   for reverse engineering (i.e. field identification).
+                   for reverse engineering (i.e. fields identification).
     :param messages: The messages that are associated with the
                      symbol. May be ``None`` (thus, an empty :class:`list`
                      would be defined), especially when
@@ -88,7 +88,7 @@ class Symbol(AbstractField):
     >>> f1 = Field(" # ")
     >>> f2 = Field("bbbbbb")
     >>> symbol = Symbol(fields=[f0, f1, f2])
-    >>> print(symbol._str_debug())
+    >>> print(symbol.str_structure())
     Symbol
     |--  Field
          |--   Data (String=aaaa ((None, None)))
@@ -100,7 +100,7 @@ class Symbol(AbstractField):
     **Usage of Symbol for protocol dissecting**
 
     The Symbol class may be used to dissect a list of messages
-    according to the field structure:
+    according to the fields structure:
 
     >>> from netzob.all import *
     >>> f0 = Field("hello", name="f0")
@@ -108,7 +108,7 @@ class Symbol(AbstractField):
     >>> m1 = RawMessage("hello world")
     >>> m2 = RawMessage("hello earth")
     >>> symbol = Symbol(fields=[f0, f1], messages=[m1, m2])
-    >>> print(symbol)
+    >>> print(symbol.str_data())
     f0      | f1      
     ------- | --------
     'hello' | ' world'
@@ -125,7 +125,7 @@ class Symbol(AbstractField):
     >>> m2 = RawMessage("hello bbbb")
     >>> symbol = Symbol(messages=[m1, m2])
     >>> Format.splitStatic(symbol)
-    >>> print(symbol)
+    >>> print(symbol.str_data())
     Field-0  | Field-1
     -------- | -------
     'hello ' | 'aaaa' 
@@ -135,7 +135,7 @@ class Symbol(AbstractField):
     **Usage of Symbol for traffic generation**
 
     A Symbol class may be used to generate concrete messages according
-    to its field definition, through the
+    to its fields definition, through the
     :meth:`~netzob.Model.Vocabulary.Symbol.specialize` method, and
     may also be used to abstract a concrete message into its
     associated symbol through the
@@ -187,7 +187,7 @@ class Symbol(AbstractField):
 
     @typeCheck(Memory, object)
     def specialize(self, memory=None, presets=None, fuzz=None):
-        r"""The method :meth:`specialize` generates a :class:`bytes` sequence whose
+        r"""The method specialize() generates a :class:`bytes` sequence whose
         content follows the field or symbol definition.
 
         The specialize() method expects some parameters:
@@ -201,7 +201,7 @@ class Symbol(AbstractField):
                         relationship dependencies.
         :param fuzz: A dictionary of keys:values used for fuzzing
                      purpose during the specialization process. This
-                     parameter is handled in the same way as the
+                     parameter is handled the same way as the
                      ``presets`` parameter (i.e. a mutator can be
                      defined for each field we want to fuzz). Values
                      in this dictionary will override any field
@@ -214,7 +214,7 @@ class Symbol(AbstractField):
         :type presets: :class:`dict`
         :type fuzz: :class:`dict`
 
-        The following example shows the :meth:`specialize` method used for a
+        The following example shows the specialize() method used for a
         field which contains a String and a Size fields.
 
         >>> from netzob.all import *
@@ -227,12 +227,12 @@ class Symbol(AbstractField):
         >>> print(len(result))
         6
 
-        **Parameterized specialization of field values (presets)**
+        **Parameterized specialization of field values**
 
         It is possible to preset (parameterize) fields during symbol
         specialization, through a dict passed in the ``presets=``
         parameter of the :meth:`~netzob.Model.Vocabulary.Symbol.specialize`
-        method. Values in this dictionary will override any field
+        method. Values in this dictionary will override any fields
         definition, constraints or relationship dependencies.
 
         The presets dictionary accepts a sequence of keys and values,
@@ -299,7 +299,7 @@ class Symbol(AbstractField):
         b'\x0b\xaa\xbb'
 
 
-        A preset value bypasses all the constraint checks on your field definition.
+        A preset value bypasses all the constraints checks on your field definition.
         For example, in the following example it can be used to bypass a size field definition.
 
         >>> from netzob.all import *
@@ -307,7 +307,7 @@ class Symbol(AbstractField):
         >>> f2 = Field(domain=Raw(nbBytes=(10,15)))
         >>> f1.domain = Size(f2)
         >>> s = Symbol(fields=[f1, f2])
-        >>> presetValues = {f1: TypeConverter.convert("\xff", Raw, BitArray)}
+        >>> presetValues = {f1: TypeConverter.convert("\xff", Raw, BitArray)}        
         >>> print(s.specialize(presets = presetValues)[0])
         195
 
@@ -339,7 +339,7 @@ class Symbol(AbstractField):
     def specialize_count(self, memory=None, presets=None, fuzz=None):
         r"""The method :meth:`specialize_count` computes the expected number of unique
         produced messages, considering the initial symbol model, the
-        preset fields and the fuzzed fields.
+        preseted fields and the fuzzed fields.
 
         The :meth:`specialize_count` method expects the same parameters as the :meth:`specialize` method:
 
@@ -352,7 +352,7 @@ class Symbol(AbstractField):
                         relationship dependencies.
         :param fuzz: A dictionary of keys:values used for fuzzing
                      purpose during the specialization process. This
-                     parameter is handled in the same way as the
+                     parameter is handled the same way as the
                      ``presets`` parameter (i.e. a mutator can be
                      defined for each field we want to fuzz). Values
                      in this dictionary will override any field
@@ -378,7 +378,7 @@ class Symbol(AbstractField):
         >>> # Specify the fuzzed fields
         >>> fuzz = Fuzz()
         >>> from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
-        >>> fuzz.set(f2, PseudoRandomIntegerMutator, interval=(20, 42))
+        >>> fuzz.set(f2, PseudoRandomIntegerMutator, interval=(20, 42)) # doctest: +SKIP
         >>>
         >>> # Count the expected number of unique produced messages
         >>> symbol.specialize_count(presets=presetValues, fuzz=fuzz) # doctest: +SKIP

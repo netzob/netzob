@@ -73,7 +73,7 @@ class ClusterBySize(object):
         >>> for sym in newSymbols:
         ...     print("[" + sym.name + "]")
         ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
-        ...     print(sym)
+        ...     print(sym.str_data())
         [symbol_7]
         Field           
         ----------------

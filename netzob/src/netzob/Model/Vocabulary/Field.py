@@ -95,7 +95,7 @@ class Field(AbstractField):
     >>> fheader.fields = [fh0, fh1]
     >>> fpayload = Field()
     >>> symbol = Symbol(fields=[fheader, fpayload])
-    >>> print(symbol._str_debug())
+    >>> print(symbol.str_structure())
     Symbol
     |--  Field
     |--  |--  Field
@@ -106,7 +106,7 @@ class Field(AbstractField):
          |--   Data (Raw=None ((0, 524280)))
 
     More generally, a field is part of a tree whose root is a symbol
-    and all other nodes of the tree are fields. Hence, a field
+    and whose all other nodes of the tree are fields. Hence, a field
     always has a parent which can be another field or a symbol if it
     is the root.
 
@@ -115,8 +115,8 @@ class Field(AbstractField):
     The value that can take a field is defined by its definition
     domain. The definition domain of a field can take multiple forms,
     in order to easily express basic types (such as Integer or String)
-    or to model complex data structures (such has
-    alternatives, repetitions or sequences).
+    or to model complex data structures (such has alternatives,
+    repetitions or sequences).
 
     The following examples present the different forms that are
     authorized by Netzob to express the same field content (i.e. an
@@ -152,7 +152,7 @@ class Field(AbstractField):
 
     The following example describes a size relationship with a String
     field:
-
+    
     >>> from netzob.all import *
     >>> f0 = Field(String("test"))
     >>> f1 = Field(Size(f0))
@@ -195,7 +195,7 @@ class Field(AbstractField):
     >>> f0 = Field(name="f0", domain=String("hello "))
     >>> f1 = Field(name="f1", domain=String(nbChars=(0, 20)))
     >>> s = Symbol(fields=[f0, f1], messages=messages)
-    >>> print(s)
+    >>> print(s.str_data())
     f0       | f1            
     -------- | --------------
     'hello ' | 'YWxs'        
@@ -203,7 +203,7 @@ class Field(AbstractField):
     'hello ' | 'd29ybGQ='    
     -------- | --------------
     >>> f1.addEncodingFunction(Base64EncodingFunction(encode_data = False))
-    >>> print(s)
+    >>> print(s.str_data())
     f0       | f1       
     -------- | ---------
     'hello ' | 'all'    
@@ -211,7 +211,7 @@ class Field(AbstractField):
     'hello ' | 'world'  
     -------- | ---------
 
-    **Field examples**
+    **Fields examples**
 
     Here are examples of fields:
 
@@ -230,7 +230,7 @@ class Field(AbstractField):
     * a field with a specific raw value
 
       >>> f = Field(Raw(b'\x00\x01\x02\x03'))
-
+    
     * a field representing a random IPv4:
 
       >>> f = Field(IPv4())
@@ -247,7 +247,7 @@ class Field(AbstractField):
 
       >>> f = Field([Size(payloadField)])
 
-    * a field representing an alternative between two different String objects, either "netzob" or "kurt":
+    * a field representing an alternative between two differents strings, either "netzob" or "kurt":
 
       >>> f = Field(["netzob", "kurt"])
 
@@ -304,7 +304,7 @@ class Field(AbstractField):
         b'hello kurt'
         b'hello kurt'
 
-        :return: a generated content represented with a hexastring
+        :return: a generated content represented with an hexastring
         :rtype: :class:`str``
         :raises: :class:`GenerationException <netzob.Model.Vocabulary.AbstractField.GenerationException>` if an error occurs while generating a message
         """

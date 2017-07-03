@@ -66,7 +66,7 @@ class FieldSplitAligned(object):
     >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
     >>> symbol = Symbol(messages=messages)
     >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print(symbol)
+    >>> print(symbol.str_data())
     Field               
     --------------------
     '01ff00ff'          
@@ -79,7 +79,7 @@ class FieldSplitAligned(object):
 
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol)
-    >>> print(symbol)
+    >>> print(symbol.str_data())
     Field  | Field  | Field        | Field
     ------ | ------ | ------------ | -----
     '01'   | 'ff00' | ''           | 'ff' 
@@ -93,7 +93,7 @@ class FieldSplitAligned(object):
     >>> samples = [b"hello toto, what's up in France ?", b"hello netzob, what's up in UK ?", b"hello sygus, what's up in Germany ?"]
     >>> messages = [RawMessage(data=sample) for sample in samples]
     >>> symbol = Symbol(messages=messages)
-    >>> print(symbol)
+    >>> print(symbol.str_data())
     Field                                
     -------------------------------------
     "hello toto, what's up in France ?"  
@@ -103,7 +103,7 @@ class FieldSplitAligned(object):
 
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol, useSemantic = False)
-    >>> print(symbol)
+    >>> print(symbol.str_data())
     Field    | Field    | Field             | Field     | Field
     -------- | -------- | ----------------- | --------- | -----
     'hello ' | 'toto'   | ", what's up in " | 'France'  | ' ?' 
@@ -116,7 +116,7 @@ class FieldSplitAligned(object):
     >>> samples = [b"John-0108030405--john.doe@gmail.com", b"Mathieu-0908070605-31 rue de Paris, 75000 Paris, France-mat@yahoo.fr", b"Olivia-0348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hotmail.fr"]
     >>> messages = [RawMessage(data=sample) for sample in samples]
     >>> symbol = Symbol(messages=messages)
-    >>> print(symbol)
+    >>> print(symbol.str_data())
     Field                                                                                      
     -------------------------------------------------------------------------------------------
     'John-0108030405--john.doe@gmail.com'                                                      
@@ -126,7 +126,7 @@ class FieldSplitAligned(object):
 
     >>> fs = FieldSplitAligned(doInternalSlick=True)
     >>> fs.execute(symbol, useSemantic = False)
-    >>> print(symbol)
+    >>> print(symbol.str_data())
     Field     | Field | Field                                                                              
     --------- | ----- | -----------------------------------------------------------------------------------
     'John'    | '-0'  | '108030405--john.doe@gmail.com'                                                    
@@ -153,7 +153,7 @@ class FieldSplitAligned(object):
 
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol, useSemantic=True)
-    >>> print(symbol)
+    >>> print(symbol.str_data())
     Field     | Field | Field | Field | Field    | Field | Field                                            | Field | Field                     
     --------- | ----- | ----- | ----- | -------- | ----- | ------------------------------------------------ | ----- | --------------------------
     'John'    | '-0'  | '10'  | '8'   | '030405' | '-'   | ''                                               | '-'   | 'john.doe@gmail.com'      

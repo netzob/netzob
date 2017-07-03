@@ -120,7 +120,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> fbody.fields = [fb1, fb2, fb3]
         >>> symbol = Symbol([fheader, fbody], messages=messages)
 
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         hello    | pseudo   | whatsup           | city       | end 
         -------- | -------- | ----------------- | ---------- | ----
         'hello ' | 'netzob' | ", what's up in " | 'Paris'    | ' ?'
@@ -136,7 +136,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         >>> fh1.addEncodingFunction(TypeEncodingFunction(HexaString))
         >>> fb2.addEncodingFunction(TypeEncodingFunction(HexaString))
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         hello          | pseudo   | whatsup           | city               | end 
         -------------- | -------- | ----------------- | ------------------ | ----
         '68656c6c6f20' | 'netzob' | ", what's up in " | '5061726973'       | ' ?'
@@ -261,7 +261,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         """
 
         if len(self.messages) < 1:
-            raise ValueError("This symbol does not contain any message.")
+            raise ValueError("This symbol/field does not contain any RawMessage, therefore you cannot call __str__() on it to display the messages content.")
 
         # Fetch all the data to align
         data = [message.data for message in self.messages]
@@ -293,7 +293,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> f4 = Field(["Paris", "Berlin", "New-York"], name="city")
         >>> f5 = Field(" ?", name="end")
         >>> symbol = Symbol([f1, f2, f3, f4, f5], messages=messages)
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         hello    | pseudo   | whatsup           | city       | end 
         -------- | -------- | ----------------- | ---------- | ----
         'hello ' | 'netzob' | ", what's up in " | 'Paris'    | ' ?'
@@ -308,7 +308,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         -------- | -------- | ----------------- | ---------- | ----
 
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         hello          | pseudo         | whatsup                          | city               | end   
         -------------- | -------------- | -------------------------------- | ------------------ | ------
         '68656c6c6f20' | '6e65747a6f62' | '2c2077686174277320757020696e20' | '5061726973'       | '203f'
@@ -363,7 +363,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> f3 = Field(["Paris", "Berlin", "New-York"], name="city")
         >>> f4 = Field(" ?", name="end")
         >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         pseudo   | whatsup           | city     | end 
         -------- | ----------------- | -------- | ----
         'netzob' | ", what's up in " | 'Paris'  | ' ?'
@@ -414,7 +414,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> f3 = Field(["Paris", "Berlin", "New-York"], name="city")
         >>> f4 = Field(" ?", name="end")
         >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         pseudo   | whatsup           | city     | end 
         -------- | ----------------- | -------- | ----
         'netzob' | ", what's up in " | 'Paris'  | ' ?'
@@ -465,7 +465,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
     #     >>> f5 = Field(" ?", name="end")
     #     >>> symbol = Symbol([f1, f2, f3, f4, f5], messages=messages)
     #     >>> print(symbol.specialize())
-    #     >>> print(symbol)
+    #     >>> print(symbol.str_data())
     #     hello  | netzob | , what's up in  | Paris    |  ?
     #     hello  | netzob | , what's up in  | Berlin   |  ?
     #     hello  | netzob | , what's up in  | New-York |  ?
@@ -707,24 +707,105 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
             self.__transformationFunctions.pop()
 
     # Standard methods
+    def __repr__(self):
+        """Return the name of the symbol or field.
+
+        >>> from netzob.all import *
+        >>> f = Field(name="test_field")
+        >>> repr(f)
+        'test_field'
+
+        """
+        return self.name
+
     def __str__(self):
-        result = self.getCells(encoded=True)
-        return str(result)
+        """Return the name of the symbol or field.
+
+        >>> from netzob.all import *
+        >>> f = Field(name="test_field")
+        >>> str(f)
+        'test_field'
+
+        """
+        return repr(self)
 
     @typeCheck(int)
-    def _str_debug(self, deepness=0):
-        """Returns a string which denotes
-        the current field definition using a tree display"""
+    def str_structure(self, deepness=0):
+        """Returns a string which denotes the current symbol/field definition
+        using a tree display.
 
+        :param deepness: Parameter used to specify th number of indentations.
+        :type deepness: :class:`int`
+
+        >>> from netzob.all import *
+        >>> f1 = Field(String(), name="field1")
+        >>> f2 = Field(Integer(interval=(10, 100)), name="field2")
+        >>> f3 = Field(Raw(nbBytes=14), name="field3")
+        >>> symbol = Symbol([f1, f2, f3], name="symbol_name")
+        >>> print(symbol.str_structure())
+        symbol_name
+        |--  field1
+             |--   Data (String=None ((None, None)))
+        |--  field2
+             |--   Data (Integer=None ((10, 100)))
+        |--  field3
+             |--   Data (Raw=None ((112, 112)))
+
+        >>> print(f1.str_structure())
+        field1
+        |--   Data (String=None ((None, None)))
+
+        """
         tab = ["|--  " for x in range(deepness)]
         tab.append(str(self.name))
         lines = [''.join(tab)]
         from netzob.Model.Vocabulary.Field import Field
         if isinstance(self, Field) and len(self.fields) == 0:
-            lines.append(self.domain._str_debug(deepness + 1))
+            lines.append(self.domain.str_structure(deepness + 1))
         for f in self.fields:
-            lines.append(f._str_debug(deepness + 1))
+            lines.append(f.str_structure(deepness + 1))
         return '\n'.join(lines)
+
+    @typeCheck(int)
+    def str_data(self, deepness=0):
+        """Returns a string which shows the associated messages of the current
+        symbol/field, after applying the symbol/field definition.
+
+        :param deepness: Parameter used to specify th number of indentations.
+        :type deepness: :class:`int`
+
+        >>> from netzob.all import *
+        >>> messages = []
+        >>> messages.append(RawMessage("john, what's up in Paris ?"))
+        >>> messages.append(RawMessage("john, what's up in Berlin ?"))
+        >>> messages.append(RawMessage("kurt, what's up in Paris ?"))
+        >>> messages.append(RawMessage("kurt, what's up in Berlin ?"))
+        >>> f1 = Field(["john", "kurt"], name="pseudo")
+        >>> f2 = Field(", what's up in ", name="whatsup")
+        >>> f3 = Field(["Paris", "Berlin", "New-York"], name="city")
+        >>> f4 = Field(" ?", name="end")
+        >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
+        >>> print(symbol.str_data())
+        pseudo | whatsup           | city     | end 
+        ------ | ----------------- | -------- | ----
+        'john' | ", what's up in " | 'Paris'  | ' ?'
+        'john' | ", what's up in " | 'Berlin' | ' ?'
+        'kurt' | ", what's up in " | 'Paris'  | ' ?'
+        'kurt' | ", what's up in " | 'Berlin' | ' ?'
+        ------ | ----------------- | -------- | ----
+
+        >>> print(f1.str_data())
+        Field 
+        ------
+        'john'
+        'john'
+        'kurt'
+        'kurt'
+        ------
+
+        """
+        result = self.getCells(encoded=True)
+        return str(result)
 
     # PROPERTIES
 

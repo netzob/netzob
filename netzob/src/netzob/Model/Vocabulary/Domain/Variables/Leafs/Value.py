@@ -167,7 +167,7 @@ class Value(AbstractRelationVariableLeaf):
     b'\x01:\x02'
     >>> m1 = RawMessage(s.specialize())
     >>> s.messages = [m1]
-    >>> print(s)
+    >>> print(s.str_data())
     f0     | f1  | f2    
     ------ | --- | ------
     '\x01' | ':' | '\x02'

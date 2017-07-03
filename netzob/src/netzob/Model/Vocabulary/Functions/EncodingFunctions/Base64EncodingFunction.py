@@ -60,7 +60,7 @@ class Base64EncodingFunction(EncodingFunction):
     >>> f2 = Field(name="f2", domain=String("Content"))
     >>> s = Symbol(fields=[f0, f1, f2])
     >>> s.messages = [RawMessage(s.specialize())]*3
-    >>> print(s)
+    >>> print(s.str_data())
     f0           | f1     | f2       
     ------------ | ------ | ---------
     'Helloworld' | 'Data' | 'Content'
@@ -68,7 +68,7 @@ class Base64EncodingFunction(EncodingFunction):
     'Helloworld' | 'Data' | 'Content'
     ------------ | ------ | ---------
     >>> f1.addEncodingFunction(Base64EncodingFunction())
-    >>> print(s)
+    >>> print(s.str_data())
     f0           | f1         | f2       
     ------------ | ---------- | ---------
     'Helloworld' | 'RGF0YQ==' | 'Content'
@@ -85,7 +85,7 @@ class Base64EncodingFunction(EncodingFunction):
     >>> f1 = Field(name="f1", domain=String(nbChars=(0, 20)))
     >>> f2 = Field(name="f2", domain=String(" !"))
     >>> s = Symbol(fields = [f0, f1, f2], messages = [RawMessage(m1), RawMessage(m2), RawMessage(m3)])
-    >>> print(s)
+    >>> print(s.str_data())
     f0       | f1             | f2  
     -------- | -------------- | ----
     'hello ' | 'YWxs'         | ' !'
@@ -93,7 +93,7 @@ class Base64EncodingFunction(EncodingFunction):
     'hello ' | 'd29ybGQ='     | ' !'
     -------- | -------------- | ----
     >>> f1.addEncodingFunction(Base64EncodingFunction(encode_data = False))
-    >>> print(s)
+    >>> print(s.str_data())
     f0       | f1        | f2  
     -------- | --------- | ----
     'hello ' | 'all'     | ' !'

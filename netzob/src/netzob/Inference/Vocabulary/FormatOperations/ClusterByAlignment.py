@@ -76,7 +76,7 @@ class ClusterByAlignment(object):
     >>> symbols = clustering.cluster(messages)
     >>> len(symbols)
     3
-    >>> print(symbols[0])
+    >>> print(symbols[0].str_data())
     Field               | Field | Field | Field | Field | Field | Field | Field | Field | Field
     ------------------- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | -----
     'My ip address is ' | '78'  | '.1'  | '67'  | '.'   | '23'  | '.'   | ''    | '1'   | '0'  
@@ -84,7 +84,7 @@ class ClusterByAlignment(object):
     'My ip address is ' | '10'  | '.1'  | '20'  | '.'   | '121' | '.'   | '2'   | '1'   | '2'  
     ------------------- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | -----
 
-    >>> print(symbols[2])
+    >>> print(symbols[2].str_data())
     Field    | Field     | Field             | Field       | Field
     -------- | --------- | ----------------- | ----------- | -----
     'hello ' | 'carlito' | ", what's up in " | 'Munich'    | ' ?' 

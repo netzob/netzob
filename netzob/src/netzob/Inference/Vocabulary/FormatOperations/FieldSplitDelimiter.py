@@ -67,7 +67,7 @@ class FieldSplitDelimiter(object):
         >>> messages = [RawMessage(data=sample) for sample in samples]
         >>> symbol = Symbol(messages=messages[:3])
         >>> Format.splitDelimiter(symbol, String("ff"))
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         Field-0    | Field-sep-6666 | Field-2      | Field-sep-6666 | Field-4   
         ---------- | -------------- | ------------ | -------------- | ----------
         'aaaa'     | 'ff'           | '000000'     | 'ff'           | '10'      
@@ -80,7 +80,7 @@ class FieldSplitDelimiter(object):
         >>> symbol = Symbol(messages=messages)
         >>> symbol.encodingFunctions.add(TypeEncodingFunction(String))  # Change visualization to hexastring
         >>> Format.splitDelimiter(symbol, String("#"))
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         Field-0         | Field-sep-23 | Field-2              | Field-sep-23 | Field-4
         --------------- | ------------ | -------------------- | ------------ | -------
         'CMDidentify'   | '#'          | '....fred'           | ''           | ''     
@@ -112,7 +112,7 @@ class FieldSplitDelimiter(object):
         'CMDbye'        | '#'          | '....'               | ''           | ''     
         'RESbye'        | '#'          | '........'           | ''           | ''     
         --------------- | ------------ | -------------------- | ------------ | -------
-        >>> print(symbol.fields[0]._str_debug())
+        >>> print(symbol.fields[0].str_structure())
         Field-0
         |--   Alt
               |--   Data (Raw=b'CMDidentify' ((None, None)))
@@ -138,7 +138,7 @@ class FieldSplitDelimiter(object):
         >>> messages = [RawMessage(data=sample) for sample in samples]
         >>> symbol = Symbol(messages=messages)
         >>> Format.splitDelimiter(symbol, Raw(b"\xff"))
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         Field-0        | Field-sep-ff | Field-2                | Field-sep-ff | Field-4   
         -------------- | ------------ | ---------------------- | ------------ | ----------
         '\x01\x02\x03' | b'\xff'      | '\x04\x05'             | b'\xff'      | '\x06\x07'

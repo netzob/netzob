@@ -149,7 +149,7 @@ class Raw(AbstractType):
         >>> s = Symbol(fields=[f])
         >>> messages = [RawMessage(s.specialize()) for x in range(5)]
         >>> s.messages = messages
-        >>> print(s)
+        >>> print(s.str_data())
         Field             
         ------------------
         '\x01\x02\x03\x04'

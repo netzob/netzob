@@ -60,7 +60,7 @@ class FieldSplitStatic(object):
     >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
     >>> symbol = Symbol(messages=messages)
     >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print(symbol)
+    >>> print(symbol.str_data())
     Field           
     ----------------
     '00ff2f00000010'
@@ -75,7 +75,7 @@ class FieldSplitStatic(object):
     
     >>> fs = FieldSplitStatic()
     >>> fs.execute(symbol)
-    >>> print(symbol)
+    >>> print(symbol.str_data())
     Field-0 | Field-1 | Field-2  | Field-3
     ------- | ------- | -------- | -------
     '00'    | 'ff2f'  | '000000' | '10'   
@@ -90,7 +90,7 @@ class FieldSplitStatic(object):
 
     >>> fs = FieldSplitStatic(mergeAdjacentStaticFields=False, mergeAdjacentDynamicFields=False)
     >>> fs.execute(symbol)
-    >>> print(symbol)
+    >>> print(symbol.str_data())
     Field-0 | Field-1 | Field-2 | Field-3 | Field-4 | Field-5 | Field-6
     ------- | ------- | ------- | ------- | ------- | ------- | -------
     '00'    | 'ff'    | '2f'    | '00'    | '00'    | '00'    | '10'   
@@ -105,7 +105,7 @@ class FieldSplitStatic(object):
 
     >>> fs = FieldSplitStatic(mergeAdjacentStaticFields=True, mergeAdjacentDynamicFields=False)
     >>> fs.execute(symbol)
-    >>> print(symbol)
+    >>> print(symbol.str_data())
     Field-0 | Field-1 | Field-2 | Field-3  | Field-4
     ------- | ------- | ------- | -------- | -------
     '00'    | 'ff'    | '2f'    | '000000' | '10'   
@@ -120,7 +120,7 @@ class FieldSplitStatic(object):
 
     >>> fs = FieldSplitStatic(mergeAdjacentStaticFields=False, mergeAdjacentDynamicFields=True)
     >>> fs.execute(symbol)
-    >>> print(symbol)
+    >>> print(symbol.str_data())
     Field-0 | Field-1 | Field-2 | Field-3 | Field-4 | Field-5
     ------- | ------- | ------- | ------- | ------- | -------
     '00'    | 'ff2f'  | '00'    | '00'    | '00'    | '10'   
@@ -137,7 +137,7 @@ class FieldSplitStatic(object):
     We can also plays with the unitsize:
     >>> fs = FieldSplitStatic(UnitSize.SIZE_8, mergeAdjacentDynamicFields=False)
     >>> fs.execute(symbol)
-    >>> print(symbol)
+    >>> print(symbol.str_data())
     Field-0 | Field-1 | Field-2 | Field-3  | Field-4
     ------- | ------- | ------- | -------- | -------
     '00'    | 'ff'    | '2f'    | '000000' | '10'   
@@ -152,7 +152,7 @@ class FieldSplitStatic(object):
 
     >>> fs = FieldSplitStatic(UnitSize.SIZE_16, mergeAdjacentDynamicFields=False)
     >>> fs.execute(symbol)
-    >>> print(symbol)
+    >>> print(symbol.str_data())
     Field-0 | Field-1 | Field-2 | Field-3
     ------- | ------- | ------- | -------
     '00ff'  | '2f00'  | '0000'  | '10'   
@@ -167,7 +167,7 @@ class FieldSplitStatic(object):
 
     >>> fs = FieldSplitStatic(UnitSize.SIZE_32, mergeAdjacentDynamicFields=False)
     >>> fs.execute(symbol)
-    >>> print(symbol)
+    >>> print(symbol.str_data())
     Field-0    | Field-1 
     ---------- | --------
     '00ff2f00' | '000010'
@@ -182,7 +182,7 @@ class FieldSplitStatic(object):
 
     >>> fs = FieldSplitStatic(UnitSize.SIZE_64, mergeAdjacentDynamicFields=False)
     >>> fs.execute(symbol)
-    >>> print(symbol)
+    >>> print(symbol.str_data())
     Field-0         
     ----------------
     '00ff2f00000010'

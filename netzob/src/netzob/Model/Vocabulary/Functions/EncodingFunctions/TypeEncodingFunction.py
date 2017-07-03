@@ -60,7 +60,7 @@ class TypeEncodingFunction(EncodingFunction):
     >>> m = RawMessage(b"There are " + TypeConverter.convert(10, Integer, Raw) + b" solutions.")
     >>> s = Symbol(fields=[f], messages=[m], name="Symbol")
     >>> s.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print(s)
+    >>> print(s.str_data())
     f0                                            
     ----------------------------------------------
     '546865726520617265200a20736f6c7574696f6e732e'
@@ -70,14 +70,14 @@ class TypeEncodingFunction(EncodingFunction):
     >>> f1=Field(String("hello"))
     >>> f2=Field(Integer(unitSize=UnitSize.SIZE_32))
     >>> s = Symbol(fields=[f1,f2], messages=[m])
-    >>> print(s)
+    >>> print(s.str_data())
     Field   | Field             
     ------- | ------------------
     'hello' | '\x00\x00\x00\x01'
     ------- | ------------------
 
     >>> f2.addEncodingFunction(TypeEncodingFunction(Integer, unitSize=UnitSize.SIZE_32, endianness=Endianness.LITTLE))
-    >>> print(s)
+    >>> print(s.str_data())
     Field   | Field   
     ------- | --------
     'hello' | 16777216
@@ -86,7 +86,7 @@ class TypeEncodingFunction(EncodingFunction):
     >>> f2=Field(Integer(unitSize=UnitSize.SIZE_32))
     >>> f2.addEncodingFunction(TypeEncodingFunction(Integer, unitSize=UnitSize.SIZE_32, endianness=Endianness.BIG))
     >>> s = Symbol(fields=[f1,f2], messages=[m])
-    >>> print(s)
+    >>> print(s.str_data())
     Field   | Field
     ------- | -----
     'hello' | 1    

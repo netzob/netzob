@@ -77,7 +77,7 @@ class Data(AbstractVariableLeaf):
 
     The following example shows the definition of the Data `pseudo`
     with a type String and a default value `"hello"`. This means that
-    this Data object accepts any String object, and the current value
+    this Data object accepts any string, and the current value
     of this object is `"hello"`.
 
     >>> from netzob.all import *

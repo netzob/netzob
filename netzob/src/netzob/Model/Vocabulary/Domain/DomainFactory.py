@@ -76,7 +76,7 @@ class DomainFactory(object):
     String=! ((None, None))
 
     >>> f = Field(domain=Agg([String("hello"), ["netzob", "kurt"]]))
-    >>> print(f._str_debug())
+    >>> print(f.str_structure())
     Field
     |--   Agg
           |--   Data (String=hello ((None, None)))

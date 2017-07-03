@@ -92,7 +92,7 @@ class FieldSpecializer(object):
     >>> f1 = Field(String("hello "), name="f1")
     >>> f2 = Field(String("kurt!"), name="f2")
     >>> fpayload.fields = [f1, f2]
-    >>> print(fpayload._str_debug())
+    >>> print(fpayload.str_structure())
     Field
     |--  f1
          |--   Data (String=hello  ((None, None)))

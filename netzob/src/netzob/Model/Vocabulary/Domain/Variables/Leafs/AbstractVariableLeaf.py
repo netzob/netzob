@@ -180,7 +180,7 @@ class AbstractVariableLeaf(AbstractVariable):
 
         return newParsingPaths
 
-    def _str_debug(self, deepness=0):
+    def str_structure(self, deepness=0):
         """Returns a string which denotes
         the current field definition using a tree display"""
 

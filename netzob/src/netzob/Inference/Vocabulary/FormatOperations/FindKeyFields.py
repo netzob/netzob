@@ -63,7 +63,7 @@ class FindKeyFields(object):
         >>> symbol = Symbol(messages=messages)
         >>> Format.splitStatic(symbol)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         Field-0 | Field-1 | Field-2 | Field-3
         ------- | ------- | ------- | -------
         '00'    | 'ff2f'  | '0000'  | '11'   

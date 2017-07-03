@@ -79,7 +79,7 @@ class ClusterByKeyField(object):
         >>> for sym in list(newSymbols.values()):
         ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
         ...     print(sym.name + ":")
-        ...     print(sym)
+        ...     print(sym.str_data())
         Symbol_ff2f:
         Field | Field  | Field   
         ----- | ------ | --------
