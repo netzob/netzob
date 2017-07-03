@@ -67,12 +67,13 @@ class Mutator(metaclass=abc.ABCMeta):
 
     def __init__(self,
                  seed=SEED_DEFAULT,
-                 counterMax=COUNTER_MAX_DEFAULT
+                 counterMax=COUNTER_MAX_DEFAULT,
+                 counterMaxRelative=False
                  ):
         # Handle class variables
         self._seed = seed
         self._currentState = 0
-        self._counterMax = counterMax
+        self.setCounterMax(counterMax, counterMaxRelative)
         self._currentCounter = 0
 
     @typeCheck(int)
@@ -103,21 +104,28 @@ class Mutator(metaclass=abc.ABCMeta):
     def currentState(self, stateValue):
         self._currentState = stateValue
 
-    @property
-    def counterMax(self):
+    def getCounterMax(self):
         """
-        Property (getter/setter).
-        The max number of values that the generator has to produce.
+        Get the max number of values that the generator would produce.
         When this limit is reached, :meth:`mutate` returns None.
 
-        :type: :class:`int`
+        :type: :class:`int` (absolute) or :class:`float` (relative)
         """
         return self._counterMax
 
-    @counterMax.setter
-    @typeCheck(int)
-    def counterMax(self, counterMaxValue):
-        self._counterMax = counterMaxValue
+    @typeCheck((int, float), bool)
+    def setCounterMax(self, counterMaxValue, relative):
+        """
+        Set the max number of values that the generator would produce.
+
+        :param counterMaxValue: the counter max value
+        :type counterMaxValue: :class:`int` (absolute) or :class:`float` (relative)
+        :param relative: wether the counter value is absolute or relative
+        :type relative: :class:`bool`
+        """
+        self._counterMax = (self.COUNTER_MAX_DEFAULT if counterMaxValue is None
+                            else counterMaxValue)
+        self._counterMaxRelative = relative
 
     @property
     def currentCounter(self):
@@ -153,7 +161,7 @@ class Mutator(metaclass=abc.ABCMeta):
         :raises: :class:`Exception` when **currentCounter** reaches
                  :attr:`Mutator.counterMax`.
         """
-        if self._currentCounter >= self.counterMax:
+        if self._currentCounter >= self.getCounterMax():
             raise Exception("Max mutation counter reached")
         self._currentCounter += 1
 

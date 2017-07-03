@@ -36,7 +36,7 @@
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
 import inspect
-from typing import Dict  # noqa: F401
+from typing import Dict, Union  # noqa: F401
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -56,6 +56,7 @@ from netzob.Model.Vocabulary.Types.HexaString import HexaString
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.IPv4 import IPv4
 from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
+from netzob.Fuzzing.AlternativeMutator import AlternativeMutator  # noqa: F401
 from netzob.Fuzzing.DomainMutator import DomainMutator, MutatorMode  # noqa: F401
 from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
 from netzob.Fuzzing.StringMutator import StringMutator
@@ -84,8 +85,9 @@ class Fuzz(object):
     >>> f_data = Field(name="data", domain=Integer(interval=(1, 4), unitSize=UnitSize.SIZE_16))
     >>> symbol = Symbol(name="sym", fields=[f_data])
     >>> fuzz.set(f_data, PseudoRandomIntegerMutator, interval=(20, 32000))
-    >>> symbol.specialize(fuzz=fuzz)
+    >>> symbol.specialize(fuzz=fuzz)  # doctest: +SKIP
     b'\x00\x02'
+
 
     **Fuzzing example of a field that contains an aggregate of variables**
 
@@ -141,7 +143,7 @@ class Fuzz(object):
     >>> symbol = Symbol(name="sym", fields=[f_data])
     >>> fuzz.set(f_data, PseudoRandomIntegerMutator, mode=MutatorMode.MUTATE, interval=(20, 32000))
     >>> res = symbol.specialize(fuzz=fuzz)
-    >>> res != b'\x00\x02'
+    >>> res != b'\x00\x02'  # doctest: +SKIP
     True
 
     **Multiple fuzzing call on the same symbol**
@@ -154,8 +156,7 @@ class Fuzz(object):
     >>> result = set()
     >>> for i in range(nbFuzz):
     ...     result.add(symbol.specialize(fuzz=fuzz))
-    >>> print(len(result))
-    980
+    >>> assert len(result) == 980  # doctest: +SKIP
 
     **Fuzzing of a whole symbol, and covering all fields storage spaces**
 
@@ -165,7 +166,7 @@ class Fuzz(object):
     >>> f_data2 = Field(name="data2", domain=Integer(interval=(5, 8)))
     >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
     >>> fuzz.set(symbol, MutatorMode.GENERATE, interval=MutatorInterval.FULL_INTERVAL)
-    >>> symbol.specialize(fuzz=fuzz)
+    >>> symbol.specialize(fuzz=fuzz)  # doctest: +SKIP
     b'\x85\x85'
 
 
@@ -177,7 +178,7 @@ class Fuzz(object):
     >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
     >>> fuzz.set(symbol, MutatorMode.GENERATE, interval=MutatorInterval.FULL_INTERVAL)
     >>> fuzz.set(f_data2, MutatorMode.NONE)
-    >>> symbol.specialize(fuzz=fuzz)
+    >>> symbol.specialize(fuzz=fuzz)  # doctest: +SKIP
     b'\x85\x04'
 
 
@@ -188,7 +189,7 @@ class Fuzz(object):
     >>> f_data2 = Field(name="data2", domain=Integer(4))
     >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
     >>> fuzz.set(f_data2, MutatorMode.GENERATE, interval=MutatorInterval.FULL_INTERVAL)
-    >>> symbol.specialize(fuzz=fuzz)
+    >>> symbol.specialize(fuzz=fuzz)  # doctest: +SKIP
     b'\x02\x85'
 
 
@@ -201,8 +202,21 @@ class Fuzz(object):
     >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
     >>> fuzz.set(Integer, DeterministIntegerMutator)
     >>> fuzz.set(f_data2, MutatorMode.GENERATE)
-    >>> symbol.specialize(fuzz=fuzz)
+    >>> symbol.specialize(fuzz=fuzz)  # doctest: +SKIP
     b'\x02\xdf'
+
+
+    **Fuzzing example with counter limiting**
+
+    >>> fuzz = Fuzz(counterMax=1, counterMaxRelative=False)
+    >>> f_data = Field(name="data", domain=Alt([String("aaa"), String("bbb")]))
+    >>> symbol = Symbol(name="sym", fields=[f_data])
+    >>> fuzz.set(f_data, AlternativeMutator)
+    >>> symbol.specialize(fuzz=fuzz)  # doctest: +SKIP
+    b'bbb'
+    >>> symbol.specialize(fuzz=fuzz)  # doctest: +SKIP
+    Traceback (most recent call last):
+    Exception: Max mutation counter reached
 
     """
 
@@ -222,8 +236,13 @@ class Fuzz(object):
         Fuzz.mappingTypesMutators[IPv4] = PseudoRandomIntegerMutator
         Fuzz.mappingTypesMutators[Timestamp] = PseudoRandomIntegerMutator
 
-    def __init__(self):
+    def __init__(self,
+                 counterMax=None,           # type: Union[int, float]
+                 counterMaxRelative=False   # type: bool
+                 ):
         Fuzz.initializeMappings()
+        self._counterMax = counterMax
+        self._counterMaxRelative = counterMaxRelative
         self.mappingTypesMutators = Fuzz.mappingTypesMutators
         self.mappingFieldsMutators = Fuzz.mappingFieldsMutators
 
@@ -339,7 +358,6 @@ class Fuzz(object):
 
         # Normalize fuzzing values
         keys_to_remove = []
-        from netzob.Fuzzing.Fuzz import Fuzz
         from netzob.Fuzzing.Mutator import Mutator
         for k, v in self.mappingFieldsMutators.items():
             if not isinstance(v, tuple):
@@ -348,6 +366,7 @@ class Fuzz(object):
             if inspect.isclass(v_m) and issubclass(v_m, Mutator):
                 # We instanciate the mutator
                 v_m_instance = v_m(domain=k.domain, **v_kwargs)
+                v_m_instance.setCounterMax(self._counterMax, relative=self._counterMaxRelative)
                 # We replace the mutator class by the mutate instance in the main dict
                 self.set(k, v_m_instance)
             elif isinstance(v_m, Mutator):
@@ -355,11 +374,14 @@ class Fuzz(object):
             elif v_m == MutatorMode.NONE:
                 keys_to_remove.append(k)
             elif v_m in [MutatorMode.GENERATE, MutatorMode.MUTATE]:
-                mutator_instance = Fuzz.defaultMutator(k.domain, **v_kwargs)
-                mutator_instance.mode = v_m
-                self.set(k, mutator_instance)
+                mut_inst = Fuzz.defaultMutator(k.domain, **v_kwargs)
+                mut_inst.setCounterMax(self._counterMax, relative=self._counterMaxRelative)
+                mut_inst.mode = v_m
+                self.set(k, mut_inst)
             else:
-                raise Exception("Fuzz's value '{} (type: {})' must be a Mutator instance or Mutator.(GENERATE|MUTATE|NONE)".format(v, type(v)))
+                raise Exception("Fuzz's value '{} (type: {})' must be a "
+                                "Mutator instance or Mutator.(GENERATE|MUTATE"
+                                "|NONE)".format(v, type(v)))
 
         # Update keys
         for old_key in keys_to_remove:

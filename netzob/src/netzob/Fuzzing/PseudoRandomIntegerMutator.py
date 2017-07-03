@@ -270,7 +270,7 @@ class PseudoRandomIntegerMutator(DomainMutator):
         super().generate()
 
         # Generate and return a random value in the interval
-        if self.currentCounter < self.counterMax:
+        if self.currentCounter < self.getCounterMax():
             self._currentCounter += 1
             dom_type = self.getDomain().dataType
             return Integer.decode(self.generateInt(),
