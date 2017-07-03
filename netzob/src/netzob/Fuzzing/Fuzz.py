@@ -74,6 +74,11 @@ class Fuzz(object):
     <netzob.Model.Fuzzing.StringMutator.StringMutator>`).
     The :meth:`set <.Fuzz.set>` method changes the default behavior.
 
+    The Fuzz constructor expects some parameters:
+
+    :param counterMax: the max number of values that the mutator would produce. See definition of Mutator.counterMax.
+    :param counterMaxRelative: whether the counter value is absolute (``False``) or relative (``True``). See definition of Mutator.counterMaxRelative.
+
     The following examples show the different usages of the fuzzing
     component.
 

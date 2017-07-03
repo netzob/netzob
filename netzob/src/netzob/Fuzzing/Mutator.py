@@ -56,7 +56,12 @@ class Mutator(metaclass=abc.ABCMeta):
     The Mutator constructor expects some parameters:
 
     :param seed: the initial seed value of the mutator
+    :param counterMax: the max number of values that the mutator would produce
+    :param counterMaxRelative: whether the counter value is absolute \
+(``False``) or relative (``True``)
     :type seed: :class:`int`, defaults to :attr:`SEED_DEFAULT`
+    :type counterMax: :class:`int`, defaults to :attr:`COUNTER_MAX_DEFAULT`
+    :type counterMaxRelative: :class:`bool`, defaults to ``False``
 
     Constant definitions:
     """
@@ -120,7 +125,7 @@ class Mutator(metaclass=abc.ABCMeta):
 
         :param counterMaxValue: the counter max value
         :type counterMaxValue: :class:`int` (absolute) or :class:`float` (relative)
-        :param relative: wether the counter value is absolute or relative
+        :param relative: whether the counter value is absolute or relative
         :type relative: :class:`bool`
         """
         self._counterMax = (self.COUNTER_MAX_DEFAULT if counterMaxValue is None

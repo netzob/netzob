@@ -137,7 +137,7 @@ class MessageSpecializer(object):
         # are converted into bitarray.
         self._normalize_presets(symbol)
 
-        # Remove preseted fields when they are concerned with fuzzing
+        # Remove preset fields when they are concerned with fuzzing
         self._filterPresetsWithFuzz(symbol)
 
         # This variable host all the specialization paths
@@ -348,7 +348,7 @@ class MessageSpecializer(object):
 
     @typeCheck(Symbol)
     def _filterPresetsWithFuzz(self, symbol):
-        """Remove preseted fields when they are concerned with fuzzing,
+        """Remove preset fields when they are concerned with fuzzing,
         because mutation has priority over preseting values.
 
         """
@@ -361,5 +361,5 @@ class MessageSpecializer(object):
 
         for (fuzz_k, fuzz_v) in self.fuzz.mappingFieldsMutators.items():
             if fuzz_k in self.presets.keys():
-                self._logger.debug("Removing preseted key '{0}' in self.presets as it is already used in self.fuzz.".format(fuzz_k))
+                self._logger.debug("Removing preset key '{0}' in self.presets as it is already used in self.fuzz.".format(fuzz_k))
                 self.presets.pop(fuzz_k)

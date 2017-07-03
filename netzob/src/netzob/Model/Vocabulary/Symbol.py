@@ -204,7 +204,7 @@ class Symbol(AbstractField):
                      parameter is handled in the same way as the
                      ``presets`` parameter (i.e. a mutator can be
                      defined for each field we want to fuzz). Values
-                     in this dictionary will override any fields
+                     in this dictionary will override any field
                      definition, constraints, relationship
                      dependencies or parameterized fields. See
                      :class:`Mutator <netzob.Fuzzing.Mutator.Mutator>`
@@ -317,7 +317,7 @@ class Symbol(AbstractField):
         It is possible to fuzz fields during symbol specialization,
         through the ``fuzz=`` parameter of the
         :meth:`~netzob.Model.Vocabulary.Symbol.specialize`
-        method. Values in this parameter will override any fields
+        method. Values in this parameter will override any field
         definition, constraints, relationship dependencies or
         parameterized values.
 
@@ -339,9 +339,9 @@ class Symbol(AbstractField):
     def specialize_count(self, memory=None, presets=None, fuzz=None):
         r"""The method :meth:`specialize_count` computes the expected number of unique
         produced messages, considering the initial symbol model, the
-        preseted fields and the fuzzed fields.
+        preset fields and the fuzzed fields.
 
-        The :meth:`specialize_dryun` method expects the same parameters as the :meth:`specialize` method:
+        The :meth:`specialize_count` method expects the same parameters as the :meth:`specialize` method:
 
         :param memory: A memory used to store variable values during
                        specialization and abstraction of sequence of symbols.
@@ -355,7 +355,7 @@ class Symbol(AbstractField):
                      parameter is handled in the same way as the
                      ``presets`` parameter (i.e. a mutator can be
                      defined for each field we want to fuzz). Values
-                     in this dictionary will override any fields
+                     in this dictionary will override any field
                      definition, constraints, relationship
                      dependencies or parameterized fields. See
                      :class:`Mutator <netzob.Fuzzing.Mutator.Mutator>`
@@ -372,7 +372,7 @@ class Symbol(AbstractField):
         >>> f3 = Field(uint8be())
         >>> symbol = Symbol(fields=[f1, f2, f3])
         >>>
-        >>> # Specify the preseted fields
+        >>> # Specify the preset fields
         >>> presetValues = {f1: TypeConverter.convert("\xff\xff", Raw, BitArray)}        
         >>>
         >>> # Specify the fuzzed fields
