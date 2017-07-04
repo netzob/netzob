@@ -194,7 +194,7 @@ class Size(AbstractRelationVariableLeaf):
 
     The following examples show the specialization process of a Size
     field:
-    
+
     >>> f0 = Field(String(nbChars=20))
     >>> f1 = Field(String(";"))
     >>> f2 = Field(Size(f0))

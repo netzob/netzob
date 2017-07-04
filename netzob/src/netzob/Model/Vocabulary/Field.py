@@ -152,7 +152,7 @@ class Field(AbstractField):
 
     The following example describes a size relationship with a String
     field:
-    
+
     >>> from netzob.all import *
     >>> f0 = Field(String("test"))
     >>> f1 = Field(Size(f0))
@@ -211,7 +211,7 @@ class Field(AbstractField):
     'hello ' | 'world'  
     -------- | ---------
 
-    **Fields examples**
+    **Field examples**
 
     Here are examples of fields:
 
@@ -230,7 +230,7 @@ class Field(AbstractField):
     * a field with a specific raw value
 
       >>> f = Field(Raw(b'\x00\x01\x02\x03'))
-    
+
     * a field representing a random IPv4:
 
       >>> f = Field(IPv4())
@@ -247,7 +247,7 @@ class Field(AbstractField):
 
       >>> f = Field([Size(payloadField)])
 
-    * a field representing an alternative between two differents strings, either "netzob" or "kurt":
+    * a field representing an alternative between two different strings, either "netzob" or "kurt":
 
       >>> f = Field(["netzob", "kurt"])
 
@@ -304,7 +304,7 @@ class Field(AbstractField):
         b'hello kurt'
         b'hello kurt'
 
-        :return: a generated content represented with an hexastring
+        :return: a generated content represented with a hexastring
         :rtype: :class:`str``
         :raises: :class:`GenerationException <netzob.Model.Vocabulary.AbstractField.GenerationException>` if an error occurs while generating a message
         """
