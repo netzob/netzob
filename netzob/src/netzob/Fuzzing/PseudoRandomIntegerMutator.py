@@ -144,7 +144,7 @@ class PseudoRandomIntegerMutator(DomainMutator):
     :type generator: :class:`str`, optional
     :type seed: :class:`int`, optional
 
-    **Internal Generator Functions**
+    **Internal generator functions**
 
     The following example shows how to generate an 8bits integer in [10, 20]
     interval, with an arbitrary seed of 4321:
@@ -155,7 +155,7 @@ class PseudoRandomIntegerMutator(DomainMutator):
     >>> mutator.generate()
     b'\n'
 
-    **Custom Generators**
+    **Custom generators**
 
     It is also possible to provide a custom :attr:`generator`.
 

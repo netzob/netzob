@@ -78,7 +78,7 @@ class Checksum(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
     * InternetChecksum (this checksum is used in ICMP, UDP, IP, TCP protocols, as specified in RFC 1071)
 
 
-    **Complete Example with ICMP**
+    **Complete example with ICMP**
 
     The following example illustrates the creation of an ICMP Echo request packet
     with a valid checksum computed on-the-fly.
