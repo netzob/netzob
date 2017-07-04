@@ -123,7 +123,7 @@ class DomainMutator(Mutator):
         # Handle parameters
         assert isinstance(mode, MutatorMode)
         self._domain = domain
-        self._mode = mode.value
+        self._mode = mode
 
     def getDomain(self):
         """

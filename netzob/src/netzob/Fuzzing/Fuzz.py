@@ -90,8 +90,8 @@ class Fuzz(object):
     >>> f_data = Field(name="data", domain=Integer(interval=(1, 4), unitSize=UnitSize.SIZE_16))
     >>> symbol = Symbol(name="sym", fields=[f_data])
     >>> fuzz.set(f_data, PseudoRandomIntegerMutator, interval=(20, 32000))
-    >>> symbol.specialize(fuzz=fuzz)  # doctest: +SKIP
-    b'\x00\x02'
+    >>> symbol.specialize(fuzz=fuzz)
+    b'`n'
 
 
     **Fuzzing example of a field that contains an aggregate of variables**
@@ -136,7 +136,7 @@ class Fuzz(object):
     >>> symbol = Symbol(name="sym", fields=[f_data, f_size])
     >>> fuzz.set(f_size, PseudoRandomIntegerMutator, interval=(20, 32000))
     >>> symbol.specialize(fuzz=fuzz)
-    b'\x00\x03\x00\x02'
+    b'\x00\x03`n'
 
 
     **Fuzzing example in mutation mode of a field that contains an integer**
@@ -148,7 +148,7 @@ class Fuzz(object):
     >>> symbol = Symbol(name="sym", fields=[f_data])
     >>> fuzz.set(f_data, PseudoRandomIntegerMutator, mode=MutatorMode.MUTATE, interval=(20, 32000))
     >>> res = symbol.specialize(fuzz=fuzz)
-    >>> res != b'\x00\x02'  # doctest: +SKIP
+    >>> res != b'\x00\x02'
     True
 
     **Multiple fuzzing call on the same symbol**
@@ -161,7 +161,8 @@ class Fuzz(object):
     >>> result = set()
     >>> for i in range(nbFuzz):
     ...     result.add(symbol.specialize(fuzz=fuzz))
-    >>> assert len(result) == 980  # doctest: +SKIP
+    >>> assert len(result) == 980
+
 
     **Fuzzing of a whole symbol, and covering all fields storage spaces**
 
@@ -171,8 +172,8 @@ class Fuzz(object):
     >>> f_data2 = Field(name="data2", domain=Integer(interval=(5, 8)))
     >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
     >>> fuzz.set(symbol, MutatorMode.GENERATE, interval=MutatorInterval.FULL_INTERVAL)
-    >>> symbol.specialize(fuzz=fuzz)  # doctest: +SKIP
-    b'\x85\x85'
+    >>> symbol.specialize(fuzz=fuzz)
+    b'DD'
 
 
     **Fuzzing of a whole symbol except one field, and covering all fields storage spaces**
@@ -183,8 +184,8 @@ class Fuzz(object):
     >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
     >>> fuzz.set(symbol, MutatorMode.GENERATE, interval=MutatorInterval.FULL_INTERVAL)
     >>> fuzz.set(f_data2, MutatorMode.NONE)
-    >>> symbol.specialize(fuzz=fuzz)  # doctest: +SKIP
-    b'\x85\x04'
+    >>> symbol.specialize(fuzz=fuzz)
+    b'D\x04'
 
 
     **Fuzzing of a field with default mutator, and covering field storage space**
@@ -194,8 +195,8 @@ class Fuzz(object):
     >>> f_data2 = Field(name="data2", domain=Integer(4))
     >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
     >>> fuzz.set(f_data2, MutatorMode.GENERATE, interval=MutatorInterval.FULL_INTERVAL)
-    >>> symbol.specialize(fuzz=fuzz)  # doctest: +SKIP
-    b'\x02\x85'
+    >>> symbol.specialize(fuzz=fuzz)
+    b'\x02D'
 
 
     **Fuzzing and changing the default Mutator for types**
@@ -207,8 +208,8 @@ class Fuzz(object):
     >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
     >>> fuzz.set(Integer, DeterministIntegerMutator)
     >>> fuzz.set(f_data2, MutatorMode.GENERATE)
-    >>> symbol.specialize(fuzz=fuzz)  # doctest: +SKIP
-    b'\x02\xdf'
+    >>> symbol.specialize(fuzz=fuzz)
+    b'\x02\xfc'
 
 
     **Fuzzing example with counter limiting**
