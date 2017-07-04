@@ -292,7 +292,7 @@ class RawEthernetClient(AbstractChannel):
                                   ip_saddr,
                                   ip_daddr,
                                   ip_payload], dataType=Integer(unitSize=UnitSize.SIZE_16, sign=Sign.UNSIGNED), factor=1 / float(8))
-        ip_checksum.domain = InternetChecksum([ip_ver,
+        ip_checksum.domain = InternetChecksum(targets=[ip_ver,
                                                ip_ihl,
                                                ip_tos,
                                                ip_tot_len,
