@@ -81,6 +81,9 @@ class CorrelationFinder(object):
     REL_SIZE = "SizeRelation"
     REL_DATA = "DataRelation"
 
+    def __init__(self, minMic=0.7):
+        self.minMic = minMic
+
     @staticmethod
     @typeCheck(AbstractField, float)
     def find(symbol, minMic=0.7):
@@ -101,16 +104,13 @@ class CorrelationFinder(object):
         except:
             # Fall back to classical relations
             import logging
-            logging.warning(
+            logging.debug(
                 "'numpy' and 'minepy' packages needed for CorrelationFinder. Fall back to RelationFinder instead."
             )
             return RelationFinder.findOnSymbol(symbol)
 
         cf = CorrelationFinder(minMic)
         return cf.execute(symbol)
-
-    def __init__(self, minMic=0.7):
-        self.minMic = minMic
 
     @typeCheck(AbstractField)
     def execute(self, symbol):

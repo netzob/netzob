@@ -131,8 +131,8 @@ class FileImporter(object):
         if filePath is None or len(str(filePath).strip()) == 0:
             raise TypeError("Filepath cannot be None or empty")
  
-        if delimitor is None or len(str(delimitor)) == 0:
-            raise TypeError("Delimitor cannot be None or empty")
+        #if delimitor is None or len(str(delimitor)) == 0 or len(delimitor) == 0:
+         #   raise TypeError("Delimitor cannot be None or empty")
 
         file_content = None
         with open(filePath, 'rb') as fd:
@@ -141,9 +141,12 @@ class FileImporter(object):
         if file_content is None:
             raise Exception("No content found in '{}'".format(filePath))
 
-        for i_data, data in enumerate(file_content.split(delimitor)):
-            if len(data) > 0:
-                self.messages.add(FileMessage(data, file_path = filePath, file_message_number = i_data))
+        if delimitor is None or len(delimitor) == 0:
+            self.messages.add(FileMessage(file_content, file_path=filePath,))
+        else:
+            for i_data, data in enumerate(file_content.split(delimitor)):
+                if len(data) > 0:
+                    self.messages.add(FileMessage(data, file_path = filePath, file_message_number = i_data))
 
     @staticmethod
     @typeCheck(list, bytes)

@@ -42,7 +42,7 @@ class WiresharkExporter(object):
     def export_to_wireshark(self,symbols,dest_file,port,TCP=True):
         """
         Exports a List of netzob symbols to a wireshark lua dissector.
-        Run wireshark likeso: wireshark -X lua_script:<my_script.lua>
+        Run wireshark like so: wireshark -X lua_script:<my_script.lua>
 
         Args:
             symbols: A list of symbols

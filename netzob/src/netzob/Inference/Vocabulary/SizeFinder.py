@@ -72,11 +72,11 @@ class SizeFinder(object):
             print(message)
             sys.stdout = old_stdout
             # Print results using click
-            self._logger.debug("Results with false positives for [Message] : \n" + buffer1.getvalue() + "\n")
-            self._logger.debug("[Number of results found] : " + str(results.total_length) + "\n")
-            self._logger.debug("Result indexes in message: \n ")
-            self._logger.debug("[Left to right search] : " + str(results.SizeLR) + "\n")
-            self._logger.debug("[Right to left search] : " + str(results.SizeRL) + "\n")
+            self._logger.warning("Results with false positives for [Message] : \n" + buffer1.getvalue() + "\n")
+            self._logger.warning("[Number of results found] : " + str(results.total_length) + "\n")
+            self._logger.warning("Result indexes in message: \n ")
+            self._logger.warning("[Left to right search] : " + str(results.SizeLR) + "\n")
+            self._logger.warning("[Right to left search] : " + str(results.SizeRL) + "\n")
             message_relation_dict[str(key)] = results
         lengthLR = 0
         lengthRL = 0
@@ -92,9 +92,9 @@ class SizeFinder(object):
         #Delete all values that are under the base index
         results_LR = self.__delete_before_baseIndex(results_LR,baseIndex)
         results_RL = self.__delete_before_baseIndex(results_RL,baseIndex)
-        self._logger.debug("Results : \n")
-        self._logger.debug("[Left to right search] : " + str(results_LR) + "\n")
-        self._logger.debug("[Right to left search] : " + str(results_RL) + "\n")
+        self._logger.warning("Results : \n")
+        self._logger.warning("[Left to right search] : " + str(results_LR) + "\n")
+        self._logger.warning("[Right to left search] : " + str(results_RL) + "\n")
         if create_fields:
             if results_LR:
                 self.__create_fields(symbol,results_LR)
@@ -114,7 +114,7 @@ class SizeFinder(object):
         size_of_size = 1
         for result in results:
             field_to_split,maxSize,indexInField = self.__getFieldFromIndex(result[0],symbol)
-            self._logger.debug("[Field to split] : " + field_to_split.name + "\n")
+            self._logger.warning("[Field to split] : " + field_to_split.name + "\n")
             first_field_dep ,maxSizefd, indexInFieldfd = self.__getFieldFromIndex(result[1],symbol)
             if indexInFieldfd != 0:
                 #Create a subfield in the first_field_dependency
@@ -140,7 +140,7 @@ class SizeFinder(object):
                     first_field_dep_after = Field(domain = Raw(value_first_field_dep_after),
                                               name = first_field_dep.name + "-1")
                 first_field_dep.fields = [first_field_dep_before, first_field_dep_after]
-            self._logger.debug("[First field dependency] : " + first_field_dep.name + "\n")
+            self._logger.warning("[First field dependency] : " + first_field_dep.name + "\n")
             field_dep = self.__get_field_dep(symbol,first_field_dep)
             #Check if static or Alt:
             values_before = []

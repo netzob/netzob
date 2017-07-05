@@ -38,3 +38,4 @@ from netzob.Inference.Vocabulary.CRCFinder import CRCFinder
 from netzob.Inference.Vocabulary.IPFinder import IPFinder
 from netzob.Inference.Vocabulary.SizeFinder import SizeFinder
 from netzob.Inference.Vocabulary.headerDetector import headerDetector
+from netzob.Inference.Vocabulary.HashIdentifyer import HashIdentifyer
