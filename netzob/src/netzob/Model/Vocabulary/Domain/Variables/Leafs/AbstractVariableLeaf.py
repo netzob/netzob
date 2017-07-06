@@ -119,10 +119,10 @@ class AbstractVariableLeaf(AbstractVariable):
 
         # Fuzzing has priority over generating a legitimate value
         from netzob.Fuzzing.DomainMutator import MutatorMode
-        if fuzz is not None and fuzz.get(self.field) is not None and fuzz.get(self.field).mode == MutatorMode.GENERATE:
+        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == MutatorMode.GENERATE:
 
             # Retrieve the mutator
-            mutator = fuzz.get(self.field)
+            mutator = fuzz.get(self)
 
             # Mutate a value according to the current field attributes
             generated_value = mutator.generate()
@@ -161,7 +161,7 @@ class AbstractVariableLeaf(AbstractVariable):
             elif self.svas == SVAS.VOLATILE:
                 newParsingPaths = self.regenerate(parsingPath, acceptCallBack)
 
-        if fuzz is not None and fuzz.get(self.field) is not None and fuzz.get(self.field).mode == MutatorMode.MUTATE:
+        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == MutatorMode.MUTATE:
 
             if len(newParsingPaths) == 0:
                 self._logger.warn("No data generated for the field: '{}'".format(self.field))
@@ -170,7 +170,7 @@ class AbstractVariableLeaf(AbstractVariable):
                 generatedData = newParsingPaths[0].getDataAssignedToVariable(self)
 
                 # Retrieve the mutator
-                mutator = fuzz.get(self.field)
+                mutator = fuzz.get(self)
 
                 # Mutate a value according to the current field attributes
                 mutated_value = mutator.mutate(generatedData)
