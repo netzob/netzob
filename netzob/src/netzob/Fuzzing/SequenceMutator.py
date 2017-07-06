@@ -54,7 +54,7 @@ from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
 
 
 class SequenceMutator(DomainMutator):
-    """The sequence mutator, using a determinist generator to get a sequence
+    r"""The sequence mutator, using a determinist generator to get a sequence
     length.
 
     The SequenceMutator constructor expects some parameters:
@@ -111,7 +111,6 @@ class SequenceMutator(DomainMutator):
     DEFAULT_MIN_LENGTH = 0
     DEFAULT_MAX_LENGTH = 10
     DOMAIN_TYPE = Repeat
-    DATA_TYPE = AbstractType
 
     def __init__(self,
                  domain,

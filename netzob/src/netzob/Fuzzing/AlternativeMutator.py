@@ -58,7 +58,7 @@ class RecursionException(Exception):
     pass
 
 class AlternativeMutator(DomainMutator):
-    """The alternative mutator.
+    r"""The alternative mutator.
 
     The AlternativeMutator constructor expects some parameters:
 
@@ -77,9 +77,10 @@ class AlternativeMutator(DomainMutator):
     :raises: :class:`Exception` if domain is not valid
 
     >>> from netzob.all import *
-    >>> subAlt = Alt([Integer(12), String("abc")])
-    >>> Alt = Alt([Integer(34), subAlt])
-    >>> mutator = AlternativeMutator(Alt, seed=10)
+    >>> from netzob.Fuzzing.DomainMutator import MutatorMode
+    >>> data_subAlt = Alt([Integer(12), String("abc")])
+    >>> data_alt = Alt([Integer(34), data_subAlt])
+    >>> mutator = AlternativeMutator(data_alt, seed=10)
     >>> mutator.generate()
     1
     >>> mutator.currentDepth
@@ -165,7 +166,6 @@ class AlternativeMutator(DomainMutator):
     """
 
     DEFAULT_MAX_DEPTH = 20
-    DATA_TYPE = Alt
 
     def __init__(self,
                  domain,

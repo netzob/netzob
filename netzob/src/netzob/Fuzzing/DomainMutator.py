@@ -48,6 +48,7 @@ from typing import Type  # noqa: F401
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
 from netzob.Fuzzing.Mutator import Mutator
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
@@ -64,10 +65,6 @@ class MutatorInterval(Enum):
     DEFAULT_INTERVAL = 0  #: We use the legitimate domain interval (ex: DeterminitMutator(interval=MutatorInterval.DEFAULT_INTERVAL)
     FULL_INTERVAL    = 1  #: We cover the whole storage space of the domain (ex: DeterminitMutator(interval=MutatorInterval.FULL_INTERVAL)
     # else, we consider the tuple passed as parameter to override the domain interval (ex: DeterminitMutator(interval=(10, 42))
-
-
-class Dummy(object):
-    """Dummy class"""
 
 
 class DomainMutator(Mutator):
@@ -112,7 +109,7 @@ class DomainMutator(Mutator):
 
     # Constants
     DOMAIN_TYPE = AbstractVariable  # type: Type[AbstractVariable]
-    DATA_TYPE = Dummy
+    DATA_TYPE = None
 
     def __init__(self,
                  domain,
@@ -121,20 +118,28 @@ class DomainMutator(Mutator):
         # Call parent init
         super().__init__(**kwargs)
 
-        # Sanity checks
+        # Sanity checks on domain
         if not isinstance(domain, self.DOMAIN_TYPE):
             raise TypeError("Mutator domain should be of type {}. Received object: '{}'"
                             .format(self.DOMAIN_TYPE, domain))
 
-        if isinstance(domain.dataType, Dummy):
-            raise TypeError("Mutator domain dataType (DATA_TYPE) not set")
+        # Sanity checks on domain on datatype (AbstractVariableLeaf have a dataType, so we check its consistency)
+        if isinstance(domain, AbstractVariableLeaf):
+            domain_datatype = type(getattr(domain, 'dataType', None))
 
-        if not isinstance(domain.dataType, self.DATA_TYPE):
-            raise TypeError("Mutator domain should be of type '{}'. Received object: '{}'"
-                            .format(self.DOMAIN_TYPE, domain))
+            if domain_datatype is None:
+                raise TypeError("Mutator domain dataType (DATA_TYPE) not set")
+
+            if not (isinstance(domain_datatype, self.DATA_TYPE) or issubclass(domain_datatype, self.DATA_TYPE)):
+                raise TypeError("Mutator domain dataType should be of type '{}'. Received object: '{}'"
+                                .format(self.DATA_TYPE, domain_datatype))
+
+        # Sanity checks on mutator mode
+        if not isinstance(mode, MutatorMode):
+            raise TypeError("Mutator mode should be of type '{}'. Received object: '{}'"
+                                .format(MutatorMode, mode))
 
         # Handle parameters
-        assert isinstance(mode, MutatorMode)
         self._domain = domain
         self._mode = mode
 
