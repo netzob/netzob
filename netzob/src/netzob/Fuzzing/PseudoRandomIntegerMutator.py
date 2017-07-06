@@ -268,7 +268,6 @@ class PseudoRandomIntegerMutator(DomainMutator):
         super().generate()
 
         # Generate and return a random value in the interval
-        self._currentCounter += 1
         dom_type = self.getDomain().dataType
         return Integer.decode(self.generateInt(),
                               unitSize=dom_type.unitSize,
