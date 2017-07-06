@@ -146,7 +146,7 @@ class AltMutator(DomainMutator):
     True
 
 
-    **Fuzzing of an alternate of variables with a limitation in term of depth**
+    **Fuzzing of an alternate of variables with a limitation in term of recursivity**
 
     >>> fuzz = Fuzz()
     >>> inner_domain = Alt([int8(interval=(1, 4)), int8(interval=(5, 8))])
@@ -181,7 +181,7 @@ class AltMutator(DomainMutator):
         super().__init__(domain, **kwargs)
 
         # Configure internal mutator to determine the alternative position to select at each call to generate()
-        domain_interval = Data(uint8le(interval=(0, len(domain.children))))
+        domain_interval = Data(uint16le(interval=(0, len(domain.children))))
         self._positionMutator = PseudoRandomIntegerMutator(domain=domain_interval)
         self._currentDepth = 0
 
@@ -294,5 +294,4 @@ called, first")
         if self._currentDepth >= self._maxDepth:
             raise RecursionException("max depth reached ({})".format(self._maxDepth))
 
-        pos = self._positionMutator.generateInt()
-        return pos
+        return self._positionMutator.generateInt()

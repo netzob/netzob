@@ -302,7 +302,19 @@ class Repeat(AbstractVariableNode):
         # initialy, there is a unique path to specialize (the provided one)
         specializingPaths = []
 
-        i_repeat = random.randint(self.nbRepeat[0], self.nbRepeat[1])
+        # If we are in a fuzzing mode
+        if fuzz is not None and fuzz.get(self) is not None:
+
+            # Retrieve the mutator
+            mutator = fuzz.get(self)
+
+            # Chose the child according to the integer returned by the mutator
+            i_repeat = mutator.generate()
+
+        # Else, randomly chose the child
+        else:
+            i_repeat = random.randint(self.nbRepeat[0], self.nbRepeat[1])
+
         newSpecializingPaths = [originalSpecializingPath.duplicate()]
 
         for i in range(i_repeat):

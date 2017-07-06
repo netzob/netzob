@@ -50,6 +50,7 @@ from netzob.Model.Vocabulary.Types.Integer import uint16le
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 
 
 class RepeatMutator(DomainMutator):
@@ -79,29 +80,74 @@ class RepeatMutator(DomainMutator):
     :type lengthBitSize: :class:`int`, optional
 
     >>> from netzob.all import *
+    >>> from netzob.Fuzzing.Mutators.DomainMutator import MutatorMode
     >>> child = Data(dataType=String("abc"), svas=SVAS.PERSISTENT)
     >>> fieldRepeat = Field(Repeat(child, nbRepeat=3))
     >>> mutator = RepeatMutator(fieldRepeat.domain, length=(0, 30), seed=10)
     >>> mutator.generate()
-    >>> mutator.sequenceLength
     16
     >>> mutator.generate()
-    >>> mutator.sequenceLength
     17
     >>> mutator.generate()
-    >>> mutator.sequenceLength
     31
 
 
-    **Fuzzing example of a field that contains a repeat of a variable**
+    **Fuzzing example of a field that contains a fixed number of repeat of a variable**
 
     >>> fuzz = Fuzz()
-    >>> f_rep = Field(name="rep", domain=Repeat(int16(interval=(1, 4)), 2))
+    >>> f_rep = Field(name="rep", domain=Repeat(int16(interval=(1, 4)), nbRepeat=2))
     >>> symbol = Symbol(name="sym", fields=[f_rep])
     >>> fuzz.set(f_rep, RepeatMutator)
     >>> symbol.specialize(fuzz=fuzz)
-    b'\x00\x03\x00\x01'
+    b'\x00\x03\x00\x01\x00\x02\x00\x03\x00\x02\x00\x01\x00\x01\x00\x03\x00\x01\x00\x01\x00\x03\x00\x03\x00\x01\x00\x02\x00\x03'
 
+
+    **Fuzzing example of a field that contains a variable number of repeat of a variable**
+
+    >>> fuzz = Fuzz()
+    >>> f_rep = Field(name="rep", domain=Repeat(int16(interval=(1, 4)), nbRepeat=(2, 4)))
+    >>> symbol = Symbol(name="sym", fields=[f_rep])
+    >>> fuzz.set(f_rep, RepeatMutator)
+    >>> symbol.specialize(fuzz=fuzz)
+    b'\x00\x03\x00\x01\x00\x02\x00\x03\x00\x02\x00\x01\x00\x01\x00\x03\x00\x01\x00\x01\x00\x03\x00\x03\x00\x01\x00\x02\x00\x03'
+    >>> symbol.specialize(fuzz=fuzz)
+    b'\x00\x02\x00\x03\x00\x01\x00\x03\x00\x03\x00\x02\x00\x01\x00\x02\x00\x03\x00\x02\x00\x02\x00\x02\x00\x02\x00\x02\x00\x02\x00\x03'
+
+
+    **Fuzzing of an alternate of variables with non-default fuzzing strategy (MutatorMode.MUTATE)**
+
+    >>> fuzz = Fuzz()
+    >>> f_rep = Field(name="rep", domain=Repeat(int16(interval=(1, 4)), nbRepeat=(2, 4)))
+    >>> symbol = Symbol(name="sym", fields=[f_rep])
+    >>> fuzz.set(f_rep, RepeatMutator, mode=MutatorMode.MUTATE)
+    >>> res = symbol.specialize(fuzz=fuzz)
+    >>> res != b'\x00\x01' and res != b'\x00\x02'
+    True
+
+
+    **Fuzzing of a repeat of variables with non-default types/mutators mapping (DeterministIntegerMutator instead of PseudoRandomIntegerMutator for Integer)**
+
+    >>> from netzob.Fuzzing.Mutators.DeterministIntegerMutator import DeterministIntegerMutator
+    >>> fuzz = Fuzz()
+    >>> f_repeat = Field(name="rep", domain=Repeat(int16(interval=(1, 4)), nbRepeat=(2, 4)))
+    >>> symbol = Symbol(name="sym", fields=[f_repeat])
+    >>> mapping = {}
+    >>> mapping[Integer] = DeterministIntegerMutator
+    >>> fuzz.set(f_repeat, RepeatMutator, mappingTypesMutators=mapping)
+    >>> res = symbol.specialize(fuzz=fuzz)
+    >>> res
+    b'\xfc\x00\xfc\x01\xfd\xff\xfe\x00\xfe\x01\xfe\xff\xff\x00\xff\x01\xff\x7f\xff\x80\xff\x81\xff\xbf\xff\xc0\xff\xc1\xff\xdf'
+
+
+    **Fuzzing of a repeat of variables without fuzzing the children**
+
+    >>> fuzz = Fuzz()
+    >>> f_repeat = Field(name="rep", domain=Repeat(int8(interval=(5, 8)), nbRepeat=(2, 4)))
+    >>> symbol = Symbol(name="sym", fields=[f_repeat])
+    >>> fuzz.set(f_repeat, RepeatMutator, mutateChild=False)
+    >>> res = symbol.specialize(fuzz=fuzz)
+    >>> for i in range(int(len(res))):
+    ...     assert 5 <= ord(res[i:i+1]) <= 8
 
     **Constant definitions**:
     """
@@ -137,13 +183,12 @@ class RepeatMutator(DomainMutator):
         self._mutateChild = mutateChild
         self.mappingTypesMutators = mappingTypesMutators
 
-        self._sequenceLengthField = Field(uint16le())
+        domain_length_repeat = Data(uint16le())
         self._lengthMutator = DeterministIntegerMutator(
-            domain=self._sequenceLengthField.domain,
+            domain=domain_length_repeat,
             interval=(self._minLength, self._maxLength),
             bitsize=lengthBitSize,
             **kwargs)
-        self._sequenceLength = None
 
     @typeCheck(int)
     def updateSeed(self, seedValue):
@@ -184,20 +229,6 @@ class RepeatMutator(DomainMutator):
         self._mappingTypesMutators = Fuzz.mappingTypesMutators.copy()
         self._mappingTypesMutators.update(mappingTypesMutators)
 
-    @property
-    def sequenceLength(self):
-        """
-        Property (getter).
-        The last generated length of the sequence.
-
-        :rtype: int
-        :raises: :class:`ValueError` if _randomType is None
-        """
-        if self._sequenceLength is None:
-            raise ValueError("Random type is None: generate() has to be called"
-                             ", first")
-        return self._sequenceLength
-
     def generate(self):
         """This is the fuzz generation method of the sequence field.
         It generates a sequence length by using lengthMutator.
@@ -209,8 +240,7 @@ class RepeatMutator(DomainMutator):
         # Call parent generate() method
         super().generate()
 
-        self._sequenceLength = self._lengthMutator.generateInt()
-        return None
+        return self._lengthMutator.generateInt()
 
     def mutate(self, data):
         """Not implemented yet."""
