@@ -45,6 +45,12 @@ from typing import Dict, Union  # noqa: F401
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
+from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
+from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
+from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
+from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
+from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType  # noqa: F401
@@ -60,8 +66,10 @@ from netzob.Fuzzing.AlternativeMutator import AlternativeMutator  # noqa: F401
 from netzob.Fuzzing.DomainMutator import DomainMutator, MutatorMode  # noqa: F401
 from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
 from netzob.Fuzzing.StringMutator import StringMutator
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 
 
+@NetzobLogger
 class Fuzz(object):
     r"""The Fuzz class is the entry point for the fuzzing component.
 
@@ -97,30 +105,85 @@ class Fuzz(object):
     **Fuzzing example of a field that contains an aggregate of variables**
 
     >>> fuzz = Fuzz()
-    >>> f_agg = Field(name="agg", domain=Agg([Integer(interval=(1, 4), unitSize=UnitSize.SIZE_16),
-    ...                                       Integer(interval=(5, 8), unitSize=UnitSize.SIZE_16)]))
+    >>> f_agg = Field(name="agg", domain=Agg([int16(interval=(1, 4)),
+    ...                                       int16(interval=(5, 8))]))
     >>> symbol = Symbol(name="sym", fields=[f_agg])
     >>> fuzz.set(f_agg, PseudoRandomIntegerMutator, interval=(20, 32000)) # doctest: +SKIP
     >>> symbol.specialize(fuzz=fuzz) # doctest: +SKIP
     b'\x02\x84\x04\xf5'
 
 
-    **Fuzzing example of a field that contains an alternate of variables**
+    **Fuzzing of a field that contains an alternate of variables with default fuzzing strategy (MutatorMode.GENERATE)**
 
     >>> fuzz = Fuzz()
-    >>> f_alt = Field(name="alt", domain=Alt([Integer(interval=(1, 4), unitSize=UnitSize.SIZE_16),
-    ...                                           Integer(interval=(5, 8), unitSize=UnitSize.SIZE_16)]))
+    >>> f_alt = Field(name="alt", domain=Alt([int16(interval=(1, 4)),
+    ...                                       int16(interval=(5, 8))]))
     >>> symbol = Symbol(name="sym", fields=[f_alt])
-    >>> fuzz.set(f_alt, PseudoRandomIntegerMutator, interval=(20, 32000)) # doctest: +SKIP
-    >>> res = symbol.specialize(fuzz=fuzz) # doctest: +SKIP
-    >>> res == b'\x02\x84' or res == b'\x04\xf5' # doctest: +SKIP
+    >>> fuzz.set(f_alt, AlternativeMutator)
+    >>> res = symbol.specialize(fuzz=fuzz)
+    >>> res
+    b'\x00\x07'
+
+
+    **Fuzzing of an alternate of variables with non-default fuzzing strategy (MutatorMode.MUTATE)**
+
+    >>> fuzz = Fuzz()
+    >>> f_alt = Field(name="alt", domain=Alt([int16(1),
+    ...                                       int16(2)]))
+    >>> symbol = Symbol(name="sym", fields=[f_alt])
+    >>> fuzz.set(f_alt, AlternativeMutator, mode=MutatorMode.MUTATE)
+    >>> res = symbol.specialize(fuzz=fuzz)
+    >>> res != b'\x00\x01' and res != b'\x00\x02'
     True
+
+
+    **Fuzzing of an alternate of variables with non-default types/mutators mapping (DeterministIntegerMutator instead of PseudoRandomIntegerMutator for Integer)**
+
+    >>> from netzob.Fuzzing.DeterministIntegerMutator import DeterministIntegerMutator
+    >>> fuzz = Fuzz()
+    >>> f_alt = Field(name="alt", domain=Alt([int16(interval=(1, 4)),
+    ...                                       int16(interval=(5, 8))]))
+    >>> symbol = Symbol(name="sym", fields=[f_alt])
+    >>> mapping = {}
+    >>> mapping[Integer] = DeterministIntegerMutator
+    >>> fuzz.set(f_alt, AlternativeMutator, mappingTypesMutators=mapping)
+    >>> res = symbol.specialize(fuzz=fuzz)
+    >>> res
+    b'\xfc\x00'
+
+
+    **Fuzzing of an alternate of variables without fuzzing the children**
+
+    >>> fuzz = Fuzz()
+    >>> f_alt = Field(name="alt", domain=Alt([int8(interval=(1, 4)),
+    ...                                       int8(interval=(5, 8))]))
+    >>> symbol = Symbol(name="sym", fields=[f_alt])
+    >>> fuzz.set(f_alt, AlternativeMutator, mutateChild=False)
+    >>> res = symbol.specialize(fuzz=fuzz)
+    >>> 5 <= ord(res) <= 8
+    True
+
+
+    **Fuzzing of an alternate of variables with a limitation in term of depth**
+
+    >>> fuzz = Fuzz()
+    >>> inner_domain = Alt([int8(interval=(1, 4)), int8(interval=(5, 8))])
+    >>> outer_domain = Alt([int8(interval=(9, 12)), inner_domain])
+    >>> f_alt = Field(name="alt", domain=outer_domain)
+    >>> symbol = Symbol(name="sym", fields=[f_alt])
+    >>> fuzz.set(f_alt, AlternativeMutator, maxDepth=2)
+    >>> symbol.specialize(fuzz=fuzz)
+    b'\x07'
+    >>> symbol.specialize(fuzz=fuzz)
+    Traceback (most recent call last):
+    ...
+    netzob.Fuzzing.AlternativeMutator.RecursionException: max depth reached (2)
 
 
     **Fuzzing example of a field that contains a repeat of a variable**
 
     >>> fuzz = Fuzz()
-    >>> f_rep = Field(name="rep", domain=Repeat(Integer(interval=(1, 4), unitSize=UnitSize.SIZE_16),
+    >>> f_rep = Field(name="rep", domain=Repeat(int16(interval=(1, 4)),
     ...                                             2))
     >>> symbol = Symbol(name="sym", fields=[f_rep])
     >>> fuzz.set(f_rep, PseudoRandomIntegerMutator, interval=(20, 32000)) # doctest: +SKIP
@@ -212,15 +275,16 @@ class Fuzz(object):
     b'\x02\xfc'
 
 
-    **Fuzzing example with counter limiting**
+    **Fuzzing configuration with a maximum number of mutations**
 
     >>> fuzz = Fuzz(counterMax=1, counterMaxRelative=False)
-    >>> f_data = Field(name="data", domain=Alt([String("aaa"), String("bbb")]))
-    >>> symbol = Symbol(name="sym", fields=[f_data])
-    >>> fuzz.set(f_data, AlternativeMutator)
-    >>> symbol.specialize(fuzz=fuzz)  # doctest: +SKIP
-    b'bbb'
-    >>> symbol.specialize(fuzz=fuzz)  # doctest: +SKIP
+    >>> f_alt = Field(name="alt", domain=Alt([int8(interval=(1, 4)),
+    ...                                       int8(interval=(5, 8))]))
+    >>> symbol = Symbol(name="sym", fields=[f_alt])
+    >>> fuzz.set(f_alt, AlternativeMutator)
+    >>> symbol.specialize(fuzz=fuzz)
+    b'\x07'
+    >>> symbol.specialize(fuzz=fuzz)
     Traceback (most recent call last):
     Exception: Max mutation counter reached
 
@@ -287,8 +351,16 @@ class Fuzz(object):
 
         if isinstance(key, type):
             # kwargs are useless here
-            self.mappingTypesMutators[key] = value
-        elif isinstance(key, AbstractField):
+            for t in self.mappingTypesMutators:
+                if type(key) == t:
+                    self.mappingTypesMutators[t] = value
+                    break
+                elif issubclass(key, t):  # For cases where partial() is used (e.g. on Integer types)
+                    self.mappingTypesMutators[t] = value
+                    break
+            else:
+                raise TypeError("Unsupported type for key: '{}'".format(type(key)))
+        elif isinstance(key, (AbstractField, AbstractVariable)):
             self.mappingFieldsMutators[key] = (value, kwargs)
             self._normalize_mappingFieldsMutators()
         else:
@@ -301,7 +373,7 @@ class Fuzz(object):
                 return self.mappingTypesMutators[key][0]
             else:
                 return None
-        elif isinstance(key, AbstractField) or isinstance(key, str):
+        elif isinstance(key, (AbstractField, AbstractVariable)) or isinstance(key, str):
             # We return the associated mutator instance
             if key in self.mappingFieldsMutators:
                 return self.mappingFieldsMutators[key][0]
@@ -311,18 +383,31 @@ class Fuzz(object):
             raise TypeError("Unsupported type for key: '{}'".format(type(key)))
 
     @staticmethod
-    def defaultMutator(domain, **kwargs):
+    def _retrieveDefaultMutator(domain, mapping, **kwargs):
         """Instanciate and return the default mutator according to the
         provided domain.
 
         """
 
-        # Retrieve the default mutator for the domain dataType
-        mutator = None
-        if type(getattr(domain, 'dataType', None)) in Fuzz.mappingTypesMutators:
-            mutator = Fuzz.mappingTypesMutators[type(domain.dataType)]
+        # Retrieve the domain mutator if the domain is complex (such as Repeat, Agg or Alt)
+        if isinstance(domain, AbstractVariableNode):
+            if isinstance(domain, Repeat):
+                mutator = SequenceMutator
+            elif isinstance(domain, Alt):
+                mutator = AlternativeMutator
+            # elif isinstance(domain, Agg):
+            #     mutator = AggregateMutator
+
+        # Else, retrieve the default mutator for the domain dataType
         else:
-            raise Exception("The domain '{}' has no configured dataType. Cannot find a default Mutator without information regarding the domain type.")
+            mutator = None
+            for t in mapping:
+                # Two type checks are made here, in order to handle cases where partial() is used (e.g. on Integer types)
+                if type(getattr(domain, 'dataType', None)) == t or isinstance(getattr(domain, 'dataType', None), t):
+                    mutator = mapping[t]
+                    break
+            else:
+                raise Exception("The domain '{}' has no configured dataType. Cannot find a default Mutator without information regarding the domain type.".format(domain))
 
         # Instanciate the mutator
         mutatorInstance = mutator(domain, **kwargs)
@@ -330,40 +415,69 @@ class Fuzz(object):
         return mutatorInstance
 
     def _normalize_mappingFieldsMutators(self):
-        """Normalize the fuzz structure.
+        """Normalize the fuzzing configuration.
 
         Fields described with field name are converted into field
-        object.
+        object, and then all key elements are converted into
+        variables.
 
         """
 
+        # Normalize fuzzing keys
+        self._normalizeKeys()
+
+        # Normalize fuzzing values
+        self._normalizeValues()
+
+        # Second loop, to handle cases where domains are complex (Alt, Agg or Repeat)
+        new_keys = {}
+        for k, v in self.mappingFieldsMutators.items():
+            new_keys[k] = v
+            if isinstance(k, AbstractVariableNode):
+                if not isinstance(v, tuple):
+                    raise TypeError("Value should be a tuple. Got: '{}'".format(v))
+                (v_m, v_kwargs) = v
+                new_keys.update(self._propagateMutation(k, v_m))
+        self.mappingFieldsMutators.update(new_keys)
+
+        # Second loop to normalize fuzzing values, after handling complex domains (that may have added news keys:values)
+        self._normalizeValues()
+
+    def _normalizeKeys(self, ):
         # Normalize fuzzing keys
         new_keys = {}
         keys_to_remove = []
         for k, v in self.mappingFieldsMutators.items():
 
-            # Handle case where k is a Field -> nothing to do
-            if isinstance(k, Field):
+            # Handle case where k is a Variable -> nothing to do
+            if isinstance(k, AbstractVariable):
                 pass
-            # Handle case where k is a Symbol -> we retrieve all its sub-fields
+            # Handle case where k is a Field -> retrieve the associated variable
+            elif isinstance(k, Field):
+                keys_to_remove.append(k)
+                new_keys[k.domain] = v
+            # Handle case where k is a Symbol -> we retrieve all its field variables
             elif isinstance(k, Symbol):
                 subfields = k.getLeafFields(includePseudoFields=True)
                 keys_to_remove.append(k)
                 for f in subfields:
-                    # We check if the field is not already present in the fields to mutate
-                    if f not in self.mappingFieldsMutators.keys():
-                        new_keys[f] = v
+                    # We check if the variable is not already present in the variables to mutate
+                    if f.domain not in self.mappingFieldsMutators.keys():
+                        new_keys[f.domain] = v
             else:
-                raise Exception("Fuzz's keys must be a Symbol or a "
-                                "Field, but not a '{}'".format(type(k)))
+                raise Exception("Fuzzing keys must contain Symbols, Fields or Variables"
+                                ", but not a '{}'".format(type(k)))
 
         # Update keys
         for old_key in keys_to_remove:
             self.mappingFieldsMutators.pop(old_key)
         self.mappingFieldsMutators.update(new_keys)
 
+    def _normalizeValues(self, ):
         # Normalize fuzzing values
+        keys_to_update = {}
         keys_to_remove = []
+
         from netzob.Fuzzing.Mutator import Mutator
         for k, v in self.mappingFieldsMutators.items():
             if not isinstance(v, tuple):
@@ -371,19 +485,19 @@ class Fuzz(object):
             (v_m, v_kwargs) = v
             if inspect.isclass(v_m) and issubclass(v_m, Mutator):
                 # We instanciate the mutator
-                v_m_instance = v_m(domain=k.domain, **v_kwargs)
+                v_m_instance = v_m(domain=k, **v_kwargs)
                 v_m_instance.setCounterMax(self._counterMax, relative=self._counterMaxRelative)
                 # We replace the mutator class by the mutate instance in the main dict
-                self.set(k, v_m_instance)
+                keys_to_update[k] = (v_m_instance, {})
             elif isinstance(v_m, Mutator):
                 pass
             elif v_m == MutatorMode.NONE:
                 keys_to_remove.append(k)
             elif v_m in [MutatorMode.GENERATE, MutatorMode.MUTATE]:
-                mut_inst = Fuzz.defaultMutator(k.domain, **v_kwargs)
+                mut_inst = Fuzz._retrieveDefaultMutator(domain=k, mapping=Fuzz.mappingTypesMutators, **v_kwargs)
                 mut_inst.setCounterMax(self._counterMax, relative=self._counterMaxRelative)
                 mut_inst.mode = v_m
-                self.set(k, mut_inst)
+                keys_to_update[k] = (mut_inst, {})
             else:
                 raise Exception("Fuzz's value '{} (type: {})' must be a "
                                 "Mutator instance or Mutator.(GENERATE|MUTATE"
@@ -392,3 +506,43 @@ class Fuzz(object):
         # Update keys
         for old_key in keys_to_remove:
             self.mappingFieldsMutators.pop(old_key)
+        self.mappingFieldsMutators.update(keys_to_update)
+
+    def _propagateMutation(self, variable, mutator):
+        """This method aims at propagating the fuzzing to the children of a
+        complex variable (such as Repeat, Alt or Agg). The propagation
+        strategy is included in the mutator associated to the parent
+        variable.
+        """
+
+        tmp_new_keys = {}
+
+        if isinstance(variable, Repeat) and isinstance(mutator, SequenceMutator) and mutator.mutateChild:
+            # We check if the variable is not already present in the variables to mutate
+            if variable.children[0] not in self.mappingFieldsMutators.keys():
+                mut_inst = Fuzz._retrieveDefaultMutator(domain=variable.children[0], mapping=mutator.mappingTypesMutators)
+                mut_inst.setCounterMax(self._counterMax, relative=self._counterMaxRelative)
+                mut_inst.mode = mutator.mode
+                tmp_new_keys[variable.children[0]] = (mut_inst, {})
+
+                # Propagate mutation to the child if it is a complex domain
+                if isinstance(variable.children[0], AbstractVariableNode):
+                    tmp_new_keys.update(self._propagateMutation(variable.children[0], mut_inst))
+        elif isinstance(variable, Alt) and isinstance(mutator, AlternativeMutator) and mutator.mutateChild:
+            for child in variable.children:
+                if child not in self.mappingFieldsMutators.keys():
+                    mut_inst = Fuzz._retrieveDefaultMutator(domain=child, mapping=mutator.mappingTypesMutators)
+                    mut_inst.setCounterMax(self._counterMax, relative=self._counterMaxRelative)
+                    mut_inst.mode = mutator.mode
+                    tmp_new_keys[child] = (mut_inst, {})
+
+                    # Propagate mutation to the child if it is a complex domain
+                    if isinstance(child, AbstractVariableNode):
+                        tmp_new_keys.update(self._propagateMutation(child, mut_inst))
+        # elif isinstance(variable, Agg) and isinstance(mutator, AggregateMutator) and mutator.mutateChildren:
+            # for child in variable.children:
+            #     tmp_new_keys[variable.children] = (mutator.mode, {})
+            #     if isinstance(child, AbstractVariableNode):
+            #         tmp_new_keys.update(self._propagateMutation(child))
+
+        return tmp_new_keys

@@ -47,11 +47,15 @@ from typing import Dict  # noqa: F401
 from netzob.Fuzzing.DomainMutator import DomainMutator
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Fuzzing.PseudoRandomIntegerMutator \
     import PseudoRandomIntegerMutator
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Types.Integer import uint8le
 
+
+class RecursionException(Exception):
+    pass
 
 class AlternativeMutator(DomainMutator):
     """The alternative mutator.
@@ -77,20 +81,17 @@ class AlternativeMutator(DomainMutator):
     >>> Alt = Alt([Integer(34), subAlt])
     >>> mutator = AlternativeMutator(Alt, seed=10)
     >>> mutator.generate()
-    >>> mutator.randomType.dataType
-    12
-    >>> mutator.currentDepth
-    2
-    >>> mutator.generate()
-    >>> mutator.randomType.dataType
-    abc
-    >>> mutator.currentDepth
-    2
-    >>> mutator.generate()
-    >>> mutator.randomType.dataType
-    34
+    1
     >>> mutator.currentDepth
     1
+    >>> mutator.generate()
+    0
+    >>> mutator.currentDepth
+    2
+    >>> mutator.generate()
+    1
+    >>> mutator.currentDepth
+    3
 
     Constant definitions:
     """
@@ -100,20 +101,21 @@ class AlternativeMutator(DomainMutator):
 
     def __init__(self,
                  domain,
-                 mutateChild=False,
+                 mutateChild=True,
+                 mappingTypesMutators={},
+                 maxDepth=DEFAULT_MAX_DEPTH,
                  **kwargs):
+        self._mutateChild = mutateChild
+        self.mappingTypesMutators = mappingTypesMutators
+        self._maxDepth = maxDepth
 
         # Call parent init
         super().__init__(domain, **kwargs)
 
-        self._mutateChild = mutateChild
-
-        position = Field(uint8le())
-        self._positionMutator = \
-            PseudoRandomIntegerMutator(domain=position.domain)
-        self._randomType = None
-        self._maxDepth = AlternativeMutator.DEFAULT_MAX_DEPTH
-        self._currentDepth = None
+        # Configure internal mutator to determine the alternative position to select at each call to generate()
+        domain_interval = Data(uint8le(interval=(0, len(domain.children))))
+        self._positionMutator = PseudoRandomIntegerMutator(domain=domain_interval)
+        self._currentDepth = 0
 
     @property
     def positionMutator(self):
@@ -162,19 +164,28 @@ class AlternativeMutator(DomainMutator):
         """
         return self._mutateChild
 
-    @property
-    def randomType(self):
-        """
-        Property (getter).
-        Return the type randomly retrieved by :meth:`generate`.
+    @mutateChild.setter
+    @typeCheck(bool)
+    def mutateChild(self, mutateChild):
+        self._mutateChild = mutateChild
 
-        :type: :class:`bool`
-        :raises: :class:`ValueError` if _randomType is None
+    @property
+    def mappingTypesMutators(self):
+        """Return the mapping that set the default mutator for each type.
+
+        :type: :class:`dict`
         """
-        if self._randomType is None:
-            raise ValueError("Random type is None : generate() has to be \
-called, first")
-        return self._randomType
+        return self._mappingTypesMutators
+
+    @mappingTypesMutators.setter
+    @typeCheck(dict)
+    def mappingTypesMutators(self, mappingTypesMutators):
+        """Override the global default mapping of types with their default
+        mutators.
+        """
+        from netzob.Fuzzing.Fuzz import Fuzz
+        self._mappingTypesMutators = Fuzz.mappingTypesMutators.copy()
+        self._mappingTypesMutators.update(mappingTypesMutators)
 
     @property
     def currentDepth(self):
@@ -193,12 +204,15 @@ called, first")
 
     def generate(self):
         """This is the fuzz generation method of the alternative field.
+
         It selects randomly the type among the alternative list, by using
         :attr:`positionMutator`, and stores it in :attr:`randomType`.
+
         If the mutation encounters recursivity (:class:`Alt <netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt>`
         containing :class:`Alt <netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt>`),
         infinite loop is avoided by controlling the number of iterations
         **currentDepth** with **maxDepth**.
+
         If **currentDepth** exceeds **maxDepth**, a RecursionError is raised.
 
         :return: None
@@ -208,18 +222,9 @@ called, first")
         # Call parent generate() method
         super().generate()
 
-        self._currentDepth = 0
-        self._randomType = self.getDomain()
-        while isinstance(self._randomType, Alt):
-            self._currentDepth += 1
-            if self._currentDepth >= self._maxDepth:
-                raise RecursionError("max depth reached ({})"
-                                     .format(self._maxDepth))
-            domain = self.getDomain()
-            pos = self._positionMutator.generateInt(
-                interval=(0, len(domain.children)))
-            if pos < len(domain.children):
-                self._randomType = self._randomType.children[pos]
-            else:
-                raise ValueError("Field position ({}) is bigger than the list size ({})"
-                                 .format(pos, len(domain.children)))
+        self._currentDepth += 1
+        if self._currentDepth >= self._maxDepth:
+            raise RecursionException("max depth reached ({})".format(self._maxDepth))
+
+        pos = self._positionMutator.generateInt()
+        return pos

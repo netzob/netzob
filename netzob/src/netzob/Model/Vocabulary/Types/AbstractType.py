@@ -294,8 +294,12 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
     def __key(self):
         # Note: as bitarray objects cannot be hashed in Python3 (because bitarray objects are mutable), we cast a bitarray object in a tuple (which is immutable)
-        return (self.typeName, tuple(self.value), self.size, self.unitSize,
-                self.endianness, self.sign)
+        if self.value is None:
+            return (self.typeName, self.size, self.unitSize,
+                    self.endianness, self.sign)
+        else:
+            return (self.typeName, tuple(self.value), self.size, self.unitSize,
+                    self.endianness, self.sign)
 
     def __eq__(x, y):
         return x.__key() == y.__key()

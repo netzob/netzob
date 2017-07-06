@@ -185,7 +185,25 @@ class Alt(AbstractVariableNode):
 
         specializingPaths = []
 
-        child = random.choice(self.children)
+        # If we are in a fuzzing mode
+        if fuzz is not None and fuzz.get(self) is not None:
+
+            # Retrieve the mutator
+            mutator = fuzz.get(self)
+
+            # Chose the child according to the integer returned by the mutator
+            generated_value = mutator.generate()
+
+            if 0 <= generated_value < len(self.children):
+                child = self.children[generated_value]
+            else:
+                raise ValueError("Field position '{}' is bigger than the length of available children '{}'"
+                                 .format(generated_value, len(self.children)))
+
+        # Else, randomly chose the child
+        else:
+            child = random.choice(self.children)
+
         newSpecializingPath = specializingPath.duplicate()
 
         childSpecializingPaths = child.specialize(newSpecializingPath, fuzz=fuzz)
