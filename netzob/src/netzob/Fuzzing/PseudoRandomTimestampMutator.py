@@ -43,21 +43,23 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.DomainMutator import DomainMutator
-from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Fuzzing.DeterministIntegerMutator import (
-    DeterministIntegerMutator)
-from netzob.Model.Vocabulary.Types.Integer import uint16le
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
-from netzob.Model.Vocabulary.Field import Field
-from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
+from netzob.Fuzzing.DomainMutator import MutatorInterval
+from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
+from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
+from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+from netzob.Model.Vocabulary.Types.BitArray import BitArray
+from netzob.Model.Vocabulary.Types.Integer import Integer
+from netzob.Model.Vocabulary.Types.AbstractType import Sign
+from randomstate import RandomState
+from randomstate.prng import (mt19937, mlfg_1279_861, mrg32k3a, pcg32, pcg64,
+                              xorshift128, xoroshiro128plus, xorshift1024,
+                              dsfmt)
 
 
-class SequenceMutator(DomainMutator):
-    """The sequence mutator, using a determinist generator to get a sequence
-    length.
+class PseudoRandomTimestampMutator(PseudoRandomIntegerMutator):
+    r"""The Timestamp mutator, using pseudo-random generator.
 
-    The SequenceMutator constructor expects some parameters:
+    The PseudoRandomTimestampMutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate.
     :param mode: If set to :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`, :meth:`generate` will be
@@ -65,108 +67,72 @@ class SequenceMutator(DomainMutator):
         If set to :attr:`MutatorMode.MUTATE <netzob.Fuzzing.DomainMutator.MutatorMode.MUTATE>`, :meth:`mutate` will be used to
         produce the value (not used yet).
         Default value is :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`.
-    :param mutateChild: If true, sub-field has to be mutated.
-        Default value is :const:`False`.
-    :param length: The scope of sequence length to generate. If set to
-        (min, max), the values will be generated between min and max.
-        Default value is **(None, None)**.
-    :param lengthBitSize: The size in bits of the memory on which the generated
-        length will be encoded.
+    :param generator: The name of the generator to use, among those
+        available in :mod:`randomstate.prng`.
+        Default value is :attr:`PRNG_mt19937`.
+    :param seed: The seed used in pseudo-random Mutator.
+        Default value is :attr:`SEED_DEFAULT <netzob.Fuzzing.Mutator.Mutator.SEED_DEFAULT>`.
     :type domain: :class:`AbstractVariable
         <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
     :type mode: :class:`int`, optional
-    :type mutateChild: :class:`bool`, optional
-    :type length: :class:`tuple`, optional
-    :type lengthBitSize: :class:`int`, optional
+    :type generator: :class:`str`, optional
+    :type seed: :class:`int`, optional
+
+    **Internal generator functions**
+
+    The following example shows how to generate a Timestamp value,
+    with an arbitrary seed of 4321:
 
     >>> from netzob.all import *
-    >>> child = Data(dataType=String("abc"), svas=SVAS.PERSISTENT)
-    >>> fieldRepeat = Field(Repeat(child, nbRepeat=3))
-    >>> mutator = SequenceMutator(fieldRepeat.domain, length=(0, 30), seed=10)
+    >>> fieldTimestamp = Field(Timestamp())
+    >>> mutator = PseudoRandomTimestampMutator(fieldTimestamp.domain, seed=4321)
     >>> mutator.generate()
-    >>> mutator.sequenceLength
-    16
-    >>> mutator.generate()
-    >>> mutator.sequenceLength
-    17
-    >>> mutator.generate()
-    >>> mutator.sequenceLength
-    31
-
-    Constant definitions:
+    b'\n'
     """
 
-    # Constants
-    DEFAULT_MIN_LENGTH = 0
-    DEFAULT_MAX_LENGTH = 10
-    DOMAIN_TYPE = Repeat
-    DATA_TYPE = AbstractType
+    DATA_TYPE = Timestamp
 
     def __init__(self,
                  domain,
-                 mutateChild=False,
-                 length=(None, None),
-                 lengthBitSize=None,
+                 generator='mt19937',
                  **kwargs):
+
         # Call parent init
-        super().__init__(domain, **kwargs)
-
-        if isinstance(length, tuple) and len(length) == 2:
-            if all(isinstance(_, int) for _ in length):
-                self._minLength, self._maxLength = length
-            else:
-                self._minLength, self._maxLength = (0, 0)
-        if isinstance(domain.nbRepeat, tuple):
-            # Handle desired length according to the domain information
-            self._minLength = max(self._minLength, int(domain.nbRepeat[0]))
-            self._maxLength = min(self._maxLength, int(domain.nbRepeat[1]))
-        if self._minLength is None or self._maxLength is None:
-            self._minLength = self.DEFAULT_MIN_LENGTH
-            self._maxLength = self.DEFAULT_MAX_LENGTH
-
-        self._mutateChild = mutateChild
-
-        self._sequenceLengthField = Field(uint16le())
-        self._lengthMutator = DeterministIntegerMutator(
-            domain=self._sequenceLengthField.domain,
-            interval=(self._minLength, self._maxLength),
-            bitsize=lengthBitSize,
-            **kwargs)
-        self._sequenceLength = None
-
-    @typeCheck(int)
-    def updateSeed(self, seedValue):
-        super().updateSeed(seedValue)
-        self._lengthMutator.updateSeed(seedValue)
-
-    @property
-    def sequenceLength(self):
-        """
-        Property (getter).
-        The last generated length of the sequence.
-
-        :rtype: int
-        :raises: :class:`ValueError` if _randomType is None
-        """
-        if self._sequenceLength is None:
-            raise ValueError("Random type is None: generate() has to be called"
-                             ", first")
-        return self._sequenceLength
+        super().__init__(domain,
+                         interval=MutatorInterval.FULL_INTERVAL,
+                         **kwargs)
 
     def generate(self):
-        """This is the fuzz generation method of the sequence field.
-        It generates a sequence length by using lengthMutator.
-        To access this length value, use :meth:`getLength`.
+        """This is the mutation method of the Timestamp type.
+        It uses a PRNG to produce the value corresponding to the domain.
 
-        :return: None
-        :rtype: :class:`None`
+        :return: the generated content represented with bytes
+        :rtype: :class:`bytes`
         """
-        # Call parent generate() method
-        super().generate()
 
-        self._sequenceLength = self._lengthMutator.generateInt()
-        return None
+        if self._currentCounter >= self.getCounterMax():
+            raise Exception("Max mutation counter reached")
+        self._currentCounter += 1
 
-    def mutate(self, data):
-        """Not implemented yet."""
-        raise NotImplementedError
+        # Generate and return a random value in the interval
+        self._currentCounter += 1
+        dom_type = self.getDomain().dataType
+        timeValue = self.generateInt()
+
+        return Integer.decode(timeValue,
+                              unitSize=dom_type.unitSize,
+                              endianness=dom_type.endianness,
+                              sign=Sign.UNSIGNED)
+
+        """
+        # convert to bitarray
+        time_bits = TypeConverter.convert(
+            timeValue,
+            Integer,
+            BitArray,
+            src_unitSize=dom_type.unitSize,
+            src_endianness=dom_type.endianness,
+            src_sign=Sign.UNSIGNED,
+            dst_endianness=dom_type.endianness)
+
+        return time_bits"""

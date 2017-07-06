@@ -106,7 +106,6 @@ class StringMutator(DomainMutator):
     b'`ls -al /`\x00     '
 
     Constant definitions:
-
     """
 
     DEFAULT_END_CHAR = '\0'
@@ -124,6 +123,7 @@ class StringMutator(DomainMutator):
     %s
     """.split()
     PADDING_CHAR = ' '
+    DATA_TYPE = String
 
     def __init__(self,
                  domain,
@@ -132,10 +132,6 @@ class StringMutator(DomainMutator):
                  lengthBitSize=None,
                  naughtyStrings=None,
                  **kwargs):
-        # Sanity checks
-        if not isinstance(domain.dataType, String):
-            raise Exception("Mutator domain dataType should be an Integer, not '{}'"
-                            .format(type(domain.dataType)))
 
         # Call parent init
         super().__init__(domain, **kwargs)

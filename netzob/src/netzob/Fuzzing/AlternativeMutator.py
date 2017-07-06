@@ -96,21 +96,17 @@ class AlternativeMutator(DomainMutator):
     """
 
     DEFAULT_MAX_DEPTH = 20
+    DATA_TYPE = Alt
 
     def __init__(self,
                  domain,
                  mutateChild=False,
                  **kwargs):
-        # Sanity checks
-        if domain is None:
-            raise Exception("Domain should be known to initialize a mutator")
-        if not isinstance(domain, Alt):
-            raise Exception("Mutator domain should be of type Alt. Received "
-                            "object: '{}'".format(domain))
-        self._mutateChild = mutateChild
 
         # Call parent init
         super().__init__(domain, **kwargs)
+
+        self._mutateChild = mutateChild
 
         position = Field(uint8le())
         self._positionMutator = \

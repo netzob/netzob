@@ -106,7 +106,10 @@ class DeterministIntegerMutator(DomainMutator):
     >>> mutator3.generate()
     b'\xff\xc1'
 
+    Constant definitions:
     """
+
+    DATA_TYPE = Integer
 
     def __init__(self,
                  domain,
@@ -117,10 +120,6 @@ class DeterministIntegerMutator(DomainMutator):
 
         # Call parent init
         super().__init__(domain, **kwargs)
-
-        # Sanity checks
-        if not isinstance(domain.dataType, Integer):
-            raise Exception("Mutator domain dataType should be an Integer, not '{}'".format(type(domain.dataType)))
 
         # Find min and max potential values for interval
         minValue = maxValue = 0

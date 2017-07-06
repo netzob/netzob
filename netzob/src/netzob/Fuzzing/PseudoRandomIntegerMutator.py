@@ -216,6 +216,8 @@ class PseudoRandomIntegerMutator(DomainMutator):
     PRNG_xorshift1024 = 'xorshift1024'
     PRNG_dsfmt = 'dsfmt'
 
+    DATA_TYPE = Integer
+
     def __init__(self,
                  domain,
                  interval=MutatorInterval.DEFAULT_INTERVAL,
@@ -223,10 +225,6 @@ class PseudoRandomIntegerMutator(DomainMutator):
                  **kwargs):
         # Call parent init
         super().__init__(domain, **kwargs)
-
-        # Sanity checks
-        if not isinstance(domain.dataType, Integer):
-            raise Exception("Mutator domain dataType should be an Integer, not '{}'".format(type(domain.dataType)))
 
         # Find min and max potential values for interval
         minValue = 0
@@ -270,15 +268,12 @@ class PseudoRandomIntegerMutator(DomainMutator):
         super().generate()
 
         # Generate and return a random value in the interval
-        if self.currentCounter < self.getCounterMax():
-            self._currentCounter += 1
-            dom_type = self.getDomain().dataType
-            return Integer.decode(self.generateInt(),
-                                  unitSize=dom_type.unitSize,
-                                  endianness=dom_type.endianness,
-                                  sign=dom_type.sign)
-        else:
-            raise Exception("Max mutation counter reached")
+        self._currentCounter += 1
+        dom_type = self.getDomain().dataType
+        return Integer.decode(self.generateInt(),
+                              unitSize=dom_type.unitSize,
+                              endianness=dom_type.endianness,
+                              sign=dom_type.sign)
 
     def generateInt(self, interval=None):
         """This is the mutation method of the integer type.

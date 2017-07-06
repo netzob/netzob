@@ -116,7 +116,7 @@ class Timestamp(AbstractType):
 
 
     >>> from netzob.all import *
-    >>> f0 = Field(Raw(b"00"), name="Start")    
+    >>> f0 = Field(Raw(b"00"), name="Start")
     >>> f1 = Field(Timestamp(1444737333), name="Timestamp")
     >>> f2 = Field(Raw(b"00"), name="End")
     >>> s = Symbol(fields=[f0, f1, f2])
@@ -140,7 +140,6 @@ class Timestamp(AbstractType):
     '00'  | 'Tue Oct 13 11:55:33 2015' | '00'
     '00'  | 'Tue Oct 13 11:55:33 2015' | '00'
     ----- | -------------------------- | ----
-
     """
 
     EPOCH_WINDOWS = datetime(1601, 1, 1)
@@ -202,7 +201,8 @@ class Timestamp(AbstractType):
                  unitSize=AbstractType.defaultUnitSize(),
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign()):
-        """Computes if specified data can be parsed as a Timestamp with the predefined constraints.
+        """Computes if specified data can be parsed as a Timestamp with the
+        predefined constraints.
 
         >>> from netzob.all import *
         >>> time = Timestamp()
@@ -213,7 +213,7 @@ class Timestamp(AbstractType):
         True
         >>> time.canParse(TypeConverter.convert("te", String, BitArray))
         False
-        
+
         However, some constrains over the definition of the Timestamp can be set to restrain the accepted values
 
         >>> from netzob.all import *
@@ -221,7 +221,6 @@ class Timestamp(AbstractType):
         >>> # the returned year is < 1900
         >>> time.canParse(TypeConverter.convert("test", String, BitArray))
         False
-
         """
 
         if data is None:
@@ -249,7 +248,7 @@ class Timestamp(AbstractType):
             # add the utc now with the epoch
             timestamp_datetime = self.epoch + timedelta(seconds=value)
 
-            # convert obtained datetime to timestamp in seconds 
+            # convert obtained datetime to timestamp in seconds
             result_sec = int(timestamp_datetime.strftime('%s'))
 
             datetime.fromtimestamp(result_sec)
@@ -257,6 +256,12 @@ class Timestamp(AbstractType):
             return False
 
         return True
+
+    def getMinStorageValue(self):
+            return 0
+
+    def getMaxStorageValue(self):
+            return 2**self.unitSize.value - 1
 
     def generate(self, generationStrategy=None):
         """Generates a Timestamp that follows the specified generationStrategy
@@ -269,8 +274,6 @@ class Timestamp(AbstractType):
         >>> f = Field(Timestamp(epoch=Timestamp.EPOCH_WINDOWS, unitSize=UnitSize.SIZE_64))
         >>> print(len(f.specialize()))
         8
-        
-
         """
         if self.value is not None:
             return self.value
@@ -281,7 +284,7 @@ class Timestamp(AbstractType):
         # substract the utc now with the epoch
         timestamp_datetime = now - self.epoch
 
-        # convert obtained datetime to timestamp in seconds 
+        # convert obtained datetime to timestamp in seconds
         result_sec = timestamp_datetime.total_seconds()
 
         # apply the unity
@@ -310,7 +313,6 @@ class Timestamp(AbstractType):
         >>> value = 1444494130
         >>> print(len(Timestamp.decode(value)))
         4
-
         """
 
         if data is None:

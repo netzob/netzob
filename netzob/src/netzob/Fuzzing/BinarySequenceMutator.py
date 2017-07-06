@@ -95,6 +95,7 @@ class BinarySequenceMutator(DomainMutator):
 
     DEFAULT_MIN_LENGTH = 0
     DEFAULT_MAX_LENGTH = 100
+    DATA_TYPE = BitArray
 
     def __init__(self,
                  domain,
@@ -103,10 +104,6 @@ class BinarySequenceMutator(DomainMutator):
                  **kwargs):
         # Call parent init
         super().__init__(domain, **kwargs)
-
-        # Sanity checks
-        if not isinstance(domain.dataType, BitArray):
-            raise Exception("Mutator domain dataType should be an Integer, not '{}'".format(type(domain.dataType)))
 
         if (isinstance(length, tuple) and len(length) == 2 and
                 all(isinstance(_, int) for _ in length)):

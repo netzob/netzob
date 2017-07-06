@@ -49,6 +49,7 @@ from typing import Type  # noqa: F401
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Fuzzing.Mutator import Mutator
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 
 class MutatorMode(Enum):
@@ -63,6 +64,10 @@ class MutatorInterval(Enum):
     DEFAULT_INTERVAL = 0  #: We use the legitimate domain interval (ex: DeterminitMutator(interval=MutatorInterval.DEFAULT_INTERVAL)
     FULL_INTERVAL    = 1  #: We cover the whole storage space of the domain (ex: DeterminitMutator(interval=MutatorInterval.FULL_INTERVAL)
     # else, we consider the tuple passed as parameter to override the domain interval (ex: DeterminitMutator(interval=(10, 42))
+
+
+class Dummy(object):
+    """Dummy class"""
 
 
 class DomainMutator(Mutator):
@@ -107,6 +112,7 @@ class DomainMutator(Mutator):
 
     # Constants
     DOMAIN_TYPE = AbstractVariable  # type: Type[AbstractVariable]
+    DATA_TYPE = Dummy
 
     def __init__(self,
                  domain,
@@ -117,8 +123,15 @@ class DomainMutator(Mutator):
 
         # Sanity checks
         if not isinstance(domain, self.DOMAIN_TYPE):
-            raise TypeError("Mutator domain should be of type AbstractRelationVariableLeaf. Received object: '{}'"
-                            .format(domain))
+            raise TypeError("Mutator domain should be of type {}. Received object: '{}'"
+                            .format(self.DOMAIN_TYPE, domain))
+
+        if isinstance(domain.dataType, Dummy):
+            raise TypeError("Mutator domain dataType (DATA_TYPE) not set")
+
+        if not isinstance(domain.dataType, self.DATA_TYPE):
+            raise TypeError("Mutator domain dataType should be of type {}, not '{}'"
+                            .format(self.DOMAIN_TYPE, type(domain.dataType)))
 
         # Handle parameters
         assert isinstance(mode, MutatorMode)

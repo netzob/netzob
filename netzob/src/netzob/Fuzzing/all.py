@@ -45,6 +45,7 @@ from netzob.Fuzzing.BinarySequenceMutator import BinarySequenceMutator
 from netzob.Fuzzing.DeterministGenerator import DeterministGenerator
 from netzob.Fuzzing.DeterministIntegerMutator import DeterministIntegerMutator
 from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
+from netzob.Fuzzing.PseudoRandomTimestampMutator import PseudoRandomTimestampMutator
 from netzob.Fuzzing.SequenceMutator import SequenceMutator
 from netzob.Fuzzing.StringPaddedGenerator import StringPaddedGenerator
 from netzob.Fuzzing.StringMutator import StringMutator
