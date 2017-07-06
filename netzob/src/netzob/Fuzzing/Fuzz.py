@@ -63,6 +63,7 @@ from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.IPv4 import IPv4
 from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
 from netzob.Fuzzing.AlternativeMutator import AlternativeMutator  # noqa: F401
+from netzob.Fuzzing.SequenceMutator import SequenceMutator  # noqa: F401
 from netzob.Fuzzing.DomainMutator import DomainMutator, MutatorMode  # noqa: F401
 from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
 from netzob.Fuzzing.StringMutator import StringMutator
@@ -93,7 +94,6 @@ class Fuzz(object):
     **Fuzzing example of a field that contains an integer**
 
     >>> from netzob.all import *
-    >>> from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
 
     >>> fuzz = Fuzz()
     >>> f_data = Field(name="data", domain=int16(interval=(1, 4)))
@@ -184,12 +184,11 @@ class Fuzz(object):
     **Fuzzing example of a field that contains a repeat of a variable**
 
     >>> fuzz = Fuzz()
-    >>> f_rep = Field(name="rep", domain=Repeat(int16(interval=(1, 4)),
-    ...                                             2))
+    >>> f_rep = Field(name="rep", domain=Repeat(int16(interval=(1, 4)), 2))
     >>> symbol = Symbol(name="sym", fields=[f_rep])
-    >>> fuzz.set(f_rep, PseudoRandomIntegerMutator, interval=(20, 32000)) # doctest: +SKIP
-    >>> symbol.specialize(fuzz=fuzz) # doctest: +SKIP
-    b'\x02\x84\x04\xf5'
+    >>> fuzz.set(f_rep, SequenceMutator)
+    >>> symbol.specialize(fuzz=fuzz)
+    b'\x00\x03\x00\x01'
 
 
     **Fuzzing example of a field that contains a size relationship with another field**
@@ -409,7 +408,7 @@ class Fuzz(object):
                     mutator = mapping[t]
                     break
             else:
-                raise Exception("The domain '{}' has no configured dataType. Cannot find a default Mutator without information regarding the domain type.".format(domain))
+                raise Exception("Cannot find a default Mutator for the domain '{}'.".format(domain))
 
         # Instanciate the mutator
         mutatorInstance = mutator(domain, **kwargs)

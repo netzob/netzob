@@ -104,7 +104,8 @@ class SequenceMutator(DomainMutator):
 
     def __init__(self,
                  domain,
-                 mutateChild=False,
+                 mutateChild=True,
+                 mappingTypesMutators={},
                  length=(None, None),
                  lengthBitSize=None,
                  **kwargs):
@@ -125,6 +126,7 @@ class SequenceMutator(DomainMutator):
             self._maxLength = self.DEFAULT_MAX_LENGTH
 
         self._mutateChild = mutateChild
+        self.mappingTypesMutators = mappingTypesMutators
 
         self._sequenceLengthField = Field(uint16le())
         self._lengthMutator = DeterministIntegerMutator(
@@ -138,6 +140,40 @@ class SequenceMutator(DomainMutator):
     def updateSeed(self, seedValue):
         super().updateSeed(seedValue)
         self._lengthMutator.updateSeed(seedValue)
+
+    @property
+    def mutateChild(self):
+        """
+        Property (getter).
+        If true, the sub-field has to be mutated.
+        Default value is False.
+
+        :type: :class:`bool`
+        """
+        return self._mutateChild
+
+    @mutateChild.setter
+    @typeCheck(bool)
+    def mutateChild(self, mutateChild):
+        self._mutateChild = mutateChild
+
+    @property
+    def mappingTypesMutators(self):
+        """Return the mapping that set the default mutator for each type.
+
+        :type: :class:`dict`
+        """
+        return self._mappingTypesMutators
+
+    @mappingTypesMutators.setter
+    @typeCheck(dict)
+    def mappingTypesMutators(self, mappingTypesMutators):
+        """Override the global default mapping of types with their default
+        mutators.
+        """
+        from netzob.Fuzzing.Fuzz import Fuzz
+        self._mappingTypesMutators = Fuzz.mappingTypesMutators.copy()
+        self._mappingTypesMutators.update(mappingTypesMutators)
 
     @property
     def sequenceLength(self):
