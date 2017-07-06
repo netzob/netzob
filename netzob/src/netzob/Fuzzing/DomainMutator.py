@@ -130,8 +130,8 @@ class DomainMutator(Mutator):
             raise TypeError("Mutator domain dataType (DATA_TYPE) not set")
 
         if not isinstance(domain.dataType, self.DATA_TYPE):
-            raise TypeError("Mutator domain dataType should be of type {}, not '{}'"
-                            .format(self.DOMAIN_TYPE, type(domain.dataType)))
+            raise TypeError("Mutator domain should be of type '{}'. Received object: '{}'"
+                            .format(self.DOMAIN_TYPE, domain))
 
         # Handle parameters
         assert isinstance(mode, MutatorMode)
