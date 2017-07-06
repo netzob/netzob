@@ -94,7 +94,6 @@ class Fuzz(object):
     **Fuzzing example of a field that contains an integer**
 
     >>> from netzob.all import *
-
     >>> fuzz = Fuzz()
     >>> f_data = Field(name="data", domain=int16(interval=(1, 4)))
     >>> symbol = Symbol(name="sym", fields=[f_data])
@@ -112,83 +111,6 @@ class Fuzz(object):
     >>> fuzz.set(f_agg, PseudoRandomIntegerMutator, interval=(20, 32000)) # doctest: +SKIP
     >>> symbol.specialize(fuzz=fuzz) # doctest: +SKIP
     b'\x02\x84\x04\xf5'
-
-
-    **Fuzzing of a field that contains an alternate of variables with default fuzzing strategy (MutatorMode.GENERATE)**
-
-    >>> fuzz = Fuzz()
-    >>> f_alt = Field(name="alt", domain=Alt([int16(interval=(1, 4)),
-    ...                                       int16(interval=(5, 8))]))
-    >>> symbol = Symbol(name="sym", fields=[f_alt])
-    >>> fuzz.set(f_alt, AlternativeMutator)
-    >>> res = symbol.specialize(fuzz=fuzz)
-    >>> res
-    b'\x00\x07'
-
-
-    **Fuzzing of an alternate of variables with non-default fuzzing strategy (MutatorMode.MUTATE)**
-
-    >>> fuzz = Fuzz()
-    >>> f_alt = Field(name="alt", domain=Alt([int16(1),
-    ...                                       int16(2)]))
-    >>> symbol = Symbol(name="sym", fields=[f_alt])
-    >>> fuzz.set(f_alt, AlternativeMutator, mode=MutatorMode.MUTATE)
-    >>> res = symbol.specialize(fuzz=fuzz)
-    >>> res != b'\x00\x01' and res != b'\x00\x02'
-    True
-
-
-    **Fuzzing of an alternate of variables with non-default types/mutators mapping (DeterministIntegerMutator instead of PseudoRandomIntegerMutator for Integer)**
-
-    >>> from netzob.Fuzzing.DeterministIntegerMutator import DeterministIntegerMutator
-    >>> fuzz = Fuzz()
-    >>> f_alt = Field(name="alt", domain=Alt([int16(interval=(1, 4)),
-    ...                                       int16(interval=(5, 8))]))
-    >>> symbol = Symbol(name="sym", fields=[f_alt])
-    >>> mapping = {}
-    >>> mapping[Integer] = DeterministIntegerMutator
-    >>> fuzz.set(f_alt, AlternativeMutator, mappingTypesMutators=mapping)
-    >>> res = symbol.specialize(fuzz=fuzz)
-    >>> res
-    b'\xfc\x00'
-
-
-    **Fuzzing of an alternate of variables without fuzzing the children**
-
-    >>> fuzz = Fuzz()
-    >>> f_alt = Field(name="alt", domain=Alt([int8(interval=(1, 4)),
-    ...                                       int8(interval=(5, 8))]))
-    >>> symbol = Symbol(name="sym", fields=[f_alt])
-    >>> fuzz.set(f_alt, AlternativeMutator, mutateChild=False)
-    >>> res = symbol.specialize(fuzz=fuzz)
-    >>> 5 <= ord(res) <= 8
-    True
-
-
-    **Fuzzing of an alternate of variables with a limitation in term of depth**
-
-    >>> fuzz = Fuzz()
-    >>> inner_domain = Alt([int8(interval=(1, 4)), int8(interval=(5, 8))])
-    >>> outer_domain = Alt([int8(interval=(9, 12)), inner_domain])
-    >>> f_alt = Field(name="alt", domain=outer_domain)
-    >>> symbol = Symbol(name="sym", fields=[f_alt])
-    >>> fuzz.set(f_alt, AlternativeMutator, maxDepth=2)
-    >>> symbol.specialize(fuzz=fuzz)
-    b'\x07'
-    >>> symbol.specialize(fuzz=fuzz)
-    Traceback (most recent call last):
-    ...
-    netzob.Fuzzing.AlternativeMutator.RecursionException: max depth reached (2)
-
-
-    **Fuzzing example of a field that contains a repeat of a variable**
-
-    >>> fuzz = Fuzz()
-    >>> f_rep = Field(name="rep", domain=Repeat(int16(interval=(1, 4)), 2))
-    >>> symbol = Symbol(name="sym", fields=[f_rep])
-    >>> fuzz.set(f_rep, SequenceMutator)
-    >>> symbol.specialize(fuzz=fuzz)
-    b'\x00\x03\x00\x01'
 
 
     **Fuzzing example of a field that contains a size relationship with another field**
@@ -213,6 +135,7 @@ class Fuzz(object):
     >>> res = symbol.specialize(fuzz=fuzz)
     >>> res != b'\x00\x02'
     True
+
 
     **Multiple fuzzing call on the same symbol**
 

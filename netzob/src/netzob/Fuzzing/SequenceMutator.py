@@ -93,7 +93,18 @@ class SequenceMutator(DomainMutator):
     >>> mutator.sequenceLength
     31
 
-    Constant definitions:
+
+    **Fuzzing example of a field that contains a repeat of a variable**
+
+    >>> fuzz = Fuzz()
+    >>> f_rep = Field(name="rep", domain=Repeat(int16(interval=(1, 4)), 2))
+    >>> symbol = Symbol(name="sym", fields=[f_rep])
+    >>> fuzz.set(f_rep, SequenceMutator)
+    >>> symbol.specialize(fuzz=fuzz)
+    b'\x00\x03\x00\x01'
+
+
+    **Constant definitions**:
     """
 
     # Constants
