@@ -56,10 +56,10 @@ from randomstate.prng import (mt19937, mlfg_1279_861, mrg32k3a, pcg32, pcg64,
                               dsfmt)
 
 
-class PseudoRandomTimestampMutator(PseudoRandomIntegerMutator):
+class TimestampMutator(PseudoRandomIntegerMutator):
     r"""The Timestamp mutator, using pseudo-random generator.
 
-    The PseudoRandomTimestampMutator constructor expects some parameters:
+    The TimestampMutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate.
     :param mode: If set to :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`, :meth:`generate` will be
@@ -85,7 +85,7 @@ class PseudoRandomTimestampMutator(PseudoRandomIntegerMutator):
 
     >>> from netzob.all import *
     >>> fieldTimestamp = Field(Timestamp())
-    >>> mutator = PseudoRandomTimestampMutator(fieldTimestamp.domain, seed=4321)
+    >>> mutator = TimestampMutator(fieldTimestamp.domain, seed=4321)
     >>> mutator.generate()
     b'\n'
     """

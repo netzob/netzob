@@ -56,11 +56,11 @@ from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.AbstractType import Sign, UnitSize
 
 
-class BinarySequenceMutator(DomainMutator):
+class BitArrayMutator(DomainMutator):
     """The binary sequence mutator, using pseudo-random generator.
     The generated sequence shall not be longer than 2^32 bits.
 
-    The BinarySequenceMutator constructor expects some parameters:
+    The BitArrayMutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate.
     :param mode: If set to :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`, :meth:`generate` will be
@@ -84,7 +84,7 @@ class BinarySequenceMutator(DomainMutator):
 
     >>> from netzob.all import *
     >>> fieldBits = Field(BitArray())
-    >>> mutator = BinarySequenceMutator(fieldBits.domain, length=(0,30), seed=19)
+    >>> mutator = BitArrayMutator(fieldBits.domain, length=(0,30), seed=19)
     >>> mutator.generate()
     bitarray('00000000000000000000000000000000000010011000000000000100110100110')
 

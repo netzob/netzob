@@ -62,12 +62,12 @@ from netzob.Model.Vocabulary.Types.HexaString import HexaString
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.IPv4 import IPv4
 from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
-from netzob.Fuzzing.Mutators.AlternativeMutator import AlternativeMutator  # noqa: F401
-from netzob.Fuzzing.Mutators.SequenceMutator import SequenceMutator  # noqa: F401
+from netzob.Fuzzing.Mutators.AltMutator import AltMutator  # noqa: F401
+from netzob.Fuzzing.Mutators.RepeatMutator import RepeatMutator  # noqa: F401
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorMode  # noqa: F401
 from netzob.Fuzzing.Mutators.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
 from netzob.Fuzzing.Mutators.StringMutator import StringMutator
-from netzob.Fuzzing.Mutators.PseudoRandomTimestampMutator import PseudoRandomTimestampMutator
+from netzob.Fuzzing.Mutators.TimestampMutator import TimestampMutator
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 
 
@@ -206,7 +206,7 @@ class Fuzz(object):
     >>> f_alt = Field(name="alt", domain=Alt([int8(interval=(1, 4)),
     ...                                       int8(interval=(5, 8))]))
     >>> symbol = Symbol(name="sym", fields=[f_alt])
-    >>> fuzz.set(f_alt, AlternativeMutator)
+    >>> fuzz.set(f_alt, AltMutator)
     >>> symbol.specialize(fuzz=fuzz)
     b'\x07'
     >>> symbol.specialize(fuzz=fuzz)
@@ -229,7 +229,7 @@ class Fuzz(object):
         Fuzz.mappingTypesMutators[Raw] = PseudoRandomIntegerMutator
         Fuzz.mappingTypesMutators[BitArray] = PseudoRandomIntegerMutator
         Fuzz.mappingTypesMutators[IPv4] = PseudoRandomIntegerMutator
-        Fuzz.mappingTypesMutators[Timestamp] = PseudoRandomTimestampMutator
+        Fuzz.mappingTypesMutators[Timestamp] = TimestampMutator
 
     def __init__(self,
                  counterMax=None,           # type: Union[int, float]
@@ -317,9 +317,9 @@ class Fuzz(object):
         # Retrieve the domain mutator if the domain is complex (such as Repeat, Agg or Alt)
         if isinstance(domain, AbstractVariableNode):
             if isinstance(domain, Repeat):
-                mutator = SequenceMutator
+                mutator = RepeatMutator
             elif isinstance(domain, Alt):
-                mutator = AlternativeMutator
+                mutator = AltMutator
             # elif isinstance(domain, Agg):
             #     mutator = AggregateMutator
 
@@ -442,7 +442,7 @@ class Fuzz(object):
 
         tmp_new_keys = {}
 
-        if isinstance(variable, Repeat) and isinstance(mutator, SequenceMutator) and mutator.mutateChild:
+        if isinstance(variable, Repeat) and isinstance(mutator, RepeatMutator) and mutator.mutateChild:
             # We check if the variable is not already present in the variables to mutate
             if variable.children[0] not in self.mappingFieldsMutators.keys():
                 mut_inst = Fuzz._retrieveDefaultMutator(domain=variable.children[0], mapping=mutator.mappingTypesMutators)
@@ -453,7 +453,7 @@ class Fuzz(object):
                 # Propagate mutation to the child if it is a complex domain
                 if isinstance(variable.children[0], AbstractVariableNode):
                     tmp_new_keys.update(self._propagateMutation(variable.children[0], mut_inst))
-        elif isinstance(variable, Alt) and isinstance(mutator, AlternativeMutator) and mutator.mutateChild:
+        elif isinstance(variable, Alt) and isinstance(mutator, AltMutator) and mutator.mutateChild:
             for child in variable.children:
                 if child not in self.mappingFieldsMutators.keys():
                     mut_inst = Fuzz._retrieveDefaultMutator(domain=child, mapping=mutator.mappingTypesMutators)

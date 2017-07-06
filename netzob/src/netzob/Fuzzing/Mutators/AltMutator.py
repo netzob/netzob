@@ -57,10 +57,10 @@ from netzob.Model.Vocabulary.Types.Integer import uint8le
 class RecursionException(Exception):
     pass
 
-class AlternativeMutator(DomainMutator):
+class AltMutator(DomainMutator):
     r"""The alternative mutator.
 
-    The AlternativeMutator constructor expects some parameters:
+    The AltMutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate.
     :param mode: If set to :attr:`MutatorMode.GENERATE`, :meth:`generate` will be
@@ -80,7 +80,7 @@ class AlternativeMutator(DomainMutator):
     >>> from netzob.Fuzzing.Mutators.DomainMutator import MutatorMode
     >>> data_subAlt = Alt([Integer(12), String("abc")])
     >>> data_alt = Alt([Integer(34), data_subAlt])
-    >>> mutator = AlternativeMutator(data_alt, seed=10)
+    >>> mutator = AltMutator(data_alt, seed=10)
     >>> mutator.generate()
     1
     >>> mutator.currentDepth
@@ -101,7 +101,7 @@ class AlternativeMutator(DomainMutator):
     >>> f_alt = Field(name="alt", domain=Alt([int16(interval=(1, 4)),
     ...                                       int16(interval=(5, 8))]))
     >>> symbol = Symbol(name="sym", fields=[f_alt])
-    >>> fuzz.set(f_alt, AlternativeMutator)
+    >>> fuzz.set(f_alt, AltMutator)
     >>> res = symbol.specialize(fuzz=fuzz)
     >>> res
     b'\x00\x07'
@@ -113,7 +113,7 @@ class AlternativeMutator(DomainMutator):
     >>> f_alt = Field(name="alt", domain=Alt([int16(1),
     ...                                       int16(2)]))
     >>> symbol = Symbol(name="sym", fields=[f_alt])
-    >>> fuzz.set(f_alt, AlternativeMutator, mode=MutatorMode.MUTATE)
+    >>> fuzz.set(f_alt, AltMutator, mode=MutatorMode.MUTATE)
     >>> res = symbol.specialize(fuzz=fuzz)
     >>> res != b'\x00\x01' and res != b'\x00\x02'
     True
@@ -128,7 +128,7 @@ class AlternativeMutator(DomainMutator):
     >>> symbol = Symbol(name="sym", fields=[f_alt])
     >>> mapping = {}
     >>> mapping[Integer] = DeterministIntegerMutator
-    >>> fuzz.set(f_alt, AlternativeMutator, mappingTypesMutators=mapping)
+    >>> fuzz.set(f_alt, AltMutator, mappingTypesMutators=mapping)
     >>> res = symbol.specialize(fuzz=fuzz)
     >>> res
     b'\xfc\x00'
@@ -140,7 +140,7 @@ class AlternativeMutator(DomainMutator):
     >>> f_alt = Field(name="alt", domain=Alt([int8(interval=(1, 4)),
     ...                                       int8(interval=(5, 8))]))
     >>> symbol = Symbol(name="sym", fields=[f_alt])
-    >>> fuzz.set(f_alt, AlternativeMutator, mutateChild=False)
+    >>> fuzz.set(f_alt, AltMutator, mutateChild=False)
     >>> res = symbol.specialize(fuzz=fuzz)
     >>> 5 <= ord(res) <= 8
     True
@@ -153,13 +153,13 @@ class AlternativeMutator(DomainMutator):
     >>> outer_domain = Alt([int8(interval=(9, 12)), inner_domain])
     >>> f_alt = Field(name="alt", domain=outer_domain)
     >>> symbol = Symbol(name="sym", fields=[f_alt])
-    >>> fuzz.set(f_alt, AlternativeMutator, maxDepth=2)
+    >>> fuzz.set(f_alt, AltMutator, maxDepth=2)
     >>> symbol.specialize(fuzz=fuzz)
     b'\x07'
     >>> symbol.specialize(fuzz=fuzz)
     Traceback (most recent call last):
     ...
-    netzob.Fuzzing.Mutators.AlternativeMutator.RecursionException: max depth reached (2)
+    netzob.Fuzzing.Mutators.AltMutator.RecursionException: max depth reached (2)
 
 
     **Constant definitions:**

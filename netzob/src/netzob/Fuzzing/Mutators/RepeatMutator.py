@@ -52,11 +52,11 @@ from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
 
 
-class SequenceMutator(DomainMutator):
+class RepeatMutator(DomainMutator):
     r"""The sequence mutator, using a determinist generator to get a sequence
     length.
 
-    The SequenceMutator constructor expects some parameters:
+    The RepeatMutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate.
     :param mode: If set to :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`, :meth:`generate` will be
@@ -81,7 +81,7 @@ class SequenceMutator(DomainMutator):
     >>> from netzob.all import *
     >>> child = Data(dataType=String("abc"), svas=SVAS.PERSISTENT)
     >>> fieldRepeat = Field(Repeat(child, nbRepeat=3))
-    >>> mutator = SequenceMutator(fieldRepeat.domain, length=(0, 30), seed=10)
+    >>> mutator = RepeatMutator(fieldRepeat.domain, length=(0, 30), seed=10)
     >>> mutator.generate()
     >>> mutator.sequenceLength
     16
@@ -98,7 +98,7 @@ class SequenceMutator(DomainMutator):
     >>> fuzz = Fuzz()
     >>> f_rep = Field(name="rep", domain=Repeat(int16(interval=(1, 4)), 2))
     >>> symbol = Symbol(name="sym", fields=[f_rep])
-    >>> fuzz.set(f_rep, SequenceMutator)
+    >>> fuzz.set(f_rep, RepeatMutator)
     >>> symbol.specialize(fuzz=fuzz)
     b'\x00\x03\x00\x01'
 
