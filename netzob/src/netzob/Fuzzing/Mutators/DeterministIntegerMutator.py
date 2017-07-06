@@ -43,9 +43,9 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.DomainMutator import DomainMutator, MutatorInterval
+from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
+from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Fuzzing.DeterministGenerator import DeterministGenerator
 from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Model.Vocabulary.Types.AbstractType import Sign
 

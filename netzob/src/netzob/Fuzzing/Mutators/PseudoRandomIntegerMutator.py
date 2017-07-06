@@ -46,9 +46,8 @@ from itertools import repeat, starmap
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.DomainMutator import DomainMutator, MutatorInterval
+from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-# from netzob.Fuzzing.Xorshift128plus import Xorshift128plus
 from netzob.Model.Vocabulary.Types.Integer import Integer
 from randomstate import RandomState
 from randomstate.prng import (mt19937, mlfg_1279_861, mrg32k3a, pcg32, pcg64,

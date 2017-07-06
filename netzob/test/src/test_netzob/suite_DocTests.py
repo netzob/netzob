@@ -80,6 +80,8 @@ from netzob.Inference.Grammar.AutomataFactories.PTAAutomataFactory import PTAAut
 
 from netzob.Fuzzing.Mutator import Mutator
 from netzob.Fuzzing.Generator import Generator
+from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
+from netzob.Fuzzing.Generators.StringPaddedGenerator import StringPaddedGenerator
 
 
 def getSuite():
@@ -188,7 +190,6 @@ def getSuite():
         SequenceMutator.__module__,
         StringPaddedGenerator.__module__,
         StringMutator.__module__,
-        Xorshift128plus.__module__,
 
         # Modules related to the protocol simulation
         # ------------------------------------------

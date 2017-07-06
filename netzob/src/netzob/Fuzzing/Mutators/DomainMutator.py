@@ -49,8 +49,8 @@ from typing import Type  # noqa: F401
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
-from netzob.Fuzzing.Mutator import Mutator
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Fuzzing.Mutator import Mutator
 
 
 class MutatorMode(Enum):

@@ -377,7 +377,7 @@ class Symbol(AbstractField):
         >>>
         >>> # Specify the fuzzed fields
         >>> fuzz = Fuzz()
-        >>> from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
+        >>> from netzob.Fuzzing.Mutators.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
         >>> fuzz.set(f2, PseudoRandomIntegerMutator, interval=(20, 42)) # doctest: +SKIP
         >>>
         >>> # Count the expected number of unique produced messages

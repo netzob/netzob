@@ -36,6 +36,7 @@
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
 from typing import Tuple  # noqa: F401
+from bitarray import bitarray
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -44,18 +45,15 @@ from typing import Tuple  # noqa: F401
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.DomainMutator import DomainMutator
+from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
+from netzob.Fuzzing.Mutators.DeterministIntegerMutator import DeterministIntegerMutator
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Fuzzing.DeterministIntegerMutator import DeterministIntegerMutator
 from netzob.Model.Vocabulary.Types.Integer import uint16le
 from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Model.Vocabulary.Field import Field
-from netzob.Fuzzing.Xorshift128plus import Xorshift128plus
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.AbstractType import Sign, UnitSize
-
-from bitarray import bitarray
 
 
 class BinarySequenceMutator(DomainMutator):

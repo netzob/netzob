@@ -43,8 +43,8 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.DomainMutator import MutatorInterval
-from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
+from netzob.Fuzzing.Mutators.DomainMutator import MutatorInterval
+from netzob.Fuzzing.Mutators.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
 from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray

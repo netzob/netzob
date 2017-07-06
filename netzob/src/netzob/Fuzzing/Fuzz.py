@@ -62,11 +62,12 @@ from netzob.Model.Vocabulary.Types.HexaString import HexaString
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.IPv4 import IPv4
 from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
-from netzob.Fuzzing.AlternativeMutator import AlternativeMutator  # noqa: F401
-from netzob.Fuzzing.SequenceMutator import SequenceMutator  # noqa: F401
-from netzob.Fuzzing.DomainMutator import DomainMutator, MutatorMode  # noqa: F401
-from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
-from netzob.Fuzzing.StringMutator import StringMutator
+from netzob.Fuzzing.Mutators.AlternativeMutator import AlternativeMutator  # noqa: F401
+from netzob.Fuzzing.Mutators.SequenceMutator import SequenceMutator  # noqa: F401
+from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorMode  # noqa: F401
+from netzob.Fuzzing.Mutators.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
+from netzob.Fuzzing.Mutators.StringMutator import StringMutator
+from netzob.Fuzzing.Mutators.PseudoRandomTimestampMutator import PseudoRandomTimestampMutator
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 
 
@@ -126,8 +127,8 @@ class Fuzz(object):
 
     **Fuzzing example in mutation mode of a field that contains an integer**
 
-    >>> from netzob.Fuzzing.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
-    >>> from netzob.Fuzzing.DomainMutator import MutatorMode
+    >>> from netzob.Fuzzing.Mutators.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
+    >>> from netzob.Fuzzing.Mutators.DomainMutator import MutatorMode
     >>> fuzz = Fuzz()
     >>> f_data = Field(name="data", domain=int16(2))
     >>> symbol = Symbol(name="sym", fields=[f_data])
@@ -153,7 +154,7 @@ class Fuzz(object):
 
     **Fuzzing of a whole symbol, and covering all fields storage spaces with default mutator per types**
 
-    >>> from netzob.Fuzzing.DomainMutator import MutatorInterval
+    >>> from netzob.Fuzzing.Mutators.DomainMutator import MutatorInterval
     >>> fuzz = Fuzz()
     >>> f_data1 = Field(name="data1", domain=int8(interval=(2, 4)))
     >>> f_data2 = Field(name="data2", domain=int8(interval=(5, 8)))
@@ -188,7 +189,7 @@ class Fuzz(object):
 
     **Fuzzing and changing the default Mutator for types**
 
-    >>> from netzob.Fuzzing.DeterministIntegerMutator import DeterministIntegerMutator
+    >>> from netzob.Fuzzing.Mutators.DeterministIntegerMutator import DeterministIntegerMutator
     >>> fuzz = Fuzz()
     >>> f_data1 = Field(name="data1", domain=int8(2))
     >>> f_data2 = Field(name="data2", domain=int8(4))
@@ -228,7 +229,7 @@ class Fuzz(object):
         Fuzz.mappingTypesMutators[Raw] = PseudoRandomIntegerMutator
         Fuzz.mappingTypesMutators[BitArray] = PseudoRandomIntegerMutator
         Fuzz.mappingTypesMutators[IPv4] = PseudoRandomIntegerMutator
-        Fuzz.mappingTypesMutators[Timestamp] = PseudoRandomIntegerMutator
+        Fuzz.mappingTypesMutators[Timestamp] = PseudoRandomTimestampMutator
 
     def __init__(self,
                  counterMax=None,           # type: Union[int, float]

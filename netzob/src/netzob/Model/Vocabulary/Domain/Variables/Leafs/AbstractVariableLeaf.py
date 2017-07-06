@@ -118,7 +118,7 @@ class AbstractVariableLeaf(AbstractVariable):
         """@todo TO BE DOCUMENTED"""
 
         # Fuzzing has priority over generating a legitimate value
-        from netzob.Fuzzing.DomainMutator import MutatorMode
+        from netzob.Fuzzing.Mutators.DomainMutator import MutatorMode
         if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == MutatorMode.GENERATE:
 
             # Retrieve the mutator

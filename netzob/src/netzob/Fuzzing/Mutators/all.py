@@ -36,6 +36,12 @@
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
 
-from netzob.Fuzzing.Fuzz import Fuzz
-from netzob.Fuzzing.Mutator import Mutator
-from netzob.Fuzzing.Mutators.all import *
+from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
+from netzob.Fuzzing.Mutators.AlternativeMutator import AlternativeMutator
+from netzob.Fuzzing.Mutators.AutomataMutator import AutomataMutator
+from netzob.Fuzzing.Mutators.BinarySequenceMutator import BinarySequenceMutator
+from netzob.Fuzzing.Mutators.DeterministIntegerMutator import DeterministIntegerMutator
+from netzob.Fuzzing.Mutators.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
+from netzob.Fuzzing.Mutators.PseudoRandomTimestampMutator import PseudoRandomTimestampMutator
+from netzob.Fuzzing.Mutators.SequenceMutator import SequenceMutator
+from netzob.Fuzzing.Mutators.StringMutator import StringMutator

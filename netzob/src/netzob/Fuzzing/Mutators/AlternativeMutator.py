@@ -44,12 +44,12 @@ from typing import Dict  # noqa: F401
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.DomainMutator import DomainMutator
+from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
+from netzob.Fuzzing.Mutators.PseudoRandomIntegerMutator \
+    import PseudoRandomIntegerMutator
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
-from netzob.Fuzzing.PseudoRandomIntegerMutator \
-    import PseudoRandomIntegerMutator
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Types.Integer import uint8le
 
@@ -77,7 +77,7 @@ class AlternativeMutator(DomainMutator):
     :raises: :class:`Exception` if domain is not valid
 
     >>> from netzob.all import *
-    >>> from netzob.Fuzzing.DomainMutator import MutatorMode
+    >>> from netzob.Fuzzing.Mutators.DomainMutator import MutatorMode
     >>> data_subAlt = Alt([Integer(12), String("abc")])
     >>> data_alt = Alt([Integer(34), data_subAlt])
     >>> mutator = AlternativeMutator(data_alt, seed=10)
@@ -121,7 +121,7 @@ class AlternativeMutator(DomainMutator):
 
     **Fuzzing of an alternate of variables with non-default types/mutators mapping (DeterministIntegerMutator instead of PseudoRandomIntegerMutator for Integer)**
 
-    >>> from netzob.Fuzzing.DeterministIntegerMutator import DeterministIntegerMutator
+    >>> from netzob.Fuzzing.Mutators.DeterministIntegerMutator import DeterministIntegerMutator
     >>> fuzz = Fuzz()
     >>> f_alt = Field(name="alt", domain=Alt([int16(interval=(1, 4)),
     ...                                       int16(interval=(5, 8))]))
@@ -159,7 +159,7 @@ class AlternativeMutator(DomainMutator):
     >>> symbol.specialize(fuzz=fuzz)
     Traceback (most recent call last):
     ...
-    netzob.Fuzzing.AlternativeMutator.RecursionException: max depth reached (2)
+    netzob.Fuzzing.Mutators.AlternativeMutator.RecursionException: max depth reached (2)
 
 
     **Constant definitions:**
