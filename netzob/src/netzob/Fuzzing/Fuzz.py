@@ -63,6 +63,7 @@ from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.IPv4 import IPv4
 from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
 from netzob.Fuzzing.Mutators.AltMutator import AltMutator  # noqa: F401
+from netzob.Fuzzing.Mutators.AggMutator import AggMutator  # noqa: F401
 from netzob.Fuzzing.Mutators.RepeatMutator import RepeatMutator  # noqa: F401
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorMode  # noqa: F401
 from netzob.Fuzzing.Mutators.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
@@ -320,8 +321,8 @@ class Fuzz(object):
                 mutator = RepeatMutator
             elif isinstance(domain, Alt):
                 mutator = AltMutator
-            # elif isinstance(domain, Agg):
-            #     mutator = AggregateMutator
+            elif isinstance(domain, Agg):
+                mutator = AggMutator
 
         # Else, retrieve the default mutator for the domain dataType
         else:
@@ -443,6 +444,7 @@ class Fuzz(object):
         tmp_new_keys = {}
 
         if isinstance(variable, Repeat) and isinstance(mutator, RepeatMutator) and mutator.mutateChild:
+
             # We check if the variable is not already present in the variables to mutate
             if variable.children[0] not in self.mappingFieldsMutators.keys():
                 mut_inst = Fuzz._retrieveDefaultMutator(domain=variable.children[0], mapping=mutator.mappingTypesMutators)
@@ -453,8 +455,11 @@ class Fuzz(object):
                 # Propagate mutation to the child if it is a complex domain
                 if isinstance(variable.children[0], AbstractVariableNode):
                     tmp_new_keys.update(self._propagateMutation(variable.children[0], mut_inst))
+
         elif isinstance(variable, Alt) and isinstance(mutator, AltMutator) and mutator.mutateChild:
+
             for child in variable.children:
+                # We check if the variable is not already present in the variables to mutate
                 if child not in self.mappingFieldsMutators.keys():
                     mut_inst = Fuzz._retrieveDefaultMutator(domain=child, mapping=mutator.mappingTypesMutators)
                     mut_inst.setCounterMax(self._counterMax, relative=self._counterMaxRelative)
@@ -464,10 +469,19 @@ class Fuzz(object):
                     # Propagate mutation to the child if it is a complex domain
                     if isinstance(child, AbstractVariableNode):
                         tmp_new_keys.update(self._propagateMutation(child, mut_inst))
-        # elif isinstance(variable, Agg) and isinstance(mutator, AggregateMutator) and mutator.mutateChildren:
-            # for child in variable.children:
-            #     tmp_new_keys[variable.children] = (mutator.mode, {})
-            #     if isinstance(child, AbstractVariableNode):
-            #         tmp_new_keys.update(self._propagateMutation(child))
+
+        elif isinstance(variable, Agg) and isinstance(mutator, AggMutator) and mutator.mutateChild:
+
+            for child in variable.children:
+                # We check if the variable is not already present in the variables to mutate
+                if child not in self.mappingFieldsMutators.keys():
+                    mut_inst = Fuzz._retrieveDefaultMutator(domain=child, mapping=mutator.mappingTypesMutators)
+                    mut_inst.setCounterMax(self._counterMax, relative=self._counterMaxRelative)
+                    mut_inst.mode = mutator.mode
+                    tmp_new_keys[child] = (mut_inst, {})
+
+                    # Propagate mutation to the child if it is a complex domain
+                    if isinstance(child, AbstractVariableNode):
+                        tmp_new_keys.update(self._propagateMutation(child, mut_inst))
 
         return tmp_new_keys

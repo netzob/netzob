@@ -38,6 +38,7 @@
 
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
 from netzob.Fuzzing.Mutators.AltMutator import AltMutator
+from netzob.Fuzzing.Mutators.AggMutator import AggMutator
 from netzob.Fuzzing.Mutators.AutomataMutator import AutomataMutator
 from netzob.Fuzzing.Mutators.BitArrayMutator import BitArrayMutator
 from netzob.Fuzzing.Mutators.DeterministIntegerMutator import DeterministIntegerMutator

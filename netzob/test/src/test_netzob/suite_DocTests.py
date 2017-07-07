@@ -181,6 +181,7 @@ def getSuite():
         Mutator.__module__,
         DomainMutator.__module__,
         AltMutator.__module__,
+        AggMutator.__module__,
         AutomataMutator.__module__,
         RepeatMutator.__module__,
         DeterministGenerator.__module__,
