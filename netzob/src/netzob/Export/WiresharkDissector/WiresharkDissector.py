@@ -478,6 +478,19 @@ class WiresharkDissector(object):
                         .format(data_rep=data_rep)
                     buf << "idx = idx + remaining_len"
 
+<<<<<<< HEAD
+=======
+        # Register dissector function to specific filter criterion
+        filter_ = WiresharkFilterFactory.getFilter(sym)
+        luatype = self.__getLuaTableType(filter_.pytype)
+        for expr in filter_.getExpressions():
+            buf << """if not pcall(DissectorTable.get, "{0}") then
+          DissectorTable.new("{0}", "Netzob-generated table", {type})
+        end
+        DissectorTable.get("{0}"):add({1}, {class_var})
+        """.format(*expr, type=luatype, **ctx)
+
+>>>>>>> ae8a03b... Added new Wireshark Dissector module. It was ported from version 0.4.2
         return buf.getvalue()
 
 
