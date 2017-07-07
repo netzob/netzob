@@ -67,6 +67,8 @@ class RepeatMutator(DomainMutator):
         Default value is :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`.
     :param mutateChild: If true, sub-field has to be mutated.
         Default value is :const:`False`.
+    :param mappingTypesMutators: Override the global default mapping of types with their default
+        mutators.
     :param length: The scope of sequence length to generate. If set to
         (min, max), the values will be generated between min and max.
         Default value is **(None, None)**.
@@ -78,6 +80,9 @@ class RepeatMutator(DomainMutator):
     :type mutateChild: :class:`bool`, optional
     :type length: :class:`tuple`, optional
     :type lengthBitSize: :class:`int`, optional
+    :type mappingTypesMutators: :class:`dict` where keys are :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>` and values are :class:`Mutator <netzob.Fuzzing.Mutator.Mutator>`, optional
+    :raises: :class:`Exception` if domain is not valid
+
 
     >>> from netzob.all import *
     >>> from netzob.Fuzzing.Mutators.DomainMutator import MutatorMode

@@ -70,11 +70,17 @@ class AltMutator(DomainMutator):
         Default value is :attr:`MutatorMode.GENERATE`.
     :param mutateChild: If :const:`True`, the subfield has to be mutated.
         Default value is :const:`False`.
+    :param mappingTypesMutators: Override the global default mapping of types with their default
+        mutators.
+    :param maxDepth: This enables to limit the recursive calls to the mutator.
     :type domain: :class:`AbstractVariable
         <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
     :type mode: :class:`int`, optional
     :type mutateChild: :class:`bool`, optional
+    :type mappingTypesMutators: :class:`dict` where keys are :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>` and values are :class:`Mutator <netzob.Fuzzing.Mutator.Mutator>`, optional
+    :type maxDepth: :class:`int`.
     :raises: :class:`Exception` if domain is not valid
+
 
     >>> from netzob.all import *
     >>> from netzob.Fuzzing.Mutators.DomainMutator import MutatorMode
