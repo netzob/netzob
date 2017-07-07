@@ -51,7 +51,7 @@ from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Model.Vocabulary.Field import Field
-from netzob.Model.Vocabulary.Types.Integer import uint8le
+from netzob.Model.Vocabulary.Types.Integer import uint16le
 
 
 class RecursionException(Exception):
