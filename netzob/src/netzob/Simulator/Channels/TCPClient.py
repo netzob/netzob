@@ -179,8 +179,28 @@ class TCPClient(AbstractChannel):
 
         """
 
-        raise NotImplementedError("Not yet implemented")
+        #raise NotImplementedError("Not yet implemented")
 
+        if self.__socket is not None:
+            # get the ports from message to identify the good response (in TCP or UDP)
+            portSrcTx = (data[0] * 256) + data[1]
+            portDstTx = (data[2] * 256) + data[3]
+
+            responseOk = False
+            stopWaitingResponse = False
+            self.write(data)
+            while stopWaitingResponse is False:
+                # TODO: handle timeout
+                dataReceived = self.read(timeout)
+                portSrcRx = (dataReceived[0] * 256) + dataReceived[1]
+                portDstRx = (dataReceived[2] * 256) + dataReceived[3]
+                stopWaitingResponse = (portSrcTx == portDstRx) and (portDstTx == portSrcRx)
+                if stopWaitingResponse:  # and not timeout
+                    responseOk = True
+            if responseOk:
+                return dataReceived
+        else:
+            raise Exception("socket is not available")
     # Management methods
 
     # Properties

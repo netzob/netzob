@@ -102,7 +102,7 @@ class FileImporter(object):
         :rtype: a :class:`netzob.Common.Utils.SortedTypedList.SortedTypedList` of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
         """
         # Verify the existence of input files
-        errorMessageList = []
+        MessageList = []
         for filePath in filePathList:
             try:
                 fp = open(filePath)
